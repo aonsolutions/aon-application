@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Arrays;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -14,19 +12,16 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.DataResource;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 public class FiscalModelUtils {
 	
-	public static final FiscalMSServiceAsync FISCAL_MS_SERVICE;
-	
-	static {
-		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
-		FISCAL_MS_SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
-	}
+//	public static final FiscalMSServiceAsync FISCAL_MS_SERVICE;
+//	
+//	static {
+//		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+//		FISCAL_MS_SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
+//	}
 	
 	private FiscalModelUtils() {
 		
@@ -534,29 +529,29 @@ public class FiscalModelUtils {
 		return buff.toString();
 	}
 	
-	public static void sendEmail(IFiscalModelCallback<?, ?> modelCallback, IFiscalModel model) {
-		
-		final PopupPanel popup = new PopupPanel(false, true);
-		popup.add(new AonSplash());
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		FISCAL_MS_SERVICE.sendEmail(modelCallback.getOptions().getOccam(), model, new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				popup.hide();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				popup.hide();
-				modelCallback.showError("No se pudo enviar email: " + caught.getMessage());
-			}
-			
-		});
-		
-	}
+//	public static void sendEmail(IFiscalModelCallback<?, ?> modelCallback, IFiscalModel model) {
+//		
+//		final PopupPanel popup = new PopupPanel(false, true);
+//		popup.add(new AonSplash());
+//		popup.setGlassEnabled(true);
+//		popup.setAnimationEnabled(true);
+//		popup.center();
+//		FISCAL_MS_SERVICE.sendEmail(modelCallback.getOptions().getOccam(), model, new AsyncCallback<Void>() {
+//			
+//			@Override
+//			public void onSuccess(Void result) {
+//				popup.hide();
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				popup.hide();
+//				modelCallback.showError("No se pudo enviar email: " + caught.getMessage());
+//			}
+//			
+//		});
+//		
+//	}
 
 }
 

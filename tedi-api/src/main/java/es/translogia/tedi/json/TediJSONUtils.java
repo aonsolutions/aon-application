@@ -58,11 +58,11 @@ public class TediJSONUtils {
 		if (date == null || "".equals(date.trim())) return null;
 		date = date.replace('"',' ');
 		date = date.trim();
-		ParseException ex = null;
+		Exception ex = null;
 		for ( SimpleDateFormat format : FORMATS) {
 			try {
 				return format.parse(date);
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				ex = e;
 			}
 		}

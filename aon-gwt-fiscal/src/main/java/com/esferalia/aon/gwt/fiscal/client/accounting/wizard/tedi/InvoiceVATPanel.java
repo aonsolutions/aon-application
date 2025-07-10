@@ -467,11 +467,14 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		addButton.setAccessKey('L');
 		addButton.addClickHandler(event -> {
-			int lastIdx = callback.getInvoice().getVats().size() - 1;
+			int idx = callback.getInvoice().getVats().size();		
+			int lastIdx = idx - 1;
 			final InvoiceVAT last = callback.getVat(lastIdx);
 			final InvoiceVAT vat = new InvoiceVAT()
 				.setExpAccount(last.getExpAccount().orElse(null))
-				.setSurcharge(last.getSurcharge()).setWithholding(last.isWithholding())
+				.setPercentage(last.getPercentage())
+				.setSurcharge(last.getSurcharge())
+				.setWithholding(last.isWithholding())
 				.setInputAccount(last.getInputAccount().orElse(null))
 				.setOutputAccount(last.getOutputAccount().orElse(null))
 				.setAdjAccount(last.getAdjAccount().orElse(null))

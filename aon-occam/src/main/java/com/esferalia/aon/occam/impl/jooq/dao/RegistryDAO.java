@@ -106,11 +106,6 @@ public class RegistryDAO {
 		}
 
 		@Override
-		public FilterDAO isNullS3() {
-			throw new UnsupportedOperationException("isNullS3 not supported for Registry Email");
-		}
-
-		@Override
 		public FilterDAO isNotNull() {
 			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.isNotNull())));
 		}
