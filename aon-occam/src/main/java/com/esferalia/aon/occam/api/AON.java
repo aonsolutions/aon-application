@@ -2615,6 +2615,12 @@ public class AON {
 		}
 	}
 
+	public static Delivery getDeliveryByPackage(Occam occam, Integer itemPackageId, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().getDeliveryByPackage(ctx, itemPackageId, options);
+		}
+	}
+
 	// ----- SAVE DELIVERY
 	
 	public static Delivery saveDelivery(Domain domain, User user, Delivery delivery) {
