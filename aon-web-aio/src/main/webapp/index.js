@@ -8,14 +8,14 @@ import { saveAuthDevice } from './services/authDeviceService.js';
 import { favicon, title, loadLink } from './css/aon-customView.js';
 
 import { loadTheme } from './modules/utils/theme';
-
+/*
 import './css/noto-sans.css';
 import './css/material-symbols-outlined.css';
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon-figma.css';
-
+*/
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM = (token) => {
     window.tokenFCM = token;
@@ -106,7 +106,7 @@ const setWindowApp = () => {
         aonNotificationIcon.initializeFB();
         aonNotificationIcon.getTotalNotification();
     });
-} 
+}
 
 const loadScripts = () => {
     let promises = [

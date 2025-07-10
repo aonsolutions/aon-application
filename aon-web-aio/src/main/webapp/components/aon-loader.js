@@ -1,6 +1,6 @@
 import { CONSTANT } from '../environments/environments.js';
 import {AonElement} from './AonElement.js';
-import '../css/aon-loader.css';
+//import '../css/aon-loader.css';
 
 export class AonLoader extends AonElement {
 	PROGRESS;

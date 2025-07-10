@@ -3,7 +3,7 @@ import { AonElement } from './AonElement.js';
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
 import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked, updateCustomerBillable } from '../services/domainsService.js';
 
-import '../css/aon-domain-customer.css';
+//import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonButton } from './aon-button.js';
 import { AonSelect } from './aon-select.js';

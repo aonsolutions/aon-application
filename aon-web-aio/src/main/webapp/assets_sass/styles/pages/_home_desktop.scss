@@ -1,26 +1,24 @@
 @use '../variables' as v;
 @use '../base/mixins' as mixin;
 
-aon-home{
-  #rootPanel {
-    aon-desktop{
-      aon-toolbar{
-        display: none;
-      }
-      .aonFlex #cardsPanel{
-        display         : flex;
-        gap             : v.$gap;
-        flex-wrap       : wrap;
-        justify-content : center;
-        width           : v.$pct-100;
-        aon-card{
-          flex-grow   : 1;
-          flex-shrink : 1;
-          flex-basis  : v.$px-400;
-          max-width   : v.$px-480;
-          .aonCardContent{
+#rootPanel {
+  aon-desktop{
+    aon-toolbar{
+      display: none;
+    }
+    .aonFlex #cardsPanel{
+      display         : flex;
+      gap             : v.$gap;
+      flex-wrap       : wrap;
+      justify-content : center;
+      width           : v.$pct-100;
+      aon-card{
+        flex-grow   : 1;
+        flex-shrink : 1;
+        flex-basis  : v.$px-400;
+        max-width   : v.$px-480;
+        .aonCardContent{
 
-          }
         }
       }
     }

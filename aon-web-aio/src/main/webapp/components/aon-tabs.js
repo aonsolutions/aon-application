@@ -1,7 +1,7 @@
 import { AonElement } from "./AonElement.js";
 import { waitEl } from "../services/utils.js";
 import { CONSTANT, EVENT, TAG } from "../environments/environments.js";
-import '../css/aon-tabs.css';
+//import '../css/aon-tabs.css';
 
 export class AonTabs extends AonElement {
   ACTIVE_CLASS;

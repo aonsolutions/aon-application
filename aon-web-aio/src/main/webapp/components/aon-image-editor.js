@@ -2,7 +2,7 @@ import { AonElement } from './AonElement.js';
 import { EVENT, CONSTANT, TAG } from "../environments/environments.js";
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
-import '../css/aon-image-editor.css';
+//import '../css/aon-image-editor.css';
 import { AonIconButton } from './aon-icon-button.js';
 import { ramdomString } from '../services/utils.js';
 

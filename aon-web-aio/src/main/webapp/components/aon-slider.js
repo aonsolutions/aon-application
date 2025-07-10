@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, TAG} from '../environments/environments.js';
-import '../css/aon-slider.css';
+//import '../css/aon-slider.css';
 
 export class AonSlider extends AonElement {
 

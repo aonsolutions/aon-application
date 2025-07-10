@@ -16,14 +16,17 @@
 #aonMenu{
   /* Menu izquierda */
   #aonMenuSidenav {
+  /*
     width     : v.$left-aonMenuLeft;
     min-width : v.$left-aonMenuLeft;
     max-width : v.$left-aonMenuLeft;
-    
+  */
+
     ul {
       list-style-type : none;
       margin          : v.$px-0;
-      padding         : v.$padding v.$px-0 v.$padding 0;
+      /*padding         : v.$padding v.$px-0 v.$padding 0;*/
+      padding         : v.$padding;
 
       li{
         height : v.$px-48;

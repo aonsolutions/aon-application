@@ -170,3 +170,69 @@
 :root.theme-etl-dark {
   @include etlDark.etlDark-theme;
 }
+
+
+/* --- Configuración Base para que todo ocupe el 100% de la altura --- */
+html, body, aon-module, aon-module > div, aon-module > div > div {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- 1. Layout Principal (Menú Principal | Resto de la App) --- */
+/* El contenedor directo de #aonMenuSidenav y #rootPanel */
+aon-module > div > div {
+  display: flex;
+}
+
+#aonMenuSidenav {
+  flex-shrink: 0; /* Evita que el menú principal se encoja */
+  /* El width lo controlas directamente en el elemento, ej: width: 250px; */
+}
+
+#rootPanel {
+  flex-grow: 1; /* Hace que el panel principal ocupe todo el espacio sobrante */
+  min-width: 0; /* Truco para prevenir problemas de overflow con los hijos */
+  display: flex; /* Para controlar a su hijo aon-application */
+}
+
+/* --- 2. Layout Vertical de la Aplicación (Toolbar | Contenido) --- */
+aon-aplication {
+  display: flex;
+  flex-direction: column; /* Alinea los hijos verticalmente */
+  flex-grow: 1; /* Ocupa todo el espacio de #rootPanel */
+}
+
+aon-toolbar {
+  flex-shrink: 0; /* La barra de herramientas tiene su altura natural */
+}
+
+.aon-flex {
+  flex-grow: 1; /* El contenedor del submenú y contenido ocupa el resto de la altura */
+  display: flex; /* Se convierte en el contenedor para el siguiente nivel */
+  min-height: 0; /* Truco para prevenir overflow vertical si fuera necesario */
+}
+
+/* --- 3. Layout Interno (Submenú | Contenido Final) --- */
+.aonSidenav {
+  flex-shrink: 0; /* El submenú no se encoge */
+  width: auto; /* Su anchura se basa en su contenido */
+  white-space: nowrap; /* Evita que el texto del menú se parta */
+}
+
+.aonContentBeta {
+  flex-grow: 1; /* El contenido final ocupa todo el espacio sobrante */
+  min-width: 0; /* El truco clave para que el scroll funcione */
+  overflow-x: auto; /* Muestra el scroll horizontal SOLO si es necesario */
+}
+/*
+<div class="content-wrapper"> 
+  <div class="top-scrollbar">
+    <div class="top-scrollbar-thumb"></div>
+  </div>
+
+  <div class="aonContentBeta">
+  </div>
+
+</div>
+*/

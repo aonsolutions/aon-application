@@ -15,7 +15,7 @@ import { MSG,TAG,CSS } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
 import * as OPTIONS from './TimecontrolOptions.js';
-import 'aoncss';
+//import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
 import { getPosition } from "../../services/maps.js";
