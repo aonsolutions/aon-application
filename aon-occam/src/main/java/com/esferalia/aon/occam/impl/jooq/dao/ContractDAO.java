@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -44,6 +45,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.Table;
@@ -192,8 +194,13 @@ public class ContractDAO {
 	
 	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, AgreementLevelCategoryFilter filter){
 		ctx.checkRead();
-		return AGREEMENT_LEVEL_CATEGORY_PROPERTIES.build(ctx.getDslContext().select()
-			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
+		return ctx.getDslContext().select()
+				.from(AGREEMENT_LEVEL_CATEGORY)
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL_CATEGORY_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.map(new AgreementLevelCategoryFiller());
 	}
 	
 	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, Integer domainId, Integer parentDomain, Integer year){
@@ -202,8 +209,9 @@ public class ContractDAO {
 		Date startDate = AonDateUtils.getYearFirstDay(year);
 		Date endDate = AonDateUtils.getYearLastDay(year);
 		
-		return ctx.getDslContext().select()
+		Result<Record> select = ctx.getDslContext().select()
 			.from(AGREEMENT_LEVEL_CATEGORY)
+			.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
 			.join(CONTRACT).on(
 					CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL)
 					.and(CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate)))
@@ -211,7 +219,9 @@ public class ContractDAO {
 					.and(CONTRACT.DOMAIN.eq(domainId))
 			)
 			.and(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(domainId).or(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(parentDomain)))
-			.fetch()
+			.fetch();
+		
+		return select
 			.stream()
 			.map(new AgreementLevelCategoryFiller());
 	}
