@@ -87,6 +87,21 @@ public class FilterDAO implements Filter {
 			}
 		}
 		
+		@Override
+		public Filter likeIgnoreCase(T t) {
+			if (t instanceof String) {
+				return new FilterDAO(field.likeIgnoreCase( (String) t));
+			} else if ( t instanceof byte[]) {
+				return new FilterDAO(field.like(new String((byte[])t)));
+			} else if ( t instanceof Integer) {
+				return new FilterDAO(field.likeIgnoreCase("%"+ AonNumberUtils.toString((Integer) t) +"%"));
+			} else if ( t instanceof Double) {
+				return new FilterDAO(field.likeIgnoreCase("%"+ AonNumberUtils.toString((Double) t) +"%"));
+			} else {
+				throw new UnsupportedOperationException();				
+			}
+		}
+		
 	@Override
 		public Filter match(T t) {
 		    Param<T> val = DSL.val(t);
@@ -198,6 +213,12 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter likeIgnoreCase(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 
@@ -278,6 +299,11 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter likeIgnoreCase(Date t) {
+			throw new UnsupportedOperationException();
+		}
 		
 	}
 
@@ -356,6 +382,11 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter notIn(Timestamp[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Timestamp t) {
+			throw new UnsupportedOperationException();			
 		}
 		
 	}
@@ -440,6 +471,11 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter likeIgnoreCase(Boolean t) {
+			throw new UnsupportedOperationException();			
+		}
 		
 	}
 
@@ -520,6 +556,11 @@ public class FilterDAO implements Filter {
 		public Filter isNullS3() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Boolean t) {
+			throw new UnsupportedOperationException();			
 		}
 	}
 
