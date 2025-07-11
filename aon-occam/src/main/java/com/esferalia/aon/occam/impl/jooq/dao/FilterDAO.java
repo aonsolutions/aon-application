@@ -84,17 +84,7 @@ public class FilterDAO implements Filter {
 		
 		@Override
 		public Filter likeIgnoreCase(T t) {
-			if (t instanceof String) {
-				return new FilterDAO(field.likeIgnoreCase( (String) t));
-			} else if ( t instanceof byte[]) {
-				return new FilterDAO(field.like(new String((byte[])t)));
-			} else if ( t instanceof Integer) {
-				return new FilterDAO(field.likeIgnoreCase("%"+ AonNumberUtils.toString((Integer) t) +"%"));
-			} else if ( t instanceof Double) {
-				return new FilterDAO(field.likeIgnoreCase("%"+ AonNumberUtils.toString((Double) t) +"%"));
-			} else {
-				throw new UnsupportedOperationException();				
-			}
+			return new FilterDAO(PropertyDAO.likeIgnoreCase(field, t));
 		}
 		
 		@Override
@@ -125,6 +115,21 @@ public class FilterDAO implements Filter {
 				throw new UnsupportedOperationException();				
 			}
 		}
+		
+		public static <T> Condition likeIgnoreCase ( Field<T> field, T t) {
+			if (t instanceof String s) {
+				return field.likeIgnoreCase( s );
+			} else if ( t instanceof byte[] b) {
+				return field.like(new String(b));
+			} else if ( t instanceof Integer i) {
+				return field.likeIgnoreCase("%"+ AonNumberUtils.toString(i) +"%");
+			} else if ( t instanceof Double d ) {
+				return field.likeIgnoreCase("%"+ AonNumberUtils.toString(d) +"%");
+			} else {
+				throw new UnsupportedOperationException();				
+			}
+		}
+		
 		public static <T> Condition match ( Field<T> field, T t) {
 			Param<T> val = DSL.val(t);
 			String str = t.toString();
