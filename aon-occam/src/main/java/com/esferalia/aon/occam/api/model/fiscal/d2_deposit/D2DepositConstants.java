@@ -114,7 +114,7 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.ITR8216023,	
 	};
 	
-	// III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	// FALTA - III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
 	public static D2DepositHeaderKey[] ITR_KEYS_3_A = new D2DepositHeaderKey[] {
 			D2DepositHeaderKey.ITR8230201, 
 			D2DepositHeaderKey.ITR8230202, 
@@ -136,6 +136,55 @@ public class D2DepositConstants {
 			D2DepositHeaderKey.ITR8230218, 
 			D2DepositHeaderKey.ITR8230219
 	};
+	
+	// FALTA - III.b. Detalle de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	public static D2DepositHeaderKey[] ITR_KEYS_3_B = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8232001,
+			D2DepositHeaderKey.ITR8232002,
+			D2DepositHeaderKey.ITR8232003,
+			D2DepositHeaderKey.ITR8232004,
+			D2DepositHeaderKey.ITR8232005,
+			D2DepositHeaderKey.ITR8232006,
+			D2DepositHeaderKey.ITR8232007,
+			D2DepositHeaderKey.ITR8232008,
+			D2DepositHeaderKey.ITR8232009,
+			
+			D2DepositHeaderKey.ITR8232011,
+			D2DepositHeaderKey.ITR8232012,
+			D2DepositHeaderKey.ITR8232013,
+			D2DepositHeaderKey.ITR8232014,
+			D2DepositHeaderKey.ITR8232015,
+			D2DepositHeaderKey.ITR8232016,
+			D2DepositHeaderKey.ITR8232017,
+			D2DepositHeaderKey.ITR8232018,
+			D2DepositHeaderKey.ITR8232019
+	};
+	
+	// FALTA - IV.a. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de participación en el capital
+	public static D2DepositHeaderKey[] ITR_KEYS_4_A = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8231001, 
+			D2DepositHeaderKey.ITR8231002, 
+			D2DepositHeaderKey.ITR8231003, 
+			D2DepositHeaderKey.ITR8231004,
+			
+			D2DepositHeaderKey.ITR8231011, 
+			D2DepositHeaderKey.ITR8231012, 
+			D2DepositHeaderKey.ITR8231013, 
+			D2DepositHeaderKey.ITR8231014  
+	};
+	
+	public static D2DepositHeaderKey[] ITR_KEYS_4_B = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8233001,
+			D2DepositHeaderKey.ITR8233002,
+			D2DepositHeaderKey.ITR8233003,
+			D2DepositHeaderKey.ITR8233004,
+          
+			D2DepositHeaderKey.ITR8233011,
+			D2DepositHeaderKey.ITR8233012,
+			D2DepositHeaderKey.ITR8233013,
+			D2DepositHeaderKey.ITR8233014 
+	};
+	
 	
 	public static D2DepositHeaderKey[] IMA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IMA8099000, D2DepositHeaderKey.IMA8099010

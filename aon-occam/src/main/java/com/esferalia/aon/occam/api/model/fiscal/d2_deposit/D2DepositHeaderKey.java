@@ -597,10 +597,13 @@ public enum D2DepositHeaderKey {
 	,ITR8230128(8230128)
 	,ITR8230129(8230129)
 	
-	// III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	// III.a. Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
 	
 	// FALTA - EL DATO DEL NIVEL, HABRA QUE HACER QUE SE GRABE EN BLANCO SI LA LINEA ENTERA NO ESTA CUMPLIMENTADA, PORQUE SI NO SE CARGA EN EL D2 CON UN CERO Y DA ERROR
 	// MIRAR AHORA COMO SE GRABAN LOS 0.00 DE PARTICIPACION DIRECTA O INDIRECTA PORQUE AUNQUE SE VEAN 0.00 EN PANTALLA LUEGO NO SE ESTAN GRABANDO LAS CLAVES EN EL XML
+	// AHORA SI NO LOS TOCAS NO SE GRABAN, O SEA QUE SE DEJA IGUAL QUE ESTA EL RESTO
+	
+	// FALTA - AÑADIR LAS CASILLAS QUE QUERAMOS, DEPENDIENDO DE LAS LINEAS QUE QUERAMOS DEJAR AL FINAL SEGUN EL FORMATO PERMITEN 40 CAMPOS, AQUI PODEMOS DEJAR 5 O 10 POR EJEMPLO	
 	
 	,ITR8230201(8230201) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
 	,ITR8230202(8230202) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
@@ -612,15 +615,59 @@ public enum D2DepositHeaderKey {
 	,ITR8230208(8230208) // Domicilio social de la persona jurídica	Desde la 8230208 hasta la 8230598 (incrementando 10). Total: 40 campos	Texto	80				No		
 	,ITR8230209(8230209) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene	Desde la 8230209 hasta la 8230599 (incrementando 10). Total: 40 campos	Texto	20				No
 	
-	,ITR8230211(8230211) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
-	,ITR8230212(8230212) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
-	,ITR8230213(8230213) // Denominación social de la sociedad	Desde la 8230203 hasta la 8230593 (incrementando 10). Total: 40 campos	Texto	70				no		
-	,ITR8230214(8230214) // País de expedición del documento identificativo	Desde la 8230204 hasta la 8230594 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
-	,ITR8230215(8230215) // El tipo de documento que identifica a la persona jurídica	Desde la 8230205 hasta la 8230595 (incrementando 10). Total: 40 campos	Entero					No	2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
-	,ITR8230216(8230216) // Documento identificativo de la persona jurídica	Desde la 8230206 hasta la 8230596 (incrementando 10). Total: 40 campos	Texto	20				No		
-	,ITR8230217(8230217) // Nacionalidad de la persona jurídica	Desde la 8230207 hasta la 8230597 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
-	,ITR8230218(8230218) // Domicilio social de la persona jurídica	Desde la 8230208 hasta la 8230598 (incrementando 10). Total: 40 campos	Texto	80				No		
-	,ITR8230219(8230219) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene	Desde la 8230209 hasta la 8230599 (incrementando 10). Total: 40 campos	Texto	20				No		
+	,ITR8230211(8230211) 
+	,ITR8230212(8230212) 
+	,ITR8230213(8230213) 
+	,ITR8230214(8230214) 
+	,ITR8230215(8230215) 
+	,ITR8230216(8230216) 
+	,ITR8230217(8230217) 
+	,ITR8230218(8230218) 
+	,ITR8230219(8230219) 
+	
+	// III.b. Detalle de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	,ITR8232001(8232001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8232001 hasta la 8232391 (incrementando 10). Total: 40 campos Texto 20						
+	,ITR8232002(8232002) // Nivel en la cadena de control	Desde la 8232002 hasta la 8232392 (incrementando 10). Total: 40 campos Entero							
+	,ITR8232003(8232003) // Denominación social de la sociedad	Desde la 8232003 hasta la 8232393 (incrementando 10). Total: 40 campos	Texto 70	
+	,ITR8232004(8232004) // País de expedición del documento identificativo	Desde la 8232004 hasta la 8232394 (incrementando 10). Total: 40 campos Texto 2 Lista de países ISO 3166 Alpha-2	
+	,ITR8232005(8232005) // El tipo de documento que identifica a la persona jurídica	Desde la 8232005 hasta la 8232395 (incrementando 10). Total: 40 campos Entero 2 = NIF, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+	,ITR8232006(8232006) // Documento identificativo de la persona jurídica	Desde la 8232006 hasta la 8232396 (incrementando 10). Total: 40 campos Texto 20
+	,ITR8232007(8232007) // Nacionalidad de la persona jurídica	Desde la 8232007 hasta la 8232397 (incrementando 10). Total: 40 campos Texto 2 Lista de países ISO 3166 Alpha-2	
+	,ITR8232008(8232008) // Domicilio social de la persona jurídica	Desde la 8232008 hasta la 8232398 (incrementando 10). Total: 40 campos Texto 80
+	,ITR8232009(8232009) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene Desde la 8232009 hasta la 8232399 (incrementando 10). Total: 40 campos Texto 20
+	
+	,ITR8232011(8232011) 
+	,ITR8232012(8232012) 
+	,ITR8232013(8232013) 
+	,ITR8232014(8232014) 
+	,ITR8232015(8232015) 	
+	,ITR8232016(8232016) 
+	,ITR8232017(8232017) 
+	,ITR8232018(8232018) 
+	,ITR8232019(8232019) 
+	
+	// IV.a. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de participación en el capital
+	,ITR8231001(8231001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8231001 hasta la 8231391 (incrementando 10). Total: 40 campos Texto 20
+	,ITR8231002(8231002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8231002 hasta la 8231392 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8231003(8231003) // Documento identificativo de la sociedad participada	Desde la 8231003 hasta la 8231393 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8231004(8231004) // Porcentaje de participación directa	Desde la 8231004 hasta la 8231394 (incrementando 10). Total: 40 campos Decimal 2 0 	
+
+	,ITR8231011(8231011) 
+	,ITR8231012(8231012) 
+	,ITR8231013(8231013) 
+	,ITR8231014(8231014) 
+	
+	// IV.b. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	,ITR8233001(8233001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control Desde la 8233001 hasta la 8233391 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233002(8233002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8233002 hasta la 8233392 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233003(8233003) // Documento identificativo de la sociedad participada	Desde la 8233003 hasta la 8233393 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233004(8233004) // Porcentaje de participación directa	Desde la 8233004 hasta la 8233394 (incrementando 10). Total: 40 campos Decimal 2 0		
+
+	,ITR8233011(8233011) 
+	,ITR8233012(8233012) 
+	,ITR8233013(8233013) 
+	,ITR8233014(8233014) 
+	
 	
 	// DOCUMENTO SOBRE SERVICIOS A TERCEROS
 	
