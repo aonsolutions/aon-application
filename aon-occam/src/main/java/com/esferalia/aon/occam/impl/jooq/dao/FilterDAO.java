@@ -66,6 +66,11 @@ public class FilterDAO implements Filter {
 		public Filter isNull() {
 			return new FilterDAO(field.isNull());
 		}
+		
+		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNull());
+		}
 
 		@Override
 		public Filter isNotNull() {
@@ -297,8 +302,7 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter isNullS3() {
-			// TODO Auto-generated method stub
-			return null;
+			return new FilterDAO(field.isNotNull());
 		}
 
 		@Override
@@ -355,11 +359,17 @@ public class FilterDAO implements Filter {
 		public Filter isNull() {
 			return new FilterDAO(field.isNull());
 		}
-
+		
 		@Override
 		public Filter isNotNull() {
 			return new FilterDAO(field.isNotNull());
 		}
+
+		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNull());
+		}
+		
 		@Override
 		public Filter like(Timestamp date) {
 			throw new UnsupportedOperationException();				
