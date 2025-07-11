@@ -668,7 +668,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						result.getInvoice().setDoc(d);
 						result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
 					});
+				} 
+				
+				if ( invoiceCallback.getInvoice().getInvoice() == null 
+					&& result.getAttach() == null 
+					&& invoiceCallback.getInvoice().getAttach() != null) {
+						result.setAttach( invoiceCallback.getInvoice().getAttach() );
 				}
+				
+				
 				AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 				invoiceCallback.setInvoice(result);
 				invoiceCallback.setAccountEntry(ae);

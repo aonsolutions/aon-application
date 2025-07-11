@@ -525,9 +525,10 @@ public class ConnectSaleInvoiceWriter {
 
 		String productCode = null;
 		String customerProductCode = null;
-		if (rItem!=null)
+		if (rItem!=null) {
 			customerProductCode = rItem.getCode();
 			productCode = StringUtils.isNotBlank(rItem.getEdiSalesCode())?rItem.getEdiSalesCode():rItem.getCode();
+		}
 		try {
 			if (productCode==null)
 				productCode = item.getProduct().getBaseItem().getBarcode();
@@ -560,11 +561,13 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setUnidadDeMedida(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
 				? "CT" : null);
 		sincl.setUnidadesEntregadas(null);
-		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
+		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				 ? unitQuantity : null);
 		
 		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
-		sincl.setUnidadDeMedidaDelPrecio(null);
+		sincl.setUnidadDeMedidaDelPrecio(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				? "CT" : null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(CommonUtil.round(detail.getVatPercent()));
 		if (detail.getVatQuota() == 0 ){

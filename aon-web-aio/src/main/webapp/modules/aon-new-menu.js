@@ -66,6 +66,7 @@ import { Expense } from './invoice/Expense.js';
 import { createSelect } from '../components/CreateComponent.js';
 import { getCompanyActivities } from '../services/companyService.js';
 import { AonDialog } from '../components/aon-dialog.js';
+import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -278,13 +279,8 @@ export class AonNewMenu extends AonElement {
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
+			}		
 		}
-		
-	    let rootPanel = this.getElement("rootPanel");
-	    rootPanel.style.height = 'calc(100vh - 7rem)';
-	    rootPanel.style.marginTop = '4rem';
-		
-	}
 	
 		let detail = {
 			app,
@@ -316,7 +312,7 @@ export class AonNewMenu extends AonElement {
 	getAonSuiteMenu( app ) {
 		switch (app.app) {
 		case ACCOUNTING_MENU.app:
-			return new AonAccountingMenu();
+			return this.isDomainManagementAvailable() ? new AonAccountingMenu() : new AonAccountingBeta();
 		case COMMERCIAL_MENU.app:
 			return new AonCommercialMenu();
 		case GROUPWARE_MENU.app:
@@ -328,9 +324,9 @@ export class AonNewMenu extends AonElement {
 		case WAREHOUSE_MENU.app:
 			return new AonWarehouseMenu();
 		case FISCAL_MENU.app:
-			return new AonFiscalMenu();
+			return this.isDomainManagementAvailable() ? new AonFiscalMenu() : new AonFiscalBeta();
 		case PAYROLL_MENU.app:
-			return new AonPayrollMenu();
+			return this.isDomainManagementAvailable() ? new AonPayrollMenu() :  new AonPayrollBeta();
 		case MARKETING_MENU.app:
 			return new AonMarketingMenu();
 		case CONFIGURATION_MENU.app:
@@ -1191,8 +1187,7 @@ export class AonNewMenu extends AonElement {
 				}, {
 					name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
 					icon: MATERIAL_ICONS.RECEIPT,
-					fn: () => this.newInvoice('ticket')
-					
+					fn: () => this.newInvoice('ticket')	
 				}
 			];
 			
@@ -1211,7 +1206,7 @@ export class AonNewMenu extends AonElement {
 
 							getCompanyActivities({}).then(activities => {
 								let data = { uploaded: 0}
-								if(this.isBeta() && activities.length > 1) {
+								if(activities.length > 1) {
 									let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
 									activity.default = true;
 									activity.setAlias("id", "description");
@@ -1242,7 +1237,7 @@ export class AonNewMenu extends AonElement {
 									});
 									d.open();
 								} else {
-									if(this.isBeta() && activities.length > 0) {
+									if(activities.length > 0) {
 										data.activity = activities[0].id;
 									}
 									let uploadToast = this.getElement('aonUploadToast');
@@ -1518,6 +1513,10 @@ export class AonNewMenu extends AonElement {
 
 		aonMenuSearchDialog.open();
 				
+	}
+	
+	isDomainManagementAvailable() {
+		return this.getDur().isDomainManagementAvailable();
 	}
 	
 }

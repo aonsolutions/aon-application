@@ -208,7 +208,9 @@ public class ContractDAO {
 					CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL)
 					.and(CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate)))
 					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(startDate))))
+					.and(CONTRACT.DOMAIN.eq(domainId))
 			)
+			.and(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(domainId).or(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(parentDomain)))
 			.fetch()
 			.stream()
 			.map(new AgreementLevelCategoryFiller());

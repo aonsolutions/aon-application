@@ -1521,7 +1521,8 @@ public class AccountingInvoiceDAO {
 				.delete(INVOICE_ATTACH)
 				.where(INVOICE_ATTACH.INVOICE.equal(invoiceId))
 				.execute();
-		ctx.log().info("------ [START] INVOICE ATTACH REMOVE " + count + " rows.");		
+		ctx.log().info("------ INVOICE ATTACH REMOVE " + count + " rows.");
+		InvoiceDocDAO.delete( ctx, invoiceId);
 		return getAccountingInvoiceFromInvoice(ctx, invoiceId);
 	}
 

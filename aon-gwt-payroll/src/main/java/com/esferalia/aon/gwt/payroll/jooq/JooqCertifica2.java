@@ -364,14 +364,14 @@ public class JooqCertifica2 {
 		certifica2Info.setZip(address.getZip());
 		certifica2Info.setGeozone(normalizeString(address.getGeozoneName()));
 
+		// Certifica2 Holidays
+
+		getCertifica2Holidays(dslContext, certifica2Info, contractId);
+		
 		// Certifica2 Periods
 
 		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
 		getCertifica2Periods(dslContext, certifica2Info, seniorityDate, contractId);
-
-		// Certifica2 Holidays
-
-		getCertifica2Holidays(dslContext, certifica2Info, contractId);
 
 		return certifica2Info;
 	}
@@ -682,6 +682,9 @@ public class JooqCertifica2 {
 
 		List<Certifica2Period> certifica2List = new ArrayList<>();
 		Integer maxDays = 0;
+		
+		// Start from settle days, cause is 180 days INCLUDING holidays
+		maxDays += certifica2Info.getSettleQuoteDays();
 
 		java.util.Date filterDateJava = DateUtils.copyDateOnly(certifica2Info.getEndDate());
 		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);

@@ -51,8 +51,6 @@ export const getRegistryBanks = (id) => get(`${API_URL}/registry/banks`, {id});
 
 export const getRegistryPaymethod = (data) => get(`${API_URL}/registry/paymethod`, data);
 
-export const getGlobalRegistries = (data) => get(`${API_URL}/global/registry`, data);
-
 // REGISTRY RELATIONSHIP
 export const getRelationShips = (data) => get(RELATIONSHIP, data);
 export const getRelationShip = (data) => get(`${RELATIONSHIP}/${data.registry}`, data);

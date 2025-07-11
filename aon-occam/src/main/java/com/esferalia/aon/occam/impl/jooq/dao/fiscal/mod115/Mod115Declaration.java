@@ -112,7 +112,7 @@ public abstract class Mod115Declaration {
 	}
 
 	private void initializePreviousData(AONContext ctx, Mod115 mod115) {
-		mod115.getMessages().clear();		
+		mod115.getMessages().clear();
 		Map<Integer, Long> prevInvoices = checkPreviousInvoices(ctx, mod115);
 		boolean existsPreviousInvoices = AonCollectionUtils.isNotEmpty(prevInvoices);
 		if (existsPreviousInvoices) {
@@ -125,6 +125,8 @@ public abstract class Mod115Declaration {
 			mod115.addMessage("Se encontraron " + currentInvoices.size() + " facturas no declaradas en el periodo de la declaraci\u00F3n.");
 		}
 		mod115.setMustIncludeInvoicesOnGeneration(existsPreviousInvoices || existsCurrentInvoices);
+		mod115.setGenerateFromYearStartAvailable(!mod115.isFirstPeriod() && existsPreviousInvoices);		
+		mod115.setGenerateFromYearStart(existsPreviousInvoices);
 	}
 
 	private void initializeComplementaryAndReplacement(AONContext ctx, Mod115 mod115) {

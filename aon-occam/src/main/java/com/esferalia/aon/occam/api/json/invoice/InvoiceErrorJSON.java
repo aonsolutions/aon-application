@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
@@ -21,8 +22,9 @@ public class InvoiceErrorJSON {
 		}
 
 		private static InvoiceErrorContext fromJSON(JSONObject json) {
-			return new InvoiceErrorContext().setLine(json.getInt(IJsonNames.LINE))
-					.setKey(safeKeyOf(json.getString(IJsonNames.KEY)));
+			return new InvoiceErrorContext()
+				.setLine(JsonUtils.getInt(json,IJsonNames.LINE))
+				.setKey(safeKeyOf(JsonUtils.getString(json,IJsonNames.KEY)));
 		}
 
 		public static JSONObject toJSON(InvoiceErrorContext context) {
@@ -60,9 +62,11 @@ public class InvoiceErrorJSON {
 	}
 
 	public static InvoiceError fromJSON(JSONObject json) {
-		return new InvoiceError().setCode(json.getString(IJsonNames.CODE)).setMessage(json.getString(IJsonNames.MESSAGE))
-				.setLevel(safeLevelOf(json.getString(IJsonNames.LEVEL)))
-				.setContext(InvoiceErrorContextJSON.fromJSON(json.getJSONObject(IJsonNames.CONTEXT)));
+		return new InvoiceError()
+			.setCode(json.getString(IJsonNames.CODE))
+			.setMessage(json.getString(IJsonNames.MESSAGE))
+			.setLevel(safeLevelOf(json.getString(IJsonNames.LEVEL)))
+			.setContext(InvoiceErrorContextJSON.fromJSON(json.getJSONObject(IJsonNames.CONTEXT)));
 	}
 
 	public static JSONArray toJSON(List<InvoiceError> list) {
@@ -76,9 +80,10 @@ public class InvoiceErrorJSON {
 	}
 
 	public static JSONObject toJSON(InvoiceError error) {
-		return new JSONObject().put(IJsonNames.CODE, error.getCode()).put(IJsonNames.MESSAGE, error.getMessage())
-				.put(IJsonNames.LEVEL, safeNameOf(error.getLevel()))
-				.put(IJsonNames.CONTEXT, InvoiceErrorContextJSON.toJSON(error.getContext()));
+		return new JSONObject()
+			.put(IJsonNames.CODE, error.getCode()).put(IJsonNames.MESSAGE, error.getMessage())
+			.put(IJsonNames.LEVEL, safeNameOf(error.getLevel()))
+			.put(IJsonNames.CONTEXT, InvoiceErrorContextJSON.toJSON(error.getContext()));
 	}
 
 	private static String safeNameOf(InvoiceErrorLevel level) {

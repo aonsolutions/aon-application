@@ -349,7 +349,7 @@ public abstract class TaskHolderEntryPanel extends AonCustomDockLayout {
 		
 		userLB.clearItems();
 		userLB.addItem("-", "");
-		users.forEach(user -> userLB.addItem(user.getName() + "( " + user.getLogin() + (null != user.getDomain().getId() && !user.getDomain().getId().equals(options.getDomain()) ? " - Dom. Padre" : "" ) + " )", null == user.getId() ? "" : user.getId().toString()));
+		users.forEach(user -> userLB.addItem(user.getName() + " ( Login: " + user.getLogin() + (null != user.getDomain().getId() && !user.getDomain().getId().equals(options.getDomain()) ? " - Entorno" : "" ) + " ) " + (null != user.getAuth() && null != user.getAuth().getEmail() ? ("[ " + user.getAuth().getEmail() + " ]") : ""), null == user.getId() ? "" : user.getId().toString()));
 		userLB.setValue(null == taskHolder.getUserId() ? "" : taskHolder.getUserId().toString());
 		userLB.addChangeHandler(e -> checkUserAviable());
 		

@@ -8,11 +8,13 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
+import com.esferalia.aon.occam.api.json.ItemCompositionJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.PackagingDeliveryJSON;
 import com.esferalia.aon.occam.api.json.PackagingJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
@@ -107,6 +109,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/deliveryPackaging":
 				response(req, resp, deleteDeliveryPackaging(api));
 				break;
+			case "/deliveryPackagingComposition":
+				response(req, resp, deleteDeliveryPackagingComposition(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -156,6 +161,14 @@ public class PackagingServlet extends AonApiHttpServlet {
 		
 		AON.deleteDeliveryPackaging(api.getDomain(), api.getUser(), delivery, sscc);
 		
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteDeliveryPackagingComposition(AonApiData api) {
+		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		ItemComposition composition = ItemCompositionJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPOSITION));
+		String destiny = JsonUtils.getString(api.getData(), "destiny");
+		AON.deleteDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, destiny);		
 		return new JSONObject();
 	}
 	

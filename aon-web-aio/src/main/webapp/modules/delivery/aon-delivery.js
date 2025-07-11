@@ -27,6 +27,8 @@ export class AonDelivery extends AonElement {
 
 	DELIVERY_TOOLBAR;
 	DELIVERY_CARD;
+	DELIVERY_GENERAL_CARD
+	DELIVERY_DETAIL_CARD
 	DETAIL_TABLE;
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
@@ -64,6 +66,8 @@ export class AonDelivery extends AonElement {
 		this.id = this.id || 'aonDelivery';
 		this.DELIVERY_TOOLBAR = this.id + CONSTANT.TOOLBAR.initCap();
 		this.DELIVERY_CARD = this.id + CONSTANT.CARD.initCap();
+		this.DELIVERY_GENERAL_CARD = this.id + 'GeneralCard';
+		this.DELIVERY_DETAIL_CARD = this.id + 'DetailCard';
 		this.DETAIL_TABLE = this.DELIVERY_CARD + 'DetailTable';
 		this.delivery = this.delivery || {};
 		this.packaging = {};
@@ -112,13 +116,17 @@ export class AonDelivery extends AonElement {
 	buildDelivery(){
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
-		// this.buildDeliveryGeneral();
+		this.buildDeliveryGeneral();
 		this.buildDeliveryDetail();
 	}
 
 	buildDeliveryGeneral() {
 		let parent = this.getElement(this.DIV);
-		createCard(this.DELIVERY_CARD, 'Datos Albarán', parent);
+		let card = createCard(this.DELIVERY_GENERAL_CARD, 'Datos Albarán', parent);
+
+		let div = this.createDiv(this.DELIVERY_GENERAL_CARD + 'Customer');
+		div.innerHTML = this.delivery.customer.name;
+		card.setContent(div);
 	}
 
 	buildDeliveryDetail() {

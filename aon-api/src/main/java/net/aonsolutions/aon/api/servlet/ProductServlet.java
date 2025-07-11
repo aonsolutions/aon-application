@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.DeliveryJSON;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -63,6 +65,9 @@ public class ProductServlet extends AonApiHttpServlet {
 				break;
 			case "/item":
 				response(req, resp, getItem(api));
+				break;
+			case "/package":
+				response(req, resp, getPackage(api));
 				break;
 			case "/items":
 				response(req, resp, getItems(api));
@@ -172,6 +177,17 @@ public class ProductServlet extends AonApiHttpServlet {
 		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> 
 			itemFilter(api, f), options(api));
 		return ItemJSON.toJSON(item);
+	}
+	
+	private JSONObject getPackage(AonApiData api) {
+		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> packageFilter(api, f), options(api));
+		JSONObject packageJSON = ItemJSON.toJSON(item);
+		
+		Delivery delivery = AON.getDeliveryByPackage(api.getOccam(), item.getId());
+		if(delivery != null && delivery.getId() != null) 
+			packageJSON.put(IJsonNames.DELIVERY, DeliveryJSON.toJSON(delivery));
+		
+		return packageJSON; 
 	}
 	
 	private JSONArray getItems(AonApiData api) {
@@ -422,6 +438,20 @@ public class ProductServlet extends AonApiHttpServlet {
 					? ProductStatus.ACTIVE.value() 
 					: ProductStatus.DISCONTINUED.value()));
 		}
+		return filter;
+	}
+	
+	private Filter packageFilter(AonApiData api, ItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+
+		if(JsonUtils.has(api.getData(), IJsonNames.SSCC)) {
+			filter = filter.and(f.getSerialNumberProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.SSCC)));
+		}
+		
+		if(JsonUtils.has(api.getData(), IJsonNames.ID)) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
+		}
+		
 		return filter;
 	}
 
