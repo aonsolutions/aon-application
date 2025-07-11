@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -152,6 +153,13 @@ public enum MimeType implements Serializable {
 		if (i < 0 || i >= MimeType.values().length) return null;
 		return MimeType.values()[i];
 	}
+	public static MimeType safeValueOf( String s ) {
+		if (AonStringUtils.isBlank(s)) return null;
+		return AonCollectionUtils.stream(values())
+			.filter( t ->  AonStringUtils.equalsIgnoreCase(t.name(), s))
+			.findFirst()
+			.orElse(null);
+	}
 	public static MimeType safeValueFromContenType( String name ) {
 		if (AonStringUtils.isBlank(name)) return null;
 		for (MimeType mimeType : MimeType.values() ) {
@@ -187,7 +195,7 @@ public enum MimeType implements Serializable {
 	}
 
 	public static String name(MimeType mimeType) {
-		return mimeType==null?null:mimeType.name;
+		return mimeType==null?null:mimeType.name();
 	}
     
 }

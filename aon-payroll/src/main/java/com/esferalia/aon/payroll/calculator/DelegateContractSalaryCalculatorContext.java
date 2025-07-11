@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.code.aon.common.AonException;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -57,6 +58,11 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 
 	public String getCcc() {
 		return ctx.getCcc();
+	}
+	
+	@Override
+	public CCCType getCCCType() {
+		return ctx.getCCCType();
 	}
 
 	public String getEnterpriseCity() {

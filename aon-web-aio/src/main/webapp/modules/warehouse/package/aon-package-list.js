@@ -1,7 +1,8 @@
 import { CONSTANT, MSG, TAG } from '../../../environments/environments.js';
 import { AonPackage } from './aon-package.js';
-import { getItems } from '../../../services/productService.js';
+import { getItems, getPackage } from '../../../services/productService.js';
 import { AonList } from '../../../components/aon-list.js';
+import { AonMobileItemPackage } from './aon-mobile-item-package.js';
 
 export class AonPackageList extends AonList {
 
@@ -40,9 +41,13 @@ export class AonPackageList extends AonList {
     }
 
     aonObject(object, i) {
-        // let aonPackage = new AonPackage();
-        // aonPackage.setPackage(object);
-        // this.getApplication().setContent(aonPackage);
+        let data = {id: object.id, full:true};
+        getPackage(data).then(itemPackage => {
+            let aonMobilePackage= new AonMobileItemPackage();
+            aonMobilePackage.setItemPackage(itemPackage);
+            aonMobilePackage.back = () => this.getApplication().setContent(new AonPackageList());
+            this.getApplication().setContent(aonMobilePackage);
+        });
     }
 
     getObjects() {

@@ -74,17 +74,7 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter like(T t) {
-			if (t instanceof String) {
-				return new FilterDAO(field.like( (String) t));
-			} else if ( t instanceof byte[]) {
-				return new FilterDAO(field.like(new String((byte[])t)));
-			} else if ( t instanceof Integer) {
-				return new FilterDAO(field.like("%"+ AonNumberUtils.toString((Integer) t) +"%"));
-			} else if ( t instanceof Double) {
-				return new FilterDAO(field.like("%"+ AonNumberUtils.toString((Double) t) +"%"));
-			} else {
-				throw new UnsupportedOperationException();				
-			}
+			return new FilterDAO(PropertyDAO.like(field, t));
 		}
 		
 		@Override
@@ -102,13 +92,9 @@ public class FilterDAO implements Filter {
 			}
 		}
 		
-	@Override
+		@Override
 		public Filter match(T t) {
-		    Param<T> val = DSL.val(t);
-		    String str = t.toString();
-		    String mode = str.contains("*") ?  "BOOLEAN" : "NATURAL LANGUAGE";
-		    Name name = field.getQualifiedName();
-		    return new FilterDAO( DSL.condition("match({0}) against({1} IN "+ mode +" MODE)", name, val));
+			return new FilterDAO(PropertyDAO.match(field, t));
 		}
 
 		@Override
@@ -120,11 +106,26 @@ public class FilterDAO implements Filter {
 		public Filter notIn(T[] t) {
 			return new FilterDAO(field.notIn(t));
 		}
-
-		@Override
-		public Filter isNullS3() {
-			// TODO Auto-generated method stub
-			return null;
+		
+		public static <T> Condition like ( Field<T> field, T t) {
+			if (t instanceof String s) {
+				return field.like( s );
+			} else if ( t instanceof byte[] b) {
+				return field.like(new String(b));
+			} else if ( t instanceof Integer i) {
+				return field.like("%"+ AonNumberUtils.toString(i) +"%");
+			} else if ( t instanceof Double d ) {
+				return field.like("%"+ AonNumberUtils.toString(d) +"%");
+			} else {
+				throw new UnsupportedOperationException();				
+			}
+		}
+		public static <T> Condition match ( Field<T> field, T t) {
+			Param<T> val = DSL.val(t);
+			String str = t.toString();
+			String mode = str.contains("*") ? "BOOLEAN" : "NATURAL LANGUAGE";
+			Name name = field.getQualifiedName();
+			return DSL.condition("match({0}) against({1} IN " + mode + " MODE)", name, val);
 		}
 		
 	}
@@ -352,11 +353,6 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter isNull() {
-			return new FilterDAO(field.isNotNull());
-		}
-
-		@Override
-		public Filter isNullS3() {
 			return new FilterDAO(field.isNull());
 		}
 
@@ -551,7 +547,6 @@ public class FilterDAO implements Filter {
 		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
 		}
-
 		@Override
 		public Filter isNullS3() {
 			// TODO Auto-generated method stub

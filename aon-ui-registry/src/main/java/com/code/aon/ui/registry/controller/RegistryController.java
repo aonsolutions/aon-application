@@ -77,6 +77,9 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.ast.impl.IdentExpressionImpl;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -98,6 +101,8 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.event.RegistryFormListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.master.TargetDB;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryController extends BasicController {
 	
@@ -504,15 +509,27 @@ public class RegistryController extends BasicController {
 		}
 		pojoMapping.put("Project", Project.class);
 		pojoMapping.put("ProjectActivity", ProjectActivity.class);
-		/** TODO REVISAR
-		 *  En la pantalla se orderna por updateDate
-		 *  y falla al construir el SQLRenderer
-		 *  cuando se descarga un listado.
-		 **/
-		Criteria criteria = getCriteria();
-		criteria.setOrderByList(null);
-		/****/
-		return CriteriaUtilities.toSQLString(criteria, true, pojoMapping, tableMapping);
+		
+		if (getCriteria().getOrderByList() != null) {
+			if (AonCollectionUtils.stream(getCriteria().getOrderByList().getOrders())
+					.map( o -> o.getExpression() )
+					.filter( e -> e != null)
+					.anyMatch( e -> AonStringUtils.contains("updateDate",e.getName() ))
+					) {
+				Criteria criteria = getCriteria();
+				OrderByList order = criteria.getOrderByList();
+				OrderByList newOrder = new OrderByList();
+				Order o1 = new Order(new IdentExpressionImpl("Customer.modificationDate") , false);
+				Order o2 = new Order(new IdentExpressionImpl("Customer.creationDate") , false);
+				newOrder.add( o1 );
+				newOrder.add( o2 );
+				criteria.setOrderByList( newOrder );
+				String ret = CriteriaUtilities.toSQLString(criteria, true, pojoMapping, tableMapping);
+				getCriteria().setOrderByList( order );
+				return ret;
+			}
+		}
+		return CriteriaUtilities.toSQLString(getCriteria(), true, pojoMapping, tableMapping);
 	}
 
 	@Override
@@ -560,9 +577,6 @@ public class RegistryController extends BasicController {
 			} else {
 				select = select.substring(0,i) + " GROUP BY c.registry " + select.substring(i+1);
 			}
-			System.out.println(" ----------------------------- ");
-			System.out.println( select );
-			System.out.println(" ----------------------------- ");
 			Query query = session.createSQLQuery(select);
 			query.setReadOnly(true);
 			

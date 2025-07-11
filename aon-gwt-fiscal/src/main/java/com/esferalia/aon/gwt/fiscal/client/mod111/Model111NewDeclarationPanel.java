@@ -110,8 +110,10 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 			initialize(model, callback );
 		});
 
-		includeInvoices.addClickHandler(event -> 
-			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue()));
+		includeInvoices.addClickHandler(event -> {
+			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue());
+			model.setGenerateFromYearStart(includeInvoices.getValue());
+		});
 		
 		includeSalaries.addClickHandler(event -> 
 			model.setMustIncludeSalariesOnGeneration(includeSalaries.getValue()));

@@ -525,9 +525,10 @@ public class ConnectSaleInvoiceWriter {
 
 		String productCode = null;
 		String customerProductCode = null;
-		if (rItem!=null)
+		if (rItem!=null) {
 			customerProductCode = rItem.getCode();
 			productCode = StringUtils.isNotBlank(rItem.getEdiSalesCode())?rItem.getEdiSalesCode():rItem.getCode();
+		}
 		try {
 			if (productCode==null)
 				productCode = item.getProduct().getBaseItem().getBarcode();

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -153,9 +154,17 @@ public class InvoiceTaxDAO {
 	}
 	
 	public static void delete(AONContext ctx, InvoiceTaxFilter filter){
-		ctx.getDslContext().delete(INVOICE_TAX)
+		List<Integer> invoiceTaxIds = getStream(ctx, filter).map(InvoiceTax::getId).toList();
+		
+		ctx.getDslContext().delete(INVOICE_TAX_ACCOUNT)
+		.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.in(invoiceTaxIds))
+		.execute();
+		
+		int count = ctx.getDslContext().delete(INVOICE_TAX)
 		.where(INVOICE_TAX_PROPERTIES.getConditions(filter))
 		.execute();
+		
+		ctx.log().debug("DELETE INVOICE_TAX de la factura ({1} filas)", count);
 	}
 	
 	public static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
