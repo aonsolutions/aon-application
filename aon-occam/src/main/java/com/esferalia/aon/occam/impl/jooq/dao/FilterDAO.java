@@ -66,6 +66,11 @@ public class FilterDAO implements Filter {
 		public Filter isNull() {
 			return new FilterDAO(field.isNull());
 		}
+		
+		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNull());
+		}
 
 		@Override
 		public Filter isNotNull() {
@@ -75,6 +80,11 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter like(T t) {
 			return new FilterDAO(PropertyDAO.like(field, t));
+		}
+		
+		@Override
+		public Filter likeIgnoreCase(T t) {
+			return new FilterDAO(PropertyDAO.likeIgnoreCase(field, t));
 		}
 		
 		@Override
@@ -105,6 +115,21 @@ public class FilterDAO implements Filter {
 				throw new UnsupportedOperationException();				
 			}
 		}
+		
+		public static <T> Condition likeIgnoreCase ( Field<T> field, T t) {
+			if (t instanceof String s) {
+				return field.likeIgnoreCase( s );
+			} else if ( t instanceof byte[] b) {
+				return field.like(new String(b));
+			} else if ( t instanceof Integer i) {
+				return field.likeIgnoreCase("%"+ AonNumberUtils.toString(i) +"%");
+			} else if ( t instanceof Double d ) {
+				return field.likeIgnoreCase("%"+ AonNumberUtils.toString(d) +"%");
+			} else {
+				throw new UnsupportedOperationException();				
+			}
+		}
+		
 		public static <T> Condition match ( Field<T> field, T t) {
 			Param<T> val = DSL.val(t);
 			String str = t.toString();
@@ -193,6 +218,18 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 
@@ -267,6 +304,16 @@ public class FilterDAO implements Filter {
 		public Filter notIn(Date[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
 		}
+
+		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNotNull());
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Date t) {
+			throw new UnsupportedOperationException();
+		}
 		
 	}
 
@@ -317,11 +364,17 @@ public class FilterDAO implements Filter {
 		public Filter isNull() {
 			return new FilterDAO(field.isNull());
 		}
-
+		
 		@Override
 		public Filter isNotNull() {
 			return new FilterDAO(field.isNotNull());
 		}
+
+		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNull());
+		}
+		
 		@Override
 		public Filter like(Timestamp date) {
 			throw new UnsupportedOperationException();				
@@ -340,6 +393,11 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter notIn(Timestamp[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Timestamp t) {
+			throw new UnsupportedOperationException();			
 		}
 		
 	}
@@ -418,6 +476,17 @@ public class FilterDAO implements Filter {
 		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter likeIgnoreCase(Boolean t) {
+			throw new UnsupportedOperationException();			
+		}
 		
 	}
 
@@ -493,7 +562,16 @@ public class FilterDAO implements Filter {
 		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
 		}
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
+		@Override
+		public Filter likeIgnoreCase(Boolean t) {
+			throw new UnsupportedOperationException();			
+		}
 	}
 
 	private Condition condition;

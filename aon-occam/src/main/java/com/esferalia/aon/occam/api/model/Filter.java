@@ -18,8 +18,10 @@ public interface Filter extends Serializable{
 		Filter in(T[] t);
 		Filter notIn(T[] t);
 		Filter isNull();
+		Filter isNullS3();
 		Filter isNotNull();
 		Filter like(T t);
+		Filter likeIgnoreCase(T t);
 		Filter match(T t);
 		Filter between(T min, T max);
 	}
