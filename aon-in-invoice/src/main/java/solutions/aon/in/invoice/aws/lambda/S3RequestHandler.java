@@ -1,6 +1,5 @@
 package solutions.aon.in.invoice.aws.lambda;
 
-import static java.lang.String.format;
 import static solutions.aon.aws.s3.S3UploadEventObject.getS3UploadEventObjects;
 
 import java.io.IOException;
@@ -18,13 +17,10 @@ import org.json.JSONObject;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
-import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -248,17 +244,16 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    JSONObject loadBatchJSON = Invofox.newLoadBatch(invofoxApiKey, invofoxApiUrl, companyId);
 	    // new issue for this batch, and don't wait for it
 	    String companyName = getCompanyName(s3UploadEventObject);
-	    Task task = new Task()
-		    .setTitle(format(TITLE, companyName))
-		    .setDescription(format(DESCRIPTION, companyName ))
-		    .setWorkgroup(new Workgroup().setDescription(WORKGROUP));
 	    JSONObject taskJSON ;
 	    
 	    try {
-		taskJSON =  TaskJSON.toJSON(task);
+			taskJSON = new JSONObject()
+					.put(IJsonNames.TITLE, companyName)
+					.put(IJsonNames.DESCRIPTION, companyName)
+					.put(IJsonNames.WORKGROUP, new JSONObject().put(IJsonNames.DESCRIPTION, WORKGROUP));
 	    } catch ( Exception t ) {
-		taskJSON = new JSONObject()
-		.put("id", Integer.MAX_VALUE );
+			taskJSON = new JSONObject()
+			.put("id", Integer.MAX_VALUE );
 	    }
 	    
 	    loadBatchTaskJSON = newLoadBatchTask(loadBatchJSON, taskJSON);
