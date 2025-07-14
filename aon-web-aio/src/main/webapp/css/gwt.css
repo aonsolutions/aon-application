@@ -238,8 +238,8 @@
 	background-size: 9px !important;
 }
 
-.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>.gwt-TreeItem,
-	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem {
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div:nth-child(-n+2)>.gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div:nth-child(-n+2)>.gwt-TreeItem {
 	left: -19px;
 	font-size: 16px;
 	font-weight: 500;
