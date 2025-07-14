@@ -4378,24 +4378,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private static List<CCC> getCCs(Enterprise enterprise) {
-
-		List<CCC> ccs = new LinkedList<CCC>();
-
-		for (Workplace workplace : enterprise.getWorkplaces()) {
-
-			Activity activity = workplace.getActivity();
-			if (activity == null) {
-				continue;
-			}
-
-			List<CCC> workplaceCcs = activity.getCccs();
-			if (workplaceCcs == null) {
-				continue;
-			}
-
-			ccs.addAll(workplaceCcs);
-		}
-		return ccs;
+		return enterprise.getActivities().stream().map(Activity::getCccs).flatMap(List::stream).distinct().collect(Collectors.toList());
 	}
 
 	private static boolean isSaltraEnabled(EmployeeStatus employeeStatus) {
