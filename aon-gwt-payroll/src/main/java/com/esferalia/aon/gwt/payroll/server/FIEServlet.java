@@ -442,15 +442,11 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void onDitDeficiencyIndicator(String deficiencyIndicator) {
 			// S=se acredita carencia; 
 			// N=no se acredita carencia;
-			// P=consulta la Dirección Provincial del INSS
-			if(AonStringUtils.isBlank(deficiencyIndicator)) deficiencyIndicator = "";
+			// P=consulta la Direcci? Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "N":
-				if(!it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN);
-				break;
-			case "S":
-				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
-				break;
+				case "S":
+					if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+					break;
 			default:
 				break;
 			}

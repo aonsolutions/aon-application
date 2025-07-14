@@ -3,6 +3,10 @@ import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 import { AonComunica } from '../../modules/laboral/aon-comunica.js';
+import { AonPayrollBeta } from './aon-payroll-beta.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+
+
 
 export class AonPayrollMenu extends AonSuiteMenu {
 
@@ -17,10 +21,12 @@ export class AonPayrollMenu extends AonSuiteMenu {
     }
 
     connectedCallback () {
-        this.clear();
-        this.initialize();
-        this.build();
-        this.setTitle("Opciones de laboral");
+		this.buildDur().then(() => {		
+	        this.clear();
+	        this.initialize();
+	        this.build();
+	        this.setTitle("Opciones de laboral");
+		})
     }
 
     laboralInitialize() {

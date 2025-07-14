@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.console.ConsoleMessageType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 
-class ConsoleMessageUtils {
+public class ConsoleMessageUtils {
 	
 	private ConsoleMessageUtils() {
 	}
@@ -67,18 +67,18 @@ class ConsoleMessageUtils {
 			.setPercent(percent);
 	}
 
-	static void print(PrintStream stream, ConsoleMessage msg) {
+	public  static void print(PrintStream stream, ConsoleMessage msg) {
 		String json = ConsoleMessageJSON.toJSON(msg).toString();
 		stream.print( json );
 		stream.println( "," );
 		stream.flush();
 	}
 	
-	static void start(PrintStream stream) {
+	public static void start(PrintStream stream) {
 		stream.println( "[" );
 	}
 
-	static void end(PrintStream stream) {
+	public static void end(PrintStream stream) {
 		stream.println( "]" );
 	}
 

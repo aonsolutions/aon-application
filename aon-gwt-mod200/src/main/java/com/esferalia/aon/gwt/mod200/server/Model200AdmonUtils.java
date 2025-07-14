@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.jooq.tools.json.ParseException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
@@ -64,15 +65,19 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.mod200.api.MODEL200;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.MODEL2002023;
+import com.esferalia.aon.occam.mod200.api.MODEL2002024;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2023.Mod2002023Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2024.Mod2002024Writer;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -224,7 +229,7 @@ public class Model200AdmonUtils {
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
 		if(AonStringUtils.isBlank(params.getPass())) {
-			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+			params.setPass(AonCertificateUtils.getCertificatePassword(attach.getDescription()));
 		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -267,10 +272,12 @@ public class Model200AdmonUtils {
 
 		@Override
 		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// DO NOTHING
 		}
 
 		@Override
 		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// DO NOTHING
 		}
 
 		@Override
@@ -388,10 +395,12 @@ public class Model200AdmonUtils {
 			if (fm instanceof Mod2002022) {
 				Mod2002022 mod = (Mod2002022) fm;
 				Mod2002022Writer.fillWriter(mod, writer);
-			}
-			if (fm instanceof Mod2002023) {
+			} else if (fm instanceof Mod2002023) {
 				Mod2002023 mod = (Mod2002023) fm;
 				Mod2002023Writer.fillWriter(mod, writer);
+			} else if (fm instanceof Mod2002024) {
+				Mod2002024 mod = (Mod2002024) fm;
+				Mod2002024Writer.fillWriter(mod, writer);
 			}
 		} catch (IOException e) {
 			throw new AonCoreException(e);
@@ -430,10 +439,12 @@ public class Model200AdmonUtils {
 		if (fm instanceof Mod2002022) {
 			Mod2002022 mod = (Mod2002022) fm;
 			MODEL2002022.aeatPresentation(occam, mod, aeatResponse);
-		}
-		if (fm instanceof Mod2002023) {
+		} else if (fm instanceof Mod2002023) {
 			Mod2002023 mod = (Mod2002023) fm;
 			MODEL2002023.aeatPresentation(occam, mod, aeatResponse);
+		} else if (fm instanceof Mod2002024) {
+			Mod2002024 mod = (Mod2002024) fm;
+			MODEL2002024.aeatPresentation(occam, mod, aeatResponse);
 		}
 		// Se muestra el PDF solo si no es presentación multiple
 		if (aeatParams.getSelected() == null)
@@ -546,7 +557,7 @@ public class Model200AdmonUtils {
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.POST(HttpRequest.BodyPublishers.ofString(urlParameters.toString()))
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
 				.build();
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
@@ -638,11 +649,13 @@ public class Model200AdmonUtils {
 			// La presentación múltiple del Modelo 200, solo se puede hacer a partir del 2022, que es cuando se introduce el estado en el modelo 200
 			Mod200 m200 = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (m200 != null) {
-				if (m200.getYear() == 2023) {
+				if (m200.getYear() == 2024) {
+					model = MODEL2002024.getMod2002024ById(occam, m200.getId());
+				} else if (m200.getYear() == 2023) {
 					model = MODEL2002023.getMod2002023ById(occam, m200.getId());
 				} else if (m200.getYear() == 2022) {
 					model = MODEL2002022.getMod2002022ById(occam, m200.getId());
-				}
+				} 
 			}
 		} else {
 			// Resto de modelos
@@ -695,6 +708,91 @@ public class Model200AdmonUtils {
 		buff.append("</ul>");
 		buff.append(ERROR_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
-	}		
+	}
+	
+	//	SERVALIDOS: NUEVO SERVICIO DE VALIDACION Y BORRADOR AEAT A PARTIR DE 2025
+	//	URL de acceso al servicio https://prewww2.aeat.es/wlpl/PFTW-PICW/ServValiDos
+	//	Al servicio se le pasará por el método POST del protocolo HTTP un documento en
+	//	formato JSON con los siguientes contenidos:			
+	//	MODELO MMM (tres dígitos del modelo a validar e imprimir, por ejemplo 111)
+	//	EJERCICIO AAAA (cuatro dígitos indicando el ejercicio, por ejemplo 2021)
+	//	PERIODO PP (dos caracteres indicando el periodo, ejemplo 0A)
+	//	FIC Fichero plano completo de la declaración acorde al Diseño de Registro
+	//	IDI Idioma en el que se solicita generar el Justificante en formato PDF (ES, EN, GL, VA, CA)
+	//	SINVL Si se desea no realizar el proceso de validación y obtener directamente el documento de la declaración correspondiente (sin validar) en
+	//			formato PDF, se deberá enviar otra variable llamada "SINVL" sin	necesidad de informar ningún valor. Para que el proceso de impresión
+	//			sea coherente, el fichero debe estar bien formado, ya que no se aplica validación sobre su contenido.			
+	public static void serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
+		
+		try {
+			System.out.println("Model200AdmonUtils_SerValiDos: " + model.getModel() + " " + model.getYear() + " " + model.getPeriod());
+			
+			byte[] fileContent = getModelFile(model);
+			
+			JSONObject params = new JSONObject();
+			params.put("MODELO", "200");
+			params.put("EJERCICIO", AonNumberUtils.toString(model.getYear()));
+			params.put("PERIODO", "0A");
+			params.put("FIC", getUnencodedFile(fileContent,StandardCharsets.UTF_8));
+			params.put("IDI", "ES");
+			
+			String url = "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServValiDos";
+
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			if (response.statusCode() == 302) {
+				giveRedirectBack(resp, response, httpClient );				 
+			} else {
+				String ct = getContentTypeHeader(response);
+				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
+					JSONObject json = new JSONObject(new String(response.body()));
+					AEATResponse aeatResponse = new AEATResponse();
+					JSONObject jsonRespuesta = json.optJSONObject("respuesta");
+					if (jsonRespuesta.has("pdf")) {
+						// Respuesta correcta, devuelve JSON que contiene el PDF de la declaración en base64
+						JSONArray jsonPdf = jsonRespuesta.optJSONArray("pdf");						
+						if (jsonPdf != null && jsonPdf.length() > 0) {
+							giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
+						} else {
+							giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
+						}
+					} else if (jsonRespuesta.has("errores")) {
+						// Respuesta con errores, obtenemos los mensajes de error
+						JSONArray jsonErrores = jsonRespuesta.optJSONArray("errores");
+						if (jsonErrores != null) {
+							for (int i = 0; i < jsonErrores.length(); i++ ) {
+								aeatResponse.addError(jsonErrores.getString(i));
+							}
+						}
+						manageWrongResponse(resp, aeatResponse, aeatParams);
+					} else {
+						giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
+					}					
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+						giveBase64Back(resp, response.body(), MimeType.HTML);					  
+				} else {					 					
+						giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+				}
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (AonCoreException | IOException e) {
+				giveExceptionBack(resp,e.getMessage());
+		}
+		
+	}
 
 }

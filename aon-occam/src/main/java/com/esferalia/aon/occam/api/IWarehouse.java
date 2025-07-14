@@ -28,8 +28,10 @@ import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
@@ -206,6 +208,13 @@ public interface IWarehouse {
 	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
 	void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId);
 	void deleteDeliveryPackaging(AONContext ctx, Integer deliveryId, String sscc);
+	void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny);
+	
+	// 	***********************************************
+	// 	**************************** DELIVERY *********
+	// 	***********************************************
+	
+	Delivery getDeliveryByPackage(AONContext ctx, Integer itemPackageId, Options...options);
 	
 	// 	***********************************************
 	// 	**************************** DELIVERY INFO ****

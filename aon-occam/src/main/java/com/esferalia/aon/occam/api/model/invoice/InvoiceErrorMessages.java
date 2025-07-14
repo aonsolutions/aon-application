@@ -40,6 +40,8 @@ public enum InvoiceErrorMessages implements Serializable {
 	C201("El ejercicio del apunte contable está cerrado, en explotaci\u00F3n o inactivo."),
 	C202("El titular de la factura suele generar facturas con bienes afectos."),
 	
+	C300("Mensaje OCR: {0}"),
+	
 	C500("Error desconocido");
 	
 	;

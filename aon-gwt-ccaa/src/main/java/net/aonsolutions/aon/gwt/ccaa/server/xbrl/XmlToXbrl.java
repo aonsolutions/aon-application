@@ -464,7 +464,7 @@ public class XmlToXbrl {
         if ("1".equals(buscar("1012")))
         	addElemento(ele, "dgi-lc-es:Xcode_LFC.023", D_ACTUAL, "023");     // Forma juridica SL                
         addElementoIde(ele, "dgi-gen-ex:OthersLegalForm", D_ACTUAL, "1013");  // Forma juridica Otras
-        addElementoIde(ele, "dgi-lc-es:Xcode_IDC.IRUS", D_ACTUAL, "1008");     // LEI
+        addElementoIde(ele, "dgi-lc-es:Xcode_IDC.IRUS", D_ACTUAL, "1008");     // IRUS
         addElementoIde(ele, "dgi-lc-es:Xcode_IDC.LEI", D_ACTUAL, "1009");     // LEI
         addElemento(ele, "dgi-lc-es:Xcode_NMT.DS", D_ACTUAL, "DS");
         addElementoIde(ele, "dgi-est-gen:LegalNameValue", D_ACTUAL, "1020");  // Denominación Social
@@ -514,10 +514,10 @@ public class XmlToXbrl {
         // Actividad 
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:ActividadTupla");
         addElementoIde(ele, "dgi-eco-bas:ActivityDescription", D_ACTUAL, "2009");  // Actividad: Descripción
-        ele = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2009");
-        addElementoIde(ele, "dgi-cnae-09:Xcode_ACC.CNAE09." + buscar("2001"), D_ACTUAL, "2001"); // Actividad: CNAE 2009
-        ele = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2025");
-        addElementoIde(ele, "dgi-cnae-25:Xcode_ACC.CNAE25." + buscar("2014"), D_ACTUAL, "2014"); // Actividad: CNAE 2009
+        ele2 = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2009");
+        addElementoIde(ele2, "dgi-cnae-09:Xcode_ACC.CNAE09." + buscar("2001"), D_ACTUAL, "2001"); // Actividad: CNAE 2009
+        ele2 = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2025");
+        addElementoIde(ele2, "dgi-cnae-25:Xcode_ACC.CNAE25." + buscar("2014"), D_ACTUAL, "2014"); // Actividad: CNAE 2025
         
         // Personal Asalariado - Ejercicio Actual
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:PersonalAsalariadoTupla");

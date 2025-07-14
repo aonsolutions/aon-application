@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne } from '../../services/service.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -51,6 +51,7 @@ import { generateJobId } from '../invoice/InvoiceUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
+import { createSelect } from '../../components/CreateComponent.js';
 
 export class AonDesktop extends AonElement {
 
@@ -363,18 +364,58 @@ export class AonDesktop extends AonElement {
 	}
 
 	uploadInvoiceDesktop(input, files) {
-		let uploadToast = this.getElement('aonUploadToast');
-		if (!uploadToast) {
-			uploadToast = new AonUploadToast();
-			this.appendChild(uploadToast);
-		}
-		let data = {
-			uploaded: 0
-		}
-		uploadToast.setJobId(generateJobId());
-		for (let file of files) {
-			uploadToast.addFile("invoice", file, data);
-		}
+		getCompanyActivities({}).then(activities => {
+			let data = { uploaded: 0 };
+			if(activities.length > 1) {
+				activities.push({
+					id: "all",
+					description: "TODAS"
+    			});
+				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+				activity.setAlias("id", "description");
+				if(activities.length > 0) {
+					activity.setOptions(activities);
+					activity.value = activities[0].id;
+				}
+
+				let d = new AonDialog();
+				let rootPanel = document.getElementById("rootPanel");
+				rootPanel.appendChild(d);
+				d.clear();
+
+				d.setTitle(MSG.UPLOAD_INVOICE);
+				d.setContent(activity);
+				d.addAcceptAction(() => {
+					data.activity = activity.getValueObject().id;
+					let uploadToast = this.getElement('aonUploadToast');
+					if (!uploadToast) {
+						uploadToast = new AonUploadToast();
+						this.appendChild(uploadToast);
+					}
+		
+					uploadToast.setJobId(generateJobId());
+					for (let file of files) {
+						uploadToast.addFile("invoice", file, data);
+					}
+				});
+				d.open();
+			} else {
+				if(activities.length > 0) {
+					data.activity = activities[0].id;
+				}
+
+				let uploadToast = this.getElement('aonUploadToast');
+				if (!uploadToast) {
+					uploadToast = new AonUploadToast();
+					this.appendChild(uploadToast);
+				}
+		
+				uploadToast.setJobId(generateJobId());
+				for (let file of files) {
+					uploadToast.addFile("invoice", file, data);
+				}
+			}
+		});
 	}
 
 	async createDashboard(parent, company) {

@@ -4,15 +4,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum TaskHolderWorkgroupType  {
 
-	USER,
-	ADMIN;
+	USER("Usuario"),
+	ADMIN("Administrador");
 	
-	private TaskHolderWorkgroupType() {
-
+	private String description;
+	
+	private TaskHolderWorkgroupType(String description) {
+		this.description = description;
 	}
 	
 	public String getName() {
     	return this.toString().toLowerCase();
+    }
+	
+	public String getDescription() {
+    	return this.description;
     }
 	
     public byte value() {

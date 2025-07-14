@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.DisabiltyLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -79,10 +80,12 @@ public class ContractServlet extends HttpServlet{
 		Date ejFinalDate = AonDateUtils.getDate(year, 11, 31);
 		PAYROLL.getContractStream(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
-			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(AonDateUtils.toSql(ejInitDate))))
+			.and(
+				f.getEndDateProperty().isNull()
+				.or(f.getEndDateProperty().ge(AonDateUtils.toSql(ejInitDate))))
+			.and(f.getStartDateProperty().le(AonDateUtils.toSql(ejFinalDate)))
 		)
-		.sorted((a,b) ->  AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(a.getPerson())).get().getName().compareTo(
-				 AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(b.getPerson())).get().getName()))
+		.sorted((a,b) ->  a.getPersonName().compareTo(b.getPersonName()))
 		.forEach(contract -> {
 			LinkedList<ContractData> list = PAYROLL.getContractDataList(domainName, domainId, login, g -> 
 				g.getContractProperty().eq(contract.getId()));
@@ -90,7 +93,7 @@ public class ContractServlet extends HttpServlet{
 			LinkedList<Double> unfixedDoubleList = new LinkedList<>();unfixedDoubleList.add(0.0);
 			Double[] endFixed = new Double[]{0.0};
 			Double[] endUnfixed = new Double[]{0.0};
-				
+			
 			if(list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).count() > 0){ 
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
 					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
@@ -167,7 +170,26 @@ public class ContractServlet extends HttpServlet{
 				json.put("end_fixed", AonMathUtils.round(endFixed[0]));
 				json.put("end_unfixed", AonMathUtils.round(endUnfixed[0]));
 	
-				json.put("category",  ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
+				// TODO find by CategoryDescription & agreementLevel the correct agreementLevelCategory otherwise keep like now
+				if(null != contract.getAgreementLevel()) {
+					Optional<AgreementLevelCategory> agreementLevelCategory = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
+							f -> f.getAgreementLevelProperty().eq(contract.getAgreementLevel()).and(f.getDescriptionProperty().likeIgnoreCase(contract.getCategoryDescription())));
+				
+					if(agreementLevelCategory.isPresent())
+						json.put("category",  ToJSON.objectToJSON(agreementLevelCategory.get().getId(), contract.getCategoryDescription()));
+					else {
+						agreementLevelCategory = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
+								f -> f.getAgreementLevelProperty().eq(contract.getAgreementLevel()));
+						
+						if(agreementLevelCategory.isPresent())
+							json.put("category",  ToJSON.objectToJSON(agreementLevelCategory.get().getId(), contract.getCategoryDescription()));
+						else
+							json.put("category",  ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
+					}
+				} else
+					json.put("category",  ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
+				
+				
 				Integer disabilityId = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? irpfData.get().getDisability().intValue() : -1;
 				String disabilityName = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? DisabiltyLevel.values()[disabilityId].getName() : "-"; 
 				json.put("disability", ToJSON.objectToJSON(disabilityId, disabilityName));

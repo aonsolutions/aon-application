@@ -27,7 +27,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 	interface ConsoleDomainTableCallback {
 		public ConsoleModuleOptions getOptions();
 		public String getSchema();
-		public String[] getSchemas();
+//		public String[] getSchemas();
 		public int addCount();
 		public void check(ConsoleDomainTableRow row);
 		public boolean isRunning();
@@ -48,6 +48,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void onAvailableUsers(JsConsoleDomain domain, AsyncCallback<LinkedList<User>> cbk);
 		public void onEditDomain( JsConsoleDomain domain);
 		public void onUtilitiesDomain( JsConsoleDomain domain );
+		public void runUtility(ConsoleUtilities cu, AonConsoleProgress aonConsole);
 	}
 	
 	

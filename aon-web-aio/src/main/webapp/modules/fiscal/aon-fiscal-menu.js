@@ -2,6 +2,9 @@ import { MSG, CSS, EVENT, TAG, APPPARAMS } from '../../environments/environments
 import { getApplicationParameters} from '../../services/applicationParameterService.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
+import { AonFiscalBeta } from './aon-fiscal-beta.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+
 
 export class AonFiscalMenu extends AonSuiteMenu {
 
@@ -22,11 +25,13 @@ export class AonFiscalMenu extends AonSuiteMenu {
     }
 
     async connectedCallback() {
-        this.clear();
-        await this.getAppParams(); 
-        this.initialize();
-        this.build();
-        this.setTitle("Opciones fiscales");
+		await this.getAppParams(); 
+		this.buildDur().then(() => {		
+	        this.clear();
+	        this.initialize();
+	        this.build();
+	        this.setTitle("Opciones fiscales");
+		})
     }
     
     async getAppParams() {

@@ -1,8 +1,10 @@
-import { MSG, TAG } from '../../environments/environments.js'; 
+import { MSG, TAG , EVENT} from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import { AonInvoiceRecord } from '../../modules/invoice/aon-invoice-record.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
+import { AonAccountingBeta } from './aon-accounting-beta.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
 import { PAYMETHODS } from '../MenuOptions.js';
 
 export class AonAccountingMenu extends AonSuiteMenu {
@@ -18,10 +20,12 @@ export class AonAccountingMenu extends AonSuiteMenu {
 	}
 
 	connectedCallback () {
-		this.clear();
-		this.initialize();
-		this.build();
-		this.setTitle("Opciones de contabilidad");
+		this.buildDur().then(() => {
+           this.clear();
+           this.initialize();
+           this.build();
+           this.setTitle("Opciones de contabilidad");
+		})
 	}
 
 	accountingInitialize() {

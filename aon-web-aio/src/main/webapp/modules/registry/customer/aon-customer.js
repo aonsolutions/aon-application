@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomerNotes, getRelationShipCompany } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -116,7 +116,7 @@ export class AonCustomer extends AonReg {
 			
 			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
 			
-			getCustomerNotes({customer: this.registry.getId()})
+			getRegistryNotes({registry: this.registry.getId()})
 				.then(notes => {
 					const existsNotes = notes.some(item => item.type === "MESSAGE" );
 					
@@ -630,13 +630,13 @@ export class AonCustomer extends AonReg {
 		if (rrelationship) {
 			if(this.isSig() /*|| this.isAyudaT()*/){
 				options.push(
-				{
-					name: "Suplantar",
-					value: "supplant",
-					icon: 'token',
-					fn: () => this.suplant(),
-				}
-			);
+					{
+						name: "Acceder",
+						value: "access",
+						icon: MATERIAL_ICONS.OPEN_IN_NEW,
+						fn: () => this.suplant(rrelationship),
+					}
+				);
 			}
 			
 			options.push(
@@ -725,10 +725,10 @@ export class AonCustomer extends AonReg {
 		}
 	}
 	
-	suplant(){
+	suplant(rrelationship){
 		getUser().then(user => {
-			console.log("User");
-			console.log(user);
+			//console.log("User");
+			//console.log(user);
 			
 			let d = this.getApplication().getDialog();
 			d.clear();
@@ -744,7 +744,7 @@ export class AonCustomer extends AonReg {
 					time: 0
 				};
 				generateTokenJson(data).then(token => {
-					open(`https://${LS.getDomainName()}/app?token=${token.session_id}`, '_blank');
+					open(`https://${rrelationship.comments}/app?token=${token.session_id}`, '_blank');
 				}).catch(e => this.showError(e));
 			});			
 			d.open();		

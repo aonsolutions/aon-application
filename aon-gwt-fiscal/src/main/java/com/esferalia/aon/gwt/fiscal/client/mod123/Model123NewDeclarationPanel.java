@@ -101,8 +101,10 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 			}
 		});
 
-		includeInvoices.addClickHandler(event -> 
-			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue()));
+		includeInvoices.addClickHandler(event -> {
+			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue());
+			model.setGenerateFromYearStart(includeInvoices.getValue());
+		});
 	}
 		
 	private void paint(Mod123 model, Model123Callback callback) {

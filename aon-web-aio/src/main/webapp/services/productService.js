@@ -6,6 +6,7 @@ export const getProducts = (data) => get(`${API_URL}/product`, data);
 export const getItems = (data) => get(`${API_URL}/product/items`, data);
 export const getRItems = (data) => get(`${API_URL}/product/ritem`, data);
 export const getItem = (data) => get(`${API_URL}/product/item`, data);
+export const getPackage = (data) => get(`${API_URL}/product/package`, data);
 
 export const getProductCategories = (data) =>  get(`${API_URL}/product/category`, data);
 
@@ -29,5 +30,6 @@ export const getDeliveryPackaging = (data) => get(`${API_URL}/packaging/delivery
 export const saveDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliveryPackaging`, data);
 export const acceptDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliveryPackaging/accept`, data);
 export const deleteDeliveryPackaging = (data) => remove(`${API_URL}/packaging/deliveryPackaging`, data);
+export const subtractDeliveryPackagingComposition = (data) => remove(`${API_URL}/packaging/deliveryPackagingComposition`, data);
 
 export const deleteDelivery = (data) => remove(`${API_URL}/delivery`, data);

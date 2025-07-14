@@ -14,9 +14,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -689,7 +691,7 @@ class SistemaREDI {
 			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			boolean end = false;
-			ArrayList<Idc> ret = new ArrayList<Idc>();
+			Set<Idc> ret = new HashSet<>();
 			while (!end) {
 				DomNodeList<DomNode> dnl = htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
 
@@ -702,7 +704,9 @@ class SistemaREDI {
 						GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(arrD[2]),
 								Integer.parseInt(arrD[1]) - 1, Integer.parseInt(arrD[0]));
 						Date d = gc.getTime();
-						ret.add(new Idc("ALTA", d));
+						if ( !ret.add(new Idc("ALTA", d)) ) {
+							return ret; // If the date already exists, return the set
+						}
 						
 						if (registros.get(2).getTextContent().trim().equals(""))
 							continue;
@@ -710,7 +714,9 @@ class SistemaREDI {
 						gc = new GregorianCalendar(Integer.parseInt(arrD[2]),
 								Integer.parseInt(arrD[1]) - 1, Integer.parseInt(arrD[0]));
 						d = gc.getTime();
-						ret.add(new Idc("BAJA", d));
+						if ( !ret.add(new Idc("BAJA", d)) ) {
+							return ret; // If the date already exists, return the set
+						}
 					}
 				}
 				

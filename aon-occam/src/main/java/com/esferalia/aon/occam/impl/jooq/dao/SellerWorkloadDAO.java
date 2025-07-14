@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -62,10 +63,12 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO.FeeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO.ProjectHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SellerWorkloadDAO {
@@ -165,6 +168,12 @@ public class SellerWorkloadDAO {
 		public Property<Byte> getSecurityLevelProperty() {
 			return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.SECURITY_LEVEL);
 		}
+
+		@Override
+		public Property<String> getEmailProperty() {
+			return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL);
+		}
+	
 	}
 
 	public static List<SellerWorkload> getList(CloseableAONContext ctx, SellerWorkloadParams params) {

@@ -29,8 +29,8 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account) throws NordigenException {
-		return AonNordigen.setBankAccountValues(occam, token, account);
+	public NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account, boolean refresh) throws NordigenException {
+		return AonNordigen.setBankAccountValues(occam, token, account, refresh);
 	}
 
 	@Override
@@ -77,5 +77,27 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country) throws NordigenException {
 		return AonNordigen.getInstitutionsByCountry(token, country);
 	}
-
+	@Override 
+	public List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) throws NordigenException {
+		return AonNordigen.setAllBankAccountValues(occam, token);
+	}
+	@Override
+	public Integer getRemainingDays(Occam occam,NordigenBankAccount account) {
+		return AonNordigen.remainingDaysAgreement(occam, account);
+	}
+	
+	@Override
+	public int getRemainingCallsToday(Occam occam, NordigenBankAccount account) {
+		return AonNordigen.getRemainingCallsToday(occam, account);
+	}
+	
+	@Override
+	public String getLatestRetryAfter(Occam occam, NordigenBankAccount account) {
+		return AonNordigen.getLatestRetryAfter(occam, account);
+	}
+	
+	@Override
+	public List<String> getCallStatuses(Occam occam, NordigenBankAccount account){
+		return AonNordigen.getCallStatuses(occam, account);
+	}
 }

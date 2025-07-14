@@ -2585,14 +2585,13 @@ size: 32px;
 }
 
 .aonWelcomeLogo   {
-	right: 5%;
+	right: 22%;
 	position: absolute;
 	max-width: 201px;
 }
 
 .aonWelcomeMessage  {
-	font-size: 24px;
-    font-weight: 600;
+	font-size: 22px;
 }
 
 

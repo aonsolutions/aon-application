@@ -46,6 +46,7 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -71,6 +72,8 @@ import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.jooq.tables.Rdoc;
 import com.esferalia.aon.jooq.tables.RdocTag;
+import com.esferalia.aon.jooq.tables.Rmedia;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -178,6 +181,9 @@ import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RMediaPropertyDAO;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class PropertiesDAO {
 	
@@ -304,7 +310,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
-			
+		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
 	}
 	
 	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {
@@ -403,6 +409,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(TARGET.TRANSACTION);}
 		@Override public Property<Byte> getAdvertisingProperty() {return new FilterDAO.PropertyDAO<>(TARGET.ADVERTISING);}
 		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(TARGET.SURCHARGE);}
+		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
 	}
 	
 	public static class PersonPropertiesDAO implements PersonProperties {
@@ -435,6 +442,8 @@ public class PropertiesDAO {
 		@Override public Property<String> getFirstNameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.NAME);}
 		@Override public Property<String> getFirstSurnameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.FIRST_SURNAME);}
 		@Override public Property<String> getSecondSurnameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SECOND_SURNAME);}
+		
+		@Override public Property<String> getEmailProperty() { return new FilterDAO.PropertyValueDAO(RMEDIA.MEDIA,(byte)0); }
 	}
 	
 	public static class CategoryPropertiesDAO implements CategoryProperties {
@@ -524,6 +533,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
 	}
 	
 	public static class RItemPropertiesDAO implements RegistryItemProperties{
@@ -1644,14 +1654,14 @@ public class PropertiesDAO {
 			return filterDAO.build(select);
 		}
 		
-		protected Condition[] getConditions(S3DocumentFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) {
-				return new Condition[0];
-			}
-			return new Condition[] {filterDAO.getCondition()};
-		}
-		
+        protected Condition[] getConditions(S3DocumentFilter filter) {
+          FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+          if (filterDAO == null) {
+            return new Condition[0];
+          }
+          return new Condition[] {filterDAO.getCondition()};
+        }
+
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.ID);}
 		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.DOMAIN); }
 		@Override public Property<String> getNameProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.NAME); }

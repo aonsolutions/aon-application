@@ -124,5 +124,11 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	public void setMinWidth(String minWidth) {
 		getElement().getStyle().setProperty("min-width", minWidth);
 	}
+	
+	@Override
+	protected void onEnsureDebugId(String baseID) {
+		super.onEnsureDebugId(baseID);
+		this.suggestBox.ensureDebugId(baseID + "Input");
+	}
 
 }

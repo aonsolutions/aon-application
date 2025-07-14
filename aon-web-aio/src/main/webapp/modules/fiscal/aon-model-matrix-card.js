@@ -47,26 +47,30 @@ export class AonModelMatrixCard extends AonElement {
 						gwtIFrame.style.position = 'fixed';
 						gwtIFrame.style.width = `calc(100vw)`;
 						gwtIFrame.style.height = `calc(100vh)`;
-					} else if (addedNode.className == 'gwt-PopupPanel' ){
-						const gwtPopupPanel = addedNode;
-						const gwtPopupContent = gwtPopupPanel.firstChild; //gwtPopupPanel.getElementsByClassName('popupContent')[0];
-						gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
-						gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
-						
+					} else if (addedNode.className == 'gwt-PopupPanel') {
+						if (gwtDocument.getElementsByClassName('gwt-PopupPanel').item(0) == addedNode ) {
+							// If the added node is the first gwt-PopupPanel, we need to adjust its size.
+							const gwtPopupPanel = addedNode;
+							const gwtPopupContent = gwtPopupPanel.firstChild;
+							gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
+							gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
+						}
 					} 
 				}
 				for (const removedNode of record.removedNodes) {
 					if (removedNode.className == 'gwt-PopupPanelGlass') {
-						gwtIFrame.style.width = `100%`;
-						gwtIFrame.style.height = `100%`;
-						gwtIFrame.style.removeProperty('top');
-						gwtIFrame.style.removeProperty('left');
-						gwtIFrame.style.removeProperty('position');
-						gwtIFrame.style.removeProperty('z-index');
-					
-					} else if (addedNode.className == 'gwt-PopupPanel' ){
-											
-					} 
+						// If there are no more gwt-PopupPanelGlass elements, reset the gwtIFrame styles.
+						if (gwtDocument.getElementsByClassName('gwt-PopupPanelGlass').length == 0) {
+							gwtIFrame.style.width = `100%`;
+							gwtIFrame.style.height = `100%`;
+							gwtIFrame.style.removeProperty('top');
+							gwtIFrame.style.removeProperty('left');
+							gwtIFrame.style.removeProperty('position');
+							gwtIFrame.style.removeProperty('z-index');
+						}
+					} else if (removedNode.className == 'gwt-PopupPanel') {
+						// Noop			
+					}
 				}
 			}
 		});

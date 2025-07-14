@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -15,10 +16,17 @@ public interface FiscalMSService extends RemoteService {
 
 	// -------------------------------------------------------------- COMPANY
 	LinkedList<CompanyBank> getCompanyBanks(String domainName, String user,int domain) throws AonCoreException;
+	
 	// -------------------------------------------------------------- ACCOUNT
 	LinkedList<Creditor> getBasicCreditors(Occam occam,String query) throws AonCoreException;
 	
 	// Para carga del PDF del modelo
 	void savePDFModel(Occam occam, IFiscalModel model, String data);
+	
+	// Para envio de email
+	void sendEmail(Occam occam, IFiscalModel model) throws AonCoreException;
+	
+	// Para obtener informacion del certificado
+	CertificateInfo getCertificateInfo(String domainName, int domainId, String user, Integer certificateId) throws AonCoreException;
 
 }

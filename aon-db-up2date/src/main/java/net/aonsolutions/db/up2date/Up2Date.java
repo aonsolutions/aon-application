@@ -19,13 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.attach.RdocTag;
-import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2025Insert;
+import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsITIMSFix;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsNamesFix;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessRoundFix;
 
 public class Up2Date {
 
@@ -381,7 +376,7 @@ public class Up2Date {
 			// MEI2024Insert.MEI2024INSERT,
 			// BasesMax2024Update.BASESMAX2024UPDATE,
 			// SMI2024Update.SMI2024UPDATE,
-			// BasesMin2024Update.BASESMIN2024UPDATE,
+			// BasesMin2024Update.BASESMIN2024UPDATE,ALTER TABLE elaboration ADD INDEX `IDX_ELABORATION_SOURCE_SOURCEID` (`source`,`source_id`);
 			// AlterRitem.ALTER_RITEM,
 			// AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
 			// AlterInvestAsset.ALTER_INVEST_ASSET,
@@ -543,18 +538,31 @@ public class Up2Date {
 			// PPEITUpdateII.PPE_IT_UPDATEII,
 			// PPEUpdate2Cost.PPE_IT_UPDATE2COST,
 			// Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
-			TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
-			TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
-			TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
-			IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
+			// TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
+			// TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
+			// TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
+			// IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
+			// AlterFsMod2002024.ALTER_FS_MODEL_200_2024, 
+			// InsertIAE869.INSERT_IAE_869,
+			// RegistryFulltextKey.REGISTRY_FULLTEXT_KEY,
+			// TaskParentIndex.TASK_PARENT_INDEX,
+			// NotificationReceiverAuthIndex.NOTIFICATION_RECEIVER_AUTH_INDEX,
+			// RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
-			RdocTag.RDOC_TAG,
-			UpdateCategoryTree.UPDATE_CATEGORY_TREE
+			// RdocTag.RDOC_TAG,
+			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
+			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
+			// AddRegistryBankAgreement.ADD_AGREEMENT_COLUMN
 
+			// ----------------------------------------------------------------
+			// By now only for `grupo-udapa-aonsolutions-net` database
+			// ElaborationSourceSourceIdIndex.ELABORATION_SOURCE_SOURCEID_INDEX,
+			// DeliveryCarrierPackingIndex.DELIVERY_CARRIER_PACKING_INDEX,
+			// DataResponseSourceResponseDateIndex.DATA_RESPONSE_SOURCE_RESPONSE_DATE_INDEX,	
 	};
 
 	// ------------------------------------------------------------------------

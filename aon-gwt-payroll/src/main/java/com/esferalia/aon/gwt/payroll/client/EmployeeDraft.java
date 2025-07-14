@@ -168,6 +168,7 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 
 		@Override
 		public void onContractAgreementChange(Integer agreementId, String agreementSSNumber) {
+//			Windo
 			employeeDraftObject.setContractAgreementId(agreementId);
 			employeeDraftObject.setContractAgreementLevelId(null);
 			employeeDraftObject.setContractCategory(null);
@@ -745,7 +746,12 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 	private void fillExistingEmployee() {
 		EmployeeInfo employeeData = employeeDraftObject.getEmployeeData();
 		
-		employee.document.setValue(employeeData.getDocument(), true);
+		employee.document.setValue(employeeData.getDocument());
+		
+		if(!employee.checkDocumentValidation(employeeData.getDocument()))
+				employee.document.addError();
+		else employee.document.removeError();
+		
 		employee.nationality.setValue(employeeData.getNationality());
 		employee.securitySocialNum.setValue(employeeData.getSsNumber(), true);
 		
@@ -958,7 +964,7 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 	// ------------------------------------------------- Auxiliar Methods
 
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		employee.level.clear();
+		employee.level.clearItems();
 		employee.level.addItem("-", "-1");
 		
 		employeeDraftObject.getAgreement(agreementId,  

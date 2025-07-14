@@ -634,3 +634,8 @@ export const CUSTOMER_NOTES = {
   entryPoint: 'CustomerNotesModule'
 };
 
+export const TASK_HOLDER_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'TaskHolderModule'
+};
+

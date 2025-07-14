@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
@@ -14,11 +15,13 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
@@ -29,12 +32,13 @@ import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class RegistryDAO {
 
@@ -42,6 +46,97 @@ public class RegistryDAO {
 	}
 	
 	protected static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
+	public static final class RMediaPropertyDAO implements Property<String> {
+		
+		
+		private MediaType mediaType;
+		
+		public RMediaPropertyDAO( MediaType mediaType ) {
+			this.mediaType = mediaType;
+		}
+		
+		SelectConditionStep<Record1<Integer>> getSubSelect() {
+			return DSL.select(RMEDIA.REGISTRY)
+					.from(RMEDIA).where(RMEDIA.MEDIA.eq(AonEnumUtils.getByte(mediaType)));
+		}
+
+		@Override
+		public FilterDAO eq(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.eq(t))));
+		}
+
+		@Override
+		public FilterDAO ne(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.ne(t))));
+		}
+
+		@Override
+		public FilterDAO le(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.le(t))));
+		}
+
+		@Override
+		public FilterDAO lt(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.lt(t))));
+		}
+
+		@Override
+		public FilterDAO gt(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.gt(t))));
+		}
+
+		@Override
+		public FilterDAO ge(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.ge(t))));
+		}
+
+		@Override
+		public FilterDAO in(String[] t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.in(t))));
+		}
+
+		@Override
+		public FilterDAO notIn(String[] t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.notIn(t))));
+		}
+
+		@Override
+		public FilterDAO isNull() {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.isNull())));
+		}
+
+		@Override
+		public FilterDAO isNotNull() {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.isNotNull())));
+		}
+
+		@Override
+		public FilterDAO like(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(FilterDAO.PropertyDAO.like(RMEDIA.VALUE,t))));
+		}
+
+		@Override
+		public FilterDAO match(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(FilterDAO.PropertyDAO.match(RMEDIA.VALUE, t))));
+		}
+
+		@Override
+		public FilterDAO between(String min, String max) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.between(min,max))));
+		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter likeIgnoreCase(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(FilterDAO.PropertyDAO.likeIgnoreCase(RMEDIA.VALUE,t))));
+		}
+	}
+
 	protected static class RegistryPropertiesDAO implements RegistryProperties {
 		
 		protected Condition[] getConditions(RegistryFilter filter) {
@@ -60,6 +155,8 @@ public class RegistryDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
+		
 	}
 	
 	public static class RegistryFiller extends Filler implements Function<Record,Registry> {

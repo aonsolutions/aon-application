@@ -152,6 +152,8 @@ public abstract class Mod111Declaration {
 			mod111.addMessage("Se encontraron " + currentInvoices.size() + " facturas no declaradas en el periodo de la declaraci\u00F3n.");
 		}
 		mod111.setMustIncludeInvoicesOnGeneration(existsPreviousInvoices || existsCurrentInvoices);
+		mod111.setGenerateFromYearStartAvailable(!mod111.isFirstPeriod() && existsPreviousInvoices);		
+		mod111.setGenerateFromYearStart(existsPreviousInvoices);
 		
 		Map<Integer, Long> previousSalaries = checkPreviousSalaries(ctx, mod111);
 		boolean existsPreviousSalaries = AonCollectionUtils.isNotEmpty(previousSalaries);			

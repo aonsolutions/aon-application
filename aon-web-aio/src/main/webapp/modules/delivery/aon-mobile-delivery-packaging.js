@@ -1,15 +1,15 @@
 import { AonElement } from '../../components/AonElement.js';
-
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
-
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import * as LS from '../../services/localStorageService.js';
-import { deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
-
-import * as ACTION from '../actions.js';
+import { deleteDeliveryPackaging, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { round } from '../../services/utils.js';
+
+import * as LS from '../../services/localStorageService.js';
+import * as ACTION from '../actions.js';
+import * as UA from '../../services/userAgentService.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -32,9 +32,12 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	packaging;
 	delivery;
+	deliveryDetails;
 
 	ELABORATION_TOOLBAR;
 	DELIVERY_TOOLBAR;
+
+	SUBTRACT_PACKAGING_PRODUCT;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -50,11 +53,13 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
+		this.getElement('aonDelivery').package = this.packaging;
 		this.build();
     }
 
 	disconnectedCallback() {
 		this.removeToolbar();
+		this.getElement('aonDelivery').package = undefined;
 	}
 
 	initialize() {
@@ -71,6 +76,8 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.COMPOSITION_TABLE = this.COMPOSITION + CONSTANT.TABLE.initCap();
 		this.COMPOSITION_ITEM = this.COMPOSITION + CONSTANT.ITEM.initCap();	
 		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
+
+		this.SUBTRACT_PACKAGING_PRODUCT = this.id + 'SubtractPackagingProduct';
 
 		this.TAG = this.id + CONSTANT.TAG.initCap();
 		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
@@ -104,7 +111,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		if(this.ELABORATION_TOOLBAR) {
 			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
 			if(elaborationToolbar) elaborationToolbar.removeButton(ACTION.PRINT.id);
-		}	
+		}
 
 		if(this.DELIVERY_TOOLBAR) {
 			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
@@ -140,13 +147,12 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		serialNumber.value = this.packaging.item.serialNumber;
 		serialNumber.disabled = true;
 		table.addCell(serialNumber);
-
 	}
 
 	buildPackageComposition(parent){
 		let card = createCard(this.COMPOSITION_CARD, MSG.COMPOSITION, parent);
 
-		let div = this.createElement(TAG.DIV);
+		let div = this.createDiv();
 		card.setContent(div);
 
 		let table = new AonBasicTable();
@@ -166,7 +172,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			td.style.paddingRight = '10px';
 
 			let span2 = this.createSpan();
-			span2.innerHTML = c.quantity;
+			span2.innerHTML = this.getFormat(this.getItemFromDelivery(c.compositionItem) ,c.quantity);
 			span2.style.fontWeight = 'bold';
 			let td2 = table.addCell(span2)
 			td2.style.paddingBottom = '10px';
@@ -182,9 +188,67 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		});
 	}
 
-	subtractDialog(composition) {
-		this.getApplication().development();
+	getFormat(item, quantity) {
+		let stockUnitTag = item.stockUnitTag.id;
+		let packFormatTag = item.packFormatTag.id;
+		let packUnitsTag = item.packUnitsTag.id;
+		let packUnits = item.packUnits;
+		let packMeasurementTag = item.packMeasurementTag.id;
+		let packMeasurement = item.packMeasurement;
+		
+		let formatQuantity = quantity;
+		if(stockUnitTag === packMeasurementTag) {
+			formatQuantity = quantity / packMeasurement;
+			formatQuantity = formatQuantity / packUnits;	
+		} else if(stockUnitTag === packUnitsTag) {
+			formatQuantity = quantity / packUnits;	
+		}
+		return round(formatQuantity);
 	}
+
+	getItemFromDelivery(item) {
+		let detail = this.deliveryDetails.filter(f => f.item.id === item)[0];
+		return detail.item;
+	}
+
+	subtractDialog(composition) {
+		let table = new AonBasicTable();
+		table.id = this.id + 'SubstractTable';
+
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ACCEPT);
+		d.setContent(table);
+
+		table.addRow();
+		let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
+		table.addCell(product);
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+
+		// let addButton = new AonIconButton();
+		// addButton.id = this.id + 'AddButton';
+		// addButton.title = MSG.ADD;
+		// addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		// addButton.addEventListener(EVENT.CLICK, () => {
+		// 	this.packaging = {};
+
+		// 	while(table.rows >= 1) {
+		// 		table.removeRow(table.rows);
+		// 	}
+		// 	this.buildSubstractDestinyNew(table);
+		// });
+		// table.addCell(addButton);
+
+		d.addAcceptAction(() => {
+			subtractDeliveryPackagingComposition({
+				delivery: this.delivery,
+				composition,
+				destiny: product.value
+			}).then(() => this.aonDelivery());
+		});
+		d.open();
+	}	
 	
 	buildTag(){
 
@@ -203,13 +267,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	print() {
 		let json = {
+			delivery: this.delivery,
 			container: this.packaging.item.id,
 			domain_id: LS.getDomainId(),
 			domain_name: LS.getDomainName(),
 			login: LS.getDomainLogin()
 		};
 
-		let fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		let fileUrl = '/ms/api/deliveryPackagingTag?json=' + btoa(JSON.stringify(json));
 		if(UA.isAndroidApp()) {
 			let file = {
 				url: fileUrl,
@@ -245,6 +310,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	setDelivery(delivery) {
 		this.delivery = delivery;
+	}
+
+	setDeliveryDetails(deliveryDetails) {
+		this.deliveryDetails = deliveryDetails;
 	}
 
 	setElaborationToolbar(toolbar) {

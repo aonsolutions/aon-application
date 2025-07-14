@@ -10,6 +10,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -92,14 +94,15 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		container.add(targetTable);
 		
 		newSchemaBox.clear();
-		int i = 0;
-		for (ConsoleSchema sch : ConsoleSchema.values()) {
-			newSchemaBox.addItem(sch.name(), sch.getSchema());
-			if (AonStringUtils.equals(sch.getSchema(), callback.getSchema())) {
-				newSchemaBox.setSelectedIndex(i);
-			}
-			i++;
-		}
+		MutableInt i = new MutableInt(0);
+		AonCollectionUtils.stream(ConsoleSchema.values())
+			.forEach( sch -> {
+				newSchemaBox.addItem(sch.name(), sch.getSchema());	
+				if (AonStringUtils.equals(sch.getSchema(), callback.getSchema())) {
+					newSchemaBox.setSelectedIndex(i.getValue());
+				}
+				i.increment();
+			});
 		newSchemaBox.addChangeHandler( e -> manageMustFlatten(callback));
 		
 		newDomainBox.setVisibleLength(40);

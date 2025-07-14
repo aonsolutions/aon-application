@@ -107,6 +107,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902024;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.ModelEmailUtils;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
@@ -129,6 +130,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902024Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -179,7 +181,7 @@ public class ModelAdmonUtils {
 	private static final String ERROR_TEMPLATE_BODY = "<li>{0}</li>";
 	private static final String ERROR_TEMPLATE_AFTER = "</ul>";
 	private static final String ERROR_TEMPLATE_END = "</body></html>";
-
+	
 	private ModelAdmonUtils() {
 		
 	}
@@ -289,7 +291,7 @@ public class ModelAdmonUtils {
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
 		if(AonStringUtils.isBlank(params.getPass())) {
-			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+			params.setPass(AonCertificateUtils.getCertificatePassword(attach.getDescription()));
 		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -298,6 +300,7 @@ public class ModelAdmonUtils {
    		kmf.init(keyStore, params.getPass().toCharArray());
    		return kmf.getKeyManagers();
 	}
+	
     
 	public static synchronized  void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
 		try {
@@ -1569,7 +1572,7 @@ public class ModelAdmonUtils {
 	//	SINVL Si se desea no realizar el proceso de validación y obtener directamente el documento de la declaración correspondiente (sin validar) en
 	//			formato PDF, se deberá enviar otra variable llamada "SINVL" sin	necesidad de informar ningún valor. Para que el proceso de impresión
 	//			sea coherente, el fichero debe estar bien formado, ya que no se aplica validación sobre su contenido.			
-	public static void serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
+	public static byte[] serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
 		
 		try {
 			System.out.println("SerValiDos: " + model.getModel() + " " + model.getYear() + " " + model.getPeriod());
@@ -1609,7 +1612,10 @@ public class ModelAdmonUtils {
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient );				 
+				if (resp == null)
+					return null;
+				else 
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient );				 
 			} else {
 				String ct = ModelAdmonUtils.getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
@@ -1620,34 +1626,60 @@ public class ModelAdmonUtils {
 						// Respuesta correcta, devuelve JSON que contiene el PDF de la declaración en base64
 						JSONArray jsonPdf = jsonRespuesta.optJSONArray("pdf");						
 						if (jsonPdf != null && jsonPdf.length() > 0) {
-							giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
+							if (resp == null)
+								return Base64.getDecoder().decode(jsonPdf.getString(0));
+							else
+								giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
 						} else {
-							ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
+							if (resp == null)
+								return null;
+							else 
+								ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
 						}
 					} else if (jsonRespuesta.has("errores")) {
-						// Respuesta con errores, obtenemos los mensajes de error
-						JSONArray jsonErrores = jsonRespuesta.optJSONArray("errores");
-						if (jsonErrores != null) {
-							for (int i = 0; i < jsonErrores.length(); i++ ) {
-								aeatResponse.addError(jsonErrores.getString(i));
-							}
+						if (resp == null) {
+							return null;
 						}
-						manageWrongResponse(resp, aeatResponse, aeatParams);
+						else { 
+							// Respuesta con errores, obtenemos los mensajes de error
+							JSONArray jsonErrores = jsonRespuesta.optJSONArray("errores");
+							if (jsonErrores != null) {
+								for (int i = 0; i < jsonErrores.length(); i++ ) {
+									aeatResponse.addError(jsonErrores.getString(i));
+								}
+							}
+							manageWrongResponse(resp, aeatResponse, aeatParams);
+						}
 					} else {
-						ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
+						if (resp == null)
+							return null;
+						else 
+							ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
 					}					
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+					if (resp == null)
+						return null;
+					else 
 						ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);					  
-				} else {					 					
+				} else {
+					if (resp == null)
+						return null;
+					else 
 						ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 				}
 			}
 		} catch (InterruptedException e) {
-			// Restore interrupted state...
-			Thread.currentThread().interrupt();
+			if (resp == null)
+				return null;
+			else 
+				Thread.currentThread().interrupt(); // Restore interrupted state...
 		} catch (AonCoreException | IOException e) {
+			if (resp == null)
+				return null;
+			else 
 				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
+		return null;
 		
 	}
 
@@ -1741,6 +1773,23 @@ public class ModelAdmonUtils {
 			System.out.println(e);
 			giveExceptionBackCanarias(resp, "EXCEPTION ERROR: " + e.getMessage());
 		}
+		
+	}
+	
+	// ENVIO EMAIL NOTIFICACION A LA DIRECCION EMAIL DE LA EMPRESA (SE SUPONE QUE SE USA POR LA ASESORIA PARA ENVIAR NOTIFICACION A LA EMPRESA CLIENTE)
+	public static void sendEmail(Occam occam, IFiscalModel model) {
+		
+		// Obtener borrador PDF, si AEAT
+		byte[] data = null;
+		try {
+			if (model.isAEAT()) {
+				data = serValiDos(null, null, model);
+			}
+		} catch (Exception e) {
+			// Si no se puede obtener el PDF no se hace nada, pero se continua con el envío del email sin PDF
+		}
+		
+		ModelEmailUtils.sendEmailCliente(occam, model, data);
 		
 	}
 	

@@ -47,6 +47,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -153,6 +154,7 @@ public class InvoiceDAO {
 		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
 	}
 
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
@@ -779,6 +781,37 @@ public class InvoiceDAO {
 		}
 		generateMD5(ctx, invoice);
 		return invoice; 
+	}
+
+	private static void updateDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		if (invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				if (detail.isDeleted()) {
+					Integer id = detail.getId() * -1;
+					detail.setId(id);
+					deleteDetail(ctx,config,invoice,detail);
+				} else {
+					insertDetail(ctx, config, invoice, detail);
+				}
+			}
+		}
+	}
+
+	private static void deleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
+		beforeDeleteDetail(ctx, config, invoice, detail);
+		
+		InvoiceTaxDAO.delete(ctx, f -> f.getDomainProperty().eq(detail.getDomain()).and(f.getInvoiceDetailProperty().eq(detail.getId())));
+		
+		ctx.getDslContext().delete(INVOICE_DETAIL_ACCOUNT)
+		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+		.execute();
+		
+		// Se borran la linea
+		int count = ctx.getDslContext()
+			.delete(INVOICE_DETAIL)
+			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
+			.execute();
+		ctx.log().debug("DELETE INVOICE_DETAIL detalle de la factura: {0} ({1} filas)",detail.getId(),count);
 	}
 
 	public static void delete(AONContext ctx, Integer id) {

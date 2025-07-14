@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryAddInfoPropertiesDAO;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CertificateDAO {
@@ -232,11 +233,26 @@ public class CertificateDAO {
 		            String ocupation = null;
 		            String cif = null;
 		            String type = null;
-		           
+		            
 		            try {
 		            	enterprise = subjectDN.split("O=\"")[1].split("\"")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+		            
+		            try {
 		            	cif = subjectDN.split("=VATES-")[1].split(",")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+		           
+		            try {
 			            type = subjectDN.split("T=")[1].split(",")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+
+		            try {
 			            ocupation = subjectDN.split("OU=")[1].split(",")[0];
 		            } catch (Exception e) {
 		            	e.printStackTrace();
@@ -448,11 +464,12 @@ public class CertificateDAO {
 		String description = rattachRecord.get(RATTACH.DESCRIPTION);
 		
 		if(AonStringUtils.containsIgnoreCase(description, "HIDE")) {
-			try {
-				return description.split("HIDE\\(")[1].substring(0, description.split("HIDE\\(")[1].length() - 1);
-			} catch (Exception e) {
-				return "";
-			}
+//			try {
+//				return description.split("HIDE\\(")[1].substring(0, description.split("HIDE\\(")[1].length() - 1);
+				return AonCertificateUtils.getCertificatePassword(description);
+//			} catch (Exception e) {
+//				return "";
+//			}
 		} else
 			return ctx.getDslContext().select(RADDINFO.VALUE).from(RADDINFO)
 				.where(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + rattachRecord.get(RATTACH.ID)))

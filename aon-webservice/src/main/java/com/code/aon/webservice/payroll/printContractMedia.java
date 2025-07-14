@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +44,7 @@ public class printContractMedia extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "Print Salaried Staff - GET METHOD");
+		
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
@@ -64,12 +67,21 @@ public class printContractMedia extends HttpServlet{
 		json.put("year", year);
 		
 		JSONArray categoryArray = new JSONArray();
-		PAYROLL.getAgreementLevelCategoryStream(domain.getName(), domain.getId(), login, f ->
-		f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-		.forEach(r -> {
-			categoryArray.put(ToJSON.objectToJSON(r.getId(), r.getDescription()));
-		});
+		
+		Set<Integer> idsVistos = new HashSet<>();
+
+		PAYROLL.getAgreementLevelCategoryStream(domain.getName(), domain.getId(), login, domain.getParentId(), year)
+		    .filter(r -> idsVistos.add(r.getId()))
+		    .forEach(r -> {
+		    	String description = null == r.getLevel() ? "" : (r.getLevel().getDescription() + " / ");
+		    	description += r.getDescription();
+		        categoryArray.put(ToJSON.objectToJSON(r.getId(), description));
+		    });
+		
 		json.put("categories", categoryArray);
+		
+		System.out.println(json);
+		
 		File file = createPdf(json, resume, detail);
 		
         Utils.addCorsHeader(resp);

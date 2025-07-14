@@ -200,6 +200,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 		resetElements();
 		initializeComponents();
 		initDisplayElements();
+		cleanErrorStyles();
 	}
 
 	private void initializeCards() {
@@ -454,7 +455,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 		document.getSuggestBox().addSelectionHandler(e -> {
 			String documentValue = this.document.getValue().trim();
 			if (AonStringUtils.isNotBlank(documentValue)) {
-				onEmployeeDocumentSuggestionChange(documentValue);
+				onEmployeeDocumentSuggestionChange(documentValue); 
 				clearEmployee.setVisible(true);
 			}
 		});
@@ -464,7 +465,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 				String documentTypeValue = checkDocumentType(documentValue);
 				this.documentType.setValue(documentTypeValue);
 				
-				if (checkDocumentValidation(documentValue))
+				if (!checkDocumentValidation(documentValue))
 					this.document.addError();
 				else
 					this.document.removeError();
@@ -1483,20 +1484,20 @@ public abstract class EmployeeWidget extends FlowPanel {
 	public String checkDocumentType(String document) {
 
 		if (null == document)
-			return "( Pasaporte )";
+			return "Pasaporte";
 
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
 		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
 
 		if (dniPattern.test(document.toUpperCase()))
-			return "( DNI )";
+			return "DNI";
 		else if (niePattern.test(document.toUpperCase()))
-			return "( NIE )";
+			return "NIE";
 		else if (cifPattern.test(document.toUpperCase()))
-			return "( CIF) ";
+			return "CIF";
 		else
-			return "( Pasaporte )";
+			return "Pasaporte";
 	}
 
 	public boolean checkDocumentValidation(String document) {

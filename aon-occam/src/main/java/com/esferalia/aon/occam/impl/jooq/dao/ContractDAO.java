@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -38,11 +39,13 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.Table;
@@ -67,6 +70,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertie
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractExtendedDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ContractDAO {
 	
@@ -190,8 +194,36 @@ public class ContractDAO {
 	
 	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, AgreementLevelCategoryFilter filter){
 		ctx.checkRead();
-		return AGREEMENT_LEVEL_CATEGORY_PROPERTIES.build(ctx.getDslContext().select()
-			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
+		return ctx.getDslContext().select()
+				.from(AGREEMENT_LEVEL_CATEGORY)
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL_CATEGORY_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.map(new AgreementLevelCategoryFiller());
+	}
+	
+	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, Integer domainId, Integer parentDomain, Integer year){
+		ctx.checkRead();
+		
+		Date startDate = AonDateUtils.getYearFirstDay(year);
+		Date endDate = AonDateUtils.getYearLastDay(year);
+		
+		Result<Record> select = ctx.getDslContext().select()
+			.from(AGREEMENT_LEVEL_CATEGORY)
+			.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+			.join(CONTRACT).on(
+					CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL)
+					.and(CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate)))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(startDate))))
+					.and(CONTRACT.DOMAIN.eq(domainId))
+			)
+			.and(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(domainId).or(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(parentDomain)))
+			.fetch();
+		
+		return select
+			.stream()
+			.map(new AgreementLevelCategoryFiller());
 	}
 	
 	public static void delete(AONContext ctx, Integer ...contractIds){

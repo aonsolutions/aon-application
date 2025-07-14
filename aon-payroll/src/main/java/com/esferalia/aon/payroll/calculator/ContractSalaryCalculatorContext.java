@@ -19,6 +19,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContex
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
@@ -177,6 +178,11 @@ public class ContractSalaryCalculatorContext extends
 	public SSRegimeType getSSRegime() {
 		return ctx.getSSRegime();
 	}
+	
+	@Override
+    public CCCType getCCCType() {
+		return ctx.getCCCType();
+    }
 
 	@Override
 	public String getCategory() {

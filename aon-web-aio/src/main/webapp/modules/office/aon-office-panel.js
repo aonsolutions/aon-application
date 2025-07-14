@@ -165,10 +165,13 @@ export class AonOfficePanel extends AonElement {
 		options.push(customer);
 
 		let taskHolder = OfficeOptions.AON_TASK_HOLDER;
+		/*
 		taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST, undefined, {
 			...this.getFilterTaskHolders(),
 			page: 1,
 		});
+		*/
+		taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
 		options.push(taskHolder);
 
 		let workgroups = OfficeOptions.AON_WORKGROUP_LIST
@@ -743,7 +746,10 @@ export class AonOfficePanel extends AonElement {
 					aonView = new AonTaskHolder();
 					break;
 				case officeViews.AON_TASK_HOLDER_LIST:
-					aonView = new AonTaskHolderList(this);
+					//aonView = new AonTaskHolderList(this);
+					this.clearToolbar();
+					//application.closeSidenav();
+					GWT.iLoad(GWT.TASK_HOLDER_MODULE, this.getApplication().CONTENT);
 					break;
 				case officeViews.AON_WORKGROUP_LIST:
 					aonView = new AonWorkgroup();

@@ -11,10 +11,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -27,6 +29,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
 public abstract class AonCertificationPopup extends AonCustomDialog {
+	
+	private static FiscalMSServiceAsync service;
+	static {
+		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+		service = new FiscalMSServiceAsyncDecorator(serviceRaw);
+	}
 	
 	public static class AonCertificationPopupParams implements Serializable {
 		
@@ -283,9 +291,10 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				l2.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
 				password.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
 				password.setValue(""); // Dejamos la contraseña en blanco para que se coja del certificado cuando se realice el envío o para que la introduzca de nuevo el usuario, si el certificado no tiene contraseña
+				getCertificateInfo(params, certificates.getSelectedValue());
 			}
 		});
-
+		
 		table.addRow()
 			.addCell(l2)
 			.addCell(password);
@@ -357,4 +366,35 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		rootPanel.add(table);
 		rootPanel.add(buttonsPanel);
 	}
+	
+	// Buscar datos del certificado, para poner por defecto el Nif y el Nombre
+	private void getCertificateInfo(AonCertificationPopupParams params, String selectedValue) {
+		
+		if (params.isShowDocument() && params.isShowName()) {
+			service.getCertificateInfo(getAPI().getAttachment().getDomainName(), getAPI().getAttachment().getDomainId(), getAPI().getAttachment().getUserName(), Integer.parseInt(selectedValue), new AsyncCallback<CertificateInfo>() {
+				
+				@Override
+				public void onSuccess(CertificateInfo info) {
+					if (AonStringUtils.isNotBlank(info.getCif())) {
+						document.setText(AonStringUtils.trimToEmpty(info.getCif()).toUpperCase());
+					    name.setText((AonStringUtils.trimToEmpty(info.getEnterprise())).toUpperCase());
+					} else if (AonStringUtils.isNotBlank(info.getDocument())) {
+						document.setText(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
+					    name.setText((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
+					} else {
+						document.setText("");
+						name.setText("");						
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					document.setText("");
+					name.setText("");
+				}
+			});		
+		}
+		
+	}
+	
 }

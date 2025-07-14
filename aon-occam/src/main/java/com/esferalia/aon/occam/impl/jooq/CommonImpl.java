@@ -471,6 +471,12 @@ public class CommonImpl implements ICommon {
 		 ctx.getDslContext().transaction(configuration -> 
 		 	DomainDAO.updateDomainOwner(ctx, domainName, domainId, owner));
 	}
+	
+	@Override
+	public void updateDomainScopeValue(AONContext ctx, String domainName, Integer domainId, Integer scope){
+		 ctx.getDslContext().transaction(configuration -> 
+		 	DomainDAO.updateDomainScopeValue(ctx, domainName, domainId, scope));
+	}
 
 	@Override
 	public GeoZone get(AONContext ctx, GeoZoneFilter filter) {

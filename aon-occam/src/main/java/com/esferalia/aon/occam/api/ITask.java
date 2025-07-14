@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -78,6 +79,8 @@ public interface ITask {
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options);
 	public List<Seller> getTaskHolderSellerStream(CloseableAONContext ctx, Integer id);
 	public void deleteTaskHolder(AONContext ctx, Integer taskHolder);
+	public List<TaskHolder> getTaskHolderList(AONContext ctx, TaskHolderParams params);
+	public Integer getTaskHoldersCount(AONContext ctx, TaskHolderParams params);
 	
 	/* usan TaskOldDAO cambiar a TaskHolderDAO */
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);

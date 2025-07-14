@@ -30,6 +30,8 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SUBTRACT_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
+	DELIVERY_GENERAL_CARD;
+	DELIVERY_DETAIL_CARD;
 	PACKAGING_PRODUCT;
 	PACKAGING_SOURCE_PRODUCT;
 	PACKAGING_SOURCE_QUANTITY;
@@ -68,6 +70,8 @@ export class AonMobileDelivery extends AonElement {
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
+		this.DELIVERY_GENERAL_CARD = this.id + 'GeneralCard';
+		this.DELIVERY_DETAIL_CARD = this.id + 'DetailCard';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -137,6 +141,11 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	buildDeliveryGeneral(parent) {
+		let card = createCard(this.DELIVERY_GENERAL_CARD, 'Datos Albarán', parent);
+
+		let div = this.createDiv(this.DELIVERY_GENERAL_CARD + 'Customer');
+		div.innerHTML = this.delivery.customer.name;
+		card.setContent(div);
 
 	}
 
@@ -171,11 +180,11 @@ export class AonMobileDelivery extends AonElement {
 		let packagingList = new AonMobileDeliveryPackagingList();
 		packagingList.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setDelivery(this.delivery.id);
+		packagingList.setDeliveryDetails(this.delivery.details);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
 	}
-
 
 	setDelivery(delivery) {
 		this.delivery = delivery;
@@ -283,6 +292,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	addPackaging() {
+		let pk = this.package;
 		this.getApplication().removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
@@ -310,7 +320,10 @@ export class AonMobileDelivery extends AonElement {
 		table2.id = this.id + 'Envasesss22';
 		packagingDiv.appendChild(table2);
 
-		this.buildProductPackaging(table, table2);
+		if(pk) {
+			this.buildExistingPackaging(table, table2, pk);
+		} else this.buildProductPackaging(table, table2);
+
 
 
 		let pendingCard = new AonCard();
@@ -549,7 +562,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 
-	buildExistingPackaging(table, table2) {
+	buildExistingPackaging(table, table2, pk) {
 		table.addRow();
 		let envaseSelect = createSelect(this.id + 'DialogEnvase', 'Envases');
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
@@ -601,6 +614,9 @@ export class AonMobileDelivery extends AonElement {
 				name: p.item.serialNumber
 			  }
 		}));
+		if(pk) {
+			envaseSelect.value = pk.item.serialNumber;
+		}
 
 		let td = table.addCell(envaseSelect);
 		td.style.width = '100%';
@@ -653,8 +669,6 @@ export class AonMobileDelivery extends AonElement {
 		});
 		table.addCell(addButton);
 	}
-
-
 
 	buildPendingTable(pendingTable) {
 		pendingTable.removeRows();
@@ -805,11 +819,10 @@ export class AonMobileDelivery extends AonElement {
 						composition
 					};
 					composition.forEach(c => {
-						// alert(JSON.stringify(c));
 						let table2 = this.getElement(this.id + 'Envasesss22');
 						table2.addRow();
 						let span = this.createSpan();
-						span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
+						span.innerHTML = detail.item.product.name + ' #' + c.composition.serialNumber;
 						table2.addCell(span);
 						let span2 = this.createSpan();
 						span2.innerHTML = this.getFormat(detail.item, c.quantity);
@@ -820,7 +833,6 @@ export class AonMobileDelivery extends AonElement {
 						this.packaging.content.push(contentObject);
 					} else this.packaging.content = [contentObject];
 		
-					// alert(JSON.stringify(this.packaging.content));
 					for(let j = 0; j < this.salesDetails.length; j++) {
 						if(this.salesDetails[j].id === detail.id) {
 							this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
@@ -862,9 +874,6 @@ export class AonMobileDelivery extends AonElement {
 			this.showError(error);
 		}
 	}
-
-
-
 }
 
 if(!window.customElements.get(TAG.AON_MOBILE_DELIVERY)){
