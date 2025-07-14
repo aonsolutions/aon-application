@@ -124,6 +124,17 @@ public class RegistryDAO {
 		public FilterDAO between(String min, String max) {
 			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(RMEDIA.VALUE.between(min,max))));
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter likeIgnoreCase(String t) {
+			return new FilterDAO(REGISTRY.ID.in(getSubSelect().and(FilterDAO.PropertyDAO.likeIgnoreCase(RMEDIA.VALUE,t))));
+		}
 	}
 
 	protected static class RegistryPropertiesDAO implements RegistryProperties {

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
@@ -65,6 +66,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.payroll.AgreementLevel;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -649,7 +651,15 @@ public class FillerDAO {
 					.setId(r.getValue(AGREEMENT_LEVEL_CATEGORY.ID))
 					.setDomain(r.getValue(AGREEMENT_LEVEL_CATEGORY.DOMAIN))
 					.setAgreementLevel(r.getValue(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
-					.setDescription(r.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+					.setDescription(r.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION))
+					.setLevel(null == r.getValue(AGREEMENT_LEVEL.ID) 
+						? null 
+						: new AgreementLevel()
+							.setId(r.getValue(AGREEMENT_LEVEL.ID))
+							.setDomain(r.getValue(AGREEMENT_LEVEL.DOMAIN))
+							.setAgreement(null == r.getValue(AGREEMENT_LEVEL.AGREEMENT) ? null : r.getValue(AGREEMENT_LEVEL.AGREEMENT))
+							.setDescription(null == r.getValue(AGREEMENT_LEVEL.DESCRIPTION) ? null : r.getValue(AGREEMENT_LEVEL.DESCRIPTION))
+					);
 		}
 	}
 	

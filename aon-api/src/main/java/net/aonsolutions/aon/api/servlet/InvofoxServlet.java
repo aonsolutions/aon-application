@@ -850,7 +850,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		}
 		if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
 			AonConfiguration config = AON.getConfiguration(ctx);
-			invoice.setActivity(config.getMainActivity());
+			if(config.getAllActivities() != null && config.getAllActivities().size() == 1)
+				invoice.setActivity(config.getMainActivity());
 		}
 		return invoice;
 	}
