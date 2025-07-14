@@ -348,3 +348,4 @@ public abstract class Mod131Declaration {
 	abstract IMod131KeyDAO[] getKeys();
 	abstract Stream<AccountingBreakdown> getAccountInfoInfo(AONContext ctx, Mod131 mod, IModelScript<Mod131Key> script, IMod131KeyDAO keyDAO);
 }
+
