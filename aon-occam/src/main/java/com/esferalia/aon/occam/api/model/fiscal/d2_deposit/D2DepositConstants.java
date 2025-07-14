@@ -173,6 +173,7 @@ public class D2DepositConstants {
 			D2DepositHeaderKey.ITR8231014  
 	};
 	
+	// FALTA - IV.b. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
 	public static D2DepositHeaderKey[] ITR_KEYS_4_B = new D2DepositHeaderKey[] {
 			D2DepositHeaderKey.ITR8233001,
 			D2DepositHeaderKey.ITR8233002,

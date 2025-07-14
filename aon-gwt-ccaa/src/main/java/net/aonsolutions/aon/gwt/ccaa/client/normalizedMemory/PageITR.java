@@ -653,17 +653,6 @@ public class PageITR extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		
-		// FALTA - ESTO NO SE SI SIRVE DE MUCHO, PORQUE LUEGO CUANDO SE CREAN LOS TEXTBOX NO PUEDES DECIRLE AL TEXTBOX QUE ANCHO QUIERES
-//		table.getColumnFormatter().setWidth(0, "70px");  // Documento TR
-//		table.getColumnFormatter().setWidth(1, "50px");  // Nivel
-//		table.getColumnFormatter().setWidth(2, "200px"); // Denominación social
-//		table.getColumnFormatter().setWidth(3, "70px"); // País expedicion documento
-//		table.getColumnFormatter().setWidth(4, "70px");  // Tipo documento
-//		table.getColumnFormatter().setWidth(5, "70px");  // Documento
-//		table.getColumnFormatter().setWidth(6, "70px");  // Nacionalidad
-//		table.getColumnFormatter().setWidth(7, "200px");  // Domicilio social
-//		table.getColumnFormatter().setWidth(8, "70px");  // Datos registrales / LEI
-		
         paintHeaderTable(table, "Documento del Titular Real", "Nivel en la cadena de control", "Denominaci\u00F3n social de la sociedad", "Pa\u00EDs documento", "Tipo documento", "Documento", "Nacionalidad", "Domicilio social", "Datos registrales o LEI");
 		
 		int row = table.getRowCount();
@@ -685,8 +674,7 @@ public class PageITR extends PageAbs {
 			paintIntegerKeyField(table, d2[1], row, 1); // Nivel en la cadena de control. Entero							
 			paintTextKeyField(table, d2[2], row, 2); // Denominación social de la sociedad. Texto 70		
 			paintListKeyField(table, d2[3], row, 3); // País de expedición del documento identificativo. Texto 2. Lista de países ISO 3166 Alpha-2
-			// FALTA - SOLO SE PERMITE 0, 2, 4 Y 6, PERO AHORA LA LISTA DESPLEGABLE COGE EL INDEX, HABRIA QUE CAMBIARLO PARA QUE COJA EL VALOR Y PONER SOLO LA LISTA DE LOS PERMITIDOS
-			paintDocumentTypeListKeyField(table, d2[4], row, 4); // El tipo de documento que identifica a la persona jurídica. Entero. 2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+			paintDocumentTypeListKeyField3ab(table, d2[4], row, 4); // El tipo de documento que identifica a la persona jurídica. Entero. 2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
 			paintTextKeyField(table, d2[5], row, 5); // Documento identificativo de la persona jurídica. Texto 20		
 			paintListKeyField(table, d2[6], row, 6); // Nacionalidad de la persona jurídica. Texto 2. Lista de países ISO 3166 Alpha-2	
 			paintTextKeyField(table, d2[7], row, 7); // Domicilio social de la persona jurídica. Texto 80		
@@ -700,12 +688,6 @@ public class PageITR extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		
-		// FALTA - ESTO NO SE SI SIRVE DE MUCHO, PORQUE LUEGO CUANDO SE CREAN LOS TEXTBOX NO PUEDES DECIRLE AL TEXTBOX QUE ANCHO QUIERES
-//		table.getColumnFormatter().setWidth(0, "70px");  // Documento TR
-//		table.getColumnFormatter().setWidth(5, "70px");  // Documento participante
-//		table.getColumnFormatter().setWidth(5, "70px");  // Documento participada
-//		table.getColumnFormatter().setWidth(5, "70px");  // Porcentaje participación directa
-	
         paintHeaderTable(table, "Documento del Titular Real", "Documento de quien tiene la participaci\u00f3n", "Documento sociedad participada", "% participaci\u00f3n directa");
 		
 		int row = table.getRowCount();
@@ -748,21 +730,11 @@ public class PageITR extends PageAbs {
 	}
 	
 	private void paintTextKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col){
-//		paintTextKeyField(tab, key, row, col, 0);
-//	}
-//	
-//	private void paintTextKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col, int maxLength){
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
 		
 		final TextBox text = new TextBox();
 		text.setStyleName(AON.AON_CSS.aonInputText());
-		
-		// FALTA - PRUEBA MAXLENGTH
-//		if (maxLength > 0) {
-//			text.setMaxLength(maxLength);
-//			text.setVisibleLength(maxLength);
-//		}		
 		
 		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
@@ -1007,41 +979,41 @@ public class PageITR extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 	
-//	private void paintDocumentTypeListKeyFieldNew(FlexTable tab, D2DepositHeaderKey key, int row, int col){
-//		FlowPanel panel = new FlowPanel();
-//		String codeId = key.getCode();
-//		
-//		final ListBox text = documentTypeListBox();
-//		codeAux = codeId;
-//		text.setTitle(codeId);
-//		text.addChangeHandler(new ChangeHandler() {
-//			String code = codeAux;
-//			@Override
-//			public void onChange(ChangeEvent event) {
-//				if (AonStringUtils.isEmpty(text.getSelectedItemText())) {
-//					text.setSelectedIndex(0);
-//				}
-//				onEdit(code, text.getSelectedValue());
-//			}
-//		});
-//		if (getMap().containsKey(key.getCode())){
-//			String d = getMap().get(key.getCode());
-//			for (int index=0; index< text.getItemCount(); index++) {
-//				if (AonStringUtils.equals(text.getValue(index), d)) {
-//					text.setSelectedIndex(index);
-//					break;
-//				}
-//			}
-//		} else text.setSelectedIndex(0);
-//		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-//		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-//		
-//		panel.add(text);
-//		
-//		tab.setWidget(row, col, panel);
-//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-//	}
+	private void paintDocumentTypeListKeyField3ab(FlexTable tab, D2DepositHeaderKey key, int row, int col){
+		FlowPanel panel = new FlowPanel();
+		String codeId = key.getCode();
+		
+		final ListBox text = documentTypeListBox3ab();
+		codeAux = codeId;
+		text.setTitle(codeId);
+		text.addChangeHandler(new ChangeHandler() {
+			String code = codeAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (AonStringUtils.isEmpty(text.getSelectedItemText())) {
+					text.setSelectedIndex(0);
+				}
+				onEdit(code, text.getSelectedValue());
+			}
+		});
+		if (getMap().containsKey(key.getCode())){
+			String d = getMap().get(key.getCode());
+			for (int index=0; index< text.getItemCount(); index++) {
+				if (AonStringUtils.equals(text.getValue(index), d)) {
+					text.setSelectedIndex(index);
+					break;
+				}
+			}
+		} else text.setSelectedIndex(0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		
+		panel.add(text);
+		
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
 	
 	private void documentTypeListBox(ListBox lb){
 		lb.addItem("", "0");
@@ -1053,20 +1025,14 @@ public class PageITR extends PageAbs {
 		lb.addItem("Otros", "6");
 	}
 	
-//	private ListBox documentTypeListBoxNew() {
-//		ListBox lb = new ListBox();
-//		lb.addItem("", "0");
-//		lb.addItem("DNI", "1");
-//		lb.addItem("NIF", "2");
-//		lb.addItem("NIE", "3");
-//		lb.addItem("TIN", "4");
-//		lb.addItem("Pasaporte", "5");
-//		lb.addItem("Otros", "6");
-//		
-//		// FALTA - PRUEBA - deshabilitar un item de la listbox
-////			lb.getElement().getElementsByTagName("option").getItem(i).setAttribute("disabled", "disabled");
-//		return lb;
-//	}
+	private ListBox documentTypeListBox3ab() {
+		ListBox lb = new ListBox();
+		lb.addItem("", "0");
+		lb.addItem("NIF", "2");
+		lb.addItem("TIN", "4");
+		lb.addItem("Otros", "6");
+		return lb;
+	}
 	
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);
