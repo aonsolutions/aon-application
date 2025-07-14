@@ -47,7 +47,7 @@ public class ConsoleModule extends MainEntryPoint {
 	public void onModuleLoad(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
-		getOptions().getParentWidget().add(new ConsoleDomainModule(options));
+		getOptions().getParentWidget().add(new ConsoleDomainPanel(options));
 	}
 
 	

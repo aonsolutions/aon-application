@@ -39,6 +39,7 @@ public interface IRequestParamsNames {
 	String COMMENTS = "comments";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
+	String CONSOLE_UTILITY = "consoleUtility";
 	String CONSOLIDATION = "consolidation";
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";

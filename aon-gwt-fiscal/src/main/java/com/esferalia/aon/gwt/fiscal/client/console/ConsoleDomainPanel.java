@@ -55,7 +55,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class ConsoleDomainModule extends AonLayoutPanel {
+public class ConsoleDomainPanel extends AonLayoutPanel {
 
 
 	private static final String AVISO = "AVISO";
@@ -68,8 +68,10 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private static final String DOMAIN_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainReportExcelPrint";
 	private static final String DOMAIN_INFO_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainInfoReportExcelPrint";
 	private static final String DOMAIN_ISOLATE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainIsolateServlet");
+	private static final String UTILITIES_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleUtilities");
 
-	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainModule.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainPanel.class.getName());
+	private static final String UTILITIES = "Utilidades";
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -84,7 +86,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private ConsoleDomainFilterPanel filterPanel;
 	private InlineLabel runningLabel = new InlineLabel("Ejecutando");
 	private AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	private AonToolbarButton extractButton = new AonToolbarButton("Duplicar",AON.CSS.aonIconCopy());
+	private AonToolbarButton utilitiesButton = new AonToolbarButton(UTILITIES,AON.CSS.aonIconWizard());
 	private FormPanel diskForm;
 	private Hidden domainParamsHidden;
 
@@ -101,39 +103,39 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	class ConsoleDomainTableCallbackImpl implements ConsoleDomainTableCallback {
 		@Override
 		public ConsoleModuleOptions getOptions() {
-			return ConsoleDomainModule.this.options;
+			return ConsoleDomainPanel.this.options;
 		}
 		@Override
 		public boolean isAdvancedMode() {
-			return ConsoleDomainModule.this.filterPanel.isAdvancedMode();
+			return ConsoleDomainPanel.this.filterPanel.isAdvancedMode();
 		}
 		@Override
 		public String getSchema() {
-			return ConsoleDomainModule.this.filterPanel.getSchema();			
+			return ConsoleDomainPanel.this.filterPanel.getSchema();			
 		}
-		@Override
-		public String[] getSchemas() {
-			return ConsoleDomainModule.this.filterPanel.getSchemas();			
-		}
+//		@Override
+//		public String[] getSchemas() {
+//			return ConsoleDomainPanel.this.filterPanel.getSchemas();			
+//		}
 		@Override
 		public int addCount() {
 			return ++count;
 		}
 		@Override
 		public boolean isRunning() {
-			return ConsoleDomainModule.this.isRunning();
+			return ConsoleDomainPanel.this.isRunning();
 		}
 		@Override
 		public void setRunning(boolean run) {
-			ConsoleDomainModule.this.setRunning(run);
+			ConsoleDomainPanel.this.setRunning(run);
 		}
 		@Override
 		public void showError(String message) {
-			ConsoleDomainModule.this.showErrorPanel(message);			
+			ConsoleDomainPanel.this.showErrorPanel(message);			
 		}
 		@Override
 		public void showInfo(String message) {
-			ConsoleDomainModule.this.showInfoPanel(message);			
+			ConsoleDomainPanel.this.showInfoPanel(message);			
 		}
 		
 		// -----------------------------------------------------------------------
@@ -483,10 +485,45 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			openFootPanelIfNeeded();
 			return tabWidget; 
 		}
+		
+		// -----------------------------------------------------------------------
+		// 												  		   [UTILITIES RUN]
+		// -----------------------------------------------------------------------
+		@Override
+		public void runUtility(ConsoleUtilities cu, AonConsoleProgress aonConsole) {
+			try {
+				setRunning(true);
+				hideErrorPanel();
+				XMLHttpRequest xhreq = XMLHttpRequest.create();
+				xhreq.open(FormPanel.METHOD_POST, UTILITIES_SERVLET);
+				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
+				xhreq.setOnReadyStateChange(  new ConsoleReadyStateChangeHandler( aonConsole, new AsyncCallback<Boolean>() {
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						setRunning(false);
+					}
+
+					@Override
+					public void onSuccess(Boolean result) {
+						setRunning(false);
+					}
+				}));
+				StringBuilder requestData = new StringBuilder();
+				DomainParams params = filterPanel.getParams(options);
+				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
+				requestData.append("&"+IRequestParamsNames.CONSOLE_UTILITY +"=" + cu.name());
+				
+				xhreq.send(requestData.toString());
+			} catch (Throwable e){
+				setRunning(false);
+				showError("No se pudo ejecutar la utilidad. " + e.getMessage());
+			}
+		}
 	}
 	
 
-	public ConsoleDomainModule(ConsoleModuleOptions options) {
+	public ConsoleDomainPanel(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
 		this.addNorth(getToolbarPanel(options), AonToolbar.HEIGTH);
@@ -595,10 +632,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		});
 		toolbar.add(deleteButton);
 		
-		extractButton.setEnabled(false);
-		extractButton.addClickHandler(e -> duplicateDomain());
-		toolbar.add(extractButton);
-		
+		utilitiesButton.addClickHandler(e -> utilities( new ConsoleDomainTableCallbackImpl() ));
+		toolbar.add(utilitiesButton);
+
 		runningLabel.setVisible(false);
 		runningLabel.setStyleName(AON.CSS.aonMarginLeft());
 		runningLabel.addStyleName(AON.CSS.aonColorWhite());
@@ -719,12 +755,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				checkedList.put(row.getId(), row);
 			}
 			deleteButton.setEnabled( !checkedList.isEmpty() );
-			extractButton.setEnabled( checkedList.size() == 1 );
 		}
-	}
-
-	private Object duplicateDomain() {
-		return null;
 	}
 
 	private class ConsoleReadyStateChangeHandler implements ReadyStateChangeHandler {
@@ -811,5 +842,13 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		schemasOffsets[ cs.ordinal() ] = schemasOffsets[ cs.ordinal() ] + increment;
 		return schemasOffsets[ cs.ordinal() ]; 
 	}
+	
+	private void utilities(ConsoleDomainTableCallback callback) {
+		ConsoleUtilitiesPanel panel = new ConsoleUtilitiesPanel(callback);
+		AonCloseTab closeTab = new AonCloseTab(UTILITIES, true);
+		mainTabLayout.add( panel, closeTab, UTILITIES);
+		mainTabLayout.selectTab(UTILITIES);
+	}
+
 }
 

@@ -22,7 +22,7 @@ public enum ConsoleSchema {
 	,DEMOS_SNS		("DEMOS_SNS","demos-aonsolutions-org","console-demos.aonsolutions.org","jgarcia")
 	
 	// -------------------------------------------
-	// BASES DE DATOS DE DESARROLLO EN MI MñAQUINA
+	// BASES DE DATOS DE DESARROLLO EN MI MAQUINA
 	// -------------------------------------------
 //	,EUK_AYUDAT		("EK_AYUDAT","ayudat-aonsolutions-net","console-ayudat.ecastellano.euk","jgarcia")
 //	,EUK_GRUPO		("EK_GRUPO"	,"grupo-ayudat-aonsolutions-net","console-grupoayudat.ecastellano.euk","jgarcia")
@@ -69,10 +69,7 @@ public enum ConsoleSchema {
 		;
 	}
 	
-	public static void main(String[] args) {
-		ConsoleSchema.safeValueOf( "ayudat-aonsolutions-net")	
-			.ifPresentOrElse(cs -> System.out.println( cs )
-					,() -> System.out.println( "NADA" ) );
-			
+	public static ConsoleSchema[] valuess() {
+		return values();
 	}
 }
