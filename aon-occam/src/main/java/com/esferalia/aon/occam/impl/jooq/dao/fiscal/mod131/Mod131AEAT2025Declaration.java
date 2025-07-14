@@ -1725,7 +1725,7 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 		mod.putAmount(Mod131Key.C03, getInitialC03(ctx,mod));
 	}
 	private static Stream<AccountingBreakdown> getInitialC03Stream(AONContext ctx, Mod131 mod) {
-		// FALTA - SI HAY DEFINIDA ALGUNA ACTIVIDAD NO SE CALCULA NADA
+		// Si hay definida alguna actividad, en el apartado I, no se calcula nada
 		if (mod.getEffectiveActivities().size() == 0) {
 			return getIncomesStream(ctx, mod)		
 				.filter( br -> (!br.isFarmer() && br.isObjectiveRegime()));
@@ -1734,14 +1734,9 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 		}
 	}
 	private static double getInitialC03(AONContext ctx, Mod131 mod) {
-		// FALTA - SI HAY DEFINIDA ALGUNA ACTIVIDAD NO SE CALCULA NADA
-//		if (mod.getEffectiveActivities().size() == 0) {
-			return getInitialC03Stream(ctx, mod)
-				.mapToDouble(br -> br.getCreditBalance())
-				.sum();
-//		} else {
-//			return 0.0;
-//		}
+		return getInitialC03Stream(ctx, mod)
+			.mapToDouble(br -> br.getCreditBalance())
+			.sum();
 	}
 	private static String getC03ComputeKeyInfo(AONContext ctx, Mod131 mod) {
 		return DeclarationInfoUtil.getExplain( ctx, mod, Mod131Key.C03, new ExplainRowManager() {
@@ -1753,17 +1748,12 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 				 		+ "70, 71, 72, 73, 75, 76, 77, 78 y 79, cuando la actividad económica vinculada "
 				 		+ "al asiento contable sea \"Régimen de Estimación objetiva\" y no sea "
 				 		+ " agrícola, ganadera y/o forestal.").withStyle( textCenter )
-					// FALTA - PONER TAMBIEN QUE NO ESTE DEFINIDA EN EL APARTADO I
 					,div(					 
 						span( "Saldo acreedor desde el" )
-						// FALTA - ESTO CREO QUE ESTA MAL ES LA FECHA INICIAL DEL PERIODO NO DEL AÑO
-//						,span( DeclarationInfoUtil.FMT.format(AonDateUtils.getYearFirstDay(mod.getYear()))).withStyle( marginLeft1em+bold)
 						,span( DeclarationInfoUtil.FMT.format(FiscalUtils.getPeriodStart(mod))).withStyle( marginLeft1em+bold)
 						,span("al").withStyle( marginLeft1em)
 						,span( DeclarationInfoUtil.FMT.format(FiscalUtils.getPeriodEnd(mod))).withStyle( marginLeft1em+bold)
 						,span(":").withStyle( marginLeft1em)
-						// FALTA - ESTA MAL LA CASILLA
-						//,span(DEC2.format( mod.getAmount( Mod130Key.C03 ) )).withStyle( marginLeft1em+bold)
 						,span(DEC2.format( mod.getAmount( Mod131Key.C03 ) )).withStyle( marginLeft1em+bold)
 					).withStyle( textCenter+marginTop )
 				).render();
@@ -1798,8 +1788,6 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 						,span("al").withStyle( marginLeft1em)
 						,span( DeclarationInfoUtil.FMT.format(FiscalUtils.getPeriodEnd(mod)) ).withStyle( marginLeft1em+bold)
 						,span(":").withStyle( marginLeft1em)
-						// FALTA - ESTA MAL LA CASILLA
-//						,span(DEC2.format( mod.getAmount( Mod130Key.C05 ) )).withStyle( marginLeft1em+bold)
 						,span(DEC2.format( mod.getAmount( Mod131Key.C05 ) )).withStyle( marginLeft1em+bold)
 					).withStyle( textCenter+marginTop )
 				).render();

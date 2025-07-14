@@ -300,8 +300,8 @@ public abstract class Mod131Declaration {
 					prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
 					prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
 					idx++;
-				}
-				// FALTA - INICIALIZAR SIEMPRE CON LOS DIAS DEL TRIMESTRE, AUNQUE EN EL TRIMESTRE ANTERIOR SE MODIFICARA MANUALMENTE
+				}				
+				// INICIALIZAR SIEMPRE CON LOS DIAS DEL TRIMESTRE, AUNQUE EN EL TRIMESTRE ANTERIOR SE MODIFICARA MANUALMENTE
 //				long prevDias = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(prev131),FiscalUtils.getPeriodEnd(prev131)) + 1;
 //				if (prevAct.getDia() == prevDias) {
 					long newDias = 	AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod131),FiscalUtils.getPeriodEnd(mod131)) + 1;
