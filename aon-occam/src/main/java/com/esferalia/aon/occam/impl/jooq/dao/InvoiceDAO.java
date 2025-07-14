@@ -783,37 +783,6 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 
-	private static void updateDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
-		if (invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
-			for (InvoiceDetail detail : invoice.getDetails()) {
-				if (detail.isDeleted()) {
-					Integer id = detail.getId() * -1;
-					detail.setId(id);
-					deleteDetail(ctx,config,invoice,detail);
-				} else {
-					insertDetail(ctx, config, invoice, detail);
-				}
-			}
-		}
-	}
-
-	private static void deleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
-		beforeDeleteDetail(ctx, config, invoice, detail);
-		
-		InvoiceTaxDAO.delete(ctx, f -> f.getDomainProperty().eq(detail.getDomain()).and(f.getInvoiceDetailProperty().eq(detail.getId())));
-		
-		ctx.getDslContext().delete(INVOICE_DETAIL_ACCOUNT)
-		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
-		.execute();
-		
-		// Se borran la linea
-		int count = ctx.getDslContext()
-			.delete(INVOICE_DETAIL)
-			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
-			.execute();
-		ctx.log().debug("DELETE INVOICE_DETAIL detalle de la factura: {0} ({1} filas)",detail.getId(),count);
-	}
-
 	public static void delete(AONContext ctx, Integer id) {
 		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
 	}
@@ -1617,14 +1586,15 @@ public class InvoiceDAO {
 	private static void deleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		beforeDeleteDetail(ctx, config, invoice, detail);
 		
-		int count = ctx.getDslContext()
-			.delete(INVOICE_TAX)
-			.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
-			.execute();
-		ctx.log().debug("DELETE INVOICE_TAX detalles de la factura: {0} ({1} filas)",detail.getId(),count);
+		InvoiceTaxDAO.delete(ctx, f -> f.getDomainProperty().eq(detail.getDomain()).and(f.getInvoiceDetailProperty().eq(detail.getId())));
+		
+		// REVISAR | SI NO ES NI ACCOUNT NI TEDI, NO SE BORRA EN beforeDeleteDetail. Hubo un caso en el que no dejaba borrar la factura. 
+		ctx.getDslContext().delete(INVOICE_DETAIL_ACCOUNT)
+		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+		.execute();
 		
 		// Se borran la linea
-		count = ctx.getDslContext()
+		int count = ctx.getDslContext()
 			.delete(INVOICE_DETAIL)
 			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
 			.execute();
