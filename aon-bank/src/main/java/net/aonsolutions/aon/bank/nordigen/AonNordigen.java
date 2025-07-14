@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
@@ -789,4 +790,58 @@ public class AonNordigen  {
         return RegistryBankDAO.getByRequisitionIsNotNull(ctx);
       }
     }
+    
+    public static String getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank) {
+    	  NordigenRequisition requisition = getRequisition(token, requisitionId);
+    	  NordigenAccountMetadata metadata = getNordigenAccountMetadata(token, requisition, rbank);
+    	  return metadata != null ? metadata.getId() : null;
+    }
+    
+    
+    public static List<BankStatement> checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank) {
+        List<BankStatement> movimientosIncorrectos = new ArrayList<>();
+
+        for (String accountId : accountIds) {
+            try {
+                NordigenAccountMetadata metadata = AonNordigen.getAccountMetadata(token, accountId);
+
+                NordigenBankAccount account = new NordigenBankAccount();
+                NordigenRequisition req = new NordigenRequisition();
+                req.setId(rbank.getRequisition());
+                req.setInstitutionId(metadata.getInstitutionId());
+                account.setMetadata(metadata);
+                account.setRequisition(req);
+                account.setLinked(true);
+                account.setInstitution(getInstitution(token, req.getInstitutionId()));
+                account.setIban(rbank.getBankAccount().getIban());
+
+                CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
+                        CompletableFuture.supplyAsync(() -> AonNordigen.getNotInsertedTransactions(token, account));
+
+                LinkedList<NordigenBankStatement> sospechosas = transactionsFuture.get(); 
+
+                try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+                    for (NordigenBankStatement st : sospechosas) {
+                        List<BankStatement> matches = BankStatementDAO.getIncorrectMovements(ctx, rbank.getId(), st.getOperationDate(),
+                        		st.getAmount(), st.getOwnConcept() != null ? st.getOwnConcept() : st.getDescription());
+
+                        if (!matches.isEmpty()) {
+                            movimientosIncorrectos.addAll(matches);
+                            System.out.println(" movimiento insertado incorrectament " +
+                                    "	rbank Id: " + rbank.getId() +
+                                    " | IBAN : " + metadata.getIban() +
+                                    " | Fecha: " + st.getOperationDate() +
+                                    " | Cantidad: " + st.getAmount() +
+                                    " | Concepto: " + st.getOwnConcept());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return movimientosIncorrectos;
+    }
+
 }

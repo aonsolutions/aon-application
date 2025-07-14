@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
@@ -2260,13 +2261,13 @@ public class NordigenModule extends MainEntryPoint {
           NORDIGEN_SERVICE.getByRequisitionIsNotNull(opt.getOccam(), new AsyncCallback<List<RegistryBank>>() {
             @Override
             public void onFailure(Throwable caught) {
-              throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+              throw new UnsupportedOperationException("Not supported yet.");
             }
 
             @Override
             public void onSuccess(List<RegistryBank> banks) {
-              int totalBanks = banks.size();
-              AtomicInteger completedRequests = new AtomicInteger(0);
+//              int totalBanks = banks.size();
+//              AtomicInteger completedRequests = new AtomicInteger(0);
 
               for(int i = 0; i < banks.size(); i++){
                 // Bancos activos, que tienen requisition
@@ -2279,44 +2280,67 @@ public class NordigenModule extends MainEntryPoint {
                 NORDIGEN_SERVICE.getRequisition(opt.getConfiguration().getToken(), bank.getRequisition(), new AsyncCallback<NordigenRequisition>() {
                   @Override
                   public void onFailure(Throwable caught) {
-                      LOGGER.info("hola");
                       LOGGER.info(caught.getMessage());
                   }
 
                   @Override
                   public void onSuccess(NordigenRequisition result) {
-                    List<String> IBANS_id = result.getAccounts();
-                    LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    List<String> accIds = result.getAccounts();
+                    String requisitionId = bank.getRequisition();
 
-                    LOGGER.info(() -> "ID de BANCK: " + bank.getId().toString());
-                    LOGGER.info(() -> "ID de BANCK requisition: " + bank.getRequisition());
-                    LOGGER.info(() -> "Cantidad de IBANS: " + IBANS_id.size() );
-                    ////////////////////////////////////////////////////////////////////////////////////////
-                    // Soli si trae mas de un iban /////////////////////////////////////////////////////////
-                    ////////////////////////////////////////////////////////////////////////////////////////
-                      if(IBANS_id.size() > 1 ){
-                        // Comprobar que no es el IBAN guardado (tiene el cliente como almacenado)-
-                        // Traer los movimientos de los IBAN (que no corresponde con los que tiene el cliente almacenado)
-                          // - movimientos 30 o 60 dias - si no es el banco que deja solo 30
-                          // - 
-                          // Traer los ultimos movimientos que estan almacenados, comprobar si algun valor y concpto coindicen, ir almacenando estos ID
-                            // - no esten punteados 
-                            // - no esten contabilizados
-                        //
-                        // creo que a este punto es mejor hacer otra funcion que se llame 
-                        //
-                        LOGGER.info("+++++++++++++++++++++++++++++++++++++++");
-                        // Recorremos IBANS
-                        for (String iban : IBANS_id) {
-                            logToConsoleString(iban);
+                    if (accIds == null || accIds.isEmpty()) {
+                      LOGGER.warning("No hay cuentas asociadas al requisition: " + requisitionId);
+                      return;
+                    }
+
+                    if (accIds.size() == 1) {
+                      LOGGER.info("Solo hay una cuenta asociada");
+                      return;
+                    }
+
+                    NORDIGEN_SERVICE.getAccountIdByIban(opt.getConfiguration().getToken(), requisitionId, bank, new AsyncCallback<String>() {
+                        @Override
+                        public void onFailure(Throwable caught) {
+                          LOGGER.warning("Error al identificar el account : " + caught.getMessage());
+                        }
+                        @Override
+                        public void onSuccess(String accIdCorrecto) {
+                          for (String accId : accIds) {
+                            if (!accId.equals(accIdCorrecto)) {
+                            	List<String> cuentasSospechosas = accIds.stream()
+                            			  .filter(id -> !id.equals(accIdCorrecto))
+                            			  .collect(Collectors.toList());
+
+                            			if (!cuentasSospechosas.isEmpty()) {
+                            			  NORDIGEN_SERVICE.checkIncorrectMovements(
+                            			    opt.getOccam(),
+                            			    opt.getConfiguration().getToken(),
+                            			    cuentasSospechosas,
+                            			    bank,
+                            			    new AsyncCallback<List<BankStatement>>() {
+                            			      @Override
+                            			      public void onFailure(Throwable caught) {
+                            			        LOGGER.warning("Error al comprobar movimientos incorrectos: " + caught.getMessage());
+                            			      }
+                            			      @Override
+                            			      public void onSuccess(List<BankStatement> incorrectos) {
+                            			        if (incorrectos.isEmpty()) {
+                            			          LOGGER.info("No se han encontrado movimientos incorrecto para :" + bank.getId());
+                            			        } else {
+                            			          LOGGER.warning("Se han encontrado movimientos incorrectos para : " + bank.getId() + ": " + incorrectos.size());
+                            			          for (BankStatement bs : incorrectos) {
+                            			            LOGGER.warning(" - Movimiento: " + bs.getOperationDate() + " | " + bs.getAmount() + " | " + bs.getOwnConcept());
+                            			          }
+                            			        }
+                            			      }
+                            			    }
+                            			  );
+                            			 }
+                            }
+                          }
                         }
                       }
-                    LOGGER.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                    // Incrementar contador de respuestas completadas
-                    if (completedRequests.incrementAndGet() == totalBanks) {
-                        // Realiza alguna acción cuando todas las respuestas estén listas
-                        logToConsoleString("Todas las respuestas se han procesado.");
-                    }
+                    );
                   }
                 });
               }

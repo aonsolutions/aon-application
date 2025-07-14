@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 
 import java.util.Date;
+import java.util.List;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Field;
@@ -10,6 +11,7 @@ import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 
 public class BankStatementDAO {
@@ -46,5 +48,17 @@ public class BankStatementDAO {
 			.orElse(0);
 		return ++lotNumber;  
 	}
+	
+	
+	public static List<BankStatement> getIncorrectMovements(AONContext ctx , Integer rbankId , Date operationDate ,  double amount, String concept) {
+		return ctx.getDslContext().select().from(BANK_STATEMENT).where(BANK_STATEMENT.RBANK.eq(rbankId))
+		.and(BANK_STATEMENT.OPERATION_DATE.eq(new java.sql.Date(operationDate.getTime())))
+		.and(BANK_STATEMENT.AMOUNT.eq(amount))
+		.and(BANK_STATEMENT.STATUS.eq((byte) 0))
+		.and( BANK_STATEMENT.OWN_CONCEPT.likeIgnoreCase("%" + concept + "%")
+		.or(BANK_STATEMENT.DESCRIPTION.likeIgnoreCase("%" + concept + "%")))
+		.fetchInto(BankStatement.class);
+	}
+	
 	
 }

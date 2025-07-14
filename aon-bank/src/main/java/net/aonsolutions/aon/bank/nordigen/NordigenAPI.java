@@ -178,6 +178,7 @@ class NordigenAPI {
 		if (checkStatus(resp.statusCode())) {
 			String errStr = resp.body();					
 			if (errStr != null && errStr.charAt(0) == '{') {
+				System.out.println(errStr);
 				throw new NordigenException(NordigenResponseJSON.from(errStr));
 			}
 		}

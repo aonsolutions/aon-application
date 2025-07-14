@@ -323,12 +323,11 @@ public class RegistryBankDAO {
       Una vez usado ELIMINAR
     */
     public static List<RegistryBank> getByRequisitionIsNotNull(AONContext ctx) {
-        ctx.log().debug("List of BANK - REQUISITION");
-
         // Realizamos la consulta y la ejecutamos para obtener los IDs
         return ctx.getDslContext()
           .select(RBANK.ID)
           .select(RBANK.REQUISITION)
+          .select(RBANK.BANK_ACCOUNT)
           .from(RBANK)
           .where(RBANK.REQUISITION.isNotNull())
          .fetchInto(RegistryBank.class);

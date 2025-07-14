@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -33,5 +34,6 @@ public interface NordigenServiceAsync {
 	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback);
 	void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>> callback);
     void getByRequisitionIsNotNull(Occam occam, AsyncCallback<List<RegistryBank>> callback);
-
+    void getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank, AsyncCallback<String> callback);
+    void checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank, AsyncCallback<List<BankStatement>> callback);
 }
