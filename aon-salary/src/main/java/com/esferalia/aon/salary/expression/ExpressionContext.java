@@ -39,6 +39,17 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 public class ExpressionContext {
 
+	public static class RetryExpressionException extends MacroException {
+
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		@Override
+		public String doMacro(String expr) {
+			return expr;
+		}
+		
+	}
+
 	public static class UnknownUndefVarException extends UndefinedVariablesException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -986,8 +997,9 @@ public class ExpressionContext {
 				T value = MVEL.eval(fixedScript, bindings, toType);
 				values.add(new TimedResult<T>(value, bindings.getPeriod(), bindings.getRead()));
 			} catch (PropertyAccessException e) {
-				throwExpressionException(e);
-				throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
+				tryDeferredException(e, parentBindings, script);
+				// throwExpressionException(e);
+				// throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
 			} catch (UnresolveablePropertyException e) {
 				throw new UndefinedVariablesException(e.getName());
 			} catch (ExpressionExceptionWrapper e) {
@@ -1003,25 +1015,21 @@ public class ExpressionContext {
 		read(values);
 		return values;
 	}
-
-	private <T> T eval(ASTNode astNode, PeriodMap bindings, Class<T> toType) throws ExpressionException {
+	private void tryDeferredException(PropertyAccessException child, PeriodMap bindings, String script) throws ExpressionException {
 		try {
-			CachingMapVariableResolverFactory factory = new CachingMapVariableResolverFactory(bindings);
-			return DataConversion.convert(astNode.getReducedValueAccelerated(null, null, factory), toType);
-		} catch (PropertyAccessException e) {
-			throwExpressionException(e);
-			throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
-		} catch (UnresolveablePropertyException e) {
-			throw new UndefinedVariablesException(e.getName());
-		} catch (ExpressionExceptionWrapper e) {
-			throw e.getExpressionException();
-		} catch (CompileException e) {
-			throw e;
-		} catch ( RuntimeException e ) {
-			throw e;
+			throwExpressionException(child);
+		}catch ( DeferredExpressionException e ) {
+			if ( e.getExpression().getExpression().equals(script) )
+				throw new UndefinedVariablesException(script, e.getExpression().getName());
+			e.eval(this, Object.class);
+			throw new RetryExpressionException();
+		}catch ( DeferredException e ) {
+			e.eval(this, Object.class);
+			throw new RetryExpressionException();
 		}
-
+		throw new UndefinedVariablesException(getUndefinedProperty(child, bindings));
 	}
+
 
 	private <T> List<ITimedResult<T>> evalUnknowUndefVariable(String script, Collection<String> inputs, Date start,
 			Date end, Class<T> toType) throws ExpressionException {
