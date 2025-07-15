@@ -17,11 +17,9 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 public class BankStatementDAO {
 	
 	private BankStatementDAO() {
-		
 	}
 
 	private static final Field<java.sql.Date> MAX_DATE = DSL.max(BANK_STATEMENT.OPERATION_DATE);
-	
 
 	public static Date getLastMovementDate(AONContext ctx, Integer rbankId) {
 		Record1<java.sql.Date> bankStatement = ctx.getDslContext()
@@ -46,19 +44,20 @@ public class BankStatementDAO {
 			.mapToInt( rec -> rec.getValue(lot))
 			.findFirst()
 			.orElse(0);
-		return ++lotNumber;  
+		return ++lotNumber;
 	}
-	
-	
-	public static List<BankStatement> getIncorrectMovements(AONContext ctx , Integer rbankId , Date operationDate ,  double amount, String concept) {
-		return ctx.getDslContext().select().from(BANK_STATEMENT).where(BANK_STATEMENT.RBANK.eq(rbankId))
-		.and(BANK_STATEMENT.OPERATION_DATE.eq(new java.sql.Date(operationDate.getTime())))
-		.and(BANK_STATEMENT.AMOUNT.eq(amount))
-		.and(BANK_STATEMENT.STATUS.eq((byte) 0))
-		.and( BANK_STATEMENT.OWN_CONCEPT.likeIgnoreCase("%" + concept + "%")
-		.or(BANK_STATEMENT.DESCRIPTION.likeIgnoreCase("%" + concept + "%")))
-		.fetchInto(BankStatement.class);
+
+	public static List<BankStatement> getIncorrectMovements(AONContext ctx , Integer rbankId) {
+      return ctx.getDslContext().select(
+    		  BANK_STATEMENT.ID, BANK_STATEMENT.OPERATION_DATE, BANK_STATEMENT.REFERENCE2, 
+    		  BANK_STATEMENT.DESCRIPTION, BANK_STATEMENT.PAYMENT, BANK_STATEMENT.AMOUNT
+    	  )
+          .from(BANK_STATEMENT)
+          .where(BANK_STATEMENT.RBANK.eq(rbankId))
+          .and(BANK_STATEMENT.STATUS.eq((byte) 0))
+          .and(BANK_STATEMENT.REFERENCE1.eq("NORDIGEN"))
+          .and(DSL.condition("operation_date >= CURDATE() - INTERVAL 60 DAY"))
+          .fetchInto(BankStatement.class);
 	}
-	
-	
+
 }

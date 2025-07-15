@@ -130,7 +130,7 @@ public class NordigenModule extends MainEntryPoint {
 		;
 		this.onModuleLoad( options );
         
-        this.repairBank( );
+        this.repairBank( options );
 	}
 	
 	public void onModuleLoad( final NordigenModuleOptions opt ) {
@@ -2242,22 +2242,28 @@ public class NordigenModule extends MainEntryPoint {
       import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
       import org.jooq.Record1;
   */
-    public static void repairBank() {
-      RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-      NordigenModuleOptions opt = new NordigenModuleOptions()
-        .setParentWidget(root)
-        .setDomainName(getCurrentDomainName())
-        .setDomain(getCurrentDomain())
-        .setUser(getCurrentUser())
-      ;
+    public static void repairBank( final NordigenModuleOptions opt ) {
+      // Montado configuracion necesaria para llamar a Nordigen
+      if ( opt == null ){
+      /*
+        RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+        NordigenModuleOptions opt = new NordigenModuleOptions()
+          .setParentWidget(root)
+          .setDomainName(getCurrentDomainName())
+          .setDomain(getCurrentDomain())
+          .setUser(getCurrentUser())
+        ;
+      */
+      }
+      // LLamando para traernos esa configuracion
       NORDIGEN_SERVICE.getConfiguration(opt.getOccam(),new AsyncCallback<NordigenConfiguration>() {
         @Override
         public void onSuccess(NordigenConfiguration result) {
           opt.setConfiguration(result);
-          LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-          LOGGER.info( opt.toString() );
-          LOGGER.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-          
+          logToConsoleString(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+          logToConsoleString( opt.toString() );
+          logToConsoleString("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+          // Nos traemos los bancos que tienen requisition
           NORDIGEN_SERVICE.getByRequisitionIsNotNull(opt.getOccam(), new AsyncCallback<List<RegistryBank>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -2267,94 +2273,93 @@ public class NordigenModule extends MainEntryPoint {
             @Override
             public void onSuccess(List<RegistryBank> banks) {
 //              int totalBanks = banks.size();
-//              AtomicInteger completedRequests = new AtomicInteger(0);
-
-              for(int i = 0; i < banks.size(); i++){
-                // Bancos activos, que tienen requisition
-                RegistryBank bank = banks.get(i);
-                logToConsoleString("--------------------------------------");
-                logToConsole( bank.getId() );
-                logToConsoleString( bank.getRequisition() );
-                logToConsoleString("******************************************");
-                // Comprobar si tiene mas de un IBAN asociado al requisition
-                NORDIGEN_SERVICE.getRequisition(opt.getConfiguration().getToken(), bank.getRequisition(), new AsyncCallback<NordigenRequisition>() {
-                  @Override
-                  public void onFailure(Throwable caught) {
-                      LOGGER.info(caught.getMessage());
-                  }
-
-                  @Override
-                  public void onSuccess(NordigenRequisition result) {
-                    List<String> accIds = result.getAccounts();
-                    String requisitionId = bank.getRequisition();
-
-                    if (accIds == null || accIds.isEmpty()) {
-                      LOGGER.warning("No hay cuentas asociadas al requisition: " + requisitionId);
-                      return;
+//              AtomicInteger completedRequests = new AtomicInteger(0);                
+                for(int i = 0; i < banks.size(); i++){
+                  // Bancos activos, que tienen requisition
+                  RegistryBank bank = banks.get(i);
+                
+                  // Comprobar si tiene mas de un IBAN asociado al requisition
+                  NORDIGEN_SERVICE.getRequisition(opt.getConfiguration().getToken(), bank.getRequisition(), new AsyncCallback<NordigenRequisition>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        LOGGER.warning(caught.getMessage());
                     }
 
-                    if (accIds.size() == 1) {
-                      LOGGER.info("Solo hay una cuenta asociada");
-                      return;
-                    }
+                    @Override
+                    public void onSuccess(NordigenRequisition result) {
+                      List<String> accIds = result.getAccounts();
+                      String requisitionId = bank.getRequisition();
 
-                    NORDIGEN_SERVICE.getAccountIdByIban(opt.getConfiguration().getToken(), requisitionId, bank, new AsyncCallback<String>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                          LOGGER.warning("Error al identificar el account : " + caught.getMessage());
-                        }
-                        @Override
-                        public void onSuccess(String accIdCorrecto) {
-                          for (String accId : accIds) {
-                            if (!accId.equals(accIdCorrecto)) {
-                            	List<String> cuentasSospechosas = accIds.stream()
-                            			  .filter(id -> !id.equals(accIdCorrecto))
-                            			  .collect(Collectors.toList());
+                      logToConsoleString("--------------------------------------");
+                      logToConsole( bank.getId() );
+                      logToConsoleString( bank.getRequisition() );
+                      for (String accId: accIds){
+                        logToConsoleString(accId);
+                      }
+                      logToConsoleString("******************************************");
+                      
+                      if (accIds == null || accIds.isEmpty()) {
+                        LOGGER.warning("No hay cuentas asociadas al requisition: " + requisitionId);
+                        return;
+                      }
 
-                            			if (!cuentasSospechosas.isEmpty()) {
-                            			  NORDIGEN_SERVICE.checkIncorrectMovements(
-                            			    opt.getOccam(),
-                            			    opt.getConfiguration().getToken(),
-                            			    cuentasSospechosas,
-                            			    bank,
-                            			    new AsyncCallback<List<BankStatement>>() {
-                            			      @Override
-                            			      public void onFailure(Throwable caught) {
-                            			        LOGGER.warning("Error al comprobar movimientos incorrectos: " + caught.getMessage());
-                            			      }
-                            			      @Override
-                            			      public void onSuccess(List<BankStatement> incorrectos) {
-                            			        if (incorrectos.isEmpty()) {
-                            			          LOGGER.info("No se han encontrado movimientos incorrecto para :" + bank.getId());
-                            			        } else {
-                            			          LOGGER.warning("Se han encontrado movimientos incorrectos para : " + bank.getId() + ": " + incorrectos.size());
-                            			          for (BankStatement bs : incorrectos) {
-                            			            LOGGER.warning(" - Movimiento: " + bs.getOperationDate() + " | " + bs.getAmount() + " | " + bs.getOwnConcept());
-                            			          }
-                            			        }
-                            			      }
-                            			    }
-                            			  );
-                            			 }
-                            }
+                      if (accIds.size() == 1) {
+                        logToConsoleString(" -- Solo hay una cuenta asociada -- ");
+                        return;
+                      }
+
+                      NORDIGEN_SERVICE.getAccountIdByIban(opt.getConfiguration().getToken(), requisitionId, bank, new AsyncCallback<String>() {
+                          @Override
+                          public void onFailure(Throwable caught) {
+                            LOGGER.warning("Error al identificar el account : " + caught.getMessage());
+                          }
+                          @Override
+                          public void onSuccess(String accIdCorrecto) {
+                            // Recorremos todos los accounts, siempre que sea distito del IBAN asociado al BANCO
+                            List<String> cuentasSospechosas = accIds.stream()
+                                .filter(id -> !id.equals(accIdCorrecto))
+                                .collect(Collectors.toList());
+                            // Pasamos las cuentas sospechosas - que no esta asociado el IBAN al requisition de rBank
+                            NORDIGEN_SERVICE.checkIncorrectMovements(
+                              opt.getOccam(),
+                              opt.getConfiguration().getToken(),
+                              cuentasSospechosas,
+                              bank,
+                              new AsyncCallback<List<BankStatement>>() {
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                  LOGGER.warning("Error al comprobar movimientos incorrectos: " + caught.getMessage());
+                                }
+                                @Override
+                                public void onSuccess(List<BankStatement> incorrectos) {
+                                  if (incorrectos.isEmpty()) {
+                                    logToConsoleString("No se han encontrado movimientos incorrecto para : " + bank.getId());
+                                  } else {
+                                    LOGGER.warning("Se han encontrado movimientos incorrectos para : " + bank.getId() + ": " + incorrectos.size());
+                                    for (BankStatement bs : incorrectos) {
+                                      logToConsoleString("ID en BD : " + bs.getId());
+                                      LOGGER.warning(" - Movimiento: " + bs.getOperationDate() + " | " + bs.getAmount() + " | " + bs.getOwnConcept());
+                                    }
+                                  }
+                                }
+                              }
+                            );
+                            
                           }
                         }
-                      }
-                    );
-                  }
-                });
-              }
+                      );
+                    }
+                  });
+                }
             }
-
-            private native void logToConsole(int bankId) /*-{
-              console.log(bankId);
-            }-*/;
-            private native void logToConsoleString(String bankId) /*-{
-              console.log(bankId);
-            }-*/;
           });
         }
-
+        private native void logToConsole(int bankId) /*-{
+          console.log(bankId);
+        }-*/;
+        private native void logToConsoleString(String bankId) /*-{
+          console.log(bankId);
+        }-*/;
         @Override
         public void onFailure(Throwable caught) {
           LOGGER.info( " -- FALLO SIN TOKEN -- " );

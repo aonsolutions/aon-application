@@ -28,7 +28,6 @@ import java.util.List;
 public class RegistryBankDAO {
 
 	private RegistryBankDAO() {
-		
 	}
 	
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
@@ -325,9 +324,7 @@ public class RegistryBankDAO {
     public static List<RegistryBank> getByRequisitionIsNotNull(AONContext ctx) {
         // Realizamos la consulta y la ejecutamos para obtener los IDs
         return ctx.getDslContext()
-          .select(RBANK.ID)
-          .select(RBANK.REQUISITION)
-          .select(RBANK.BANK_ACCOUNT)
+          .select(RBANK.ID, RBANK.DOMAIN, RBANK.REQUISITION, RBANK.BANK_ACCOUNT)
           .from(RBANK)
           .where(RBANK.REQUISITION.isNotNull())
          .fetchInto(RegistryBank.class);
