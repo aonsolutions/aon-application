@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
@@ -18,7 +19,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -56,7 +56,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private AonPasswordTextBox advancedModePassword;
 	private InlineLabel advancedModeLabel;
 	private boolean advancedMode;
-	private String[] schemas;
+	// private String[] schemas;
 	private String select;
 	
 	private FlowPanel advancedButtonsPanel;
@@ -74,37 +74,43 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		searchingPanel.add(searchingLabel);
 		setWidget(searchingPanel);
 		
+		schemaBox.clear();
+		schemaBox.addItem(AonStringUtils.EMPTY);
+		AonCollectionUtils.stream(ConsoleSchema.values())
+			.forEach( s -> schemaBox.addItem(s.name(), s.getSchema()));
 		
-		ConsoleModule.CONSOLE_SERVICE.getSchemas(opt.getOccam(), new AsyncCallback<String[]>() {
-			
-			@Override
-			public void onSuccess(String[] schemas) {
-				ConsoleDomainFilterPanel.this.schemas = schemas;
-				schemaBox.clear();
-				schemaBox.addItem(AonStringUtils.EMPTY);
-				for (String sch : schemas) {
-					schemaBox.addItem(sch);
-				}
-				schemaBox.addChangeHandler(e -> {
-					fire(opt);
-					if ( AonStringUtils.isBlank(schemaBox.getSelectedValue())) {
-						parentBox.setEnabled(false);	
-					} else {
-						parentBox.setEnabled(true);
-						parentBox.setSchema( schemaBox.getSelectedValue() );
-					}
-				});
-				paintFields( opt );
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				FlowPanel searchingPanel = new FlowPanel();
-				InlineLabel searchingLabel = new InlineLabel("No se pueden leer los escquemas de la BD");
-				searchingPanel.add(searchingLabel);
-				setWidget(searchingPanel);
-			}
-		});
+		paintFields( opt );
+
+//		ConsoleModule.CONSOLE_SERVICE.getSchemas(opt.getOccam(), new AsyncCallback<String[]>() {
+//			
+//			@Override
+//			public void onSuccess(String[] schemas) {
+//				ConsoleDomainFilterPanel.this.schemas = schemas;
+//				schemaBox.clear();
+//				schemaBox.addItem(AonStringUtils.EMPTY);
+//				for (String sch : schemas) {
+//					schemaBox.addItem(sch);
+//				}
+//				schemaBox.addChangeHandler(e -> {
+//					fire(opt);
+//					if ( AonStringUtils.isBlank(schemaBox.getSelectedValue())) {
+//						parentBox.setEnabled(false);	
+//					} else {
+//						parentBox.setEnabled(true);
+//						parentBox.setSchema( schemaBox.getSelectedValue() );
+//					}
+//				});
+//				paintFields( opt );
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				FlowPanel searchingPanel = new FlowPanel();
+//				InlineLabel searchingLabel = new InlineLabel("No se pueden leer los escquemas de la BD");
+//				searchingPanel.add(searchingLabel);
+//				setWidget(searchingPanel);
+//			}
+//		});
 		
 		
 		
@@ -115,9 +121,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	}
 
 
-	public String[]getSchemas() {
-		return this.schemas;
-	}
+//	public String[]getSchemas() {
+//		return this.schemas;
+//	}
 
 	private void defineFields(ConsoleModuleOptions opt) {
 		schemaBox = new ListBox();
@@ -380,7 +386,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 
 	@Override
 	public void setAccessKey(char key) {
-		schemaBox.setAccessKey(key);;
+		schemaBox.setAccessKey(key);
 	}
 
 	@Override

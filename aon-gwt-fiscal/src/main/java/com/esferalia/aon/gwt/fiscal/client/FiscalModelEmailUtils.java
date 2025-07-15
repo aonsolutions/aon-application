@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 
-public class FiscalModelUtilsBis {
+public class FiscalModelEmailUtils {
 	
 	public static final FiscalMSServiceAsync FISCAL_MS_SERVICE;
 	
@@ -16,10 +16,11 @@ public class FiscalModelUtilsBis {
 		FISCAL_MS_SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
 	}
 	
-	private FiscalModelUtilsBis() {
+	private FiscalModelEmailUtils() {
 		
 	}
 	
+	// Envio del email a la empresa cliente por parte del asesor (cuando se finaliza el modelo indicando Envio a Cliente)
 	public static void sendEmail(IFiscalModelCallback<?, ?> modelCallback, IFiscalModel model) {
 		
 		final PopupPanel popup = new PopupPanel(false, true);

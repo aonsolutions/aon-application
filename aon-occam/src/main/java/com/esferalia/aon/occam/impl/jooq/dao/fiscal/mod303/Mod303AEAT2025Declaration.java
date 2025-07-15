@@ -2881,7 +2881,6 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		
 	}
 	
-	
 	private static boolean hasSimplifiedRegime(Mod303 mod303) {
 		return AonNumberUtils.notEquals(mod303.getAmount(Mod303Key.CT_A02), 2);
 	}
@@ -2891,12 +2890,14 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			Date curStart = FiscalUtils.getPeriodStart(current);
 			Date curEnd = FiscalUtils.getPeriodEnd(current);
 			int curMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(curStart, curEnd)) + 1;
-			Date prevStart = FiscalUtils.getPeriodStart(previous);
-			Date prevEnd = FiscalUtils.getPeriodEnd(previous);
-			int prevMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(prevStart, prevEnd)) + 1;
-			if (AonNumberUtils.equals(prevMaxDias, previous.getAmount(daysKey))) {
+			
+			// INICIALIZAR SIEMPRE CON LOS DIAS DEL TRIMESTRE, AUNQUE EN EL TRIMESTRE ANTERIOR SE MODIFICARA MANUALMENTE
+//			Date prevStart = FiscalUtils.getPeriodStart(previous);
+//			Date prevEnd = FiscalUtils.getPeriodEnd(previous);
+//			int prevMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(prevStart, prevEnd)) + 1;
+//			if (AonNumberUtils.equals(prevMaxDias, previous.getAmount(daysKey))) {
 				current.ensureDetail(daysKey).setAmount(curMaxDias);			
-			}
+//			}
 		}
 	}
 

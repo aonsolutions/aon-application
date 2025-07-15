@@ -3,12 +3,12 @@ package com.esferalia.aon.gwt.fiscal.server.console;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.servlet.http.HttpServlet;
-
 import org.jooq.Schema;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
+
+import jakarta.servlet.http.HttpServlet;
 
 public abstract class ConsoleAbstractServlet extends HttpServlet {
 

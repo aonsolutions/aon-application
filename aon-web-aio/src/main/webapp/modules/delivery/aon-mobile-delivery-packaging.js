@@ -147,13 +147,12 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		serialNumber.value = this.packaging.item.serialNumber;
 		serialNumber.disabled = true;
 		table.addCell(serialNumber);
-
 	}
 
 	buildPackageComposition(parent){
 		let card = createCard(this.COMPOSITION_CARD, MSG.COMPOSITION, parent);
 
-		let div = this.createElement(TAG.DIV);
+		let div = this.createDiv();
 		card.setContent(div);
 
 		let table = new AonBasicTable();

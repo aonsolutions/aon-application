@@ -109,6 +109,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.ModelEmailUtils;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
@@ -1500,9 +1501,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 					model.getFinance().setBankAlias(bankAlias);
 					model.getFinance().setBic(bankBIC);
 				}
-				if(reject) {
+				String user = model.getModificationUser(); // Ultimo usuario que modificó el modelo, es a quien se le enviará el email de notificación
+				if (reject) {
 					// Marcar el modelo como Rechazado por el Cliente
 					markModelAsCustomerRejected(ctx, model, reasonReject);
+					// Enviar email de notificación al asesor
+					sendEmail(ctx, model, user, reasonReject);
 				} else {
 					// Finalizar el modelo
 					model.setNrc(nrc);
@@ -1514,9 +1518,14 @@ public class FiscalServlet extends AonApiHttpServlet{
 					}
 					markModelAsFinished(ctx, model);
 					
-					// Presentación automática del modelo 
-					if (presModelAuto == 1) {
-						send(aeatParams, model);
+					try {
+						// Presentación automática del modelo 
+						if (presModelAuto == 1) {
+							send(aeatParams, model);
+						} 
+					} finally {
+						// Enviar email de notificación al asesor (se envía aunque el metodo send genere algún error, pues aún así se habrá finalizado el modelo)
+						sendEmail(ctx, model, user, null);						
 					}
 				}					
 				return new JSONObject().put("status", "OK"); 
@@ -1525,6 +1534,20 @@ public class FiscalServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	private void sendEmail(CloseableAONContext ctx, FiscalModel model, String user, String reasonReject) {
+
+		try {
+			ModelEmailUtils.sendEmailAsesor(new Occam()
+											.setDomainName(ctx.getDomainName())
+											.setDomain(ctx.getDomainId())
+											.setUser(ctx.getUser()), 
+											model, user, reasonReject);
+		} catch (Exception e) {
+			// No hacer nada, pase lo que pase, que no afecte al resto de procesos			
+		}
+		
+	}
+
 	private FiscalModel getModel(CloseableAONContext ctx, FiscalModelType modelType, Integer id) {
 		
 		FiscalModel model;
@@ -1584,7 +1607,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			case M303: Mod303DAO.markAsCustomerRejected(ctx, (Mod303) model, reasonReject); break;
 			default: throw new AonApiException("Unexpected value FiscalModelType: " + model.getModel());
 		}
-	
+		
 	}
 
 	// METODOS PARA LA PRESENTACION DEL MODELO DESDE EL PORTAL

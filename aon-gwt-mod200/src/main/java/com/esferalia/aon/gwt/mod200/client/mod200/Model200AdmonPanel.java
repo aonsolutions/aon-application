@@ -21,6 +21,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
@@ -346,6 +347,10 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
+		
+		// Controlar que name no lleve el caracter &
+		if (AonStringUtils.contains(params.getName(), "&"))
+			params.setName(URL.encodeQueryString(params.getName()));
 
 		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server.console;
 
 
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleService;
