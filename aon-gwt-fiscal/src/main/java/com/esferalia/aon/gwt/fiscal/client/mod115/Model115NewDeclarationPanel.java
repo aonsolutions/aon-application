@@ -101,8 +101,10 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 			}
 		});
 		
-		includeInvoices.addClickHandler(event -> 
-			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue()));
+		includeInvoices.addClickHandler(event -> {
+			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue());
+			model.setGenerateFromYearStart(includeInvoices.getValue());
+		});
 
 	}
 	
@@ -224,7 +226,7 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 			.addCell(new Label(),AON.CSS.aonTableLabel())
 			.addCell(includeInvoices,AON.CSS.aonWidth400());
 	}
-
+	
 	private FlowPanel getButtonsPanel(Mod115 model, final Model115Callback callback) {
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.CSS.aonPadding());

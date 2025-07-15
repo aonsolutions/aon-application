@@ -259,8 +259,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		ctrlMonthListBox.setSelectedMonth(prevMonth);
 
 		typeListBox.setSelectedIndex(0);//L00
-		setVisibleToFromCtrlMonth(false);
-		
+		setVisibleTo(true);
+		setVisibleFrom(true);
+		setVisibleCtrl(false);
+		setVisibleMonth(false);
 		
 		
 		acceptButton.setEnabled(enableAccept());
@@ -296,15 +298,19 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		.visit( new TypeVisitor<Void>() {
 			@Override
 			public Void visitL00() {
-				setVisibleMonth(true);
-				setVisibleToFromCtrlMonth(false);
+				setVisibleTo(true);
+				setVisibleFrom(true);
+				setVisibleCtrl(false);
+				setVisibleMonth(false);
 				onMonthChanged(null);
 				return null;
 			}
 
 			@Override
 			public Void visitL03() {
-				setVisibleToFromCtrlMonth(true);
+				setVisibleTo(true);
+				setVisibleFrom(true);
+				setVisibleCtrl(true);
 				setVisibleMonth(false);
 				onMonthsChanged(null);
 				return null;
@@ -312,27 +318,19 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 			@Override
 			public Void visitL13() {
-				setVisibleMonth(true);
-				setVisibleToFromCtrlMonth(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
 
 			@Override
 			public Void visitL90() {
-				setVisibleMonth(true);
-				setVisibleToFromCtrlMonth(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
 
 			@Override
 			public Void visitL91() {
-				setVisibleMonth(true);
-				setVisibleToFromCtrlMonth(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
+
 		});
 		
 	}
@@ -351,67 +349,11 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	}
 
 	public Date getToMonth(){
-		return 
-		Type.valueOf(typeListBox.getSelectedValue())
-		.visit(new TypeVisitor<Date>() {
-
-			@Override
-			public Date visitL00() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL03() {
-				return toMonthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL13() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL90() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL91() {
-				return monthListBox.getSelected();
-			}
-		});
+		return toMonthListBox.getSelected();
 	}
 	
 	public Date getFromMonth(){
-		return 
-		Type.valueOf(typeListBox.getSelectedValue())
-		.visit(new TypeVisitor<Date>() {
-
-			@Override
-			public Date visitL00() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL03() {
-				return fromMonthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL13() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL90() {
-				return monthListBox.getSelected();
-			}
-
-			@Override
-			public Date visitL91() {
-				return monthListBox.getSelected();
-			}
-		});
+		return fromMonthListBox.getSelected();
 	}
 
 	public Date getCtrlMonth(){
@@ -421,7 +363,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 			@Override
 			public Date visitL00() {
-				return monthListBox.getSelected();
+				return toMonthListBox.getSelected();
 			}
 
 			@Override
@@ -431,17 +373,17 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 			@Override
 			public Date visitL13() {
-				return monthListBox.getSelected();
+				return toMonthListBox.getSelected();
 			}
 
 			@Override
 			public Date visitL90() {
-				return monthListBox.getSelected();
+				return toMonthListBox.getSelected();
 			}
 
 			@Override
 			public Date visitL91() {
-				return monthListBox.getSelected();
+				return toMonthListBox.getSelected();
 			}
 		});
 	}
@@ -505,11 +447,18 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setVisible(visible, monthTR);
 	}
 
-	protected void setVisibleToFromCtrlMonth(boolean visible){
+	protected void setVisibleTo(boolean visible){
 		setVisible(visible, toMonthTR);
+	}
+
+	protected void setVisibleFrom(boolean visible){
 		setVisible(visible, fromMonthTR);
+	}
+
+	protected void setVisibleCtrl(boolean visible){
 		setVisible(visible, ctrlMonthTR);
 	}
+
 
 	protected void setVisiblePreviousBases(boolean visible){
 		setVisible(visible, previousBasesTR);

@@ -137,6 +137,8 @@ public abstract class Mod123Declaration {
 			mod123.addMessage("Se encontraron " + currentInvoices.size() + " facturas no declaradas en el periodo de la declaraci\u00F3n.");
 		}
 		mod123.setMustIncludeInvoicesOnGeneration(existsPreviousInvoices || existsCurrentInvoices);
+		mod123.setGenerateFromYearStartAvailable(!mod123.isFirstPeriod() && existsPreviousInvoices);		
+		mod123.setGenerateFromYearStart(existsPreviousInvoices);
 	}
 
 	private void initializeComplementaryAndReplacement(AONContext ctx, Mod123 mod123) {

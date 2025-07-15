@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -309,6 +310,10 @@ public abstract class QuoteCalculator {
 		}
 	}
 
+	/**
+	 * Quote calculator for general contracts, which calculates the bases
+	 * according to the contract payments and the salary start and end dates.
+	 */
 	public static class GeneralQuote extends QuoteCalculator {
 		
 
@@ -775,6 +780,9 @@ public abstract class QuoteCalculator {
 		    return getRawName(var.getName());
 		}
 		
+		protected ExpressionContext getContext() {
+			return context;
+		}
 
 	}
 
@@ -828,6 +836,21 @@ public abstract class QuoteCalculator {
 			
 			return Collections.emptyList();
 		}
+	}
+	
+	public static class AllQuote extends GeneralQuote {
+
+		public AllQuote(ExpressionContext context, Date salaryStart,
+				Date salaryEnd) {
+			super(context, salaryStart, salaryEnd);
+		}
+		
+		@Override
+		protected List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end)
+				throws UndefinedVariablesException, ExpressionException {
+			return super.getContext().eval("_P", start, end, Double.class);			
+		}
+
 	}
 
 	public static class CompositeGeneralQuote extends QuoteCalculator {
@@ -1020,12 +1043,25 @@ public abstract class QuoteCalculator {
 							SSRegimeType ssRegimeType) {
 						return NonQuote.getInstance();
 					}
+					
+					@Override
+					public QuoteCalculator visitArtistRegime(SSRegimeType ssRegimeType) {
+						return new AllQuote(expressionContext, startDate, endDate);
+					}
 				});
 
 		if (quoteCalculator != null) {
 			return quoteCalculator;
 		}
-
+		
+		if ( ctx.getCCCType() == CCCType.ARTIST) {
+			quoteCalculator = new AllQuote(expressionContext, startDate, endDate);
+		}
+		
+		if (quoteCalculator != null) {
+			return quoteCalculator;
+		}
+		
 		SalaryType salaryType = ctx.getSalaryType();
 
 		quoteCalculator = salaryType

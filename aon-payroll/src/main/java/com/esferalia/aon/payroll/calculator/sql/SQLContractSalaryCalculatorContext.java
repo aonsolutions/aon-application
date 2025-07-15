@@ -1569,6 +1569,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	@Override
+	public CCCType getCCCType() {
+		int ordinal = getInt(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.TYPE);
+		return CCCType.values()[ordinal];
+	}
+
+	@Override
 	public String getCategory() {
 		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
 //		if (AonStringUtils.isNotBlank(category))
@@ -1833,12 +1839,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Object cna2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, EnterpriseActivityColumns.CNAE2009);
 		return cna2009 != null ? (Integer) cna2009 : null;
 	}
-
-	public CCCType getCCCType() {
-		int ordinal = getInt(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.TYPE);
-		return CCCType.values()[ordinal];
-	}
-
 	public boolean next() throws SQLException, ExpressionException {
 		return next((ctx) -> {
 		});

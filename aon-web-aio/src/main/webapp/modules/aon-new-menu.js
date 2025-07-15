@@ -274,6 +274,7 @@ export class AonNewMenu extends AonElement {
 					break;
             }
         }
+
 		let detail = {
 			app,
 			sidenav

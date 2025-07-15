@@ -30,6 +30,10 @@
   }
 }
 
+.aonToolbar {
+  background-color: white;
+}
+
 #divCompanyLogoForm {
     display:none;
 }

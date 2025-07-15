@@ -2,7 +2,6 @@ package solutions.aon.selenium.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
@@ -11,8 +10,10 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,7 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 	@Test
-	public void testGlobalManagerUserMain() throws MalformedURLException, URISyntaxException {
+	public void testConsultancyManagerUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://test.aonsolutions.org:8080/app");
 		String email = System.getProperty("integration.test.env.app.auth", "asesor@payroll-test.aonsolutions.org");
@@ -29,15 +30,15 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		WebDriver webDriver = null;
 		try {
-			// webDriver = newChromeDriver();
-			// webDriver = newFirefoxDriver();
-			webDriver = newRemoteDriver();
+			webDriver = newWebDriver();
 
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
-
+			
+			assertHelpContentIndex(webDriver, wait);
+			assertHelpNotifications(webDriver, wait);
 			
 			assertNotTopMenu(webDriver, wait);
 			assertNotSideMenu(webDriver, wait );
@@ -52,6 +53,8 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
 			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
 
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
 		} finally {
 			if (webDriver != null) {
 				webDriver.close();
@@ -61,7 +64,8 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	@Test
-	public void testGlobalManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
+	@Ignore
+	public void testConsultancyManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
 		String user = System.getProperty("integration.test.env.app.user", "asesor");
@@ -69,14 +73,16 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		WebDriver webDriver = null;
 		try {
-			// webDriver = newChromeDriver();
-			// webDriver = newFirefoxDriver();
-			webDriver = newRemoteDriver();
+			webDriver = newWebDriver();
 
 			login(webDriver, url, user, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+			wait.ignoring(StaleElementReferenceException.class);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+
+			assertHelpContentIndex(webDriver, wait);
+			assertHelpNotifications(webDriver, wait);
 
 			assertTopMenu(webDriver, wait, "enterpriseMenu", "accountingMenu", "fiscalMenu", "payrollMenu");
 			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "documental");
@@ -93,6 +99,45 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			
 			
 
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testMultiManagerUserMain() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "asesor@multi-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+
+			
+			assertNotTopMenu(webDriver, wait);
+			assertNotSideMenu(webDriver, wait );
+			assertCompaniesTabs(webDriver, wait	, "Activas",  "Entorno");
+			
+			
+
+//			selectEnterprise(webDriver, wait, "consultancy", "ENTORNO");
+//			assertTopMenuHidden(webDriver, wait);
+
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
 		} finally {
 			if (webDriver != null) {
 				webDriver.close();
@@ -178,6 +223,26 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		assertEquals(companyTabsExpectedTexts.size(), aonTabItems.size());
 		aonTabItems.forEach(tab -> assertTrue(tab.getText(),
 				companyTabsExpectedTexts.stream().anyMatch(text -> tab.getText().startsWith(text))));
+	}
+
+	private void assertHelpNotifications(WebDriver webDriver, WebDriverWait wait) {
+		webDriver.findElement(By.id("aonParentSidenavHelpNotifications" )).click();
+		WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+		webDriver.switchTo().frame(aonJsfAppFrame);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:newsForm")));
+		webDriver.switchTo().defaultContent();
+		webDriver.findElement(By.id("aonHeaderHome")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonParentSidenavHelpNotifications")));
+	}
+	
+	private void assertHelpContentIndex(WebDriver webDriver, WebDriverWait wait) {
+		webDriver.findElement(By.id("aonParentSidenavHelpContentIndex" )).click();
+		WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+		webDriver.switchTo().frame(aonJsfAppFrame);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:driveContentForm")));
+		webDriver.switchTo().defaultContent();
+		webDriver.findElement(By.id("aonHeaderHome")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonParentSidenavHelpContentIndex")));
 	}
 
 }

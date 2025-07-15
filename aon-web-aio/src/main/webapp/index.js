@@ -70,8 +70,8 @@ export const loadThemeOld = async  () => {
 	// LS.AON_THEME 
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	let themeUrl = UA.isMobile() ? mobileCss : paramCss  || "/customview" || LS.AON_THEME;
-
+	let themeUrl = UA.isMobile() ? mobileCss : ( paramCss  || "/customview" || LS.AON_THEME );
+		
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
@@ -82,9 +82,12 @@ export const loadThemeOld = async  () => {
 			loadLink(themeUrl, 'stylesheet', 'text/css').then(() => {
 				resolve();
 				aonThemeSpan.remove();
-			});
+			}).catch((err) => {
+                reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
+                aonThemeSpan.remove();
+            });
 		} catch ( err ) {
-			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
+			reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
 		}
 	});
 };

@@ -9,6 +9,8 @@ public class AgreementLevelCategory implements Serializable{
 	Integer domain;
 	Integer agreementLevel;
 	String description;
+	
+	AgreementLevel level;
 		
 	public AgreementLevelCategory() {
 	
@@ -47,6 +49,15 @@ public class AgreementLevelCategory implements Serializable{
 
 	public AgreementLevelCategory setDescription(String description) {
 		this.description = description;
+		return this;
+	}
+
+	public AgreementLevel getLevel() {
+		return level;
+	}
+
+	public AgreementLevelCategory setLevel(AgreementLevel level) {
+		this.level = level;
 		return this;
 	}
 

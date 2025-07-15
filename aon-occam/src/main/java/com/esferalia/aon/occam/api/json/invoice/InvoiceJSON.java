@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -15,6 +16,8 @@ import com.esferalia.aon.occam.api.json.doc.InvoiceDocJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -52,6 +55,9 @@ public class InvoiceJSON {
 		if(RectificationType.NORMAL_RECTIFIER.equals(rtype) 
 			 || RectificationType.SPECIAL_RECTIFIER.equals(rtype))
 			rectificationInvoice = getRectificationInvoice(rectificationInvoiceJSON);
+		List<InvoiceError> messageList = InvoiceErrorJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.MESSAGES));
+		LinkedList<InvoiceError> messages = new LinkedList<>();
+		messages.addAll(messageList);
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -89,6 +95,7 @@ public class InvoiceJSON {
 				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
 				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
+				.setMessages(messages)
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
 				.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART))

@@ -18,13 +18,14 @@ export const loadCustomView = (customCssUrl) => {
 };
 
 export const favicon = () => {
-  let favicon = getComputedStyle(document.body).getPropertyValue('--favicon').trim();
-  if ( favicon ) {
-    loadLink('', 'icon', 'image/x-icon').then( faviconLink  => {
-      favicon += `?v=${Date.now()}`;
-      faviconLink.href = favicon;
-    });
-  }
+	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
+	if ( favicon ) {
+		loadLink(favicon, 'icon', 'image/x-icon')
+		.then( faviconLink  => {
+            favicon += `?v=${Date.now()}`;
+			faviconLink.href = favicon;
+		});
+	}
 };
 
 export const title = () => {
@@ -36,10 +37,21 @@ export const title = () => {
 
 export const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
     const link = document.createElement('link');
-    document.head.appendChild(link);
-    link.onload = resolve(link);
-    link.onerror = reject;
-    link.href = url;
-    link.rel = rel || "stylesheet";
-    link.type = type || "text/css";
+	link.onerror = reject;
+	link.onload = () => resolve(link);
+	link.href = url;
+	link.rel = rel || "stylesheet";
+	link.type = type || "text/css";
+
+	document.head.appendChild(link);
 });
+
+export const loadImg = (src) => {
+	return new Promise((resolve, reject) => {
+        const img = document.createElement('img');
+		img.onerror = reject;
+        img.onload = () => resolve(img);
+        img.src = src;
+		document.body.appendChild(img);
+    });
+};

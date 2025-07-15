@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
@@ -313,30 +314,30 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						invofoxConfiguration.getApiUrl(), documentId);
 				
 				OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
+				
+				Integer rawdocId = getRawdocId(ocrDocument);
+				Rawdoc rdoc = rawdocId != null ? AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getIdProperty().eq(rawdocId))).findFirst().orElse(null) : null;
+				
 				OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
 				Invoice inv = response.getDocument().map( doc -> InvofoxServlet.toInvoice(doc,companyDocument))
 						.map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
 						.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 						.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 						.map(invoice -> fillCategory(aonContext, invoice))
-						.map(invoice -> fillActivity(aonContext, invoice))
+						.map(invoice -> fillActivity(aonContext, invoice, rdoc))
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
 				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
 						&& inv.getTediCategory() != null) {
-					Integer rawdocId = getRawdocId(ocrDocument);
-
-					if(rawdocId != null) {
-						Rawdoc rdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-								f -> f.getDomainProperty().eq(api.getDomain().getId())
-									.and(f.getIdProperty().eq(rawdocId))).findFirst().orElse(null);
-						if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
-							boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
-							inv.setSigned(signed);
-						}
-					}
 					
+					if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
+						boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
+						inv.setSigned(signed);
+					}
+										
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, rawdocId);
 					if (inv != null && inv.getId() != null) {
@@ -380,6 +381,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl())
 					.getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
 
+			EnterpriseActivity activity = null;
+			Integer rawdocId = getRawdocId(ocrDocument);
+			Rawdoc rdoc = rawdocId != null ? AON.getRawdocStream(domain.getName(), domain.getId(), user.getLogin(), 
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getIdProperty().eq(rawdocId))).findFirst().orElse(null) : null;
+			if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
+					Invoice rdocInv = InvoiceJSON.fromJSON(rdoc.getJson());
+					activity = rdocInv.getActivity();
+				}
+			
 			return response.getDocument()
 					.map(doc -> InvofoxServlet.toInvoice(doc,companyDocument))
 					.map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
@@ -387,7 +398,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 					.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 					.map(invoice -> fillCategory(aonContext, invoice))
-					.map(invoice -> fillActivity(aonContext, invoice))
+					.map(invoice -> fillActivity(aonContext, invoice, rdoc))
 					.map(InvoiceJSON::toJSON)
 					.map(invoice -> invoice.put("token", token))
 					.map(invoice -> invoice.put("file", getFileJSON(ocrDocument)))
@@ -832,10 +843,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return invoice;
 	}
 
-	private static Invoice fillActivity(AONContext ctx, Invoice invoice) {
+	private static Invoice fillActivity(AONContext ctx, Invoice invoice, Rawdoc rdoc) {
+		Invoice rdocInvoice = InvoiceJSON.fromJSON(rdoc.getJson());
+		if(rdocInvoice.getActivity() != null && rdocInvoice.getActivity().getId() != null) {
+			invoice.setActivity(rdocInvoice.getActivity());
+		}
 		if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
 			AonConfiguration config = AON.getConfiguration(ctx);
-			invoice.setActivity(config.getMainActivity());
+			if(config.getAllActivities() != null && config.getAllActivities().size() == 1)
+				invoice.setActivity(config.getMainActivity());
 		}
 		return invoice;
 	}

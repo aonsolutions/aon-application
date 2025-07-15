@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -58,6 +59,15 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public void sendEmail(Occam occam, IFiscalModel model) throws AonCoreException {
 		ModelAdmonUtils.sendEmail(occam, model);
 	}
+
+	// Para obtener informacion del certificado
+	@Override
+	public CertificateInfo getCertificateInfo(String domainName, int domainId, String user, Integer certificateId) throws AonCoreException {
+		return AON.getCertificateInfo(domainName, domainId, user, f -> f.getIdProperty().eq(certificateId));
+	}
+	
+	
+	
 	
 //	// -------------------------------------------------------------- ACTIVITIES
 //	@Override

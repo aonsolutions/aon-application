@@ -29,6 +29,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -274,6 +275,10 @@ public class SQLExtraSalaryCalculatorContext implements
 
 	public SSRegimeType getSSRegime() {
 		return ctx.getSSRegime();
+	}
+
+	public CCCType getCCCType() {
+		return ctx.getCCCType();
 	}
 
 	public String getCategory() {

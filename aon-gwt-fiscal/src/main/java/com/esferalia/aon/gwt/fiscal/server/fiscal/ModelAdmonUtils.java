@@ -4,14 +4,11 @@ import static com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO.getDataRespo
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -19,8 +16,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -29,7 +24,6 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -61,8 +55,6 @@ import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.RespuestaCorrecta;
 import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.ServicioConsultasDirectas;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
@@ -83,11 +75,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902023;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902024;
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -116,13 +104,10 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902023;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902024;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.ModelEmailUtils;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
@@ -144,8 +129,8 @@ import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902023Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902024Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
-import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -154,8 +139,6 @@ import com.google.api.services.drive.Drive;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
-import solutions.aon.aws.ses.SES;
-import solutions.aon.aws.ses.SESMessage;
 
 public class ModelAdmonUtils {
 	
@@ -199,8 +182,6 @@ public class ModelAdmonUtils {
 	private static final String ERROR_TEMPLATE_AFTER = "</ul>";
 	private static final String ERROR_TEMPLATE_END = "</body></html>";
 	
-	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");	
-
 	private ModelAdmonUtils() {
 		
 	}
@@ -310,7 +291,7 @@ public class ModelAdmonUtils {
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
 		if(AonStringUtils.isBlank(params.getPass())) {
-			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+			params.setPass(AonCertificateUtils.getCertificatePassword(attach.getDescription()));
 		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -319,6 +300,7 @@ public class ModelAdmonUtils {
    		kmf.init(keyStore, params.getPass().toCharArray());
    		return kmf.getKeyManagers();
 	}
+	
     
 	public static synchronized  void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
 		try {
@@ -1797,8 +1779,6 @@ public class ModelAdmonUtils {
 	// ENVIO EMAIL NOTIFICACION A LA DIRECCION EMAIL DE LA EMPRESA (SE SUPONE QUE SE USA POR LA ASESORIA PARA ENVIAR NOTIFICACION A LA EMPRESA CLIENTE)
 	public static void sendEmail(Occam occam, IFiscalModel model) {
 		
-		System.out.println("Envio email modelo fiscal: " + model.getModel() + " " + model.getYear() + " " + model.getPeriod());
-		
 		// Obtener borrador PDF, si AEAT
 		byte[] data = null;
 		try {
@@ -1809,194 +1789,8 @@ public class ModelAdmonUtils {
 			// Si no se puede obtener el PDF no se hace nada, pero se continua con el envío del email sin PDF
 		}
 		
-		try {
-			String parentName = getParentName(occam);
-//			String from = "fiscal." + parentName + "@aon.solutions"; // SUPONGO QUE SERA EL DOMINIO PADRE, NO SERIA MEJOR SIMPLEMENTE notificaciones o fiscal.notificaciones@aon.solutions
-			String from = "fiscal.notificaciones@aon.solutions"; // POR AHORA SE DEJA CON UNA CUENTA FICTICIA GENERICA
-			String to = getEnterpriseEmail(occam);        // email de la empresa cliente
-			String reply = getUserEmail(occam);           // email del usuario
-			String name = getParentCompanyName(occam);    // Nombre de la empresa del dominio padre
-			String subject = "Nuevo modelo para confirmar en el portal"; // Asunto del mensaje de correo
-//			String url = "https://" + parentName + "/aonDocuments/company.logo"; // Logo de la empresa del dominio padre
-			String url = getLogoUrl(parentName);
-//			String url = "https://aon.solutions/assets/aon-logo.png"; // PARA PROBAR
-			String body = "";
-					if (AonStringUtils.isNotBlank(url)) {
-						body = body +
-							"<div style=\"margin: 20px;\">" + 
-							  "<img src=\"" + url + "\" width=\"350\" height=\"150\">" +
-							"</div>"; 
-					}
-			body = body +
-					"<div>" +
-						"<p>Estimado cliente:</p>" +
-						"<p>Tiene un nuevo modelo para confirmar en el portal:</p>" +
-						"<p>Modelo: " + model.getModelFullName() + "<br>" +
-						"Declarante: " + model.getDocument() + " " + model.getFullName() + "<br>" +
-						"Resultado: " + FMT.format(model.getDeclarationResult()) + "<br>" +
-						"Tipo Declaración: " + model.getDeclarationResultType().getDescription() + "</p>" +
-						"<p>Un saludo</p>" +
-						"<p><h5>Este mensaje está dirigido de manera exclusiva a su destinatario y puede contener información privada y/o confidencial. No lo reenvíe, copie o distribuya a terceros que no deban conocer su contenido. En caso de haberlo recibido por error, rogamos lo notifique al remitente y proceda a su borrado, así como el de cualquier documento que pudiera adjuntarse.</h5></p>"+
-					"</div>"; 
-	
-			// Controlar que email destino y el email del usuario esten cumplimentados
-			if (AonStringUtils.isNotBlank(to) && AonStringUtils.isNotBlank(reply)) {
-				SESMessage msg = new SESMessage()
-					.setFrom(from) // Si no se indica from, se enviará desde "no-reply@aon.solutions"
-					.setTo(to) 
-					.setBcc(reply) // En BCC tambien se pone la cuenta del usuario
-					.setReplyTo(reply)
-					.setAlias(name)
-					.setSubject(subject) 
-					.setBody(body) 
-				;
-
-				// Adjuntar PDF con el borrador del modelo, si se ha podido obtener
-				File parent = null;
-				File file = null;
-				if (data != null) {
-					String fileName = getFileName(model); 
-					Path parentPath = Files.createTempDirectory(model.getDocument());
-					parent = parentPath.toFile();
-					file = new File(parent, fileName);
-					AonFileUtils.writeByteArrayToFile(file, data); // data es el documento PDF con el borrador (solo AEAT), que se adjunta al correo
-					msg.setFile(file);
-				}
-				
-				// Enviar mensaje
-				SES.sendEmail(msg);
-				
-				if (file != null) {
-					// Una vez que el mensaje ha sido enviado, intentar borrar el directorio y fichero temporal
-					if (!file.delete()) 
-						System.out.println("No se ha podido borrar el fichero " + file.getPath());
-					if (!parent.delete())  
-						System.out.println("No se ha podido borrar el directorio temporal " + parent.getPath());
-				}
-				
-			} else {
-				System.out.println("ERROR: Dirección email (to o reply) no cumplimentada");
-				throw new AonCoreException("Falta dirección email de destino (email de la empresa) o dirección email del usuario.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new AonCoreException(e.getMessage());
-		}
-
-	}
-
-	// Obtener la dirección email de la empresa
-	private static String getEnterpriseEmail(Occam occam) {
+		ModelEmailUtils.sendEmailCliente(occam, model, data);
 		
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return ctx.getDslContext().transactionResult(
-				configuration -> {
-					Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-					Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId());
-					return enterprise.getEmail(); // Email de la empresa
-				}
-			);
-		}
-
 	}
-	
-	// Obtener la dirección email del usuario
-	private static String getUserEmail(Occam occam) {
-		
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return ctx.getDslContext().transactionResult(
-					configuration -> {
-						User user = ctx.getConfig().getUser();
-		
-						// Esto sería para obtener todas las direcciones del usuario separadas por punto y como, pero solo se obtendrá una de ellas
-//						LinkedList<MailAccount> mailAccountList = SecurityDAO.getMailAccountList(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getDomainProperty().eq(user.getDomain().getId())));
-//						String email = "";
-//						if (mailAccountList.size() > 0) {
-//							for (MailAccount ma : mailAccountList) {
-//								email = email + ma.getEmail() + ";";
-//							}	
-//							email = email.substring(0, email.length() - 1);
-//						}
-//						return email;
-						
-						MailAccount mailAccount = SecurityDAO.getMailAccount(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getDomainProperty().eq(user.getDomain().getId())));
-						return mailAccount.getEmail();
-					}
-			);
-		}
-
-	}
-	
-	// Obtener el nombre de la empresa del dominio padre o del propio dominio, si no tiene padre
-	private static String getParentCompanyName(Occam occam) {
-		
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return ctx.getDslContext().transactionResult(
-				configuration -> {
-					Integer domainId = DomainDAO.getParentDomain(ctx);
-					
-					if (domainId == null) {
-						domainId = ctx.getDomainId();
-					}
-					
-					Domain domain = DomainDAO.getDomain(ctx, domainId);
-					Company company = CompanyDAO.getCompany(ctx, domain.getId());
-					
-					return company.getName();
-				}
-			);
-		}
-
-	}
-	
-	// Obtener el nombre del dominio padre o del propio dominio, si no tiene padre
-	private static String getParentName(Occam occam) {
-		
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return ctx.getDslContext().transactionResult(
-				configuration -> {
-					Integer domainId = DomainDAO.getParentDomain(ctx);
-					
-					if (domainId == null) {
-						domainId = ctx.getDomainId();
-					}
-					
-					Domain domain = DomainDAO.getDomain(ctx, domainId);
-					return domain.getName();
-				}
-			);
-		}
-
-	}
-	
-	// Obtener nombre del fichero que se adjunta al mensaje de correo
-	private static String getFileName(IFiscalModel fs) {
-		String document = AonStringUtils.trimToEmpty( fs.getDocument());
-		document = document.replaceAll("[^a-zA-Z0-9.-]", "_");
-		return  "Mod" + FiscalModelUtils.getModelName(fs) 
-				+ "_" + fs.getYear() 
-				+ "_" + ( fs.getModel() == FiscalModelType.M202 ? AonFiscalFileUtils.getMod202Period((Mod202) fs) : fs.getPeriod().getName()) 
-				+ AonStringUtils.prependIfMissing(document, "_") + ".pdf";
-	}
-	
-	public static String getLogoUrl(String companyName) {
-		//String logo = "https://aon.solutions/assets/aon-logo.png"; // Esta seria la imagen de AON, si la queremos devolver por defecto
-		String logoUrl = "";
-		try {
-			String logo = "https://" + companyName + "/aonDocuments/company.logo";
-			URI uri = URI.create(logo);
-		    URL url = uri.toURL();
-	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-	        int statusCode = connection.getResponseCode();
-	        if(200 == statusCode) {
-	        	logoUrl = logo;
-	        }
-            connection.disconnect();
-		} catch (Exception e) {
-			// do nothing
-		}
-		return logoUrl;
-		
-	}	
 	
 }
