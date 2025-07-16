@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.DisabiltyLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 @SuppressWarnings("serial")
@@ -172,7 +173,10 @@ public class ContractServlet extends HttpServlet{
 	
 				// TODO find by CategoryDescription & agreementLevel the correct agreementLevelCategory otherwise keep like now
 				if(null != contract.getAgreementLevel()) {
-					Optional<AgreementLevelCategory> agreementLevelCategory = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
+					Optional<AgreementLevelCategory> agreementLevelCategory = 
+						AonStringUtils.isBlank(contract.getCategoryDescription()) 
+						? Optional.empty()	
+						: PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
 							f -> f.getAgreementLevelProperty().eq(contract.getAgreementLevel()).and(f.getDescriptionProperty().likeIgnoreCase(contract.getCategoryDescription())));
 				
 					if(agreementLevelCategory.isPresent())
