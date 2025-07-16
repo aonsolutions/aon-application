@@ -599,8 +599,6 @@ public enum D2DepositHeaderKey {
 	
 	// III.a. Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
 	
-	// FALTA - AÑADIR LAS CASILLAS QUE QUERAMOS, DEPENDIENDO DE LAS LINEAS QUE QUERAMOS DEJAR AL FINAL SEGUN EL FORMATO PERMITEN 40 CAMPOS, AQUI PODEMOS DEJAR 5 O 10 POR EJEMPLO	
-	
 	,ITR8230201(8230201) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
 	,ITR8230202(8230202) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
 	,ITR8230203(8230203) // Denominación social de la sociedad	Desde la 8230203 hasta la 8230593 (incrementando 10). Total: 40 campos	Texto	70				no		
@@ -619,7 +617,27 @@ public enum D2DepositHeaderKey {
 	,ITR8230216(8230216) 
 	,ITR8230217(8230217) 
 	,ITR8230218(8230218) 
-	,ITR8230219(8230219) 
+	,ITR8230219(8230219)
+	
+	,ITR8230221(8230221) 
+	,ITR8230222(8230222) 
+	,ITR8230223(8230223) 
+	,ITR8230224(8230224) 
+	,ITR8230225(8230225) 
+	,ITR8230226(8230226) 
+	,ITR8230227(8230227) 
+	,ITR8230228(8230228) 
+	,ITR8230229(8230229) 
+	
+	,ITR8230231(8230231) 
+	,ITR8230232(8230232) 
+	,ITR8230233(8230233) 
+	,ITR8230234(8230234) 
+	,ITR8230235(8230235) 
+	,ITR8230236(8230236) 
+	,ITR8230237(8230237) 
+	,ITR8230238(8230238) 
+	,ITR8230239(8230239)
 	
 	// III.b. Detalle de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
 	,ITR8232001(8232001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8232001 hasta la 8232391 (incrementando 10). Total: 40 campos Texto 20						
@@ -641,7 +659,27 @@ public enum D2DepositHeaderKey {
 	,ITR8232017(8232017) 
 	,ITR8232018(8232018) 
 	,ITR8232019(8232019) 
-	
+
+	,ITR8232021(8232021) 
+	,ITR8232022(8232022) 
+	,ITR8232023(8232023) 
+	,ITR8232024(8232024) 
+	,ITR8232025(8232025) 	
+	,ITR8232026(8232026) 
+	,ITR8232027(8232027) 
+	,ITR8232028(8232028) 
+	,ITR8232029(8232029) 
+
+	,ITR8232031(8232031) 
+	,ITR8232032(8232032) 
+	,ITR8232033(8232033) 
+	,ITR8232034(8232034) 
+	,ITR8232035(8232035) 	
+	,ITR8232036(8232036) 
+	,ITR8232037(8232037) 
+	,ITR8232038(8232038) 
+	,ITR8232039(8232039) 
+
 	// IV.a. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de participación en el capital
 	,ITR8231001(8231001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8231001 hasta la 8231391 (incrementando 10). Total: 40 campos Texto 20
 	,ITR8231002(8231002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8231002 hasta la 8231392 (incrementando 10). Total: 40 campos Texto 20		
@@ -652,7 +690,17 @@ public enum D2DepositHeaderKey {
 	,ITR8231012(8231012) 
 	,ITR8231013(8231013) 
 	,ITR8231014(8231014) 
-	
+
+	,ITR8231021(8231021) 
+	,ITR8231022(8231022) 
+	,ITR8231023(8231023) 
+	,ITR8231024(8231024) 
+
+	,ITR8231031(8231031) 
+	,ITR8231032(8231032) 
+	,ITR8231033(8231033) 
+	,ITR8231034(8231034) 
+
 	// IV.b. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
 	,ITR8233001(8233001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control Desde la 8233001 hasta la 8233391 (incrementando 10). Total: 40 campos Texto 20		
 	,ITR8233002(8233002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8233002 hasta la 8233392 (incrementando 10). Total: 40 campos Texto 20		
@@ -662,8 +710,17 @@ public enum D2DepositHeaderKey {
 	,ITR8233011(8233011) 
 	,ITR8233012(8233012) 
 	,ITR8233013(8233013) 
-	,ITR8233014(8233014) 
+	,ITR8233014(8233014)
 	
+	,ITR8233021(8233021) 
+	,ITR8233022(8233022) 
+	,ITR8233023(8233023) 
+	,ITR8233024(8233024)
+	
+	,ITR8233031(8233031) 
+	,ITR8233032(8233032) 
+	,ITR8233033(8233033) 
+	,ITR8233034(8233034) 
 	
 	// DOCUMENTO SOBRE SERVICIOS A TERCEROS
 	

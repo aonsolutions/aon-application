@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import org.json.JSONArray;
+
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
@@ -766,10 +768,10 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				cnae = c.substring(0, 2) + "." + c.substring(2);
 			}
 		}
-		
+
 		// Datos registrales (Tomo, Folio, Nº Hoja). Si hay varios, se coge el último según la fecha de registro
 		RecordData recordData = AON.getRecordDataStream(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getRegistryProperty().eq(companyId))
-				.sorted(Comparator.comparing(RecordData::getRecordDate).reversed())
+				.sorted(Comparator.comparing(RecordData::getRecordDate,Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
 				.findFirst().orElse(null);
 		
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();

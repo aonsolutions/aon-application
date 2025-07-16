@@ -6,13 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -23,6 +16,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryItem;
 
 @SuppressWarnings("serial")
@@ -108,9 +107,11 @@ public class CCAAPrint extends HttpServlet {
 		if(d2Deposit.getYear() == 2020 || d2Deposit.getYear() == 2021) {
 			if(options.substring(index, index+1).equals("T"))  action.CVA();index++; // Hoja COVID
 		}
-		
-    	if(d2Deposit.getYear() >= 2017) {
-    		if(options.substring(index, index+1).equals("T")) action.ITR();index++;
+
+    	if (d2Deposit.getYear() >= 2023) {
+    		if (options.substring(index, index+1).equals("T")) action.itr2023(); index++;
+    	} else if (d2Deposit.getYear() >= 2017) {
+    		if (options.substring(index, index+1).equals("T")) action.ITR(); index++;
     	}
     	
     	if(d2Deposit.getYear() >= 2018) {
