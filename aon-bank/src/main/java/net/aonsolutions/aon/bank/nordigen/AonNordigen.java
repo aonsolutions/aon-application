@@ -836,12 +836,13 @@ public class AonNordigen  {
           }
 
           for (String accountId : accountIds) {
+/*
             System.out.println("-- Llamamos a la BD --");
             System.out.println(rbank.getId());
             System.out.println(rbank.getBankAccount().getIban());
             System.out.println(rbank.getRequisition());
             System.out.println("-- Sigue :( --");
-            
+*/
               try {
                   NordigenAccountMetadata metadata = AonNordigen.getAccountMetadata(token, accountId);
 
@@ -855,13 +856,12 @@ public class AonNordigen  {
                   account.setLinked(true);
                   account.setInstitution(getInstitution(token, req.getInstitutionId()));
                   account.setIban(rbank.getBankAccount().getIban());
-
+/*
                   System.out.println("-- Account --");
                   System.out.println(account.getIban());
                   System.out.println(account.getMetadata().getId());
                   System.out.println(sixtyDaysAgo);
-
-
+*/
                   CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture = 
                       CompletableFuture.supplyAsync(() -> AonNordigen.getNotInsertedTransactionsDate(token, account, sixtyDaysAgo));
                   // ID de nordigen asociado a un IBAN - 
@@ -875,15 +875,15 @@ public class AonNordigen  {
                           nordigenTransaction.getDescription() + ":" + 
                           nordigenTransaction.isPayment() + ":" + 
                           nordigenTransaction.getAmount();
-
+/*
                   System.out.println("-- Lo que tenemos en NORDIGEN  --");
                   System.out.println(comparisonKey);
-                  
+*/                
                         if (bankStatementMap.containsKey(comparisonKey)) {
                           BankStatement matchedBS = bankStatementMap.get(comparisonKey);
                           // Listado de movimientos incorrectos en BD
                           movimientosIncorrectos.add(matchedBS);
-                          
+                          /*
                           System.out.println(" movimiento insertado incorrectament " +
                             "	rbank Id: " + rbank.getId() +
                             " | IBAN : " + metadata.getIban() +
@@ -891,6 +891,7 @@ public class AonNordigen  {
                             " | Fecha: " + AonDateUtils.format(nordigenTransaction.getOperationDate(), SIMPLE_DATE_FORMAT4) +
                             " | Cantidad: " + nordigenTransaction.getAmount() +
                             " | Concepto: " + nordigenTransaction.getDescription());
+                          */
                         }
                       }
                   }

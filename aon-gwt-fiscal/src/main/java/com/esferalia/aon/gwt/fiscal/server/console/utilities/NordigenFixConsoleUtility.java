@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleMessageUtils;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
-import com.esferalia.aon.occam.impl.jooq.dao.console.ConsoleDAO;
 
 class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 
@@ -29,7 +28,7 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 		ctx.getDslContext()
 			.select(DOMAIN.ID, DOMAIN.NAME,DOMAIN.DESCRIPTION)
 			.from(DOMAIN)
-			.where( ConsoleDAO.getFilter( domainParams ) )
+			.where( DOMAIN.ID.eq(0))
 			.fetch()
 			.stream()
 			.forEach( result -> {
@@ -56,8 +55,14 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
                                 .collect(Collectors.toList());
 						List<BankStatement> wrongMovements = nordigen.checkIncorrectMovements(occam, config.getToken(), wrongAccounts, bank);
 						List<Integer> wrongMovementsIds = wrongMovements.stream().map(r -> r.getId()).toList();
-						ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "moves: " + wrongMovementsIds.toString()));
-//						ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovements)).execute();
+                        for(Integer a : wrongMovementsIds){
+                          ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "move ID delete (BANK_STATEMENT): " + a));
+                        }
+						ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).execute();
+                        ConsoleMessageUtils.print(
+                          params.getPrinter(), ConsoleMessageUtils.ok(processId,
+                          ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).getSQL()
+                        ));
                     }
 				}
 			});
