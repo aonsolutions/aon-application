@@ -707,6 +707,20 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			}
 		}
 	}
+
+	private void ssHeaderItr(String[] headers){
+
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		XSSFCellStyle headerStyle = calculateHeaderFontSize(3);
+		
+		for (String s : headers) {
+			CellUtil.createCell(row, cellCount, s, headerStyle);
+			cellCount++;
+		}
+		
+	}
 	
 	private void idaRow(Integer n, String[] strings) {
 		row = sheet.createRow(rowCount++);
@@ -768,7 +782,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		header(pageMaxNumber);
 		ssHeader("Identificaci\u00f3n", pageMaxNumber);
 	
-		String sa = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01011.getCode());
+//		String sa = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01011.getCode());
 		String sl = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01012.getCode());
 		String other = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01013.getCode());
 		if(other == null || other.equalsIgnoreCase("null")) other = "";
@@ -954,7 +968,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		if(!isPymes()){
 			ssHeader("Unidades", pageMaxNumber);
 			
-			String euros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09001.getCode());
+//			String euros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09001.getCode());
 			String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 			String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 			
@@ -1078,6 +1092,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			cell.setCellValue(ITR8234002);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		}
+		
 		row = sheet.createRow(rowCount++);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		CellUtil.createCell(row, 0, "Titular real persona física con porcentaje de participación superior al 25%", headerCellStyle);
@@ -1147,6 +1162,265 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				macell(txt, j, j);
 			}
 		}
+	}
+	
+	public void itr2023() {
+		addSheet("Identificador del Titular Real");
+		header(6);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+
+		CellUtil.createCell(row, cellCount, "Identificador del Titular Real", headerCellStyle);
+
+		sheet.setColumnWidth(cellCount++, 20 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);
+		sheet.setColumnWidth(cellCount++, 11 * 256);		
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		row = sheet.createRow(rowCount++);
+		String text = "La entidad está sujeta a la obligación de identificar al titular real porque no cotiza en mercados regulados";		
+
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		Cell cell = row.createCell(cellCount++);
+		CellStyle style = workbook.createCellStyle();
+		style.setWrapText(true);
+		style.setFont(defaulFont);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		style.setVerticalAlignment(VerticalAlignment.TOP);
+		style.setAlignment(HorizontalAlignment.CENTER);
+		cell.setCellStyle(style);
+		cell.setCellValue(text);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		String value = getBoolText(getD2Deposit().getMap().get(D2DepositHeaderKey.ITR8080829.getCode()));
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		row = sheet.createRow(rowCount++);
+		String text2 = "La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real";		
+
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		Cell cell2 = row.createCell(cellCount++);
+		cell2.setCellStyle(style);
+		cell2.setCellValue(text2);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+	
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		row = sheet.createRow(rowCount++);
+		String text3 = "Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real";		
+
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(text3);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+	
+		String ITR8234001 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234001.getCode());
+		String ITR8234001TXT = "";
+		if("1".equals(ITR8234001)) ITR8234001TXT = "Primera";
+		else if("2".equals(ITR8234001)) ITR8234001TXT = "Actualizaci\u00f3n";
+		else if("3".equals(ITR8234001)) ITR8234001TXT = "Rectificaci\u00f3n";
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(ITR8234001TXT);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+	
+		row = sheet.createRow(rowCount++);
+		String text4 = "Fecha en la que debe reputarse que se ha producido el cambio de datos";		
+
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(text4);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+	
+		String ITR8234002 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(ITR8234002);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+
+		// Ia, Ib
+		itr1ab(D2DepositConstants.ITR_KEYS_4, "Titular real persona física con porcentaje de participación en el capital superior al 25%");
+		itr1ab(D2DepositConstants.ITR_KEYS_5, "Titular real persona física con porcentaje de participación por derechos de voto superior al 25%");
+		
+		// II
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 6));
+		CellUtil.createCell(row, 0, "Titular real persona física asimilada", headerCellStyle);
+		ssHeaderItr(new String[]{				
+				"Apellidos, Nombre", 
+				"Pais Expedición Documento", 
+				"Tipo Documento", 
+				"Documento", 
+				"Fecha Nacimiento", 
+				"Nacionalidad", 
+				"Pais de Residencia"});
+		
+		for (Integer i = 0; i < D2DepositConstants.ITR_KEYS_6.length; i+=7){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_6[i],
+					D2DepositConstants.ITR_KEYS_6[i+1],
+					D2DepositConstants.ITR_KEYS_6[i+2],
+					D2DepositConstants.ITR_KEYS_6[i+3],
+					D2DepositConstants.ITR_KEYS_6[i+4],
+					D2DepositConstants.ITR_KEYS_6[i+5],
+					D2DepositConstants.ITR_KEYS_6[i+6]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = getD2Deposit().getMap().get(d2[j].getCode());
+				if (j==2)
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
+				macell(txt, j, j);
+			}
+		}
+		
+		// IIIa, IVa, IIIb, IVb (A partir de 2024)
+		if (d2Deposit.getYear() >= 2024) {
+			itr3ab(D2DepositConstants.ITR_KEYS_3_A, "Detalle de las sociedades intervinientes en la cadena de control a través de participación en el capital");
+			itr4ab(D2DepositConstants.ITR_KEYS_4_A, "Detalle de las participaciones de las sociedades que intervienen en la cadena de control a través de participación en el capital");
+			itr3ab(D2DepositConstants.ITR_KEYS_3_B, "Detalle de las sociedades que intervienen en la cadena de control a través de derechos de voto");
+			itr4ab(D2DepositConstants.ITR_KEYS_4_B, "Detalle de las participaciones de las sociedades que intervienen en la cadena de control a través de derechos de voto");
+		}
+		
+	}
+	
+	private void itr1ab(D2DepositHeaderKey[] itrKeys1, String title) {
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		CellUtil.createCell(row, 0, title, headerCellStyle);
+		ssHeaderItr(new String[] {
+				"Apellidos, Nombre", 
+				"Pais Expedición Documento", 
+				"Tipo Documento", 
+				"Documento", 
+				"Fecha Nacimiento", 
+				"Nacionalidad", 
+				"Pais de Residencia", 
+				"% Participación Directa", 
+				"% Participación Indirecta"});
+		
+		for(Integer i = 0; i< itrKeys1.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					itrKeys1[i],
+					itrKeys1[i+1],
+					itrKeys1[i+2],
+					itrKeys1[i+3],
+					itrKeys1[i+4],
+					itrKeys1[i+5],
+					itrKeys1[i+6],
+					itrKeys1[i+7],
+					itrKeys1[i+8]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = getD2Deposit().getMap().get(d2[j].getCode());
+				if (j==2)
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
+				macell(txt, j, j);
+			}
+		}		
+		
+	}
+	
+	private void itr3ab(D2DepositHeaderKey[] itrKeys3, String title) {
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		CellUtil.createCell(row, 0, title, headerCellStyle);
+		ssHeaderItr(new String[] {
+					"Documento del Titular Real",
+					"Nivel en la cadena de control",
+					"Denominación social de la sociedad",
+					"País documento",
+					"Tipo documento",
+					"Documento",
+					"Nacionalidad",
+					"Domicilio social",
+					"Datos registrales o LEI"});
+		
+		for(Integer i = 0; i < itrKeys3.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					itrKeys3[i],
+					itrKeys3[i+1],
+					itrKeys3[i+2],
+					itrKeys3[i+3],
+					itrKeys3[i+4],
+					itrKeys3[i+5],
+					itrKeys3[i+6],
+					itrKeys3[i+7],
+					itrKeys3[i+8]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = getD2Deposit().getMap().get(d2[j].getCode());
+				if (j==4)
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
+				macell(txt, j, j);
+			}
+		}		
+		
+	}
+
+	private void itr4ab(D2DepositHeaderKey[] itrKeys4, String title) {
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 3));
+		row.setHeightInPoints(35);
+		CellUtil.createCell(row, 0, title, headerCellStyle);
+		
+		ssHeaderItr(new String[] {
+					"Documento del Titular Real",
+					"Documento de quien tiene la participación",
+					"Documento sociedad participada",
+					"% participación directa"});
+		
+		for(Integer i = 0; i < itrKeys4.length; i+=4){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					itrKeys4[i],
+					itrKeys4[i+1],
+					itrKeys4[i+2],
+					itrKeys4[i+3]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(txt, j, j);
+			}
+		}		
+		
 	}
 	
 	public void CVA() {
