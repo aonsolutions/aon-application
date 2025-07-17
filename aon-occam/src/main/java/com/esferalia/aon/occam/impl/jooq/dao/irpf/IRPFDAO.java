@@ -574,7 +574,7 @@ public class IRPFDAO {
 				.leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
 				.where(SALARY.DOMAIN.equal(fm.getDomain()))
 					.and(getSalaryDateField(fm).ge(getStartDate(fm)))
-					.and(getSalaryDateField(fm).lt(getEndDate(fm)))
+					.and(getSalaryDateField(fm).le(getEndDate(fm)))
 					.and(SALARY.IRPF_BASE.ne( 0.0 ))
 					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
 					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
