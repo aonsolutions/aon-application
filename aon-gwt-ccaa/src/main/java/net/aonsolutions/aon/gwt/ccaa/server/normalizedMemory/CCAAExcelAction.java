@@ -43,14 +43,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public abstract class CCAAExcelAction extends AbsExcelAction {
-	/*
-	\u00e1 -> á		\u00c1 -> Á
-	\u00e9 -> é	 	\u00c9 -> É
-	\u00ed -> í		\u00cd -> Í
-	\u00f3 -> ó		\u00d3 -> Ó
-	\u00fa -> ú		\u00da -> Ú	
-	\u00f1 -> ñ 	\u00d1 -> Ñ
-	*/
+	
 	public CCAAExcelAction(D2Deposit d2Deposit) {
 		this.d2Deposit = d2Deposit;
 	}
