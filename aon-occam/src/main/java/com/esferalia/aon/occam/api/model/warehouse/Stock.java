@@ -8,7 +8,7 @@ public class Stock implements Serializable {
 	private Integer domain;
 	private Integer id;
 	private Integer item;
-	private Double quantity;
+	private double quantity;
 	private Integer warehouse;
 
 	public Integer getDomain() {
@@ -32,10 +32,10 @@ public class Stock implements Serializable {
 		this.item = item;
 		return this;
 	}
-	public Double getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
-	public Stock setQuantity(Double quantity) {
+	public Stock setQuantity(double quantity) {
 		this.quantity = quantity;
 		return this;
 	}

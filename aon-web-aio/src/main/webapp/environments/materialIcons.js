@@ -124,6 +124,7 @@ export const DO_NOT_DISTURB_ON = 'do_not_disturb_on';
 export const DOCUMENT_SCANNER = 'document_scanner';
 export const DONE = 'done';
 export const DOMAIN_ADD = 'domain_add';
+export const DRAFT_ORDERS = 'draft_orders';
 
 // ----- E
 
