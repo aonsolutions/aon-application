@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.sii;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -16,12 +17,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSearchBox;
 import com.esferalia.aon.gwt.common.shared.AonMenuItem;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
@@ -29,9 +33,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -91,6 +97,7 @@ public class SiiMain extends DockLayoutPanel {
 	private SiiConfiguration siiConfiguration;
 	InvoiceGrid invoiceGrid;
 	
+	List<Invoice> selectedInvoices;
 	Sii sii;
 
 	protected SiiMain(Sii sii, API api, FiscalModelModuleOptions<FiscalModel> options) {
@@ -130,6 +137,8 @@ public class SiiMain extends DockLayoutPanel {
 
 					@Override
 					public void select(LinkedList<Invoice> selFiles) {
+						selectedInvoices = selFiles;
+						
 						boolean visible = !selFiles.isEmpty();
 						sendButton.setVisible(visible);
 						bajaButton.setVisible(visible);
@@ -230,7 +239,7 @@ public class SiiMain extends DockLayoutPanel {
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE, getModel().getFullName()));
 		
 		sendButton = new AonToolbarButton("Enviar", AON.CSS.aonIconSend());
-		sendButton.addClickHandler(event -> Window.alert("send"));
+		sendButton.addClickHandler(event -> send(true));
 		sendButton.setVisible(false);
 		toolbarPanel.add(sendButton);
 		
@@ -251,6 +260,71 @@ public class SiiMain extends DockLayoutPanel {
 		toolbarPanel.showSearchPanel(searchBox);
 		
 		return toolbarPanel;
+	}
+	
+	private API getAPI() {
+		return new API(GWT.getHostPageBaseURL(), 
+				options.getConfiguration().getMd5(),
+				options.getConfiguration().getDomain().getName(), 
+				options.getConfiguration().getDomain().getId(),
+				options.getConfiguration().getUser().getLogin());
+	}
+	
+	private void send(boolean alta) {
+		
+		AonCertificationPopupParams params = new AonCertificationPopupParams()
+				.setShowDocument(false)
+				.setShowName(false);
+		AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
+				
+				@Override
+				protected void onCancel() {
+
+				}
+				
+				@Override
+				protected void onAccept( AEATParams params) {
+					hide();
+					getSii().openFootPanelIfNeeded();
+
+					VerticalPanel vp = new VerticalPanel();
+					getSii().getBreakdownPanel().setWidget(vp);
+					if(alta) {
+						selectedInvoices.stream().forEach(invoice -> {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
+								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
+								vp.add(getErrorMessage(message));
+							} else {
+								SII_SERVICE.altaSii(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
+									
+									@Override
+									public void onSuccess(ICResponse result) {
+										if(!result.isError()) { 	
+											String message = "La factura " + invoice.getReferenceCode() + " se ha enviado correctamente.";
+											vp.add(getOkMessage(message));
+										} else vp.add(getErrorMessage(result.getErrorMessage()));
+										
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										vp.add(getErrorMessage(caught.getMessage()));
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+								});
+							}
+						});
+					} else {
+						Window.alert("BAJA");						
+					}
+				}
+			};
+			certPopup.center();
 	}
 
 	private VerticalPanel advancedSearchPanel() {
@@ -413,4 +487,19 @@ public class SiiMain extends DockLayoutPanel {
 //    	hp.add(downloadButton);
     	return hp;
     }
+    
+	public Label getMessage(String message, String color){
+		Label label = new Label(message);
+		label.getElement().getStyle().setColor(color);
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		return label;
+	}
+	 
+	public Label getOkMessage(String message ){
+		return getMessage(message, "green");
+	}
+	
+	public Label getErrorMessage(String message ){
+		return getMessage(message, "red");
+	}
 }

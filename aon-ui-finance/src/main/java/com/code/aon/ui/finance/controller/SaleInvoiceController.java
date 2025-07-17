@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -96,6 +97,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -112,6 +114,10 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showCertTbaiAnularWindow;
 	private boolean showFacturaeInfoWindow;
 	private boolean showTbaiAccept;
+	
+	private boolean showCertVerifactuWindow;
+	private boolean showVerifactuWindow;
+	private boolean showVerifactuAccept;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -182,6 +188,24 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showCertTbaiWindow = showCertTbaiWindow;
 		if(showCertTbaiWindow)
 			setShowTbaiAccept(showCertTbaiWindow);
+	}
+	
+	public boolean isShowVerifactuWindow() {
+		return showVerifactuWindow;
+	}
+
+	public void setShowVerifactuWindow(boolean showVerifactuWindow) {
+		this.showVerifactuWindow = showVerifactuWindow;
+	}
+	
+	public boolean isShowCertVerifactuWindow() {
+		return showCertVerifactuWindow;
+	}
+
+	public void setShowCertVerifactuWindow(boolean showCertVerifactuWindow) {
+		this.showCertVerifactuWindow = showCertVerifactuWindow;
+		if(showCertVerifactuWindow)
+			setShowVerifactuAccept(showCertVerifactuWindow);
 	}
 	
 	public boolean isShowCertTbaiAnularWindow() {
@@ -519,14 +543,13 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Override
 	protected synchronized void accept() {
-		if(isNevv() && isTbai()) {
+		if(isNevv() && (isTbai() || isVerifactu())) {
 			Invoice invoice = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			Integer number = AON.getInvoiceMinNumber(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, invoice.getSeries());
 			invoice.setNumber(number < 0 ? number : -1);
-
 		}
 		setTbaiUrl(null);
 		if(!isTbaiInvoice()) {
@@ -654,7 +677,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Transient
 	public synchronized void issueInvoice() {
-		if(!isShowTbaiAccept()) return;
+		if(!isShowTbaiAccept() && !isShowVerifactuAccept()) return;
 		try {
 			setShowTbaiAccept(false);
 			if(lroe) {
@@ -690,7 +713,21 @@ public class SaleInvoiceController extends InvoiceController {
 					tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 					setTbaiUrl(TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
-		
+				
+//				VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
+//
+//				verifactuConfiguration.setCertificate(getCertData());
+//				if(verifactuConfiguration.isActive()) {
+//					Domain domain = new Domain().setName(domainName).setId(invoice.getDomain());
+//					User user = new User().setLogin(login);
+//					AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+//							new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
+//								.setCompany(company)
+//								.setVerifactuConfiguration(verifactuConfiguration);
+//
+//					InvoiceCommunicationType.VERIFACTU.visit(visitor);
+//				}
+				
 				// SII
 			}
 		} catch (Exception e) {
@@ -900,10 +937,25 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showTbaiAccept = showTbaiAccept;
 	}
 	
+	public boolean isShowVerifactuAccept() {
+		return showVerifactuAccept;
+	}
+	
+	public void setShowVerifactuAccept(boolean showVerifactuAccept) {
+		this.showVerifactuAccept = showVerifactuAccept;
+	}
+	
 	public boolean isInvoiceTbaiAccepted() {
 		Invoice inv = (Invoice) getTo();
 		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
 				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
+		return info.getStatus().isAccepted();
+	}
+	
+	public boolean isInvoiceVerifactuAccepted() {
+		Invoice inv = (Invoice) getTo();
+		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
 		return info.getStatus().isAccepted();
 	}
 	

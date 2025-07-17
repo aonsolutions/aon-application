@@ -10,12 +10,14 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 import net.aonsolutions.aon.tbai.TbaiBlockchain;
+import net.aonsolutions.aon.verifactu.VerifactuBlockchain;
 
 public class BasicCommunicationInvoiceTypeVisitor {
 
@@ -30,6 +32,7 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	private Person person;
 	private TbaiConfiguration tbaiConfiguration;
 	private SiiConfiguration siiConfiguration;
+	private VerifactuConfiguration verifactuConfiguration;
 	
 	public BasicCommunicationInvoiceTypeVisitor(Domain domain, User user, Invoice invoice) {
 		this.domain = domain;
@@ -116,6 +119,18 @@ public class BasicCommunicationInvoiceTypeVisitor {
 		return this;
 	}
 	
+	protected VerifactuConfiguration getVerifactuConfiguration() {
+		return verifactuConfiguration != null
+			? verifactuConfiguration
+			: AON.getVerifactuConfiguration(getDomain(), getUser())
+					.setCertificate(getCertificate());
+	}
+	
+	public BasicCommunicationInvoiceTypeVisitor setVerifactuConfiguration(VerifactuConfiguration verifactuConfiguration) {
+		this.verifactuConfiguration = verifactuConfiguration;
+		return this;
+	}
+	
 	protected TbaiBlockchain getBlockchain(Integer actualInvoice) {
 		DataResponseSource source = getTbaiConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
@@ -131,6 +146,23 @@ public class BasicCommunicationInvoiceTypeVisitor {
 			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 		
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
+	}
+	
+	protected VerifactuBlockchain getVerifactuBlockchain(Integer actualInvoice) {	
+		DataResponseSource source = getTbaiConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId())
+			.and(f.getSourceProperty().eq(source.value()))
+			.and(f.getSourceIdProperty().ne(actualInvoice))
+			.and(f.getCodeProperty().ne("baja"))
+			);
+		
+		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId())
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+		
+		return VerifactuBlockchain.fromJSON(drd.getDataValue());
 	}
 	
 	protected Certificate getCertificate() {

@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.FISCAL;
@@ -22,6 +23,7 @@ import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
+import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
 		
@@ -53,12 +55,6 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 				TBAI.getInstance().accept(getTbaiConfiguration(), getCompany(), getInvoice(), 
 						getBlockchain(getCertificateId()));
 				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			TbaiMain tbai = new TbaiMain();
-			try {
-				tbai.createEmisionTBAI(getCompany(), getInvoice(), getTbaiConfiguration());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -107,7 +103,16 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitVERIFACTU() {
-		// Not implemented
+		if(InvoiceType.SALES.equals(getInvoice().getType())) {
+			try {
+				List<Invoice> list = new LinkedList<>();
+				list.add(getInvoice());
+				VERIFACTU.getInstance().accept(getVerifactuConfiguration(), getCompany(), list, 
+						getVerifactuBlockchain(getInvoice().getId()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

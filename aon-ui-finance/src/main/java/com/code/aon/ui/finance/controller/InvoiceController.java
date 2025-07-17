@@ -124,6 +124,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -201,6 +202,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private AonFile invoiceAttachFile;
 	private RegistryAddressFilter addressesFilter;
 	private TbaiConfiguration tbaiConfiguration;
+	private VerifactuConfiguration verifactuConfiguration;
 	
 	private Boolean hasInvoiceDoc;
 	private InvoiceDoc invoiceDoc;
@@ -834,17 +836,17 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			if (getRectificationNumber() == 0) {
 				updateRectificationNumber(getRectificationSeries());
 			}
-			if(isTbai()) {
+			if(isTbai() || isVerifactu()) {
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
 				setRectificationNumber(number < 0 ? number : -1);
 			}
 			rectifier = manager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
-													getRectificationCause(), getRectificationSettleFinance(), isTbai());
+													getRectificationCause(), getRectificationSettleFinance(), isTbai() || isVerifactu());
 		} else {
 			rectifier = manager.rectifyReceivedInvoice(getInvoice(), getRectificationReferenceCode(), getRectificationDate(), getRectificationCause(), 
-															getRectificationSettleFinance(), isTbai());
+															getRectificationSettleFinance(), isTbai() || isVerifactu());
 		}
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
@@ -989,7 +991,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	        if (getDuplicationNumber() == 0) {
 	        	updateDuplicationNumber(getDuplicationSeries());
 			}		
-	        if(isTbai()) {
+	        if(isTbai() || isVerifactu()) {
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getDuplicationSeries());
@@ -2094,6 +2096,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
 	}
 	
+	public boolean isVerifactuInvoice() {
+		// TODO
+		return isVerifactu() && getInvoice().getNumber() > 0;
+	}
+	
 	String tbaiUrl;
 	Integer invoiceId;
 
@@ -2121,6 +2128,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return getTbaiConfiguration().isActive();
 	}
 	
+	public boolean isVerifactu() {
+		return getVerifactuConfiguration().isActive();
+	}
+	
 	public boolean isAraba() {
 		return getTbaiConfiguration().isAraba();
 	}
@@ -2145,6 +2156,21 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
 		this.tbaiConfiguration = tbaiConfiguration;
+	}
+	
+	public VerifactuConfiguration getVerifactuConfiguration() {
+		if(verifactuConfiguration == null) {
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			verifactuConfiguration = AON.getVerifactuConfiguration(domainName, domainId, login);
+		}
+		System.out.println("verifactu -> " + verifactuConfiguration.isActive());
+		return verifactuConfiguration;
+	}
+	
+	public void setVerifactuConfiguration(VerifactuConfiguration verifactuConfiguration) {
+		this.verifactuConfiguration = verifactuConfiguration;
 	}
 	
 	public LROEInformation getLroe() {

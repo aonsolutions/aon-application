@@ -111,7 +111,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                action: () => GWT.iLoad(GWT.MODEL_SII)
+                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
@@ -195,7 +195,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                action: () => GWT.iLoad(GWT.MODEL_SII)
+                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
@@ -266,7 +266,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                action: () => GWT.iLoad(GWT.MODEL_SII)
+                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {

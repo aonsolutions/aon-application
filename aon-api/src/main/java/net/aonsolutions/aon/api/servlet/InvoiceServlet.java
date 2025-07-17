@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.VerifactuConfigurationJSON;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -90,12 +91,12 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
+import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.TbaiUri;
-import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends AonApiHttpServlet{
@@ -584,6 +585,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public static JSONObject acceptInvoice(AonApiData api) throws Exception {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.isSales()) {
 			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
@@ -593,9 +595,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
 		if(invoice.isSales() && tbaiConfiguration.isActive() && invoice.isThirdPart()) {
 			checkTbaiId(company, invoice, tbaiId);
-		} else if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			tbaiConfiguration.setCertificate(checkCertificate(api));
-			tbaiValidation(invoice);
+		} else if(invoice.isSales() && (tbaiConfiguration.isActive() || verifactuConfiguration.isActive())) {
+			Certificate certificate = checkCertificate(api);
+			tbaiConfiguration.setCertificate(certificate);
+			verifactuConfiguration.setCertificate(certificate);
+			invoiceValidation(invoice);
 		}
 		
 		Integer rawdocId = invoice.getId();
@@ -603,6 +607,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
+		acceptVerifactu(api, verifactuConfiguration, company, invoice);
 		saveInvoiceData(api, tbaiConfiguration, invoice, tbaiId);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
@@ -662,6 +667,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(invoice.isSales() && tbaiConfiguration.isActive() && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+		}
+	}
+
+	public static void acceptVerifactu(AonApiData api, VerifactuConfiguration verifactuConfiguration, Company company,  Invoice invoice) throws Exception {
+		if(invoice.isSales() && verifactuConfiguration.isActive() && !invoice.isThirdPart()) {
+			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+					new AcceptInvoiceCommunicationTypeVisitor(api.getDomain(), api.getUser(), invoice)
+						.setCompany(company)
+						.setVerifactuConfiguration(verifactuConfiguration);
+
+			InvoiceCommunicationType.VERIFACTU.visit(visitor);
 		}
 	}
 	
@@ -932,7 +948,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return getRawdocStatus(status) != null;
 	}
 	
-	private static  void tbaiValidation(Invoice invoice) throws Exception {
+	private static void invoiceValidation(Invoice invoice) throws Exception {
 		checkInvoice(invoice);
 		checkRegistry(invoice);
 	}

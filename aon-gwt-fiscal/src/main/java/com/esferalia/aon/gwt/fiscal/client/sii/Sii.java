@@ -100,14 +100,19 @@ public class Sii extends MainEntryPoint {
 		return footPanel; 
 	}
 	
-	private void closeFootPanel() {
+	public void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-	private void openFootPanelIfNeeded() {
+	
+	public void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
 			splitLayoutPanel.animate(500);
 		}
+	}
+	
+	public ScrollPanel getBreakdownPanel() {
+		return breakdownPanel;
 	}
 }
