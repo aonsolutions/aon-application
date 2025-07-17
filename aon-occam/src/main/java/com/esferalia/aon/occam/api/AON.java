@@ -5141,6 +5141,44 @@ public class AON {
 		}
 	}
 	
+	// DELETE PACKAGE BY ITEM ID
+	
+	public static void deletePackage(Domain domain, User user, Integer itemId) {
+		deletePackage(domain.getName(), domain.getId(), user.getLogin(), itemId);
+	}
+	
+	public static void deletePackage(Domain domain, String login, Integer itemId) {
+		deletePackage(domain.getName(), domain.getId(), login, itemId);
+	}
+	
+	public static void deletePackage(String domainName, Integer domainId, String login, Integer itemId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deletePackage(ctx, itemId);
+		}
+	}
+	
+	// DELETE PACKAGE BY SSCC
+	
+	public static void deletePackage(Domain domain, User user, String sscc) {
+		deletePackage(domain.getName(), domain.getId(), user.getLogin(), sscc);
+	}
+	
+	public static void deletePackage(Domain domain, String login, String sscc) {
+		deletePackage(domain.getName(), domain.getId(), login, sscc);
+	}
+	
+	public static void deletePackage(String domainName, Integer domainId, String login, String sscc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deletePackage(ctx, sscc);
+		}
+	}
+	
+	public static void adjustPackageComposition(Domain domain, User user, ItemComposition ic) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getWarehouse().adjustPackageComposition(ctx, ic);
+		}
+	}
+	
 	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
