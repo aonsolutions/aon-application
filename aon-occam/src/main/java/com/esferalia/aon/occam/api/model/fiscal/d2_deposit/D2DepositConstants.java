@@ -114,6 +114,139 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.ITR8216023,	
 	};
 	
+	// III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	public static D2DepositHeaderKey[] ITR_KEYS_3_A = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8230201, 
+			D2DepositHeaderKey.ITR8230202, 
+			D2DepositHeaderKey.ITR8230203, 
+			D2DepositHeaderKey.ITR8230204, 
+			D2DepositHeaderKey.ITR8230205, 
+			D2DepositHeaderKey.ITR8230206, 
+			D2DepositHeaderKey.ITR8230207, 
+			D2DepositHeaderKey.ITR8230208, 
+			D2DepositHeaderKey.ITR8230209,
+			
+			D2DepositHeaderKey.ITR8230211, 
+			D2DepositHeaderKey.ITR8230212, 
+			D2DepositHeaderKey.ITR8230213, 
+			D2DepositHeaderKey.ITR8230214, 
+			D2DepositHeaderKey.ITR8230215, 
+			D2DepositHeaderKey.ITR8230216, 
+			D2DepositHeaderKey.ITR8230217, 
+			D2DepositHeaderKey.ITR8230218, 
+			D2DepositHeaderKey.ITR8230219,
+			
+			D2DepositHeaderKey.ITR8230221, 
+			D2DepositHeaderKey.ITR8230222, 
+			D2DepositHeaderKey.ITR8230223, 
+			D2DepositHeaderKey.ITR8230224, 
+			D2DepositHeaderKey.ITR8230225, 
+			D2DepositHeaderKey.ITR8230226, 
+			D2DepositHeaderKey.ITR8230227, 
+			D2DepositHeaderKey.ITR8230228, 
+			D2DepositHeaderKey.ITR8230229,
+			
+			D2DepositHeaderKey.ITR8230231, 
+			D2DepositHeaderKey.ITR8230232, 
+			D2DepositHeaderKey.ITR8230233, 
+			D2DepositHeaderKey.ITR8230234, 
+			D2DepositHeaderKey.ITR8230235, 
+			D2DepositHeaderKey.ITR8230236, 
+			D2DepositHeaderKey.ITR8230237, 
+			D2DepositHeaderKey.ITR8230238, 
+			D2DepositHeaderKey.ITR8230239
+	};
+	
+	// III.b. Detalle de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	public static D2DepositHeaderKey[] ITR_KEYS_3_B = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8232001,
+			D2DepositHeaderKey.ITR8232002,
+			D2DepositHeaderKey.ITR8232003,
+			D2DepositHeaderKey.ITR8232004,
+			D2DepositHeaderKey.ITR8232005,
+			D2DepositHeaderKey.ITR8232006,
+			D2DepositHeaderKey.ITR8232007,
+			D2DepositHeaderKey.ITR8232008,
+			D2DepositHeaderKey.ITR8232009,
+			
+			D2DepositHeaderKey.ITR8232011,
+			D2DepositHeaderKey.ITR8232012,
+			D2DepositHeaderKey.ITR8232013,
+			D2DepositHeaderKey.ITR8232014,
+			D2DepositHeaderKey.ITR8232015,
+			D2DepositHeaderKey.ITR8232016,
+			D2DepositHeaderKey.ITR8232017,
+			D2DepositHeaderKey.ITR8232018,
+			D2DepositHeaderKey.ITR8232019,
+			
+			D2DepositHeaderKey.ITR8232021,
+			D2DepositHeaderKey.ITR8232022,
+			D2DepositHeaderKey.ITR8232023,
+			D2DepositHeaderKey.ITR8232024,
+			D2DepositHeaderKey.ITR8232025,
+			D2DepositHeaderKey.ITR8232026,
+			D2DepositHeaderKey.ITR8232027,
+			D2DepositHeaderKey.ITR8232028,
+			D2DepositHeaderKey.ITR8232029,
+			
+			D2DepositHeaderKey.ITR8232031,
+			D2DepositHeaderKey.ITR8232032,
+			D2DepositHeaderKey.ITR8232033,
+			D2DepositHeaderKey.ITR8232034,
+			D2DepositHeaderKey.ITR8232035,
+			D2DepositHeaderKey.ITR8232036,
+			D2DepositHeaderKey.ITR8232037,
+			D2DepositHeaderKey.ITR8232038,
+			D2DepositHeaderKey.ITR8232039
+	};
+	
+	
+	// IV.a. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de participación en el capital
+	public static D2DepositHeaderKey[] ITR_KEYS_4_A = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8231001, 
+			D2DepositHeaderKey.ITR8231002, 
+			D2DepositHeaderKey.ITR8231003, 
+			D2DepositHeaderKey.ITR8231004,
+			
+			D2DepositHeaderKey.ITR8231011, 
+			D2DepositHeaderKey.ITR8231012, 
+			D2DepositHeaderKey.ITR8231013, 
+			D2DepositHeaderKey.ITR8231014,
+			
+			D2DepositHeaderKey.ITR8231021, 
+			D2DepositHeaderKey.ITR8231022, 
+			D2DepositHeaderKey.ITR8231023, 
+			D2DepositHeaderKey.ITR8231024, 
+			
+			D2DepositHeaderKey.ITR8231031, 
+			D2DepositHeaderKey.ITR8231032, 
+			D2DepositHeaderKey.ITR8231033, 
+			D2DepositHeaderKey.ITR8231034  
+	};
+	
+	// IV.b. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	public static D2DepositHeaderKey[] ITR_KEYS_4_B = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8233001,
+			D2DepositHeaderKey.ITR8233002,
+			D2DepositHeaderKey.ITR8233003,
+			D2DepositHeaderKey.ITR8233004,
+          
+			D2DepositHeaderKey.ITR8233011,
+			D2DepositHeaderKey.ITR8233012,
+			D2DepositHeaderKey.ITR8233013,
+			D2DepositHeaderKey.ITR8233014,
+	          
+			D2DepositHeaderKey.ITR8233021,
+			D2DepositHeaderKey.ITR8233022,
+			D2DepositHeaderKey.ITR8233023,
+			D2DepositHeaderKey.ITR8233024, 
+	          
+			D2DepositHeaderKey.ITR8233031,
+			D2DepositHeaderKey.ITR8233032,
+			D2DepositHeaderKey.ITR8233033,
+			D2DepositHeaderKey.ITR8233034 
+	};
+
 	public static D2DepositHeaderKey[] IMA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IMA8099000, D2DepositHeaderKey.IMA8099010
 	};
@@ -5012,5 +5145,5 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.IDA01010,
 		D2DepositHeaderKey.IDA01020
 	};
-}
 
+}
