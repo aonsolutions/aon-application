@@ -13,10 +13,32 @@ public class D2PrevioustoD2Current {
 	}
 	
 	@FunctionalInterface
+	private static interface IPropertyFillerHeaderText {
+		public void fillText(Map<D2DepositHeaderKey,String> mapCurrent, Map<D2DepositHeaderKey,String> mapPrevious);
+	}
+	
+	@FunctionalInterface
 	private static interface IPropertyFiller {
 		public void fill2(Map<D2DepositKey,Double> mapCurrent, Map<D2DepositKey,Double> mapPrevious);
 	}
 	
+	private static final IPropertyFillerHeaderText[] IDE_KEYS = new IPropertyFillerHeaderText[] {
+		 // Mujeres y total miembros del órgano de administración
+		 (ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04212, D2DepositHeaderKey.IDA042129)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04213, D2DepositHeaderKey.IDA042139)
+		 // Personal asalariado
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04001, D2DepositHeaderKey.IDA040019)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04002, D2DepositHeaderKey.IDA040029)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04010, D2DepositHeaderKey.IDA040109)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04120, D2DepositHeaderKey.IDA041209)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04121, D2DepositHeaderKey.IDA041219)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04122, D2DepositHeaderKey.IDA041229)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA04123, D2DepositHeaderKey.IDA041239)
+		 // Presentación de cuentas (fechas inicio y fin)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA01102, D2DepositHeaderKey.IDA011029)
+		,(ctx, mapPrevious) ->  setText(ctx, mapPrevious, D2DepositHeaderKey.IDA01101, D2DepositHeaderKey.IDA011019)
+			
+	};	
 
 	private static final IPropertyFillerHeader[] BALANCE_ACTIVE_KEYS = new IPropertyFillerHeader[] {
 			
@@ -1243,18 +1265,27 @@ public class D2PrevioustoD2Current {
 		ctx.put(D2Key, dv==null?0.0:dv);
 	}
 	
+	private static void setText(Map<D2DepositHeaderKey, String> ctx, Map<D2DepositHeaderKey, String> mapPrevious, D2DepositHeaderKey previousKey, D2DepositHeaderKey D2Key) {
+		ctx.put(D2Key, mapPrevious.get(previousKey));
+	}
+	
 	private static void set(Map<D2DepositKey, Double> ctx, Map<D2DepositKey, Double> mapPrevious, D2DepositKey previousKey, D2DepositKey D2Key) {
 		Double dv = mapPrevious.get(previousKey);
 		ctx.put(D2Key, dv==null?0.0:dv);
 	}
 
-	public static void fill(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositHeaderKey, Double> mapPrevious) {
-		fillBalance(ctx, mapPrevious);
-		fillPyg(ctx, mapPrevious);
-		fillEcpn(ctx, mapPrevious);
-		fillEcpn2(ctx, mapPrevious);
-	}
+//	public static void fill(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositHeaderKey, Double> mapPrevious) {
+//		fillBalance(ctx, mapPrevious);
+//		fillPyg(ctx, mapPrevious);
+//		fillEcpn(ctx, mapPrevious);
+//		fillEcpn2(ctx, mapPrevious);
+//	}
 	
+	public static void fillIde(Map<D2DepositHeaderKey, String> ctx, Map<D2DepositHeaderKey, String> mapPrevious) {
+		for (IPropertyFillerHeaderText filler : IDE_KEYS ) {
+			filler.fillText(ctx, mapPrevious);
+		}
+	}
 	public static void fillBalance(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositHeaderKey, Double> mapPrevious) {
 		for (IPropertyFillerHeader filler : BALANCE_ACTIVE_KEYS ) {
 			filler.fill(ctx, mapPrevious);

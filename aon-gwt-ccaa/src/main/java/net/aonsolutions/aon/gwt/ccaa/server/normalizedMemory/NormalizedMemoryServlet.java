@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -891,8 +893,10 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-
-		if(isDigitalDeposit(aonData, year-1)){
+		Map<D2DepositHeaderKey, String> ctxText = new LinkedHashMap<D2DepositHeaderKey, String>();
+		
+        // COPIAR DATOS DEL EJERCICIO ANTERIOR
+		if (isDigitalDeposit(aonData, year-1)){
 			Esquema previousSchema = getSchema(aonData, year-1);
 			Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
 			D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
@@ -900,9 +904,16 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
 			D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
 			mapFreeText = getFreeTextKeySchema(previousSchema);
+			// FALTA - COPIAR DATOS EJERCICIO ANTERIOR: IDENTIFICACION, TITULAR REAL, INSTANCIA PRESENTADOR, ...
+			if (year >= 2024) {
+				Map<D2DepositHeaderKey, String> mapPreviousIde = getMapPreviousIde(previousSchema); // Identificacion
+				D2PrevioustoD2Current.fillIde(ctxText, mapPreviousIde);
+				Map<D2DepositHeaderKey, String> mapPreviousItr = getMapPreviousItr(previousSchema); // Titular Real
+				ctxText.putAll(mapPreviousItr);
+			}
 		}
 		
-		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
+		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
@@ -915,7 +926,117 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
 			, AttachType.REGISTRY);
 		return Utils.readXml(attach.getData());
-	}	
+	}
+	
+	private Map<D2DepositHeaderKey, String> getMapPreviousIde(Esquema schema) {
+		
+		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
+		D2DepositHeaderKey[] keys = new D2DepositHeaderKey[] {
+ 			 // Mujeres y total miembros del órgano de administración
+			 D2DepositHeaderKey.IDA04212 
+			,D2DepositHeaderKey.IDA04213 
+			 // Personal asalariado
+			,D2DepositHeaderKey.IDA04001
+			,D2DepositHeaderKey.IDA04002
+			,D2DepositHeaderKey.IDA04010
+			,D2DepositHeaderKey.IDA04120
+			,D2DepositHeaderKey.IDA04121
+			,D2DepositHeaderKey.IDA04122
+			,D2DepositHeaderKey.IDA04123
+			 // Presentación de cuentas (fechas inicio y fin)
+			,D2DepositHeaderKey.IDA01102
+			,D2DepositHeaderKey.IDA01101
+		};
+		
+		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
+		for (D2DepositHeaderKey key : keys) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode())) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}		
+		return map;
+		
+	}
+	 
+	private Map<D2DepositHeaderKey, String> getMapPreviousItr(Esquema schema) {
+		
+		// Identificación del titular real a partir de 2024
+		ArrayList<D2DepositHeaderKey> itrKeysList = new ArrayList<>();
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4));   // Apartado Ia
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_5));   // Apartado Ib
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_6));   // Apartado II
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_3_A)); // Apartado IIIa
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_3_B)); // Apartado IIIb
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_A)); // Apartado IVa
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_B)); // Apartado IVb
+		
+		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
+		for (D2DepositHeaderKey key : itrKeysList) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode())) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}
+//		
+//		
+//		
+//		
+//		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_5) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_6) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_3_A) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_3_B) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4_A) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4_B) {
+//			for (Clave clave : schema.getClaves().getClave()) {
+//				if (clave.getCodigo().toString().equals(key.getCode())) {
+//					map.put(key,clave.getValor());
+//				}
+//			}
+//		}
+		return map;
+		
+	}
 	
 	private Map<D2DepositHeaderKey, Double> getHeaderKeySchema(Esquema schema) {
 		Map<D2DepositHeaderKey, Double> map = new HashMap<D2DepositHeaderKey, Double>();
