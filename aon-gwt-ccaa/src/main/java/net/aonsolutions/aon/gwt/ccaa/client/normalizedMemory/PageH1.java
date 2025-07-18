@@ -12,10 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.CNAE2025;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -295,13 +292,13 @@ public class PageH1 extends PageAbs {
 		keyExe("1061", IDA01061, "text", true);
 		keyExe("1060", IDA01060, "text", true);
 		keyExe("2009", IDA02009, "label", true);
-//		IDA02001.setEnabled(false);
+		IDA02001.setEnabled(false);
 		keyExe("2001", IDA02001, "text", false);
 
 		if (getYear() >= 2024) {
 			CNAE2025Label.setVisible(true);
 			IDA02014.setVisible(true);
-//			IDA02014.setEnabled(false); 
+			IDA02014.setEnabled(false); 
 			keyExe("2014", IDA02014, "text", false);
 		} else {
 			CNAE2025Label.setVisible(false);
@@ -367,19 +364,6 @@ public class PageH1 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		init();
-		
-		// A partir del ejercicio 2024: Comprobar si el CNAE 2025 está vacio y si es así, cumplimentarlo con la 
-		// correspondencia del CNAE-2009, si es necesario se mostrará una lista para que el cliente seleccione el CNAE-2025		
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				if (getYear() >= 2024 && AonStringUtils.isBlank(IDA02014.getText()) && AonStringUtils.isNotBlank(IDA02001.getText())) {
-					String code2009 = AonStringUtils.left(IDA02001.getText(), 2) + "." + AonStringUtils.right(IDA02001.getText(), 2);
-					cnaePanel2025.onShowCnae2009ToCnae2025(code2009);
-				}
-			}
-		});
-		
 	}
 	
 	String key2Aux;
