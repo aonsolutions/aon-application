@@ -75,6 +75,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			case "/items":
 				response(req, resp, getItems(api));
 				break;
+			case "/barcode/items":
+				response(req, resp, getBarcodeItems(api));
+				break;
 			case "/ritem":
 				response(req, resp, getRItems(api));
 				break;
@@ -225,6 +228,23 @@ public class ProductServlet extends AonApiHttpServlet {
 		} else throw new AonApiException("No se ha especificado el envase.");
 		
 		return new JSONObject();
+	}
+	
+	private JSONArray getBarcodeItems(AonApiData api) {
+		String barcode = JsonUtils.getString(api.getData(), IJsonNames.BARCODE);
+		Item base = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().eq(barcode), new Options().setFull(true));
+		
+		return ItemJSON.toJSON(
+			AON.getItemStream(api.getDomain(), api.getUser().getLogin(), f -> 
+				f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getProductProperty().eq(base.getProduct().getId()))
+				.and(f.getStatusProperty().eq(ProductStatus.ACTIVE.value())))
+			.map(item -> 
+				item.setPackFormatTag(base.getPackFormatTag())
+					.setPackMeasurementTag(base.getPackMeasurementTag())
+					.setPackUnitsTag(base.getPackUnitsTag())
+					.setStockUnitTag(base.getStockUnitTag())
+			));
 	}
 	
 	private JSONArray getItems(AonApiData api) {

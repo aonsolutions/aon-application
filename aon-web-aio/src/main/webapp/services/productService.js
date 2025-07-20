@@ -4,6 +4,7 @@ import { API_URL } from "../environments/environments.js";
 
 export const getProducts = (data) => get(`${API_URL}/product`, data);
 export const getItems = (data) => get(`${API_URL}/product/items`, data);
+export const getItemsByBarcode = (data) => get(`${API_URL}/product/barcode/items`, data);
 export const getRItems = (data) => get(`${API_URL}/product/ritem`, data);
 export const getItem = (data) => get(`${API_URL}/product/item`, data);
 export const getPackage = (data) => get(`${API_URL}/product/package`, data);
