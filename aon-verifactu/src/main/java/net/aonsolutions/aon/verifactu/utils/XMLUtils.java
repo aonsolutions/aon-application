@@ -45,6 +45,8 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 
+import net.aonsolutions.aon.verifactu.VerifactuResponse;
+
 public class XMLUtils {
 
 	public static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
@@ -109,7 +111,7 @@ public class XMLUtils {
 		return o.getValue();
 	}
 	
-	public static String post(Certificate cert, String uri, String document) throws SOAPException, IOException {
+	public static VerifactuResponse post(Certificate cert, String uri, String document) throws SOAPException, IOException {
         System.out.println("********************* REQUEST *******************");
         System.out.println(document);
         
@@ -132,6 +134,8 @@ public class XMLUtils {
         String result = baos.toString();
         System.out.println("********************* RESPONSE *******************");
         System.out.println(result);
+        VerifactuResponse vr = new VerifactuResponse();
+        vr.setResponse(result);
         
         String body = "<env:Body>";
         String endBody = "</env:Body>";
@@ -145,11 +149,14 @@ public class XMLUtils {
         } else if(result.contains("<faultstring>")) {
         	body = "<faultstring>";
         	endBody = "</faultstring>";
+
+            String message = result.split(body )[1];
+            message = message.split(endBody)[0];
+            vr.setError(true);
+            vr.setErrorMessage(message);            
         }
-        result = result.split(body )[1];
-        result = result.split(endBody)[0];
-        System.out.println(result);
-        return result;
+        
+        return vr;
 	}
 	
 	private static void secure(Certificate cert, String uri) {

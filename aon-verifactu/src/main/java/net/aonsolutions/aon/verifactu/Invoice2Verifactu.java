@@ -29,6 +29,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.EncadenamientoFacturaAnteriorType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
@@ -36,6 +37,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Destinatarios;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Encadenamiento;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SiNoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
@@ -102,11 +104,12 @@ public class Invoice2Verifactu {
 		Date expDate = invoice.ensureFiscal().getExpDate() != null
 				? invoice.getFiscal().getExpDate()
 				: invoice.getIssueDate();
+		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
+		idFactura.setIDEmisorFactura(company.getDocument());
+		idFactura.setNumSerieFactura(invoice.getReferenceCode());
+		idFactura.setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
+		alta.setIDFactura(idFactura);
 		
-		alta.getIDFactura().setIDEmisorFactura(company.getDocument());
-		alta.getIDFactura().setNumSerieFactura(invoice.getReferenceCode());
-		alta.getIDFactura().setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
-
 		// Referencia Externa InvoiceId
 		alta.setRefExterna(invoice.getId().toString());
 		
@@ -156,7 +159,10 @@ public class Invoice2Verifactu {
 		// destinatario.setIDOtro(new IDOtroType());
 		destinatario.setNIF(invoice.getRegistryDocument());
 		destinatario.setNombreRazon(invoice.getRegistryName());
-		alta.getDestinatarios().getIDDestinatario().add(destinatario);
+		
+		Destinatarios destinatarios = new Destinatarios();
+		destinatarios.getIDDestinatario().add(destinatario);
+		alta.setDestinatarios(destinatarios);
 		
 		// ?????????????????????
 		alta.setCupon(CuponType.N);

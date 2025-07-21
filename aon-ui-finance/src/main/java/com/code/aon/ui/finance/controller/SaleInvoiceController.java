@@ -714,19 +714,19 @@ public class SaleInvoiceController extends InvoiceController {
 					setTbaiUrl(TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
 				
-//				VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
-//
-//				verifactuConfiguration.setCertificate(getCertData());
-//				if(verifactuConfiguration.isActive()) {
-//					Domain domain = new Domain().setName(domainName).setId(invoice.getDomain());
-//					User user = new User().setLogin(login);
-//					AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
-//							new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
-//								.setCompany(company)
-//								.setVerifactuConfiguration(verifactuConfiguration);
-//
-//					InvoiceCommunicationType.VERIFACTU.visit(visitor);
-//				}
+				VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
+
+				verifactuConfiguration.setCertificate(getCertData());
+				if(verifactuConfiguration.isActive()) {
+					Domain domain = new Domain().setName(domainName).setId(invoice.getDomain());
+					User user = new User().setLogin(login);
+					AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+							new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
+								.setCompany(company)
+								.setVerifactuConfiguration(verifactuConfiguration);
+
+					InvoiceCommunicationType.VERIFACTU.visit(visitor);
+				}
 				
 				// SII
 			}

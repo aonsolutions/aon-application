@@ -52,14 +52,14 @@ public class VERIFACTU {
 	public void accept(VerifactuConfiguration verifactuConfiguration, Company company, List<Invoice> invoices, VerifactuBlockchain blockchain) throws Exception {
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(verifactuConfiguration, company, invoices, blockchain);
 		String requestStr = XMLUtils.soapMarshal(request, RegFactuSistemaFacturacion.class);
-		String responseStr = XMLUtils.post(verifactuConfiguration.getCertificate(), VerifactuUri.getUrlEmision(), requestStr);
-		RespuestaRegFactuSistemaFacturacionType response = (RespuestaRegFactuSistemaFacturacionType) XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, responseStr);
-		save(company, request, response);
+		VerifactuResponse response = XMLUtils.post(verifactuConfiguration.getCertificate(), VerifactuUri.getUrlEmision(true), requestStr);
+
+		save(company, invoices, request, response);
 	}
 
-	protected void save(Company company, RegFactuSistemaFacturacion request, RespuestaRegFactuSistemaFacturacionType response) throws ParserConfigurationException, SAXException, IOException, JAXBException {
+	protected void save(Company company, List<Invoice> invoices, RegFactuSistemaFacturacion request, VerifactuResponse response) throws ParserConfigurationException, SAXException, IOException, JAXBException {
 		byte[] requestData = XMLUtils.marshal(request, RegFactuSistemaFacturacion.class);
-		byte[] responseData = XMLUtils.marshal(request, RespuestaRegFactuSistemaFacturacionType.class);
+		byte[] responseData = response.getResponse().getBytes();
 		// save DATA REQUEST
 		DataRequest dataRequest = saveRequest(company.getDomain(), requestData);
 		// save DATA RESPONSE
@@ -104,14 +104,22 @@ public class VERIFACTU {
 					.setValue(blockchain.toJSON().toString()));
 		
 		InvoiceBatch invoiceBatch = saveInvoiceBatch(company.getDomain(), user, dataResponse);
-		if(!response.getRespuestaLinea().isEmpty()) {
-			response.getRespuestaLinea().stream().forEach(r -> {
-				Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-				InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
-				saveInvoiceInfo(company.getDomain(), user, invoiceId, status); 
-				saveInvoiceBatchdetail(company.getDomain(),user, invoiceBatch, invoiceId, status);				
+		if(response.isError()) {
+			invoices.stream().forEach(r -> {
+				saveInvoiceInfo(company.getDomain(), user, r.getId(), InvoiceCommunicationStatus.WRONG);
+				saveInvoiceBatchdetail(company.getDomain(), user, invoiceBatch, r.getId(), InvoiceCommunicationStatus.WRONG);					
 			});
-		}	
+		} else {
+			RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, response.getResponse());
+			if(!respuesta.getRespuestaLinea().isEmpty()) {
+				respuesta.getRespuestaLinea().stream().forEach(r -> {
+					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+					InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
+					saveInvoiceInfo(company.getDomain(), user, invoiceId, status); 
+					saveInvoiceBatchdetail(company.getDomain(),user, invoiceBatch, invoiceId, status);				
+				});
+			}
+		}		
 	}
 	
 	private InvoiceCommunicationStatus getInvoiceCommunicationStatus(EstadoRegistroType status) {

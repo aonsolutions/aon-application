@@ -11,9 +11,9 @@ public class VerifactuUri {
 	
 
     // https://prewww2.aeat.es equivalente en cuanto a requisitos a https://www2.agenciatributaria.gob.es
-  	private static final String URL_1 = "https://www2.agenciatributaria.gob.es";
-	private static final String URL_TEST_1 = "https://prewww2.aeat.es";
-
+  	private static final String URL_1 = "https://www1.agenciatributaria.gob.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP";
+  	private static final String URL_TEST_1 = "https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP";
+  	
   	// https://prewww1.aeat.es equivalente en cuanto a requisitos a https://www1.agenciatributaria.gob.es
   	private static final String URL_2 = "https://www1.agenciatributaria.gob.es";
 	private static final String URL_TEST_2 = "https://prewww1.aeat.es";
@@ -25,8 +25,8 @@ public class VerifactuUri {
 	private static final String URL_QR = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
 	private static final String URL_QR_TEST = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
 	
-	public static String getUrlEmision() {
-		return URL_TEST_1;
+	public static String getUrlEmision(boolean test) {
+		return test ? URL_TEST_1 : URL_1;
 	}
 	
 	public static String getUrlQr() {
