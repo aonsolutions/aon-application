@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
+import com.esferalia.aon.occam.api.json.ItemCompositionJSON;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
@@ -22,10 +23,12 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.BookingStatus;
@@ -72,6 +75,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			case "/items":
 				response(req, resp, getItems(api));
 				break;
+			case "/barcode/items":
+				response(req, resp, getBarcodeItems(api));
+				break;
 			case "/ritem":
 				response(req, resp, getRItems(api));
 				break;
@@ -105,6 +111,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			case "/ritem/update":
 				response(req, resp, updateRegistryItem(api));
 				break;			
+			case "/package/adjustComposition":
+				response(req, resp, adjustPackageComposition(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}	
@@ -147,6 +156,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			case "/":
 //				response(req, resp, getResponseObject());
 				break;
+			case "/package":
+				response(req, resp, deletePackage(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}	
@@ -181,6 +193,14 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private JSONObject getPackage(AonApiData api) {
 		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> packageFilter(api, f), options(api));
+		// TODO HACERLO EN EL DAO!
+		for (Integer i = 0; i<item.getItemComposition().size(); i++) {
+			Integer compositionItemId = item.getItemComposition().get(i).getCompositionItemId();
+			Item composition = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> 
+				f.getIdProperty().eq(compositionItemId), new Options().setFull(true));
+			item.getItemComposition().get(i).setComposition(composition);
+		}
+		
 		JSONObject packageJSON = ItemJSON.toJSON(item);
 		
 		Delivery delivery = AON.getDeliveryByPackage(api.getOccam(), item.getId());
@@ -188,6 +208,43 @@ public class ProductServlet extends AonApiHttpServlet {
 			packageJSON.put(IJsonNames.DELIVERY, DeliveryJSON.toJSON(delivery));
 		
 		return packageJSON; 
+	}
+	
+	private JSONObject adjustPackageComposition(AonApiData api) {
+		ItemComposition ic = ItemCompositionJSON.fromJSON(api.getData());
+		AON.adjustPackageComposition(api.getDomain(), api.getUser(), ic);
+		return new JSONObject();
+	}
+	
+	private JSONObject deletePackage(AonApiData api) {
+		if(JsonUtils.has(api.getData(), IJsonNames.ID)) {
+			Integer itemId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+			AON.deletePackage(api.getDomain(), api.getUser(), itemId);
+		} else if(JsonUtils.has(api.getData(), IJsonNames.SSCC)) {
+			String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+			if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+			else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+			AON.deletePackage(api.getDomain(), api.getUser(), sscc);			
+		} else throw new AonApiException("No se ha especificado el envase.");
+		
+		return new JSONObject();
+	}
+	
+	private JSONArray getBarcodeItems(AonApiData api) {
+		String barcode = JsonUtils.getString(api.getData(), IJsonNames.BARCODE);
+		Item base = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().eq(barcode), new Options().setFull(true));
+		
+		return ItemJSON.toJSON(
+			AON.getItemStream(api.getDomain(), api.getUser().getLogin(), f -> 
+				f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getProductProperty().eq(base.getProduct().getId()))
+				.and(f.getStatusProperty().eq(ProductStatus.ACTIVE.value())))
+			.map(item -> 
+				item.setPackFormatTag(base.getPackFormatTag())
+					.setPackMeasurementTag(base.getPackMeasurementTag())
+					.setPackUnitsTag(base.getPackUnitsTag())
+					.setStockUnitTag(base.getStockUnitTag())
+			));
 	}
 	
 	private JSONArray getItems(AonApiData api) {
@@ -445,7 +502,10 @@ public class ProductServlet extends AonApiHttpServlet {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
 		if(JsonUtils.has(api.getData(), IJsonNames.SSCC)) {
-			filter = filter.and(f.getSerialNumberProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.SSCC)));
+			String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+			if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+			else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+			filter = filter.and(f.getSerialNumberProperty().eq(sscc));
 		}
 		
 		if(JsonUtils.has(api.getData(), IJsonNames.ID)) {

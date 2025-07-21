@@ -12,28 +12,6 @@ public class ElaborationPackageDAO {
 	
 	}
 	
-//	public static ElaborationDetail update(AONContext ctx, ElaborationDetail elaborationPackage) {
-//		ElaborationDetail savedElaborationPackage = ElaborationDetailDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
-//		ElaborationPackageValidation.validatePackageDeletion(ctx, savedElaborationPackage);
-//		// TODO UPDATE ELABORATION DETAIL..
-//		
-//		// UPDATE ELABORATION DETAIL COMPOSITION
-//		elaborationPackage.getComposition().forEach(composition -> {
-//			ElaborationDetailComposition savedComposition = savedElaborationPackage.getComposition().stream().filter(f -> f.getId().equals(r.getId())).findFirst().orElse(new ElaborationDetailComposition());
-//			if(!savedComposition.equals(composition)) {
-//				// UPDATE ELABORATION DETAIL COMPOSITION
-//				ElaborationDetailCompositionDAO.updateElaborationDetailComposition(ctx, composition);
-//				// UPDATE ITEM COMPOSITION
-//				ItemCompositionDAO.update(ctx, null);
-//				// UPDATE STOCK
-//				
-//				// UPDATE ELABORATION DETAIL
-//			}
-//		});
-//		
-//	}
-	
-	
 	public static ElaborationDetail delete(AONContext ctx, Integer id) {
 		ElaborationDetail elaborationPackage = ElaborationDetailDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
 		ElaborationPackageValidation.validatePackageDeletion(ctx, elaborationPackage);
@@ -46,21 +24,15 @@ public class ElaborationPackageDAO {
 		
 		ItemCompositionDAO.delete(ctx, f -> f.getItemProperty().eq(elaborationPackage.getItem().getId()));
 
-		Stock packageStock = WarehouseDAO.getStock(ctx, f -> f.getItemProperty().eq(elaborationPackage.getItem().getId()));
-		WarehouseDAO.deleteStock(ctx, packageStock.getId());
+		Stock packageStock = StockDAO.get(ctx, f -> f.getItemProperty().eq(elaborationPackage.getItem().getId()));
+		StockDAO.delete(ctx, packageStock.getId());
 		
 		ItemDAO.delete(ctx, elaborationPackage.getItem().getId());
 		
 		elaborationPackage.getComposition().stream().forEach(composition -> {
 			//UPDATE STOCK. Subtrack removed quantity.
-			Stock stock = WarehouseDAO.getStock(ctx, f-> 
-					f.getItemProperty().eq(composition.getItem().getId())
-					.and(f.getWarehouseProperty().eq(elaborationPackage.getWarehouse().getId())));
-			if(stock != null && stock.getId() != null) {
-				stock.setQuantity(stock.getQuantity() - composition.getQuantity());
-				WarehouseDAO.saveStock(ctx, stock);
-			}
-			
+			StockDAO.subtract(ctx, composition.getItem().getId(), composition.getWarehouse().getId(), composition.getQuantity());
+
 			//UPDATE ELABORATION DETAIL. Subtrack removed quantity.
 			ElaborationDetail elaborationDetail = ElaborationDetailDAO.get(ctx, f -> f.getElaborationProperty().eq(elaborationPackage.getElaboration().getId())
 					.and(f.getTypeProperty().eq(ElaborationDetailType.ELABORATION.value()))

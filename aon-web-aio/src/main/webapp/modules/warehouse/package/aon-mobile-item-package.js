@@ -1,35 +1,27 @@
 import { AonElement } from '../../../components/AonElement.js';
 
-import { AonCard } from "../../../components/aon-card.js";
-
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 
-import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
-
-import { AonNumber } from '../../../components/aon-number.js';
-import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
-import { AonIconButton } from '../../../components/aon-icon-button.js';
 import * as LS from '../../../services/localStorageService.js';
-import {openFileUrl} from '../../../services/service.js';
+import {getItems, getItemsByBarcode, getPackage, openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
-import { deleteElaborationPackage } from '../../../services/warehouseService.js';
-import { getPackages, removePackage } from '../package/PackagesCache.js';
-import { AonMobilePackageList } from './aon-mobile-package-list.js';
 
 import * as UA from '../../../services/userAgentService.js';
 import { printFile } from '../../../services/actionService.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { ToolbarType } from '../../../models/enums.js';
-import { createCard, createInput } from '../../../components/CreateComponent.js';
+import { createCard, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
 import { round } from '../../../services/utils.js';
+import { adjustComposition, deletePackage } from '../../../services/warehouseService.js';
+import { AonIconButton } from '../../../components/aon-icon-button.js';
 
 
 export class AonMobileItemPackage extends AonElement {
 
 	PACKAGE_TOOLBAR;
+	PACKAGE_DIV;
 
 	PACKAGE_CARD;
 	PACKAGE_TABLE;
@@ -38,13 +30,20 @@ export class AonMobileItemPackage extends AonElement {
 	PACKAGE_QUANTITY;
 	PACKAGE_SERIAL_NUMBER;
 	PACKAGE_SERIAL_DATE;
+	PACKAGE_COMPOSITION_TABLE
 
 	COMPOSITION;
 	COMPOSITION_CARD;
 	COMPOSITION_TABLE;
 	COMPOSITION_ITEM;
 	COMPOSITION_QUANTITY;
-	
+
+	COMPOSITION_ADJUST_QUANTITY
+
+	COMPOSITION_ADD_PRODUCT;
+	COMPOSITION_ADD_ITEM;
+	COMPOSITION_ADD_QUANTITY;
+
 	TAG;
 	TAG_CARD;
 
@@ -75,6 +74,7 @@ export class AonMobileItemPackage extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'aonPackage';
+		this.PACKAGE_DIV = this.id + CONSTANT.DIV.initCap();
 		this.PACKAGE_TOOLBAR = this.id + CONSTANT.TOOLBAR.initCap();
 		this.PACKAGE_CARD = this.id + CONSTANT.CARD.initCap();
 		this.PACKAGE_TABLE = this.id + CONSTANT.TABLE.initCap();
@@ -82,12 +82,18 @@ export class AonMobileItemPackage extends AonElement {
 		this.PACKAGE_QUANTITY = this.id + CONSTANT.QUANTITY.initCap();
 		this.PACKAGE_SERIAL_NUMBER = this.id + 'SerialNumber';
 		this.PACKAGE_SERIAL_DATE = this.id + 'SerialDate';
+		this.PACKAGE_COMPOSITION_TABLE = this.id + 'CompositionTable';
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
 		this.COMPOSITION_TABLE = this.COMPOSITION + CONSTANT.TABLE.initCap();
 		this.COMPOSITION_ITEM = this.COMPOSITION + CONSTANT.ITEM.initCap();	
 		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
+		this.COMPOSITION_ADJUST_QUANTITY = this.COMPOSITION + 'Adjust' + CONSTANT.QUANTITY.initCap();
+
+		this.COMPOSITION_ADD_PRODUCT = this.COMPOSITION + 'AddProduct';
+		this.COMPOSITION_ADD_ITEM = this.COMPOSITION + 'AddItem';
+		this.COMPOSITION_ADD_QUANTITY = this.COMPOSITION + 'AddQuantity';
 
 		this.TAG = this.id + CONSTANT.TAG.initCap();
 		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
@@ -97,7 +103,7 @@ export class AonMobileItemPackage extends AonElement {
 
 	build() {
 		this.buildToolbar();
-		let div = this.createDiv();
+		let div = this.createDiv(this.PACKAGE_DIV);		
 		this.appendChild(div);
 		this.buildPackage(div);		
 	}
@@ -108,9 +114,9 @@ export class AonMobileItemPackage extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = MSG.PACKAGE; 
 		this.appendChild(toolbar);
+		if(!this.itemPackage.delivery && this.itemPackage.status === 'ACTIVE') 
+			toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(this.back) toolbar.addButton2(ACTION.BACK, () => this.back());
-		// if(!this.itemPackage.delivery)
-		// 	toolbar.addButton2(ACTION.DELETE, () => this.delete());
 	}
 
   	buildPackage(parent){
@@ -134,6 +140,14 @@ export class AonMobileItemPackage extends AonElement {
 			deliveryDiv.style.color = 'red';
 			deliveryDiv.style.fontWeight = 'bold';
 			table.addCell(deliveryDiv);
+		} else if(this.itemPackage.status === 'DISCONTINUED') {
+			table.addRow();
+
+			let deliveryDiv = this.createDiv();
+			deliveryDiv.innerHTML = 'El envase está descatalogado';
+			deliveryDiv.style.color = 'red';
+			deliveryDiv.style.fontWeight = 'bold';
+			table.addCell(deliveryDiv);	
 		}
 
 		table.addRow();
@@ -161,7 +175,7 @@ export class AonMobileItemPackage extends AonElement {
 		table.id = this.PACKAGE_COMPOSITION_TABLE;
 		div.appendChild(table);
 		
-		this.itemPackage.itemComposition.forEach((c) => {
+		this.itemPackage.itemComposition.forEach((c, i) => {
 			table.addRow();
 			
 			let span = this.createSpan();
@@ -175,7 +189,29 @@ export class AonMobileItemPackage extends AonElement {
 			span2.style.fontWeight = 'bold';
 			let td2 = table.addCell(span2)
 			td2.style.paddingBottom = '10px';
+			if(!this.itemPackage.delivery && this.itemPackage.status === 'ACTIVE') {
+				let aonIconButton = this.createAonElement(new AonIconButton(), 'AAAAicon' + i, 'icon'); 
+				aonIconButton.icon = MATERIAL_ICONS.DRAFT_ORDERS;
+				aonIconButton.addEventListener(EVENT.CLICK, () => {
+					this.adjustDialog(c);
+				});
+				let td3 = table.addCell(aonIconButton);
+				td3.style.paddingBottom = '10px';
+			}
 		});
+
+		if(!this.itemPackage.delivery && this.itemPackage.status === 'ACTIVE') {
+			table.addRow();
+
+			let aonIconButton = this.createAonElement(new AonIconButton(), 'AddIcon', 'icon'); 
+			aonIconButton.icon = MATERIAL_ICONS.ADD_CIRCLE;
+			aonIconButton.addEventListener(EVENT.CLICK, () => {
+				this.addDialog();
+			});
+			let td3 = table.addCell(aonIconButton);
+			td3.style.paddingBottom = '10px';
+
+		}
 	}
 
 	getFormat(item, quantity) {
@@ -228,7 +264,7 @@ export class AonMobileItemPackage extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE);
-		d.setContentHTML('Estás seguro de eliminar el Envase ' + this.itemPackage.serialNumber);
+		d.setContentHTML('¿Estás seguro de eliminar el Envase <b>' + this.itemPackage.serialNumber + '</b>? <p>También se restará el stock del contenido del envase.<p>');
 		d.addAcceptAction(() => deletePackage(this.itemPackage.id)
 			.then(() => {
 				this.showMessage(MSG.DELETED_DATA);
@@ -237,6 +273,94 @@ export class AonMobileItemPackage extends AonElement {
 		);
 		d.open();
 	}
+
+	adjustDialog(composition) {
+		let aonWarehouse = this.getElement('aonWarehouse');
+		let quantityBox = createQuantity(this.COMPOSITION_ADJUST_QUANTITY, MSG.QUANTITY);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		quantityBox.setTags(composition.composition);
+
+		let d = document.getElementById(aonWarehouse.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Ajustar Cantidad");
+		d.setContent(quantityBox);
+		d.addAcceptAction(() => {
+			composition.quantity = quantityBox.getQuantity();
+			adjustComposition(composition)
+			.then(() => {
+				this.showMessage("Se ha actualizado correctamente.");
+				let div = this.getElement(this.PACKAGE_DIV);	
+				this.clearElement(div);
+				this.buildPackage(div);
+			}).catch(e => this.showError(e))
+		});
+		d.open();
+	}
+
+	addDialog() {
+		let aonWarehouse = this.getElement('aonWarehouse');
+
+		let div =  this.createDiv(this.id + 'AddDiv');
+
+		let quantityBox = createQuantity(this.COMPOSITION_ADD_QUANTITY, MSG.QUANTITY);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		
+		let itemSelect = createSelect(this.COMPOSITION_ADD_ITEM, "Lote");
+
+		let product = createInput(this.COMPOSITION_ADD_PRODUCT, "Contenido");
+		product.addEventListener(EVENT.CHANGE, () => {
+			getItemsByBarcode({barcode: product.value}).then(items => {
+				product.setValue(items[0].product.name);
+				itemSelect.setAlias("id", "serialNumber");
+				itemSelect.setOptions(items);
+				itemSelect.addEventListener(EVENT.SELECT, () => {
+					quantityBox.setTags(itemSelect.getValueObject());
+					div.appendChild(quantityBox);
+				})
+				div.appendChild(itemSelect);
+			});	
+		});
+		// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode());
+
+		div.appendChild(product);
+
+		let d = document.getElementById(aonWarehouse.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Añadir Contenido");
+		d.setContent(div);
+		d.addAcceptAction(() => {	
+			let item = itemSelect.getValueObject();
+			let composition = {
+				domain: this.itemPackage.domain.id,
+				item: this.itemPackage.id,
+				compositionItem: item.id,
+				composition: item,
+				description: item.product.name + ' #' + item.serialNumber,
+				quantity: quantityBox.getQuantity(),
+				sequence: this.itemPackage.itemComposition ? this.itemPackage.itemComposition.length + 1 : 1
+
+			}
+			adjustComposition(composition)
+			.then(() => {
+				let data = {id: this.itemPackage.id, full:true};
+				getPackage(data).then(ip => {
+					this.itemPackage = ip;
+					this.showMessage("Se ha actualizado correctamente.");
+					let div = this.getElement(this.PACKAGE_DIV);	
+					this.clearElement(div);
+					this.buildPackage(div);
+				});
+			}).catch(e => this.showError(e))
+		});
+		d.open();
+	}
+
 
 	setItemPackage(itemPackage) {
 		this.itemPackage = itemPackage;

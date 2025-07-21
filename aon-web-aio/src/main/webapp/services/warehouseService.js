@@ -15,3 +15,7 @@ export const saveElaboration = (data) => put(API.ELABORATION, data);
 export const deleteElaboration = (id)  => remove(API.ELABORATION, {id});
 
 export const deleteElaborationPackage = (id)  => remove(`${API.ELABORATIONS}/packages/${id}`, {id});
+
+export const deletePackage = (id)  => remove(`${API.PRODUCT}/package`, {id});
+
+export const adjustComposition = (data) => post(`${API.PRODUCT}/package/adjustComposition`, data)
