@@ -13,6 +13,7 @@ export const ACCOUNT_BALANCE_WALLET = 'account_balance_wallet';
 export const ACCOUNT_BOX = 'account_box';
 export const ACCOUNT_CIRCLE = 'account_circle';
 export const ADD = 'add';
+export const ADD_CIRCLE = 'add_circle';
 export const ADD_CIRCLE_OUTLINE = 'add_circle_outline';
 export const ADD_SHOPPING_CART = 'add_shopping_cart';
 export const ADD_TASK = 'add_task';
