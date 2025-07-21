@@ -195,14 +195,12 @@ public class InvoiceDetail implements Serializable {
 			discountExpression = new DiscountExpression("0.0");
 		return discountExpression;
 	}
-	
-	public InvoiceDetail setDiscountExpression(DiscountExpression discountExpression) {
-		this.discountExpression = discountExpression;
-		return this;
-	}
-	
 	public InvoiceDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = new DiscountExpression(discountExpression);
+		return this;
+	}
+	public InvoiceDetail setDiscountExpression(DiscountExpression discountExpression) {
+		this.discountExpression = discountExpression;
 		return this;
 	}
 	

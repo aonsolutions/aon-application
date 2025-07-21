@@ -31,6 +31,10 @@ public enum InvoiceCommunicationType implements Serializable{
 		// Redefine
 	}
 	
+	public static String name( InvoiceCommunicationType i ) {
+		return (i == null) ? null : i.name(); 
+	}
+
 	public static InvoiceCommunicationType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

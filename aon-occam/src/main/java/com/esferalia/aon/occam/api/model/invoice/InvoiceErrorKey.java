@@ -2,6 +2,9 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum InvoiceErrorKey implements Serializable {
 	DOMAIN("Dominio") {
 		@Override
@@ -244,6 +247,15 @@ public enum InvoiceErrorKey implements Serializable {
 
 	public String getDescription() {
 		return description;
+	}
+	public static String name( InvoiceErrorKey k ) {
+		return k == null ? null : k.name();
+	}
+	public static InvoiceErrorKey safeValueOf(String name) {
+		return AonCollectionUtils.stream( InvoiceErrorKey.values() )
+			.filter( k -> AonStringUtils.equalsIgnoreCase(k.name(), name))
+			.findFirst()
+			.orElse(null);
 	}
 
 	public abstract <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t);
