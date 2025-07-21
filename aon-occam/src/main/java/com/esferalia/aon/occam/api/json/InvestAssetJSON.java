@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -27,18 +28,23 @@ public class InvestAssetJSON {
  		return list;
 	}
 	
+	public static Optional<InvestAsset> from(JSONObject json) {
+		if ( JsonUtils.isEmpty(json) ) return Optional.empty();
+		return Optional.of( new InvestAsset()
+				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
+				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+				.setType(InvestAssetType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
+				.setRegime(InvestAssetRegime.safeValueOf(JsonUtils.getString(json, IJsonNames.REGIME)))
+				.setStartDate(JsonUtils.getDateFormat(json, "startDate", "yyyy-MM-dd"))
+				.setEndDate(JsonUtils.getDateFormat(json, "endDate", "yyyy-MM-dd"))
+				.setVatPercent(JsonUtils.getdouble(json, IJsonNames.VAT_PERCENT))
+				.setRetentionPercent(JsonUtils.getdouble(json, IJsonNames.RETENTION_PERCENT)));
+	}
+	
 	public static InvestAsset fromJSON(JSONObject json) {
-		return new InvestAsset()
-			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-			.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-			.setType(InvestAssetType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
-			.setRegime(InvestAssetRegime.safeValueOf(JsonUtils.getString(json, IJsonNames.REGIME)))
-			.setStartDate(JsonUtils.getDateFormat(json, "startDate", "yyyy-MM-dd"))
-			.setEndDate(JsonUtils.getDateFormat(json, "endDate", "yyyy-MM-dd"))
-			.setVatPercent(JsonUtils.getdouble(json, IJsonNames.VAT_PERCENT))
-			.setRetentionPercent(JsonUtils.getdouble(json, IJsonNames.RETENTION_PERCENT));
+		return from(json).orElse(new InvestAsset());
 	}
 
 	public static JSONArray toJSON(List<InvestAsset> investAssets) {

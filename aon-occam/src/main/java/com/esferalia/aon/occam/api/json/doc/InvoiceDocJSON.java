@@ -17,14 +17,13 @@ public class InvoiceDocJSON {
 	// ***********************************************************
 	// ************************************************ [FROM] ***
 	// ***********************************************************
-	public static Optional<InvoiceDoc> fromJSON(JSONObject json) {
-		return fromJSON(json, InvoiceDoc::new);
+	public static Optional<InvoiceDoc> from(JSONObject json) {
+		return from(json, InvoiceDoc::new);
 	}
-	
-	public static Optional<InvoiceDoc> fromJSON(JSONObject json, Supplier<InvoiceDoc> docSupplier) {
+	public static Optional<InvoiceDoc> from(JSONObject json, Supplier<InvoiceDoc> docSupplier) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
 		InvoiceDoc doc = docSupplier.get();
-		ExternalDocJSON.fromJSON(json, () -> doc);
+		ExternalDocJSON.from(json, () -> doc);
 		return Optional.of(doc
 			.setInvoice(JsonUtils.getInteger(json, IJsonNames.INVOICE))
 		);
@@ -33,16 +32,19 @@ public class InvoiceDocJSON {
 	// ***********************************************************
 	// ************************************************** [TO] ***
 	// ***********************************************************
-	public static Optional<JSONObject> toJSON(InvoiceDoc doc) {
-		return toJSON(doc, JSONObject::new);
+	public static Optional<JSONObject> to(Optional<InvoiceDoc> doc) {
+		return doc.flatMap(d -> to(d));
 	}
-	
-	public static Optional<JSONObject> toJSON(InvoiceDoc doc, Supplier<JSONObject> jsonSupplier) {
+	public static Optional<JSONObject> to(InvoiceDoc doc) {
+		return to(doc, JSONObject::new);
+	}
+	public static Optional<JSONObject> to(InvoiceDoc doc, Supplier<JSONObject> jsonSupplier) {
 		if (doc == null) return Optional.empty();
-		return ExternalDocJSON.toJSON(doc, jsonSupplier )
+		return ExternalDocJSON.to(doc, jsonSupplier )
 			.map(json -> json
 				.put(IJsonNames.INVOICE, doc.getInvoice() )
 		);
 	}
+
 
 }
