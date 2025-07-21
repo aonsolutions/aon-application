@@ -65,36 +65,22 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		}
 		
 		AON_SOLUTIONS.getSuggestionRegistries(api.getDomain(), api.getUser().getLogin(), list,
-				f -> rfilter(api, f)).forEach(r -> array.put(registryToJSON(r, false)));
+				f -> rfilter(api, f, false)).forEach(r -> array.put(registryToJSON(r, false)));
 		if(array.length() <= 0) {
 			AON_SOLUTIONS.getGlobalSuggestionRegistries(api.getDomain(), api.getUser().getLogin(), 
-					f -> globalRfilter(api, f)).forEach(r -> array.put(registryToJSON(r, true)));
+					f -> rfilter(api, f, true)).forEach(r -> array.put(registryToJSON(r, true)));
 		}
  		return array;
 	}
 	
-	private Filter rfilter(AonApiData api, RegistryProperties f) {
-    	Filter filter =  f.getDomainProperty().eq(api.getDomain().getId());
+	private Filter rfilter(AonApiData api, RegistryProperties f, boolean global) {
+    	Filter filter =  f.getDomainProperty().eq(global ? 0 : api.getDomain().getId());
  
     	String name = JsonUtils.getString(api.getData(), IJsonNames.NAME);
 		String document = JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT);
 		
 		if(!AonStringUtils.isBlank(document)) {
-			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
-		} else if(!AonStringUtils.isBlank(name)) {
-			filter = filter.and(f.getNameProperty().like("%" + name + "%"));
-		}
-		return filter;
-	}
-	
-	private Filter globalRfilter(AonApiData api, RegistryProperties f) {
-    	Filter filter =  f.getDomainProperty().eq(0);
- 
-    	String name = api.getData().optString("name");
-		String document = api.getData().optString("document");
-		
-		if(!AonStringUtils.isBlank(document)) {
-			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
+			filter = filter.and(f.getDocumentProperty().match(toBooleanMode(document)));
 		} else if(!AonStringUtils.isBlank(name)) {
 			filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
 		}

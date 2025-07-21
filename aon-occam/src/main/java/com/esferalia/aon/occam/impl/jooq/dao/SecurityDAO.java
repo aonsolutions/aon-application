@@ -123,6 +123,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPrope
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -1293,7 +1294,7 @@ public class SecurityDAO {
 		
 		if(null == certificateRecord) return null;
 		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		String password = AonCertificateUtils.getCertificatePassword(certificateRecord.get(RATTACH.DESCRIPTION));
 		
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
@@ -1321,7 +1322,7 @@ public class SecurityDAO {
 
 		String password = null;
 		if(certificateRecord.get(RATTACH.DESCRIPTION).contains("HIDE"))
-			password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+			password = AonCertificateUtils.getCertificatePassword(certificateRecord.get(RATTACH.DESCRIPTION));
 		
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
@@ -1340,7 +1341,7 @@ public class SecurityDAO {
 		
 		if(null == certificateRecord) return null;
 		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		String password = AonCertificateUtils.getCertificatePassword(certificateRecord.get(RATTACH.DESCRIPTION));
 		
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())

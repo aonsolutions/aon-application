@@ -168,6 +168,10 @@ public abstract class Mod111Declaration {
 		if (!mod111.isComplementary() && mod111.isReplacement() ) {
 			mod111.setMustIncludeSalariesOnGeneration(existsPreviousSalaries || existsCurrentSalaries);
 		}
+		
+		mod111.setGenerateFromYearStartAvailable(!mod111.isFirstPeriod() && (existsPreviousInvoices || existsPreviousSalaries) );		
+		mod111.setGenerateFromYearStart(existsPreviousInvoices || existsPreviousSalaries);
+		
 	}
 
 //	private void initializePreviousData(AONContext ctx, Mod111 mod111) {

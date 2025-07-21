@@ -64,6 +64,10 @@ public class ItemCompositionDAO {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static ItemComposition get(AONContext ctx, Integer id) {
+		return get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
+	}
+	
 	public static ItemComposition get(AONContext ctx, ItemCompositionFilter filter) {
 		return select(ctx, filter).limit(1).fetch().stream().map(new ItemCompositionFiller()).findFirst().orElse(new ItemComposition());
 	}

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -39,6 +40,21 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 	public void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback) {		
 		AON.start();		
 		serviceAsync.savePDFModel(occam, model, data, new AsyncCallbackWrapper<Void>(callback));		
+	}
+	
+	// Para envio de email
+	@Override
+	public void sendEmail(Occam occam, IFiscalModel model, AsyncCallback<Void> callback) {		
+		AON.start();		
+		serviceAsync.sendEmail(occam, model, new AsyncCallbackWrapper<Void>(callback));		
+	}
+
+	// Para obtener informacion del certificado
+	@Override
+	public void getCertificateInfo(String domainName, int domainId, String user, Integer certificateId, AsyncCallback<CertificateInfo> callback) {
+		
+		AON.start();
+		serviceAsync.getCertificateInfo(domainName, domainId, user, certificateId, new AsyncCallbackWrapper<CertificateInfo>(callback));
 	}
 	
 }

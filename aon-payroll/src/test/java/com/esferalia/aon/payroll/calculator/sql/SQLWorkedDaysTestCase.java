@@ -76,6 +76,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -90,8 +91,6 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
-import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
@@ -100,11 +99,14 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -2211,6 +2213,78 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		
 		results = ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class);
 		org.junit.Assert.assertEquals((1000.00 * 20 / 30.00 + 25.00 * 10.00) / 30 , results.get(0).getValue(), 0.0001);
+
+	}
+
+	@Test
+	public void testContextWorkDaysMinusHolidaysIT() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		AgreementRecord agreement = newAgreement(aonContext);
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		addData(aonContext, agreement, getFirstDayOfYear(getToday()), new HashMap<String, String>(){
+			{
+				put("DIAS_NO_TRABAJADOS", "DIAS_VACACIONES");
+			}
+		});
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put("VACACIONES", "750.00");
+						put(MONTH_DAYS.getName(),"30.00");
+						put(TC2.getName(),format("\"%s\"", C100.getValue()));
+					}
+				},
+				new String []{
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"VACACIONES * DIAS_NO_TRABAJADOS / DIAS_MES "
+				},
+				new String[0],
+				category
+				);
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = add(startDate, Calendar.DAY_OF_MONTH, 23);
+
+		contract.setEndDate(endDate);
+		contract.update();
+		
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		
+		Date itStartDate = startDate;
+		Date itEndDate = add(itStartDate, Calendar.DAY_OF_MONTH, 6);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, getFirstDayOfYear(getToday()), itEndDate, 1000.00/30.00);
+
+		Date holidaysStartDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		Date holidaysEndDate = endDate;
+		
+		addData(aonContext, contract, holidaysStartDate, holidaysEndDate, "DIAS_VACACIONES", "14.00");
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, getLastDayOfMonth(startDate), getLastDayOfMonth(startDate), contract);
+		ISalary salary = new SmartContractSalaryCalculator(new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				// TODO Auto-generated method stub
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println("Payment: " + description + " = " + amount + " from " + startDate + " to " + endDate);
+			}
+		}).calculate(ctx);
+		
+		 salary.getPaymentS().forEach( payment -> {
+		 	System.out.println(payment.getDescription() + " = " + payment.getAmount());
+		});
+		
+		org.junit.Assert.assertEquals((1000.00 * 10 / 30.00 + 25.00 * 14.00), salary.getTotalPayment(), 0.004);
 
 	}
 

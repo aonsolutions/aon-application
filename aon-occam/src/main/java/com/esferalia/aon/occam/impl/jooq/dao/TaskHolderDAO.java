@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -23,13 +25,16 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderValidation;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskHolderDAO {
 	
@@ -60,6 +65,7 @@ public class TaskHolderDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.ALIAS);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.SECURITY_LEVEL);}
+		@Override public Property<String> getEmailProperty() {return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL); }		
 	}
 
 	
@@ -168,6 +174,100 @@ public class TaskHolderDAO {
 		return getStream(ctx, filter, options)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static ArrayList<TaskHolder> getTaskHolderList(AONContext ctx, TaskHolderParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectOnConditionStep<Record> select = ctx.getDslContext().select()
+				.from(TASK_HOLDER)
+				.join(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(DOMAIN).on(TASK_HOLDER_ALIAS.DOMAIN.eq(DOMAIN.ID)) // TODO REVISAR DONDE SE UTILIZA, BORRAR SI NO ES NECESARIO!!!!
+				;
+		
+		if(null != params.getWorkgroup()) {
+			select.leftJoin(TASK_HOLDER_WORKGROUP)
+				.on(	TASK_HOLDER_WORKGROUP.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY)
+						.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq( params.getWorkgroup()))
+				);
+		}
+		
+		select.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TASK_HOLDER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TASK_HOLDER.ACTIVE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TASK_HOLDER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TASK_HOLDER.ACTIVE.desc());
+		}
+		
+		ArrayList<TaskHolder> taskHolders = new ArrayList<>(
+				select
+				.limit(params.getOffset(), params.getLimit())
+				.fetch()
+				.stream()
+				.map(new TaskHolderFiller())
+				.collect(Collectors.toList())
+		);
+		
+		taskHolders.forEach(th -> {
+			th.setWorkgroups(new ArrayList<>(WorkgroupDAO.getWorkgroupByTaskHolderStream(ctx, f -> f.getDomainProperty().eq(th.getDomain().getId()), th.getId()).collect(Collectors.toList())));
+			if(null != th.getUserId()) th.setUser(UserDAO.get(ctx, f -> f.getIdProperty().eq(th.getUserId()), new Options().setFull(false)));
+			
+		});
+				
+		return taskHolders;
+	}
+
+	private static Condition paramsToCondition(AONContext ctx, TaskHolderParams params) {
+		Condition condition = DSL.trueCondition();
+		condition = TASK_HOLDER.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(null != params.getStatus())
+			condition = condition.and(TASK_HOLDER.ACTIVE.eq(params.getStatus() ? (byte)1 : (byte)0));
+			
+		
+		if(AonStringUtils.isNotBlank(params.getDescription())) {
+			condition = condition.and(
+					TASK_HOLDER_ALIAS.NAME.like("%" + params.getDescription() + "%")
+					.or(TASK_HOLDER_ALIAS.NAME.like("%" + params.getDescription() + "%"))
+					.or(TASK_HOLDER_ALIAS.ALIAS.like("%" + params.getDescription() + "%"))
+					.or(TASK_HOLDER_ALIAS.DOCUMENT.like("%" + params.getDescription() + "%"))
+			);
+		}
+		
+		return condition;
+	}
+
+	public static Integer getTaskHoldersCount(AONContext ctx, TaskHolderParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectCount()
+				.from(TASK_HOLDER)
+				.join(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(DOMAIN).on(TASK_HOLDER_ALIAS.DOMAIN.eq(DOMAIN.ID)) // TODO REVISAR DONDE SE UTILIZA, BORRAR SI NO ES NECESARIO!!!!
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TASK_HOLDER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TASK_HOLDER.ACTIVE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TASK_HOLDER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TASK_HOLDER.ACTIVE.desc());
+		}
+		
+		Record1<Integer> taskHolderCount = select.fetchOne();
+				
+		return taskHolderCount == null ? 0 : taskHolderCount.value1();
+	}
 
 	public static TaskHolder get(AONContext ctx, Integer id){
 		return get(ctx, p -> p.getIdProperty().eq(id));
@@ -232,6 +332,11 @@ public class TaskHolderDAO {
 		// TODO CONTROLAR FOREIGN KEYS
 		// course_instructor, daily_tracking, mk_action, mk_campaign, project_holder
 		// project_tas, seller, task, task_holder_workgroup, task_workflow, timecontrol
+		
+		int countW = ctx.getDslContext().delete(TASK_HOLDER_WORKGROUP)
+				.where(TASK_HOLDER_WORKGROUP.TASK_HOLDER.eq(taskHolderId))
+				.execute();
+			ctx.log().debug("DELETE TASK HOLDER WORKGROUPS taskHolderId: {0} ({1} rows)", taskHolderId, countW);
 		
 		int count = ctx.getDslContext().delete(TASK_HOLDER)
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolderId))

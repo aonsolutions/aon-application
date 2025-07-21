@@ -12,6 +12,10 @@
     margin-top: 600px;
 }
 
+.aonToolbar {
+  background-color: white;
+}
+
 #divCompanyLogoForm {
     display:none;
 }

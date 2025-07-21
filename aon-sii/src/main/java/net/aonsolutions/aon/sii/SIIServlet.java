@@ -12,12 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,9 +34,15 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
@@ -102,7 +102,7 @@ public class SIIServlet extends HttpServlet{
 			}
 			
 			if(AonStringUtils.isBlank(pass)) {
-				pass = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
+				pass = AonCertificateUtils.getCertificatePassword(attach.getDescription());
 			}
 			
 			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
@@ -196,7 +196,7 @@ public class SIIServlet extends HttpServlet{
 			}
 			attach.setDescription(desc);
 		} else if(attach.getDescription().contains("HIDE")){
-			String password = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
+			String password = AonCertificateUtils.getCertificatePassword(attach.getDescription());
 			Integer index = attach.getDescription().indexOf("HIDE");
 			if(!certificate.getPassword().equals(password)) {
 				if(checkCert(attach.getData(), certificate.getPassword())) {

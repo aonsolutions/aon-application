@@ -63,6 +63,7 @@ public interface IPayroll {
 	// -------------------- AgreementLevelCategory
 	
 	public Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, AgreementLevelCategoryFilter filter);
+	public Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, Integer domainId, Integer parentDomain, Integer year);
 	
 	// -------------------- BONUS 
 	

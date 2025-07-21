@@ -20,6 +20,9 @@ import { Income } from "./Income.js";
 import { AonExpense } from "./aon-expense.js";
 import { Expense } from "./Expense.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
+import { createSelect } from "../../components/CreateComponent.js";
+import { getCompanyActivities } from "../../services/companyService.js";
+import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoiceHome extends AonElement {
 
@@ -94,16 +97,57 @@ export class AonInvoiceHome extends AonElement {
     }
 
 	uploadInvoiceHome(input, files) {
-		let uploadToast = this.getElement('aonUploadToast');
-		if(!uploadToast){ 
-			uploadToast = new AonUploadToast();
-			this.appendChild(uploadToast);
-		}
-		let data = { uploaded : 0 };
-		uploadToast.setJobId(generateJobId());
-		for (let file of files) {
-			uploadToast.addFile("invoice", file, data);
-		}
+		getCompanyActivities({}).then(activities => {
+			let data = { uploaded: 0 };
+			if(activities.length > 1) {
+				activities.push({
+					id: "all",
+					description: "TODAS"
+        		});
+				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+				activity.setAlias("id", "description");
+				if(activities.length > 0) {
+					activity.setOptions(activities);
+					activity.value = activities[0].id;
+				}
+	
+				let d = new AonDialog();
+				let rootPanel = document.getElementById("rootPanel");
+				rootPanel.appendChild(d);
+				d.clear();
+	
+				d.setTitle(MSG.UPLOAD_INVOICE);
+				d.setContent(activity);
+				d.addAcceptAction(() => {
+					data.activity = activity.getValueObject().id;
+					let uploadToast = this.getElement('aonUploadToast');
+					if (!uploadToast) {
+						uploadToast = new AonUploadToast();
+						this.appendChild(uploadToast);
+					}
+			
+					uploadToast.setJobId(generateJobId());
+					for (let file of files) {
+						uploadToast.addFile("invoice", file, data);
+					}
+				});
+				d.open();
+			} else {
+				if(activities.length > 0) {
+					data.activity = activities[0].id;
+				}
+
+				let uploadToast = this.getElement('aonUploadToast');
+				if (!uploadToast) {
+					uploadToast = new AonUploadToast();
+					this.appendChild(uploadToast);
+				}
+				uploadToast.setJobId(generateJobId());
+				for (let file of files) {
+					uploadToast.addFile("invoice", file, data);
+				}
+			}
+		});
 	}
 
     buildFastPanel(dashboard) {

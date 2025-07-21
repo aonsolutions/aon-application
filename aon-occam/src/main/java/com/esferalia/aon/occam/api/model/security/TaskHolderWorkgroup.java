@@ -13,7 +13,7 @@ public class TaskHolderWorkgroup implements Serializable {
 	Integer id;
 	Integer domain;
 	Integer taskHolder;
-	TaskHolder taskholder;
+	TaskHolder taskholderObj;
 	Workgroup workgroup;
 	
 	TaskHolderWorkgroupType taskHolderWorkgroupType;
@@ -50,11 +50,12 @@ public class TaskHolderWorkgroup implements Serializable {
 	}
 	
 	public TaskHolder getTaskHolderObj() {
-		return taskholder;
+		return taskholderObj;
 	}
 
 	public TaskHolderWorkgroup setTaskHolder(TaskHolder taskholder) {
-		this.taskholder = taskholder;
+		this.taskholderObj = taskholder;
+		this.taskHolder = null == taskholder ? null : taskholder.getId();
 		return this;
 	}
 

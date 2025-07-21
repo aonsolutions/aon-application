@@ -43,19 +43,19 @@ public class GlobalRegistryServlet extends HttpServlet{
 
 	    String document = req.getParameter("document");
 	    if (document != null) {
-		filter = filter.and(f.getDocumentProperty().like(document + "%"));
+		filter = filter.and(f.getDocumentProperty().match(toBooleanMode(document)));
 	    }
 
 	    String name = req.getParameter("name");
 	    name = name != null ? name.trim() : ""; 
 	    if (name.length() > 0) {
-		filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
+	    	filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
 	    }
 
 	    String value = req.getParameter("value");
 	    value = value != null ? value.trim() : ""; 
 	    if (value.length() > 0) {
-		filter = filter.and(f.getDocumentProperty().like("%" + value + "%")
+		filter = filter.and(f.getDocumentProperty().match(toBooleanMode(value))
 			.or(f.getNameProperty().match(toBooleanMode(value))));
 	    }
 

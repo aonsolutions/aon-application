@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -1112,9 +1114,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 
 	@Override
-	public void getCustomerNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
+	public void getRegistryNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getRegistryNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -1143,6 +1145,76 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getInvoicePDF(String domainName, int domain, String user, Integer officeDomain, Integer invoiceId, AsyncCallback<String> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getInvoicePDF(domainName, domain, user, officeDomain, invoiceId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ************************************ [TASK HOLDER]
+	// **************************************************
+
+	@Override
+	public void getTaskHolderList(TaskHolderParams params, AsyncCallback<List<TaskHolder>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolderList(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHolder(String domainName, int domain, String user, Integer taskHolderId, AsyncCallback<TaskHolder> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolder(domainName, domain, user, taskHolderId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTaskHolder(String domainName, int domain, String user, Integer taskHolderId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTaskHolder(domainName, domain, user, taskHolderId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTaskHolder(String domainName, int domain, String user, TaskHolder taskHolder, AsyncCallback<TaskHolder> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTaskHolder(domainName, domain, user, taskHolder, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHoldersCount(TaskHolderParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHoldersCount(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTaskHolderWorkgroup(String domainName, Integer domain, String user, TaskHolderWorkgroup taskHolderWorkgroup, AsyncCallback<TaskHolderWorkgroup> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTaskHolderWorkgroup(domainName, domain, user, taskHolderWorkgroup, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId, AsyncCallback<TaskHolderWorkgroup> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolderWorkgroup(domainName, domain, user, taskHolderWorkgroupId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTaskHolderWorkgroup(domainName, domain, user, taskHolderWorkgroupId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHolderWorkgroupList(String domainName, Integer domain, String user, Integer taskHolderId, AsyncCallback<List<TaskHolderWorkgroup>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolderWorkgroupList(domainName, domain, user, taskHolderId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getUsersForTaskHolder(String domainName, Integer domain, String user, boolean all, AsyncCallback<List<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsersForTaskHolder(domainName, domain, user, all, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getUser(String domainName, Integer domainId, String user, Integer userId, AsyncCallback<User> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUser(domainName, domainId, user, userId, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

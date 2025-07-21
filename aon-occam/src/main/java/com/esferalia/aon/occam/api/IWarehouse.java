@@ -23,13 +23,14 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
@@ -206,6 +207,13 @@ public interface IWarehouse {
 	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
 	void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId);
 	void deleteDeliveryPackaging(AONContext ctx, Integer deliveryId, String sscc);
+	void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny);
+	
+	// 	***********************************************
+	// 	**************************** DELIVERY *********
+	// 	***********************************************
+	
+	Delivery getDeliveryByPackage(AONContext ctx, Integer itemPackageId, Options...options);
 	
 	// 	***********************************************
 	// 	**************************** DELIVERY INFO ****
@@ -214,4 +222,14 @@ public interface IWarehouse {
 	DeliveryInfo getDeliveryInfo(AONContext ctx, DeliveryInfoFilter filter);
 	DeliveryInfo saveDeliveryInfo(AONContext ctx, DeliveryInfo invoiceInfo);
 	void deleteDeliveryInfo(AONContext ctx, Integer deliveryId);
+
+
+	// 	***********************************************
+	// 	**************************** PACKAGE ****
+	// 	***********************************************
+	
+	void deletePackage(AONContext ctx, Integer itemId);
+	void deletePackage(AONContext ctx, String sscc);
+	
+	void adjustPackageComposition(AONContext ctx, ItemComposition ic);
 }

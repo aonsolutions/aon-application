@@ -11,7 +11,7 @@ export const uploadInvoices = async(el, files) => {
         let reader = await getReader(file).catch(()=>null);
         if(reader){
             let invoice = await uploadInvoice(reader);
-            if(invoice) 
+            if(invoice)
                 arr.push(invoice);
         }
     }
@@ -94,19 +94,28 @@ export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
         base64 = btoa(encodeURIComponent(name)) + (ext || '');
     } 
 
-    formData.append('key', 
-        'invoices'
-        + `/${LS.getDomainName()}`
-        + `/${company.document}`
-        + `/${LS.getDomainLogin()}`
-        + `/${jobId}` 
-        + `/${fileOrder}_${prefix}_${base64}`);
+    if(data.activity) {
+        formData.append('key', 
+            'invoices'
+            + `/${LS.getDomainName()}`
+            + `/${company.document}`
+            + `/${data.activity || 'all'}`
+            + `/${LS.getDomainLogin()}`
+            + `/${jobId}`
+            + `/${fileOrder}_${prefix}_${base64}`);
+    } else {
+        formData.append('key', 
+            'invoices'
+            + `/${LS.getDomainName()}`
+            + `/${company.document}`
+            + `/${LS.getDomainLogin()}`
+            + `/${jobId}`
+            + `/${fileOrder}_${prefix}_${base64}`);
+    }
+
     formData.append('success_action_status', '201');
     formData.append('Content-Type', file.type);
     formData.append('file', file);
-    if(data.activity) {
-        formData.append('x-amz-meta-activity',  data.activity);
-    }
 
     xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
     xhr.addEventListener('readystatechange', (e) => {

@@ -522,9 +522,13 @@ public class ConnectSaleInvoiceWriter {
 		Item item = detail.getItem();
 		Integer customerId = detail.getInvoice().getRegistry().getId();
 		RegistryItem rItem = obtainCustomerItem(item.getProduct(), customerId);
+
 		String productCode = null;
-		if (rItem!=null)
+		String customerProductCode = null;
+		if (rItem!=null) {
+			customerProductCode = rItem.getCode();
 			productCode = StringUtils.isNotBlank(rItem.getEdiSalesCode())?rItem.getEdiSalesCode():rItem.getCode();
+		}
 		try {
 			if (productCode==null)
 				productCode = item.getProduct().getBaseItem().getBarcode();
@@ -535,7 +539,8 @@ public class ConnectSaleInvoiceWriter {
 			productCode = item.getProduct().getCode();
 		
 		SINCL sincl = new SINCL();
-		sincl.setNumeroDeLinea(lineNumber);
+		sincl.setNumeroDeLinea(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				 ? lineNumber * 10 : lineNumber);
 		sincl.setCodigoArticulo(productCode);
 		sincl.setDescripcionDelArticulo(detail.getItem().getProduct().getName());
 		if (detail.getItem().getProduct().getType() == ProductType.SERVICE) {
@@ -544,7 +549,7 @@ public class ConnectSaleInvoiceWriter {
 			sincl.setTipoArticulo(SINCL.SINCL_5.MERCANCIA_M.getValue());
 		}
 		sincl.setCodigoInternoArticuloProveedor_SA_(productCode);
-		sincl.setCodigoInternoArticuloCliente_IN_(null);
+		sincl.setCodigoInternoArticuloCliente_IN_(customerProductCode);
 		sincl.setCodigoVariablePromocional_PV_(null);
 		sincl.setCodigoUnidadDeExpedicion_EN_(null);
 		sincl.setNumeroDeLote_BN_(detail.getItem().getSerialNumber());
@@ -553,13 +558,16 @@ public class ConnectSaleInvoiceWriter {
 		double unitPriceFactor = detail.getQuantity() / unitQuantity;
 		sincl.setCantidadFacturada_47_(unitQuantity);
 		sincl.setCantidadBonificada_15E_(null);
-		sincl.setUnidadDeMedida(null);
+		sincl.setUnidadDeMedida(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				? "CT" : null);
 		sincl.setUnidadesEntregadas(null);
-		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
+		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				 ? unitQuantity : null);
 		
 		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
-		sincl.setUnidadDeMedidaDelPrecio(null);
+		sincl.setUnidadDeMedidaDelPrecio(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				? "CT" : null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(CommonUtil.round(detail.getVatPercent()));
 		if (detail.getVatQuota() == 0 ){
@@ -584,7 +592,9 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
 		sincl.setNumeroPedido_ON_(SeresUtils.isDia(detail.getInvoice().getRegistryDocument())? null : obtainSalesNumber(detail));
-		if(!SeresUtils.isDia(detail.getInvoice().getRegistryDocument()) && delivery != null && delivery.getId() != null)
+		if(!SeresUtils.isDia(detail.getInvoice().getRegistryDocument())
+				&& !SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+				&& delivery != null && delivery.getId() != null)
 			sincl.setNumeroDeAlbaran_DQ_(delivery.getReferenceCode());
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);

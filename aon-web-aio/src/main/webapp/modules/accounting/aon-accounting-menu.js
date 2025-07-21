@@ -25,39 +25,6 @@ export class AonAccountingMenu extends AonSuiteMenu {
            this.initialize();
            this.build();
            this.setTitle("Opciones de contabilidad");
-		   if (this.isBeta()) {
-		   	let newViewButton = new AonIconButton();
-		   	newViewButton.id = this.id + "NewViewBtn";
-			newViewButton.icon = "open_in_new";
-		   	newViewButton.title = "Nueva Vista";
-		   	newViewButton.addEventListener(EVENT.CLICK, () => {
-		   		this.rootPanel(new AonAccountingBeta());
-		   	});
-
-		   	requestAnimationFrame(() => {
-		   		let titleDiv = this.querySelector('.suiteMenuDiv');
-		   		let betaContent = document.getElementById('aonAccountingBetaContent');
-		   		if (titleDiv && !betaContent) {
-					titleDiv.style.display = 'flex';
-					titleDiv.style.alignItems = 'center';
-					titleDiv.style.justifyContent = 'space-between';
-
-		   			let wrapper = document.createElement('div');
-		   			wrapper.id = "aonAccountingNewViewDiv";
-		   			wrapper.style.display = 'flex';
-		   			wrapper.style.alignItems = 'center';
-		   			wrapper.style.gap = '10px';
-
-		   			let label = document.createElement('span');
-		   			label.textContent = "Nueva Vista";
-					label.style.marginLeft = '20px';
-					
-		   			wrapper.appendChild(label);
-		   			wrapper.appendChild(newViewButton);
-		   			titleDiv.appendChild(wrapper);
-		   		}
-		   	});
-		   }
 		})
 	}
 

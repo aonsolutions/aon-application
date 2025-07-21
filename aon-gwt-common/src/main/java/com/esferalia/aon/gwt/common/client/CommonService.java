@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -91,6 +93,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -388,7 +391,7 @@ public interface CommonService extends RemoteService {
 	// ********************************* [CUSTOMER NOTES]
 	// **************************************************
 	
-	List<RegistryNote> getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
+	List<RegistryNote> getRegistryNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
 	RegistryNote saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id) throws AonCoreException;
 
@@ -398,5 +401,23 @@ public interface CommonService extends RemoteService {
 	
 	List<Invoice> getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
 	String getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer officeDomain, Integer invoiceId) throws AonCoreException;
+	
+	// **************************************************
+	// ************************************ [TASK HOLDER]
+	// **************************************************
+	
+	List<TaskHolder> getTaskHolderList(TaskHolderParams params) throws AonCoreException;
+	TaskHolder getTaskHolder(String domainName, int domain, String user, Integer taskHolderId) throws AonCoreException;
+	void deleteTaskHolder(String domainName, int domain, String user, Integer taskHolderId) throws AonCoreException;
+	TaskHolder saveTaskHolder(String domainName, int domain, String user, TaskHolder taskHolder) throws AonCoreException;
 
+	Integer getTaskHoldersCount(TaskHolderParams params) throws AonCoreException;
+	
+	TaskHolderWorkgroup getTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId) throws AonCoreException;
+	TaskHolderWorkgroup saveTaskHolderWorkgroup(String domainName, Integer domain, String user, TaskHolderWorkgroup taskHolderWorkgroup) throws AonCoreException;
+	void deleteTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId) throws AonCoreException;
+	List<TaskHolderWorkgroup> getTaskHolderWorkgroupList(String domainName, Integer domain, String user, Integer taskHolderId) throws AonCoreException;
+	List<User> getUsersForTaskHolder(String domainName, Integer domainId, String user, boolean all) throws AonCoreException;
+	User getUser(String domainName, Integer domainId, String user, Integer userId) throws AonCoreException;
+	
 }

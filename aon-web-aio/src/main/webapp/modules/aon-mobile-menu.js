@@ -383,7 +383,7 @@ export class AonMobileMenu extends AonElement {
       fn :  () => {
         if(isUdapa){
           dialog.close();
-          let aonComponent = new  AonWarehouse();
+          let aonComponent = new AonWarehouse();
           aonComponent.setOption(WAREHOUSE_OPTION.PACKAGING);
           this.rootPanel(aonComponent);
         }
@@ -402,10 +402,25 @@ export class AonMobileMenu extends AonElement {
         }
       }
     };
+
+    const searchPackage = {
+      title:'Buscar Envases',
+      icon: MATERIAL_ICONS.QR_CODE_SCANNER,
+      permission: isUdapa,
+      backgroundColor: "#002469",
+      fn :  () => {
+        if(isUdapa){
+          dialog.close();
+          let aonComponent = new AonWarehouse();
+          aonComponent.setOption(WAREHOUSE_OPTION.PACKAGE);
+          this.rootPanel(aonComponent);
+        }
+      }
+    };
     
     let buttons = [newInvoice, uploadInvoice, photoInvoice, newMessenger, uploadDocument, photoDocument];
     if(isUdapa) {
-      buttons = [newInvoice, uploadInvoice, photoInvoice, newPackaging, deliveryPreparation, uploadDocument];
+      buttons = [newInvoice, uploadInvoice, photoInvoice, newPackaging, deliveryPreparation, searchPackage];
     }
     dialog.addButtons(buttons);
   }

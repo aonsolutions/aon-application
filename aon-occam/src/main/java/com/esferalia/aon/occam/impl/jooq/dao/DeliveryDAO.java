@@ -41,12 +41,12 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailPropertiesDAO;
@@ -184,8 +185,8 @@ public class DeliveryDAO {
 
 	// ----- GET
 	
-	public static Delivery get(AONContext ctx, Integer deliveryId){
-		return get(ctx, f -> f.getIdProperty().eq(deliveryId));
+	public static Delivery get(AONContext ctx, Integer deliveryId, Options... options){
+		return get(ctx, f -> f.getIdProperty().eq(deliveryId), options);
 	}
 	
 	public static Delivery get(AONContext ctx, DeliveryFilter filter, Options... options){
@@ -203,6 +204,12 @@ public class DeliveryDAO {
 		return delivery; 
 	}
 	
+	public static Delivery getByPackage(AONContext ctx, Integer itemPackageId, Options... options) {
+		DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(itemPackageId));
+		return dp != null && dp.getId() != null
+			? get(ctx, dp.getDelivery().getId(), options) 
+			: null;
+	}
 	// ----- GET STREAM
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options... options){

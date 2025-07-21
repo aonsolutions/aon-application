@@ -39,20 +39,8 @@ public class NordigenCallLogDAO {
                 reintentos != null ? reintentos : 3
             ).execute();
     }
-  /*  
-    public static int getCallsMadeToday(AONContext ctx, int domain, Integer rbankId, String callType) {
-        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
-        return ctx.getDslContext()
-            .selectCount()
-            .from(NORDIGEN_CALL_LOG)
-            .where(NORDIGEN_CALL_LOG.DOMAIN.eq(domain))
-            .and(NORDIGEN_CALL_LOG.RBANK.eq(rbankId))
-            .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq(callType))
-            .and(NORDIGEN_CALL_LOG.CALL_TIME.greaterOrEqual(Timestamp.valueOf(startOfDay)))
-            .fetchOne(0, int.class);
-    }
-*/
-    public static int getCallsMadeToday(AONContext ctx, int domain, Integer rbankId, String callType) {
+ 
+ public static int getCallsMadeToday(AONContext ctx, int domain, Integer rbankId, String callType) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime twentyFourHoursAgo = now.minusHours(24); // Hace 24 horas desde el momento actual
 
@@ -71,9 +59,6 @@ public class NordigenCallLogDAO {
         // Si no se encuentra retryCount (por ejemplo, si no hay llamadas en las últimas 24 horas)
         if (retryCount == null) {
             return 0;  // Si no se encontraron llamadas
-        } else if (retryCount == 2 || retryCount == 3) {
-        // Aplicar la lógica de negocio para el valor de retry_count
-            return 0;  // Si el retry_count es 2 o 3, devolvemos 0 (reinicio)
         }
         
         return retryCount + 1;

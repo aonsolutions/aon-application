@@ -29,8 +29,10 @@ import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.StockDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.delivery.DeliveryInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -217,7 +220,7 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			WarehouseDAO.getStockStream(ctx, filter));
+			StockDAO.getStream(ctx, filter));
 	}
 
 
@@ -467,19 +470,19 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Optional<Stock> insertStock(AONContext ctx, Stock stock) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-				WarehouseDAO.insertStock(ctx, stock));
+			StockDAO.insert(ctx, stock));
 	}
 	
 	@Override
 	public Optional<Stock> updateStock(AONContext ctx, Stock stock) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-				WarehouseDAO.updateStock(ctx, stock));
+				StockDAO.update(ctx, stock));
 	}
 
 	@Override
 	public Optional<Stock> deleteStock(AONContext ctx, Integer stockId) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-		WarehouseDAO.deleteStock(ctx, stockId));
+		StockDAO.delete(ctx, stockId));
 	}
 
 	@Override
@@ -541,6 +544,19 @@ public class WarehouseImpl implements IWarehouse {
 	public void deleteDeliveryPackaging(AONContext ctx, Integer deliveryId, String sscc) {
 		ctx.getDslContext().transaction(configuration -> PackagingDAO.deleteDeliveryPackaging(ctx, deliveryId, sscc));
 	}
+
+	@Override
+	public void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny));
+	}
+
+	// DELIVERY
+	
+	@Override
+	public Delivery getDeliveryByPackage(AONContext ctx, Integer itemPackageId, Options...options) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DeliveryDAO.getByPackage(ctx, itemPackageId, options));
+	}
 	
 	// DELIVERY INFO
 	
@@ -560,5 +576,21 @@ public class WarehouseImpl implements IWarehouse {
 	public void deleteDeliveryInfo(AONContext ctx, Integer deliveryId) {
 		ctx.getDslContext().transaction(
 				configuration -> DeliveryInfoDAO.delete(ctx, f -> f.getDeliveryProperty().eq(deliveryId)));
+	}
+	
+	@Override
+	public void deletePackage(AONContext ctx, Integer itemId) {
+		ctx.getDslContext().transaction(
+				configuration -> PackagingDAO.deletePackage(ctx, itemId));
+	}
+	
+	@Override
+	public void deletePackage(AONContext ctx, String sscc) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.deletePackage(ctx, sscc));
+	}
+	
+	@Override
+	public void adjustPackageComposition(AONContext ctx, ItemComposition ic) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.adjustPackageComposition(ctx, ic));
 	}
 }

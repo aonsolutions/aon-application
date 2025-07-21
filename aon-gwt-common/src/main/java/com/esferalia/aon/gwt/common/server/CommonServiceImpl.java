@@ -3,7 +3,10 @@ package com.esferalia.aon.gwt.common.server;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -55,6 +59,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -108,6 +113,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -115,6 +121,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -1139,7 +1146,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 
 	@Override
-	public List<RegistryNote> getCustomerNotes(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
+	public List<RegistryNote> getRegistryNotes(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
 		return AON.getRegistryNoteStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
@@ -1171,8 +1178,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public String getInvoicePDF(String domainName, int domainId, String login, Integer officeDomain, Integer invoiceId) throws AonCoreException {
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){
-			
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){	
 			PrintInvoiceConfiguration config;
 			if(null == officeDomain)
 				config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
@@ -1219,6 +1225,95 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	// **************************************************
+	// ************************************ [TASK HOLDER]
+	// **************************************************
+	
+	@Override
+	public List<TaskHolder> getTaskHolderList(TaskHolderParams params) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderList(params);
+		return new ArrayList<>(taskHolders);
+	}
+	
+	@Override
+	public TaskHolder getTaskHolder(String domainName, int domain, String user, Integer taskHolderId) throws AonCoreException {
+		return AON.getTaskHolder(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(taskHolderId));
+	}
+	
+	@Override
+	public void deleteTaskHolder(String domainName, int domain, String user, Integer taskHolderId) throws AonCoreException {
+		AON.deleteTaskHolder(domainName, taskHolderId, user, taskHolderId);
+	}
+	
+	@Override
+	public TaskHolder saveTaskHolder(String domainName, int domain, String user, TaskHolder taskHolder) throws AonCoreException {
+		return AON.save(domainName, domain, user, taskHolder);
+	}
+	
+	@Override
+	public Integer getTaskHoldersCount(TaskHolderParams params) throws AonCoreException {
+		Integer count = AON.getTaskHoldersCount(params);
+		return count;
+	}
+	
+	@Override
+	public TaskHolderWorkgroup getTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId) throws AonCoreException {
+		return AON.getTaskHolderWorkgroupsList(new Domain().setName(domainName).setId(domain), new User().setLogin(user).setName(user), f -> f.getIdProperty().eq(taskHolderWorkgroupId)).get(0);
+	}
+	
+	@Override
+	public TaskHolderWorkgroup saveTaskHolderWorkgroup(String domainName, Integer domain, String user, TaskHolderWorkgroup taskHolderWorkgroup) throws AonCoreException {
+		return AON.saveTaskHolderWorkgroup(new Domain().setName(domainName).setId(domain), new User().setLogin(user).setName(user), taskHolderWorkgroup);
+	}
+	
+	@Override
+	public void deleteTaskHolderWorkgroup(String domainName, Integer domain, String user, Integer taskHolderWorkgroupId) throws AonCoreException {
+		AON.deleteTaskHolderWorkgroup(new Domain().setName(domainName).setId(domain), new User().setLogin(user).setName(user), f -> f.getIdProperty().eq(taskHolderWorkgroupId));
+	}
+	
+	@Override
+	public List<TaskHolderWorkgroup> getTaskHolderWorkgroupList(String domainName, Integer domain, String user, Integer taskHolderId) throws AonCoreException {
+		return AON.getTaskHolderWorkgroupsList(new Domain().setName(domainName).setId(domain), new User().setLogin(user).setName(user), f -> f.getTaskHolderProperty().eq(taskHolderId));
+	}
+	
+	@Override
+	public List<User> getUsersForTaskHolder(String domainName, Integer domainId, String user, boolean all) throws AonCoreException {
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		List<User> users;
+		if((domain.isEnableHeredity() || domain.getDomainType().equals(DomainType.OFFICE)) && null != domain.getParentId())
+			users = AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getDomainProperty().eq(domainId).or(f.getDomainProperty().eq(domain.getParentId())), new Options().setFull(true)).collect(Collectors.toList());
+		else
+			users = AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getDomainProperty().eq(domainId), new Options().setFull(true)).collect(Collectors.toList());
+		
+		users.sort(Comparator.comparing(userIt -> normalizeName(userIt.getName())));
+		
+		// Filter already asigned users
+		if(!all) {
+			List<TaskHolder> taskHolders = AON.getTaskHolderList(new TaskHolderParams().setDomainName(domainName).setDomain(domainId).setUser(user).setOffset(0).setLimit(Integer.MAX_VALUE));
+			List<Integer> taskHolderUsers = taskHolders.stream().map(th -> th.getUserId()).filter(Objects::nonNull).collect(Collectors.toList());
+			
+			users = users.stream().filter(usr -> !taskHolderUsers.contains(usr.getId())).collect(Collectors.toList());
+		}
+		
+		return users;
+	}
+	
+	private static String normalizeName(String name) {
+		if(AonStringUtils.isBlank(name)) return AonStringUtils.EMPTY;
+
+		name = name.trim();
+
+	    String noAccents = Normalizer.normalize(name, Normalizer.Form.NFD)
+	            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+	    return noAccents.toLowerCase();
+	}
+	
+	@Override
+	public User getUser(String domainName, Integer domainId, String user, Integer userId) throws AonCoreException {
+		return AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getIdProperty().eq(userId), new Options().setFull(true)).collect(Collectors.toList()).get(0);
 	}
 
 }

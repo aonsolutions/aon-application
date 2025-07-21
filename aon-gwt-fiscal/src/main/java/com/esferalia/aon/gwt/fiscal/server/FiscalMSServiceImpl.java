@@ -3,13 +3,13 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal", "/aon_gwt_mod200/ms/Fiscal" })
 public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implements FiscalMSService {
@@ -51,6 +53,21 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 			DataResponseDAO.insertPDFModel(ctx, model, data);
 		} 
 	}
+	
+	// Para envio de email	
+	@Override
+	public void sendEmail(Occam occam, IFiscalModel model) throws AonCoreException {
+		ModelAdmonUtils.sendEmail(occam, model);
+	}
+
+	// Para obtener informacion del certificado
+	@Override
+	public CertificateInfo getCertificateInfo(String domainName, int domainId, String user, Integer certificateId) throws AonCoreException {
+		return AON.getCertificateInfo(domainName, domainId, user, f -> f.getIdProperty().eq(certificateId));
+	}
+	
+	
+	
 	
 //	// -------------------------------------------------------------- ACTIVITIES
 //	@Override

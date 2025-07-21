@@ -31,7 +31,7 @@ public class DocJSON {
 			.setType(enumValue( doc, JsonUtils.getString( json, IJsonNames.TYPE )))
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-			.setMimeType(MimeType.safeValueFromContenType(JsonUtils.getString(json, IJsonNames.MIME_TYPE)))
+			.setMimeType(MimeType.safeValueOf(JsonUtils.getString(json, IJsonNames.MIME_TYPE)))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 		);

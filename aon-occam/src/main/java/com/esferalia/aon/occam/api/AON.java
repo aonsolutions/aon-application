@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -91,6 +92,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -686,6 +688,12 @@ public class AON {
 	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
+		}
+	}
+	
+	public static void updateDomainScopeValue(String domainName, Integer domainId, String user, Integer scope) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user)) {
+			getCommon().updateDomainScopeValue(ctx, domainName, domainId, scope);
 		}
 	}
 	
@@ -2604,6 +2612,12 @@ public class AON {
 	public static Delivery getDelivery(String domainName, Integer domainId, String login, DeliveryFilter filter, Options...options) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getManagement().getDelivery(ctx, filter, options);
+		}
+	}
+
+	public static Delivery getDeliveryByPackage(Occam occam, Integer itemPackageId, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().getDeliveryByPackage(ctx, itemPackageId, options);
 		}
 	}
 
@@ -5127,6 +5141,44 @@ public class AON {
 		}
 	}
 	
+	// DELETE PACKAGE BY ITEM ID
+	
+	public static void deletePackage(Domain domain, User user, Integer itemId) {
+		deletePackage(domain.getName(), domain.getId(), user.getLogin(), itemId);
+	}
+	
+	public static void deletePackage(Domain domain, String login, Integer itemId) {
+		deletePackage(domain.getName(), domain.getId(), login, itemId);
+	}
+	
+	public static void deletePackage(String domainName, Integer domainId, String login, Integer itemId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deletePackage(ctx, itemId);
+		}
+	}
+	
+	// DELETE PACKAGE BY SSCC
+	
+	public static void deletePackage(Domain domain, User user, String sscc) {
+		deletePackage(domain.getName(), domain.getId(), user.getLogin(), sscc);
+	}
+	
+	public static void deletePackage(Domain domain, String login, String sscc) {
+		deletePackage(domain.getName(), domain.getId(), login, sscc);
+	}
+	
+	public static void deletePackage(String domainName, Integer domainId, String login, String sscc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deletePackage(ctx, sscc);
+		}
+	}
+	
+	public static void adjustPackageComposition(Domain domain, User user, ItemComposition ic) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getWarehouse().adjustPackageComposition(ctx, ic);
+		}
+	}
+	
 	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
@@ -6802,6 +6854,21 @@ public class AON {
 		}
 	}
 	
+	public static List<TaskHolder> getTaskHolderList(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return new ArrayList<>(getTask().getTaskHolderList(ctx, params));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<TaskHolder>();
+		}
+	}
+	
+	public static Integer getTaskHoldersCount(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getTask().getTaskHoldersCount(ctx, params);
+		}
+	}
+	
 	// -----
 	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
@@ -8319,6 +8386,12 @@ public class AON {
 	public static void deleteDeliveryPackaging(Domain domain, User user, Integer deliveryId, String sscc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getWarehouse().deleteDeliveryPackaging(ctx, deliveryId, sscc);
+		}
+	}
+	
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny);
 		}
 	}
 	

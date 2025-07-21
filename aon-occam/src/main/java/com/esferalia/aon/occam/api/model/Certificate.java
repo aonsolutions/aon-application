@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Certificate implements Serializable {
@@ -83,9 +84,10 @@ public class Certificate implements Serializable {
 	public Certificate setDescription(String description) {
 		if(description != null && description.contains("HIDE")) {
 			String[] hide = description.split("HIDE\\(");
-			String[] hidePass = hide[1].split("\\)");
+			//String[] hidePass = hide[1].split("\\)");
 			this.description = hide[0];
-			this.password = hidePass.length > 0 ? hidePass[0] : "";
+			//this.password = hidePass.length > 0 ? hidePass[0] : "";
+			this.password = AonCertificateUtils.getCertificatePassword(description);
 		} else {
 			this.description = description != null ? description : "";
 			this.password = "";

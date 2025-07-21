@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.api.servlet.registry;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +20,11 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -274,15 +280,100 @@ public class RelationshipServlet extends AonApiHttpServlet {
 	}
 
 	private static RegistryRelationship saveRelationship(AonApiData api, RegistryRelationship rrelationship) {
+		
+		Company company = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(rrelationship.getRelatedRegistry()));
+		Scope scope;
+		
+		if(null != company.getDomain()) {
+			
+			// Check Scope
+			Integer domainScope = company.getDomain().getScope();
+			
+			if(null == domainScope) {
+				Scope newScope = new Scope()
+						.setDomain(null == company.getDomain().getParentId() ? company.getDomain().getId() : company.getDomain().getParentId())
+						.setDescription(company.getDocument());
+				newScope = AON.insertScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), newScope);
+				AON.updateDomainScopeValue(company.getDomain().getName(), company.getDomain().getId(), api.getUser().getLogin(), newScope.getId());
+				scope = newScope;
+			} else {
+				scope = AON.getScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainScope);
+				if(!AonStringUtils.equalsIgnoreCase(scope.getDescription(), company.getDocument())) {
+					Scope newScope = new Scope()
+							.setDomain(null == company.getDomain().getParentId() ? company.getDomain().getId() : company.getDomain().getParentId())
+							.setDescription(company.getDocument());
+					newScope = AON.insertScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), newScope);
+					AON.updateDomainScopeValue(company.getDomain().getName(), company.getDomain().getId(), api.getUser().getLogin(), newScope.getId());
+					scope = newScope;
+				}
+			}
+			
+			// Check userScope
+			User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			Domain userDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(user.getDomain().getId()));
+			Stream<Scope> userScopes = AON.getUserScopeStream(userDomain.getName(), userDomain.getId(), api.getUser().getLogin(), user.getId(), f -> f.getDomainProperty().eq(userDomain.getId()));
+			Integer scopeId = scope.getId();
+			boolean existUserScope = userScopes.filter(s -> s.getId().equals(scopeId)).findAny().isPresent();
+			if(!existUserScope) {
+				AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						new UserScope()
+						.setDomain(user.getDomain().getId())
+						.setScope(scope.getId())
+						.setUserId(user.getId()));
+				
+			}
+		}
+		
 		return AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
 	}
 	
 	private static JSONObject deleteRelationship(AonApiData api) {
 		Integer id = api.getData().optInt(IJsonNames.ID);
+		
+		Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(
+			api.getDomain(), 
+			api.getUser(), 
+			f-> f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getIdProperty().eq(id))
+		);
+		
+		// Delete user scope & set scope null
+		if(rrelationship.isPresent()) {
+			Company company = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(rrelationship.get().getRelatedRegistry()));
+			
+			if(null != company.getDomain()) {
+				
+				// Check Scope
+				Integer domainScope = company.getDomain().getScope();
+				
+				Scope scope = new Scope().setId(company.getDomain().getScope());
+				
+				if(null != domainScope)
+					scope = AON.getScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainScope);
+				
+				// Check userScope
+				User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+				Domain userDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(user.getDomain().getId()));
+				Stream<Scope> userScopes = AON.getUserScopeStream(userDomain.getName(), userDomain.getId(), api.getUser().getLogin(), user.getId(), f -> f.getDomainProperty().eq(userDomain.getId()));
+				Integer scopeId = scope.getId();
+				Optional<Scope> existUserScope = userScopes.filter(s -> s.getId().equals(scopeId)).findFirst();
+				
+				if(existUserScope.isPresent())
+					AON.deleteUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getScopeProperty().eq(existUserScope.get().getId()));
+				
+				if(AonStringUtils.equalsIgnoreCase(scope.getDescription(), company.getDocument())) {
+					AON.updateDomainScopeValue(company.getDomain().getName(), company.getDomain().getId(), api.getUser().getLogin(), null);
+					AON.deleteScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), scope.getId());
+				}
+				
+			}
+		}
+		
 		AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), f-> 
 			f.getDomainProperty().eq(api.getDomain().getId())
 			.and(f.getIdProperty().eq(id))
 		);
+		
 		return new JSONObject();
 	}
 }

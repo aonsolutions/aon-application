@@ -261,7 +261,7 @@ public class ConsoleDAO {
 	private static Condition and(Condition a, Condition b) {
 		return (a==null)?b:a.and(b);
 	}
-	private static Condition getFilter(DomainParams params) {
+	public static Condition getFilter(DomainParams params) {
 		Condition c = DSL.noCondition();
 		if (params.getId() != null ) {
 			c = and(c, DOMAIN.ID.eq(params.getId()));

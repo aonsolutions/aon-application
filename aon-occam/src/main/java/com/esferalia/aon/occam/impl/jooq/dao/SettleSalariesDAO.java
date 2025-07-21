@@ -230,7 +230,7 @@ public class SettleSalariesDAO {
 				.innerJoin(REGISTRY).on(REGISTRY.ID.eq(ENTERPRISE.REGISTRY))
 				.innerJoin(RBANK).on(RBANK.ID.eq(FBATCH.RBANK))
 				.innerJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
-				.innerJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 				.where(FBATCH.ID.eq(fbatchId))
 				.and(RADDRESS.TYPE.eq((byte)0))
 				.fetchOne();
@@ -299,7 +299,7 @@ public class SettleSalariesDAO {
 		
 			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + "</AdrLine>";
 			
-			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")</AdrLine>";
+			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + (null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
 		
 		}
 		
@@ -346,10 +346,10 @@ public class SettleSalariesDAO {
 			
 				xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + "</AdrLine>";
 				
-				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")</AdrLine>";
+				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + ( null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
 			
 			}
-			
+			 
 			xmlData += "</PstlAdr>";
 			
 			xmlData += "<Id><PrvtId><Othr>";
