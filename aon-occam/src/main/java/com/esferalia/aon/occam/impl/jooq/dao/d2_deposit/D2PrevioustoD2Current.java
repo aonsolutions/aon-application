@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class D2PrevioustoD2Current {
 	
@@ -14,7 +16,7 @@ public class D2PrevioustoD2Current {
 	
 	@FunctionalInterface
 	private static interface IPropertyFillerHeaderText {
-		public void fillText(Map<D2DepositHeaderKey,String> mapCurrent, Map<D2DepositHeaderKey,String> mapPrevious);
+		public void fillText(Map<ID2DepositKey, String> ctxText, Map<ID2DepositKey,String> mapPrevious);
 	}
 	
 	@FunctionalInterface
@@ -1265,8 +1267,9 @@ public class D2PrevioustoD2Current {
 		ctx.put(D2Key, dv==null?0.0:dv);
 	}
 	
-	private static void setText(Map<D2DepositHeaderKey, String> ctx, Map<D2DepositHeaderKey, String> mapPrevious, D2DepositHeaderKey previousKey, D2DepositHeaderKey D2Key) {
-		ctx.put(D2Key, mapPrevious.get(previousKey));
+	private static void setText(Map<ID2DepositKey, String> ctx, Map<ID2DepositKey, String> mapPrevious, ID2DepositKey previousKey, ID2DepositKey D2Key) {
+		if (AonStringUtils.isNotBlank(mapPrevious.get(previousKey)))
+			ctx.put(D2Key, mapPrevious.get(previousKey));
 	}
 	
 	private static void set(Map<D2DepositKey, Double> ctx, Map<D2DepositKey, Double> mapPrevious, D2DepositKey previousKey, D2DepositKey D2Key) {
@@ -1281,9 +1284,9 @@ public class D2PrevioustoD2Current {
 //		fillEcpn2(ctx, mapPrevious);
 //	}
 	
-	public static void fillIde(Map<D2DepositHeaderKey, String> ctx, Map<D2DepositHeaderKey, String> mapPrevious) {
+	public static void fillIde(Map<ID2DepositKey, String> ctxText, Map<ID2DepositKey, String> mapPrevious) {
 		for (IPropertyFillerHeaderText filler : IDE_KEYS ) {
-			filler.fillText(ctx, mapPrevious);
+			filler.fillText(ctxText, mapPrevious);
 		}
 	}
 	public static void fillBalance(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositHeaderKey, Double> mapPrevious) {

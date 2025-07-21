@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.CNAE2009ToCNAE2025;
@@ -893,7 +894,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Map<D2DepositHeaderKey, String> ctxText = new LinkedHashMap<D2DepositHeaderKey, String>();
+		Map<ID2DepositKey, String> ctxText = new LinkedHashMap<>();
 		
         // COPIAR DATOS DEL EJERCICIO ANTERIOR
 		if (isDigitalDeposit(aonData, year-1)){
@@ -903,13 +904,14 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			D2PrevioustoD2Current.fillPyg(ctx, mapPrevious);
 			Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
 			D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
-			mapFreeText = getFreeTextKeySchema(previousSchema);
-			// FALTA - COPIAR DATOS EJERCICIO ANTERIOR: IDENTIFICACION, TITULAR REAL, INSTANCIA PRESENTADOR, ...
+			mapFreeText = getFreeTextKeySchema(previousSchema);			
 			if (year >= 2024) {
-				Map<D2DepositHeaderKey, String> mapPreviousIde = getMapPreviousIde(previousSchema); // Identificacion
+				Map<ID2DepositKey, String> mapPreviousIde = getMapPreviousIde(previousSchema); // Identificacion
 				D2PrevioustoD2Current.fillIde(ctxText, mapPreviousIde);
-				Map<D2DepositHeaderKey, String> mapPreviousItr = getMapPreviousItr(previousSchema); // Titular Real
+				Map<ID2DepositKey, String> mapPreviousItr = getMapPreviousItr(previousSchema); // Titular Real
 				ctxText.putAll(mapPreviousItr);
+				Map<ID2DepositKey, String> mapPreviousPre = getMapPreviousPre(previousSchema); // Presentante que hace la solicitud
+				ctxText.putAll(mapPreviousPre);
 			}
 		}
 		
@@ -928,7 +930,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		return Utils.readXml(attach.getData());
 	}
 	
-	private Map<D2DepositHeaderKey, String> getMapPreviousIde(Esquema schema) {
+	private Map<ID2DepositKey, String> getMapPreviousIde(Esquema schema) {
 		
 		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
 		D2DepositHeaderKey[] keys = new D2DepositHeaderKey[] {
@@ -948,10 +950,10 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			,D2DepositHeaderKey.IDA01101
 		};
 		
-		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
-		for (D2DepositHeaderKey key : keys) {
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : keys) {
 			for (Clave clave : schema.getClaves().getClave()) {
-				if (clave.getCodigo().toString().equals(key.getCode())) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
 					map.put(key,clave.getValor());
 				}
 			}
@@ -960,7 +962,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		
 	}
 	 
-	private Map<D2DepositHeaderKey, String> getMapPreviousItr(Esquema schema) {
+	private Map<ID2DepositKey, String> getMapPreviousItr(Esquema schema) {
 		
 		// Identificación del titular real a partir de 2024
 		ArrayList<D2DepositHeaderKey> itrKeysList = new ArrayList<>();
@@ -972,68 +974,42 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_A)); // Apartado IVa
 		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_B)); // Apartado IVb
 		
-		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
-		for (D2DepositHeaderKey key : itrKeysList) {
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : itrKeysList) {
 			for (Clave clave : schema.getClaves().getClave()) {
-				if (clave.getCodigo().toString().equals(key.getCode())) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
 					map.put(key,clave.getValor());
 				}
 			}
 		}
-//		
-//		
-//		
-//		
-//		Map<D2DepositHeaderKey, String> map = new HashMap<D2DepositHeaderKey, String>();
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_5) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_6) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_3_A) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_3_B) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4_A) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
-//		for (D2DepositHeaderKey key : D2DepositConstants.ITR_KEYS_4_B) {
-//			for (Clave clave : schema.getClaves().getClave()) {
-//				if (clave.getCodigo().toString().equals(key.getCode())) {
-//					map.put(key,clave.getValor());
-//				}
-//			}
-//		}
+		
+		return map;
+		
+	}
+	
+	private Map<ID2DepositKey, String> getMapPreviousPre(Esquema schema) {
+		
+		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
+		D2DepositFooterKey[] keys = new D2DepositFooterKey[] {
+			 D2DepositFooterKey.PR8081201 // Nombre y apellidos del presentante que hace la solicitud	   
+			,D2DepositFooterKey.PR8081202 // DNI del presentante que hace la solicitud	                  
+			,D2DepositFooterKey.PR8081203 // Domicilio del presentante que hace la solicitud	            
+			,D2DepositFooterKey.PR8081204 // Ciudad del presentante que hace la solicitud	         
+			,D2DepositFooterKey.PR8081205 // Código postal del presentante que hace la solicitud               
+			,D2DepositFooterKey.PR8081206 // Provincia del presentante que hace la solicitud            
+			,D2DepositFooterKey.PR8081207 // Fax del presentante que hace la solicitud              
+			,D2DepositFooterKey.PR8081208 // Teléfono del presentante que hace la solicitud                   
+			,D2DepositFooterKey.PR8081209 // Correo electrónico del presentante que hace la solicitud
+		};
+		
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : keys) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}		
 		return map;
 		
 	}

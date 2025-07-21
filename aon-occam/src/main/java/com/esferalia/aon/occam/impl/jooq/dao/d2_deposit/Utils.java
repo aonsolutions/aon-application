@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -276,7 +277,7 @@ public class Utils {
 	}
 	
 	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositHeaderKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<ID2DepositKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
 		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
@@ -286,7 +287,7 @@ public class Utils {
 			schema.getClaves().getClave().add(clave);
 		}
 		
-		for (D2DepositHeaderKey key : ctxText.keySet()) {
+		for (ID2DepositKey key : ctxText.keySet()) {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
 			clave.setValor(ctxText.get(key));
