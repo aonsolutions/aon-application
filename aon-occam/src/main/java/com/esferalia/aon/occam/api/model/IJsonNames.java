@@ -20,6 +20,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_ENTRY = "accountEntry";
 	public static final String ACCOUNT_ENTRY_ID = "accountEntryId";
 	public static final String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
+	public static final String ACCOUNT_ID = "accountId";
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
@@ -31,11 +32,13 @@ public final class IJsonNames {
 	public static final String ACTIVITY_NAME = "activityName";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
+	public static final String ADDRESS3 = "address3";
 	public static final String ADJ_ACCOUNT = "adjAccount";
 	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
+	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
@@ -123,6 +126,8 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
+	public static final String COMMUNICATION_STATUS = "communicationStatus";
+	public static final String COMMUNICATION_TYPE = "communicationType";
 	public static final String COMPANY = "company";
 	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";
@@ -245,6 +250,7 @@ public final class IJsonNames {
 	public static final String ERROR = "error";
 	public static final String ERRORS = "errors";
 	public static final String EXP_ACCOUNT = "expAccount";
+	public static final String EXP_DATE = "expDate";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
@@ -326,8 +332,11 @@ public final class IJsonNames {
 	public static final String INVOFOX_ID = "invofoxId";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
+	public static final String INVOICE_BREAKDOWN = "invoiceBreakdown";;
 	public static final String INVOICE_DETAIL = "invoiceDetail";
 	public static final String INVOICE_DOC = "invoiceDoc";
+	public static final String INVOICE_FISCAL = "invoiceFiscal";
+	public static final String INVOICE_INFO = "invoiceInfo";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
@@ -483,6 +492,7 @@ public final class IJsonNames {
 	public static final String PLAN = "plan";
 	public static final String PORTAL = "portal";
 	public static final String POS = "pos";
+	public static final String POS_SHIFT = "posShift";
 	public static final String POSTAL_CODE = "postal_code";
 	public static final String PREPAYMENT = "prepayment";
 	public static final String PREVIOUS_PERIODS = "previousPeriods";
@@ -534,9 +544,15 @@ public final class IJsonNames {
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
+	public static final String RECORDABLE = "recordable";
 	public static final String RECORDED = "recorded";
 	public static final String RECTIFICATION = "rectification";
 	public static final String RECTIFICATION_INVOICE = "rectificationInvoice";
+	public static final String RECTIFICATION_INVOICE_ID = "rectificationInvoiceId";
+	public static final String RECTIFICATION_INVOICE_SERIES = "rectificationInvoiceSeries";
+	public static final String RECTIFICATION_INVOICE_NUMBER = "rectificationInvoiceNumber";
+	public static final String RECTIFICATION_INVOICE_REFERENCE = "rectificationInvoiceReference";
+	public static final String RECTIFICATION_INVOICE_DATE = "rectificationInvoiceDate";
 	public static final String RECTIFICATION_TYPE = "rectificationType";
 	public static final String RECTIFIED = "rectified";
 	public static final String RECTIFIER = "rectifier";
@@ -596,6 +612,7 @@ public final class IJsonNames {
 	public static final String SELLER = "seller";
 	public static final String SELLERS = "sellers";
 	public static final String SELLER_IDS = "sellerIds";
+	public static final String SELLER_NAME = "sellerName";
 	public static final String SENDER = "sender";
 	public static final String SEPA_MANDATE_REF = "sepaMandateRef";
 	public static final String SERFRUIT = "serfruit";
@@ -627,6 +644,7 @@ public final class IJsonNames {
 	public static final String SIGNATURE = "signature";
 	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
+	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
 	public static final String SSCC = "sscc";
@@ -711,6 +729,7 @@ public final class IJsonNames {
 	public static final String VAT_PERCENT = "vatPercent";
 	public static final String VAT_QUOTA = "vatQuota";
 	public static final String VAT_REGIME = "vatRegime";
+	public static final String VAT_REGIMES = "vatRegimes";
 	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
@@ -718,6 +737,7 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERSION = "version";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	public static final String WAREHOUSE = "warehouse";
@@ -740,5 +760,6 @@ public final class IJsonNames {
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
+	
 
 }

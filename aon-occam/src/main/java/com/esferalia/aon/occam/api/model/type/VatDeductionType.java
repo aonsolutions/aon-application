@@ -65,7 +65,7 @@ public enum VatDeductionType implements Serializable {
 		}
 		return null;
 	}
-	public static String safeValueOf(VatDeductionType t) {
+	public static String name(VatDeductionType t) {
 		return t == null ? null : t.name() ;
 	}
 }

@@ -58,7 +58,7 @@ public enum InvoiceTransactionType implements Serializable {
 		return NATIONAL;
 	}
 	
-	public static String safeValueOf( InvoiceTransactionType t) {
+	public static String name( InvoiceTransactionType t) {
 		return (t == null) ? null : t.name();
 	}
 

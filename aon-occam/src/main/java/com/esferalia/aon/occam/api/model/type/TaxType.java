@@ -54,6 +54,14 @@ public enum TaxType implements Serializable {
 		return UNKNOWN;
 	}
 
+	public static String name(TaxType t) {
+		return t == null ? null : t.name();
+	}
+
+	/**
+	 * @deprecated ????
+	 */
+	@Deprecated
 	public static String safeValueOf(TaxType t) {
 		return t == null ? UNKNOWN.name() : t.name();
 	}

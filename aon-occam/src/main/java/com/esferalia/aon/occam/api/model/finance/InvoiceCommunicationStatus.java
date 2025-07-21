@@ -31,6 +31,10 @@ public enum InvoiceCommunicationStatus implements Serializable{
 		return (byte) ordinal();
 	}
 	
+	public static String name( InvoiceCommunicationStatus i ) {
+		return (i == null) ? null : i.name(); 
+	}
+	
 	public static InvoiceCommunicationStatus safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

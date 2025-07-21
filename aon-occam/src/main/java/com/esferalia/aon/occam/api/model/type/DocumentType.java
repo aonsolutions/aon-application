@@ -53,5 +53,8 @@ public enum DocumentType implements Serializable {
 	public static Byte value(DocumentType dt) {
 		return dt==null?null:dt.value();
 	}
+	public static String name(DocumentType dt) {
+		return dt==null?null:dt.name();
+	}
 	
 }

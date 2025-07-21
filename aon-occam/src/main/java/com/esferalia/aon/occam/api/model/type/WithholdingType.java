@@ -252,10 +252,14 @@ public enum WithholdingType implements Serializable {
 		return null;
 	}
 
-	public static String safeValueOf(WithholdingType t) {
+	public static String name(WithholdingType t) {
 		return t == null ? null : t.name();
 	}
 
+	/**
+	 * @deprecated ????
+	 */
+	@Deprecated
 	public static String safeToString(WithholdingType type) {
 		return (type==null?"NULL": type.toString());
 	}

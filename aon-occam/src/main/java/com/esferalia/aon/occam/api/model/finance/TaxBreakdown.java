@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -22,7 +23,9 @@ public class TaxBreakdown implements Serializable {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
-
+	public Stream<InvoiceBreakdown> stream() {
+		return ibs == null ? Stream.empty() : ibs.stream();
+	}
 	public List<InvoiceBreakdown> getBreakdown() {
 		return ibs;
 	}

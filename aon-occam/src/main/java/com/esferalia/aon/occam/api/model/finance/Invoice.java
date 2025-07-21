@@ -137,11 +137,20 @@ public class Invoice implements Serializable, HasAudit {
 		this.domain = domain;
 		return this;
 	}
+	
+	public Optional<EnterpriseActivity> optActivity() {
+		return Optional.ofNullable(this.activity);
+	}
+	/**
+	 * @deprecated This method will be refactored to return value without change it. 
+	 * use optActivity()
+	 */
+	@Deprecated
 	public EnterpriseActivity getActivity() {
-		if(activity == null) {
-			activity = new EnterpriseActivity();
+		if (this.activity == null) {
+			this.activity = new EnterpriseActivity();
 		}
-		return activity;
+		return this.activity;
 	}
 	public Invoice setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
@@ -941,6 +950,7 @@ public class Invoice implements Serializable, HasAudit {
 	 * @deprecated This method will be removed 
 	 * use messageStream()
 	 */
+	@Deprecated
 	public List<InvoiceError> getMessages() {
 	    if ( messages == null ) {
 	    	messages = new LinkedList<>();
@@ -951,9 +961,11 @@ public class Invoice implements Serializable, HasAudit {
 	 * @deprecated This method will be removed 
 	 * use addMessage(InvoiceError message)
 	 */
+	@Deprecated
 	public Invoice setMessages(LinkedList<InvoiceError> messages) {
 	    this.messages = messages;
 	    return this;
 	}
+
 }
 
