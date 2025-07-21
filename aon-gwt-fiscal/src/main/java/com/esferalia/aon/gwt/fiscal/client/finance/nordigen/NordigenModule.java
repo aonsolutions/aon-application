@@ -87,8 +87,9 @@ public class NordigenModule extends MainEntryPoint {
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
-	private static final String EURO = "\u20AC";
-	private static final String AON_BLUE = "#002469";
+	private static final String EURO        = "\u20AC";
+	private static final String AON_BLUE    = "#002469";
+	private static final String AON_RED     = "#EF4444";
 	private static final String HOVER_COLOR = "#7A9AD7";
 
 	private static final NordigenServiceAsync NORDIGEN_SERVICE;
@@ -598,6 +599,9 @@ public class NordigenModule extends MainEntryPoint {
 			FlowPanel diasAcuerdoPanel = new FlowPanel();
             diasAcuerdoPanel.setStyleName(AON.CSS.aonBorderTop());
             diasAcuerdoPanel.addStyleName(AON.CSS.aonPaddingTop());
+            diasAcuerdoPanel.addStyleName(AON.CSS.aonDisplayFlex());
+            diasAcuerdoPanel.addStyleName(AON.CSS.aonAlignItemsCenter());
+            diasAcuerdoPanel.getElement().getStyle().setProperty("gap", "0.5rem");
 			InlineLabel diasBox = new InlineLabel();
 			diasBox.setStyleName(AON.CSS.aonTableLabel());
 			diasBox.setStyleName(AON.CSS.aonBold());
@@ -768,29 +772,38 @@ public class NordigenModule extends MainEntryPoint {
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
               allMovementsButton, balanceJsonButton, forceRefresh, attempsBox);
 
-			loadRemainingDays(opt, nordigenBankAccount, diasBox);
+			loadRemainingDays(opt, nordigenBankAccount, diasBox, diasAcuerdoPanel);
 		}
 
-		private void loadRemainingDays(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel diasBox) {
-		        NORDIGEN_SERVICE.getRemainingDays(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
-		            @Override
-		            public void onSuccess(Integer result) {
-		            	if(result != 0 && result != null) {
-		            		diasBox.setText("Renovaci\u00F3n del acuerdo en: "+ result +" d\u00EDas");
-			                diasBox.addStyleName(AON.CSS.aonBold());
-			                diasBox.addStyleName(AON_BLUE);
-		            	}else{
-		            		diasBox.setVisible(false);
-		            	}
-		            }
+		private void loadRemainingDays(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel diasBox, FlowPanel diasAcuerdoPanel) {
+            NORDIGEN_SERVICE.getRemainingDays(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
+                @Override
+                public void onSuccess(Integer result) {
+                    if(result != null && result > 0 ) {
+                        diasBox.setText("Renovaci\u00F3n del acuerdo en: "+ result +" d\u00EDas");
+                        diasBox.addStyleName(AON.CSS.aonBold());
+                        diasBox.getElement().getStyle().setColor(AON_BLUE);
+                    }else{
+                        diasBox.setText("Necesario renovaci\u00F3n del acuerdo");
+                        diasBox.addStyleName(AON.CSS.aonBold());
+                        diasBox.getElement().getStyle().setColor(AON_RED);
 
-		            @Override
-		            public void onFailure(Throwable caught) {
-		                diasBox.setText("Error al cargar los d\u00EDas restantes");
-		                diasBox.addStyleName(AON.CSS.aonColorRed());
-		            }
-		        });
-			}
+                      	AonTableButton saveButton = new AonTableButton("Vincular", AON.CSS.aonIconLink());
+                        saveButton.setTabIndex(-2);
+                        saveButton.addClickHandler(event -> {
+                            paintBankRegistration(opt, nordigenBankAccount);
+                        });
+                        diasAcuerdoPanel.add(saveButton);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    diasBox.setText("Error al cargar los d\u00EDas restantes");
+                    diasBox.addStyleName(AON.CSS.aonColorRed());
+                }
+            });
+        }
 		
 		private void loadRemainingCalls(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, HTML attempsBox) {
 		    NORDIGEN_SERVICE.getCallStatuses(opt.getOccam(), nordigenBankAccount, new AsyncCallback<List<String>>() {
@@ -1518,183 +1531,183 @@ public class NordigenModule extends MainEntryPoint {
 			});
 			getMenuPanel().add(saveButton);
 		}
-		
-		private void countryChange(NordigenModuleOptions opt, ListBox countryList, FlexTable registrationTable, NordigenBankAccount nordigenBankAccount) {
-			String countryIso2 = countryList.getSelectedValue();
-			NORDIGEN_SERVICE.getInstitutions(opt.getConfiguration().getToken(), Country.valueOf(countryIso2), new AsyncCallback<List<NordigenInstitution>>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					if (registrationTable.getRowCount() >= 7) {
-						registrationTable.removeRow(6);
-					}
-				}
-
-				@Override
-				public void onSuccess(List<NordigenInstitution> result) {
-					if (registrationTable.getRowCount() >= 7) {
-						registrationTable.removeRow(6);
-					}
-					AonNordigenBankBox bankBox = new AonNordigenBankBox(opt.getDomainName(), opt.getDomain(), opt.getUser(), result, isMobile());
-
-					bankBox.setWidth("100%");
-
-					bankBox.addSelectionHandler(e -> {
-						if (e.getSelectedItem() != null) {
-							nordigenBankAccount.setInstitution(e.getSelectedItem());
-						}
-					});
-					registrationTable.setWidget(6, 0, bankBox);
-				}
-			});
-		}
-		
-		private void paintBankRegistration(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount) {
-			AonDialog dialog = null;
-			FlowPanel mobilePanel = null;
-			
-			Label errLabel = new Label();
-			
-			FlexTable registrationTable = new FlexTable();
-			
-			if (isMobile()) {
-				
-				AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
-				
-				toolbar.setTitle("VINCULAR");
-				toolbar.add(back);
-				centerPanel.clear();
-				back.addClickHandler(h -> {
-					toolbar.remove(back);
-					centerPanel.clear();
-					loadModule(opt, true);
-				});
-				
-				mobilePanel = new FlowPanel();
-				
-				mobilePanel.add(registrationTable);
-				centerPanel.add(mobilePanel);
-			} else {				
-				dialog = new AonDialog("REGISTRAR CUENTA", registrationTable);
-				dialog.setAutoHideEnabled(true);
-			}
-			
-			registrationTable.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-			registrationTable.getElement().getStyle().setProperty("margin", "auto");
-			
-			Label bankLabel = new Label(""+(nordigenBankAccount.getRbank() != null ? AonStringUtils.trimToEmpty(nordigenBankAccount.getRbank().getAlias()) : ""));
-			bankLabel.addStyleName(AON.AON_BOLD);
-			bankLabel.getElement().getStyle().setProperty("margin-bottom", "1.5em");
-			bankLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			bankLabel.getElement().getStyle().setFontSize(isMobile() ? 1.5 : 2, Unit.EM);
-			bankLabel.addStyleName(AON.AON_NO_MARGIN);
-			registrationTable.setWidget(0, 0, bankLabel);
-			
-			Label ibanLabel = new Label(formatIban(nordigenBankAccount.getIban()));
-			ibanLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			ibanLabel.getElement().getStyle().setFontSize(isMobile() ? 1 : 1.75, Unit.EM);
-			ibanLabel.addStyleName(AON.CSS.aonMarginBottom());
-			registrationTable.setWidget(1, 0, ibanLabel);
-			
-			FlexTable loginTable = new FlexTable();
-			loginTable.setWidth("100%");
-			
-			HorizontalPanel hp = new HorizontalPanel();
-			hp.addStyleName(AON.CSS.aonBlockCenter());
-			Button hai = new Button(AON.MSG.accept());
-			
-			if (isMobile()) {
-				mobileAcceptButton(hai);
-			} else {
-				desktopAcceptButton(hai);
-			}
-			
-			Button iie = new Button(AON.MSG.cancelAction());
-			hp.setWidth("50%");
-			hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			if (!isMobile()) {
-				desktopCancelButton(iie);
-				hp.add(iie);
-			}
-			hp.add(hai);
-			registrationTable.setWidget(3, 0, hp);
-			
-			AonDialog dial = dialog;
-			
-			hai.addClickHandler(handler -> {
-				NORDIGEN_SERVICE.addAccount(opt.getConfiguration().getToken(), opt.getOccam(), nordigenBankAccount, new AsyncCallback<NordigenRequisition>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						
-						RegistryBank rbank = nordigenBankAccount.getRbank();
-						String bic = AonStringUtils.substring(rbank != null ? rbank.getBic() : "", 0, 8);
-						
-						errLabel.setText("No se pudo detectar la entidad bancaria, por favor, el\u00EDjala manualmente:");
-						registrationTable.setWidget(4, 0, errLabel);
-						
-						NORDIGEN_SERVICE.getInstitutionsByBic(opt.getConfiguration().getToken(), bic, new AsyncCallback<List<NordigenInstitution>>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								
-								ListBox countryList = new ListBox();
-								for (Country country : Country.values()) {
-									countryList.addItem(country.getName(), country.getIso2());
-								}
-								int spaIndex = Arrays.asList(Country.values()).indexOf(Country.ES);
-								countryList.setSelectedIndex(spaIndex);
-								countryChange(opt, countryList, registrationTable, nordigenBankAccount);
-								
-								countryList.addChangeHandler((ev) -> {
-									countryChange(opt, countryList, registrationTable, nordigenBankAccount);
-								});
-								
-								registrationTable.setWidget(5, 0, countryList);
-							}
-
-							@Override
-							public void onSuccess(List<NordigenInstitution> result) {
-								ListBox availableBanksList = new ListBox();
-								for (NordigenInstitution institution : result) {
-									availableBanksList.addItem(institution.getName() + " - " + institution.getBic(), institution.getId());
-								}
-								
-								availableBanksList.addChangeHandler((ev) -> {
-									String instId = availableBanksList.getSelectedValue();
-									NordigenInstitution selectedInst = result.stream().filter(inst -> AonStringUtils.equals(instId, inst.getId())).findFirst().orElse(null);
-									nordigenBankAccount.setInstitution(selectedInst);
-								});
-								String instId = availableBanksList.getSelectedValue();
-								NordigenInstitution selectedInst = result.stream().filter(inst -> AonStringUtils.equals(instId, inst.getId())).findFirst().orElse(null);
-								nordigenBankAccount.setInstitution(selectedInst);
-								registrationTable.setWidget(5, 0, availableBanksList);
-							}
-						});
-					}
-
-					@Override
-					public void onSuccess(NordigenRequisition result) {
-						if (registrationTable != null) {
-                          Storage storage = Storage.getLocalStorageIfSupported();
-                          storage.setItem("bankSuccessAdd", result.getId());
-                          drawShit(opt, dial, nordigenBankAccount, result, registrationTable);
-						}
-						Window.open(result.getLink(), "REGISTRO DE CUENTA", "_blank");
-						nordigenBankAccount.setInstitution(null);
-					}
-				});
-			});
-			
-			iie.addClickHandler(handler -> {
-				if (dial != null)
-					dial.hide();
-			});
-			if (dial != null) {
-				dialog.center();
-				dialog.show();
-			}
-		}
 	}
 
+    private void countryChange(NordigenModuleOptions opt, ListBox countryList, FlexTable registrationTable, NordigenBankAccount nordigenBankAccount) {
+        String countryIso2 = countryList.getSelectedValue();
+        NORDIGEN_SERVICE.getInstitutions(opt.getConfiguration().getToken(), Country.valueOf(countryIso2), new AsyncCallback<List<NordigenInstitution>>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                if (registrationTable.getRowCount() >= 7) {
+                    registrationTable.removeRow(6);
+                }
+            }
+
+            @Override
+            public void onSuccess(List<NordigenInstitution> result) {
+                if (registrationTable.getRowCount() >= 7) {
+                    registrationTable.removeRow(6);
+                }
+                AonNordigenBankBox bankBox = new AonNordigenBankBox(opt.getDomainName(), opt.getDomain(), opt.getUser(), result, isMobile());
+
+                bankBox.setWidth("100%");
+
+                bankBox.addSelectionHandler(e -> {
+                    if (e.getSelectedItem() != null) {
+                        nordigenBankAccount.setInstitution(e.getSelectedItem());
+                    }
+                });
+                registrationTable.setWidget(6, 0, bankBox);
+            }
+        });
+    }
+    
+    private void paintBankRegistration(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount) {
+        AonDialog dialog = null;
+        FlowPanel mobilePanel = null;
+
+        Label errLabel = new Label();
+
+        FlexTable registrationTable = new FlexTable();
+
+        if (isMobile()) {
+
+            AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
+
+            toolbar.setTitle("VINCULAR");
+            toolbar.add(back);
+            centerPanel.clear();
+            back.addClickHandler(h -> {
+                toolbar.remove(back);
+                centerPanel.clear();
+                loadModule(opt, true);
+            });
+
+            mobilePanel = new FlowPanel();
+
+            mobilePanel.add(registrationTable);
+            centerPanel.add(mobilePanel);
+        } else {				
+            dialog = new AonDialog("REGISTRAR CUENTA", registrationTable);
+            dialog.setAutoHideEnabled(true);
+        }
+
+        registrationTable.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+        registrationTable.getElement().getStyle().setProperty("margin", "auto");
+
+        Label bankLabel = new Label(""+(nordigenBankAccount.getRbank() != null ? AonStringUtils.trimToEmpty(nordigenBankAccount.getRbank().getAlias()) : ""));
+        bankLabel.addStyleName(AON.AON_BOLD);
+        bankLabel.getElement().getStyle().setProperty("margin-bottom", "1.5em");
+        bankLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        bankLabel.getElement().getStyle().setFontSize(isMobile() ? 1.5 : 2, Unit.EM);
+        bankLabel.addStyleName(AON.AON_NO_MARGIN);
+        registrationTable.setWidget(0, 0, bankLabel);
+
+        Label ibanLabel = new Label(formatIban(nordigenBankAccount.getIban()));
+        ibanLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        ibanLabel.getElement().getStyle().setFontSize(isMobile() ? 1 : 1.75, Unit.EM);
+        ibanLabel.addStyleName(AON.CSS.aonMarginBottom());
+        registrationTable.setWidget(1, 0, ibanLabel);
+
+        FlexTable loginTable = new FlexTable();
+        loginTable.setWidth("100%");
+
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.addStyleName(AON.CSS.aonBlockCenter());
+        Button hai = new Button(AON.MSG.accept());
+
+        if (isMobile()) {
+            mobileAcceptButton(hai);
+        } else {
+            desktopAcceptButton(hai);
+        }
+
+        Button iie = new Button(AON.MSG.cancelAction());
+        hp.setWidth("50%");
+        hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        if (!isMobile()) {
+            desktopCancelButton(iie);
+            hp.add(iie);
+        }
+        hp.add(hai);
+        registrationTable.setWidget(3, 0, hp);
+
+        AonDialog dial = dialog;
+
+        hai.addClickHandler(handler -> {
+            NORDIGEN_SERVICE.addAccount(opt.getConfiguration().getToken(), opt.getOccam(), nordigenBankAccount, new AsyncCallback<NordigenRequisition>() {
+                @Override
+                public void onFailure(Throwable caught) {
+
+                    RegistryBank rbank = nordigenBankAccount.getRbank();
+                    String bic = AonStringUtils.substring(rbank != null ? rbank.getBic() : "", 0, 8);
+
+                    errLabel.setText("No se pudo detectar la entidad bancaria, por favor, el\u00EDjala manualmente:");
+                    registrationTable.setWidget(4, 0, errLabel);
+
+                    NORDIGEN_SERVICE.getInstitutionsByBic(opt.getConfiguration().getToken(), bic, new AsyncCallback<List<NordigenInstitution>>() {
+                        @Override
+                        public void onFailure(Throwable caught) {
+
+                            ListBox countryList = new ListBox();
+                            for (Country country : Country.values()) {
+                                countryList.addItem(country.getName(), country.getIso2());
+                            }
+                            int spaIndex = Arrays.asList(Country.values()).indexOf(Country.ES);
+                            countryList.setSelectedIndex(spaIndex);
+                            countryChange(opt, countryList, registrationTable, nordigenBankAccount);
+
+                            countryList.addChangeHandler((ev) -> {
+                                countryChange(opt, countryList, registrationTable, nordigenBankAccount);
+                            });
+
+                            registrationTable.setWidget(5, 0, countryList);
+                        }
+
+                        @Override
+                        public void onSuccess(List<NordigenInstitution> result) {
+                            ListBox availableBanksList = new ListBox();
+                            for (NordigenInstitution institution : result) {
+                                availableBanksList.addItem(institution.getName() + " - " + institution.getBic(), institution.getId());
+                            }
+
+                            availableBanksList.addChangeHandler((ev) -> {
+                                String instId = availableBanksList.getSelectedValue();
+                                NordigenInstitution selectedInst = result.stream().filter(inst -> AonStringUtils.equals(instId, inst.getId())).findFirst().orElse(null);
+                                nordigenBankAccount.setInstitution(selectedInst);
+                            });
+                            String instId = availableBanksList.getSelectedValue();
+                            NordigenInstitution selectedInst = result.stream().filter(inst -> AonStringUtils.equals(instId, inst.getId())).findFirst().orElse(null);
+                            nordigenBankAccount.setInstitution(selectedInst);
+                            registrationTable.setWidget(5, 0, availableBanksList);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSuccess(NordigenRequisition result) {
+                    if (registrationTable != null) {
+                      Storage storage = Storage.getLocalStorageIfSupported();
+                      storage.setItem("bankSuccessAdd", result.getId());
+                      drawShit(opt, dial, nordigenBankAccount, result, registrationTable);
+                    }
+                    Window.open(result.getLink(), "REGISTRO DE CUENTA", "_blank");
+                    nordigenBankAccount.setInstitution(null);
+                }
+            });
+        });
+
+        iie.addClickHandler(handler -> {
+            if (dial != null)
+                dial.hide();
+        });
+        if (dial != null) {
+            dialog.center();
+            dialog.show();
+        }
+    }
+    
 	private void drawShit(NordigenModuleOptions opt, AonDialog dial, NordigenBankAccount nordigenBankAccount,NordigenRequisition result, FlexTable registrationTable) {
 		if (dial != null) {
 			dial.setAutoHideEnabled(false);
