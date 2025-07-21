@@ -115,8 +115,11 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 			model.setGenerateFromYearStart(includeInvoices.getValue());
 		});
 		
-		includeSalaries.addClickHandler(event -> 
-			model.setMustIncludeSalariesOnGeneration(includeSalaries.getValue()));
+		includeSalaries.addClickHandler(event -> {
+			model.setMustIncludeSalariesOnGeneration(includeSalaries.getValue());
+			model.setGenerateFromYearStart(includeInvoices.getValue());
+		});
+			
 	}
 		
 	private void paint(Mod111 model, Model111Callback callback) {
