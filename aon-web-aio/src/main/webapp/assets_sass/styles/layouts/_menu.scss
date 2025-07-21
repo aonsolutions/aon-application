@@ -16,18 +16,13 @@
 #aonMenu{
   /* Menu izquierda */
   #aonMenuSidenav {
-  /*
     width     : v.$left-aonMenuLeft;
     min-width : v.$left-aonMenuLeft;
     max-width : v.$left-aonMenuLeft;
-  */
-
     ul {
       list-style-type : none;
       margin          : v.$px-0;
-      /*padding         : v.$padding v.$px-0 v.$padding 0;*/
-      padding         : v.$padding;
-
+      padding         : v.$padding v.$px-0;
       li{
         height : v.$px-48;
         a{
@@ -38,7 +33,7 @@
             justify-content : flex-start !important;
             flex-direction  : row !important;
             gap             : v.$padding;
-            padding-left    : v.$padding;
+            padding         : v.$px-0 v.$padding;
             cursor          : pointer;
 
             .aonNewMenuAppIcon{
@@ -58,6 +53,9 @@
             }
           }
         }
+        &:empty {
+          display: none;
+        }
       }
     }
   }
@@ -69,13 +67,12 @@
     top        : v.$height-cabecera;
     left       : v.$menu-top-Left;   // lo que ocupa el menu de la izquierda
     overflow-x : hidden;
-    z-index    : 1;
+    z-index    : 2;
     #aonTopMenuDiv{
       display         : flex;
       justify-content : center;
       height          : v.$pct-100;
       gap             : v.$gap;
-      
       >div >a{
         cursor : pointer;
         &:hover {

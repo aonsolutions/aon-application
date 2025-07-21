@@ -35,8 +35,13 @@ aon-home{
     .aonSidenav:empty{
       display: none;
     }
-    .aonRightSidenav:empty{
-      display: none;
+    .aonRightSidenav{
+      &:empty{
+        display: none;
+      }
+      img.aonWelcomeLogo{
+        width: 10rem;
+      }
     }
   }
 }

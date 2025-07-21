@@ -1,6 +1,6 @@
 @use '../variables' as v;
 
-$icon-size: v.$px-18;
+$icon-size: v.$px-16;
 $icon-gap : calc(v.$gap / 2);
 
 // Submenu que carga dentro de las paginas
@@ -21,7 +21,7 @@ $icon-gap : calc(v.$gap / 2);
     align-items    : center;
     cursor         : pointer;
     &> * {
-      font-size  : v.$px-16;
+      font-size  : v.$px-14;
       font-family: v.$font-primary-bold;
     }
     aon-icon[icon="chevron-down"] {
@@ -43,7 +43,7 @@ $icon-gap : calc(v.$gap / 2);
     transition    : opacity 0.3s ease, transform 0.3s ease;
     li{
       font-family    : v.$font-primary-regular;
-      font-size      : v.$px-14;
+      font-size      : v.$px-12;
       padding        : v.$px-10 v.$padding v.$px-10 (v.$padding + v.$padding);
       cursor         : pointer;
       display        : flex;
@@ -81,10 +81,10 @@ $icon-gap : calc(v.$gap / 2);
       transform     : translateY(20px);
       pointer-events: none;
       visibility    : hidden;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+      height        : 0;
+      margin        : 0;
+      padding       : 0;
+      overflow      : hidden;
     }
   }
 }

@@ -29,7 +29,7 @@ export class AonApplication extends AonElement {
   selected;
   VIEWS;
 
-  content; 
+  content;
 
   static get observedAttributes() {
     return [CONSTANT.TITLE];
@@ -126,15 +126,43 @@ export class AonApplication extends AonElement {
 //      leftSidenav.style.height = 'calc(100vh - 172px)';
     }
 
-    let content = this.createDiv(this.CONTENT);
-    div.appendChild(content);
-    content.className =
-      this.isMobile() || this.isSidenavBlock()
-        ? "aonMobileContent"
-        : CSS.AON_CONTENT_BETA;
-    if(this.isMobile() && this.isSab()){
-//      content.style.bottom = '69px';
-    }
+    // --- Donde metemos el contenido (que tenga la barra de desplazamiento arriba) ---
+      // Crear el contenedor principal que envolverá todo.
+      const wrapper = this.createDiv();
+      wrapper.className = CSS.AON_CONTENT_WRAPPER;
+      // 1 - Barra arriba
+        // Crear la barra de scroll superior.
+        const scrollbar = this.createDiv();
+        scrollbar.className = CSS.AON_CONTENT_TOP_SCROLLBAR;
+        // Crear la parte móvil (el "pulgar") de la barra de scroll.
+        const thumb = this.createDiv();
+        thumb.className = CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB;
+        // Construir la barra de scroll y añadirla al wrapper.
+        scrollbar.appendChild(thumb);
+        wrapper.appendChild(scrollbar);
+      // 2 - Contenido
+        // Crear div donde metemos el contenido
+        let content = this.createDiv(this.CONTENT);
+        console.log("-- Entra: build()");
+        console.log(this.CONTENT);
+        content.className = CSS.AON_CONTENT_BETA;
+        wrapper.appendChild(content);
+      // 3 - Barra abajo
+        // Crear la barra de scroll inferior.
+        const scrollbarBottom = this.createDiv();
+        scrollbarBottom.className = CSS.AON_CONTENT_BOTTOM_SCROLLBAR;
+        // Crear la parte móvil (el "pulgar") de la barra de scroll.
+        const thumbBottom = this.createDiv();
+        thumbBottom.className = CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB;
+        // Construir la barra de scroll y añadirla al wrapper.
+        scrollbarBottom.appendChild(thumbBottom);
+        wrapper.appendChild(scrollbarBottom);
+      // 4 - Agregar
+        // Añadir la estructura completa (el wrapper) al div padre.
+        div.appendChild(wrapper);
+        // Agregamos logica para tratar el scrollbar
+        this.addContentScrollbar();
+    // --- FIN Donde metemos el contenido (que tenga la barra de desplazamiento arriba) ---
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
     div.appendChild(rightSidenav);
@@ -1093,6 +1121,243 @@ export class AonApplication extends AonElement {
     if (content) content.appendChild(element);
   }
 
+  addContentScrollbar() {
+    const content         = this.getElement(this.CONTENT);
+    const scrollbarTop    = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR);
+    const thumbTop        = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB);
+    const scrollbarBottom = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR);
+    const thumbBottom     = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB);
+
+    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
+      return;
+    }
+
+    let isDraggingTop    = false;
+    let isDraggingBottom = false;
+    let paddingSpacerDiv = null;
+
+    const getPaddingRight = () => {
+      const style = window.getComputedStyle(content);
+      return parseFloat(style.paddingRight) || 0;
+    };
+
+    const getScrollableWidth = () => {
+      return content.scrollWidth - content.clientWidth;
+    };
+
+    const ensurePaddingSpacer = () => {
+      // La unica manera de que coja el padding de la derecha
+      if (!paddingSpacerDiv) {
+        paddingSpacerDiv = document.createElement('div');
+        paddingSpacerDiv.style.display  = 'inline-block';
+        paddingSpacerDiv.style.height   = '1px';
+        paddingSpacerDiv.style.pointerEvents = 'none';
+        content.appendChild(paddingSpacerDiv);
+      }
+      const paddingRight           = getPaddingRight();
+      content.style.display        = 'flex';
+      paddingSpacerDiv.style.width = `${paddingRight}px`;
+    };
+
+    const removePaddingSpacer = () => {
+      if (paddingSpacerDiv) {
+        content.removeChild(paddingSpacerDiv);
+        content.style.display = '';
+        paddingSpacerDiv      = null;
+      }
+    };
+
+    const updateThumbs = () => {
+      const scrollableWidth = getScrollableWidth();
+      const visibleRatio    = content.clientWidth / content.scrollWidth;
+
+      if (visibleRatio >= 1) {
+        scrollbarTop.style.display    = 'none';
+        scrollbarBottom.style.display = 'none';
+        removePaddingSpacer();
+        return;
+      } else {
+        scrollbarTop.style.display    = 'flex';
+        scrollbarBottom.style.display = 'flex';
+        ensurePaddingSpacer();
+      }
+
+      thumbTop.style.width    = `${visibleRatio * 100}%`;
+      thumbBottom.style.width = `${visibleRatio * 100}%`;
+
+      if (scrollableWidth > 0) {
+        const scrollPercentage  = content.scrollLeft / scrollableWidth;
+        const extraOffset       = 10; // el exceso por paddin y margin
+        const thumbMaxXTop      = scrollbarTop.offsetWidth - thumbTop.offsetWidth - extraOffset;
+        const thumbMaxXBottom   = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth - extraOffset;
+
+        thumbTop.style.left     = `${scrollPercentage * thumbMaxXTop}px`;
+        thumbBottom.style.left  = `${scrollPercentage * thumbMaxXBottom}px`;
+      }
+    };
+
+    content.addEventListener('scroll', updateThumbs);
+
+    thumbTop.addEventListener('mousedown', (e) => {
+      isDraggingTop         = true;
+      const startX          = e.pageX;
+      const startScrollLeft = content.scrollLeft;
+      e.preventDefault();
+      scrollbarTop.classList.add('scrollbar-dragging');
+
+      document.onmousemove = (moveEvent) => {
+        if (!isDraggingTop) return;
+        const deltaX          = moveEvent.pageX - startX;
+        const scrollableWidth = getScrollableWidth();
+        const thumbMaxX       = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
+        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
+        content.scrollLeft    = startScrollLeft + scrollDelta;
+      };
+
+      document.onmouseup = () => {
+        isDraggingTop        = false;
+        scrollbarTop.classList.remove('scrollbar-dragging');
+        document.onmousemove = null;
+        document.onmouseup   = null;
+      };
+    });
+
+    thumbBottom.addEventListener('mousedown', (e) => {
+      isDraggingBottom      = true;
+      const startX          = e.pageX;
+      const startScrollLeft = content.scrollLeft;
+      e.preventDefault();
+      scrollbarBottom.classList.add('scrollbar-dragging');
+
+      document.onmousemove = (moveEvent) => {
+        if (!isDraggingBottom) return;
+        const deltaX          = moveEvent.pageX - startX;
+        const scrollableWidth = getScrollableWidth();
+        const thumbMaxX       = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
+        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
+        content.scrollLeft    = startScrollLeft + scrollDelta;
+      };
+
+      document.onmouseup = () => {
+        isDraggingBottom     = false;
+        scrollbarBottom.classList.remove('scrollbar-dragging');
+        document.onmousemove = null;
+        document.onmouseup   = null;
+      };
+    });
+
+    new ResizeObserver(updateThumbs).observe(content);
+
+    const mutationObserver = new MutationObserver(updateThumbs);
+    mutationObserver.observe(content, { childList: true, subtree: true });
+
+    updateThumbs();
+  }
+
+/*
+  addContentScrollbar() {
+    const content         = this.getElement(this.CONTENT);
+    const scrollbarTop    = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR);
+    const thumbTop        = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB);
+    const scrollbarBottom = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR);
+    const thumbBottom     = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB);
+
+    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
+      return;
+    }
+
+    let isDraggingTop    = false;
+    let isDraggingBottom = false;
+
+    const getPaddingRight = () => {
+      const style = window.getComputedStyle(content);
+      return parseFloat(style.paddingRight) || 0;
+    };
+
+    const getScrollableWidth = () => {
+      return content.scrollWidth - content.clientWidth;
+    };
+
+    const updateThumbs = () => {
+      const scrollableWidth = getScrollableWidth();
+      const visibleRatio    = content.clientWidth / content.scrollWidth;
+
+      if (visibleRatio >= 1) {
+        scrollbarTop.style.display    = 'none';
+        scrollbarBottom.style.display = 'none';
+        return;
+      } else {
+        scrollbarTop.style.display    = 'block';
+        scrollbarBottom.style.display = 'block';
+      }
+
+      thumbTop.style.width    = `${visibleRatio * 100}%`;
+      thumbBottom.style.width = `${visibleRatio * 100}%`;
+
+      if (scrollableWidth > 0) {
+        const scrollPercentage  = content.scrollLeft / scrollableWidth;
+        const thumbMaxXTop      = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
+        const thumbMaxXBottom   = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
+
+        thumbTop.style.left     = `${scrollPercentage * thumbMaxXTop}px`;
+        thumbBottom.style.left  = `${scrollPercentage * thumbMaxXBottom}px`;
+      }
+    };
+
+    content.addEventListener('scroll', updateThumbs);
+
+    thumbTop.addEventListener('mousedown', (e) => {
+      isDraggingTop         = true;
+      const startX          = e.pageX;
+      const startScrollLeft = content.scrollLeft;
+      e.preventDefault();
+
+      document.onmousemove = (moveEvent) => {
+        if (!isDraggingTop) return;
+        const deltaX          = moveEvent.pageX - startX;
+        const scrollableWidth = getScrollableWidth();
+        const thumbMaxX       = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
+        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
+        content.scrollLeft    = startScrollLeft + scrollDelta;
+      };
+
+      document.onmouseup = () => {
+        isDraggingTop        = false;
+        document.onmousemove = null;
+        document.onmouseup   = null;
+      };
+    });
+
+    thumbBottom.addEventListener('mousedown', (e) => {
+      isDraggingBottom      = true;
+      const startX          = e.pageX;
+      const startScrollLeft = content.scrollLeft;
+      e.preventDefault();
+
+      document.onmousemove = (moveEvent) => {
+        if (!isDraggingBottom) return;
+        const deltaX          = moveEvent.pageX - startX;
+        const scrollableWidth = getScrollableWidth();
+        const thumbMaxX       = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
+        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
+        content.scrollLeft    = startScrollLeft + scrollDelta;
+      };
+
+      document.onmouseup = () => {
+        isDraggingBottom     = false;
+        document.onmousemove = null;
+        document.onmouseup   = null;
+      };
+    });
+
+    new ResizeObserver(updateThumbs).observe(content);
+
+    const mutationObserver = new MutationObserver(updateThumbs);
+    mutationObserver.observe(content, { childList: true, subtree: true });
+
+    updateThumbs();
+  }
+*/
   addFloatOption(action, fn) {
     const buttonId = this.id + action.id + "Button";
     let aonIconButton = this.getElement(buttonId);
@@ -1293,7 +1558,7 @@ export class AonApplication extends AonElement {
       this.content.removeEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
       this.content.removeEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
       document.removeEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
-      this.content.removeEventListener(EVENT.DROP, this.dropFn);      
+      this.content.removeEventListener(EVENT.DROP, this.dropFn);
     }
   }
 

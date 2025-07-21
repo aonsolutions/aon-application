@@ -64,7 +64,7 @@ export class AonTable extends AonElement {
     if (this.hasAttribute("selectable")){
       this.paintCheckboxHeader();
     }
-
+/*
     if (
       localStorage.getItem("aon_solutions") === undefined ||
       localStorage.getItem("aon_solutions") === null
@@ -77,7 +77,7 @@ export class AonTable extends AonElement {
         tbody.style.height = `calc(100vh - 178px)`;
       }
     }
-
+*/
     if(this.checkFetch){
       tbody.addEventListener("scroll", ({target}) => {
         const scrollTop = target.scrollTop;
@@ -195,8 +195,9 @@ export class AonTable extends AonElement {
       tr.className    = "aonTableTr";
       // Crear la celda para el mensaje
       let tdMessage = this.createElement(TAG.TD);
-      tdMessage.setAttribute('colspan', '100%');
-      tdMessage.textContent     = message;
+      tdMessage.setAttribute('colspan', '1000');
+      tdMessage.textContent = message;
+      tdMessage.title       = message;
       // A�adir la celda a la fila
       tr.appendChild(tdMessage);
       // A�adir la fila con el mensaje al cuerpo de la tabla
@@ -267,8 +268,8 @@ export class AonTable extends AonElement {
         if(value.fn){
           td.addEventListener(EVENT.CLICK, value.fn);
         }
-      }  else if("icons" === item.type && value[id]) {
-        let span = this.createSpan(this.getId() + 'Icons')
+      } else if("icons" === item.type && value[id]) {
+        let span = this.createSpan(this.getId() + 'Icons');
         value[id].forEach((icon,i) => {
           let icon2 = this.createElement(TAG.I);
           icon2.id = this.getId() + "Icon" + i;
@@ -279,7 +280,7 @@ export class AonTable extends AonElement {
           if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
           span.appendChild(icon2);
         });
-        td.appendChild(span);       
+        td.appendChild(span);
       } else if(item.type && item.type === "list" ) {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);
@@ -295,9 +296,9 @@ export class AonTable extends AonElement {
           }
           ulList.appendChild(li);
         });
-      
       } else if(item.type && item.type ==="html") {
-        td.appendChild(value[id])
+        td.appendChild(value[id]);
+        td.title = td.textContent.trim();
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -309,9 +310,9 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="date" || item.type ==="creation_date") {
+      } else if(item.type && (item.type ==="date" || item.type ==="creation_date")) {
         const dateRegex = /\d{2,4}\-\d{1,2}\-\d{1,2}(?:T.*)?/;
-        const dateValue = value[id] !== undefined? value[id] : "";
+        const dateValue = value[id] !== undefined ? value[id] : "";
         let val = "";
         try {
           if (dateValue && (dateValue instanceof Date)) {
@@ -320,12 +321,13 @@ export class AonTable extends AonElement {
             let date = new Date(dateValue);
             val = AonDateUtils.formatDate(date);
           } else {
-            val = dateValue;  
+            val = dateValue;
           }
         } catch (error) {
           val = dateValue;
         }
         td.innerHTML = val;
+        td.title = val;
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -337,13 +339,13 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } 
-      else if(item.type && item.type ==="number") {
-        td.innerHTML = value[id] !== undefined? value[id] : "";
+      } else if(item.type && item.type ==="number") {
+        td.innerHTML = value[id] !== undefined ? value[id] : "";
+        td.title = value[id] !== undefined ? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
-      } 
-      else {
-        td.innerHTML = value[id] !== undefined? value[id] : "";
+      } else {
+        td.innerHTML = value[id] !== undefined ? value[id] : "";
+        td.title = value[id] !== undefined ? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -410,6 +412,7 @@ export class AonTable extends AonElement {
 
     let td = this.createElement(TAG.TD);
     td.innerHTML = message;
+    td.title     = message;
     tr.appendChild(td);
   }
 
