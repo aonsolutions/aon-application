@@ -79,7 +79,9 @@ public class VERIFACTU {
 					.setDomain(company.getDomain().getId())
 					.setInvoice(invoiceId)
 					.setName("VERIFACTU_BLOCKCHAIN")
-					.setValue(invoiceBlockchain.toJSON().toString());
+					.setValue(VerifactuBlockchainJSON.toJSON(invoiceBlockchain)
+							.map(j -> j.toString() )
+							.orElse(null));
 			AON.saveInvoiceData(company.getDomain(), user, invoiceData);
 			
 			InvoiceData invoiceData2 = new InvoiceData()
@@ -101,7 +103,11 @@ public class VERIFACTU {
 				new ApplicationParameter()
 					.setDomain(company.getDomain().getId())
 					.setName(AppParam.VERIFACTU_BLOCKCHAIN)
-					.setValue(blockchain.toJSON().toString()));
+					.setValue(VerifactuBlockchainJSON.toJSON(blockchain)
+						.map(j -> j.toString())
+						.orElse(null)
+					));
+							
 		
 		InvoiceBatch invoiceBatch = saveInvoiceBatch(company.getDomain(), user, dataResponse);
 		if(response.isError()) {

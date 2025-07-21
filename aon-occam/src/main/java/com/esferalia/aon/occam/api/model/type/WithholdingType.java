@@ -221,6 +221,11 @@ public enum WithholdingType implements Serializable {
 		return WithholdingType.values()[i];
 	}
 	
+	/**
+	 * @deprecated
+	 * @return use WithholdingType safeValue(String str) 
+	 */
+	@Deprecated
 	public static WithholdingType safeValueOf(String str) {
 		if(AonStringUtils.isBlank(str)) return PROFESSIONAL;
 		

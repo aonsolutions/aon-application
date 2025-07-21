@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
@@ -187,7 +188,7 @@ public class Invoice2Verifactu {
 		alta.setNumRegistroAcuerdoFacturacion(null);
 		alta.setIdAcuerdoSistemaInformatico(null);
 		alta.setTipoHuella("01");
-		alta.setHuella(calculateHuella(alta, blockchain.getHuella()));
+		alta.setHuella(calculateHuella(alta, blockchain));
 		
 		
 		factura.setRegistroAlta(getSignedAlta(verifactuConfiguration, alta));
@@ -215,7 +216,7 @@ public class Invoice2Verifactu {
 	
 	private static Encadenamiento getEncadenamiento(VerifactuBlockchain blockchain) {
 		Encadenamiento encadenamiento = new Encadenamiento();
-		if(blockchain == null || blockchain.isEmpty()) 
+		if(blockchain == null) 
 			encadenamiento.setPrimerRegistro(PrimerRegistroCadenaType.S);
 		else {
 			EncadenamientoFacturaAnteriorType cadena = new EncadenamientoFacturaAnteriorType();
@@ -228,14 +229,14 @@ public class Invoice2Verifactu {
 		return encadenamiento;		
 	}
 	
-	private static String calculateHuella(RegistroFacturacionAltaType alta, String huellaAnterior) {
+	private static String calculateHuella(RegistroFacturacionAltaType alta, VerifactuBlockchain previousBlockchain) {
 		String huella = "IDEmisorFactura=" + alta.getIDFactura().getIDEmisorFactura() 
 				+ "&NumSerieFactura=" + alta.getIDFactura().getNumSerieFactura()
 				+ "&FechaExpedicionFactura=" + alta.getIDFactura().getFechaExpedicionFactura()
 				+ "&TipoFactura=" + alta.getTipoFactura().name()
 				+ "&CuotaTotal=" + alta.getCuotaTotal()
 				+ "&ImporteTotal=" + alta.getImporteTotal()
-				+ "&Huella=" + huellaAnterior
+				+ "&Huella=" + AonObjectUtils.ifNotNullGet(previousBlockchain, VerifactuBlockchain::getHuella )
 				+ "&FechaHoraHusoGenRegistro=" + alta.getFechaHoraHusoGenRegistro();
 		
 		return AonDigestUtils.sha256Hex(huella);
