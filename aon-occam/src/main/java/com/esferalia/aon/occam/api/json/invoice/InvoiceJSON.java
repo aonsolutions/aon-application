@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,9 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.JsonVersion;
-import com.esferalia.aon.occam.api.json.JsonVersion.JsonVersionVisitor;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON.InvoiceJSONVersion.JsonVersionVisitor;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 
 public class InvoiceJSON {
 	
@@ -17,16 +21,47 @@ public class InvoiceJSON {
 	
 	}
 	
+	public enum InvoiceJSONVersion implements Serializable  {
+
+		 V1 {@Override public <T> T visit(JsonVersionVisitor<T> visitor) {return visitor.visitV1();}}
+		,V2 {@Override public <T> T visit(JsonVersionVisitor<T> visitor) {return visitor.visitV2();}}
+		;
+		
+		public byte value() {
+			return (byte) this.ordinal();
+		}
+		
+		public abstract <T> T visit(JsonVersionVisitor<T> visitor);
+		
+		public interface JsonVersionVisitor<T> {
+			public T visitV1();		
+			public T visitV2();
+		}
+
+		public static Optional<InvoiceJSONVersion> safeValueOf(String v) {
+			return AonCollectionUtils.stream(values())
+				.filter( t ->  AonStringUtils.equalsIgnoreCase(t.name(), v))
+				.findFirst();
+		}
+		
+		
+	}	
+
+	public static Optional<InvoiceJSONVersion> getVersion(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.of(InvoiceJSONVersion.V1);
+		return InvoiceJSONVersion.safeValueOf( JsonUtils.getString(json, IJsonNames.VERSION) );
+	}
+	
 	// ---------------------------------------------------------------
 	// ----------------------------------------------------- [FROM] --
 	// ---------------------------------------------------------------
 	public static Optional<Invoice> from(JSONObject json) {
-		return JsonUtils.getVersion(json)
+		return getVersion(json)
 			.map(v -> from(v, json) )
 			.orElse( Optional.ofNullable(InvoiceJSONV1.fromJSON(json)) )
 		;
 	}
-	public static Optional<Invoice> from(JsonVersion v, JSONObject json) {
+	public static Optional<Invoice> from(InvoiceJSONVersion v, JSONObject json) {
 		if (v == null) return Optional.ofNullable(InvoiceJSONV1.fromJSON(json));
 		return v.visit( new JsonVersionVisitor<Optional<Invoice>>() {
 
@@ -49,7 +84,7 @@ public class InvoiceJSON {
 		return Optional.ofNullable(InvoiceJSONV1.toJSON(invoice));
 	}
 	
-	public static Optional<JSONObject> to(JsonVersion v, Invoice invoice) {
+	public static Optional<JSONObject> to(InvoiceJSONVersion v, Invoice invoice) {
 		if (v == null) return Optional.ofNullable(InvoiceJSONV1.toJSON(invoice));
 		return v.visit( new JsonVersionVisitor<Optional<JSONObject>>() {
 

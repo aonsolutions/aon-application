@@ -12,9 +12,9 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.JsonVersion;
 import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.doc.InvoiceDocJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON.InvoiceJSONVersion;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -349,7 +349,7 @@ class InvoiceJSONV2 {
 	static Optional<JSONObject> to(Invoice inv, Supplier<JSONObject> sup) {
 		if (inv == null) return Optional.empty();
 		JSONObject json = sup.get()
-			.put(IJsonNames.VERSION, JsonVersion.V2.name())
+			.put(IJsonNames.VERSION, InvoiceJSONVersion.V2.name())
 			.put(IJsonNames.ID, inv.getId())
 			.put(IJsonNames.DOMAIN, inv.getDomain())
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.to(inv.optActivity()).orElse(null))

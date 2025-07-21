@@ -221,10 +221,5 @@ public class JsonUtils {
 	public static JSONArray nullIfEmpty(JSONArray jsonArray) {
 		return isEmpty(jsonArray) ? null : jsonArray;
 	}
-	
-	public static Optional<JsonVersion> getVersion(JSONObject json) {
-		if (isEmpty(json)) return Optional.of(JsonVersion.V1);
-		return JsonVersion.safeValueOf( getString(json, IJsonNames.VERSION) );
-	}
 
 }
