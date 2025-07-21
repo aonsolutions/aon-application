@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -21,15 +24,22 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
@@ -55,26 +65,81 @@ public class VERIFACTU {
 		// save DATA RESPONSE
 		DataResponse dataResponse = saveResponse(company.getDomain(), dataRequest, responseData);
 		
+		User user = new User().setLogin("");
 		request.getRegistroFactura().stream().forEach(req -> {
 			Integer invoiceId = AonNumberUtils.toInteger(req.getRegistroAlta().getRefExterna());
-			// TODO save INVOICE_DATA (HUELLA)
+			
+			VerifactuBlockchain invoiceBlockchain = new VerifactuBlockchain()
+					.setDate(req.getRegistroAlta().getIDFactura().getFechaExpedicionFactura())
+					.setDocument(req.getRegistroAlta().getIDFactura().getIDEmisorFactura())	
+					.setHuella(req.getRegistroAlta().getHuella())
+					.setReference(req.getRegistroAlta().getIDFactura().getNumSerieFactura());
+
+			InvoiceData invoiceData = new InvoiceData()
+					.setDomain(company.getDomain().getId())
+					.setInvoice(invoiceId)
+					.setName("VERIFACTU_BLOCKCHAIN")
+					.setValue(invoiceBlockchain.toJSON().toString());
+			AON.saveInvoiceData(company.getDomain(), user, invoiceData);
+			
+			InvoiceData invoiceData2 = new InvoiceData()
+					.setDomain(company.getDomain().getId())
+					.setInvoice(invoiceId)
+					.setName("VERIFACTU_QR")
+					.setValue(getQrUrl(req.getRegistroAlta()));
+			AON.saveInvoiceData(company.getDomain(), user, invoiceData2);
 		});
 		
-		String lastHuella = request.getRegistroFactura().getLast().getRegistroAlta().getHuella();
-		// TODO save la huella en app_param last_huella o algo asi..	
+		RegistroFacturacionAltaType last = request.getRegistroFactura().getLast().getRegistroAlta();
+		VerifactuBlockchain blockchain = new VerifactuBlockchain()
+				.setDate(last.getIDFactura().getFechaExpedicionFactura())
+				.setDocument(last.getIDFactura().getIDEmisorFactura())
+				.setHuella(last.getHuella())
+				.setReference(last.getIDFactura().getNumSerieFactura());
+
+		AON.saveApplicationParameter(new Occam().setDomain(company.getDomain().getId()).setDomainName(company.getName()).setUser(""), 
+				new ApplicationParameter()
+					.setDomain(company.getDomain().getId())
+					.setName(AppParam.VERIFACTU_BLOCKCHAIN)
+					.setValue(blockchain.toJSON().toString()));
 		
-		// TODO save INVOICE BATCH
-//		InvoiceBatch invoiceBatch = saveInvoiceBatch(company.getDomain(), dataResponse);
+		InvoiceBatch invoiceBatch = saveInvoiceBatch(company.getDomain(), user, dataResponse);
 		if(!response.getRespuestaLinea().isEmpty()) {
-			RespuestaExpedidaType r = response.getRespuestaLinea().get(0);
-			Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-			// TODO save InvoiceInfo
-			saveInvoiceInfo(null, invoiceId);
-			// TODO save InvoiceBatchDetail
-//			saveInvoiceBatchDetail(invoiceBatch, invoiceId);
+			response.getRespuestaLinea().stream().forEach(r -> {
+				Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+				InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
+				saveInvoiceInfo(company.getDomain(), user, invoiceId, status); 
+				saveInvoiceBatchdetail(company.getDomain(),user, invoiceBatch, invoiceId, status);				
+			});
 		}	
 	}
 	
+	private InvoiceCommunicationStatus getInvoiceCommunicationStatus(EstadoRegistroType status) {
+		if(status == null) return null;
+		if(EstadoRegistroType.CORRECTO.equals(status)) return InvoiceCommunicationStatus.ACCEPTED;
+		else if(EstadoRegistroType.ACEPTADO_CON_ERRORES.equals(status)) return InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;
+		else if(EstadoRegistroType.INCORRECTO.equals(status)) return InvoiceCommunicationStatus.WRONG;
+		return null;
+	}
+	
+	private String getQrUrl(RegistroFacturacionAltaType alta) {
+		return new StringBuilder(VerifactuUri.getUrlQr())
+				.append("?")
+				.append("nif=").append(encodeParam(alta.getIDFactura().getIDEmisorFactura()))
+				.append("numserie=").append(encodeParam(alta.getIDFactura().getNumSerieFactura()))
+				.append("fecha=").append(encodeParam(alta.getIDFactura().getFechaExpedicionFactura()))
+				.append("importe=").append(encodeParam(alta.getImporteTotal()))
+				.toString();
+	}
+	
+	private String encodeParam(String param) {
+		try {
+			return URLEncoder.encode(param, "UTF-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return param;
+		}
+	}
 	private DataRequest saveRequest(Domain domain, byte[] request) {
 		DataRequest dataRequest = new DataRequest()
 				.setDomain(domain.getId())
@@ -103,11 +168,9 @@ public class VERIFACTU {
 				.setDomain(dataRequest.getDomain())
 				.setDataRequest(dataRequest.getId())
 				.setCode("")
-				.setSource(DataResponseSource.VERIFACTU)
-				
-				;
+				.setSource(DataResponseSource.VERIFACTU);
 		
-		// TODO save dataresponse
+		dataResponse = AON.insertDataResponse(domain.getName(), domain.getId(), "", dataResponse);
 		
 		Attach attach = new Attach()
 				.setDomain(domain)
@@ -123,19 +186,32 @@ public class VERIFACTU {
 		return dataResponse;		
 	}
 	
-	private static InvoiceInfo saveInvoiceInfo(Domain domain, Integer invoice) {
-		return new InvoiceInfo();
+	private static InvoiceInfo saveInvoiceInfo(Domain domain, User user, Integer invoice, InvoiceCommunicationStatus status) {
+		InvoiceInfo info = new InvoiceInfo()
+				.setDomain(domain.getId())
+				.setInvoice(invoice)
+				.setType(InvoiceCommunicationType.VERIFACTU)
+				.setStatus(status);
+		
+		return AON.saveInvoiceInfo(domain, user, info);
 	}
 	
-	private static InvoiceBatch saveInvoiceBatch(Domain domain, Integer invoice) {
-		return new InvoiceBatch();
+	private static InvoiceBatch saveInvoiceBatch(Domain domain, User user, DataResponse dataResponse) {
+		InvoiceBatch invoiceBatch = new InvoiceBatch()
+				.setDomain(domain.getId())
+				.setOperation(InvoiceCommunicationOperation.REGISTER)
+				.setDataResponse(dataResponse.getId());
+		return AON.saveInvoiceBatch(domain, user, invoiceBatch);
 	}
 	
-	
-	private static InvoiceBatchDetail saveInvoiceBAtchdetail(Domain domain, Integer invoice) {
-		InvoiceBatchDetail ibd = new InvoiceBatchDetail();
-		return ibd;		
+	private static InvoiceBatchDetail saveInvoiceBatchdetail(Domain domain, User user, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
+		InvoiceBatchDetail ibd = new InvoiceBatchDetail()
+				.setDomain(invoiceBatch.getDomain())
+				.setInvoiceBatch(invoiceBatch.getId())
+				.setInvoice(invoice)
+				.setStatus(status);
+		
+		return AON.saveInvoiceBatchDetail(domain, user, ibd);
 	}
 
-	
 }

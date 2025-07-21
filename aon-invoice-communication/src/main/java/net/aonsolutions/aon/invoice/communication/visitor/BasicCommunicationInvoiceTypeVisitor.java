@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 
@@ -148,21 +149,9 @@ public class BasicCommunicationInvoiceTypeVisitor {
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
 	}
 	
-	protected VerifactuBlockchain getVerifactuBlockchain(Integer actualInvoice) {	
-		DataResponseSource source = getTbaiConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
-			f.getDomainProperty().eq(getDomain().getId())
-			.and(f.getSourceProperty().eq(source.value()))
-			.and(f.getSourceIdProperty().ne(actualInvoice))
-			.and(f.getCodeProperty().ne("baja"))
-			);
-		
-		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
-			f.getDomainProperty().eq(getDomain().getId())
-			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
-		
-		return VerifactuBlockchain.fromJSON(drd.getDataValue());
+	protected VerifactuBlockchain getVerifactuBlockchain() {	
+		String blockchain = AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN).getValue();		
+		return VerifactuBlockchain.fromJSON(blockchain);
 	}
 	
 	protected Certificate getCertificate() {

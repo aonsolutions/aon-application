@@ -29,9 +29,9 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.EncadenamientoFacturaAnteriorType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
@@ -72,8 +72,10 @@ public class Invoice2Verifactu {
 	
 	private static CabeceraType getCabecera(Company company) { 
 		final CabeceraType c = new CabeceraType();
-		c.getObligadoEmision().setNIF(company.getDocument());
-		c.getObligadoEmision().setNombreRazon(company.getName());
+		PersonaFisicaJuridicaESType obligado = new PersonaFisicaJuridicaESType();
+		obligado.setNIF(company.getDocument());
+		obligado.setNombreRazon(company.getName());
+		c.setObligadoEmision(obligado);
 		
 		// REPRESENTANTE/ASESOR SI LO TUVIERA 
 		// c.getRepresentante().setNIF(null);
@@ -105,15 +107,12 @@ public class Invoice2Verifactu {
 		alta.getIDFactura().setNumSerieFactura(invoice.getReferenceCode());
 		alta.getIDFactura().setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 
-		// Referencia Externa ??
+		// Referencia Externa InvoiceId
 		alta.setRefExterna(invoice.getId().toString());
 		
 		alta.setNombreRazonEmisor(company.getName());
-
 		alta.setSubsanacion(SubsanacionType.N);
-		
 		alta.setRechazoPrevio(RechazoPrevioType.N);
-		
 		alta.setTipoFactura(invoice.isSimplified() ? ClaveTipoFacturaType.F_2 : ClaveTipoFacturaType.F_1);
 		
 		if(invoice.isRectifier()) {
@@ -146,17 +145,17 @@ public class Invoice2Verifactu {
 		// ??????????????????????
 		alta.setMacrodato(MacrodatoType.N);
 
-		// Facturas emitidas por terceros.
-		if(invoice.isThirdPart()) { 
-			alta.getTercero().setIDOtro(new IDOtroType());
-			alta.getTercero().setNIF("");
-			alta.getTercero().setNombreRazon("");
-		}
+		// Facturas emitidas por terceros. AUTOFACTURA!
+		// if(invoice.isThirdPart()) { 
+		//	alta.getTercero().setIDOtro(new IDOtroType());
+		//	alta.getTercero().setNIF("");
+		//	alta.getTercero().setNombreRazon("");
+		// }
 
 		PersonaFisicaJuridicaType destinatario = new PersonaFisicaJuridicaType();
-		destinatario.setIDOtro(new IDOtroType());
-		destinatario.setNIF("");
-		destinatario.setNombreRazon("");
+		// destinatario.setIDOtro(new IDOtroType());
+		destinatario.setNIF(invoice.getRegistryDocument());
+		destinatario.setNombreRazon(invoice.getRegistryName());
 		alta.getDestinatarios().getIDDestinatario().add(destinatario);
 		
 		// ?????????????????????
@@ -176,7 +175,7 @@ public class Invoice2Verifactu {
 
 		alta.setEncadenamiento(getEncadenamiento(blockchain));
 		
-		alta.setSistemaInformatico(getSistemaInformatico());
+		alta.setSistemaInformatico(getSistemaInformatico(company));
        
 		alta.setFechaHoraHusoGenRegistro(getXmlDate());
 		alta.setNumRegistroAcuerdoFacturacion(null);
@@ -329,14 +328,15 @@ public class Invoice2Verifactu {
 		return desglose;
 	}
 	
-	private static SistemaInformaticoType getSistemaInformatico() {
+	private static SistemaInformaticoType getSistemaInformatico(Company company) {
+		;
 		SistemaInformaticoType sys = new SistemaInformaticoType();
 		sys.setNIF("B01487271");
 		sys.setNombreRazon("AON SOLUTIONS SL");
-		sys.setIdSistemaInformatico(""); // ???
+		sys.setIdSistemaInformatico("aonSolutions-9.23"); // ???
 		sys.setNombreSistemaInformatico("aonSolutions");
 		sys.setVersion("9.23");
-		sys.setNumeroInstalacion(""); //???
+		sys.setNumeroInstalacion(company.getDocument() + "-" + company.getDomain().getId()); // CONCATENA EL NIF Y DOMAIN ID.
 		sys.setTipoUsoPosibleSoloVerifactu(SiNoType.N);
 		sys.setTipoUsoPosibleMultiOT(SiNoType.S);
 		sys.setIndicadorMultiplesOT(SiNoType.S);

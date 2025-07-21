@@ -21,7 +21,6 @@ import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TBAI;
-import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 
@@ -107,8 +106,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 			try {
 				List<Invoice> list = new LinkedList<>();
 				list.add(getInvoice());
-				VERIFACTU.getInstance().accept(getVerifactuConfiguration(), getCompany(), list, 
-						getVerifactuBlockchain(getInvoice().getId()));
+				VERIFACTU.getInstance().accept(getVerifactuConfiguration(), getCompany(), list, getVerifactuBlockchain());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

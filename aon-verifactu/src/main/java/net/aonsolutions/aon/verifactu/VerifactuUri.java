@@ -20,34 +20,17 @@ public class VerifactuUri {
 
   	// https://prewww10.aeat.es (pruebas de Web Services para Contribuyentes con certificado de sello) equivalente en cuanto a requisitos a https://www10.agenciatributaria.gob.es
 	private static final String URL_3 = "https://www10.agenciatributaria.gob.es";
-	private static final String URL_TEST_3 = "https://prewww10.aeat.es";	
+	private static final String URL_TEST_3 = "https://prewww10.aeat.es";
+	
+	private static final String URL_QR = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+	private static final String URL_QR_TEST = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
 	
 	public static String getUrlEmision() {
 		return URL_TEST_1;
 	}
 	
-	public static String getUrlAnulacion() {
-		return "";
-	}
-	
-	public static String getUrlZuzendu() {
-		return "";
-	}
-	
-	public static String getUrlZuzenduBaja() {
-		return "";
-	}
-	
-	public static String getUrlOsatu() {
-		return "";
-	}
-	
-	public static String getUrlConsulta() {
-		return "";
-	}
-	
 	public static String getUrlQr() {
-		return "";
+		return URL_QR;
 	}
 	
 }

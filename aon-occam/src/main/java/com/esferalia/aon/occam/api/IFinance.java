@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
@@ -271,6 +272,13 @@ public interface IFinance {
 	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter);
 	public InvoiceCommunicationTracking saveInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking);
 	public void deleteInvoiceCommunicationTracking(AONContext ctx, Integer invoiceId);
+	
+	// 	***********************************************
+	// 	***************** INVOICE BATCH ***************
+	// 	***********************************************
+	
+	public InvoiceBatch saveInvoiceBatch(AONContext ctx, InvoiceBatch invoiceBatch);
+	public InvoiceBatchDetail saveInvoiceBatchDetail(AONContext ctx, InvoiceBatchDetail invoiceBatchDetail);
 	
 	// 	***********************************************
 	// 	***************** BOOKING CHECK ***************
