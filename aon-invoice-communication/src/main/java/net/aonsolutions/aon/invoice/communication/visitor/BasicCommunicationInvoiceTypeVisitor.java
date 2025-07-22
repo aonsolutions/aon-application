@@ -150,8 +150,11 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	}
 	
 	protected VerifactuBlockchain getVerifactuBlockchain() {	
-		String blockchain = AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN).getValue();		
-		return VerifactuBlockchain.fromJSON(blockchain);
+		return new VerifactuBlockchain()
+			.setDocument(AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT).getValue())
+			.setReference(AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE).getValue())
+			.setDate(AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN_DATE).getValue())
+			.setHuella(AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), "", AppParam.VERIFACTU_BLOCKCHAIN_HUELLA).getValue());
 	}
 	
 	protected Certificate getCertificate() {

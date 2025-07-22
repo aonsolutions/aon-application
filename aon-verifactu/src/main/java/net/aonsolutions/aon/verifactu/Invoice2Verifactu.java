@@ -191,32 +191,32 @@ public class Invoice2Verifactu {
 		alta.setHuella(calculateHuella(alta, blockchain));
 		
 		
-		factura.setRegistroAlta(getSignedAlta(verifactuConfiguration, alta));
+		factura.setRegistroAlta(alta); //getSignedAlta(verifactuConfiguration, alta));
 		return factura;
 	}
 	
-	private static RegistroFacturacionAltaType getSignedAlta(VerifactuConfiguration verifactuConfiguration, RegistroFacturacionAltaType alta) {
-		try {
-			byte[] data = XMLUtils.marshal(alta, RegistroFacturacionAltaType.class);
-			byte[] xml = VerifactuSigner.getInstance().sign(verifactuConfiguration, data);
-			return (RegistroFacturacionAltaType) XMLUtils.unmarshal(xml, RegistroFacturacionAltaType.class);
-		} catch (AonSignerException | JAXBException e) {
-			e.printStackTrace();
-		}
-		return alta;
-	}
+//	private static RegistroFacturacionAltaType getSignedAlta(VerifactuConfiguration verifactuConfiguration, RegistroFacturacionAltaType alta) {
+//		try {
+//			byte[] data = XMLUtils.marshal(alta, RegistroFacturacionAltaType.class);
+//			byte[] xml = VerifactuSigner.getInstance().sign(verifactuConfiguration, data);
+//			return (RegistroFacturacionAltaType) XMLUtils.unmarshal(xml, RegistroFacturacionAltaType.class);
+//		} catch (AonSignerException | JAXBException e) {
+//			e.printStackTrace();
+//		}
+//		return alta;
+//	}
 	
 	private static String getCuotaTotal(Invoice invoice) {
 		double quota = invoice.getVatQuota();
 		if(quota == 0.0) {
-			
+			quota = invoice.getBreakdown().stream().mapToDouble(InvoiceBreakdown::getQuota).sum();
 		}
 		return doubleToString(quota);
 	}
 	
 	private static Encadenamiento getEncadenamiento(VerifactuBlockchain blockchain) {
 		Encadenamiento encadenamiento = new Encadenamiento();
-		if(blockchain == null) 
+		if(blockchain == null || blockchain.isEmpty()) 
 			encadenamiento.setPrimerRegistro(PrimerRegistroCadenaType.S);
 		else {
 			EncadenamientoFacturaAnteriorType cadena = new EncadenamientoFacturaAnteriorType();
@@ -230,21 +230,24 @@ public class Invoice2Verifactu {
 	}
 	
 	private static String calculateHuella(RegistroFacturacionAltaType alta, VerifactuBlockchain previousBlockchain) {
+		String previousHuella = AonObjectUtils.ifNotNullGet(previousBlockchain, VerifactuBlockchain::getHuella );
 		String huella = "IDEmisorFactura=" + alta.getIDFactura().getIDEmisorFactura() 
 				+ "&NumSerieFactura=" + alta.getIDFactura().getNumSerieFactura()
 				+ "&FechaExpedicionFactura=" + alta.getIDFactura().getFechaExpedicionFactura()
-				+ "&TipoFactura=" + alta.getTipoFactura().name()
+				+ "&TipoFactura=" + alta.getTipoFactura().value()
 				+ "&CuotaTotal=" + alta.getCuotaTotal()
 				+ "&ImporteTotal=" + alta.getImporteTotal()
-				+ "&Huella=" + AonObjectUtils.ifNotNullGet(previousBlockchain, VerifactuBlockchain::getHuella )
+				+ "&Huella=" + (previousHuella != null ? previousHuella : "")
 				+ "&FechaHoraHusoGenRegistro=" + alta.getFechaHoraHusoGenRegistro();
-		
-		return AonDigestUtils.sha256Hex(huella);
+		huella = AonDigestUtils.sha256Hex(huella);
+		return huella.toUpperCase();	
 	}
 	
 	private static XMLGregorianCalendar getXmlDate() {
 		 try {
-	        return DatatypeFactory.newInstance().newXMLGregorianCalendar( new GregorianCalendar());
+			 XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar( new GregorianCalendar());
+			 xmlGregorianCalendar.setFractionalSecond(null);
+			 return xmlGregorianCalendar;
 		 } catch (Exception e) {
 			 e.printStackTrace();
 		}
@@ -278,9 +281,11 @@ public class Invoice2Verifactu {
 				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(AonMathUtils.round(r.getBase())));
 				detalle.setTipoImpositivo(invoice.isIsp() ? "0.0" : doubleToString(r.getPercentage()));
 				detalle.setCuotaRepercutida(invoice.isIsp() ? "0.0" : doubleToString(AonMathUtils.round(r.getQuota())));
-				detalle.setTipoRecargoEquivalencia(invoice.isIsp() || "0.0".equals(detalle.getTipoImpositivo())
-					? "0.0" : doubleToString(AonMathUtils.round(r.getSurcharge())));
-				detalle.setCuotaRecargoEquivalencia(invoice.isIsp() ? "0.0" : doubleToString(AonMathUtils.round(r.getSurchargeQuota())));
+				if(!invoice.isIsp() && !"0.0".equals(detalle.getTipoImpositivo()) && r.getSurcharge() > 0.0) {
+					detalle.setTipoRecargoEquivalencia(doubleToString(AonMathUtils.round(r.getSurcharge())));
+					detalle.setCuotaRecargoEquivalencia(doubleToString(AonMathUtils.round(r.getSurchargeQuota())));
+				}
+
 				detalle.setCalificacionOperacion(invoice.isIsp() ? CalificacionOperacionType.S_2 : CalificacionOperacionType.S_1);
 
 				if(r.getBase() != 0.0)
@@ -340,7 +345,7 @@ public class Invoice2Verifactu {
 		SistemaInformaticoType sys = new SistemaInformaticoType();
 		sys.setNIF("B01487271");
 		sys.setNombreRazon("AON SOLUTIONS SL");
-		sys.setIdSistemaInformatico("aonSolutions-9.23"); // ???
+		sys.setIdSistemaInformatico("01"); // ???
 		sys.setNombreSistemaInformatico("aonSolutions");
 		sys.setVersion("9.23");
 		sys.setNumeroInstalacion(company.getDocument() + "-" + company.getDomain().getId()); // CONCATENA EL NIF Y DOMAIN ID.

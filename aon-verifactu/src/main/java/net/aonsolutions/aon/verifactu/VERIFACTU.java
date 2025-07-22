@@ -69,19 +69,17 @@ public class VERIFACTU {
 		request.getRegistroFactura().stream().forEach(req -> {
 			Integer invoiceId = AonNumberUtils.toInteger(req.getRegistroAlta().getRefExterna());
 			
-			VerifactuBlockchain invoiceBlockchain = new VerifactuBlockchain()
-					.setDate(req.getRegistroAlta().getIDFactura().getFechaExpedicionFactura())
-					.setDocument(req.getRegistroAlta().getIDFactura().getIDEmisorFactura())	
-					.setHuella(req.getRegistroAlta().getHuella())
-					.setReference(req.getRegistroAlta().getIDFactura().getNumSerieFactura());
+//			VerifactuBlockchain invoiceBlockchain = new VerifactuBlockchain()
+//					.setDate(req.getRegistroAlta().getIDFactura().getFechaExpedicionFactura())
+//					.setDocument(req.getRegistroAlta().getIDFactura().getIDEmisorFactura())	
+//					.setHuella(req.getRegistroAlta().getHuella())
+//					.setReference(req.getRegistroAlta().getIDFactura().getNumSerieFactura());
 
 			InvoiceData invoiceData = new InvoiceData()
 					.setDomain(company.getDomain().getId())
 					.setInvoice(invoiceId)
-					.setName("VERIFACTU_BLOCKCHAIN")
-					.setValue(VerifactuBlockchainJSON.toJSON(invoiceBlockchain)
-							.map(j -> j.toString() )
-							.orElse(null));
+					.setName("VERIFACTU_HUELLA")
+					.setValue(req.getRegistroAlta().getHuella());
 			AON.saveInvoiceData(company.getDomain(), user, invoiceData);
 			
 			InvoiceData invoiceData2 = new InvoiceData()
@@ -98,16 +96,7 @@ public class VERIFACTU {
 				.setDocument(last.getIDFactura().getIDEmisorFactura())
 				.setHuella(last.getHuella())
 				.setReference(last.getIDFactura().getNumSerieFactura());
-
-		AON.saveApplicationParameter(new Occam().setDomain(company.getDomain().getId()).setDomainName(company.getName()).setUser(""), 
-				new ApplicationParameter()
-					.setDomain(company.getDomain().getId())
-					.setName(AppParam.VERIFACTU_BLOCKCHAIN)
-					.setValue(VerifactuBlockchainJSON.toJSON(blockchain)
-						.map(j -> j.toString())
-						.orElse(null)
-					));
-							
+		saveVerifactuBlockchain(company.getDomain(), user, blockchain);
 		
 		InvoiceBatch invoiceBatch = saveInvoiceBatch(company.getDomain(), user, dataResponse);
 		if(response.isError()) {
@@ -213,6 +202,8 @@ public class VERIFACTU {
 	private static InvoiceBatch saveInvoiceBatch(Domain domain, User user, DataResponse dataResponse) {
 		InvoiceBatch invoiceBatch = new InvoiceBatch()
 				.setDomain(domain.getId())
+				.setType(InvoiceCommunicationType.VERIFACTU)
+				.setDate(new Date())
 				.setOperation(InvoiceCommunicationOperation.REGISTER)
 				.setDataResponse(dataResponse.getId());
 		return AON.saveInvoiceBatch(domain, user, invoiceBatch);
@@ -226,6 +217,14 @@ public class VERIFACTU {
 				.setStatus(status);
 		
 		return AON.saveInvoiceBatchDetail(domain, user, ibd);
+	}
+	
+	private static void saveVerifactuBlockchain(Domain domain, User user, VerifactuBlockchain blockchain) {
+		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
+		AON.saveApplicationParameter(occam, new ApplicationParameter().setDomain(domain.getId()).setName(AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT.name()).setValue(blockchain.getDocument()));
+		AON.saveApplicationParameter(occam, new ApplicationParameter().setDomain(domain.getId()).setName(AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE.name()).setValue(blockchain.getReference()));
+		AON.saveApplicationParameter(occam, new ApplicationParameter().setDomain(domain.getId()).setName(AppParam.VERIFACTU_BLOCKCHAIN_DATE.name()).setValue(blockchain.getDate()));
+		AON.saveApplicationParameter(occam, new ApplicationParameter().setDomain(domain.getId()).setName(AppParam.VERIFACTU_BLOCKCHAIN_HUELLA.name()).setValue(blockchain.getHuella()));
 	}
 
 }

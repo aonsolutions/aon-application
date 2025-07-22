@@ -85,7 +85,7 @@ export class AonInvoiceCommunication extends AonElement {
         
         if(this.isTicketBai()) {
             this.buildTicketBai(table);
-        } else if(!this.isNavarra() && this.isBeta()){
+        } else if(!this.isNavarra() && this.isConsole()){
             this.buildVerifactu(table);
         }
         

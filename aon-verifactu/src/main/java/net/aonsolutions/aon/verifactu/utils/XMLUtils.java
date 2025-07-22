@@ -135,17 +135,23 @@ public class XMLUtils {
         System.out.println("********************* RESPONSE *******************");
         System.out.println(result);
         VerifactuResponse vr = new VerifactuResponse();
-        vr.setResponse(result);
+
         
         String body = "<env:Body>";
         String endBody = "</env:Body>";
         if(result.contains("<env:Body Id=\"Body\">")) {
         	body = "<env:Body Id=\"Body\">";
+            result = result.split(body )[1];
+            result = result.split(endBody)[0];
         } else if(result.contains("<env:Body Id='Body'>")) {
         	body = "<env:Body Id='Body'>";
+        	result = result.split(body )[1];
+            result = result.split(endBody)[0];
         } else if(result.contains("<soap:Body>")) {
         	body = "<soap:Body>";
         	endBody = "</soap:Body>";
+        	result = result.split(body )[1];
+            result = result.split(endBody)[0];
         } else if(result.contains("<faultstring>")) {
         	body = "<faultstring>";
         	endBody = "</faultstring>";
@@ -155,7 +161,7 @@ public class XMLUtils {
             vr.setError(true);
             vr.setErrorMessage(message);            
         }
-        
+        vr.setResponse(result);
         return vr;
 	}
 	

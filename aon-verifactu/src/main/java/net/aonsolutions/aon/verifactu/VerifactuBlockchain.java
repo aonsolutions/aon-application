@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class VerifactuBlockchain {
 
 	private String document;
@@ -65,10 +67,10 @@ public class VerifactuBlockchain {
 //				.setHuella(JsonUtils.getString(json, IJsonNames.HUELLA));		
 //	}
 //	
-//	public boolean isEmpty() {
-//		return AonStringUtils.isBlank(getDocument()) 
-//			&& AonStringUtils.isBlank(getDate())
-//			&& AonStringUtils.isBlank(getReference())
-//			&& AonStringUtils.isBlank(getHuella());
-//	}
+	public boolean isEmpty() {
+		return AonStringUtils.isBlank(getDocument()) 
+			&& AonStringUtils.isBlank(getDate())
+			&& AonStringUtils.isBlank(getReference())
+			&& AonStringUtils.isBlank(getHuella());
+	}
 }
