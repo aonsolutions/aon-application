@@ -9,10 +9,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -20,8 +18,6 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -29,6 +25,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
 
@@ -51,7 +48,10 @@ public class SQLArtistsTestCase extends AbstractSQLTestCase {
 
 		Date today = getToday();
 		
-		Date contractStartDate = addDays(today, 10);
+		int todayDay = AonDateUtils.get(today, Calendar.DAY_OF_MONTH);
+		int endMonthDay = AonDateUtils.getMax(today, Calendar.DAY_OF_MONTH);
+		
+		Date contractStartDate = addDays(today, Math.min(10, endMonthDay - todayDay));
 		Date contractEndDate = addDays(contractStartDate, 5);
 		
 		ContractRecord contract = newContract(
