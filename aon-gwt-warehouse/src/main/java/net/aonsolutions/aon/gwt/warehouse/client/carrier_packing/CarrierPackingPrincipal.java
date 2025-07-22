@@ -77,6 +77,16 @@ public class CarrierPackingPrincipal extends Composite{
 	
 	public void filterContent(){
 		northContent.setWidget(new FilterPanel(this));
+		this.openFilterPanel();
+	}
+	
+	public void closeFilterPanel() {
+		contentDockLayoutPanel.setWidgetSize(northContent, 0);
+		parent.closeFilterButtons();    
+	}
+	
+	public void openFilterPanel() {
+		contentDockLayoutPanel.setWidgetSize(northContent, 85);
 	}
 	
 	public void gridContent(){
