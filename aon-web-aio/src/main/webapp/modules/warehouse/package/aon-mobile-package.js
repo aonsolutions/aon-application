@@ -1,27 +1,20 @@
 import { AonElement } from '../../../components/AonElement.js';
-
 import { AonCard } from "../../../components/aon-card.js";
-
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
-
 import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
-
 import { AonNumber } from '../../../components/aon-number.js';
 import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
-import * as LS from '../../../services/localStorageService.js';
 import {openFileUrl} from '../../../services/service.js';
-
-import * as ACTION from '../../actions.js';
 import { deleteElaborationPackage } from '../../../services/warehouseService.js';
 import { getPackages, removePackage } from '../package/PackagesCache.js';
 import { AonMobilePackageList } from './aon-mobile-package-list.js';
-
-import * as UA from '../../../services/userAgentService.js';
 import { printFile } from '../../../services/actionService.js';
 
+import * as ACTION from '../../actions.js';
+import * as UA from '../../../services/userAgentService.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -101,15 +94,13 @@ export class AonMobilePackage extends AonElement {
 
 		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
 		toolbar.removeButton(ACTION.PRINT.id);
-		toolbar.addButtonAfter(ACTION.DELETE, () => this.delete());
+		if(!this.isBlocked()) toolbar.addButtonAfter(ACTION.DELETE, () => this.delete());
 		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());		
 	}
 
   	buildPackage(parent){
 		this.buildPackageGeneral(parent);
 		this.buildPackageComposition(parent);
-		if(this.packaging.composition.length === 1)
-			this.buildTag(parent);
 	}
 
 	buildPackageGeneral(parent){
@@ -119,6 +110,36 @@ export class AonMobilePackage extends AonElement {
 		let table = new AonBasicTable();
 		table.id = this.PACKAGE_TABLE;
 		card.setContent(table);
+		if(this.packaging.delivery && this.packaging.delivery.id) {
+			table.addRow();
+
+			let deliveryDiv = this.createDiv();
+			deliveryDiv.innerHTML = 'Incluido en el albarán ' + this.packaging.delivery.reference;
+			deliveryDiv.style.color = 'red';
+			deliveryDiv.style.fontWeight = 'bold';
+			table.addCell(deliveryDiv, 2);
+		} else 	if(this.packaging.item.status === 'DISCONTINUED') {			
+			table.addRow();
+
+			let statusDiv = this.createDiv();
+			statusDiv.innerHTML = 'El envase está descatalogado';
+			statusDiv.style.color = 'red';
+			statusDiv.style.fontWeight = 'bold';
+			table.addCell(statusDiv, 2);
+		} else if(this.packaging.item.itemComposition && //this.packaging.item.itemComposition.length > 0 &&
+			(this.packaging.item.itemComposition.length === 0
+			|| this.packaging.item.itemComposition.length > 1 
+			|| this.packaging.item.itemComposition[0].compositionItem !== this.packaging.composition[0].item.id
+			|| this.packaging.item.itemComposition[0].quantity !== this.packaging.composition[0].quantity)
+		) {
+			table.addRow();
+
+			let statusDiv = this.createDiv();
+			statusDiv.innerHTML = 'El envase ha sido modificado';
+			statusDiv.style.color = 'orange';
+			statusDiv.style.fontWeight = 'bold';
+			table.addCell(statusDiv, 2);
+		} 
 
 		table.addRow();
 
@@ -179,24 +200,6 @@ export class AonMobilePackage extends AonElement {
 		d.setContentHTML(MSG.IN_DEVELOPMENT);
 		d.addAcceptAction(() => {});
 		d.open();
-	}
-
-	buildTag(parent){
-		let card = this.createCard(this.TAG_CARD, MSG.TAG);
-		parent.appendChild(card);
-
-		let json = {
-			container: this.packaging.item.id,
-			domain_id: LS.getDomainId(),
-			domain_name: LS.getDomainName(),
-			login: LS.getDomainLogin()
-		};
-
-		let w = this.getElement(card.CONTENT).offsetWidth;
-		let type = 'application/pdf';
-		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		this.fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 	}
 
 	// ACTIONS
@@ -279,6 +282,16 @@ export class AonMobilePackage extends AonElement {
 
 	setElaborationToolbar(toolbar) {
 		this.ELABORATION_TOOLBAR = toolbar;
+	}
+
+	isBlocked() {
+		return this.packaging.item.status === 'DISCONTINUED' || (this.packaging.delivery && this.packaging.delivery.id)
+			|| (this.packaging.item.itemComposition && // this.packaging.item.itemComposition.length > 0 &&
+			(this.packaging.item.itemComposition.length === 0
+				|| this.packaging.item.itemComposition.length > 1 
+				|| this.packaging.item.itemComposition[0].compositionItem !== this.packaging.composition[0].item.id
+				|| this.packaging.item.itemComposition[0].quantity !== this.packaging.composition[0].quantity)
+			);
 	}
 }
 
