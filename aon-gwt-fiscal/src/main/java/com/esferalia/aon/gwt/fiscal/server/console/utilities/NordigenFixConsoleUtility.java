@@ -13,11 +13,14 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleMessageUtils;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
+import com.esferalia.aon.occam.impl.jooq.dao.BankStatementDAO;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 
@@ -55,14 +58,19 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
                                 .collect(Collectors.toList());
 						List<BankStatement> wrongMovements = nordigen.checkIncorrectMovements(occam, config.getToken(), wrongAccounts, bank);
 						List<Integer> wrongMovementsIds = wrongMovements.stream().map(r -> r.getId()).toList();
-                        for(Integer a : wrongMovementsIds){
-                          ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "move ID delete (BANK_STATEMENT): " + a));
+                        for(Integer movement : wrongMovementsIds){
+                          ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Deleting bank movement ID(BANK_STATEMENT): " + movement + 
+                        		  ", Bank account: " + bank.getBankAccount().getIban() + ", Requisition: " + bank.getRequisition()));
                         }
 						ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).execute();
-                        ConsoleMessageUtils.print(
-                          params.getPrinter(), ConsoleMessageUtils.ok(processId,
-                          ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).getSQL()
-                        ));
+                        NordigenBankAccount nordigenAccount = new NordigenBankAccount()
+                	            .setRbank(bank)
+                	            .setIban(bank != null && bank.getBankAccount() != null ? bank.getBankAccount().getIban() : null)
+                	            .setBankAlias(bank != null ? bank.getAlias() : null)
+                	            .setLinked(AonStringUtils.isNotBlank(bank.getRequisition()))
+                	            .setRequisitionId(bank.getRequisition())
+                	            .setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, bank.getId()));
+                        nordigen.insertCorrectMovements(occam, nordigenAccount);
                     }
 				}
 			});

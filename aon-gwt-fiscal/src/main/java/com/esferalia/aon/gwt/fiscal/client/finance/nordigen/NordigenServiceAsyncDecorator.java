@@ -135,4 +135,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		AON.start();
 		fsa.checkIncorrectMovements(occam, token, accountIds, rbank, callback);
 	}
+	
+	public void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.insertCorrectMovements(occam, nordigenBankAccount, callback);
+	}
 }

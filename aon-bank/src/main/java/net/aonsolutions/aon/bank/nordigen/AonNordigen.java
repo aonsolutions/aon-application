@@ -58,9 +58,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class AonNordigen  {
 
@@ -288,14 +286,8 @@ public class AonNordigen  {
 	    return NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
 	}
 
-	private static NordigenAccountTransactions getTransactions(NordigenAccessToken token, String nordigenAccountId) {
-	    return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
-	}
 	private static NordigenAccountTransactions getTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
 	    return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, null);
-	}
-	private static NordigenAccountTransactions getTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom, Date dateTo) {
-        return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, dateTo);
 	}
 
 	private static List<NordigenBankStatement> getPendingAccountTransactions(NordigenBankAccount account, NordigenAccountTransactions transactions) {
@@ -562,9 +554,25 @@ public class AonNordigen  {
 		return requisition;
 	}
 	
-	public static Integer remainingDaysAgreement(Occam occam,NordigenBankAccount account) {
+	public static Integer remainingDaysAgreement(Occam occam, NordigenBankAccount account) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
 			return NordigenDAO.getRemainingDays(ctx, account);
+		}
+	}
+	
+	public static void insertCorrectMovements(Occam occam, NordigenBankAccount account) {
+		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
+		Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -60);
+        Date date = calendar.getTime();
+		NordigenConfiguration config = AonNordigen.getConfiguration(occam);
+		NordigenRequisition requisition = AonNordigen.getRequisition(config.getToken(), account.getRequisitionId());
+		NordigenAccountMetadata metadata = AonNordigen.getNordigenAccountMetadata(config.getToken(), requisition, account.getRbank());
+		NordigenAccountTransactions transactions = AonNordigen.getTransactions(config.getToken(), metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null, date);
+		stList.addAll( getBookedAccountTransactions(account, transactions, date));
+		account.setNotInsertedMovements(stList);
+		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
+			NordigenDAO.insertStatementsNotRepeated(ctx, account);
 		}
 	}
 
@@ -740,7 +748,6 @@ public class AonNordigen  {
 	    	        account.setBalances(balancesFuture.get());
 	    	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
 	    	        account.setNotInsertedMovements(notInserted);
-
 	    	        if (notInserted != null && !notInserted.isEmpty()) {
 	    	            insertStatements(occam, account);
 	    	        }
@@ -866,7 +873,6 @@ public class AonNordigen  {
                       CompletableFuture.supplyAsync(() -> AonNordigen.getNotInsertedTransactionsDate(token, account, sixtyDaysAgo));
                   // ID de nordigen asociado a un IBAN - 
                   LinkedList<NordigenBankStatement> transacciones = transactionsFuture.get();
- 
                   for (NordigenBankStatement nordigenTransaction : transacciones) {
                       if (!matches.isEmpty()) {
                         String comparisonKey = 
@@ -875,10 +881,6 @@ public class AonNordigen  {
                           nordigenTransaction.getDescription() + ":" + 
                           nordigenTransaction.isPayment() + ":" + 
                           nordigenTransaction.getAmount();
-/*
-                  System.out.println("-- Lo que tenemos en NORDIGEN  --");
-                  System.out.println(comparisonKey);
-*/                
                         if (bankStatementMap.containsKey(comparisonKey)) {
                           BankStatement matchedBS = bankStatementMap.get(comparisonKey);
                           // Listado de movimientos incorrectos en BD

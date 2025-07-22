@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.bank.nordigen.AonNordigen;
@@ -124,4 +123,9 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
     	return AonNordigen.checkIncorrectMovements(occam, token, accountIds, rbank);
     }
 
+    @Override
+    public void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount) {
+    	AonNordigen.insertCorrectMovements(occam, nordigenBankAccount);
+    }
+    
 }

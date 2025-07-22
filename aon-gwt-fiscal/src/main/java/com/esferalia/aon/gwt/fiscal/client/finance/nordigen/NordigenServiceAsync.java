@@ -36,4 +36,5 @@ public interface NordigenServiceAsync {
     void getByRequisitionIsNotNull(Occam occam, AsyncCallback<List<RegistryBank>> callback);
     void getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank, AsyncCallback<String> callback);
     void checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank, AsyncCallback<List<BankStatement>> callback);
+    void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount, AsyncCallback<Void> callback);
 }

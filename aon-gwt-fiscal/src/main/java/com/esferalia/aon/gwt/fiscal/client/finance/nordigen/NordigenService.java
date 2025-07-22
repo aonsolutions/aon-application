@@ -39,4 +39,5 @@ public interface NordigenService extends RemoteService {
 	List<RegistryBank> getByRequisitionIsNotNull(Occam occam) throws NordigenException;
 	String getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank) throws NordigenException;
 	List<BankStatement> checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank) throws NordigenException;
+	void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount);
 }
