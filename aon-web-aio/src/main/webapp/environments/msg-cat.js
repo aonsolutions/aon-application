@@ -73,6 +73,7 @@ export const CATEGORY = 'Categoria';
 export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificat';
 export const CERTIFICATES = 'Certificats';
+export const CERTIFICATIONS = 'Certificacions';
 export const CHANGE_TYPE = 'Canviar Tipus';
 export const CHANGE_PASSWORD = 'Canvia contrasenya';
 export const CHOOSE_A_DOMAIN = 'Si us plau, seleccioneu un domini';

@@ -402,6 +402,7 @@ export const AON_GARAGE_MENU = 'aon-garage-menu';
 export const AON_IMAGE_EDITOR = 'aon-image-editor';
 
 export const AON_CONFIGURATION_MENU = 'aon-configuration-menu';
+export const AON_CERTIFICATION = 'aon-certification';
 export const AON_JSF_MAIL_CONTACT = 'aon-jsf-mail-contact' ;
 export const AON_JSF_MAIL_ACCOUNT = 'aon-jsf-mail-account' ;
 export const AON_JSF_MAIL_SIGNATURE = 'aon-jsf-mail-signature' ;

@@ -6,6 +6,7 @@ import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
 import { getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { AonCertification } from './certification/aon-certification.js';
 import * as JSF from './aon-jsf-app.js';
 
 export class AonHelp extends AonElement {
@@ -101,6 +102,27 @@ export class AonHelp extends AonElement {
 
 		helpNotificationDiv.addEventListener(EVENT.CLICK, () => {
 			this.rootPanel(new JSF.AonJsfHelpNotification());
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+		});
+		
+		let helpCertificationsDiv = this.createSpan();
+		helpCertificationsDiv.className = "helpCardText";
+
+		let helpCertificationsI = this.createElement(TAG.I);
+		helpCertificationsI.className = CSS.MATERIAL_ICONS;
+		helpCertificationsI.classList.add("aonHelpI");
+		helpCertificationsI.innerHTML= "license";
+		helpCertificationsDiv.appendChild(helpCertificationsI);
+
+		let helpCertificationsSpan = this.createDiv();
+		helpCertificationsSpan.className = CSS.AON_CARD_TEXT;
+		helpCertificationsSpan.classList.add("aonHelpSpan2");
+		helpCertificationsSpan.innerHTML = MSG.CERTIFICATIONS;
+		helpCertificationsDiv.appendChild(helpCertificationsSpan);
+		helpContent.appendChild(helpCertificationsDiv);
+
+		helpCertificationsDiv.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new AonCertification());
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
 
