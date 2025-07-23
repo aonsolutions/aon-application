@@ -38,6 +38,10 @@ export class AonCertification extends AonSuiteMenu {
 					text-align: center;
 					margin-top: 0;
 				}
+				
+				span {
+					font-size: 10px;
+				}
 				 
                 .cert-card {
                     background: white;
@@ -51,6 +55,11 @@ export class AonCertification extends AonSuiteMenu {
                 }
 				
 				.cert-card .link{
+					font-weight: bold;
+					text-decoration: underline;
+				}
+				
+				.cert-card .link2{
 					font-weight: bold;
 					text-decoration: underline;
 					position: absolute;   
@@ -87,8 +96,18 @@ export class AonCertification extends AonSuiteMenu {
 				  align-items: center;
 				  margin-bottom: 1em;
 				}
+				
+				.link-inline {
+				    display: flex;
+				    align-items: center;
+				    gap: 8px;
+					position: absolute;   
+					bottom: 20px;         
+					right: 20px;  
+				}
 
-                .link { color: #2b475e;}
+                .link,
+				.link2 { color: #2b475e;}
                 .purple { color: #b45084; }
                 .black { color: #000; }
             </style>
@@ -109,8 +128,11 @@ export class AonCertification extends AonSuiteMenu {
                         </li>
                     </ul>
 					<br>
-                    <a class="link" href="https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/FZ01/RSoftHomologado_doc_base.pdf" target="_blank" rel="noopener noreferrer" >Ver software homologados</a>
-                </div>
+					<div class="link-inline">
+                    	<a class="link" href="https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/FZ01/RSoftHomologado_doc_base.pdf" target="_blank" rel="noopener noreferrer" >Ver software homologados</a>
+                		<span> (Página 11) </span>
+					</div>	
+				</div>
 
                 <div class="cert-card">
 					<div class="logo-row">
@@ -124,7 +146,7 @@ export class AonCertification extends AonSuiteMenu {
                         Ayuda asesorías, Pymes y autónomos a adaptarse de manera sencilla al nuevo marco de facturación electrónica 
                         con total seguridad y respaldo normativo.
                     </p>
-                    <a class="link" href="https://drive.google.com/file/d/1xObCAXybwhoOEa339DgFy9h3KL97CYJ5/view?usp=sharing" target="_blank" rel="noopener noreferrer" >Ver Declaración Responsable</a>
+                    <a class="link2" href="https://drive.google.com/file/d/1xObCAXybwhoOEa339DgFy9h3KL97CYJ5/view?usp=sharing" target="_blank" rel="noopener noreferrer" >Ver Declaración Responsable</a>
                 </div>
 
                 <div class="cert-card">
@@ -139,7 +161,7 @@ export class AonCertification extends AonSuiteMenu {
                         <li>Hacienda Foral de GIPUZKOA</li>
                     </ul>
 					<br>
-                    <a class="link" href="https://www.gipuzkoa.eus/es/web/ogasuna/ticketbai/listado-software" target="_blank" rel="noopener noreferrer" >Ver software registrados</a>
+                    <a class="link2" href="https://www.batuz.eus/es/registro-de-software?q=aonSolutions" target="_blank" rel="noopener noreferrer" >Ver software registrados</a>
                 </div>
 
                 <div class="cert-card">
@@ -147,7 +169,7 @@ export class AonCertification extends AonSuiteMenu {
                     <ul>
                         <li>Software con soporte del IGIC</li>
                         <li>Software integrado con Veri*Factu</li>
-                        <li>REGISTRADO COMO Colaborador Social</li>
+                        <li>Registrado como Colaborador Social</li>
                     </ul>
                 </div>
 
@@ -165,8 +187,11 @@ export class AonCertification extends AonSuiteMenu {
                         </li>
                     </ul>
 					<br>
-                    <a class="link" href="https://www.seg-social.es/wps/wcm/connect/wss/7ada0194-1392-4dca-bc7f-e2496ec372b8/T86-Proveedor+de+n%C3%B3mina+2018-07.pdf?MOD=AJPERES&CVID=" target="_blank" rel="noopener noreferrer" >Ver listado proveedores</a>
-                </div>
+					<div class="link-inline">
+				        <a class="link" href="https://www.seg-social.es/wps/wcm/connect/wss/7ada0194-1392-4dca-bc7f-e2496ec372b8/T86-Proveedor+de+n%C3%B3mina+2018-07.pdf?MOD=AJPERES&CVID=" target="_blank" rel="noopener noreferrer">Ver listado proveedores</a>
+				        <span>(Página 4)</span>
+					</div>				
+				</div>
 
                 <div class="cert-card">
                     <h3> <img src="../../images/apps/sepe.png" class="logo"> SEPE</h3>
