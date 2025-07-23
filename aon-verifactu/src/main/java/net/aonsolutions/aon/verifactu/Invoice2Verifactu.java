@@ -1,11 +1,9 @@
 package net.aonsolutions.aon.verifactu;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -18,7 +16,9 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
@@ -46,17 +46,19 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
-import net.aonsolutions.aon.sign.VerifactuSigner;
-import net.aonsolutions.aon.sign.exception.AonSignerException;
-import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
-public class Invoice2Verifactu {
-
+class Invoice2Verifactu {
+	
+	static final String DATE_FORMAT = "dd-MM-yyyy";
+	static final String VERSION  = "1.0";
+	static final String SERVICE_DESCRIPTION = "Prestación de servicios";
+	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderías";
+	
 	private Invoice2Verifactu() {
 	
 	}
 	
-	public static RegFactuSistemaFacturacion build(VerifactuConfiguration verifactuConfiguration, Company company, List<Invoice> invoices, VerifactuBlockchain blockchain) {
+	static RegFactuSistemaFacturacion build(VerifactuConfiguration verifactuConfiguration, Company company, List<Invoice> invoices, VerifactuBlockchain blockchain) {
 		RegFactuSistemaFacturacion verifactu = new RegFactuSistemaFacturacion();
 		verifactu.setCabecera(getCabecera(company));
 
@@ -99,20 +101,17 @@ public class Invoice2Verifactu {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
-		alta.setIDVersion("1.0");
+		alta.setIDVersion(VERSION);
 		
 		// ID FACTURA
-		Date expDate = invoice.ensureFiscal().getExpDate() != null
-				? invoice.getFiscal().getExpDate()
-				: invoice.getIssueDate();
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(company.getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
+		idFactura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getExpDate(), DATE_FORMAT ));
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
-		alta.setRefExterna(invoice.getId().toString());
+		alta.setRefExterna(AonNumberUtils.toString(invoice.getId()));
 		
 		alta.setNombreRazonEmisor(company.getName());
 		alta.setSubsanacion(SubsanacionType.N);
@@ -138,15 +137,15 @@ public class Invoice2Verifactu {
 			alta.getImporteRectificacion().setCuotaRectificada(null);			
 		}
 
-		alta.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+		alta.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT ));
 		
-		alta.setDescripcionOperacion("DESCRIPCIÓN OPERACIÓN");
+		String opDescription = invoice.isService() ? SERVICE_DESCRIPTION : NO_SERVICE_DESCRIPTION;
+		alta.setDescripcionOperacion(opDescription);
 		
 		alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 
 		alta.setFacturaSinIdentifDestinatarioArt61D(invoice.isSimplified() ?  CompletaSinDestinatarioType.S : CompletaSinDestinatarioType.N);
 
-		// ??????????????????????
 		alta.setMacrodato(MacrodatoType.N);
 
 		// Facturas emitidas por terceros. AUTOFACTURA!
@@ -165,20 +164,12 @@ public class Invoice2Verifactu {
 		destinatarios.getIDDestinatario().add(destinatario);
 		alta.setDestinatarios(destinatarios);
 		
-		// ?????????????????????
 		alta.setCupon(CuponType.N);
 
-		Double total = AonMathUtils.round(invoice.getTotal());
-		if(invoice.isWithholding()) {
-			double ret = invoice.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
-				.mapToDouble(InvoiceBreakdown::getQuota).sum();
-			total = AonMathUtils.round(total + ret);
-		} 
-		alta.setCuotaTotal(getCuotaTotal(invoice));
+		alta.setCuotaTotal( doubleToString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
+		alta.setImporteTotal(doubleToString(invoice.getGrossTotal()));
 		
-		alta.setImporteTotal(doubleToString(invoice.getTotal()));
-		
-		alta.setDesglose(getDesglose(invoice, total));
+		alta.setDesglose(getDesglose(invoice, invoice.getGrossTotal()));
 
 		alta.setEncadenamiento(getEncadenamiento(blockchain));
 		
@@ -206,14 +197,6 @@ public class Invoice2Verifactu {
 //		return alta;
 //	}
 	
-	private static String getCuotaTotal(Invoice invoice) {
-		double quota = invoice.getVatQuota();
-		if(quota == 0.0) {
-			quota = invoice.getBreakdown().stream().mapToDouble(InvoiceBreakdown::getQuota).sum();
-		}
-		return doubleToString(quota);
-	}
-	
 	private static Encadenamiento getEncadenamiento(VerifactuBlockchain blockchain) {
 		Encadenamiento encadenamiento = new Encadenamiento();
 		if(blockchain == null || blockchain.isEmpty()) 
@@ -230,15 +213,15 @@ public class Invoice2Verifactu {
 	}
 	
 	private static String calculateHuella(RegistroFacturacionAltaType alta, VerifactuBlockchain previousBlockchain) {
-		String previousHuella = AonObjectUtils.ifNotNullGet(previousBlockchain, VerifactuBlockchain::getHuella );
+		String previousHuella = AonStringUtils.defaultIfBlank(AonObjectUtils.ifNotNullGet(previousBlockchain, VerifactuBlockchain::getHuella ));
 		String huella = "IDEmisorFactura=" + alta.getIDFactura().getIDEmisorFactura() 
-				+ "&NumSerieFactura=" + alta.getIDFactura().getNumSerieFactura()
-				+ "&FechaExpedicionFactura=" + alta.getIDFactura().getFechaExpedicionFactura()
-				+ "&TipoFactura=" + alta.getTipoFactura().value()
-				+ "&CuotaTotal=" + alta.getCuotaTotal()
-				+ "&ImporteTotal=" + alta.getImporteTotal()
-				+ "&Huella=" + (previousHuella != null ? previousHuella : "")
-				+ "&FechaHoraHusoGenRegistro=" + alta.getFechaHoraHusoGenRegistro();
+			+ "&NumSerieFactura=" + alta.getIDFactura().getNumSerieFactura()
+			+ "&FechaExpedicionFactura=" + alta.getIDFactura().getFechaExpedicionFactura()
+			+ "&TipoFactura=" + alta.getTipoFactura().value()
+			+ "&CuotaTotal=" + alta.getCuotaTotal()
+			+ "&ImporteTotal=" + alta.getImporteTotal()
+			+ "&Huella=" + previousHuella
+			+ "&FechaHoraHusoGenRegistro=" + alta.getFechaHoraHusoGenRegistro();
 		huella = AonDigestUtils.sha256Hex(huella);
 		return huella.toUpperCase();	
 	}

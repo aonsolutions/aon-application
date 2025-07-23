@@ -198,6 +198,9 @@ public class Invoice implements Serializable, HasAudit {
 		this.issueDate = issueDate;
 		return this;
 	}
+	public Date getExpDate() {
+		return ensureFiscal().getExpDate() != null ? ensureFiscal().getExpDate() : issueDate;
+	}
 	public Date getTaxDate() {
 		return taxDate;
 	}
@@ -434,6 +437,9 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setRetentionQuota(double retentionQuota) {
 		this.retentionQuota = retentionQuota;
 		return this;
+	}
+	public double getGrossTotal() {
+		return AonMathUtils.round(total - getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0));	
 	}
 	public double getTotal() {
 		return total;
@@ -760,8 +766,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public boolean isSimplified() {
-		return AonStringUtils.isBlank(getRegistryDocument()) || AonStringUtils.isBlank(getRegistryName())
-				|| (AonStringUtils.isBlank(getAddress().getZip()) && getRegistryAddress() == null);
+		return AonStringUtils.isBlank(getRegistryDocument()) 
+			|| AonStringUtils.isBlank(getRegistryName())
+			|| (AonStringUtils.isBlank(getAddress().getZip()) && getRegistryAddress() == null);
 	}
 	
 	public boolean isProforma() {
@@ -814,6 +821,10 @@ public class Invoice implements Serializable, HasAudit {
 			setTaxBreakdown( new TaxBreakdown());
 		}
 		return this.taxBreakdown;
+	}
+	public Invoice refreshTaxBreakdown() {
+		ensureTaxBreakdown().refresh(this);
+		return this;
 	}
 	public Invoice addTax(InvoiceTax it) {
 		ensureTaxBreakdown().add(it);

@@ -136,11 +136,9 @@ public class InvoiceBreakdown implements Serializable {
 			&& this.getTaxType() == b.getTaxType()
 			&& AonMathUtils.equals(this.getPercentage(),b.getPercentage())
 			&& AonMathUtils.equals(this.getSurcharge(),b.getSurcharge())
-			// La factura debería tener un único WithholdingType 
-			/* && this.getWithholdingType() == b.getWithholdingType() */
-			// La factura debería tener un único VatDeductionType
-			/* && this.getVatDeductionType() == b.getVatDeductionType() */
-			;
+			&& this.getWithholdingType() == b.getWithholdingType()
+			&& this.getVatDeductionType() == b.getVatDeductionType()
+		;
 	}
 	
 	public InvoiceBreakdown add(InvoiceBreakdown ib) {

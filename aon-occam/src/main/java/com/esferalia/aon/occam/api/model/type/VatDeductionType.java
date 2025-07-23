@@ -6,9 +6,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum VatDeductionType implements Serializable {
 
-	 WITH_RIGHT		("Con Drcho. Deduc.","CON Dcho.")
-	,WITHOUT_RIGHT	("Sin Drcho. Deduc.","SIN Dcho.")
-	,NON_TAXABLE	("No sujeto"		,"No Suj.")
+	 WITH_RIGHT		("Con Drcho. Deduc.","CON Dcho.")	// Sujeto. No exento.
+	,WITHOUT_RIGHT	("Sin Drcho. Deduc.","SIN Dcho.")	// Sujeto. Exento.
+	,NON_TAXABLE	("No sujeto"		,"No Suj.")		// No Sujeto.
 	; 
 	
 	private String name;
