@@ -73,6 +73,7 @@ export const CATEGORY = 'Kategoria';
 export const CATEGORIES = 'Kategoriak';
 export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
+export const CERTIFICATIONS = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
 export const CHANGE_PASSWORD = 'Aldatu pasahitza';
