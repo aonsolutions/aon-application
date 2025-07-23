@@ -275,7 +275,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		tab.addInlineStyle(customerLabel, COLS.DES.getStyles());
 		tab.addRow(row, customerLabel, COLS.DES.getColWidth());
 		
-		Label statusLabel = new Label("");
+		Label statusLabel = new Label("Facturado");
 		tab.addRow(row, statusLabel, COLS.STA.getColWidth());
 		
 		Label productLabel = new Label(invoiceDetail.getDescription());
