@@ -24,8 +24,6 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
@@ -101,18 +99,8 @@ public class ElaborationDetailDAO {
 	public static Stream<ElaborationDetail> getFullStream(AONContext ctx, ElaborationDetailFilter filter) {
 		// TODO Cambiar el método de ElaborationDetailCompositionDAO
 		return getStream(ctx, filter)
-			.map(r -> {
-				r.setComposition(ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId())));
-				r.setItem(ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(r.getItem().getId())));
-				DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getItemProperty().eq(r.getItem().getId())), new Options().setFull(true));
-				if(!dp.isEmpty()){
-					Delivery delivery = DeliveryDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(dp.getDelivery().getId())));	
-					r.setDelivery(delivery);
-				}
-
-				return r;		
-			});
+			.map(r -> r.setComposition(ElaborationDetailCompositionDAO
+					.getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
 	}
 	
 	public static List<ElaborationDetail> getList(AONContext ctx, ElaborationDetailFilter filter, Options options){

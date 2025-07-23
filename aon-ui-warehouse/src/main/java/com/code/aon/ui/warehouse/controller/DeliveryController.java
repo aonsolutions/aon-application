@@ -7,8 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +90,6 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
@@ -961,14 +957,5 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}
 	
-	public String getDeliveryDownloadURL() {
-		Delivery delivery = (Delivery) getTo();
-		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
-		JSONObject json = new JSONObject()
-				.put(IJsonNames.DELIVERY, delivery.getId())
-				.put("domain_id", domain.getId())
-				.put("domain_name", domain.getName())
-				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
-		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
-	}
+	
 }
