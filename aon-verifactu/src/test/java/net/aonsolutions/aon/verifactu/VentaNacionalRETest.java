@@ -4,28 +4,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.StreetType;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -55,15 +42,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalSimple {
-	
-	private VentaNacionalSimple() {
-	}
+class VentaNacionalRETest {
 	
 	@Test
 	void invoiceTest() throws VerifactuException {
 		Company c = company();
-		List<Invoice> invoices = invoices();
+		List<Invoice> invoices = new LinkedList<>();
+		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE() );
 		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
@@ -188,7 +173,7 @@ class VentaNacionalSimple {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01.getValue() , dt.getClaveRegimen() );
+	    assertEquals( ClaveRegimen.C18.getValue() , dt.getClaveRegimen() );
 	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
 	    assertNull( dt.getOperacionExenta() );		
 	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
@@ -196,8 +181,8 @@ class VentaNacionalSimple {
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
 	    assertEquals( "21" , dt.getCuotaRepercutida());
-	    assertNull( dt.getTipoRecargoEquivalencia() );		
-	    assertNull( dt.getCuotaRecargoEquivalencia() );
+	    assertEquals( "5.2" , dt.getTipoRecargoEquivalencia());
+	    assertEquals( "5.2" , dt.getCuotaRecargoEquivalencia());		
 	    
 	    assertEquals( "21" , rfat.getCuotaTotal());
 	    assertEquals( "121" , rfat.getImporteTotal());
@@ -244,58 +229,5 @@ class VentaNacionalSimple {
 		company.setName("Verifactu Test Company S.L.");
 		company.setDomain(new Domain().setId(1));
 		return company;
-	}
-	private List<Invoice> invoices() {
-		return Stream.of(invoice1()).toList();
-	}
-	private Invoice invoice1() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
-		return new Invoice()
-			.setId(1)
-			.setType(InvoiceType.SALES)
-			.setSeries("A" + AonDateUtils.getYear(today))
-			.setNumber(1)
-			.setReferenceCode("A" + AonDateUtils.getYear(today) + "/000001")
-			.setIssueDate(today)
-			.setTaxDate(today)
-			.setTransaction(InvoiceTransactionType.NATIONAL)
-			.setRectificationType(RectificationType.NONE)
-			.setConfidential(false)
-			.setRegistryDocument("88888888Y")
-			.setRegistryDocumentType(DocumentType.NIF)
-			.setRegistryDocumentCountry(Country.ES)
-			.setRegistryName("Verfictu Cliente Test")
-			.setSurcharge(false)
-			.setWithholding(false)
-			.setWithholdingFarmer(false)
-			.setVatAccrualPayment(false)
-			.setInvestment(false)
-			.setService(false)
-			.setAddress( new RegistryAddress()
-				.setStreetType(StreetType.CALLE)
-				.setAddress("Calle Verifactu")
-				.setNumber("6")
-				.setAddress2(" portal Verifactu")
-				.setZip("01000")
-				.setCity("Abetxukooo")
-				.setProvince("ALAVA")
-				.setCountry(Country.ES)
-			)
-			.addDetail(new InvoiceDetail()
-				.setQuantity(1)
-				.setPrice(100.0)
-				.setTaxableBase(100.0)
-				.addTax(new InvoiceTax()
-					.setTaxType(TaxType.VAT)
-					.setBase(100.0)
-					.setPercentage(21.0)
-					.setQuota(21.0)
-					.setDeductibleQuota(21.0)
-				)
-			)
-			.setVatQuota(21.0)
-			.setTotal(121.0)
-			.refreshTaxBreakdown()
-		;
 	}
 }

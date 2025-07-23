@@ -3,19 +3,21 @@ package net.aonsolutions.aon.verifactu;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.TaxBreakdown;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
@@ -47,6 +49,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
+import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2Verifactu {
@@ -240,39 +243,30 @@ class Invoice2Verifactu {
 		return null;
 	}
 	
-	private static String doubleToString(double d) {
+	static String doubleToString(double d) {
 		String ds = AonNumberUtils.toString( AonMathUtils.round(d) );
 		return new BigDecimal(ds).stripTrailingZeros().toPlainString();
 	}
-	private static String dateToString(Date d) {
+	static String dateToString(Date d) {
 		return AonDateUtils.format(d, DATE_FORMAT );
 	}
 	
 	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice, double total) throws VerifactuException {
 		try {
 			DesgloseType desglose = new DesgloseType();
-			invoice.getTaxBreakdown()
-				.map(t -> t.stream() )
-				.ifPresent( s -> s.forEach(ib -> {
-					try {
-						DetalleType detalle = new DetalleType();
-						detalle.setImpuesto(TipoImpuesto.IVA.getValue());
-						detalle.setClaveRegimen( ClaveRegimen.get(vc, invoice, ib) );
-						detalle.setBaseImponibleOimporteNoSujeto(doubleToString(ib.getBase()));
-						detalle.setBaseImponibleACoste(null);
-						detalle.setTipoImpositivo(doubleToString(ib.getPercentage()));
-						detalle.setCuotaRepercutida(doubleToString(ib.getQuota()));
-						detalle.setTipoRecargoEquivalencia(null);
-						detalle.setCuotaRecargoEquivalencia(null);
-						detalle.setOperacionExenta(null);
-						detalle.setCalificacionOperacion(invoice.isIsp() 
-							? CalificacionOperacionType.S_2 
-							: CalificacionOperacionType.S_1);
-						desglose.getDetalleDesglose().add(detalle);
-					} catch (VerifactuException e) {
-						throw new AonCoreException(e); 
-					}
-				}));
+			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();
+			if (optTb.isPresent()) {
+				TaxBreakdown tb = optTb.get();
+				if (AonCollectionUtils.isEmpty(tb.getVats())) {
+					throw new VerifactuException(VerifactuError.AON_9003);
+				}
+				for (InvoiceBreakdown ib : tb.getVats()) {
+					DetalleType detalle = ClaveRegimen.get(vc, invoice, ib);
+					desglose.getDetalleDesglose().add(detalle);
+				}
+			} else {
+				throw new VerifactuException(VerifactuError.AON_9003);
+			}
 			return desglose;
 		} catch (AonCoreException e) {
 			if ( e.getCause() != null && VerifactuException.class.isAssignableFrom( e.getCause().getClass()) ) {

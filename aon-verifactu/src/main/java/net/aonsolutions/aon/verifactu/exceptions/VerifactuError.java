@@ -14,6 +14,7 @@ public enum VerifactuError {
 	AON_9000("9000", "Error interno."),
 	AON_9001("9001", "No se ha encontrado un valor para ClaveRegimen v\u00E1lido."),
 	AON_9002("9002", "Se han encontrado m\u00E1s de un valor para ClaveRegimen. Resolver caso."),
+	AON_9003("9003", "No hay desglose de impuestos en la factura."),
 	
 	VERIFACTU_4102("4102", "El XML no cumple el esquema. Falta informar campo obligatorio."),
 	VERIFACTU_4103("4103", "Se ha producido un error inesperado al parsear el XML."),
