@@ -50,7 +50,12 @@ public class VERIFACTU {
 	}
 	
 	public void accept(VerifactuConfiguration verifactuConfiguration, Company company, List<Invoice> invoices, VerifactuBlockchain blockchain) throws Exception {
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(verifactuConfiguration, company, invoices, blockchain);
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig(verifactuConfiguration)
+			.setCompany(company)
+			.setInvoices(invoices)
+			.setBlockchain(blockchain);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		String requestStr = XMLUtils.soapMarshal(request, RegFactuSistemaFacturacion.class);
 		VerifactuResponse response = XMLUtils.post(verifactuConfiguration.getCertificate(), VerifactuUri.getUrlEmision(true), requestStr);
 

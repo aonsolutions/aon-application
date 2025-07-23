@@ -18,7 +18,6 @@ import org.w3._2000._09.xmldsig.SignatureType;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
@@ -64,7 +63,11 @@ public class Invoice2VerifactuTest {
 		Company c = company();
 		List<Invoice> invoices = invoices();
 		
-		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(config(), c, invoices, null);
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig( config() )
+			.setCompany( c )
+			.setInvoices(invoices);
+		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		
 		// ------------------------ CabeceraType asserts

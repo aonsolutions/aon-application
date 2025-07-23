@@ -2,7 +2,6 @@ package net.aonsolutions.aon.verifactu;
 
 import java.math.BigDecimal;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -11,7 +10,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
@@ -58,28 +56,29 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuConfiguration verifactuConfiguration, Company company, List<Invoice> invoices, VerifactuBlockchain blockchain) {
+	static RegFactuSistemaFacturacion build(VerifactuContext vc) {
 		RegFactuSistemaFacturacion verifactu = new RegFactuSistemaFacturacion();
-		verifactu.setCabecera(getCabecera(company));
+		verifactu.setCabecera(getCabecera(vc));
 
-		for (Invoice invoice : invoices) {
-			RegistroFacturaType factura = getFactura(verifactuConfiguration, company, invoice, blockchain);
+		for (Invoice invoice : vc.getInvoices()) {
+			RegistroFacturaType factura = getFactura(vc, invoice);
 			verifactu.getRegistroFactura().add(factura);
-			blockchain = new VerifactuBlockchain()
-					.setDate(factura.getRegistroAlta().getIDFactura().getFechaExpedicionFactura())
-					.setDocument(factura.getRegistroAlta().getIDFactura().getIDEmisorFactura())
-					.setReference(factura.getRegistroAlta().getIDFactura().getNumSerieFactura())
-					.setHuella(factura.getRegistroAlta().getHuella());			
+			vc.setBlockchain(new VerifactuBlockchain()
+				.setDate(factura.getRegistroAlta().getIDFactura().getFechaExpedicionFactura())
+				.setDocument(factura.getRegistroAlta().getIDFactura().getIDEmisorFactura())
+				.setReference(factura.getRegistroAlta().getIDFactura().getNumSerieFactura())
+				.setHuella(factura.getRegistroAlta().getHuella())
+			);			
 		}
 
 		return verifactu;
 	}
 	
-	private static CabeceraType getCabecera(Company company) { 
+	private static CabeceraType getCabecera(VerifactuContext vc) { 
 		final CabeceraType c = new CabeceraType();
 		PersonaFisicaJuridicaESType obligado = new PersonaFisicaJuridicaESType();
-		obligado.setNIF(company.getDocument());
-		obligado.setNombreRazon(company.getName());
+		obligado.setNIF(vc.getCompany().getDocument());
+		obligado.setNombreRazon(vc.getCompany().getName());
 		c.setObligadoEmision(obligado);
 		
 		// REPRESENTANTE/ASESOR SI LO TUVIERA 
@@ -97,7 +96,7 @@ class Invoice2Verifactu {
 		return c; 
 	}
 	
-	private static RegistroFacturaType getFactura(VerifactuConfiguration verifactuConfiguration, Company company, Invoice invoice, VerifactuBlockchain blockchain) {
+	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
@@ -105,7 +104,7 @@ class Invoice2Verifactu {
 		
 		// ID FACTURA
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
-		idFactura.setIDEmisorFactura(company.getDocument());
+		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
 		idFactura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getExpDate(), DATE_FORMAT ));
 		alta.setIDFactura(idFactura);
@@ -113,7 +112,7 @@ class Invoice2Verifactu {
 		// Referencia Externa InvoiceId
 		alta.setRefExterna(AonNumberUtils.toString(invoice.getId()));
 		
-		alta.setNombreRazonEmisor(company.getName());
+		alta.setNombreRazonEmisor(vc.getCompany().getName());
 		alta.setSubsanacion(SubsanacionType.N);
 		alta.setRechazoPrevio(RechazoPrevioType.N);
 		alta.setTipoFactura(invoice.isSimplified() ? ClaveTipoFacturaType.F_2 : ClaveTipoFacturaType.F_1);
@@ -123,7 +122,7 @@ class Invoice2Verifactu {
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I);// por diferencia (I) o por sustitucion (S)
 
 			IDFacturaARType rectified = new IDFacturaARType();
-			rectified.setIDEmisorFactura(company.getDocument());
+			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(invoice.getRectificationInvoiceReference());
 			rectified.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), "dd-MM-yyyy"));
 			
@@ -171,15 +170,15 @@ class Invoice2Verifactu {
 		
 		alta.setDesglose(getDesglose(invoice, invoice.getGrossTotal()));
 
-		alta.setEncadenamiento(getEncadenamiento(blockchain));
+		alta.setEncadenamiento(getEncadenamiento(vc.getBlockchain()));
 		
-		alta.setSistemaInformatico(getSistemaInformatico(company));
+		alta.setSistemaInformatico(getSistemaInformatico(vc.getCompany()));
        
 		alta.setFechaHoraHusoGenRegistro(getXmlDate());
 		alta.setNumRegistroAcuerdoFacturacion(null);
 		alta.setIdAcuerdoSistemaInformatico(null);
 		alta.setTipoHuella("01");
-		alta.setHuella(calculateHuella(alta, blockchain));
+		alta.setHuella(calculateHuella(alta, vc.getBlockchain()));
 		
 		
 		factura.setRegistroAlta(alta); //getSignedAlta(verifactuConfiguration, alta));
