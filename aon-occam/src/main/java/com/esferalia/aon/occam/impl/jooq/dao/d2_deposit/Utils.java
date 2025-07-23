@@ -5,8 +5,6 @@ import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitiali
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -37,6 +35,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -46,28 +45,43 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-
-
 public class Utils {
-	final static String ABREVIATE = "Abreviado";
-	final static String PYMES = "Pymes";
+	static final String ABREVIATE = "Abreviado";
+	static final String PYMES = "Pymes";
+	
+	// ESTO REALMENTE ES PASAR EL ESQUEMA A XML Y DEVOLVERLO COMO BYTE[], AUNQUE LO QUE HACE ES
+	// GRABAR UN ARCHIVO EN EL DIRECTORIO TMP SIEMPRE CON EL MISMO NOMBRE, LEER ESE ARCHIVO GRABADO Y DEVOLVER EL ARRAY DE BYTES
+	// LO CAMBIO PARA QUE SE HAGA SIMPLEMENTE CON UN ByteArrayOutputStream SIN NECESIDAD DE GRABAR UN FICHERO FISICAMENTE EN TMP 
+//	public static byte[] writeXml(Esquema schema) throws JAXBException, IOException{
+//		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
+//		
+//		Marshaller marshaller = ctx.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//		
+//		FileOutputStream fos = new FileOutputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
+//		
+//		marshaller.marshal(schema, fos);
+//		fos.close();
+//		FileInputStream fis = new FileInputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
+//
+//		return AonIOUtils.toByteArray(fis);
+//	}
 	
 	public static byte[] writeXml(Esquema schema) throws JAXBException, IOException{
+				
 		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
-		
 		Marshaller marshaller = ctx.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		
-		FileOutputStream fos = new FileOutputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
-		
-		marshaller.marshal(schema, fos);
-		fos.close();
-		FileInputStream fis = new FileInputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
 
-		return AonIOUtils.toByteArray(fis);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		marshaller.marshal(schema, baos);
+		baos.close();
+
+		return baos.toByteArray();
+				
 	}
 	
 	public static Esquema readXml(byte[] xmlFile){
@@ -263,13 +277,20 @@ public class Utils {
 	}
 	
 	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<ID2DepositKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
 		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
 			clave.setValor(double2String(ctx.get(key)));
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		for (ID2DepositKey key : ctxText.keySet()) {
+			Clave clave = new Clave();
+			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
+			clave.setValor(ctxText.get(key));
 			schema.getClaves().getClave().add(clave);
 		}
 		
@@ -808,4 +829,5 @@ public class Utils {
 			return o.toString();
 		}
 	}
+	
 }

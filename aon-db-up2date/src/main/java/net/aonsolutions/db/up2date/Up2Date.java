@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
 
 public class Up2Date {
 
@@ -548,6 +549,7 @@ public class Up2Date {
 			// TaskParentIndex.TASK_PARENT_INDEX,
 			// NotificationReceiverAuthIndex.NOTIFICATION_RECEIVER_AUTH_INDEX,
 			// RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
+			TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

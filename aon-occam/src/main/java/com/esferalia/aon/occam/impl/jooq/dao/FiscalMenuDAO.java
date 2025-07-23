@@ -222,19 +222,11 @@ public class FiscalMenuDAO {
 		if (ctx.getDomainId() == fm.getDomain())
 			return true;
 		
-		// Si el usuario no tiene ambitos asignados, solo puede acceder a las empresas que no tienen ambito
-		
-		// Estamos en el entorno, el dominio de la empresa debe ser uno de los disponibles para el usuario
-		Domain childDomain = null;
-		for (Domain domain : ctx.getConfig().getChildDomains()) {
-			if (domain.getId().intValue() == fm.getDomain()) {
-				childDomain = domain; 
-			}
-		}
-		
+		// Estamos en el entorno, el ambito de la empresa debe ser nulo o uno de los disponibles para el usuario
+		Domain childDomain = DomainDAO.getDomain(ctx, fm.getDomain());
 		if (childDomain != null) {
 			if (childDomain.getScope() == null) {
-				return true; // Si ambito de la empresa, es nulo, aparece siempre
+				return true; // Si ambito de la empresa es nulo, aparece siempre
 			} else if (ctx.getConfig().hasAvailableScopes()) {
 				// Si ambito de la empresa no es nulo, debe ser uno de los ambitos disponibles para el usuario
 				for (Scope scope : ctx.getConfig().getAvailableScopes()) {

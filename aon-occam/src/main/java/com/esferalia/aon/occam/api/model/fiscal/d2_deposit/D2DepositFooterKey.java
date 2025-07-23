@@ -2,9 +2,9 @@ package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 
 
-public enum D2DepositFooterKey {
+public enum D2DepositFooterKey implements ID2DepositKey {
 	// MODELO AUTOCARTERA
-	A18009010(8009010)
+	 A18009010(8009010)
 	,A18009020(8009020)
 	,A18009030(8009030)
 	,A18009040(8009040)
@@ -1191,15 +1191,15 @@ public enum D2DepositFooterKey {
 ,PR8080825(8080825) //CHECKBOX  NO FINANCIERA
 ,PR8080827(8080827) //CHECKBOX  TITULAR REAL
 
-,PR8081201(8081201)
-,PR8081202(8081202)
-,PR8081203(8081203)
-,PR8081204(8081204)
-,PR8081205(8081205)
-,PR8081206(8081206)
-,PR8081207(8081207)
-,PR8081208(8081208)
-,PR8081209(8081209)
+,PR8081201(8081201) // Nombre y apellidos del presentante que hace la solicitud	   
+,PR8081202(8081202) // DNI del presentante que hace la solicitud	                  
+,PR8081203(8081203) // Domicilio del presentante que hace la solicitud	            
+,PR8081204(8081204) // Ciudad del presentante que hace la solicitud	         
+,PR8081205(8081205) // Código postal del presentante que hace la solicitud               
+,PR8081206(8081206) // Provincia del presentante que hace la solicitud            
+,PR8081207(8081207) // Fax del presentante que hace la solicitud              
+,PR8081208(8081208) // Teléfono del presentante que hace la solicitud                   
+,PR8081209(8081209) // Correo electrónico del presentante que hace la solicitud   
 
 ,PR8081320(8081320) // ROAC
 ,PR8081330(8081330) // ROAC
@@ -1237,10 +1237,6 @@ public enum D2DepositFooterKey {
 		
 		public String getDescription() {
 			return D2DepositDescription.DESCRIPTION_MAP.get(this);
-		}
-		
-		public static void main(String[] args) {
-			
 		}
 	
 }
