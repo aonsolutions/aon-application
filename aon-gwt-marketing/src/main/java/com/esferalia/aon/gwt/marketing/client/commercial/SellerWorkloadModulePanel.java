@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -15,6 +18,8 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
@@ -33,8 +38,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	
 	private AonCustomListBox period = new AonCustomListBox("Periocidad");
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
-	private AonCustomListBox active = new AonCustomListBox("Activo");
+	private AonCustomListBox active = new AonCustomListBox("Estado");
 	private AonCustomListBox customer = new AonCustomListBox("Agentes");
+	private AonCustomMultiSelectBox customerStatus = new AonCustomMultiSelectBox("Estado Cliente");
 	private AonCustomListBox type = new AonCustomListBox("Tipo");
 	
 	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
@@ -88,7 +94,28 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		customer.addItem( "Con clientes", "1");
 		customer.addItem( "Sin clientes", "0");
 		customer.getListBox().setSelectedIndex(1);
-		customer.getListBox().addChangeHandler(event -> onSearch( options ));
+		customer.getListBox().addChangeHandler(event -> {
+			customerStatus.setVisible(customer.getListBox().getSelectedIndex() == 1);
+			onSearch( options );	
+		});
+		
+		// Customer Status
+		Set<String> customerStatusoptions = new LinkedHashSet<String>();
+		customerStatusoptions.add("Activo");
+		customerStatusoptions.add("Inactivo");
+		customerStatusoptions.add("Bloqueado");
+		customerStatus.setOptions(customerStatusoptions);
+		
+		customerStatus.addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+            	onSearch( options );
+            }
+        });
+		
+		Set<String> selectedOptions = new LinkedHashSet<String>();
+		selectedOptions.add("Activo");
+		customerStatus.setSelectedOptions(selectedOptions);
 		
 		type.addItem( "Cuotas", "false");
 		type.addItem( "Expedientes", "true");
@@ -103,6 +130,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		addFilterWidget(scope);
 		addFilterWidget(active);
 		addFilterWidget(customer);
+		addFilterWidget(customerStatus);
 		addFilterWidget(type);
 		
 		sort.addItem("Nombre", "name");
@@ -139,6 +167,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		scope.getListBox().setSelectedIndex(0);
 		active.getListBox().setSelectedIndex(0);
 		customer.getListBox().setSelectedIndex(1);
+		Set<String> selectedOptions = new LinkedHashSet<String>();
+		selectedOptions.add("Activo");
+		customerStatus.setSelectedOptions(selectedOptions);
 		period.setValue("2");
 		
 		sellerWorkloadPanel.resetSearchOffset();
@@ -217,7 +248,11 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	public SellerWorkloadParams getWidgetParams( SellerModuleOptions options) {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams()
 			.setCustomers(AonStringUtils.isBlank(customer.getValue()) ? null : Byte.parseByte(customer.getValue()))
-			.setPeriod(Byte.parseByte(period.getValue()));
+			.setPeriod(Byte.parseByte(period.getValue()))
+			.setCustomerActive(customerStatus.getSelectedOptions().contains("Activo"))
+			.setCustomerInactive(customerStatus.getSelectedOptions().contains("Inactivo"))
+			.setCustomerBlocked(customerStatus.getSelectedOptions().contains("Bloqueado"))
+			;
 		
 		sellerWorkloadParams.setDomainName(options.getDomainName())
 			.setDomain(options.getDomain())

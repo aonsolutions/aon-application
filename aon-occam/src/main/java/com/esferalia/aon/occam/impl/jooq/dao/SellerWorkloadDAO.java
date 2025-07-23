@@ -12,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -68,7 +67,6 @@ import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO.FeeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO.ProjectHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SellerWorkloadDAO {
@@ -195,8 +193,9 @@ public class SellerWorkloadDAO {
 					.on(CUSTOMER_FEE.PROJECT.eq(PROJECT.ID)
 							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
-																											// fechas
+									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de fechas
+					.leftJoin(CUSTOMER)
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(condition)
 					.and(PROJECT_HOLDER.START_DATE.le(new Timestamp(end.getTime())))
 					.and(PROJECT_HOLDER.END_DATE.isNull().or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
@@ -227,8 +226,9 @@ public class SellerWorkloadDAO {
 					.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
 							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
-																											// fechas
+									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de fechas
+					.leftJoin(CUSTOMER)
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 
 			applyOrdering(select, params);
@@ -266,6 +266,8 @@ public class SellerWorkloadDAO {
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
 									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
 																											// fechas
+					.leftJoin(CUSTOMER)
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(condition)
 					.and(PROJECT_HOLDER.START_DATE.ge(new Timestamp(start.getTime())))
 					.and(PROJECT_HOLDER.END_DATE.isNull().or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
@@ -289,6 +291,8 @@ public class SellerWorkloadDAO {
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
 									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
 																											// fechas
+					.leftJoin(CUSTOMER)
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 	
 			applyOrdering(select, params);
@@ -301,7 +305,7 @@ public class SellerWorkloadDAO {
 	}
 
 	public static SellerWorkloadContent getSellersWorkloadContent(CloseableAONContext ctx, SellerWorkloadParams params) {
-		Condition condition = createFeeCondition(ctx, params);
+		Condition condition = createFeeWorkloadCondition(ctx, params);
 
 		Date start = getStartDatePeriod(params.getPeriod());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
@@ -335,7 +339,7 @@ public class SellerWorkloadDAO {
 			if(null != params.getSeller()) {
 				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
 						.from(CUSTOMER_FEE).join(CUSTOMER)
-						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte) 1)))
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 						.where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
 						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
@@ -355,7 +359,7 @@ public class SellerWorkloadDAO {
 			if(null != params.getTaskHolder()) {
 				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
 						.from(CUSTOMER_FEE).join(CUSTOMER)
-						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte) 1)))
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 						.where(CUSTOMER_FEE.PROJECT.in(projectIds))
 						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
@@ -548,7 +552,7 @@ public class SellerWorkloadDAO {
 		return condition;
 	}
 
-	private static Condition createFeeCondition(CloseableAONContext ctx, SellerWorkloadParams params) {
+	private static Condition createFeeWorkloadCondition(CloseableAONContext ctx, SellerWorkloadParams params) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(params.getDomain());
 
 		User user = SecurityDAO.getUser(ctx);
@@ -556,11 +560,40 @@ public class SellerWorkloadDAO {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
+		
+		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+			
+			List<Byte> customerStatus = new ArrayList<Byte>();
+			
+			if(params.getCustomerActive()) customerStatus.add((byte)0);
+			if(params.getCustomerInactive()) customerStatus.add((byte)1);
+			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+			
+			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+		}
 
-//		if (AonStringUtils.isNotBlank(params.getDescription())) {
-//			condition = condition.and(CUSTOMER_ALIAS.NAME.likeIgnoreCase("%" + params.getDescription() + "%")
-//					.or(CUSTOMER_FEE.DESCRIPTION.likeIgnoreCase("%" + params.getDescription() + "%")));
-//		}
+		return condition;
+	}
+
+	private static Condition createFeeWorkloadCondition(AONContext ctx, SellerWorkloadParams params) {
+		Condition condition = CUSTOMER_FEE.DOMAIN.eq(params.getDomain());
+
+		User user = SecurityDAO.getUser(ctx);
+		if (user.getDomain().getId() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+			
+			List<Byte> customerStatus = new ArrayList<Byte>();
+			
+			if(params.getCustomerActive()) customerStatus.add((byte)0);
+			if(params.getCustomerInactive()) customerStatus.add((byte)1);
+			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+			
+			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+		}
 
 		return condition;
 	}
@@ -672,6 +705,17 @@ public class SellerWorkloadDAO {
 
 		if (null != params.getActive())
 			condition = condition.and(SELLER.STATUS.eq(params.getActive()));
+		
+		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+			
+			List<Byte> customerStatus = new ArrayList<Byte>();
+			
+			if(params.getCustomerActive()) customerStatus.add((byte)0);
+			if(params.getCustomerInactive()) customerStatus.add((byte)1);
+			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+			
+			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+		}
 
 		return condition;
 	}
@@ -693,6 +737,17 @@ public class SellerWorkloadDAO {
 
 		if (AonStringUtils.isNotBlank(params.getDocument()))
 			condition = condition.and(TASK_HOLDER_ALIAS.DOCUMENT.like("%" + params.getDocument() + "%"));
+		
+		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+			
+			List<Byte> customerStatus = new ArrayList<Byte>();
+			
+			if(params.getCustomerActive()) customerStatus.add((byte)0);
+			if(params.getCustomerInactive()) customerStatus.add((byte)1);
+			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+			
+			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+		}
 
 		return condition;
 	}
@@ -701,6 +756,8 @@ public class SellerWorkloadDAO {
 		Date start = getStartDatePeriod(params.getPeriod());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 		Date end = getEndDatePeriod(params.getPeriod());
+		
+		Condition condition = createFeeWorkloadCondition(ctx, params);
 
 		// Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera
 		// compatible con ambos motores de base de datos
@@ -720,8 +777,9 @@ public class SellerWorkloadDAO {
 					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
 							CUSTOMER_FEE.CUSTOMER)
 					.from(CUSTOMER_FEE).join(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte) 1)))
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(CUSTOMER_FEE.SELLER.eq(seller))
+					.and(condition)
 					.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 					.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
@@ -816,6 +874,8 @@ public class SellerWorkloadDAO {
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 		Date end = getEndDatePeriod(params.getPeriod());
 		
+		Condition condition = createFeeWorkloadCondition(ctx, params);
+		
 		List<Integer> projectIds = ctx.getDslContext().selectDistinct(PROJECT.ID)
 			.from(PROJECT)
 			.join(PROJECT_HOLDER).on(PROJECT_HOLDER.PROJECT.eq(PROJECT.ID))
@@ -842,8 +902,9 @@ public class SellerWorkloadDAO {
 					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
 							CUSTOMER_FEE.CUSTOMER)
 					.from(CUSTOMER_FEE).join(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte) 1)))
+					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(CUSTOMER_FEE.PROJECT.in(projectIds))
+					.and(condition)
 					.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 					.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))

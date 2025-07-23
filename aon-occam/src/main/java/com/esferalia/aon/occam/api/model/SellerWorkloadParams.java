@@ -11,6 +11,10 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 	private Integer seller;
 	private Integer taskHolder;
 	
+	private Boolean customerActive;
+	private Boolean customerInactive;
+	private Boolean customerBlocked;
+	
 	public SellerWorkloadParams() {
 		super();
 	}
@@ -50,5 +54,34 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 		this.taskHolder = taskHolder;
 		return this;
 	}
+
+	public Boolean getCustomerActive() {
+		return customerActive;
+	}
+
+	public SellerWorkloadParams setCustomerActive(Boolean customerActive) {
+		this.customerActive = customerActive;
+		return this;
+	}
+
+	public Boolean getCustomerInactive() {
+		return customerInactive;
+	}
+
+	public SellerWorkloadParams setCustomerInactive(Boolean customerInactive) {
+		this.customerInactive = customerInactive;
+		return this;
+	}
+
+	public Boolean getCustomerBlocked() {
+		return customerBlocked;
+	}
+
+	public SellerWorkloadParams setCustomerBlocked(Boolean customerBlocked) {
+		this.customerBlocked = customerBlocked;
+		return this;
+	}
+	
+	
 	
 }
