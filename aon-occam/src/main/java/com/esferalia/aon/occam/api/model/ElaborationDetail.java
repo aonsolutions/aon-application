@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class ElaborationDetail implements Serializable {
@@ -31,8 +30,6 @@ public class ElaborationDetail implements Serializable {
 	private Date modificationDate;	
 	
 	private List<ElaborationDetailComposition> composition;
-	
-	private Delivery delivery; 
  	
 	public Integer getId() {
 		return id;
@@ -146,15 +143,6 @@ public class ElaborationDetail implements Serializable {
 		return this;
 	}
 
-	public Delivery getDelivery() {
-		return delivery;
-	}
-	
-	public ElaborationDetail setDelivery(Delivery delivery) {
-		this.delivery = delivery;
-		return this;
-	}
-	
 	public boolean isEmpty() {
 		return getId() == null && getElaboration().isEmpty();
 	}

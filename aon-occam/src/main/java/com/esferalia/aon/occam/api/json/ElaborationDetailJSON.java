@@ -35,8 +35,7 @@ public class ElaborationDetailJSON {
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
 			.setAddInfo(JsonUtils.getString(json, "addInfo"))
 			.setType(ElaborationDetailType.safeValueOf(JsonUtils.getString(json, "type")))
-			.setComposition(ElaborationDetailCompositionJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.COMPOSITION)))
-			.setDelivery(DeliveryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DELIVERY)));
+			.setComposition(ElaborationDetailCompositionJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.COMPOSITION)));
 
 	}
 	
@@ -60,7 +59,6 @@ public class ElaborationDetailJSON {
 			.put(IJsonNames.WAREHOUSE, WarehouseJSON.toJSON(object.getWarehouse()))
 			.put(IJsonNames.QUANTITY, object.getQuantity())
 			.put(IJsonNames.COMPOSITION, ElaborationDetailCompositionJSON.toJSON(object.getComposition()))
-			.put(IJsonNames.DELIVERY, DeliveryJSON.toJSON(object.getDelivery()))
 			.put(IJsonNames.CREATION_USER, object.getCreationUser())
 			.put(IJsonNames.CREATION_DATE, object.getCreationDate())
 			.put(IJsonNames.MODIFICATION_USER, object.getModificationUser())
