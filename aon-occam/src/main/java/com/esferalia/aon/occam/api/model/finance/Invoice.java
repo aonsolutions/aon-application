@@ -439,7 +439,7 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	public double getGrossTotal() {
-		return AonMathUtils.round(total - getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0));	
+		return AonMathUtils.round(total - getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0));	
 	}
 	public double getTotal() {
 		return total;
@@ -763,6 +763,10 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setVatImportation(boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
+	}
+	
+	public boolean isSalesOSS() {
+		return (isSales() && (isVatUnion() || isVatUnionExternal() || isVatImportation()));
 	}
 	
 	public boolean isSimplified() {

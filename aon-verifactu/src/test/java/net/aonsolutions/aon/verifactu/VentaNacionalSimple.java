@@ -10,10 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.junit.jupiter.api.Test;
-import org.w3._2000._09.xmldsig.SignatureType;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -33,6 +30,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
@@ -44,22 +42,26 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SiNoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SistemaInformaticoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TercerosODestinatarioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
+import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
+import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-public class Invoice2VerifactuTest {
+class VentaNacionalSimple {
 	
-	private Invoice2VerifactuTest() {
+	private VentaNacionalSimple() {
 	}
 	
 	@Test
-	void invoiceTest() {
+	void invoiceTest() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = invoices();
 		
@@ -182,19 +184,47 @@ public class Invoice2VerifactuTest {
 	    assertNotNull( desglose );
 	    List<DetalleType> listaDesglose = desglose.getDetalleDesglose();
 	    assertNotNull( listaDesglose );
-	    // assertEquals( 1, listaDesglose.size() );
+	    assertEquals( 1, listaDesglose.size() );
+	    DetalleType dt = listaDesglose.get(0);
+	    assertNotNull( dt );
+	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
+	    assertEquals( ClaveRegimen.C01.getValue() , dt.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
+	    assertNull( dt.getOperacionExenta() );		
+	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
+	    assertEquals( "21" , dt.getTipoImpositivo());
+	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
+	    assertNull( dt.getBaseImponibleACoste() );
+	    assertEquals( "21" , dt.getCuotaRepercutida());
+	    assertNull( dt.getTipoRecargoEquivalencia() );		
+	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
-	    String cuotaTotal = rfat.getCuotaTotal();
-	    String importeTotal = rfat.getCuotaTotal();
+	    assertEquals( "21" , rfat.getCuotaTotal());
+	    assertEquals( "121" , rfat.getImporteTotal());
+	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
-	    SistemaInformaticoType sistemaInformatico = rfat.getSistemaInformatico();
-	    XMLGregorianCalendar fechaHoraHusoGenRegistro = rfat.getFechaHoraHusoGenRegistro();
-	    String numRegistroAcuerdoFacturacion = rfat.getNumRegistroAcuerdoFacturacion();
-	    String idAcuerdoSistemaInformatico = rfat.getIdAcuerdoSistemaInformatico();
-	    String tipoHuella = rfat.getTipoHuella();
-	    String huella = rfat.getHuella();
-	    SignatureType signature = rfat.getSignature();
+	    assertNotNull( encadenamiento );
+	    assertEquals( PrimerRegistroCadenaType.S , encadenamiento.getPrimerRegistro());
+	    assertNull( encadenamiento.getRegistroAnterior() );
 	    
+	    SistemaInformaticoType sistemaInformatico = rfat.getSistemaInformatico();
+	    assertNotNull( sistemaInformatico );
+	    assertEquals( "B01487271" , sistemaInformatico.getNIF());
+	    assertEquals( "AON SOLUTIONS SL" , sistemaInformatico.getNombreRazon());
+	    assertEquals( "01" , sistemaInformatico.getIdSistemaInformatico());
+	    assertEquals( "aonSolutions" , sistemaInformatico.getNombreSistemaInformatico());
+	    assertEquals( "9.23" , sistemaInformatico.getVersion());
+	    assertEquals( "11111111H-1" , sistemaInformatico.getNumeroInstalacion());
+	    assertEquals( SiNoType.N , sistemaInformatico.getTipoUsoPosibleSoloVerifactu());
+	    assertEquals( SiNoType.S , sistemaInformatico.getTipoUsoPosibleMultiOT());
+	    assertEquals( SiNoType.S , sistemaInformatico.getIndicadorMultiplesOT());
+				
+	    assertNotNull( rfat.getFechaHoraHusoGenRegistro() );
+	    assertNull( rfat.getNumRegistroAcuerdoFacturacion() );
+	    assertNull( rfat.getIdAcuerdoSistemaInformatico() );
+	    assertEquals( "01", rfat.getTipoHuella() );
+	    assertNotNull( rfat.getHuella() );
+	    assertNull( rfat.getSignature() );
 	    
 	}
 	
@@ -267,11 +297,5 @@ public class Invoice2VerifactuTest {
 			.setTotal(121.0)
 			.refreshTaxBreakdown()
 		;
-	}
-	private Invoice invoice2() {
-		return new Invoice();
-	}
-	private Invoice invoice3() {
-		return new Invoice();
 	}
 }

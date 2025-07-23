@@ -1087,8 +1087,9 @@ public class AonDateUtils {
     }
 
 	public static String format(Date date, String pattern) {
+		if (date == null) return null;
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
-		return date == null ? null : format.format(date);
+		return format.format(date);
 	}
 	
 	public static Date parse(String date, String pattern) {

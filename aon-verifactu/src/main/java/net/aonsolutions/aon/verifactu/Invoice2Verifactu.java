@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.verifactu;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -11,6 +13,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -44,6 +47,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
+import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2Verifactu {
 	
@@ -56,7 +60,7 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuContext vc) {
+	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws VerifactuException {
 		RegFactuSistemaFacturacion verifactu = new RegFactuSistemaFacturacion();
 		verifactu.setCabecera(getCabecera(vc));
 
@@ -96,7 +100,7 @@ class Invoice2Verifactu {
 		return c; 
 	}
 	
-	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) {
+	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
@@ -106,7 +110,7 @@ class Invoice2Verifactu {
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getExpDate(), DATE_FORMAT ));
+		idFactura.setFechaExpedicionFactura( dateToString(invoice.getExpDate()) );
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
@@ -124,7 +128,7 @@ class Invoice2Verifactu {
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(invoice.getRectificationInvoiceReference());
-			rectified.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), "dd-MM-yyyy"));
+			rectified.setFechaExpedicionFactura( dateToString(invoice.getRectificationInvoiceDate()));
 			
 			alta.getFacturasRectificadas().getIDFacturaRectificada().add(rectified);
 			// SI FUERA FACTURA RECTIFICATIVO POR SUSTITUCIÓN.
@@ -136,7 +140,7 @@ class Invoice2Verifactu {
 			alta.getImporteRectificacion().setCuotaRectificada(null);			
 		}
 
-		alta.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT ));
+		alta.setFechaOperacion( dateToString(invoice.getIssueDate() ));
 		
 		String opDescription = invoice.isService() ? SERVICE_DESCRIPTION : NO_SERVICE_DESCRIPTION;
 		alta.setDescripcionOperacion(opDescription);
@@ -168,7 +172,7 @@ class Invoice2Verifactu {
 		alta.setCuotaTotal( doubleToString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
 		alta.setImporteTotal(doubleToString(invoice.getGrossTotal()));
 		
-		alta.setDesglose(getDesglose(invoice, invoice.getGrossTotal()));
+		alta.setDesglose(getDesglose(vc, invoice, invoice.getGrossTotal()));
 
 		alta.setEncadenamiento(getEncadenamiento(vc.getBlockchain()));
 		
@@ -236,7 +240,49 @@ class Invoice2Verifactu {
 		return null;
 	}
 	
-	private static DesgloseType getDesglose(Invoice invoice, double total) {
+	private static String doubleToString(double d) {
+		String ds = AonNumberUtils.toString( AonMathUtils.round(d) );
+		return new BigDecimal(ds).stripTrailingZeros().toPlainString();
+	}
+	private static String dateToString(Date d) {
+		return AonDateUtils.format(d, DATE_FORMAT );
+	}
+	
+	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice, double total) throws VerifactuException {
+		try {
+			DesgloseType desglose = new DesgloseType();
+			invoice.getTaxBreakdown()
+				.map(t -> t.stream() )
+				.ifPresent( s -> s.forEach(ib -> {
+					try {
+						DetalleType detalle = new DetalleType();
+						detalle.setImpuesto(TipoImpuesto.IVA.getValue());
+						detalle.setClaveRegimen( ClaveRegimen.get(vc, invoice, ib) );
+						detalle.setBaseImponibleOimporteNoSujeto(doubleToString(ib.getBase()));
+						detalle.setBaseImponibleACoste(null);
+						detalle.setTipoImpositivo(doubleToString(ib.getPercentage()));
+						detalle.setCuotaRepercutida(doubleToString(ib.getQuota()));
+						detalle.setTipoRecargoEquivalencia(null);
+						detalle.setCuotaRecargoEquivalencia(null);
+						detalle.setOperacionExenta(null);
+						detalle.setCalificacionOperacion(invoice.isIsp() 
+							? CalificacionOperacionType.S_2 
+							: CalificacionOperacionType.S_1);
+						desglose.getDetalleDesglose().add(detalle);
+					} catch (VerifactuException e) {
+						throw new AonCoreException(e); 
+					}
+				}));
+			return desglose;
+		} catch (AonCoreException e) {
+			if ( e.getCause() != null && VerifactuException.class.isAssignableFrom( e.getCause().getClass()) ) {
+				throw (VerifactuException) e.getCause(); 
+			}
+			throw new VerifactuException( e );
+		}
+	}
+
+	private static DesgloseType _getDesglose(Invoice invoice, double total) {
 		DesgloseType desglose = new DesgloseType();		
 		if(invoice.isIntracommunity() && invoice.isService()) { // NO SUJETA - INTRACOMUNITARIO Y PRESTACIÓN DE SERVICIOS
 			DetalleType detalle = new DetalleType();
@@ -248,37 +294,37 @@ class Invoice2Verifactu {
 			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() 
 					|| invoice.isExtracommunity() || invoice.isCanCeuMel();
 			
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
-					&& ((!exempt && f.getPercentage() > 0) || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
-				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
-					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
-				}
-			
-				if(r.getSurcharge() > 0 && r.getSurchargeQuota() == 0.0) {
-					r.setSurchargeQuota(AonMathUtils.round(r.getBase() * r.getSurcharge() / 100));
-				}
-				
-				DetalleType detalle = new DetalleType();
-				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(AonMathUtils.round(r.getBase())));
-				detalle.setTipoImpositivo(invoice.isIsp() ? "0.0" : doubleToString(r.getPercentage()));
-				detalle.setCuotaRepercutida(invoice.isIsp() ? "0.0" : doubleToString(AonMathUtils.round(r.getQuota())));
-				if(!invoice.isIsp() && !"0.0".equals(detalle.getTipoImpositivo()) && r.getSurcharge() > 0.0) {
-					detalle.setTipoRecargoEquivalencia(doubleToString(AonMathUtils.round(r.getSurcharge())));
-					detalle.setCuotaRecargoEquivalencia(doubleToString(AonMathUtils.round(r.getSurchargeQuota())));
-				}
-
-				detalle.setCalificacionOperacion(invoice.isIsp() ? CalificacionOperacionType.S_2 : CalificacionOperacionType.S_1);
-
-				if(r.getBase() != 0.0)
-					desglose.getDetalleDesglose().add(detalle);
-			});
+//			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+//					&& ((!exempt && f.getPercentage() > 0) || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
+//				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
+//					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
+//				}
+//			
+//				if(r.getSurcharge() > 0 && r.getSurchargeQuota() == 0.0) {
+//					r.setSurchargeQuota(AonMathUtils.round(r.getBase() * r.getSurcharge() / 100));
+//				}
+//				
+//				DetalleType detalle = new DetalleType();
+//				detalle.setClaveRegimen("01");
+//				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(r.getBase()));
+//				detalle.setTipoImpositivo(invoice.isIsp() ? "0.0" : doubleToString(r.getPercentage()));
+//				detalle.setCuotaRepercutida(invoice.isIsp() ? "0.0" : doubleToString(r.getQuota()));
+//				if(!invoice.isIsp() && !"0.0".equals(detalle.getTipoImpositivo()) && r.getSurcharge() > 0.0) {
+//					detalle.setTipoRecargoEquivalencia(doubleToString(r.getSurcharge()));
+//					detalle.setCuotaRecargoEquivalencia(doubleToString(r.getSurchargeQuota()));
+//				}
+//
+//				detalle.setCalificacionOperacion(invoice.isIsp() ? CalificacionOperacionType.S_2 : CalificacionOperacionType.S_1);
+//
+//				if(r.getBase() != 0.0)
+//					desglose.getDetalleDesglose().add(detalle);
+//			});
 			
 			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
 					&&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
 				DetalleType detalle = new DetalleType();
 				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(AonMathUtils.round(r.getBase())));
+				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(r.getBase()));
 						
 				detalle.setOperacionExenta(OperacionExentaType.E_6);
 				if(invoice.getActivity().getVatExemptionCause() != null) {
@@ -313,7 +359,7 @@ class Invoice2Verifactu {
 			if(noSujetaOtros != 0) {
 				DetalleType detalle = new DetalleType();
 				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(AonMathUtils.round(noSujetaOtros)));
+				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(noSujetaOtros));
 				detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
 				desglose.getDetalleDesglose().add(detalle);
 			}
@@ -323,7 +369,6 @@ class Invoice2Verifactu {
 	}
 	
 	private static SistemaInformaticoType getSistemaInformatico(Company company) {
-		;
 		SistemaInformaticoType sys = new SistemaInformaticoType();
 		sys.setNIF("B01487271");
 		sys.setNombreRazon("AON SOLUTIONS SL");
@@ -337,8 +382,22 @@ class Invoice2Verifactu {
 		return sys;		
 	}
 	
-	private static String doubleToString(double d) {
-		return new BigDecimal(Double.toString(d)).stripTrailingZeros().toPlainString();
-	}
+	static enum TipoImpuesto {
+		IVA("01"), // Impuesto sobre el Valor Añadido (IVA).
+		IPSI("02"), // Impuesto sobre la Producción, los Servicios y la Importación (IPSI) de Ceuta y Melilla.
+		IGIC("03"), // Impuesto General Indirecto Canario (IGIC).
+		OTRO("05")  // Otros.
+		;
 
+		private String value;
+		private TipoImpuesto(String value) {
+			this.value = value; 
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+	
 }
+

@@ -6,13 +6,18 @@ public class VerifactuException extends Exception  implements Serializable{
 
 	private static final long serialVersionUID = 1088764044366567246L;
 	
-	private VerifactuError verifactuError;
+	private final VerifactuError verifactuError;
 	
-	public VerifactuException() {super();}
-	public VerifactuException(String message, Throwable cause) {super(message, cause);}
-	public VerifactuException(String message) {super(message);}
-	public VerifactuException(Throwable cause) {super(cause);}
-	
+	public VerifactuException() {
+		this(VerifactuError.AON_9000); 
+	}
+	public VerifactuException(Throwable cause) {
+		this(VerifactuError.AON_9000, cause);
+	}
+	public VerifactuException(VerifactuError error, Throwable cause) {
+		super(error.getMessage(), cause);
+		this.verifactuError = error;
+	}
 	public VerifactuException(VerifactuError error) {
 		super(error.getMessage());
 		this.verifactuError = error;
