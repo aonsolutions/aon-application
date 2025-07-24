@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
@@ -24,7 +25,10 @@ enum ClaveRegimen {
 				&& !inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
-				&& !inv.isSalesOSS();
+				&& !inv.isSalesOSS()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+			;
 		}
 		
 		@Override
@@ -41,7 +45,10 @@ enum ClaveRegimen {
 				&& !inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
-				&& !inv.isSalesOSS();
+				&& !inv.isSalesOSS()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+			;
 		}
 		
 		@Override
@@ -60,13 +67,39 @@ enum ClaveRegimen {
 				&& !inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
-				&& !inv.isSalesOSS();
+				&& !inv.isSalesOSS()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+			;
 		}
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C01_ISP.getBasic( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
+			return detalle;
+		}
+	},
+	C01_PREPAYMENT("01") {	// Operación de régimen general. Suplidos.
+		@Override
+		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
+			return getVATRegime(vc, inv) == VATRegime.GENERAL 
+				&& inv.isNational()
+				&& !inv.isSurcharge() 
+				&& !inv.isWithholdingFarmer()
+				&& !inv.isVatAccrualPayment()
+				&& !inv.isSalesOSS()
+				&& ib.isPrepayment()
+				&& VatDeductionType.safeNoSujeto(ib.getVatDeductionType())
+			;
+		}
+		
+		@Override
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+			DetalleType detalle = C01_ISP.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
+			detalle.setTipoImpositivo(null);
+			detalle.setCuotaRepercutida(null);
 			return detalle;
 		}
 	},
@@ -174,7 +207,10 @@ enum ClaveRegimen {
 				&& inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
-				&& !inv.isSalesOSS();
+				&& !inv.isSalesOSS()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+			;
 		}
 		
 		@Override

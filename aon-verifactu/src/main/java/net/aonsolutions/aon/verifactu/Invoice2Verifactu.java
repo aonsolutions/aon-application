@@ -278,13 +278,13 @@ class Invoice2Verifactu {
 
 	private static DesgloseType _getDesglose(Invoice invoice, double total) {
 		DesgloseType desglose = new DesgloseType();		
-		if(invoice.isIntracommunity() && invoice.isService()) { // NO SUJETA - INTRACOMUNITARIO Y PRESTACIÓN DE SERVICIOS
-			DetalleType detalle = new DetalleType();
-			detalle.setClaveRegimen("01");
-			detalle.setBaseImponibleOimporteNoSujeto(doubleToString(total));
-			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
-			desglose.getDetalleDesglose().add(detalle);
-		} else {
+//		if(invoice.isIntracommunity() && invoice.isService()) { // NO SUJETA - INTRACOMUNITARIO Y PRESTACIÓN DE SERVICIOS
+//			DetalleType detalle = new DetalleType();
+//			detalle.setClaveRegimen("01");
+//			detalle.setBaseImponibleOimporteNoSujeto(doubleToString(total));
+//			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
+//			desglose.getDetalleDesglose().add(detalle);
+//		} else {
 			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() 
 					|| invoice.isExtracommunity() || invoice.isCanCeuMel();
 			
@@ -314,8 +314,11 @@ class Invoice2Verifactu {
 //					desglose.getDetalleDesglose().add(detalle);
 //			});
 			
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
-					&&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
+			invoice.getBreakdown().stream()
+				.filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+					&&  exempt 
+					&& f.getPercentage() == 0 
+					&& !invoice.isIsp()).forEach(r -> {
 				DetalleType detalle = new DetalleType();
 				detalle.setClaveRegimen("01");
 				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(r.getBase()));
@@ -336,16 +339,16 @@ class Invoice2Verifactu {
 				desglose.getDetalleDesglose().add(detalle);
 			});
 						
-			Double totalSuplidos = invoice.getDetails().stream()
-				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
-				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
-			if(totalSuplidos != 0) {
-				DetalleType detalle = new DetalleType();
-				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(totalSuplidos));
-				detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
-				desglose.getDetalleDesglose().add(detalle);
-			}
+//			Double totalSuplidos = invoice.getDetails().stream()
+//				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
+//				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
+//			if(totalSuplidos != 0) {
+//				DetalleType detalle = new DetalleType();
+//				detalle.setClaveRegimen("01");
+//				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(totalSuplidos));
+//				detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
+//				desglose.getDetalleDesglose().add(detalle);
+//			}
 			
 			double noSujetaOtros = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
 						&&  !exempt && f.getPercentage() == 0 && !invoice.isIsp())
@@ -357,7 +360,7 @@ class Invoice2Verifactu {
 				detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
 				desglose.getDetalleDesglose().add(detalle);
 			}
-		}
+//		}
 				
 		return desglose;
 	}

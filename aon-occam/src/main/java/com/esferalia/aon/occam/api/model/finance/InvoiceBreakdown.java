@@ -13,7 +13,8 @@ public class InvoiceBreakdown implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private Integer invoice;	
+	private Integer invoice;
+	private boolean prepayment;
 	private TaxType taxType;
 	private double base;
 	private double percentage;
@@ -23,6 +24,7 @@ public class InvoiceBreakdown implements Serializable {
 	private double deductibleQuota;
 	private WithholdingType withholdingType;
 	private VatDeductionType vatDeductionType;
+	private VATExemptionCause vatExemptionCause;
 	
 	public Integer getId() {
 		return id;
@@ -45,6 +47,14 @@ public class InvoiceBreakdown implements Serializable {
 	}
 	public InvoiceBreakdown setInvoice(Integer invoice) {
 		this.invoice = invoice;
+		return this;
+	}
+	
+	public boolean isPrepayment() {
+		return prepayment;
+	}
+	public InvoiceBreakdown setPrepayment(boolean prepayment) {
+		this.prepayment = prepayment;
 		return this;
 	}
 	
@@ -121,6 +131,14 @@ public class InvoiceBreakdown implements Serializable {
 		return this;
 	}
 	
+	public VATExemptionCause getVatExemptionCause() {
+		return vatExemptionCause;
+	}
+	public InvoiceBreakdown setVatExemptionCause(VATExemptionCause vatExemptionCause) {
+		this.vatExemptionCause = vatExemptionCause;
+		return this;
+	}
+	
 	public boolean isSurcharge() {
 		return AonMathUtils.isGreatherThanZero( getSurcharge() );
 	}
@@ -138,6 +156,7 @@ public class InvoiceBreakdown implements Serializable {
 			&& AonMathUtils.equals(this.getSurcharge(),b.getSurcharge())
 			&& this.getWithholdingType() == b.getWithholdingType()
 			&& this.getVatDeductionType() == b.getVatDeductionType()
+			&& this.isPrepayment() == b.isPrepayment()
 		;
 	}
 	
@@ -165,6 +184,8 @@ public class InvoiceBreakdown implements Serializable {
 			.setSurchargeQuota(it.getSurchargeQuota())
 			.setDeductibleQuota(it.getDeductibleQuota())
 			.setWithholdingType(it.getWithholdingType())
-			.setVatDeductionType(it.getVatDeductionType());
+			.setVatDeductionType(it.getVatDeductionType())
+			.setPrepayment(false)
+		;
 	}
 }

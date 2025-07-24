@@ -125,7 +125,9 @@ public class TaxBreakdown implements Serializable {
 			.map( d ->  new InvoiceBreakdown()
 				.setTaxType( TaxType.VAT )
 				.setBase(d.getTaxableBase())
-				.setVatDeductionType( VatDeductionType.NON_TAXABLE ))
+				.setVatDeductionType( VatDeductionType.NON_TAXABLE )
+				.setPrepayment(true)
+			)
 			.forEach( this::add );
 			
 		
