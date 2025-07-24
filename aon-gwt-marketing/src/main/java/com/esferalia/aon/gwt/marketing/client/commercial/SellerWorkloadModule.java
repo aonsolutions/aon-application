@@ -104,9 +104,6 @@ public class SellerWorkloadModule extends MainEntryPoint {
 			protected Integer getSellerWorkloadPosition(Integer sellerWorkloadId) {
 				return sellerWorkloadModulePanel.getSellerListPosition(sellerWorkloadId);
 			}
-
-			@Override
-			protected void onClearFilter() { /* Nothing to do here */ }
 		};
 			
 		deckLayoutPanel.add(sellerWorkloadModulePanel);

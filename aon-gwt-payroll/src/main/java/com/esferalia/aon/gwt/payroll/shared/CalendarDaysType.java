@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 public class CalendarDaysType implements Serializable {
@@ -574,7 +575,7 @@ public class CalendarDaysType implements Serializable {
 			
 			if(newCalendarDayType.getDayType() == dayTypeList.get(i).getDayType() && isNextDay(newCalendarDayType.getEndDate(), dayTypeList.get(i).getStartDate())) {
 				if(isCoefficientDayType(newCalendarDayType.getDayType())) {
-					if(Double.compare(Double.parseDouble(newCalendarDayType.getExpession()), Double.parseDouble(dayTypeList.get(i).getExpession())) == 0) {
+					if(AonStringUtils.equalsIgnoreCase(newCalendarDayType.getExpession(), dayTypeList.get(i).getExpession()) || Double.compare(Double.parseDouble(newCalendarDayType.getExpession()), Double.parseDouble(dayTypeList.get(i).getExpession())) == 0) {
 						newCalendarDayType.setEndDate(dayTypeList.get(i).getEndDate());
 						continue;
 					} else {
