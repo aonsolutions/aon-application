@@ -1,36 +1,37 @@
 // HTML
 export const A = 'a';
 export const BR = 'br';
+export const BIG = 'big';
+export const BUTTON = 'button';
+export const CANVAS = 'canvas';
 export const DIV = 'div';
+export const FORM = 'form';
 export const H1 = 'h1';
 export const H2 = 'h2';
 export const H3 = 'h3';
 export const H4 = 'h4';
 export const H5 = 'h5';
-export const IMG = 'img';
 export const I = 'i';
-export const INPUT = 'input';
-export const LABEL = 'label'
-export const LI = 'li';
-export const SPAN = 'span';
-export const FORM = 'form';
-export const UL = 'ul';
-export const TABLE = 'table';
-export const TH = 'th';
-export const TR = 'tr';
-export const TD = 'td';
-export const CANVAS = 'canvas';
-export const BUTTON = 'button';
-export const SECTION = 'section';
 export const IFRAME = 'iframe';
-export const PRE = 'pre';
-export const TEXTAREA = 'textarea';
-export const SRIPT = 'script';
+export const IMG = 'img';
+export const INPUT = 'input';
+export const LABEL = 'label';
+export const LI = 'li';
 export const LINK = 'link';
 export const P = 'p';
+export const PRE = 'pre';
+export const SCRIPT = 'script';
+export const SECTION = 'section';
+export const SMALL = 'small';
+export const SPAN = 'span';
+export const TABLE = 'table';
+export const TD = 'td';
+export const TEXTAREA = 'textarea';
+export const TH = 'th';
+export const TR = 'tr';
+export const UL = 'ul';
 
 // COMPONENTS
-
 export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';

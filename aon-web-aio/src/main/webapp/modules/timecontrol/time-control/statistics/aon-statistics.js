@@ -1,5 +1,5 @@
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import {  CONSTANT, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, TAG } from "../../../../environments/environments.js";
 import { AonElement } from "../../../../components/AonElement.js";
 import { timeHour } from "../utils.js";
 import { getTaskHolder} from "../../../../services/taskHolderService.js";
@@ -64,24 +64,18 @@ export class AonStatistics extends AonElement {
   build() {
     getTaskHolder({reload:true}).then(th => {
       this.taskHolder = th;
-
-      this.innerHTML = '';
+      this.innerHTML  = '';
 
       let canvasDiv = this.createElement(TAG.DIV);
       canvasDiv.id = "timeControlCanvasDiv";
-      canvasDiv.style.width = "100%";
-      canvasDiv.style.height = "100%";
-
       this.appendChild(canvasDiv);
 
-      let canvas = this.createElement(TAG.CANVAS);
-      canvas.id = "timeControlCanvas";
-      canvas.cle
+      let canvas   = this.createElement(TAG.CANVAS);
+      canvas.id    = "timeControlCanvas";
       canvasDiv.appendChild(canvas);
 
       this.paintChart(canvas);
     });
-
   }
 
   async paintChart(canvas) {
@@ -93,18 +87,18 @@ export class AonStatistics extends AonElement {
       const firstDayOfWeek = new Date().getFirstDayOfWeek().setHours(0,0,0,0);
       for (const key in resp) {
         let { time, start_date, status, in_date } = resp[key];
-        if(in_date && status && status.indexOf("in")>=0){
-          time =  Number((new Date().getTime() - in_date)  + time);
+        if(in_date && status && status.indexOf("in") >= 0){
+          time = Number((new Date().getTime() - in_date) + time);
         }
         const newTime = this.timeToDecimal(time);
-        const day =  new Date(start_date);
-        let color = "rgba(189, 189, 189, 1)";
+        const day = new Date(start_date);
+        let color = "#cbd5e1";
         const newDayTime = day.setHours(0,0,0,0);
         if(newDayTime === new Date().setHours(0,0,0,0)){
-            color = "rgba(134, 211, 100, 1)";
+          color = "#16a34a";
         } else if(newDayTime >= firstDayOfWeek){
-          color = "rgba(200, 230, 201, 1)";
-        } 
+          color = "#4ade80";
+        }
         
         if(
           newTime>0 && start_date && 
@@ -113,9 +107,8 @@ export class AonStatistics extends AonElement {
           sum = sum + newTime;
           count ++;
         }
-          
         datos.push({
-          time: newTime, 
+          time: newTime,
           dayLetter: this.getFirstLettersDay(day),
           color
         });
@@ -125,7 +118,7 @@ export class AonStatistics extends AonElement {
       let labels = datos.map(dt => dt.dayLetter);
       let colors = datos.map(dt => dt.color);
       let datas = datos.map(dt => dt.time);
-      let colorGrid = LS.isDarkTheme() ? "#ffffff" : "#bdbdbd"
+      let colorGrid = "#94a3b8";
       
       const dataChart = {
         labels,
@@ -134,17 +127,16 @@ export class AonStatistics extends AonElement {
             label: 'Horas',
             data: datas,
             backgroundColor: colors,
-            borderRadius: Number.MAX_VALUE,
+            borderRadius: 5,
             borderSkipped: false,
             order: 1
           },
           // Lines
           {
             label: 'Media',
-            // borderColor: '#4c4c4c',
             data: [average, average, average, average, average, average, average, average],
             type: 'line',
-            borderColor: "rgb(143, 143, 143)",
+            borderColor: colorGrid,
             borderDash: [2, 4],
             pointStyle: 'circle',
             pointRadius: 0,
@@ -177,22 +169,22 @@ export class AonStatistics extends AonElement {
                 display : false
               },
               border : {
-                color :  colorGrid
+                color : colorGrid
               },
               ticks : {
                 color : colorGrid
               }
-            },
+            }
           },
           plugins: {
             legend: {
-              display: false, // This hides all text in the legend and also the labels.
-            },
-          },
-        },
+              display: false  // This hides all text in the legend and also the labels.
+            }
+          }
+        }
       };
 
-      if (this.comboBarChart != undefined) {
+      if (this.comboBarChart !== undefined) {
         this.comboBarChart.destroy();
       }
       // clear canvas for android mobiles

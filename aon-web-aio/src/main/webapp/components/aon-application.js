@@ -143,8 +143,6 @@ export class AonApplication extends AonElement {
       // 2 - Contenido
         // Crear div donde metemos el contenido
         let content = this.createDiv(this.CONTENT);
-        console.log("-- Entra: build()");
-        console.log(this.CONTENT);
         content.className = CSS.AON_CONTENT_BETA;
         wrapper.appendChild(content);
       // 3 - Barra abajo

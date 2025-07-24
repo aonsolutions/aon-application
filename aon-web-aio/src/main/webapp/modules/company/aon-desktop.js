@@ -162,13 +162,9 @@ export class AonDesktop extends AonElement {
 			cardsPanel.appendChild(timecontrolCard);
 
 			getTimeControl().then(r => {
-				let staticsDiv = this.createElement(TAG.DIV);
-				staticsDiv.innerHTML = '';
-                staticsDiv.appendChild(new AonStatistics());
-
 				let aonSign = new AonSign();
 				timecontrolCard.clearContent();
-				timecontrolCard.setContent(staticsDiv);
+				timecontrolCard.setContent(new AonStatistics());
 				timecontrolCard.setContent(aonSign);
 
 				aonSign.buildSignin(r);

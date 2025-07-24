@@ -12,8 +12,8 @@ $color-100      : #1D2435;
 $color-200      : #232c40;
 $color-300      : #232c40;
 $color-400      : #334155;
-$color-500      : #334155;
-$color-600      : #475569;
+$color-500      : #475569;
+$color-600      : #334155;
 $color-700      : #232c40;
 $color-800      : #1e293b;
 $color-900      : #0f172a;
@@ -87,9 +87,11 @@ $color-yellow-800 : #854d0e;
 $color-yellow-900 : #713f12;
 
 // Colores textos
+$color-text-secundary     :#adafb3;
 $color-text               : #fff;
 $color-text-head          : #fff;
-$color-text-login         : #adafb3;
+$color-text-login         : $color-text-secundary;
+$color-text-general       : $color-text-secundary;
 $color-text-button        : #ffffff;
 $color-text-button-transp : #fff;
 
@@ -141,7 +143,7 @@ $color-menu-green : $color-green-400;
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
     $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,

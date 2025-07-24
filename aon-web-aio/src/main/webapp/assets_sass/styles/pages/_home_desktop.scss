@@ -1,24 +1,61 @@
 @use '../variables' as v;
-@use '../base/mixins' as mixin;
+
+$gap-min: calc(v.$gap / 2);
 
 #rootPanel {
   aon-desktop{
     aon-toolbar{
       display: none;
     }
-    .aonFlex #cardsPanel{
-      display         : flex;
-      gap             : v.$gap;
-      flex-wrap       : wrap;
-      justify-content : center;
-      width           : v.$pct-100;
-      aon-card{
-        flex-grow   : 1;
-        flex-shrink : 1;
-        flex-basis  : v.$px-400;
-        max-width   : v.$px-480;
-        .aonCardContent{
-
+    .aonFlex .aonContentBeta{
+      padding: v.$px-0;
+      #cardsPanel{
+        display         : flex;
+        gap             : v.$gap;
+        flex-wrap       : wrap;
+        justify-content : center;
+        width           : v.$pct-100;
+        aon-card{
+          flex-grow   : 1;
+          flex-shrink : 1;
+          flex-basis  : v.$px-400;
+          max-width   : v.$px-480;
+          .aonCardContent{
+            min-height: v.$px-320;
+            display   : grid;
+            gap       : v.$gap;
+          //
+          // Control horario
+            #timeControlCanvasDiv{
+              width: v.$pct-100 !important;
+              canvas{
+                width   : v.$pct-100 !important;
+                height  : v.$pct-100 !important;
+                display : block;
+              }
+            }
+            #aonSign{
+              display : grid;
+              gap     : $gap-min;
+              #aonSignTime{
+                cursor      : default;
+                justify-self: center;
+              }
+              #aonSignContent{
+                display : grid;
+                gap     : $gap-min;
+                #lastTimeUser{
+                  cursor      : default;
+                  justify-self: center;
+                }
+                #totalHour{
+                  cursor: default;
+                }
+              }
+            }
+          // FIN Control horario
+          //
+          }
         }
       }
     }

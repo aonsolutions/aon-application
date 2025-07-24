@@ -6,7 +6,7 @@
   $color-400, $color-500, $color-600, $color-700, 
   $color-800, $color-900, $color-input, $color-box,
   $color-grad-min, $color-grad-max,
-  $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
+  $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
   $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
   $color-switch-off, $color-switch-on, $color-switch,
   $color-red-100,  $color-red-500, $color-red-900,
@@ -55,7 +55,7 @@
 
   --favicon-#{$theme}: #{$favicon};
   --title-#{$theme}: #{$title};
-  body {
+  body{
     color            : $color-text;
     margin           : $body-margin;
     aon-module{
@@ -248,7 +248,7 @@
       border            : $button-border;
       &:hover{
         background-color : $color-500;
-      }
+      }      
       aon-icon-button i {
         &::after {
           background-color : $color-300;
@@ -367,6 +367,7 @@
             td {
               border-top   : $border;
               border-bottom: $border;
+              color        : $color-text-general;
               // Primer td de la fila ? esquinas izquierda
               &:first-child {
                 border-left: $border;
@@ -408,13 +409,32 @@
     // Desktop
     aon-desktop .aonFlex #aonDesktopMainContent{
       background-color: unset;
+      // Control horario
+      #aonSign{
+        #aonSignContent{
+          #lastTimeUser{
+            color: $color-text-general;
+          }
+          #totalHour{
+            color: $color-text-general;
+          }
+        }
+      }
     }
     // Plans
     aon-plans .aonFlex #Content{
       background-color: unset;
       .plansGrid{
+        .planDescription {
+          color: $color-text-general;
+        }
         .contracted{
           color: $color-menu-green;
+        }
+      }
+      aon-card.plansFooter{
+        .aonCardContent{
+          color: $color-text-general;
         }
       }
     }

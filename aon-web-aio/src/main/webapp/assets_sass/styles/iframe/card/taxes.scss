@@ -1,0 +1,71 @@
+@use '../../variables' as v;
+
+.iframe-fiscal{
+  overflow: hidden;
+    #rootPanel{
+    width           : 100%;
+    background-color: transparent !important;
+    margin          : 0;
+    padding         : 0;
+    /*color           : white;*/
+    overflow        : hidden;
+    
+    &::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    // Variables opcionales
+    $border-color: #ccc;
+    $cell-padding: 0.25rem;
+
+    .aon_display_table {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+
+      // Fila
+      .aon_display_table_row {
+        display: table-row;
+
+        &.aon_font_smaller {
+          font-size: 0.85rem;
+        }
+
+        &.aon_bold {
+          font-weight: bold;
+        }
+
+        // Celda
+        .aon_display_table_cell {
+          display: table-cell;
+          padding: $cell-padding;
+          text-align: center;
+          vertical-align: middle;
+          background-color: transparent;
+          
+          &.aon_border_bottom {
+            border-bottom: 1px solid $border-color;
+          }
+
+          &.aon_text_center {
+            text-align: center;
+          }
+
+          &.aon_width_400 {
+            width: v.$px-400;
+          }
+
+          // Boton dentro de celda
+          button.aon_table_button {
+            width   : 100%;
+            padding : 0.5rem 0;
+            border  : none;
+            cursor  : pointer;
+          }
+        }
+      }
+    }
+  }
+}

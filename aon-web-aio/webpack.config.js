@@ -1,15 +1,17 @@
-const path                  = require('path');
-const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
-const CssMinimizerPlugin    = require('css-minimizer-webpack-plugin');
-const HtmlWebpackPlugin     = require('html-webpack-plugin');
-const CopyWebpackPlugin     = require('copy-webpack-plugin');
+const path                      = require('path');
+const MiniCssExtractPlugin      = require('mini-css-extract-plugin');
+const CssMinimizerPlugin        = require('css-minimizer-webpack-plugin');
+const HtmlWebpackPlugin         = require('html-webpack-plugin');
+const CopyWebpackPlugin         = require('copy-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
   entry: {
-    app     : './src/main/webapp/index.js',                     // Para usar en el BETA
-    aio     : './src/main/webapp/aio.js',
-    appSass : './src/main/webapp/index.js',                     // Para usar en el NEW
-    sass    : './src/main/webapp/assets_sass/styles/main.scss'  // Para usar en el NEW
+    app       : './src/main/webapp/index.js',                       // Para usar en el BETA
+    aio       : './src/main/webapp/aio.js',
+    appSass   : './src/main/webapp/index.js',                       // Para usar en el NEW
+    sass      : './src/main/webapp/assets_sass/styles/main.scss',   // Para usar en el NEW
+    sassIframe: './src/main/webapp/assets_sass/styles/iframe.scss'  // Para usar en el NEW - IFRAME
   },
   output: {
     // Hash solo para appSass.js y sass.css
@@ -22,8 +24,14 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: (pathData) => {
-        return pathData.chunk.name === 'sass' ? '[name].[contenthash].min.css' : '[name].min.css';
+        return pathData.chunk.name === 'sass' || pathData.chunk.name === 'sassIframe'
+          ? '[name].[contenthash].min.css'
+          : '[name].min.css';
       }
+    }),
+    new WebpackManifestPlugin({
+      fileName  : 'manifest.json', // Acceder desde JS directamente
+      publicPath: ''
     }),
     new HtmlWebpackPlugin({
       template: './src/main/webapp/templates/new',

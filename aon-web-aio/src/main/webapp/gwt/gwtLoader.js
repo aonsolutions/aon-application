@@ -67,7 +67,7 @@
 	}
 	
 	const addScript = (document, type,  src) => {
-		let script = document.createElement(TAG.SRIPT);
+		let script = document.createElement(TAG.SCRIPT);
 		script.type = src.type || type;
 		if ( src.src ) {
 			script.src = src.src;
@@ -141,7 +141,6 @@
 			
 			const promise = new Promise((resolve, reject) => {
 				iframe.onload = () => {
-					
 
 					let iwindow = iframe.contentWindow;			
 					let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
@@ -179,7 +178,7 @@
 					rootPanel.id = 'rootPanel';
 					idocument.body.appendChild(rootPanel);
 					
-					let script = idocument.createElement(TAG.SRIPT);
+					let script = idocument.createElement(TAG.SCRIPT);
 					script.type = "text/javascript";
 					script.defer = "true";
 					script.text = `
