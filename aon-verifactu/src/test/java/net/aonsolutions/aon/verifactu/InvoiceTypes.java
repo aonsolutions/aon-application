@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -62,9 +63,15 @@ class InvoiceTypes {
 		.setDescription("PANADERIA")
 		.setPrincipal(true)
 		.setVatRegime(VATRegime.GENERAL)
-		.setVatExemptionCause(null)
 	;
 
+	static final EnterpriseActivity ACTIVITY_EXENTA = new EnterpriseActivity()
+		.setId(1)
+		.setDescription("FISIOTERAPIA")
+		.setPrincipal(true)
+		.setVatRegime(VATRegime.EXEMPT)
+	;
+	
 	static Invoice VENTA_NACIONAL_SIMPLE() {
 		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
 		return new Invoice()
@@ -330,6 +337,50 @@ class InvoiceTypes {
 					.setPercentage(21.0)
 					.setQuota(21.0)
 					.setDeductibleQuota(21.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				)
+			)
+			.setVatQuota(0.0)
+			.setTotal(100.0)
+			.refreshTaxBreakdown()
+		;
+	}
+
+	static Invoice VENTA_NACIONAL_EXENTA_E1() {
+		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		return new Invoice()
+			.setId(1)
+			.setType(InvoiceType.SALES)
+			.setActivity(ACTIVITY_EXENTA)
+			.setSeries("A" + AonDateUtils.getYear(today))
+			.setNumber(1)
+			.setReferenceCode("A" + AonDateUtils.getYear(today) + "/000001")
+			.setIssueDate(today)
+			.setTaxDate(today)
+			.setTransaction(InvoiceTransactionType.NATIONAL)
+			.setRectificationType(RectificationType.NONE)
+			.setConfidential(false)
+			.setRegistryDocument(REGISTRY_NATIONAL.getDocument())
+			.setRegistryDocumentType(REGISTRY_NATIONAL.getDocumentType())
+			.setRegistryDocumentCountry(REGISTRY_NATIONAL.getDocumentCountry())
+			.setRegistryName(REGISTRY_NATIONAL.getName())
+			.setSurcharge(false)
+			.setWithholding(false)
+			.setWithholdingFarmer(false)
+			.setVatAccrualPayment(false)
+			.setInvestment(false)
+			.setService(false)
+			.setAddress( REGISTRY_ADDRESS_NATIONAL )
+			.addDetail(new InvoiceDetail()
+				.setQuantity(1)
+				.setPrice(100.0)
+				.setTaxableBase(100.0)
+				.addTax(new InvoiceTax()
+					.setTaxType(TaxType.VAT)
+					.setBase(100.0)
+					.setPercentage(0.0)
+					.setQuota(0.0)
+					.setDeductibleQuota(0.0)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 				)
 			)

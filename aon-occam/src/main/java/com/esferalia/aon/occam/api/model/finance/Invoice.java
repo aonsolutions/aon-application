@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -740,6 +741,11 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	// ----------- VAT REGIMES
+	public boolean isExempt() {
+		return optActivity().filter(a -> a.getVatRegime() == VATRegime.EXEMPT).isPresent()
+			|| (getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_EXEMPT))
+		;
+	}
 	
 	public boolean isVatUnion() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_UNION);

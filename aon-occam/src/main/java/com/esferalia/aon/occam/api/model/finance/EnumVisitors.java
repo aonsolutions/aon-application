@@ -24,14 +24,6 @@ public class EnumVisitors {
 		IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper);
 	}
 
-	public static interface IInvoiceTransactionTypeVisitor {
-		void visitNational();
-		void visitIntracommunity();
-		void visitExtracommunity();
-		void visitCanCeuMel();
-		void visitOtherISP();
-	}
-
 	public static interface IWithholdingTypeVisitor<T> {
 		T visitProfessional(T t);
 		T visitRenting(T t);

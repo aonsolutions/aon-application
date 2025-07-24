@@ -285,8 +285,11 @@ class Invoice2Verifactu {
 //			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
 //			desglose.getDetalleDesglose().add(detalle);
 //		} else {
-			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() 
-					|| invoice.isExtracommunity() || invoice.isCanCeuMel();
+			boolean exempt = 
+				   invoice.getActivity().getVatRegime().isExempt() 
+				|| invoice.isIntracommunity() 
+				|| invoice.isExtracommunity() 
+				|| invoice.isCanCeuMel();
 			
 //			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
 //					&& ((!exempt && f.getPercentage() > 0) || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {

@@ -2,21 +2,20 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceTransactionType implements Serializable {
 
 	NATIONAL ("Op. Interiores", "NAC")
-		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitNational();} },
+		{ @Override public <T> T visit(InvoiceTransactionTypeVisitor<T> visitor){ return visitor.visitNational();} },
 	INTRACOMMUNITY("Intracomunitaria", "INTR")
-		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitIntracommunity();} },
+		{ @Override public <T> T visit(InvoiceTransactionTypeVisitor<T> visitor){ return visitor.visitIntracommunity();} },
 	EXTRACOMMUNITY("Extracomunitaria", "EXTR")
-		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitExtracommunity();} },
+		{ @Override public <T> T visit(InvoiceTransactionTypeVisitor<T> visitor){ return visitor.visitExtracommunity();} },
 	CAN_CEU_MEL("Canarias, Ceuta y Melilla", "CCM")
-		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitCanCeuMel();} },
+		{ @Override public <T> T visit(InvoiceTransactionTypeVisitor<T> visitor){ return visitor.visitCanCeuMel();} },
 	OTHER_ISP("I.S.P.", "ISP")
-		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitOtherISP();} },
+		{ @Override public <T> T visit(InvoiceTransactionTypeVisitor<T> visitor){ return visitor.visitOtherISP();} },
 	;
 	
 	private String description;
@@ -63,8 +62,13 @@ public enum InvoiceTransactionType implements Serializable {
 	}
 
 	
-	public void visit(IInvoiceTransactionTypeVisitor visitor) {
-		
+	public abstract <T> T visit(InvoiceTransactionTypeVisitor<T> visitor);
+	public static interface InvoiceTransactionTypeVisitor<T> {
+		T visitNational();
+		T visitIntracommunity();
+		T visitExtracommunity();
+		T visitCanCeuMel();
+		T visitOtherISP();
 	}
 
 }

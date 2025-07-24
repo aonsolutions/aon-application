@@ -283,7 +283,7 @@ public class InvoiceDetail implements Serializable {
 	    return this.invoiceTaxes;
 	}
 	public boolean hasTaxes() {
-		return AonCollectionUtils.isEmpty(this.invoiceTaxes);
+		return AonCollectionUtils.isNotEmpty(this.invoiceTaxes);
 	}
 	public InvoiceDetail addTax(InvoiceTax tax) {
 		ensureTaxes().add(tax);

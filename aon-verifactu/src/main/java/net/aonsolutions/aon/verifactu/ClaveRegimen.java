@@ -5,18 +5,23 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
 import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 enum ClaveRegimen {
-	C01_NATIONAL("01") {	// Operación de régimen general. NACIONALES
+	/**
+	 * OPERACIÓN DE RÉGIMEN GENERAL. NACIONALES
+	 */
+	C01_NATIONAL("01") {	
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return inv.isSales()
@@ -33,11 +38,14 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
-			DetalleType detalle = C01_NATIONAL.getBasic( ib );
-			return detalle;
+			return C01_NATIONAL.getBasic( ib );
 		}
 	},
-	C01_ISP("01") {	// Operación de régimen general. ISP
+	
+	/**
+	 * OPERACIÓN DE RÉGIMEN GENERAL. ISP
+	 */
+	C01_ISP("01") {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
@@ -58,7 +66,11 @@ enum ClaveRegimen {
 			return detalle;
 		}
 	},
-	C01_INTRACOMMUNITY_SERVICE("01") {	// Operación de régimen general. Prestacion servicio intracomunitario
+	
+	/**
+	 *  OPERACIÓN DE RÉGIMEN GENERAL. PRESTACION SERVICIO INTRACOMUNITARIO
+	 */
+	C01_INTRACOMMUNITY_SERVICE("01") {	
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
@@ -80,7 +92,11 @@ enum ClaveRegimen {
 			return detalle;
 		}
 	},
-	C01_PREPAYMENT("01") {	// Operación de régimen general. Suplidos.
+	
+	/**
+	 * OPERACIÓN DE RÉGIMEN GENERAL. SUPLIDOS.
+	 */
+	C01_PREPAYMENT("01") {	
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
@@ -103,6 +119,54 @@ enum ClaveRegimen {
 			return detalle;
 		}
 	},
+	
+	/**
+	 *	OPERACIÓN DE RÉGIMEN GENERAL. EXENTA E1.
+	 *
+	 * Art. 20 - Exenciones interiores (en España)
+	 * Ciertas actividades no llevan IVA, como:
+	 * 	- Educación
+	 * 	- Sanidad
+	 * 	- Alquiler de vivienda
+	 * 	- Servicios financieros y seguros
+	 * 	- Actividades sin ánimo de lucro
+	 */
+	C01_EXENTA_E1("01") {
+		@Override
+		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
+			System.out.println(
+			  "inv.isNational() ..: " +  inv.isNational()
+			+ "inv.isExempt() ..: " +  inv.isExempt()				
+			+ "!inv.isSurcharge() ..: " +  !inv.isSurcharge() 
+			+ "!inv.isWithholdingFarmer() ..: " +  !inv.isWithholdingFarmer()
+			+ "!inv.isVatAccrualPayment() ..: " +  !inv.isVatAccrualPayment()
+			+ "!inv.isSalesOSS() ..: " +  !inv.isSalesOSS()
+			+ "!ib.isPrepayment() ..: " +  !ib.isPrepayment()
+			+ "VatDeductionType.safeSujetoExento(ib.getVatDeductionType()) ..: " +  VatDeductionType.safeSujetoExento(ib.getVatDeductionType())
+			+ "ib.getVatExemptionCause() == VATExemptionCause.E1 ..: " +  (ib.getVatExemptionCause() == VATExemptionCause.E1)
+					);
+
+			
+			return inv.isNational()
+				&& inv.isExempt()				
+				&& !inv.isSurcharge() 
+				&& !inv.isWithholdingFarmer()
+				&& !inv.isVatAccrualPayment()
+				&& !inv.isSalesOSS()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoExento(ib.getVatDeductionType())
+				&& ib.getVatExemptionCause() == VATExemptionCause.E1
+			;
+		}
+		
+		@Override
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+			DetalleType detalle = C01_EXENTA_E1.getBasic( ib );
+			detalle.setOperacionExenta(OperacionExentaType.E_1);
+			return detalle;
+		}
+	},
+
 	// Exportación.
 	C02("01") {
 		@Override

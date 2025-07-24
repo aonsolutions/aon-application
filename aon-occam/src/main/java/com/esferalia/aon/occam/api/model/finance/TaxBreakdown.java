@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType.InvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -118,10 +119,12 @@ public class TaxBreakdown implements Serializable {
 	public void refresh(Invoice invoice) {
 		ibs = new LinkedList<>();
 		
-		// Se añaden los suplidos (invoiceDeetail.prepaymet=true)
-		// como NO SUJETOS
+		// Se añaden los suplidos como NO SUJETOS
 		invoice.detailStream()
+			// ... que sean suplidos
 			.filter(d -> d.isPrepayment())
+			// ... que tengan base imponible
+			.filter(d -> AonMathUtils.isNotZero(d.getTaxableBase()))
 			.map( d ->  new InvoiceBreakdown()
 				.setTaxType( TaxType.VAT )
 				.setBase(d.getTaxableBase())
@@ -130,15 +133,48 @@ public class TaxBreakdown implements Serializable {
 			)
 			.forEach( this::add );
 			
-		
-		// Se añaden los invoice_tax de la factura 
+		// Se añaden las líneas de facturas 
 		invoice.detailStream()
-			.flatMap(d -> d.taxStream()) 
+			// ... que no sean suplidos
+			.filter(d -> !d.isPrepayment())
+			// ... que tengan base imponible
+			.filter(d -> AonMathUtils.isNotZero(d.getTaxableBase()))
+			// ... que no tengan impuestos definidos
+			.filter(d -> !d.hasTaxes())
+			.map( d ->  { 
+				InvoiceBreakdown ib = new InvoiceBreakdown()
+					.setTaxType( TaxType.VAT )
+					.setBase(d.getTaxableBase())
+				;
+				return ensureData(invoice,ib, true);
+			})
 			.forEach( this::add );
-		
-		
+			
+		// Se añaden los invoice_tax "normales" de la factura 
+		invoice.detailStream()
+			// ... que no sean suplidos
+			.filter(d -> !d.isPrepayment())
+			.flatMap(d -> d.taxStream())
+			.map( InvoiceBreakdown::from )
+			.map( ib -> ensureData(invoice,ib, false))
+			.forEach( this::add );
 	}
 	
+	private InvoiceBreakdown ensureData(Invoice invoice, InvoiceBreakdown ib, boolean forceExemption) {
+		if (forceExemption || invoice.isExempt()) {
+			ib.setVatDeductionType( VatDeductionType.WITHOUT_RIGHT )
+				.setPrepayment(false)
+				.setVatExemptionCause( invoice.getTransaction().visit(new InvoiceTransactionTypeVisitor<VATExemptionCause>() {
+					@Override public VATExemptionCause visitNational() {return VATExemptionCause.E1;}
+					@Override public VATExemptionCause visitIntracommunity() {return VATExemptionCause.E5;}
+					@Override public VATExemptionCause visitExtracommunity() {return VATExemptionCause.E2;}
+					@Override public VATExemptionCause visitCanCeuMel() {return VATExemptionCause.E2;}
+					@Override public VATExemptionCause visitOtherISP() {return VATExemptionCause.E1;}
+				})
+			);
+		}
+		return ib;
+	}
 	public Invoice calculateTaxBreakdown(Invoice inv) {
 		stream().forEach(ib -> calculateBreakdown(inv, ib));
 		return inv;
