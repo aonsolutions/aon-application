@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -16,19 +19,20 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 class InvoiceTypes {
-	private static final Registry REGISTRY = new Registry() 
+	static final Registry REGISTRY = new Registry() 
 		.setDocument("88888888Y")
 		.setDocumentType(DocumentType.NIF)
 		.setDocumentCountry(Country.ES)
 		.setName("Verfictu Cliente Test")
 	;
 	
-	private static final RegistryAddress REGISTRY_ADDRESS = new RegistryAddress()
+	static final RegistryAddress REGISTRY_ADDRESS = new RegistryAddress()
 		.setStreetType(StreetType.CALLE)
 		.setAddress("Calle Verifactu")
 		.setNumber("6")
@@ -38,7 +42,15 @@ class InvoiceTypes {
 		.setProvince("ALAVA")
 		.setCountry(Country.ES)
 	;
-	
+
+	static final EnterpriseActivity ACTIVITY_GENERAL = new EnterpriseActivity()
+		.setId(1)
+		.setDescription("PANADERIA")
+		.setPrincipal(true)
+		.setVatRegime(VATRegime.GENERAL)
+		.setVatExemptionCause(null)
+	;
+
 	static Invoice VENTA_NACIONAL_SIMPLE() {
 		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
 		return new Invoice()

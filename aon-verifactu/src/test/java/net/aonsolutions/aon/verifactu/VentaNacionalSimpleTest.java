@@ -1,16 +1,11 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPException;
 
 import org.junit.jupiter.api.Test;
 
@@ -46,22 +41,34 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
-import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
 class VentaNacionalSimpleTest {
-	// En el entorno de pruebas los XML de entrada se deben ejecutar en la siguente dirección:
-	private String TEST_URL = "https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/ValRegistroNoVerifactu";
 	
 	@Test
-	void invoiceTest() throws VerifactuException, JAXBException, SOAPException, IOException {
+	void ventaNacionalSimpleNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLE() );
-		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
 			.setInvoices(invoices);
+		assertInvoice( vc );
+	}
+
+	@Test
+	void ventaNacionalSimpleActGeneral() throws VerifactuException {
+		Company c = company();
+		List<Invoice> invoices = new LinkedList<>();
+		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLE().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig( config() )
+			.setCompany( c )
+			.setInvoices(invoices);
+		assertInvoice( vc );
+	}
+	
+	private void assertInvoice( VerifactuContext vc ) throws VerifactuException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		
@@ -70,8 +77,8 @@ class VentaNacionalSimpleTest {
 		assertNotNull( cab );
 	    PersonaFisicaJuridicaESType obligadoEmision = cab.getObligadoEmision();
 	    assertNotNull( obligadoEmision );
-	    assertEquals(c.getDocument() , obligadoEmision.getNIF());
-	    assertEquals(c.getName() , obligadoEmision.getNombreRazon());
+	    assertEquals(vc.getCompany().getDocument() , obligadoEmision.getNIF());
+	    assertEquals(vc.getCompany().getName() , obligadoEmision.getNombreRazon());
 	    PersonaFisicaJuridicaESType representante = cab.getRepresentante();
 	    assertNull( representante );
 	    CabeceraType.RemisionVoluntaria remisionVoluntaria = cab.getRemisionVoluntaria();
@@ -82,8 +89,8 @@ class VentaNacionalSimpleTest {
 
 		// ------------------------ RegistroFacturaType asserts
 	    List<RegistroFacturaType> facturas = rfsf.getRegistroFactura();
-	    assertEquals(invoices.size() , facturas.size() );
-	    Invoice i = invoices.get(0);
+	    assertEquals(vc.getInvoices().size() , facturas.size() );
+	    Invoice i = vc.getInvoices().get(0);
 	    assertNotNull( i );
 	    RegistroFacturaType rft = facturas.get(0);
 	    assertNotNull( rft );
@@ -96,7 +103,7 @@ class VentaNacionalSimpleTest {
 	    
 	    IDFacturaExpedidaType idFactura = rfat.getIDFactura();
 	    assertNotNull( idFactura );
-	    assertEquals(c.getDocument() , idFactura.getIDEmisorFactura() );
+	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(i.getReferenceCode() , idFactura.getNumSerieFactura() );
 	    assertEquals(AonDateUtils.format(i.getExpDate(), Invoice2Verifactu.DATE_FORMAT ), idFactura.getFechaExpedicionFactura() );
 	    
@@ -106,7 +113,7 @@ class VentaNacionalSimpleTest {
 	    
 	    String nombreRazonEmisor = rfat.getNombreRazonEmisor();
 	    assertNotNull( nombreRazonEmisor );
-	    assertEquals(c.getName() , nombreRazonEmisor );
+	    assertEquals(vc.getCompany().getName() , nombreRazonEmisor );
 	    
 	    SubsanacionType subsanacion = rfat.getSubsanacion();
 	    assertNotNull( subsanacion );
@@ -160,10 +167,10 @@ class VentaNacionalSimpleTest {
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
 	    assertNotNull( destinatarios );
-	    List<PersonaFisicaJuridicaType> IDDestinatario = destinatarios.getIDDestinatario();
-	    assertNotNull( IDDestinatario );
-	    assertEquals( 1, IDDestinatario.size() );
-	    PersonaFisicaJuridicaType destinatario = IDDestinatario.get(0);
+	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
+	    assertNotNull( iDDestinatario );
+	    assertEquals( 1, iDDestinatario.size() );
+	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
 	    assertNotNull( destinatario );
 	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
 	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
@@ -217,15 +224,6 @@ class VentaNacionalSimpleTest {
 	    assertEquals( "01", rfat.getTipoHuella() );
 	    assertNotNull( rfat.getHuella() );
 	    assertNull( rfat.getSignature() );
-	    
-	    if ( vc.getConfig().getCertificate() != null) {
-	    	VerifactuResponse response = XMLUtils.post(
-    			vc.getConfig().getCertificate()
-    			, TEST_URL
-    			, XMLUtils.soapMarshal(rfsf, RegFactuSistemaFacturacion.class));
-	    	assertNotNull( response );
-	    	assertFalse( response.isError() );
-	    }
 	    
 	}
 	

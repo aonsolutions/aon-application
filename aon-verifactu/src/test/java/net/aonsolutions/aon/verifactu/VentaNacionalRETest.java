@@ -45,15 +45,30 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 class VentaNacionalRETest {
 	
 	@Test
-	void invoiceTest() throws VerifactuException {
+	void ventaNacionalRENoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE() );
-		
 		VerifactuContext vc = new VerifactuContext()
-			.setConfig( config() )
-			.setCompany( c )
-			.setInvoices(invoices);
+				.setConfig( config() )
+				.setCompany( c )
+				.setInvoices(invoices);
+			assertInvoice( vc );
+	}
+
+	@Test
+	void ventaNacionalREActGeneral() throws VerifactuException {
+		Company c = company();
+		List<Invoice> invoices = new LinkedList<>();
+		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		VerifactuContext vc = new VerifactuContext()
+				.setConfig( config() )
+				.setCompany( c )
+				.setInvoices(invoices);
+			assertInvoice( vc );
+	}
+
+	private void assertInvoice( VerifactuContext vc ) throws VerifactuException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		
@@ -62,8 +77,8 @@ class VentaNacionalRETest {
 		assertNotNull( cab );
 	    PersonaFisicaJuridicaESType obligadoEmision = cab.getObligadoEmision();
 	    assertNotNull( obligadoEmision );
-	    assertEquals(c.getDocument() , obligadoEmision.getNIF());
-	    assertEquals(c.getName() , obligadoEmision.getNombreRazon());
+	    assertEquals(vc.getCompany().getDocument() , obligadoEmision.getNIF());
+	    assertEquals(vc.getCompany().getName() , obligadoEmision.getNombreRazon());
 	    PersonaFisicaJuridicaESType representante = cab.getRepresentante();
 	    assertNull( representante );
 	    CabeceraType.RemisionVoluntaria remisionVoluntaria = cab.getRemisionVoluntaria();
@@ -74,8 +89,8 @@ class VentaNacionalRETest {
 
 		// ------------------------ RegistroFacturaType asserts
 	    List<RegistroFacturaType> facturas = rfsf.getRegistroFactura();
-	    assertEquals(invoices.size() , facturas.size() );
-	    Invoice i = invoices.get(0);
+	    assertEquals(vc.getInvoices().size() , facturas.size() );
+	    Invoice i = vc.getInvoices().get(0);
 	    assertNotNull( i );
 	    RegistroFacturaType rft = facturas.get(0);
 	    assertNotNull( rft );
@@ -88,7 +103,7 @@ class VentaNacionalRETest {
 	    
 	    IDFacturaExpedidaType idFactura = rfat.getIDFactura();
 	    assertNotNull( idFactura );
-	    assertEquals(c.getDocument() , idFactura.getIDEmisorFactura() );
+	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(i.getReferenceCode() , idFactura.getNumSerieFactura() );
 	    assertEquals(AonDateUtils.format(i.getExpDate(), Invoice2Verifactu.DATE_FORMAT ), idFactura.getFechaExpedicionFactura() );
 	    
@@ -98,7 +113,7 @@ class VentaNacionalRETest {
 	    
 	    String nombreRazonEmisor = rfat.getNombreRazonEmisor();
 	    assertNotNull( nombreRazonEmisor );
-	    assertEquals(c.getName() , nombreRazonEmisor );
+	    assertEquals(vc.getCompany().getName() , nombreRazonEmisor );
 	    
 	    SubsanacionType subsanacion = rfat.getSubsanacion();
 	    assertNotNull( subsanacion );
@@ -152,10 +167,10 @@ class VentaNacionalRETest {
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
 	    assertNotNull( destinatarios );
-	    List<PersonaFisicaJuridicaType> IDDestinatario = destinatarios.getIDDestinatario();
-	    assertNotNull( IDDestinatario );
-	    assertEquals( 1, IDDestinatario.size() );
-	    PersonaFisicaJuridicaType destinatario = IDDestinatario.get(0);
+	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
+	    assertNotNull( iDDestinatario );
+	    assertEquals( 1, iDDestinatario.size() );
+	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
 	    assertNotNull( destinatario );
 	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
 	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
