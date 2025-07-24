@@ -48,13 +48,15 @@ import com.esferalia.aon.occam.api.model.Certificate;
 import net.aonsolutions.aon.verifactu.VerifactuResponse;
 
 public class XMLUtils {
-
+	
+	private XMLUtils() {
+		
+	}
 	public static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		InputStream is = new ByteArrayInputStream(data);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(is);
-		return doc;
+		return dBuilder.parse(is);
 	}
 	
 	public static String documentToString(Document doc) {
@@ -100,14 +102,13 @@ public class XMLUtils {
 		String soapEnvelope =
 		       "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 			       "<soapenv:Header /><soapenv:Body>%s</soapenv:Body></soapenv:Envelope>";
-		String output = String.format(soapEnvelope, sw.toString());
-		return output;
+		return String.format(soapEnvelope, sw.toString());
 	}
 	
-	public static Object soapUnmarshal(Class clazz, String response) throws JAXBException {
+	public static Object soapUnmarshal(Class<?> clazz, String response) throws JAXBException {
 		response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + response;
 		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
-		JAXBElement o = (JAXBElement) unmar.unmarshal(new StringReader(response));
+		JAXBElement<?> o = (JAXBElement<?>) unmar.unmarshal(new StringReader(response));
 		return o.getValue();
 	}
 	

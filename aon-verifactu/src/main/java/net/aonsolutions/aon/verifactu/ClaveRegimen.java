@@ -15,11 +15,11 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 enum ClaveRegimen {
-	C01("01") {		// Operación de régimen general.
+	C01_NATIONAL("01") {	// Operación de régimen general. NACIONALES
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
-				&& (inv.isNational() || inv.isIsp())
+				&& inv.isNational()
 				&& !inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
@@ -28,13 +28,25 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
-			DetalleType detalle = C01.getBasic( ib );
-			detalle.setTipoRecargoEquivalencia(null);
-			detalle.setCuotaRecargoEquivalencia(null);
-			detalle.setOperacionExenta(null);
-			detalle.setCalificacionOperacion(inv.isIsp() 
-				? CalificacionOperacionType.S_2 
-				: CalificacionOperacionType.S_1);
+			DetalleType detalle = C01_NATIONAL.getBasic( ib );
+			return detalle;
+		}
+	},
+	C01_ISP("01") {	// Operación de régimen general. ISP
+		@Override
+		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
+			return getVATRegime(vc, inv) == VATRegime.GENERAL 
+				&& inv.isIsp()
+				&& !inv.isSurcharge() 
+				&& !inv.isWithholdingFarmer()
+				&& !inv.isVatAccrualPayment()
+				&& !inv.isSalesOSS();
+		}
+		
+		@Override
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+			DetalleType detalle = C01_ISP.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_2);
 			return detalle;
 		}
 	}
@@ -150,8 +162,6 @@ enum ClaveRegimen {
 			DetalleType detalle = C18.getBasic( ib );
 			detalle.setTipoRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurcharge()));
 			detalle.setCuotaRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurchargeQuota()));
-			detalle.setOperacionExenta(null);
-			detalle.setCalificacionOperacion( CalificacionOperacionType.S_1 );
 			return detalle;
 		}
 		
@@ -196,6 +206,7 @@ enum ClaveRegimen {
 		detalle.setBaseImponibleACoste(null);
 		detalle.setTipoImpositivo(Invoice2Verifactu.doubleToString(ib.getPercentage()));
 		detalle.setCuotaRepercutida(Invoice2Verifactu.doubleToString(ib.getQuota()));
+		detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 		return detalle;
 	}
 

@@ -439,7 +439,7 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	public double getGrossTotal() {
-		return AonMathUtils.round(total - getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0));	
+		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0));	
 	}
 	public double getTotal() {
 		return total;

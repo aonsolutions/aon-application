@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 class InvoiceTypes {
@@ -61,6 +63,7 @@ class InvoiceTypes {
 					.setPercentage(21.0)
 					.setQuota(21.0)
 					.setDeductibleQuota(21.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 				)
 			)
 			.setVatQuota(21.0)
@@ -121,4 +124,66 @@ class InvoiceTypes {
 			.refreshTaxBreakdown()
 		;
 	}
+	
+	static Invoice VENTA_NACIONAL_IRPF_PROFESSIONAL() {
+		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		return new Invoice()
+			.setId(1)
+			.setType(InvoiceType.SALES)
+			.setSeries("A" + AonDateUtils.getYear(today))
+			.setNumber(1)
+			.setReferenceCode("A" + AonDateUtils.getYear(today) + "/000001")
+			.setIssueDate(today)
+			.setTaxDate(today)
+			.setTransaction(InvoiceTransactionType.NATIONAL)
+			.setRectificationType(RectificationType.NONE)
+			.setConfidential(false)
+			.setRegistryDocument("88888888Y")
+			.setRegistryDocumentType(DocumentType.NIF)
+			.setRegistryDocumentCountry(Country.ES)
+			.setRegistryName("Verfictu Cliente Test")
+			.setSurcharge(false)
+			.setWithholding(true)
+			.setWithholdingFarmer(false)
+			.setVatAccrualPayment(false)
+			.setInvestment(false)
+			.setService(false)
+			.setAddress( new RegistryAddress()
+				.setStreetType(StreetType.CALLE)
+				.setAddress("Calle Verifactu")
+				.setNumber("6")
+				.setAddress2(" portal Verifactu")
+				.setZip("01000")
+				.setCity("Abetxukooo")
+				.setProvince("ALAVA")
+				.setCountry(Country.ES)
+			)
+			.addDetail(new InvoiceDetail()
+				.setQuantity(1)
+				.setPrice(100.0)
+				.setTaxableBase(100.0)
+				.addTax(new InvoiceTax()
+					.setTaxType(TaxType.VAT)
+					.setBase(100.0)
+					.setPercentage(21.0)
+					.setQuota(21.0)
+					.setDeductibleQuota(21.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				)
+				.addTax(new InvoiceTax()
+					.setTaxType(TaxType.RETENTION)
+					.setBase(100.0)
+					.setPercentage(15.0)
+					.setQuota(15.0)
+					.setDeductibleQuota(15.0)
+					.setWithholdingType(WithholdingType.PROFESSIONAL)
+				)
+			)
+			.setVatQuota(21.0)
+			.setRetentionQuota(15.0)
+			.setTotal(106.0)
+			.refreshTaxBreakdown()
+		;
+	}
+	
 }

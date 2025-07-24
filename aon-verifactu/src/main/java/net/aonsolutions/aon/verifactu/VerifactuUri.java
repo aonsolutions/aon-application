@@ -1,8 +1,5 @@
 package net.aonsolutions.aon.verifactu;
 
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.type.Administration;
-
 public class VerifactuUri {
 		
 	private VerifactuUri() {

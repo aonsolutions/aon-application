@@ -1,16 +1,11 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPException;
 
 import org.junit.jupiter.api.Test;
 
@@ -46,17 +41,14 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
-import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
-class VentaNacionalSimpleTest {
-	// En el entorno de pruebas los XML de entrada se deben ejecutar en la siguente dirección:
-	private String TEST_URL = "https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/ValRegistroNoVerifactu";
+class VentaNacionalIRPFProfessionalTest {
 	
 	@Test
-	void invoiceTest() throws VerifactuException, JAXBException, SOAPException, IOException {
+	void invoiceTest() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLE() );
+		invoices.add( InvoiceTypes.VENTA_NACIONAL_IRPF_PROFESSIONAL() );
 		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
@@ -207,7 +199,7 @@ class VentaNacionalSimpleTest {
 	    assertEquals( "01" , sistemaInformatico.getIdSistemaInformatico());
 	    assertEquals( "aonSolutions" , sistemaInformatico.getNombreSistemaInformatico());
 	    assertEquals( "9.23" , sistemaInformatico.getVersion());
-	    assertEquals( vc.getCompany().getDocument() + "-1" , sistemaInformatico.getNumeroInstalacion());
+	    assertEquals( "11111111H-1" , sistemaInformatico.getNumeroInstalacion());
 	    assertEquals( SiNoType.N , sistemaInformatico.getTipoUsoPosibleSoloVerifactu());
 	    assertEquals( SiNoType.S , sistemaInformatico.getTipoUsoPosibleMultiOT());
 	    assertEquals( SiNoType.S , sistemaInformatico.getIndicadorMultiplesOT());
@@ -219,18 +211,9 @@ class VentaNacionalSimpleTest {
 	    assertNotNull( rfat.getHuella() );
 	    assertNull( rfat.getSignature() );
 	    
-	    if ( vc.getConfig().getCertificate() != null) {
-	    	VerifactuResponse response = XMLUtils.post(
-    			vc.getConfig().getCertificate()
-    			, TEST_URL
-    			, XMLUtils.soapMarshal(rfsf, RegFactuSistemaFacturacion.class));
-	    	assertNotNull( response );
-	    	assertFalse( response.isError() );
-	    }
-	    
 	}
 	
-	private VerifactuConfiguration config() {
+	private  VerifactuConfiguration config() {
 		return new VerifactuConfiguration()
 			.setActive(true)
 			.setTest(true)
@@ -247,5 +230,4 @@ class VentaNacionalSimpleTest {
 		company.setDomain(new Domain().setId(1));
 		return company;
 	}
-	
 }
