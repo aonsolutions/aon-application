@@ -45,11 +45,14 @@
 							<rules>
 								<rule>
 									<element>PACKAGE</element>
+									<includes>
+						                <include>net.aonsolutions.aon.verifactu</include>
+              						</includes>
 									<limits>
 										<limit>
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>50%</minimum>
+											<minimum>56%</minimum>
 										</limit>
 									</limits>
 								</rule>
