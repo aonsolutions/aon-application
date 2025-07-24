@@ -414,7 +414,7 @@ export class AonNewMenu extends AonElement {
 	}
 
 	addMenuSidenavApp(ul, app) {
-      if (this.isAyudaT() || (app.title != 'Planes'&& !this.isAyudaT())){
+	if (((this.isAyudaT() && app.app != CONSTANT.PLANS)  || (this.isAyudaT() && app.app == CONSTANT.PLANS && (this.getDur().isAdmin() || this.getDur().isEnterprise()))) || (app.app != CONSTANT.PLANS && !this.isAyudaT())){
 		let li = this.createElement(TAG.LI);
 		li.id = `aonMenuList-${app.app}`;
 		li.classList.add("aonNewMenuSideNavLi");
@@ -616,7 +616,7 @@ export class AonNewMenu extends AonElement {
             icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
             icon.innerHTML = app.symbol;
             icon.setAttribute("data-icon", app.symbol);
-            if(app.title == 'Planes' && this.isAyudaT()){
+            if(app.app == CONSTANT.PLANS && this.isAyudaT()){
               a.classList.add('color-green');
             }
             icon.classList.add("aonNewMenuAppIcon");
@@ -630,8 +630,8 @@ export class AonNewMenu extends AonElement {
               icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 //              icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
               icon.innerHTML = app.symbol;
-              if(app.title == 'Planes' && this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
-//                  icon.style.color = "green";
+              if(app.title == CONSTANT.PLANS && this.isAyudaT()){
+                  icon.style.color = "green";
               } 
               if(app.newColor || app.color) {
 //                  icon.style.color = app.newColor || app.color;
