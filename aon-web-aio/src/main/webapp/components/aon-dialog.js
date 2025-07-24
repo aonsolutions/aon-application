@@ -276,6 +276,7 @@ export class AonDialog extends AonElement {
 
 	onClick(){
 		const dialog = this.getDialog();
+		dialog.classList.add('-hidden');
 		if(dialog){
 			dialog.onclick = ({target}) => {
 				if (target === dialog && this.autoclose) {
@@ -309,6 +310,9 @@ export class AonDialog extends AonElement {
 	close() {
 		this.autoclose = true;
 		let dialog = this.getDialog();
+		if (dialog.classList.contains('aon-dialog-hidden')) {
+			dialog.classList.remove('aon-dialog-hidden');
+		}
 		if(dialog) dialog.style.display = 'none';
 		this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
 
