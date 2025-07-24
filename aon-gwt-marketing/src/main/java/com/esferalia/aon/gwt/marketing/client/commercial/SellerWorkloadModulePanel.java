@@ -109,6 +109,12 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		customerStatus.addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
+            	if(customerStatus.getSelectedOptions().isEmpty()) {
+            		Set<String> selectedOptions = new LinkedHashSet<String>();
+            		selectedOptions.add("Activo");
+            		customerStatus.setSelectedOptions(selectedOptions);
+            	}
+            	
             	onSearch( options );
             }
         });
@@ -195,6 +201,15 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			
 			if(null != sellerWorkloadListParams.getCustomers())
 				json.put("customer", new JSONString(sellerWorkloadListParams.getCustomers().toString()));
+			
+			if(null != sellerWorkloadListParams.getCustomerActive())
+				json.put("customerActive", new JSONString( Boolean.toString( sellerWorkloadListParams.getCustomerActive() )));
+			
+			if(null != sellerWorkloadListParams.getCustomerInactive())
+				json.put("customerInactive", new JSONString( Boolean.toString( sellerWorkloadListParams.getCustomerInactive() )));
+			
+			if(null != sellerWorkloadListParams.getCustomerBlocked())
+				json.put("customerBlocked", new JSONString( Boolean.toString( sellerWorkloadListParams.getCustomerBlocked() )));
 			
 			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 			json.put("isSellersWorkload", new JSONString("true"));

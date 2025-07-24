@@ -87,17 +87,6 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		});
 		setSearchPlaceholder("Filtrar por cliente, producto...");
 		
-//		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-//		cleanButton.addClickHandler(event -> {
-//			getSearchTextBox().setValue(null, false);
-//			
-//			sellerWorkloadFeePanel.resetSearchOffset();
-//			
-//			onSearch( getSellerWorkloadListParams() );
-//		});
-//		
-//		addFilterToolbarButton(cleanButton);
-		
 		// Customer Status
 		Set<String> customerStatusoptions = new LinkedHashSet<String>();
 		customerStatusoptions.add("Activo");
@@ -108,6 +97,12 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		customerStatus.addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
+            	if(customerStatus.getSelectedOptions().isEmpty()) {
+            		Set<String> selectedOptions = new LinkedHashSet<String>();
+            		selectedOptions.add("Activo");
+            		customerStatus.setSelectedOptions(selectedOptions);
+            	}
+            	
             	onSearch( getSellerWorkloadListParams() );
             }
         });
@@ -198,6 +193,10 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		
 		json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 		json.put("isSellerWorkload", new JSONString("true"));
+		
+		json.put("customerActive", new JSONString( Boolean.toString( customerStatus.getSelectedOptions().contains("Activo") )));
+		json.put("customerInactive", new JSONString( Boolean.toString( customerStatus.getSelectedOptions().contains("Inactivo") )));
+		json.put("customerBlocked", new JSONString( Boolean.toString( customerStatus.getSelectedOptions().contains("Bloqueado") )));
 		
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
             	+ "?filter=" + btoa(json.toString())

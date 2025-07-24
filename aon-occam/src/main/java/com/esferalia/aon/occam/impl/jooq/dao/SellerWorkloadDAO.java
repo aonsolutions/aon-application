@@ -708,13 +708,16 @@ public class SellerWorkloadDAO {
 		
 		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
 			
-			List<Byte> customerStatus = new ArrayList<Byte>();
+			if(null != params.getCustomerActive() || null != params.getCustomerInactive() || null != params.getCustomerBlocked()) {
+				List<Byte> customerStatus = new ArrayList<Byte>();
+				
+				if(null != params.getCustomerActive() && params.getCustomerActive()) customerStatus.add((byte)0);
+				if(null != params.getCustomerInactive() && params.getCustomerInactive()) customerStatus.add((byte)1);
+				if(null != params.getCustomerBlocked() && params.getCustomerBlocked()) customerStatus.add((byte)2);
+				
+				condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+			}
 			
-			if(params.getCustomerActive()) customerStatus.add((byte)0);
-			if(params.getCustomerInactive()) customerStatus.add((byte)1);
-			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-			
-			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
 		}
 
 		return condition;
