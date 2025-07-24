@@ -1,11 +1,16 @@
 package net.aonsolutions.aon.verifactu;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.soap.SOAPException;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,14 +46,17 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
+import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
-class VentaNacionalRETest {
+class VentaISPTest {
+	// En el entorno de pruebas los XML de entrada se deben ejecutar en la siguente dirección:
+	private String TEST_URL = "https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/ValRegistroNoVerifactu";
 	
 	@Test
-	void invoiceTest() throws VerifactuException {
+	void invoiceTest() throws VerifactuException, JAXBException, SOAPException, IOException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE() );
+		invoices.add( InvoiceTypes.VENTA_ISP() );
 		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
@@ -173,18 +181,18 @@ class VentaNacionalRETest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C18.getValue() , dt.getClaveRegimen() );
-	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
+	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.S_2 , dt.getCalificacionOperacion() );
 	    assertNull( dt.getOperacionExenta() );		
 	    assertEquals( "21" , dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
 	    assertEquals( "21" , dt.getCuotaRepercutida());
-	    assertEquals( "5.2" , dt.getTipoRecargoEquivalencia());
-	    assertEquals( "5.2" , dt.getCuotaRecargoEquivalencia());		
+	    assertNull( dt.getTipoRecargoEquivalencia() );		
+	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
 	    assertEquals( "21" , rfat.getCuotaTotal());
-	    assertEquals( "121" , rfat.getImporteTotal());
+	    assertEquals( "100" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );
@@ -198,7 +206,7 @@ class VentaNacionalRETest {
 	    assertEquals( "01" , sistemaInformatico.getIdSistemaInformatico());
 	    assertEquals( "aonSolutions" , sistemaInformatico.getNombreSistemaInformatico());
 	    assertEquals( "9.23" , sistemaInformatico.getVersion());
-	    assertEquals( "11111111H-1" , sistemaInformatico.getNumeroInstalacion());
+	    assertEquals( vc.getCompany().getDocument() + "-1" , sistemaInformatico.getNumeroInstalacion());
 	    assertEquals( SiNoType.N , sistemaInformatico.getTipoUsoPosibleSoloVerifactu());
 	    assertEquals( SiNoType.S , sistemaInformatico.getTipoUsoPosibleMultiOT());
 	    assertEquals( SiNoType.S , sistemaInformatico.getIndicadorMultiplesOT());
@@ -210,9 +218,18 @@ class VentaNacionalRETest {
 	    assertNotNull( rfat.getHuella() );
 	    assertNull( rfat.getSignature() );
 	    
+	    if ( vc.getConfig().getCertificate() != null) {
+	    	VerifactuResponse response = XMLUtils.post(
+    			vc.getConfig().getCertificate()
+    			, TEST_URL
+    			, XMLUtils.soapMarshal(rfsf, RegFactuSistemaFacturacion.class));
+	    	assertNotNull( response );
+	    	assertFalse( response.isError() );
+	    }
+	    
 	}
 	
-	private  VerifactuConfiguration config() {
+	private VerifactuConfiguration config() {
 		return new VerifactuConfiguration()
 			.setActive(true)
 			.setTest(true)
@@ -229,4 +246,5 @@ class VentaNacionalRETest {
 		company.setDomain(new Domain().setId(1));
 		return company;
 	}
+	
 }
