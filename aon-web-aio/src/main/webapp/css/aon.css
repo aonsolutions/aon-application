@@ -3353,6 +3353,15 @@ color: var(--aonWhite);
   margin-top: -16px;
 }
 
+.helpversionCardText{
+  display: flex;
+  padding: .5rem 1rem;
+  width: 100%;
+  gap: .5rem;
+  align-items: center;
+  margin-top: -16px;
+}
+
 .configCardText {
   border-radius: 5px;
   cursor: pointer;
@@ -3432,6 +3441,7 @@ color: var(--aonWhite);
   width: 90%;
   height: fit-content;
   margin-left: 10px;
+  margin-bottom: 70px;
 }
 
 .configPanelSuiteDiv{
