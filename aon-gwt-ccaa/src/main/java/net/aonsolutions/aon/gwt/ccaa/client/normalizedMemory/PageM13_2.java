@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,6 +23,8 @@ public class PageM13_2 extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
 	@UiField TabPanel tabPanel;
+	
+	@UiField InlineLabel groupTitle;
 
 	public PageM13_2(Deposit2 deposit) {
 		super(deposit);
@@ -36,7 +39,7 @@ public class PageM13_2 extends PageAbs {
 	private void initialize(Integer tab) {
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(tab != null ? tab : 0);
+		tabPanel.selectTab(tab != null ? tab : 0);		
 		initializeTable();
 	}
 
@@ -47,9 +50,10 @@ public class PageM13_2 extends PageAbs {
 			AON.MSG.fiscalYear() + " " + (getYear() - 1)
 		};
 		
-		if(getYear() < 2016){
+		if (getYear() < 2016) {
 			defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
 		} else {
+			groupTitle.setText("N\u00FAmero medio de personas empleadas en el curso del ejercicio");
 			defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS_2016);
 		}
 	}

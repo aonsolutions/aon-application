@@ -1691,7 +1691,7 @@ public abstract class CCAAPdfAction {
 			keys = D2DepositConstants.MRN13_ABREVIATE_KEYS_2016;
 		}
 
-		two("Número medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", keys, 8);
+		two(d2Deposit.getYear() < 2016 ? "Número medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)" : "Número medio de personas empleadas en el curso del ejercicio", keys, 8);
 		document.newPage();
 	}
 	

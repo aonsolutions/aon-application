@@ -293,7 +293,7 @@ public class D2DepositDescription {
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398006,"Ocupaciones elementales");
 				// 2015 Trabajadores no cualificados
-		DESCRIPTION_MAP.put(D2DepositKey.MA1398007,"Total empleado medio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398007,"TOTAL EMPLEO MEDIO");
 
 	}
 	
