@@ -73,6 +73,7 @@ export const CATEGORY = 'Kategorie';
 export const CATEGORIES = 'Kategorien';
 export const CERTIFICATE = 'Zertifikat';
 export const CERTIFICATES = 'Zertifikate';
+export const CERTIFICATIONS = 'Zertifizierungen';
 export const CHANGE_TYPE = 'Typ ändern';
 export const CHARGES_AND_PAYMENTS = 'Gebühren und Zahlungen';
 export const CHANGE_PASSWORD = 'Kennwort ändern';

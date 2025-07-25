@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,8 +34,11 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.CNAE2009ToCNAE2025;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
@@ -111,6 +116,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	}
 	
 	public Map<String, String> getSchema(AonData aonData, Company company, Integer year, Boolean textMode){
+		System.out.println("NormalizedMemoryServlet: getSchema (1) - year: " + year);
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId())
 				.and(f.getTypeProperty().eq((byte) 17))
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
@@ -141,12 +147,15 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	}
 	
 	private Map<String, String> getSchema(AonData aonData, Attach attach, Integer year){
+		System.out.println("NormalizedMemoryServlet: getSchema (2) - year: " +  year);
 		Map<String, String> map = new HashMap<String, String>();
 		if(year>=2017) {
 			map.put(D2DepositFooterKey.PR8080827.getCode(), "1");
 		}
 		try {
-			Esquema schema = Utils.readXml(attach.getData());		
+			// CREAMOS EL ESQUEMA SEGUN LOS DATOS GUARDADOS EN RATTACH (XML)
+			Esquema schema = Utils.readXml(attach.getData());
+			// SI NO ES MEMORIA NORMALIZADA, LEEMOS EL DOCUMENTO DE LA MEMORIA
 			if(!schema.getCabecera().isMemoriaNormalizada()) {
 				Vector<Integer> id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_MEMORY + year);
 				if(id.get(0) == -1) {
@@ -154,30 +163,57 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				}
 			}
 			
+			// RELLENAMOS LA LISTA DE CLAVES
 			List<Clave> claves = schema.getClaves().getClave();
 			if(schema.getError() != null) {
 				map.put("error", schema.getError());
+				System.out.println("NormalizedMemoryServlet: getSchema (2) - schema.getError() != null - " + schema.getError());
 			}
+			
+			// TIPO CUESTIONARIO (ABREVIADO, PYME)
 			String type = schema.getCabecera().getTipoCuestionario();
 			map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+			
+			// GUARDAR TODAS LAS CLAVES EN EL MAP
 			for (Integer i = 0; i < claves.size(); i++) {
 				if(!map.containsKey(claves.get(i).getCodigo().toString()))
 					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
 			}
 			
+			// CNAE2025 A PARTIR DE LAS CUENTAS ANUALES DE 2024, CUMPLIMENTARLO SI ESTA VACIO, SOLO SI EQUIVALENTE ES UNICO
+			CNAE2025 cnae2025 = null;
+			if (year >= 2024 && AonStringUtils.isBlank(map.get(D2DepositHeaderKey.IDA02014.getCode())) && AonStringUtils.isNotBlank(map.get(D2DepositHeaderKey.IDA02001.getCode()))) {
+				String cnae2009 = map.get(D2DepositHeaderKey.IDA02001.getCode());
+				cnae2025 = getCnae2025fromCnae2009(cnae2009);
+				if (cnae2025 != null) {
+					// Codigo CNAE2025
+					map.put(D2DepositHeaderKey.IDA02014.getCode(), cnae2025.getCodeWithoutPoint());
+					// Descripción la del CNAE 2025 (como hace el D2)
+					map.put(D2DepositHeaderKey.IDA02009.getCode(), cnae2025.getDescription()); 
+				}
+			}
+			
+			// SI EL AÑO NO COINCIDE CON EL QUE CONTIENE EL ESQUEMA, GRABO EL ESQUEMA EN LA BD ?? POR QUE NO VA A COINCIDIR EL AÑO ?? TAL VEZ PROBLEMAS AL GUARDAR LOS DATOS O ALGO ASI ??
 			if(year != null && year != -1  && !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
+				System.out.println("NormalizedMemoryServlet: getSchema (2) - Año no coincide con el esquema. year="+year + " esquema_ejercicio=" + schema.getCabecera().getEjercicio());
 				saveDeposit(aonData, map, year);
 			}
 			
+			// GRABAR CLAVES 8080852 O 8080805 PAGINA PR MEMORIA PYME O ABREVIADA, SEGUN TIPO CUESTIONARIO Y CNAE2025 SI ES NECESARIO
 			if(schema.getCabecera().getTipoCuestionario().equalsIgnoreCase("pymes")) {
 				String a = map.get(D2DepositFooterKey.PR8080852.getCode());
-				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year);
+				//updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year);
+				updateSchemaMemoryNew(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year, cnae2025);
 			} else {
 				String a = map.get(D2DepositFooterKey.PR8080805.getCode());
-				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080805.getCode(), year);
+				//updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080805.getCode(), year);
+				updateSchemaMemoryNew(aonData, "1".equals(a), D2DepositFooterKey.PR8080805.getCode(), year, cnae2025);
 			}
+			System.out.println("NormalizedMemoryServlet: getSchema (2) - OK");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.err.println("NormalizedMemoryServlet: getSchema (2) - ERROR");
 		}
 		return map;
 	}
@@ -209,6 +245,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	}
 	
 	public void saveDeposit(AonData aonData, Map<String, String> deposit, Integer year) {
+		System.out.println("NormalizedMemoryServlet: saveDeposit");
 		Esquema schema = getSchema(aonData, year);
 		if(!schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
 			schema.getCabecera().setEjercicio(BigInteger.valueOf(year));
@@ -219,7 +256,9 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			Esquema sch = Utils.readXml(b);
 			if(sch.getError() != null) {
 				// TODO
+				System.err.println("NormalizedMemoryServlet: saveDeposit - ERROR - " + sch.getError());
 			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+			System.out.println("NormalizedMemoryServlet: saveDeposit - OK ");
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -716,6 +755,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 
 	public void updateSchemaMemory(AonData aonData, Boolean bool, String key, Integer year){
 		Esquema schema = getSchema(aonData, year);
+		System.out.println("NormalizedMemoryServlet: updateSchemaMemory - year="+year+" esquema.ejercicio="+schema.getCabecera().getEjercicio());
 	
 		if(D2DepositFooterKey.PR8080805.getCode().equals(key)
 			|| D2DepositFooterKey.PR8080852.getCode().equals(key))
@@ -744,17 +784,92 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		}
 		
 		try {
+			// HACE LO MISMO QUE EN SAVEDEPOSIT, GRABA Y LEE EL FICHERO XML, LO PASA A ESQUEMA Y GRABA EL XML
 			byte[] b = Utils.writeXml(schema);
 			Esquema sch = Utils.readXml(b);
 			if(sch.getError() != null) {
 				// TODO
+				System.err.println("NormalizedMemoryServlet: updateSchemaMemory - sch.getError() != null - " + sch.getError());
 			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+			System.out.println("NormalizedMemoryServlet: updateSchemaMemory - OK");
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateSchemaMemoryNew(AonData aonData, Boolean bool, String key, Integer year, CNAE2025 cnae2025){
+		Esquema schema = getSchema(aonData, year);
+		System.out.println("NormalizedMemoryServlet: updateSchemaMemoryNew - year="+year+" esquema.ejercicio="+schema.getCabecera().getEjercicio());
+	
+		if(D2DepositFooterKey.PR8080805.getCode().equals(key)
+			|| D2DepositFooterKey.PR8080852.getCode().equals(key))
+			schema.getCabecera().setMemoriaNormalizada(!bool);
+		
+		List<Clave> claves = schema.getClaves().getClave();
+		Boolean esta = false;
+	
+		Integer index2009 = null; // Index de la casilla de la descripción del CNAE
+		Integer index2014 = null; // Index de la casilla del código del CNAE2025
+		for (Integer i = 0; i < claves.size(); i++) {
+			if(schema.getClaves().getClave().get(i).getCodigo().toString().equals(key)){
+				if(D2DepositFooterKey.PR8080805.getCode().equals(key)
+					|| D2DepositFooterKey.PR8080852.getCode().equals(key))
+					schema.getClaves().getClave().get(i).setValor(bool?"0":"1");
+				else schema.getClaves().getClave().get(i).setValor(bool?"1":"0");
+				esta = true;
+			}
+			// Guardo tambien el index de la descripción del CNAE, por si necesito actualizarlo con la descripción del CNAE2025
+			if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositHeaderKey.IDA02009.getCode())) {
+				index2009 = i;
+			}
+			// Guardo tambien el index del codigo del CNAE2025, por si ya existe y es necesario sobreescribirlo más abajo
+			if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositHeaderKey.IDA02014.getCode())) {
+				index2014 = i;
+			}
+			
+		}
+		if(!esta) {
+			Clave clave = new Clave();
+			clave.setCodigo(new BigInteger(key));
+			if(D2DepositFooterKey.PR8080805.getCode().equals(key)
+				|| D2DepositFooterKey.PR8080852.getCode().equals(key))
+				clave.setValor(bool?"0":"1");
+			else clave.setValor(bool?"1":"0");
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		// CNAE2025 si no es nulo, tambien lo grabamos en el esquema
+		if (cnae2025 != null) {
+			System.out.println("NormalizedMemoryServlet: updateSchemaMemoryNew - cnae2025 != null - " + cnae2025.getCode() + " " + cnae2025.getDescription());
+			// Codigo CNAE2025 
+			if (index2014 != null) {
+				schema.getClaves().getClave().get(index2014).setValor(cnae2025.getCodeWithoutPoint());
+			} else {
+				Clave c2014 = new Clave();
+				c2014.setCodigo(new BigInteger(D2DepositHeaderKey.IDA02014.getCode()));
+				c2014.setValor(cnae2025.getCodeWithoutPoint());
+				schema.getClaves().getClave().add(c2014);
+			}
+			// Descripción la del CNAE 2025 (como hace el D2)
+			if (index2009 != null)
+				schema.getClaves().getClave().get(index2009).setValor(cnae2025.getDescription());
+		}
+		
+		try {
+			byte[] b = Utils.writeXml(schema);
+			Esquema sch = Utils.readXml(b);
+			if(sch.getError() != null) {
+				// TODO
+				System.err.println("NormalizedMemoryServlet: updateSchemaMemoryNew - sch.getError() != null - " + sch.getError());
+			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+			System.out.println("NormalizedMemoryServlet: updateSchemaMemoryNew - OK");
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private Map<String, String> createD2Deposit(AonData aonData, Integer companyId, String name, String type,Integer year) {
+		System.out.println("NormalizedMemoryServlet: createD2Deposit"); 
 		Enterprise enterprise = AON.getEnterprise(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), companyId);
 		
 		// CNAE de la actividad principal, solo si es de longitud 4
@@ -772,21 +887,35 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				.sorted(Comparator.comparing(RecordData::getRecordDate,Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
 				.findFirst().orElse(null);
 		
+		// FALTA - AQUI SE PODRIA PONER LA LLAMADA AL INFORME DE EMPLEADOS DE LABORAL 
+		// PARA CUMPLIMENTAR AL MENOS EL DATO DE EMPLEO MEDIO DEL APARTADO 10 OTRA INFORMACION DE LA MEMORIA
+		// ContractServlet
+		
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-
-		if(isDigitalDeposit(aonData, year-1)){
+		Map<ID2DepositKey, String> ctxText = new LinkedHashMap<>();
+		
+        // COPIAR DATOS DEL EJERCICIO ANTERIOR
+		if (isDigitalDeposit(aonData, year-1)){
 			Esquema previousSchema = getSchema(aonData, year-1);
 			Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
 			D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
 			D2PrevioustoD2Current.fillPyg(ctx, mapPrevious);
 			Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
 			D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
-			mapFreeText = getFreeTextKeySchema(previousSchema);
+			mapFreeText = getFreeTextKeySchema(previousSchema);			
+			if (year >= 2024) {
+				Map<ID2DepositKey, String> mapPreviousIde = getMapPreviousIde(previousSchema); // Identificacion
+				D2PrevioustoD2Current.fillIde(ctxText, mapPreviousIde);
+				Map<ID2DepositKey, String> mapPreviousItr = getMapPreviousItr(previousSchema); // Titular Real
+				ctxText.putAll(mapPreviousItr);
+				Map<ID2DepositKey, String> mapPreviousPre = getMapPreviousPre(previousSchema); // Presentante que hace la solicitud
+				ctxText.putAll(mapPreviousPre);
+			}
 		}
 		
-		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
+		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
@@ -799,7 +928,91 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
 			, AttachType.REGISTRY);
 		return Utils.readXml(attach.getData());
-	}	
+	}
+	
+	private Map<ID2DepositKey, String> getMapPreviousIde(Esquema schema) {
+		
+		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
+		D2DepositHeaderKey[] keys = new D2DepositHeaderKey[] {
+ 			 // Mujeres y total miembros del órgano de administración
+			 D2DepositHeaderKey.IDA04212 
+			,D2DepositHeaderKey.IDA04213 
+			 // Personal asalariado
+			,D2DepositHeaderKey.IDA04001
+			,D2DepositHeaderKey.IDA04002
+			,D2DepositHeaderKey.IDA04010
+			,D2DepositHeaderKey.IDA04120
+			,D2DepositHeaderKey.IDA04121
+			,D2DepositHeaderKey.IDA04122
+			,D2DepositHeaderKey.IDA04123
+			 // Presentación de cuentas (fechas inicio y fin)
+			,D2DepositHeaderKey.IDA01102
+			,D2DepositHeaderKey.IDA01101
+		};
+		
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : keys) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}		
+		return map;
+		
+	}
+	 
+	private Map<ID2DepositKey, String> getMapPreviousItr(Esquema schema) {
+		
+		// Identificación del titular real a partir de 2024
+		ArrayList<D2DepositHeaderKey> itrKeysList = new ArrayList<>();
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4));   // Apartado Ia
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_5));   // Apartado Ib
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_6));   // Apartado II
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_3_A)); // Apartado IIIa
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_3_B)); // Apartado IIIb
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_A)); // Apartado IVa
+		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4_B)); // Apartado IVb
+		
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : itrKeysList) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}
+		
+		return map;
+		
+	}
+	
+	private Map<ID2DepositKey, String> getMapPreviousPre(Esquema schema) {
+		
+		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
+		D2DepositFooterKey[] keys = new D2DepositFooterKey[] {
+			 D2DepositFooterKey.PR8081201 // Nombre y apellidos del presentante que hace la solicitud	   
+			,D2DepositFooterKey.PR8081202 // DNI del presentante que hace la solicitud	                  
+			,D2DepositFooterKey.PR8081203 // Domicilio del presentante que hace la solicitud	            
+			,D2DepositFooterKey.PR8081204 // Ciudad del presentante que hace la solicitud	         
+			,D2DepositFooterKey.PR8081205 // Código postal del presentante que hace la solicitud               
+			,D2DepositFooterKey.PR8081206 // Provincia del presentante que hace la solicitud            
+			,D2DepositFooterKey.PR8081207 // Fax del presentante que hace la solicitud              
+			,D2DepositFooterKey.PR8081208 // Teléfono del presentante que hace la solicitud                   
+			,D2DepositFooterKey.PR8081209 // Correo electrónico del presentante que hace la solicitud
+		};
+		
+		Map<ID2DepositKey, String> map = new HashMap<>();
+		for (ID2DepositKey key : keys) {
+			for (Clave clave : schema.getClaves().getClave()) {
+				if (clave.getCodigo().toString().equals(key.getCode()) && clave.getValor() != null) {
+					map.put(key,clave.getValor());
+				}
+			}
+		}		
+		return map;
+		
+	}
 	
 	private Map<D2DepositHeaderKey, Double> getHeaderKeySchema(Esquema schema) {
 		Map<D2DepositHeaderKey, Double> map = new HashMap<D2DepositHeaderKey, Double>();
@@ -984,5 +1197,30 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 					m.value(), fileData, mf.getName(), aonData.getUser().getLogin());
 		}       
 	}
+
+	// Equivalencia del codigo CNAE2009 con el codigo CNAE2025, si es única
+	// cnae2009 puede venir con punto o sin punto
+	private static CNAE2025 getCnae2025fromCnae2009(String cnae2009) {
+		
+		if (AonStringUtils.isNotBlank(cnae2009)) {
+			if (AonStringUtils.containsNone(cnae2009, ".")) {
+				cnae2009 = AonStringUtils.left(cnae2009, 2) + "." + AonStringUtils.right(cnae2009, 2);
+			}
+			
+			CNAE2009ToCNAE2025 conv = CNAE2009ToCNAE2025.valueOfCode(cnae2009);
+			if (conv != null) {
+				String[] cnaes2025 = conv.getCode2025();
+				if (cnaes2025.length == 1) {
+					CNAE2025 cnae2025 = CNAE2025.valueOfCode(cnaes2025[0]);
+					if (cnae2025 != null) {
+						return cnae2025; 
+					}
+				}					
+			} 
+		}
+		return null;
+
+	}
+	
 	
 }
