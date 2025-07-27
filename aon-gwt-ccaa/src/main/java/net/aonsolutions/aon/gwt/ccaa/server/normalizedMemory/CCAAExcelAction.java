@@ -2350,7 +2350,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			keys = D2DepositConstants.MRN13_ABREVIATE_KEYS_2016;
 		}
 		// 2
-		general(pageMaxNumber, 2, new String[]{"N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", "Ejercicio " + getD2Deposit().getYear(), 
+		general(pageMaxNumber, 2, new String[]{getD2Deposit().getYear() < 2016 ? "N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)" : "N\u00famero medio de personas empleadas en el curso del ejercicio", "Ejercicio " + getD2Deposit().getYear(), 
 				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 2, 0, null);
 	}
 	
