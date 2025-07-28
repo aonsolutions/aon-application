@@ -98,10 +98,10 @@ public enum D2DepositHeaderKey implements ID2DepositKey {
 	,BA2121110(21110)	,BA21211109(211109)	,BA212111098(2111098)
 	,BA2121120(21120)	,BA21211209(211209)	,BA212112098(2112098)
 	,BA2121200(21200)	,BA21212009(212009)	,BA212120098(2120098)
-	,BA2121300(21300)	,BA21213009(213009)	,BA212130098(2130098)
+	,BA2121300(21300)	,BA21213009(213009)	,BA212130098(2130098) // Reservas
 	//***************** A partir ej. 2015 **********************
-	,BA2121350(21350)	,BA21213509(213509)	,BA212135098(2135098) 
-	,BA2121360(21360)	,BA21213609(213609)	,BA212136098(2136098)
+	,BA2121350(21350)	,BA21213509(213509)	,BA212135098(2135098) // Reserva de capitalización
+	,BA2121360(21360)	,BA21213609(213609)	,BA212136098(2136098) // Otras reservas
 	//**********************************************************
 	,BA2121400(21400)	,BA21214009(214009)	,BA212140098(2140098)
 	,BA2121500(21500)	,BA21215009(215009)	,BA212150098(2150098)
@@ -433,11 +433,11 @@ public enum D2DepositHeaderKey implements ID2DepositKey {
 	,IMA8099061(8099061)
 	
 	// IDENTIFICADOR DEL TITULAR REAL
-	,ITR8080828(8080828)
-	,ITR8080829(8080829)
+	,ITR8080828(8080828) // La entidad actualiza o declara datos de identificación del titular real (1- Sí, 2- No)
+	,ITR8080829(8080829) // La entidad está sujeta a la obligación de identificar al titular real porque no cotiza en mercados regulados (1- Sí, 2- No)
 	
-	,ITR8234001(8234001)
-	,ITR8234002(8234002)
+	,ITR8234001(8234001) // Tipo de actualización de los datos de identificación del titular real (1 = Primera presentación, 2 = Actualización por cambio de titular real, 3 = Rectificación de los datos erróneos de una declaración previa)
+	,ITR8234002(8234002) // Fecha en la que debe reputarse que se ha producido el cambio de los datos
 	
 	,ITR8210000(8210000)
 	,ITR8211000(8211000)

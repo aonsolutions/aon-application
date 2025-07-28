@@ -1165,7 +1165,7 @@ public enum D2DepositFooterKey implements ID2DepositKey {
 
 
 
-,PR8081001(8081001)
+,PR8081001(8081001) // Registro mercantil
 ,PR8081002(8081002)
 ,PR8081003(8081003)
 ,PR8081004(8081004)
