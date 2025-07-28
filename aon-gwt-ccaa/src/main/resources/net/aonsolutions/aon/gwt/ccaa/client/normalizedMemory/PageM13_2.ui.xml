@@ -8,14 +8,14 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:TabPanel ui:field="tabPanel" styleName="{aonResources.css.aonWidthAll}">
-		<g:Tab text="{msg.memory11_2Title}">
+		<g:Tab text="{msg.memory14_2Table3}">
 
 	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
 				<div class="{aonResources.css.aonGroupBody}">
 		 			<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory13_2Table}" />
+							<g:InlineLabel ui:field="groupTitle" text="{msg.memory13_2Table}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<g:FlexTable ui:field="table"/>

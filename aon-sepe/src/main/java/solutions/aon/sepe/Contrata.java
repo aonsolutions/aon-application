@@ -359,7 +359,9 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(cif, htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 			handleSepeExceptions(htmlPage);
 
@@ -436,6 +438,8 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
 
+			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 			handleSepeExceptions(htmlPage);
 
@@ -908,6 +912,17 @@ public class Contrata {
 		}
 	}
 
+	private static HtmlPage loginAndSelectEnterprise(String cif, HtmlPage htmlPage) throws IOException {
+		try {
+			HtmlForm form = htmlPage.getFormByName("loginForm");
+			form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
+			form.getInputByName("usuarioPrincipal").setValue(cif);
+			return form.getInputByName("enviar").click();
+		} catch ( Exception e) {
+			return htmlPage;
+		}
+	}
+
 	private static Contract getContractDataImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException,
@@ -1086,7 +1101,9 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
 					.click();
 			handleSepeExceptions(htmlPage);
@@ -1393,6 +1410,8 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
 
+			htmlPage = loginAndSelectEnterprise(contractExtension.getCif(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
 					.click();
 			handleSepeExceptions(htmlPage);
