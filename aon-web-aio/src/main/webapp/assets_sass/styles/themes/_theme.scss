@@ -17,7 +17,9 @@
   $scrollbar-background-color, $scrollbar-box-shadow, $scrollbar-thumb-background-color, $scrollbar-thumb-box-shadow, 
   $scrollbar-thumb-border, $scrollbar-thumb-hover-background-color, $scrollbar-thumb-hover-box-shadow
 ) {
-  $color-900-alpha: #{$color-900}0D;
+  
+  $color-900-alpha   : #{$color-900}0D;
+  $color-dialog-alpha: #{$color-800}80;
   
   $body-margin       : unset;
   $aonmodule-display : flex;
@@ -230,6 +232,28 @@
       }
     }
     // dialog
+    aon-dialog{
+      /*background-color: */
+      background-color: $color-dialog-alpha;
+      // Contenido
+      .aonDialog{
+        background-color: $color-box;
+        .dialog-head{
+          border-bottom: v.$px-1-6 solid $color-300;
+          aon-icon-button i {
+            &::after {
+              background-color: $color-text;
+            }
+          }
+        }
+        .dialog-body{
+          
+
+        }
+      }
+    }
+
+    // dialog-menu
     aon-dialog-menu{
       background-color : $color-700;
       box-shadow       : $box-shadow-dialog;
@@ -387,11 +411,11 @@
     // login
     aon-new-login{
       #logoContent{
-        background-color : $color-login;
+        background-color: $color-login;
         #logoSVG{
-          background-image : url($logo);
-          width : $logo-width;
-          height : $logo-height;
+          background-image: url($logo);
+          width           : $logo-width;
+          height          : $logo-height;
         }
       }
       #loginContent, #magicLinkContent{

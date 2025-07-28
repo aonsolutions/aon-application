@@ -120,6 +120,9 @@ export class AonLoginPanel extends AonElement {
           let buttonEditPass = this.createElement(TAG.BUTTON);
           buttonEditPass.innerText =  MSG.CHANGE_PASSWORD;
           buttonEditPass.addEventListener("click", (e) => {
+            
+            console.log('editar el pass');
+            
               let aonUser = new AonUser();
               aonUser.editPassword();
               let rightPanel = this.closest('aon-right-panel');

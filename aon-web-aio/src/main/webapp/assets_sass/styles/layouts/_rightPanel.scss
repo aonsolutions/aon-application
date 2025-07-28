@@ -6,13 +6,13 @@ aon-right-panel{
   right      : v.$px-0;
   min-width  : v.$px-350;
   height     : v.$pct-100;
-  z-index    : v.$num-1;
+  z-index    : v.$num-2;
   transform  : translateX(v.$px-0);
   transition : transform v.$t-03 ease-in-out;
   opacity    : v.$num-1;
   transition : transform v.$t-03 ease, opacity v.$t-03 ease;
   
-  #aonRightPanel{ 
+  #aonRightPanel{
     height         : v.$pct-100;
     display        : flex;
     flex-direction : column;

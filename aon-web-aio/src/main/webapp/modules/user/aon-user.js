@@ -18,7 +18,7 @@ import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser, deleteUserCache } from './UserCache.js';
 import { AonSwitch } from '../../components/aon-switch.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
 
@@ -427,43 +427,29 @@ export class AonUser extends AonElement {
 		let application = document.querySelector('aon-application');
 		let d = document.getElementById(application.DIALOG);
 		d.clear();
-		if(this.isMobile()) {
-            d.type = "fullscreen";
-        } else {
-            d.width = '400px';
-        }
 		d.setTitle("Cambiar Contraseña");
 
-		let div = document.createElement("div");
+        let newPassword   = new AonNewInput();
+        newPassword.id    = "aonConfigurationUserCardOldPassword";
+        newPassword.type  = "password";
+        newPassword.title = "Contraseña";
+        d.setContent(newPassword);
 
-        let oldPassword = new AonInput();
-        oldPassword.id = "aonConfigurationUserCardOldPassword";
-        oldPassword.type = "password";
-        oldPassword.description = "Contraseña";
-        div.appendChild(oldPassword);
-
-        let newPassword = new AonInput();
-        newPassword.id = "aonConfigurationUserCardNewPassword";
-        newPassword.type = "password";
-        newPassword.description = "Repetir Contraseña";
-        div.appendChild(newPassword);
-
-		d.setContent(div);
-
+        let newPasswordRepeat   = new AonNewInput();
+        newPasswordRepeat.id    = "aonConfigurationUserCardNewPassword";
+        newPasswordRepeat.type  = "password";
+        newPasswordRepeat.title = "Repetir Contraseña";
+        d.addContent(newPasswordRepeat);
+        
 		d.addAcceptAction(() => {
-			// if(newPassword && newPassword.length>5){
-				changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}, this.sessionData).then(()=>{
-					this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
-				}).catch(e=>this.showError(e))
-			// } else {
-			// 	this.showToast({message:"La contraseña debe tener al menos 6 carácter", type:CONSTANT.ERROR});
-			// }
-
+          changePassword({oldPassword:newPassword.value, newPassword:newPasswordRepeat.value}, this.sessionData).then(()=>{
+            this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
+          }).catch(e=>this.showError(e));
 		});
 		d.open();
 	}
 
-	save() {	
+	save() {
 		if(!this.isOnlyAuth())
 			updateUser(this.user);
 		if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {

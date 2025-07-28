@@ -1,23 +1,58 @@
 @use '../variables' as v;
 
-aon-dialog-menu{
-  width         : v.$px-200;
-  height        : auto;
-  position      : fixed;
-  border-radius : v.$border-radius;
-  ul{
-    list-style-type : none;
-    padding         : v.$px-0;
-    margin          : v.$px-0;
-    display         : grid;
-    li{
-      padding : v.$px-16; /* lo mismo que de gap */
-      cursor  : pointer;
-      &:first-child{
-        border-radius : v.$border-radius v.$border-radius v.$px-0 v.$px-0;
+aon-dialog{
+  position: fixed;
+  top     : 0;
+  left    : 0;
+  width   : 100vw;
+  height  : 100vh;
+  z-index : v.$num-99;
+  background-color: #cbd5e180;
+  // Posicionar contenido en el centro
+  display       : flex;
+  align-items   : center;
+  justify-content: center;
+  // No mostrar
+  &.aon-dialog-hidden{
+    display: none;
+  }
+  // Contenido
+  .aonDialog{
+    background   : white;
+    box-shadow   : 0 v.$px-10 v.$px-30 rgba(0, 0, 0, 0.3);
+    
+    width        : v.$pct-90;
+    border-radius: v.$border-radius;
+    max-width    : v.$px-800;
+    max-height   : 90vh;
+    overflow-y   : auto;
+    transition   : all 0.3s ease;
+    .dialog-head{
+      display        : flex;
+      justify-content: space-between;
+      align-items    : center;
+      padding        : v.$px-12 v.$padding;
+      font-family    : v.$font-primary-semibold;
+      font-size      : v.$font-size-h4;
+      line-height    : v.$line-height-h4;
+      letter-spacing : v.$letter-spacing-h4;
+      
+      /*border-bottom: v.$px-1-6 solid $color-300;*/
+      border-bottom: v.$px-1-6 solid #cbd5e1;
+      
+      &:empty {
+        display : none;
       }
-      &:last-child{
-        border-radius : v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
+    }
+    .dialog-body{
+      padding: v.$padding;
+      display: grid;
+      gap    : v.$gap;
+      
+      .dialog-body-content{
+        display       : flex;
+        flex-direction: column;
+        gap           : 1rem;
       }
     }
   }
