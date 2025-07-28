@@ -2,7 +2,6 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,15 +10,11 @@ import com.esferalia.aon.occam.api.model.Occam;
 
 class VerifactuContextTest {
 
-	private static class MyVerifactuContext extends VerifactuContext<String> {
-		
-	}
-	
 	@Test
 	void testContext() {
-		MyVerifactuContext vc1 = VerifactuMocker.mock( MyVerifactuContext.class ); 
+		VerifactuContext vc1 = VerifactuMocker.mock( VerifactuContext.class ); 
 		 
-		MyVerifactuContext vc2 = new MyVerifactuContext();
+		VerifactuContext vc2 = new VerifactuContext();
 		vc2.setConfig(vc1.getConfig());
 		vc2.setCompany(vc1.getCompany());
 		vc2.setActivities(vc1.getActivities());

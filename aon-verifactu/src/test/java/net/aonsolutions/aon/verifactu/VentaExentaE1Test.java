@@ -49,14 +49,14 @@ class VentaExentaE1Test {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_EXENTA_E1() );
-		VerifactuContext<RegFactuSistemaFacturacion> vc = new VerifactuContext<RegFactuSistemaFacturacion>()
+		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
 			.setInvoices(invoices);
 		assertInvoice( vc );
 	}
 
-	private void assertInvoice( VerifactuContext<RegFactuSistemaFacturacion> vc ) throws VerifactuException {
+	private void assertInvoice( VerifactuContext vc ) throws VerifactuException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		

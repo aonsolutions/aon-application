@@ -25,6 +25,8 @@ public enum VerifactuError {
 	AON_9002("9002", "Se han encontrado m\u00E1s de un valor para ClaveRegimen. Resolver caso."),
 	AON_9003("9003", "No hay desglose de impuestos en la factura."),
 	AON_9004("9004", "Error en la serilializaci\u00F3n XML."),
+	AON_9005("9005", "No se ha encontrado un valor para ClaveTipoFacturaType v\u00E1lido."),
+	AON_9006("9006", "Se han encontrado m\u00E1s de un valor para ClaveTipoFacturaType. Resolver caso."),
 	
 	
 	VERIFACTU_4102("4102", "El XML no cumple el esquema. Falta informar campo obligatorio."),

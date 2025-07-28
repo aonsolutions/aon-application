@@ -67,7 +67,7 @@ public class VERIFACTU {
 		VerifactuBlockchain blockchain, 
 		String user) throws VerifactuException {
 		
-		VerifactuContext<RegFactuSistemaFacturacion> vc = new VerifactuContext<RegFactuSistemaFacturacion>()
+		VerifactuContext vc = new VerifactuContext()
 			.setConfig(verifactuConfiguration)
 			.setCompany(company)
 			.setInvoices(invoices)
@@ -78,7 +78,7 @@ public class VERIFACTU {
 		}
 	}
 
-	public static void accept(AONContext ctx, VerifactuContext<RegFactuSistemaFacturacion> vc) throws VerifactuException {
+	public static void accept(AONContext ctx, VerifactuContext vc) throws VerifactuException {
 		check(vc);
 		vc.setRequest(Invoice2Verifactu.build(vc) );
 		try {
@@ -95,7 +95,7 @@ public class VERIFACTU {
 		}
 	}
 
-	private static <T> void check(VerifactuContext<T> vc) throws VerifactuException {
+	private static void check(VerifactuContext vc) throws VerifactuException {
 		if (vc == null) {
 			throw new VerifactuException(VerifactuError.AON_0001);
 		}
@@ -122,7 +122,7 @@ public class VERIFACTU {
 		
 	}
 
-	private static void save(AONContext ctx, VerifactuContext<RegFactuSistemaFacturacion> vc) throws VerifactuException, JAXBException {
+	private static void save(AONContext ctx, VerifactuContext vc) throws VerifactuException, JAXBException {
 		byte[] requestData = XMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
 		byte[] responseData = vc.getResponse().getResponse().getBytes();
 		// save DATA REQUEST

@@ -25,14 +25,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CuponType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.EncadenamientoFacturaAnteriorType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
@@ -63,7 +59,7 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuContext<?> vc) throws VerifactuException {
+	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws VerifactuException {
 		RegFactuSistemaFacturacion verifactu = new RegFactuSistemaFacturacion();
 		verifactu.setCabecera(getCabecera(vc));
 
@@ -81,7 +77,7 @@ class Invoice2Verifactu {
 		return verifactu;
 	}
 	
-	private static CabeceraType getCabecera(VerifactuContext<?> vc) { 
+	private static CabeceraType getCabecera(VerifactuContext vc) { 
 		final CabeceraType c = new CabeceraType();
 		PersonaFisicaJuridicaESType obligado = new PersonaFisicaJuridicaESType();
 		obligado.setNIF(vc.getCompany().getDocument());
@@ -103,7 +99,7 @@ class Invoice2Verifactu {
 		return c; 
 	}
 	
-	private static RegistroFacturaType getFactura(VerifactuContext<?> vc, Invoice invoice) throws VerifactuException {
+	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
@@ -122,26 +118,8 @@ class Invoice2Verifactu {
 		alta.setNombreRazonEmisor(vc.getCompany().getName());
 		alta.setSubsanacion(SubsanacionType.N);
 		alta.setRechazoPrevio(RechazoPrevioType.N);
-		alta.setTipoFactura(invoice.isSimplified() ? ClaveTipoFacturaType.F_2 : ClaveTipoFacturaType.F_1);
 		
-		if(invoice.isRectifier()) {
-			alta.setTipoFactura(invoice.isSimplified() ? ClaveTipoFacturaType.R_5 : ClaveTipoFacturaType.R_1);
-			alta.setTipoRectificativa(ClaveTipoRectificativaType.I);// por diferencia (I) o por sustitucion (S)
-
-			IDFacturaARType rectified = new IDFacturaARType();
-			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
-			rectified.setNumSerieFactura(invoice.getRectificationInvoiceReference());
-			rectified.setFechaExpedicionFactura( dateToString(invoice.getRectificationInvoiceDate()));
-			
-			alta.getFacturasRectificadas().getIDFacturaRectificada().add(rectified);
-			// SI FUERA FACTURA RECTIFICATIVO POR SUSTITUCIÓN.
-			// alta.getFacturasSustituidas().getIDFacturaSustituida().add(rectified);
-			
-			// ????????????????????????????????
-			alta.getImporteRectificacion().setBaseRectificada(null);
-			alta.getImporteRectificacion().setCuotaRecargoRectificado(null);
-			alta.getImporteRectificacion().setCuotaRectificada(null);			
-		}
+		ClaveTipoFactura.fill(vc, invoice, alta);
 
 		alta.setFechaOperacion( dateToString(invoice.getIssueDate() ));
 		
@@ -150,19 +128,9 @@ class Invoice2Verifactu {
 		
 		alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 
-		alta.setFacturaSinIdentifDestinatarioArt61D(invoice.isSimplified() ?  CompletaSinDestinatarioType.S : CompletaSinDestinatarioType.N);
-
 		alta.setMacrodato(MacrodatoType.N);
 
-		// Facturas emitidas por terceros. AUTOFACTURA!
-		// if(invoice.isThirdPart()) { 
-		//	alta.getTercero().setIDOtro(new IDOtroType());
-		//	alta.getTercero().setNIF("");
-		//	alta.getTercero().setNombreRazon("");
-		// }
-
 		PersonaFisicaJuridicaType destinatario = new PersonaFisicaJuridicaType();
-		// destinatario.setIDOtro(new IDOtroType());
 		destinatario.setNIF(invoice.getRegistryDocument());
 		destinatario.setNombreRazon(invoice.getRegistryName());
 		
@@ -251,7 +219,7 @@ class Invoice2Verifactu {
 		return AonDateUtils.format(d, DATE_FORMAT );
 	}
 	
-	private static DesgloseType getDesglose(VerifactuContext<?> vc, Invoice invoice) throws VerifactuException {
+	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		try {
 			DesgloseType desglose = new DesgloseType();
 			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();

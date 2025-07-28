@@ -12,7 +12,9 @@ import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public class VerifactuContext<T> {
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
+
+public class VerifactuContext {
 	
 	private VerifactuConfiguration config;
 	private Company company;
@@ -21,13 +23,13 @@ public class VerifactuContext<T> {
 	private VerifactuBlockchain blockchain;
 	private String user;
 	
-	private T request;
+	private RegFactuSistemaFacturacion request;
 	private VerifactuResponse response;
 	
 	public VerifactuConfiguration getConfig() {
 		return config;
 	}
-	public VerifactuContext<T> setConfig(VerifactuConfiguration config) {
+	public VerifactuContext setConfig(VerifactuConfiguration config) {
 		this.config = config;
 		return this;
 	}
@@ -35,7 +37,7 @@ public class VerifactuContext<T> {
 	public Company getCompany() {
 		return company;
 	}
-	public VerifactuContext<T> setCompany(Company company) {
+	public VerifactuContext setCompany(Company company) {
 		this.company = company;
 		return this;
 	}
@@ -53,7 +55,7 @@ public class VerifactuContext<T> {
 	public List<EnterpriseActivity> getActivities() {
 		return activities;
 	}
-	public VerifactuContext<T> setActivities(List<EnterpriseActivity> activities) {
+	public VerifactuContext setActivities(List<EnterpriseActivity> activities) {
 		this.activities = activities;
 		return this;
 	}
@@ -66,7 +68,7 @@ public class VerifactuContext<T> {
 	public List<Invoice> getInvoices() {
 		return invoices;
 	}
-	public VerifactuContext<T> setInvoices(List<Invoice> invoices) {
+	public VerifactuContext setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
 		return this;
 	}
@@ -74,7 +76,7 @@ public class VerifactuContext<T> {
 	public VerifactuBlockchain getBlockchain() {
 		return blockchain;
 	}
-	public VerifactuContext<T> setBlockchain(VerifactuBlockchain blockchain) {
+	public VerifactuContext setBlockchain(VerifactuBlockchain blockchain) {
 		this.blockchain = blockchain;
 		return this;
 	}
@@ -82,15 +84,15 @@ public class VerifactuContext<T> {
 	public String getUser() {
 		return user;
 	}
-	public VerifactuContext<T> setUser(String user) {
+	public VerifactuContext setUser(String user) {
 		this.user = user;
 		return this;
 	}
 	
-	public T getRequest() {
+	public RegFactuSistemaFacturacion getRequest() {
 		return request;
 	}
-	public VerifactuContext<T> setRequest(T request) {
+	public VerifactuContext setRequest(RegFactuSistemaFacturacion request) {
 		this.request = request;
 		return this;
 	}
@@ -98,7 +100,7 @@ public class VerifactuContext<T> {
 	public VerifactuResponse getResponse() {
 		return response;
 	}
-	public VerifactuContext<T> setResponse(VerifactuResponse response) {
+	public VerifactuContext setResponse(VerifactuResponse response) {
 		this.response = response;
 		return this;
 	}

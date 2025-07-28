@@ -29,7 +29,7 @@ class InvoiceTypes {
 		.setDocumentCountry(Country.ES)
 		.setName("Verfictu Cliente Test")
 	;
-	
+
 	static final RegistryAddress REGISTRY_ADDRESS_NATIONAL = new RegistryAddress()
 		.setStreetType(StreetType.CALLE)
 		.setAddress("Calle Verifactu")
