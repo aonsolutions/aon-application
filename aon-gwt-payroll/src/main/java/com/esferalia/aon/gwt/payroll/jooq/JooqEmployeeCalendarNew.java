@@ -695,45 +695,50 @@ public class JooqEmployeeCalendarNew {
 	}
 	
 	private static void setEmployeeCalendarDB(DSLContext dslContext, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo) {
+		
+		dslContext.transaction(t -> {
 			
-		// Contract
+			// Contract
+			Record contractRecord = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId))
+					.fetchOne();
+			
+			Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
+			
+			Date contractStartDate = contractRecord.get(CONTRACT.START_DATE);
+			Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
+			
+			// isFullTime
+			
+			Boolean isFullTime = employeeCalendarInfo.isFullTime();
+			
+			// Calendar Hours
+			
+			updateCalendarHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarHours());
+			
+			// Extra Hours
+			
+			updateExtraHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarExtraHours());
+			
+			// Complementary Hours
+			
+			updateComplementaryHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarComplementaryHours());
+			
+			// Working Days
+			
+			updateWorkingDays(dslContext, domainId, contractId, contractStartDate, contractEndDate, isFullTime, employeeCalendarInfo.getWorkingDays());
+			
+			// Contract Days Type
+			
+			updateDaysType(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarDaysType());
+			
+			// Contract Partiality Days Type
+			
+			updatePartialityDaysType(dslContext, domainId, contractId, employeeCalendarInfo.getPartialityDaysType());
+			
+		});
 		
-		Record contractRecord = dslContext.select().from(CONTRACT)
-				.where(CONTRACT.ID.eq(contractId))
-				.fetchOne();
 		
-		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
-		
-		Date contractStartDate = contractRecord.get(CONTRACT.START_DATE);
-		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
-		
-		// isFullTime
-		
-		Boolean isFullTime = employeeCalendarInfo.isFullTime();
-		
-		// Calendar Hours
-		
-		updateCalendarHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarHours());
-		
-		// Extra Hours
-		
-		updateExtraHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarExtraHours());
-		
-		// Complementary Hours
-		
-		updateComplementaryHours(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarComplementaryHours());
-		
-		// Working Days
-		
-		updateWorkingDays(dslContext, domainId, contractId, contractStartDate, contractEndDate, isFullTime, employeeCalendarInfo.getWorkingDays());
-		
-		// Contract Days Type
-		
-		updateDaysType(dslContext, domainId, contractId, employeeCalendarInfo.getCalendarDaysType());
-		
-		// Contract Partiality Days Type
-		
-		updatePartialityDaysType(dslContext, domainId, contractId, employeeCalendarInfo.getPartialityDaysType());
 		
 	}
 

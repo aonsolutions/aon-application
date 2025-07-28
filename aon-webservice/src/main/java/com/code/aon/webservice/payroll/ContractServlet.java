@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.DisabiltyLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 @SuppressWarnings("serial")
@@ -98,8 +99,21 @@ public class ContractServlet extends HttpServlet{
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
 					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
 					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getEndDate() : ejFinalDate;
-					Number number =(Number) MVEL.eval(c.getExpression());
+					
+					String expression = c.getExpression();
+					
+					if(expression.contains(","))
+						expression = normalizarExpresion(expression);
+					
+					// Try get coef, 1.00 by default or wrong format expression
+					Number number = 1.00;
+					try {
+						number = (Number) MVEL.eval(expression);
+					} catch (Exception e) {
+						System.err.println("MVEL.eval error -> " + c.getExpression());
+					}
 					Double coef = number.doubleValue();
+					
 					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0)
 					.filter(distinctByKey(p -> p.getName() + " " + p.getStartDate() + " " + p.getEndDate()))
 					.forEach(h -> {
@@ -172,7 +186,10 @@ public class ContractServlet extends HttpServlet{
 	
 				// TODO find by CategoryDescription & agreementLevel the correct agreementLevelCategory otherwise keep like now
 				if(null != contract.getAgreementLevel()) {
-					Optional<AgreementLevelCategory> agreementLevelCategory = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
+					Optional<AgreementLevelCategory> agreementLevelCategory = 
+						AonStringUtils.isBlank(contract.getCategoryDescription()) 
+						? Optional.empty()	
+						: PAYROLL.getAgreementLevelCategory(domainName, domainId, login, 
 							f -> f.getAgreementLevelProperty().eq(contract.getAgreementLevel()).and(f.getDescriptionProperty().likeIgnoreCase(contract.getCategoryDescription())));
 				
 					if(agreementLevelCategory.isPresent())
@@ -199,6 +216,19 @@ public class ContractServlet extends HttpServlet{
 		});
 		return array;
 	}
+	
+	public static String normalizarExpresion(String expr) {
+	    expr = expr.trim();
+
+	    // Eliminar puntos miles
+	    expr = expr.replaceAll("(\\d)\\.(\\d{3})", "$1$2");
+
+	    // Convierte comas en puntos
+	    expr = expr.replace(',', '.');
+
+	    return expr;
+	}
+
 	
 	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 	    Map<Object, Boolean> map = new ConcurrentHashMap<>();

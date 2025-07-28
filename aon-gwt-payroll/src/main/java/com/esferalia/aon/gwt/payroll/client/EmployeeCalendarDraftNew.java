@@ -1347,9 +1347,16 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 					Date startDate = getStartDate();
 					Date endDate = getEndDate();
 					Integer daysBetween = getDaysBetween(startDate, endDate);
-					addDayType(startDate, endDate, dayType,  Integer.toString(daysBetween));
+					
+					addDayTypeNoRefresh(startDate, endDate, dayType,  Integer.toString(daysBetween));
+					
 					if(DayType.NOTYPEDAY == dayType)
 						addPartialityDayType(startDate, endDate, dayType, Integer.toString(daysBetween));
+					else {
+						onChange();
+						changeYear();
+					}
+						
 				}
 			};
 		} else {
@@ -1357,9 +1364,15 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 			Date startDate = this.selectedDates.getSelectedList().get(0);
 			Date endDate = this.selectedDates.getSelectedList().get(this.selectedDates.getSelectedList().size() - 1);
 			Integer daysBetween = getDaysBetween(startDate, endDate);
-			addDayType(startDate, endDate, dayType,  Integer.toString(daysBetween));
-			if(DayType.NOTYPEDAY == dayType)
+			
+			addDayTypeNoRefresh(startDate, endDate, dayType,  Integer.toString(daysBetween));
+			
+			if(DayType.NOTYPEDAY == dayType) {
 				addPartialityDayType(startDate, endDate, dayType, Integer.toString(daysBetween));
+			} else {
+				onChange();
+				changeYear();
+			}
 		}
 		
 	}
@@ -1678,6 +1691,10 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 		employeeCalendarDraftObject.addDayType(startDate, endDate, dayType, expression);
 		onChange();
 		changeYear();
+	}
+	
+	private void addDayTypeNoRefresh(Date startDate, Date endDate, DayType dayType, String expression) {
+		employeeCalendarDraftObject.addDayType(startDate, endDate, dayType, expression);
 	}
 	
 	private void addPartialityDayType(Date startDate, Date endDate, DayType dayType, String expression) {

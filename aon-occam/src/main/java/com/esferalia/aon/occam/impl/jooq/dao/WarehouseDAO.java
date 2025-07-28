@@ -92,7 +92,6 @@ public class WarehouseDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
 	private static final DepartmentPropertiesDAO DEPARTMENT_PROPERTIES = new DepartmentPropertiesDAO();
-	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
 	private static final CarrierPackingPropertiesDAO CARRIER_PACKING_PROPERTIES = new CarrierPackingPropertiesDAO();
 	
 	private WarehouseDAO() {
@@ -290,20 +289,6 @@ public class WarehouseDAO {
 		});
 		return jooq.execute();
 	}
-
-	protected static class StockPropertiesDAO implements StockProperties {
-		protected Condition[] getConditions(StockFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ID);} 
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(STOCK.WAREHOUSE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(STOCK.DOMAIN);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(STOCK.QUANTITY);}
-	}
-	
 	
 	public static Stream<WarehouseTransfer> getWarehouseTransferStream(AONContext ctx, WarehouseTransferFilter filter){
 		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))
@@ -430,47 +415,7 @@ public class WarehouseDAO {
 		});
 		return list;
 	}
-	
-	public static Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
-		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
-		.fetchInto(STOCK).stream().map(new FullStockFiller());
-	}
-	
-	public static Stock getStock(AONContext ctx, StockFilter filter){
-		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(STOCK).stream().map(new FullStockFiller()).findFirst().orElse(new Stock());
-	}
-	
-	public static Stock saveStock(AONContext ctx, Stock stock) {
-		return stock.getId() != null 
-				? updateStock(ctx, stock).orElse(new Stock())
-				: insertStock(ctx, stock).orElse(new Stock());
-	}
-	
-	public static Optional<Stock> insertStock(AONContext ctx, Stock stock){
-		ctx.checkWrite();
-		ProductOldValidation.validateStocking(ctx, stock.getItem());
-		return ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE)
-				.values(stock.getDomain(), stock.getItem(), stock.getQuantity(), stock.getWarehouse())
-				.returning().fetch().stream().map(new FullStockFiller()).findFirst();
-	}
-	
-	public static Optional<Stock> updateStock(AONContext ctx, Stock stock){
-		ctx.checkWrite();
-		return ctx.getDslContext().update(STOCK)
-			.set(STOCK.QUANTITY, stock.getQuantity())
-			.set(STOCK.DOMAIN, stock.getDomain())
-			.set(STOCK.ITEM, stock.getItem())
-			.set(STOCK.WAREHOUSE, stock.getWarehouse())
-			.where(STOCK.ID.eq(stock.getId()))
-			.returning().fetch().stream().map(new FullStockFiller()).findFirst();
-	}
-	
-	public static Optional<Stock> deleteStock(AONContext ctx, Integer stockId){
-		Optional<Stock> stock = getStockStream(ctx, f -> f.getIdProperty().eq(stockId)).findFirst();
-		ctx.getDslContext().delete(STOCK).where(STOCK.ID.eq(stockId)).execute();
-		return stock;
-	}
+
 	
 	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
 		Result<Record1<Integer>> result = null;
@@ -767,18 +712,6 @@ public class WarehouseDAO {
 							.setNumber(r.getValue(WAREHOUSE_TRANSFER.NUMBER)));
 		}
 
-	}
-	
-	private static class FullStockFiller implements Function<StockRecord, Stock> {
-		@Override
-		public Stock apply(StockRecord r) {
-			return new Stock()
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setItem(r.getItem())
-					.setQuantity(r.getQuantity())
-					.setWarehouse(r.getWarehouse());
-		}
 	}
 	
 	public static class WarehouseFiller extends Filler implements Function<Record, Warehouse> {

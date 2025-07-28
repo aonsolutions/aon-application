@@ -40,7 +40,7 @@ public class PageF2 extends PageAbs {
 	
 	@UiField Label IDA01101;
 	
-	@UiField ListBox PR8081001 ; // ciudad / provinci
+	@UiField ListBox PR8081001 ; // Registro mercantil 
 	@UiField TextBox PR8081002 ; // tomo
 	@UiField TextBox PR8081003 ; // folio
 	@UiField TextBox PR8081004 ; // num hojas registral
@@ -90,7 +90,7 @@ public class PageF2 extends PageAbs {
 		
 		IDA01101 = new Label();
 		
-		PR8081001 = new ListBox(); // ciudad / provinci
+		PR8081001 = new ListBox(); // Registro mercantil
 		PR8081002 = new TextBox(); // tomo
 		PR8081003 = new TextBox(); // folio
 		PR8081004 = new TextBox(); // num hojas registral

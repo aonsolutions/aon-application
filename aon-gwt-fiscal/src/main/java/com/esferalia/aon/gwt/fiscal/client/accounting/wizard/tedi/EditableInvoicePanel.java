@@ -2113,12 +2113,22 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 			
 		if (!invoiceCallback.getConfiguration().isOCRActive()) {
-			Label noOCR = new Label( "OCR NO CONTRATADO" );
-			noOCR.setStyleName(AON.CSS.aonFlexGrow1());
+			FlowPanel fp = new FlowPanel();
+			fp.setStyleName(AON.CSS.aonWidthAll());
+			fp.addStyleName(AON.CSS.aonDisplayFlexEnd());
+			
+			InlineLabel noOCR = new InlineLabel( "APIdeF no CONTRATADO" );
+			noOCR.setTitle("Asistente Para Introducci\u00F3n de Facturas");
+			noOCR.getElement().getStyle().setPaddingLeft(30, Unit.PX);
+			noOCR.setStyleName(AON.CSS.aonLabelWithIcon());
+			noOCR.addStyleName(AON.CSS.aonIconInfo());
 			noOCR.addStyleName(AON.CSS.aonPaddingRight());
-			noOCR.addStyleName(AON.CSS.aonTextRight());
 			noOCR.addStyleName(AON.CSS.aonColorBlue());
-			dropPanel = new FocusPanel( noOCR );	
+			noOCR.addStyleName(AON.CSS.aonNowrap());
+			noOCR.addStyleName(AON.CSS.aonWidth300());
+			
+			fp.add( noOCR );
+			dropPanel = new FocusPanel( fp );	
 		} else {
 			dropPanel = new FocusPanel();
 		}
