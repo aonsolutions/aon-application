@@ -2,11 +2,14 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.watson.server.AonDateUtils.SIMPLE_DATE_FORMAT4;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jooq.InsertValuesStep11;
@@ -15,6 +18,7 @@ import org.jooq.Record2;
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
@@ -160,6 +164,39 @@ public class NordigenDAO {
 		}
 		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
 		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
+	}
+	
+	public static Integer insertStatementsNotRepeated(AONContext ctx, NordigenBankAccount account) throws AonCoreException {
+		Map<String, BankStatement> bankStatementMap = new HashMap<>();
+		LinkedList<NordigenBankStatement> notRepeatedMoves = new LinkedList<>();
+		List<NordigenBankStatement> moves = ctx.getDslContext().select()
+			.from(BANK_STATEMENT)
+			.where(BANK_STATEMENT.RBANK.eq(account.getRbank().getId()))
+			.fetchStreamInto(BANK_STATEMENT)
+			.map(bs -> dbToNordigenBankStatement(bs, account.getRbank()))
+			.collect(Collectors.toList());
+		for (NordigenBankStatement nordigenTransaction : moves) {
+			String comparisonKey = 
+	            AonDateUtils.format(nordigenTransaction.getOperationDate(), SIMPLE_DATE_FORMAT4) + ":" + 
+	            nordigenTransaction.getReference2() + ":" + 
+	            nordigenTransaction.getDescription() + ":" + 
+	            nordigenTransaction.isPayment() + ":" + 
+	            nordigenTransaction.getAmount();
+            bankStatementMap.put(comparisonKey, nordigenTransaction);
+        }
+		for (NordigenBankStatement nordigenTransaction : account.getNotInsertedMovements()) {
+			String comparisonKey = 
+		            AonDateUtils.format(nordigenTransaction.getOperationDate(), SIMPLE_DATE_FORMAT4) + ":" + 
+		            nordigenTransaction.getNordigenMovementId() + ":" + 
+		            nordigenTransaction.getDescription() + ":" + 
+		            nordigenTransaction.isPayment() + ":" + 
+		            nordigenTransaction.getAmount();
+			if(!bankStatementMap.containsKey(comparisonKey)) {
+				notRepeatedMoves.add(nordigenTransaction);
+			}
+		}
+		account.setNotInsertedMovements(notRepeatedMoves);
+		return NordigenDAO.insertStatements(ctx, account);
 	}
 
 	public static List<NordigenBankStatement> getBankStatements(AONContext ctx, RegistryBank rbank, Date dateFrom, Date dateTo) {
