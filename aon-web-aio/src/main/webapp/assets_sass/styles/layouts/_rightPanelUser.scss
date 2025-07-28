@@ -27,29 +27,13 @@ aon-right-panel{
       .userPanelNameInfoDiv{
         display      : flex;
         gap          : v.$gap;
-        /*padding-left : v.$padding;*/
         align-items  : center;
         &:first-of-type {
           justify-content : center;
-          /*padding-bottom  : v.$px-5;*/
           font-weight     : v.$font-weight-semibold;
           font-size       : v.$px-20;
-          /*padding-left    : v.$px-0;*/
          }
       }
     }
-
-/*    #aonLoginPanelLogout{
-      border-radius: v.$border-radius;
-      .userPanelInfoLinkDiv{
-        display         : flex;
-        align-items     : center;
-        justify-content : center;
-        padding         : v.$px-7 v.$px-0;
-        width           : v.$pct-100;
-        cursor          : pointer;
-        gap             : v.$px-10;
-      }
-    }  */
   }
 }

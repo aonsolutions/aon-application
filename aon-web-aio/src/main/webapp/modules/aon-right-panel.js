@@ -164,7 +164,7 @@ export class AonRightPanel extends AonElement {
 
     titleButtonOptions(){
       let toolbarRightButtonsPanel    = this.createDiv(this.TITLE_BUTTONS);
-      let rightPanelCloseButton       = new AonIconButton(); 
+      let rightPanelCloseButton       = new AonIconButton();
       rightPanelCloseButton.id        = this.CLOSE_BUTTON;
       rightPanelCloseButton.icon      ='close';
       rightPanelCloseButton.className = "rightPanelCloseButton";

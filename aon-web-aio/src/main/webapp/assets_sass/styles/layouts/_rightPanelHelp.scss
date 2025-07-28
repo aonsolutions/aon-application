@@ -16,18 +16,14 @@ aon-right-panel{
               font-size     : v.$px-16;
             }
           }
-          .helpCardText{
-            display       : flex;
-            gap           : v.$px-8;
-            font-size     : v.$px-16;
-            border-radius : v.$border-radius;
-            cursor: pointer;
-            // estos colores no estan en themes.scss porque no sera asi. Seran buttons normales
-            background-color : #f1f5f9;
-            padding          : v.$px-8 v.$padding v.$px-8 v.$padding;
-            &:hover{
-              background-color : #cbd5e1;
-              color            : #1E293B;
+          aon-card{
+            .aonCardContent{
+              display: grid;
+              gap    : v.$gap;
+              .card-list-row{
+                display: flex;
+                gap    : v.$gap;
+              }
             }
           }
           .divInfo{
