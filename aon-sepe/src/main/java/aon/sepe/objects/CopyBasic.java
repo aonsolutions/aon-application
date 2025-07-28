@@ -5,6 +5,8 @@ import java.util.Optional;
 
 public class CopyBasic {
 
+	private String cif;
+	
 	private String workAddress;
 	private String restContract;
 	private FirmType firmType;
@@ -17,6 +19,10 @@ public class CopyBasic {
 	private Date fini;
 	private Date fend;
 
+	public String getCif() {
+		return cif;
+	}
+	
 	public String getWorkAddress() {
 		return workAddress;
 	}
@@ -47,6 +53,11 @@ public class CopyBasic {
 
 	public CopyBasic setWorkAddress(String workAddress) {
 		this.workAddress = workAddress;
+		return this;
+	}
+	
+	public CopyBasic setCif(String cif) {
+		this.cif = cif;
 		return this;
 	}
 

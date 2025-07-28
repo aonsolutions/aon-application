@@ -282,7 +282,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- SEPE Files
 	
-	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde, String enterpriseCif, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getEmployeeCbcTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException;
 	

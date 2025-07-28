@@ -26,9 +26,9 @@ public class Sepe {
 	 * COPY BASIC CONTRACT
 	 */
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
+			final String certificateType, String ipf, Date fini, Date fend, String enterpriseCif) throws SepeException {
 		return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend,
-				Optional.empty());
+				Optional.empty(), enterpriseCif);
 	}
 
 	public static byte[] getTransformationPdf(final InputStream certificateInputStream,
@@ -59,9 +59,9 @@ public class Sepe {
 	}
 
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String sepeId) throws SepeException {
+			final String certificateType, String sepeId, String enterpriseCif) throws SepeException {
 		return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null,
-				Optional.ofNullable(sepeId));
+				Optional.ofNullable(sepeId), enterpriseCif);
 	}
 
 	public static byte[] getTransformationPdf(final InputStream certificateInputStream,
@@ -100,9 +100,9 @@ public class Sepe {
 
 	public static String sendContratoCopyBasic(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date fini, Date fend,
-			CopyBasic.FirmType firmType, String workAddress, String restContract) throws SepeException {
+			CopyBasic.FirmType firmType, String workAddress, String restContract, String enterpriseCif) throws SepeException {
 		CopyBasic copyBasic = new CopyBasic().setIpf(ipf).setFini(fini).setFend(fend).setFirmType(firmType)
-				.setWorkAddress(workAddress).setRestContract(restContract);
+				.setWorkAddress(workAddress).setRestContract(restContract).setCif(enterpriseCif);
 		return sendCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic);
 	}
 
