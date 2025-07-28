@@ -38,7 +38,6 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C01_NATIONAL.getBasicWithVat( ib );
-
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			return detalle;
 		}
@@ -149,10 +148,16 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C01_EXENTA_E1.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setOperacionExenta(OperacionExentaType.E_1);
 			return detalle;
 		}
 	},
+    /**
+     * Art. 25 - Entregas intracomunitarias
+     * 	Vender a empresas en otros países de la UE también está exento de IVA, 
+     * 	si el comprador tiene NIF-IVA intracomunitario y se prueba el envío.	
+     */
 	C01_EXENTA_E5("01") {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
@@ -171,6 +176,7 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C01_EXENTA_E5.getBasic(ib);
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setOperacionExenta(OperacionExentaType.E_5);
 			return detalle;
 		}
@@ -185,6 +191,7 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C02.getBasic(ib);
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setOperacionExenta(OperacionExentaType.E_2);
 			return detalle;
 		}
@@ -335,6 +342,7 @@ enum ClaveRegimen {
 	
 	private DetalleType getBasic( InvoiceBreakdown ib ) {
 		DetalleType detalle = new DetalleType();
+		detalle.setImpuesto(TipoImpuesto.IVA.getValue());
 		detalle.setClaveRegimen( this.getValue() );
 		detalle.setBaseImponibleOimporteNoSujeto(Invoice2Verifactu.doubleToString(ib.getBase()));
 		return detalle;
@@ -342,7 +350,6 @@ enum ClaveRegimen {
 	
 	private DetalleType getBasicWithVat( InvoiceBreakdown ib ) {
 		DetalleType detalle = this.getBasic(ib);
-		detalle.setImpuesto(TipoImpuesto.IVA.getValue());
 		detalle.setBaseImponibleACoste(null);
 		detalle.setTipoImpositivo(Invoice2Verifactu.doubleToString(ib.getPercentage()));
 		detalle.setCuotaRepercutida(Invoice2Verifactu.doubleToString(ib.getQuota()));

@@ -190,10 +190,10 @@ class VentaIntracomunitariaServiciosTest {
 	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
 	    assertEquals( CalificacionOperacionType.N_2, dt.getCalificacionOperacion() );
 	    assertNull( dt.getOperacionExenta() );		
-	    assertEquals( "21" , dt.getTipoImpositivo());
+	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
-	    assertEquals( "21" , dt.getCuotaRepercutida());
+	    assertNull( dt.getCuotaRepercutida());
 	    assertNull( dt.getTipoRecargoEquivalencia() );		
 	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    

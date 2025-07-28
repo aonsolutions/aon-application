@@ -45,7 +45,7 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 class VentaExentaE1Test {
 	
 	@Test
-	void ventaNacionalSimpleNoAct() throws VerifactuException {
+	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_EXENTA_E1() );
@@ -179,10 +179,10 @@ class VentaExentaE1Test {
 	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
 	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
 	    assertEquals( OperacionExentaType.E_1, dt.getOperacionExenta() );
-	    assertEquals( "0" , dt.getTipoImpositivo());
+	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
-	    assertEquals( "0" , dt.getCuotaRepercutida());
+	    assertNull( dt.getCuotaRepercutida());
 	    assertNull( dt.getTipoRecargoEquivalencia() );		
 	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
