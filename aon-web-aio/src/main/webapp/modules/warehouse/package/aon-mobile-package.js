@@ -15,6 +15,7 @@ import { printFile } from '../../../services/actionService.js';
 
 import * as ACTION from '../../actions.js';
 import * as UA from '../../../services/userAgentService.js';
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -95,7 +96,7 @@ export class AonMobilePackage extends AonElement {
 		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
 		toolbar.removeButton(ACTION.PRINT.id);
 		if(!this.isBlocked()) toolbar.addButtonAfter(ACTION.DELETE, () => this.delete());
-		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());		
+		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
 	}
 
   	buildPackage(parent){
@@ -213,6 +214,15 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	print() {
+		if(!this.fileUrl) {
+			let json = {
+				container: this.packaging.item.id,
+				domain_id: LS.getDomainId(),
+				domain_name: LS.getDomainName(),
+				login: LS.getDomainLogin()
+			};
+			this.fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		}
 		if(UA.isAndroidApp()) {
 			let file = {
 				url: this.fileUrl,
