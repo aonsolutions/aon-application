@@ -38,7 +38,9 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
-			return C01_NATIONAL.getBasic( ib );
+			DetalleType detalle = C01_NATIONAL.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
+			return detalle;
 		}
 	},
 	
@@ -162,6 +164,7 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C01_EXENTA_E1.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setOperacionExenta(OperacionExentaType.E_1);
 			return detalle;
 		}
@@ -262,8 +265,11 @@ enum ClaveRegimen {
 			return false;
 		}
 	}
-	// Recargo de equivalencia.
-	,C18("18") {
+	
+	,/**
+	 * OPERACIÓN DE RÉGIMEN DE RECARGO DE EQUIVALENCIA.
+	 */
+	C18("18") {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
@@ -280,6 +286,7 @@ enum ClaveRegimen {
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C18.getBasic( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setTipoRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurcharge()));
 			detalle.setCuotaRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurchargeQuota()));
 			return detalle;
@@ -326,7 +333,6 @@ enum ClaveRegimen {
 		detalle.setBaseImponibleACoste(null);
 		detalle.setTipoImpositivo(Invoice2Verifactu.doubleToString(ib.getPercentage()));
 		detalle.setCuotaRepercutida(Invoice2Verifactu.doubleToString(ib.getQuota()));
-		detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 		return detalle;
 	}
 
