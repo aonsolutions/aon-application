@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -31,6 +32,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -582,7 +584,7 @@ public class Deposit2 extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonDialog dialog = new AonDialog("Resetear", new Label("Est\u00e1 seguro de resetear el dep\u00f3sito de cuentas Anuales del ejercicio " + getYear() + ". Se perder\u00e1n todos los datos almacenados hasta ahora."));
+				AonDialog dialog = new AonDialog("Resetear Cuentas Anuales Ejercicio " + getYear(), new Label("Est\u00e1 seguro de resetear el dep\u00f3sito de cuentas Anuales del ejercicio " + getYear() + ". Se perder\u00e1n todos los datos almacenados hasta ahora."));
 				dialog.setAutoHideEnabled(true);
 				dialog.confirm(new AonAcceptDialogCallback() {
 					
@@ -594,6 +596,13 @@ public class Deposit2 extends DockLayoutPanel {
 					@Override
 					public void onAccept() {
 						dialog.hide();
+
+						final PopupPanel popup = new PopupPanel(false, true);
+						popup.add(new AonSplash());
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
 						getInma().reset(getAonData(), getCompany(), getYear(), new AsyncCallback<Map<String,String>>() {
 							
 							@Override
@@ -608,9 +617,12 @@ public class Deposit2 extends DockLayoutPanel {
 								setDeposit(result);
 								updateHeader(getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), getYear());
 								refreshPage();
+								popup.hide();
 							}
 							
-							@Override public void onFailure(Throwable caught) {}
+							@Override public void onFailure(Throwable caught) {
+								popup.hide();
+							}
 						});						
 					}
 				});

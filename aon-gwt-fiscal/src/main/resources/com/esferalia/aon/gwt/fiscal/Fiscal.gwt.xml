@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='aon_gwt_fiscal'>
-
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
@@ -41,15 +40,11 @@
 	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
-
 	
 	<!-- Other module inherits --> 
 	<entry-point class='com.esferalia.aon.gwt.fiscal.client.MainEntryPoint' />
-	
 
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='shared' />
-	
-
 </module>
