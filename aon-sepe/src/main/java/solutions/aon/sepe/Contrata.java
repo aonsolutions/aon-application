@@ -1542,16 +1542,7 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click();
 			handleSepeExceptions(htmlPage);
 			
-			HtmlInput cifInput = (HtmlInput) htmlPage.getElementById("selCif5");
-			if(null != cifInput) {
-				((HtmlSelect) htmlPage.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(copyBasic.getCif()), true);
-				
-				cifInput.setValue(copyBasic.getCif());
-				cifInput.setValueAttribute(copyBasic.getCif());
-				
-				htmlPage = ((HtmlInput) htmlPage.querySelector("input[name=enviar]")).click();
-				handleSepeExceptions(htmlPage);
-			}
+			htmlPage = loginAndSelectEnterprise(copyBasic.getCif(), htmlPage);
 			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_comunica_copiaBasicaContrato.jsp?origen=copiabasica").click();
 			handleSepeExceptions(htmlPage);
@@ -1805,17 +1796,8 @@ public class Contrata {
 					.click();
 			handleSepeExceptions(htmlPage);
 			
-			HtmlInput cifInput = (HtmlInput) htmlPage.getElementById("selCif5");
-			if(null != cifInput) {
-				((HtmlSelect) htmlPage.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(enterpriseCif), true);
-				
-				cifInput.setValue(enterpriseCif);
-				cifInput.setValueAttribute(enterpriseCif);
-				
-				htmlPage = ((HtmlInput) htmlPage.querySelector("input[name=enviar]")).click();
-				handleSepeExceptions(htmlPage);
-			}
-
+			htmlPage = loginAndSelectEnterprise(enterpriseCif, htmlPage);
+			
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
