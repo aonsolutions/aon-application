@@ -490,7 +490,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "SEPE");
 
-		return Sepe.getCopyBasicPdf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);	
+		return Sepe.getCopyBasicPdf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, fecha, fecha, null);	
 	}	
 	
 	private JSONArray getIpfxNaf(AonApiData api) throws SegSocialException, IOException, ParserConfigurationException {

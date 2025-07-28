@@ -550,7 +550,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
-				Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback)
+				Date startDate, Date endDate, String sepeIde, String enterpriseCif, AsyncCallback<String> callback)
 				throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
@@ -1195,7 +1195,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void getEmployeeCbc(String currentDomainName, String currentUser, String document,
-							Integer contractId, Date startDate, Date endDate, String sepeIde,
+							Integer contractId, Date startDate, Date endDate, String sepeIde, String enterpriseCif,
 							AsyncCallback<String> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
