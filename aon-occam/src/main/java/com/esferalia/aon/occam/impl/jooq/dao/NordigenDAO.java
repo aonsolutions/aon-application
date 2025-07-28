@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.watson.server.AonDateUtils.SIMPLE_DATE_FORMAT4;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jooq.InsertValuesStep11;
+import org.jooq.InsertValuesStep12;
 import org.jooq.Record2;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
@@ -118,7 +119,7 @@ public class NordigenDAO {
 	}
 
 	public static Integer insertStatements(AONContext ctx, NordigenBankAccount account) throws AonCoreException {
-		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
+		InsertValuesStep12<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String, String> query =
 			ctx.getDslContext().insertInto(
 				BANK_STATEMENT
 				, BANK_STATEMENT.DOMAIN
@@ -132,21 +133,28 @@ public class NordigenDAO {
 				, BANK_STATEMENT.STATUS
 				, BANK_STATEMENT.REFERENCE1
 				, BANK_STATEMENT.REFERENCE2
+				, BANK_STATEMENT.NORDIGEN_ID
 				);
-		
 		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();
-		
+		LinkedList<NordigenBankStatement> notRepeatedMoves = new LinkedList<>();
 		if (bankStatements != null) {
 			int lotNumber = BankStatementDAO.getNextLotNumber(ctx, ctx.getDomainId(), account.getRbank());
 			for (NordigenBankStatement bankStatement : bankStatements) {
+		        Calendar calendario = Calendar.getInstance();
+		        calendario.set(2025, Calendar.AUGUST, 1, 0, 0, 0);
+				Date targetDate = calendario.getTime();
+				boolean checkMoveInBD = true;
+				if(bankStatement.getOperationDate().after(targetDate)) {
+					checkMoveInBD = ctx.getDslContext().select().from(BANK_STATEMENT).where(BANK_STATEMENT.NORDIGEN_ID.eq(bankStatement.getNordigenMovementId()).and(BANK_STATEMENT.RBANK.eq(bankStatement.getRegistryBank().getId()))).fetch().stream().count() == 1 ? false : true;
+				}
 				if (!bankStatement.isPending() 
 					&& bankStatement.getOperationDate() != null
-					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()) ) {
-					
+					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()) 
+					&& checkMoveInBD) {
+					notRepeatedMoves.add(bankStatement);
 					bankStatement.setLotNumber(lotNumber);
 					// BankStatement Validation
 					BankStatementValidator.validate(ctx, bankStatement);
-					
 					query = query.values(bankStatement.getDomain()
 						,bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
 						,bankStatement.getLotNumber()
@@ -157,12 +165,15 @@ public class NordigenDAO {
 						,bankStatement.getDescription()
 						,bankStatement.getStatus().value()
 						,bankStatement.getReference1()
-						,bankStatement.getReference2());
+						,bankStatement.getReference2()
+						,bankStatement.getNordigenMovementId());
 				}
-				
 			}
 		}
-		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
+		notRepeatedMoves.addAll(account.getNotInsertedMovements().stream().filter(statement -> statement.isPending())
+		        .collect(Collectors.toList()));
+		account.setNotInsertedMovements(notRepeatedMoves);
+		final InsertValuesStep12<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String, String> finalQuery = query;
 		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
 	}
 	

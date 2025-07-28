@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -363,7 +364,13 @@ public class AonNordigen  {
 			}
 			
 			if(account.getMetadata() != null && account.getMetadata().getStatus() == NordigenAccountStatus.READY) {
-				updateBalancesAndTransactions(ctx, occam, token, account);
+				LocalDateTime now = LocalDate.now().atStartOfDay();
+		        LocalDateTime targetDate = LocalDateTime.of(2025, Month.AUGUST, 1, 0, 0, 0);
+				if(now.isAfter(targetDate)) {
+					updateBalancesAndTransactions(ctx, occam, token, account, true);
+				} else {					
+					updateBalancesAndTransactions(ctx, occam, token, account, false);
+				}
 			}
 
 		} catch (Exception e) {
@@ -641,10 +648,10 @@ public class AonNordigen  {
 		return new NordigenException(err);						
 	}
 	
-	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, NordigenBankAccount account) {
+	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, NordigenBankAccount account, Boolean usingNordigenId) {
 		NordigenAccountMetadata metadata = account.getMetadata();
 		String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
-		Date dateFrom = guessDateForm( account );
+		Date dateFrom = guessDateForm(account, usingNordigenId);
 		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
 
 			StringBuilder exceptionMessage = new StringBuilder();
@@ -667,12 +674,15 @@ public class AonNordigen  {
 			return stList;
 	}
 	
-	private static Date guessDateForm(NordigenBankAccount account) {
+	private static Date guessDateForm(NordigenBankAccount account, Boolean usingNordigenId) {
 		Date lastMovDate = account.getLastMovementDate();
 		Date today = new Date();
 		Date dateFrom = null;
 		if (lastMovDate != null) {
-			dateFrom = AonDateUtils.addDays(lastMovDate, 1);
+			if(usingNordigenId == null || usingNordigenId == false)
+				dateFrom = AonDateUtils.addDays(lastMovDate, 1);
+			else
+				dateFrom = lastMovDate;
 		} else {
 			NordigenInstitution institution = account.getInstitution();
 			if (institution != null && institution.getTransactionTotalDays() != null) {
@@ -736,28 +746,25 @@ public class AonNordigen  {
 	    }
 	}
 
-	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
+	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account, Boolean usingNordigenId) {
 	    try {	    	
 	    			CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
 	    	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
 	    	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
-	    	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account));
-
+	    	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account, usingNordigenId));
 	    	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
-
 	    	        account.setBalances(balancesFuture.get());
 	    	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
 	    	        account.setNotInsertedMovements(notInserted);
 	    	        if (notInserted != null && !notInserted.isEmpty()) {
 	    	            insertStatements(occam, account);
 	    	        }
-
 	    	        Integer calls = NordigenCallLogDAO.getCallsMadeToday(ctx, ctx.getDomainId(),
 	    	                account.getRbank().getId(), "update");
 	    	        NordigenRateLimiter.registerCall(ctx, ctx.getDomainId(), account.getRbank().getId(), "update", calls);
-
+	    	        LinkedList<NordigenBankStatement> i = account.getNotInsertedMovements();
+	    	        account.setNotInsertedMovements(i);
 	    	        NordigenDAO.updateRegistryBank(ctx, account);
-			
 	    } catch (CompletionException e) {
 	        handleRateLimitException(ctx, account, e);
 	    } catch (Exception e) {
