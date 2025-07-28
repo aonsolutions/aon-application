@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -9,8 +10,10 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseRectificacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.FacturasRectificadas;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
@@ -73,14 +76,13 @@ enum ClaveTipoFactura {
 			alta.setTipoFactura(ClaveTipoFacturaType.R_1);
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.N);
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I); 
+			FacturasRectificadas frs = new FacturasRectificadas();
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(inv.getRectificationInvoiceReference());
 			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
-			alta.getFacturasRectificadas().getIDFacturaRectificada().add(rectified);
-			alta.getImporteRectificacion().setBaseRectificada(null);
-			alta.getImporteRectificacion().setCuotaRecargoRectificado(null);
-			alta.getImporteRectificacion().setCuotaRectificada(null);			
+			frs.getIDFacturaRectificada().add(rectified);
+			alta.setFacturasRectificadas(frs);
 		}
 	},
 
@@ -149,14 +151,13 @@ enum ClaveTipoFactura {
 			alta.setTipoFactura(ClaveTipoFacturaType.R_5 );
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.S);
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I);
+			FacturasRectificadas frs = new FacturasRectificadas();
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(inv.getRectificationInvoiceReference());
 			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
-			alta.getFacturasRectificadas().getIDFacturaRectificada().add(rectified);
-			alta.getImporteRectificacion().setBaseRectificada(null);
-			alta.getImporteRectificacion().setCuotaRecargoRectificado(null);
-			alta.getImporteRectificacion().setCuotaRectificada(null);			
+			frs.getIDFacturaRectificada().add(rectified);
+			alta.setFacturasRectificadas(frs);
 		}
 	},
 
