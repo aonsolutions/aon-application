@@ -23,11 +23,11 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankValidation;
+import java.util.List;
 
 public class RegistryBankDAO {
 
 	private RegistryBankDAO() {
-		
 	}
 	
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
@@ -191,7 +191,7 @@ public class RegistryBankDAO {
 	public static Stream<RegistryBank> getByRequisition(AONContext ctx, String requisition) {
 		return RegistryBankDAO.getStream(ctx, f -> f.getRequisitionProperty().eq(requisition));
 	}
-	
+
 	/**
 	 * Get a collection of RegistryBank with the given sepaMandateRef
 	 * @param ctx context
@@ -315,6 +315,18 @@ public class RegistryBankDAO {
 			.findFirst()
 			.orElse(null);
 	}
-	
 
+    /*
+      Se ha importados:
+        import java.util.List;
+      Una vez usado ELIMINAR
+    */
+    public static List<RegistryBank> getByRequisitionIsNotNull(AONContext ctx) {
+        // Realizamos la consulta y la ejecutamos para obtener los IDs
+        return ctx.getDslContext()
+          .select(RBANK.ID, RBANK.DOMAIN, RBANK.REQUISITION, RBANK.BANK_ACCOUNT)
+          .from(RBANK)
+          .where(RBANK.REQUISITION.isNotNull())
+         .fetchInto(RegistryBank.class);
+    }
 }

@@ -17,12 +17,16 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import org.json.JSONArray;
+
+import com.code.aon.webservice.payroll.ContractServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -887,17 +891,14 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				.sorted(Comparator.comparing(RecordData::getRecordDate,Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
 				.findFirst().orElse(null);
 		
-		// FALTA - AQUI SE PODRIA PONER LA LLAMADA AL INFORME DE EMPLEADOS DE LABORAL 
-		// PARA CUMPLIMENTAR AL MENOS EL DATO DE EMPLEO MEDIO DEL APARTADO 10 OTRA INFORMACION DE LA MEMORIA
-		// ContractServlet
-		
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Map<ID2DepositKey, String> ctxText = new LinkedHashMap<>();
 		
         // COPIAR DATOS DEL EJERCICIO ANTERIOR
-		if (isDigitalDeposit(aonData, year-1)){
+		boolean hasPreviousDeposit = isDigitalDeposit(aonData, year-1);
+		if (hasPreviousDeposit) {
 			Esquema previousSchema = getSchema(aonData, year-1);
 			Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
 			D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
@@ -915,11 +916,81 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			}
 		}
 		
-		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
+		// DATOS DE LABORAL PARA DETERMINADAS CASILLAS (PERSONAL ASALARIADO)
+		putPayrollData(aonData.getDomain(), aonData.getUser().getLogin(), year, hasPreviousDeposit, ctx, ctxMem);
+		
+		// CREAR EL DEPOSITO (XML) CON TODOS LOS DATOS
+		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData, hasPreviousDeposit);
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
 		return getSchema(aonData, attach, year);
+	}
+
+	private void putPayrollData(Domain domain, String login, Integer year, boolean hasPreviousDeposit, Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem) {
+		
+		// Ejercicio actual
+		double[] currentYear = getPayrollData(domain, login, year);
+		ctx.put(D2DepositHeaderKey.IDA04001, currentYear[0]);   // Personal asalariado: Número medio de personas FIJO
+		ctx.put(D2DepositHeaderKey.IDA04002, currentYear[1]);   // Personal asalariado: Número medio de personas NO FIJO
+		ctx.put(D2DepositHeaderKey.IDA04010, currentYear[2]);   // Personal asalariado: Número medio de personas CON DISCAPACIDAD
+		ctx.put(D2DepositHeaderKey.IDA04120, currentYear[3]);   // Personal asalariado: Al término del ejercicio FIJO HOMBRES
+		ctx.put(D2DepositHeaderKey.IDA04121, currentYear[4]);   // Personal asalariado: Al término del ejercicio FIJO MUJERES
+		ctx.put(D2DepositHeaderKey.IDA04122, currentYear[5]);   // Personal asalariado: Al término del ejercicio NO FIJO HOMBRES
+		ctx.put(D2DepositHeaderKey.IDA04123, currentYear[6]);   // Personal asalariado: Al término del ejercicio NO FIJO MUJERES
+		ctxMem.put(D2DepositKey.MA1398007, currentYear[0] + currentYear[1]); // Memoria Apartado 10 Otra informacion: Número medio de personas empleadas en el curso del ejercicio TOTAL EMPLEO MEDIO
+		
+		// Datos del ejercicio anterior, solo si no existe deposito del ejercicio anterior, pues si 
+		// existe deposito del ejercicio anterior, esos datos se habrán copiado del ejercicio anterior
+		if (!hasPreviousDeposit) {
+			double[] previousYear = getPayrollData(domain, login, year-1);
+			ctx.put(D2DepositHeaderKey.IDA040019, previousYear[0]);   // Personal asalariado: Número medio de personas FIJO
+			ctx.put(D2DepositHeaderKey.IDA040029, previousYear[1]);   // Personal asalariado: Número medio de personas NO FIJO
+			ctx.put(D2DepositHeaderKey.IDA040109, previousYear[2]);   // Personal asalariado: Número medio de personas CON DISCAPACIDAD
+			ctx.put(D2DepositHeaderKey.IDA041209, previousYear[3]);   // Personal asalariado: Al término del ejercicio FIJO HOMBRES
+			ctx.put(D2DepositHeaderKey.IDA041219, previousYear[4]);   // Personal asalariado: Al término del ejercicio FIJO MUJERES
+			ctx.put(D2DepositHeaderKey.IDA041229, previousYear[5]);   // Personal asalariado: Al término del ejercicio NO FIJO HOMBRES
+			ctx.put(D2DepositHeaderKey.IDA041239, previousYear[6]);   // Personal asalariado: Al término del ejercicio NO FIJO MUJERES
+			ctxMem.put(D2DepositKey.MA13980079, previousYear[0] + previousYear[1]); // Memoria Apartado 10 Otra informacion: Número medio de personas empleadas en el curso del ejercicio TOTAL EMPLEO MEDIO
+		}
+		
+	}
+	
+	private double[] getPayrollData(Domain domain, String login, Integer year) {
+		
+		try {
+			JSONArray array = ContractServlet.getContractMediaList(domain, login, year);
+			if (!array.isEmpty()) {
+				double fixed = 0.0, 
+					   unfixed = 0.0, 
+					   discap = 0.0, 
+					   fixedEndH = 0.0, 
+					   fixedEndM = 0.0, 
+					   unfixedEndH = 0.0, 
+					   unfixedEndM = 0.0;
+					
+				for (int i = 0; i < array.length(); i++){
+					fixed = fixed + array.getJSONObject(i).optDouble("fixed", 0.0);
+					unfixed = unfixed + array.getJSONObject(i).optDouble("unfixed", 0.0);
+					if (array.getJSONObject(i).getJSONObject("disability").getInt("id") != -1) {
+						discap = discap + array.getJSONObject(i).optDouble("fixed", 0.0) + array.getJSONObject(i).optDouble("unfixed", 0.0);
+					}
+					if (array.getJSONObject(i).getJSONObject("gender").getInt("id") == 1) {
+						fixedEndM = fixedEndM + array.getJSONObject(i).optDouble("end_fixed", 0.0);
+						unfixedEndM = unfixedEndM + array.getJSONObject(i).optDouble("end_unfixed", 0.0);
+					} else {
+						fixedEndH = fixedEndH + array.getJSONObject(i).optDouble("end_fixed", 0.0);
+						unfixedEndH = unfixedEndH + array.getJSONObject(i).optDouble("end_unfixed", 0.0);
+					}
+				}
+				return new double[] {fixed, unfixed, discap, fixedEndH, fixedEndM, unfixedEndH, unfixedEndM}; 
+			}
+		} catch (Exception e) {
+			// Pase lo que pase, que no afecte al resto de la creación del deposito (se devolverá todo ceros)
+			e.printStackTrace();
+		}
+		return new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		
 	}
 
 	public Esquema getSchema(AonData aonData, Integer year){
@@ -966,6 +1037,8 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		
 		// Identificación del titular real a partir de 2024
 		ArrayList<D2DepositHeaderKey> itrKeysList = new ArrayList<>();
+		itrKeysList.add(D2DepositHeaderKey.ITR8080828); 
+		itrKeysList.add(D2DepositHeaderKey.ITR8080829);
 		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_4));   // Apartado Ia
 		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_5));   // Apartado Ib
 		itrKeysList.addAll(Arrays.asList(D2DepositConstants.ITR_KEYS_6));   // Apartado II
@@ -989,7 +1062,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	
 	private Map<ID2DepositKey, String> getMapPreviousPre(Esquema schema) {
 		
-		// Identificación: Claves que se van a copiar del ejercicio anterior a partir del 2024
+		// Identificación del presentante: Claves que se van a copiar del ejercicio anterior a partir del 2024
 		D2DepositFooterKey[] keys = new D2DepositFooterKey[] {
 			 D2DepositFooterKey.PR8081201 // Nombre y apellidos del presentante que hace la solicitud	   
 			,D2DepositFooterKey.PR8081202 // DNI del presentante que hace la solicitud	                  
@@ -1000,6 +1073,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			,D2DepositFooterKey.PR8081207 // Fax del presentante que hace la solicitud              
 			,D2DepositFooterKey.PR8081208 // Teléfono del presentante que hace la solicitud                   
 			,D2DepositFooterKey.PR8081209 // Correo electrónico del presentante que hace la solicitud
+			,D2DepositFooterKey.PR8081001 // Registro mercantil
 		};
 		
 		Map<ID2DepositKey, String> map = new HashMap<>();

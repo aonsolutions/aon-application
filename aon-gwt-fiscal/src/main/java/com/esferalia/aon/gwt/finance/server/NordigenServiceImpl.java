@@ -6,6 +6,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenService;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -77,7 +79,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country) throws NordigenException {
 		return AonNordigen.getInstitutionsByCountry(token, country);
 	}
-	@Override 
+	@Override
 	public List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) throws NordigenException {
 		return AonNordigen.setAllBankAccountValues(occam, token);
 	}
@@ -100,4 +102,30 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<String> getCallStatuses(Occam occam, NordigenBankAccount account){
 		return AonNordigen.getCallStatuses(occam, account);
 	}
+    
+    /*
+      Se ha importados:
+        import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+      Una vez usado ELIMINAR
+    */
+    @Override
+    public List<RegistryBank> getByRequisitionIsNotNull(Occam occam){
+      return AonNordigen.getByRequisitionIsNotNull(occam);
+    }
+    
+    @Override
+    public String getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank) {
+    	  return AonNordigen.getAccountIdByIban(token, requisitionId, rbank);
+    }
+    
+    @Override
+    public List<BankStatement> checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank){
+    	return AonNordigen.checkIncorrectMovements(occam, token, accountIds, rbank);
+    }
+
+    @Override
+    public void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount) {
+    	AonNordigen.insertCorrectMovements(occam, nordigenBankAccount);
+    }
+    
 }

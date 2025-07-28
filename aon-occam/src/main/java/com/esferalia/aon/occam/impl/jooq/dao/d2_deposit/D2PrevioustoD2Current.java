@@ -74,6 +74,9 @@ public class D2PrevioustoD2Current {
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121120,D2DepositHeaderKey.BA21211209)
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121200,D2DepositHeaderKey.BA21212009)
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121300,D2DepositHeaderKey.BA21213009)
+		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121350,D2DepositHeaderKey.BA21213509)
+		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121360,D2DepositHeaderKey.BA21213609)
+		// -----
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121400,D2DepositHeaderKey.BA21214009)
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121500,D2DepositHeaderKey.BA21215009)
 		,(ctx,mapPrevious) ->  set(ctx,mapPrevious,D2DepositHeaderKey.BA2121600,D2DepositHeaderKey.BA21216009)

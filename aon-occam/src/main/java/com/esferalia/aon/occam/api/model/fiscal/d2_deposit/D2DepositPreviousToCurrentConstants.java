@@ -17,7 +17,8 @@ public class D2DepositPreviousToCurrentConstants {
 		,D2DepositHeaderKey.BA2120000	,D2DepositHeaderKey.BA2121000
 		,D2DepositHeaderKey.BA2121100	,D2DepositHeaderKey.BA2121110
 		,D2DepositHeaderKey.BA2121120	,D2DepositHeaderKey.BA2121200
-		,D2DepositHeaderKey.BA2121300	,D2DepositHeaderKey.BA2121400
+		,D2DepositHeaderKey.BA2121300   ,D2DepositHeaderKey.BA2121350	
+		,D2DepositHeaderKey.BA2121360	,D2DepositHeaderKey.BA2121400
 		,D2DepositHeaderKey.BA2121500	,D2DepositHeaderKey.BA2121600
 		,D2DepositHeaderKey.BA2121700	,D2DepositHeaderKey.BA2121800
 		,D2DepositHeaderKey.BA2121900	,D2DepositHeaderKey.BA2122000
