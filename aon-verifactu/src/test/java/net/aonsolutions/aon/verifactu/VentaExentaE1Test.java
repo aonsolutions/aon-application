@@ -177,7 +177,7 @@ class VentaExentaE1Test {
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
 	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
-	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
+	    assertNull( dt.getCalificacionOperacion() );
 	    assertEquals( OperacionExentaType.E_1, dt.getOperacionExenta() );
 	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());

@@ -14,6 +14,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.FacturasRectificadas;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
@@ -36,6 +37,7 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.F_1);
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.N);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 		}
 	},
 
@@ -56,6 +58,7 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.F_2 );
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.S);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.S);
 		}
 	},
 
@@ -75,6 +78,7 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.R_1);
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.N);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I); 
 			FacturasRectificadas frs = new FacturasRectificadas();
 			IDFacturaARType rectified = new IDFacturaARType();
@@ -150,12 +154,16 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.R_5 );
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.S);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.S);
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I);
+
 			FacturasRectificadas frs = new FacturasRectificadas();
+
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(inv.getRectificationInvoiceReference());
 			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
+
 			frs.getIDFacturaRectificada().add(rectified);
 			alta.setFacturasRectificadas(frs);
 		}

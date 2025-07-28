@@ -124,8 +124,6 @@ class Invoice2Verifactu {
 		// ¡AVISO! SI DESCRIPCION OPERACION LLEVA TILDES DEVUELVE UN ERRROR!!
 		String opDescription = invoice.isService() ? SERVICE_DESCRIPTION : NO_SERVICE_DESCRIPTION;
 		alta.setDescripcionOperacion(opDescription);
-		
-		alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 
 		alta.setMacrodato(MacrodatoType.N);
 
