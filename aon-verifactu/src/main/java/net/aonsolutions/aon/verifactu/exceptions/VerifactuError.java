@@ -11,10 +11,21 @@ package net.aonsolutions.aon.verifactu.exceptions;
 
 
 public enum VerifactuError {
+	AON_0001("0001", "\"VerifactuContext\" no puede ser NULL"),
+	AON_0002("0002", "\"Company\" no puede ser NULL"),
+	AON_0003("0003", "\"Company.Domain\" no puede ser NULL"),
+	AON_0004("0004", "\"User\" no puede ser NULL"),
+	AON_0005("0005", "\"Invoices\" no puede ser NULL o estar vac\u00EDo"),
+	AON_0006("0006", "\"VerifactuConfiguration\" no puede ser NULL"),
+	AON_0007("0007", "\"VerifactuConfiguration.Certificate\" no puede ser NULL"),
+	AON_0008("0008", "Error en la codificaci\u00F3n del par\u00E1metro"),
+
 	AON_9000("9000", "Error interno."),
 	AON_9001("9001", "No se ha encontrado un valor para ClaveRegimen v\u00E1lido."),
 	AON_9002("9002", "Se han encontrado m\u00E1s de un valor para ClaveRegimen. Resolver caso."),
 	AON_9003("9003", "No hay desglose de impuestos en la factura."),
+	AON_9004("9004", "Error en la serilializaci\u00F3n XML."),
+	
 	
 	VERIFACTU_4102("4102", "El XML no cumple el esquema. Falta informar campo obligatorio."),
 	VERIFACTU_4103("4103", "Se ha producido un error inesperado al parsear el XML."),

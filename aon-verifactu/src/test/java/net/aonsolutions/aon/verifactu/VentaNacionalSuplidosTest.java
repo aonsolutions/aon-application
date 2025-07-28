@@ -40,7 +40,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TercerosODestinatarioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
-import net.aonsolutions.aon.verifactu.Invoice2Verifactu.TipoImpuesto;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VentaNacionalSuplidosTest {
@@ -50,7 +49,7 @@ class VentaNacionalSuplidosTest {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_SUPLIDOS() );
-		VerifactuContext vc = new VerifactuContext()
+		VerifactuContext<RegFactuSistemaFacturacion> vc = new VerifactuContext<RegFactuSistemaFacturacion>()
 			.setConfig( config() )
 			.setCompany( c )
 			.setInvoices(invoices);
@@ -62,14 +61,14 @@ class VentaNacionalSuplidosTest {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add( InvoiceTypes.VENTA_NACIONAL_SUPLIDOS().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
-		VerifactuContext vc = new VerifactuContext()
+		VerifactuContext<RegFactuSistemaFacturacion> vc = new VerifactuContext<RegFactuSistemaFacturacion>()
 			.setConfig( config() )
 			.setCompany( c )
 			.setInvoices(invoices);
 		assertInvoice( vc );
 	}
 	
-	private void assertInvoice( VerifactuContext vc ) throws VerifactuException {
+	private void assertInvoice( VerifactuContext<RegFactuSistemaFacturacion> vc ) throws VerifactuException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		

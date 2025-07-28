@@ -63,7 +63,7 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws VerifactuException {
+	static RegFactuSistemaFacturacion build(VerifactuContext<?> vc) throws VerifactuException {
 		RegFactuSistemaFacturacion verifactu = new RegFactuSistemaFacturacion();
 		verifactu.setCabecera(getCabecera(vc));
 
@@ -81,7 +81,7 @@ class Invoice2Verifactu {
 		return verifactu;
 	}
 	
-	private static CabeceraType getCabecera(VerifactuContext vc) { 
+	private static CabeceraType getCabecera(VerifactuContext<?> vc) { 
 		final CabeceraType c = new CabeceraType();
 		PersonaFisicaJuridicaESType obligado = new PersonaFisicaJuridicaESType();
 		obligado.setNIF(vc.getCompany().getDocument());
@@ -103,7 +103,7 @@ class Invoice2Verifactu {
 		return c; 
 	}
 	
-	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+	private static RegistroFacturaType getFactura(VerifactuContext<?> vc, Invoice invoice) throws VerifactuException {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
@@ -175,7 +175,7 @@ class Invoice2Verifactu {
 		alta.setCuotaTotal( doubleToString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
 		alta.setImporteTotal(doubleToString(invoice.getGrossTotal()));
 		
-		alta.setDesglose(getDesglose(vc, invoice, invoice.getGrossTotal()));
+		alta.setDesglose(getDesglose(vc, invoice));
 
 		alta.setEncadenamiento(getEncadenamiento(vc.getBlockchain()));
 		
@@ -251,7 +251,7 @@ class Invoice2Verifactu {
 		return AonDateUtils.format(d, DATE_FORMAT );
 	}
 	
-	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice, double total) throws VerifactuException {
+	private static DesgloseType getDesglose(VerifactuContext<?> vc, Invoice invoice) throws VerifactuException {
 		try {
 			DesgloseType desglose = new DesgloseType();
 			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();
@@ -275,6 +275,10 @@ class Invoice2Verifactu {
 			throw new VerifactuException( e );
 		}
 	}
+	
+	// ***************************************************************
+	// *************************************************** [OLD] *****
+	// ***************************************************************
 
 	private static DesgloseType _getDesglose(Invoice invoice, double total) {
 		DesgloseType desglose = new DesgloseType();		
@@ -380,23 +384,6 @@ class Invoice2Verifactu {
 		sys.setTipoUsoPosibleMultiOT(SiNoType.S);
 		sys.setIndicadorMultiplesOT(SiNoType.S);
 		return sys;		
-	}
-	
-	static enum TipoImpuesto {
-		IVA("01"), // Impuesto sobre el Valor Añadido (IVA).
-		IPSI("02"), // Impuesto sobre la Producción, los Servicios y la Importación (IPSI) de Ceuta y Melilla.
-		IGIC("03"), // Impuesto General Indirecto Canario (IGIC).
-		OTRO("05")  // Otros.
-		;
-
-		private String value;
-		private TipoImpuesto(String value) {
-			this.value = value; 
-		}
-		
-		public String getValue() {
-			return value;
-		}
 	}
 	
 }
