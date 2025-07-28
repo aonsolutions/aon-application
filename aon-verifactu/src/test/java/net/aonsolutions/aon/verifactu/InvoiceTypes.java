@@ -200,6 +200,49 @@ class InvoiceTypes {
 		;
 	}
 	
+	static Invoice VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA() {
+		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		return new Invoice()
+			.setId(1)
+			.setType(InvoiceType.SALES)
+			.setSeries("R" + AonDateUtils.getYear(today))
+			.setNumber(1)
+			.setReferenceCode("A" + AonDateUtils.getYear(today) + "/000001")
+			.setIssueDate(today)
+			.setTaxDate(today)
+			.setTransaction(InvoiceTransactionType.NATIONAL)
+			.setRectificationType(RectificationType.NORMAL_RECTIFIER)
+			.setRectificationInvoice( 1 )
+			.setRectificationInvoiceSeries("A" + AonDateUtils.getYear(today))
+			.setRectificationInvoiceReference("A" + AonDateUtils.getYear(today) + "/000001")
+			.setRectificationInvoiceNumber( 1 )
+			.setRectificationInvoiceDate(today)
+			.setConfidential(false)
+			.setSurcharge(false)
+			.setWithholding(false)
+			.setWithholdingFarmer(false)
+			.setVatAccrualPayment(false)
+			.setInvestment(false)
+			.setService(false)
+			.addDetail(new InvoiceDetail()
+				.setQuantity(1)
+				.setPrice(100.0)
+				.setTaxableBase(100.0)
+				.addTax(new InvoiceTax()
+					.setTaxType(TaxType.VAT)
+					.setBase(100.0)
+					.setPercentage(21.0)
+					.setQuota(21.0)
+					.setDeductibleQuota(21.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				)
+			)
+			.setVatQuota(21.0)
+			.setTotal(121.0)
+			.refreshTaxBreakdown()
+		;
+	}
+
 	static Invoice VENTA_ISP() {
 		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
 		return new Invoice()
