@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.TaxBreakdown;
-import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -31,7 +30,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.EncadenamientoFacturaAnteriorType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
@@ -52,8 +50,8 @@ class Invoice2Verifactu {
 	
 	static final String DATE_FORMAT = "dd-MM-yyyy";
 	static final String VERSION  = "1.0";
-	static final String SERVICE_DESCRIPTION = "Prestación de servicios";
-	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderías";
+	static final String SERVICE_DESCRIPTION = "Prestacion de servicios";
+	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderias";
 	
 	private Invoice2Verifactu() {
 	
@@ -123,6 +121,7 @@ class Invoice2Verifactu {
 
 		alta.setFechaOperacion( dateToString(invoice.getIssueDate() ));
 		
+		// ¡AVISO! SI DESCRIPCION OPERACION LLEVA TILDES DEVUELVE UN ERRROR!!
 		String opDescription = invoice.isService() ? SERVICE_DESCRIPTION : NO_SERVICE_DESCRIPTION;
 		alta.setDescripcionOperacion(opDescription);
 		
@@ -222,6 +221,7 @@ class Invoice2Verifactu {
 	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		try {
 			DesgloseType desglose = new DesgloseType();
+			invoice.refreshTaxBreakdown();
 			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();
 			if (optTb.isPresent()) {
 				TaxBreakdown tb = optTb.get();
@@ -242,6 +242,20 @@ class Invoice2Verifactu {
 			}
 			throw new VerifactuException( e );
 		}
+	}
+	
+	private static SistemaInformaticoType getSistemaInformatico(Company company) {
+		SistemaInformaticoType sys = new SistemaInformaticoType();
+		sys.setNIF("B01487271");
+		sys.setNombreRazon("AON SOLUTIONS SL");
+		sys.setIdSistemaInformatico("01");
+		sys.setNombreSistemaInformatico("aonSolutions");
+		sys.setVersion("9.23");
+		sys.setNumeroInstalacion(company.getDocument() + "-" + company.getDomain().getId()); // CONCATENA EL NIF Y DOMAIN ID.
+		sys.setTipoUsoPosibleSoloVerifactu(SiNoType.N);
+		sys.setTipoUsoPosibleMultiOT(SiNoType.S);
+		sys.setIndicadorMultiplesOT(SiNoType.S);
+		return sys;		
 	}
 	
 	// ***************************************************************
@@ -289,31 +303,31 @@ class Invoice2Verifactu {
 //					desglose.getDetalleDesglose().add(detalle);
 //			});
 			
-			invoice.getBreakdown().stream()
-				.filter(f -> TaxType.VAT.equals(f.getTaxType()) 
-					&&  exempt 
-					&& f.getPercentage() == 0 
-					&& !invoice.isIsp()).forEach(r -> {
-				DetalleType detalle = new DetalleType();
-				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(r.getBase()));
-						
-				detalle.setOperacionExenta(OperacionExentaType.E_6);
-				if(invoice.getActivity().getVatExemptionCause() != null) {
-					VATExemptionCause cause = invoice.getActivity().getVatExemptionCause();
-					detalle.setOperacionExenta(OperacionExentaType.fromValue(cause.name()));
-				}
-			
-				if(invoice.isNational()) {
-					detalle.setOperacionExenta(OperacionExentaType.E_1);
-				} else if(invoice.isIntracommunity()) {
-					detalle.setOperacionExenta(OperacionExentaType.E_5);
-				} else if(invoice.isExtracommunity() || invoice.isCanCeuMel()) {
-					detalle.setOperacionExenta(OperacionExentaType.E_2);
-				}
-				desglose.getDetalleDesglose().add(detalle);
-			});
-						
+//			invoice.getBreakdown().stream()
+//				.filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+//					&&  exempt 
+//					&& f.getPercentage() == 0 
+//					&& !invoice.isIsp()).forEach(r -> {
+//				DetalleType detalle = new DetalleType();
+//				detalle.setClaveRegimen("01");
+//				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(r.getBase()));
+//						
+//				detalle.setOperacionExenta(OperacionExentaType.E_6);
+//				if(invoice.getActivity().getVatExemptionCause() != null) {
+//					VATExemptionCause cause = invoice.getActivity().getVatExemptionCause();
+//					detalle.setOperacionExenta(OperacionExentaType.fromValue(cause.name()));
+//				}
+//			
+//				if(invoice.isNational()) {
+//					detalle.setOperacionExenta(OperacionExentaType.E_1);
+//				} else if(invoice.isIntracommunity()) {
+//					detalle.setOperacionExenta(OperacionExentaType.E_5);
+//				} else if(invoice.isExtracommunity() || invoice.isCanCeuMel()) {
+//					detalle.setOperacionExenta(OperacionExentaType.E_2);
+//				}
+//				desglose.getDetalleDesglose().add(detalle);
+//			});
+//						
 //			Double totalSuplidos = invoice.getDetails().stream()
 //				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
 //				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
@@ -338,20 +352,6 @@ class Invoice2Verifactu {
 //		}
 				
 		return desglose;
-	}
-	
-	private static SistemaInformaticoType getSistemaInformatico(Company company) {
-		SistemaInformaticoType sys = new SistemaInformaticoType();
-		sys.setNIF("B01487271");
-		sys.setNombreRazon("AON SOLUTIONS SL");
-		sys.setIdSistemaInformatico("01"); // ???
-		sys.setNombreSistemaInformatico("aonSolutions");
-		sys.setVersion("9.23");
-		sys.setNumeroInstalacion(company.getDocument() + "-" + company.getDomain().getId()); // CONCATENA EL NIF Y DOMAIN ID.
-		sys.setTipoUsoPosibleSoloVerifactu(SiNoType.N);
-		sys.setTipoUsoPosibleMultiOT(SiNoType.S);
-		sys.setIndicadorMultiplesOT(SiNoType.S);
-		return sys;		
 	}
 	
 }

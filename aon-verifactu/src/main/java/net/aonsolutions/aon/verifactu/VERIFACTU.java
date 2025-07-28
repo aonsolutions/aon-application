@@ -60,7 +60,7 @@ public class VERIFACTU {
 		
 	}
 	
-	public void accept(
+	public static void accept(
 		VerifactuConfiguration verifactuConfiguration, 
 		Company company, 
 		List<Invoice> invoices, 

@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -21,14 +17,20 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.tbai.TbaiData;
 
@@ -102,6 +104,19 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
 			}
+			
+			VerifactuConfiguration verifactu = AON.getVerifactuConfiguration(domainName, domainId, login);
+			if(verifactu.isActive()) {
+				Integer invoiceId = invoice.getId();
+				InvoiceData data = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
+					f.getDomainProperty().eq(domainId)
+					.and(f.getInvoiceProperty().eq(invoiceId))
+					.and(f.getNameProperty().eq("VERIFACTU_QR")));
+				if(data != null && AonStringUtils.isNotBlank(data.getValue())) {
+					qrUrl = data.getValue();
+				}
+			}
+			
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
 			responseFile(resp, "factura", MimeType.PDF);
