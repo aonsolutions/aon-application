@@ -79,7 +79,7 @@ class InvoiceTypes {
 	;
 	
 	static Invoice VENTA_NACIONAL_SIMPLE() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -122,7 +122,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_NACIONAL_SIMPLIFICADA() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -160,7 +160,7 @@ class InvoiceTypes {
 	}
 	
 	static Invoice VENTA_NACIONAL_RECTIFICATIVA_SIMPLE() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -208,7 +208,7 @@ class InvoiceTypes {
 	}
 	
 	static Invoice VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -251,7 +251,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_ISP() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -294,7 +294,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_NACIONAL_RE() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -338,7 +338,7 @@ class InvoiceTypes {
 	}
 	
 	static Invoice VENTA_NACIONAL_SUPLIDOS() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -387,7 +387,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_NACIONAL_IRPF_PROFESSIONAL() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -439,7 +439,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_INTRACOMUNITARIA_SERVICIOS() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -482,7 +482,7 @@ class InvoiceTypes {
 	}
 
 	static Invoice VENTA_NACIONAL_EXENTA_E1() {
-		Date today = Date.from( LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant() );
+		Date today = AonDateUtils.today();
 		return new Invoice()
 			.setId(1)
 			.setType(InvoiceType.SALES)
@@ -525,6 +525,50 @@ class InvoiceTypes {
 		;
 	}
 	
+	static Invoice VENTA_ANULADA() {
+		Date today = AonDateUtils.today();
+		return new Invoice()
+			.setId(1)
+			.setType(InvoiceType.SALES)
+			.setSeries("A" + AonDateUtils.getYear(today))
+			.setNumber(1)
+			.setReferenceCode("A" + AonDateUtils.getYear(today) + "/000001")
+			.setIssueDate(today)
+			.setTaxDate(today)
+			.setTransaction(InvoiceTransactionType.NATIONAL)
+			.setRectificationType(RectificationType.NONE)
+			.setConfidential(false)
+			.setRegistryDocument(REGISTRY_NATIONAL.getDocument())
+			.setRegistryDocumentType(REGISTRY_NATIONAL.getDocumentType())
+			.setRegistryDocumentCountry(REGISTRY_NATIONAL.getDocumentCountry())
+			.setRegistryName(REGISTRY_NATIONAL.getName())
+			.setSurcharge(false)
+			.setWithholding(false)
+			.setWithholdingFarmer(false)
+			.setVatAccrualPayment(false)
+			.setInvestment(false)
+			.setService(false)
+			.setAnnulled(true)
+			.setAddress( REGISTRY_ADDRESS_NATIONAL )
+			.addDetail(new InvoiceDetail()
+				.setQuantity(1)
+				.setPrice(100.0)
+				.setTaxableBase(100.0)
+				.addTax(new InvoiceTax()
+					.setTaxType(TaxType.VAT)
+					.setBase(100.0)
+					.setPercentage(21.0)
+					.setQuota(21.0)
+					.setDeductibleQuota(0.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				)
+			)
+			.setVatQuota(21.0)
+			.setTotal(121.0)
+			.refreshTaxBreakdown()
+		;
+	}
+
 	public static List<Invoice> getAll() {
 		List<Invoice> list = new LinkedList<>();
 		list.add(VENTA_NACIONAL_SIMPLE());

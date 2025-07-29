@@ -19,6 +19,7 @@ public enum VerifactuError {
 	AON_0006("0006", "\"VerifactuConfiguration\" no puede ser NULL"),
 	AON_0007("0007", "\"VerifactuConfiguration.Certificate\" no puede ser NULL"),
 	AON_0008("0008", "Error en la codificaci\u00F3n del par\u00E1metro"),
+	AON_0009("0009", "No se ha podido identificar el tipo de registro para la generaci\u00F3n del blockchain"),
 
 	AON_9000("9000", "Error interno."),
 	AON_9001("9001", "No se ha encontrado un valor para ClaveRegimen v\u00E1lido."),

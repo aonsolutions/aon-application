@@ -142,6 +142,7 @@ public class AonStringUtils {
 	public static final String BULLET = "\u2022";
 	public static final String PERCENT = "%";
 	public static final String ASTERISK = "*";
+	public static final String AMPERSAND = "&";
 	public static final String COLON = ":";
 	public static final String HYPHEN = "-";
 	public static final String UNDERSCORE = "_";

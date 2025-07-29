@@ -785,13 +785,20 @@ public class Invoice implements Serializable, HasAudit {
 		return getNumber() <= 0;
 	}
 	
+	/**
+	 * @deprecated
+	 * @use optInfo()
+	 */
+	@Deprecated
 	public InvoiceInfo getInvoiceInfo() {
 		if(invoiceInfo == null) {
 			invoiceInfo = new InvoiceInfo();
 		}
 		return invoiceInfo;
 	}
-
+	public Optional<InvoiceInfo> optInfo() {
+		return Optional.ofNullable(invoiceInfo);
+	}
 	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
 		this.invoiceInfo = invoiceInfo;
 		return this;
