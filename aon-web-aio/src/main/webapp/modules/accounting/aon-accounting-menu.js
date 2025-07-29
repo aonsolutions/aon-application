@@ -63,11 +63,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			},{
 				description: "Apuntes de Amortizaciones",
 				title: "Apuntes de Amortizaciones",
-				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization),
+				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization()),
 			},{
 				description: "Asientos de explotación, cierre y apertura",
 				title: "Asientos de explotación, cierre y apertura",
-				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries),
+				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries()),
 			},{
 				description: "Contabilización de Facturas y Documentos Pendientes",
 				title: "Contabilización de Facturas",
@@ -81,7 +81,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			{
 				description: "Contabilización de Cobros y Pagos realizados",
 				title: "Contabilización de Cobros y Pagos realizados",
-				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry),
+				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry()),
 			}
 			// ,{
 			// 	description: "Documentos Pendientes",
@@ -159,7 +159,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Ficha de Amortización",
 				title: "Ficha de Amortización",
-				action: () => this.rootPanel(new JSF.AonJsfAmortization)
+				action: () => this.rootPanel(new JSF.AonJsfAmortization())
 			},{
 				description: "Tabla de tipos de Amortización",
 				title: "Tabla de tipos de Amortización",
@@ -187,7 +187,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			},{
 				description: "Listado de Excel de Impuestos aplicados en Facturas",
 				title: "Listado de Excel de Impuestos aplicados en Facturas",
-				action: () => this.rootPanel(new JSF.AonJsfInvoiceReport)
+				action: () => this.rootPanel(new JSF.AonJsfInvoiceReport())
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
@@ -219,7 +219,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Conciliador Bancario",
 				title: "Conciliador Bancario",
-				action: () => this.rootPanel(new JSF.AonJsfBankStatement)
+				action: () => this.rootPanel(new JSF.AonJsfBankStatement())
 			},{
 				description: "Agregador Bancario",
 				title: "Agregador Bancario",
@@ -236,7 +236,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Emisión de libros contables (LEGALIA)",
 				title: "Emisión de libros contables (LEGALIA)",
-				action: () => this.rootPanel(new JSF.AonJsfAccountingBook)
+				action: () => this.rootPanel(new JSF.AonJsfAccountingBook())
 			},{
 				description: "Depósito de cuentas (D2)",
 				title: "Depósito de cuentas (D2)",
@@ -248,19 +248,19 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Plan General Contable",
 				title: "Plan General Contable",
-				action: () => this.rootPanel(new JSF.AonJsfAccount)
+				action: () => this.rootPanel(new JSF.AonJsfAccount())
 			},{
 				description: "Conceptos Automáticos",
 				title: "Conceptos Automáticos",
-				action: () => this.rootPanel(new JSF.AonJsfAutConcept)
+				action: () => this.rootPanel(new JSF.AonJsfAutConcept())
 			},{
 				description: "Definición de Balances",
 				title: "Definición de Balances",
-				action: () => this.rootPanel(new JSF.AonJsfBalance)
+				action: () => this.rootPanel(new JSF.AonJsfBalance())
 			},{
 				description: "Tabla de Tipos de Amortización",
 				title: "Tabla de Tipos de Amortización",
-				action: () => this.rootPanel(new JSF.AonJsfAmortizationType)
+				action: () => this.rootPanel(new JSF.AonJsfAmortizationType())
 			},{
 				description: "Utilidades y chequeos contables",
 				title: "Utilidades y chequeos contables",
