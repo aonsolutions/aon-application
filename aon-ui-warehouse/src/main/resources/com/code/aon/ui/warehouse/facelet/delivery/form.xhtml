@@ -38,6 +38,14 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						<aon:outputLink id="packaginSales-downloadPdf"
+							target="_blank" value="#{delivery.deliveryDownloadURL}" 
+							rendered="#{domainSwitcher.paturpat}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							
+							<aon:outputText styleClass="aon-margin-right"
+										value="Hoja Almacen"/>
+					    </aon:outputLink>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:commandButton id="delivery-ediFtp"
 								value="SERES"

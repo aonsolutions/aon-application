@@ -115,6 +115,10 @@ public class AonToolbar extends FlowPanel {
 		return buttonContainer;
 	}
 	
+	public FlowPanel getSearchPanel() {
+		return searchPanel;
+	}
+	
 	@Override
 	public void setTitle(String name) {
 		titlePanel.clear();

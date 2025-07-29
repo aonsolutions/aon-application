@@ -5,8 +5,6 @@ import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitiali
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -37,6 +35,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -46,28 +45,43 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-
-
 public class Utils {
-	final static String ABREVIATE = "Abreviado";
-	final static String PYMES = "Pymes";
+	static final String ABREVIATE = "Abreviado";
+	static final String PYMES = "Pymes";
+	
+	// ESTO REALMENTE ES PASAR EL ESQUEMA A XML Y DEVOLVERLO COMO BYTE[], AUNQUE LO QUE HACE ES
+	// GRABAR UN ARCHIVO EN EL DIRECTORIO TMP SIEMPRE CON EL MISMO NOMBRE, LEER ESE ARCHIVO GRABADO Y DEVOLVER EL ARRAY DE BYTES
+	// LO CAMBIO PARA QUE SE HAGA SIMPLEMENTE CON UN ByteArrayOutputStream SIN NECESIDAD DE GRABAR UN FICHERO FISICAMENTE EN TMP 
+//	public static byte[] writeXml(Esquema schema) throws JAXBException, IOException{
+//		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
+//		
+//		Marshaller marshaller = ctx.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//		
+//		FileOutputStream fos = new FileOutputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
+//		
+//		marshaller.marshal(schema, fos);
+//		fos.close();
+//		FileInputStream fis = new FileInputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
+//
+//		return AonIOUtils.toByteArray(fis);
+//	}
 	
 	public static byte[] writeXml(Esquema schema) throws JAXBException, IOException{
+				
 		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
-		
 		Marshaller marshaller = ctx.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		
-		FileOutputStream fos = new FileOutputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
-		
-		marshaller.marshal(schema, fos);
-		fos.close();
-		FileInputStream fis = new FileInputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
 
-		return AonIOUtils.toByteArray(fis);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		marshaller.marshal(schema, baos);
+		baos.close();
+
+		return baos.toByteArray();
+				
 	}
 	
 	public static Esquema readXml(byte[] xmlFile){
@@ -262,15 +276,41 @@ public class Utils {
 		return b;
 	}
 	
-	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
-		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData);
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<ID2DepositKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData, boolean hasPreviousDeposit) {
+		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData, hasPreviousDeposit);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
 			clave.setValor(double2String(ctx.get(key)));
 			schema.getClaves().getClave().add(clave);
+		}
+		
+		for (ID2DepositKey key : ctxText.keySet()) {
+			Clave clave = new Clave();
+			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
+			clave.setValor(ctxText.get(key));
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		// Casillas dia, mes y año de la fecha de inicio anterior 
+		if (AonStringUtils.isNotBlank(ctxText.get(D2DepositHeaderKey.IDA011029))) {
+			String[] startDateSplit = AonStringUtils.split(ctxText.get(D2DepositHeaderKey.IDA011029), '.');
+			if (startDateSplit.length == 3) {
+				schema.getClaves().getClave().add(getNewClave(110219, startDateSplit[2])); // Año
+				schema.getClaves().getClave().add(getNewClave(110229, startDateSplit[1])); // Mes
+				schema.getClaves().getClave().add(getNewClave(110239, startDateSplit[0])); // Día
+			}
+		}
+		
+		// Casillas dia, mes y año de la fecha de fin anterior
+		if (AonStringUtils.isNotBlank(ctxText.get(D2DepositHeaderKey.IDA011019))) {
+			String[] endDateSplit = AonStringUtils.split(ctxText.get(D2DepositHeaderKey.IDA011019), '.');
+			if (endDateSplit.length == 3) {
+				schema.getClaves().getClave().add(getNewClave(110119, endDateSplit[2])); // Año
+				schema.getClaves().getClave().add(getNewClave(110129, endDateSplit[1])); // Mes
+				schema.getClaves().getClave().add(getNewClave(110139, endDateSplit[0])); // Dia
+			}
 		}
 		
 		for (D2DepositKey key : ctxMem.keySet()) {
@@ -308,6 +348,13 @@ public class Utils {
 //		return b;
 //	}
 	
+	private static Clave getNewClave(long codigo, String valor) {
+		Clave clave = new Clave();
+		clave.setCodigo(BigInteger.valueOf(codigo));
+		clave.setValor(valor);
+		return clave;
+	}
+
 	public static Esquema changeType(Esquema schema, String type) {
 		schema.getCabecera().setTipoCuestionario(type);
 		Integer[] arr = {8080805, 8080852, 8080854, 8080855, 8080801, 8080803, 8080850, 8080851};
@@ -374,7 +421,7 @@ public class Utils {
 		return schema;
 	}
 	
-	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
+	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData, boolean hasPreviousDeposit) {
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
@@ -447,7 +494,6 @@ public class Utils {
 		c1024.setValor(enterprise.getZip() != null ? enterprise.getZip() : "");
 		keys.getClave().add(c1024);
 		
-		
 		Clave c1025 = new Clave();
 		c1025.setCodigo(BigInteger.valueOf(1025));
 		Map<Province,String> ctx = new HashMap<>();
@@ -497,51 +543,35 @@ public class Utils {
 			keys.getClave().add(c8081004);
 		}
 		
-		Clave c11021 = new Clave();
-		c11021.setCodigo(BigInteger.valueOf(11021));
-		c11021.setValor(year.toString());
-		keys.getClave().add(c11021);
-		   
-		Clave c11022 = new Clave();
-		c11022.setCodigo(BigInteger.valueOf(11022));
-		c11022.setValor("1");
-		keys.getClave().add(c11022);
+		// Fecha Inicio Actual
+		keys.getClave().add(getNewClave(1102, "1.1." + year.toString())); // Completa
+		keys.getClave().add(getNewClave(11021, year.toString()));         // Año
+		keys.getClave().add(getNewClave(11022, "1"));                     // Mes
+		keys.getClave().add(getNewClave(11023, "1"));                     // Día
 		
-		Clave c11023 = new Clave();
-		c11023.setCodigo(BigInteger.valueOf(11023));
-		c11023.setValor("1");
-		keys.getClave().add(c11023);
-		    
-		Clave c11011 = new Clave();
-		c11011.setCodigo(BigInteger.valueOf(11011));
-		c11011.setValor(year.toString());
-		keys.getClave().add(c11011);
+		// Fecha Fin Actual
+		keys.getClave().add(getNewClave(1101, "31.12." + year.toString())); // Completa
+		keys.getClave().add(getNewClave(11011, year.toString()));           // Año
+		keys.getClave().add(getNewClave(11012, "12"));                      // Mes
+		keys.getClave().add(getNewClave(11013, "31"));                      // Día
 		
-		Clave c11012 = new Clave();
-		c11012.setCodigo(BigInteger.valueOf(11012));
-		c11012.setValor("12");
-		keys.getClave().add(c11012);
-		
-		Clave c110139 = new Clave();
-		c110139.setCodigo(BigInteger.valueOf(110139));
-		c110139.setValor("31");
-		keys.getClave().add(c110139);
-		
-		Clave c110219 = new Clave();
-		c110219.setCodigo(BigInteger.valueOf(110219));
-		Integer yearAux = year - 1; 
-		c110219.setValor(yearAux.toString());
-		keys.getClave().add(c110219);
-		
-		Clave c110229 = new Clave();
-		c110229.setCodigo(BigInteger.valueOf(110229));
-		c110229.setValor("1");
-		keys.getClave().add(c110229);
-		
-		Clave c110239 = new Clave();
-		c110239.setCodigo(BigInteger.valueOf(110239));
-		c110239.setValor("1");
-		keys.getClave().add(c110239);
+		// Las fechas de inicio y fin anterior, solo se inicializan si no se han copiado del ejercicio anterior
+		if (!hasPreviousDeposit) {
+
+			// Fecha Inicio Anterior
+			Integer preYear = year - 1;
+			keys.getClave().add(getNewClave(11029, "1.1." + preYear.toString())); // Completa
+			keys.getClave().add(getNewClave(110219, preYear.toString()));         // Año
+			keys.getClave().add(getNewClave(110229, "1"));                        // Mes
+			keys.getClave().add(getNewClave(110239, "1"));                        // Día
+			
+			// Fecha Fin Anterior
+			keys.getClave().add(getNewClave(11019, "31.12." + preYear.toString())); // Completa
+			keys.getClave().add(getNewClave(110119, preYear.toString()));           // Año
+			keys.getClave().add(getNewClave(110129, "12"));                         // Mes
+			keys.getClave().add(getNewClave(110139, "31"));                         // Día
+			
+		}
 		   
 		Clave c8009010 = new Clave();
 		c8009010.setCodigo(BigInteger.valueOf(8009010));
@@ -570,16 +600,6 @@ public class Utils {
 			c8080855.setValor("1");
 			keys.getClave().add(c8080855);
 		}
-		
-		Clave c110119 = new Clave();
-		c110119.setCodigo(BigInteger.valueOf(110119));
-		c110119.setValor(yearAux.toString());
-		keys.getClave().add(c110119);
-		
-		Clave c11013 = new Clave();
-		c11013.setCodigo(BigInteger.valueOf(11013));
-		c11013.setValor("31");
-		keys.getClave().add(c11013);
 		
 		if(type.equals("Abreviado")){
 			Clave c8080801 = new Clave();
@@ -629,7 +649,7 @@ public class Utils {
 		c9000000.setValor("1");
 		keys.getClave().add(c9000000);
 		
-		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO. */
+		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES DESDE CONTABILIDAD MEDIANTE SUS FORMULAS DE CÁLCULO. */
 
 		CloseableAONContext ctx2 = null;
 		try {
@@ -669,11 +689,12 @@ public class Utils {
 				}
 			}
 
+			// Añadir casillas calculadas
 			Map<String, String> c = compute(computeMap, year, type);
 
 			for (String key : c.keySet()) {
-				// TODO ARREGLO PROVISIONAL 32580 & 12380
-				if(!key.equals("32580") && !key.equals("12380")){
+				// Casillas que son totales, pero que tambien se leen de la contabilidad, se ignoran, porque si no se duplicarían
+				if (!key.equals("32580") && !key.equals("12380") && !key.equals("21300")) {
 					Clave clave = new Clave();
 					clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
 					clave.setValor(c.get(key));
@@ -808,4 +829,5 @@ public class Utils {
 			return o.toString();
 		}
 	}
+	
 }

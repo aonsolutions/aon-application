@@ -151,7 +151,7 @@ public class TestContrato {
 			String workAddress = "CALLE WELLINGM, ALAVA";
 			String restContract = "segun convenio";
 			Sepe.sendContratoCopyBasic(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin,
-					FirmType.NO_FACILITADO_COPIA, workAddress, restContract);
+					FirmType.NO_FACILITADO_COPIA, workAddress, restContract, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -183,7 +183,7 @@ public class TestContrato {
 			String sepeId = "3320210207385";
 //			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, fini);
 
-			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
+			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId, null);
 			System.out.println(new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();

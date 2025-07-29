@@ -176,11 +176,11 @@ public class Contrata {
 	}
 
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
+			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId, String enterpriseCif)
 			throws SepeException {
 		try {
 			return getCopyBasicPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, startDate,
-					endDate, sepeId);
+					endDate, sepeId, enterpriseCif);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
 		} catch (IOException e) {
@@ -359,7 +359,9 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(cif, htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 			handleSepeExceptions(htmlPage);
 
@@ -436,6 +438,8 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
 
+			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 			handleSepeExceptions(htmlPage);
 
@@ -908,6 +912,17 @@ public class Contrata {
 		}
 	}
 
+	private static HtmlPage loginAndSelectEnterprise(String cif, HtmlPage htmlPage) throws IOException {
+		try {
+			HtmlForm form = htmlPage.getFormByName("loginForm");
+			form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
+			form.getInputByName("usuarioPrincipal").setValue(cif);
+			return form.getInputByName("enviar").click();
+		} catch ( Exception e) {
+			return htmlPage;
+		}
+	}
+
 	private static Contract getContractDataImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException,
@@ -1086,7 +1101,9 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
 					.click();
 			handleSepeExceptions(htmlPage);
@@ -1393,6 +1410,8 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
 
+			htmlPage = loginAndSelectEnterprise(contractExtension.getCif(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
 					.click();
 			handleSepeExceptions(htmlPage);
@@ -1519,13 +1538,15 @@ public class Contrata {
 			webClient.getOptions().setUseInsecureSSL(true);
 
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
-
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(copyBasic.getCif(), htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_comunica_copiaBasicaContrato.jsp?origen=copiabasica").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			Optional<String> sepeId = copyBasic.getSepeId();
 
 			if (sepeId.isPresent()) {
@@ -1763,33 +1784,35 @@ public class Contrata {
 
 	private static byte[] getCopyBasicPdfImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate,
-			Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException,
+			Optional<String> sepeId, String enterpriseCif) throws FailingHttpStatusCodeException, IOException,
 			InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
-
+			
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas")
 					.click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = loginAndSelectEnterprise(enterpriseCif, htmlPage);
+			
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=entrada")
 					.click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultaImpCB&origen=consultaImpresionCB")
 					.click();// PARA CONTRATOS INICIALES
 			handleSepeExceptions(htmlPage);
-
+			
 			if (sepeId.isPresent()) {
 				htmlPage = htmlPage.getAnchorByHref(
 						"/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=idcomunicacion&origen=consultaImpresionCB")

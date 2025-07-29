@@ -6,7 +6,9 @@ import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
 import { getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { AonCertification } from './certification/aon-certification.js';
 import * as JSF from './aon-jsf-app.js';
+
 
 export class AonHelp extends AonElement {
 
@@ -103,6 +105,46 @@ export class AonHelp extends AonElement {
 			this.rootPanel(new JSF.AonJsfHelpNotification());
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
+		
+		let helpCertificationsDiv = this.createSpan();
+		helpCertificationsDiv.className = "helpCardText";
+
+		let helpCertificationsI = this.createElement(TAG.I);
+		helpCertificationsI.className = CSS.MATERIAL_ICONS;
+		helpCertificationsI.classList.add("aonHelpI");
+		helpCertificationsI.innerHTML= "license";
+		helpCertificationsDiv.appendChild(helpCertificationsI);
+
+		let helpCertificationsSpan = this.createDiv();
+		helpCertificationsSpan.className = CSS.AON_CARD_TEXT;
+		helpCertificationsSpan.classList.add("aonHelpSpan2");
+		helpCertificationsSpan.innerHTML = MSG.CERTIFICATIONS;
+		helpCertificationsDiv.appendChild(helpCertificationsSpan);
+		helpContent.appendChild(helpCertificationsDiv);
+
+		helpCertificationsDiv.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new AonCertification());
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+		});
+		
+		let helpVersionDiv = this.createSpan();
+		helpVersionDiv.className = "helpversionCardText";
+
+		let helpVersionI = this.createElement(TAG.I);
+		helpVersionI.className = CSS.MATERIAL_ICONS;
+		helpVersionI.classList.add("aonHelpI");
+		helpVersionI.innerHTML= "info";
+		helpVersionDiv.appendChild(helpVersionI);
+
+		let helpVersionSpan = this.createDiv();
+		helpVersionSpan.className = CSS.AON_CARD_TEXT;
+		helpVersionSpan.classList.add("aonHelpSpan2")
+		getManifest().then((manifest) => {
+			let version = MSG.VERSION + ": " + manifest.build_date;
+			helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
+		});;
+		helpVersionDiv.appendChild(helpVersionSpan);
+		helpContent.appendChild(helpVersionDiv);
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;
@@ -112,7 +154,6 @@ export class AonHelp extends AonElement {
 			let data = {value: rightPanelSwitchSupportButton.isChecked()}
 			setSupport(data).then(r => {})
 		});
-
     	if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
 			let rightPanelAboutContactCard = new AonCard();
 			rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
@@ -175,27 +216,19 @@ export class AonHelp extends AonElement {
 			});
 		}
 		
-		getManifest().then(
-		  (manifest) => {
-				let version = MSG.VERSION + ": " + manifest.build_date;
-				let divInfo = this.createElement(TAG.DIV);
-				divInfo.className = "divInfo";
-				divInfo.innerHTML = `
-				  <span>
-					<a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-					  <!-- aonSolutions -->
-					</a> 
-					<span class="aonTrademark" >
-						<!-- ${MSG.REGISTERED_TRADEMARK_AON} -->
-					</span> 
-				  </span>
-				  <div id="aonManifest">${version}</div>`;
-				  helpContent.appendChild(divInfo);
-			}
-		);
 
 		let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
+		
+		const aonParent = document.querySelector('aon-parent');
+
+		if (aonParent && aonParent.isConsultancyEmpty) {
+			const aboutCard = this.getAboutContact();
+			const scheduleCard = this.getScheduleContact();
+
+			if (aboutCard) aboutCard.style.display = 'none';
+			if (scheduleCard) scheduleCard.style.display = 'none';
+		}
 	
 	}
 

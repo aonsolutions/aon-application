@@ -6,12 +6,14 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -117,5 +119,25 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	public void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>> callback) {
 		AON.start();
 		fsa.getCallStatuses(occam, account, callback);
-	} 
+	}
+    
+	public void getByRequisitionIsNotNull(Occam occam, AsyncCallback<List<RegistryBank>> callback) {
+      AON.start();
+      fsa.getByRequisitionIsNotNull(occam, callback);
+	}
+	
+	public void getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getAccountIdByIban(token, requisitionId, rbank, callback);
+	}
+	
+	public void checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank, AsyncCallback<List<BankStatement>> callback) {
+		AON.start();
+		fsa.checkIncorrectMovements(occam, token, accountIds, rbank, callback);
+	}
+	
+	public void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.insertCorrectMovements(occam, nordigenBankAccount, callback);
+	}
 }

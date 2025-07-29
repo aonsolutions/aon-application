@@ -22,24 +22,16 @@
 
 </ui:style>
 
-<g:HTMLPanel  styleName="aon-panelGrid-search" height="55px" >
-   	<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">							
-		<g:HorizontalPanel ui:field="filterHorizontal" styleName="aon-width-all">
-			<g:HTMLPanel>
-				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
-				<g:InlineLabel ui:field="categoryLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
-				<g:InlineLabel ui:field="customerLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
-				<g:InlineLabel ui:field="sellerLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
-				<g:InlineLabel ui:field="workplaceLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
-				<g:InlineLabel ui:field="periodLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
-			</g:HTMLPanel>			
-		</g:HorizontalPanel>					
+<g:HTMLPanel   height="55px" >
+   	<div >							
+		<g:HTMLPanel>
+			<g:InlineLabel ui:field="categoryLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+			<g:InlineLabel ui:field="customerLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+			<g:InlineLabel ui:field="sellerLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+			<g:InlineLabel ui:field="workplaceLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+			<g:InlineLabel ui:field="periodLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+		</g:HTMLPanel>			
 	</div>
-    
-    <g:HorizontalPanel ui:field="panel" styleName="aon-width-all">
-        <p:PaperIconButton ui:field="cleanFilter" icon="close" style="position:absolute;right:15px;" />
-	</g:HorizontalPanel>
-    
+    <g:HorizontalPanel ui:field="panel" styleName="aon-width-all"/>
 </g:HTMLPanel>
-
 </ui:UiBinder>

@@ -1061,7 +1061,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
-			Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+			Date startDate, Date endDate, String sepeIde, String enterpriseCif) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}
