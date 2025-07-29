@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -364,13 +363,7 @@ public class AonNordigen  {
 			}
 			
 			if(account.getMetadata() != null && account.getMetadata().getStatus() == NordigenAccountStatus.READY) {
-				LocalDateTime now = LocalDate.now().atStartOfDay();
-		        LocalDateTime targetDate = LocalDateTime.of(2025, Month.AUGUST, 1, 0, 0, 0);
-				if(now.isAfter(targetDate)) {
-					updateBalancesAndTransactions(ctx, occam, token, account, true);
-				} else {					
-					updateBalancesAndTransactions(ctx, occam, token, account, false);
-				}
+				updateBalancesAndTransactions(ctx, occam, token, account);
 			}
 
 		} catch (Exception e) {
@@ -648,10 +641,10 @@ public class AonNordigen  {
 		return new NordigenException(err);						
 	}
 	
-	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, NordigenBankAccount account, Boolean usingNordigenId) {
+	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, NordigenBankAccount account) {
 		NordigenAccountMetadata metadata = account.getMetadata();
 		String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
-		Date dateFrom = guessDateForm(account, usingNordigenId);
+		Date dateFrom = guessDateForm(account);
 		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
 
 			StringBuilder exceptionMessage = new StringBuilder();
@@ -674,15 +667,12 @@ public class AonNordigen  {
 			return stList;
 	}
 	
-	private static Date guessDateForm(NordigenBankAccount account, Boolean usingNordigenId) {
+	private static Date guessDateForm(NordigenBankAccount account) {
 		Date lastMovDate = account.getLastMovementDate();
 		Date today = new Date();
 		Date dateFrom = null;
 		if (lastMovDate != null) {
-			if(usingNordigenId == null || usingNordigenId == false)
-				dateFrom = AonDateUtils.addDays(lastMovDate, 1);
-			else
-				dateFrom = lastMovDate;
+			dateFrom = lastMovDate;
 		} else {
 			NordigenInstitution institution = account.getInstitution();
 			if (institution != null && institution.getTransactionTotalDays() != null) {
@@ -746,12 +736,12 @@ public class AonNordigen  {
 	    }
 	}
 
-	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account, Boolean usingNordigenId) {
+	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
 	    try {	    	
 	    			CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
 	    	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
 	    	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
-	    	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account, usingNordigenId));
+	    	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account));
 	    	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
 	    	        account.setBalances(balancesFuture.get());
 	    	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
