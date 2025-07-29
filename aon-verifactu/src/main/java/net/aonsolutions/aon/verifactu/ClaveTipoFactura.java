@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -10,7 +9,6 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseRectificacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
@@ -87,7 +85,7 @@ enum ClaveTipoFactura {
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(inv.getRectificationInvoiceReference());
-			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
+			rectified.setFechaExpedicionFactura( VerifactuUtils.toString(inv.getRectificationInvoiceDate()));
 			frs.getIDFacturaRectificada().add(rectified);
 			alta.setFacturasRectificadas(frs);
 			alta.setDestinatarios(getDestinatarios(inv));
@@ -166,7 +164,7 @@ enum ClaveTipoFactura {
 			IDFacturaARType rectified = new IDFacturaARType();
 			rectified.setIDEmisorFactura(vc.getCompany().getDocument());
 			rectified.setNumSerieFactura(inv.getRectificationInvoiceReference());
-			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
+			rectified.setFechaExpedicionFactura( VerifactuUtils.toString(inv.getRectificationInvoiceDate()));
 
 			frs.getIDFacturaRectificada().add(rectified);
 			alta.setFacturasRectificadas(frs);

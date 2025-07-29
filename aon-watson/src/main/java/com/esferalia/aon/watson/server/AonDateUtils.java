@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -1397,5 +1399,14 @@ public class AonDateUtils {
 		if (first == null) return false;
 		if (second == null) return false;
 		return first.after(second);
+	}
+	
+	public static Date today() {
+		return Date.from(
+			LocalDate
+				.now()
+				.atStartOfDay(ZoneId.systemDefault())
+				.toInstant()
+		);
 	}
 }

@@ -1,7 +1,5 @@
 package net.aonsolutions.aon.verifactu;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
@@ -14,10 +12,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.TaxBreakdown;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -31,14 +27,11 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Destinatarios;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Encadenamiento;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SiNoType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SistemaInformaticoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
@@ -48,7 +41,6 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2Verifactu {
 	
-	static final String DATE_FORMAT = "dd-MM-yyyy";
 	static final String VERSION  = "1.0";
 	static final String SERVICE_DESCRIPTION = "Prestacion de servicios";
 	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderias";
@@ -107,7 +99,7 @@ class Invoice2Verifactu {
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura( dateToString(invoice.getExpDate()) );
+		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(invoice.getExpDate()) );
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
@@ -119,7 +111,7 @@ class Invoice2Verifactu {
 		
 		ClaveTipoFactura.fill(vc, invoice, alta);
 
-		alta.setFechaOperacion( dateToString(invoice.getIssueDate() ));
+		alta.setFechaOperacion( VerifactuUtils.toString(invoice.getIssueDate() ));
 		
 		// ¡AVISO! SI DESCRIPCION OPERACION LLEVA TILDES DEVUELVE UN ERRROR!!
 		String opDescription = invoice.isService() ? SERVICE_DESCRIPTION : NO_SERVICE_DESCRIPTION;
@@ -129,8 +121,8 @@ class Invoice2Verifactu {
 
 		alta.setCupon(CuponType.N);
 
-		alta.setCuotaTotal( doubleToString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
-		alta.setImporteTotal(doubleToString(invoice.getGrossTotal()));
+		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
+		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal()));
 		
 		alta.setDesglose(getDesglose(vc, invoice));
 
@@ -198,14 +190,6 @@ class Invoice2Verifactu {
 			 e.printStackTrace();
 		}
 		return null;
-	}
-	
-	static String doubleToString(double d) {
-		String ds = AonNumberUtils.toString( AonMathUtils.round(d) );
-		return new BigDecimal(ds).stripTrailingZeros().toPlainString();
-	}
-	static String dateToString(Date d) {
-		return AonDateUtils.format(d, DATE_FORMAT );
 	}
 	
 	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws VerifactuException {
@@ -335,7 +319,7 @@ class Invoice2Verifactu {
 			if(noSujetaOtros != 0) {
 				DetalleType detalle = new DetalleType();
 				detalle.setClaveRegimen("01");
-				detalle.setBaseImponibleOimporteNoSujeto(doubleToString(noSujetaOtros));
+				detalle.setBaseImponibleOimporteNoSujeto(VerifactuUtils.toString(noSujetaOtros));
 				detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
 				desglose.getDetalleDesglose().add(detalle);
 			}

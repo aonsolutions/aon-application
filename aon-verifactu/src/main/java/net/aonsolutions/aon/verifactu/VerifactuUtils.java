@@ -1,0 +1,33 @@
+package net.aonsolutions.aon.verifactu;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+
+class VerifactuUtils {
+
+	static final String DATE_FORMAT = "dd-MM-yyyy";
+	
+	private VerifactuUtils() {
+		
+	}
+	
+	// ******************************************* [DATE]
+	static Date toDate(String d) {
+		return AonDateUtils.parse(d, DATE_FORMAT );
+	}
+	static String toString(Date d) {
+		return AonDateUtils.format(d, DATE_FORMAT );
+	}
+
+	// ******************************************* [double]
+	static String toString(double d) {
+		String ds = AonNumberUtils.toString( AonMathUtils.round(d) );
+		return new BigDecimal(ds).stripTrailingZeros().toPlainString();
+	}
+	
+
+}

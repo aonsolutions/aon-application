@@ -299,8 +299,8 @@ enum ClaveRegimen {
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
 			DetalleType detalle = C18.getBasicWithVat( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
-			detalle.setTipoRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurcharge()));
-			detalle.setCuotaRecargoEquivalencia(Invoice2Verifactu.doubleToString(ib.getSurchargeQuota()));
+			detalle.setTipoRecargoEquivalencia(VerifactuUtils.toString(ib.getSurcharge()));
+			detalle.setCuotaRecargoEquivalencia(VerifactuUtils.toString(ib.getSurchargeQuota()));
 			return detalle;
 		}
 		
@@ -341,15 +341,15 @@ enum ClaveRegimen {
 		DetalleType detalle = new DetalleType();
 		detalle.setImpuesto(TipoImpuesto.IVA.getValue());
 		detalle.setClaveRegimen( this.getValue() );
-		detalle.setBaseImponibleOimporteNoSujeto(Invoice2Verifactu.doubleToString(ib.getBase()));
+		detalle.setBaseImponibleOimporteNoSujeto(VerifactuUtils.toString(ib.getBase()));
 		return detalle;
 	}
 	
 	private DetalleType getBasicWithVat( InvoiceBreakdown ib ) {
 		DetalleType detalle = this.getBasic(ib);
 		detalle.setBaseImponibleACoste(null);
-		detalle.setTipoImpositivo(Invoice2Verifactu.doubleToString(ib.getPercentage()));
-		detalle.setCuotaRepercutida(Invoice2Verifactu.doubleToString(ib.getQuota()));
+		detalle.setTipoImpositivo(VerifactuUtils.toString(ib.getPercentage()));
+		detalle.setCuotaRepercutida(VerifactuUtils.toString(ib.getQuota()));
 		return detalle;
 	}
 
