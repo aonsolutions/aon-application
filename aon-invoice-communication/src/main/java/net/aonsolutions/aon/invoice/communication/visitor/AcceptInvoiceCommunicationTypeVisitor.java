@@ -106,7 +106,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 			try {
 				List<Invoice> list = new LinkedList<>();
 				list.add(getInvoice());
-				VERIFACTU.getInstance().accept(getVerifactuConfiguration(), getCompany(), list, getVerifactuBlockchain());
+				VERIFACTU.accept(getVerifactuConfiguration(), getCompany(), list, getVerifactuBlockchain(), getUser().getLogin());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

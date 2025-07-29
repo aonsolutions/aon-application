@@ -127,14 +127,6 @@ class Invoice2Verifactu {
 
 		alta.setMacrodato(MacrodatoType.N);
 
-		PersonaFisicaJuridicaType destinatario = new PersonaFisicaJuridicaType();
-		destinatario.setNIF(invoice.getRegistryDocument());
-		destinatario.setNombreRazon(invoice.getRegistryName());
-		
-		Destinatarios destinatarios = new Destinatarios();
-		destinatarios.getIDDestinatario().add(destinatario);
-		alta.setDestinatarios(destinatarios);
-		
 		alta.setCupon(CuponType.N);
 
 		alta.setCuotaTotal( doubleToString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));

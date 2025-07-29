@@ -3,6 +3,8 @@ package net.aonsolutions.aon.verifactu;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -27,8 +29,13 @@ class InvoiceTypes {
 		.setDocument("88888888Y")
 		.setDocumentType(DocumentType.NIF)
 		.setDocumentCountry(Country.ES)
-		.setName("Verfictu Cliente Test")
-	;
+		.setName("Verfictu Cliente Test");
+	
+	static final Registry TRANSLOGIA = new Registry() 
+		.setDocument("B66941873") //"88888888Y")
+		.setDocumentType(DocumentType.NIF)
+		.setDocumentCountry(Country.ES)
+		.setName("TRANSLOGIA DEVELOPMENT, S.L.");//("Verfictu Cliente Test");
 
 	static final RegistryAddress REGISTRY_ADDRESS_NATIONAL = new RegistryAddress()
 		.setStreetType(StreetType.CALLE)
@@ -516,5 +523,20 @@ class InvoiceTypes {
 			.setTotal(100.0)
 			.refreshTaxBreakdown()
 		;
+	}
+	
+	public static List<Invoice> getAll() {
+		List<Invoice> list = new LinkedList<>();
+		list.add(VENTA_NACIONAL_SIMPLE());
+		list.add(VENTA_NACIONAL_SIMPLIFICADA());
+		list.add(VENTA_NACIONAL_RECTIFICATIVA_SIMPLE());
+		list.add(VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA());
+		list.add(VENTA_ISP());
+		list.add(VENTA_NACIONAL_RE());
+		list.add(VENTA_NACIONAL_SUPLIDOS());
+		list.add(VENTA_NACIONAL_IRPF_PROFESSIONAL());
+		list.add(VENTA_INTRACOMUNITARIA_SERVICIOS());
+		list.add(VENTA_NACIONAL_EXENTA_E1());
+		return list;	
 	}
 }

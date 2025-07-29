@@ -12,7 +12,9 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseRectificacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Destinatarios;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.FacturasRectificadas;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
@@ -38,6 +40,7 @@ enum ClaveTipoFactura {
 			alta.setTipoFactura(ClaveTipoFacturaType.F_1);
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.N);
 			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
+			alta.setDestinatarios(getDestinatarios(inv));
 		}
 	},
 
@@ -87,6 +90,7 @@ enum ClaveTipoFactura {
 			rectified.setFechaExpedicionFactura( Invoice2Verifactu.dateToString(inv.getRectificationInvoiceDate()));
 			frs.getIDFacturaRectificada().add(rectified);
 			alta.setFacturasRectificadas(frs);
+			alta.setDestinatarios(getDestinatarios(inv));
 		}
 	},
 
@@ -205,5 +209,18 @@ enum ClaveTipoFactura {
 		if (AonCollectionUtils.isEmpty(tipoFact)) throw new VerifactuException( VerifactuError.AON_9005 );
 		if (AonCollectionUtils.size(tipoFact) > 1) throw new VerifactuException( VerifactuError.AON_9006 );
 		tipoFact.get(0).filler(vc, inv, alta);
+	}
+	
+	public static Destinatarios getDestinatarios(Invoice invoice) {
+		PersonaFisicaJuridicaType destinatario = new PersonaFisicaJuridicaType();
+		destinatario.setNIF(invoice.getRegistryDocument());
+		destinatario.setNombreRazon(invoice.getRegistryName());
+		
+		
+		// TODO ID OTRO
+		
+		Destinatarios destinatarios = new Destinatarios();
+		destinatarios.getIDDestinatario().add(destinatario);
+		return destinatarios;
 	}
 }
