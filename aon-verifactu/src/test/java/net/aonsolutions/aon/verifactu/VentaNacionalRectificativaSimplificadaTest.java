@@ -177,15 +177,7 @@ class VentaNacionalRectificativaSimplificadaTest {
 	    assertNull( tercero );
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
-	    assertNotNull( destinatarios );
-	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
-	    assertNotNull( iDDestinatario );
-	    assertEquals( 1, iDDestinatario.size() );
-	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
-	    assertNotNull( destinatario );
-	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
-	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
-	    assertNull( destinatario.getIDOtro() );
+	    assertNull( destinatarios );
 	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
