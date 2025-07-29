@@ -551,8 +551,8 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- SEPE Files
 	
-	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, sepeIde, callback);
+	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, String sepeIde, String enterpriseCif, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, sepeIde, enterpriseCif, callback);
 	}
 
 	public void getEmployeeCbcTransform(String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {

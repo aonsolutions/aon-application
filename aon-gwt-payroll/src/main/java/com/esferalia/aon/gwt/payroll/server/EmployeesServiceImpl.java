@@ -6346,7 +6346,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Integer contractId, Date startDate,
-			Date endDate, String sepeIde) throws IllegalArgumentException {
+			Date endDate, String sepeIde, String enterpriseCif) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6361,8 +6361,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
-						: Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate, enterpriseCif)
+						: Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde, enterpriseCif);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
 				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
@@ -7102,9 +7102,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
 			String workplaceAddress = employeeContractInfo.getContractInfo().getWorkplaceFullAddress();
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
+			String enterpriseCif = employeeContractInfo.getContractInfo().getEnterpriseCIF();
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
-					endDate, CopyBasic.FirmType.values()[signType-1], workplaceAddress, restContract);
+					endDate, CopyBasic.FirmType.values()[signType-1], workplaceAddress, restContract, enterpriseCif);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -7655,6 +7656,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		copyBasic.setFend(employeeContractInfo.getContractInfo().getEndDate());
 		copyBasic.setIpf(employeeContractInfo.getEmployeeInfo().getDocument());
 		copyBasic.setWorkAddress(employeeContractInfo.getContractInfo().getWorkplaceFullAddress());
+		copyBasic.setCif(employeeContractInfo.getContractInfo().getEnterpriseCIF());
 
 		String signBasicCopy = employeeContractInfo.getContractSpecificData().getSignBasicCopy();
 		Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
