@@ -16,17 +16,11 @@ export class AonCertification extends AonElement {
   build () {
     //
     // AEAT
-    const aeatCard     = new AonCard();
-    aeatCard.id        = "aeat-card";
-    aeatCard.title     = "AEAT";
-    this.appendChild(aeatCard);
-    // Contenido
-      // imagen
-      const imgAeat     = this.createElement(TAG.DIV);
-      imgAeat.className = "card-img-aeat";
-      aeatCard.setContent(imgAeat);
-      // textos
-      const optionsAeat = [
+    this.createCard({
+      id        : "aeat-card",
+      title     : "AEAT",
+      imgClass  : "card-img-aeat",
+      listOptions: [
         "Homologado para la Digitalización Certificada de Facturas Nº Homologación: RGE405069592024",
         "Software integrado con Veri*Factu",
         "Registrado como Colaborador Social",
@@ -37,117 +31,76 @@ export class AonCertification extends AonElement {
             "Consulta y descarga de modelos fiscales presentados"
           ]
         }
-      ];
-      const content = this.buildListContent(optionsAeat);
-      // Agregar el contenido
-      aeatCard.addContent(content);
-    // Footer
-      const footer = this.createCardFooter({
+      ],
+      footer: {
         text: "Ver software homologados",
         href: "https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/FZ01/RSoftHomologado_doc_base.pdf",
         note: "(Página 11)"
-      });
-      aeatCard.addContent(footer);
+      }
+    });
     // FIN AEAT
     //
 
     //
     // VERIFACTU
-    const verifactuCard     = new AonCard();
-    verifactuCard.id        = "verifactu-card";
-    verifactuCard.title     = "Software Integrado con Veri*Factu";
-    this.appendChild(verifactuCard);
-    // Contenido
-      // imagen
-      const imgVeri = this.createElement(TAG.DIV);
-      imgVeri.className = "card-img-veri";
-      verifactuCard.setContent(imgVeri);
-      // textos
-      const verifactuText       = this.createElement(TAG.P);
-      verifactuText.textContent = `Nuestro software cumple con todos los requisitos técnicos y legales establecidos por la Agencia Tributaria. 
-Ayuda asesorías, Pymes y autónomos a adaptarse de manera sencilla al nuevo marco de facturación electrónica 
-con total seguridad y respaldo normativo.`;
-      // Agregar el contenido
-      verifactuCard.setContent(verifactuText);
-    // Footer
-      const verifactuFooter = this.createCardFooter({
-          text : "Ver Declaración Responsable",
-          href : "https://drive.google.com/file/d/1xObCAXybwhoOEa339DgFy9h3KL97CYJ5/view?usp=sharing"
-      });
-      verifactuCard.addContent(verifactuFooter);
+    this.createCard({
+      id         : "verifactu-card",
+      title      : "Software Integrado con Veri*Factu",
+      imgClass   : "card-img-veri",
+      textContent: `Nuestro software cumple con todos los requisitos técnicos y legales establecidos por la Agencia Tributaria. 
+        Ayuda asesorías, Pymes y autónomos a adaptarse de manera sencilla al nuevo marco de facturación electrónica 
+        con total seguridad y respaldo normativo.`,
+      footer: {
+        text : "Ver Declaración Responsable",
+        href : "https://drive.google.com/file/d/1xObCAXybwhoOEa339DgFy9h3KL97CYJ5/view?usp=sharing"
+      }
+    });
     // FIN VERIFACTU
     //
 
     //
     // HACIENDAS FORALES
-    const haciendasCard     = new AonCard();
-    haciendasCard.id        = "haciendas-card";
-    haciendasCard.title     = "Haciendas Forales";
-    this.appendChild(haciendasCard);
-    // Contenido
-      // imagen
-      const imgHaciendas = this.createElement(TAG.DIV);
-      imgHaciendas.className = "card-img-haciendas";
-      haciendasCard.setContent(imgHaciendas);
-      // textos
-      const haciendasText       = this.createElement(TAG.P);
-      haciendasText.textContent = `Solución cloud homologada por el Gobierno Vasco como software garante del cumplimiento legal de “Ticket BAI” para las tres Haciendas Forales:`;
-
-      const haciendasOptions = [
+    this.createCard({
+      id         : "haciendas-card",
+      title      : "Haciendas Forales",
+      imgClass   : "card-img-haciendas",
+      textContent: `Solución cloud homologada por el Gobierno Vasco como software garante del cumplimiento legal de ?Ticket BAI? para las tres Haciendas Forales:`,
+      listOptions: [
         "Hacienda Foral de ÁLAVA/ARABA",
         "Hacienda Foral de BIZKAIA",
         "Hacienda Foral de GIPUZKOA"
-      ];
-      const haciendasList = this.buildListContent(haciendasOptions);
-      // Agregar el contenido
-      haciendasCard.setContent(haciendasText);
-      haciendasCard.addContent(haciendasList);
-    // Footer
-      const haciendasFooter = this.createCardFooter({
+      ],
+      footer: {
         text : "Ver software registrados",
         href : "https://www.batuz.eus/es/registro-de-software?q=aonSolutions"
-      });
-      haciendasCard.addContent(haciendasFooter);
+      }
+    });
     // FIN HACIENDAS FORALES
     //
 
     //
     // AGENCIA TRIBUTARIA CANARIA
-    const atcCard     = new AonCard();
-    atcCard.id        = "atc-card";
-    atcCard.className = "no-space";
-    atcCard.title     = "Agencia Tributaria Canaria";
-    this.appendChild(atcCard);
-    // Contenido
-      // imagen
-      const imgAtc = this.createElement(TAG.DIV);
-      imgAtc.className = "card-img-atc";
-      atcCard.setContent(imgAtc);
-      // textos
-      const atcOptions = [
+    this.createCard({
+      id         : "atc-card",
+      title      : "Agencia Tributaria Canaria",
+      className  : "no-space",
+      imgClass   : "card-img-atc",
+      listOptions: [
         "Software con soporte del IGIC",
         "Software integrado con Veri*Factu",
         "Registrado como Colaborador Social"
-      ];
-      const atcContent = this.buildListContent(atcOptions);
-      // Agregar el contenido
-      atcCard.setContent(atcContent);
+      ]
+    });
     // FIN AGENCIA TRIBUTARIA CANARIA
     //
 
     //
     // TGSS
-    const tgssCard     = new AonCard();
-    tgssCard.id        = "tgss-card";
-    tgssCard.title     = "TGSS";
-    this.appendChild(tgssCard);
-    // Contenido
-      // imagen
-      const imgTgss = this.createElement(TAG.DIV);
-      imgTgss.className = "card-img-tgss";
-      tgssCard.setContent(imgTgss);
-      // textos
-      const tgssOptions = [
+    this.createCard({
+      id         : "tgss-card",
+      title      : "TGSS",
+      imgClass   : "card-img-tgss",
+      listOptions: [
         "Software de nóminas registrado",
         "Código Proveedor de nóminas nº 558",
         {
@@ -158,34 +111,24 @@ con total seguridad y respaldo normativo.`;
             "Sincronización de datos entre TGSS y AON"
           ]
         }
-      ];
-      const tgssContent = this.buildListContent(tgssOptions);
-      // Agregar el contenido
-      tgssCard.setContent(tgssContent);
-    // Footer
-    const tgssFooter = this.createCardFooter({
-      text : "Ver listado proveedores",
-      href : "https://www.seg-social.es/wps/wcm/connect/wss/7ada0194-1392-4dca-bc7f-e2496ec372b8/T86-Proveedor+de+n%C3%B3mina+2018-07.pdf?MOD=AJPERES&CVID=",
-      note : "(Página 4)"
+      ],
+      footer: {
+        text : "Ver listado proveedores",
+        href : "https://www.seg-social.es/wps/wcm/connect/wss/7ada0194-1392-4dca-bc7f-e2496ec372b8/T86-Proveedor+de+n%C3%B3mina+2018-07.pdf?MOD=AJPERES&CVID=",
+        note : "(Página 4)"
+      }
     });
-    tgssCard.addContent(tgssFooter);
     // FIN TGSS
     //
 
     //
     // SEPE
-    const sepeCard     = new AonCard();
-    sepeCard.id        = "sepe-card";
-    sepeCard.title     = "SEPE";
-    sepeCard.className = "no-space";
-    this.appendChild(sepeCard);
-    // Contenido
-      // imagen
-      const imgSepe = this.createElement(TAG.DIV);
-      imgSepe.className = "card-img-sepe";
-      sepeCard.setContent(imgSepe);
-      // textos
-      const sepeOptions = [
+    this.createCard({
+      id         : "sepe-card",
+      title      : "SEPE",
+      className  : "no-space",
+      imgClass   : "card-img-sepe",
+      listOptions: [
         {
           title   : "Comunic@ / TGSS:",
           children: [
@@ -193,16 +136,45 @@ con total seguridad y respaldo normativo.`;
             "Consulta de Contratos y Copia básica"
           ]
         }
-      ];
-      const sepeContent = this.buildListContent(sepeOptions);
-      // Agregar el contenido
-      sepeCard.setContent(sepeContent);
+      ]
+    });
     // FIN SEPE
     //
   }
 
-  buildListContent(options) {
-    const ul        = this.createElement(TAG.UL);
+  createCard({ id, title, className, imgClass, listOptions, textContent, footer }) {
+    const card  = new AonCard();
+    card.id     = id;
+    card.title  = title;
+    if (className) card.className = className;
+    this.appendChild(card);
+
+    // imagen
+    const img     = this.createElement(TAG.DIV);
+    img.className = imgClass;
+    card.setContent(img);
+
+    // textos
+    if (textContent) {
+      const text       = this.createElement(TAG.P);
+      text.textContent = textContent;
+      card.setContent(text);
+    }
+
+    if (listOptions) {
+      const list = this.addListContent(listOptions);
+      card.addContent(list);
+    }
+
+    // Footer
+    if (footer) {
+      const footerEl = this.createCardFooter(footer);
+      card.addContent(footerEl);
+    }
+  }
+
+  addListContent(options) {
+    const ul = this.createElement(TAG.UL);
 
     for (const option of options) {
       const li     = this.createElement(TAG.LI);
