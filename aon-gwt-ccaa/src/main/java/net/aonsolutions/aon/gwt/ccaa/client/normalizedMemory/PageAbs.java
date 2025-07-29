@@ -625,8 +625,13 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		getDeposit().getUndoStack().push(m);
 		getDeposit().getRedoStack().clear();
+
+		if (value == null) {
+			getMap().remove(key);			
+		} else {
+			getMap().put(key, value);			
+		}
 		
-		getMap().put(key, value);
 		if(calculate) {
 			getDeposit().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
 				@Override
@@ -638,7 +643,7 @@ public abstract class PageAbs extends ResizeComposite {
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else {
+		} else {			
 			getDeposit().getInma().saveDeposit(getAonData(), getMap(), getYear(), new AsyncCallback<Void>() {
 			
 				@Override
