@@ -171,7 +171,7 @@ export class AonHelp extends AonElement {
 
 	buildSupportData(value, title, icon, className) {
 		let div 		= this.createDiv();
-		div.className	= "card-list-row";
+		div.className	= "help-row";
 		div.style.title = title;
 		if(!this.isNewStyle()){
           div.style.marginTop = '10px';

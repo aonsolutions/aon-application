@@ -1,0 +1,30 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-certification{
+    display         : flex;
+    gap             : v.$gap;
+    flex-wrap       : wrap;
+    justify-content : center;
+    width           : v.$pct-100;
+    aon-card{
+      flex-grow   : 1;
+      flex-shrink : 1;
+      flex-basis  : v.$px-400;
+      max-width   : v.$px-480;
+      .aonCardContent{
+        min-height: v.$px-250;
+        display   : grid;
+        gap       : v.$gap;
+        .card-img {
+          width: 100px;
+          height: 100px;
+          background-image: url('../images/agencias/aeat.png');
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      }
+    }
+  }
+}

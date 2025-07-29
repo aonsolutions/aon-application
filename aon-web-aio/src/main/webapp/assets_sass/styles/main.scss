@@ -15,6 +15,7 @@
 @use './pages/index' as index;                // login
 @use './pages/home' as home;                  // home  - logueado
 @use './pages/home_desktop' as home_desktop;  // home  - en empresa
+@use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen
 @use './pages/plans' as plans;                // plans - Listado de planes que se pueden contratar
 @use './pages/documental' as doc;             // doc   - Documentos
 

@@ -341,15 +341,16 @@
         border-bottom: v.$px-1-6 solid $color-300;
       }
       .aonCardContent{
-        .card-list, buttoms{
-          color: $color-text-card;
-        }
-        .buttom{
-          &:hover{
-            background-color: $color-50;
-          }
-          &.active{
-            background-color: $color-100;
+        color: $color-text-card;
+        // Listado como si fueran botones de menu
+        .buttoms{
+          .buttom{
+            &:hover{
+              background-color: $color-50;
+            }
+            &.active{
+              background-color: $color-100;
+            }
           }
         }
       }

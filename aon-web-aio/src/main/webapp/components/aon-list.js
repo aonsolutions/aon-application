@@ -76,7 +76,7 @@ export class AonList extends AonElement {
         if (table) {
             initializeObjects();
             this.getObjects().then(objects => {
-                if (Array.isArray(objects) && objects.length === 0) {   
+                if (Array.isArray(objects) && objects.length === 0) {
                     this.empty();
                 }else{
                     table.removeRows();
@@ -89,8 +89,6 @@ export class AonList extends AonElement {
             });
         }
     }
-    
-    
 
 	loadMore() {
 		this.more = false;

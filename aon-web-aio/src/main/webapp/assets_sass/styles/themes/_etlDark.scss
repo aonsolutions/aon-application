@@ -20,6 +20,10 @@ $color-900      : #0f172a;
 $color-grad-min : #e62a25;
 $color-grad-max : #0E1030;
 
+$color-dark-0  : #fff;     // es $color-0 en claro
+$color-dark-100: #f1f5f9;  // es $color-100 en claro
+$color-dark-300: #cbd5e1;  // es $color-300 en claro
+
 $color-sky-50  : #f0f9ff;
 $color-sky-100 : #e0f2fe;
 $color-sky-200 : #bae6fd;
@@ -87,31 +91,31 @@ $color-yellow-800 : #854d0e;
 $color-yellow-900 : #713f12;
 
 // Colores textos
-$color-text-secundary     :#adafb3;
-$color-text               : #fff;
-$color-text-head          : #fff;
+$color-text-secundary     : $color-dark-100;
+$color-text               : $color-dark-0;
+$color-text-head          : $color-dark-0;
 $color-text-login         : $color-text-secundary;
 $color-text-general       : $color-text-secundary;
-$color-text-button        : #ffffff;
-$color-text-button-transp : #fff;
+$color-text-button        : $color-dark-0;
+$color-text-button-transp : $color-dark-0;
 
 // Colores card
-$color-text-card          : #fff;
+$color-text-card          : $color-text-secundary;
 $color-button-card        : $color-800;
 $color-button-card-hover  : $color-900;
 $color-notif-hover        : $color-100;
-$color-icon-menu          : #fff;
+$color-icon-menu          : $color-dark-0;
 
 // Colores login
 $color-login      : $color-900;
-$color-login-form : #232c40;
-$color-input      : #334155;
-$color-box        : #334155;
+$color-login-form : $color-700;
+$color-input      : $color-400;
+$color-box        : $color-400;
 
 // Colores switch
-$color-switch     : $color-600;
-$color-switch-on  : #334155;
-$color-switch-off : #fff;
+$color-switch     : $color-dark-300;
+$color-switch-on  : $color-600;
+$color-switch-off : $color-dark-0;
 
 // Logo del header
 $logoHead        : "../images/etl/logo-horizontal-bicolor.svg";

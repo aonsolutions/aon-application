@@ -20,9 +20,10 @@ aon-right-panel{
             .aonCardContent{
               display: grid;
               gap    : v.$gap;
-              .card-list-row{
-                display: flex;
-                gap    : v.$gap;
+              .help-row{
+                display     : flex;
+                align-items : center;
+                gap         : calc(v.$gap / 2);
               }
             }
           }

@@ -1,5 +1,7 @@
 @use '../variables' as v;
 
+$gap-min: calc(v.$gap / 2);
+
 aon-card{
   display       : block;
   border-radius : v.$border-radius;
@@ -18,17 +20,23 @@ aon-card{
   }
   .aonCardContent{
     padding : v.$padding;
-    .card-list{
-      display: grid;
-      gap    : v.$gap;
-      .card-list-row{
-        display     : flex;
-        align-items : center;
-        gap         : v.$px-8;
-      }
+    p{
+      margin: v.$px-0;
+    }
+    ul{
+      margin      : v.$px-0;
+      padding-left: v.$padding;
+    }
+    .card-footer {
+      display    : flex;
+      align-items: flex-end;
+      gap        : $gap-min;
+    }
+    .right-align{
+      justify-content: flex-end;
     }
   }
-  // Listado como si fueran botoones
+  // Listado como si fueran botones
   &.card-list-buttom{
     .aonCardContent{
       padding : v.$px-0;
@@ -38,7 +46,7 @@ aon-card{
           padding     : v.$px-8 v.$padding;
           display     : flex;
           align-items : center;
-          gap         : v.$px-8;
+          gap         : $gap-min;
           cursor      : pointer;
         }
       }
