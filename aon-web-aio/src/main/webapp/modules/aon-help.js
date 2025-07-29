@@ -154,10 +154,6 @@ export class AonHelp extends AonElement {
 			let data = {value: rightPanelSwitchSupportButton.isChecked()}
 			setSupport(data).then(r => {})
 		});
-		
-		let aonParent = document.querySelector('aon-parent');
-
-		if (aonParent && !aonParent.isConsultancyEmpty){
 	    	if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
 				let rightPanelAboutContactCard = new AonCard();
 				rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
@@ -219,7 +215,7 @@ export class AonHelp extends AonElement {
 					
 				});
 			}
-		}
+		
 		
 		let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
