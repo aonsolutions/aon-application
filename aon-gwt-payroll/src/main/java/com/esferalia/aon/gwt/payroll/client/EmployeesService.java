@@ -264,7 +264,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- SEPE Files
 	
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException;
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde, String enterpriseCif) throws IllegalArgumentException;
 
 	String getEmployeeCbcTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
 	

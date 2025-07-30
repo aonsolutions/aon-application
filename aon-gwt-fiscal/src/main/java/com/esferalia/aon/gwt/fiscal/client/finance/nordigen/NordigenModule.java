@@ -88,8 +88,9 @@ public class NordigenModule extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	private static final String EURO        = "\u20AC";
-	private static final String AON_BLUE    = "#002469";
-	private static final String AON_RED     = "#EF4444";
+	private static final String AON_GREEN   = "#14532d";
+	private static final String AON_BLUE    = "#1e3a8a";
+	private static final String AON_RED     = "#7f1d1d";
 	private static final String HOVER_COLOR = "#7A9AD7";
 
 	private static final NordigenServiceAsync NORDIGEN_SERVICE;
@@ -757,8 +758,8 @@ public class NordigenModule extends MainEntryPoint {
 			updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
-			    refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-                  allMovementsButton, balanceJsonButton, true, attempsBox);
+			    refreshCardAsync(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
+                  allMovementsButton, balanceJsonButton, true, attempsBox, diasBox, diasAcuerdoPanel);
 			});
 
 			getMenuPanel().add(updateButton);
@@ -769,21 +770,23 @@ public class NordigenModule extends MainEntryPoint {
               forceRefresh = true;
               storage.removeItem("bankSuccessAdd");
             }
-			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-              allMovementsButton, balanceJsonButton, forceRefresh, attempsBox);
-
-			loadRemainingDays(opt, nordigenBankAccount, diasBox, diasAcuerdoPanel);
+			refreshCardAsync(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
+              allMovementsButton, balanceJsonButton, forceRefresh, attempsBox, diasBox, diasAcuerdoPanel);
 		}
 
 		private void loadRemainingDays(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel diasBox, FlowPanel diasAcuerdoPanel) {
             NORDIGEN_SERVICE.getRemainingDays(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer result) {
-                    if(result != null && result > 0 ) {
+                    if(result == null) {
+                        diasBox.setText("Renovaci\u00F3n del acuerdo completado.");
+                        diasBox.addStyleName(AON.CSS.aonBold());
+                        diasBox.getElement().getStyle().setColor(AON_GREEN);
+                    } else if(result != null && result > 0 ) {
                         diasBox.setText("Renovaci\u00F3n del acuerdo en: "+ result +" d\u00EDas");
                         diasBox.addStyleName(AON.CSS.aonBold());
                         diasBox.getElement().getStyle().setColor(AON_BLUE);
-                    }else{
+                    } else {
                         diasBox.setText("Necesario renovaci\u00F3n del acuerdo");
                         diasBox.addStyleName(AON.CSS.aonBold());
                         diasBox.getElement().getStyle().setColor(AON_RED);
@@ -1035,9 +1038,35 @@ public class NordigenModule extends MainEntryPoint {
 			}
 		}
 
+		private void refreshCardAsync(final NordigenModuleOptions opt, final NordigenBankAccount nordigenBankAccount,
+          InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
+          AonTableButton allMovementsButton, AonTableButton balanceJsonButton, boolean forceRefresh, HTML attempsBox, final InlineLabel diasBox, final FlowPanel diasAcuerdoPanel
+        ){
+          // Llamada asincrónica de refreshCard (supongamos que es una llamada al servidor)
+          refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBox, availableBox, 
+            title, titlePanel, allMovementsButton, balanceJsonButton, forceRefresh, attempsBox, new AsyncCallback<Void>() 
+          {
+
+              @Override
+              public void onFailure(Throwable caught) {
+                  // Manejar error si es necesario
+                  Window.alert("Error al refrescar la tarjeta.");
+              }
+
+              @Override
+              public void onSuccess(Void result) {
+                // Una vez que refreshCard haya terminado, podemos continuar con loadRemainingDays
+                // Pasamos todas las variables que necesitamos a loadRemainingDays
+                // Saber los dias que nos queda de vinculacion de cuenta.
+                loadRemainingDays(opt, nordigenBankAccount, diasBox, diasAcuerdoPanel);
+              }
+          });
+        }
+
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
           InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-          AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh, HTML attempsBox) {
+          AonTableButton allMovementsButton, AonTableButton balanceJsonButton, boolean refresh, HTML attempsBox, final AsyncCallback<Void> callback
+        ) {
 			balanceJsonButton.setVisible(false);
 			allMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
@@ -1047,6 +1076,8 @@ public class NordigenModule extends MainEntryPoint {
 				public void onFailure(Throwable caught) {
 					LOGGER.info(caught.getMessage());
 					showBottomMessage("red", caught.getMessage());
+                    // Si falla tambien ya que mostramos el valor de base de datos
+                    callback.onSuccess(null);  // 'null' porque es un AsyncCallback<Void>
 				}
 
 				@Override
@@ -1069,6 +1100,8 @@ public class NordigenModule extends MainEntryPoint {
 					    openFootPanel();
                         loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
 				    }
+                    // Finalmente, si todo va bien, llamamos al callback de éxito
+                    callback.onSuccess(null);  // 'null' porque es un AsyncCallback<Void>
 				}
 			});
 		}
@@ -1128,8 +1161,9 @@ public class NordigenModule extends MainEntryPoint {
 		}
 
 		private void updateCard(NordigenModuleOptions opt, NordigenBankAccount result, InlineLabel atDateBox, InlineLabel lastDateBox,
-				InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton balanceJsonButton) {
+          InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
+          AonTableButton allMovementsButton, AonTableButton balanceJsonButton
+        ) {
 			
 			for (String log : result.getLogs()) {
 				clearBottomMessage();

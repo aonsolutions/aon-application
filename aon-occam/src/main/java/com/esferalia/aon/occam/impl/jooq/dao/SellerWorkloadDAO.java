@@ -381,9 +381,21 @@ public class SellerWorkloadDAO {
 				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
 						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+				
+				if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+					
+					List<Byte> customerStatus = new ArrayList<Byte>();
+					
+					if(params.getCustomerActive()) customerStatus.add((byte)0);
+					if(params.getCustomerInactive()) customerStatus.add((byte)1);
+					if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+					
+					invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+				}
 	
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
@@ -396,9 +408,21 @@ public class SellerWorkloadDAO {
 				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 						.where(INVOICE_DETAIL.PROJECT.in(projectIds))
 						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+				
+				if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+					
+					List<Byte> customerStatus = new ArrayList<Byte>();
+					
+					if(params.getCustomerActive()) customerStatus.add((byte)0);
+					if(params.getCustomerInactive()) customerStatus.add((byte)1);
+					if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+					
+					invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+				}
 	
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
@@ -790,15 +814,28 @@ public class SellerWorkloadDAO {
 					.fetch();
 			
 			// Realizamos la consulta con la lógica del ajuste de fechas incorporada
-			Result<Record4<Double, Double, String, Integer>> invoiceResult = ctx.getDslContext()
+			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = ctx.getDslContext()
 					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
 					.from(INVOICE_DETAIL)
 					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 					.where(INVOICE_DETAIL.SELLER.eq(seller))
 					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(INVOICE.ISSUE_DATE.between(start, endIt))
-					.fetch();
-
+					.and(INVOICE.ISSUE_DATE.between(start, endIt));
+			
+			if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+				
+				List<Byte> customerStatus = new ArrayList<Byte>();
+				
+				if(params.getCustomerActive()) customerStatus.add((byte)0);
+				if(params.getCustomerInactive()) customerStatus.add((byte)1);
+				if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+				
+				invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+			}
+			
+			Result<Record4<Double, Double, String, Integer>> invoiceResult = invoiceSelect.fetch();
+			
 			// Inicializamos los valores para los cálculos
 			double netSum = 0.0;
 			double totalSum = 0.0;
@@ -915,14 +952,28 @@ public class SellerWorkloadDAO {
 					.fetch();
 			
 			// Realizamos la consulta con la lógica del ajuste de fechas incorporada
-			Result<Record4<Double, Double, String, Integer>> invoiceResult = ctx.getDslContext()
+			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = ctx.getDslContext()
 					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
 					.from(INVOICE_DETAIL)
 					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 					.where(INVOICE_DETAIL.PROJECT.in(projectIds))
 					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(INVOICE.ISSUE_DATE.between(start, endIt))
-					.fetch();
+					.and(INVOICE.ISSUE_DATE.between(start, endIt));
+			
+			if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
+				
+				List<Byte> customerStatus = new ArrayList<Byte>();
+				
+				if(params.getCustomerActive()) customerStatus.add((byte)0);
+				if(params.getCustomerInactive()) customerStatus.add((byte)1);
+				if(params.getCustomerBlocked()) customerStatus.add((byte)2);
+				
+				invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+			}
+			
+			Result<Record4<Double, Double, String, Integer>> invoiceResult = invoiceSelect.fetch();
+			
 
 			// Inicializamos los valores para los cálculos
 			double netSum = 0.0;

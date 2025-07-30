@@ -299,12 +299,22 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	}
 
 	public void setSellerWorkload(SellerWorkloadParams params, SellerWorkload sellerWorkload, Integer sellectPos) {
+		updateCustomerStatusByParams(params);
+		
 		setSellerWorkload(params, sellerWorkload, finish -> {
 			if(position >= 0) showNavegationOptions();
 			else hideNavegationOptions();
 		});
 	}
 	
+	private void updateCustomerStatusByParams(SellerWorkloadParams params) {
+		Set<String> selectedOptions = new LinkedHashSet<String>();
+		if(params.getCustomerActive()) selectedOptions.add("Activo");
+		if(params.getCustomerInactive()) selectedOptions.add("Inactivo");
+		if(params.getCustomerBlocked()) selectedOptions.add("Bloqueado");
+		customerStatus.setSelectedOptions(selectedOptions);
+	}
+
 	public void setSellerWorkload(SellerWorkloadParams params, SellerWorkload sellerWorkload, Consumer<Void> finish) {
 		this.sellerWorkload = sellerWorkload;
 		

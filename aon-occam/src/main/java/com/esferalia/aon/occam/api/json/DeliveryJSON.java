@@ -88,6 +88,7 @@ public class DeliveryJSON {
 	}
 	
 	public static JSONObject toJSON(Delivery object) {
+		if(object == null) return null;
 		return new JSONObject()
 			.put(IJsonNames.ID, object.getId())
 			.put(IJsonNames.DOMAIN, object.getDomain())
