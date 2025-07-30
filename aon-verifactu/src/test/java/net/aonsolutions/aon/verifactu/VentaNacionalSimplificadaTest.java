@@ -40,13 +40,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalSimplificadaTest {
+class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	
 	@Test
-	void ventaNacionalSimpleNoAct() throws VerifactuException {
+	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLE() );
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx) );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -55,10 +55,10 @@ class VentaNacionalSimplificadaTest {
 	}
 
 	@Test
-	void ventaNacionalSimpleActGeneral() throws VerifactuException {
+	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLE().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -123,7 +123,7 @@ class VentaNacionalSimplificadaTest {
 	    
 	    ClaveTipoFacturaType tipoFactura = rfat.getTipoFactura();
 	    assertNotNull( tipoFactura );
-	    assertEquals( ClaveTipoFacturaType.F_1, tipoFactura );
+	    assertEquals( ClaveTipoFacturaType.F_2, tipoFactura );
 	    
 	    ClaveTipoRectificativaType tipoRectificativa = rfat.getTipoRectificativa();
 	    assertNull( tipoRectificativa );
@@ -147,11 +147,11 @@ class VentaNacionalSimplificadaTest {
 	    
 	    SimplificadaCualificadaType facturaSimplificadaArt7273 = rfat.getFacturaSimplificadaArt7273();
 	    assertNotNull( facturaSimplificadaArt7273 );
-	    assertEquals( SimplificadaCualificadaType.N , facturaSimplificadaArt7273 );
+	    assertEquals( SimplificadaCualificadaType.S , facturaSimplificadaArt7273 );
 
 	    CompletaSinDestinatarioType facturaSinIdentifDestinatarioArt61D = rfat.getFacturaSinIdentifDestinatarioArt61D();
 	    assertNotNull( facturaSinIdentifDestinatarioArt61D );
-	    assertEquals( CompletaSinDestinatarioType.N , facturaSinIdentifDestinatarioArt61D );
+	    assertEquals( CompletaSinDestinatarioType.S , facturaSinIdentifDestinatarioArt61D );
 	    
 	    MacrodatoType macrodato = rfat.getMacrodato();
 	    assertNotNull( macrodato );
@@ -164,15 +164,7 @@ class VentaNacionalSimplificadaTest {
 	    assertNull( tercero );
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
-	    assertNotNull( destinatarios );
-	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
-	    assertNotNull( iDDestinatario );
-	    assertEquals( 1, iDDestinatario.size() );
-	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
-	    assertNotNull( destinatario );
-	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
-	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
-	    assertNull( destinatario.getIDOtro() );
+	    assertNull( destinatarios );
 	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );

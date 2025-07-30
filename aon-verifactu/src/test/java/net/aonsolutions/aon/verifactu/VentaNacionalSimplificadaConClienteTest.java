@@ -2,7 +2,6 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
@@ -26,7 +24,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseRectificacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
@@ -43,13 +40,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
+class VentaNacionalSimplificadaConClienteTest extends AbstractVerifactuTest {
 	
 	@Test
 	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get( ctx ) );
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx) );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -61,7 +58,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get( ctx ).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -126,20 +123,13 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    
 	    ClaveTipoFacturaType tipoFactura = rfat.getTipoFactura();
 	    assertNotNull( tipoFactura );
-	    assertEquals( ClaveTipoFacturaType.R_5, tipoFactura );
+	    assertEquals( ClaveTipoFacturaType.F_2, tipoFactura );
 	    
 	    ClaveTipoRectificativaType tipoRectificativa = rfat.getTipoRectificativa();
-	    assertEquals( ClaveTipoRectificativaType.I, tipoRectificativa );
+	    assertNull( tipoRectificativa );
 	    
 	    RegistroFacturacionAltaType.FacturasRectificadas facturasRectificadas = rfat.getFacturasRectificadas();
-	    assertNotNull( facturasRectificadas );
-	    List<IDFacturaARType> rectIds = facturasRectificadas.getIDFacturaRectificada();
-	    assertTrue( AonCollectionUtils.isNotEmpty( rectIds ) );
-	    IDFacturaARType rectId = rectIds.get(0);
-	    assertNotNull( rectId );
-	    assertEquals( vc.getCompany().getDocument(), rectId.getIDEmisorFactura() );
-	    assertEquals(i.getRectificationInvoiceReference(), rectId.getNumSerieFactura());
-	    assertEquals(VerifactuUtils.toString(i.getRectificationInvoiceDate() ), rectId.getFechaExpedicionFactura() );
+	    assertNull( facturasRectificadas );
 	    
 	    RegistroFacturacionAltaType.FacturasSustituidas facturasSustituidas = rfat.getFacturasSustituidas();
 	    assertNull( facturasSustituidas );

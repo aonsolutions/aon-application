@@ -272,7 +272,7 @@ public class CompanyDAO {
 		ctx.checkWrite();
 		companyFull.setRegistry(CompanyDAO.save(ctx, companyFull.getRegistry()));
 		RegistryDAO.saveChilds(ctx, companyFull);
-		companyFull = getFull(ctx, companyFull.getId());
+		companyFull = getFull(ctx, companyFull.getDomain());
 		return companyFull;
 	}
 

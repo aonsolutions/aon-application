@@ -40,13 +40,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalSuplidosTest {
+class VentaNacionalSuplidosTest extends AbstractVerifactuTest {
 	
 	@Test
-	void ventaNacionalSimpleNoAct() throws VerifactuException {
+	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLIFICADA() );
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx) );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -55,10 +55,10 @@ class VentaNacionalSuplidosTest {
 	}
 
 	@Test
-	void ventaNacionalSimpleActGeneral() throws VerifactuException {
+	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_SIMPLIFICADA().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -123,7 +123,7 @@ class VentaNacionalSuplidosTest {
 	    
 	    ClaveTipoFacturaType tipoFactura = rfat.getTipoFactura();
 	    assertNotNull( tipoFactura );
-	    assertEquals( ClaveTipoFacturaType.F_2, tipoFactura );
+	    assertEquals( ClaveTipoFacturaType.F_1, tipoFactura );
 	    
 	    ClaveTipoRectificativaType tipoRectificativa = rfat.getTipoRectificativa();
 	    assertNull( tipoRectificativa );
@@ -147,11 +147,11 @@ class VentaNacionalSuplidosTest {
 	    
 	    SimplificadaCualificadaType facturaSimplificadaArt7273 = rfat.getFacturaSimplificadaArt7273();
 	    assertNotNull( facturaSimplificadaArt7273 );
-	    assertEquals( SimplificadaCualificadaType.S , facturaSimplificadaArt7273 );
+	    assertEquals( SimplificadaCualificadaType.N , facturaSimplificadaArt7273 );
 
 	    CompletaSinDestinatarioType facturaSinIdentifDestinatarioArt61D = rfat.getFacturaSinIdentifDestinatarioArt61D();
 	    assertNotNull( facturaSinIdentifDestinatarioArt61D );
-	    assertEquals( CompletaSinDestinatarioType.S , facturaSinIdentifDestinatarioArt61D );
+	    assertEquals( CompletaSinDestinatarioType.N , facturaSinIdentifDestinatarioArt61D );
 	    
 	    MacrodatoType macrodato = rfat.getMacrodato();
 	    assertNotNull( macrodato );
@@ -164,7 +164,15 @@ class VentaNacionalSuplidosTest {
 	    assertNull( tercero );
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
-	    assertNull( destinatarios );
+	    assertNotNull( destinatarios );
+	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
+	    assertNotNull( iDDestinatario );
+	    assertEquals( 1, iDDestinatario.size() );
+	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
+	    assertNotNull( destinatario );
+	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertNull( destinatario.getIDOtro() );
 	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
@@ -174,22 +182,36 @@ class VentaNacionalSuplidosTest {
 	    assertNotNull( desglose );
 	    List<DetalleType> listaDesglose = desglose.getDetalleDesglose();
 	    assertNotNull( listaDesglose );
-	    assertEquals( 1, listaDesglose.size() );
-	    DetalleType dt = listaDesglose.get(0);
-	    assertNotNull( dt );
-	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
-	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
-	    assertNull( dt.getOperacionExenta() );		
-	    assertEquals( "21" , dt.getTipoImpositivo());
-	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
-	    assertNull( dt.getBaseImponibleACoste() );
-	    assertEquals( "21" , dt.getCuotaRepercutida());
-	    assertNull( dt.getTipoRecargoEquivalencia() );		
-	    assertNull( dt.getCuotaRecargoEquivalencia() );
+	    assertEquals( 2, listaDesglose.size() );
+
+	    DetalleType dt0 = listaDesglose.get(0);
+	    assertNotNull( dt0 );
+	    assertEquals( TipoImpuesto.IVA.getValue() , dt0.getImpuesto() );
+	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt0.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.N_1 , dt0.getCalificacionOperacion() );
+	    assertNull( dt0.getOperacionExenta() );		
+	    assertNull( dt0.getTipoImpositivo());
+	    assertEquals( "500" , dt0.getBaseImponibleOimporteNoSujeto());
+	    assertNull( dt0.getBaseImponibleACoste() );
+	    assertNull( dt0.getCuotaRepercutida());
+	    assertNull( dt0.getTipoRecargoEquivalencia() );		
+	    assertNull( dt0.getCuotaRecargoEquivalencia() );
+	    
+	    DetalleType dt1 = listaDesglose.get(1);
+	    assertNotNull( dt1 );
+	    assertEquals( TipoImpuesto.IVA.getValue() , dt1.getImpuesto() );
+	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt1.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.S_1 , dt1.getCalificacionOperacion() );
+	    assertNull( dt1.getOperacionExenta() );		
+	    assertEquals( "21" , dt1.getTipoImpositivo());
+	    assertEquals( "100" , dt1.getBaseImponibleOimporteNoSujeto());
+	    assertNull( dt1.getBaseImponibleACoste() );
+	    assertEquals( "21" , dt1.getCuotaRepercutida());
+	    assertNull( dt1.getTipoRecargoEquivalencia() );		
+	    assertNull( dt1.getCuotaRecargoEquivalencia() );
 	    
 	    assertEquals( "21" , rfat.getCuotaTotal());
-	    assertEquals( "121" , rfat.getImporteTotal());
+	    assertEquals( "621" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );

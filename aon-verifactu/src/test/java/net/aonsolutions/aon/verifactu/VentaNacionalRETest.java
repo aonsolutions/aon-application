@@ -40,13 +40,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalRETest {
+class VentaNacionalRETest extends AbstractVerifactuTest {
 	
 	@Test
-	void ventaNacionalRENoAct() throws VerifactuException {
+	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE() );
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx) );
 		VerifactuContext vc = new VerifactuContext()
 				.setConfig( config() )
 				.setCompany( c )
@@ -55,10 +55,10 @@ class VentaNacionalRETest {
 	}
 
 	@Test
-	void ventaNacionalREActGeneral() throws VerifactuException {
+	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_RE().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 				.setConfig( config() )
 				.setCompany( c )

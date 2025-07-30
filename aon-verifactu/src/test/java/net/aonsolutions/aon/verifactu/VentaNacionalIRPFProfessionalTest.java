@@ -40,13 +40,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
-class VentaNacionalIRPFProfessionalTest {
+class VentaNacionalIRPFProfessionalTest extends AbstractVerifactuTest {
 	
 	@Test
-	void ventaNacionalIRPFProfessionalNoAct() throws VerifactuException {
+	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_IRPF_PROFESSIONAL() );
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get( ctx ) );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -55,10 +55,10 @@ class VentaNacionalIRPFProfessionalTest {
 	}
 		
 	@Test
-	void ventaNacionalIRPFProfessionalActGeneral() throws VerifactuException {
+	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.VENTA_NACIONAL_IRPF_PROFESSIONAL().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get( ctx ).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
