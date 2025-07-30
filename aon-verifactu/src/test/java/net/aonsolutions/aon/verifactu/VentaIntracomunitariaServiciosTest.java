@@ -170,10 +170,12 @@ class VentaIntracomunitariaServiciosTest {
 	    assertEquals( 1, iDDestinatario.size() );
 	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
 	    assertNotNull( destinatario );
-	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
-	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
-	    assertNull( destinatario.getIDOtro() );
 	    
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertNull(destinatario.getNIF());
+	    assertNotNull(destinatario.getIDOtro());
+	    assertEquals( i.getRegistryDocument(), destinatario.getIDOtro().getID().substring(2));
+
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
 	    assertEquals(CuponType.N,cupon);

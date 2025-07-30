@@ -4,12 +4,15 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CountryType2;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Destinatarios;
@@ -211,14 +214,35 @@ enum ClaveTipoFactura {
 	
 	public static Destinatarios getDestinatarios(Invoice invoice) {
 		PersonaFisicaJuridicaType destinatario = new PersonaFisicaJuridicaType();
-		destinatario.setNIF(invoice.getRegistryDocument());
 		destinatario.setNombreRazon(invoice.getRegistryName());
 		
-		
-		// TODO ID OTRO
+		if((invoice.isNational() || invoice.isIsp() || invoice.isCanCeuMel())
+				&& Country.ES.equals(invoice.getRegistryDocumentCountry())) {
+			destinatario.setNIF(invoice.getRegistryDocument().replace(" ", ""));	
+		} else {
+			IDOtroType other = new IDOtroType();
+			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+				other.setCodigoPais(CountryType2.GB);
+			} else other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+			
+			other.setIDType(null);
+			other.setIDType(invoice.isIntracommunity() 
+					? VerifactuIDType.NIF_IVA.getName()
+					: VerifactuIDType.OTRO.getName());
+			
+			String doc = invoice.getRegistryDocument().replace(" ", "");
+			if(!doc.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+				doc = countryDocument + doc;
+			}
+			other.setID(doc);
+			destinatario.setIDOtro(other);
+		}
 		
 		Destinatarios destinatarios = new Destinatarios();
 		destinatarios.getIDDestinatario().add(destinatario);
 		return destinatarios;
 	}
+	
 }
