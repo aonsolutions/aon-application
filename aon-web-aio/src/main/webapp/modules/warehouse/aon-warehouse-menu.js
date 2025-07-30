@@ -117,11 +117,11 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             options: [{
                 description: "Orden de elaboración",
                 title: "Orden de elaboración",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.ELABORATION)
             }, {
                 description: "Packing List",
                 title: "Packing List",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.PACKING_LIST)
             }, {
                 description: "Etiquetas Envio",
                 title: "Etiquetas Envio",

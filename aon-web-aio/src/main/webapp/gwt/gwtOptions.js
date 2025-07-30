@@ -95,6 +95,24 @@ export const AMORTIZATION_TYPE = {
   entryPoint: 'AmortizationType'
 };
 
+export const PACKING_LIST = {
+  module: GWT_AIO,
+  entryPoint: 'warehouse',
+  subEntryPoint: 'carrier_packing'
+};
+
+export const ELABORATION = {
+  module: GWT_AIO,
+  entryPoint: 'warehouse',
+  subEntryPoint: 'elaboration'
+};
+
+export const ELABORATION_NEW = {
+  module: GWT_AIO,
+  entryPoint: 'warehouse',
+  subEntryPoint: 'elaborationNew'
+};
+
 export const DEPOSIT = {
   module: GWT_AIO,
   entryPoint: 'deposit',
