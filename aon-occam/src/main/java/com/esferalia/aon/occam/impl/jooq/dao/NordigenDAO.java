@@ -144,9 +144,9 @@ public class NordigenDAO {
 		        calendario.set(2025, Calendar.AUGUST, 1, 0, 0, 0);
 				Date targetDate = calendario.getTime();
 				boolean checkMoveInBD = true;
-				if(account.getRbank().getBalanceDate() == null && account.getRbank().getBalanceDate().after(targetDate)) {
+				if(account.getRbank().getBalanceDate() != null && account.getRbank().getBalanceDate().after(targetDate)) {
 					checkMoveInBD = ctx.getDslContext().select().from(BANK_STATEMENT).where(BANK_STATEMENT.NORDIGEN_ID.eq(bankStatement.getNordigenMovementId()).and(BANK_STATEMENT.RBANK.eq(bankStatement.getRegistryBank().getId()))).fetch().stream().count() == 1 ? false : true;
-				} else {
+				} else if(account.getRbank().getBalanceDate() != null && account.getRbank().getBalanceDate().before(targetDate)){
 					java.sql.Date sqlDate = new java.sql.Date(bankStatement.getOperationDate().getTime());
 					checkMoveInBD = ctx.getDslContext()
 					.select()
