@@ -81,8 +81,12 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -419,5 +423,27 @@ public interface CommonService extends RemoteService {
 	List<TaskHolderWorkgroup> getTaskHolderWorkgroupList(String domainName, Integer domain, String user, Integer taskHolderId) throws AonCoreException;
 	List<User> getUsersForTaskHolder(String domainName, Integer domainId, String user, boolean all) throws AonCoreException;
 	User getUser(String domainName, Integer domainId, String user, Integer userId) throws AonCoreException;
+	
+	// **************************************************
+	// ****************************************** [SCOPE]
+	// **************************************************
+	
+	List<Scope> getScopeList(ScopeParams params) throws AonCoreException;
+	Integer getScopesCount(ScopeParams params) throws AonCoreException;
+	
+	Scope getScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException;
+	Scope saveScope(String domainName, int domain, String user, Scope scope) throws AonCoreException;
+	void deleteScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException;
+	
+	List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
+	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope) throws AonCoreException;
+	void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId) throws AonCoreException;
+	
+	List<Domain> getDomainScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
+	void saveDomainScope(String domainName, Integer domainId, String user, Integer domainChange, Integer scopeId) throws AonCoreException;
+	void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain) throws AonCoreException;
+	
+	List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException;
+
 	
 }

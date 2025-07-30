@@ -650,3 +650,8 @@ export const TASK_HOLDER_MODULE = {
   entryPoint: 'TaskHolderModule'
 };
 
+export const SCOPE_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'ScopeModule'
+};
+
