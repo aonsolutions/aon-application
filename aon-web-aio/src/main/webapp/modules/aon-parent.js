@@ -163,7 +163,6 @@ export class AonParent extends AonElement {
 		let companyTitleSpan = this.getElement(this.COMPANY_TITLE_SPAN);
 		companyTitleSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 		let tabCompanies = {};
-		let isConsultancyEmpty = false;
 		for( let companyFilterTab of companyFilterTabs ){
 			let companyFilterTabCompanies = companies.filter(f => !this.isLocationCompany(f) && this.companyFilter(f, { ...companyFilterTab, ...filter }));
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
@@ -174,9 +173,6 @@ export class AonParent extends AonElement {
 				tabCompanies[companyFilterTab.id] = companyFilterTab;
 				companyFilterTabSpan.parentElement.classList.remove(CSS.AON_COMPANY_FILTER_EMPTY);
 				companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
-				if (companyFilterTab.id === 'consultancy') {
-					this.isConsultancyEmpty = true;
-				}
 			}
 		}
 		

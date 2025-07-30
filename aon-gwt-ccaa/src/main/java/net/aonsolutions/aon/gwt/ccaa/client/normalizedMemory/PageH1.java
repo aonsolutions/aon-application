@@ -447,6 +447,7 @@ public class PageH1 extends PageAbs {
 			//SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
   
 			DateBox d = (DateBox) w;
+			d.setFireNullValues(true);
 			d.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 			dAux = d;
 			if(getMap().containsKey(key2)){
@@ -472,11 +473,19 @@ public class PageH1 extends PageAbs {
 				DateBox d = dAux;
 				@Override
 				public void onValueChange(ValueChangeEvent<Date> event) {
-					Integer day = d.getValue().getDate();
-					Integer month = d.getValue().getMonth()+1;
-					Integer year = d.getValue().getYear()+1900;
-					String value = day+"."+month+"."+year;
-					onEdit(key2, value);
+					Integer day = null;
+					Integer month = null;
+					Integer year = null;
+					Date dateValue = d.getValue();
+					if (dateValue == null) {
+						onEdit(key2, null);
+					} else {
+						day = d.getValue().getDate();
+						month = d.getValue().getMonth()+1;
+						year = d.getValue().getYear()+1900;
+						String value = day+"."+month+"."+year;
+						onEdit(key2, value);
+					}
 					
 					String dayKey = null;
 					String monthKey = null;
@@ -502,13 +511,13 @@ public class PageH1 extends PageAbs {
 						dayKey = "110139";
 					}
 					if(dayKey != null){
-						onEdit(dayKey, day.toString());
+						onEdit(dayKey, day == null ? null : day.toString());
 					}
 					if(monthKey != null){
-						onEdit(monthKey, month.toString());
+						onEdit(monthKey, month == null ? null : month.toString());
 					}
 					if(yearKey != null){
-						onEdit(yearKey, year.toString());	
+						onEdit(yearKey, year == null ? null : year.toString());	
 					}
 				}
 			});
