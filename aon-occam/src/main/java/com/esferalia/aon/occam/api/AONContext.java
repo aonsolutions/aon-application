@@ -52,7 +52,7 @@ public class AONContext {
 			super(connection, domainName, user);
 		}
 		
-		protected CloseableAONContext(Connection connection, String domainName, int domainId, String user) {
+		protected CloseableAONContext(Connection connection, String domainName, Integer domainId, String user) {
 			super(connection, domainName, domainId, user);
 		}
 
@@ -172,7 +172,7 @@ public class AONContext {
 		return getAONContext(occam.getDomainName(),occam.getDomain(),occam.getUser());
 	}
 	
-	public static CloseableAONContext getAONContext(String domainName, int domainId, String user) {
+	public static CloseableAONContext getAONContext(String domainName, Integer domainId, String user) {
 		try {
 			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId,user);
@@ -256,7 +256,7 @@ public class AONContext {
 	private DSLContext dslContext;
 	private Connection connection;
 	private String domainName;
-	private int domainId;
+	private Integer domainId;
 	private String user;
 	
 	private AonConfiguration config;
@@ -283,7 +283,7 @@ public class AONContext {
 		this.domainId = getDomainId(dslContext, domainName);
 	}
 
-	private AONContext(Connection connection, String domainName, int domainId, String user) {
+	private AONContext(Connection connection, String domainName, Integer domainId, String user) {
 		this.domainName = domainName;
 		this.domainId = domainId;
 		this.user = user;
@@ -294,7 +294,7 @@ public class AONContext {
 	public String getDomainName() {
 		return domainName;
 	}
-	public int getDomainId() {
+	public Integer getDomainId() {
 		return domainId;
 	}
 
