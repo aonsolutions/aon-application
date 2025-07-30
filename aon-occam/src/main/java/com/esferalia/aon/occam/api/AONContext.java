@@ -294,8 +294,8 @@ public class AONContext {
 	public String getDomainName() {
 		return domainName;
 	}
-	public Integer getDomainId() {
-		return domainId;
+	public int getDomainId() {
+		return domainId == null ? 0 : domainId;
 	}
 
 	public DSLContext getDslContext() {
