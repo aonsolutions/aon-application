@@ -256,7 +256,7 @@ public class AONContext {
 	private DSLContext dslContext;
 	private Connection connection;
 	private String domainName;
-	private Integer domainId;
+	private int domainId;
 	private String user;
 	
 	private AonConfiguration config;
