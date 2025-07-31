@@ -33,6 +33,12 @@ const AON_SELLER_WORKLOAD = {
     icon: MATERIAL_ICONS.PERSON_PLAY
 }
 
+const AON_SCOPE = {
+    id: 'sideNavScope',
+    name: "Ámbitos",
+    icon: MATERIAL_ICONS.ACTIVITY_ZONE
+}
+
 const AON_SERVICE = {
     id: 'sideNavService',
     name: MSG.AON_SERVICES,
@@ -80,7 +86,8 @@ const OfficeOptions = {
     AON_TASK_HOLDER,
     AON_WORKGROUP_LIST,
     AON_SELLER_LIST,
-    AON_SELLER_WORKLOAD
+    AON_SELLER_WORKLOAD,
+    AON_SCOPE
 };
 
 const ServiceOptions = {

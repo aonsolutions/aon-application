@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Contact;
@@ -25,6 +26,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.Booking;
@@ -71,7 +74,13 @@ public interface ISecurity {
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);
 	public Scope insertScope(AONContext ctx, Scope scope);
+	public Scope saveScope(AONContext ctx, Scope scope);
 	public Integer deleteScope(AONContext ctx, Integer scopeId);
+	
+	public List<Scope> getScopeList(CloseableAONContext ctx, ScopeParams params);
+	public Integer getScopesCount(CloseableAONContext ctx, ScopeParams params);
+	public List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId);
+	
 	public void assignAuthToUser(AONContext ctx, User user, byte[] auth);
 	public void insertUserScope(AONContext ctx, UserScope userScope);
 	
