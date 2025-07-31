@@ -158,6 +158,8 @@ public class TaxBreakdown implements Serializable {
 			.map( InvoiceBreakdown::from )
 			.map( ib -> ensureData(invoice,ib, false))
 			.forEach( this::add );
+		
+		calculateTaxBreakdown(invoice);
 	}
 	
 	private InvoiceBreakdown ensureData(Invoice invoice, InvoiceBreakdown ib, boolean forceExemption) {
@@ -175,18 +177,21 @@ public class TaxBreakdown implements Serializable {
 		}
 		return ib;
 	}
+	
 	public Invoice calculateTaxBreakdown(Invoice inv) {
 		stream().forEach(ib -> calculateBreakdown(inv, ib));
 		return inv;
 	}
 	
 	private static void calculateBreakdown(Invoice inv, InvoiceBreakdown ib) {
-		ib.setQuota(AonMathUtils.round(ib.getBase() * ib.getPercentage() / 100 ));
-		if (inv.isSurcharge()) {
-			ib.setSurchargeQuota( AonMathUtils.round(ib.getBase() * ib.getSurcharge() / 100 ));	
-		} else {
-			ib.setSurcharge( 0.0);
-			ib.setSurchargeQuota( 0.0);
+		if(ib.getPercentage() != 0.0 && ib.getQuota() == 0.0) {
+			ib.setQuota(AonMathUtils.round(ib.getBase() * ib.getPercentage() / 100 ));
+			if (inv.isSurcharge() && ib.getSurchargeQuota() != 0.0 && ib.getSurchargeQuota() == 0.0) {
+				ib.setSurchargeQuota( AonMathUtils.round(ib.getBase() * ib.getSurcharge() / 100 ));	
+			} else {
+				ib.setSurcharge( 0.0);
+				ib.setSurchargeQuota( 0.0);
+			}
 		}
 	}
 }

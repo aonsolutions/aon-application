@@ -34,6 +34,8 @@ class Invoice2VerifactuAlta {
 	}
 	
 	static RegistroFacturacionAltaType get(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+		invoice.refreshTaxBreakdown();
+		
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
 		
 		alta.setIDVersion(Invoice2Verifactu.VERSION);
@@ -94,7 +96,6 @@ class Invoice2VerifactuAlta {
 	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		try {
 			DesgloseType desglose = new DesgloseType();
-			invoice.refreshTaxBreakdown();
 			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();
 			if (optTb.isPresent()) {
 				TaxBreakdown tb = optTb.get();
