@@ -997,8 +997,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<Seller> getTaskHolderUsers(String domainName, int domain, String user) throws AonCoreException {
-		return AON.getTaskHolderSellerStream(
+		List<Seller> list = AON.getTaskHolderSellerStream(
 				new Domain().setName(domainName).setId(domain), user);
+		
+		// Filter user from parent domain
+		list = list.stream()
+			.filter(seller -> !seller.getTaskHolder().getDomain().getId().equals(seller.getTaskHolder().getUser().getDomain().getId()))
+			.collect(Collectors.toList());
+		
+		return list;
 	}
 	
 	@Override
