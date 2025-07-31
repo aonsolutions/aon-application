@@ -349,6 +349,8 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
+				dateTab.setWidget(0, 1, periodBox);
 				fromDate.setValue(period.getSelectedInitiationDate(),false);
 				toDate.setValue(period.getSelectedDeadline(),false);
 				confidential.setSelectedIndex(2);
