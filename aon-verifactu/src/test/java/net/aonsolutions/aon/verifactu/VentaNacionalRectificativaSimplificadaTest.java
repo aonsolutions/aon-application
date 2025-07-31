@@ -11,9 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -213,7 +211,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    assertEquals( "01" , sistemaInformatico.getIdSistemaInformatico());
 	    assertEquals( "aonSolutions" , sistemaInformatico.getNombreSistemaInformatico());
 	    assertEquals( "9.23" , sistemaInformatico.getVersion());
-	    assertEquals( vc.getCompany().getDocument() + "-1" , sistemaInformatico.getNumeroInstalacion());
+	    assertEquals( vc.getCompany().getDocument() + "-" + DOMAIN_ID , sistemaInformatico.getNumeroInstalacion());
 	    assertEquals( SiNoType.N , sistemaInformatico.getTipoUsoPosibleSoloVerifactu());
 	    assertEquals( SiNoType.S , sistemaInformatico.getTipoUsoPosibleMultiOT());
 	    assertEquals( SiNoType.S , sistemaInformatico.getIndicadorMultiplesOT());
@@ -227,22 +225,5 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    
 	}
 	
-	private VerifactuConfiguration config() {
-		return new VerifactuConfiguration()
-			.setActive(true)
-			.setTest(true)
-			.setDefaultCertificate(null)
-			.setCertificate(null)
-			.setIncludeDate(null)
-			.setRegistryDate(null)
-		;
-	}
-	private Company company() {
-		Company company = new Company();
-		company.setDocument("11111111H");
-		company.setName("Verifactu Test Company S.L.");
-		company.setDomain(new Domain().setId(1));
-		return company;
-	}
-	
+
 }
