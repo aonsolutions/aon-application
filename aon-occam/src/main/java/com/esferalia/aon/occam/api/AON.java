@@ -1904,6 +1904,9 @@ public class AON {
 			return acceptInvoice(ctx, invoice, rawdocId);
 		}
 	}
+	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice){
+		return getFinance().acceptInvoice(ctx, invoice, null);
+	}
 	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
 	}

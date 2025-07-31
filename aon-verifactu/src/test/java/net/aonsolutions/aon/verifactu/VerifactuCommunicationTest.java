@@ -5,17 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
@@ -26,7 +22,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -38,49 +33,48 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
-class VerifactuCommunicationTest {
+class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
-//	@Test
-//	void communication() throws Exception {
-//		VerifactuContext vc = new VerifactuContext()
-//				.setConfig(config())
-//				.setCompany(company())
-//				.setInvoices(InvoiceTypes.getAll())
-//				.setBlockchain(null);
-//
-//		vc.setRequest(Invoice2Verifactu.build(vc) );
-//		
-//		String requestStr = XMLUtils.soapMarshal(
-//				vc.getRequest(), 
-//				RegFactuSistemaFacturacion.class);
-//		vc.setResponse( XMLUtils.post(
-//				vc.getConfig().getCertificate(), 
-//				VerifactuUri.getUrlEmision(true), 
-//				requestStr));
-//	
-//		assertNotNull(vc.getResponse());
-//		assertEquals(vc.getResponse().isError(), false);
-//		
-//		RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) 
-//				XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, vc.getResponse().getResponse());
-//
-//		if (!respuesta.getRespuestaLinea().isEmpty()) {
-//			respuesta.getRespuestaLinea().stream().forEach(r -> {
-//				assertEquals(r.getEstadoRegistro().equals("ParcialmenteCorrecto")
-//						? "ParcialmenteCorrecto" : "Correcto", r.getEstadoRegistro());
-//			});
-//		}
-//	}
-//	
-//	@Test
-//	void communicationAndSave() throws Exception {
-//		Occam occam = new Occam();
-//		List<Invoice> invoices = InvoiceTypes.getAll().stream().map(i -> AON.acceptInvoice(occam, i)).toList();	
-//		VERIFACTU.accept(config(), company(), invoices, null, "user");
-//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-//			invoices.stream().forEach(invoice -> assertInvoiceCommunication(ctx, invoice));
-//		}
-//	}
+	@Test
+	@Disabled
+	void communication() throws Exception {
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig(config())
+			.setCompany(company())
+			.setInvoices(InvoiceTypes.getAll(ctx))
+			.setBlockchain(null);
+		vc.setRequest(Invoice2Verifactu.build(vc) );
+		String requestStr = XMLUtils.soapMarshal(
+			vc.getRequest(), 
+			RegFactuSistemaFacturacion.class);
+		
+		vc.setResponse( XMLUtils.post(
+			vc.getConfig().getCertificate(), 
+			VerifactuUri.getUrlEmision(true), 
+			requestStr));
+	
+		assertNotNull(vc.getResponse());
+		assertEquals(vc.getResponse().isError(), false);
+		
+		RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) 
+				XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, vc.getResponse().getResponse());
+
+		if (!respuesta.getRespuestaLinea().isEmpty()) {
+			respuesta.getRespuestaLinea().stream().forEach(r -> {
+				assertEquals(r.getEstadoRegistro().equals("ParcialmenteCorrecto")
+						? "ParcialmenteCorrecto" : "Correcto", r.getEstadoRegistro());
+			});
+		}
+	}
+	
+	@Test
+	@Disabled
+	void communicationAndSave() throws Exception {
+		List<Invoice> invoices = InvoiceTypes.getAll(ctx).stream().map(i -> AON.acceptInvoice(ctx, i)).toList();	
+		VERIFACTU.accept(config(), company(), invoices, null, "user");
+		invoices.stream().forEach(invoice -> assertInvoiceCommunication(ctx, invoice));
+		
+	}
 		
 	private void assertInvoiceCommunication(AONContext ctx, Invoice invoice) {
 		InvoiceData qrUrl = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
@@ -134,24 +128,6 @@ class VerifactuCommunicationTest {
 				.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(request.getData());
-	}
-	
-	private VerifactuConfiguration config() {
-		return new VerifactuConfiguration()
-			.setActive(true)
-			.setTest(true)
-			.setDefaultCertificate(null)
-			.setCertificate(AonSecret.getSigCert())
-			.setIncludeDate(null)
-			.setRegistryDate(null)
-		;
-	}
-	private Company company() {
-		Company company = new Company();
-		company.setDocument("B01487271");
-		company.setName("AON SOLUTIONS SL");
-		company.setDomain(new Domain().setId(1));
-		return company;
 	}
 	
 }

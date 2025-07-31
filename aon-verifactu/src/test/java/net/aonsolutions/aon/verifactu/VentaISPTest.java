@@ -40,11 +40,17 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VentaISPTest extends AbstractVerifactuTest {
 	
+	private Invoice getTestInvoice() {
+		return InvoiceTypes.Invoices.VENTA_ISP
+			.get( ctx )
+			.setId(1);
+	}
+
 	@Test
 	void ventaNoActTest() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_ISP.get(ctx) );
+		invoices.add( getTestInvoice()  );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -56,7 +62,7 @@ class VentaISPTest extends AbstractVerifactuTest {
 	void ventaActGeneralTest() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_ISP.get(ctx).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( getTestInvoice().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )

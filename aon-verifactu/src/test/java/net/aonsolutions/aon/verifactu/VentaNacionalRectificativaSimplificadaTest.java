@@ -43,11 +43,17 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	
+	private Invoice getTestInvoice() {
+		return InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA
+			.get( ctx )
+			.setId(1);
+	}
+
 	@Test
 	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get( ctx ) );
+		invoices.add( getTestInvoice() );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
@@ -59,7 +65,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	void ventaActGeneral() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get( ctx ).setActivity(InvoiceTypes.ACTIVITY_GENERAL));
+		invoices.add( getTestInvoice().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )

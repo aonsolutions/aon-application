@@ -40,11 +40,17 @@ import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VentaExentaE1Test extends AbstractVerifactuTest {
 	
+	private Invoice getTestInvoice() {
+		return InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1
+			.get( ctx )
+			.setId(1);
+	}
+	
 	@Test
 	void ventaNoAct() throws VerifactuException {
 		Company c = company();
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx) );
+		invoices.add( getTestInvoice() );
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )

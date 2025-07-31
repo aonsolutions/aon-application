@@ -42,7 +42,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -86,7 +85,6 @@ class InvoiceTypes {
 			@Override
 			Invoice get(AONContext ctx) {
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -127,7 +125,6 @@ class InvoiceTypes {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				customer.getAddresses().clear();
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -171,7 +168,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -222,7 +218,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -271,7 +266,6 @@ class InvoiceTypes {
 			@Override
 			Invoice get(AONContext ctx) {
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -316,7 +310,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -361,7 +354,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -407,7 +399,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -461,7 +452,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -506,7 +496,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setActivity(ACTIVITY_EXENTA)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
@@ -552,7 +541,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -598,7 +586,6 @@ class InvoiceTypes {
 			Invoice get(AONContext ctx) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
 				return new Invoice()
-					.setId(1)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
