@@ -266,6 +266,26 @@ class DomainProviderForTests {
 			context.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
 		}
 		
+		ApplicationParameter verifactuActiveParam = AppParamDAO.fetchOne(context, AppParam.VERIFACTU_ACTIVE.toString());
+		if (verifactuActiveParam == null || verifactuActiveParam.getId() == null) {
+			context.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, context.getDomainId())
+			.set(APP_PARAM.NAME, AppParam.VERIFACTU_ACTIVE.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
+			.execute();
+			context.log().info("App Param VERIFACTU_ACTIVE set to TRUE");
+		}
+		
+		ApplicationParameter verifactuTestParam = AppParamDAO.fetchOne(context, AppParam.VERIFACTU_TEST.toString());
+		if (verifactuTestParam == null || verifactuTestParam.getId() == null) {
+			context.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, context.getDomainId())
+			.set(APP_PARAM.NAME, AppParam.VERIFACTU_TEST.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
+			.execute();
+			context.log().info("App Param VERIFACTU_TEST set to TRUE");
+		}
+		
 		Creditor defaultFiscalCreditor = new Creditor();
 		defaultFiscalCreditor.setDomain(domain);
 		defaultFiscalCreditor.setDocumentCountry(Country.ES);

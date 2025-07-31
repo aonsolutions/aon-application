@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.verifactu;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -21,8 +24,14 @@ import org.junit.platform.commons.logging.LoggerFactory;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -34,6 +43,7 @@ public abstract class AbstractVerifactuTest {
 
 	protected static CloseableAONContext ctx;
 	protected static Integer DOMAIN_ID;
+	private VerifactuConfiguration verifactuConfiguration;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "verifactutest.aonsolutions.test");	
 	protected static String USER 		= System.getProperty("domainUser", "admin");
@@ -50,6 +60,7 @@ public abstract class AbstractVerifactuTest {
 	protected static Occam getOccam() {
 		return new Occam()
 			.setDomainName(DOMAIN_NAME)
+			.setDomain(DOMAIN_ID)
 			.setUser(USER);
 	}
 	
@@ -139,4 +150,21 @@ public abstract class AbstractVerifactuTest {
 		return AonObjectUtils.defaultIfNull(testDate, new Date());
 	}
 	
+	protected Company company() {
+		return CompanyDAO.getCompany(ctx, DOMAIN_ID);
+	}
+	
+	protected VerifactuConfiguration config() {
+		if (verifactuConfiguration == null) {
+			verifactuConfiguration = VerifactuConfigurationDAO.get(ctx); 
+		}
+		assertNotNull("VerifactuConfiguration NULL", verifactuConfiguration );
+		assertTrue("VerifactuConfiguration NO ACTIVO", verifactuConfiguration.isActive() );
+		assertTrue("VerifactuConfiguration NO ENTORNO TEST", verifactuConfiguration.isTest() );
+		Certificate c = AonSecret.getSigCert();
+		assertNotNull("Verifactu Certificate NULL",c);
+		verifactuConfiguration.setCertificate(AonSecret.getSigCert()); 
+		return verifactuConfiguration;
+	}
+
 }
