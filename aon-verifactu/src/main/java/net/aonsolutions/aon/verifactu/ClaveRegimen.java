@@ -225,7 +225,20 @@ enum ClaveRegimen {
 	,C07("07") {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
-			return false;
+			return inv.isSales()
+				&& getVATRegime(vc, inv) == VATRegime.GENERAL 
+				&& inv.isNational()
+				&& inv.isVatAccrualPayment()
+				&& !ib.isPrepayment()
+				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+			;
+		}
+		
+		@Override
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+			DetalleType detalle = C07.getBasicWithVat( ib );
+			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
+			return detalle;
 		}
 	}
 	// Operaciones sujetas al IPSI/IGIC (Impuesto sobre la Producción, los Servicios y la Importación/Impuesto General Indirecto Canario).

@@ -593,6 +593,51 @@ class InvoiceTypes {
 				;
 			}
 		},
+		VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA {
+			@Override
+			Invoice get(AONContext ctx) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+				return new Invoice()
+					.setId(1)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.NATIONAL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(true)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress() )
+					.addDetail(new InvoiceDetail()
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(21.0)
+					.setTotal(121.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
 		;
 		
 		abstract Invoice get( AONContext ctx);
