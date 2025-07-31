@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
+import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
 
@@ -73,7 +74,7 @@ public class Up2Date {
 			// PlusSalarialInsert.PLUSSALARIALINSERT,
 			// TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE,
 			// FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019UPDATE,
-			// AgriculturalITInsert.AGRICULTURALITINSERT,"http://payroll-test.aonsolutions.org:8080/aon-aio/"
+			// AgriculturalITInsert.AGRICULTURALITINSERT,
 			// Bases2019UpdateIII.BASES2019UPDATEIII,
 			// SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE,
 			// NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE,
@@ -549,7 +550,8 @@ public class Up2Date {
 			// TaskParentIndex.TASK_PARENT_INDEX,
 			// NotificationReceiverAuthIndex.NOTIFICATION_RECEIVER_AUTH_INDEX,
 			// RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
-			TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
+			// TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
+			AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
