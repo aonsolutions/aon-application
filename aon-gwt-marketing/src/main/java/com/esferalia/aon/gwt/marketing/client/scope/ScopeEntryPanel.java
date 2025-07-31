@@ -299,7 +299,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 		AonToolbarButton newEntepriseButton = new AonToolbarButton( "Nueva Empresa", AON.CSS.aonIconAdd());
 		newEntepriseButton.addClickHandler(e -> showDomainScopeDialog());
 		
-		AonCustomCard domainScopeCard = new AonCustomCard("Dominios", newEntepriseButton);
+		AonCustomCard domainScopeCard = new AonCustomCard("Empresas (Dominios)", newEntepriseButton);
 		
 		domainScopeTable = new DomainScopeTable(options.getDomainName(), options.getDomain(), options.getUser(), this.scope) {
 
