@@ -92,6 +92,7 @@ import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
+import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
@@ -270,8 +271,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONObject deleteInvoiceTBAI(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		Certificate cert = checkCertificate(api);
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		tbaiConfiguration.setCertificate(checkCertificate(api));
+		tbaiConfiguration.setCertificate(cert);
+		
+		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
+		tbaiConfiguration.setCertificate(cert);
 		
 		List<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
 		invoiceIds.stream().forEach(id -> {
@@ -280,11 +285,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					api.getUser().getLogin(), id);
 
 			try {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-				AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+				if(tbaiConfiguration.isActive()) {
+					TbaiMain tbai = new TbaiMain();
+					tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+					AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+				} else if(verifactuConfiguration.isActive()) {
+					CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
+							new CancelInvoiceCommunicationTypeVisitor(api.getDomain(), api.getUser(), invoice)
+								.setCompany(company)
+								.setVerifactuConfiguration(verifactuConfiguration);
+
+					InvoiceCommunicationType.VERIFACTU.visit(visitor);
+				}				
 			} catch (Exception e) {
-				if(tbaiConfiguration.isTest()) {
+				if(!verifactuConfiguration.isActive() && tbaiConfiguration.isTest()) {
 					AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
 				} else {
 					e.printStackTrace();
@@ -301,6 +315,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
 
 		boolean accepted = true;
 		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
@@ -321,21 +336,34 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 		}
 		
-		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-			f.getAttachModuleProperty().eq(invoiceId)
-			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
-			, AttachType.INVOICE, true);		
+		if(invoice.isSales() && verifactuConfiguration.isActive()) {
+			try {
+				verifactuConfiguration.setCertificate(checkCertificate(api));
+				CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
+					new CancelInvoiceCommunicationTypeVisitor(api.getDomain(), api.getUser(), invoice)
+						.setCompany(company)
+						.setVerifactuConfiguration(verifactuConfiguration);
 
-		// ids to null
-		invoice.setId(null);
-		invoice.setDetails(invoice.getDetails().stream().map(r -> {
-			r.setId(null);
-			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
-			return r;
-		}).toList());
-		// ----------
+				InvoiceCommunicationType.VERIFACTU.visit(visitor);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+				f.getAttachModuleProperty().eq(invoiceId)
+				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
+				, AttachType.INVOICE, true);		
+
+			// ids to null
+			invoice.setId(null);
+			invoice.setDetails(invoice.getDetails().stream().map(r -> {
+				r.setId(null);
+				r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
+				return r;
+			}).toList());
+			// ----------
 		
-		Rawdoc rawdoc = new Rawdoc()
+			Rawdoc rawdoc = new Rawdoc()
 				.setData(attach.getData())
 				.setDomain(invoice.getDomain())
 				.setJson(InvoiceJSON.toJSON(invoice).toString())
@@ -343,9 +371,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setNature(RawdocNature.INVOICE)
 				.setStatus(RawdocStatus.DRAFT)
 				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
-		AON.deleteInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
-		return new JSONObject();
+			AON.deleteInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
+			AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
+		}
+		return new JSONObject();	
 	}
 
 
@@ -442,6 +471,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
+			}
+		}
+		
+		VerifactuConfiguration verifactu = AON.getVerifactuConfiguration(domain, login);
+		if(verifactu.isActive()) {	
+			InvoiceData data = AON.getInvoiceData(domain, new User().setLogin(login), f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getInvoiceProperty().eq(invoice.getId()))
+					.and(f.getNameProperty().eq("VERIFACTU_QR")));
+			if(data != null && !AonStringUtils.isBlank(data.getValue())) {
+				json.put("verifactu", true);
+				json.put("verifactuUrl", data.getValue());
 			}
 		}
 		json.put(IJsonNames.FILE, buildInvoiceFileJSON(domain, login, invoice));
@@ -615,6 +655,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
+			}
+		}
+		
+		if(verifactuConfiguration.isActive()) {	
+			Integer invoiceId = invoice.getId();
+			InvoiceData data = AON.getInvoiceData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getInvoiceProperty().eq(invoiceId))
+					.and(f.getNameProperty().eq("VERIFACTU_QR")));
+			if(data != null && !AonStringUtils.isBlank(data.getValue())) {
+				json.put("verifactu", true);
+				json.put("verifactuUrl", data.getValue());
 			}
 		}
 		json.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));

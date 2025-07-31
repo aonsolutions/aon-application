@@ -6,7 +6,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.GeneradoPorType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaBajaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioAnulacionType;
@@ -30,10 +29,13 @@ class Invoice2VerifactuAnulacion {
 		idFactura.setFechaExpedicionFacturaAnulada( VerifactuUtils.toString(invoice.getExpDate()) );
 		anul.setIDFactura(idFactura);
 		anul.setRefExterna(AonNumberUtils.toString(invoice.getId()));
-		anul.setSinRegistroPrevio( hasRegistroPrevio( vc, invoice ) );
+		anul.setSinRegistroPrevio( SinRegistroPrevioType.N ); // hasRegistroPrevio( vc, invoice ) );
 		anul.setRechazoPrevio(RechazoPrevioAnulacionType.N);
-		anul.setGeneradoPor(GeneradoPorType.E);
-		anul.setGenerador(null);
+//		anul.setGeneradoPor(GeneradoPorType.E);
+//		PersonaFisicaJuridicaType generador = new PersonaFisicaJuridicaType();
+//		generador.setNombreRazon(vc.getCompany().getName());
+//		generador.setNIF(vc.getCompany().getDocument());
+//		anul.setGenerador(generador);
 		anul.setEncadenamiento(getEncadenamientoAnulacion(vc.getBlockchain()));
 		anul.setSistemaInformatico(Invoice2Verifactu.getSistemaInformatico(vc.getCompany()));
 		anul.setFechaHoraHusoGenRegistro(Invoice2Verifactu.getXmlDate());

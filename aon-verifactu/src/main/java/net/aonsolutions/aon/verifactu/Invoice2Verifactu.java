@@ -35,7 +35,7 @@ class Invoice2Verifactu {
 		for (Invoice invoice : vc.getInvoices()) {
 			RegistroFacturaType factura = getFactura(vc, invoice);
 			regFactu.getRegistroFactura().add(factura);
-			vc.setBlockchain( newBlockchain( factura ) );
+			vc.setBlockchain( newBlockchain( factura) );
 		}
 		return regFactu;
 	}
@@ -75,7 +75,7 @@ class Invoice2Verifactu {
 	
 	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws VerifactuException {
 		RegistroFacturaType factura = new RegistroFacturaType();
-		if (invoice.isAnnulled()) {
+		if (vc.isAnnulment()) {
 			factura.setRegistroAnulacion( Invoice2VerifactuAnulacion.get(vc, invoice) );
 		} else {
 			factura.setRegistroAlta( Invoice2VerifactuAlta.get(vc, invoice) );

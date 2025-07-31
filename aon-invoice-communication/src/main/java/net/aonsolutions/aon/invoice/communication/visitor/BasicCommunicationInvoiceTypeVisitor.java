@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
@@ -22,10 +23,13 @@ import net.aonsolutions.aon.verifactu.VerifactuBlockchain;
 
 public class BasicCommunicationInvoiceTypeVisitor {
 
+
+	private Occam occam;
 	
-	private Domain domain;
-	private User user;
+	@Deprecated private Domain domain;
+	@Deprecated private User user;
 	private Invoice invoice;
+	// LIST<Invoice>
 	private Integer certificateId;
 	
 	
@@ -35,31 +39,62 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	private SiiConfiguration siiConfiguration;
 	private VerifactuConfiguration verifactuConfiguration;
 	
+	public BasicCommunicationInvoiceTypeVisitor(Occam occam, Invoice invoice) {
+		this.occam = occam;
+		this.invoice = invoice;
+	}
+	
+	public BasicCommunicationInvoiceTypeVisitor(Occam occam, Invoice invoice, Integer certificateId) {
+		this.occam = occam;
+		this.invoice = invoice;
+		this.certificateId = certificateId;
+	}
+	
 	public BasicCommunicationInvoiceTypeVisitor(Domain domain, User user, Invoice invoice) {
+		this.occam = new Occam()
+				.setDomain(domain.getId())
+				.setDomainName(domain.getName())
+				.setUser(user.getLogin());
 		this.domain = domain;
 		this.user = user;
 		this.invoice = invoice;
 	}
 	
 	public BasicCommunicationInvoiceTypeVisitor(Domain domain, User user, Invoice invoice, Integer certificateId) {
+		this.occam = new Occam()
+				.setDomain(domain.getId())
+				.setDomainName(domain.getName())
+				.setUser(user.getLogin());
 		this.domain = domain;
 		this.user = user;
 		this.invoice = invoice;
 		this.certificateId = certificateId;
 	}
 	
+	public Occam getOccam() {
+		return occam;
+	}
+	
+	public void setOccam(Occam occam) {
+		this.occam = occam;
+	}
+	
+	@Deprecated
 	public Domain getDomain() {
 		return domain;
 	}
 	
+	@Deprecated
 	public void setDomain(Domain domain) {
 		this.domain = domain;
 	}
 	
+	@Deprecated
 	public User getUser() {
 		return user;
 	}
 	
+	@Deprecated
 	public void setUser(User user) {
 		this.user = user;
 	}

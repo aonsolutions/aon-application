@@ -23,6 +23,7 @@ class VerifactuContextTest {
 		vc2.setUser(vc1.getUser());
 		vc2.setRequest(vc1.getRequest());
 		vc2.setResponse(vc1.getResponse());
+		vc2.setOperation(vc1.getOperation());
 		
 		VerifactuAsserts.assertClassEquals( vc1, vc2);
 		

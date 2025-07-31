@@ -3034,7 +3034,7 @@ export class AonInvoice extends AonElement {
 
 	trashPendingInvoice() {
 		let data = {id: this.getInvoice().id};
-		if(this.getInvoice().isTbai()) {
+		if(this.getInvoice().isTbai() || this.getInvoice().isVerifactu()) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';

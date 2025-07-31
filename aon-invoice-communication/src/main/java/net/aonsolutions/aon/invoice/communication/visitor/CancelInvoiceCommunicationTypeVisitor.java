@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.FISCAL;
@@ -10,9 +11,11 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicat
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAI;
+import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
 
@@ -73,6 +76,14 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitVERIFACTU() {
-		// Not implemented
+		if(InvoiceType.SALES.equals(getInvoice().getType())) {
+			try {
+				List<Invoice> list = new LinkedList<>();
+				list.add(getInvoice());
+				VERIFACTU.cancel(getVerifactuConfiguration(), getCompany(), list, getVerifactuBlockchain(), getUser().getLogin());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

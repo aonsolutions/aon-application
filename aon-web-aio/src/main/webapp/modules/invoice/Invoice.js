@@ -48,6 +48,9 @@ export class Invoice {
   tbai; // boolean
   tbaiUrl;
 
+  verifactu; // boolean
+  verifactuUrl;
+
   workplace;
   
   messages;
@@ -126,6 +129,8 @@ export class Invoice {
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
+      this.verifactu = invoice.verifactu || false;
+      this.verifactuUrl = invoice.verifactuUrl || '';
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
@@ -432,6 +437,10 @@ export class Invoice {
 
   isTbai() {
     return this.tbai;
+  }
+
+  isVerifactu() {
+    return this.verifactu;
   }
 
   getTbaiUrl() {

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -22,6 +23,7 @@ public class VerifactuContext {
 	private List<Invoice> invoices;
 	private VerifactuBlockchain blockchain;
 	private String user;
+	private InvoiceCommunicationOperation operation;
 	
 	private RegFactuSistemaFacturacion request;
 	private VerifactuResponse response;
@@ -103,6 +105,19 @@ public class VerifactuContext {
 	public VerifactuContext setResponse(VerifactuResponse response) {
 		this.response = response;
 		return this;
+	}
+	
+	public InvoiceCommunicationOperation getOperation() {
+		return operation;
+	}
+	
+	public VerifactuContext setOperation(InvoiceCommunicationOperation operation) {
+		this.operation = operation;
+		return this;
+	}
+	
+	public boolean isAnnulment() {
+		return getOperation() != null && getOperation().isAnnulment();
 	}
 	
 }

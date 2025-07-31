@@ -122,6 +122,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
@@ -2097,11 +2098,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isVerifactuInvoice() {
-		// TODO
-		return isVerifactu() && getInvoice().getNumber() > 0;
+		return isVerifactu() && getInvoice().getNumber() > 0 && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	
 	String tbaiUrl;
+	String verifactuUrl;
 	Integer invoiceId;
 
 	public String getTbaiUrl() {
@@ -2122,6 +2123,31 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public void setTbaiUrl(String tbaiUrl) {
 		this.tbaiUrl = tbaiUrl;
+	}
+	
+	public String getVerifactuUrl() {
+		Invoice invoice = (Invoice) this.getTo();
+		if(invoice == null || invoice.getId() == null) verifactuUrl = null;
+		if(AonStringUtils.isBlank(verifactuUrl) || (invoice != null && invoice.getId() != null 
+				&& !invoice.getId().equals(invoiceId))) {
+			if(invoice == null || invoice.getId() == null) return null;
+			invoiceId = invoice.getId();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Domain domain = new Domain().setName(domainName).setId(domainId);
+			User user = new User().setLogin(login);
+			InvoiceData data = AON.getInvoiceData(domain, user, f -> f.getDomainProperty().eq(domainId)
+					.and(f.getInvoiceProperty().eq(invoiceId))
+					.and(f.getNameProperty().eq("VERIFACTU_QR")));
+			if(data != null) verifactuUrl = data.getValue();					
+			if(verifactuUrl == null) verifactuUrl = ""; 
+		} 
+		return verifactuUrl;
+	}
+	
+	public void setVerifactuUrl(String verifactuUrl) {
+		this.verifactuUrl = verifactuUrl;
 	}
 	
 	public boolean isTbai() {

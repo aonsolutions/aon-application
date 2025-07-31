@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
@@ -46,7 +47,8 @@ class VentaAnuladaTest extends AbstractVerifactuTest {
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig( config() )
 			.setCompany( c )
-			.setInvoices(invoices);
+			.setInvoices(invoices)
+			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		assertInvoice( vc );
 	}
 	
@@ -99,15 +101,14 @@ class VentaAnuladaTest extends AbstractVerifactuTest {
 	    
 	    SinRegistroPrevioType sinRegistroPrevio = anul.getSinRegistroPrevio();
 	    assertNotNull( sinRegistroPrevio );
-	    assertEquals( SinRegistroPrevioType.S, sinRegistroPrevio );
+	    assertEquals( SinRegistroPrevioType.N, sinRegistroPrevio );
 
 	    RechazoPrevioAnulacionType rechazoPrevio = anul.getRechazoPrevio();
 	    assertNotNull( rechazoPrevio );
 	    assertEquals( RechazoPrevioAnulacionType.N, rechazoPrevio );
 
 	    GeneradoPorType generadoPor = anul.getGeneradoPor();
-	    assertNotNull( generadoPor );
-	    assertEquals( GeneradoPorType.E, generadoPor );
+	    assertNull( generadoPor );
 	    
 	    PersonaFisicaJuridicaType generador = anul.getGenerador();
 	    assertNull( generador );

@@ -98,6 +98,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
+import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -116,6 +117,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showTbaiAccept;
 	
 	private boolean showCertVerifactuWindow;
+	private boolean showCertVerifactuAnularWindow;
 	private boolean showVerifactuWindow;
 	private boolean showVerifactuAccept;
 	
@@ -214,6 +216,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowCertTbaiAnularWindow(boolean showCertTbaiAnularWindow) {
 		this.showCertTbaiAnularWindow = showCertTbaiAnularWindow;
+	}
+	
+	public boolean isShowCertVerifactuAnularWindow() {
+		return showCertVerifactuAnularWindow;
+	}
+
+	public void setShowCertVerifactuAnularWindow(boolean showCertVerifactuAnularWindow) {
+		this.showCertVerifactuAnularWindow = showCertVerifactuAnularWindow;
 	}
 	
 	public boolean isShowFacturaeInfoWindow() {
@@ -692,9 +702,8 @@ public class SaleInvoiceController extends InvoiceController {
 				tbaiValidation(invoice);
 								
 				if(invoice.getNumber() < 1) {
-					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
-					Integer number = lastInvoice.getNumber() > 0
-							? lastInvoice.getNumber() + 1 : 1;
+					Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
 					inv.setNumber(number);
@@ -869,7 +878,27 @@ public class SaleInvoiceController extends InvoiceController {
 					AonUtil.addErrorMessage(e.getMessage());
 				}
 			}
-		}	
+		} else if(isVerifactuInvoice()) {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
+			verifactuConfiguration.setCertificate(getCertData());
+			
+			try {
+				CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
+						new CancelInvoiceCommunicationTypeVisitor(company.getDomain(), new User().setLogin(login), invoice)
+							.setCompany(company)
+							.setVerifactuConfiguration(verifactuConfiguration);
+
+				InvoiceCommunicationType.VERIFACTU.visit(visitor);
+			} catch (Exception e) {
+				e.printStackTrace();
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
 	}
 	
 	@Override
