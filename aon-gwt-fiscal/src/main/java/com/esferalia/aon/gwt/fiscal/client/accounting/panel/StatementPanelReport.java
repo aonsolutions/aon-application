@@ -332,8 +332,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
-				fromDate.setValue(null,false);
-				toDate.setValue(null,false);
+				ListBox periodBox = getPeriodBox(options, period.getSelectedValue());
+				dateTab.setWidget(0, 1, periodBox);
+				fromDate.setValue(period.getSelectedInitiationDate(),false);
+				toDate.setValue(period.getSelectedDeadline(),false);
 				confidential.setSelectedIndex(2);
 				account.setAccount(null, false);;
 				if (activitiesListBoxEnabled) {
