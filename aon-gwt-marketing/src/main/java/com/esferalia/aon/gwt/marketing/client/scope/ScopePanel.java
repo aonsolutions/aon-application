@@ -54,8 +54,8 @@ public abstract class ScopePanel extends ScrollPanel {
 	
 	private static enum COLS {
 		
-		  DES(AON.MSG.description()					,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DOM("Dom."								,"4rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  DOM(AonStringUtils.EMPTY					,"4rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DES(AON.MSG.description()					,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"3rem"				,"")
 		;
 
@@ -224,20 +224,21 @@ public abstract class ScopePanel extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onScopeOpen(scope), ClickEvent.getType());
 		
+		Widget userDomain;
+		if(!scope.getDomain().equals(params.getDomain())){
+			userDomain = new AonTableButton("Entorno Padre", AON.CSS.aonIconEnterprise());
+			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
+		} else {
+			userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconHome());
+			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
+		}
+		
+		tab.addRow(row, userDomain, COLS.DOM.getColWidth());
+		
 		Label name = new Label(scope.getDescription());
 		name.setTitle(scope.getDescription());
 		tab.addInlineStyle(name, COLS.DES.getStyles());
 		tab.addRow(row, name, COLS.DES.getColWidth());
-		
-		Widget userDomain;
-		if(!scope.getDomain().equals(params.getDomain())){
-			userDomain = new AonTableButton("Padre", AON.CSS.aonIconEnterprise());
-			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
-		} else
-			userDomain = new Label();
-		
-		tab.addRow(row, userDomain, COLS.DOM.getColWidth());
-		
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
