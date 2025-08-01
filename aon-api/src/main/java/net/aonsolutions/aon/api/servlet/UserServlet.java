@@ -475,6 +475,11 @@ public class UserServlet extends AonApiHttpServlet {
 					? AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(api.getData().getInt("id")))
 					: new User();
 			
+			if(api.getData().opt("active") != null) {
+				usr.setActive(api.getData().optBoolean("active"));
+				AON.saveUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+			}
+			
 			String login = ramdonLogin();
 			String pass = null;
 			if(usr != null && usr.getId() != null) {
@@ -531,17 +536,28 @@ public class UserServlet extends AonApiHttpServlet {
 					saveTaskHolder(api, user);
 				}
 				
-				js.put("id", user.getId());
-				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
-				js.put("uuid", auth.getUuid());
-				js.put("name", auth.getName() != null ? auth.getName() : user.getName());
-				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
-				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
-				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				js.put("roles", getUserRoles(api.getDomain(), user.getId()));
-				js.put("portal", user.isPortal());
-				js.put("shared", user.isShared());
-				js.put("login", user.getLogin());
+				// Return user better
+//				js.put("id", user.getId());
+//				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
+//				js.put("uuid", auth.getUuid());
+//				js.put("name", auth.getName() != null ? auth.getName() : user.getName());
+//				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
+//				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
+//				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+//				js.put("roles", getUserRoles(api.getDomain(), user.getId()));
+//				js.put("portal", user.isPortal());
+//				js.put("shared", user.isShared());
+//				js.put("login", user.getLogin());
+				
+				Integer userId = user.getId();
+				
+				return UserJSON.toJSON(
+					AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getName(), f -> f.getIdProperty().eq(userId))
+						.map(r -> !r.getAuth().isEmpty() && r.getAuth().getEmail() == null
+						? r.setAuth(AON_SOLUTIONS.getAuth(r.getAuth().getAuth())) 
+						: r)
+						.findAny().get()
+				);
 			}
 		} else {
 			throw new Exception("El email no es correcto.");
