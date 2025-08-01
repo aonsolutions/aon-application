@@ -25,18 +25,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 
-	protected void doUtility(String processId, ConsoleParams params, DomainParams domainParams) {	
+	protected void doUtility(String processId, ConsoleParams params, DomainParams domainParams) {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "Inicio del proceso."));
 		AONContext ctx = params.getFromConnection().getAONContext();
 		NordigenServiceImpl nordigen = new NordigenServiceImpl();
 		ctx.getDslContext()
-			.select(DOMAIN.ID, DOMAIN.NAME,DOMAIN.DESCRIPTION)
+			.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION)
 			.from(DOMAIN)
 			.where( DOMAIN.ID.eq(0))
 			.fetch()
 			.stream()
 			.forEach( result -> {
-				String login = ctx.getDslContext()
+                String login = ctx.getDslContext()
 						.select(User.USER.LOGIN)
 						.from(User.USER)
 						.join(UserScope.USER_SCOPE)
@@ -51,7 +51,7 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 				NordigenConfiguration config = nordigen.getConfiguration(occam);
 				for(RegistryBank bank : banks) {
 					NordigenRequisition requisition = nordigen.getRequisition(config.getToken(), bank.getRequisition());
-					if(requisition.getStatus() == NordigenRequisitionStatus.LINKED) {						
+					if(requisition.getStatus() == NordigenRequisitionStatus.LINKED) {
 						List<String> accIds = requisition.getAccounts();
 						if(!(accIds == null || accIds.isEmpty() || accIds.size() == 1)) {
 							String account = nordigen.getAccountIdByIban(config.getToken(), bank.getRequisition(), bank);
@@ -64,7 +64,12 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 								ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Deleting bank movement ID(BANK_STATEMENT): " + movement + 
 										", Bank account: " + bank.getBankAccount().getIban() + ", Requisition: " + bank.getRequisition()));
 							}
-							ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).execute();
+                            try {
+                                int deletedRows = ctx.getDslContext().delete(BANK_STATEMENT).where(BANK_STATEMENT.ID.in(wrongMovementsIds)).execute();
+                                ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "Filas eliminadas: " + deletedRows));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 							NordigenBankAccount nordigenAccount = new NordigenBankAccount()
 									.setRbank(bank)
 									.setIban(bank != null && bank.getBankAccount() != null ? bank.getBankAccount().getIban() : null)
@@ -89,5 +94,4 @@ class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 			});
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "Final del proceso."));
 	}
-	
 }

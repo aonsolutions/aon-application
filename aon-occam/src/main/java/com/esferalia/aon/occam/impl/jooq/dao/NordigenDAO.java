@@ -141,7 +141,7 @@ public class NordigenDAO {
 			int lotNumber = BankStatementDAO.getNextLotNumber(ctx, ctx.getDomainId(), account.getRbank());
 			for (NordigenBankStatement bankStatement : bankStatements) {
 		        Calendar calendario = Calendar.getInstance();
-		        calendario.set(2025, Calendar.AUGUST, 1, 0, 0, 0);
+		        calendario.set(2025, Calendar.AUGUST, 6, 0, 0, 0);
 				Date targetDate = calendario.getTime();
 				boolean checkMoveInBD = true;
 				if(account.getRbank().getBalanceDate() != null && account.getRbank().getBalanceDate().after(targetDate)) {
@@ -208,7 +208,7 @@ public class NordigenDAO {
 		for (NordigenBankStatement nordigenTransaction : account.getNotInsertedMovements()) {
 			String comparisonKey = 
 		            AonDateUtils.format(nordigenTransaction.getOperationDate(), SIMPLE_DATE_FORMAT4) + ":" + 
-		            nordigenTransaction.getNordigenMovementId() + ":" + 
+		            nordigenTransaction.getReference2() + ":" + 
 		            nordigenTransaction.getDescription() + ":" + 
 		            nordigenTransaction.isPayment() + ":" + 
 		            nordigenTransaction.getAmount();

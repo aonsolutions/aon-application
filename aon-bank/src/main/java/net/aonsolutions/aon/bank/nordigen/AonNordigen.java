@@ -815,7 +815,8 @@ public class AonNordigen  {
         // Crear una instancia de Calendar con la fecha actual
           Calendar calendar = Calendar.getInstance();
           // Restar 60 días
-          calendar.add(Calendar.DAY_OF_MONTH, -60);
+           calendar.add(Calendar.DAY_OF_MONTH, -60);
+          
           calendar.set(Calendar.HOUR_OF_DAY, 0);
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
@@ -835,7 +836,8 @@ public class AonNordigen  {
                 bs.getDescription()   + ":" + 
                 bs.isPayment()        + ":" + 
                 bs.getAmount();
-
+//              System.out.println(comparisonKey);
+              
               bankStatementMap.put(comparisonKey, bs);
           }
 
@@ -860,12 +862,12 @@ public class AonNordigen  {
                   account.setLinked(true);
                   account.setInstitution(getInstitution(token, req.getInstitutionId()));
                   account.setIban(rbank.getBankAccount().getIban());
-/*
+
                   System.out.println("-- Account --");
                   System.out.println(account.getIban());
                   System.out.println(account.getMetadata().getId());
                   System.out.println(sixtyDaysAgo);
-*/
+
                   CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture = 
                       CompletableFuture.supplyAsync(() -> AonNordigen.getNotInsertedTransactionsDate(token, account, sixtyDaysAgo));
                   // ID de nordigen asociado a un IBAN - 
@@ -874,13 +876,19 @@ public class AonNordigen  {
                       if (!matches.isEmpty()) {
                         String comparisonKey = 
                           AonDateUtils.format(nordigenTransaction.getOperationDate(), SIMPLE_DATE_FORMAT4) + ":" + 
-                          nordigenTransaction.getNordigenMovementId() + ":" + 
+                          nordigenTransaction.getReference2() + ":" + 
                           nordigenTransaction.getDescription() + ":" + 
                           nordigenTransaction.isPayment() + ":" + 
                           nordigenTransaction.getAmount();
+//                        System.out.println(comparisonKey);
+                        
                         if (bankStatementMap.containsKey(comparisonKey)) {
                           BankStatement matchedBS = bankStatementMap.get(comparisonKey);
                           // Listado de movimientos incorrectos en BD
+                          
+                          System.out.println("ELIMINA:             - ");
+                          System.out.println(comparisonKey);
+                          
                           movimientosIncorrectos.add(matchedBS);
                           /*
                           System.out.println(" movimiento insertado incorrectament " +
