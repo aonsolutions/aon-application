@@ -432,7 +432,7 @@ export class AonConfiguration extends AonElement {
 			page: 1,
 			perPage: 50,
 			target: false,
-			status: ["ACTIVE", "BLOCKED"],
+			status: ["ACTIVE", "BLOCKED", "INACTIVE"],
 			relatedRegistry: true
 		};
 
