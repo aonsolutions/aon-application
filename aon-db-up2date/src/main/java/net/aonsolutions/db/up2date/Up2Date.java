@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
+import net.aonsolutions.db.up2date.finance.InvoiceBatchEndDateTime;
 import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
@@ -552,6 +553,7 @@ public class Up2Date {
 			// RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
 			// TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
 			AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
+			InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -626,15 +628,7 @@ public class Up2Date {
 
 				statement.execute(String.format("USE `%s`", database));
 
-				for (Update update : UPDATES) {
-					try {
-						update.upgrade(connection);
-						System.out.println("Success.");
-					} catch (Throwable t) {
-						t.printStackTrace();
-						System.out.println("Error: " + t.getLocalizedMessage());
-					}
-				}
+				upgrade(connection);
 
 			}
 
@@ -659,6 +653,18 @@ public class Up2Date {
 			}
 		}
 
+	}
+
+	public static void upgrade(Connection connection) {
+		for (Update update : UPDATES) {
+			try {
+				update.upgrade(connection);
+				System.out.println("Success.");
+			} catch (Throwable t) {
+				t.printStackTrace();
+				System.out.println("Error: " + t.getLocalizedMessage());
+			}
+		}
 	}
 
 }
