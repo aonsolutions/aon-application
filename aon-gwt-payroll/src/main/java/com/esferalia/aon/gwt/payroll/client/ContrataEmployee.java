@@ -1485,6 +1485,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		saveDocument.setVisible(false);
+		
+		nextContract.setVisible(false);
+		sellerIteration.setVisible(false);
+		previusContract.setVisible(false);
+		listEmployees.setVisible(false);
+		
 		dataURI = null;
 		attachId = null;
 	}
@@ -1497,6 +1503,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 
+		nextContract.setVisible(false);
+		sellerIteration.setVisible(false);
+		previusContract.setVisible(false);
+		listEmployees.setVisible(false);
+		
 		pdfButtons.setVisible(true);
 	}
 
@@ -1506,6 +1517,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void onClosePDF() {
 		showEmployee();
+
+		nextContract.setVisible(true);
+		sellerIteration.setVisible(true);
+		previusContract.setVisible(true);
+		listEmployees.setVisible(true);
 	}
 
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -1760,7 +1776,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
 
-		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
+		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconClose());
 		closePDF.addClickHandler(e -> onClosePDF());
 		hPanel.add(closePDF);
 

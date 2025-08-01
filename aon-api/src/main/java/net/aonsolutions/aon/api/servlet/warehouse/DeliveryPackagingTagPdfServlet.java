@@ -81,7 +81,7 @@ public class DeliveryPackagingTagPdfServlet extends AonApiHttpServlet {
 			String sscc = container.getSerialNumber();
 
 			boolean onlyOneItem = compositionList.stream().map(m -> m.getCompositionItemId()).distinct().count() == 1;
-			if(isMercadona(delivery.getCustomer()) && onlyOneItem) {
+			if(onlyOneItem) { // && isMercadona(delivery.getCustomer())) {
 				Integer itemIdAux = itemId;
 				Item item = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(itemIdAux)));				
 				if(AonStringUtils.isBlank(barcode)) {

@@ -270,7 +270,7 @@ public abstract class Mod131Declaration {
 				.setModules( new LinkedList<>()));
 		}
 	}
-
+	
 	// CAMBIO DE EPIGRAFES EN 2025 (SE ELIMINA MEJILLON EN BATEA Y SE USA OTRA CLASE Modules2025)
 	private LinkedList<Mod131Activity> copyActivities(Mod131 prev131, Mod131 mod131) {
 		return AonCollectionUtils.stream( prev131.getActivities() )
@@ -300,12 +300,13 @@ public abstract class Mod131Declaration {
 					prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
 					prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
 					idx++;
-				}
-				long prevDias = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(prev131),FiscalUtils.getPeriodEnd(prev131)) + 1;
-				if (prevAct.getDia() == prevDias) {
+				}				
+				// INICIALIZAR SIEMPRE CON LOS DIAS DEL TRIMESTRE, AUNQUE EN EL TRIMESTRE ANTERIOR SE MODIFICARA MANUALMENTE
+//				long prevDias = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(prev131),FiscalUtils.getPeriodEnd(prev131)) + 1;
+//				if (prevAct.getDia() == prevDias) {
 					long newDias = 	AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod131),FiscalUtils.getPeriodEnd(mod131)) + 1;
 					prevAct.setDia((int) newDias);
-				}
+//				}
 				return prevAct;
 			})
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -347,3 +348,4 @@ public abstract class Mod131Declaration {
 	abstract IMod131KeyDAO[] getKeys();
 	abstract Stream<AccountingBreakdown> getAccountInfoInfo(AONContext ctx, Mod131 mod, IModelScript<Mod131Key> script, IMod131KeyDAO keyDAO);
 }
+

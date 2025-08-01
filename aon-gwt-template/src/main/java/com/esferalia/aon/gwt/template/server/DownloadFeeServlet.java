@@ -694,6 +694,10 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setDescription(filterJSON.optString("description"));
 		params.setByProject(AonStringUtils.isNotBlank(filterJSON.optString("taskHolder")));
 		
+		params.setCustomerActive(Boolean.parseBoolean(filterJSON.optString("customerActive")));
+		params.setCustomerInactive(Boolean.parseBoolean(filterJSON.optString("customerInactive")));
+		params.setCustomerBlocked(Boolean.parseBoolean(filterJSON.optString("customerBlocked")));
+		
 		params.setOffset(0);
 		params.setLimit(Integer.MAX_VALUE);
 		
@@ -713,6 +717,10 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setCustomers(AonStringUtils.isBlank(filterJSON.optString("customer")) ? null : Byte.parseByte(filterJSON.optString("customer")));
 		params.setDescription(filterJSON.optString("description"));
 		params.setByProject(Boolean.parseBoolean(filterJSON.optString("byProject")));
+		
+		params.setCustomerActive(Boolean.parseBoolean(filterJSON.optString("customerActive")));
+		params.setCustomerInactive(Boolean.parseBoolean(filterJSON.optString("customerInactive")));
+		params.setCustomerBlocked(Boolean.parseBoolean(filterJSON.optString("customerBlocked")));
 		
 		params.setOffset(0);
 		params.setLimit(Integer.MAX_VALUE);

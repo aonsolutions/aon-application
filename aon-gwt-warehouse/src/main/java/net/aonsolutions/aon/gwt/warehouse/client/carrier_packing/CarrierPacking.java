@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTemplate;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSearchBox;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
@@ -53,6 +54,8 @@ public class CarrierPacking extends AonTemplate {
 	
 	private AonToolbarButton backButton;
 	private AonToolbarButton newButton;
+	private AonToolbarButton closeFilterButton;
+	private AonToolbarButton openFilterButton;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton printButton;
 	private AonToolbarButton sendButton;
@@ -100,6 +103,7 @@ public class CarrierPacking extends AonTemplate {
 
 	private void toolbar() {
 		getToolbar().getButtonContainer().clear();
+		getToolbar().getSearchPanel().clear();
 
 		backButton = new AonToolbarButton("Volver",
 			AON.CSS.aonIconBack(), false, e -> back());
@@ -108,6 +112,14 @@ public class CarrierPacking extends AonTemplate {
 		newButton = new AonToolbarButton(AON.MSG.newAction(),
 			AON.CSS.aonIconAdd(), true, e -> createCarrierPacking());
 		getToolbar().add(newButton);
+		
+		closeFilterButton = new AonToolbarButton("Cerrar Filtro",
+			AON.CSS.aonIconFilterOff(), true, e -> closeFilter());
+		getToolbar().add(closeFilterButton);
+		
+		openFilterButton = new AonToolbarButton("Abrir Filtro",
+			AON.CSS.aonIconFilterOn(), false, e -> openFilter());
+		getToolbar().add(openFilterButton);
 		
 		deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),
 			AON.CSS.aonIconDelete(), false, e -> removeCarrierPacking());
@@ -132,6 +144,19 @@ public class CarrierPacking extends AonTemplate {
 		nextButton = new AonToolbarButton("Siguiente",
 			AON.CSS.aonIconNext(), false, e -> next());
 		getToolbar().add(nextButton);
+		
+		AonToolbarSearchBox searchBox = new AonToolbarSearchBox() {
+
+			@Override
+			public void onValueChange(String value) {
+				 LinkedList<String> list = new LinkedList<>();
+			     list.add(value);
+				 CarrierPackingPrincipal cp = (CarrierPackingPrincipal) getContent().getWidget();
+			     cp.getFilterMap().put("text", list);
+			     cp.gridContent();
+			}
+		};
+		getToolbar().showSearchPanel(searchBox);
 	}
 	
 	/**
@@ -163,6 +188,8 @@ public class CarrierPacking extends AonTemplate {
 		tokenButton.setVisible(true);
 		previousButton.setVisible(true);
 		nextButton.setVisible(true);
+		closeFilterButton.setVisible(false);    
+	    openFilterButton.setVisible(false);
 
 		setContent(new CarrierPackingDetail(this, js));
 	}
@@ -187,6 +214,7 @@ public class CarrierPacking extends AonTemplate {
 				
 			}
 		});
+		
 	}
 	
 	private void removeCarrierPacking(){
@@ -214,6 +242,25 @@ public class CarrierPacking extends AonTemplate {
 		dialog.setAutoHideEnabled(true);
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();
+	}
+	
+	public void closeFilterButtons() {
+		closeFilterButton.setVisible(false);    
+	    openFilterButton.setVisible(true);
+	}
+	
+	private void closeFilter() {
+	    CarrierPackingPrincipal cp = (CarrierPackingPrincipal) getContent().getWidget();
+	    cp.closeFilterPanel();
+	}
+	
+	private void openFilter() {
+		 closeFilterButton.setVisible(true);  
+		 openFilterButton.setVisible(false); 
+
+		 CarrierPackingPrincipal cp = (CarrierPackingPrincipal) getContent().getWidget();
+		 cp.openFilterPanel();
+
 	}
 	
 	private void sendEmail() {

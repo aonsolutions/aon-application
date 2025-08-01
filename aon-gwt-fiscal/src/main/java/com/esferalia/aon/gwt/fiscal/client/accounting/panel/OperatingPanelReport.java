@@ -360,6 +360,9 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				@Override
 				public void onClick(ClickEvent event) {
 					period.selectDefaultPeriod();
+					ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
+					periodBoxContainer.clear();
+					periodBoxContainer.add(periodBox);
 					AccountPeriod ap = period.getSelectedPeriod();
 					if (ap != null) {
 						fromDate.setValue(ap.getInitiationDate(),false);
@@ -368,6 +371,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 						fromDate.setValue(null,false);
 						toDate.setValue(null,false);
 					}
+					showPercents.setValue(false, false);
+					showPercents.setEnabled(true);
 					confidential.setSelectedIndex(2);
 					level.setSelectedIndex(1);
 					if (activitiesListBoxEnabled) {
@@ -377,6 +382,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 					costCenters.setSelectedIndex(0);
 					costCentersSet = null;
 					costCenters.setEnabled(true);
+					selectedCostCenter.clear();
 					byMonth.setValue(false);
 					previousPeriods.setEnabled(true);
 					previousPeriods.setSelectedIndex(0);

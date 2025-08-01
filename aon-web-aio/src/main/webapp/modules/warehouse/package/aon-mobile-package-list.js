@@ -85,11 +85,25 @@ export class AonMobilePackageList extends AonMobileList {
     addRow(packaging, i) {
         let liValue = {
             icon: MATERIAL_ICONS.PALLET,
+            icon_color: this.getRowIconColor(packaging),
             title: packaging.item.name,
             subtitle: packaging.item.serialNumber
         }
         this.addLi(liValue, i, () => this.aonPackage(packaging, i));
     }
+
+    getRowIconColor(packaging) {
+		if(packaging.item.status === 'DISCONTINUED' || (packaging.delivery && packaging.delivery.id)){
+            return "red";
+        } else if(packaging.item.itemComposition && // this.packaging.item.itemComposition.length > 0 &&
+			(packaging.item.itemComposition.length === 0
+				|| packaging.item.itemComposition.length > 1 
+				|| packaging.item.itemComposition[0].compositionItem !== packaging.composition[0].item.id
+				|| packaging.item.itemComposition[0].quantity !== packaging.composition[0].quantity)
+		){
+            return "orange";
+        } return undefined;
+	}
 
     addItemRow(item, i) {
         let liValue = {

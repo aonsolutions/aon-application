@@ -133,6 +133,8 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 	}
 	
 	public void setSelectedOptions(Set<String> options) {
+		valuesCB.values().forEach(cb -> cb.setValue(false));
+		
 		selectedOptions = options;
 		options.forEach(option -> valuesCB.get(option).setValue(true));
 		selectionLabel.setText(selectedOptions.isEmpty() ? "Seleccione un valor" : String.join(", ", selectedOptions));

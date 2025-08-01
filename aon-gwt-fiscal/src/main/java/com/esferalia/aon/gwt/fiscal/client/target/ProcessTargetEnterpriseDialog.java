@@ -226,14 +226,14 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 
 		targetContainer.add(createRow(url, null));
 
-		supportSeller = new AonCustomListBox("Agente de soporte (con usuario)");
+		supportSeller = new AonCustomListBox("Agente de soporte (con usuario en Entorno Padre)");
 		supportSeller.clearItems();
 		supportSeller.addItem("-", "");
 		supportSellers.forEach(seller -> supportSeller.addItem(seller.getName(), seller.getId().toString()));
 
 		targetContainer.add(createRow(supportSeller, null));
 		
-		commercialSeller = new AonCustomListBox("Agente comercial (con usuario)");
+		commercialSeller = new AonCustomListBox("Agente comercial (con usuario en Entorno Padre)");
 		commercialSeller.clearItems();
 		commercialSeller.addItem("-", "");
 		supportSellers.forEach(seller -> commercialSeller.addItem(seller.getName(), seller.getId().toString()));

@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
-public enum D2DepositHeaderKey {
+public enum D2DepositHeaderKey implements ID2DepositKey {
 	
 	// DATOS GENERALES DE IDENTIFICACIÓN
 	//IDENTIFICACIÓN DE LA EMPRESA
@@ -98,10 +98,10 @@ public enum D2DepositHeaderKey {
 	,BA2121110(21110)	,BA21211109(211109)	,BA212111098(2111098)
 	,BA2121120(21120)	,BA21211209(211209)	,BA212112098(2112098)
 	,BA2121200(21200)	,BA21212009(212009)	,BA212120098(2120098)
-	,BA2121300(21300)	,BA21213009(213009)	,BA212130098(2130098)
+	,BA2121300(21300)	,BA21213009(213009)	,BA212130098(2130098) // Reservas
 	//***************** A partir ej. 2015 **********************
-	,BA2121350(21350)	,BA21213509(213509)	,BA212135098(2135098) 
-	,BA2121360(21360)	,BA21213609(213609)	,BA212136098(2136098)
+	,BA2121350(21350)	,BA21213509(213509)	,BA212135098(2135098) // Reserva de capitalización
+	,BA2121360(21360)	,BA21213609(213609)	,BA212136098(2136098) // Otras reservas
 	//**********************************************************
 	,BA2121400(21400)	,BA21214009(214009)	,BA212140098(2140098)
 	,BA2121500(21500)	,BA21215009(215009)	,BA212150098(2150098)
@@ -144,7 +144,7 @@ public enum D2DepositHeaderKey {
 	//BALANCE DE SITUACION PYMES
 	,BP2122000(22000)	,BP21220009(220009)	,BP212200098(2200098)
 
-	///CUENTA DE PERDIDAS Y GANANCIAS
+	//CUENTA DE PERDIDAS Y GANANCIAS
 	,PA40100(40100)		,PA401009(401009)	,PA4010098(4010098)
 	,PA40200(40200)		,PA402009(402009)	,PA4020098(4020098)
 	,PA40300(40300)		,PA403009(403009)	,PA4030098(4030098)
@@ -175,8 +175,7 @@ public enum D2DepositHeaderKey {
 	,PA49300(49300)		,PA493009(493009)	,PA4930098(4930098)
 	,PA49500(49500)		,PA495009(495009)	,PA4950098(4950098)
 
-	///ESTADO DE CAMBIOS EN EL PATRIMONIO NETO
-	// INGRESOS
+	//ESTADO DE CAMBIOS EN EL PATRIMONIO NETO - EIGR
 	,PNA159100(59100)	,PNA1591009(591009)	,PNA15910098(5910098)
 	,PNA159200(59200)	,PNA1592009(592009)	,PNA15920098(5920098)
 	,PNA159300(59300)	,PNA1593009(593009)	,PNA15930098(5930098)
@@ -195,8 +194,7 @@ public enum D2DepositHeaderKey {
 	,PNA150120(50120)	,PNA1501209(501209)	,PNA15012098(5012098)
 	,PNA150130(50130)	,PNA1501309(501309)	,PNA15013098(5013098)
 
-	///ESTADO DE CAMBIOS EN EL PATRIMONIO NETO
-	// CAMBIOS
+	//ESTADO DE CAMBIOS EN EL PATRIMONIO NETO - ECPN
 	,PNA251101(51101)	,PNA2511019(511019)
 	,PNA251102(51102)	,PNA2511029(511029)
 	,PNA251103(51103)	,PNA2511039(511039)
@@ -434,12 +432,12 @@ public enum D2DepositHeaderKey {
 	,IMA8099051(8099051)
 	,IMA8099061(8099061)
 	
-	// IDENTIFICADOR DEL TITULO REAL
-	,ITR8080828(8080828)
-	,ITR8080829(8080829)
+	// IDENTIFICADOR DEL TITULAR REAL
+	,ITR8080828(8080828) // La entidad actualiza o declara datos de identificación del titular real (1- Sí, 2- No)
+	,ITR8080829(8080829) // La entidad está sujeta a la obligación de identificar al titular real porque no cotiza en mercados regulados (1- Sí, 2- No)
 	
-	,ITR8234001(8234001)
-	,ITR8234002(8234002)
+	,ITR8234001(8234001) // Tipo de actualización de los datos de identificación del titular real (1 = Primera presentación, 2 = Actualización por cambio de titular real, 3 = Rectificación de los datos erróneos de una declaración previa)
+	,ITR8234002(8234002) // Fecha en la que debe reputarse que se ha producido el cambio de los datos
 	
 	,ITR8210000(8210000)
 	,ITR8211000(8211000)
@@ -596,6 +594,133 @@ public enum D2DepositHeaderKey {
 	,ITR8230127(8230127)
 	,ITR8230128(8230128)
 	,ITR8230129(8230129)
+	
+	// III.a. Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	
+	,ITR8230201(8230201) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
+	,ITR8230202(8230202) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
+	,ITR8230203(8230203) // Denominación social de la sociedad	Desde la 8230203 hasta la 8230593 (incrementando 10). Total: 40 campos	Texto	70				no		
+	,ITR8230204(8230204) // País de expedición del documento identificativo	Desde la 8230204 hasta la 8230594 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230205(8230205) // El tipo de documento que identifica a la persona jurídica	Desde la 8230205 hasta la 8230595 (incrementando 10). Total: 40 campos	Entero					No	2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+	,ITR8230206(8230206) // Documento identificativo de la persona jurídica	Desde la 8230206 hasta la 8230596 (incrementando 10). Total: 40 campos	Texto	20				No		
+	,ITR8230207(8230207) // Nacionalidad de la persona jurídica	Desde la 8230207 hasta la 8230597 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230208(8230208) // Domicilio social de la persona jurídica	Desde la 8230208 hasta la 8230598 (incrementando 10). Total: 40 campos	Texto	80				No		
+	,ITR8230209(8230209) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene	Desde la 8230209 hasta la 8230599 (incrementando 10). Total: 40 campos	Texto	20				No
+	
+	,ITR8230211(8230211) 
+	,ITR8230212(8230212) 
+	,ITR8230213(8230213) 
+	,ITR8230214(8230214) 
+	,ITR8230215(8230215) 
+	,ITR8230216(8230216) 
+	,ITR8230217(8230217) 
+	,ITR8230218(8230218) 
+	,ITR8230219(8230219)
+	
+	,ITR8230221(8230221) 
+	,ITR8230222(8230222) 
+	,ITR8230223(8230223) 
+	,ITR8230224(8230224) 
+	,ITR8230225(8230225) 
+	,ITR8230226(8230226) 
+	,ITR8230227(8230227) 
+	,ITR8230228(8230228) 
+	,ITR8230229(8230229) 
+	
+	,ITR8230231(8230231) 
+	,ITR8230232(8230232) 
+	,ITR8230233(8230233) 
+	,ITR8230234(8230234) 
+	,ITR8230235(8230235) 
+	,ITR8230236(8230236) 
+	,ITR8230237(8230237) 
+	,ITR8230238(8230238) 
+	,ITR8230239(8230239)
+	
+	// III.b. Detalle de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	,ITR8232001(8232001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8232001 hasta la 8232391 (incrementando 10). Total: 40 campos Texto 20						
+	,ITR8232002(8232002) // Nivel en la cadena de control	Desde la 8232002 hasta la 8232392 (incrementando 10). Total: 40 campos Entero							
+	,ITR8232003(8232003) // Denominación social de la sociedad	Desde la 8232003 hasta la 8232393 (incrementando 10). Total: 40 campos	Texto 70	
+	,ITR8232004(8232004) // País de expedición del documento identificativo	Desde la 8232004 hasta la 8232394 (incrementando 10). Total: 40 campos Texto 2 Lista de países ISO 3166 Alpha-2	
+	,ITR8232005(8232005) // El tipo de documento que identifica a la persona jurídica	Desde la 8232005 hasta la 8232395 (incrementando 10). Total: 40 campos Entero 2 = NIF, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+	,ITR8232006(8232006) // Documento identificativo de la persona jurídica	Desde la 8232006 hasta la 8232396 (incrementando 10). Total: 40 campos Texto 20
+	,ITR8232007(8232007) // Nacionalidad de la persona jurídica	Desde la 8232007 hasta la 8232397 (incrementando 10). Total: 40 campos Texto 2 Lista de países ISO 3166 Alpha-2	
+	,ITR8232008(8232008) // Domicilio social de la persona jurídica	Desde la 8232008 hasta la 8232398 (incrementando 10). Total: 40 campos Texto 80
+	,ITR8232009(8232009) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene Desde la 8232009 hasta la 8232399 (incrementando 10). Total: 40 campos Texto 20
+	
+	,ITR8232011(8232011) 
+	,ITR8232012(8232012) 
+	,ITR8232013(8232013) 
+	,ITR8232014(8232014) 
+	,ITR8232015(8232015) 	
+	,ITR8232016(8232016) 
+	,ITR8232017(8232017) 
+	,ITR8232018(8232018) 
+	,ITR8232019(8232019) 
+
+	,ITR8232021(8232021) 
+	,ITR8232022(8232022) 
+	,ITR8232023(8232023) 
+	,ITR8232024(8232024) 
+	,ITR8232025(8232025) 	
+	,ITR8232026(8232026) 
+	,ITR8232027(8232027) 
+	,ITR8232028(8232028) 
+	,ITR8232029(8232029) 
+
+	,ITR8232031(8232031) 
+	,ITR8232032(8232032) 
+	,ITR8232033(8232033) 
+	,ITR8232034(8232034) 
+	,ITR8232035(8232035) 	
+	,ITR8232036(8232036) 
+	,ITR8232037(8232037) 
+	,ITR8232038(8232038) 
+	,ITR8232039(8232039) 
+
+	// IV.a. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de participación en el capital
+	,ITR8231001(8231001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8231001 hasta la 8231391 (incrementando 10). Total: 40 campos Texto 20
+	,ITR8231002(8231002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8231002 hasta la 8231392 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8231003(8231003) // Documento identificativo de la sociedad participada	Desde la 8231003 hasta la 8231393 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8231004(8231004) // Porcentaje de participación directa	Desde la 8231004 hasta la 8231394 (incrementando 10). Total: 40 campos Decimal 2 0 	
+
+	,ITR8231011(8231011) 
+	,ITR8231012(8231012) 
+	,ITR8231013(8231013) 
+	,ITR8231014(8231014) 
+
+	,ITR8231021(8231021) 
+	,ITR8231022(8231022) 
+	,ITR8231023(8231023) 
+	,ITR8231024(8231024) 
+
+	,ITR8231031(8231031) 
+	,ITR8231032(8231032) 
+	,ITR8231033(8231033) 
+	,ITR8231034(8231034) 
+
+	// IV.b. Detalle de las participaciones de las sociedades que intervienen en la cadena de control - Control a través de derechos de voto
+	,ITR8233001(8233001) // Documento identificativo Titular Real sobre el que se detalla la cadena de control Desde la 8233001 hasta la 8233391 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233002(8233002) // Documento identificativo de la sociedad o titular real que tiene la participación sobre la sociedad participada	Desde la 8233002 hasta la 8233392 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233003(8233003) // Documento identificativo de la sociedad participada	Desde la 8233003 hasta la 8233393 (incrementando 10). Total: 40 campos Texto 20		
+	,ITR8233004(8233004) // Porcentaje de participación directa	Desde la 8233004 hasta la 8233394 (incrementando 10). Total: 40 campos Decimal 2 0		
+
+	,ITR8233011(8233011) 
+	,ITR8233012(8233012) 
+	,ITR8233013(8233013) 
+	,ITR8233014(8233014)
+	
+	,ITR8233021(8233021) 
+	,ITR8233022(8233022) 
+	,ITR8233023(8233023) 
+	,ITR8233024(8233024)
+	
+	,ITR8233031(8233031) 
+	,ITR8233032(8233032) 
+	,ITR8233033(8233033) 
+	,ITR8233034(8233034) 
+	
+	// DOCUMENTO SOBRE SERVICIOS A TERCEROS
 	
 	,SRP8080831(8080831)
 	,SRP8080832(8080832)

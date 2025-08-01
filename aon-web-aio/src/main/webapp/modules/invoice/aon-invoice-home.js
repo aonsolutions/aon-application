@@ -100,8 +100,11 @@ export class AonInvoiceHome extends AonElement {
 		getCompanyActivities({}).then(activities => {
 			let data = { uploaded: 0 };
 			if(activities.length > 1) {
+				activities.push({
+					id: "all",
+					description: "TODAS"
+        		});
 				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
-				activity.default = true;
 				activity.setAlias("id", "description");
 				if(activities.length > 0) {
 					activity.setOptions(activities);

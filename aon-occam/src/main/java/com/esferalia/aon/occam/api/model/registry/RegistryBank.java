@@ -30,7 +30,10 @@ public class RegistryBank implements Serializable {
 	private Boolean active;
 	private boolean dirty;
 	private boolean removed;
-		
+
+     public RegistryBank() {
+    }
+
 	public Integer getId() {
 		return id;
 	}

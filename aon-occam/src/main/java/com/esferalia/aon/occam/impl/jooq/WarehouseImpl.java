@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.StockDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.delivery.DeliveryInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -219,7 +220,7 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			WarehouseDAO.getStockStream(ctx, filter));
+			StockDAO.getStream(ctx, filter));
 	}
 
 
@@ -469,19 +470,19 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Optional<Stock> insertStock(AONContext ctx, Stock stock) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-				WarehouseDAO.insertStock(ctx, stock));
+			StockDAO.insert(ctx, stock));
 	}
 	
 	@Override
 	public Optional<Stock> updateStock(AONContext ctx, Stock stock) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-				WarehouseDAO.updateStock(ctx, stock));
+				StockDAO.update(ctx, stock));
 	}
 
 	@Override
 	public Optional<Stock> deleteStock(AONContext ctx, Integer stockId) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-		WarehouseDAO.deleteStock(ctx, stockId));
+		StockDAO.delete(ctx, stockId));
 	}
 
 	@Override
@@ -575,5 +576,21 @@ public class WarehouseImpl implements IWarehouse {
 	public void deleteDeliveryInfo(AONContext ctx, Integer deliveryId) {
 		ctx.getDslContext().transaction(
 				configuration -> DeliveryInfoDAO.delete(ctx, f -> f.getDeliveryProperty().eq(deliveryId)));
+	}
+	
+	@Override
+	public void deletePackage(AONContext ctx, Integer itemId) {
+		ctx.getDslContext().transaction(
+				configuration -> PackagingDAO.deletePackage(ctx, itemId));
+	}
+	
+	@Override
+	public void deletePackage(AONContext ctx, String sscc) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.deletePackage(ctx, sscc));
+	}
+	
+	@Override
+	public void adjustPackageComposition(AONContext ctx, ItemComposition ic) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.adjustPackageComposition(ctx, ic));
 	}
 }

@@ -344,7 +344,7 @@ public abstract class CCAAPdfAction {
 	        
 			unity.addCell(tableHeader("Unidades", 8, 10));
 			
-			String euros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09001.getCode());
+//			String euros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09001.getCode());
 			String milesEuros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 			String millonesEuros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 			
@@ -697,7 +697,7 @@ public abstract class CCAAPdfAction {
 			for (Integer j = 0; j < d2.length; j++) {
 				String txt = d2Deposit.getMap().get(d2[j].getCode());
 				if (j==2)
-					txt = documentType(txt);
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
 				itr1a.addCell(tableCell(txt, 1));
 			}
 		}
@@ -736,7 +736,7 @@ public abstract class CCAAPdfAction {
 			for (Integer j = 0; j < d2.length; j++) {
 				String txt = d2Deposit.getMap().get(d2[j].getCode());
 				if (j==2)
-					txt = documentType(txt);
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
 				itr1b.addCell(tableCell(txt, 1));
 			}
 		}
@@ -771,7 +771,7 @@ public abstract class CCAAPdfAction {
 			for (Integer j = 0; j < d2.length; j++) {
 				String txt = d2Deposit.getMap().get(d2[j].getCode());
 				if (j==2)
-					txt = documentType(txt);
+					txt = CCAAUtils.getDocumentTypeDescription(txt);
 				itr2.addCell(tableCell(txt, 1));
 			}
 		}
@@ -780,21 +780,106 @@ public abstract class CCAAPdfAction {
 		document.add(itr2);
 		
 		document.newPage();
+		
+		// A partir de 2024 apartados 3a, 3b, 4a y 4b
+		if(d2Deposit.getYear() >= 2024) {
+			itr2024();
+		}
+		
+	}
+
+	private void itr2024() throws DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		
+		PdfPTable itr0 = new PdfPTable(8);
+		itr0.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr0.setWidthPercentage(100);
+		itr0.addCell(tableHeader("Identificación del Titular Real", 8, 10));
+		document.add(new Paragraph(" "));
+		document.add(itr0);
+		
+		itr3ab(D2DepositConstants.ITR_KEYS_3_A, "Detalle de las sociedades intervinientes en la cadena de control a través de participación en el capital");
+		itr4ab(D2DepositConstants.ITR_KEYS_4_A, "Detalle de las participaciones de las sociedades que intervienen en la cadena de control a través de participación en el capital");
+		itr3ab(D2DepositConstants.ITR_KEYS_3_B, "Detalle de las sociedades que intervienen en la cadena de control a través de derechos de voto");
+		itr4ab(D2DepositConstants.ITR_KEYS_4_B, "Detalle de las participaciones de las sociedades que intervienen en la cadena de control a través de derechos de voto");
+		
+		document.newPage();
+	}	
+
+	private void itr3ab(D2DepositHeaderKey[] itrKeys3, String title) throws DocumentException {
+		
+		PdfPTable itr3ab = new PdfPTable(9);
+		itr3ab.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr3ab.setWidthPercentage(100);
+
+		itr3ab.addCell(tableHeader(title, 9, 10));
+		itr3ab.addCell(tableHeader("Documento del Titular Real", 1, 8));
+		itr3ab.addCell(tableHeader("Nivel en la cadena de control", 1, 8));
+		itr3ab.addCell(tableHeader("Denominaci\u00F3n social de la sociedad", 1, 8));
+		itr3ab.addCell(tableHeader("Pa\u00EDs documento", 1, 8));
+		itr3ab.addCell(tableHeader("Tipo documento", 1, 8));
+		itr3ab.addCell(tableHeader("Documento", 1, 8));
+		itr3ab.addCell(tableHeader("Nacionalidad", 1, 8));
+		itr3ab.addCell(tableHeader("Domicilio social", 1, 8));
+		itr3ab.addCell(tableHeader("Datos registrales o LEI", 1, 8));
+		
+		for(Integer i = 0; i < itrKeys3.length; i += 9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					itrKeys3[i],
+					itrKeys3[i+1],
+					itrKeys3[i+2],
+					itrKeys3[i+3],
+					itrKeys3[i+4],
+					itrKeys3[i+5],
+					itrKeys3[i+6],
+					itrKeys3[i+7],
+					itrKeys3[i+8]
+			};
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[0].getCode()), 1)); // Documento del Titular Real
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[1].getCode()), 1)); // Nivel en la cadena de control
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[2].getCode()), 1)); // Denominación social de la sociedad
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[3].getCode()), 1)); // País documento
+			itr3ab.addCell(tableCell(CCAAUtils.getDocumentTypeDescription(d2Deposit.getMap().get(d2[4].getCode())), 1)); // Tipo documento
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[5].getCode()), 1)); // Documento
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[6].getCode()), 1)); // Nacionalidad
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[7].getCode()), 1)); // Domicilio social
+			itr3ab.addCell(tableCell(d2Deposit.getMap().get(d2[8].getCode()), 1)); // Datos registrales o LEI
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr3ab);		
+		
 	}
 	
-	private String documentType(String code) {
-		if (code==null)
-			return "";
-		else 
-			return switch (code) {
-				case "1" -> "DNI";
-				case "2" -> "NIF";
-				case "3" -> "NIE";
-				case "4" -> "TIN";
-				case "5" -> "PASAPORTE";
-			    case "6" -> "OTRO";
-				default -> "";
+	private void itr4ab(D2DepositHeaderKey[] itrKeys4, String title) throws DocumentException {
+		
+		PdfPTable itr4ab = new PdfPTable(4);
+		itr4ab.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr4ab.setWidthPercentage(100);
+
+		itr4ab.addCell(tableHeader(title, 4, 10));
+		itr4ab.addCell(tableHeader("Documento del Titular Real", 1, 8));
+		itr4ab.addCell(tableHeader("Documento de quien tiene la participaci\u00f3n", 1, 8));
+		itr4ab.addCell(tableHeader("Documento sociedad participada", 1, 8));
+		itr4ab.addCell(tableHeader("% participaci\u00f3n directa", 1, 8));
+		
+		for(Integer i = 0; i < itrKeys4.length; i += 4){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					itrKeys4[i],
+					itrKeys4[i+1],
+					itrKeys4[i+2],
+					itrKeys4[i+3]
 			};
+			itr4ab.addCell(tableCell(d2Deposit.getMap().get(d2[0].getCode()), 1)); // Documento del Titular Real
+			itr4ab.addCell(tableCell(d2Deposit.getMap().get(d2[1].getCode()), 1)); // Documento de quien tiene la participación
+			itr4ab.addCell(tableCell(d2Deposit.getMap().get(d2[2].getCode()), 1)); // Documento sociedad participada
+			itr4ab.addCell(tableCell(d2Deposit.getMap().get(d2[3].getCode()), 1)); // % participación directa
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr4ab);		
+		
 	}
 
 	public void sra() throws DocumentException, IOException {
@@ -1383,7 +1468,8 @@ public abstract class CCAAPdfAction {
 	public void ap6C() throws DocumentException, IOException{
 		document.add(header());
 		document.add(subHeader());
-		document.setPageSize(PageSize.A4_LANDSCAPE);
+		//document.setPageSize(PageSize.A4_LANDSCAPE);
+		document.setPageSize(PageSize.A4);
 		
 		D2DepositKey[][] keys, keys2;
 		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
@@ -1432,7 +1518,8 @@ public abstract class CCAAPdfAction {
 	public void ap7B() throws DocumentException, IOException{
 		document.add(header());
 		document.add(subHeader());
-		document.setPageSize(PageSize.A4_LANDSCAPE);
+		//document.setPageSize(PageSize.A4_LANDSCAPE);
+		document.setPageSize(PageSize.A4);
 		D2DepositKey[][] keys = d2Deposit.getType().equalsIgnoreCase("PYMES")
 			? D2PDepositConstants.MRN7_PYMES_KEYS_3 : D2DepositConstants.MRN7_ABREVIATE_KEYS_3;
 
@@ -1604,7 +1691,7 @@ public abstract class CCAAPdfAction {
 			keys = D2DepositConstants.MRN13_ABREVIATE_KEYS_2016;
 		}
 
-		two("Número medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", keys, 8);
+		two(d2Deposit.getYear() < 2016 ? "Número medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)" : "Número medio de personas empleadas en el curso del ejercicio", keys, 8);
 		document.newPage();
 	}
 	
