@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
@@ -77,6 +78,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceConsoleDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailExtendedDAO;
@@ -700,6 +702,14 @@ public class FinanceImpl implements IFinance {
 	public VerifactuConfiguration saveVerifactuConfiguration(AONContext ctx, VerifactuConfiguration vc) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> VerifactuConfigurationDAO.save(ctx, vc));
+	}
+
+	// ---------- INVOICE COMMUNICATION CONFIGURATION
+	
+	@Override
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceCommunicationConfigurationDAO.get(ctx));
 	}
 	
 	// ---------- TBAI CONFIGURATION

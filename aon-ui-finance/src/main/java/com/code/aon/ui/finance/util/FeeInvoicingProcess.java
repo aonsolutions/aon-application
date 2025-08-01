@@ -3,7 +3,6 @@ package com.code.aon.ui.finance.util;
 import static com.code.aon.common.IProgression.FINISH_VALUE;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,9 +27,13 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
+import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class FeeInvoicingProcess implements ILongProcess {
@@ -83,10 +86,8 @@ public class FeeInvoicingProcess implements ILongProcess {
 			HibernateUtil.commitTransaction(sessionName);
 
 			Collection<Invoice> invoicedList = engine.getInvoicingDAO().getCollection();
-			if (invoicedList.size() > 0) {
-				for (Invoice invoice : invoicedList) {
-					invoice = ticketbai(invoice);
-				}
+			if (invoicedList != null && !invoicedList.isEmpty()) {
+				communication(invoicedList);			
 				if (controller.getParams().isInvoiceRecordable()) {
 					HibernateUtil.beginTransaction(sessionName);
 					int invoicesToRecord = invoicedList.size();
@@ -124,6 +125,31 @@ public class FeeInvoicingProcess implements ILongProcess {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);			
+		}
+	}
+	private void communication(Collection<Invoice> invoiceList) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = AonCollectionUtils.stream(invoiceList).findFirst().orElse(new Invoice()).getDomain();
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser("");
+						
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+		if(config.isTbai()) {
+			// TODO HAY QUE ADAPTAR TICKET BAI PARA QUE PUEDA ENVIARSE TODAS LAS FACTURAS DE UNA.
+			// Y USAR EL ELSE PARA TICKET BAI. 
+			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(inv));
+		} else if(config.isVerifactu()) {
+			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.stream(invoiceList)
+					.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
+					.toList();
+			
+			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+				new AcceptInvoiceCommunicationTypeVisitor(occam, invoices)
+				.setCompany(AON.getCompanyForDomain(occam));
+			try {
+				if(config.getType() != null) config.getType().visit(visitor);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 	

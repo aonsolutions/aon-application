@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
@@ -16,16 +17,22 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TBAI;
+import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
 		
+	public AcceptInvoiceCommunicationTypeVisitor(Occam occam, List<Invoice> invoices) {
+		super(occam, invoices);
+	}
+	
 	public AcceptInvoiceCommunicationTypeVisitor(Domain domain, User user, Invoice invoice) {
 		super(domain, user, invoice);
 	}
@@ -39,19 +46,18 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		SIIManager manager = SIIManager.getInstance(getSiiConfiguration());
 		
 		AccountingReportParams params = new AccountingReportParams();
-		params.setDomain(getDomain().getId());
-		params.setInvoices(new Integer[] {getInvoice().getId()});
-		LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getDomain().getName(), getDomain().getId(), getUser().getLogin(), params, "")
+		params.setDomain(getOccam().getDomain());
+		params.setInvoices(AonCollectionUtils.stream(getInvoices()).map(Invoice::getId).toArray(Integer[]::new));
+		LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getOccam().getDomainName(), getOccam().getDomain(), getOccam().getUser(), params, "")
 				.collect(Collectors.toCollection(LinkedList::new));		
-		
-		manager.suministroFacturas(getDomain(), getUser().getLogin(), getCompany(), getInvoice(), contextList, null);
+		manager.suministroFacturas(getDomain(), getOccam().getUser(), getCompany(), getInvoice(), contextList, null);
 	}
 
 	@Override
 	public void visitTBAI() {
 		if(InvoiceType.SALES.equals(getInvoice().getType())) {
 			try {
-				TBAI.getInstance().accept(getTbaiConfiguration(), getCompany(), getInvoice(), 
+				TBAI.accept(getTbaiConfiguration(), getCompany(), getInvoice(), 
 						getBlockchain(getCertificateId()));
 				
 			} catch (Exception e) {
@@ -102,14 +108,10 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitVERIFACTU() {
-		if(InvoiceType.SALES.equals(getInvoice().getType())) {
-			try {
-				List<Invoice> list = new LinkedList<>();
-				list.add(getInvoice());
-				VERIFACTU.accept(getVerifactuConfiguration(), getCompany(), list, getVerifactuBlockchain(), getUser().getLogin());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			VERIFACTU.accept(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

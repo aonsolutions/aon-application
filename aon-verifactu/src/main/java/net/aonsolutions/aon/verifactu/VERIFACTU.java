@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -62,18 +63,18 @@ public class VERIFACTU {
 		
 	}
 	public static void cancel(
+			Occam occam, 
 			VerifactuConfiguration verifactuConfiguration, 
 			Company company, 
 			List<Invoice> invoices, 
-			VerifactuBlockchain blockchain, 
-			String user) throws VerifactuException {
+			VerifactuBlockchain blockchain) throws VerifactuException {
 		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig(verifactuConfiguration)
 			.setCompany(company)
 			.setInvoices(invoices)
 			.setBlockchain(blockchain)
-			.setUser(user)
+			.setUser(occam.getUser())
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		try (CloseableAONContext ctx = AONContext.getAONContext(vc.getOccam())) {
 			ctx.getDslContext().transaction(configuration -> cancel(ctx, vc));
@@ -98,18 +99,18 @@ public class VERIFACTU {
 	}
 	
 	public static void accept(
+		Occam occam,
 		VerifactuConfiguration verifactuConfiguration, 
 		Company company, 
 		List<Invoice> invoices, 
-		VerifactuBlockchain blockchain, 
-		String user) throws VerifactuException {
+		VerifactuBlockchain blockchain) throws VerifactuException {
 		
 		VerifactuContext vc = new VerifactuContext()
 			.setConfig(verifactuConfiguration)
 			.setCompany(company)
 			.setInvoices(invoices)
 			.setBlockchain(blockchain)
-			.setUser(user)
+			.setUser(occam.getUser())
 			.setOperation(InvoiceCommunicationOperation.REGISTER);
 		try (CloseableAONContext ctx = AONContext.getAONContext(vc.getOccam())) {
 			ctx.getDslContext().transaction(configuration -> accept(ctx, vc));

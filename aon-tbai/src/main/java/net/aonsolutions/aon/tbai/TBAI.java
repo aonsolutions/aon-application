@@ -31,21 +31,21 @@ import ticketbai.respuesta.TicketBaiResponse;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
 public class TBAI {
-
-	public static TBAI getInstance() {
-		return new TBAI();
-	}
 	
-	public void accept(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception {
-		byte[] data = generateAcceptXMl(tbaiConfiguration, company, invoice, blockchain);
-		byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
-		String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
-		byte[] response = XMLUtils.send(tbaiConfiguration.getCertificate(), uri, xml);
-
+	private TBAI() {
 		
 	}
 	
-	public void modify(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception {
+	public static void accept(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception {
+//		byte[] data = generateAcceptXMl(tbaiConfiguration, company, invoice, blockchain);
+//		byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
+//		String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
+//		byte[] response = XMLUtils.send(tbaiConfiguration.getCertificate(), uri, xml);	
+		TbaiMain tbai = new TbaiMain();
+		tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+	}
+	
+	public static void modify(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception {
 		byte[] data = generateModifyXMl(tbaiConfiguration, company, invoice);
 		byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
 		String uri = TbaiUri.getUrlZuzendu(tbaiConfiguration);
@@ -53,30 +53,30 @@ public class TBAI {
 		TicketBaiResponse tbaiResponse = (TicketBaiResponse) XMLUtils.unmarshal(response, TicketBaiResponse.class);
 	}
 	
-	public void cancel(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception {
+	public static void cancel(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception {
 		byte[] data = generateCancelXMl(tbaiConfiguration, company, invoice);
 		byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
 		String uri = TbaiUri.getUrlAnulacion(tbaiConfiguration);
 		byte[] response = XMLUtils.send(tbaiConfiguration.getCertificate(), uri, xml);
 	}
 
-	public byte[] generateAcceptXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception{
+	public static byte[] generateAcceptXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception{
 		TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 		return XMLUtils.marshal(tbai, TicketBai.class);
 	}
 	
-	public byte[] generateModifyXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception{
+	public static byte[] generateModifyXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception{
 		SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, tbaiConfiguration, null, null, false);
 		return XMLUtils.marshal(tbai, SubsanacionModificacionTicketBAI.class);
 	}
 	
-	public byte[] generateCancelXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception{
+	public static byte[] generateCancelXMl(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws Exception{
 		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, tbaiConfiguration);
 		return XMLUtils.marshal(tbai, AnulaTicketBai.class);
 	}
 	
 	
-	protected void save(Company company, Invoice invoice, byte[] request, byte[] response, TbaiConfiguration tbaiConfiguration) throws ParserConfigurationException, SAXException, IOException, JAXBException {
+	protected static void save(Company company, Invoice invoice, byte[] request, byte[] response, TbaiConfiguration tbaiConfiguration) throws ParserConfigurationException, SAXException, IOException, JAXBException {
 		DataRequest datRequest = saveRequest(company.getDomain(), request);
 		
 		String sign = TbaiSign.getSign(request);
@@ -89,7 +89,7 @@ public class TBAI {
 		
 	}
 	
-	private DataRequest saveRequest(Domain domain, byte[] request) {
+	private static DataRequest saveRequest(Domain domain, byte[] request) {
 		DataRequest dataRequest = new DataRequest()
 				.setDomain(domain.getId())
 				.setDate(new Date())

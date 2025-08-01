@@ -120,6 +120,7 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -907,6 +908,11 @@ public class AON {
 		}
 	}
 	
+	public static ApplicationParameter getApplicationParameter(Occam occam, AppParam param){
+		ApplicationParameter ap = fetchApplicationParameter(occam.getDomainName(), occam.getDomain(), occam.getUser(), param);
+		return ap != null ? ap : new ApplicationParameter();
+	}
+	
 	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login, AppParam param){
 		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
 		return ap != null ? ap : new ApplicationParameter();
@@ -1091,7 +1097,11 @@ public class AON {
 		return getCompanyStream(ctx, filter)
 				.findFirst().orElse(new Company());
 	}
-
+	
+	public static Company getCompanyForDomain(Occam occam) {
+		return getCompany(occam.getDomainName(), occam.getDomain(), occam.getUser(), f -> f.getDomainProperty().eq(occam.getDomain()));
+	}
+	
 	public static Company getCompanyForDomain(String domainName, int domainId, String login) {
 		return getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 	}
@@ -7094,7 +7104,7 @@ public class AON {
 				return getSecurity().getCertificates(ctx, filter);
 			}
 		}
-
+		
 		public static Certificate getCertificate(Domain domain, User user, String certificateType) {
 			return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
 		}	
@@ -8073,6 +8083,10 @@ public class AON {
 	}
 	
 	// VERIFACTU CONFIGURATION
+
+	public static VerifactuConfiguration getVerifactuConfiguration(Occam occam) {
+		return getVerifactuConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
+	}
 	
 	public static VerifactuConfiguration getVerifactuConfiguration(Domain domain, User user) {
 		return getVerifactuConfiguration(domain.getName(), domain.getId(), user.getLogin());
@@ -8102,8 +8116,21 @@ public class AON {
 		}
 	}
 	
+	
 	// TICKET BAI CONFIGURATION
-
+	
+	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationConfiguration(ctx);
+		}
+	}
+	
+	// TICKET BAI CONFIGURATION
+	
+	public static TbaiConfiguration getTbaiConfiguration(Occam occam) {
+		return getTbaiConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
+	}
+	
 	public static TbaiConfiguration getTbaiConfiguration(Domain domain, User user) {
 		return getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	}
@@ -8133,7 +8160,11 @@ public class AON {
 	}
 	
 	// SII CONFIGURATION
-
+	
+	public static SiiConfiguration getSiiConfiguration(Occam occam) {
+		return getSiiConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
+	}
+	
 	public static SiiConfiguration getSiiConfiguration(Domain domain, User user) {
 		return getSiiConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	}
@@ -8182,6 +8213,12 @@ public class AON {
 	public static Person savePerson(Domain domain, String login, Person person) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getPerson().savePerson(ctx, person);
+		}
+	}
+
+	public static Person getPerson(Occam occam, PersonFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getPerson().getPerson(ctx, filter);
 		}
 	}
 	

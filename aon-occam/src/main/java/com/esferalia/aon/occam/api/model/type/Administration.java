@@ -38,17 +38,29 @@ public enum Administration implements Serializable {
 	public boolean isAraba() {
 		return (this == Administration.ALAVA);
 	}
+	
 	public boolean isBizkaia() {
 		return (this == Administration.BIZKAIA);
 	}
+	
 	public boolean isGipuzkoa() {
 		return (this == Administration.GIPUZKOA);
 	}
+	
 	public boolean isNavarra() {
 		return (this == Administration.NAVARRA);
 	}
+
 	public boolean isAEAT() {
 		return (this == Administration.COMMON_TERRITORY);
+	}
+	
+	public boolean isCanarias() {
+		return (this == Administration.COMMON_TERRITORY);
+	}
+	
+	public boolean isUnknown() {
+		return (this == Administration.UNKNOWN);
 	}
 	
 	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
