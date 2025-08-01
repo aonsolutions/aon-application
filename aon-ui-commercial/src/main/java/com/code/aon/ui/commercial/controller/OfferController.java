@@ -90,6 +90,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants, IAuditableController {
@@ -839,14 +841,15 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		Offer to = getOffer();
 		try {
 			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-			boolean tbai = isTbai();
-		    if(tbai) {
+			InvoiceCommunicationConfiguration config = getInvoiceCommunicationConfiguration();
+			boolean communication = config.isTbai() || config.isVerifactu();
+		    if(communication) {
 		        String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getInvoiceSeries());
 	        	setInvoiceNumber(number);
 	        }
-			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), tbai);
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), communication);
 			onLoadInvoice(event);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -863,6 +866,14 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		return AON.getTbaiConfiguration(domainName, domainId, login);
+	}
+	
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		Occam occam = new Occam()
+				.setDomainName(AonUtil.getDomainName())
+				.setDomain(DomainManager.getCurrentDomain())
+				.setUser("");
+		return AON.getInvoiceCommunicationConfiguration(occam);
 	}
 	
 	public Invoice getInvoice() throws ManagerBeanException {

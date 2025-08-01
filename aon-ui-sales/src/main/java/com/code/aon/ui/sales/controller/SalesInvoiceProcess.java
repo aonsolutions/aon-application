@@ -8,10 +8,9 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.bridge.invoicing.SalesInvoicingManager;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.common.ILongProcess;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 
 public class SalesInvoiceProcess implements ILongProcess {
 
@@ -25,8 +24,9 @@ public class SalesInvoiceProcess implements ILongProcess {
 	public void execute() {
 		Sales to = (Sales)salesController.getTo();
 		try {
-			boolean tbai = salesController.isTbai();
-		    if(tbai) {
+			InvoiceCommunicationConfiguration config = salesController.getInvoiceCommunicationConfiguration();
+			boolean communication = config.isTbai() || config.isVerifactu();
+		    if(communication) {
 		        String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, salesController.getInvoiceSeries());
@@ -35,7 +35,7 @@ public class SalesInvoiceProcess implements ILongProcess {
 	        }
 			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
 			invoicingManager.setProgression(salesController.getProgressionState());
-			Invoice invoice = invoicingManager.invoice(to, salesController.getInvoiceSeries(), salesController.getInvoiceNumber(), salesController.getInvoiceDate(), tbai);
+			Invoice invoice = invoicingManager.invoice(to, salesController.getInvoiceSeries(), salesController.getInvoiceNumber(), salesController.getInvoiceDate(), communication);
 			salesController.setInvoiceId(invoice.getId());
 			salesController.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
 		} catch (Throwable ex) {
