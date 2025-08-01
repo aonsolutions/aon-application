@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -39,9 +40,10 @@ class InvoiceTypes {
 	enum Invoices {
 		VENTA_NACIONAL_SIMPLE {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx, domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -51,6 +53,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -63,6 +66,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -83,8 +87,9 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLIFICADA {
 			@Override
-			Invoice get(AONContext ctx) {
+			Invoice get(AONContext ctx, int domain) {
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -101,6 +106,7 @@ class InvoiceTypes {
 					.setInvestment(false)
 					.setService(false)
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -121,10 +127,11 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				customer.getAddresses().clear();
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -145,6 +152,7 @@ class InvoiceTypes {
 					.setInvestment(false)
 					.setService(false)
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -165,9 +173,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SUPLIDOS {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -189,6 +198,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -202,6 +212,7 @@ class InvoiceTypes {
 						)
 					)
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(500.0)
 						.setTaxableBase(500.0)
@@ -215,9 +226,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLE {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -244,6 +256,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -264,8 +277,9 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA {
 			@Override
-			Invoice get(AONContext ctx) {
+			Invoice get(AONContext ctx, int domain) {
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -287,6 +301,7 @@ class InvoiceTypes {
 					.setInvestment(false)
 					.setService(false)
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -307,9 +322,10 @@ class InvoiceTypes {
 		},
 		VENTA_ISP {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -331,15 +347,16 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
 						.addTax(new InvoiceTax()
 							.setTaxType(TaxType.VAT)
 							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
+							.setPercentage(0.0)
+							.setQuota(0.0)
+							.setDeductibleQuota(0.0)
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						)
 					)
@@ -351,9 +368,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RE {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -375,6 +393,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -396,9 +415,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_IRPF_PROFESSIONAL {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -420,6 +440,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -449,9 +470,10 @@ class InvoiceTypes {
 		},
 		VENTA_INTRACOMUNITARIA_SERVICIOS {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -473,6 +495,7 @@ class InvoiceTypes {
 					.setService(true)
 					.setAddress( customer.getMainAddress()  )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -493,9 +516,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_EXENTA_E1 {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx); 
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setActivity(ACTIVITY_EXENTA)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
@@ -518,6 +542,7 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -538,9 +563,10 @@ class InvoiceTypes {
 		},
 		VENTA_ANULADA {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -563,6 +589,7 @@ class InvoiceTypes {
 					.setAnnulled(true)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -583,9 +610,10 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA {
 			@Override
-			Invoice get(AONContext ctx) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx);
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
+					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
@@ -607,6 +635,101 @@ class InvoiceTypes {
 					.setService(false)
 					.setAddress( customer.getMainAddress() )
 					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(21.0)
+					.setTotal(121.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_NACIONAL_CLIENTE_NO_CENSADO {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomerNoCensado(ctx, domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.NATIONAL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress() )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(21.0)
+					.setTotal(121.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_NACIONAL_CLIENTE_CEDILLA {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomerCedilla(ctx, domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.NATIONAL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress() )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
@@ -627,12 +750,12 @@ class InvoiceTypes {
 		},
 		;
 		
-		abstract Invoice get( AONContext ctx);
+		abstract Invoice get( AONContext ctx, int domain);
 	}
 
-	public static List<Invoice> getAll(AONContext ctx) {
+	public static List<Invoice> getAll(AONContext ctx, int domain) {
 		return AonCollectionUtils.stream( Invoices.values() )
-			.map(i -> i.get(ctx))
+			.map(i -> i.get(ctx,domain))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

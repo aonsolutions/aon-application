@@ -1,133 +1,225 @@
 package net.aonsolutions.aon.verifactu;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
+import javax.xml.soap.SOAPMessage;
+
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.DataRequest;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
-import net.aonsolutions.aon.verifactu.utils.XMLUtils;
+import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
 	@Test
-	@Disabled
-	void communication() throws Exception {
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig(config())
-			.setCompany(company())
-			.setInvoices(InvoiceTypes.getAll(ctx))
-			.setBlockchain(null);
-		vc.setRequest(Invoice2Verifactu.build(vc) );
-		String requestStr = XMLUtils.soapMarshal(
-			vc.getRequest(), 
-			RegFactuSistemaFacturacion.class);
-		
-		vc.setResponse( XMLUtils.post(
-			vc.getConfig().getCertificate(), 
-			VerifactuUri.getUrlEmision(true), 
-			requestStr));
-	
-		assertNotNull(vc.getResponse());
-		assertEquals(vc.getResponse().isError(), false);
-		
-		RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) 
-				XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, vc.getResponse().getResponse());
-
-		if (!respuesta.getRespuestaLinea().isEmpty()) {
-			respuesta.getRespuestaLinea().stream().forEach(r -> {
-				assertEquals(r.getEstadoRegistro().equals("ParcialmenteCorrecto")
-						? "ParcialmenteCorrecto" : "Correcto", r.getEstadoRegistro());
-			});
-		}
+	void venta_nacional_simpleAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
 	}
 	
 	@Test
-	@Disabled
-	void communicationAndSave() throws Exception {
-		List<Invoice> invoices = InvoiceTypes.getAll(ctx).stream().map(i -> AON.acceptInvoice(ctx, i)).toList();	
-		VERIFACTU.accept(config(), company(), invoices, null, "user");
-		invoices.stream().forEach(invoice -> assertInvoiceCommunication(ctx, invoice));
-		
+	void venta_nacional_simplificadaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
 	}
+	
+	@Test
+	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_suplidosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_rectificativa_simpleAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_rectificativa_simplificadaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_ispAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_reAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_irpf_professionalAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_intracomunitaria_serviciosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_exenta_e1AEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_anuladaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_simple_criterio_cajaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	@Test
+	void venta_nacional_cliente_no_censadoAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_NO_CENSADO.get(ctx, DOMAIN_ID).setId(1);
+		RespuestaExpedidaType ret = communicateInvalid(invoice);
+		assertNotNull(ret);
 		
-	private void assertInvoiceCommunication(AONContext ctx, Invoice invoice) {
-		InvoiceData qrUrl = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))
-				.and(f.getNameProperty().eq("VERIFACTU_QR")));
-		assertNotNull(qrUrl);
-		assertNotNull(qrUrl.getValue());
+		BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
+		assertNotNull(codigoErrorRegistro);
+		assertEquals( BigInteger.valueOf(1110) , codigoErrorRegistro);
 		
-		InvoiceData huella = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))
-				.and(f.getNameProperty().eq("VERIFACTU_HUELLA")));
-		assertNotNull(huella);
-		assertNotNull(huella.getValue());		
-				
-		InvoiceInfo invoiceInfo = InvoiceInfoDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))));
-		assertNotNull(invoiceInfo);
-		assertEquals(InvoiceCommunicationStatus.ACCEPTED, invoiceInfo.getStatus());
-
-		InvoiceCommunicationTracking tracking = InvoiceCommunicationTrackingDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value()))
-				.and(f.getOperationProperty().eq(InvoiceCommunicationOperation.REGISTER.value())));
-		assertNotNull(tracking);
-		assertNotNull(tracking.getInvoiceBatchDetail());
-		assertEquals(InvoiceCommunicationStatus.ACCEPTED, tracking.getInvoiceBatchDetail().getStatus());
+		String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
+		assertNotNull(descripcionErrorRegistro);
+		assertTrue(AonStringUtils.startsWith(descripcionErrorRegistro, "Error en el bloque Destinatario.. El NIF no está identificado en el censo de la AEAT"));
+	}
+	
+	@Test
+	void venta_nacional_cliente_cedillaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_CEDILLA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+	
+	private void communicateValid(Invoice invoice) throws VerifactuException {
+		RespuestaExpedidaType ret = communicateCommon(invoice);
+		EstadoRegistroType estado = ret.getEstadoRegistro();
+		assertNotNull(estado);
 		
-		assertNotNull(tracking.getInvoiceBatch());
-		assertNotNull(tracking.getInvoiceBatch().getDataResponse());
+		if (estado == EstadoRegistroType.ACEPTADO_CON_ERRORES) {
+			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
+			assertNotNull(codigoErrorRegistro);
+			assertEquals( BigInteger.valueOf(2007) , codigoErrorRegistro);
+			
+			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
+			assertNotNull(descripcionErrorRegistro);
+			assertTrue(AonStringUtils.startsWith(descripcionErrorRegistro, "No debe informarse como primer registro"));
+		} else if (estado == EstadoRegistroType.CORRECTO) {
+			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
+			assertNull(codigoErrorRegistro);
+			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
+			assertNull(descripcionErrorRegistro);
+		} else {
+			fail( "Estado no correcto ["+estado+"] "
+				+ " (" + ret.getCodigoErrorRegistro() + ") "
+				+ ret.getDescripcionErrorRegistro() );
+		}
 		
-		DataResponse dataResponse = DataResponseDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getIdProperty().eq(tracking.getInvoiceBatch().getDataResponse())));
-		assertNotNull(dataResponse);
-		assertNotNull(dataResponse.getDataRequest());
-
-		DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getIdProperty().eq(dataResponse.getDataRequest())));
-		assertNotNull(dataRequest);
-
-		Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-				.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
-		assertNotNull(request);
-		assertNotNull(request.getData());
+		assertNull(ret.getRegistroDuplicado());
+	}
+	
+	private RespuestaExpedidaType communicateInvalid(Invoice invoice) throws VerifactuException {
+		RespuestaExpedidaType ret = communicateCommon(invoice);
+		EstadoRegistroType estado = ret.getEstadoRegistro();
+		assertNotNull(estado);
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
-				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-				.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
-		assertNotNull(response);
-		assertNotNull(request.getData());
+		if (estado != EstadoRegistroType.INCORRECTO) {
+			fail( "Estado Correcto");
+		}
+		assertNull(ret.getRegistroDuplicado());
+		return ret;
+	}
+	
+	private VerifactuContext doCommunicate(Invoice invoice) throws VerifactuException {
+		List<Invoice> invoices = new LinkedList<>();
+		invoices.add( invoice );
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig(config())
+			.setCompany(company())
+			.setInvoices( invoices )
+			.setBlockchain(null);
+		
+		vc.setRequest(Invoice2Verifactu.build(vc) );
+		
+		SOAPMessage request = VerifactuXMLUtils.soapMarshal(
+			vc.getRequest(), 
+			RegFactuSistemaFacturacion.class);
+		
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true), request));
+	
+		assertNotNull(vc.getResponse());
+		return vc;
+	}
+	private RespuestaExpedidaType communicateCommon(Invoice invoice) throws VerifactuException {
+		VerifactuContext vc = doCommunicate(invoice);
+		
+		assertFalse(vc.getResponse().isError());
+		
+		RespuestaRegFactuSistemaFacturacionType resp = vc.getResponse().getResponse();
+		assertNotNull(resp);
+		assertNotNull(resp.getRespuestaLinea());
+		assertFalse(resp.getRespuestaLinea().isEmpty());
+		assertEquals(1, resp.getRespuestaLinea().size());
+		RespuestaExpedidaType ret = resp.getRespuestaLinea().get(0);
+		
+		IDFacturaExpedidaType idFactura = ret.getIDFactura();
+	    assertNotNull( idFactura );
+	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
+	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
+	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+		
+		OperacionType operacion = ret.getOperacion();
+		assertNotNull(operacion);
+		assertNotNull(operacion.getTipoOperacion());
+		assertEquals(TipoOperacionType.ALTA, operacion.getTipoOperacion());
+		assertNotNull(operacion.getSubsanacion());
+		assertEquals(SubsanacionType.N, operacion.getSubsanacion());
+		assertNotNull(operacion.getRechazoPrevio());
+		assertEquals(RechazoPrevioType.N, operacion.getRechazoPrevio());
+		assertNull(operacion.getSinRegistroPrevio());
+		
+		assertNotNull(ret.getRefExterna());
+		assertEquals("1", ret.getRefExterna());
+		return ret;
 	}
 	
 }

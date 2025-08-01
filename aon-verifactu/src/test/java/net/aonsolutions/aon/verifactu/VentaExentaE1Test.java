@@ -42,7 +42,7 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 	

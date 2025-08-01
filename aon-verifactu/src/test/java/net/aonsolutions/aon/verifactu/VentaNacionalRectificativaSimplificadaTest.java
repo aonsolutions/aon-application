@@ -45,7 +45,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 
@@ -161,7 +161,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    
 	    SimplificadaCualificadaType facturaSimplificadaArt7273 = rfat.getFacturaSimplificadaArt7273();
 	    assertNotNull( facturaSimplificadaArt7273 );
-	    assertEquals( SimplificadaCualificadaType.S , facturaSimplificadaArt7273 );
+	    assertEquals( SimplificadaCualificadaType.N , facturaSimplificadaArt7273 );
 
 	    CompletaSinDestinatarioType facturaSinIdentifDestinatarioArt61D = rfat.getFacturaSinIdentifDestinatarioArt61D();
 	    assertNotNull( facturaSinIdentifDestinatarioArt61D );

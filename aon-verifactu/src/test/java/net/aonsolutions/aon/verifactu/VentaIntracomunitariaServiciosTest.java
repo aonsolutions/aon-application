@@ -42,7 +42,7 @@ class VentaIntracomunitariaServiciosTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 	

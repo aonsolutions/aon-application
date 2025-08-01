@@ -42,7 +42,7 @@ class VentaNacionalRETest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_NACIONAL_RE
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 

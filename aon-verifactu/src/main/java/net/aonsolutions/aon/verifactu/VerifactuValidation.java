@@ -21,94 +21,94 @@ public class VerifactuValidation {
 		
 	}
 	
-	private static record AltaContext( 
-		RegFactuSistemaFacturacion fras, 
-		RegistroFacturacionAltaType fra,
-		List<VerifactuError> errors) 
-	{}
-	
-	private static record AnulacionContext( 
-		RegFactuSistemaFacturacion fras, 
-		RegistroFacturacionAnulacionType fra, 
-		List<VerifactuError> errors) 
-	{}
-	
-	public List<VerifactuError> validate(RegFactuSistemaFacturacion fras) {
-		LinkedList<VerifactuError> allErrors = new LinkedList<>();
-		for (RegistroFacturaType fraType : fras.getRegistroFactura()) {
-			if (fraType.getRegistroAlta() != null) {
-				allErrors.addAll( validateAlta( fras, fraType.getRegistroAlta()));
-			}
-			if (fraType.getRegistroAnulacion() != null) {
-				allErrors.addAll( validateAnulacion( fras, fraType.getRegistroAnulacion()));
-			}
-		}
-		return allErrors;
-	}
-	
-	// *********************************************************
-	// ************ [VALIDACION REGISTRO ANULACION] ************
-	// *********************************************************
-	private List<VerifactuError> validateAnulacion(RegFactuSistemaFacturacion fras, RegistroFacturacionAnulacionType fra) {
-		AnulacionContext ctx = new AnulacionContext(fras, fra, new LinkedList<>());
-		return ctx.errors;
-	}
-
-	// *********************************************************
-	// *************** [VALIDACION REGISTRO ALTA] **************
-	// *********************************************************
-	private List<VerifactuError> validateAlta(RegFactuSistemaFacturacion fras, RegistroFacturacionAltaType fra) {
-		AltaContext ctx = new AltaContext(fras, fra, new LinkedList<>());
-		CHECK_CABECERA
-			.andThen(ALTA_FRA_NIF)
-			.andThen(ALTA_FRA_FECHA)
-			.accept(ctx);
-		
-		return ctx.errors;
-	}
-	
-	/**
-	 * El dato Cabecera >> ObligadoEmision >> NIF  en  debe existir.
-	 */
-	private static final Consumer<AltaContext> CHECK_CABECERA = new Consumer<>() {
-		@Override
-		public void accept(AltaContext ctx) {
-			if (ctx.fras.getCabecera().getObligadoEmision().getNIF() == null) {
-				ctx.errors.add(VerifactuError.VERIFACTU_4104);
-			} else if (!AonDocumentUtil.isValid(ctx.fras.getCabecera().getObligadoEmision().getNIF())) {
-				ctx.errors.add(VerifactuError.VERIFACTU_4109);
-			}
-		}
-	};
-	
-	/**
-	 * 1. Agrupación IDFactura
-	 * 
-	 * 	 - El NIF del campo IDEmisorFactura debe ser el mismo que el del campo NIF
-	 * 	   de la agrupación ObligadoEmision del bloque Cabecera.
-	 */
-	private static final Consumer<AltaContext> ALTA_FRA_NIF = ctx -> {
-		if (AonStringUtils.notEquals(
-			ctx.fras.getCabecera().getObligadoEmision().getNIF(),
-			ctx.fra.getIDFactura().getIDEmisorFactura())) {
-			ctx.errors.add(VerifactuError.VERIFACTU_1108);
-		}
-	};
-
-	/**
-	 * 1. Agrupación IDFactura
-	 * 
-	 * 	 - La FechaExpedicionFactura no podrá ser superior a la fecha actual.
-	 */
-	private static final Consumer<AltaContext> ALTA_FRA_FECHA = ctx -> {
-		Date expDate = VerifactuUtils.toDate(ctx.fra.getIDFactura().getFechaExpedicionFactura());
-		if (expDate == null) {
-			ctx.errors.add(VerifactuError.VERIFACTU_1105);
-		}
-		if (AonDateUtils.isAfter(expDate, AonDateUtils.today())) {
-			ctx.errors.add(VerifactuError.VERIFACTU_1112);
-		}
-	};
+//	private static record AltaContext( 
+//		RegFactuSistemaFacturacion fras, 
+//		RegistroFacturacionAltaType fra,
+//		List<VerifactuError> errors) 
+//	{}
+//	
+//	private static record AnulacionContext( 
+//		RegFactuSistemaFacturacion fras, 
+//		RegistroFacturacionAnulacionType fra, 
+//		List<VerifactuError> errors) 
+//	{}
+//	
+//	public List<VerifactuError> validate(RegFactuSistemaFacturacion fras) {
+//		LinkedList<VerifactuError> allErrors = new LinkedList<>();
+//		for (RegistroFacturaType fraType : fras.getRegistroFactura()) {
+//			if (fraType.getRegistroAlta() != null) {
+//				allErrors.addAll( validateAlta( fras, fraType.getRegistroAlta()));
+//			}
+//			if (fraType.getRegistroAnulacion() != null) {
+//				allErrors.addAll( validateAnulacion( fras, fraType.getRegistroAnulacion()));
+//			}
+//		}
+//		return allErrors;
+//	}
+//	
+//	// *********************************************************
+//	// ************ [VALIDACION REGISTRO ANULACION] ************
+//	// *********************************************************
+//	private List<VerifactuError> validateAnulacion(RegFactuSistemaFacturacion fras, RegistroFacturacionAnulacionType fra) {
+//		AnulacionContext ctx = new AnulacionContext(fras, fra, new LinkedList<>());
+//		return ctx.errors;
+//	}
+//
+//	// *********************************************************
+//	// *************** [VALIDACION REGISTRO ALTA] **************
+//	// *********************************************************
+//	private List<VerifactuError> validateAlta(RegFactuSistemaFacturacion fras, RegistroFacturacionAltaType fra) {
+//		AltaContext ctx = new AltaContext(fras, fra, new LinkedList<>());
+//		CHECK_CABECERA
+//			.andThen(ALTA_FRA_NIF)
+//			.andThen(ALTA_FRA_FECHA)
+//			.accept(ctx);
+//		
+//		return ctx.errors;
+//	}
+//	
+//	/**
+//	 * El dato Cabecera >> ObligadoEmision >> NIF  en  debe existir.
+//	 */
+//	private static final Consumer<AltaContext> CHECK_CABECERA = new Consumer<>() {
+//		@Override
+//		public void accept(AltaContext ctx) {
+//			if (ctx.fras.getCabecera().getObligadoEmision().getNIF() == null) {
+//				ctx.errors.add(VerifactuError.VERIFACTU_4104);
+//			} else if (!AonDocumentUtil.isValid(ctx.fras.getCabecera().getObligadoEmision().getNIF())) {
+//				ctx.errors.add(VerifactuError.VERIFACTU_4109);
+//			}
+//		}
+//	};
+//	
+//	/**
+//	 * 1. Agrupación IDFactura
+//	 * 
+//	 * 	 - El NIF del campo IDEmisorFactura debe ser el mismo que el del campo NIF
+//	 * 	   de la agrupación ObligadoEmision del bloque Cabecera.
+//	 */
+//	private static final Consumer<AltaContext> ALTA_FRA_NIF = ctx -> {
+//		if (AonStringUtils.notEquals(
+//			ctx.fras.getCabecera().getObligadoEmision().getNIF(),
+//			ctx.fra.getIDFactura().getIDEmisorFactura())) {
+//			ctx.errors.add(VerifactuError.VERIFACTU_1108);
+//		}
+//	};
+//
+//	/**
+//	 * 1. Agrupación IDFactura
+//	 * 
+//	 * 	 - La FechaExpedicionFactura no podrá ser superior a la fecha actual.
+//	 */
+//	private static final Consumer<AltaContext> ALTA_FRA_FECHA = ctx -> {
+//		Date expDate = VerifactuUtils.toDate(ctx.fra.getIDFactura().getFechaExpedicionFactura());
+//		if (expDate == null) {
+//			ctx.errors.add(VerifactuError.VERIFACTU_1105);
+//		}
+//		if (AonDateUtils.isAfter(expDate, AonDateUtils.today())) {
+//			ctx.errors.add(VerifactuError.VERIFACTU_1112);
+//		}
+//	};
 }
 
 

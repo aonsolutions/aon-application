@@ -1,13 +1,12 @@
 package net.aonsolutions.aon.verifactu;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -55,7 +54,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
-import net.aonsolutions.aon.verifactu.utils.XMLUtils;
 
 public class VERIFACTU {
 
@@ -84,18 +82,9 @@ public class VERIFACTU {
 	public static void cancel(AONContext ctx, VerifactuContext vc) throws VerifactuException {
 		check(vc);
 		vc.setRequest(Invoice2Verifactu.build(vc) );
-		try {
-			String requestStr = XMLUtils.soapMarshal(
-				vc.getRequest(), 
-				RegFactuSistemaFacturacion.class);
-			vc.setResponse( XMLUtils.post(
-				vc.getConfig().getCertificate(), 
-				VerifactuUri.getUrlEmision(true), 
-				requestStr));
-			saveCancel( ctx, vc );
-		} catch (JAXBException | SOAPException | IOException e) {
-			throw new VerifactuException(VerifactuError.AON_9004,e); 
-		}
+		SOAPMessage request = VerifactuXMLUtils.soapMarshal(vc.getRequest(),RegFactuSistemaFacturacion.class);
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),request));
+		saveCancel( ctx, vc );
 	}
 	
 	public static void accept(
@@ -120,18 +109,9 @@ public class VERIFACTU {
 	public static void accept(AONContext ctx, VerifactuContext vc) throws VerifactuException {
 		check(vc);
 		vc.setRequest(Invoice2Verifactu.build(vc) );
-		try {
-			String requestStr = XMLUtils.soapMarshal(
-				vc.getRequest(), 
-				RegFactuSistemaFacturacion.class);
-			vc.setResponse( XMLUtils.post(
-				vc.getConfig().getCertificate(), 
-				VerifactuUri.getUrlEmision(true), 
-				requestStr));
-			save( ctx, vc );
-		} catch (JAXBException | SOAPException | IOException e) {
-			throw new VerifactuException(VerifactuError.AON_9004,e); 
-		}
+		SOAPMessage request = VerifactuXMLUtils.soapMarshal(vc.getRequest(),RegFactuSistemaFacturacion.class);
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),request));
+		save( ctx, vc );
 	}
 
 	private static void check(VerifactuContext vc) throws VerifactuException {
@@ -161,63 +141,68 @@ public class VERIFACTU {
 		
 	}
 
-	private static void save(AONContext ctx, VerifactuContext vc) throws VerifactuException, JAXBException {
-		byte[] requestData = XMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
-		byte[] responseData = vc.getResponse().getResponse().getBytes();
-		// save DATA REQUEST
-		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), requestData);
-		// save DATA RESPONSE
-		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, responseData);
-		
-		for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {
-			saveInvoiceData(ctx, vc.getDomain(), req.getRegistroAlta() );
-		}
-		
-		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());
-		
-		InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain(), dataResponse);
-		if (vc.getResponse().isError()) {
-			vc.getInvoices().stream().forEach(inv -> {
-				saveInvoiceInfo(ctx, vc.getDomain(), inv.getId(), InvoiceCommunicationStatus.WRONG);
-				saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, inv.getId(), InvoiceCommunicationStatus.WRONG);					
-			});
-		} else {
-			RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) 
-				XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, vc.getResponse().getResponse());
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
-					saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status); 
-					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);				
-				});
+	private static void save(AONContext ctx, VerifactuContext vc) throws VerifactuException {
+		try {
+			byte[] requestData = VerifactuXMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
+			// save DATA REQUEST
+			DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), requestData);
+			// save DATA RESPONSE
+			DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());
+			
+			for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {
+				saveInvoiceData(ctx, vc.getDomain(), req.getRegistroAlta() );
 			}
-		}		
+			
+			saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());
+			
+			InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain(), dataResponse);
+			if (vc.getResponse().isError()) {
+				vc.getInvoices().stream().forEach(inv -> {
+					saveInvoiceInfo(ctx, vc.getDomain(), inv.getId(), InvoiceCommunicationStatus.WRONG);
+					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, inv.getId(), InvoiceCommunicationStatus.WRONG);					
+				});
+			} else {
+				RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+				if (!respuesta.getRespuestaLinea().isEmpty()) {
+					respuesta.getRespuestaLinea().stream().forEach(r -> {
+						Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+						InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
+						saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status); 
+						saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);				
+					});
+				}
+			}		
+		} catch (JAXBException e) {
+			throw new VerifactuException(VerifactuError.AON_9004,e);
+		}
 	}
 	
-	private static void saveCancel(AONContext ctx, VerifactuContext vc) throws VerifactuException, JAXBException {
-		byte[] requestData = XMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
-		byte[] responseData = vc.getResponse().getResponse().getBytes();
-		// save DATA REQUEST
-		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), requestData);
-		// save DATA RESPONSE
-		saveResponse(ctx, vc.getDomain(), dataRequest, responseData);
-		
-		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	
-	
-		// DELETE ANNULLED INVOICES
-		if (!vc.getResponse().isError()) {
-			RespuestaRegFactuSistemaFacturacionType respuesta = (RespuestaRegFactuSistemaFacturacionType) 
-				XMLUtils.soapUnmarshal(RespuestaRegFactuSistemaFacturacionType.class, vc.getResponse().getResponse());
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
-							&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
-						InvoiceDAO.delete(ctx, invoiceId);
-					}
-				});
+	private static void saveCancel(AONContext ctx, VerifactuContext vc) throws VerifactuException {
+		try {
+			byte[] requestData = VerifactuXMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
+			byte[] responseData = vc.getResponse().getBytes();
+			// save DATA REQUEST
+			DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), requestData);
+			// save DATA RESPONSE
+			saveResponse(ctx, vc.getDomain(), dataRequest, responseData);
+			
+			saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	
+			
+			// DELETE ANNULLED INVOICES
+			if (!vc.getResponse().isError()) {
+				RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+				if (!respuesta.getRespuestaLinea().isEmpty()) {
+					respuesta.getRespuestaLinea().stream().forEach(r -> {
+						Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+						if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
+								&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
+							InvoiceDAO.delete(ctx, invoiceId);
+						}
+					});
+				}
 			}
+		} catch (JAXBException e) {
+			throw new VerifactuException(VerifactuError.AON_9004,e); 
 		}
 	}
 

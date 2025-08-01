@@ -450,23 +450,24 @@ class DomainProviderForTests {
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("MAYOR").setNumber("74").setZip("07520").setCity("PETRA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_43102210A);
 		
-		CustomerFull C_X3654266A = new CustomerFull();
-		C_X3654266A
-			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X3654266A").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("JEAN FRANÇOIS VICENT COURTINAT")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
-		CustomerDAO.save(ctx, C_X3654266A);
-		
-		CustomerFull C_X1485566L = new CustomerFull();
-		C_X1485566L
-			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X1485566L").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("GOLDEN GATE INSTITUTE")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
-		CustomerDAO.save(ctx, C_X1485566L);
-
 		CustomerFull I_393356000000 = new CustomerFull();
 		I_393356000000
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("393356000000").setDocumentType(DocumentType.OTHER).setDocumentCountry(Country.FR).setName("LA POSTE")))
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
 		CustomerDAO.save(ctx, I_393356000000);
 		
+		// CARACTER CHUNGO
+		CustomerFull C_X3654266A = new CustomerFull();
+		C_X3654266A
+			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X3654266A").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("JEAN FRANÇOIS VICENT COURTINAT")))
+			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
+		CustomerDAO.save(ctx, C_X3654266A);
+
+		// NO CENSADO EN AEAT
+		CustomerFull C_X1485566L = new CustomerFull();
+		C_X1485566L
+			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X1485566L").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("GOLDEN GATE INSTITUTE")))
+			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
+		CustomerDAO.save(ctx, C_X1485566L);
 	}
 }

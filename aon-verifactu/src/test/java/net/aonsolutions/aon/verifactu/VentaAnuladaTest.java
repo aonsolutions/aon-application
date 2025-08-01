@@ -35,7 +35,7 @@ class VentaAnuladaTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_ANULADA
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 	

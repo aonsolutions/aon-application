@@ -62,7 +62,7 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.F_2 );
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.S);
-			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.S);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 		}
 	},
 
@@ -159,7 +159,7 @@ enum ClaveTipoFactura {
 		protected void filler(VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta) {
 			alta.setTipoFactura(ClaveTipoFacturaType.R_5 );
 			alta.setFacturaSinIdentifDestinatarioArt61D(CompletaSinDestinatarioType.S);
-			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.S);
+			alta.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.N);
 			alta.setTipoRectificativa(ClaveTipoRectificativaType.I);
 
 			FacturasRectificadas frs = new FacturasRectificadas();
@@ -224,8 +224,6 @@ enum ClaveTipoFactura {
 			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
 				other.setCodigoPais(CountryType2.GB);
 			} else other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
-			
-			other.setIDType(null);
 			other.setIDType(invoice.isIntracommunity() 
 					? VerifactuIDType.NIF_IVA.getName()
 					: VerifactuIDType.OTRO.getName());

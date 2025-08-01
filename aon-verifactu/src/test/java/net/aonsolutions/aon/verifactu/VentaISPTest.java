@@ -42,7 +42,7 @@ class VentaISPTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_ISP
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 
@@ -193,14 +193,14 @@ class VentaISPTest extends AbstractVerifactuTest {
 	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
 	    assertEquals( CalificacionOperacionType.S_2 , dt.getCalificacionOperacion() );
 	    assertNull( dt.getOperacionExenta() );		
-	    assertEquals( "21" , dt.getTipoImpositivo());
+	    assertEquals( "0" , dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
-	    assertEquals( "21" , dt.getCuotaRepercutida());
+	    assertEquals( "0" , dt.getCuotaRepercutida());
 	    assertNull( dt.getTipoRecargoEquivalencia() );		
 	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
-	    assertEquals( "21" , rfat.getCuotaTotal());
+	    assertEquals( "0" , rfat.getCuotaTotal());
 	    assertEquals( "100" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();

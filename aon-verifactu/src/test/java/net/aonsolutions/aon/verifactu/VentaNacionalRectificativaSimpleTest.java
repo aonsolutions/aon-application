@@ -45,7 +45,7 @@ class VentaNacionalRectificativaSimpleTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 	

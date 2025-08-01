@@ -42,7 +42,7 @@ class VentaNacionalIRPFProfessionalTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
 		return InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL
-			.get( ctx )
+			.get( ctx , DOMAIN_ID)
 			.setId(1);
 	}
 	
