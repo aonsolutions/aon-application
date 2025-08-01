@@ -144,10 +144,13 @@ public class SistemaREDCCC {
 			
 			// Check if need to find by authCode
 			try {
+				autorizationCode = autorizationCode.length() == 6 ? autorizationCode : ( "0" + autorizationCode );
+				
 				HtmlTable autorizadTable = document.querySelector("#tabla_lisAutorizad");
-				String enlaceSelector = "#enlace_0" + autorizationCode;
+				String enlaceSelector = "#enlace_" + autorizationCode;
 				System.out.println("----- enlaceSelector : " + enlaceSelector);
 				HtmlAnchor targetLink = autorizadTable.querySelector(enlaceSelector);
+				
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
 			} catch (Exception e) {}
 			
