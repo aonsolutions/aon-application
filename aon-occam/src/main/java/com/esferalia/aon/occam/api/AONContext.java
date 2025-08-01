@@ -52,7 +52,7 @@ public class AONContext {
 			super(connection, domainName, user);
 		}
 		
-		protected CloseableAONContext(Connection connection, String domainName, int domainId, String user) {
+		protected CloseableAONContext(Connection connection, String domainName, Integer domainId, String user) {
 			super(connection, domainName, domainId, user);
 		}
 
@@ -102,12 +102,12 @@ public class AONContext {
 	}
 	
 	/**
-	 * @deprecated Usar getAONContext(String domainName, int domainId, <b>String user</b>)
+	 * @deprecated Usar getAONContext(String domainName, Integer domainId, <b>String user</b>)
 	 *  para obtener el usuario, desde un servlet (parte cliente), se puede llamar al método
 	 *  <code>AonServletUtils.getLoggedUser()<code>
 	 */
 	@Deprecated
-	public static CloseableAONContext getAONContext(String domainName, int domainId) {
+	public static CloseableAONContext getAONContext(String domainName, Integer domainId) {
 		try {
 			// ----------------------
 			// ----------------------
@@ -172,7 +172,7 @@ public class AONContext {
 		return getAONContext(occam.getDomainName(),occam.getDomain(),occam.getUser());
 	}
 	
-	public static CloseableAONContext getAONContext(String domainName, int domainId, String user) {
+	public static CloseableAONContext getAONContext(String domainName, Integer domainId, String user) {
 		try {
 			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId,user);
@@ -283,19 +283,19 @@ public class AONContext {
 		this.domainId = getDomainId(dslContext, domainName);
 	}
 
-	private AONContext(Connection connection, String domainName, int domainId, String user) {
+	private AONContext(Connection connection, String domainName, Integer domainId, String user) {
 		this.domainName = domainName;
-		this.domainId = domainId;
 		this.user = user;
 		this.connection = connection;
 		this.dslContext = DSL.using(connection,getDefaultSettings());
+		this.domainId = domainId != null ? domainId : getDomainId(dslContext, domainName);
 	}
 
 	public String getDomainName() {
 		return domainName;
 	}
 	public int getDomainId() {
-		return domainId;
+		return domainId ;
 	}
 
 	public DSLContext getDslContext() {

@@ -625,17 +625,6 @@ public class AonCertificateDialog extends AonCustomDialog {
 		tgss.setValue(false, true);
 		sepe.setValue(false, true);
 		aeat.setValue(false, true);
-		String owner = ownerHidden.getValue();
-		for(Certificate certificateIt: certificates)
-			if(AonStringUtils.equalsIgnoreCase(certificateIt.getOwner().name(), owner) && (null == certificate || !certificate.getId().equals(certificateIt.getId())))
-				for(CertificateType tag : certificateIt.getTags())
-					checkTagEnable(tag);
-	}
-
-	private void checkTagEnable(CertificateType tag) {
-		if(tag.equals(CertificateType.TGSS)) tgss.setEnable(false);
-		if(tag.equals(CertificateType.SEPE)) sepe.setEnable(false);
-		if(tag.equals(CertificateType.AEAT)) aeat.setEnable(false);
 	}
 
 	// ------------------------------------------------- Auxiliar Methods
@@ -691,7 +680,10 @@ public class AonCertificateDialog extends AonCustomDialog {
 		acceptBtnDialog.setText("Grabar");
 		acceptBtnDialog.addClickHandler(e -> {
 			if(hasTGSSCertificate(certificate) || hasSEPECertificate(certificate) || hasAEATCertificate(certificate)) {
-				formUpdate.submit();
+				if(!existCertificateTypeInOtherCertificate(certificate))
+					formUpdate.submit();
+				else 
+					showError("Certitficado Tipo", "No puede existir un tipo de certiticado repetido");
 			} else 
 				showError("Certitficado", "Debe seleccionar un tipo de certificado para poder guardarlo");
 		});
@@ -704,6 +696,19 @@ public class AonCertificateDialog extends AonCustomDialog {
 		closeBtnDialog.addClickHandler(e -> hide());
 		
 		buttonsPanel.add(closeBtnDialog);
+	}
+
+	private boolean existCertificateTypeInOtherCertificate(Certificate certificate) {
+		Boolean exist = false;
+		
+		String owner = ownerHidden.getValue();
+		for(Certificate certificateIt: certificates)
+			if(AonStringUtils.equalsIgnoreCase(certificateIt.getOwner().name(), owner) && (null == certificate || !certificate.getId().equals(certificateIt.getId())))
+				for(CertificateType tag : certificateIt.getTags())
+					if(certificate.getTags().contains(tag))
+						return true;
+		
+		return exist;
 	}
 
 	private void accept() {

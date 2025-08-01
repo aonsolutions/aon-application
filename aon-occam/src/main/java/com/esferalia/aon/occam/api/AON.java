@@ -193,6 +193,8 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -620,6 +622,17 @@ public class AON {
 		}
 	}
 	
+	public static Scope saveScope(String domainName, Integer domainId, String login, Scope scope) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().saveScope(ctx, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
 		CloseableAONContext ctx = null;
 		try {
@@ -630,8 +643,24 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	
+
+	public static List<Scope> getScopeList(ScopeParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getSecurity().getScopeList(ctx, params);
+		} 
+	}
+
+	public static Integer getScopesCount(ScopeParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getSecurity().getScopesCount(ctx, params);
+		} 
+	}
+
+	public static List<UserScopeFull> getUserScopeFullList(String domainName, Integer domain, String user, Integer scopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getSecurity().getUserScopeFullList(ctx, scopeId);
+		} 
+	}
 
 	// ********************************************
 	// ********************************** COMMON **

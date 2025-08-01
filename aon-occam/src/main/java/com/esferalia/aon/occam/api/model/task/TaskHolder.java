@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -79,6 +80,11 @@ public class TaskHolder extends Registry implements Serializable{
 
 	public TaskHolder setUserId(Integer userId) {
 		user = null == user ? new User().setId(userId) : user.setId(userId);
+		return this;
+	}
+	
+	public TaskHolder setUserId(Integer userId, Integer userDomain) {
+		user = null == user ? new User().setId(userId).setDomain(new Domain().setId(userDomain)) : user.setId(userId).setDomain(new Domain().setId(userDomain));
 		return this;
 	}
 	

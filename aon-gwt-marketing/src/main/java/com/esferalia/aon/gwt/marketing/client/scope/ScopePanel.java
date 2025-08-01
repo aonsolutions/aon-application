@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.marketing.client.taskholder;
+package com.esferalia.aon.gwt.marketing.client.scope;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +15,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.occam.api.model.TaskHolderParams;
-import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -34,11 +33,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class TaskHolderPanel extends ScrollPanel {
+public abstract class ScopePanel extends ScrollPanel {
 
 	private static CommonServiceAsync COMMON_SERVICE;
 	
-	private static final Logger LOGGER = Logger.getLogger(TaskHolderPanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ScopePanel.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
 	private final int limit = 100;
@@ -49,17 +48,14 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 	private AonCustomTable tab;
 	private int lastScrollPos = 0;
 	
-	private TaskHolderParams params;
-	private Map<Integer, TaskHolder> rowProjects = new HashMap<>();
+	private ScopeParams params;
+	private boolean isOffice;
+	private Map<Integer, Scope> rowScopes = new HashMap<>();
 	
 	private static enum COLS {
-		  DOC(AON.MSG.document()					,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, NAM(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-//		, ALI("Alias"								,"8rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA("Estado"								,"5rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, WOR("Grupo Trabajo"						,"15rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, USR("Usuario"								,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, USD("Dom."								,"4rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		
+		  DOM(AonStringUtils.EMPTY					,"4rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DES(AON.MSG.description()					,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"3rem"				,"")
 		;
 
@@ -72,23 +68,27 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 			this.colWidth = colWidth;
 			this.styles = styles;
 		}
+		
 		public String getColWidth() {
 			return colWidth;
 		}
+		
 		public String getHeaderLabel() {
 			return headerLabel;
 		}
+		
 		public String getStyles() {
 			return styles;
 		}
 	}
 
-	public TaskHolderPanel(TaskHolderParams params) {
+	public ScopePanel(ScopeParams params, boolean isOffice) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
-		this.rowProjects.clear();
+		this.isOffice = isOffice;
+		this.rowScopes.clear();
 
 		addScrollHandler(new ScrollHandler() {
 
@@ -159,18 +159,18 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		getList(taskHolders -> {
+		getList(scopes -> {
 			boolean something = false;
 			
-			for(TaskHolder taskHolder : taskHolders) {
+			for(Scope scope : scopes) {
 				something = true;
-				paintRow(taskHolder);
+				paintRow(scope);
 			}
 			
-			if (taskHolders.size() < limit) {
+			if (scopes.size() < limit) {
 				disableMoreData();
 			} else {
-				offset.setValue(offset.intValue() + taskHolders.size() - 1);
+				offset.setValue(offset.intValue() + scopes.size() - 1);
 				enableMoreData();
 			}
 			
@@ -187,23 +187,23 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 	private void paintEmptyRow() {
 		HTMLPanel row = tab.createRow();
 		
-		Label name = new Label("No existen operarios");
-		name.setTitle("No existen operarios");
-		tab.addInlineStyle(name, COLS.DOC.getStyles());
-		tab.addRow(row, name, COLS.DOC.getColWidth());
+		Label name = new Label("No existen \u00e1mbitos");
+		name.setTitle("No existen \u00e1mbitos");
+		tab.addInlineStyle(name, COLS.DES.getStyles());
+		tab.addRow(row, name, COLS.DES.getColWidth());
 	}
 
-	private void paintRow(TaskHolder taskHolder) {
+	private void paintRow(Scope scope) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton deleteButton = new AonTableButton("Borrar operario", AON.CSS.aonIconDelete());
+		AonTableButton deleteButton = new AonTableButton("Borrar \u00e1mbito", AON.CSS.aonIconDelete());
 		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		deleteButton.addClickHandler(e -> {
 			e.stopPropagation();
 			deleteButton.setEnabled(false);
-			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Operario",
-					new HTML("Se va a proceder a eliminar el operario <b>" + taskHolder.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n \u00c1mbito",
+					new HTML("Se va a proceder a eliminar el \u00e1mbito <b>" + scope.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 			
 			dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -214,80 +214,54 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 
 				@Override
 				public void onAccept() {
-					delete(taskHolder.getId(), deleteButton);
+					delete(scope.getId(), deleteButton);
 				}
 			});
 		});
+		deleteButton.setVisible(scope.getDomain().equals(params.getDomain()) || isOffice);
 		buttonContainer.add(deleteButton);
 		
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onTaskHolderOpen(taskHolder), ClickEvent.getType());
-		
-		Label document = new Label(taskHolder.getDocument());
-		tab.addInlineStyle(document, COLS.DOC.getStyles());
-		tab.addRow(row, document, COLS.DOC.getColWidth());
-		
-		Label name = new Label(taskHolder.getName());
-		name.setTitle(taskHolder.getName());
-		tab.addInlineStyle(name, COLS.NAM.getStyles());
-		tab.addRow(row, name, COLS.NAM.getColWidth());
-		
-//		Label alias = new Label(taskHolder.getAlias());
-//		alias.setTitle(taskHolder.getAlias());
-//		tab.addInlineStyle(alias, COLS.ALI.getStyles());
-//		tab.addRow(row, alias, COLS.ALI.getColWidth());
-		
-		Label status = new Label(taskHolder.getStatus().getDescription());
-		tab.addInlineStyle(status, COLS.STA.getStyles());
-		tab.addRow(row, status, COLS.STA.getColWidth());
-		
-		String workgroupsValue = taskHolder.getWorkgroups().stream()
-			    .map(Workgroup::getDescription)
-			    .collect(Collectors.joining(", "));
-		Label workgroups = new Label(workgroupsValue);
-		workgroups.setTitle(workgroupsValue);
-		tab.addInlineStyle(workgroups, COLS.WOR.getStyles());
-		tab.addRow(row, workgroups, COLS.WOR.getColWidth());
-		
-		Label user = new Label(null != taskHolder.getUser() ? taskHolder.getUser().getLogin() : AonStringUtils.EMPTY);
-		user.setTitle(null != taskHolder.getUser() ? taskHolder.getUser().getLogin() : AonStringUtils.EMPTY);
-		tab.addInlineStyle(user, COLS.USR.getStyles());
-		tab.addRow(row, user, COLS.USR.getColWidth());
+		row.addDomHandler(e -> onScopeOpen(scope), ClickEvent.getType());
 		
 		Widget userDomain;
-		if(null != taskHolder.getUser() && null != taskHolder.getUser().getDomain() && null != taskHolder.getUser().getDomain().getId() && !taskHolder.getUser().getDomain().getId().equals(taskHolder.getDomain().getId())){
-			userDomain = new AonTableButton("Padre", AON.CSS.aonIconEnterprise());
+		if(!scope.getDomain().equals(params.getDomain())){
+			userDomain = new AonTableButton("Entorno Padre", AON.CSS.aonIconEnterprise());
 			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
 		} else {
 			userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconHome());
 			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
 		}
 		
-		tab.addRow(row, userDomain, COLS.USD.getColWidth());
+		tab.addRow(row, userDomain, COLS.DOM.getColWidth());
 		
+		Label name = new Label(scope.getDescription());
+		name.setTitle(scope.getDescription());
+		tab.addInlineStyle(name, COLS.DES.getStyles());
+		tab.addRow(row, name, COLS.DES.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
-		rowProjects.put(taskHolder.getId(), taskHolder);
+		rowScopes.put(scope.getId(), scope);
 	}
 	
-	private void getList(Consumer<List<TaskHolder>> success) {
-		COMMON_SERVICE.getTaskHolderList(params, new AsyncCallback<List<TaskHolder>>() {
+	private void getList(Consumer<List<Scope>> success) {
+		COMMON_SERVICE.getScopeList(params, new AsyncCallback<List<Scope>>() {
 			
 			@Override
-			public void onSuccess(List<TaskHolder> taskHolders) {
+			public void onSuccess(List<Scope> taskHolders) {
 				success.accept(taskHolders);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				onShowErrorMessage("Error obteniendo operarios : " + caught.getMessage());
+				onShowErrorMessage("Error obteniendo \u00e1mbitos : " + caught.getMessage());
 			}
 		});
 	}
 	
-	private void delete(Integer taskHolderId, AonTableButton deleteButton) {
-		COMMON_SERVICE.deleteTaskHolder(params.getDomainName(), params.getDomain(), params.getUser(), taskHolderId, new AsyncCallback<Void>() {
+	private void delete(Integer scopeId, AonTableButton deleteButton) {
+		COMMON_SERVICE.deleteScope(params.getDomainName(), params.getDomain(), params.getUser(), scopeId, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -304,23 +278,23 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 	
 	public void resetSearchOffset() {
 		offset.setValue(0);
-		rowProjects.clear();
+		rowScopes.clear();
 	}
 	
 	public AonCustomTable getTable() {
 		return tab;
 	}
 
-	public Integer getTaskHolderListPosition(Integer taskHolderId) {
-		List<TaskHolder> taskHolders = rowProjects.values().stream().collect(Collectors.toList());
-		for(int i=0; i<taskHolders.size(); i++)
-			if(taskHolders.get(i).getId().equals(taskHolderId))
+	public Integer getScopeListPosition(Integer scopeId) {
+		List<Scope> scopes = rowScopes.values().stream().collect(Collectors.toList());
+		for(int i=0; i<scopes.size(); i++)
+			if(scopes.get(i).getId().equals(scopeId))
 				return i;
 		return 0;
 	}
 	
-	public void getTaskHolderListCount(Consumer<Integer> finish) {
-		COMMON_SERVICE.getTaskHoldersCount(params, new AsyncCallback<Integer>() {
+	public void getScopeListCount(Consumer<Integer> finish) {
+		COMMON_SERVICE.getScopesCount(params, new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer count) {
@@ -337,8 +311,8 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 	protected abstract void onShowSuccessMessage(String successMessage);
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onShowLoadingMessage(String loadingMessage);
-	protected abstract void onTaskHolderOpen(TaskHolder taskHolder);
-	protected abstract void onTaskHolderCreation(TaskHolder taskHolder);
+	protected abstract void onScopeOpen(Scope scope);
+	protected abstract void onScopeCreation(Scope scope);
 	
 }
 
