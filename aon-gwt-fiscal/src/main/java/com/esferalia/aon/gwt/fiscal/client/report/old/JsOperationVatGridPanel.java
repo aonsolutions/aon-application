@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.report;
+package com.esferalia.aon.gwt.fiscal.client.report.old;
 
 import java.util.Map;
 import java.util.TreeMap;

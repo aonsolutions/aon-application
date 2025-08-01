@@ -46,7 +46,9 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -633,6 +635,9 @@ public class AccountingImpl implements IAccounting {
 		return AccountingOperationDAO.getOperationBreakdown(ctx
 				,domain
 				,params);
+	}
+	public Stream<OperationBreakdownNew> getOperationBreakdownNew(AONContext ctx, int domain, OperationParamsNew params) {
+		return AccountingOperationDAO.getOperationBreakdownNew(ctx, domain, params);
 	}
 	
 	// AMORTIZATION TYPE

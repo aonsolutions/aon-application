@@ -45,7 +45,9 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -728,6 +730,12 @@ public class ACCOUNTING {
 	public static Stream<OperationBreakdown> getOperationBreakdown(Occam occam, OperationParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getOperationBreakdown(ctx, occam.getDomain(), params);
+		}
+	}
+	
+	public static Stream<OperationBreakdownNew> getOperationBreakdownNew(Occam occam, OperationParamsNew params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getOperationBreakdownNew(ctx, occam.getDomain(), params);
 		}
 	}
 	

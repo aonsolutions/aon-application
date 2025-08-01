@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -19,7 +17,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -43,10 +41,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class OperationReport extends MainEntryPoint {
 	
-	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
-	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
-	private static final int IVA_TAB = 0; 
-	private static final int IRPF_TAB = 1;
+//	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
+	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
+	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 
+	private static final int TAB_1 = 1; // Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
@@ -57,16 +55,15 @@ public class OperationReport extends MainEntryPoint {
 	private OperationReportModuleOptions options;
 	
 	private TabLayoutPanel tabLayout;
-	private SimpleLayoutPanel ivaContent;
-	private SimpleLayoutPanel irpfContent;
+	private SimpleLayoutPanel tab0Content;
+	private SimpleLayoutPanel tab1Content;
 	
-	private ListBox type;  // Compras y Gastos / Ventas e Ingresos
+	private ListBox type;  // Libro de IVA, Libro de IRPF, Libro de IVA e IRPF
 	private AonIntegerBox year;
 	private PeriodListBox period;
 	private AonDateBox fromDate;
 	private AonDateBox toDate;
 	private ListBox activity;
-	int indexMainActivity = 0;
 
 	private FormPanel diskForm;
 	private Hidden operationParamsHidden = new Hidden("operationParams");
@@ -96,7 +93,7 @@ public class OperationReport extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert( AON.MSG.loadError("Operation Report"));
+				Window.alert( AON.MSG.loadError("Operation Report New"));
 			}
 		});
 
@@ -106,22 +103,22 @@ public class OperationReport extends MainEntryPoint {
 		this.options = opts;
 		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
 		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		aonLayoutPanel.addNorth(getAeatToolbarPanel(), AonToolbar.HEIGTH);
 		aonLayoutPanel.addNorth(getFilterPanel(), 70);
-		
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
+		tab0Content = new SimpleLayoutPanel();
+		tab1Content = new SimpleLayoutPanel();
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
+		tabLayout.add(tab0Content, "");
+		tabLayout.add(tab1Content, "");
 		tabLayout.addSelectionHandler( event -> {
-			if (event.getSelectedItem() == IVA_TAB) ivaContent.clear();
-			else if (event.getSelectedItem() == IRPF_TAB) irpfContent.clear();
+			if (event.getSelectedItem() == TAB_0) 
+				tab0Content.clear();
+			else if (event.getSelectedItem() == TAB_1) 
+				tab1Content.clear();
 			onSearch();
 		});
-		ivaContent = new SimpleLayoutPanel();
-		tabLayout.add(ivaContent, "Listado IVA");
-		irpfContent = new SimpleLayoutPanel();
-		tabLayout.add(irpfContent, "Listado IRPF");
 		content.setWidget(tabLayout);
 		aonLayoutPanel.add(content);
 		initialize();
@@ -129,17 +126,21 @@ public class OperationReport extends MainEntryPoint {
 	}
 	
 	private Widget getToolbarPanel() {
-		AonToolbar toolbarPanel  = new AonToolbar("Panel de Compras y Gastos / Ventas e Ingresos");
+		AonToolbar toolbarPanel  = new AonToolbar("LIBROS REGISTRO AEAT");
+		
+		// Botón limpiar
 		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(),AON.CSS.aonIconClear());
 		clean.addClickHandler(event -> initialize());
 		toolbarPanel.add(clean);
 
+		// Botón refrescar
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refresh.addClickHandler(event -> onSearch());
 		toolbarPanel.add(refresh);
 
+		// Botón exportar a Excel
 		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export(),AON.CSS.aonIconExcel());
-		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_PRINT, getWidgetParams()));
+		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams()));
 		toolbarPanel.add(export);
 		
 		diskForm = new FormPanel("_blank");
@@ -154,84 +155,13 @@ public class OperationReport extends MainEntryPoint {
 		return toolbarPanel;
 	}
 	
-	private Widget getAeatToolbarPanel() {
-		AonToolbar toolbarPanel  = new AonToolbar();
-		
-		Label aeatLabel = new Label("Libros AEAT:");
-		aeatLabel.setStyleName(AON.CSS.aonLabelWithIcon());
-		aeatLabel.addStyleName(AON.CSS.aonIconAeatBw());
-		toolbarPanel.add(aeatLabel);
-		
-		String aeatLabel1 = "Facturas Expedidas (IVA)";  
-		final AonTextButton aeat1 = new AonTextButton(aeatLabel1);
-		aeat1.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(false)
-				.setIrpf(false)
-				.setExpenses(false)));
-		toolbarPanel.add(aeat1);
-		
-		String aeatLabel2 = "Facturas Recibidas (IVA)";
-		final AonTextButton aeat2 = new AonTextButton(aeatLabel2);
-		aeat2.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(false)
-				.setIrpf(false)
-				.setExpenses(true)));
-		toolbarPanel.add(aeat2);
-
-		String aeatLabel3 = "Ventas e Ingresos (IRPF)";
-		final AonTextButton  aeat3 = new AonTextButton (aeatLabel3);
-		aeat3.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(false)
-				.setIrpf(true)
-				.setExpenses(false)));
-		toolbarPanel.add(aeat3);
-		
-		String aeatLabel4 = "Compras y Gastos (IRPF)";
-		final AonTextButton  aeat4 = new AonTextButton (aeatLabel4);
-		aeat4.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(false)
-				.setIrpf(true)
-				.setExpenses(true)));
-		toolbarPanel.add(aeat4);
-		
-		String aeatLabel5 = "Ventas e Ingresos (IVA e IRPF)";
-		final AonTextButton  aeat5 = new AonTextButton (aeatLabel5);
-		aeat5.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(true)
-				.setIrpf(true)
-				.setExpenses(false)));
-		toolbarPanel.add(aeat5);
-		
-		String aeatLabel6 = "Compras y Gastos (IVA e IRPF)";
-		final AonTextButton  aeat6 = new AonTextButton (aeatLabel6);
-		aeat6.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK
-			, getWidgetParams()
-				.setAeatBook(true)
-				.setUnifiedBook(true)
-				.setIrpf(true)
-				.setExpenses(true)));
-		toolbarPanel.add(aeat6);
-		
-		return toolbarPanel;
-	}
-
-	
 	private Widget getFilterPanel() {
 		type = new ListBox();
-		type .addStyleName(AON.CSS.aonMarginLeft());
-		type.addItem("Compras y Gastos", "");
-		type.addItem("Ventas e Ingresos");
-		type.addChangeHandler(event -> fillDates());
+		type.addStyleName(AON.CSS.aonMarginLeft());
+		type.addItem("Libros Registro de IVA");
+		type.addItem("Libros Registro de IRPF");
+		type.addItem("Libros Unificados de IVA e IRPF");
+		type.addChangeHandler(event -> onSearch());
 		
 		year = new AonIntegerBox();
 		year.addStyleName(AON.CSS.aonMarginLeft());
@@ -245,24 +175,25 @@ public class OperationReport extends MainEntryPoint {
 		
 		fromDate = new AonDateBox();
 		fromDate.addStyleName(AON.CSS.aonMarginLeft());
+		fromDate.addValueChangeHandler(event -> onSearch()); 
+		
 		toDate = new AonDateBox();
+		toDate.addValueChangeHandler(event -> onSearch()); 
 	
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			activity = new ListBox();
 			activity.addStyleName(AON.CSS.aonMarginLeft());
 			activity.setWidth("300px");
 			activity.addItem("-- Todas --", "");
-			int i = 1;
-			for (EnterpriseActivity ea : options.getConfiguration().getAllActivities()) {				
-				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+			for (EnterpriseActivity ea : options.getConfiguration().getAllActivities()) {
+				String description = ea.getDescription() + (ea.getIae().isEmpty() ? "" : (" ("+ea.getEpigraph()+")"));
+				activity.addItem(description, AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
-					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
-					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto (Ahora no, ahora se queda marcada "Todas"
+					activity.setItemText(activity.getItemCount()-1, description + " " + AonStringUtils.ASTERISK);
 				}
-				i++;
 			}
-			//activity.setSelectedIndex(indexMainActivity);
 			activity.setSelectedIndex(0);
+			activity.addChangeHandler(event -> onSearch()); 
 		}
 
 		FlexTable tab = new FlexTable();
@@ -278,7 +209,6 @@ public class OperationReport extends MainEntryPoint {
 		FlowPanel filterPanel = new FlowPanel();
 		tab.setWidget(0, 0, filterPanel);
 		
-		// ---------------------------------------------------------------- FIRST ROW
 		FlowPanel firstRowPanel = new FlowPanel();
 		firstRowPanel.addStyleName(AON.CSS.aonMarginTop());
 		filterPanel.add(firstRowPanel);
@@ -317,22 +247,25 @@ public class OperationReport extends MainEntryPoint {
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
 			activityLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
+			activityLabel.addStyleName(AON.CSS.aonMarginLeft());
 			firstRowPanel.add(activityLabel);
 			firstRowPanel.add(activity);
 		}
-
 		
-		AonSearchPanelButton searchButton = new AonSearchPanelButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
-		searchButton.addStyleName(AON.CSS.aonBold());
-		searchButton.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-		searchButton.setText(AON.MSG.searchAction());
-		searchButton.addClickHandler(event -> onSearch());
-		firstRowPanel.add(searchButton);
+		// FALTA - QUITAMOS BOTON SEARCH, SE BUSCARA AL CAMBIAR CUALQUIER FILTRO
+//		AonSearchPanelButton searchButton = new AonSearchPanelButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
+//		searchButton.addStyleName(AON.CSS.aonBold());
+//		searchButton.addStyleName(AON.CSS.aonMarginLeft());
+//		searchButton.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+//		searchButton.setText(AON.MSG.searchAction());
+//		searchButton.addClickHandler(event -> onSearch());
+//		firstRowPanel.add(searchButton);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
 		return scrollPanel;
+		
 	}
 
 	private void fillDates() {
@@ -350,21 +283,24 @@ public class OperationReport extends MainEntryPoint {
 				toDate.setValue(DateUtils.getLastDayOfMonth(DateUtils.getDate(p.getDueMonth(), y)),false);
 			}
 		}
+		onSearch(); // FALTA - SE HABILITA DE NUEVO
 	}
 	
 	private void initialize() {
 		type.setSelectedIndex(0);
 		year.setValue(DateUtils.getYear(),false);
 		period.setSelectedIndex(0);
-		fillDates();
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			//activity.setSelectedIndex(indexMainActivity);
 			activity.setSelectedIndex(0);
 		}
-//		 onSearch(); Disable initial search
+		fillDates(); // ESTO DISPARA onSearch
+//		onSearch(); // FALTA - SE HABILITA DE NUEVO 
 	}
 	
-	private void submitForm(String action, OperationParams params) {
+	// FALTA - CON LOS NUEVOS PARAMETROS - POR AHORA NO HACE NADA
+	private void submitForm(String action, OperationParamsNew params) {
+//		Window.alert("boton excel");
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		operationParamsHidden.setValue(JsonParams.convert(params));				
 		domainIdHidden.setValue(String.valueOf(options.getDomain()));
@@ -373,19 +309,17 @@ public class OperationReport extends MainEntryPoint {
 		diskForm.submit();
 	}
 
-	private OperationParams getWidgetParams() {
-		OperationParams params = new OperationParams()
+	private OperationParamsNew getWidgetParams() {
+		OperationParamsNew params = new OperationParamsNew()
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
-			.setAeatBook(false)
-			.setUnifiedBook(false)
-			.setExpenses(type.getSelectedIndex() == 0)
+			.setType(type.getSelectedIndex())
 			;
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
 			if (activity.getSelectedIndex() > 0) {
-				params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
-				params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
+				params.setActivity(AonNumberUtils.toInteger(activity.getSelectedValue()));
+				params.setActivityDescription((activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*","")).trim());
 			} else {
 				params.setActivity(null);
 				params.setActivityDescription("");			
@@ -395,23 +329,38 @@ public class OperationReport extends MainEntryPoint {
 	}
 
 	private void onSearch() {
-		if (tabLayout.getSelectedIndex() == IVA_TAB) {
-			refreshIVA(getWidgetParams());
-		} else if (tabLayout.getSelectedIndex() == IRPF_TAB) {
-			refreshIRPF(getWidgetParams() );
+//		Window.alert("ON SEARCH");
+		paintTextTab();
+		if (tabLayout.getSelectedIndex() == TAB_0) {
+			refreshTab0(getWidgetParams());
+		} else if (tabLayout.getSelectedIndex() == TAB_1) {
+			refreshTab1(getWidgetParams() );
 		}
 	}
 
-	private void refreshIVA(OperationParams params) {
-		ivaContent.clear();
-		params.setIrpf(false);
-		ivaContent.setWidget(new OperationReportVatPanel(options, params));	
+	private void refreshTab0(OperationParamsNew params) {
+		tab0Content.clear();
+		// FALTA - PASARLE QUE QUEREMOS SOLO EXPEDIDAS E INGRESOS
+		tab0Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabExpIngPanel()));
+	}
+	
+	private void refreshTab1(OperationParamsNew params) {
+		tab1Content.clear();
+		// FALTA - PASARLE QUE QUEREMOS SOLO RECIBIDAS Y GASTOS
+		tab1Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabRecGasPanel()));
 	}
 
-	private void refreshIRPF(OperationParams params) {
-		irpfContent.clear();
-		params.setIrpf(true);
-		irpfContent.setWidget(new OperationReportIrpfPanel(options, params));
+	private void paintTextTab() {
+		if (type.getSelectedIndex() == 0) {
+			tabLayout.setTabText(TAB_0, "Facturas Expedidas");
+			tabLayout.setTabText(TAB_1, "Facturas Recibidas");
+		} else if (type.getSelectedIndex() == 1) {
+			tabLayout.setTabText(TAB_0, "Ventas e Ingresos");
+			tabLayout.setTabText(TAB_1, "Compras y Gastos");
+		} else {
+			tabLayout.setTabText(TAB_0, "Expedidas e Ingresos");
+			tabLayout.setTabText(TAB_1, "Recibidas y Gastos");
+		}
 	}
 
 	public static void run() {
@@ -419,7 +368,7 @@ public class OperationReport extends MainEntryPoint {
 			
 			@Override
 			public void onFailure(Throwable reason) {
-				Window.alert(AON.MSG.loadError("OperationReport"));
+				Window.alert(AON.MSG.loadError("OperationReport New"));
 			}
 			
 			@Override

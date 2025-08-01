@@ -1,32 +1,27 @@
+// FACTURAS EXPEDIDAS / VENTAS E INGRESOS
 package com.esferalia.aon.gwt.fiscal.client.report;
 
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsOperationIrpfGridPanel extends FlowPanel implements HasSelectionHandlers<JsOperationBreakdown>{
-	
+public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
+	// FALTA - VER AL FINAL QUE COLUMNAS QUEREMOS MOSTRAR EN PANTALLA
 	private final Label title;
 	private final Label subTitle;
 	private final AonDisplayGrid grid;
 	private boolean something;
 	private double sumBase = 0.0;
 	private double sumQuota = 0.0;
+	private double sumSurchargeQuota = 0.0;
 	private double sumTotal = 0.0;
-	private Map<String,Object[]> mapConceptSummary = new TreeMap<>();
 	
-	public JsOperationIrpfGridPanel() {
+	public JsOperationGridTabExpIngPanel() {
 		title = new Label();
 		title.setStyleName(AON.CSS.aonMarginTop());
 		title.addStyleName(AON.CSS.aonBold());
@@ -60,12 +55,16 @@ public class JsOperationIrpfGridPanel extends FlowPanel implements HasSelectionH
 		grid.addHeaderRow()
 			.addCell(new Label("Act."),AON.CSS.aonWidth40())
 			.addCell(new Label("Fecha"),AON.CSS.aonWidth80())
+			.addCell(new Label("Fecha IVA."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Concepto"),AON.CSS.aonWidth150())
 			.addCell(new Label("N\u00BA Documento"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label("Titular"),AON.CSS.aonWidthAuto())
 			.addCell(new Label("Base Imp."),AON.CSS.aonTextRight(),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())		
-			.addCell(new Label("Impuestos"),AON.CSS.aonTextRight(),AON.CSS.aonWidth100())
-			.addCell(new Label("Total"),AON.CSS.aonTextRight(),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
+			.addCell(new Label("% IVA"),AON.CSS.aonTextRight(),AON.CSS.aonWidth40(),AON.CSS.aonNowrap())
+			.addCell(new Label("Cuota"),AON.CSS.aonTextRight(),AON.CSS.aonWidth100())
+			.addCell(new Label("% RE"),AON.CSS.aonTextRight(),AON.CSS.aonWidth40(),AON.CSS.aonNowrap())
+			.addCell(new Label("Cuota RE"),AON.CSS.aonTextRight(),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
+			.addCell(new Label("Total Fra."),AON.CSS.aonTextRight(),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 		;
 	}
 	
@@ -75,39 +74,42 @@ public class JsOperationIrpfGridPanel extends FlowPanel implements HasSelectionH
 			: supplier.get();
 	}
 	
-	public void addRow(JsOperationBreakdown br) {
+	public void addRow(JsOperationBreakdownNew br) {
 		if (!something) {
 			something = true;
 			paintHeader();			
 		}
 		AonDisplayGridRow row = grid.addRow();
 		row.addClickHandler(event -> SelectionEvent.fire(this, br));
-		row .addCell(new Label(ensure(br.getEpigraph(), br::getEpigraph, AonStringUtils.EMPTY)))
+//		row .addCell(new Label(ensure(br.getEpigraph(), br::getEpigraph, AonStringUtils.EMPTY)))
+//			.addCell(new Label(ensure(br.getEntryDate(), () -> AON.DATE_FORMAT.format(br.getEntryDate()), AonStringUtils.EMPTY)))
+//			.addCell(new Label(ensure(br.getTaxDate(), () -> AON.DATE_FORMAT.format(br.getTaxDate()), AonStringUtils.EMPTY)))
+//			.addCell(new Label(ensure(br.getConcept(), br::getConcept, AonStringUtils.EMPTY)))
+//			.addCell(new Label(ensure(br.getDocumentNumber(), br::getDocumentNumber, AonStringUtils.EMPTY)))
+//			.addCell(new Label(ensure(br.getRegistryFullName(), br::getRegistryFullName, AonStringUtils.EMPTY)))
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getBase())),AON.CSS.aonTextRight())
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getPercent()) + "%"),AON.CSS.aonTextRight())
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getQuota())),AON.CSS.aonTextRight())
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getSurchargePercent()) + "%"),AON.CSS.aonTextRight())
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getSurchargeQuota())),AON.CSS.aonTextRight())
+//			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getTotal())),AON.CSS.aonTextRight())
+		row .addCell(new Label(AonStringUtils.EMPTY))
 			.addCell(new Label(ensure(br.getEntryDate(), () -> AON.DATE_FORMAT.format(br.getEntryDate()), AonStringUtils.EMPTY)))
-			.addCell(new Label(ensure(br.getConcept(), br::getConcept, AonStringUtils.EMPTY)))
-			.addCell(new Label(ensure(br.getDocumentNumber(), br::getDocumentNumber, AonStringUtils.EMPTY)))
-			.addCell(new Label(ensure(br.getRegistryFullName(), br::getRegistryFullName, AonStringUtils.EMPTY)))
+			.addCell(new Label(ensure(br.getTaxDate(), () -> AON.DATE_FORMAT.format(br.getTaxDate()), AonStringUtils.EMPTY)))
+			.addCell(new Label(ensure(br.getConceptCode(), br::getConceptCode, AonStringUtils.EMPTY)))
+			.addCell(new Label(ensure(br.getDocument(), br::getDocument, AonStringUtils.EMPTY)))
+			.addCell(new Label(ensure(br.getName(), br::getName, AonStringUtils.EMPTY)))
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getBase())),AON.CSS.aonTextRight())
+			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getPercent()) + "%"),AON.CSS.aonTextRight())
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getQuota())),AON.CSS.aonTextRight())
+			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getSurchargePercent()) + "%"),AON.CSS.aonTextRight())
+			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getSurchargeQuota())),AON.CSS.aonTextRight())
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getTotal())),AON.CSS.aonTextRight())
 		;
 		sumBase = sumBase + br.getBase();
 		sumQuota = sumQuota + br.getQuota();
+		sumSurchargeQuota = sumSurchargeQuota + br.getSurchargeQuota();
 		sumTotal = sumTotal + br.getTotal();
-
-		Object[] indexIrpf = mapConceptSummary.get(br.getAccount());								  
-		if (indexIrpf != null) {
-			Object[] obj = new Object[2];	
-			obj[0] = br.getAccountDescription();
-			obj[1] = (double) indexIrpf[1] + br.getBase();
-			mapConceptSummary.put(br.getAccount(), obj);
-		} else {
-			Object[] obj = new Object[2];
-			obj[0] = br.getAccountDescription();
-			obj[1] = br.getBase();
-			mapConceptSummary.put(br.getAccount(), obj);
-		}
-		
 	}
 
 	public void addFooterRow() {
@@ -122,51 +124,22 @@ public class JsOperationIrpfGridPanel extends FlowPanel implements HasSelectionH
 				.addCell(new Label())
 				.addCell(new Label())
 				.addCell(new Label())
-				.addCell(new Label(AON.MSG.total()),AON.CSS.aonTextRight(),AON.CSS.aonBold(),AON.CSS.aonTextUppercase())
 				.addCell(new Label())
+				.addCell(new Label())
+				.addCell(new Label(AON.MSG.total()),AON.CSS.aonTextRight(),AON.CSS.aonBold(),AON.CSS.aonTextUppercase())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumBase)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
+				.addCell(new Label())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumQuota)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
+				.addCell(new Label())
+				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumSurchargeQuota)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumTotal)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
+				.addCell(new Label())
 				;
-			paintSummary();
 		}
 	}
 
 	public void setReportTitle( String title) {
 		this.title.setText(title);
 	}
-	private void paintSummary() {
-		paintSummary("RESUMEN POR CONCEPTO", mapConceptSummary);
-	}
 	
-	private void paintSummary(String label, Map<String, Object[]> map) {
-		Label summaryLabel = new Label(label);
-		summaryLabel.setStyleName(AON.CSS.aonTextCenter());
-		summaryLabel.addStyleName(AON.CSS.aonMarginTop());
-		summaryLabel.addStyleName(AON.CSS.aonFontSmall());
-		summaryLabel.addStyleName(AON.CSS.aonBold());
-		add( summaryLabel );
-		AonDisplayGrid summaryGrid = new AonDisplayGrid();
-		summaryGrid.addStyleName(AON.CSS.aonMarginTop());
-		summaryGrid.addStyleName(AON.CSS.aonFontSmaller());
-		summaryGrid.addStyleName(AON.CSS.aonBlockCenter());
-		summaryGrid.addHeaderRow()
-			.addCell(new Label("Cuenta"),AON.CSS.aonWidth100())		
-			.addCell(new Label("Descripci\u00F3n"),AON.CSS.aonWidthAuto(),AON.CSS.aonNowrap())
-			.addCell(new Label("Total"),AON.CSS.aonTextRight(),AON.CSS.aonWidth150())
-		;		
-		map.entrySet()
-			.stream()
-			.forEach(entry ->  summaryGrid.addRow()
-				.addCell(new Label(entry.getKey()))		
-				.addCell(new Label((String) entry.getValue()[0]))
-				.addCell(new Label(AON.CURRENCY_FORMAT.format((Double) entry.getValue()[1])),AON.CSS.aonTextRight())
-		);
-		add( summaryGrid );
-	}
-
-	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<JsOperationBreakdown> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
-	}
 }
