@@ -452,7 +452,7 @@ class DomainProviderForTests {
 		
 		CustomerFull I_393356000000 = new CustomerFull();
 		I_393356000000
-			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("393356000000").setDocumentType(DocumentType.OTHER).setDocumentCountry(Country.FR).setName("LA POSTE")))
+			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("12487773327").setDocumentType(DocumentType.OTHER).setDocumentCountry(Country.FR).setName("STE AMAZON EU SARL")))
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
 		CustomerDAO.save(ctx, I_393356000000);
 		
