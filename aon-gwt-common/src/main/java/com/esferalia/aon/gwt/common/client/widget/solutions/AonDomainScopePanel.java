@@ -39,7 +39,7 @@ public class AonDomainScopePanel extends AonCustomDialog {
 	private HTMLPanel content = new HTMLPanel("");
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private AonCustomListBox domainLB = new AonCustomListBox("Dominio");
+	private AonCustomListBox domainLB = new AonCustomListBox("Empresa (Dominio)");
 	
 	private String domainName;
 	private Integer domainId;
@@ -58,7 +58,7 @@ public class AonDomainScopePanel extends AonCustomDialog {
 		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
-		setCaption("Nuevo Dominio");
+		setCaption("Nueva Empresa");
 		
 		getDomains(domains -> {
 			show(callback);
@@ -95,7 +95,7 @@ public class AonDomainScopePanel extends AonCustomDialog {
     		
     		if(AonStringUtils.isBlank(domainLB.getValue())) {
     			okButton.setEnabled(true);
-    			AonMessagePanel.showWarning(messagePanel, "El campo dominio es obligatorio");
+    			AonMessagePanel.showWarning(messagePanel, "El campo empresa es obligatoria");
     		} else {
     			
     			commonService.saveDomainScope(domainName, domainId, user, Integer.parseInt(domainLB.getValue()), scopeId, new AsyncCallback<Void>() {

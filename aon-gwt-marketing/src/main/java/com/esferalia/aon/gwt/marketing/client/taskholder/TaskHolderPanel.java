@@ -258,8 +258,10 @@ public abstract class TaskHolderPanel extends ScrollPanel {
 		if(null != taskHolder.getUser() && null != taskHolder.getUser().getDomain() && null != taskHolder.getUser().getDomain().getId() && !taskHolder.getUser().getDomain().getId().equals(taskHolder.getDomain().getId())){
 			userDomain = new AonTableButton("Padre", AON.CSS.aonIconEnterprise());
 			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
-		} else
-			userDomain = new Label();
+		} else {
+			userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconHome());
+			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
+		}
 		
 		tab.addRow(row, userDomain, COLS.USD.getColWidth());
 		

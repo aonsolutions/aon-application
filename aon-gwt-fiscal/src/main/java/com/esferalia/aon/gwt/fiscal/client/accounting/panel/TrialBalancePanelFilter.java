@@ -349,6 +349,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
+				ListBox periodBox = getPeriodBox(options, period.getSelectedValue());
+				dateTab.setWidget(0, 1, periodBox);
 				fromDate.setValue(period.getSelectedInitiationDate(),false);
 				toDate.setValue(period.getSelectedDeadline(),false);
 				confidential.setSelectedIndex(2);
@@ -360,6 +362,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				account.setValue(null,false);
 				lowLevelAccountVisible.setValue(false, false);
 				noActivityAccountVisible.setValue(false, false);
+				noBalanceAccountExcluded.setValue(false, false);
 				operatingEntriesExcluded.setValue(false, false);
 				closingEntriesExcluded.setValue(false, false);
 				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
