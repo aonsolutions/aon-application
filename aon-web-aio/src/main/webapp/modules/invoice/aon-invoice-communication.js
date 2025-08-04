@@ -7,6 +7,8 @@ import { AonInput } from "../../components/aon-input.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { createDate, createSelect } from "../../components/CreateComponent.js";
 
+import * as LS from "../../services/localStorageService.js";
+
 export class AonInvoiceCommunication extends AonElement {
     
     configuration;
@@ -85,7 +87,7 @@ export class AonInvoiceCommunication extends AonElement {
         
         if(this.isTicketBai()) {
             this.buildTicketBai(table);
-        } else if(!this.isNavarra() && this.isConsole()){
+        } else if(!this.isNavarra() && this.isConsole() && "jgarcia" == LS.getDomainLogin()){
             this.buildVerifactu(table);
         }
         
@@ -245,35 +247,6 @@ export class AonInvoiceCommunication extends AonElement {
 		});
         table.addCell(test, 1).style.height = '50px';
     
-        table.addRow();
-
-        let verifactuRegistryDate = createSelect(this.VERIFACTU_REGISTRY_DATE, 'Fecha Registro (VERIFACTU)');
-        if(!this.configuration.verifactu.active) {
-            verifactuRegistryDate.classList.add(CSS.AON_NONE);
-        }
-        table.addCell(verifactuRegistryDate, 1).style.height = '50px';
-        verifactuRegistryDate.setOptions([
-            {value: 'tax', name: 'Fecha IVA'},
-            {value: 'audit', name: 'Fecha Auditoria'}
-        ]);
-        verifactuRegistryDate.value = this.configuration.verifactu.registryDate;
-        verifactuRegistryDate.onChange(() => {
-            this.configuration.verifactu.registryDate = verifactuRegistryDate.value;
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-        });
-
-        let verifactuIncludeDate = createDate(this.VERIFACTU_INCLUDE_DATE, 'Fecha Inclusión VERIFACTU');
-        if(!this.configuration.verifactu.active) {
-            verifactuIncludeDate.classList.add(CSS.AON_NONE);
-        }
-        verifactuIncludeDate.onChange(() => {
-            this.configuration.verifactu.includeDate = verifactuIncludeDate.value;
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-        });
-        table.addCell(verifactuIncludeDate, 1).style.height = '50px';
-        if(this.configuration.verifactu.includeDate) {
-            verifactuIncludeDate.value = this.configuration.verifactu.includeDate;
-        }
         table.addRow();
     }
 

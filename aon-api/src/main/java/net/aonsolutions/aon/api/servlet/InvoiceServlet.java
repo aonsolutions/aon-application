@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -870,10 +871,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
-		json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON( 
-			AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainProperty().eq(api.getDomain().getId()))));
 		json.put(IJsonNames.VATS, getVats(api));
+		
+		if(api.getUser().getDomain().getId() != 0) {
+			List<Workplace> workplaces = AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+				f.getDomainProperty().eq(api.getDomain().getId()));
+			json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(workplaces));
+		} 
 		return json;
 	}
 	
