@@ -15,13 +15,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUN
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -54,13 +48,13 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -85,7 +79,6 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.server.io.DataUrl;
 import com.esferalia.aon.watson.server.io.DataUrlSerializer;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -440,15 +433,20 @@ public class AccountingInvoiceDAO {
 		return refreshInvoice(ctx, type, registryId, ai);
 	}
 	
-	private static void checkTBAIForSales( final AONContext ctx, final InvoiceType type ) {
-		TbaiConfiguration tbaiConfig = TbaiConfigurationDAO.get(ctx);
-		if (tbaiConfig.isActive() && type == InvoiceType.SALES) {
-			throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
+	private static void checkCommunicationForSales( final AONContext ctx, final InvoiceType type ) {
+		InvoiceCommunicationConfiguration c = InvoiceCommunicationConfigurationDAO.get(ctx);
+		if (type == InvoiceType.SALES) {
+			if (c.isTbai()) {
+				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
+			}
+			if (c.isVerifactu()) {
+				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Verifactu activado");
+			}
 		}
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
-		checkTBAIForSales( ctx, type);	
+		checkCommunicationForSales( ctx, type);	
 		
 		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
@@ -1551,7 +1549,7 @@ public class AccountingInvoiceDAO {
 		if (registry == null) throw new AonCoreException("No se pudo inicializar una factura sin titular");
 		if (ai.getInvoice() == null) throw new AonCoreException("No se pudo inicializar un apunte sin factura");
 		
-		checkTBAIForSales( ctx, type);
+		checkCommunicationForSales( ctx, type);
 		
 		boolean hasRegistry = ai.getInvoice().getRegistry() != null;
 		boolean registryChanged = hasRegistry
