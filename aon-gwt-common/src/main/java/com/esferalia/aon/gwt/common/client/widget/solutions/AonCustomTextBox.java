@@ -5,6 +5,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AonCustomTextBox extends HTMLPanel {
 
@@ -60,7 +61,7 @@ public class AonCustomTextBox extends HTMLPanel {
 		this.textBox.setFocus(focused);
 	}
 
-	public void addButton(AonTableButton button) {
+	public void addButton(Widget button) {
 		textBoxPanel.add(button);
 	}
 

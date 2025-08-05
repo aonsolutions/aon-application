@@ -1866,6 +1866,10 @@ if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_PARAMS)) {
 	window.customElements.define(TAG.AON_JSF_ACCOUNTING_PARAMS, AonJsfAccountingParams);
 }
 
+if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_BOOK)) {
+	window.customElements.define(TAG.AON_JSF_ACCOUNTING_BOOK, AonJsfAccountingBook);
+}
+
 if (!window.customElements.get(TAG.AON_JSF_FISCAL_PARAMS)) {
 	window.customElements.define(TAG.AON_JSF_FISCAL_PARAMS, AonJsfFiscalParams);
 }

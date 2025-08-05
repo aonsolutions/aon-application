@@ -82,8 +82,12 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -415,4 +419,27 @@ public interface CommonServiceAsync {
 	void getTaskHolderWorkgroupList(String domainName, Integer domain, String user, Integer taskHolderId, AsyncCallback<List<TaskHolderWorkgroup>> asyncCallback) throws AonCoreException;
 	void getUsersForTaskHolder(String domainName, Integer domainId, String user, boolean all, AsyncCallback<List<User>> asyncCallback) throws AonCoreException;
 	void getUser(String domainName, Integer domainId, String user, Integer userId, AsyncCallback<User> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ****************************************** [SCOPE]
+	// **************************************************
+	
+	void getScopeList(ScopeParams params, AsyncCallback<List<Scope>> asyncCallback) throws AonCoreException;
+	void getScopesCount(ScopeParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
+	
+	void getScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
+	void saveScope(String domainName, int domain, String user, Scope scope, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
+	void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
+	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getDomainScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
+	void saveDomainScope(String domainName, Integer domainId, String user, Integer domainChange, Integer scopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
+	
+	
 }
