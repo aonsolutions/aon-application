@@ -2,12 +2,16 @@ import { AonElement } from "../../components/AonElement.js";
 import { getCompany, getDomainUserRoles, getRegistryNotes } from "../../services/service.js";
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, MSG, TAG, CSS} from '../../environments/environments.js';
 import * as JSF from '../aon-jsf-app.js';
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import * as GWT from '../../gwt/gwt.js';
 import * as LS from '../../services/localStorageService.js';
 import * as ACTION from '../actions.js';
+import { AonNewUpload } from '../../components/aon-new-upload.js'
+import { getCompanyActivities } from "../../services/companyService.js";
+import { AonUploadToast } from "../../components/aon-upload-toast.js";
+import { generateJobId } from "../invoice/InvoiceUtils.js";
 
 import { AonAccountingMenu } from './aon-accounting-menu.js';
 
@@ -44,6 +48,7 @@ export class AonAccountingBeta extends AonElement {
 	}
 
 	initialize() {
+		this.id =  this.id || 'aonAccountingBetaId'
 		this.AON_ACCOUNTING_BETA = "aonAccountingBeta";
 		this.ROOT_PANEL = "rootPanel";
 	}
@@ -51,7 +56,7 @@ export class AonAccountingBeta extends AonElement {
 	build() {
 		this.buildToolbar();
 		
-		let aonAccountingBeta = this.getElement(this.AON_ACCOUNTING_BETA);
+		let aonAccountingBeta = this.getApplication();
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let configurationOptions = [];
@@ -85,7 +90,20 @@ export class AonAccountingBeta extends AonElement {
 
 			aonAccountingBeta.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
 		}
+		if (localStorage.getItem("aon_domain_id")&&(this.getDur().isInvoice() && (this.getDur().isOcr() || this.getDur().isInvofox()))) {
+	       let utilitiesOptions = {
+				id: "uploadInvoice",
+				title: MSG.UTILITIES.toUpperCase(),
+				name: MSG.UTILITIES.toUpperCase(),
+			}
 
+			let uploadInv = new AonNewUpload();
+	       	uploadInv.id = this.UPLOAD_INVOICE;
+	       	uploadInv.setMessage(MSG.UPLOAD_INVOICE);
+	       	uploadInv.setType("Invoice");
+			this.getApplication().addSidenavWidget2(utilitiesOptions, uploadInv);	
+		}
+		
 		this.buildAccountingMenu();
 	}
 	
@@ -198,6 +216,60 @@ export class AonAccountingBeta extends AonElement {
 
 	buildAccountingMenu() {
 		this.getApplication().setContent(new AonAccountingMenu());
+	}
+	
+	uploadInvoiceAccounting(input, files) {
+		getCompanyActivities({}).then(activities => {
+			let data = { uploaded: 0 };
+			if(activities.length > 1) {
+				activities.push({
+					id: "all",
+					description: "TODAS"
+        		});
+				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+				activity.setAlias("id", "description");
+				if(activities.length > 0) {
+					activity.setOptions(activities);
+					activity.value = activities[0].id;
+				}
+	
+				let d = new AonDialog();
+				let rootPanel = document.getElementById("rootPanel");
+				rootPanel.appendChild(d);
+				d.clear();
+	
+				d.setTitle(MSG.UPLOAD_INVOICE);
+				d.setContent(activity);
+				d.addAcceptAction(() => {
+					data.activity = activity.getValueObject().id;
+					let uploadToast = this.getElement('aonUploadToast');
+					if (!uploadToast) {
+						uploadToast = new AonUploadToast();
+						this.appendChild(uploadToast);
+					}
+			
+					uploadToast.setJobId(generateJobId());
+					for (let file of files) {
+						uploadToast.addFile("invoice", file, data);
+					}
+				});
+				d.open();
+			} else {
+				if(activities.length > 0) {
+					data.activity = activities[0].id;
+				}
+
+				let uploadToast = this.getElement('aonUploadToast');
+				if (!uploadToast) {
+					uploadToast = new AonUploadToast();
+					this.appendChild(uploadToast);
+				}
+				uploadToast.setJobId(generateJobId());
+				for (let file of files) {
+					uploadToast.addFile("invoice", file, data);
+				}
+			}
+		});
 	}
 
 	getApplication() {

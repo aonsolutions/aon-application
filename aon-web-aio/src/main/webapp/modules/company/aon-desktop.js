@@ -560,7 +560,7 @@ export class AonDesktop extends AonElement {
 		// Accounting
 		// ------------------------------------------------
 		let aonJsfAccountingGraphCard ;
-		if (this.getDur().isAccountingManager() && this.isBeta() ) {
+		if (this.getDur().isAccountingManager() ) {
 			let accountingGraphCard = new AonCard();
 			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			accountingGraphCard.id = "accountingGraphCard";
@@ -612,7 +612,7 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Payroll
 		// ------------------------------------------------
-		if (this.getDur().isPayrollManager() && this.isBeta()  ) {
+		if (this.getDur().isPayrollManager()  ) {
 			let contractGraphCard = new AonCard();
 			let payrollGraphCard = new AonCard();
 			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
