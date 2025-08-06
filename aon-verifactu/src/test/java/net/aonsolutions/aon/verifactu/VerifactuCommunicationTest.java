@@ -14,6 +14,7 @@ import java.util.List;
 import javax.xml.soap.SOAPMessage;
 
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -91,6 +92,18 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		communicateValid(invoice);
 	}
 	
+	@Test
+	void venta_intracomunitaria_no_serviciosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
+	@Test
+	void venta_extracomunitaria_no_servicioAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_NO_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
 	@Test
 	void venta_nacional_exenta_e1AEATTest() throws VerifactuException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID).setId(1);
@@ -178,13 +191,18 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 			.setInvoices( invoices )
 			.setBlockchain(null);
 		
-		vc.setRequest(Invoice2Verifactu.build(vc) );
-		
-		SOAPMessage request = VerifactuXMLUtils.soapMarshal(
-			vc.getRequest(), 
-			RegFactuSistemaFacturacion.class);
-		
-		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true), request));
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		vc.setRequest( request );
+		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
+		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage));
+
+//		vc.setRequest(Invoice2Verifactu.build(vc) );
+//		SOAPMessage request = VerifactuXMLUtils.soapMarshal(
+//			vc.getRequest(), 
+//			RegFactuSistemaFacturacion.class);
+//		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true), request));
 	
 		assertNotNull(vc.getResponse());
 		return vc;

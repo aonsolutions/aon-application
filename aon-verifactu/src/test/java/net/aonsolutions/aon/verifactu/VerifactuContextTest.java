@@ -22,6 +22,7 @@ class VerifactuContextTest {
 		vc2.setBlockchain(vc1.getBlockchain());
 		vc2.setUser(vc1.getUser());
 		vc2.setRequest(vc1.getRequest());
+		vc2.setRequestBytes(vc1.getRequestBytes());
 		vc2.setResponse(vc1.getResponse());
 		vc2.setOperation(vc1.getOperation());
 		

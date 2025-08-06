@@ -160,15 +160,16 @@ enum ClaveRegimen {
 	C01_EXENTA_E5("01") {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
-			return inv.isIntracommunity()
-				&& inv.isExempt()
+			return inv.isSales()
+				&& inv.isIntracommunity()
+				&& !inv.isService()
 				&& !inv.isSurcharge()
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
 				&& !inv.isSalesOSS()
 				&& !ib.isPrepayment()
-				&& VatDeductionType.safeSujetoExento(ib.getVatDeductionType())
-				&& ib.getVatExemptionCause() == VATExemptionCause.E5
+//				&& VatDeductionType.safeSujetoExento(ib.getVatDeductionType())
+//				&& ib.getVatExemptionCause() == VATExemptionCause.E5
 			;
 		}
 		

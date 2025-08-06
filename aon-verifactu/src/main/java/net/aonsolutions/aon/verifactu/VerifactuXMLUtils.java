@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -37,6 +39,13 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.w3c.dom.Document;
@@ -44,6 +53,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.watson.util.AonChronometer;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
@@ -81,14 +91,6 @@ class VerifactuXMLUtils {
 //	    }
 //	}
 //	
-	static <T> byte[] marshal(T object, Class<T> clazz) throws JAXBException {
-		final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-		final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		jaxbMarshaller.marshal(object, bos);
-		return bos.toByteArray();
-	}
 	
 //	private static Object unmarshal(byte[] data, Class<?> clazz) throws JAXBException {
 //		final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
@@ -113,13 +115,35 @@ class VerifactuXMLUtils {
 //		return ret;
 //	}
 	
-	static <T> SOAPMessage soapMarshal(T suministro, Class<T> clazz) throws VerifactuException {
+	static <T> byte[] toBytes(Document document) throws VerifactuException {
+		try {
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		    transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
+		    transformer.setOutputProperty(OutputKeys.INDENT, "no");
+		    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		    transformer.transform(new DOMSource(document), new StreamResult(outputStream));
+		    return outputStream.toByteArray();
+		} catch (TransformerException | TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+			throw new VerifactuException(VerifactuError.AON_9004 ,e);
+		}
+	}
+	
+	static <T> Document toDocument(T data, Class<T> clazz) throws VerifactuException {
 		try {
 			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			Marshaller mar =  JAXBContext.newInstance(clazz).createMarshaller();
 			mar.setProperty(Marshaller.JAXB_FRAGMENT, true);
-			mar.marshal(suministro, document);
-	
+			mar.marshal(data, document);
+			return document;
+		} catch (JAXBException | ParserConfigurationException e) {
+			e.printStackTrace();
+			throw new VerifactuException(VerifactuError.AON_9004 ,e);
+		}
+	}
+
+	static <T> SOAPMessage soapMarshal(Document document) throws VerifactuException {
+		try {
 			MessageFactory messageFactory = MessageFactory.newInstance();
 			SOAPMessage soapMessage = messageFactory.createMessage();
 			SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
@@ -134,7 +158,7 @@ class VerifactuXMLUtils {
 			soapBody.addDocument(document);
 			soapMessage.saveChanges();		
 			return soapMessage;
-		} catch (JAXBException | SOAPException | ParserConfigurationException e) {
+		} catch (SOAPException e) {
 			e.printStackTrace();
 			throw new VerifactuException(VerifactuError.AON_9004 ,e);
 		}
@@ -163,10 +187,20 @@ class VerifactuXMLUtils {
 	
 	static VerifactuResponse post(Certificate cert, String uri, SOAPMessage soapMessage) throws VerifactuException {
 		try {
-//	        System.out.println("********************* REQUEST *******************");
-//	        System.out.println(document);
+			AonChronometer cr = new AonChronometer();
+			cr.start();
+			System.out.println("START TRACING POST");
+			
+	        System.out.print("\tTRACING POST: 0 - " + "REQUEST:");
+	        soapMessage.writeTo(System.out);
+	        System.out.println();
+	        
+	        System.out.println("\tTRACING POST: 1 - " + cr.getCurrentTime());
+	        
 			secure(cert, uri);
 			
+	        System.out.println("\tTRACING POST: 2 - " + cr.getCurrentTime());
+	        
 	        // Create SOAP Connection
 	        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 	        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
@@ -174,17 +208,19 @@ class VerifactuXMLUtils {
 	        // Send SOAP Message to SOAP Server
 	        SOAPMessage soapResponse = soapConnection.call(soapMessage, uri);
 	        soapConnection.close();
+	        System.out.println("\tTRACING POST: 3 - " + cr.getCurrentTime());
 	        
         	// SOAP Response to String
 	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	        soapResponse.writeTo(baos);
 	        String stringResp = new String(baos.toByteArray());
-//        	System.out.println("********************* RESPONSE *******************");
-//			System.out.println( stringResp );
+        	System.out.println("\tTRACING POST: 4 - RESPONSE: " + stringResp );
+	        System.out.println("\tTRACING POST: 5 - " + cr.getCurrentTime());
 
 			SOAPBody soapBody = soapResponse.getSOAPBody();
 	        Document bodyDoc = soapBody.extractContentAsDocument();
 	        VerifactuResponse vr = new VerifactuResponse();
+	        System.out.println("\tTRACING POST: 6 - " + cr.getCurrentTime());
 	        
 	        NodeList faults = bodyDoc.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
 	        if (faults.getLength() > 0) {
@@ -200,6 +236,7 @@ class VerifactuXMLUtils {
 	        	vr.setError(false)
 	        		.setResponse(o.getValue());
 	        }
+	        System.out.println("\tTRACING POST: 7 - " + cr.getCurrentTime());
 			return vr.setBytes( stringResp.getBytes() );
 		} catch (SOAPException | JAXBException | IOException e) {
 			e.printStackTrace();
@@ -293,7 +330,8 @@ class VerifactuXMLUtils {
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
             
             // Open HTTPS connection
-            URL url = new URL(uri);
+            // URL url = new URL(uri);
+            URL url = URI.create(uri).toURL();
             HttpsURLConnection httpsConnection = (HttpsURLConnection) url.openConnection();
             // Trust all hosts
             httpsConnection.setHostnameVerifier(new TrustAllHosts());

@@ -26,6 +26,7 @@ public class VerifactuContext {
 	private InvoiceCommunicationOperation operation;
 	
 	private RegFactuSistemaFacturacion request;
+	private byte[] requestBytes;	
 	private VerifactuResponse response;
 	
 	public VerifactuConfiguration getConfig() {
@@ -96,6 +97,14 @@ public class VerifactuContext {
 	}
 	public VerifactuContext setRequest(RegFactuSistemaFacturacion request) {
 		this.request = request;
+		return this;
+	}
+	
+	public byte[] getRequestBytes() {
+		return requestBytes;
+	}
+	public VerifactuContext setRequestBytes(byte[] requestBytes) {
+		this.requestBytes = requestBytes;
 		return this;
 	}
 	

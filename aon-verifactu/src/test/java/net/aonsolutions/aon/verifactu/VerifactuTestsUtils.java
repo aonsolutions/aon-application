@@ -71,10 +71,27 @@ class VerifactuTestsUtils {
 		return getCustomer( ctx, domain,  getRandomIntrCustomerDocument());
 	}
 	
+	static final String[] EXTR_CUSTOMER_DOCUMENTS = new String[] {
+		"999999999A"
+	};
+	static String getRandomExtrCustomerDocument() {
+		return EXTR_CUSTOMER_DOCUMENTS[PodamUtils.getIntegerInRange(0, EXTR_CUSTOMER_DOCUMENTS.length - 1 )];
+	}
+	static CustomerFull getExtrCustomer(AONContext ctx, int domain) {
+		return getCustomer( ctx, domain,  getRandomExtrCustomerDocument());
+	}
+		
 	static CustomerFull getCustomer(AONContext ctx, int domain, String document) {
 		return CustomerDAO.getStream(ctx, f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().eq(domain)) )
 			.map( c -> CustomerDAO.getFull(ctx, c.getId()) )
 			.findFirst()
-			.orElseThrow(() -> new AonCoreException("No encuenrto el cliente con documento " + document));
+			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento " + document));
+	}
+
+	static CustomerFull getContadoCustomer(AONContext ctx, int domain) {
+		return CustomerDAO.getStream(ctx, f -> f.getDocumentProperty().isNull().and(f.getDomainProperty().eq(domain)) )
+			.map( c -> CustomerDAO.getFull(ctx, c.getId()) )
+			.findFirst()
+			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento nulo"));
 	}
 }

@@ -88,6 +88,7 @@ class InvoiceTypes {
 		VENTA_NACIONAL_SIMPLIFICADA {
 			@Override
 			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
@@ -99,6 +100,11 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
 					.setSurcharge(false)
 					.setWithholding(false)
 					.setWithholdingFarmer(false)
@@ -141,6 +147,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -186,6 +193,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -244,6 +252,7 @@ class InvoiceTypes {
 					.setRectificationInvoiceNumber( 1 )
 					.setRectificationInvoiceDate(VerifactuTestsUtils.issueDate())
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -278,6 +287,7 @@ class InvoiceTypes {
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA {
 			@Override
 			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
@@ -294,6 +304,11 @@ class InvoiceTypes {
 					.setRectificationInvoiceNumber( 1 )
 					.setRectificationInvoiceDate(VerifactuTestsUtils.issueDate())
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
 					.setSurcharge(false)
 					.setWithholding(false)
 					.setWithholdingFarmer(false)
@@ -335,6 +350,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.OTHER_ISP)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -381,6 +397,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -428,6 +445,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -468,6 +486,53 @@ class InvoiceTypes {
 				;
 			}
 		},
+		VENTA_INTRACOMUNITARIA {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.INTRACOMMUNITY)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress()  )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(0.0)
+					.setTotal(100.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
 		VENTA_INTRACOMUNITARIA_SERVICIOS {
 			@Override
 			Invoice get(AONContext ctx, int domain) {
@@ -483,6 +548,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.INTRACOMMUNITY)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -530,6 +596,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -576,6 +643,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -623,6 +691,7 @@ class InvoiceTypes {
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
 					.setRegistryDocument(customer.getRegistry().getDocument())
 					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
 					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
@@ -744,6 +813,53 @@ class InvoiceTypes {
 					)
 					.setVatQuota(21.0)
 					.setTotal(121.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_EXTRACOMUNITARIA_NO_SERVICIO {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress()  )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(0.0)
+					.setTotal(100.0)
 					.refreshTaxBreakdown()
 				;
 			}

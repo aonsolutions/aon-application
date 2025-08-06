@@ -779,7 +779,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDataDAO.getStream(ctx, filter));
+				configuration -> InvoiceDataDAO.stream(ctx, filter));
 	}
 	
 	@Override

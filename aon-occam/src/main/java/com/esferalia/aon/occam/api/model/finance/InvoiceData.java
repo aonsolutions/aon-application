@@ -7,6 +7,9 @@ public class InvoiceData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public static final String VERIFACTU_QR = "VERIFACTU_QR";
+	public static final String VERIFACTU_HUELLA = "VERIFACTU_HUELLA";
+	
 	private Integer id;
 	private Integer domain;
 	private Integer invoice;
@@ -18,7 +21,6 @@ public class InvoiceData implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-
 	public InvoiceData setId(Integer id) {
 		this.id = id;
 		return this;
@@ -27,7 +29,6 @@ public class InvoiceData implements Serializable {
 	public Integer getDomain() {
 		return domain;
 	}
-
 	public InvoiceData setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
@@ -36,7 +37,6 @@ public class InvoiceData implements Serializable {
 	public Integer getInvoice() {
 		return invoice;
 	}
-
 	public InvoiceData setInvoice(Integer invoice) {
 		this.invoice = invoice;
 		return this;
@@ -45,7 +45,6 @@ public class InvoiceData implements Serializable {
 	public String getName() {
 		return name;
 	}
-
 	public InvoiceData setName(String name) {
 		this.name = name;
 		return this;
@@ -54,7 +53,6 @@ public class InvoiceData implements Serializable {
 	public String getValue() {
 		return value;
 	}
-
 	public InvoiceData setValue(String value) {
 		this.value = value;
 		return this;
@@ -63,7 +61,6 @@ public class InvoiceData implements Serializable {
 	public Date getStartDate() {
 		return startDate;
 	}
-
 	public InvoiceData setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
@@ -72,7 +69,6 @@ public class InvoiceData implements Serializable {
 	public Date getEndDate() {
 		return endDate;
 	}
-
 	public InvoiceData setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;

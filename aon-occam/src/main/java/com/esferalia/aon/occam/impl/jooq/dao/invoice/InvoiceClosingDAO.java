@@ -45,7 +45,7 @@ public class InvoiceClosingDAO {
 			.map(Invoice::getId).collect(Collectors.toSet());
 			
 			StringBuilder builder = new StringBuilder();
-			InvoiceDataDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			InvoiceDataDAO.stream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getNameProperty().eq("MD5"))
 					.and(f.getInvoiceProperty().in(invoices.toArray(Integer[]::new))))
 			.filter(r -> !AonStringUtils.isBlank(r.getValue()))

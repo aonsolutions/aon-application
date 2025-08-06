@@ -623,24 +623,24 @@ public class InvoiceDAO {
 				.setValue(md5)
 				.setStartDate(new Date());
 		
-		InvoiceDataDAO.save(ctx, invoiceData, invoice);
+		InvoiceDataDAO.save(ctx, invoiceData);
 	}
 	
-	private static void generateSHA(AONContext ctx, Invoice invoice) {
-		String sha = AonDigestUtils.sha256Hex(invoice.flat().getBytes());
-		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))
-				.and(f.getNameProperty().eq("SHA")));
-		if(invoiceData == null) invoiceData = new InvoiceData();
-		
-		invoiceData.setDomain(invoice.getDomain())
-				.setInvoice(invoice.getId())
-				.setName("SHA")
-				.setValue(sha)
-				.setStartDate(new Date());
-		
-		InvoiceDataDAO.save(ctx, invoiceData, invoice);
-	}
+//	private static void generateSHA(AONContext ctx, Invoice invoice) {
+//		String sha = AonDigestUtils.sha256Hex(invoice.flat().getBytes());
+//		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+//				.and(f.getInvoiceProperty().eq(invoice.getId()))
+//				.and(f.getNameProperty().eq("SHA")));
+//		if(invoiceData == null) invoiceData = new InvoiceData();
+//		
+//		invoiceData.setDomain(invoice.getDomain())
+//				.setInvoice(invoice.getId())
+//				.setName("SHA")
+//				.setValue(sha)
+//				.setStartDate(new Date());
+//		
+//		InvoiceDataDAO.save(ctx, invoiceData, invoice);
+//	}
 	
 	public static Invoice insert(AONContext ctx, Invoice invoice) {
 		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 

@@ -450,12 +450,50 @@ class DomainProviderForTests {
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("MAYOR").setNumber("74").setZip("07520").setCity("PETRA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_43102210A);
 		
+		// CLIENTE INTRACOMUNITARIO
 		CustomerFull I_393356000000 = new CustomerFull();
 		I_393356000000
-			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("12487773327").setDocumentType(DocumentType.OTHER).setDocumentCountry(Country.FR).setName("STE AMAZON EU SARL")))
+			.setRegistry(new Customer()
+				.copy(new Registry()
+					.setDomain(domain)
+					.setDocument("12487773327")
+					.setDocumentType(DocumentType.OTHER)
+					.setDocumentCountry(Country.FR)
+					.setName("STE AMAZON EU SARL"))
+				.setTransaction(InvoiceTransactionType.INTRACOMMUNITY))
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
 		CustomerDAO.save(ctx, I_393356000000);
 		
+		// CLIENTE EXTRACOMUNITARIO
+		CustomerFull I_999999999A = new CustomerFull();
+		I_999999999A
+			.setRegistry(new Customer()
+				.copy(new Registry()
+					.setDomain(domain)
+					.setDocument("999999999A")
+					.setDocumentType(DocumentType.OTHER)
+					.setDocumentCountry(Country.TW)
+					.setName("REIFY TECHNOLOGY LTD"))
+				.setTransaction(InvoiceTransactionType.INTRACOMMUNITY))
+			.addAddress(new RegistryAddress()
+				.setStreetType((StreetType.CALLE))
+				.setAddress("Bei Xin St")
+				.setZip("30044")
+				.setCity("Hsinchu City"));
+		CustomerDAO.save(ctx, I_999999999A);
+		
+		// CLIENTE CONTADO
+		CustomerFull C_CONTADO = new CustomerFull();
+		C_CONTADO
+			.setRegistry(new Customer().copy(new Registry()
+				.setDomain(domain)
+				.setDocument(null)
+				.setDocumentType(DocumentType.NIF)
+				.setDocumentCountry(Country.ES)
+				.setName("CLIENTE CONTADO")))
+			;
+		CustomerDAO.save(ctx, C_CONTADO);
+
 		// CARACTER CHUNGO
 		CustomerFull C_X3654266A = new CustomerFull();
 		C_X3654266A

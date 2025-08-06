@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,15 +19,16 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -58,11 +60,31 @@ public class DataResponseDAO {
 	
 
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, DataResponseFilter filter){	
+	private static SelectJoinStep<Record> select(AONContext ctx){	
 		return ctx.getDslContext()
 				.select()
-				.from(DATA_RESPONSE)
-				.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
+				.from(DATA_RESPONSE);
+	}
+	private static SelectConditionStep<Record> select(AONContext ctx, DataResponseFilter filter){	
+		return select(ctx)
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
+	}
+	public static Optional<DataResponse> get(AONContext ctx, Integer id, Options...options) {
+		return select(ctx)
+			.where(DATA_RESPONSE.ID.eq(id))
+			.orderBy(DATA_RESPONSE.ID.desc())
+			.fetch()
+			.stream()
+			.map(new DataResponseFiller())
+			.map(dr -> {
+				if(options.length > 0 && options[0].isFull()) {
+					dr.setDetails(getDataResponseDetailStream(ctx, f -> f.getDataResponseProperty().eq(dr.getId())).collect(Collectors.toCollection(LinkedList::new)));
+				}
+				return dr;
+			})
+			.findFirst();
+			
+		
 	}
 	
 	public static DataResponse get(AONContext ctx, DataResponseFilter filter, Options...options) {

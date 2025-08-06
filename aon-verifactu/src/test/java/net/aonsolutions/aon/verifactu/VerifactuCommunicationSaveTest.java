@@ -2,9 +2,11 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +16,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
@@ -31,69 +35,217 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
-		
+
 	@Test
-	void ventaNacionalSimpleSaveTest() throws VerifactuException {
+	void venta_nacional_simpleAEATTest() {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_simplificadaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+
+	@Test
+	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_suplidosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_rectificativa_simpleAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_rectificativa_simplificadaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_ispAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_reAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_irpf_professionalAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_intracomunitaria_serviciosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_intracomunitaria_no_serviciosAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+
+	@Test
+	void venta_extracomunitaria_no_servicioAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_NO_SERVICIO.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_exenta_e1AEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_anuladaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_simple_criterio_cajaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID);
+		save(invoice);
+	}
+
+	private void save(Invoice invoice) {
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID) );
-		invoices.stream().forEach(i -> InvoiceDAO.save(ctx, i));
-		VERIFACTU.accept(getOccam(), config(), company(), invoices, null);
-		invoices.stream().forEach( invoice -> {
-			InvoiceData qrUrl = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getInvoiceProperty().eq(invoice.getId()))
-					.and(f.getNameProperty().eq("VERIFACTU_QR")));
-			assertNotNull(qrUrl);
-			assertNotNull(qrUrl.getValue());
-			
-			InvoiceData huella = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getInvoiceProperty().eq(invoice.getId()))
-					.and(f.getNameProperty().eq("VERIFACTU_HUELLA")));
-			assertNotNull(huella);
-			assertNotNull(huella.getValue());		
-					
-			InvoiceInfo invoiceInfo = InvoiceInfoDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())
-					.and(f.getInvoiceProperty().eq(invoice.getId()))));
-			assertNotNull(invoiceInfo);
-			
-			assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
-					|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
-	
-			InvoiceCommunicationTracking tracking = InvoiceCommunicationTrackingDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getInvoiceProperty().eq(invoice.getId()))
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value()))
-					.and(f.getOperationProperty().eq(InvoiceCommunicationOperation.REGISTER.value())));
-			assertNotNull(tracking);
-			assertNotNull(tracking.getInvoiceBatchDetail());
-			assertTrue(tracking.getInvoiceBatchDetail().getStatus() == InvoiceCommunicationStatus.ACCEPTED
-					|| tracking.getInvoiceBatchDetail().getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
-			
-			assertNotNull(tracking.getInvoiceBatch());
-			assertNotNull(tracking.getInvoiceBatch().getDataResponse());
-			
-			DataResponse dataResponse = DataResponseDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getIdProperty().eq(tracking.getInvoiceBatch().getDataResponse())));
-			assertNotNull(dataResponse);
-			assertNotNull(dataResponse.getDataRequest());
-	
-			DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getIdProperty().eq(dataResponse.getDataRequest())));
-			assertNotNull(dataRequest);
-	
-			Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-					.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-					.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
-			assertNotNull(request);
-			assertNotNull(request.getData());
-			
-			Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-					.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
-					.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-					.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
-			assertNotNull(response);
-			assertNotNull(request.getData());
+		invoices.add( invoice );
+		
+		ctx.transaction(config -> {
+			invoices.stream().forEach(i -> {
+				System.out.println( "BEFORE InvoiceDAO.save Id: " + i.getId());
+				InvoiceDAO.save(ctx, i);
+				System.out.println( "AFTER InvoiceDAO.save Id: " + i.getId());
+			});
+			System.out.println( "invoices(0) Id: " + invoices.get(0).getId());
+			VERIFACTU.accept(ctx, config(), company(), invoices, null, USER);
+			invoices.stream().forEach( i -> {
+				InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
+				DataResponse response = assertDataResponse(i, tracking);
+				assertDataRequest(i, response);
+				assertInvoiceData(i);
+				assertInvoiceInfo(i);
+			});
 		});
+	}
+
+	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
+		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(ctx, i.getDomain(), i.getId());
+		assertNotNull(oTracking);
+		assertTrue(oTracking.isPresent());
+		InvoiceCommunicationTracking tracking = oTracking.get();
+		assertNotNull(tracking);
+		InvoiceBatchDetail invoiceBatchDetail = tracking.getInvoiceBatchDetail();
+		assertNotNull(invoiceBatchDetail);
+		assertEquals(invoiceBatchDetail.getDomain(),i.getDomain());
+		assertEquals(invoiceBatchDetail.getInvoice(),i.getId());
+		InvoiceCommunicationStatus status = invoiceBatchDetail.getStatus();
+		assertNotNull(status);
+		assertTrue(status == InvoiceCommunicationStatus.ACCEPTED || status == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		InvoiceBatch invoiceBatch = tracking.getInvoiceBatch();
+		assertNotNull(invoiceBatch);
+		assertTrue(invoiceBatch.getType() == InvoiceCommunicationType.VERIFACTU);
+		assertTrue(invoiceBatch.getOperation() == InvoiceCommunicationOperation.REGISTER);
+		assertTrue(invoiceBatch.getDomain().equals(i.getDomain()));
+		Integer dataResponse = invoiceBatch.getDataResponse();
+		assertNotNull(dataResponse);
+		assertTrue(dataResponse > 0);
+		return tracking;
+	}
+
+	private DataResponse assertDataResponse(Invoice i, InvoiceCommunicationTracking tracking) {
+		assertNotNull(tracking);
+		assertNotNull(tracking.getInvoiceBatch());
+		Integer dataResponseId = tracking.getInvoiceBatch().getDataResponse();
+		assertNotNull(dataResponseId);
+		Optional<DataResponse> optDataResponse = DataResponseDAO.get(ctx, dataResponseId);
+		assertNotNull(optDataResponse);
+		assertTrue(optDataResponse.isPresent());
+		DataResponse dataResponse = optDataResponse.get();
+		assertNotNull(dataResponse);
+		assertTrue(dataResponse.getId().equals(dataResponseId));
+		assertTrue(dataResponse.getDomain().equals(i.getDomain()));
+		assertTrue(dataResponse.getId() > 0);
+		assertNotNull(dataResponse.getDataRequest());
+		
+		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
+			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
+			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
+		assertNotNull(response);
+		assertNotNull(response.getData());
+		return dataResponse;
+	}
+	
+	private void assertInvoiceInfo(Invoice i) {
+		InvoiceInfo invoiceInfo = InvoiceInfoDAO.get(ctx, 
+			f -> f.getDomainProperty().eq(i.getDomain())
+			.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())
+			.and(f.getInvoiceProperty().eq(i.getId()))));
+		assertNotNull(invoiceInfo);
+		assertNotNull(invoiceInfo.getId());
+		assertNotNull(invoiceInfo.getDomain());
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+	}
+
+	private void assertDataRequest(Invoice i, DataResponse response) {
+		assertNotNull(response);
+		Integer responseDataRequest = response.getDataRequest();
+		assertNotNull(responseDataRequest);
+		DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+			.and(f.getIdProperty().eq(responseDataRequest)));
+		assertNotNull(dataRequest);
+		assertTrue(dataRequest.getId().equals(responseDataRequest));
+		assertTrue(dataRequest.getDomain().equals(i.getDomain()));
+		assertTrue(dataRequest.getId() > 0);
+		Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
+				.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
+		assertNotNull(request);
+		assertNotNull(request.getData());
+	}
+
+	private void assertInvoiceData(Invoice invoice) {
+		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_QR);
+		assertNotNull(oQRUrl);
+		assertTrue(oQRUrl.isPresent());
+		InvoiceData QRUrl =  oQRUrl.get();
+		assertEquals(invoice.getId(), QRUrl.getInvoice() );
+		assertEquals(invoice.getDomain(), QRUrl.getDomain() );
+		assertEquals(InvoiceData.VERIFACTU_QR, QRUrl.getName());
+		assertNotNull(QRUrl.getValue());
+
+		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_HUELLA);
+		assertNotNull(oHuella);
+		assertTrue(oHuella.isPresent());
+		InvoiceData huella =  oHuella.get();
+		assertEquals(invoice.getId(), huella.getInvoice() );
+		assertEquals(invoice.getDomain(), huella.getDomain() );
+		assertEquals(InvoiceData.VERIFACTU_HUELLA, huella.getName());
+		assertNotNull(huella.getValue());
 	}
 	
 }
