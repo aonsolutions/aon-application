@@ -51,24 +51,12 @@ abstract class AbstractConsoleUtility {
 				.setSchemaName(sch)
 				.setDomain(new Domain().setId(domainParams.getId()));
 			consoleParams.setFromConnection(conParams);
-			// Ver donde hemos conectado
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "------------------------------------------------------------"));
-			String schemaName = (schema != null) ? schema.getName() : "Esquema no encontrado";
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "Conectado al Esquema: " + schemaName));
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "------------------------------------------------------------"));
-			// seguimos
+			
 			doUtility(processId, consoleParams, domainParams);
 			consoleParams.getPrinter().flush();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			Throwable cause = e.getCause();
-			if (cause != null) {
-			    System.out.println("Causa: " + cause.getMessage());
-				ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
-			} else {
-				ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.error(processId, "e.getMessage() is NULL "));
-				ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.error(processId, "Puede que no tengas el Esquema: " + domainParams.getDbSchema()));
-			}
+			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
 			consoleParams.getPrinter().println();
 			consoleParams.getPrinter().flush();
 			LOGGER.log(Level.SEVERE, "ConsoleUtilitiesAbsServlet {0}!",e.getMessage());

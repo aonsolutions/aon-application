@@ -960,7 +960,6 @@ CREATE TABLE `bank_statement` (
   `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad',
   `status` tinyint DEFAULT '0' COMMENT 'Estado',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios',
-  `nordigen_id` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Identificador interno de Nordigen',
   PRIMARY KEY (`id`),
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
   KEY `IDX_BANK_STATEMENT_DOMAIN` (`domain`),
