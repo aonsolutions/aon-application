@@ -171,14 +171,7 @@ public class NordigenBankAccount implements Serializable {
 			.setStatus(StatementStatus.PENDING)
 			.setReference1("NORDIGEN")
 			.setReference2(AonStringUtils.trimToNull(AonStringUtils.substring(sb.toString(), 0, 64)));
-		
-		String id = null;
-		if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
-			id = transaction.getTransactionId();
-		} else if (AonStringUtils.isNotBlank(transaction.getInternalTransactionId())) {
-			id = transaction.getInternalTransactionId();
-		}
-		statement.setNordigenMovementId(id);
+		statement.setNordigenMovementId(transaction.getInternalTransactionId());
 		return statement;
 	}
 	

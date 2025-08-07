@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.accounting.AlterBankStatementAddNordigenInternalId;
 import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
@@ -559,6 +560,7 @@ public class Up2Date {
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
 			// AddRegistryBankAgreement.ADD_AGREEMENT_COLUMN
+			AlterBankStatementAddNordigenInternalId.ALTER_BANK_STATEMENT_ADD_NORDIGEN_INTERNAL_ID
 
 			// ----------------------------------------------------------------
 			// By now only for `grupo-udapa-aonsolutions-net` database
