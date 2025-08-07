@@ -817,7 +817,7 @@ class InvoiceTypes {
 				;
 			}
 		},
-		VENTA_EXTRACOMUNITARIA_NO_SERVICIO {
+		VENTA_EXTRACOMUNITARIA {
 			@Override
 			Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
@@ -843,6 +843,147 @@ class InvoiceTypes {
 					.setVatAccrualPayment(false)
 					.setInvestment(false)
 					.setService(false)
+					.setAddress( customer.getMainAddress()  )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(0.0)
+					.setTotal(100.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_EXTRACOMUNITARIA_SERVICIO {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(true)
+					.setAddress( customer.getMainAddress()  )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(0.0)
+					.setTotal(100.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_CAN_CEU_MEL {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.CAN_CEU_MEL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress()  )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(0.0)
+					.setTotal(100.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
+		VENTA_CAN_CEU_MEL_SERVICIO {
+			@Override
+			Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
+					.setNumber(0)
+					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.CAN_CEU_MEL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(true)
 					.setAddress( customer.getMainAddress()  )
 					.addDetail(new InvoiceDetail()
 						.setSource(InvoiceSource.TEDI)

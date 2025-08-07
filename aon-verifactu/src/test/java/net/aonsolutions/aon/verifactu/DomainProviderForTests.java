@@ -482,6 +482,26 @@ class DomainProviderForTests {
 				.setCity("Hsinchu City"));
 		CustomerDAO.save(ctx, I_999999999A);
 		
+		// CLIENTE CANARIO
+		CustomerFull canarias1 = new CustomerFull();
+		canarias1
+			.setRegistry(new Customer()
+				.copy(new Registry()
+					.setDomain(domain)
+					.setDocument("A38025938")
+					.setDocumentType(DocumentType.CIF)
+					.setDocumentCountry(Country.ES)
+					.setName("NÁUTICA Y DEPORTES TENERIFE S.A."))
+				.setTransaction(InvoiceTransactionType.CAN_CEU_MEL))
+			.addAddress(new RegistryAddress()
+				.setStreetType((StreetType.CALLE))
+				.setAddress("Dársena Pesquera Via SE 18")
+				.setZip("38180")
+				.setCity("SANTA CRUZ DE TENERIFE")
+				.setGeozone(getGeozoneId(ctx,"38")))
+			;
+		CustomerDAO.save(ctx, canarias1 );
+		
 		// CLIENTE CONTADO
 		CustomerFull C_CONTADO = new CustomerFull();
 		C_CONTADO

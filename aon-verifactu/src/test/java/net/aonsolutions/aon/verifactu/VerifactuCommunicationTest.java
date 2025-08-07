@@ -99,8 +99,26 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	}
 
 	@Test
-	void venta_extracomunitaria_no_servicioAEATTest() throws VerifactuException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_NO_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
+	void venta_extracomunitariaAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
+	@Test
+	void venta_extracomunitaria_servicioAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
+	@Test
+	void venta_can_ceu_melAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
+	@Test
+	void venta_can_ceu_mel_servicioAEATTest() throws VerifactuException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 

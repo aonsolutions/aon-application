@@ -80,7 +80,26 @@ class VerifactuTestsUtils {
 	static CustomerFull getExtrCustomer(AONContext ctx, int domain) {
 		return getCustomer( ctx, domain,  getRandomExtrCustomerDocument());
 	}
-		
+
+	
+	static final String[] CAN_CEU_MEL_CUSTOMER_DOCUMENTS = new String[] {
+		"A38025938"
+	};
+	static String getRandomCanCeuMelCustomerDocument() {
+		return CAN_CEU_MEL_CUSTOMER_DOCUMENTS[PodamUtils.getIntegerInRange(0, CAN_CEU_MEL_CUSTOMER_DOCUMENTS.length - 1 )];
+	}
+	static CustomerFull getCanCeuMelCustomer(AONContext ctx, int domain) {
+		return getCustomer( ctx, domain,  getRandomCanCeuMelCustomerDocument());
+	}
+	
+	static CustomerFull getContadoCustomer(AONContext ctx, int domain) {
+		return CustomerDAO.getStream(ctx, f -> f.getDocumentProperty().isNull().and(f.getDomainProperty().eq(domain)) )
+				.map( c -> CustomerDAO.getFull(ctx, c.getId()) )
+				.findFirst()
+				.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento nulo"));
+	}
+	
+	
 	static CustomerFull getCustomer(AONContext ctx, int domain, String document) {
 		return CustomerDAO.getStream(ctx, f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().eq(domain)) )
 			.map( c -> CustomerDAO.getFull(ctx, c.getId()) )
@@ -88,10 +107,4 @@ class VerifactuTestsUtils {
 			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento " + document));
 	}
 
-	static CustomerFull getContadoCustomer(AONContext ctx, int domain) {
-		return CustomerDAO.getStream(ctx, f -> f.getDocumentProperty().isNull().and(f.getDomainProperty().eq(domain)) )
-			.map( c -> CustomerDAO.getFull(ctx, c.getId()) )
-			.findFirst()
-			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento nulo"));
-	}
 }
