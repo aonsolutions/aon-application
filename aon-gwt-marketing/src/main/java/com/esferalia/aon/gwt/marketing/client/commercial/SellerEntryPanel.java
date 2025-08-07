@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel.AonMediaPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DocumentValidator;
 import com.esferalia.aon.occam.api.model.GeoZone;
@@ -59,6 +60,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class SellerEntryPanel extends DeckLayoutPanel {
 	
@@ -415,7 +417,21 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 				else
 					getTaskHolderUser(userFind -> {
 						if(null == userFind) user.setValue("No existen usuario para este operario");
-						else user.setValue(userFind.getLogin() + (null != userFind.getAuth() ? (" / " + userFind.getAuth().getEmail()) : ""));
+						else {
+							user.setValue(userFind.getLogin() + (null != userFind.getAuth() ? (" / " + userFind.getAuth().getEmail()) : ""));
+						
+							Widget userDomain;
+							if(null != seller.getTaskHolder().getDomain() && null != userFind.getDomain().getId() && !seller.getTaskHolder().getDomain().getId().equals(userFind.getDomain().getId())){
+								userDomain = new AonTableButton("Entorno Padre", AON.CSS.aonIconEnterprise());
+								userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
+								userDomain.getElement().getStyle().setProperty("background-size", "20px");
+							} else {
+								userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconHome());
+								userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
+							}
+							
+							user.addButton(userDomain);
+						}
 					});
 			}
 			table2.setWidget(3, 0, user);

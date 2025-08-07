@@ -13,8 +13,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,16 +38,28 @@ public class PackagingSalesPdfServlet extends AonApiHttpServlet {
 			String domainName = json.optString("domain_name");
 			Integer domainId = json.optInt("domain_id");
 			String login = json.optString("login");
-			Integer salesId = JsonUtils.getInteger(json, IJsonNames.SALES);
 			
 			Domain domain = new Domain().setName(domainName).setId(domainId);
-		
-			Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesId), new Options().setFull(true));
-			Integer deliveryId = JsonUtils.has(json, IJsonNames.DELIVERY)
-				? JsonUtils.getInteger(json, IJsonNames.DELIVERY) 
-				: sales.getDetails().get(0).getDelivery();
-			Delivery delivery = AON.getDelivery(domain, login, f -> f.getIdProperty().eq(deliveryId));
-			PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
+			
+			if(JsonUtils.has(json, IJsonNames.SALES)) {
+				Integer salesId = JsonUtils.getInteger(json, IJsonNames.SALES);				
+				Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesId), new Options().setFull(true));				
+				Integer deliveryId = JsonUtils.has(json, IJsonNames.DELIVERY)
+						? JsonUtils.getInteger(json, IJsonNames.DELIVERY) 
+						: sales.getDetails().get(0).getDelivery();
+				Delivery delivery = AON.getDelivery(domain, login, f -> f.getIdProperty().eq(deliveryId));
+				PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
+			} else if(JsonUtils.has(json, IJsonNames.DELIVERY)) {
+				Integer deliveryId = JsonUtils.getInteger(json, IJsonNames.DELIVERY); 
+				Delivery delivery = AON.getDelivery(domain, login, f -> f.getIdProperty().eq(deliveryId), new Options().setFull(true));
+				DeliveryDetail detail = delivery.getDetails().stream().filter(f -> f.getSalesDetail() != null).findFirst().orElse(null);
+				if(detail != null && detail.getSalesDetail() != null) { 
+					SalesDetail salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, f ->
+						f.getIdProperty().eq(detail.getSalesDetail())).findFirst().orElse(null);
+					Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesDetail.getSales().getId()), new Options().setFull(true));
+					PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
+				}
+			}	
 
 			responseFile(resp, "almacen", MimeType.PDF);
 		} catch (IOException e) {

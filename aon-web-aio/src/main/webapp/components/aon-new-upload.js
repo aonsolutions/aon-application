@@ -80,6 +80,7 @@ export class AonNewUpload extends AonElement {
         input.addEventListener(EVENT.CHANGE, ({target}) => {
             let desktop = this.getElement('aonDesktop');
             let invoiceHome = this.getElement('aonInvoiceHome'); 
+			let accountingBeta = this.getElement('aonAccountingBetaId');
             if(desktop) {
                 if(this.type === "Documental"){
                     desktop.uploadDocumentsDesktop(input, target.files);
@@ -88,7 +89,9 @@ export class AonNewUpload extends AonElement {
                 }
             } else if(invoiceHome) {
                 invoiceHome.uploadInvoiceHome(input, target.files);
-            }
+            } else if(accountingBeta) {
+				accountingBeta.uploadInvoiceAccounting(input, target.files);
+			}
         });
         div.appendChild(input);
         
@@ -167,6 +170,7 @@ export class AonNewUpload extends AonElement {
                 let files = event.dataTransfer.files;
                 let desktop = this.getElement('aonDesktop');
                 let invoiceHome = this.getElement('aonInvoiceHome'); 
+				let accountingBeta = this.getElement('aonAccountingBetaId');
                 if(desktop) {
                     if(this.type === "Documental"){
                         desktop.uploadDocumentsDesktop(element, files);
@@ -175,7 +179,9 @@ export class AonNewUpload extends AonElement {
                     }
                 } else if(invoiceHome) {
                     invoiceHome.uploadInvoiceHome(element, files);
-                }
+                } else if(accountingBeta) {
+					accountingBeta.uploadInvoiceAccounting(element, files);
+				}
 
             }
         };

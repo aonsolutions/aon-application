@@ -178,6 +178,7 @@ class NordigenAPI {
 		if (checkStatus(resp.statusCode())) {
 			String errStr = resp.body();					
 			if (errStr != null && errStr.charAt(0) == '{') {
+				System.out.println(errStr);
 				throw new NordigenException(NordigenResponseJSON.from(errStr));
 			}
 		}
@@ -388,7 +389,6 @@ class NordigenAPI {
 				.header(AUTHORIZATION_PARAM, BEARER + token)
 			, NordigenAccountBalanceJSON::fromBalances);
 	}
-	
 
 	static NordigenAccountDetail getDetail(String token, String id) throws NordigenException {
 		return get(ACCOUNTS_URL + id + "/details/"
@@ -405,8 +405,15 @@ class NordigenAPI {
 			jsonParams.putOnce(DATE_FROM_PARAM, AonDateUtils.format(dateFrom, SIMPLE_DATE_FORMAT4));
 		}
 		if (dateTo != null) {
-			jsonParams.putOnce(DATE_TO_PARAM, AonDateUtils.format(dateTo, SIMPLE_DATE_FORMAT4));			
+			jsonParams.putOnce(DATE_TO_PARAM, AonDateUtils.format(dateTo, SIMPLE_DATE_FORMAT4));
 		}
+        
+//        System.out.println("jsonParams");
+//        System.out.println(dateFrom);
+//        System.out.println(dateTo);
+//        System.out.println(jsonParams);
+//        System.out.println("FIN --- jsonParams");
+        
 		return get(ACCOUNTS_URL + id + "/transactions/"
 			, jsonParams
 			, req -> req
@@ -424,7 +431,6 @@ class NordigenAPI {
 	// ************************************************************************************
 
 	// ************************************* [OP METHDS]
-	
 
 	// *******************************************************
 	// *******************************************************

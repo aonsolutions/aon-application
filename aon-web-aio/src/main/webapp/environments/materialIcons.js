@@ -6,6 +6,7 @@ export const _3D_ROTATION = '3d_rotation';
 export const ACCESSIBILITY = 'accessibility';
 export const ACCESSIBILITY_NEW = 'accessibility_new';
 export const ACCESSIBLE = 'accessible';
+export const ACTIVITY_ZONE = 'activity_zone';
 export const APARTMENT = 'apartment';
 export const ACCESSIBLE_FORWARD = 'accessible_forward';
 export const ACCOUNT_BALANCE = 'account_balance';

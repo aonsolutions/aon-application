@@ -24,7 +24,6 @@ import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
-import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
@@ -139,14 +138,16 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			
 			// Check if need to find by authCode
 			try {
+				autorizationCode = autorizationCode.length() == 6 ? autorizationCode : ( "0" + autorizationCode );
+				
 				HtmlTable autorizadTable = document.querySelector("#tabla_lisAutorizad");
-				String enlaceSelector = "#enlace_0" + autorizationCode;
+				String enlaceSelector = "#enlace_" + autorizationCode;
 				System.out.println("----- enlaceSelector : " + enlaceSelector);
 				HtmlAnchor targetLink = autorizadTable.querySelector(enlaceSelector);
+				
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
 			} catch (Exception e) {}
-			
-			
+
 			HtmlDivision dialogoMensajes = (HtmlDivision) document.getElementById("dialogoMensajes");
 
 			if (dialogoMensajes != null) {

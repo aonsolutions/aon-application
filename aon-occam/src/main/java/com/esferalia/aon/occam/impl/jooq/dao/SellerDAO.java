@@ -229,7 +229,7 @@ public class SellerDAO {
 				.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
-				.leftOuterJoin(USER).on(USER.ID.eq(TASK_HOLDER.USER_ID).and(USER.DOMAIN.eq(DOMAIN.PARENT)))
+				.leftOuterJoin(USER).on(USER.ID.eq(TASK_HOLDER.USER_ID)/*.and(USER.DOMAIN.eq(DOMAIN.PARENT))*/)
 				.where(SELLER_PROPERTIES.getConditions(f -> f.getDomainProperty().eq(domainId)))
 				.and(TASK_HOLDER.REGISTRY.isNotNull())
 				.orderBy(SELLER_ALIAS.NAME)

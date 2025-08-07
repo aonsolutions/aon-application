@@ -28,10 +28,9 @@ export class AonHelp extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
-		    this.build();
-		});
+        this.buildDur()
+          .then(  dur => this.build(true) )
+          .catch( err => this.build());
 	}
 
 	initialize() {
@@ -44,7 +43,7 @@ export class AonHelp extends AonElement {
 		this.cont = 1;
 	}
 
-	build() {
+	build(loadCompanies = false) {
       let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
 
       let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
@@ -113,6 +112,24 @@ export class AonHelp extends AonElement {
         setSupport(data).then(r => {});
       });
 
+      // Comapny
+      if(loadCompanies){
+        this.buildCampany(helpContent);
+      }
+
+      // Version
+      getManifest().then(
+        (manifest) => {
+          let version = MSG.VERSION + ": " + manifest.build_date;
+          let divInfo = this.createElement(TAG.DIV);
+            divInfo.className = "divInfo";
+            divInfo.innerHTML = `<small id="aonManifest">${version}</small>`;
+            helpContent.appendChild(divInfo);
+          }
+      );
+	}
+
+	buildCampany(helpContent) {
       if (this.dur.getDomain() !== null) {
         // Estructura del contact card
         let contactCard       = new AonCard();
@@ -125,9 +142,9 @@ export class AonHelp extends AonElement {
           // Agregamos info a CONTACT CARD
           contactCard.setContent(this.buildSupportData("AON SOLUTIONS S.L.", MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
           contactCard.addContent(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
-          contactCard.addContent(this.buildSupportData("soporte@aonSolutions.es", "Atenci贸n a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
-          contactCard.addContent(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contrataci贸n", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
-          contactCard.addContent(this.buildSupportData("administracion@aonSolutions.es", "Facturaci贸n, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
+          contactCard.addContent(this.buildSupportData("soporte@aonSolutions.es", "Atenci髇 a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
+          contactCard.addContent(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contrataci髇", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
+          contactCard.addContent(this.buildSupportData("administracion@aonSolutions.es", "Facturaci髇, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
           // Card de horario 
           let scheduleCard       = new AonCard();
           scheduleCard.id        = this.SCHEDULE_CONTACT_CARD;
@@ -144,7 +161,7 @@ export class AonHelp extends AonElement {
           getParentCompany({parentId, parentName}).then(r =>{
             let name      = r.name;
             let phoneData = r.media.find(item => item.media === "fixed_phone");
-            let phone     = phoneData ? phoneData.value : "Tel茅fono no encontrado";
+            let phone     = phoneData ? phoneData.value : "Tel閒ono no encontrado";
             let emailData = r.media.find(item => item.media === "email");
             let email     = emailData ? emailData.value : "Email no encontrado";
             // Agregamos CONTACT CARD
@@ -153,21 +170,11 @@ export class AonHelp extends AonElement {
             helpContent.appendChild(contactCard);
             contactCard.setContent(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS));
             contactCard.addContent(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
-            contactCard.addContent(this.buildSupportData(email, "Correo electr贸nico", MATERIAL_ICONS.MAIL));
+            contactCard.addContent(this.buildSupportData(email, "Correo electr髇ico", MATERIAL_ICONS.MAIL));
           });
         }
       }
-      // Version
-      getManifest().then(
-        (manifest) => {
-          let version = MSG.VERSION + ": " + manifest.build_date;
-          let divInfo = this.createElement(TAG.DIV);
-            divInfo.className = "divInfo";
-            divInfo.innerHTML = `<small id="aonManifest">${version}</small>`;
-            helpContent.appendChild(divInfo);
-          }
-      );
-	}
+    }
 
 	buildSupportData(value, title, icon, className) {
 		let div 		= this.createDiv();

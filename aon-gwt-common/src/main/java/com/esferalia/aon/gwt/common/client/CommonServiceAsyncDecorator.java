@@ -81,8 +81,12 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -1215,6 +1219,82 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getUser(String domainName, Integer domainId, String user, Integer userId, AsyncCallback<User> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getUser(domainName, domainId, user, userId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// **************************************************
+	// ****************************************** [SCOPE]
+	// **************************************************
+	
+	@Override
+	public void getScopeList(ScopeParams params, AsyncCallback<List<Scope>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getScopeList(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getScopesCount(ScopeParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getScopesCount(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Scope> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveScope(String domainName, int domain, String user, Scope scope, AsyncCallback<Scope> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveScope(domainName, domain, user, scope, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUserScopeList(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveUserScope(domainName, domainId, user, userScope, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteUserScope(domainName, domain, user, userScopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getDomainScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<Domain>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomainScopeList(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveDomainScope(String domainName, Integer domainId, String user, Integer domainChange, Integer scopeId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveDomainScope(domainName, domainId, user, domainChange, scopeId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteDomainScope(domainName, domainId, user, domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomains(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

@@ -113,8 +113,12 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -993,8 +997,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<Seller> getTaskHolderUsers(String domainName, int domain, String user) throws AonCoreException {
-		return AON.getTaskHolderSellerStream(
+		List<Seller> list = AON.getTaskHolderSellerStream(
 				new Domain().setName(domainName).setId(domain), user);
+		
+		// Filter user from parent domain
+		list = list.stream()
+			.filter(seller -> !seller.getTaskHolder().getDomain().getId().equals(seller.getTaskHolder().getUser().getDomain().getId()))
+			.collect(Collectors.toList());
+		
+		return list;
 	}
 	
 	@Override
@@ -1314,6 +1325,82 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public User getUser(String domainName, Integer domainId, String user, Integer userId) throws AonCoreException {
 		return AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getIdProperty().eq(userId), new Options().setFull(true)).collect(Collectors.toList()).get(0);
+	}
+	
+	// **************************************************
+	// ****************************************** [SCOPE]
+	// **************************************************
+	
+	@Override
+	public List<Scope> getScopeList(ScopeParams params) throws AonCoreException {
+		return AON.getScopeList(params);
+	}
+	
+	@Override
+	public Integer getScopesCount(ScopeParams params) throws AonCoreException {
+		return AON.getScopesCount(params);
+	}
+	
+	@Override
+	public Scope getScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException {
+		return AON.getScope(domainName, domain, user, scopeId);
+	}
+	
+	@Override
+	public Scope saveScope(String domainName, int domain, String user, Scope scope) throws AonCoreException {
+		return AON.saveScope(domainName, domain, user, scope);
+	}
+	
+	@Override
+	public void deleteScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException {
+		AON.deleteScope(domainName, domain, user, scopeId);
+	}
+
+	@Override
+	public List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException {
+		List<UserScopeFull> list = AON.getUserScopeFullList(domainName, domain, user, scopeId);
+		return list;
+	}
+
+	@Override
+	public void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope) throws AonCoreException {
+		AON.insertUserScope(domainName, domainId, user, userScope);
+	}
+	
+	@Override
+	public void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId) throws AonCoreException {
+		AON.deleteUserScope(domainName, domain, user, f -> f.getIdProperty().eq(userScopeId));	
+	}
+	
+	@Override
+	public List<Domain> getDomainScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException {
+		return AON.getDomainList(domainName, domain, user, f -> f.getScopeProperty().eq(scopeId));
+	}
+	
+	@Override
+	public void saveDomainScope(String domainName, Integer domainId, String user, Integer domainChange, Integer scopeId) throws AonCoreException {
+		Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(domainChange));
+		AON.updateDomainScopeValue(domain.getName(), domain.getId(), user, scopeId);
+	}
+	
+	@Override
+	public void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain) throws AonCoreException {
+		AON.updateDomainScopeValue(domain.getName(), domain.getId(), user, null);
+	}
+	
+	@Override
+	public List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException {
+		Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(domainId));
+		
+		List<Integer> searchDomains = new ArrayList<Integer>();
+		searchDomains.add(domain.getId());
+		if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
+		
+		Integer[] domainParentIds = new Integer[searchDomains.size()];
+		searchDomains.stream().collect(Collectors.toList()).toArray(domainParentIds);
+		
+		
+		return AON.getDomainList(domainName, domainId, user, f -> f.getParentProperty().in(domainParentIds));
 	}
 
 }

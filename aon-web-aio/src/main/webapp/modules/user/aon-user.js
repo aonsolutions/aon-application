@@ -11,7 +11,7 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS, COLORS, EVENT } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
@@ -173,6 +173,7 @@ export class AonUser extends AonElement {
 			`;
 
 		getBookingDomainUserRoles({}, this.sessionData).then(r => {
+			
 			this.dur = new DomainUserRoles(r);
 			this.buildUserToolbar();
 			this.build();
@@ -196,6 +197,7 @@ export class AonUser extends AonElement {
 	}
 
 	initApps() {
+		
 		this.clearElementById('aonUserRoleTable');
 		if(this.isPersonalizado()) {
 			this.buildAppSelect(undefined);
@@ -211,7 +213,11 @@ export class AonUser extends AonElement {
 
 	initUser() {
 		this.user = this.user || {};
+		
 		this.buildUserToolbar();
+		
+		this.buildStatusRegistry();
+		
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
 		if(aonUserName)
 			aonUserName.setAttribute('value', this.user && this.user.name && this.user.email ? this.user.name : '');
@@ -237,6 +243,91 @@ export class AonUser extends AonElement {
 				}
 			}
 		}
+	}
+	
+	buildStatusRegistry(){
+		let card = document.getElementById('aonConfigurationUserCard');
+		const id = "statusDiv";
+
+		let statusDiv = this.getElement(id);
+		if(statusDiv) statusDiv.remove();
+
+		const title = this.user.active ? "Activo" : "Inactivo";
+
+		let color = "green";
+		if(this.user.active){
+			color = "green"
+		} else {
+			color = COLORS.ORANGE
+		}
+
+		statusDiv = this.createElement(TAG.DIV);
+		statusDiv.id = id;
+		statusDiv.title = MSG.STATUS;
+		statusDiv.style.display = "flex";
+		statusDiv.style.alignItems = "center";
+		statusDiv.style.columnGap = "5px";
+		statusDiv.style.border = "1px solid";
+		statusDiv.style.borderColor = "lightgray";
+		statusDiv.style.borderRadius = "10px";
+		statusDiv.style.padding = "4px";
+		statusDiv.style.cursor = "pointer";
+		card.addSection2(statusDiv);
+
+		let statusBox = this.createElement(TAG.DIV);
+		statusBox.style.width           = "10px";
+		statusBox.style.height          = "10px";
+		statusBox.style.borderRadius    = "50%";
+		statusBox.style.marginTop       = "3px";
+		statusBox.style.backgroundColor = color;
+		statusDiv.appendChild(statusBox);
+
+		let statusText = this.createElement(TAG.DIV);
+		statusText.innerText = title;
+		statusText.style.fontSize = "14px";
+		statusText.style.fontWeight = "500";
+		statusText.style.color = "#5f6368";
+		statusDiv.appendChild(statusText);
+
+		let iconArrowDown = this.createElement(TAG.DIV);
+		iconArrowDown.style.fontSize  = "18px";
+		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
+		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		statusDiv.appendChild(iconArrowDown);
+
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
+	}
+
+	getOptionsStatus(element){
+		const top = element.getBoundingClientRect().top + 24;
+		const left = element.getBoundingClientRect().left + 3;
+		let d = this.getApplication().getOptionDialog();
+
+		let options = [
+			{ 
+				name: "Activar", 
+				value:"ACTIVE",
+				icon:"toggle_on", 
+				fn:()=> {
+					this.user.active = true;
+					this.save();
+				}
+			},
+			{ 
+				name: "Inactivar", 
+				value:"INACTIVE",
+				icon:"toggle_off", 
+				fn:()=> {
+					this.user.active = false;
+					this.save();
+				}
+			}
+		];
+
+		options = options.filter(opt => opt.value!=(this.user.active ? "ACTIVE" : "INACTIVE") );
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
 	}
 
 	buildPermissionButtons() {
@@ -456,12 +547,21 @@ export class AonUser extends AonElement {
 			this.user.portal = true;
 			this.user.roles = [Role.ENTERPRISE];
 		}
+		
 		saveUser(this.user, this.sessionData).then(r => {
-			this.user = r;
-			let definedUsers = getUsers().filter(f => !f.portal).length;
-			this.getDur().definedUsers = definedUsers;
-			updateDurDefinedUsers(definedUsers, this.sessionData);
-			this.init();
+			
+			getUserRoles({user: this.user.id}, this.sessionData).then(roles => {
+				this.user = r;
+				this.user.roles = roles;
+				
+				let definedUsers = getUsers().filter(f => !f.portal).length;
+				this.getDur().definedUsers = definedUsers;
+				updateDurDefinedUsers(definedUsers, this.sessionData);
+				this.init();
+				
+			});
+			
+			
 		}).catch(e => this.showError(e));
 	}
 

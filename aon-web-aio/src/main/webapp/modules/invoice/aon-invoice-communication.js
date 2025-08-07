@@ -176,6 +176,19 @@ export class AonInvoiceCommunication extends AonElement {
         if(this.configuration.tbai.includeDate) {
             tbaiIncludeDate.value = this.configuration.tbai.includeDate;
         }
+
+        table.addRow();
+
+        // SII
+
+        let verifactuActive = new AonSwitch();
+        verifactuActive.id = 'VERIFACTUACTIVEID';
+		verifactuActive.title = "Verifactu";
+		verifactuActive.checked = false;
+        verifactuActive.disabled = true;
+		table.addCell(verifactuActive, 2).style.height = '50px';
+        verifactuActive.setWidth('110px');
+
         table.addRow();
 
         // SII

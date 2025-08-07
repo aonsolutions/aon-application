@@ -186,7 +186,9 @@ public class XmlToXbrl {
 		        for (String key : datosConversionMemCuadros.keySet()) {
 		        	String name = datosConversionMemCuadros.get(key)[0];
 		        	String context = datosConversionMemCuadros.get(key)[1];
-		        	addElementoMem(document.getDocumentElement(), key, name, context);
+		        	// Controlar elementos del ejercicio anterior
+		        	if (context.contains("_ACTUAL_") || (context.contains("_ANTERIOR_") && llevaAnterior))
+		        		addElementoMem(document.getDocumentElement(), key, name, context);
 		        }
 		        
 		        // Memoria cuadro normalizado apartado 10 (Otra información)

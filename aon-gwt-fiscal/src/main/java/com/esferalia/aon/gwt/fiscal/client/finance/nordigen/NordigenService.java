@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -11,6 +12,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -33,5 +35,9 @@ public interface NordigenService extends RemoteService {
 	Integer getRemainingDays(Occam occam,NordigenBankAccount account) throws NordigenException;
 	int getRemainingCallsToday(Occam occam, NordigenBankAccount account) throws NordigenException;
 	String getLatestRetryAfter(Occam occam, NordigenBankAccount account) throws NordigenException;
-	List<String> getCallStatuses(Occam occam, NordigenBankAccount account) throws NordigenException; 
+	List<String> getCallStatuses(Occam occam, NordigenBankAccount account) throws NordigenException;
+	List<RegistryBank> getByRequisitionIsNotNull(Occam occam) throws NordigenException;
+	String getAccountIdByIban(NordigenAccessToken token, String requisitionId, RegistryBank rbank) throws NordigenException;
+	List<BankStatement> checkIncorrectMovements(Occam occam, NordigenAccessToken token, List<String> accountIds, RegistryBank rbank) throws NordigenException;
+	void insertCorrectMovements(Occam occam, NordigenBankAccount nordigenBankAccount);
 }
