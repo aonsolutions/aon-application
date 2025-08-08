@@ -675,48 +675,46 @@ export class AonDomainCustomer extends AonElement {
   }
 
   checkAccess(domainCompany) {
-    let domain = domainCompany ? domainCompany.domain : null;
+    const domain = domainCompany ? domainCompany.domain : null;
+    let boolean  = false;
     if (domain) {
-      let access = this.domainStatusFilter.value;
+      const access = this.domainStatusFilter.value;
       switch (access) {
         case "":
-          return true;
+          boolean = true;
           break;
         case "active":
-          return (domain.active ? true : false);
+          boolean = (domain.active ? true : false);
           break;
         case "inactive":
-          return (!domain.active ? true : false);
+          boolean = (!domain.active ? true : false);
           break;
         case "expired":
-          return (domain.expirationDate ? true : false);
-          break;
-        default:
+          boolean = (domain.expirationDate ? true : false);
           break;
       }
     }
-    return false;
+    return boolean;
   }
 
   checkLinkStatus(domainCompany) {
-    let domain = domainCompany ? domainCompany.domain : null;
+    const domain = domainCompany ? domainCompany.domain : null;
+    let boolean  = false;
     if (domain) {
-      let linkStatus = this.linkStatusFilter.value;
+      const linkStatus = this.linkStatusFilter.value;
       switch (linkStatus) {
         case "":
-          return true;
+          boolean =  true;
           break;
         case "linked":
-          return (domain.aonCustomer ? true : false);
+          boolean = (domain.aonCustomer ? true : false);
           break;
         case "unlinked":
-          return (!domain.aonCustomer ? true : false);
-          break;
-        default:
+          boolean = (!domain.aonCustomer ? true : false);
           break;
       }
     }
-    return false;
+    return boolean;
   }
 
   async customerSearch() {

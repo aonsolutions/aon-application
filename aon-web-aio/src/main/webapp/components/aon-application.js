@@ -159,7 +159,7 @@ export class AonApplication extends AonElement {
         // Añadir la estructura completa (el wrapper) al div padre.
         div.appendChild(wrapper);
         // Agregamos logica para tratar el scrollbar
-        this.addContentScrollbar();
+        //this.addContentScrollbar();
     // --- FIN Donde metemos el contenido (que tenga la barra de desplazamiento arriba) ---
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
@@ -1120,266 +1120,178 @@ export class AonApplication extends AonElement {
   }
 
   addContentScrollbar() {
-    const content         = this.getElement(this.CONTENT);
-    const scrollbarTop    = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR);
-    const thumbTop        = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB);
-    const scrollbarBottom = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR);
-    const thumbBottom     = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB);
-
-    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
-      return;
-    }
-
-    let isDraggingTop    = false;
-    let isDraggingBottom = false;
-    let paddingSpacerDiv = null;
-
-    const getPaddingRight = () => {
-      const style = window.getComputedStyle(content);
-      return parseFloat(style.paddingRight) || 0;
-    };
-
-    const getScrollableWidth = () => {
-      return content.scrollWidth - content.clientWidth;
-    };
-
-    const ensurePaddingSpacer = () => {
-      // La unica manera de que coja el padding de la derecha
-      if (!paddingSpacerDiv) {
-        paddingSpacerDiv = document.createElement('div');
-        paddingSpacerDiv.style.display  = 'inline-block';
-        paddingSpacerDiv.style.height   = '1px';
-        paddingSpacerDiv.style.pointerEvents = 'none';
-        content.appendChild(paddingSpacerDiv);
-      }
-      const paddingRight           = getPaddingRight();
-      content.style.display        = 'flex';
-      paddingSpacerDiv.style.width = `${paddingRight}px`;
-    };
-
-    const removePaddingSpacer = () => {
-      if (paddingSpacerDiv) {
-        content.removeChild(paddingSpacerDiv);
-        content.style.display = '';
-        paddingSpacerDiv      = null;
-      }
-    };
-
-    const updateThumbs = () => {
-      const scrollableWidth = getScrollableWidth();
-      const visibleRatio    = content.clientWidth / content.scrollWidth;
-
-      if (visibleRatio >= 1) {
-        scrollbarTop.style.display    = 'none';
-        scrollbarBottom.style.display = 'none';
-        removePaddingSpacer();
-        return;
-      } else {
-        scrollbarTop.style.display    = 'flex';
-        scrollbarBottom.style.display = 'flex';
-        ensurePaddingSpacer();
-      }
-
-      thumbTop.style.width    = `${visibleRatio * 100}%`;
-      thumbBottom.style.width = `${visibleRatio * 100}%`;
-
-      if (scrollableWidth > 0) {
-        const scrollPercentage  = content.scrollLeft / scrollableWidth;
-        const extraOffset       = 10; // el exceso por paddin y margin
-        const thumbMaxXTop      = scrollbarTop.offsetWidth - thumbTop.offsetWidth - extraOffset;
-        const thumbMaxXBottom   = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth - extraOffset;
-
-        thumbTop.style.left     = `${scrollPercentage * thumbMaxXTop}px`;
-        thumbBottom.style.left  = `${scrollPercentage * thumbMaxXBottom}px`;
-      }
-    };
-
-    content.addEventListener('scroll', updateThumbs);
-
-    thumbTop.addEventListener('mousedown', (e) => {
-      isDraggingTop         = true;
-      const startX          = e.pageX;
-      const startScrollLeft = content.scrollLeft;
-      e.preventDefault();
-      scrollbarTop.classList.add('scrollbar-dragging');
-
-      document.onmousemove = (moveEvent) => {
-        if (!isDraggingTop) return;
-        const deltaX          = moveEvent.pageX - startX;
-        const scrollableWidth = getScrollableWidth();
-        const thumbMaxX       = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
-        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
-        content.scrollLeft    = startScrollLeft + scrollDelta;
-      };
-
-      document.onmouseup = () => {
-        isDraggingTop        = false;
-        scrollbarTop.classList.remove('scrollbar-dragging');
-        document.onmousemove = null;
-        document.onmouseup   = null;
-      };
-    });
-
-    thumbBottom.addEventListener('mousedown', (e) => {
-      isDraggingBottom      = true;
-      const startX          = e.pageX;
-      const startScrollLeft = content.scrollLeft;
-      e.preventDefault();
-      scrollbarBottom.classList.add('scrollbar-dragging');
-
-      document.onmousemove = (moveEvent) => {
-        if (!isDraggingBottom) return;
-        const deltaX          = moveEvent.pageX - startX;
-        const scrollableWidth = getScrollableWidth();
-        const thumbMaxX       = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
-        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
-        content.scrollLeft    = startScrollLeft + scrollDelta;
-      };
-
-      document.onmouseup = () => {
-        isDraggingBottom     = false;
-        scrollbarBottom.classList.remove('scrollbar-dragging');
-        document.onmousemove = null;
-        document.onmouseup   = null;
-      };
-    });
-
-    new ResizeObserver(updateThumbs).observe(content);
-
-    const mutationObserver = new MutationObserver(updateThumbs);
-    mutationObserver.observe(content, { childList: true, subtree: true });
-
-    updateThumbs();
+//    const content         = this.getElement(this.CONTENT);
+//    const scrollbarTop    = document.querySelector(`.${CSS.AON_CONTENT_TOP_SCROLLBAR}`);
+//    const thumbTop        = document.querySelector(`.${CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB}`);
+//    const scrollbarBottom = document.querySelector(`.${CSS.AON_CONTENT_BOTTOM_SCROLLBAR}`);
+//    const thumbBottom     = document.querySelector(`.${CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB}`);
+//
+//    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
+//      return;
+//    }
+//
+//    let paddingSpacerDiv = null;
+//    let updateScheduled = false;
+//
+//    // Helper: fuerza el padding adicional en la derecha
+//    const getPaddingRight = () => {
+//      const style = window.getComputedStyle(content);
+//      return parseFloat(style.paddingRight) || 0;
+//    };
+//
+//    // Helper: ancho total desplazable
+//    const getScrollableWidth = () => content.scrollWidth - content.clientWidth;
+//
+//    // Inserta un div espaciador para respetar paddingRight
+//    const ensurePaddingSpacer = () => {
+//      if (!paddingSpacerDiv) {
+//        paddingSpacerDiv = document.createElement('div');
+//        paddingSpacerDiv.style.display        = 'inline-block';
+//        paddingSpacerDiv.style.height         = '1px';
+//        paddingSpacerDiv.style.pointerEvents  = 'none';
+//        content.appendChild(paddingSpacerDiv);
+//      }
+//      content.style.display = 'flex';
+//      paddingSpacerDiv.style.width = `${getPaddingRight()}px`;
+//    };
+//
+//    // Quita el espaciador y restaura display
+//    const removePaddingSpacer = () => {
+//      if (paddingSpacerDiv) {
+//        content.removeChild(paddingSpacerDiv);
+//        content.style.display = '';
+//        paddingSpacerDiv = null;
+//      }
+//    };
+//
+//    // La función que hace LECTURAS y luego ESCRITURAS
+//    const updateThumbs = () => {
+//      // --- LECTURAS ---
+//      const scrollWidth       = content.scrollWidth;
+//      const clientWidth       = content.clientWidth;
+//      const scrollLeft        = content.scrollLeft;
+//      const scrollableWidth   = scrollWidth - clientWidth;
+//      const visibleRatio      = clientWidth / scrollWidth;
+//
+//      // --- ESCRITURAS & LÓGICA ---
+//      if (visibleRatio >= 1) {
+//        scrollbarTop.style.display    = 'none';
+//        scrollbarBottom.style.display = 'none';
+//        removePaddingSpacer();
+//        return;
+//      }
+//
+//      scrollbarTop.style.display    = 'flex';
+//      scrollbarBottom.style.display = 'flex';
+//      ensurePaddingSpacer();
+//
+//      const thumbWidthPercent = `${visibleRatio * 100}%`;
+//      thumbTop.style.width    = thumbWidthPercent;
+//      thumbBottom.style.width = thumbWidthPercent;
+//
+//      if (scrollableWidth > 0) {
+//        const scrollPercentage    = scrollLeft / scrollableWidth;
+//        const extraOffset         = 10;
+//
+//        // Lecturas adicionales necesarias para calcular offsets máximos
+//        const scrollbarTopWidth    = scrollbarTop.offsetWidth;
+//        const scrollbarBottomWidth = scrollbarBottom.offsetWidth;
+//        const thumbTopWidth        = thumbTop.offsetWidth;
+//        const thumbBottomWidth     = thumbBottom.offsetWidth;
+//
+//        const thumbMaxXTop    = scrollbarTopWidth    - thumbTopWidth    - extraOffset;
+//        const thumbMaxXBottom = scrollbarBottomWidth - thumbBottomWidth - extraOffset;
+//
+//        thumbTop.style.left    = `${scrollPercentage * thumbMaxXTop}px`;
+//        thumbBottom.style.left = `${scrollPercentage * thumbMaxXBottom}px`;
+//      }
+//    };
+//
+//    // Wrapper para agrupar múltiples llamadas en un solo frame
+//    const scheduleUpdateThumbs = () => {
+//      if (updateScheduled) return;
+//      updateScheduled = true;
+//      requestAnimationFrame(() => {
+//        updateThumbs();
+//        updateScheduled = false;
+//      });
+//    };
+//
+//    // Event listeners ahora usan scheduleUpdateThumbs
+//    content.addEventListener('scroll', scheduleUpdateThumbs);
+//
+//    thumbTop.addEventListener('mousedown', (e) => {
+//      e.preventDefault();
+//      scrollbarTop.classList.add('scrollbar-dragging');
+//      const startX = e.pageX;
+//      const startScroll = content.scrollLeft;
+//
+//      const onMouseMove = (moveEvent) => {
+//        const deltaX        = moveEvent.pageX - startX;
+//        const scrollableW   = getScrollableWidth();
+//        const thumbMaxX     = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
+//        content.scrollLeft = startScroll + (deltaX / thumbMaxX) * scrollableW;
+//      };
+//
+//      const onMouseUp = () => {
+//        scrollbarTop.classList.remove('scrollbar-dragging');
+//        document.removeEventListener('mousemove', onMouseMove);
+//        document.removeEventListener('mouseup',   onMouseUp);
+//      };
+//
+//      document.addEventListener('mousemove', onMouseMove);
+//      document.addEventListener('mouseup',   onMouseUp);
+//    });
+//
+//    thumbBottom.addEventListener('mousedown', (e) => {
+//      e.preventDefault();
+//      scrollbarBottom.classList.add('scrollbar-dragging');
+//      const startX = e.pageX;
+//      const startScroll = content.scrollLeft;
+//
+//      const onMouseMove = (moveEvent) => {
+//        const deltaX        = moveEvent.pageX - startX;
+//        const scrollableW   = getScrollableWidth();
+//        const thumbMaxX     = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
+//        content.scrollLeft = startScroll + (deltaX / thumbMaxX) * scrollableW;
+//      };
+//
+//      const onMouseUp = () => {
+//        scrollbarBottom.classList.remove('scrollbar-dragging');
+//        document.removeEventListener('mousemove', onMouseMove);
+//        document.removeEventListener('mouseup',   onMouseUp);
+//      };
+//
+//      document.addEventListener('mousemove', onMouseMove);
+//      document.addEventListener('mouseup',   onMouseUp);
+//    });
+//
+//    // Observers también usan scheduleUpdateThumbs
+//    new ResizeObserver(scheduleUpdateThumbs).observe(content);
+//
+//    const mutationObserver = new MutationObserver(scheduleUpdateThumbs);
+//    mutationObserver.observe(content, { childList: true, subtree: true });
+//
+//    // Primera ejecución
+//    scheduleUpdateThumbs();
   }
 
-/*
-  addContentScrollbar() {
-    const content         = this.getElement(this.CONTENT);
-    const scrollbarTop    = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR);
-    const thumbTop        = document.querySelector('.' + CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB);
-    const scrollbarBottom = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR);
-    const thumbBottom     = document.querySelector('.' + CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB);
-
-    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
-      return;
-    }
-
-    let isDraggingTop    = false;
-    let isDraggingBottom = false;
-
-    const getPaddingRight = () => {
-      const style = window.getComputedStyle(content);
-      return parseFloat(style.paddingRight) || 0;
-    };
-
-    const getScrollableWidth = () => {
-      return content.scrollWidth - content.clientWidth;
-    };
-
-    const updateThumbs = () => {
-      const scrollableWidth = getScrollableWidth();
-      const visibleRatio    = content.clientWidth / content.scrollWidth;
-
-      if (visibleRatio >= 1) {
-        scrollbarTop.style.display    = 'none';
-        scrollbarBottom.style.display = 'none';
-        return;
-      } else {
-        scrollbarTop.style.display    = 'block';
-        scrollbarBottom.style.display = 'block';
-      }
-
-      thumbTop.style.width    = `${visibleRatio * 100}%`;
-      thumbBottom.style.width = `${visibleRatio * 100}%`;
-
-      if (scrollableWidth > 0) {
-        const scrollPercentage  = content.scrollLeft / scrollableWidth;
-        const thumbMaxXTop      = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
-        const thumbMaxXBottom   = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
-
-        thumbTop.style.left     = `${scrollPercentage * thumbMaxXTop}px`;
-        thumbBottom.style.left  = `${scrollPercentage * thumbMaxXBottom}px`;
-      }
-    };
-
-    content.addEventListener('scroll', updateThumbs);
-
-    thumbTop.addEventListener('mousedown', (e) => {
-      isDraggingTop         = true;
-      const startX          = e.pageX;
-      const startScrollLeft = content.scrollLeft;
-      e.preventDefault();
-
-      document.onmousemove = (moveEvent) => {
-        if (!isDraggingTop) return;
-        const deltaX          = moveEvent.pageX - startX;
-        const scrollableWidth = getScrollableWidth();
-        const thumbMaxX       = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
-        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
-        content.scrollLeft    = startScrollLeft + scrollDelta;
-      };
-
-      document.onmouseup = () => {
-        isDraggingTop        = false;
-        document.onmousemove = null;
-        document.onmouseup   = null;
-      };
-    });
-
-    thumbBottom.addEventListener('mousedown', (e) => {
-      isDraggingBottom      = true;
-      const startX          = e.pageX;
-      const startScrollLeft = content.scrollLeft;
-      e.preventDefault();
-
-      document.onmousemove = (moveEvent) => {
-        if (!isDraggingBottom) return;
-        const deltaX          = moveEvent.pageX - startX;
-        const scrollableWidth = getScrollableWidth();
-        const thumbMaxX       = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
-        const scrollDelta     = (deltaX / thumbMaxX) * scrollableWidth;
-        content.scrollLeft    = startScrollLeft + scrollDelta;
-      };
-
-      document.onmouseup = () => {
-        isDraggingBottom     = false;
-        document.onmousemove = null;
-        document.onmouseup   = null;
-      };
-    });
-
-    new ResizeObserver(updateThumbs).observe(content);
-
-    const mutationObserver = new MutationObserver(updateThumbs);
-    mutationObserver.observe(content, { childList: true, subtree: true });
-
-    updateThumbs();
-  }
-*/
   addFloatOption(action, fn) {
     const buttonId = this.id + action.id + "Button";
     let aonIconButton = this.getElement(buttonId);
     if(!aonIconButton){
       let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
       span.id = this.id + "FloatSpan";
-//      span.style.position = "fixed";
-//      span.style.right = "20px";
-//      span.style.bottom = this.isSab() ? "80px" : "70px";
       
       aonIconButton = new AonIconButton();
       aonIconButton.icon = action.icon;
       aonIconButton.id = buttonId;
       aonIconButton.title = action.name;
-      aonIconButton.background = "#f1f1f1";
-//      aonIconButton.style.marginLeft = '10px';
       span.appendChild(aonIconButton);
       this.appendChild(span);
       aonIconButton.addEventListener(EVENT.CLICK, fn);
 
       const btn = aonIconButton.getButton();
-//      if(btn){
-//        btn.style.boxShadow = "0px 1px 8px rgb(0 0 0 / 43%)";
-//      }
     }
 
     return aonIconButton;

@@ -6,6 +6,7 @@ const CopyWebpackPlugin         = require('copy-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
+//  devtool: 'source-map',
   entry: {
     app       : './src/main/webapp/index.js',                       // Para usar en el BETA
     aio       : './src/main/webapp/aio.js',
@@ -53,6 +54,11 @@ module.exports = {
       {
         test: /\.css$/i,
         use : [MiniCssExtractPlugin.loader, 'css-loader']
+//        devtool
+//        use: [
+//          MiniCssExtractPlugin.loader,
+//          { loader: 'css-loader', options: { sourceMap: true } }
+//        ]
       },
       {
         test: /\.scss$/i,  // Regla para archivos .scss
@@ -61,6 +67,12 @@ module.exports = {
           'css-loader',  // Procesa el CSS
           'sass-loader'  // Compila Sass a CSS
         ]
+//        devtool
+//        use: [
+//          MiniCssExtractPlugin.loader,
+//          { loader: 'css-loader', options: { sourceMap: true } },
+//          { loader: 'sass-loader', options: { sourceMap: true } }
+//        ]
       }
     ]
   },

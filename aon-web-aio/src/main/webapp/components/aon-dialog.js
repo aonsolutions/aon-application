@@ -124,9 +124,6 @@ export class AonDialog extends AonElement {
   }
 
   buildMenu() {
-
-    console.log('esta - buildMenu()');
-
     let dialog = this.createElement(TAG.DIV);
     dialog.id = this.DIALOG;
     dialog.className = "aonDialog";
@@ -146,7 +143,6 @@ export class AonDialog extends AonElement {
   }
 
   build() {
-    console.log('esta - build()');
     // Se limpia el dialog
     this.innerHTML = "";
     // Montamos el HTML - div padre
@@ -199,9 +195,6 @@ export class AonDialog extends AonElement {
     // Si se quiere boton de volver solo cargar ese en el buid.
     // Si se quiere pantalla completa, solo es agragar una clase en build()
     this.build();
-
-    console.log('esta - buildFullScreen()');
-
     this.innerHTML = "";
     let dialog = this.createElement(TAG.DIV);
     dialog.id = this.DIALOG;
