@@ -1274,20 +1274,20 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "4.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
+				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
 		
-		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
-		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
-	
 		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
 		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));		
 		
+		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
+		
 		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "8.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
 		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(8.6, r.getValue()));		
-			
+		
 	}
 
 	@Test
@@ -1365,15 +1365,15 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "4.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));			
+				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
+		
+		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));		
 		
 		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
 		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
-		
-		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
-		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));	
 		
 		addData(aonContext, category, firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "7.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
