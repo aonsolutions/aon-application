@@ -43,7 +43,7 @@ public class SQLSystemExpressionContextFactory implements
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
 			+ " AND domain IN (0,?,?,?) "
-			+ " ORDER BY ( CASE WHEN `domain` <= -100 THEN 1 WHEN `domain` <= 0  THEN 0 ELSE `domain` END ) ASC, start_date ASC"
+			+ " ORDER BY ( CASE WHEN `domain` <= 0  THEN ABS(`domain`) ELSE ( `domain` + 1000 ) END ) ASC, start_date ASC"
 			//+ " ORDER BY ABS(`domain`) ASC, start_date ASC"
 			;
 
