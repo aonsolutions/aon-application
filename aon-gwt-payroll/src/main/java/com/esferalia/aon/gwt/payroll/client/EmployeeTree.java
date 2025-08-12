@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -40,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCom
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
+import com.esferalia.aon.gwt.payroll.server.CretaServlet;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -660,10 +663,68 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				requestDataBuffer.append("&" + Parameter.WITH_IDC + "=on");
 
 			requestDataBuffer.append("&" + Parameter.I54 + "=" + i54);
+			
+			try {
+				file.accept( new CretaService.File.Visitor<StringBuffer, Collection<CCC>, Exception>() {
+					
+					void visitFile(StringBuffer requestDataBuffer, Collection<CCC> cccs) throws Exception {
+						for (CCC ccc : cccs)
+							for (Employee employee : ccc.getEmployees())
+								requestDataBuffer.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
+					}
+					
+					@Override
+					public void visitBases(StringBuffer t, Collection<CCC> l) throws Exception {
+						visitFile(t, l);
+					}
 
-			for (CCC ccc : cccs)
-				for (Employee employee : ccc.getEmployees())
-					requestDataBuffer.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
+					@Override
+					public void visitRespuesta(StringBuffer t, Collection<CCC> l) throws Exception {
+						visitFile(t, l);
+						
+					}
+
+					@Override
+					public void visitTrabajadoresTramos(StringBuffer t, Collection<CCC> l) throws Exception {
+						visitFile(t, l);
+						
+					}
+
+					@Override
+					public void visitSolicitudBorrador(StringBuffer t, Collection<CCC> l) throws Exception {
+						// Without NAFS 
+					}
+
+					@Override
+					public void visitSolicitudCalculos(StringBuffer t, Collection<CCC> l) throws Exception {
+						// Without NAFS 
+					}
+
+					@Override
+					public void visitSolicitudConfirmacion(StringBuffer t, Collection<CCC> l) throws Exception {
+						// Without NAFS 
+					}
+
+					@Override
+					public void visitSolicitudTrabajadoresTramos(StringBuffer t, Collection<CCC> l) throws Exception {
+						// Without NAFS 
+					}
+
+					@Override
+					public void visitComunicacionDatosBancarios(StringBuffer t, Collection<CCC> l) throws Exception {
+						// Without NAFS 
+					}
+
+					@Override
+					public void visitDocumentoCalculoLiquidacion(StringBuffer t, Collection<CCC> l) throws Exception {
+						// without NAFS 
+					}
+					
+				}, requestDataBuffer, cccs);
+			} catch (Exception e) {
+				// No enterprise selected.
+			}
+			
 
 			// Send request to server and catch any errors.
 

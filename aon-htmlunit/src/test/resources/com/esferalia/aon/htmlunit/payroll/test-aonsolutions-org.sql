@@ -14117,7 +14117,7 @@ CREATE TABLE `task_workflow` (
   `task_holder` int DEFAULT NULL COMMENT 'Identificador del Operario',
   `email` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Email del emisor',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo del flujo de Tareas',
-  `comment` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
+  `comment` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Comentario de la Tarea',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -15020,4 +15020,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-09 20:27:58
+-- Dump completed on 2025-07-30  9:27:45

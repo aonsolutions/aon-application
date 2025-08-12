@@ -136,7 +136,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "FIE - Importación masiva de I.T",
 		        title: "FIE - Importación masiva de I.T",
-		        action: () => alert("description"),
+		        action: () => GWT.iLoad(GWT.MASSIVE_FIE),
 				filter: () => this.isDomainManagementAvailable()
 			}]
 		},{
