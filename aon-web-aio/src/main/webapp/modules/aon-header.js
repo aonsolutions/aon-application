@@ -1109,15 +1109,15 @@ export class AonHeader extends AonElement {
       Cambio de empresa menu - modifico estilo
 /		
 */		
-		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init().then(() => {
-			aonMenu.open();
-			let customUrl =  LS.getDomainName() + '/customview?domain=' + company.domain;
-			loadCustomView(customUrl).then(() => { 
-				favicon();
-				title();
-			}).catch(() => {});
-		});
+		// let aonMenu = this.getElement('aonMenu');
+		// aonMenu.init().then(() => {
+		// 	aonMenu.open();
+		// 	let customUrl =  LS.getDomainName() + '/customview?domain=' + company.domain;
+		// 	loadCustomView(customUrl).then(() => { 
+		// 		favicon();
+		// 		title();
+		// 	}).catch(() => {});
+		// });
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
