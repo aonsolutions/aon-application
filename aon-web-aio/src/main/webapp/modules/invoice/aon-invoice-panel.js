@@ -36,9 +36,9 @@ import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
 import * as LS from "../../services/localStorageService.js";
 
-import "./aon-invoice-print.js";
-import "../../components/aon-application.js";
-import "../../components/aon-dialog-menu.js";
+// import "./aon-invoice-print.js";
+// import "../../components/aon-application.js";
+// import "../../components/aon-dialog-menu.js";
 
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
@@ -121,10 +121,7 @@ export class AonInvoicePanel extends AonElement {
     this.counterActive = true;
 
     this.option =
-      this.option ||
-      (CONSTANT.REJECTED === this.status
-        ? OPTION.RAWDOC_REJECT
-        : OPTION.RAWDOC_INBOX);
+      this.option || (CONSTANT.REJECTED === this.status ? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX);
   }
 
   getFilter() {

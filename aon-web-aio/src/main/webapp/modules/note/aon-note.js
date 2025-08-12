@@ -1,6 +1,5 @@
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { AonElement } from "../../components/AonElement.js";
-import { Note } from "../../models/note/Note.js";
 import { getNotes } from "../../services/noteService.js";
 import { sortBy } from "../../services/utils.js";
 import {NotesUtils} from "./NotesUtils.js"

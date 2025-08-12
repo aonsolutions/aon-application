@@ -4,7 +4,7 @@
     <div class="aon-content-top-scrollbar">
         <div class="aon-content-top-scrollbar-thumb"></div>
     </div>
-    <div class="aonContentBeta">
+    <div class="aonContentBeta content-scrollbar">
     </div>
     <div class="aon-content-bottom-scrollbar">
         <div class="aon-content-bottom-scrollbar-thumb"></div>
@@ -54,63 +54,15 @@ aon-toolbar {
   white-space : nowrap;
 }
 
-/* --- 4. Layout del Wrapper de Contenido y Scrollbar Superior --- */
-$max-height-scroll: v.$padding;
-$height-scroll    : v.$px-12;
-$position-scroll  : calc((#{$max-height-scroll} - #{$height-scroll}) / 2);
-
-.aon-content-wrapper {
+/* --- 4. Contenido --- */
+.aonContentBeta {
   position      : relative;
   flex-grow     : 1;
   min-width     : v.$px-0; 
   display       : flex;
   flex-direction: column;
   box-sizing    : border-box;
-  .aon-content-top-scrollbar{
-    // Posicion top
-    top: $position-scroll;
-  }
-  .aon-content-bottom-scrollbar{
-    // Posicion bottom
-    bottom: $position-scroll;
-  }
-  
-  .aon-content-top-scrollbar, .aon-content-bottom-scrollbar {
-    &.scrollbar-dragging {
-      cursor: grabbing !important;
-    }
-    position      : absolute;
-    left          : 0;
-    right         : 0;
-    z-index       : 1;
-    align-items   : center;
-    height        : $height-scroll;
-    border-radius : v.$border-radius;
-    margin        : v.$px-0 calc($max-height-scroll / 2);
-    max-height    : $max-height-scroll;
-    overflow      : hidden;
-    padding       : v.$px-0 v.$px-4;
-    
-    .aon-content-top-scrollbar-thumb,
-    .aon-content-bottom-scrollbar-thumb {
-      height        : 68%;
-      width         : 20%;
-      border-radius : v.$border-radius;
-      position      : relative;
-      box-sizing    : border-box;
-    }
-  }
-}
-.aonContentBeta {
-  flex-grow         : 1;
-  min-width         : 0;
-  overflow-x        : auto;
-  box-sizing        : border-box;
-  scrollbar-width   : none;
-  -ms-overflow-style: none;
-  padding           : v.$padding;
-  border-radius     : v.$border-radius;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  padding       : v.$padding;
+  border-radius : v.$border-radius;
+  overflow: auto;
 }

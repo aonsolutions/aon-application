@@ -1,0 +1,69 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-notes {
+    #notesContainer{
+      display        : flex;
+      gap            : v.$gap;
+      flex-wrap      : wrap;
+      align-items    : center;
+      justify-content: center;
+      width          : v.$pct-100;
+      .noteCard{
+        position     : relative;
+        border-radius: v.$border-radius;
+        padding      : v.$padding;
+        &::after {
+          content         : "";
+          position        : absolute;
+          top             : 0;
+          left            : 0;
+          width           : v.$pct-100;
+          height          : v.$padding;
+          transform       : rotateX(8deg);
+          transform-origin: top;
+          pointer-events  : none;
+        }
+        .noteTitleCard{
+          display    : flex;
+          align-items: center;
+          aon-new-input label{
+            span{
+              display: none;
+            }
+            input{
+              padding: v.$px-0;
+            }
+          }
+        }
+        .noteBodyContent{
+          display        : flex;
+          flex-direction : column;
+          height         : v.$pct-100;
+          padding-bottom : v.$padding;
+          textarea{
+            width    : v.$pct-100;
+            min-width: v.$pct-100;
+            margin   : v.$px-0;
+            padding  : v.$px-0;
+          }
+          .note-footer{
+            position      : absolute;
+            bottom        : calc(v.$padding / 2);
+            left          : 0;
+            width         : v.$pct-100;
+            small{
+              display       : flex;
+              justify-content: center;
+            }
+            .note-buttons{
+              display        : flex;
+              justify-content: center;
+              gap            : calc(v.$gap / 2);
+            }
+          }
+        }
+      }
+    }
+  }
+}

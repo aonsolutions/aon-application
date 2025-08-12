@@ -13,9 +13,7 @@
   $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
   $color-blue-100, $color-blue-500, $color-blue-900,
   $logoHead, $logoHead-width, $logoHead-height,
-  $logo, $logo-width, $logo-height,
-  $scrollbar-background-color, $scrollbar-box-shadow, $scrollbar-thumb-background-color, $scrollbar-thumb-box-shadow, 
-  $scrollbar-thumb-border, $scrollbar-thumb-hover-background-color, $scrollbar-thumb-hover-box-shadow
+  $logo, $logo-width, $logo-height
 ) {
   
   $color-900-alpha   : #{$color-900}0D;
@@ -75,7 +73,7 @@
         height           : $logoHead-height; 
       }
       aon-icon-button {
-        i {
+        aon-icon {
           &::after {
             background-color : $color-text-head;
           }
@@ -90,7 +88,7 @@
           background : $color-600;
           color      : $color-text-head;
           aon-icon-button{
-            i{
+            aon-icon{
               &::after{
                 background-color : $color-text-head;
               }
@@ -174,7 +172,7 @@
         }
       }
       aon-icon-button{
-        i{
+        aon-icon{
           &::after{
             background-color: $color-text;
           }
@@ -184,22 +182,6 @@
     // content
     .aonContentBeta{
       background-color: $color-box;
-    }
-    // Barra de content scrollbar
-    .aon-content-wrapper {
-      .aon-content-top-scrollbar, .aon-content-bottom-scrollbar {
-        background-color: $scrollbar-background-color;
-        box-shadow      : $scrollbar-box-shadow;
-        .aon-content-top-scrollbar-thumb, .aon-content-bottom-scrollbar-thumb {
-          background: $scrollbar-thumb-background-color;
-          box-shadow: $scrollbar-thumb-box-shadow;
-          border: $scrollbar-thumb-border;
-          &:hover {
-            background: $scrollbar-thumb-hover-background-color;
-            box-shadow: $scrollbar-thumb-hover-box-shadow;
-          }
-        }
-      }
     }
   // 
   // Componentes
@@ -240,15 +222,13 @@
         background-color: $color-box;
         .dialog-head{
           border-bottom: v.$px-1-6 solid $color-300;
-          aon-icon-button i {
+          aon-icon-button aon-icon {
             &::after {
               background-color: $color-text;
             }
           }
         }
         .dialog-body{
-          
-
         }
       }
     }
@@ -273,7 +253,7 @@
       &:hover{
         background-color : $color-500;
       }      
-      aon-icon-button i {
+      aon-icon-button aon-icon {
         &::after {
           background-color : $color-300;
         }
@@ -319,7 +299,7 @@
           color: $color-red-500;
         }
       }
-      aon-icon-button i {
+      aon-icon-button aon-icon {
         &::after {
           background-color: $color-300;
         }
@@ -460,6 +440,35 @@
       aon-card.plansFooter{
         .aonCardContent{
           color: $color-text-general;
+        }
+      }
+    }
+    // Notas
+    aon-notes .aonFlex #notesContainer{
+      .noteCard{
+        border: $border;
+        box-shadow: v.$px-0 v.$px-4 v.$px-2 rgba(0, 0, 0, 0.1);
+        &::after {
+          background: transparent;
+          box-shadow: v.$px-0 v.$px-6 v.$px-8 -#{v.$px-4} rgba(0, 0, 0, 0.05);
+        }
+        .noteTitleCard{
+          aon-new-input label{
+            input{
+              background-color: transparent;
+              border: none;
+              &::placeholder{
+                color  : unset;
+                opacity: unset;
+              }
+            }
+          }
+        }
+        .noteBodyContent{
+          textarea{
+            background-color: transparent;
+            border: unset;
+          }
         }
       }
     }

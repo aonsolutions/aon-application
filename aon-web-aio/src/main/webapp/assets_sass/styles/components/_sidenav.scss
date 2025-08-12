@@ -59,7 +59,7 @@ $icon-gap : calc(v.$gap / 2);
         button{
           width : $icon-size;
           height: $icon-size;
-          i {
+          aon-icon {
             width : $icon-size;
             height: $icon-size;
             &::after {
@@ -85,6 +85,26 @@ $icon-gap : calc(v.$gap / 2);
       margin        : 0;
       padding       : 0;
       overflow      : hidden;
+    }
+  }
+  // si tenemos contenido vacio
+  div:empty {
+    display: none;
+  }
+  // Componente dentro de este
+  .sidenav-component{
+    padding: 0 v.$padding;
+    // Marcaje
+    aon-sign{
+      display       : flex;
+      flex-direction: column;
+      align-items   : center;
+      #aonSignContent{
+        display       : flex;
+        flex-direction: column;
+        align-items   : center;
+        gap           : calc(v.$gap / 2);
+      }
     }
   }
 }

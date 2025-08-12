@@ -11,24 +11,30 @@ $mask-size                   : contain;
 
 // Mapa con iconos y texto
 $icons: (
-  "visibility"     : '../icons/eye.svg',
-  "visibility_off" : '../icons/eye-off.svg',
-  "settings"       : '../icons/settings.svg',
-  "close"          : '../icons/x-square.svg',
-  "open_in_new"    : '../icons/maximize-2.svg',
-  "language"       : '../icons/globe.svg',
-  "palette"        : '../icons/palette.svg',
-  "account_circle" : '../icons/user.svg',
-  "notifications"  : '../icons/bell.svg',
-  "help_outline"   : '../icons/help-circle.svg',
-  "business"       : '../icons/building.svg',
-  "home"           : '../icons/home.svg',
-  "chevron-down"   : '../icons/chevron-down.svg',
-  "chevron-right"  : '../icons/chevron-right.svg',
-  "delete"         : '../icons/trash-2.svg',
-  "edit"           : '../icons/edit.svg',
-  "add"            : '../icons/plus.svg',
-  "award"          : '../icons/award.svg',
+  "visibility"           : '../icons/eye.svg',
+  "visibility_off"       : '../icons/eye-off.svg',
+  "settings"             : '../icons/settings.svg',
+  "close"                : '../icons/x-square.svg',
+  "open_in_new"          : '../icons/maximize-2.svg',
+  "language"             : '../icons/globe.svg',
+  "palette"              : '../icons/palette.svg',
+  "account_circle"       : '../icons/user.svg',
+  "notifications"        : '../icons/bell.svg',
+  "notification_add"     : '../icons/bell-plus.svg',
+  "help_outline"         : '../icons/help-circle.svg',
+  "business"             : '../icons/building.svg',
+  "home"                 : '../icons/home.svg',
+  "chevron-down"         : '../icons/chevron-down.svg',
+  "chevron-right"        : '../icons/chevron-right.svg',
+  "delete"               : '../icons/trash-2.svg',
+  "edit"                 : '../icons/edit.svg',
+  "add"                  : '../icons/plus.svg',
+  "award"                : '../icons/award.svg',
+  "push_pin"             : '../icons/pin.svg',
+  "aon_pin_off"          : '../icons/pin-off.svg',
+  "label"                : '../icons/tag.svg',
+  "move_to_inbox"        : '../icons/archive.svg',
+  "filter_list"          : '../icons/filter.svg',
   /* nombres que le han puesto en los iconos de la izquierda... */
   "widgets"            : '../icons/box.svg',
   "add_circle_outline" : '../icons/plus-square.svg',
@@ -73,7 +79,7 @@ $icons: (
     button{
       width  : $icon-size;
       height : $icon-size;
-      i {
+      aon-icon {
         font-size : $iconbutton-font-size;
         position  : $position;
         font-size : $iconbutton-font-size-hidden; /* Ocultar el texto */

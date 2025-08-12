@@ -1,6 +1,6 @@
 import { AonElement } from '../components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, 
- NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, PLANS, SUPERSET, getConstPlans,
+ NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, PLANS, SUPERSET,
   COMMERCE, OFFICE, GARAGE, ACADEMY, ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, 
   TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, 
   MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU
@@ -28,10 +28,8 @@ import { AonAppMenu } from '../modules/aon-app-menu.js';
 import { AonNotes } from '../modules/note/aon-notes.js';
 import { AonDesktop } from '../modules/company/aon-desktop.js';
 import { AonWarehouse } from '../modules/warehouse/aon-warehouse.js';
-//import { AonMarketing } from '../modules/marketing/aon-marketing.js';
 import * as OPTION from '../modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from '../modules/messenger/MessengerEnums.js';
-import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
 import { AonPlans } from './aon-plans';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
@@ -56,17 +54,12 @@ import { AonSearchBox } from '../components/aon-search-box.js';
 
 import { AonParent } from "./aon-parent.js";
 
-import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
-
 import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
 import { Income } from './invoice/Income.js';
 import { Expense } from './invoice/Expense.js';
-import { createSelect } from '../components/CreateComponent.js';
-import { getCompanyActivities } from '../services/companyService.js';
-import { AonDialog } from '../components/aon-dialog.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!

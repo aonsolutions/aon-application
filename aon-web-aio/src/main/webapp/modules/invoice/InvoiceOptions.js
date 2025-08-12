@@ -489,7 +489,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT] //, CLOSING_INVOICE ]
   }
 
-
   export const INVOICE_SEARCH_OPTIONS = [
     {
       type: CONSTANT.DATE,
@@ -510,7 +509,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
       title: MSG.STATUS
     },
   ];
-
 
   export const NEW_ISSUED_INVOICE = {
     name: MSG.ISSUEDS,

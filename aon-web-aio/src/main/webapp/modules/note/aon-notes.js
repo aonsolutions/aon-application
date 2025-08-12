@@ -1,13 +1,14 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { AON_ICONS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
-import Apps, { NOTES } from "../../services/app.js";
+import { NOTES } from "../../services/app.js";
 import { AON_NOTES } from "../../environments/aonTag.js";
 import { getNotes, saveNote, deleteNote, saveNoteTag, deleteNoteTag } from "../../services/noteService.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { Note } from "../../models/note/Note.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { AonNewDialog } from "../../components/aon-new-dialog.js";
+import { AonNewInput } from "../../components/aon-new-input";
 import { sortBy } from "../../services/utils.js";
 import { AonIcon } from "../../components/aon-icon.js";
 import { createInput } from "../../components/CreateComponent.js";
@@ -16,6 +17,7 @@ export class AonNotes extends AonElement {
   NOTES;
   NOTES_TAG;
   NOTES_STATUS;
+  DIALOG;
 
   notesContainer;
   filter;
@@ -24,6 +26,8 @@ export class AonNotes extends AonElement {
     super();
     this.filter = {};
     this.filter.order = 'pinUp';
+    const application = document.querySelector('aon-application');
+    this.DIALOG       = document.getElementById(application.DIALOG);
   }
 
   connectedCallback() {
@@ -34,23 +38,22 @@ export class AonNotes extends AonElement {
   initialize() {}
 
   async build() {
-    this.createApplication(AON_NOTES, MSG.NOTES, new AonApplication());
-    this.buildToolbar();
-
+    // TRAER la cantidad de notas
     await this.getNotes();
-    
-    this.buildSidenav();
+    // MONTAR
+    this.createApplication(AON_NOTES, MSG.NOTES, new AonApplication());
+    // CABECERA
+    this.buildToolbar();
+    // Menu de la izquierda
+    await this.buildSidenav();
     this.buildTagSidenav();
-
+    // Listado de notas, Por lo visto si existe el boton de activas
     this.waitForElementToExist("aon-notesSidenavNotesOpen").then(
       (noteSidenavOpt) => {
         noteSidenavOpt.click();
-
         // Hide sideNav
         if (this.isMobile() || window.innerWidth < 730) {
-          this.waitForElementToExist(
-            "aon-notesToolbarHeaderTitleSectionMenuIconButton"
-          ).then((collapseMenuBtn) => {
+          this.waitForElementToExist("aon-notesToolbarHeaderTitleSectionMenuIconButton").then((collapseMenuBtn) => {
             collapseMenuBtn.click();
           });
         }
@@ -58,45 +61,39 @@ export class AonNotes extends AonElement {
     );
   }
 
-  // ----------------------------- TOOLBAR
-
+// ----------------------------- TOOLBAR
   buildToolbar() {
-    this.getApplication().addToolbarOption2(
-      {
+    // Filtro - Dialog de filtro
+    let orderOpt = new AonDialogMenu();
+    orderOpt.id  = "orderOptDialog";
+    this.getApplication().appendChild(orderOpt);
+    // Boton del dialog para el filtro
+    this.getApplication().addToolbarOption2({
+        id  : "Order",
         name: "Odernar",
-        icon: MATERIAL_ICONS.FILTER_LIST,
-        id: "Order",
-      },
-      () => {
+        icon: MATERIAL_ICONS.FILTER_LIST
+      },() => {
         this.showOrderDialog();
-      }
-    );
-
-    this.getApplication().addToolbarOption2(
-      {
-        name: "Nueva Nota",
-        icon: MATERIAL_ICONS.ADD,
+      });
+    // Agregar
+    this.getApplication().addToolbarOption2({
         id: MATERIAL_ICONS.ADD,
-      },
-      () => {
+        name: "Nueva Nota",
+        icon: MATERIAL_ICONS.ADD
+      },() => {
         const titleInputId = this.addNote();
         this.waitForElementToExist(`${titleInputId}`).then((titleInput) => {
           titleInput.focus();
         });
-      }
-    );
-
-    let orderOpt = new AonDialogMenu();
-    orderOpt.id = "orderOptDialog";
-    this.getApplication().appendChild(orderOpt);
-
+      });
   }
 
   showOrderDialog(){
-
+    
+    console.log('showOrderDialog() - - - - - -');
+    
     this.waitForElementToExist("aon-notesToolbarHeaderToolSectionOrderButtonIconButton").then(
       (button) => {
-
         let height = window.innerHeight;
         let top  = button.getBoundingClientRect().top;
         const left = button.getBoundingClientRect().left;
@@ -140,11 +137,10 @@ export class AonNotes extends AonElement {
         let options = [defaultOrder, updateOrder, creationOrder];
         d.setMenuOptions(options, top, left);
         d.open();
-      });    
+      });
   }
 
-  // ----------------------------- GET NOTES
-
+// ----------------------------- GET NOTES
   async getNotes(){
     await getNotes().then((notes) => {
       this.NOTES = notes;
@@ -181,93 +177,73 @@ export class AonNotes extends AonElement {
     });
   }
 
-  // ----------------------------- SIDENAV
-
-  buildSidenav() {
+// ----------------------------- SIDENAV
+  async buildSidenav() {
+    // Notas
+    await this.buildUtilitiesOptions();
     this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) =>
+      // filtros de las notas
       this.selectOption(e.detail)
     );
-
-    this.buildUtilitiesOptions();
   }
-
+  // ----------------------------- SIDENAV (NOTES)
   async selectOption(option) {
+    this.filter.all      = false;
+    this.filter.active   = false;
+    this.filter.expired  = false;
+    this.filter.archived = false;
     switch (option.id) {
       case "NotesAll":
         this.filter.all = true;
-        this.filter.active = false;
-        this.filter.expired = false;
-        this.filter.archived = false;
-        this.aonNotes();
         break;
       case "NotesOpen":
-        this.filter.all = false;
         this.filter.active = true;
-        this.filter.expired = false;
-        this.filter.archived = false;
-        this.aonNotes();
         break;
       case "NotesExpired":
-        this.filter.all = false;
-        this.filter.active = false;
         this.filter.expired = true;
-        this.filter.archived = false;
-        this.aonNotes();
         break;
       case "NotesArchived":
-        this.filter.all = false;
-        this.filter.active = false;
-        this.filter.expired = false;
         this.filter.archived = true;
-        this.aonNotes();
-        break;
-      default:
         break;
     }
+    this.aonNotes();
   }
-
-  // ----------------------------- SIDENAV (NOTES)
-
-  buildUtilitiesOptions() {
-    let notesOpts = [];
-    notesOpts.push(
+  // Opciones de filtros en las notas
+  async buildUtilitiesOptions() {
+    let notesOpts = [
       {
         id: CONSTANT.NOTES.initCap() + "All",
         name: `Todas (${this.NOTES_STATUS.all})`,
-        icon: MATERIAL_ICONS.ALL_INBOX,
         app: NOTES,
         fn: () => {
           // Filter selectOption method
-        },
+        }
       },
       {
         id: CONSTANT.NOTES.initCap() + "Open",
         name: `Activas (${this.NOTES_STATUS.active})`,
-        icon: MATERIAL_ICONS.NOTES,
         app: NOTES,
         fn: () => {
           // Filter selectOption method
-        },
+        }
       },
       {
         id: CONSTANT.NOTES.initCap() + "Expired",
         name: `Expiradas (${this.NOTES_STATUS.expired})`,
-        icon: MATERIAL_ICONS.SCHEDULE,
         app: NOTES,
         fn: () => {
           // Filter selectOption method
-        },
+        }
       },
       {
         id: CONSTANT.NOTES.initCap() + "Archived",
         name: `Archivadas (${this.NOTES_STATUS.archived})`,
-        icon: MATERIAL_ICONS.INBOX,
         app: NOTES,
         fn: () => {
           // Filter selectOption method
-        },
+        }
       }
-    );
+    ];
 
     let options = {
       id: CONSTANT.NOTES.initCap(),
@@ -278,9 +254,9 @@ export class AonNotes extends AonElement {
 
     this.getApplication().addSidenavOptions3(options);
   }
+  // ----------------------------- SIDENAV (FIN - NOTES)
 
   // ----------------------------- SIDENAV (TAG)
-
   async buildTagSidenav() {
     let notesOpts = [];
     Object.keys(this.NOTES_TAG).forEach(key => {
@@ -288,7 +264,6 @@ export class AonNotes extends AonElement {
         id: key,
         name: `${this.truncateKey(key)} (${this.NOTES_TAG[key] || '0'})`,
         title: `${key} (${this.NOTES_TAG[key] || '0'})`,
-        icon: MATERIAL_ICONS.LABEL,
         actions: [
           {
             id: "Delete",
@@ -299,29 +274,30 @@ export class AonNotes extends AonElement {
             id: "Edit",
             icon: MATERIAL_ICONS.EDIT,
             action: () => this.dialogTag(key)
-          },
+          }
         ],
         fn: async () => {
           // Filter notes by tag
-          if(this.filter.tag && this.filter.tag === key){
-            this.filter.tag = undefined;
-          } else {
-            this.filter.tag = key;
-          }
+          this.filter.tag = this.filter.tag && this.filter.tag === key ? undefined : key;
           this.aonNotes();
-        },
+        }
       });
     });
+    
+    // Solo si tenemos etiquetas
+    if(notesOpts.length > 0){
+      let options = {
+        id: "Tags",
+        name: MSG.TAG,
+        app: NOTES,
+        options: notesOpts
+      };
 
-    let options = {
-      id: "Tags",
-      name: MSG.TAG,
-      app: NOTES,
-      options: notesOpts
-    };
-
-    this.getApplication().addSidenavOptions3(options);
+      this.getApplication().addSidenavOptions3(options);
+    }
   }
+  // ----------------------------- SIDENAV (FIN - TAG)
+// ----------------------------- FIN - SIDENAV
 
   truncateKey(value){
     if(value && value.length > 10){
@@ -329,8 +305,7 @@ export class AonNotes extends AonElement {
     }
     return value;
   }
-
-  deleteTag(noteTag) {
+  deleteTag(noteTag) {    
     let aonDeleteTagDialog = new AonNewDialog();
     aonDeleteTagDialog.id = noteTag + "Delete";
     this.getApplication().appendChild(aonDeleteTagDialog);
@@ -360,6 +335,62 @@ export class AonNotes extends AonElement {
   }
 
   dialogTag(noteTag) {
+    
+  /*
+    let d = document.getElementById(application.DIALOG);
+    DIALOG            = document.getElementById(application.DIALOG);
+		d.clear();
+		d.setTitle("Cambiar Contraseña");
+
+        let newPassword   = new AonNewInput();
+        newPassword.id    = "aonConfigurationUserCardOldPassword";
+        newPassword.type  = "password";
+        newPassword.title = "Contraseña";
+        d.setContent(newPassword);
+
+        let newPasswordRepeat   = new AonNewInput();
+        newPasswordRepeat.id    = "aonConfigurationUserCardNewPassword";
+        newPasswordRepeat.type  = "password";
+        newPasswordRepeat.title = "Repetir Contraseña";
+        d.addContent(newPasswordRepeat);
+        
+		d.addAcceptAction(() => {
+          changePassword({oldPassword:newPassword.value, newPassword:newPasswordRepeat.value}, this.sessionData).then(()=>{
+            this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
+          }).catch(e=>this.showError(e));
+		});
+		d.open();
+     * 
+   */
+//      const application = document.querySelector('aon-application');
+//    this.DIALOG       = document.getElementById(application.DIALOG);
+
+  console.log(this.DIALOG);
+
+    this.DIALOG.clear();
+    this.DIALOG.setTitle("Etiqueta");
+    
+    // Create name input
+    let nameInput = createInput('nameInput', 'Nombre');
+    nameInput.type = 'text';
+    nameInput.setAttribute("maxLength", 17);
+    nameInput.id = "dialogTag";
+    if (noteTag)
+      nameInput.value = noteTag;
+    this.DIALOG.setContent(nameInput);
+    nameInput.focus();
+    
+    this.DIALOG.addAcceptAction(async () => {
+      let data = {};
+      data.noteTagOld = noteTag;
+      data.noteTagNew = nameInput.value;
+      await saveNoteTag(data);
+      await this.reloadNotes();
+    });
+
+    this.DIALOG.open();
+    
+  /*
     let aonCreateUpdateTagDialog = new AonNewDialog("Etiqueta");
     aonCreateUpdateTagDialog.id = "createUpdateTagDialog";
     this.getApplication().appendChild(aonCreateUpdateTagDialog);
@@ -392,10 +423,10 @@ export class AonNotes extends AonElement {
       input.setAttribute("maxLength", 17);
       input.focus();
     });
+   */
   }
 
   // ----------------------------- NOTES
-
   aonNotes() {
     this.notesContainer = this.createElement(TAG.DIV);
     this.notesContainer.id = "notesContainer";
@@ -424,8 +455,11 @@ export class AonNotes extends AonElement {
     }
 
     this.addFilterSelection();
-    if(this.filter.tag){ this.updateTagSideNavCount(); } 
-    else { this.updateSideNavCount(); }
+    if(this.filter.tag){ 
+      this.updateTagSideNavCount();
+    } else {
+      this.updateSideNavCount();
+    }
   }
 
   filterNotes() {
@@ -466,58 +500,41 @@ export class AonNotes extends AonElement {
     let noteCard = this.createElement(TAG.DIV);
     noteCard.id = note.getId() + "Card";
     noteCard.className = CSS.NOTE_CARD;
-
+    if(note.color){
+      noteCard.style.backgroundColor = note.color;
+    }
     // Title
     let noteCardTitleDiv = this.createElement(TAG.DIV);
     noteCardTitleDiv.className = CSS.NOTE_TITLE_CARD;
-    if(note.color){
-      noteCardTitleDiv.style.backgroundColor = note.color;
-    } else {
-      noteCardTitleDiv.style.backgroundColor = "white";
-    }
     noteCard.appendChild(noteCardTitleDiv);
 
-    let noteCardTitle = this.createElement(TAG.INPUT);
+    //let noteCardTitle = this.createElement(TAG.INPUT);
+    let noteCardTitle = new AonNewInput();
     noteCardTitle.id = note.getId() + "Title";
     noteCardTitle.type = "text";
-    noteCardTitle.maxlength = 60;
-    noteCardTitle.placeholder = MSG.TITLE;
+    noteCardTitle.title = MSG.TITLE;
     noteCardTitle.className = CSS.NOTE_TITLE;
     noteCardTitle.value = note.getSubject() ? note.getSubject() : "";
     noteCardTitleDiv.appendChild(noteCardTitle);
 
-    let pinUpTitleButton = new AonIcon();
-    pinUpTitleButton.icon = AON_ICONS.AON_PIN_OFF;
-    pinUpTitleButton.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
-    pinUpTitleButton.style.cursor = "pointer";
-    pinUpTitleButton.title = "Liberar";
-    pinUpTitleButton.id = "pinUpTitleButton";
-    pinUpTitleButton.addEventListener(EVENT.CLICK, async (ev)=>{
-      ev.stopPropagation();
-      note.setPinUp(!note.getPinUp());
-      await this.saveNote(note);
-      await this.reloadNotes();
-    });
-
     if(note.getPinUp()){
+      const pinUpTitleButton = this.createNoteButton(AON_ICONS.AON_PIN_OFF, "Liberar", async (ev) => {
+        note.setPinUp(!note.getPinUp());
+        await this.saveNote(note);
+        await this.reloadNotes();
+      });
+      pinUpTitleButton.id = "pinUpTitleButton";
       noteCardTitleDiv.appendChild(pinUpTitleButton);
-      this.waitForElementToExist(`pinUpTitleButton`).then(
-        (button) => {
-          let svg = document.querySelector("#pinUpTitleButton svg");
-          svg.setAttribute("width", "20");
-          svg.setAttribute("height", "20");
-        }
-      );
     }
 
-     // Body
+    // Body
     let noteCardBodyDiv = this.createElement(TAG.DIV);
     noteCardBodyDiv.className = CSS.NOTE_BODY_CONTENT;
     noteCard.appendChild(noteCardBodyDiv);
 
     let textAreaBody = this.createElement("textarea");
     textAreaBody.placeholder = MSG.WRITE_A_NOTE;
-    textAreaBody.rows = "4";
+    textAreaBody.rows = "6";
     textAreaBody.className = CSS.NOTE_BODY;
     textAreaBody.value = note.getNote() ? note.getNote() : "";
     noteCardBodyDiv.appendChild(textAreaBody);
@@ -531,92 +548,67 @@ export class AonNotes extends AonElement {
 
     // Bottom
     let bottomNoteDiv = this.createElement(TAG.DIV);
-    bottomNoteDiv.style.width = "100%";
-    bottomNoteDiv.style.display = "flex";
-    bottomNoteDiv.style.justifyContent = "space-between";
-    bottomNoteDiv.style.alignItems = "center";
+    bottomNoteDiv.classList.add("note-footer");
     noteCardBodyDiv.appendChild(bottomNoteDiv);
 
-    let noteTagDiv = this.createElement(TAG.DIV);
-    noteTagDiv.style.display = "none";
-    noteTagDiv.style.padding = ".5rem";
-    noteTagDiv.style.backgroundColor = "#ddd";
-    noteTagDiv.style.borderRadius = "15px";
-    noteTagDiv.style.height = "30px";
-    noteTagDiv.style.display = "block";
-    noteTagDiv.style.fontSize = ".7rem";
+    let noteTagDiv = this.createElement(TAG.SMALL);
+    noteTagDiv.classList.add("note-tags");
     bottomNoteDiv.appendChild(noteTagDiv);
 
     if(note.getNoteTag()){
       noteTagDiv.innerHTML = note.getNoteTag();
-    } else noteTagDiv.style.visibility = "hidden";
+    } else 
+      noteTagDiv.classList.add("hidden");
 
     let buttonsNoteDiv = this.createElement(TAG.DIV);
-    buttonsNoteDiv.style.display = "none";
-    buttonsNoteDiv.style.width = "12rem";
+    buttonsNoteDiv.classList.add("note-buttons", "hidden");
     bottomNoteDiv.appendChild(buttonsNoteDiv);
 
     // Delete
-    let deleteButton = this.createNoteButton(
-      MATERIAL_ICONS.DELETE,
-      "Eliminar nota",
-      () => {
-        let aonDeleteDialog = new AonNewDialog();
-        aonDeleteDialog.id = note.getId();
-        this.getApplication().appendChild(aonDeleteDialog);
+    let deleteButton = this.createNoteButton(MATERIAL_ICONS.DELETE, "Eliminar nota", () => {
+      let aonDeleteDialog = new AonNewDialog();
+      aonDeleteDialog.id = note.getId();
+      this.getApplication().appendChild(aonDeleteDialog);
 
-        aonDeleteDialog.createMessage(`¿Desea eliminar la nota '${note.getSubject()}'?`);
+      aonDeleteDialog.createMessage(`¿Desea eliminar la nota '${note.getSubject()}'?`);
 
-        aonDeleteDialog.createAcceptButton(async () => {
-          await deleteNote(note);
-          this.getApplication().removeChild(aonDeleteDialog);
-          await this.reloadNotes();
-        });
+      aonDeleteDialog.createAcceptButton(async () => {
+        await deleteNote(note);
+        this.getApplication().removeChild(aonDeleteDialog);
+        await this.reloadNotes();
+      });
 
-        aonDeleteDialog.createCancelButton(() => {
-          this.getApplication().removeChild(aonDeleteDialog);
-        });
+      aonDeleteDialog.createCancelButton(() => {
+        this.getApplication().removeChild(aonDeleteDialog);
+      });
 
-        this.waitForElementToExist(`${note.getId()}AcceptButton`).then(
-          (acceptButton) => {
-            acceptButton.focus();
-          }
-        );
-      }
-    )
+      this.waitForElementToExist(`${note.getId()}AcceptButton`).then(
+        (acceptButton) => {
+          acceptButton.focus();
+        }
+      );
+    });
     buttonsNoteDiv.appendChild(deleteButton);
 
-    let pinUpButton = this.createNoteButton(
-      MATERIAL_ICONS.PUSH_PIN,
-      note.getPinUp() ? "Liberar" : "Fijar",
-      async () => {
-        note.setPinUp(!note.getPinUp());
-        await this.saveNote(note);
-        await this.reloadNotes();
-      }
-    );
+    let pinUpButton = this.createNoteButton(MATERIAL_ICONS.PUSH_PIN, note.getPinUp() ? "Liberar" : "Fijar", async () => {
+      note.setPinUp(!note.getPinUp());
+      await this.saveNote(note);
+      await this.reloadNotes();
+    });
     if(!note.getPinUp()){
       buttonsNoteDiv.appendChild(pinUpButton);
     }
 
-    let colorButton = this.createNoteButton(
-      MATERIAL_ICONS.PALETTE,
-      "Color",
-      (ev) => {
-        this.createColorsSelection(ev, note, buttonsNoteDiv);
-      }
-    );
+    let colorButton = this.createNoteButton(MATERIAL_ICONS.PALETTE, "Color", (ev) => {
+      this.createColorsSelection(ev, note, buttonsNoteDiv);
+    });
     buttonsNoteDiv.appendChild(colorButton);
 
-    let alarmButton = this.createNoteButton(
-      MATERIAL_ICONS.NOTIFICATION_ADD,
-      "Fecha",
-      () => {
-        noteCardDate.style.display = "block";
-        const date = document.getElementById(note.getId() + "Date");
-        date.showPicker();
-      }
-    );
+    let alarmButton = this.createNoteButton(MATERIAL_ICONS.NOTIFICATION_ADD, "Fecha", () => {
+      noteCardDate.style.display = "block";
+      const date = document.getElementById(note.getId() + "Date");
+      date.showPicker();
+    });
     buttonsNoteDiv.appendChild(alarmButton);
 
     let archiveButton = this.createNoteButton(
@@ -632,76 +624,57 @@ export class AonNotes extends AonElement {
     );
     buttonsNoteDiv.appendChild(archiveButton);
 
-    let tagButton = this.createNoteButton(
-      MATERIAL_ICONS.LABEL,
-      "Etiqueta",
-      () => {
-        let aonTagDialog = new AonNewDialog("Asignar etiqueta");
-        aonTagDialog.id = note.getId() + "Tag";
-        this.getApplication().appendChild(aonTagDialog);
+    let tagButton = this.createNoteButton(MATERIAL_ICONS.LABEL, "Etiqueta", () => {
+      let aonTagDialog = new AonNewDialog("Asignar etiqueta");
+      aonTagDialog.id = note.getId() + "Tag";
+      this.getApplication().appendChild(aonTagDialog);
 
-        // Create name input
-        let tagInputDiv = this.createElement(TAG.DIV);
-        tagInputDiv.style.height = "50px";
-        tagInputDiv.style.border = "1px solid #d2d2d6";
-        tagInputDiv.style.borderRadius = "3px";
-        tagInputDiv.style.position = "relative";
+      // Create name input
+      let tagInputDiv = this.createElement(TAG.DIV);
 
-        let selectInputDic = this.createElement(TAG.INPUT);
-        selectInputDic.type = "text";
-        selectInputDic.placeholder = "Introduce la etiqueta";
-        selectInputDic.setAttribute("list", "tagDatalist");
-        selectInputDic.style.width = "100%";
-        selectInputDic.style.height = "100%";
-        selectInputDic.style.background = "none";
-        selectInputDic.style.border = "none";
-        selectInputDic.style.paddingLeft = "1rem";
-        selectInputDic.setAttribute("maxLength", 17);
-        selectInputDic.id = "tagInputDialog";
-        selectInputDic.value = note.getNoteTag();
-        tagInputDiv.appendChild(selectInputDic);
+      let selectInputDic = this.createElement(TAG.INPUT);
+      selectInputDic.type = "text";
+      selectInputDic.placeholder = "Introduce la etiqueta";
+      selectInputDic.setAttribute("list", "tagDatalist");
+      selectInputDic.setAttribute("maxLength", 17);
+      selectInputDic.id = "tagInputDialog";
+      selectInputDic.value = note.getNoteTag();
+      tagInputDiv.appendChild(selectInputDic);
 
-        let datalist = this.createElement("datalist");
-        datalist.id = "tagDatalist";
-        tagInputDiv.appendChild(datalist);
+      let datalist = this.createElement("datalist");
+      datalist.id = "tagDatalist";
+      tagInputDiv.appendChild(datalist);
 
-        Object.keys(this.NOTES_TAG).forEach(tag => {
-          let optionSelectDic = this.createElement("option");
-          optionSelectDic.innerText = tag;
-          optionSelectDic.value = tag;
-          datalist.appendChild(optionSelectDic);
-        });
+      Object.keys(this.NOTES_TAG).forEach(tag => {
+        let optionSelectDic = this.createElement("option");
+        optionSelectDic.innerText = tag;
+        optionSelectDic.value = tag;
+        datalist.appendChild(optionSelectDic);
+      });
 
-        let tagSpantDic = this.createElement(TAG.SPAN);
-        tagSpantDic.innerText = "Etiqueta";
-        tagSpantDic.style.top = "-8px";
-        tagSpantDic.style.padding = "0 5px";
-        tagSpantDic.style.background = "white";
-        tagSpantDic.style.position = "absolute";
-        tagSpantDic.style.left = "10px";
-        tagSpantDic.style.fontSize = "12px";
-        tagInputDiv.appendChild(tagSpantDic);
-        
-        aonTagDialog.createBody(tagInputDiv);
+      let tagSpantDic = this.createElement(TAG.SPAN);
+      tagSpantDic.innerText = "Etiqueta";
+      tagInputDiv.appendChild(tagSpantDic);
 
-        aonTagDialog.createAcceptButton(async () => {
-          this.getApplication().removeChild(aonTagDialog);
-          note.noteTag = selectInputDic.value;
-          await this.saveNote(note);
-          await this.reloadNotes();
-        });
+      aonTagDialog.createBody(tagInputDiv);
 
-        aonTagDialog.createCancelButton(() => {
-          this.getApplication().removeChild(aonTagDialog);
-        });
+      aonTagDialog.createAcceptButton(async () => {
+        this.getApplication().removeChild(aonTagDialog);
+        note.noteTag = selectInputDic.value;
+        await this.saveNote(note);
+        await this.reloadNotes();
+      });
 
-        this.waitForElementToExist(`tagInputDialog`).then(
-          (input) => {
-            input.focus();
-          }
-        );
-      }
-    );
+      aonTagDialog.createCancelButton(() => {
+        this.getApplication().removeChild(aonTagDialog);
+      });
+
+      this.waitForElementToExist(`tagInputDialog`).then(
+        (input) => {
+          input.focus();
+        }
+      );
+    });
     buttonsNoteDiv.appendChild(tagButton);
 
     // Check if its expired
@@ -725,33 +698,19 @@ export class AonNotes extends AonElement {
       alarmButton.style.display = "none";
     }
 
-    if(note.getColor()){
-      noteCardBodyDiv.style.backgroundColor = note.getColor();
-      textAreaBody.style.backgroundColor = note.getColor();
-      noteCardDate.style.backgroundColor = note.getColor();
-    } else {
-      noteCardBodyDiv.style.backgroundColor = "white";
-      textAreaBody.style.backgroundColor = "white";
-      noteCardDate.style.backgroundColor = "white";
-    }
-
     // EVENTS
-    noteCard.addEventListener(
-      "mouseover",
-      (event) => {
-        buttonsNoteDiv.style.display = "flex";
-        noteTagDiv.style.display = "none";
-      },
-      false,
+    noteCard.addEventListener("mouseover",(event) => {
+        buttonsNoteDiv.classList.remove("hidden");
+        noteTagDiv.classList.add("hidden");
+      },false,
     );
 
-    noteCard.addEventListener(
-      "mouseout",
-      (event) => {
-        buttonsNoteDiv.style.display = "none";
-        noteTagDiv.style.display = "block";
-      },
-      false,
+    noteCard.addEventListener("mouseout",(event) => {
+        buttonsNoteDiv.classList.add("hidden");
+        if (noteTagDiv.children.length > 0 || noteTagDiv.textContent.trim() !== "") {
+          noteTagDiv.classList.remove("hidden");
+        }
+      },false,
     );
 
     noteCardTitle.addEventListener("change", async ({ target }) => {
@@ -851,19 +810,11 @@ export class AonNotes extends AonElement {
   }
 
   createNoteButton(icon, title, fn){
-    let button = new AonIconButton();
+    let button     = new AonIconButton();
     button.noHover = true;
-    button.icon = icon;
-    button.title = title;
-    
-    let innerButton = button.getButton();
-    innerButton.style.height = "30px";
-    innerButton.style.minWidth = "30px";
-    innerButton.style.width = "30px";
-
-    let innerIcon = button.getIcon();
-    innerIcon.style.fontSize = "1.3rem";
-    
+    button.icon    = icon;
+    button.title   = title;
+        
     button.addEventListener(EVENT.CLICK, (ev)=>{
       ev.stopPropagation();
       fn(ev);
@@ -885,22 +836,22 @@ export class AonNotes extends AonElement {
   async updateSideNavCount(){
     let currentDate = new Date().getTime();
 
-    document.getElementById("aon-notesSidenavNotesAll").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesAll").childNodes[0].innerText =
       `Todas (${
         this.NOTES.length
       })`;
 
-    document.getElementById("aon-notesSidenavNotesOpen").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesOpen").childNodes[0].innerText =
       `Activas (${
         this.NOTES.filter((note) => !note.archive && currentDate <= new Date(note.date).getTime()).length
       })`;
 
-    document.getElementById("aon-notesSidenavNotesExpired").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesExpired").childNodes[0].innerText =
       `Expiradas (${
         this.NOTES.filter((note) => !note.archive && currentDate > new Date(note.date).getTime()).length
       })`;
     
-    document.getElementById("aon-notesSidenavNotesArchived").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesArchived").childNodes[0].innerText =
       `Archivadas (${
         this.NOTES.filter((note) => note.archive).length
       })`;
@@ -909,22 +860,22 @@ export class AonNotes extends AonElement {
   async updateTagSideNavCount(){
     let currentDate = new Date().getTime();
 
-    document.getElementById("aon-notesSidenavNotesAll").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesAll").childNodes[0].innerText =
       `Todas (${
         this.NOTES.filter((note) => note.noteTag === this.filter.tag).length
       })`;
 
-    document.getElementById("aon-notesSidenavNotesOpen").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesOpen").childNodes[0].innerText =
       `Activas (${
         this.NOTES.filter((note) => !note.archive && currentDate <= new Date(note.date).getTime() && note.noteTag === this.filter.tag).length
       })`;
 
-    document.getElementById("aon-notesSidenavNotesExpired").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesExpired").childNodes[0].innerText =
       `Expiradas (${
         this.NOTES.filter((note) => !note.archive && currentDate > new Date(note.date).getTime() && note.noteTag === this.filter.tag).length
       })`;
     
-    document.getElementById("aon-notesSidenavNotesArchived").childNodes[1].innerText =
+    document.getElementById("aon-notesSidenavNotesArchived").childNodes[0].innerText =
       `Archivadas (${
         this.NOTES.filter((note) => note.archive && note.noteTag === this.filter.tag).length
       })`;

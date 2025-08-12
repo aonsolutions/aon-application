@@ -1,11 +1,10 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl, getContracts} from  '../services/service.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl} from  '../services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
-import { AonDesktop } from '../modules/company/aon-desktop.js';
 import { AonApplication } from '../components/aon-application.js';
 import * as LS from '../services/localStorageService.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
-import { MenuApps, ClassicApps, Apps } from '../services/app.js';
+import { ClassicApps, Apps } from '../services/app.js';
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
 import * as JSF from './aon-jsf-app.js';
 
@@ -238,12 +237,10 @@ export class AonParent extends AonElement {
 	}
 
 	getNotices(){
-		getUserNotice()
-		.then(notice =>{
+		getUserNotice().then(notice =>{
 			this.notice = notice;
 			this.updateCount();
-		})
-		.catch( err => {
+		}).catch( err => {
 			this.notice = undefined;
 			this.updateCount();
 		})
@@ -459,7 +456,6 @@ export class AonParent extends AonElement {
 		  options: [{
 				id: this.ENTERPRISES,
 				name: MSG.ALL2,
-				icon: MATERIAL_ICONS.BUSINESS,
 				app: ClassicApps.AON_SOLUTIONS,
 				fn: () => {
 					let enterprisesFilter = {ids:undefined, count:undefined};
@@ -478,7 +474,6 @@ export class AonParent extends AonElement {
 				{
 					id: this.TRAMIT_INVOICES,
 					name: MSG.DOCUMENTS_IN_PROCESS,
-					icon: MATERIAL_ICONS.EDIT_DOCUMENT,
 					app: Apps.INVOICE,
 					fn: () => {
 						let processedDomains = this.notice?.invoice?.processed?.domains || [];
@@ -500,42 +495,38 @@ export class AonParent extends AonElement {
 
 						let tramitFilter = { ids: domains, count: domainCount };
 						this.select({...this.getFilter(), ...tramitFilter}, companies => this.decorateTabs(companies, tramitFilter));																  
-					},
+					}
 				},
 				{
 					id: this.REJECTED_INVOICES,
 					name: MSG.DOCUMENTS_UNDER_REVIEW,
-					icon: MATERIAL_ICONS.REPORT,
 					app: Apps.INVOICE,
 					fn: () => {
 						let reviewFilter = { ids: this.notice?.invoice?.rejected?.domains, count: this.notice?.invoice?.rejected?.domainCount };
 						this.select({...this.getFilter(), ...reviewFilter}, companies => this.decorateTabs(companies, reviewFilter));
-					},
+					}
 				},
 				{
 					id: this.PENDING_INVOICES,
 					name: MSG.UNACCOUNT_INVOICES,
-					icon: MATERIAL_ICONS.LABEL_IMPORTANT,
 					app: Apps.INVOICE,
 					fn: () => {
 						let unaccountedFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
 						this.select({...this.getFilter(), ...unaccountedFilter}, companies => this.decorateTabs(companies, unaccountedFilter));
-					},
+					}
 				},
 				{
 					id: this.INBOX_INVOICES,
 					name: MSG.DRAFTS+"/"+MSG.PROFORMA,
-					icon: MATERIAL_ICONS.INBOX,
 					app: Apps.INVOICE,
 					fn: () => {
 						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
 						this.select({...this.getFilter(), ...draftsFilter}, companies => this.decorateTabs(companies, draftsFilter));
-					},
+					}
 				}
 			]
 		};
-		
-		
+
 		this.getApplication().addSidenavOptions3(invoiceOptions);
 		
 		let helpOptions = {
@@ -545,13 +536,11 @@ export class AonParent extends AonElement {
 		  options: [{
 			    id: CONSTANT.HELP.initCap() + "Notifications",
 			    name: MSG.NOTIFICATIONS,
-			    icon: MATERIAL_ICONS.RSS_FEED,
 				app: Apps.HOME,
 			    fn: () => this.rootPanel(new JSF.AonJsfHelpNotification())
 			},{
   			    id: CONSTANT.HELP.initCap() + "ContentIndex",
   			    name: MSG.CONTENT_INDEX,
-  			    icon: MATERIAL_ICONS.SCHOOL,
   				app: Apps.HOME,
   			    fn: () => this.rootPanel(new JSF.AonJsfHelpContent())
 			},
@@ -564,17 +553,9 @@ export class AonParent extends AonElement {
 		appsDiv.id = this.APPS_DIV;
 		this.getApplication().getSidenav().appendChild(appsDiv);
 
-		getTimeControl()
-		.then(r => {
-			let option = {
-				id: "signing",
-				title: MSG.SIGNING.toUpperCase(),
-				name: MSG.SIGNING.toUpperCase(),
-				app: Apps.TIMECONTROL
-			}
-
+		getTimeControl().then(r => {
 			let aonSign = new AonSign();
-			this.getApplication().addSidenavWidget2(option, aonSign);
+			this.getApplication().addSidenavWidgetComponet(aonSign);
 
 			aonSign.buildSignin(r);
 			let aonHeader = this.getElement('aonHeader');
@@ -582,7 +563,6 @@ export class AonParent extends AonElement {
 		});
 		
 		this.getNotices();
-		
 	}
 
 	cleanCompanies(){

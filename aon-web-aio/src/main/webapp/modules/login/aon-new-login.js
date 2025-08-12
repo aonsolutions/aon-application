@@ -1,18 +1,9 @@
 import { AonElement } from "../../components/AonElement.js";
 import { login, getManifest, magicLink, getCompanies, getUser, MOBILE_ACTION } from "../../services/service.js";
-
-import "../../components/aon-input.js";
-import "../../components/aon-loader.js";
-import "../../components/aon-dialog.js";
-import "../../components/aon-toast.js";
-import "../company/aon-mobile-desktop.js";
-
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonToast } from "../../components/aon-toast.js";
-import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
-import { Language } from "../../models/Language.js";
 import { AonEmail } from "../../components/aon-email.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
@@ -139,15 +130,14 @@ export class AonNewLogin extends AonElement {
 	    if (event.key === 'Enter') {
 			const username = this.getElement("aonLoginUser").value;
     		const password = this.getElement("aonLoginPassword").value;
-   
-   			if(username.length == 0 || password.length == 0) return;
+   			if(username.length === 0 || password.length === 0) return;
 	        this.signin();
     	}
     });
     
     passwordInput.addEventListener('keyup', (event) => {
 	    if (event.key === 'Enter') {
-	        if(userInput.value.length == 0 || passwordInput.value.length == 0) return;
+	        if(userInput.value.length === 0 || passwordInput.value.length === 0) return;
 	        this.signin();
     	}
     });

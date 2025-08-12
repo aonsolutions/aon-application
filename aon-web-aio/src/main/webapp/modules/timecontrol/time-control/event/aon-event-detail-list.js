@@ -2,7 +2,7 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { isEmptyObject, removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
 import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services/service.js";
-import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
+import { ToolbarOptions, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
@@ -12,7 +12,6 @@ import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { AonIconButton } from "../../../../components/aon-icon-button.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
-
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -97,9 +96,9 @@ export class AonEventDetailList extends AonElement {
 
     if(!this.applicationParentEl.isEmployee()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.aonEvent() );
+        this.applicationEl.addFloatOption(ToolbarOptions.ADD, () => this.aonEvent() );
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.aonEvent());
+        this.applicationEl.addToolbarOption2(ToolbarOptions.ADD, () => this.aonEvent());
       }
     }
     

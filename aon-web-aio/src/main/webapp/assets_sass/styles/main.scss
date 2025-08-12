@@ -18,6 +18,8 @@
 @use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen
 @use './pages/plans' as plans;                // plans - Listado de planes que se pueden contratar
 @use './pages/documental' as doc;             // doc   - Documentos
+@use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
+@use './pages/notes' as notes;                // notes - Notas que se crean
 
 // Temas y Resoluciones
 @use './theme-base' as themeBase;

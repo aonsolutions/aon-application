@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities } from '../../services/service.js';
+import { getDomainUserRoles, getTaskHolder, getTimeControl, getPeriodLaboral, getCompanyOne } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -18,13 +18,7 @@ import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
-import '../../components/aon-icon.js';
-import '../../components/aon-application.js';
-import { getOfficeProjects } from '../../services/projectService.js';
-import { Project } from '../../models/project/Project.js';
-import { getNoteCount } from '../../services/noteService.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
-import { Attach } from '../../models/Attach.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
@@ -45,7 +39,6 @@ import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
-import { createSelect } from '../../components/CreateComponent.js';
 
 export class AonDesktop extends AonElement {
 	dur;
@@ -108,17 +101,6 @@ export class AonDesktop extends AonElement {
 		};
 		let f = this.getDur().hasCustomView() || this.getDur().isEmployee()
 			? filter : parentFilter;
-/*
-		if (this.getDur().isTimecontrol() && !LS.isNewTheme()) {
-			getTimeControl().then(r => {
-				let aonSign = new AonSign();
-				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
-				aonSign.buildSignin(r);
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.timeControlStatus(r);
-			});
-		}
-*/
 		// Content
 		let content = this.createElement(TAG.DIV);
 		content.id = "content";

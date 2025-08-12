@@ -154,11 +154,12 @@ export class AonNewInput extends AonElement {
         label.appendChild(span);
 
         if(this.isPassword()) {
-            this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                this.getElement(this.ICON_BUTTON).icon =  type === 'password' ? 'visibility' : 'visibility_off';
-                input.type = type;
-            })
+          this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
+            const iconButton = this.getElement(this.ICON_BUTTON);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            iconButton.setIcon(type === 'password' ? 'visibility' : 'visibility_off');
+            input.type = type;
+          });
         }
     }
 
@@ -210,7 +211,6 @@ export class AonNewInput extends AonElement {
             this.removeError();
         }
     }
-
 
     addIcon(icon, color, fn) {
         let div = this.getElement(this.BOX);
@@ -306,7 +306,7 @@ export class AonNewInput extends AonElement {
     }
 
     getId() {
-       return this.id; 
+       return this.id
     }
 
     setId(id) {

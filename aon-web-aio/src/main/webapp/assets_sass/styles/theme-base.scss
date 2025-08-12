@@ -18,7 +18,10 @@
   font-weight : v.$font-weight-regular;
   font-size   : v.$px-16;
 }
-
+// sea global
+.hidden {
+  display: none !important;
+}
 ////////////////////////////////////////////////////////////
 // 
 //  Establecer rem dependiendo de la resolucion 

@@ -32,7 +32,6 @@ import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoice extends AonElement {
-
 	invoice;
 	focusId;
 	TOOLBAR;
@@ -135,7 +134,6 @@ export class AonInvoice extends AonElement {
 		this.DIALOG_BLANK = CONSTANT.AON_INVOICE + 'DialogBlank';
 
 		// ----- TAX
-
 		this.TAX = CONSTANT.AON_INVOICE_TAX;
 		this.TAX_TABLE = this.TAX + CONSTANT.TABLE.initCap();
 		this.TAX_TABLE2 = this.TAX_TABLE + '2';
@@ -157,7 +155,6 @@ export class AonInvoice extends AonElement {
 		this.TAX_ADD = this.TAX  + CONSTANT.ADD.initCap();
 
 		// ----- DETAIL
-
 		this.DETAIL = CONSTANT.AON_INVOICE_DETAIL;
 		this.DETAIL_TABLE = this.DETAIL + CONSTANT.TABLE.initCap();
 		this.DETAIL_ADD = this.DETAIL + CONSTANT.ADD.initCap();
@@ -175,7 +172,6 @@ export class AonInvoice extends AonElement {
 		// TODO BIEN AFECTO
 
 		// ----- FINANCE
-
 		this.FINANCE = CONSTANT.AON_INVOICE_FINANCE;
 		this.FINANCE_TABLE = this.FINANCE + CONSTANT.TABLE.initCap();
 		this.FINANCE_ADD = this.FINANCE + CONSTANT.ADD.initCap();

@@ -7,6 +7,9 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
 //  devtool: 'source-map',
+  stats: {
+    errorDetails: true
+  },
   entry: {
     app       : './src/main/webapp/index.js',                       // Para usar en el BETA
     aio       : './src/main/webapp/aio.js',
@@ -78,7 +81,7 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new CssMinimizerPlugin(), '...'
+//      new CssMinimizerPlugin(), '...'
     ]
   },
   resolve: {

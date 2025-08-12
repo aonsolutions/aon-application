@@ -62,7 +62,7 @@ aon-input, aon-new-input{
       position        : $inputiconlabel-position;
       justify-content : $inputiconlabel-justify-content;
       top             : -($input-height - $padding-top);
-      right           : $padding-right;
+      right           : calc($icon-padding-right / 4);
       aon-icon-button {
         height        : $iconbutton-height;
         align-content : $iconbutton-align-content;

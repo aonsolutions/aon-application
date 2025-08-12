@@ -1,14 +1,8 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";
+import * as LS from '../services/localStorageService.js';
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonIcon } from "./aon-icon.js";
-import "./aon-toolbar.js";
-import "./aon-loader.js";
-import "./aon-icon.js";
-import "./aon-dialog.js";
-import "./aon-dialog-menu.js";
-import "./aon-toast.js";
-import * as LS from '../services/localStorageService.js';
 import { AonToolbar } from "./aon-toolbar.js";
 import { AonLoader } from "./aon-loader.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
@@ -126,41 +120,10 @@ export class AonApplication extends AonElement {
 //      leftSidenav.style.height = 'calc(100vh - 172px)';
     }
 
-    // --- Donde metemos el contenido (que tenga la barra de desplazamiento arriba) ---
-      // Crear el contenedor principal que envolverá todo.
-      const wrapper = this.createDiv();
-      wrapper.className = CSS.AON_CONTENT_WRAPPER;
-      // 1 - Barra arriba
-        // Crear la barra de scroll superior.
-        const scrollbar = this.createDiv();
-        scrollbar.className = CSS.AON_CONTENT_TOP_SCROLLBAR;
-        // Crear la parte móvil (el "pulgar") de la barra de scroll.
-        const thumb = this.createDiv();
-        thumb.className = CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB;
-        // Construir la barra de scroll y añadirla al wrapper.
-        scrollbar.appendChild(thumb);
-        wrapper.appendChild(scrollbar);
-      // 2 - Contenido
-        // Crear div donde metemos el contenido
-        let content = this.createDiv(this.CONTENT);
-        content.className = CSS.AON_CONTENT_BETA;
-        wrapper.appendChild(content);
-      // 3 - Barra abajo
-        // Crear la barra de scroll inferior.
-        const scrollbarBottom = this.createDiv();
-        scrollbarBottom.className = CSS.AON_CONTENT_BOTTOM_SCROLLBAR;
-        // Crear la parte móvil (el "pulgar") de la barra de scroll.
-        const thumbBottom = this.createDiv();
-        thumbBottom.className = CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB;
-        // Construir la barra de scroll y añadirla al wrapper.
-        scrollbarBottom.appendChild(thumbBottom);
-        wrapper.appendChild(scrollbarBottom);
-      // 4 - Agregar
-        // Añadir la estructura completa (el wrapper) al div padre.
-        div.appendChild(wrapper);
-        // Agregamos logica para tratar el scrollbar
-        //this.addContentScrollbar();
-    // --- FIN Donde metemos el contenido (que tenga la barra de desplazamiento arriba) ---
+    // Crear div donde metemos el contenido
+    let content = this.createDiv(this.CONTENT);
+    content.className = CSS.AON_CONTENT_BETA;
+    div.appendChild(content);
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
     div.appendChild(rightSidenav);
@@ -377,16 +340,24 @@ export class AonApplication extends AonElement {
 
   addSidenavWidget2(data, element) {
     this.addSidenavOptionsTitle(data);
-
-    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    const sidenav = this.getElement(this.SIDENAV);
     if(data && data.id && sidenav) {
         let div = this.getElement(sidenav.id + data.id);
         if(div){
           let content = this.createElement(TAG.DIV);
-//          content.style.paddingLeft = "26px";
           content.appendChild(element);
           div.appendChild(content);
         }
+    }
+  }
+  // Agregamos un componente al menu, como el marcaje
+  addSidenavWidgetComponet(element) {
+    const sidenav = this.getElement(this.SIDENAV);
+    if(sidenav) {
+      let content       = this.createElement(TAG.DIV);
+      content.className = "sidenav-component";
+      content.appendChild(element);
+      sidenav.appendChild(content);
     }
   }
 
@@ -1117,163 +1088,6 @@ export class AonApplication extends AonElement {
   addContent(element) {
     let content = this.getElement(this.CONTENT);
     if (content) content.appendChild(element);
-  }
-
-  addContentScrollbar() {
-//    const content         = this.getElement(this.CONTENT);
-//    const scrollbarTop    = document.querySelector(`.${CSS.AON_CONTENT_TOP_SCROLLBAR}`);
-//    const thumbTop        = document.querySelector(`.${CSS.AON_CONTENT_TOP_SCROLLBAR_THUMB}`);
-//    const scrollbarBottom = document.querySelector(`.${CSS.AON_CONTENT_BOTTOM_SCROLLBAR}`);
-//    const thumbBottom     = document.querySelector(`.${CSS.AON_CONTENT_BOTTOM_SCROLLBAR_THUMB}`);
-//
-//    if (!content || !scrollbarTop || !thumbTop || !scrollbarBottom || !thumbBottom) {
-//      return;
-//    }
-//
-//    let paddingSpacerDiv = null;
-//    let updateScheduled = false;
-//
-//    // Helper: fuerza el padding adicional en la derecha
-//    const getPaddingRight = () => {
-//      const style = window.getComputedStyle(content);
-//      return parseFloat(style.paddingRight) || 0;
-//    };
-//
-//    // Helper: ancho total desplazable
-//    const getScrollableWidth = () => content.scrollWidth - content.clientWidth;
-//
-//    // Inserta un div espaciador para respetar paddingRight
-//    const ensurePaddingSpacer = () => {
-//      if (!paddingSpacerDiv) {
-//        paddingSpacerDiv = document.createElement('div');
-//        paddingSpacerDiv.style.display        = 'inline-block';
-//        paddingSpacerDiv.style.height         = '1px';
-//        paddingSpacerDiv.style.pointerEvents  = 'none';
-//        content.appendChild(paddingSpacerDiv);
-//      }
-//      content.style.display = 'flex';
-//      paddingSpacerDiv.style.width = `${getPaddingRight()}px`;
-//    };
-//
-//    // Quita el espaciador y restaura display
-//    const removePaddingSpacer = () => {
-//      if (paddingSpacerDiv) {
-//        content.removeChild(paddingSpacerDiv);
-//        content.style.display = '';
-//        paddingSpacerDiv = null;
-//      }
-//    };
-//
-//    // La función que hace LECTURAS y luego ESCRITURAS
-//    const updateThumbs = () => {
-//      // --- LECTURAS ---
-//      const scrollWidth       = content.scrollWidth;
-//      const clientWidth       = content.clientWidth;
-//      const scrollLeft        = content.scrollLeft;
-//      const scrollableWidth   = scrollWidth - clientWidth;
-//      const visibleRatio      = clientWidth / scrollWidth;
-//
-//      // --- ESCRITURAS & LÓGICA ---
-//      if (visibleRatio >= 1) {
-//        scrollbarTop.style.display    = 'none';
-//        scrollbarBottom.style.display = 'none';
-//        removePaddingSpacer();
-//        return;
-//      }
-//
-//      scrollbarTop.style.display    = 'flex';
-//      scrollbarBottom.style.display = 'flex';
-//      ensurePaddingSpacer();
-//
-//      const thumbWidthPercent = `${visibleRatio * 100}%`;
-//      thumbTop.style.width    = thumbWidthPercent;
-//      thumbBottom.style.width = thumbWidthPercent;
-//
-//      if (scrollableWidth > 0) {
-//        const scrollPercentage    = scrollLeft / scrollableWidth;
-//        const extraOffset         = 10;
-//
-//        // Lecturas adicionales necesarias para calcular offsets máximos
-//        const scrollbarTopWidth    = scrollbarTop.offsetWidth;
-//        const scrollbarBottomWidth = scrollbarBottom.offsetWidth;
-//        const thumbTopWidth        = thumbTop.offsetWidth;
-//        const thumbBottomWidth     = thumbBottom.offsetWidth;
-//
-//        const thumbMaxXTop    = scrollbarTopWidth    - thumbTopWidth    - extraOffset;
-//        const thumbMaxXBottom = scrollbarBottomWidth - thumbBottomWidth - extraOffset;
-//
-//        thumbTop.style.left    = `${scrollPercentage * thumbMaxXTop}px`;
-//        thumbBottom.style.left = `${scrollPercentage * thumbMaxXBottom}px`;
-//      }
-//    };
-//
-//    // Wrapper para agrupar múltiples llamadas en un solo frame
-//    const scheduleUpdateThumbs = () => {
-//      if (updateScheduled) return;
-//      updateScheduled = true;
-//      requestAnimationFrame(() => {
-//        updateThumbs();
-//        updateScheduled = false;
-//      });
-//    };
-//
-//    // Event listeners ahora usan scheduleUpdateThumbs
-//    content.addEventListener('scroll', scheduleUpdateThumbs);
-//
-//    thumbTop.addEventListener('mousedown', (e) => {
-//      e.preventDefault();
-//      scrollbarTop.classList.add('scrollbar-dragging');
-//      const startX = e.pageX;
-//      const startScroll = content.scrollLeft;
-//
-//      const onMouseMove = (moveEvent) => {
-//        const deltaX        = moveEvent.pageX - startX;
-//        const scrollableW   = getScrollableWidth();
-//        const thumbMaxX     = scrollbarTop.offsetWidth - thumbTop.offsetWidth;
-//        content.scrollLeft = startScroll + (deltaX / thumbMaxX) * scrollableW;
-//      };
-//
-//      const onMouseUp = () => {
-//        scrollbarTop.classList.remove('scrollbar-dragging');
-//        document.removeEventListener('mousemove', onMouseMove);
-//        document.removeEventListener('mouseup',   onMouseUp);
-//      };
-//
-//      document.addEventListener('mousemove', onMouseMove);
-//      document.addEventListener('mouseup',   onMouseUp);
-//    });
-//
-//    thumbBottom.addEventListener('mousedown', (e) => {
-//      e.preventDefault();
-//      scrollbarBottom.classList.add('scrollbar-dragging');
-//      const startX = e.pageX;
-//      const startScroll = content.scrollLeft;
-//
-//      const onMouseMove = (moveEvent) => {
-//        const deltaX        = moveEvent.pageX - startX;
-//        const scrollableW   = getScrollableWidth();
-//        const thumbMaxX     = scrollbarBottom.offsetWidth - thumbBottom.offsetWidth;
-//        content.scrollLeft = startScroll + (deltaX / thumbMaxX) * scrollableW;
-//      };
-//
-//      const onMouseUp = () => {
-//        scrollbarBottom.classList.remove('scrollbar-dragging');
-//        document.removeEventListener('mousemove', onMouseMove);
-//        document.removeEventListener('mouseup',   onMouseUp);
-//      };
-//
-//      document.addEventListener('mousemove', onMouseMove);
-//      document.addEventListener('mouseup',   onMouseUp);
-//    });
-//
-//    // Observers también usan scheduleUpdateThumbs
-//    new ResizeObserver(scheduleUpdateThumbs).observe(content);
-//
-//    const mutationObserver = new MutationObserver(scheduleUpdateThumbs);
-//    mutationObserver.observe(content, { childList: true, subtree: true });
-//
-//    // Primera ejecución
-//    scheduleUpdateThumbs();
   }
 
   addFloatOption(action, fn) {

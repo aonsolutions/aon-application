@@ -2,7 +2,6 @@ import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, TAG } from '../environments/environments.js';
 
 export class AonButton extends AonElement {
-
   BUTTON;
   ICON;
   TEXT;
@@ -48,10 +47,10 @@ export class AonButton extends AonElement {
   }
 
   constructor () {
-		super();
-	}
+    super();
+  }
 
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     this.build();
   }

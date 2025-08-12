@@ -15,7 +15,6 @@ import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoiceList extends AonElement {
-
 	more;
 	filter;	
 	TABLE;
@@ -50,7 +49,8 @@ export class AonInvoiceList extends AonElement {
 	}
 
  	build() {
-		if(this.isProcessing()) this.buildProcessing();
+		if(this.isProcessing())
+			this.buildProcessing();
 		else {
 			let aonInvoiceTable = createList(this.TABLE); 
 			aonInvoiceTable.selectable = 'true';

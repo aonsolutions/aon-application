@@ -111,16 +111,12 @@ export class AonIconButton extends AonElement {
     this.setAttribute("backgroundColor", backgroundColor);
   }
 
-
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
     if (CONSTANT.DISABLED === name) {
       this.getButton().disabled = newValue;
     }else if (CONSTANT.VISIBLE === name) {
-      if (
-        this.getAttribute(CONSTANT.VISIBLE) != undefined &&
-        "false" == this.getAttribute(CONSTANT.VISIBLE)
-      ) {
+      if (this.getAttribute(CONSTANT.VISIBLE) !== undefined && "false" === this.getAttribute(CONSTANT.VISIBLE)) {
         this.style.width = "0px";
         this.style.display = "none";
       } else {
@@ -148,12 +144,11 @@ export class AonIconButton extends AonElement {
     this.build();
   }
 
-
   initialize() {
-    this.BUTTON = this.id + "IconButton";
-    this.ICON = this.id + "Icon";
+    this.BUTTON   = this.id + "IconButton";
+    this.ICON     = this.id + "Icon";
     this.AON_ICON = this.id + "AonIcon";
-    this.IMAGE = this.id + "Image";
+    this.IMAGE    = this.id + "Image";
   }
 
   build() {
@@ -171,17 +166,19 @@ export class AonIconButton extends AonElement {
       this.getButton().setAttribute(CONSTANT.DISABLED, true);
     }
 
-    if (
-      this.getAttribute(CONSTANT.VISIBLE) != undefined &&
-      "false" == this.getAttribute(CONSTANT.VISIBLE)
-    ) {
+    if (this.getAttribute(CONSTANT.VISIBLE) !== undefined && "false" === this.getAttribute(CONSTANT.VISIBLE)) {
       this.style.width = "0px";
       this.style.display = "none";
     }
-    if (this.hasAttribute("icon")) {
-      this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
-      this.getIcon().innerHTML = this.getAttribute("icon");
-      this.getButton().appendChild(this.getIcon());
+
+    if (this.hasAttribute("icon") || this.hasAttribute("aonIcon")) {
+      this.getButton().innerHTML = "";
+      const iconType = this.getAttribute("icon") ? this.getAttribute("icon") : this.hasAttribute("aonIcon");
+      let icon          = new AonIcon();
+      icon.id           = this.AON_ICON;
+      icon.icon         = iconType;
+      this.ICON_ELEMENT = icon;
+      this.getButton().appendChild(icon);
     } else if (this.hasAttribute("image")) {
       let image = this.createElement(TAG.IMG);
       image.id = this.IMAGE;
@@ -191,21 +188,8 @@ export class AonIconButton extends AonElement {
       this.getButton().appendChild(image);
     }
 
-    if (this.hasAttribute("aonIcon")) {
-      this.getButton().innerHTML = "";
-      let aonIcon = new AonIcon();
-      aonIcon.id = this.AON_ICON;
-      aonIcon.icon = this.aonIcon;
-      this.getButton().appendChild(aonIcon);
-      
-      if(this.hasAttribute("color")){
-        aonIcon.color = this.getAttribute("color")
-      }
-    }
-
     this.appendChild(this.getButton());
   }
-
 
   getBackgroundHover() {
     return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.15)";
@@ -233,8 +217,14 @@ export class AonIconButton extends AonElement {
     }
   }
 
+  setIcon(icon) {
+    this.icon = icon;
+    // El componente icon en el boton
+    this.getIcon().icon = icon;
+  }
+
   getIcon(){
-    this.ICON_ELEMENT = this.ICON_ELEMENT || this.createElement(TAG.I);
+    this.ICON_ELEMENT = this.ICON_ELEMENT || new AonIcon();
     this.ICON_ELEMENT.id  = this.ICON;
     return this.ICON_ELEMENT;
   }
