@@ -131,8 +131,8 @@ public class DeliveryDAO {
 		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER_PACKING);}
 		
-		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_ALIAS.NAME);}
+		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_ALIAS.DOCUMENT);}
 	}
 	
 	// -------------------- DELIVERY
