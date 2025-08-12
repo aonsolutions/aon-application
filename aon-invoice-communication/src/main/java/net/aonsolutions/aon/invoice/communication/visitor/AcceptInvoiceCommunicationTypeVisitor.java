@@ -108,11 +108,12 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitVERIFACTU() {
-		try {
-			VERIFACTU.accept(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// Not implemented
+//		try {
+//			VERIFACTU.accept(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 }

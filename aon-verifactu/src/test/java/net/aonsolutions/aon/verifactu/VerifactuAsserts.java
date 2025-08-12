@@ -1,9 +1,9 @@
 package net.aonsolutions.aon.verifactu;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -28,8 +28,8 @@ public class VerifactuAsserts {
 	private static final Comparator<Date> SAME_DAY = (d1, d2) -> AonDateUtils.isSameDay(d1 , d2) ? 0 : 1;
 	
 	static <T> void assertEqualsNulls(T expected, T actual, String msg) {
-		if ( expected == null) assertNull(msg, actual);
-		if ( expected != null) assertNotNull(msg, actual);
+		if ( expected == null) assertNull(actual, msg);
+		if ( expected != null) assertNotNull(actual, msg);
 	}
 	
 	private static <T> void assertAon(T expected, T actual, String[] skipFields, String className) {

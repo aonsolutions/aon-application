@@ -92,6 +92,8 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
+import net.aonsolutions.aon.invoice.communication.CommunicatorContext;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.sign.PdfSigner;
@@ -489,7 +491,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
+	/**
+	 * @deprecated
+	 * @use com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils.buildInvoiceFileJSON
+	 */
+	@Deprecated
+	static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
 		JSONObject json = new JSONObject();
 
 		InvoiceDoc invoiceDoc = invoice.getDoc().orElse(null);
@@ -624,10 +631,23 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static JSONObject acceptInvoice(AonApiData api) throws Exception {
-		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		
+		// ***********************************
+		// ***********************************
+		// ***********************************
+		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
+		
+		if (!(invoice.isSales() && tbaiConfiguration.isActive()) ) {
+			return acceptAndCommunicateInvoice(api).getOutputInvoiceJSON();
+		}
+		// ***********************************
+		// ***********************************
+		// ***********************************
+		
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
 		if(invoice.isSales()) {
 			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
 				invoice.setReferenceCode(null);	
@@ -1071,4 +1091,54 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONArray getInvoiceSeries(AonApiData api) {
 		return InvoiceSeriesJSON.to(FINANCE.getInvoiceSalesSeries(api.getOccam(), api.getDomain().getId()));	
 	}
+	
+	// ************************************************************
+	// ******************************* [ACCEPT AND COMMUNICATE] ***
+	// ************************************************************
+	public static CommunicatorContext acceptAndCommunicateInvoice(AonApiData api) {
+		checkApiData(api);
+		
+		Invoice invoice = InvoiceJSON.from(api.getData())
+			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
+		
+		CommunicatorContext communicator = new CommunicatorContext(api.getDomain(), api.getUser(), invoice, api.getData());
+		InvoiceCommunicator.acceptInvoice(communicator);
+		return communicator;
+	}
+	
+	// ************************************************************
+	// ******************************* [CANCEL AND COMMUNICATE] ***
+	// ************************************************************
+	public static CommunicatorContext cancelAndCommunicateInvoice(AonApiData api) {
+		checkApiData(api);
+		
+		Invoice invoice = InvoiceJSON.from(api.getData())
+			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
+		
+		CommunicatorContext communicator = new CommunicatorContext(api.getDomain(), api.getUser(), invoice, api.getData());
+		InvoiceCommunicator.cancelInvoice(communicator);
+		return communicator;
+	}
+
+	private static void checkApiData(AonApiData api) {
+		if (api == null) {
+			throw new AonApiException("Invalid API data provided.");
+		}
+		if (api.getDomain() == null 
+			|| api.getDomain().getId() == null 
+			|| AonStringUtils.isBlank(api.getDomain().getName())) {
+			throw new AonApiException("Invalid domain information provided.");
+		}
+		if(api.getUser() == null 
+			|| api.getUser().getId() == null 
+			|| AonStringUtils.isBlank(api.getUser().getLogin())) {
+			throw new AonApiException("Invalid user login provided.");
+		}
+		if(api.getData() == null 
+				|| api.getData().isEmpty()) {
+			throw new AonApiException("No data provided for the operation.");
+		}
+	}
+	
+
 }

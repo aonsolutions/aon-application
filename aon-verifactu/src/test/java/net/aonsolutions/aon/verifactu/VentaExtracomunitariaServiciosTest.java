@@ -1,8 +1,8 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
@@ -203,7 +202,7 @@ class VentaExtracomunitariaServiciosTest extends AbstractVerifactuTest {
 	    assertNull( dt.getTipoRecargoEquivalencia() );		
 	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
-	    assertEquals( "21" , rfat.getCuotaTotal());
+	    assertEquals( "0" , rfat.getCuotaTotal());
 	    assertEquals( "100" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();

@@ -1,8 +1,8 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -202,7 +202,7 @@ class VentaIntracomunitariaServiciosTest extends AbstractVerifactuTest {
 	    assertNull( dt.getTipoRecargoEquivalencia() );		
 	    assertNull( dt.getCuotaRecargoEquivalencia() );
 	    
-	    assertEquals( "21" , rfat.getCuotaTotal());
+	    assertEquals( "0" , rfat.getCuotaTotal());
 	    assertEquals( "100" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();

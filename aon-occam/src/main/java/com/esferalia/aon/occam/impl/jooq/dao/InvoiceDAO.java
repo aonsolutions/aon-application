@@ -117,6 +117,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -594,6 +595,61 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
+	public static Invoice accept2(AONContext ctx, final Invoice invoice, Integer rawdocId) {
+		if (invoice.getId() != null) {
+			throw new AonCoreException("No se puede aceptar una factura con Id");
+		}
+		insert(ctx, invoice);
+		
+		// ****************** ESTO DEBERIA ESTAR EN INVOICEDAO.INSERT ******************
+		if (!invoice.hasFinances()) {
+			AonCollectionUtils.stream( FinanceDAO.getFinancesForInvoice(ctx, invoice))
+				.forEach(invoice::addFinance);	
+		}
+		FinanceDAO.insertFinances(ctx, invoice.getFinances());
+		// *****************************************************************************
+		
+		
+		
+		// ****************** ESTO DEBERIA ESTAR EN INVOICEDAO.INSERT ******************
+		if(invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
+			updateRectifiedInvoice(ctx, invoice);
+		}
+		// *****************************************************************************
+		
+		if(rawdocId != null) {
+			RawdocDAO.getFull(ctx, rawdocId)
+				.ifPresent(rawdoc -> {
+					if(rawdoc.getData() != null) {
+						Attach attach = new Attach()
+							.setDate(new Date())
+							.setDomain(new Domain().setId(invoice.getDomain()))
+							.setAttachModule(invoice.getId())
+							.setMimeType(rawdoc.getMimeType())
+							.setAttachType(AttachType.INVOICE)
+							.setType(InvoiceAttachmentType.INVOICE.value())
+							.setData(rawdoc.getData());
+						AttachmentDAO.insertInvoiceAttach(ctx, attach);
+					}
+					RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
+				}
+			);
+		}
+		
+		// ****************** ???????????????????? ******************
+		invoice.getDetails().stream().forEach(detail ->
+			detail.getInvoiceTaxes().stream().forEach(tax -> 
+				ctx.getDslContext().delete(INVOICE_TAX_ACCOUNT)
+					.where(INVOICE_TAX_ACCOUNT.DOMAIN.eq(tax.getDomain()))
+					.and(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(tax.getId()))
+				.execute()
+			)
+		);
+		// ****************** ???????????????????? ******************
+		
+		return invoice;
+	}
+
 	private static void updateRectifiedInvoice(AONContext ctx, Invoice rectifierInvoice) {
 		ctx.getDslContext().update(INVOICE)
 		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())

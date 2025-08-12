@@ -193,10 +193,21 @@ public class InvoiceDataDAO {
 	// **********************************************
 	// **********************************************
 	// **********************************************
+	public static Optional<InvoiceData> get(AONContext ctx, Integer invoice, String name) {
+		return select(ctx)
+			.where(INVOICE_DATA.INVOICE.eq(invoice))
+			.and(INVOICE_DATA.NAME.eq(name))
+			.fetch()
+			.stream()
+			.map(new InvoiceDataFiller())
+			.findFirst();
+	}
 	
 	/**
-	 * @deprecated ¿Si el filtro da mas de una fila?. Si no hay nada no devuelve null ... Devulve new InvoiceData()
-	 * @use stream(AONContext ctx, InvoiceDataFilter filter) 
+	 * @deprecated ¿Si el filtro da mas de una fila?. Si no hay nada no devuelve null ... Devuelve new InvoiceData()
+	 * @use Optional<InvoiceData> get(AONContext ctx, Integer invoice, String name) 
+	 * 		or  
+	 * 		stream(AONContext ctx, InvoiceDataFilter filter)  
 	 */
 	@Deprecated
 	public static InvoiceData get(AONContext ctx, InvoiceDataFilter filter) {

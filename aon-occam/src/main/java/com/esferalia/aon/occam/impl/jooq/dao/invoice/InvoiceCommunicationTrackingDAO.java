@@ -87,6 +87,18 @@ public class InvoiceCommunicationTrackingDAO {
 			.findFirst();
 	}
 	
+	public static Optional<InvoiceCommunicationTracking> getVerifactuAnnulment(AONContext ctx, Integer domain, Integer invoice) {
+		return select(ctx)
+			.where(INVOICE_BATCH_DETAIL.DOMAIN.eq(domain))
+			.and(INVOICE_BATCH_DETAIL.INVOICE.eq(invoice))
+			.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.VERIFACTU.value()))
+			.and(INVOICE_BATCH.OPERATION.eq(InvoiceCommunicationOperation.ANNULMENT.value()))
+			.limit(1)
+			.fetch()
+			.stream()
+			.map(new InvoiceCommunicationTrackingFiller())
+			.findFirst();
+	}
 	
 	public static Stream<InvoiceCommunicationTracking> getStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return select(ctx, filter)

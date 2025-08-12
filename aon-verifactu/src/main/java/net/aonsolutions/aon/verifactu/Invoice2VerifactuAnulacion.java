@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -44,13 +43,13 @@ class Invoice2VerifactuAnulacion {
 		return anul;
 	}
 	
-	private static SinRegistroPrevioType hasRegistroPrevio(VerifactuContext vc, Invoice invoice) {
-		return invoice.optInfo()
-			.filter(i -> i.getType() == InvoiceCommunicationType.VERIFACTU)
-			.map( i -> SinRegistroPrevioType.N )
-			.orElse(SinRegistroPrevioType.S)	
-		;
-	}
+//	private static SinRegistroPrevioType hasRegistroPrevio(VerifactuContext vc, Invoice invoice) {
+//		return invoice.optInfo()
+//			.filter(i -> i.getType() == InvoiceCommunicationType.VERIFACTU)
+//			.map( i -> SinRegistroPrevioType.N )
+//			.orElse(SinRegistroPrevioType.S)	
+//		;
+//	}
 	
 	private static Encadenamiento getEncadenamientoAnulacion(VerifactuBlockchain blockchain) {
 		Encadenamiento encadenamiento = new Encadenamiento();

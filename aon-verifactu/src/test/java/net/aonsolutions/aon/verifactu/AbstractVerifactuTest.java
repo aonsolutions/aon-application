@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,8 +29,10 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -43,6 +45,7 @@ public abstract class AbstractVerifactuTest {
 
 	protected static CloseableAONContext ctx;
 	protected static Integer DOMAIN_ID;
+	private InvoiceCommunicationConfiguration communicationConfiguration;
 	private VerifactuConfiguration verifactuConfiguration;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "verifactutest.aonsolutions.test");	
@@ -154,17 +157,29 @@ public abstract class AbstractVerifactuTest {
 		return CompanyDAO.getCompany(ctx, DOMAIN_ID);
 	}
 	
-	protected VerifactuConfiguration config() {
+	protected VerifactuConfiguration verifactuConfig() {
 		if (verifactuConfiguration == null) {
 			verifactuConfiguration = VerifactuConfigurationDAO.get(ctx); 
 		}
-		assertNotNull("VerifactuConfiguration NULL", verifactuConfiguration );
-		assertTrue("VerifactuConfiguration NO ACTIVO", verifactuConfiguration.isActive() );
-		assertTrue("VerifactuConfiguration NO ENTORNO TEST", verifactuConfiguration.isTest() );
+		assertNotNull(verifactuConfiguration,"VerifactuConfiguration NULL" );
+		assertTrue(verifactuConfiguration.isActive(),"VerifactuConfiguration NO ACTIVO" );
+		assertTrue(verifactuConfiguration.isTest() ,"VerifactuConfiguration NO ENTORNO TEST" );
 		Certificate c = AonSecret.getSigCert();
-		assertNotNull("Verifactu Certificate NULL",c);
+		assertNotNull(c,"Verifactu Certificate NULL");
 		verifactuConfiguration.setCertificate(AonSecret.getSigCert()); 
 		return verifactuConfiguration;
 	}
 
+	protected InvoiceCommunicationConfiguration config() {
+		if (communicationConfiguration == null) {
+			communicationConfiguration = InvoiceCommunicationConfigurationDAO.get(ctx); 
+		}
+		assertNotNull(communicationConfiguration,"communicationConfiguration NULL" );
+		assertTrue(communicationConfiguration.isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
+		assertTrue(communicationConfiguration.isTest(),"communicationConfiguration NO ENTORNO TEST" );
+		Certificate c = AonSecret.getSigCert();
+		assertNotNull(c, "Verifactu Certificate NULL");
+		communicationConfiguration.setCertificate(AonSecret.getSigCert()); 
+		return communicationConfiguration;
+	}
 }

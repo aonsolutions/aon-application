@@ -14,10 +14,8 @@ public enum InvoiceCommunicationType implements Serializable{
 	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}},
 	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitEMAIL();}},
 	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitCLOSING();}},
-	VERIFACTU { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitVERIFACTU();}}
+	VERIFACTU { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}}
 	;
-
-	
 	
 	private InvoiceCommunicationType() {
 

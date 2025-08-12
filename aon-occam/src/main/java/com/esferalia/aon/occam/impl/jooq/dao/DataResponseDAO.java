@@ -156,13 +156,18 @@ public class DataResponseDAO {
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());		
 	}
 
-	public static DataResponse getLast(AONContext ctx, DataResponseFilter filter){
+	public static Optional<DataResponse> getLastDataResponse(AONContext ctx, DataResponseFilter filter){
 		return ctx.getDslContext()
 			.select().from(DATA_RESPONSE)
 			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
 			.orderBy(DATA_RESPONSE.ID.desc()).limit(1)
 			.fetch().stream().map(new DataResponseFiller())
-			.findFirst().orElse(new DataResponse());
+			.findFirst();
+	}
+
+	public static DataResponse getLast(AONContext ctx, DataResponseFilter filter){
+		return getLastDataResponse(ctx, filter)
+			.orElse(new DataResponse());
 	}
 	
 	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){

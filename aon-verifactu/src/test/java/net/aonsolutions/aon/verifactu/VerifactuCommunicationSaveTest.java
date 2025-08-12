@@ -1,8 +1,8 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,8 +32,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackin
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
-
 class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
 	@Test
@@ -43,103 +41,103 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 	
 	@Test
-	void venta_nacional_simplificadaAEATTest() throws VerifactuException {
+	void venta_nacional_simplificadaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
 	@Test
-	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws VerifactuException {
+	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_suplidosAEATTest() throws VerifactuException {
+	void venta_nacional_suplidosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_rectificativa_simpleAEATTest() throws VerifactuException {
+	void venta_nacional_rectificativa_simpleAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_rectificativa_simplificadaAEATTest() throws VerifactuException {
+	void venta_nacional_rectificativa_simplificadaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_ispAEATTest() throws VerifactuException {
+	void venta_ispAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_reAEATTest() throws VerifactuException {
+	void venta_nacional_reAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_irpf_professionalAEATTest() throws VerifactuException {
+	void venta_nacional_irpf_professionalAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_intracomunitaria_serviciosAEATTest() throws VerifactuException {
+	void venta_intracomunitaria_serviciosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_intracomunitaria_no_serviciosAEATTest() throws VerifactuException {
+	void venta_intracomunitaria_no_serviciosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
 	@Test
-	void venta_extracomunitariaAEATTest() throws VerifactuException {
+	void venta_extracomunitariaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_extracomunitaria_servicioAEATTest() throws VerifactuException {
+	void venta_extracomunitaria_servicioAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_melAEATTest() throws VerifactuException {
+	void venta_can_ceu_melAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_mel_servicioAEATTest() throws VerifactuException {
+	void venta_can_ceu_mel_servicioAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
 	@Test
-	void venta_nacional_exenta_e1AEATTest() throws VerifactuException {
+	void venta_nacional_exenta_e1AEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_anuladaAEATTest() throws VerifactuException {
+	void venta_anuladaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_simple_criterio_cajaAEATTest() throws VerifactuException {
+	void venta_nacional_simple_criterio_cajaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
@@ -150,12 +148,9 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		
 		ctx.transaction(config -> {
 			invoices.stream().forEach(i -> {
-				System.out.println( "BEFORE InvoiceDAO.save Id: " + i.getId());
 				InvoiceDAO.save(ctx, i);
-				System.out.println( "AFTER InvoiceDAO.save Id: " + i.getId());
 			});
-			System.out.println( "invoices(0) Id: " + invoices.get(0).getId());
-			VERIFACTU.accept(ctx, config(), company(), invoices, null, USER);
+			VERIFACTU.accept(ctx, config(), company(), invoices);
 			invoices.stream().forEach( i -> {
 				InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
 				DataResponse response = assertDataResponse(i, tracking);

@@ -111,6 +111,7 @@ public final class IJsonNames {
 	public static final String CASH_ACCOUNT= "cashAccount";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
+	public static final String CERT = "cert";
 	public static final String CITY = "city";
 	public static final String CHARGE_DATE = "chargeDate";
 	public static final String CHILD_COUNT = "childCount";
@@ -737,6 +738,7 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_URL = "verifactuUrl";
 	public static final String VERSION = "version";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 

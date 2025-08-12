@@ -10,13 +10,11 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -24,12 +22,12 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -43,7 +41,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.watson.util.AonChronometer;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -66,50 +63,24 @@ public class VERIFACTU {
 	// **************************************************************
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
-	/**
-	 * @deprecated This method is deprecated, use the one with AONContext parameter
-	 * 			La llamada debe hacerse con una trasacción abierta.
-	 */
-	@Deprecated
-	public static void accept(
-			Occam occam,
-			VerifactuConfiguration verifactuConfiguration, 
-			Company company, 
-			List<Invoice> invoices, 
-			VerifactuBlockchain blockchain) {
-			
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig(verifactuConfiguration)
-			.setCompany(company)
-			.setInvoices(invoices)
-			.setBlockchain(blockchain)
-			.setUser(occam.getUser())
-			.setOperation(InvoiceCommunicationOperation.REGISTER);
-		try (CloseableAONContext ctx = AONContext.getAONContext(vc.getOccam())) {
-			ctx.getDslContext().transaction(configuration -> accept(ctx, vc));
-		}
-	}
 	
-	public static void accept(
+	public static DataResponse accept(
 			AONContext ctx,
-			VerifactuConfiguration verifactuConfiguration, 
+			InvoiceCommunicationConfiguration configuration, 
 			Company company, 
-			List<Invoice> invoices, 
-			VerifactuBlockchain blockchain,
-			String user) throws VerifactuException {
+			List<Invoice> invoices) throws VerifactuException {
 			
 		VerifactuContext vc = new VerifactuContext()
-			.setConfig(verifactuConfiguration)
+			.setConfig(configuration)
 			.setCompany(company)
 			.setInvoices(invoices)
-			.setBlockchain(blockchain)
-			.setUser(user)
+			.setBlockchain( getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER);
 		
-		accept(ctx, vc);
+		return accept(ctx, vc);
 	}
 	
-	private static void accept(AONContext ctx, VerifactuContext vc) throws VerifactuException {
+	private static DataResponse accept(AONContext ctx, VerifactuContext vc) throws VerifactuException {
 		check(vc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		vc.setRequest( request );
@@ -117,9 +88,89 @@ public class VERIFACTU {
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
 		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage));
-		save( ctx, vc );
+		return saveAccept( ctx, vc );
 	}
 
+	private static DataResponse saveAccept(AONContext ctx, VerifactuContext vc) throws VerifactuException {
+		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
+		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
+		for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {		
+			saveInvoiceData(ctx, vc.getDomain(), req.getRegistroAlta());	// save INVOICE DATA
+		}
+		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	// save BLOCKCHAIN DATA		
+		InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain()	// save INVOICE BATCH
+			, dataResponse	
+			, InvoiceCommunicationOperation.REGISTER);								
+		if (vc.getResponse().isError()) {
+			vc.getInvoices().stream().forEach(inv -> {
+				saveInvoiceInfo(ctx, vc.getDomain(), inv.getId(), InvoiceCommunicationStatus.WRONG);
+				saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, inv.getId(), InvoiceCommunicationStatus.WRONG);					
+			});
+		} else {
+			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+			if (!respuesta.getRespuestaLinea().isEmpty()) {
+				respuesta.getRespuestaLinea().stream().forEach(r -> {
+					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+					InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
+					saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status); 
+					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);				
+				});
+			}
+		}
+		return dataResponse;
+	}
+	
+	// **************************************************************
+	// ************************************************ [CANCEL] ****
+	// **************************************************************
+	public static DataResponse cancel(
+			AONContext ctx,
+			InvoiceCommunicationConfiguration configuration, 
+			Company company, 
+			List<Invoice> invoices) throws VerifactuException {
+		
+		VerifactuContext vc = new VerifactuContext()
+			.setConfig(configuration)
+			.setCompany(company)
+			.setInvoices(invoices)
+			.setBlockchain( getBlockchain(ctx) )
+			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
+		return cancel(ctx, vc);
+	}
+	
+	private static DataResponse cancel(AONContext ctx, VerifactuContext vc) throws VerifactuException {
+		check(vc);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		vc.setRequest( request );
+		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
+		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage));
+		return saveCancel( ctx, vc );
+	}
+	
+	private static DataResponse saveCancel(AONContext ctx, VerifactuContext vc) {
+		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
+		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
+		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	// save BLOCKCHAIN DATA
+		if (!vc.getResponse().isError()) {	// DELETE ANNULLED INVOICES
+			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+			if (!respuesta.getRespuestaLinea().isEmpty()) {
+				respuesta.getRespuestaLinea().stream().forEach(r -> {
+					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+					if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
+							&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
+						InvoiceDAO.delete(ctx, invoiceId);
+					}
+				});
+			}
+		}
+		return dataResponse;
+	}
+	
+	// **************************************************************
+	// ************************************************ [PRIVATE] ***
+	// **************************************************************
 	private static void check(VerifactuContext vc) throws VerifactuException {
 		if (vc == null) {
 			throw new VerifactuException(VerifactuError.AON_0001);
@@ -132,9 +183,6 @@ public class VERIFACTU {
 			|| AonStringUtils.isBlank( vc.getCompany().getDomain().getName())) {
 			throw new VerifactuException(VerifactuError.AON_0003);
 		}
-		if (AonStringUtils.isBlank( vc.getUser())) {
-			throw new VerifactuException(VerifactuError.AON_0004);
-		}
 		if (AonCollectionUtils.isEmpty(vc.getInvoices())) {
 			throw new VerifactuException(VerifactuError.AON_0005);
 		}
@@ -146,118 +194,9 @@ public class VERIFACTU {
 		}
 	}
 	
-	private static void save(AONContext ctx, VerifactuContext vc) throws VerifactuException {
-		AonChronometer cr = new AonChronometer();
-		cr.start();
-        System.out.println("\tSTART TRACING SAVE:");
-        System.out.println("\t\tTRACING SAVE: 1 - " + cr.getCurrentTime());
-
-		// save DATA REQUEST
-		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());
-		// save DATA RESPONSE
-		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());
-		// save INVOICE DATA
-		for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {
-			System.out.println("\t\tTRACING SAVE: 2 - " + cr.getCurrentTime());
-			saveInvoiceData(ctx, vc.getDomain(), req.getRegistroAlta() , cr);
-			System.out.println("\t\tTRACING SAVE: 3 - " + cr.getCurrentTime());
-		}
-		
-		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());
-		System.out.println("\t\tTRACING SAVE: 4 - " + cr.getCurrentTime());
-		// save INVOICE DATA
-		InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain(), dataResponse);
-		System.out.println("\t\tTRACING SAVE: 5 - " + cr.getCurrentTime());
-		if (vc.getResponse().isError()) {
-			System.out.println("\t\tTRACING SAVE: 6- " + cr.getCurrentTime());
-			vc.getInvoices().stream().forEach(inv -> {
-				System.out.println("\t\tTRACING SAVE: 7 - " + cr.getCurrentTime());
-				saveInvoiceInfo(ctx, vc.getDomain(), inv.getId(), InvoiceCommunicationStatus.WRONG);
-				System.out.println("\t\tTRACING SAVE: 8 - " + cr.getCurrentTime());
-				saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, inv.getId(), InvoiceCommunicationStatus.WRONG);					
-				System.out.println("\t\tTRACING SAVE: 9 - " + cr.getCurrentTime());
-			});
-		} else {
-			System.out.println("\t\tTRACING SAVE: 10 - " + cr.getCurrentTime());
-			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					System.out.println("\t\tTRACING SAVE: 11 - " + cr.getCurrentTime());
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
-					System.out.println("\t\tTRACING SAVE: 12 - " + cr.getCurrentTime());
-					saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status); 
-					System.out.println("\t\tTRACING SAVE: 13 - " + cr.getCurrentTime());
-					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);				
-					System.out.println("\t\tTRACING SAVE: 14 - " + cr.getCurrentTime());
-				});
-			}
-		}		
-	}
-	
 	// **************************************************************
 	// **************************************************************
 	// **************************************************************
-	public static void cancel(
-			Occam occam, 
-			VerifactuConfiguration verifactuConfiguration, 
-			Company company, 
-			List<Invoice> invoices, 
-			VerifactuBlockchain blockchain) {
-		
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig(verifactuConfiguration)
-			.setCompany(company)
-			.setInvoices(invoices)
-			.setBlockchain(blockchain)
-			.setUser(occam.getUser())
-			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
-		try (CloseableAONContext ctx = AONContext.getAONContext(vc.getOccam())) {
-			ctx.getDslContext().transaction(configuration -> cancel(ctx, vc));
-		}
-	}
-	
-	public static void cancel(AONContext ctx, VerifactuContext vc) throws VerifactuException {
-		check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
-		vc.setRequest( request );
-		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
-		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
-		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage));
-		saveCancel( ctx, vc );
-//		check(vc);
-//		vc.setRequest(Invoice2Verifactu.build(vc) );
-//		SOAPMessage request = VerifactuXMLUtils.soapMarshal(vc.getRequest(),RegFactuSistemaFacturacion.class);
-//		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),request));
-//		saveCancel( ctx, vc );
-	}
-	
-	private static void saveCancel(AONContext ctx, VerifactuContext vc) throws VerifactuException {
-		// byte[] requestData = VerifactuXMLUtils.marshal(vc.getRequest(), RegFactuSistemaFacturacion.class);
-		byte[] requestData = vc.getRequestBytes();
-		byte[] responseData = vc.getResponse().getBytes();
-		// save DATA REQUEST
-		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), requestData);
-		// save DATA RESPONSE
-		saveResponse(ctx, vc.getDomain(), dataRequest, responseData);
-		
-		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	
-		
-		// DELETE ANNULLED INVOICES
-		if (!vc.getResponse().isError()) {
-			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
-							&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
-						InvoiceDAO.delete(ctx, invoiceId);
-					}
-				});
-			}
-		}
-	}
 
 	private static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
 		DataRequest dataRequest = new DataRequest()
@@ -300,24 +239,20 @@ public class VERIFACTU {
 		return dataResponse;		
 	}
 
-	private static void saveInvoiceData(AONContext ctx, Domain domain, RegistroFacturacionAltaType registroAlta, AonChronometer cr) throws VerifactuException {
+	private static void saveInvoiceData(AONContext ctx, Domain domain, RegistroFacturacionAltaType registroAlta) throws VerifactuException {
 		Integer invoiceId = AonNumberUtils.toInteger(registroAlta.getRefExterna());
-		System.out.println("\t\tTRACING SAVE: 2.0 - " + cr.getCurrentTime());
 		InvoiceDataDAO.save(ctx, new InvoiceData()
 			.setDomain(domain.getId())
 			.setInvoice(invoiceId)
 			.setName(InvoiceData.VERIFACTU_HUELLA)
 			.setValue(registroAlta.getHuella())
 		);
-		System.out.println("\t\tTRACING SAVE: 2.1 - " + cr.getCurrentTime());
 		String qrUrl = getQrUrl(registroAlta);
-		System.out.println("\t\tTRACING SAVE: 2.2 - " + cr.getCurrentTime());
 		InvoiceDataDAO.save(ctx, new InvoiceData()
 			.setDomain(domain.getId())
 			.setInvoice(invoiceId)
 			.setName(InvoiceData.VERIFACTU_QR)
 			.setValue(qrUrl));
-		System.out.println("\t\tTRACING SAVE: 2.2 - " + cr.getCurrentTime());
 	}
 	
 	private static String getQrUrl(RegistroFacturacionAltaType alta) throws VerifactuException {
@@ -357,12 +292,12 @@ public class VERIFACTU {
 			.setValue(blockchain.getHuella()));
 	}
 	
-	private static InvoiceBatch saveInvoiceBatch(AONContext ctx, Domain domain, DataResponse dataResponse) {
+	private static InvoiceBatch saveInvoiceBatch(AONContext ctx, Domain domain, DataResponse dataResponse, InvoiceCommunicationOperation operation) {
 		InvoiceBatch invoiceBatch = new InvoiceBatch()
 			.setDomain(domain.getId())
 			.setType(InvoiceCommunicationType.VERIFACTU)
 			.setDate(new Date())
-			.setOperation(InvoiceCommunicationOperation.REGISTER)
+			.setOperation(operation)
 			.setDataResponse(dataResponse.getId());
 		return InvoiceBatchDAO.save(ctx, invoiceBatch);
 	}
@@ -392,4 +327,11 @@ public class VERIFACTU {
 		return null;
 	}
 
+	private static VerifactuBlockchain getBlockchain(AONContext ctx) {	
+		return new VerifactuBlockchain()
+			.setDocument(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT).getValue())
+			.setReference(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE).getValue())
+			.setDate(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE).getValue())
+			.setHuella(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA).getValue());
+	}
 }

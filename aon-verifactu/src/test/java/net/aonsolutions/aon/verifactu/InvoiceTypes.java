@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-class InvoiceTypes {
+public class InvoiceTypes {
 	
 	static final EnterpriseActivity ACTIVITY_GENERAL = new EnterpriseActivity()
 		.setId(1)
@@ -37,10 +37,10 @@ class InvoiceTypes {
 		.setVatRegime(VATRegime.EXEMPT)
 	;
 	
-	enum Invoices {
+	public enum Invoices {
 		VENTA_NACIONAL_SIMPLE {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -87,7 +87,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLIFICADA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -133,7 +133,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				customer.getAddresses().clear();
 				return new Invoice()
@@ -180,7 +180,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SUPLIDOS {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -234,7 +234,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLE {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
 					.setDomain(domain)
@@ -286,7 +286,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -337,7 +337,7 @@ class InvoiceTypes {
 		},
 		VENTA_ISP {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -384,7 +384,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_RE {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -432,7 +432,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_IRPF_PROFESSIONAL {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
 					.setDomain(domain)
@@ -488,7 +488,7 @@ class InvoiceTypes {
 		},
 		VENTA_INTRACOMUNITARIA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -521,9 +521,9 @@ class InvoiceTypes {
 						.addTax(new InvoiceTax()
 							.setTaxType(TaxType.VAT)
 							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
+							.setPercentage(0.0)
+							.setQuota(0.0)
+							.setDeductibleQuota(0.0)
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						)
 					)
@@ -535,7 +535,7 @@ class InvoiceTypes {
 		},
 		VENTA_INTRACOMUNITARIA_SERVICIOS {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -568,9 +568,9 @@ class InvoiceTypes {
 						.addTax(new InvoiceTax()
 							.setTaxType(TaxType.VAT)
 							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
+							.setPercentage(0.0)
+							.setQuota(0.0)
+							.setDeductibleQuota(0.0)
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						)
 					)
@@ -582,7 +582,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_EXENTA_E1 {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
 				return new Invoice()
 					.setDomain(domain)
@@ -630,7 +630,7 @@ class InvoiceTypes {
 		},
 		VENTA_ANULADA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -678,7 +678,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -725,7 +725,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_CLIENTE_NO_CENSADO {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerNoCensado(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -772,7 +772,7 @@ class InvoiceTypes {
 		},
 		VENTA_NACIONAL_CLIENTE_CEDILLA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerCedilla(ctx, domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -819,7 +819,7 @@ class InvoiceTypes {
 		},
 		VENTA_EXTRACOMUNITARIA {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -849,14 +849,6 @@ class InvoiceTypes {
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
-						.addTax(new InvoiceTax()
-							.setTaxType(TaxType.VAT)
-							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						)
 					)
 					.setVatQuota(0.0)
 					.setTotal(100.0)
@@ -866,7 +858,7 @@ class InvoiceTypes {
 		},
 		VENTA_EXTRACOMUNITARIA_SERVICIO {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -896,14 +888,6 @@ class InvoiceTypes {
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
-						.addTax(new InvoiceTax()
-							.setTaxType(TaxType.VAT)
-							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						)
 					)
 					.setVatQuota(0.0)
 					.setTotal(100.0)
@@ -913,7 +897,7 @@ class InvoiceTypes {
 		},
 		VENTA_CAN_CEU_MEL {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -943,14 +927,6 @@ class InvoiceTypes {
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
-						.addTax(new InvoiceTax()
-							.setTaxType(TaxType.VAT)
-							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						)
 					)
 					.setVatQuota(0.0)
 					.setTotal(100.0)
@@ -960,7 +936,7 @@ class InvoiceTypes {
 		},
 		VENTA_CAN_CEU_MEL_SERVICIO {
 			@Override
-			Invoice get(AONContext ctx, int domain) {
+			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
 				return new Invoice()
 					.setDomain(domain)
@@ -990,14 +966,6 @@ class InvoiceTypes {
 						.setQuantity(1)
 						.setPrice(100.0)
 						.setTaxableBase(100.0)
-						.addTax(new InvoiceTax()
-							.setTaxType(TaxType.VAT)
-							.setBase(100.0)
-							.setPercentage(21.0)
-							.setQuota(21.0)
-							.setDeductibleQuota(21.0)
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						)
 					)
 					.setVatQuota(0.0)
 					.setTotal(100.0)
@@ -1007,7 +975,7 @@ class InvoiceTypes {
 		},
 		;
 		
-		abstract Invoice get( AONContext ctx, int domain);
+		public abstract Invoice get( AONContext ctx, int domain);
 	}
 
 	public static List<Invoice> getAll(AONContext ctx, int domain) {

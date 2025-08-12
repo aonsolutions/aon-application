@@ -32,7 +32,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isTbai() {
 		return tbai;
 	}
-	
 	public InvoiceCommunicationConfiguration setTbai(boolean tbai) {
 		this.tbai = tbai;
 		return this;
@@ -41,7 +40,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isVerifactu() {
 		return verifactu;
 	}
-	
 	public InvoiceCommunicationConfiguration setVerifactu(boolean verifactu) {
 		this.verifactu = verifactu;
 		return this;
@@ -50,7 +48,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isSii() {
 		return sii;
 	}
-	
 	public InvoiceCommunicationConfiguration setSii(boolean sii) {
 		this.sii = sii;
 		return this;
@@ -59,7 +56,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isTest() {
 		return test;
 	}
-	
 	public InvoiceCommunicationConfiguration setTest(boolean test) {
 		this.test = test;
 		return this;
@@ -68,7 +64,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public Integer getDefaultCertificate() {
 		return defaultCertificate;
 	}
-	
 	public InvoiceCommunicationConfiguration setDefaultCertificate(Integer defaultCertificate) {
 		this.defaultCertificate = defaultCertificate;
 		return this;
@@ -77,7 +72,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public Certificate getCertificate() {
 		return certificate;
 	}
-	
 	public InvoiceCommunicationConfiguration setCertificate(Certificate certificate) {
 		this.certificate = certificate;
 		return this;
@@ -86,7 +80,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public Date getIncludeDate() {
 		return includeDate;
 	}
-	
 	public InvoiceCommunicationConfiguration setIncludeDate(Date includeDate) {
 		this.includeDate = includeDate;
 		return this;
@@ -95,7 +88,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public String getRegistryDate() {
 		return registryDate;
 	}
-	
 	public InvoiceCommunicationConfiguration setRegistryDate(String registryDate) {
 		this.registryDate = registryDate;
 		return this;
@@ -117,4 +109,9 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		}
 		return null;
 	}
+	
+	public boolean hasCommunication() {
+		return getType() != null;
+	}
+
 }

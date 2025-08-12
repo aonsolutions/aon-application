@@ -1,8 +1,8 @@
 package net.aonsolutions.aon.verifactu.exceptions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class VerifactuErrorTest {
 			String code = e.getCode();
 			assertNotNull( code );
 			assertFalse( AonStringUtils.isBlank(code) );
-			assertTrue("Por convencion, el nombre debe contener el codigo", AonStringUtils.contains(name, code));
+			assertTrue(AonStringUtils.contains(name, code), "Por convencion, el nombre debe contener el codigo");
 		}
 		
 	}

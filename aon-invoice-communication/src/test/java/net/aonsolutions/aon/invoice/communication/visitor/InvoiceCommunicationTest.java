@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.invoice.communication;
+package net.aonsolutions.aon.invoice.communication.visitor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
@@ -20,10 +20,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-
-import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
-import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
-import net.aonsolutions.aon.invoice.communication.visitor.ModifyInvoiceCommunicationTypeVisitor;
 
 public class InvoiceCommunicationTest {
 
@@ -49,7 +45,7 @@ public class InvoiceCommunicationTest {
 	private static final String DOCUMENT_3 = "99999972C";
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void test() throws Exception {
 		Domain domain = new Domain();
 		User user = new User();

@@ -74,10 +74,11 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitVERIFACTU() {
-		try {
-			VERIFACTU.cancel(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// Not implemented
+//		try {
+//			VERIFACTU.cancel(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 }

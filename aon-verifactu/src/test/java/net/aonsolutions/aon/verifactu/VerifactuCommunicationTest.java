@@ -1,11 +1,11 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
@@ -168,10 +168,13 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
 		if (estado == EstadoRegistroType.ACEPTADO_CON_ERRORES) {
 			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
+			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
+			
+			System.out.println(  estado + " (" + codigoErrorRegistro + ") " + descripcionErrorRegistro );
+			
 			assertNotNull(codigoErrorRegistro);
 			assertEquals( BigInteger.valueOf(2007) , codigoErrorRegistro);
 			
-			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
 			assertNotNull(descripcionErrorRegistro);
 			assertTrue(AonStringUtils.startsWith(descripcionErrorRegistro, "No debe informarse como primer registro"));
 		} else if (estado == EstadoRegistroType.CORRECTO) {
