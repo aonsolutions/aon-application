@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -42,8 +43,9 @@ public class PackagingSalesPdfServlet extends AonApiHttpServlet {
 			Domain domain = new Domain().setName(domainName).setId(domainId);
 			
 			if(JsonUtils.has(json, IJsonNames.SALES)) {
-				Integer salesId = JsonUtils.getInteger(json, IJsonNames.SALES);				
+				Integer salesId = JsonUtils.getInteger(json, IJsonNames.SALES);
 				Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesId), new Options().setFull(true));				
+				sales.setShippingAddress(AON.getRegistryAddress(domain, new User().setLogin(login), f -> f.getIdProperty().eq(sales.getShippingAddress().getId())));		
 				Integer deliveryId = JsonUtils.has(json, IJsonNames.DELIVERY)
 						? JsonUtils.getInteger(json, IJsonNames.DELIVERY) 
 						: sales.getDetails().get(0).getDelivery();
@@ -57,6 +59,13 @@ public class PackagingSalesPdfServlet extends AonApiHttpServlet {
 					SalesDetail salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, f ->
 						f.getIdProperty().eq(detail.getSalesDetail())).findFirst().orElse(null);
 					Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesDetail.getSales().getId()), new Options().setFull(true));
+					sales.setShippingAddress(AON.getRegistryAddress(domain, new User().setLogin(login), f -> f.getIdProperty().eq(sales.getShippingAddress().getId())));
+					PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
+				} else {
+					SalesDetail salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, f ->
+						f.getDeliveryProperty().eq(deliveryId)).findFirst().orElse(null);
+					Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesDetail.getSales().getId()), new Options().setFull(true));
+					sales.setShippingAddress(AON.getRegistryAddress(domain, new User().setLogin(login), f -> f.getIdProperty().eq(sales.getShippingAddress().getId())));
 					PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
 				}
 			}	
