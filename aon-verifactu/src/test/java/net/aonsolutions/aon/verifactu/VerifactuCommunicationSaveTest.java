@@ -60,14 +60,30 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 	
 	@Test
 	void venta_nacional_rectificativa_simpleAEATTest()  {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
-		save(invoice);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		invoice1 = save(invoice1);
+
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
+		invoice2.setRectificationInvoice(invoice1.getId());
+		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
+		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
+		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
+		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
+		save(invoice2);
 	}
 	
 	@Test
 	void venta_nacional_rectificativa_simplificadaAEATTest()  {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
-		save(invoice);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		invoice1 = save(invoice1);
+		
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		invoice2.setRectificationInvoice(invoice1.getId());
+		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
+		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
+		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
+		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
+		save(invoice2);
 	}
 	
 	@Test
@@ -142,14 +158,11 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		save(invoice);
 	}
 
-	private void save(Invoice invoice) {
-		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( invoice );
-		
-		ctx.transaction(config -> {
-			invoices.stream().forEach(i -> {
-				InvoiceDAO.save(ctx, i);
-			});
+	private Invoice save(Invoice invoice) {
+		return ctx.getDslContext().transactionResult(config -> {
+			Invoice inv = InvoiceDAO.save(ctx, invoice);
+			List<Invoice> invoices = new LinkedList<>();
+			invoices.add( inv );
 			VERIFACTU.accept(ctx, config(), company(), invoices);
 			invoices.stream().forEach( i -> {
 				InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
@@ -158,6 +171,7 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 				assertInvoiceData(i);
 				assertInvoiceInfo(i);
 			});
+			return inv;
 		});
 	}
 

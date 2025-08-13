@@ -329,9 +329,9 @@ public class VERIFACTU {
 
 	private static VerifactuBlockchain getBlockchain(AONContext ctx) {	
 		return new VerifactuBlockchain()
-			.setDocument(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT).getValue())
-			.setReference(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE).getValue())
-			.setDate(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE).getValue())
-			.setHuella(AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA).getValue());
+			.setDocument(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT))
+			.setReference(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE))
+			.setDate(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE))
+			.setHuella(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA));
 	}
 }
