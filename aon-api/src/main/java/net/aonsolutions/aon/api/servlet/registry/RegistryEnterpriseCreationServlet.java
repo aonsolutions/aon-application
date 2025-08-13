@@ -574,7 +574,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						.setSeller(new Seller().setId(sellerCommercial))
 						.setType(RegistrySellerType.COMERCIAL)
 						.setStatus(RegistrySellerStatus.ACTIVE)
-						.setStartDate(sale.getCreationDate());
+						.setStartDate(startDate);
 				
 				RegistrySellerDAO.save(ctx, newRseller);
 			}
@@ -689,10 +689,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	}
 
 	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope, Auth auth, String login, String name) {
-		JSONObject data = api.getData();
-		
-		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
-		
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
 
 		User newUser = new User()
@@ -1055,8 +1051,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		return from;
 	}
-
-	
 
 	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from, String name) {
 		VelocityEngine engine = new VelocityEngine();
