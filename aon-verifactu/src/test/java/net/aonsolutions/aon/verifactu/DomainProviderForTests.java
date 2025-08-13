@@ -14,9 +14,13 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.Arrays;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -26,11 +30,13 @@ import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -41,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Cnae2009DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -309,6 +316,7 @@ class DomainProviderForTests {
 		context.log().info("App Param FS_ADMON_RETENTION_CREDITOR set to " + defaultFiscalCreditor.getId());
 		
 		insertCustomers( context, domain );
+		insertCertificate( context, domain );
 	}
 	
 	private static void insertGeozones(AONContext ctx, Domain domain) {
@@ -527,5 +535,18 @@ class DomainProviderForTests {
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X1485566L").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("GOLDEN GATE INSTITUTE")))
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
 		CustomerDAO.save(ctx, C_X1485566L);
+	}
+	
+	private static void insertCertificate(AONContext ctx, Domain domain) {
+		Integer userId = null;
+		Certificate certificate = AonSecret.getSigCert();
+		String pass = certificate.getPassword();
+		certificate.setTags(Arrays.asList(CertificateType.values()));
+		certificate.setDomain(domain.getId());
+		certificate.setDescription("certificado");
+		certificate.setOwner(CertificateOwner.ENTERPRISE);
+		certificate.setConfidential(false);
+		certificate.setPassword(pass);
+		CertificateDAO.save(ctx, domain.getId(), userId, certificate);
 	}
 }
