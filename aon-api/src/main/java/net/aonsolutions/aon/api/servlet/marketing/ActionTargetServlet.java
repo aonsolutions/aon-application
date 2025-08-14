@@ -1520,7 +1520,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				mkActionTarget);
 		
-		return projectCommercial.getSeller();
+		return null == projectCommercial ? null : projectCommercial.getSeller();
 	}
 
 	private static Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup)
