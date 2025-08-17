@@ -26,7 +26,9 @@ public class DomainUserRoles implements Serializable {
 	private List<AonRole> domainUserRoles;
 	private List<AonRole> parentDomainUserRoles;
 	private boolean domainPayer;
+	
 	private boolean isTrial;
+	private String trialValue;
 	
 	public DomainUserRoles() {
 		super();
@@ -77,6 +79,15 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setTrial(boolean isTrial) {
 		this.isTrial = isTrial;
+		return this;
+	}
+	
+	public String getTrialValue() {
+		return trialValue;
+	}
+	
+	public DomainUserRoles setTrialValue(String trialValue) {
+		this.trialValue = trialValue;
 		return this;
 	}
 	

@@ -23,7 +23,9 @@ export class DomainUserRoles {
 	oldUserRoles;
 
 	domainPayer;
+	
 	trial;
+	trialValue;
 
 	constructor(data) {
 		this.domain = new Domain(data.domain);
@@ -44,6 +46,7 @@ export class DomainUserRoles {
 		this.domainPayer = data.domainPayer;
 
 		this.trial = data.trial;
+		this.trialValue = data.trialValue;
 	}
 
 	checkUsers() {
@@ -778,6 +781,10 @@ export class DomainUserRoles {
 
 	isTrial() {
 		return this.trial;
+	}
+	
+	getTrialValue() {
+		return this.trialValue;
 	}
 
 	isDomainManagementAvailable() {

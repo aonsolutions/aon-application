@@ -1587,7 +1587,8 @@ public class SecurityDAO {
 				.setDomainUserRoles(domainUserRoles)
 				.setParentDomainUserRoles(parentDomainUserRoles)
 				.setDomainPayer(domainPayer != null)
-				.setTrial(trialAppParam.isPresent());
+				.setTrial(trialAppParam.isPresent() && !AonStringUtils.equalsIgnoreCase(trialAppParam.get().getValue(), "0"))
+				.setTrialValue(trialAppParam.isPresent() ? trialAppParam.get().getValue() : null);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
