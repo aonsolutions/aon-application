@@ -119,6 +119,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -1401,6 +1402,25 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		
 		return AON.getDomainList(domainName, domainId, user, f -> f.getParentProperty().in(domainParentIds));
+	}
+	
+	// **************************************************
+	// ******************************************** [TAG]
+	// **************************************************
+	
+	@Override
+	public List<Tag> getTagList(TagParams params) throws AonCoreException {
+		return AON.getTagList(params);
+	}
+	
+	@Override
+	public Tag saveTag(String domainName, Integer domainId, String user, Tag tag) throws AonCoreException {
+		return AON.saveTag(domainName, domainId, user, tag);
+	}
+	
+	@Override
+	public void deleteTag(String domainName, int domainId, String user, Integer id) throws AonCoreException {
+		AON.deleteTag(domainName, domainId, user, f -> f.getIdProperty().eq(id));
 	}
 
 }

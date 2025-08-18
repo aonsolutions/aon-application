@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -440,6 +441,14 @@ public interface CommonServiceAsync {
 	void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
+
+	// **************************************************
+	// ******************************************** [TAG]
+	// **************************************************
+
+	void getTagList(TagParams params, AsyncCallback<List<Tag>> asyncCallback) throws AonCoreException;
+	void saveTag(String domainName, Integer domainId, String user, Tag tag, AsyncCallback<Tag> asyncCallback) throws AonCoreException;
+	void deleteTag(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	
 }

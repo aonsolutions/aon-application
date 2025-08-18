@@ -2,19 +2,25 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TagDAO {
 	
@@ -49,6 +55,48 @@ public class TagDAO {
 	
 	public static List<Tag> getList(AONContext ctx, TagFilter filter) {
 		return getTagStream(ctx, filter).toList();
+	}
+	
+	public static LinkedList<Tag> getList(AONContext ctx, TagParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(TAG)
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(TAG.NAME);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(TAG.NAME.desc());
+		}
+		
+		return select
+				.limit(params.getOffset(), params.getLimit())
+				.fetchInto(TAG)
+				.stream()
+				.map(new TagFiller())
+				.collect(Collectors.toCollection(LinkedList::new))
+				;
+	}
+	
+	private static Condition paramsToCondition(AONContext ctx, TagParams params) {
+		Condition condition = DSL.trueCondition();
+		
+		condition = condition.and(TAG.DOMAIN.eq(params.getDomain()));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(TAG.NAME.like("%" + params.getDescription() + "%"));
+		
+		if(null != params.getTagType())
+			condition = condition.and(TAG.TYPE.eq(params.getTagType().value()));
+		
+		return condition;
+	}
+
+	public static Tag save(AONContext ctx, Tag tag){
+		return (null == tag.getId()) ? insertTag(ctx, tag) : updateTag(ctx, tag);
 	}
 	
 	public static Tag updateTag(AONContext ctx, Tag tag){

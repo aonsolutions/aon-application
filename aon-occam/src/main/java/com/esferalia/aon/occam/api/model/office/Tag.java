@@ -77,24 +77,27 @@ public class Tag implements Serializable, HasId {
 		return color;
 	}
 	
-	public void setStartDate(Date startDate) {
+	public Tag setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
 	}
 	
 	public Date getStartDate() {
 		return startDate;
 	}
 	
-	public void setEndDate(Date endDate) {
+	public Tag setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
 	}
 	
 	public Date getEndDate() {
 		return endDate;
 	}
 	
-	public void setUser(User user) {
+	public Tag setUser(User user) {
 		this.user = user;
+		return this;
 	}
 	
 	public User getUser() {
