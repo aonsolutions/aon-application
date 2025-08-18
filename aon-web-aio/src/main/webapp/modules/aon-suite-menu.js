@@ -105,9 +105,9 @@ export class AonSuiteMenu extends AonElement {
         sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
         sideMenu.appendChild(sideNavTitle);
 
-        sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1,"stacks"));
-        sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED,"schedule"));
-        sideMenu.appendChild(this.buildSideNavRow(this.last,"quick_reference_all"));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED));
+        sideMenu.appendChild(this.buildSideNavRow(this.last));
 
         if(this.cardData)
             this.buildSideNavCard(sideMenu,"1");
@@ -119,7 +119,7 @@ export class AonSuiteMenu extends AonElement {
             
         sideMenu.appendChild(utilidades);
 
-        sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, "folder_managed"));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, ));
 
         if(!this.uploadButton){
             let uploadButton = new AonButton();
@@ -346,16 +346,9 @@ export class AonSuiteMenu extends AonElement {
         
     }
 
-    buildSideNavRow(value, icon) {
+    buildSideNavRow(value) {
 		let div = this.createSpan();
 		div.classList.add("suiteMenuSideNavRowDiv");
-
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.classList.add("suiteMenuSideNavRowI");
-		i.innerHTML= icon;
-		div.appendChild(i);
-        
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;

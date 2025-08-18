@@ -98,6 +98,7 @@ export class AonDocumental extends AonElement {
 
 	async build() {
 		let aonDocumental = this.getApplication();
+		LS.setBetaDoc(true);
 		if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
 
