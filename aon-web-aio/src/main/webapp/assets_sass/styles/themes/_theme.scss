@@ -270,7 +270,7 @@
           background-position : $loginbutton-hover-background-size;
         }
       }
-      &.aonMagicButton{
+      &.aonMagicButton, &.button-transparent{
         background-color   : $magicbutton-background-color;
         color              : $magicbutton-color;
         border             : $magicbutton-border;
@@ -289,6 +289,14 @@
         color              : $color-300;
         &:hover{
           background-color : $iconbutton-hover-background-color;
+        }
+      }
+      &.dialog-button-save{
+      }
+      &.dialog-button-delete{
+        background-color : $color-red-900;
+        &:hover{
+        background-color : $color-red-500;
         }
       }
     }

@@ -26,16 +26,12 @@ export class AonNotes extends AonElement {
     super();
     this.filter = {};
     this.filter.order = 'pinUp';
-    const application = document.querySelector('aon-application');
-    this.DIALOG       = document.getElementById(application.DIALOG);
   }
 
-  connectedCallback() {
-    this.initialize();
-    this.build();
+  async connectedCallback() {
+    await this.build();
+    this.initDialog();
   }
-
-  initialize() {}
 
   async build() {
     // TRAER la cantidad de notas
@@ -59,6 +55,15 @@ export class AonNotes extends AonElement {
         }
       }
     );
+  }
+
+  initDialog() {
+    if (!this.DIALOG) {
+      const application = document.querySelector('aon-application');
+      if (application) {
+        this.DIALOG = document.getElementById(application.DIALOG);
+      }
+    }
   }
 
 // ----------------------------- TOOLBAR
@@ -301,129 +306,58 @@ export class AonNotes extends AonElement {
 
   truncateKey(value){
     if(value && value.length > 10){
-      value = `${value.substring(0, 10)}...`
+      value = `${value.substring(0, 10)}...`;
     }
     return value;
   }
-  deleteTag(noteTag) {    
-    let aonDeleteTagDialog = new AonNewDialog();
-    aonDeleteTagDialog.id = noteTag + "Delete";
-    this.getApplication().appendChild(aonDeleteTagDialog);
 
-    aonDeleteTagDialog.createMessage(
+  deleteTag(noteTag) {
+    this.DIALOG.clear();
+    this.DIALOG.setTitle("Eliminar etiqueta");
+    // Mensaje
+    const textnode = document.createTextNode(
       `Existe al menos una nota con esta etiqueta asignada. ¿Realmente desea eliminar la etiqueta '${noteTag}'?`
     );
-
-    aonDeleteTagDialog.createAcceptButton(async () => {
+    this.DIALOG.setContent(textnode);
+    // Cancelar
+    this.DIALOG.addCancelAction();
+    // Aceptar
+    this.DIALOG.addSendAction(async () => {
       let data = {};
       data.noteTag = noteTag;
       await deleteNoteTag(data);
-      this.getApplication().removeChild(aonDeleteTagDialog);
       if(this.filter.tag && this.filter.tag === noteTag){
         this.filter.tag = undefined;
       }
       await this.reloadNotes();
-    });
-
-    aonDeleteTagDialog.createCancelButton(() => {
-      this.getApplication().removeChild(aonDeleteTagDialog);
-    });
-
-    this.waitForElementToExist(`${noteTag}DeleteAcceptButton`).then((acceptButton) => {
-      acceptButton.focus();
-    });
+    }, "delete");
+    this.DIALOG.open();
   }
 
   dialogTag(noteTag) {
-    
-  /*
-    let d = document.getElementById(application.DIALOG);
-    DIALOG            = document.getElementById(application.DIALOG);
-		d.clear();
-		d.setTitle("Cambiar Contraseña");
-
-        let newPassword   = new AonNewInput();
-        newPassword.id    = "aonConfigurationUserCardOldPassword";
-        newPassword.type  = "password";
-        newPassword.title = "Contraseña";
-        d.setContent(newPassword);
-
-        let newPasswordRepeat   = new AonNewInput();
-        newPasswordRepeat.id    = "aonConfigurationUserCardNewPassword";
-        newPasswordRepeat.type  = "password";
-        newPasswordRepeat.title = "Repetir Contraseña";
-        d.addContent(newPasswordRepeat);
-        
-		d.addAcceptAction(() => {
-          changePassword({oldPassword:newPassword.value, newPassword:newPasswordRepeat.value}, this.sessionData).then(()=>{
-            this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
-          }).catch(e=>this.showError(e));
-		});
-		d.open();
-     * 
-   */
-//      const application = document.querySelector('aon-application');
-//    this.DIALOG       = document.getElementById(application.DIALOG);
-
-  console.log(this.DIALOG);
-
     this.DIALOG.clear();
-    this.DIALOG.setTitle("Etiqueta");
+    this.DIALOG.setTitle("Editar etiqueta");
     
     // Create name input
-    let nameInput = createInput('nameInput', 'Nombre');
-    nameInput.type = 'text';
+    let nameInput   = createInput('nameInput', 'Nombre');
+    nameInput.type  = 'text';
+    nameInput.id    = "dialogTag";
+    nameInput.value = noteTag ?? '';
     nameInput.setAttribute("maxLength", 17);
-    nameInput.id = "dialogTag";
-    if (noteTag)
-      nameInput.value = noteTag;
     this.DIALOG.setContent(nameInput);
     nameInput.focus();
-    
-    this.DIALOG.addAcceptAction(async () => {
+    // Cancelar
+    this.DIALOG.addCancelAction();
+    // Aceptar
+    this.DIALOG.addSendAction(async () => {
       let data = {};
       data.noteTagOld = noteTag;
       data.noteTagNew = nameInput.value;
       await saveNoteTag(data);
       await this.reloadNotes();
-    });
-
+    }, "save");
+    
     this.DIALOG.open();
-    
-  /*
-    let aonCreateUpdateTagDialog = new AonNewDialog("Etiqueta");
-    aonCreateUpdateTagDialog.id = "createUpdateTagDialog";
-    this.getApplication().appendChild(aonCreateUpdateTagDialog);
-
-    // Create name input
-    let nameInput = createInput('nameInput', 'Nombre');
-    nameInput.type = 'text';
-    nameInput.setAttribute("maxLength", 17);
-    nameInput.id = "dialogTag"
-    if (noteTag) nameInput.value = noteTag;
-
-    // Add dialog body
-    aonCreateUpdateTagDialog.createBody(nameInput);
-    nameInput.focus();
-
-    aonCreateUpdateTagDialog.createAcceptButton(async () => {
-      let data = {};
-      data.noteTagOld = noteTag;
-      data.noteTagNew = nameInput.value;
-      await saveNoteTag(data);
-      this.getApplication().removeChild(aonCreateUpdateTagDialog);
-      await this.reloadNotes();
-    });
-
-    aonCreateUpdateTagDialog.createCancelButton(() => {
-      this.getApplication().removeChild(aonCreateUpdateTagDialog);
-    });
-
-    this.waitForElementToExist(`dialogTagInput`).then((input) => {
-      input.setAttribute("maxLength", 17);
-      input.focus();
-    });
-   */
   }
 
   // ----------------------------- NOTES
@@ -566,27 +500,21 @@ export class AonNotes extends AonElement {
 
     // Delete
     let deleteButton = this.createNoteButton(MATERIAL_ICONS.DELETE, "Eliminar nota", () => {
-      let aonDeleteDialog = new AonNewDialog();
-      aonDeleteDialog.id = note.getId();
-      this.getApplication().appendChild(aonDeleteDialog);
-
-      aonDeleteDialog.createMessage(`¿Desea eliminar la nota '${note.getSubject()}'?`);
-
-      aonDeleteDialog.createAcceptButton(async () => {
-        await deleteNote(note);
-        this.getApplication().removeChild(aonDeleteDialog);
-        await this.reloadNotes();
-      });
-
-      aonDeleteDialog.createCancelButton(() => {
-        this.getApplication().removeChild(aonDeleteDialog);
-      });
-
-      this.waitForElementToExist(`${note.getId()}AcceptButton`).then(
-        (acceptButton) => {
-          acceptButton.focus();
-        }
+      this.DIALOG.clear();
+      this.DIALOG.setTitle("Eliminar nota");
+      // Mensaje
+      const textnode = document.createTextNode(
+        `¿Desea eliminar la nota '${note.getSubject()}'?`
       );
+      this.DIALOG.setContent(textnode);
+      // Cancelar
+      this.DIALOG.addCancelAction();
+      // Aceptar
+      this.DIALOG.addSendAction(async () => {
+        await deleteNote(note);
+        await this.reloadNotes();
+      }, "delete");
+      this.DIALOG.open();
     });
     buttonsNoteDiv.appendChild(deleteButton);
 
@@ -625,14 +553,11 @@ export class AonNotes extends AonElement {
     buttonsNoteDiv.appendChild(archiveButton);
 
     let tagButton = this.createNoteButton(MATERIAL_ICONS.LABEL, "Etiqueta", () => {
-      let aonTagDialog = new AonNewDialog("Asignar etiqueta");
-      aonTagDialog.id = note.getId() + "Tag";
-      this.getApplication().appendChild(aonTagDialog);
-
+      this.DIALOG.clear();
+      this.DIALOG.setTitle("Asignar etiqueta");
       // Create name input
-      let tagInputDiv = this.createElement(TAG.DIV);
-
-      let selectInputDic = this.createElement(TAG.INPUT);
+      let tagInputDiv     = this.createElement(TAG.DIV);
+      let selectInputDic  = this.createElement(TAG.INPUT);
       selectInputDic.type = "text";
       selectInputDic.placeholder = "Introduce la etiqueta";
       selectInputDic.setAttribute("list", "tagDatalist");
@@ -656,24 +581,17 @@ export class AonNotes extends AonElement {
       tagSpantDic.innerText = "Etiqueta";
       tagInputDiv.appendChild(tagSpantDic);
 
-      aonTagDialog.createBody(tagInputDiv);
-
-      aonTagDialog.createAcceptButton(async () => {
-        this.getApplication().removeChild(aonTagDialog);
+      this.DIALOG.setContent(tagInputDiv);
+      // Cancelar
+      this.DIALOG.addCancelAction();
+      // Aceptar
+      this.DIALOG.addSendAction(async () => {
         note.noteTag = selectInputDic.value;
         await this.saveNote(note);
         await this.reloadNotes();
-      });
+      }, "save");
 
-      aonTagDialog.createCancelButton(() => {
-        this.getApplication().removeChild(aonTagDialog);
-      });
-
-      this.waitForElementToExist(`tagInputDialog`).then(
-        (input) => {
-          input.focus();
-        }
-      );
+      this.DIALOG.open();
     });
     buttonsNoteDiv.appendChild(tagButton);
 

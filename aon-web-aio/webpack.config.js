@@ -6,7 +6,7 @@ const CopyWebpackPlugin         = require('copy-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
-//  devtool: 'source-map',
+  devtool: 'source-map',
   stats: {
     errorDetails: true
   },
@@ -56,26 +56,26 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use : [MiniCssExtractPlugin.loader, 'css-loader']
+//        use : [MiniCssExtractPlugin.loader, 'css-loader']
 //        devtool
-//        use: [
-//          MiniCssExtractPlugin.loader,
-//          { loader: 'css-loader', options: { sourceMap: true } }
-//        ]
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { sourceMap: true } }
+        ]
       },
       {
         test: /\.scss$/i,  // Regla para archivos .scss
-        use : [
-          MiniCssExtractPlugin.loader,  // Extrae el CSS en un archivo separado
-          'css-loader',  // Procesa el CSS
-          'sass-loader'  // Compila Sass a CSS
-        ]
-//        devtool
-//        use: [
-//          MiniCssExtractPlugin.loader,
-//          { loader: 'css-loader', options: { sourceMap: true } },
-//          { loader: 'sass-loader', options: { sourceMap: true } }
+//        use : [
+//          MiniCssExtractPlugin.loader,  // Extrae el CSS en un archivo separado
+//          'css-loader',  // Procesa el CSS
+//          'sass-loader'  // Compila Sass a CSS
 //        ]
+//        devtool
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { sourceMap: true } },
+          { loader: 'sass-loader', options: { sourceMap: true } }
+        ]
       }
     ]
   },

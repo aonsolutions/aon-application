@@ -62,10 +62,6 @@ import { Income } from './invoice/Income.js';
 import { Expense } from './invoice/Expense.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 
-//	Falla la compilación por esta línea que no se usa. REVISAR!!
-// import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
-//
-
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
@@ -387,6 +383,9 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add("aonNewMenuSideNavUl");
 
 		for (let item in MENU_APPS) {
+          
+          console.log(MENU_APPS[item])
+          
 			if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
 				this.addMenuSidenavApp(ul, app);
@@ -407,7 +406,7 @@ export class AonNewMenu extends AonElement {
 	}
 
 	addMenuSidenavApp(ul, app) {
-	if (((this.isAyudaT() && app.app != CONSTANT.PLANS)  || (this.isAyudaT() && app.app == CONSTANT.PLANS && (this.getDur().isAdmin() || this.getDur().isEnterprise()))) || (app.app != CONSTANT.PLANS && !this.isAyudaT())){
+      if (((this.isAyudaT() && app.app != CONSTANT.PLANS)  || (this.isAyudaT() && app.app == CONSTANT.PLANS && (this.getDur().isAdmin() || this.getDur().isEnterprise()))) || (app.app != CONSTANT.PLANS && !this.isAyudaT())){
 		let li = this.createElement(TAG.LI);
 		li.id = `aonMenuList-${app.app}`;
 		li.classList.add("aonNewMenuSideNavLi");
