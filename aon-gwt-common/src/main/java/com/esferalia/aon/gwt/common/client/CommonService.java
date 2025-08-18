@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -97,7 +98,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -444,6 +444,14 @@ public interface CommonService extends RemoteService {
 	void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain) throws AonCoreException;
 	
 	List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException;
+
+	// **************************************************
+	// ******************************************** [TAG]
+	// **************************************************
+
+	List<Tag> getTagList(TagParams params) throws AonCoreException;
+	Tag saveTag(String domainName, Integer domainId, String user, Tag tag) throws AonCoreException;
+	void deleteTag(String domainName, int domain, String user, Integer id) throws AonCoreException;
 
 	
 }

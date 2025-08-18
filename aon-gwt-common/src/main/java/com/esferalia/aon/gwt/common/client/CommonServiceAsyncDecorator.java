@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -1295,6 +1296,28 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomains(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ******************************************** [TAG]
+	// **************************************************
+
+	@Override
+	public void getTagList(TagParams params, AsyncCallback<List<Tag>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTagList(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTag(String domainName, Integer domainId, String user, Tag tag, AsyncCallback<Tag> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTag(domainName, domainId, user, tag, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTag(String domainName, int domainId, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTag(domainName, domainId, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 }
