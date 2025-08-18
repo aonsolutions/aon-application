@@ -118,13 +118,11 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const CREATE_INVOICE_RECEIVED = {
     id: CONSTANT.CREATE_INVOICE_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE
   }
 
   export const CREATE_INVOICE_TICKET = {
     id: CONSTANT.CREATE_INVOICE_TICKET.initCap(),
     name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT
   }
 
   // ***** INVOICES *****
@@ -133,14 +131,12 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const INVOICE_ISSUED = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED,
-    icon: MATERIAL_ICONS.UNARCHIVE,
     fn: () => invoiceIssued()
   }
 
   export const INVOICE_ISSUED_BETA = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED_INVOICES,
-    icon: MATERIAL_ICONS.UNARCHIVE,
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
@@ -153,7 +149,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const INVOICE_RECEIVED = {
     id: CONSTANT.INVOICE_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE,
     fn: () => invoiceList({
       status: "accounting",
       type: "purchase,expenses",
@@ -165,7 +160,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const INVOICE_RECEIVED_BETA = {
     id: CONSTANT.INVOICE_RECEIVED.initCap(),
     name: MSG.RECEIVED_INVOICES,
-    icon: MATERIAL_ICONS.ARCHIVE,
     fn: () => invoiceList({
       status: "accounting",
       type: "purchase,expenses",
@@ -177,7 +171,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
     name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
-    icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",
       type: "ticket",
@@ -198,21 +191,18 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const PROFORMA_INVOICES = {
     id: CONSTANT.PROFORMA_INVOICES.initCap(),
     name: MSG.PROFORMA_INVOICES,
-    icon: "edit_document",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
 
   export const RAWDOC_INBOX_RECEIVED = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE,
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
   export const RAWDOC_INBOX_RECEIVED_NEW = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED_NEW.initCap(),
     name: MSG.DRAFT + " F." + MSG.RECEIVEDS,
-    icon: "edit_document",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
@@ -227,14 +217,12 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const RAWDOC_INBOX_TICKET = {
     id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
     name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
   
   export const RAWDOC_INBOX_TICKET_NEW = {
     id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
     name: MSG.DRAFT + " " + MSG.SIMPLIFIED+"/"+MSG.TICKETS,
-    icon: "edit_note",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
 
@@ -249,28 +237,24 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const RAWDOC_PROCESSING = {
     id: CONSTANT.RAWDOC_PROCESSING.initCap(),
     name: MSG.PROCCESSING,
-    icon: MATERIAL_ICONS.SCHEDULE,
     fn: () => invoiceProcessing()
   }
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
     name: MSG.TO_REVIEW,
-    icon: MATERIAL_ICONS.REPORT,
     fn: () => invoiceList( { status: CONSTANT.REJECTED })
   }
   
   export const RAWDOC_TRASH = {
     id: CONSTANT.RAWDOC_TRASH.initCap(),
     name: MSG.TRASH,
-    icon: MATERIAL_ICONS.DELETE,
     fn: () => invoiceList( { status: CONSTANT.DRAFT })
   }
 
   export const INVOICE_PENDINGS = {
     id: CONSTANT.PENDINGS.initCap(),
     name: MSG.PENDING_INVOICES,
-    icon: MATERIAL_ICONS.INBOX,
     opened: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
@@ -278,28 +262,24 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const OTHER_INCOMES = {
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
-    icon: "add_card",
     fn: () => income()
   }
 
   export const OFFERS = {
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
-    icon: MATERIAL_ICONS.CONTRACT,
     fn: () => jsfOfferLoad()
   }
 
   export const OTHER_EXPENSES = {
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
-    icon: "account_balance_wallet",
     fn: () => expense()
   }
 
   export const STAFF_EXPENSES = {
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
-    icon: MATERIAL_ICONS.GROUP,
     fn: () => alert("EN DESARROLLO. Use temporalmente la opción de otros gastos.")
   }
 
@@ -391,28 +371,24 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const REGISTRY_CUSTOMER = {
     id: CONSTANT.REGISTRY_CUSTOMER.initCap(),
     name: MSG.CUSTOMERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE,
     fn: () => customerList()
   }
   
   export const REGISTRY_SUPPLIER = {
     id: CONSTANT.REGISTRY_SUPPLIER.initCap(),
     name: MSG.SUPPLIERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE,
     fn: () => supplierList()
   }
   
   export const REGISTRY_CREDITOR = {
     id: CONSTANT.REGISTRY_CREDITOR.initCap(),
     name: MSG.CREDITORS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE,
     fn: () => creditorList()
   }
 
   export const REGISTRY = {
     id: CONSTANT.HOLDERS.initCap(),
     name: MSG.CONTACTS,
-    icon: MATERIAL_ICONS.PEOPLE,
     clickable: false,
     options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
   }
@@ -420,21 +396,18 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
     name: MSG.PRODUCTS_AND_SERVICES,
-    icon: MATERIAL_ICONS.INVENTORY_2,
     fn: () => productList({ expense: false })
   }
 
   export const EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
     name: MSG.EXPENSES,
-    icon: MATERIAL_ICONS.INVENTORY_2,
     fn: () => expenseList({ expense: true })
   }
 
   export const CHARGES_PAYMENTS = {
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
-    icon: MATERIAL_ICONS.EURO_SYMBOL,
     fn: () => gwtLoad(GWT.FINANCE)
   }
 
@@ -455,20 +428,17 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const FISCAL_DRAFT = {
     id: "fiscalModelDraft",
     name: "Precálculo Impuestos",
-    icon: MATERIAL_ICONS.ACCOUNT_BALANCE
   }
 
   export const INVEST = {
     id: CONSTANT.INVEST_ASSET.initCap(),
     name: MSG.INVEST_ASSET,
-    icon: MATERIAL_ICONS.INVENTORY_2,
     fn: () => investList({})
   }
   
   export const CONCEPTS = {
     id: CONSTANT.CONCEPTS.initCap(),
     name: MSG.CONCEPTS,
-    icon: MATERIAL_ICONS.LOCAL_MALL,
     clickable: false,
     options: [PRODUCT, EXPENSES, INVEST]
   }
