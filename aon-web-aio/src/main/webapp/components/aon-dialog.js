@@ -83,13 +83,13 @@ export class AonDialog extends AonElement {
   }
 
   buildByType() {
-    if (this.isTypeBlank())
-      this.buildBlank();
-    else if (this.isTypeMenu())
-      this.buildMenu();
-    else if (this.isTypeFullScreen())
-      this.buildFullScreen();
-    else
+//    if (this.isTypeBlank())
+//      this.buildBlank();
+//    else if (this.isTypeMenu())
+//      this.buildMenu();
+//    else if (this.isTypeFullScreen())
+//      this.buildFullScreen();
+//    else
       this.build();
   }
 
@@ -107,14 +107,11 @@ export class AonDialog extends AonElement {
   }
 
   clear() {
-    const title   = this.getElement(this.TITLE);
-    const content = this.getContent();
-    if (title)
-      title.innerHTML = '';
-    if (content)
-      content.innerHTML = '';
-    // const action = this.getElement(this.ACTION)
-    // if(action) action.innerHTML = '';
+    [
+      this.getElement(this.TITLE),
+      this.getContent(),
+      this.getElement(this.ACTION)
+    ].forEach(el => el && (el.innerHTML = ''));
   }
 
   buildBlank() {
@@ -209,15 +206,11 @@ export class AonDialog extends AonElement {
     action.id = this.ACTION;
 
     let title = this.createElement(TAG.DIV);
-//		title.style.fontSize = "22px";
-//		title.style.fontWeight = "bold";
-//		title.style.marginBottom = "10px";
     title.id = this.TITLE;
     title.className = "dialog-title";
 
     let content = this.createElement(TAG.DIV);
     content.id = this.CONTENT;
-//		content.style.marginBottom = '20px';
 
     main.appendChild(action);
     main.appendChild(content);
@@ -230,27 +223,7 @@ export class AonDialog extends AonElement {
 
     let divButtonRight = this.createElement(TAG.DIV);
     divButtonRight.id = this.BUTTON_RIGHT;
-//		divButtonRight.style.marginLeft = "auto";
     action.appendChild(divButtonRight);
-    /*
-     //--- CHANGE STYLES --------------------------------
-     this.style.position = "relative";
-     //----------MAIN
-     main.style.padding = '0';
-     main.style.top = "0";
-     main.style.position = "fixed";
-     main.style.width = "100%";
-     main.style.height = "100%";
-     
-     //----------TITLE
-     title.style.lineHeight = "41px";
-     
-     //----------ACTION
-     action.style.display = "flex";
-     
-     //---------CONTENT
-     content.style.padding = "20px";
-     */
 
     this.addAction({
       id: this.CANCEL,
@@ -297,11 +270,6 @@ export class AonDialog extends AonElement {
     if (this.classList.contains('aon-dialog-hidden')) {
       this.classList.remove('aon-dialog-hidden');
     }
-//		let dialog = this.getDialog();
-//		dialog.style.display = 'block';
-//		if(this.isTypeFullScreen()){
-//			this.getElement("aonMobileMenuSidenav").style.zIndex = "-1";
-//		}
   }
 
   close() {
@@ -309,14 +277,7 @@ export class AonDialog extends AonElement {
     if (!this.classList.contains('aon-dialog-hidden')) {
       this.classList.add('aon-dialog-hidden');
     }
-//		let dialog = this.getDialog();
-//		if(dialog) dialog.style.display = 'none';
     this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
-
-//		if(this.isTypeFullScreen()){
-//			this.getElement("aonMobileMenuSidenav").style.zIndex = "0";
-//			this.type =""; // BUILD HTML
-//		}
   }
 
   clickOutsideDialogClose(){
@@ -345,15 +306,15 @@ export class AonDialog extends AonElement {
     return this.getElement(this.MAIN);
   }
 
-  setContent(widget, top, left, width) {
+  setContent(widget, top = null, left = null, width = null) {
     let content       = this.getContent();
     content.innerHTML = '';
     content.appendChild(widget);
-    if (top && left) {
-      let dialog = this.getElement(this.DIALOG);
+//    if (top && left) {
+//      let dialog = this.getElement(this.DIALOG);
 //      content.style.top = top + 'px' || '90px';
 //      content.style.left = (left > (dialog.offsetWidth / 2) ? left - 180 : left) + 'px';
-    }
+//    }
 
 //		if(width) {
 //			content.style.width = width;
@@ -441,7 +402,6 @@ export class AonDialog extends AonElement {
       btn.id = id;
       btn.icon = icon || aonIcon;
       btn.title = title;
-      btn.background = "transparent";
       if (fn) {
         btn.addEventListener(EVENT.CLICK, fn);
       }
@@ -451,44 +411,42 @@ export class AonDialog extends AonElement {
       btn = this.createElement(TAG.BUTTON);
       btn.id = id;
       btn.className = 'aonButton';
-      btn.style.marginRight = "10px";
       btn.innerHTML = title;
       this.getElement(this.ACTION).appendChild(btn);
       btn.addEventListener(EVENT.CLICK, fn);
-  }
+    }
   }
 
-  addCancelAction(fn, close = true) {
+  addCancelAction(fn = undefined, close = true) {
     let btn = undefined;
-    if (this.isTypeFullScreen()) {
-      btn = this.addAction({
-        id: this.CANCEL,
-        title: MSG.CLOSE,
-        icon: MATERIAL_ICONS.ARROW_BACK,
-        position: "left"
-      });
-    } else {
+//    if (this.isTypeFullScreen()) {
+//      btn = this.addAction({
+//        id: this.CANCEL,
+//        title: MSG.CLOSE,
+//        icon: MATERIAL_ICONS.ARROW_BACK,
+//        position: "left"
+//      });
+//    } else {
       btn = this.getElement(this.CANCEL);
       if (btn)
         btn.remove();
       btn = this.createElement(TAG.BUTTON);
       btn.id = this.CANCEL;
-      btn.className = 'aonButton';
-      btn.style.backgroundColor = "grey";
-      btn.style.marginRight = "10px";
+      btn.className = 'aonButton button-transparent';
       btn.innerHTML = MSG.CANCEL;
       this.getElement(this.ACTION).appendChild(btn);
-    }
+//    }
 
     btn.addEventListener(EVENT.CLICK, (ev) => {
-      fn(ev);
+      if (fn){
+        fn(ev);
+      }
       if (close) {
         this.close();
       }
     });
 
     return btn;
-
   }
 
   addAcceptAction(fn) {
@@ -503,14 +461,14 @@ export class AonDialog extends AonElement {
 
   createButtonAccept(title = undefined) {
     let btn = undefined;
-    if (this.isTypeFullScreen()) {
-      btn = this.addAction({
-        id: this.ACCEPT,
-        title: title || MSG.ACCEPT,
-        icon: MATERIAL_ICONS.DONE,
-        position: "right"
-      });
-    } else {
+//    if (this.isTypeFullScreen()) {
+//      btn = this.addAction({
+//        id: this.ACCEPT,
+//        title: title || MSG.ACCEPT,
+//        icon: MATERIAL_ICONS.DONE,
+//        position: "right"
+//      });
+//    } else {
       btn = this.getElement(this.ACCEPT);
       if (btn)
         btn.remove();
@@ -521,16 +479,28 @@ export class AonDialog extends AonElement {
       btn.title = title || MSG.ACCEPT;
       let divAction = this.getElement(this.ACTION);
       divAction.appendChild(btn);
-    }
+//    }
 
     return btn;
   }
 
-  addSendAction(fn, title) {
+  addSendAction(fn, titleOrType) {
+    const defaults = {
+      save  : MSG.SAVE,
+      delete: MSG.DELETE
+    };
+
+    // Si no hay title y existe un default para ese type, úsalo
+    const title = defaults[titleOrType] || titleOrType;
+
     let button = this.createButtonAccept(title);
     if (button) {
-      button.classList.add('buttonload');
-      button.addEventListener('click', (ev) => {
+      button.classList.add('dialog-buttonload');
+      // Agregar clase basada en el tipo si existe en defaults
+      if (defaults[titleOrType]) {
+        button.classList.add(`dialog-button-${titleOrType}`);
+      }
+      button.addEventListener(EVENT.CLICK, (ev) => {
         ev.stopPropagation();
         ev.preventDefault();
         fn(ev);
@@ -538,19 +508,6 @@ export class AonDialog extends AonElement {
       return button;
     }
   }
-
-  // loadingButton(loading){
-  // 	let accept = this.getElement(this.ACCEPT);
-  // if(loading) accept.classList.add("button--loading"); 
-  // else accept.classList.remove("button--loading");
-  // 	if(accept){
-  // 		let id = "iconDialogSend";
-  // 		let icon = this.createElement('i');
-  // 		icon.id = id;
-  // 		icon.classList.add("fa fa-refresh fa-spin");
-  // 		accept.appendChild(icon);
-  // 	}
-  // }
 }
 if (!window.customElements.get('aon-dialog')) {
   window.customElements.define('aon-dialog', AonDialog);
