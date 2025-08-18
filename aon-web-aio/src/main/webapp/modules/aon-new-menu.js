@@ -383,10 +383,7 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add("aonNewMenuSideNavUl");
 
 		for (let item in MENU_APPS) {
-          
-          console.log(MENU_APPS[item])
-          
-			if (this.isSidenavApp(MENU_APPS[item])) {
+          	if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
 				this.addMenuSidenavApp(ul, app);
 			}
