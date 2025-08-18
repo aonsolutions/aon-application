@@ -96,8 +96,7 @@ export class AonDeliveryList extends AonElement {
 	}
 
 	search(detail) {
-        let value = detail.search;
-		if(detail.search) this.filter.value = value;
+		if(detail.search) this.filter.value = detail.search;
         if(detail.status) this.filter.status = detail.status;
         if(detail.startDate) this.filter.from = detail.startDate;
         if(detail.to) this.filter.to = detail.to;
@@ -146,7 +145,39 @@ export class AonDeliveryList extends AonElement {
         if(status == 'IN_PREPARATION') return 'En Preparación';
         else if(status == 'INVOICED') return "Facturado";
         else return MSG.PENDING;
-     }
+    }
+
+    empty() {
+        let tableWrapper = this.getElement(this.TABLE);
+        if (!tableWrapper) return;
+    
+        let table = tableWrapper.querySelector("table");
+        if (!table) return;
+    
+        let tbody = table.querySelector("tbody");
+        if (!tbody) {
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+        } else {
+            tbody.innerHTML = ""; 
+        }
+        let columnsCount = (this.columns && this.columns.length) ? this.columns.length : 1;
+        let tr = document.createElement("tr");
+        let td = document.createElement("td");
+    
+        td.colSpan = columnsCount;
+        td.textContent = "No hay datos disponibles";
+
+        tr.style.border = "0px";
+        tr.classList.add("no-hover");
+        
+        td.style.textAlign = "center";
+        td.style.padding = "10px";
+        td.style.border = "0px";
+        
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    }
 
 }
 

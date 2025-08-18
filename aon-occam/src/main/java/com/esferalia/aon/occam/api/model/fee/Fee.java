@@ -358,6 +358,9 @@ public class Fee implements Serializable{
 	}
 
 	public LinkedList<String> getSegments() {
+		if(segments == null) {
+			segments = new LinkedList<>();
+		}
 		return segments;
 	}
 

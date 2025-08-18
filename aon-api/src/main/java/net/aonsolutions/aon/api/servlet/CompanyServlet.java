@@ -1,5 +1,4 @@
 package net.aonsolutions.aon.api.servlet;
-import java.io.InterruptedIOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,8 +6,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.naming.LimitExceededException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,6 +20,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -30,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
@@ -39,6 +38,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -521,7 +521,50 @@ public class CompanyServlet extends AonApiHttpServlet{
 //			TaskBookingUtils.getInstance().createTask(api.getDomain(), parentDomain, api.getUser(), oldBooking, newBooking);
 		}
 		
+		// Trial
+		updateTrialAppParam(api);
+		
 		return new JSONObject();
+	}
+	
+	private void updateTrialAppParam(AonApiData api) {
+		boolean trial = JsonUtils.getboolean(api.getData(), IJsonNames.TRIAL);
+		String trialValue = JsonUtils.getString(api.getData(), IJsonNames.TRIAL_VALUE);
+		
+		ApplicationParameter trialAppParam = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.TRIAL);
+		
+		if(!trial || AonStringUtils.equalsIgnoreCase(trialValue, "0")) {
+			// Delete trial appParam
+			if(null != trialAppParam && null != trialAppParam.getId())
+				AON.deleteApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(trialAppParam.getId()));
+		
+		// Create/Update appParam
+		} else {
+			
+			Occam occam = new Occam()
+					.setDomain(api.getDomain().getId())
+					.setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
+			
+			// Update appParam
+			if(null != trialAppParam && null != trialAppParam.getId()) {
+				
+				trialAppParam.setValue(trialValue);
+				AON.saveApplicationParameter(occam, trialAppParam);
+			
+			// Create appParam
+			} else {
+				
+				ApplicationParameter trailParam = new ApplicationParameter()
+						.setDomain(api.getDomain().getId())
+						.setName(AppParam.TRIAL)
+						.setValue(trialValue);
+				
+				AON.saveApplicationParameter(occam, trailParam);
+				
+			}
+			
+		}
 	}
 	
 	private boolean isDifferentBooking(Booking oldBooking, Booking newBooking) {

@@ -1,396 +1,412 @@
 import { AonElement } from "./AonElement.js";
-import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG} from '../environments/environments.js'
+import { CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG } from '../environments/environments.js'
 //import '../css/aon-new-input.css';
 import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewInput extends AonElement {
-    ROOT;
-    BOX;
-    LABEL;
-    INPUT;
-    ICON;
-    ICON_BUTTON;
-    TITLE;
-    MSG;
-    MSG_SPAN;
-    
-    get id() {
-        return this.getAttribute(CONSTANT.ID);
-    }
-    
-    set id(id) {
-        this.setAttribute(CONSTANT.ID, id);
-    }
+	ROOT;
+	BOX;
+	LABEL;
+	INPUT;
+	ICON;
+	ICON_BUTTON;
+	TITLE;
+	MSG;
+	MSG_SPAN;
 
-    get type() {
-        return this.getAttribute(CONSTANT.TYPE);
-    }
-    
-    set type(type) {
-        this.setAttribute(CONSTANT.TYPE, type);
-    }
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
 
-    get name() {
-        return this.getAttribute(CONSTANT.NAME);
-    }
+	set id(id) {
+		this.setAttribute(CONSTANT.ID, id);
+	}
 
-    set name(name) {
-        this.setAttribute(CONSTANT.NAME, name);
-    }
+	get type() {
+		return this.getAttribute(CONSTANT.TYPE);
+	}
 
-    get title() {
-        return this.getAttribute(CONSTANT.TITLE);
-    }
-    
-    set title(title) {
-        this.setAttribute(CONSTANT.TITLE, title);
-    }
+	set type(type) {
+		this.setAttribute(CONSTANT.TYPE, type);
+	}
 
-    get value() {
-        return this.getAttribute(CONSTANT.VALUE);
-    }
-    
-    set value(value) {
-        this.setAttribute(CONSTANT.VALUE, value);
-    }
+	get name() {
+		return this.getAttribute(CONSTANT.NAME);
+	}
 
-    get required() {
-        return this.getAttribute(CONSTANT.REQUIRED);
-    }
-    
-    set required(value) {
-        this.setAttribute(CONSTANT.REQUIRED, value);
-    }
+	set name(name) {
+		this.setAttribute(CONSTANT.NAME, name);
+	}
 
-    get readonly(){
-        return this.getAttribute(CONSTANT.READONLY);
-    } 
+	get title() {
+		return this.getAttribute(CONSTANT.TITLE);
+	}
 
-    set readonly(value) {
-        this.setAttribute(CONSTANT.READONLY, value);
-    }
+	set title(title) {
+		this.setAttribute(CONSTANT.TITLE, title);
+	}
 
-    get disabled() {
-        return this.getAttribute(CONSTANT.DISABLED);
-    }
+	get value() {
+		return this.getAttribute(CONSTANT.VALUE);
+	}
 
-    set disabled(value) {
-        this.setAttribute(CONSTANT.DISABLED, value);
-    }
+	set value(value) {
+		this.setAttribute(CONSTANT.VALUE, value);
+	}
 
-    get maxlength() {
-        return this.getAttribute(CONSTANT.MAXLENGTH);
-    }
-    
-    set maxlength(maxlength) {
-       this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
-    }
+	get required() {
+		return this.getAttribute(CONSTANT.REQUIRED);
+	}
 
-    connectedCallback() {
-        this.initialize();
-        this.build();
-    }
+	set required(value) {
+		this.setAttribute(CONSTANT.REQUIRED, value);
+	}
 
-    initialize() {
-        this.ROOT = this.id + CONSTANT.ROOT.initCap();
-        this.BOX = this.id + CONSTANT.BOX.initCap();
-        this.LABEL = this.id + CONSTANT.LABEL.initCap();
-        this.INPUT = this.id + CONSTANT.INPUT.initCap();
-        this.TITLE = this.id + CONSTANT.TITLE.initCap();
-        this.MSG = this.id + CONSTANT.MSG.initCap();
-        this.MSG_SPAN = this.id + CONSTANT.MSG.initCap() + CONSTANT.SPAN.initCap();
-        this.ICON = this.id + CONSTANT.ICON.initCap();
-        this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
-        this.value = this.value || CONSTANT.EMPTY;
-        this.type = this.type || CONSTANT.TEXT;
+	get readonly() {
+		return this.getAttribute(CONSTANT.READONLY);
+	}
 
-    }
+	set readonly(value) {
+		this.setAttribute(CONSTANT.READONLY, value);
+	}
 
-    build() {
-        let rootDiv = this.createElement(TAG.DIV);
-        rootDiv.id = this.ROOT;
-        rootDiv.title = this.getTitle();
-        this.appendChild(rootDiv);
-    
-        this.buildBox(rootDiv);
-        this.buildMsg(rootDiv);
-    }
+	get disabled() {
+		return this.getAttribute(CONSTANT.DISABLED);
+	}
 
-    buildBox(parent) {
-        let boxDiv = this.createElement(TAG.DIV);
-        boxDiv.id = this.BOX;
-        boxDiv.className = CSS.AON_INPUT_BOX;
-        parent.appendChild(boxDiv);
+	set disabled(value) {
+		this.setAttribute(CONSTANT.DISABLED, value);
+	}
 
-        let label = this.createElement(TAG.LABEL);
-        label.id = this.LABEL;
-        label.className = CSS.AON_INPUT_BOX_LABEL;  
-        boxDiv.appendChild(label);
+	get maxlength() {
+		return this.getAttribute(CONSTANT.MAXLENGTH);
+	}
 
-        let input = this.createElement(TAG.INPUT);
-        input.id = this.INPUT;
-        input.value = this.getValue();
-        input.type = this.getType();
-        input.className = CSS.AON_NEW_INPUT;
+	set maxlength(maxlength) {
+		this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
+	}
 
-        if (this.isDisabled()) input.setAttribute("disabled", "true");
-        if (this.isReadonly())  input.setAttribute("readonly", "true");
-    
-        
-        input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
-        input.addEventListener(EVENT.BLUR, this.onBlur);
-        input.addEventListener(EVENT.INPUT, this.onInput);
+	connectedCallback() {
+		this.initialize();
+		this.build();
+	}
 
-        input.placeholder = this.getTitle();
-        label.appendChild(input);
-        if(this.maxlength) {
-            input.setAttribute("maxlength", this.maxlength);
-        }
+	initialize() {
+		this.ROOT = this.id + CONSTANT.ROOT.initCap();
+		this.BOX = this.id + CONSTANT.BOX.initCap();
+		this.LABEL = this.id + CONSTANT.LABEL.initCap();
+		this.INPUT = this.id + CONSTANT.INPUT.initCap();
+		this.TITLE = this.id + CONSTANT.TITLE.initCap();
+		this.MSG = this.id + CONSTANT.MSG.initCap();
+		this.MSG_SPAN = this.id + CONSTANT.MSG.initCap() + CONSTANT.SPAN.initCap();
+		this.ICON = this.id + CONSTANT.ICON.initCap();
+		this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
+		this.value = this.value || CONSTANT.EMPTY;
+		this.type = this.type || CONSTANT.TEXT;
 
-        let span = this.createElement(TAG.SPAN);
-        span.id = this.TITLE;
-        let requiredText = this.isRequired() ? " *" : "";
-        span.innerHTML = this.getTitle() + requiredText;
-        label.appendChild(span);
+	}
 
-        if(this.isPassword()) {
+	build() {
+		let rootDiv = this.createElement(TAG.DIV);
+		rootDiv.id = this.ROOT;
+		rootDiv.title = this.getTitle();
+		this.appendChild(rootDiv);
+
+		this.buildBox(rootDiv);
+		this.buildMsg(rootDiv);
+	}
+
+	buildBox(parent) {
+		let boxDiv = this.createElement(TAG.DIV);
+		boxDiv.id = this.BOX;
+		boxDiv.className = CSS.AON_INPUT_BOX;
+		parent.appendChild(boxDiv);
+
+		let label = this.createElement(TAG.LABEL);
+		label.id = this.LABEL;
+		label.className = CSS.AON_INPUT_BOX_LABEL;
+		boxDiv.appendChild(label);
+
+		let input = this.createElement(TAG.INPUT);
+		input.id = this.INPUT;
+		input.value = this.getValue();
+		input.type = this.getType();
+		input.className = CSS.AON_NEW_INPUT;
+
+		if (this.isDisabled()) input.setAttribute("disabled", "true");
+		if (this.isReadonly()) input.setAttribute("readonly", "true");
+
+		input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
+		input.addEventListener(EVENT.BLUR, this.onBlur);
+		input.addEventListener(EVENT.INPUT, this.onInput);
+
+		input.placeholder = this.getTitle();
+		label.appendChild(input);
+		if (this.maxlength) {
+			input.setAttribute("maxlength", this.maxlength);
+		}
+
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.TITLE;
+		let requiredText = this.isRequired() ? " *" : "";
+		span.innerHTML = this.getTitle() + requiredText;
+		label.appendChild(span);
+
+		if (this.isPassword()) {
           this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
             const iconButton = this.getElement(this.ICON_BUTTON);
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             iconButton.setIcon(type === 'password' ? 'visibility' : 'visibility_off');
             input.type = type;
           });
-        }
-    }
+		}
+	}
 
-    buildMsg(parent) {
-        let msgDiv = this.createElement(TAG.DIV)
-        msgDiv.id = this.MSG;
-        msgDiv.className = CSS.AON_INPUT_MSG
-        parent.appendChild(msgDiv);
-        msgDiv.style.display = 'none';
-    }
+	buildMsg(parent) {
+		let msgDiv = this.createElement(TAG.DIV)
+		msgDiv.id = this.MSG;
+		msgDiv.className = CSS.AON_INPUT_MSG
+		parent.appendChild(msgDiv);
+		msgDiv.style.display = 'none';
+	}
 
-    buildErrorMessage(message) {
-        let div = this.getElement(this.MSG);
-        this.clearElement(div);
-        div.style.display = '';
-        
-        let span = this.createElement(TAG.SPAN);
-        span.id = this.MSG_SPAN;
-        span.className = CSS.AON_INPUT_MSG_ERROR;
-        span.innerHTML = message;
-        div.appendChild(span);
-    }
+	buildErrorMessage(message) {
+		let div = this.getElement(this.MSG);
+		this.clearElement(div);
+		div.style.display = '';
 
-    buildWarningMessage(message) {
-        let div = this.getElement(this.MSG);
-        this.clearElement(div);
-        div.style.display = '';
-        
-        let span = this.createElement(TAG.SPAN);
-        span.id = this.MSG_SPAN;
-        span.className = CSS.AON_INPUT_MSG_WARNING;
-        span.innerHTML = message;
-        div.appendChild(span);
-    }
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.MSG_SPAN;
+		span.className = CSS.AON_INPUT_MSG_ERROR;
+		span.innerHTML = message;
+		div.appendChild(span);
+	}
 
-    onBlur = () => {
-        this.checkRequired();
-        this.dispatchEvent(new Event(EVENT.BLUR));
-    };
+	buildWarningMessage(message) {
+		let div = this.getElement(this.MSG);
+		this.clearElement(div);
+		div.style.display = '';
 
-    onInput = () => {
-        this.dispatchEvent(new Event(EVENT.INPUT));
-    };
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.MSG_SPAN;
+		span.className = CSS.AON_INPUT_MSG_WARNING;
+		span.innerHTML = message;
+		div.appendChild(span);
+	}
 
-    checkRequired() {
-        if(this.isRequired() && this.getValue().isEmpty()) {
-            this.addError(this.getTitle() + " " + MSG.IS_REQUIRED);
-        } else if(this.isRequired()) {
-            this.removeError();
-        }
-    }
+	onBlur = () => {
+		this.checkRequired();
+		this.dispatchEvent(new Event(EVENT.BLUR));
+	};
 
-    addIcon(icon, color, fn) {
-        let div = this.getElement(this.BOX);
-        let iconLabel = this.getElement(this.ICON);
-        if (!iconLabel) {
-          iconLabel = this.createElement(TAG.LABEL);
-          div.appendChild(iconLabel);
-        }
-        iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-        iconLabel.id = this.ICON;
-        iconLabel.setAttribute("for", this.INPUT);
-        let aonIconButton = new AonIconButton();
-        aonIconButton.id = this.ICON_BUTTON;
-        aonIconButton.icon = icon;
-        aonIconButton.noHover = "true";
-        if(fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
-        iconLabel.appendChild(aonIconButton);
-        
-        if(color) iconLabel.color = color;
-    }
+	onInput = () => {
+		this.dispatchEvent(new Event(EVENT.INPUT));
+	};
 
-    addIconWithRemove(icon, color, removeFn) {
-        let div = this.getElement(this.BOX);
-        let iconLabel = this.getElement(this.ICON);
-        if (!iconLabel) {
-          iconLabel = this.createElement(TAG.LABEL);
-          div.appendChild(iconLabel);
-        }
-        iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-       // iconLabel.style.top = '5px';
-        iconLabel.id = this.ICON;
-        iconLabel.setAttribute("for", this.INPUT);
-        let aonIconButton = new AonIconButton();
-        aonIconButton.id = this.ICON_BUTTON;
-        aonIconButton.icon = icon;
-        aonIconButton.noHover = "true";
-        aonIconButton.addEventListener(EVENT.MOUSEOVER, () => 
-          aonIconButton.icon = MATERIAL_ICONS.CLOSE);
-    
-        aonIconButton.addEventListener(EVENT.MOUSELEAVE, () => 
-          aonIconButton.icon = icon);
-    
-        aonIconButton.addEventListener(EVENT.CLICK, removeFn);
-    
-        iconLabel.appendChild(aonIconButton);
-    
-        if (color) iconLabel.color = color; 
-       //this.getElement(this.INPUT).style.paddingRight = '40px';
-      }
+	checkRequired() {
+		if (this.isRequired() && this.getValue().isEmpty()) {
+			this.addError(this.getTitle() + " " + MSG.IS_REQUIRED);
+		} else if (this.isRequired()) {
+			this.removeError();
+		}
+	}
 
-    addError(message) {
-        let span = this.getElement(this.TITLE);
-        span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
-        let input = this.getElement(this.INPUT);
-        input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
-        
-        if(message) {
-            this.buildErrorMessage(message);
-        }
-    }
+	addIcon(icon, color, fn) {
+		let div = this.getElement(this.BOX);
+		let iconLabel = this.getElement(this.ICON);
+		if (!iconLabel) {
+			iconLabel = this.createElement(TAG.LABEL);
+			div.appendChild(iconLabel);
+		}
+		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+//		iconLabel.style.top = '5px';
+		iconLabel.id = this.ICON;
+		iconLabel.setAttribute("for", this.INPUT);
+		let aonIconButton = new AonIconButton();
+		aonIconButton.id = this.ICON_BUTTON;
+		aonIconButton.icon = icon;
+		aonIconButton.noHover = "true";
+		if (fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
+		iconLabel.appendChild(aonIconButton);
 
-    addWarning(message) {
-        let span = this.getElement(this.TITLE);
-        span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
-        let input = this.getElement(this.INPUT);
-        input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
-        
-        if(message) {
-            this.buildWarningMessage(message);
-        }
-    }
+		if (color) iconLabel.color = color;
+//		this.getElement(this.INPUT).style.paddingRight = '40px';
+	}
 
-    removeError() {
-        let span = this.getElement(this.TITLE);
-        span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
-        let input = this.getElement(this.INPUT);
-        input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
+	addIconWithRemove(icon, color, removeFn) {
+		let div = this.getElement(this.BOX);
+		let iconLabel = this.getElement(this.ICON);
+		if (!iconLabel) {
+			iconLabel = this.createElement(TAG.LABEL);
+			div.appendChild(iconLabel);
+		}
+		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+//		iconLabel.style.top = '5px';
+		iconLabel.id = this.ICON;
+		iconLabel.setAttribute("for", this.INPUT);
+		let aonIconButton = new AonIconButton();
+		aonIconButton.id = this.ICON_BUTTON;
+		aonIconButton.icon = icon;
+		aonIconButton.noHover = "true";
+		aonIconButton.addEventListener(EVENT.MOUSEOVER, () =>
+			aonIconButton.icon = MATERIAL_ICONS.CLOSE);
 
-        let div = this.getElement(this.MSG);
-        this.clearElement(div);
-        div.style.display = 'none';
-    }
+		aonIconButton.addEventListener(EVENT.MOUSELEAVE, () =>
+			aonIconButton.icon = icon);
 
-    removeWarning() {
-        let span = this.getElement(this.TITLE);
-        span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
-        let input = this.getElement(this.INPUT);
-        input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
+		aonIconButton.addEventListener(EVENT.CLICK, removeFn);
 
-        let div = this.getElement(this.MSG);
-        this.clearElement(div);
-        div.style.display = 'none';
-    }
+		iconLabel.appendChild(aonIconButton);
 
-    getId() {
-       return this.id
-    }
+		if (color) iconLabel.color = color;
+//		this.getElement(this.INPUT).style.paddingRight = '40px';
+	}
 
-    setId(id) {
-        this.id = id;
-    }
+	addEndWidget(widget) {
+		let div = this.getElement(this.BOX);
+		let iconLabel = this.getElement(this.ICON);
+		if (!iconLabel) {
+			iconLabel = this.createElement(TAG.LABEL);
+			div.appendChild(iconLabel);
+		}
+		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+//		iconLabel.style.top = '15px';
+//		iconLabel.style.right = '15px';
+		iconLabel.id = this.ICON;
+		iconLabel.setAttribute("for", this.INPUT);
+		
+		iconLabel.appendChild(widget);
+	}
 
-    getTitle() {
-        return this.title;
-    }
+	addError(message) {
+		let span = this.getElement(this.TITLE);
+		span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
+		let input = this.getElement(this.INPUT);
+		input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
 
-    setTitle(title) {
-        this.title = title;
-    }
+		if (message) {
+			this.buildErrorMessage(message);
+		}
+	}
 
-    getType() {
-        return this.type;
-    }
+	addWarning(message) {
+		let span = this.getElement(this.TITLE);
+		span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
+		let input = this.getElement(this.INPUT);
+		input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
 
-    setType(type) {
-        this.type = type;
-    }
+		if (message) {
+			this.buildWarningMessage(message);
+		}
+	}
 
-    isPassword() {
-        return this.type === CONSTANT.PASSWORD;
-    }
+	removeError() {
+		let span = this.getElement(this.TITLE);
+		span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
+		let input = this.getElement(this.INPUT);
+		input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
 
-    getValue() {
-        return this.value;
-    }
+		let div = this.getElement(this.MSG);
+		this.clearElement(div);
+		div.style.display = 'none';
+	}
 
-    setValue(value) {
-        this.value = value; 
-        if(value == undefined) value = CONSTANT.EMPTY
-        let input = this.getElement(this.INPUT);
-        if(input) input.value = value;
-    }
+	removeWarning() {
+		let span = this.getElement(this.TITLE);
+		span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
+		let input = this.getElement(this.INPUT);
+		input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
 
-    isRequired() {
-        return this.required;
-    }
+		let div = this.getElement(this.MSG);
+		this.clearElement(div);
+		div.style.display = 'none';
+	}
 
-    setRequired(required) {
-        this.required = required;
-    }
+	getId() {
+		return this.id;
+	}
 
-    isReadonly() {
-        return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
-            && 'false' !== this.getAttribute(CONSTANT.READONLY)
-    }
+	setId(id) {
+		this.id = id;
+	}
 
-    setReadonly(readonly) {
+	getTitle() {
+		return this.title;
+	}
 
-        this.setAttribute(CONSTANT.READONLY, readonly);
-        let input = this.getElement(this.INPUT);
-        if(input) {
-            if(readonly) input.setAttribute("readonly", readonly);
-            else input.removeAttribute("readonly");
-        } 
-    }
+	setTitle(title) {
+		this.title = title;
+	}
 
-    isDisabled() {
-        return this.disabled;
-    }
+	getType() {
+		return this.type;
+	}
 
-    setDisabled(disabled) {
-        this.disabled = disabled;
-        let input = this.getElement(this.INPUT);
-        if(input) {
-            if(disabled) input.setAttribute("disabled", disabled);
-            else input.removeAttribute("disabled");
-        }
-    }
+	setType(type) {
+		this.type = type;
+	}
 
-    setMaxlength(maxlength) {
-        this.maxlength = maxlength;
-        let input  = this.getElement(this.INPUT);
-        if(input) input.setAttribute("maxlength", this.maxlength);
-    }
+	isPassword() {
+		return this.type === CONSTANT.PASSWORD;
+	}
 
-    focus() {
-        this.getElement(this.INPUT).focus();
-    }
+	getValue() {
+		return this.value;
+	}
+
+	setValue(value) {
+		this.value = value;
+		if (value === undefined) value = CONSTANT.EMPTY;
+		let input = this.getElement(this.INPUT);
+		if (input) input.value = value;
+	}
+
+	isRequired() {
+		return this.required;
+	}
+
+	setRequired(required) {
+		this.required = required;
+	}
+
+	isReadonly() {
+		return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+			&& 'false' !== this.getAttribute(CONSTANT.READONLY)
+	}
+
+	setReadonly(readonly) {
+		this.setAttribute(CONSTANT.READONLY, readonly);
+		let input = this.getElement(this.INPUT);
+		if (input) {
+			if (readonly) input.setAttribute("readonly", readonly);
+			else input.removeAttribute("readonly");
+		}
+	}
+
+	isDisabled() {
+		return this.disabled;
+	}
+
+	setDisabled(disabled) {
+		this.disabled = disabled;
+		let input = this.getElement(this.INPUT);
+		if (input) {
+			if (disabled) input.setAttribute("disabled", disabled);
+			else input.removeAttribute("disabled");
+		}
+	}
+
+	setMaxlength(maxlength) {
+		this.maxlength = maxlength;
+		let input = this.getElement(this.INPUT);
+		if (input) input.setAttribute("maxlength", this.maxlength);
+	}
+
+	focus() {
+		this.getElement(this.INPUT).focus();
+	}
 }
-if(!window.customElements.get(TAG.AON_NEW_INPUT)){
-    window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);
+
+if (!window.customElements.get(TAG.AON_NEW_INPUT)) {
+	window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);
 }
-  

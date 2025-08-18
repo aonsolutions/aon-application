@@ -2,19 +2,11 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.orderBy;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.YEAR_DAYS;
 
 import java.sql.Connection;
@@ -25,7 +17,6 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
-
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.AonConstants;
@@ -34,7 +25,6 @@ import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionVariable;
@@ -52,8 +42,10 @@ public class SQLSystemExpressionContextFactory implements
 	private static final String SYSTEM_DATA_SQL = "SELECT * "
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
-			+ " AND domain IN (0,?,?,?) " 
-			+ " ORDER BY ABS(`domain`) ASC, start_date ASC";
+			+ " AND domain IN (0,?,?,?) "
+			+ " ORDER BY ( CASE WHEN `domain` <= 0  THEN ABS(`domain`) ELSE ( `domain` + 1000 ) END ) ASC, start_date ASC"
+			//+ " ORDER BY ABS(`domain`) ASC, start_date ASC"
+			;
 
 	private static Long getYearDays(Date startDate, Date endDate) {
 		Date startDay = CommonUtil.getYearFirstDay(startDate);

@@ -350,6 +350,11 @@ export class AonInput extends AonElement {
     if (color) this.getElement(this.ICON_LABEL).color = color; 
     this.getElement(this.INPUT).style.paddingRight = '40px';
   }
+  
+  addEndWidget(widget) {
+    let div = this.getElement(this.DIV);
+    div.appendChild(widget);
+  }
 
   addIcon(icon, color) {
     let div = this.getElement(this.DIV);
