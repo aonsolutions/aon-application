@@ -374,12 +374,17 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
+				dateTab.setWidget(0, 1, periodBox);
 				fromDate.setValue(period.getSelectedInitiationDate(),false);
 				toDate.setValue(period.getSelectedDeadline(),false);
+				previousPeriods.setSelectedIndex(0);
+				balanceType.setSelectedIndex(1);
 				confidential.setSelectedIndex(2);
 				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
+				breakdownEnabled.setValue(false, false);
 				period.setFocus(true);
 				ValueChangeEvent.<AccountingReportParams>fire(BalancePanelFilter.this, getWidgetParams(options));
 			}

@@ -55,10 +55,12 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
@@ -68,6 +70,7 @@ import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
@@ -98,6 +101,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -865,6 +870,19 @@ public class SecurityDAO {
 			.findFirst().orElse(new Scope());
 	}
 	
+	public static Scope saveScope(AONContext ctx, Scope scope){
+		
+		if(null == scope.getId()) return insertScope(ctx, scope);
+		
+		ctx.getDslContext().update(SCOPE)
+			.set(SCOPE.DESCRIPTION, scope.getDescription())
+			.where(SCOPE.ID.eq(scope.getId()))
+			.execute();
+		
+		return scope;
+	}
+	
+	
 	public static Integer deleteScope(AONContext ctx, Integer scopeId){
 		ctx.getDslContext().delete(SCOPE).where(SCOPE.ID.eq(scopeId)).execute();
 		return scopeId;
@@ -1569,7 +1587,8 @@ public class SecurityDAO {
 				.setDomainUserRoles(domainUserRoles)
 				.setParentDomainUserRoles(parentDomainUserRoles)
 				.setDomainPayer(domainPayer != null)
-				.setTrial(trialAppParam.isPresent());
+				.setTrial(trialAppParam.isPresent() && !AonStringUtils.equalsIgnoreCase(trialAppParam.get().getValue(), "0"))
+				.setTrialValue(trialAppParam.isPresent() ? trialAppParam.get().getValue() : null);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
@@ -1626,6 +1645,106 @@ public class SecurityDAO {
 							.execute();
 						}
 				});
+	}
+
+	public static List<Scope> getScopeList(CloseableAONContext ctx, ScopeParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(params.getDomain()));
+		List<Integer> searchDomains = new ArrayList<Integer>();
+		searchDomains.add(params.getDomain());
+		if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
+		
+		SelectConditionStep<Record> select =  ctx.getDslContext()
+				.select()
+				.from(SCOPE)
+				.where(condition)
+				.and(SCOPE.DOMAIN.in(searchDomains));
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(SCOPE.DESCRIPTION);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(SCOPE.DESCRIPTION.desc());
+		}
+		
+		return select
+				.limit(params.getOffset(), params.getLimit())
+				.fetchInto(SCOPE)
+				.stream()
+				.map(new ScopeFiller())
+				.collect(Collectors.toList())
+				;
+	}
+
+	public static Integer getScopesCount(CloseableAONContext ctx, ScopeParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(params.getDomain()));
+		List<Integer> searchDomains = new ArrayList<Integer>();
+		searchDomains.add(params.getDomain());
+		if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
+		
+		SelectConditionStep<Record1<Integer>> select =  ctx.getDslContext().selectCount()
+				.from(SCOPE)
+				.where(condition)
+				.and(SCOPE.DOMAIN.in(searchDomains));
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(SCOPE.DESCRIPTION);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "description"))
+				select.orderBy(SCOPE.DESCRIPTION.desc());
+		}
+		
+		Record1<Integer> scopeCount = select.fetchOne();
+		
+		return scopeCount == null ? 0 : scopeCount.value1();
+	}
+	
+	private static Condition paramsToCondition(AONContext ctx, ScopeParams params) {
+		Condition condition = DSL.trueCondition();
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(SCOPE.DESCRIPTION.like("%" + params.getDescription() + "%"));
+		
+		return condition;
+	}
+
+	public static List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId) {
+		List<UserScopeFull> list = ctx.getDslContext().select()
+			.from(USER_SCOPE)
+			.join(SCOPE).on(SCOPE.ID.eq(USER_SCOPE.SCOPE))
+			.join(USER).on(USER.ID.eq(USER_SCOPE.USER_ID))
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
+			.where(USER_SCOPE.SCOPE.eq(scopeId))
+			.fetch()
+			.stream()
+			.map(new UserScopeFullFiller())
+			.collect(Collectors.toList());
+		
+		return list;
+	}
+	
+	public static class UserScopeFullFiller extends Filler implements Function<Record, UserScopeFull> {
+		
+		@Override
+		public UserScopeFull apply(Record r) {
+			return build(r);
+		}
+		
+		public static UserScopeFull build(Record r) {
+			return new UserScopeFull()
+				.setId(r.getValue(USER_SCOPE.ID))
+				.setDomain(r.getValue(USER_SCOPE.DOMAIN))
+				.setScope( checkField(r, USER_SCOPE.SCOPE) ? ScopeFiller.buildScope(r) : null )
+				.setUser( checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r) : null )
+				;
+		}		
 	}
 	
 }

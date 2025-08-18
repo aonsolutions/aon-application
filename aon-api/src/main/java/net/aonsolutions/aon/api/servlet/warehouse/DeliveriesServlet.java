@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -159,6 +160,15 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		if(id != null) {
 			filter = filter.and(f.getIdProperty().eq(id));
+		}
+
+		String value = JsonUtils.getString(api.getData(), IJsonNames.VALUE);
+		if(value != null) {
+			Filter valueFilter = f.getRegistryNameProperty().like("%" + value + "%");
+			if(AonNumberUtils.isNumber(value))
+				valueFilter = valueFilter.or(f.getNumberProperty().like(AonNumberUtils.toInteger(value)));
+			filter = filter.and(valueFilter);
+			
 		}
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);

@@ -971,6 +971,7 @@ export class AonHeader extends AonElement {
 			
 			let firstDayOfMonth = new Date(); 
 			firstDayOfMonth.setUTCHours(0,0,0,0);
+			firstDayOfMonth.setUTCMonth(firstDayOfMonth.getUTCMonth() - 1, 1); // Set to first day of the previous month
 			
 			getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, pattern: aonHeaderSearchBoxValue, limit: 26 })
 			.then(contracts => {
@@ -986,9 +987,10 @@ export class AonHeader extends AonElement {
 				.forEach(contract => {
 					const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
 					const contractDocument = this.decorateMatching(contract.document, aonHeaderSearchBoxValue);
+					const contractEndDate  = contract.end_date ? `(${new Date(contract.end_date).toLocaleDateString()})` : '';
 					searchOptions.push({
 						icon : MATERIAL_ICONS.PERSON,
-						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractDocument}</span><span style="float:right;">${contract.company.name}</span>`,
+						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractDocument}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name})} );
 						},

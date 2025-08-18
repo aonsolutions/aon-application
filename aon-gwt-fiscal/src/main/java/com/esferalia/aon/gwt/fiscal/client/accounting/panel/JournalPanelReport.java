@@ -379,6 +379,9 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
+				comments.setValue(null);
+				id.setValue(0);
+				order.setSelectedIndex(0);
 				onSearch(options);
 			}
 		});

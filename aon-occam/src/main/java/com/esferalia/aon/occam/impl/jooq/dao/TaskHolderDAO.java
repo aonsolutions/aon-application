@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -92,13 +93,20 @@ public class TaskHolderDAO {
 		 */
 		public static TaskHolder build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = TASK_HOLDER_ALIAS;
-			return new TaskHolder()
+			TaskHolder th = new TaskHolder()
 					.copy(RegistryFiller.build(r, registry))
 					.setRegistry(r.getValue(TASK_HOLDER.REGISTRY))
 					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
-					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
+					;
+					
+			if(checkField(r, USER.DOMAIN))
+				th.setUserId(r.getValue(TASK_HOLDER.USER_ID), r.getValue(USER.DOMAIN));
+			else
+				th.setUserId(r.getValue(TASK_HOLDER.USER_ID));
+			
+			return th;
 		}
 		
 		/**

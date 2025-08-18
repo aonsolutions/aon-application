@@ -469,8 +469,9 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} 
 			}
-				let appElement = this.buildTopApp(app);
-				aonTopMenuDiv.appendChild(appElement);
+			
+			let appElement = this.buildTopApp(app);
+			aonTopMenuDiv.appendChild(appElement);
 		}
 		
 	
@@ -1174,7 +1175,7 @@ export class AonNewMenu extends AonElement {
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
-		if(this.getDur().isInvoiceUser()){
+		if(this.getDur().isInvoice()){
 			let optionsMenu = [
 				{
 					name: MSG.ISSUEDS,
