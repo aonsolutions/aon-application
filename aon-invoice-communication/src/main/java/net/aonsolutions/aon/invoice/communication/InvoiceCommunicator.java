@@ -82,7 +82,9 @@ public class InvoiceCommunicator {
 				}
 			}
 			
-			invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
+			invoice = InvoiceDAO.accept(ctx, invoice, cc.getRawdocId());
+			// TODO Cambiarlo cuando accept2 sea viable para la pantalla del portal.
+			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
 			
 			// TODO ---> JSON VERSION 2.0???
 			// cc.setOutputInvoiceJSON( InvoiceJSON.to(invoice)

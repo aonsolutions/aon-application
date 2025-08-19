@@ -4,19 +4,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.sii.SIIManager;
@@ -108,12 +112,13 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitVERIFACTU() {
-		// Not implemented
-//		try {
-//			VERIFACTU.accept(getOccam(), getVerifactuConfiguration(), getCompany(), getInvoices(), getVerifactuBlockchain());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
+			InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx);
+			config.setCertificate(getVerifactuConfiguration().getCertificate());
+			ctx.getDslContext().transaction(configuration -> VERIFACTU.accept(ctx, config, getCompany(), getInvoices()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

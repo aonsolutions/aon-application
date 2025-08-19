@@ -258,9 +258,9 @@ public class VERIFACTU {
 	private static String getQrUrl(RegistroFacturacionAltaType alta) throws VerifactuException {
 		return new StringBuilder(VerifactuUri.getUrlQr())
 			.append("?")
-			.append("nif=").append(encodeParam(alta.getIDFactura().getIDEmisorFactura()))
-			.append("numserie=").append(encodeParam(alta.getIDFactura().getNumSerieFactura()))
-			.append("fecha=").append(encodeParam(alta.getIDFactura().getFechaExpedicionFactura()))
+			.append("nif=").append(encodeParam(alta.getIDFactura().getIDEmisorFactura())).append("&")
+			.append("numserie=").append(encodeParam(alta.getIDFactura().getNumSerieFactura())).append("&")
+			.append("fecha=").append(encodeParam(alta.getIDFactura().getFechaExpedicionFactura())).append("&")
 			.append("importe=").append(encodeParam(alta.getImporteTotal()))
 			.toString();
 	}

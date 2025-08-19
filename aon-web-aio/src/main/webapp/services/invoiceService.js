@@ -49,7 +49,7 @@ export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});
 export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&cert=${data.cert}&legalLiterals=${data.legalLiterals}`);
-export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
+export const getCommunicationHistory = (invoice) => post(`${API_URL}/communication/history`, {invoice});
 
 export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});
 export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configuration`, data);

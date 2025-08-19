@@ -8419,10 +8419,22 @@ public class AON {
 			getFinance().deleteInvoiceInfo(ctx, invoiceId);
 		}
 	}	
+
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Occam occam, InvoiceCommunicationTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
+		}
+	}
 	
 	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
+		}
+	}
+	
+	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Occam occam, InvoiceCommunicationTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
 	

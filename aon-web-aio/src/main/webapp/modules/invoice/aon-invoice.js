@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	signInvoice, getInvoiceConfiguration, getAeatCertificates, getCommunicationHistory, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
 	getPaymethod} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
@@ -103,8 +103,8 @@ export class AonInvoice extends AonElement {
 		this.TABS = this.id + 'Tabs';
 		this.CONTENT = this.id + 'Content';
 		this.DATA = this.id + 'Data';
-		this.TBAI_CARD = this.id + 'Tbai' + CONSTANT.CARD.initCap();
 		this.COMMUNICATION = this.id + 'Communication';
+		this.COMMUNICATION_CARD = this.COMMUNICATION + CONSTANT.CARD.initCap();
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
@@ -491,7 +491,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildTabs(data) {
-		if(!this.invoice.isRawdoc() && this.invoice.isTbai()) {
+		if(!this.invoice.isRawdoc() && (this.invoice.isTbai() || this.invoice.isVerifactu())) {
 			let tab = new AonTab();
 			tab.id = this.TABS;
 			tab.setOptions(this.options);
@@ -535,7 +535,7 @@ export class AonInvoice extends AonElement {
 		communication.id = this.COMMUNICATION;
 		communication.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
 		content.appendChild(communication);
-		this.buildTbaiCard(communication);
+		this.buildCommunicationCard(communication);
 	}
 
 	buildFileContent() {
@@ -546,8 +546,9 @@ export class AonInvoice extends AonElement {
 		div.appendChild(file);
 	}
 
-	buildTbaiCard(parent) {
-		let card = this.createAonElement(new AonCard(), this.TBAI_CARD, MSG.TICKETBAI);
+	buildCommunicationCard(parent) {
+		let title = this.invoice.isTbai() ? MSG.TICKETBAI : "Verifactu";
+		let card = this.createAonElement(new AonCard(), this.COMMUNICATION_CARD, title);
 		card.style.width = this.fileOpened ? '100%' : '50%';
 		parent.appendChild(card);
 
@@ -559,15 +560,15 @@ export class AonInvoice extends AonElement {
 		}
 		table.removeRows();
 
-		getTbaiHistory(this.invoice.id).then(requests => {
+		getCommunicationHistory(this.invoice.id).then(requests => {
 			for(let i = 0; i < requests.length; i++) {
 				let history = requests[i];
-				this.printTbaiHistory(table, history, i);
+				this.printCommunicationHistory(table, history, i);
 			}
 		});
 	}
 
-	printTbaiHistory(table, history, i) {
+	printCommunicationHistory(table, history, i) {
 		table.addRow(); // ----- ROW i
 		
 		let span = this.createElement(TAG.SPAN);
@@ -580,7 +581,7 @@ export class AonInvoice extends AonElement {
 
 		let icon = this.createElement(TAG.I);
 		icon.className = "material-icons";
-		icon.style.color =  history.ok ? "green" : "red";
+		icon.style.color = this.getCommunicationStatusColor(history.status);
         icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
 		table.addCell(icon);
 
@@ -597,6 +598,13 @@ export class AonInvoice extends AonElement {
 			open(history.responseUrl, '_blank');
 		});
 		table.addCell(responseDownload);
+	}
+
+	getCommunicationStatusColor(status) {
+		if("PENDING" === status) return "gray";
+		else if("ACCEPTED" === status) return "green";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "orange";
+		else return "red";
 	}
 	
 	buildCommentCard(parent) {
