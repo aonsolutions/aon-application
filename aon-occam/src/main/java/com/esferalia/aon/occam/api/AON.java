@@ -121,6 +121,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -8145,8 +8146,15 @@ public class AON {
 		}
 	}
 	
+	// INVOICE COMMUNICATION HISTORY
 	
-	// TICKET BAI CONFIGURATION
+	public static List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(Occam occam, Integer invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationHistory(ctx, invoice);
+		}
+	}
+	
+	// INVOICE COMMUNICATION CONFIGURATION
 	
 	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

@@ -51,44 +51,36 @@
 											<f:facet name="header">
 												<aon:outputText value="Envíos" />
 											</f:facet>
-											<aon:dataTable id="verifactuSendTable"  value="#{invoiceController.verifactuInfo.requests}" var="tb">
+											<aon:dataTable id="verifactuSendTable"  value="#{invoiceController.invoiceCommunicationHistory}" var="history">
 												<aon:column>
 													<f:facet name="header">
 														<aon:outputText value="Fecha" />
 													</f:facet>
-													<aon:outputText value="#{tb.dataResponse.responseDate}" />
+													<aon:outputText value="#{history.date}" />
 												</aon:column>
 												
 												<aon:column>
 													<f:facet name="header">
 														<aon:outputText value="Operación" />
 													</f:facet>
-													<aon:outputText value="#{tb.operacion}" />
+													<aon:outputText value="#{history.operation.description}" />
 												</aon:column>
 												
 												<aon:column>
 													<f:facet name="header">
-														<aon:outputText value="" />
+														<aon:outputText value="Estado" />
 													</f:facet>
-													<aon:outputText title="Estado"
-														styleClass="aon-editDataTable-button aon-icon-check-black aon-nowrap aon-margin-left"
-														value="&#160;"
-														rendered="#{tb.response.ok}" />
-														
-													<aon:outputText title="#{tb.response.validationDescription}"
-														styleClass="aon-editDataTable-button aon-icon-wrong aon-nowrap aon-margin-left"
-														value="&#160;"
-														rendered="#{tb.response.error}" />
+													<aon:outputText value="#{history.status.description}" />
 
-													<aon:outputLink id="tbaiDownloadRequest"
+													<aon:outputLink id="verifactuDownloadRequest"
 														title="Descargar Petición"
-														target="_blank" value="#{tb.requestUrl}" 
+														target="_blank" value="#{history.requestUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>
 													
-													<aon:outputLink id="tbaiDownloadResponse"
+													<aon:outputLink id="verifactuDownloadResponse"
 														title="Descargar Respuesta"
-														target="_blank" value="#{tb.responseUrl}" 
+														target="_blank" value="#{history.responseUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>
 

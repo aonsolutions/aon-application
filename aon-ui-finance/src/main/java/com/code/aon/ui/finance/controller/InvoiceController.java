@@ -122,6 +122,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -174,6 +175,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showAuditInfoWindow;
 	private boolean showFiscalInformationWindow;
 	private boolean showLroeWindow;
+	private boolean showVerifactuWindow;
 	private boolean showAmortizationWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
@@ -724,6 +726,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void setShowLroeWindow(boolean showLroeWindow) {
 		this.showLroeWindow = showLroeWindow;
+	}
+	
+	public boolean isShowVerifactuWindow() {
+		return showVerifactuWindow;
+	}
+
+	public void setShowVerifactuWindow(boolean showVerifactuWindow) {
+		this.showVerifactuWindow = showVerifactuWindow;
 	}
 	
 	public boolean isShowAmortizationWindow() {
@@ -2215,6 +2225,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
 		return TbaiData.getInstance(getTbaiConfiguration()).get(domain, user, getInvoice().getId());		
+	}
+	
+	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Occam occam = new Occam().setDomain(domainId).setDomainName(domainName).setUser(login);
+		return AON.getInvoiceCommunicationHistory(occam, getInvoice().getId());
 	}
 	
 	public String getExpDate() {

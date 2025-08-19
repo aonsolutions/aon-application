@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
@@ -233,6 +234,7 @@ public interface IFinance {
 	// 	***********************************************
 
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx);
+	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(AONContext ctx, Integer invoice);
 	
 	// 	***********************************************
 	// 	********** TICKET BAI CONFIGURATION ***********

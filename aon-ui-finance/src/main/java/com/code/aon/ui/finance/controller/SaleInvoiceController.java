@@ -118,7 +118,6 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	private boolean showCertVerifactuWindow;
 	private boolean showCertVerifactuAnularWindow;
-	private boolean showVerifactuWindow;
 	private boolean showVerifactuAccept;
 	
 	private EdiInvoiceImporterHandler ediImporter;
@@ -190,14 +189,6 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showCertTbaiWindow = showCertTbaiWindow;
 		if(showCertTbaiWindow)
 			setShowTbaiAccept(showCertTbaiWindow);
-	}
-	
-	public boolean isShowVerifactuWindow() {
-		return showVerifactuWindow;
-	}
-
-	public void setShowVerifactuWindow(boolean showVerifactuWindow) {
-		this.showVerifactuWindow = showVerifactuWindow;
 	}
 	
 	public boolean isShowCertVerifactuWindow() {
