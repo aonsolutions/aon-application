@@ -43,7 +43,7 @@ export class AonHome extends AonElement {
 			this.buildMobile();
 		} else {
 			this.build();
-			this.customize();
+//			this.customize();
 		}
 	}
 
@@ -299,10 +299,9 @@ export class AonHome extends AonElement {
 	
 	// Cerrar el popup si se hace clic fuera del popup-content
  	closePopupOnOutsideClick(openpBtn, event) {
-		 let rightPanelContent = document.querySelector(".rightPanel");
-		
-		 if (!rightPanelContent.contains(event.target) && !openpBtn.contains(event.target)) {
-		
+        let rightPanelContent = document.querySelector(".rightPanel");
+
+		if (!rightPanelContent.contains(event.target) && !openpBtn.contains(event.target)) {
 	       	this.editButton.style.display='none';
 			this.configButton.style.display='none';
 			this.notificationButton.style.display='none';
@@ -311,22 +310,22 @@ export class AonHome extends AonElement {
 			
 			// Its remove on this.rightPanel.addEventListener(EVENT.CLOSE, ...)
 	        //document.removeEventListener('click', this.closeRightPanelHandler); // Remover el evento una vez cerrado
-	        
 	    }
 	}
 	
 	customize(){
-		let aonHeader = this.getElement(this.AON_HEADER);
-		let aonSearchDiv = aonHeader.getElement("aon-search-div");
-		aonSearchDiv.style.height = '32px';
-		aonSearchDiv.style.border = 'none';
-		aonSearchDiv.style.borderRadius = '4px';
-		aonSearchDiv.style.backgroundColor = "var(--aonSearchBar)";
-		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
-		aonSearchDiv.style.alignItems = 'center';
+//		let aonHeader = this.getElement(this.AON_HEADER);
+//		let aonSearchDiv = aonHeader.getElement("aon-search-div");
+//		aonSearchDiv.style.height = '32px';
+//		aonSearchDiv.style.border = 'none';
+//		aonSearchDiv.style.borderRadius = '4px';
+//		aonSearchDiv.style.backgroundColor = "var(--aonSearchBar)";
+//		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
+//		aonSearchDiv.style.alignItems = 'center';
 	}
 	
 	showMenu(bool) {}
 
 }
+
 window.customElements.define('aon-home', AonHome);

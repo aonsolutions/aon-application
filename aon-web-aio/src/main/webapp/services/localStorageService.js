@@ -56,7 +56,7 @@ export const remove = (item) => {
 
 export const closeSession = () => {
     let theme = getTheme();
-    let language = getLanguage();    
+    let language = getLanguage();
     let topMenu = getTopMenu();
     let leftMenu = getLeftMenu();
     let portalChecked = getPortalChecked();

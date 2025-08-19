@@ -190,17 +190,17 @@ export class AonElement extends HTMLElement{
   };
 
   isAyudaTorInfoautonomos() {
-    const href = localStorage.getItem("aon_domain_name");
+    const href = LS.getDomainName();
     return href ? href.includes('ayudat') || href.includes('infoautonomos') : false;
   }
 
   isAyudaT() {
-    const href = localStorage.getItem("aon_domain_name");
+    const href = LS.getDomainName();
     return href ? href.includes('ayudat') : false;
   }
 
   isInfoautonomos() {
-    const href = localStorage.getItem("aon_domain_name");
+    const href = LS.getDomainName();
     return href ? href.includes('infoautonomos') : false;
   }
 

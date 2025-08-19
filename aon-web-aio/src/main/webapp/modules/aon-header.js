@@ -1,13 +1,13 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
-import '../components/aon-dialog-menu.js';
-import '../components/aon-icon-button.js';
-import '../components/aon-search-box.js';
-import './configuration/aon-configuration.js';
-import './company/aon-desktop.js';
-import './notification/aon-notification-icon.js';
+//import '../components/aon-dialog-menu.js';
+//import '../components/aon-icon-button.js';
+//import '../components/aon-search-box.js';
+//import './configuration/aon-configuration.js';
+//import './company/aon-desktop.js';
+//import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
@@ -18,13 +18,13 @@ import { AonDialog } from '../components/aon-dialog.js';
 import { AonSearchBox } from '../components/aon-search-box.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
-import { AonNotificationIcon } from './notification/aon-notification-icon.js';
+//import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 import { AonParent } from './aon-parent.js';
 import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
-import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
-import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
+//import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
+//import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
 
 import {AonStringUtils} from './utils/AonStringUtils.js'
 
@@ -907,7 +907,7 @@ export class AonHeader extends AonElement {
 					icon: aonHeader.getIcon(company),
 					name: `<span>${companyName}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
 					title: `${company.domain}`,
-					fn: () => { aonHeader.companySelection(company); },
+					fn: () => { aonHeader.companySelection(company); }
 				});
 			});
 			
@@ -949,20 +949,20 @@ export class AonHeader extends AonElement {
 						icon : MATERIAL_ICONS.PERSON,
 						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractDocument}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
-							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name})} );
-						},
-					});				
+							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name});} );
+						}
+					});
 				});
 				aonHeaderSearchDialogMenu.addMenuOptions(searchOptions);
 				
 				let employeesSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees`);
 				employeesSpan.innerText = `${contracts.length > 25 ? '>': ''} ${contracts.length} ${MSG.EMPLOYEES}`;
 				employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
-					
+
 			}).catch(error => console.log(error));
-			
+
 		});
-		
+
 	}
 	
 	decorateMatching (text, searcher) {
@@ -1135,7 +1135,7 @@ export class AonHeader extends AonElement {
 			title: MSG.APPLICATIONS,
 			app: CONSTANT.APPLICATIONS,
 			symbol: MATERIAL_ICONS.APPLICATIONS,
-		}
+		};
 
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.id = `aonMenuLeftop-${app.app}`;
