@@ -138,11 +138,12 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			
 			// Check if need to find by authCode
 			try {
+				if(autorizationCode.length() > 6) autorizationCode = autorizationCode.substring(autorizationCode.length() - 6, autorizationCode.length());
+				
 				autorizationCode = autorizationCode.length() == 6 ? autorizationCode : ( "0" + autorizationCode );
 				
 				HtmlTable autorizadTable = document.querySelector("#tabla_lisAutorizad");
 				String enlaceSelector = "#enlace_" + autorizationCode;
-				System.out.println("----- enlaceSelector : " + enlaceSelector);
 				HtmlAnchor targetLink = autorizadTable.querySelector(enlaceSelector);
 				
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
