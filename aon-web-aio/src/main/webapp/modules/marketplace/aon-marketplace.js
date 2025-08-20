@@ -3,16 +3,13 @@ import {Apps, ClassicApps, Services, Packs} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App} from '../../models/enums.js';
-
-
-import '../../components/aon-card.js';
-import '../../components/aon-icon-button.js';
-import '../../components/aon-icon.js';
-
 import { CSS, MSG, TAG } from '../../environments/environments.js'; 
 
-export class AonMarketplace extends AonElement {
+//import '../../components/aon-card.js';
+//import '../../components/aon-icon-button.js';
+//import '../../components/aon-icon.js';
 
+export class AonMarketplace extends AonElement {
 	APP;
 	apps;
 

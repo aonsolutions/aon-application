@@ -1,10 +1,10 @@
 // COMPONENTS
 import {AonElement} from '../../components/AonElement.js';
-import '../../components/aon-application.js';
-import './aon-booking.js';
+import { CONSTANT, MSG } from '../../environments/environments.js'; 
+//import '../../components/aon-application.js';
+//import './aon-booking.js';
 //import 'aoncss'
 // CONSTANTS
-import { CONSTANT, MSG } from '../../environments/environments.js'; 
 
 export class AonMarketplacePanel extends AonElement {
 

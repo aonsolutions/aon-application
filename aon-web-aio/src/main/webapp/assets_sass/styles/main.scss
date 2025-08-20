@@ -20,6 +20,7 @@
 @use './pages/documental' as doc;             // doc   - Documentos
 @use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
 @use './pages/notes' as notes;                // notes - Notas que se crean
+@use './pages/marketplace' as marketplace;    // marketplace - Contratacion
 
 // Temas y Resoluciones
 @use './theme-base' as themeBase;

@@ -57,10 +57,10 @@ export class AonIcon extends AonElement {
   }
 
   constructor () {
-		super();
-	}
+      super();
+  }
 
-	connectedCallback () {
+  connectedCallback () {
     if(!this.isNewStyle()){
       this.build();
     }
@@ -68,6 +68,11 @@ export class AonIcon extends AonElement {
 
   build() {
     let icon = icons[this.getAttribute('icon')];
+    // Icono que no esta ---
+    if (!icon) {
+      throw new Error('El icono no está definido o no existe: ' + this.getAttribute('icon'));
+    }
+    
     let left = icon.left || 0;
     let top = icon.top || 0;
     let transform = icon.transform || "";
