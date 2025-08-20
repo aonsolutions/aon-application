@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
@@ -151,6 +152,9 @@ public interface ICommon {
 	public Tag insertTag(AONContext ctx, Tag tag);
 	public Tag updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, TagFilter filter);
+	
+	public LinkedList<Tag> getTagList(CloseableAONContext ctx, TagParams params);
+	public Tag saveTag(CloseableAONContext ctx, Tag tag);
 	
 	//TAX
 

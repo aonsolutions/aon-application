@@ -33,6 +33,12 @@ const AON_SCOPE = {
     name: "Ámbitos",
 }
 
+const AON_CUSTOMER_STATUS= {
+    id: 'sideNavTag',
+    name: "Estados C. Bloqueados",
+    icon: MATERIAL_ICONS.INFO
+}
+
 const AON_SERVICE = {
     id: 'sideNavService',
     name: MSG.AON_SERVICES,
@@ -79,7 +85,8 @@ const OfficeOptions = {
     AON_WORKGROUP_LIST,
     AON_SELLER_LIST,
     AON_SELLER_WORKLOAD,
-    AON_SCOPE
+    AON_SCOPE,
+    AON_CUSTOMER_STATUS
 };
 
 const ServiceOptions = {

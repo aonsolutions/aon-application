@@ -655,3 +655,8 @@ export const SCOPE_MODULE = {
   entryPoint: 'ScopeModule'
 };
 
+export const TAG_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'TagModule'
+};
+

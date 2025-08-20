@@ -204,6 +204,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -6434,6 +6435,18 @@ public class AON {
 			return getCommon().getTagStream(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Tag> getTagList(TagParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getCommon().getTagList(ctx, params);
+		}
+	}
+	
+	public static Tag saveTag(String domainName, Integer domainId, String login, Tag tag){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().saveTag(ctx, tag);
 		}
 	}
 	
