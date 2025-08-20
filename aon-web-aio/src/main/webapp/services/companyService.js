@@ -143,6 +143,8 @@ export const getDomainApps = (domain) => {
       );
     });
   };
+  
+  export const getCustomerStatusTags = (data) => get(API.COMPANY_CUSTOMER_TAGS, data);
 
   export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);
 

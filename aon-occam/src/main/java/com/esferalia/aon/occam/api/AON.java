@@ -8451,6 +8451,12 @@ public class AON {
 		}
 	}
 	
+	public static Domain updateDomainStatus(String domainName, Integer domainId, String login, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().updateDomainStatus(ctx, domain);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {

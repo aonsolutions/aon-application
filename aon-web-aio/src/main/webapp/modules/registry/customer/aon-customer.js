@@ -6,10 +6,10 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
-import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
+import { getCustomerStatusTags, getDomainCompanies, saveCompany } from "../../../services/companyService.js";
 import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
 import { AonItemList } from "../target/item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
@@ -24,6 +24,7 @@ import * as LS from '../../../services/localStorageService.js';
 import { AonUserList } from "../../user/aon-user-list.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { generateTokenJson, getUser } from "../../../services/userService.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
 
 export class AonCustomer extends AonReg {
 	
@@ -749,6 +750,73 @@ export class AonCustomer extends AonReg {
 			});			
 			d.open();		
 		});
+	}
+	
+	async openCustomerInactiveBloqued() {
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if (this.isMobile()) {
+			dialog.type = "fullscreen";
+		} else {
+			dialog.width = "30%";
+		}
+
+		const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : "Motivo inactividad";
+
+		dialog.setTitle(title);
+
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectTag = new AonSelect();
+		selectTag.id = "selectTag";
+		selectTag.title = "Motivo";
+		//selectTag.autocomplete = true;
+		div.appendChild(selectTag);
+		
+		selectTag.loading(true);
+		getCustomerStatusTags()
+			.then((tags) => {
+				const options = tags.map((c) => ({ ...c, value: c.id }))
+				selectTag.setOptions(options);
+			})
+			.finally(() => {
+				selectTag.loading(false);
+			});
+		
+		let datePicker = new AonNewDate();
+	    datePicker.id = "aonDBloquedDatePicker";
+	    
+	    const dateTitle = this.registry.status === "BLOCKED" ? "F. Bloqueo Empresa" : "F. Inactividad Empresa";
+	    datePicker.title = dateTitle;
+	    
+	    div.appendChild(datePicker);
+
+		dialog.addSendAction(async () => {
+			if (selectTag.value) {
+				await this.saveNote(selectTag.getDetail().name, datePicker.getDateValue());
+				this.buildStatusRegistry();
+				this.save();
+				dialog.close();
+			}
+		}, MSG.SAVE);
+
+		dialog.open();
+	}
+	
+	async saveNote(tagName, date) {
+		const params = {
+			tagName: tagName,
+			customerId: this.registry.id,
+			status: this.registry.status,
+			date : date
+		}
+		
+		await saveCustomerNote(params);
 	}
 
 	openDialogCompany(companies = []) {
