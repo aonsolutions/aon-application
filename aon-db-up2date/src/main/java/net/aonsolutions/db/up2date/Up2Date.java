@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.finance.InvoiceBatchEndDateTime;
 import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
+import net.aonsolutions.db.up2date.tgss.BaseCgpMin2025Fix;
 
 public class Up2Date {
 
@@ -553,8 +554,9 @@ public class Up2Date {
 			// NotificationReceiverAuthIndex.NOTIFICATION_RECEIVER_AUTH_INDEX,
 			// RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
 			// TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
-			AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
-			InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
+			// AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
+			// InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
+			BaseCgpMin2025Fix.BASECGPMIN2025FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -564,7 +566,7 @@ public class Up2Date {
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
 			// AddRegistryBankAgreement.ADD_AGREEMENT_COLUMN
-			AlterBankStatementAddNordigenInternalId.ALTER_BANK_STATEMENT_ADD_NORDIGEN_INTERNAL_ID
+			// AlterBankStatementAddNordigenInternalId.ALTER_BANK_STATEMENT_ADD_NORDIGEN_INTERNAL_ID
 
 			// ----------------------------------------------------------------
 			// By now only for `grupo-udapa-aonsolutions-net` database
