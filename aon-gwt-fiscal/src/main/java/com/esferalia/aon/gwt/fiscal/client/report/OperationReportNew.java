@@ -39,9 +39,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class OperationReport extends MainEntryPoint {
+public class OperationReportNew extends MainEntryPoint {
 	
-//	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
 	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
 	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 
 	private static final int TAB_1 = 1; // Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
@@ -52,7 +51,7 @@ public class OperationReport extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 	}
 
-	private OperationReportModuleOptions options;
+	private OperationReportModuleOptionsNew options;
 	
 	private TabLayoutPanel tabLayout;
 	private SimpleLayoutPanel tab0Content;
@@ -74,7 +73,7 @@ public class OperationReport extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		OperationReportModuleOptions opts = new OperationReportModuleOptions();
+		OperationReportModuleOptionsNew opts = new OperationReportModuleOptionsNew();
 		opts.setParentWidget(root);
 		opts.setDomainName(getCurrentDomainName());
 		opts.setDomain(getCurrentDomain());
@@ -82,7 +81,7 @@ public class OperationReport extends MainEntryPoint {
 		this.onModuleLoad( opts );
 	}
 	
-	public void onModuleLoad( OperationReportModuleOptions opts ) {
+	public void onModuleLoad( OperationReportModuleOptionsNew opts ) {
 		AON.ensureInjected();
 		COMMON_SERVICE.getAonConfiguration(opts.getOccam(),new AsyncCallback<AonConfiguration>() {
 			@Override
@@ -99,7 +98,7 @@ public class OperationReport extends MainEntryPoint {
 
 	}
 	
-	private void loadModule( OperationReportModuleOptions opts ) {
+	private void loadModule( OperationReportModuleOptionsNew opts ) {
 		this.options = opts;
 		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
 		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
@@ -252,15 +251,6 @@ public class OperationReport extends MainEntryPoint {
 			firstRowPanel.add(activity);
 		}
 		
-		// FALTA - QUITAMOS BOTON SEARCH, SE BUSCARA AL CAMBIAR CUALQUIER FILTRO
-//		AonSearchPanelButton searchButton = new AonSearchPanelButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
-//		searchButton.addStyleName(AON.CSS.aonBold());
-//		searchButton.addStyleName(AON.CSS.aonMarginLeft());
-//		searchButton.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-//		searchButton.setText(AON.MSG.searchAction());
-//		searchButton.addClickHandler(event -> onSearch());
-//		firstRowPanel.add(searchButton);
-
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
@@ -283,7 +273,7 @@ public class OperationReport extends MainEntryPoint {
 				toDate.setValue(DateUtils.getLastDayOfMonth(DateUtils.getDate(p.getDueMonth(), y)),false);
 			}
 		}
-		onSearch(); // FALTA - SE HABILITA DE NUEVO
+		onSearch(); 
 	}
 	
 	private void initialize() {
@@ -291,16 +281,12 @@ public class OperationReport extends MainEntryPoint {
 		year.setValue(DateUtils.getYear(),false);
 		period.setSelectedIndex(0);
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
-			//activity.setSelectedIndex(indexMainActivity);
 			activity.setSelectedIndex(0);
 		}
-		fillDates(); // ESTO DISPARA onSearch
-//		onSearch(); // FALTA - SE HABILITA DE NUEVO 
+		fillDates(); // Esto llama a onSearch
 	}
 	
-	// FALTA - CON LOS NUEVOS PARAMETROS - POR AHORA NO HACE NADA
 	private void submitForm(String action, OperationParamsNew params) {
-//		Window.alert("boton excel");
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		operationParamsHidden.setValue(JsonParams.convert(params));				
 		domainIdHidden.setValue(String.valueOf(options.getDomain()));
@@ -341,13 +327,13 @@ public class OperationReport extends MainEntryPoint {
 	private void refreshTab0(OperationParamsNew params) {
 		tab0Content.clear();
 		// FALTA - PASARLE QUE QUEREMOS SOLO EXPEDIDAS E INGRESOS
-		tab0Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabExpIngPanel()));
+		tab0Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabExpIngPanelNew()));
 	}
 	
 	private void refreshTab1(OperationParamsNew params) {
 		tab1Content.clear();
 		// FALTA - PASARLE QUE QUEREMOS SOLO RECIBIDAS Y GASTOS
-		tab1Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabRecGasPanel()));
+		tab1Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabRecGasPanelNew()));
 	}
 
 	private void paintTextTab() {
@@ -364,7 +350,7 @@ public class OperationReport extends MainEntryPoint {
 	}
 
 	public static void run() {
-		GWT.runAsync(OperationReport.class, new RunAsyncCallback() {
+		GWT.runAsync(OperationReportNew.class, new RunAsyncCallback() {
 			
 			@Override
 			public void onFailure(Throwable reason) {
@@ -373,7 +359,7 @@ public class OperationReport extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess() {
-				OperationReport operationReport = new OperationReport();
+				OperationReportNew operationReport = new OperationReportNew();
 				operationReport.onModuleLoad();
 			}
 		});

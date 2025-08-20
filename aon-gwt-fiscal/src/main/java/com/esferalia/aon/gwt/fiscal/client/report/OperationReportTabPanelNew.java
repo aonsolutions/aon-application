@@ -21,22 +21,19 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-class OperationReportTabPanel extends ScrollPanel{
+class OperationReportTabPanelNew extends ScrollPanel{
 		
 	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/AccountingOperationReportStreamNew");
 	
 	private FlowPanel rootPanel = new FlowPanel();
 	
-	public OperationReportTabPanel(OperationReportModuleOptions options, OperationParamsNew params, JsOperationGridPanel grid) {
+	public OperationReportTabPanelNew(OperationReportModuleOptionsNew options, OperationParamsNew params, JsOperationGridPanelNew grid) {
 		setStyleName(AON.CSS.aonScrollArea());
 		rootPanel.add(grid);
 		setWidget(rootPanel);
 		
-		grid.addSelectionHandler( event -> showEntry(options,event.getSelectedItem().getEntryId()));
-		
-//		final AonToast toast = new AonToast();
-//		final InlineLabel label =  new InlineLabel("Un momento, por favor ...");
-//		toast.show("Cargando ...", label);
+		grid.setParams(params);
+		grid.addSelectionHandler(event -> showEntry(options, event.getSelectedItem().getEntryId()));
 		
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add(new AonSplash());
@@ -54,7 +51,6 @@ class OperationReportTabPanel extends ScrollPanel{
 				for (int i = 0; i < array.length(); i++) {
 					grid.addRow(array.get(i));			
 				}
-//					toast.hide();
 				popup.hide();
 				grid.addFooterRow();
 			}
@@ -69,7 +65,7 @@ class OperationReportTabPanel extends ScrollPanel{
 		
 	}
 	
-	private void showEntry(OperationReportModuleOptions options,Integer entryId) {
+	private void showEntry(OperationReportModuleOptionsNew options, Integer entryId) {
 		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");

@@ -5,11 +5,17 @@ import java.util.function.Consumer;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -32,12 +38,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Operation Report Excel Book New", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelBookNew" })
 public class OperationReportExcelBookNew extends HttpServlet {
 	
-//	private static final long serialVersionUID = -8237842836135745934L;
-	
-	// Esta variable se utiliza para poder sacar los cobros/pagos en Facturas RECC, 
-	// deben salir primero las lineas de la factura y despues los cobros/pagos 
-//	private OperationBreakdown opAccrual = null;
-		
+	private static final long serialVersionUID = 4002617139388558939L;
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -53,7 +55,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				.setUser(user);
 
 			OperationParamsNew params = JsonParser.parseOperationParamsNew(operationParams);			
-//			params.setAeatBook(true);
 			
 			// Obtener NIF y Nombre de la Empresa (para el nombre del fichero)
 			String companyDocument = "";
@@ -105,17 +106,11 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			
 			filename = filename + companyName;
 			
-//			opAccrual = null;
-			
 			// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos			
-			ExcelAction action = new ExcelAction(occam, params);
+			//ExcelAction action = new ExcelAction(occam, params);
+			ExcelAction action = new ExcelAction(params);
 			action.initialize(sheetName1);
 			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
-			
-			// Comprobar si quedan por poner cobros/pagos de la última factura
-//			if (opAccrual != null) {
-//				getInvoicePayments(occam, opAccrual, params).forEach(action);
-//			}
 			
 			// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 			action.createSheet(sheetName2);
@@ -137,22 +132,19 @@ public class OperationReportExcelBookNew extends HttpServlet {
 	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdownNew>{
 		
 		private Row row2;
-		private Occam occam;
 		private OperationParamsNew params;
+		private XSSFCellStyle headerCellStyleDisabled;
+		private XSSFCellStyle headerCellStyleSmall;
 		
-		public ExcelAction(Occam occam, OperationParamsNew params) {
-			this.occam = occam;
+		public ExcelAction(OperationParamsNew params) {
 			this.params = params;
 		}
 		
 		@Override
 		public void createSheet(String name) {
-			
-			//sheet = (SXSSFSheet) workbook.createSheet(name);
 			sheet = workbook.createSheet(name);
 		    rowCount = 0;
 		    cellCount = 0;
-		    
 		    headerRow();		    
 		}
 
@@ -163,6 +155,15 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			topHeaderFont.setBold(true);
 			topHeaderFont.setFontHeightInPoints((short) 10);
 			
+			Font topHeaderFontDisabled = workbook.createFont();
+			topHeaderFontDisabled.setBold(true);
+			topHeaderFontDisabled.setFontHeightInPoints((short) 10);
+			topHeaderFontDisabled.setColor( IndexedColors.GREY_50_PERCENT.index );
+			
+			Font topHeaderFontSmall = workbook.createFont();
+			topHeaderFontSmall.setBold(true);
+			topHeaderFontSmall.setFontHeightInPoints((short) 8);
+			
 		    headerCellStyle.setBorderBottom(BorderStyle.THIN);
 		    headerCellStyle.setBorderTop(BorderStyle.THIN);
 		    headerCellStyle.setBorderLeft(BorderStyle.THIN);
@@ -171,8 +172,32 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    headerCellStyle.setFont(topHeaderFont);
 		    headerCellStyle.setWrapText(true);
 		    
+		    headerCellStyleDisabled = (XSSFCellStyle) workbook.createCellStyle();
+			headerCellStyleDisabled.setAlignment( HorizontalAlignment.CENTER );
+			headerCellStyleDisabled.setVerticalAlignment( VerticalAlignment.CENTER);
+		    headerCellStyleDisabled.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		    headerCellStyleDisabled.setBorderBottom(BorderStyle.THIN);
+		    headerCellStyleDisabled.setBorderTop(BorderStyle.THIN);
+		    headerCellStyleDisabled.setBorderLeft(BorderStyle.THIN);
+		    headerCellStyleDisabled.setBorderRight(BorderStyle.THIN);
+		    headerCellStyleDisabled.setFillForegroundColor(AON_LIGHT_GRAY);
+		    headerCellStyleDisabled.setFont(topHeaderFontDisabled);
+		    headerCellStyleDisabled.setWrapText(true);
+		    
+		    headerCellStyleSmall = (XSSFCellStyle) workbook.createCellStyle();
+			headerCellStyleSmall.setAlignment( HorizontalAlignment.CENTER );
+			headerCellStyleSmall.setVerticalAlignment( VerticalAlignment.CENTER);
+		    headerCellStyleSmall.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		    headerCellStyleSmall.setBorderBottom(BorderStyle.THIN);
+		    headerCellStyleSmall.setBorderTop(BorderStyle.THIN);
+		    headerCellStyleSmall.setBorderLeft(BorderStyle.THIN);
+		    headerCellStyleSmall.setBorderRight(BorderStyle.THIN);
+		    headerCellStyleSmall.setFillForegroundColor(AON_LIGHT_GRAY);
+		    headerCellStyleSmall.setFont(topHeaderFontSmall);
+		    headerCellStyleSmall.setWrapText(true);
+		    
 		    sheet.setRandomAccessWindowSize(2);  // La cabecera lleva 2 filas
-		    sheet.setDefaultColumnWidth(11);
+		    sheet.setDefaultColumnWidth(10);
 		    sheet.trackAllColumnsForAutoSizing();
 		    
 		    rowCount = 0;
@@ -193,116 +218,107 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos
 		protected void headerRowExpIng() {
 			addHorizontalMergedRegion("Autoliquidación", 2);
-			addAutoSizeCell("Ejercicio");
-			addAutoSizeCell("Periodo");
+			addHeaderCell("Ejercicio");
+			addHeaderCell("Periodo");
 			addHorizontalMergedRegion("Actividad", 3);
-			addAutoSizeCell("Código");
-			addAutoSizeCell("Tipo");
-			addAutoSizeCell("Epígrafe IAE");
+			addHeaderCell("Código");
+			addHeaderCell("Tipo");
+			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
-    		addVerticalMergedRegion("Concepto de Ingreso");
-    		addVerticalMergedRegion("Ingreso Computable");
+    		addVerticalMergedRegion("Concepto de Ingreso", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Ingreso Computable", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
 	    	addHorizontalMergedRegion("Identificación de la Factura", 3);
-	    	addAutoSizeCell("Serie");
-	    	addAutoSizeCell("Número");
-	    	addAutoSizeCell("Número-Final");
-	        addHorizontalMergedRegion("NIF Destinatario",3);
-		    addAutoSizeCell("Tipo");
-		    addAutoSizeCell("Código País");
-		    addAutoSizeCell("Identificación");
+	    	addHeaderCell("Serie");
+	    	addHeaderCell("Número");
+	    	addHeaderCell("Número-Final");
+	        addHorizontalMergedRegion("NIF Destinatario", 3);
+		    addHeaderCell("Tipo");
+		    addHeaderCell("Código País");
+		    addHeaderCell("Identificación");
 	    	addVerticalMergedRegion("Nombre Destinatario");
-		    addVerticalMergedRegion("Clave de Operación");
-		    addVerticalMergedRegion("Calificación de la Operación");
-		    addVerticalMergedRegion("Operación Exenta");
+		    addVerticalMergedRegion("Clave de Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Calificación de la Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Operación Exenta", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Total Factura");
 		    addVerticalMergedRegion("Base Imponible");
 		    addVerticalMergedRegion("Tipo de IVA");
 	    	addVerticalMergedRegion("Cuota IVA Repercutida");
 		    addVerticalMergedRegion("Tipo de Recargo Eq.");		    
-		    addVerticalMergedRegion("Cuota Recargo Equivalencia");		    
-	    	addHorizontalMergedRegion("Cobro (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)", 4);		    	
-		    addAutoSizeCell("Fecha");
-		    addAutoSizeCell("Importe");
-		    addAutoSizeCell("Medio Utilizado");
-		    addAutoSizeCell("Identificación Medio Utilizado");		    
-	    	addVerticalMergedRegion("Tipo Retención IRPF");
-	    	addVerticalMergedRegion("Importe Retenido IRPF");
-	    	addVerticalMergedRegion("Registro Acuerdo Facturación");
+		    addVerticalMergedRegion("Cuota Recargo Eq.");		    
+	    	addHorizontalMergedRegion("Cobro (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)", 4, headerCellStyleSmall);		    	
+		    addHeaderCell("Fecha");
+		    addHeaderCell("Importe");
+		    addHeaderCell("Medio Utilizado");
+		    addHeaderCell("Identificación Medio Utilizado");		    
+	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addHorizontalMergedRegion("Inmueble", 2);
-	    	addAutoSizeCell("Situación");
-	    	addAutoSizeCell("Referencia Catastral");
+	    	addHeaderCell("Situación");
+	    	addHeaderCell("Referencia Catastral");
 	    	addVerticalMergedRegion("Referencia Externa");
 		}
 		
 		// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 		protected void headerRowRecGas() {
 			addHorizontalMergedRegion("Autoliquidación", 2);
-			addAutoSizeCell("Ejercicio");
-			addAutoSizeCell("Periodo");
+			addHeaderCell("Ejercicio");
+			addHeaderCell("Periodo");
 			addHorizontalMergedRegion("Actividad", 3);
-			addAutoSizeCell("Código");
-			addAutoSizeCell("Tipo");
-			addAutoSizeCell("Epígrafe IAE");
+			addHeaderCell("Código");
+			addHeaderCell("Tipo");
+			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
-    		addVerticalMergedRegion("Concepto de Gasto");
-    		addVerticalMergedRegion("Gasto Deducible");
+    		addVerticalMergedRegion("Concepto de Gasto", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Gasto Deducible", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
 	    	addHorizontalMergedRegion("Identificación Factura del Expedidor", 2);
-	    	addAutoSizeCell("Serie-Número");
-	    	addAutoSizeCell("Número-Final");
-	    	addVerticalMergedRegion("Fecha Recepción");
+	    	addHeaderCell("(Serie-Número)");
+	    	addHeaderCell("Número-Final");
+	    	addVerticalMergedRegion("Fecha Recepción", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addVerticalMergedRegion("Número Recepción");
 	    	addVerticalMergedRegion("Número Recepción Final");
 	        addHorizontalMergedRegion("NIF Expedidor",3);
-		    addAutoSizeCell("Tipo");
-		    addAutoSizeCell("Código País");
-		    addAutoSizeCell("Identificación");
+		    addHeaderCell("Tipo");
+		    addHeaderCell("Código País");
+		    addHeaderCell("Identificación");
 	    	addVerticalMergedRegion("Nombre Expedidor");
-		    addVerticalMergedRegion("Clave de Operación");
-		    addVerticalMergedRegion("Bien de Inversión");
-		    addVerticalMergedRegion("Inversión del Sujeto Pasivo");
-		    addVerticalMergedRegion("Deducible en Periodo Posterior");
-	    	addHorizontalMergedRegion("Periodo Deducción", 2);
-	    	addAutoSizeCell("Ejercicio");
-	    	addAutoSizeCell("Periodo");
+		    addVerticalMergedRegion("Clave de Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Bien de Inversión", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Inversión del Sujeto Pasivo", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Deducible en Periodo Posterior", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHorizontalMergedRegion("Periodo Deducción", 2, params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle); 
+	    	addHeaderCell("Ejercicio", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);                        
+	    	addHeaderCell("Periodo", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);                          
 		    addVerticalMergedRegion("Total Factura");
 		    addVerticalMergedRegion("Base Imponible");
 		    addVerticalMergedRegion("Tipo de IVA");
 	    	addVerticalMergedRegion("Cuota IVA Soportado");
 	    	addVerticalMergedRegion("Cuota Deducible");
 		    addVerticalMergedRegion("Tipo de Recargo Eq.");		    
-		    addVerticalMergedRegion("Cuota Recargo Equivalencia");		    
-	    	addHorizontalMergedRegion("Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)", 4);		    	
-		    addAutoSizeCell("Fecha");
-		    addAutoSizeCell("Importe");
-		    addAutoSizeCell("Medio Utilizado");
-		    addAutoSizeCell("Identificación Medio Utilizado");		    
-	    	addVerticalMergedRegion("Tipo Retención IRPF");
-	    	addVerticalMergedRegion("Importe Retenido IRPF");
-	    	addVerticalMergedRegion("Registro Acuerdo Facturación");
+		    addVerticalMergedRegion("Cuota Recargo Eq.");		    
+	    	addHorizontalMergedRegion("Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)", 4, headerCellStyleSmall);		    	
+		    addHeaderCell("Fecha");
+		    addHeaderCell("Importe");
+		    addHeaderCell("Medio Utilizado");
+		    addHeaderCell("Identificación Medio Utilizado");		    
+	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addHorizontalMergedRegion("Inmueble", 2);
-	    	addAutoSizeCell("Situación");
-	    	addAutoSizeCell("Referencia Catastral");
+	    	addHeaderCell("Situación");
+	    	addHeaderCell("Referencia Catastral");
 	    	addVerticalMergedRegion("Referencia Externa");
 		}
 		
 		public void accept(OperationBreakdownNew op) {
 			
-			// Comprobar si hay que poner los cobros/pagos de la factura anterior
-//			if (opAccrual == null) {
-//				opAccrual = op;
-//			}
-			
-//			if (op.getInvoice() != null && !op.getInvoice().equals(opAccrual.getInvoice())) {
-//				getInvoicePayments(occam, opAccrual, params).forEach(this);				
-//				opAccrual = op;				
-//			}
-			
 			// Añadir linea de detalle al archivo Excel
-			addDetailRow(op);			
+			addDetailRow(op);
+			
 		}
 		
 		private void addDetailRow(OperationBreakdownNew op) {
@@ -326,7 +342,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getActivityType()).setCellStyle(centerCellStyle);  // Actividad - Tipo
 			addCell(AonStringUtils.trimToEmpty(op.getActivityIAE()).replace(".","")).setCellStyle(centerCellStyle); // Actividad - Grupo o Epígrafe IAE
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
-			sheet.autoSizeColumn(cellCount-1);
 			
 			addCell(params.getType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Ingreso (excepto Libro de IVA)
 			if (params.getType() == 0) {
@@ -337,8 +352,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				addCell(op.getConceptAmount()); // Ingreso computable
 			}
 						
-			addCell(op.getEntryDate());  // Fecha Expedición
-			addCell("");                 // Fecha Operación (no se usa)
+			addCell(op.getEntryDate());      // Fecha Expedición
+			addCell("");                     // Fecha Operación (no se usa)
 			addCell(op.getInvoiceSeries());  // Identificación de la Factura - Serie
 		    addCell(op.getInvoiceNumber());  // Identificación de la Factura - Número
 		    addCell("");                     // Identificación de la Factura - Número-Final (no se usa)
@@ -361,7 +376,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			}
 			
 			addCell(op.getDocument()); // NIF - Identificación
-			sheet.autoSizeColumn(cellCount-1);
 			addCell(op.getName());     // Nombre Destinatario
 			sheet.autoSizeColumn(cellCount-1);
 			
@@ -377,21 +391,20 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addDoubleCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
 			addDoubleCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
 			
-			addCell(op.getPayDate());             // Cobro RECC - Fecha
-			sheet.autoSizeColumn(cellCount-1);
-			addDoubleCell(op.getPayAmount());     // Cobro RECC - Importe
-			sheet.autoSizeColumn(cellCount-1);
+			addCell(op.getPayDate());                                 // Cobro RECC - Fecha
+			addDoubleCell(op.getPayAmount());                         // Cobro RECC - Importe
 			addCell(op.getPayMethod()).setCellStyle(centerCellStyle); // Cobro RECC - Medio Utilizado
-			addCell(op.getPayMethodName());       // Cobro RECC - Identificación Medio Utilizado
+			addCell(op.getPayMethodName());                           // Cobro RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
 			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
 			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
-			addCell(""); // Registro Acuerdo Facturacion (no se usa)
+			addCell("");                                                     // Registro Acuerdo Facturacion (no se usa)
 			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); // Inmueble - Situación
 			addCell(op.getCadasdralReference());                             // Inmueble - Referencia Catastral
-			addCell(""); // Referencia Externa (no se usa)	
+			sheet.autoSizeColumn(cellCount-1);
+			addCell("");                                                     // Referencia Externa (no se usa)	
 			
 		}
 		
@@ -404,7 +417,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getActivityType()).setCellStyle(centerCellStyle);  // Actividad - Tipo
 			addCell(AonStringUtils.trimToEmpty(op.getActivityIAE()).replace(".","")).setCellStyle(centerCellStyle); // Actividad - Grupo o Epígrafe IAE
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
-			sheet.autoSizeColumn(cellCount-1);
 			
 			addCell(params.getType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
 			if (params.getType() == 0) {
@@ -415,13 +427,23 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				addCell(op.getConceptAmount()); // Gasto Deducible
 			}
 						
-			addCell(op.getEntryDate());  // Fecha Expedición
-			addCell("");                 // Fecha Operación (no se usa)
+			addCell(op.getEntryDate());      // Fecha Expedición
+			addCell("");                     // Fecha Operación (no se usa)
 		    addCell(op.getInvoiceNumber());  // Identificación de la Factura del Expedidor - Serie-Número
+		    sheet.autoSizeColumn(cellCount-1, true);
 		    addCell("");                     // Identificación de la Factura - Número-Final (no se usa)
-		    addCell(op.getReceptionDate());  // Fecha Recepción
+		    sheet.setColumnWidth(cellCount-1, 15 * 256);
+		    
+		    if (params.getType() == 1) {
+		    	// Libro de IRPF
+				addCell(""); // Fecha Recepción
+		    } else {
+		    	// Resto
+		    	addCell(op.getReceptionDate());  // Fecha Recepción
+		    }
+		    
 		    addCell(op.getReceptionNumber()); // Número Recepción
-		    addCell("");                     // Número Recepción Final (no se usa)
+		    addCell("");                      // Número Recepción Final (no se usa)
 			
 			if (AonStringUtils.isBlank(op.getDocumentCountry()) || op.getDocumentCountry().equals("ES")) {
 				addCell("");
@@ -441,7 +463,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			}
 			
 			addCell(op.getDocument()); // NIF - Identificación
-			sheet.autoSizeColumn(cellCount-1);
 			addCell(op.getName());     // Nombre Expedidor
 			sheet.autoSizeColumn(cellCount-1);
 			
@@ -452,30 +473,29 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(""); // Periodo Deducción - Ejercicio (no se usa)
 			addCell(""); // Periodo Deducción - Periodo (no se usa)
 			
-			addCell(op.getTotal());   // Total Factura
-			addCell(op.getBase());    // Base Imponible
-			addCell(op.getPercent()); // Tipo de IVA
-			addCell(op.getQuota());   // Cuota IVA Soportado
-			addCell(op.getDeductibleQuota());   // Cuota Deducible
+			addCell(op.getTotal());   			// Total Factura
+			addCell(op.getBase());             	// Base Imponible
+			addCell(op.getPercent());          	// Tipo de IVA
+			addCell(op.getQuota());            	// Cuota IVA Soportado
+			addCell(op.getDeductibleQuota());  	// Cuota Deducible
 			
 			addDoubleCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
 			addDoubleCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
 			
-			addCell(op.getPayDate());             // Pago RECC - Fecha
-			sheet.autoSizeColumn(cellCount-1);
-			addDoubleCell(op.getPayAmount());     // Pago RECC - Importe
-			sheet.autoSizeColumn(cellCount-1);
-			addCell(op.getPayMethod()).setCellStyle(centerCellStyle); // Pago RECC - Medio Utilizado
-			addCell(op.getPayMethodName());       // Pago RECC - Identificación Medio Utilizado
+			addCell(op.getPayDate());             						// Pago RECC - Fecha
+			addDoubleCell(op.getPayAmount());     						// Pago RECC - Importe
+			addCell(op.getPayMethod()).setCellStyle(centerCellStyle); 	// Pago RECC - Medio Utilizado
+			addCell(op.getPayMethodName());       						// Pago RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
 			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
 			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
-			addCell(""); // Registro Acuerdo Facturacion (no se usa)
-			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); // Inmueble - Situación
-			addCell(op.getCadasdralReference());                             // Inmueble - Referencia Catastral
-			addCell(""); // Referencia Externa (no se usa)	
+			addCell(""); 														// Registro Acuerdo Facturacion (no se usa)
+			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); 	// Inmueble - Situación
+			addCell(op.getCadasdralReference());                             	// Inmueble - Referencia Catastral
+			sheet.autoSizeColumn(cellCount-1);
+			addCell(""); 														// Referencia Externa (no se usa)	
 			
 		}	
 
@@ -487,112 +507,38 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		}
 					
 		private void addHorizontalMergedRegion(String value, int cellsNumber) {
-			CellUtil.createCell(row, cellCount, value, headerCellStyle);			
+			addHorizontalMergedRegion(value, cellsNumber, headerCellStyle);
+		}
+		private void addHorizontalMergedRegion(String value, int cellsNumber, XSSFCellStyle cellStyle) {
+			CellUtil.createCell(row, cellCount, value, cellStyle);			
 			sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(0, 0, cellCount, cellCount+cellsNumber-1)));
 		}
 		
 		private void addVerticalMergedRegion(String value) {
-		    CellUtil.createCell(row, cellCount, value, headerCellStyle);
+			addVerticalMergedRegion(value, headerCellStyle);
+		}
+		private void addVerticalMergedRegion(String value, CellStyle cellStyle) {
+		    CellUtil.createCell(row, cellCount, value, cellStyle);
 			sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(0, 1, cellCount, cellCount)));
 			cellCount++;
 		}
 		
-		private void addAutoSizeCell(String value) {
-			CellUtil.createCell(row2, cellCount, value, headerCellStyle); 
-			sheet.autoSizeColumn(cellCount);
+		private void addHeaderCell(String value) {
+			addHeaderCell(value, headerCellStyle);
+		}
+		private void addHeaderCell(String value, XSSFCellStyle cellStyle) {
+			CellUtil.createCell(row2, cellCount, value, cellStyle);
 			cellCount++;			
 		}
 		
 		private CellRangeAddress setBordersToMergedRegion(CellRangeAddress rangeAddress) {
-			    RegionUtil.setBorderTop(BorderStyle.THIN, rangeAddress, sheet);
-			    RegionUtil.setBorderLeft(BorderStyle.THIN, rangeAddress, sheet);
-			    RegionUtil.setBorderRight(BorderStyle.THIN, rangeAddress, sheet);
-			    RegionUtil.setBorderBottom(BorderStyle.THIN, rangeAddress, sheet);
-			    return rangeAddress;
+			RegionUtil.setBorderTop(BorderStyle.THIN, rangeAddress, sheet);
+			RegionUtil.setBorderLeft(BorderStyle.THIN, rangeAddress, sheet);
+			RegionUtil.setBorderRight(BorderStyle.THIN, rangeAddress, sheet);
+			RegionUtil.setBorderBottom(BorderStyle.THIN, rangeAddress, sheet);
+			return rangeAddress;
 		}	
 		
 	}
-
-	// Obtiene los cobros/pagos de una factura en Regimen Especial de Criterio de Caja
-//	private Stream<OperationBreakdown> getInvoicePayments(Occam occam, final OperationBreakdown op, final OperationParams params) {
-//		
-//		// Solo para Libro de IVA (o unificado) y para Facturas RECC
-//		if ((params.isIrpf() && !params.getUnifiedBook()) || !("07".equals(op.getOperationType()))) {
-//			return Stream.empty();	
-//		}
-//
-//		// Condicion para que aparezcan los vecimientos
-//		// Está cobrado/pagado y la fecha de cobro/pago está entre los filtros
-//		Condition condition = (FINANCE_TRACKING.TYPE.equal(FinanceTrackingType.PAID.value()).and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate()))));
-//		
-//		try ( CloseableAONContext ctx = AONContext.getAONContext(occam)) { 
-//			return ctx.getDslContext().select(
-//	      			 FINANCE_TRACKING.TRACKING_DATE
-//					,FINANCE_TRACKING.AMOUNT
-//					,FINANCE_TRACKING.TYPE
-//					,PAY_METHOD.TYPE
-//					,PAY_METHOD.NAME
-//					,RBANK.BANK_ACCOUNT
-//					)
-//					.from(FINANCE)
-//					.join(FINANCE_TRACKING).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))				
-//					.leftJoin(PAY_METHOD).on(PAY_METHOD.ID.equal(FINANCE.PAY_METHOD))
-//					.leftJoin(RBANK).on(RBANK.ID.equal(FINANCE_TRACKING.RBANK))				
-//					.where(FINANCE.INVOICE.equal(op.getInvoice()))
-//					.and(condition)
-//					.orderBy(FINANCE_TRACKING.TRACKING_DATE)
-//					.fetch()
-//					.stream()
-//					.map( rec -> {
-//						
-//						// Metodo de Cobro/Pago
-//						String payMethod = ""; 
-//						String payMethodName = ""; 
-//						Byte pm = rec.getValue(PAY_METHOD.TYPE);
-//						if (pm != null) {
-//							switch (pm) {
-//								case 1:  // Negociable 
-//									payMethod = "05"; // Domiciliacion
-//									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-//									break;
-//								case 4:  // Cheque 
-//									payMethod = "02"; // Cheque
-//									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-//									break;
-//								case 5:  // Transferencia 
-//									payMethod = "01";  // Transferencia
-//									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-//									break;
-//								default: // Resto
-//									payMethod = "04"; // Otros medios de pago		
-//									payMethodName = rec.getValue(PAY_METHOD.NAME);
-//									break;
-//							}
-//						}
-//						
-//						return new OperationBreakdown()
-//								.setTaxDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
-//								.setActivityType(op.getActivityType())
-//								.setActivityIAE(op.getActivityIAE())
-//								.setInvoice(op.getInvoice())
-//								.setInvoiceType(op.getInvoiceType())
-//								.setConceptType(op.getConceptType())													
-//								.setEntryDate(op.getEntryDate())
-//								.setInvoiceSeries(op.getInvoiceSeries())
-//								.setInvoiceNumber(op.getInvoiceNumber())
-//								.setDocNumber(op.getDocNumber())
-//								.setRegistryDocumentType(op.getRegistryDocumentType())
-//								.setRegistryDocumentCountry(op.getRegistryDocumentCountry())
-//								.setRegistryDocument(op.getRegistryDocument())
-//								.setRegistryName(op.getRegistryName())
-//								.setOperationType(op.getOperationType())
-//								.setPayDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
-//								.setPayAmount(rec.getValue(FINANCE_TRACKING.AMOUNT))
-//								.setPayMethod(payMethod)
-//								.setPayMethodName(payMethodName)							
-//								;
-//								
-//					 });
-//		}
-//	}
+	
 }

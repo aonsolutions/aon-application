@@ -4,26 +4,20 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class JsOperationBreakdownNew extends JavaScriptObject {
 	
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
-
 	protected JsOperationBreakdownNew() {
 	}
 	
-	// FALTA - PONER AL FINAL TODAS LAS COLUMNAS QUE QUERAMOS MOSTRAR EN PANTALLA Y LAS QUE SE NECESITEN QUE NO SE MUESTREN (POR EJEMPLO entryId)
-	
-	// FALTA - DETERMINAR COMO SE VAN A PASAR LAS FECHAS, SI FORMATEADAS COMO TEXTO O COMO LONG DENTRO DE UN STRING
 	private Date ensureDate(String dateString) {
-		return dateString == null ? null : AonDateUtils.parseDate(dateString); // FORMATEADAS COMO TEXTO dd/MM/yyyy   yyyy-MM-dd
-//		return dateString == null ? null : AonDateUtils.fromLong(dateString);   // COMO LONG EN UN STRING
+		return dateString == null ? null : AonDateUtils.parseDate(dateString); // FECHAS FORMATEADAS COMO TEXTO dd/MM/yyyy
 	}
 	
 	public final native int getEntryId() /*-{
 		return this.entryId;
 	}-*/;
+	
 	public final Date getEntryDate() {
 		return ensureDate(getEntryDateString());
 	}
@@ -35,15 +29,28 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	public final Date getTaxDate() {
 		return ensureDate(getTaxDateString());
 	}
+	
 	private final native String getTaxDateString() /*-{
 		return this.taxDate;
 	}-*/;
 	
+	public final native String getActivityIAE() /*-{
+		return this.activityIAE;
+	}-*/;
 	public final native String getConceptCode() /*-{
 		return this.conceptCode;
 	}-*/;
-	public final native int getInvoiceNumber() /*-{
+	public final native double getConceptAmount() /*-{
+		return this.conceptAmount;
+	}-*/;
+	public final native String getInvoiceSeries() /*-{
+		return this.invoiceSeries;
+	}-*/;
+	public final native String getInvoiceNumber() /*-{
 		return this.invoiceNumber;
+	}-*/;
+	public final native String getReceptionNumber() /*-{
+		return this.receptionNumber;
 	}-*/;
 	public final native String getDocument() /*-{
 		return this.document;
@@ -60,6 +67,9 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	public final native double getQuota() /*-{
 	 	return this.quota;
 	}-*/;	
+	public final native double getDeductibleQuota() /*-{
+ 		return this.deductibleQuota;
+	}-*/;	
 	public final native double getSurchargePercent() /*-{
 		return this.surchargePercent;
 	}-*/;
@@ -69,11 +79,11 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	public final native double getTotal() /*-{
 		return this.total;
 	}-*/;
-//	public final String getRegistryFullName() {
-//		return  AonStringUtils.abbreviate(
-//			AonStringUtils.defaultIfBlank(getRegistryDocument(), AonStringUtils.EMPTY)
-//			+ (AonStringUtils.isBlank(getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
-//			+ AonStringUtils.defaultIfBlank(getRegistryName(), AonStringUtils.EMPTY),34 );
-//	}
+	public final native double getRetentionPercent() /*-{
+		return this.retentionPercent;
+	}-*/;
+	public final native double getRetentionQuota() /*-{
+		return this.retentionQuota;
+	}-*/;
 	
 }

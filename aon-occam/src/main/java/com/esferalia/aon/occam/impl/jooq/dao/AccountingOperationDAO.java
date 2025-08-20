@@ -99,18 +99,19 @@ public class AccountingOperationDAO {
 	private static OperationBreakdownNew prueba() {
 		
 		Date date = AonDateUtils.getDate(2025, 7, 1);
+		Date date2 = AonDateUtils.getDate(2025, 8, 1);
 		OperationBreakdownNew op1 = new OperationBreakdownNew();
 		op1.setActivityCode("A"); 			// Actividad: Código
 		op1.setActivityType("03"); 			// Actividad: Tipo
 		op1.setActivityIAE("411.1");  			// Actividad: Grupo o Epígrafe del IAE
 		op1.setInvoiceType("F1"); 			// Tipo de Factura	
 		op1.setConceptCode("I01"); 			// Codigo Concepto de Ingreso o Gasto
-		op1.setConceptAmount(1000.0); 			// Ingreso computable o Gasto deducible 	
+		op1.setConceptAmount(1100.0); 			// Ingreso computable o Gasto deducible 	
 		op1.setEntryDate(date); 				// Fecha Expedición
-		op1.setTaxDate(date);        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
-		op1.setInvoiceSeries(""); 			// Identificación de la Factura: Serie (Emitidas)
-		op1.setInvoiceNumber(""); 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
-		op1.setReceptionNumber(""); 		// Número recepción (Recibidas)
+		op1.setTaxDate(date2);        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
+		op1.setInvoiceSeries("A20"); 			// Identificación de la Factura: Serie (Emitidas)
+		op1.setInvoiceNumber("00001"); 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
+		op1.setReceptionNumber("R2025/00001"); 		// Número recepción (Recibidas)
 		op1.setReceptionDate(date); 			// Fecha Recepción (Fecha Asiento)
 		op1.setDocumentType(""); 			// NIF Destinatario/Expedidor: Tipo
 		op1.setDocumentCountry("");  		// NIF Destinatario/Expedidor: Código País
@@ -135,11 +136,12 @@ public class AccountingOperationDAO {
 		op1.setRetentionPercent(15.0);   		// Tipo Retención del IRPF	
 		op1.setRetentionQuota(150.0);    		// Importe Retenido del IRPF	
 		op1.setBuildingLocation("1"); 		// Situación del Inmueble;	
-		op1.setCadasdralReference("50R585845485454"); 		// Referencia Catastral del Inmueble
+		op1.setCadasdralReference("9872023VH5797S0001WX"); 		// Referencia Catastral del Inmueble
 		op1.setEntryId(0);                // ID del apunte
 		return op1;
 		
 	}
+	
 	public static Stream<OperationBreakdownNew> getOperationBreakdownNew(final AONContext ctx, int domain, OperationParamsNew params) {
 		
 //		Date date = AonDateUtils.getDate(2025, 7, 1);
@@ -153,7 +155,7 @@ public class AccountingOperationDAO {
 //		lista.add(op1);
 //		lista.add(op2);
 //		lista.add(op3);
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<1000; i++) {
 			lista.add(prueba());   
 		}
 		return lista.stream(); // PRUEBA PARA CREAR VARIAS LINEAS 

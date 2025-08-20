@@ -47,7 +47,6 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 			ACCOUNTING.getOperationBreakdownNew(occam, params)
 				.forEach(op -> {
 					JSONObject jsonObject = new JSONObject(op);
-					// FALTA - LAS FECHAS SE PASAN FORMATEADAS EN UN STRING (dd/MM/yyyy o long), SI NO, EL JSON SE CREA CON UNA FECHA LARGA
 					jsonObject.put("entryDate", ensureDate(op.getEntryDate()));
 					jsonObject.put("taxDate", ensureDate(op.getTaxDate()));
 					jsonObject.put("receptionDate", ensureDate(op.getReceptionDate()));
@@ -64,11 +63,9 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 		}
 	}
 	
-	// FALTA - VER COMO SE PASAN LAS FECHAS, dd/MM/yyyy O COMO LONG (EN CUALQUIER CASO AMBAS SE PASAN EN UN STRING)
-	// Para los valores nulos, si pasamos JSONObject.NULL, se pone el valor en el JSON con null, si pasamos simplemente null, el valor se quita del JSON
+	// Las fechas se pasan formateadas en un string como dd/MM/yyyy
 	private String ensureDate(Date date) {
 		return date == null ? null : AonDateUtils.simpleFormat(date); // FORMATEADA COMO dd/MM/yyyy 
-//		return date == null ? null : AonNumberUtils.toString(date.getTime()); // COMO LONG EN UN STRING
 	}
 
 }
