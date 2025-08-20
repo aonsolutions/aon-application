@@ -640,7 +640,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			// IRPF PROFESIONAL
 			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);
-			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap ? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
+			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap || !professionalIRPFMap.getMap().containsKey(WithholdingType.PROFESSIONAL) 
+					? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
 			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfProfessionalJson = new JSONObject();
@@ -650,7 +651,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			// IRPF ARRENDAMIENTO
 			IrpfSummaryGroup rentingIRPFlMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO);
-			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap ? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
+			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap || !rentingIRPFlMap.getMap().containsKey(WithholdingType.RENTING)
+					? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
 			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfRentingJson = new JSONObject();
