@@ -1,13 +1,16 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
+
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 
 public class InvoiceCommunicationTracking implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	InvoiceBatch invoiceBatch;
-	InvoiceBatchDetail invoiceBatchDetail;
+	private InvoiceBatch invoiceBatch;
+	private InvoiceBatchDetail invoiceBatchDetail;
 		
 	public InvoiceBatchDetail getInvoiceBatchDetail() {
 		if(invoiceBatchDetail == null) {

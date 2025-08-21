@@ -2,10 +2,13 @@ package com.esferalia.aon.watson.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -125,5 +128,10 @@ public class AonCollectionUtils {
 		}
 		return false;
 	}
-	
+
+	public static <T> List<T> toList(T t) {
+		LinkedList<T> l = new LinkedList<>();
+		if (t != null) l.add(t);
+		return l;
+	}
 }

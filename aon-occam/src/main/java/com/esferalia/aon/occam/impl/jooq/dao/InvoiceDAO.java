@@ -559,6 +559,10 @@ public class InvoiceDAO {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
+		if (!invoice.hasFinances()) {
+			AonCollectionUtils.stream( FinanceDAO.getFinancesForInvoice(ctx, invoice))
+				.forEach(invoice::addFinance);	
+		}
 		insert(ctx, aonCtx, invoice);
 		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		if(invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
@@ -595,7 +599,7 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
-	public static Invoice accept2(AONContext ctx, final Invoice invoice, Integer rawdocId) {
+	public static Invoice accept2(AONContext ctx, final Invoice invoice, Optional<Integer> rawdocId) {
 		if (invoice.getId() != null) {
 			throw new AonCoreException("No se puede aceptar una factura con Id");
 		}
@@ -616,9 +620,8 @@ public class InvoiceDAO {
 			updateRectifiedInvoice(ctx, invoice);
 		}
 		// *****************************************************************************
-		
-		if(rawdocId != null) {
-			RawdocDAO.getFull(ctx, rawdocId)
+		rawdocId.ifPresent(rawid -> {
+			RawdocDAO.getFull(ctx, rawid)
 				.ifPresent(rawdoc -> {
 					if(rawdoc.getData() != null) {
 						Attach attach = new Attach()
@@ -631,10 +634,10 @@ public class InvoiceDAO {
 							.setData(rawdoc.getData());
 						AttachmentDAO.insertInvoiceAttach(ctx, attach);
 					}
-					RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
+					RawdocDAO.delete(ctx, invoice.getDomain(), rawid);	
 				}
 			);
-		}
+		});	
 		
 		// ****************** ???????????????????? ******************
 		invoice.getDetails().stream().forEach(detail ->
@@ -1527,13 +1530,13 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE UNRECORD: Invoice {0}: {1} filas.",invoiceId, count);
 	}
 
-	/// ******************************************************************************************
-	/// ******************************************************************************************
-	/// ******************************************************************************************
-	/// **************************************************************************** [DETAIL] ****
-	/// ******************************************************************************************
-	/// ******************************************************************************************
-	/// ******************************************************************************************
+	// ******************************************************************************************
+	// ******************************************************************************************
+	// ******************************************************************************************
+	// **************************************************************************** [DETAIL] ****
+	// ******************************************************************************************
+	// ******************************************************************************************
+	// ******************************************************************************************
 	
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter){
 		ctx.checkRead();

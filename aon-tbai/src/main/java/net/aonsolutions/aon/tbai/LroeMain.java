@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.security.User;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;

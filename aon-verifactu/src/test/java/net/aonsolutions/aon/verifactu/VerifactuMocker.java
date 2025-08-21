@@ -89,6 +89,7 @@ public class VerifactuMocker {
 	    	.addExcludedField(Product.class, "domain")
 	    	.addExcludedField(Product.class, "itemComposition")
 	    	.addExcludedField(ItemComposition.class, "discountExpression")
+	    	.addExcludedField(VerifactuContext.class, "invoiceCommunicatorContext")
 		;
     	
     	DATA_PROVIDER_STRATEGY

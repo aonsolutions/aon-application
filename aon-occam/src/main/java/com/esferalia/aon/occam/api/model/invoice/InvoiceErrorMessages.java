@@ -35,6 +35,8 @@ public enum InvoiceErrorMessages implements Serializable {
 	C019("La fecha del vencimiento no es correcta."),
 	C020("La divisa de la factura no es euro"),
 	
+	C050("Error comunicaci\u00F3n: \"{0}\" \"{1}\""),
+	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),
 	C201("El ejercicio del apunte contable está cerrado, en explotaci\u00F3n o inactivo."),

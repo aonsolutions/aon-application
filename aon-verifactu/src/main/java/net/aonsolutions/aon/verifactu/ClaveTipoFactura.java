@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -18,8 +20,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Destinatarios;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.FacturasRectificadas;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 enum ClaveTipoFactura {
 
@@ -203,12 +203,12 @@ enum ClaveTipoFactura {
 	protected abstract boolean accept( Invoice inv );
 	protected abstract void filler( VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta);
 
-	public static void fill( VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta ) throws VerifactuException {
+	public static void fill( VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta ) throws InvoiceCommunicationException {
 		LinkedList<ClaveTipoFactura> tipoFact = AonCollectionUtils.stream( values() )
 			.filter( cr -> cr.accept( inv ))
 			.collect(Collectors.toCollection(LinkedList::new));
-		if (AonCollectionUtils.isEmpty(tipoFact)) throw new VerifactuException( VerifactuError.AON_9005 );
-		if (AonCollectionUtils.size(tipoFact) > 1) throw new VerifactuException( VerifactuError.AON_9006 );
+		if (AonCollectionUtils.isEmpty(tipoFact)) throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_9005 );
+		if (AonCollectionUtils.size(tipoFact) > 1) throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_9006 );
 		tipoFact.get(0).filler(vc, inv, alta);
 	}
 	

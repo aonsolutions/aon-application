@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 import java.util.Arrays;

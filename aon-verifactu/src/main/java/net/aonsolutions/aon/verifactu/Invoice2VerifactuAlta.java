@@ -5,6 +5,8 @@ import java.util.Optional;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.TaxBreakdown;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -21,8 +23,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType.Encadenamiento;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2VerifactuAlta {
 	
@@ -33,7 +33,7 @@ class Invoice2VerifactuAlta {
 	
 	}
 	
-	static RegistroFacturacionAltaType get(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+	static RegistroFacturacionAltaType get(VerifactuContext vc, Invoice invoice) throws InvoiceCommunicationException {
 		invoice.refreshTaxBreakdown();
 		
 		RegistroFacturacionAltaType alta = new RegistroFacturacionAltaType();
@@ -93,28 +93,28 @@ class Invoice2VerifactuAlta {
 		return encadenamiento;		
 	}
 	
-	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+	private static DesgloseType getDesglose(VerifactuContext vc, Invoice invoice) throws InvoiceCommunicationException {
 		try {
 			DesgloseType desglose = new DesgloseType();
 			Optional<TaxBreakdown> optTb = invoice.getTaxBreakdown();
 			if (optTb.isPresent()) {
 				TaxBreakdown tb = optTb.get();
 				if (AonCollectionUtils.isEmpty(tb.getVats())) {
-					throw new VerifactuException(VerifactuError.AON_9003);
+					throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9003);
 				}
 				for (InvoiceBreakdown ib : tb.getVats()) {
 					DetalleType detalle = ClaveRegimen.get(vc, invoice, ib);
 					desglose.getDetalleDesglose().add(detalle);
 				}
 			} else {
-				throw new VerifactuException(VerifactuError.AON_9003);
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9003);
 			}
 			return desglose;
 		} catch (AonCoreException e) {
-			if ( e.getCause() != null && VerifactuException.class.isAssignableFrom( e.getCause().getClass()) ) {
-				throw (VerifactuException) e.getCause(); 
+			if ( e.getCause() != null && InvoiceCommunicationException.class.isAssignableFrom( e.getCause().getClass()) ) {
+				throw (InvoiceCommunicationException) e.getCause(); 
 			}
-			throw new VerifactuException( e );
+			throw new InvoiceCommunicationException( e );
 		}
 	}
 	

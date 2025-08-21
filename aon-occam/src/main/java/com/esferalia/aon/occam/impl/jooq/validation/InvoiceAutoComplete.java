@@ -551,10 +551,14 @@ public class InvoiceAutoComplete {
 				double base = detail.getInvoiceTaxes().get(i).getBase();
 				if(TaxType.VAT.equals(detail.getInvoiceTaxes().get(i).getTaxType())) {
 					it = detail.getInvoiceTaxes().get(i);
-					if(detail.getInvoiceTaxes().get(i).getAccount() == null)
-						detail.getInvoiceTaxes().get(i).setAccount(inv.isSales() 
-								? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
+					if(detail.getInvoiceTaxes().get(i).getAccount() == null) {
+						Account a = inv.isSales() 
+							? ctx.getConfiguration().accounting().getDefaultChargedRetAccount()
+							: ctx.getConfiguration().accounting().getDefaultPaidRetAccount();
+						if (a != null) {
+							detail.getInvoiceTaxes().get(i).setAccount(a.getId());
+						}
+					}
 					
 					if(ia != null && ia.getId() != null) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getVatPercent());
@@ -563,10 +567,14 @@ public class InvoiceAutoComplete {
 				}
 				
 				if(TaxType.RETENTION.equals(detail.getInvoiceTaxes().get(i).getTaxType())) {
-					if(detail.getInvoiceTaxes().get(i).getAccount() == null)
-						detail.getInvoiceTaxes().get(i).setAccount(inv.isSales() 
-								? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
+					if(detail.getInvoiceTaxes().get(i).getAccount() == null) {
+						Account a = inv.isSales() 
+							? ctx.getConfiguration().accounting().getDefaultChargedRetAccount()
+							: ctx.getConfiguration().accounting().getDefaultPaidRetAccount();
+						if (a != null) {
+							detail.getInvoiceTaxes().get(i).setAccount(a.getId());
+						}
+					}
 					if(ia != null && ia.getId() != null) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getRetentionPercent()); 
 						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(base * ia.getRetentionPercent() / 100));
@@ -681,7 +689,7 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FINANCES = (inv,ctx) -> 
-		inv.getFinances().stream().forEach(finance -> {
+		inv.financeStream().forEach(finance -> {
 			finance.setDomain(inv.getDomain());
 			finance.setInvoice(inv);
 			finance.setRegistry(inv.getRegistryData());

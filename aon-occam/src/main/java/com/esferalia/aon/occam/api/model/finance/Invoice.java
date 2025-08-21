@@ -92,6 +92,8 @@ public class Invoice implements Serializable, HasAudit {
 	private Date modificationDate;
 
 	private String siiStatus;
+	
+	private Integer rawdocId;
 
 	private List<InvoiceDetail> details;
 	private List<Finance> finances;
@@ -535,6 +537,14 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public Optional<Integer> getRawdocId() {
+		return Optional.ofNullable(rawdocId);
+	}
+	public Invoice setRawdocId(Integer rawdocId) {
+		this.rawdocId = rawdocId;
 		return this;
 	}
 	// ---------------------------------------------------- [DETAILS]

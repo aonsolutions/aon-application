@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigInteger;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.soap.SOAPMessage;
@@ -17,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
@@ -28,120 +30,119 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
 	@Test
-	void venta_nacional_simpleAEATTest() throws VerifactuException {
+	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
-	
+
 	@Test
-	void venta_nacional_simplificadaAEATTest() throws VerifactuException {
+	void venta_nacional_simplificadaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws VerifactuException {
+	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_suplidosAEATTest() throws VerifactuException {
+	void venta_nacional_suplidosAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_rectificativa_simpleAEATTest() throws VerifactuException {
+	void venta_nacional_rectificativa_simpleAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_rectificativa_simplificadaAEATTest() throws VerifactuException {
+	void venta_nacional_rectificativa_simplificadaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_ispAEATTest() throws VerifactuException {
+	void venta_ispAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_reAEATTest() throws VerifactuException {
+	void venta_nacional_reAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_irpf_professionalAEATTest() throws VerifactuException {
+	void venta_nacional_irpf_professionalAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_intracomunitaria_serviciosAEATTest() throws VerifactuException {
+	void venta_intracomunitaria_serviciosAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_intracomunitaria_no_serviciosAEATTest() throws VerifactuException {
+	void venta_intracomunitaria_no_serviciosAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
-	void venta_extracomunitariaAEATTest() throws VerifactuException {
+	void venta_extracomunitariaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
-	void venta_extracomunitaria_servicioAEATTest() throws VerifactuException {
+	void venta_extracomunitaria_servicioAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_melAEATTest() throws VerifactuException {
+	void venta_can_ceu_melAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_mel_servicioAEATTest() throws VerifactuException {
+	void venta_can_ceu_mel_servicioAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
-	void venta_nacional_exenta_e1AEATTest() throws VerifactuException {
+	void venta_nacional_exenta_e1AEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_anuladaAEATTest() throws VerifactuException {
+	void venta_anuladaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_simple_criterio_cajaAEATTest() throws VerifactuException {
+	void venta_nacional_simple_criterio_cajaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
-	void venta_nacional_cliente_no_censadoAEATTest() throws VerifactuException {
+	void venta_nacional_cliente_no_censadoAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_NO_CENSADO.get(ctx, DOMAIN_ID).setId(1);
 		RespuestaExpedidaType ret = communicateInvalid(invoice);
 		assertNotNull(ret);
@@ -156,12 +157,12 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	}
 	
 	@Test
-	void venta_nacional_cliente_cedillaAEATTest() throws VerifactuException {
+	void venta_nacional_cliente_cedillaAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_CEDILLA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
-	
-	private void communicateValid(Invoice invoice) throws VerifactuException {
+
+	private void communicateValid(Invoice invoice) throws InvoiceCommunicationException {
 		RespuestaExpedidaType ret = communicateCommon(invoice);
 		EstadoRegistroType estado = ret.getEstadoRegistro();
 		assertNotNull(estado);
@@ -191,7 +192,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		assertNull(ret.getRegistroDuplicado());
 	}
 	
-	private RespuestaExpedidaType communicateInvalid(Invoice invoice) throws VerifactuException {
+	private RespuestaExpedidaType communicateInvalid(Invoice invoice) throws InvoiceCommunicationException {
 		RespuestaExpedidaType ret = communicateCommon(invoice);
 		EstadoRegistroType estado = ret.getEstadoRegistro();
 		assertNotNull(estado);
@@ -203,15 +204,11 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		return ret;
 	}
 	
-	private VerifactuContext doCommunicate(Invoice invoice) throws VerifactuException {
-		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( invoice );
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig(config())
-			.setCompany(company())
-			.setInvoices( invoices )
-			.setBlockchain(null);
-		
+	private VerifactuContext doCommunicate(Invoice invoice) throws InvoiceCommunicationException {
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		icc.setConfig(configWithCertificate());
+		VerifactuContext vc = new VerifactuContext(icc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
@@ -228,7 +225,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		assertNotNull(vc.getResponse());
 		return vc;
 	}
-	private RespuestaExpedidaType communicateCommon(Invoice invoice) throws VerifactuException {
+	private RespuestaExpedidaType communicateCommon(Invoice invoice) throws InvoiceCommunicationException {
 		VerifactuContext vc = doCommunicate(invoice);
 		
 		assertFalse(vc.getResponse().isError());

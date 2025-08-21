@@ -9,8 +9,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
@@ -36,7 +38,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TercerosODestinatarioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class VentaExtracomunitariaServiciosTest extends AbstractVerifactuTest {
 	
@@ -47,30 +48,25 @@ class VentaExtracomunitariaServiciosTest extends AbstractVerifactuTest {
 	}
 	
 	@Test
-	void ventaNoActTest() throws VerifactuException {
-		Company c = company();
-		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( getTestInvoice() );
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig( config() )
-			.setCompany( c )
-			.setInvoices(invoices);
+	void ventaNoActTest() throws InvoiceCommunicationException {
+		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
+		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
 		
 	@Test
-	void ventaActGeneralTest() throws VerifactuException {
-		Company c = company();
+	void ventaActGeneralTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = new LinkedList<>();
-		invoices.add( getTestInvoice().setActivity(InvoiceTypes.ACTIVITY_GENERAL));
-		VerifactuContext vc = new VerifactuContext()
-			.setConfig( config() )
-			.setCompany( c )
-			.setInvoices(invoices);
+		Invoice invoice = getTestInvoice();
+		invoice.setActivity(InvoiceTypes.ACTIVITY_GENERAL);
+		invoices.add( invoice );
+		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
 
-	private void assertInvoice( VerifactuContext vc ) throws VerifactuException {
+	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
 		
@@ -91,8 +87,8 @@ class VentaExtracomunitariaServiciosTest extends AbstractVerifactuTest {
 
 		// ------------------------ RegistroFacturaType asserts
 	    List<RegistroFacturaType> facturas = rfsf.getRegistroFactura();
-	    assertEquals(vc.getInvoices().size() , facturas.size() );
-	    Invoice i = vc.getInvoices().get(0);
+	    assertEquals(vc.invoiceCount() , facturas.size() );
+	    Invoice i = vc.invoiceStream().findFirst().orElse(null);
 	    assertNotNull( i );
 	    RegistroFacturaType rft = facturas.get(0);
 	    assertNotNull( rft );

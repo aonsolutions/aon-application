@@ -2,9 +2,9 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +18,13 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
@@ -161,15 +163,17 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 	private Invoice save(Invoice invoice) {
 		return ctx.getDslContext().transactionResult(config -> {
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
-			List<Invoice> invoices = new LinkedList<>();
-			invoices.add( inv );
-			VERIFACTU.accept(ctx, config(), company(), invoices);
-			invoices.stream().forEach( i -> {
-				InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
-				DataResponse response = assertDataResponse(i, tracking);
-				assertDataRequest(i, response);
-				assertInvoiceData(i);
-				assertInvoiceInfo(i);
+			List<Invoice> invoices = AonCollectionUtils.toList(inv);
+			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+			icc.setConfig(configWithCertificate());
+			VERIFACTU.accept(ctx, icc);
+			icc.invoiceStream()			
+				.forEach( i -> {
+					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
+					DataResponse response = assertDataResponse(i, tracking);
+					assertDataRequest(i, response);
+					assertInvoiceData(i);
+					assertInvoiceInfo(i);
 			});
 			return inv;
 		});
@@ -190,9 +194,9 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertTrue(status == InvoiceCommunicationStatus.ACCEPTED || status == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
 		InvoiceBatch invoiceBatch = tracking.getInvoiceBatch();
 		assertNotNull(invoiceBatch);
-		assertTrue(invoiceBatch.getType() == InvoiceCommunicationType.VERIFACTU);
-		assertTrue(invoiceBatch.getOperation() == InvoiceCommunicationOperation.REGISTER);
-		assertTrue(invoiceBatch.getDomain().equals(i.getDomain()));
+		assertSame(InvoiceCommunicationType.VERIFACTU, invoiceBatch.getType());
+		assertSame(InvoiceCommunicationOperation.REGISTER, invoiceBatch.getOperation());
+		assertEquals(invoiceBatch.getDomain(),i.getDomain());
 		Integer dataResponse = invoiceBatch.getDataResponse();
 		assertNotNull(dataResponse);
 		assertTrue(dataResponse > 0);
@@ -209,8 +213,8 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertTrue(optDataResponse.isPresent());
 		DataResponse dataResponse = optDataResponse.get();
 		assertNotNull(dataResponse);
-		assertTrue(dataResponse.getId().equals(dataResponseId));
-		assertTrue(dataResponse.getDomain().equals(i.getDomain()));
+		assertEquals(dataResponse.getId(),dataResponseId);
+		assertEquals(dataResponse.getDomain(),i.getDomain());
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
@@ -244,8 +248,8 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(i.getDomain())
 			.and(f.getIdProperty().eq(responseDataRequest)));
 		assertNotNull(dataRequest);
-		assertTrue(dataRequest.getId().equals(responseDataRequest));
-		assertTrue(dataRequest.getDomain().equals(i.getDomain()));
+		assertEquals(dataRequest.getId(),responseDataRequest);
+		assertEquals(dataRequest.getDomain(),i.getDomain());
 		assertTrue(dataRequest.getId() > 0);
 		Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(i.getDomain())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
@@ -259,11 +263,11 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
-		InvoiceData QRUrl =  oQRUrl.get();
-		assertEquals(invoice.getId(), QRUrl.getInvoice() );
-		assertEquals(invoice.getDomain(), QRUrl.getDomain() );
-		assertEquals(InvoiceData.VERIFACTU_QR, QRUrl.getName());
-		assertNotNull(QRUrl.getValue());
+		InvoiceData qRUrl =  oQRUrl.get();
+		assertEquals(invoice.getId(), qRUrl.getInvoice() );
+		assertEquals(invoice.getDomain(), qRUrl.getDomain() );
+		assertEquals(InvoiceData.VERIFACTU_QR, qRUrl.getName());
+		assertNotNull(qRUrl.getValue());
 
 		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_HUELLA);
 		assertNotNull(oHuella);

@@ -14,8 +14,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -65,7 +65,7 @@ public class InvoiceCommunicationTest {
 			}
 			
 			ModifyInvoiceCommunicationTypeVisitor visitor2 = (ModifyInvoiceCommunicationTypeVisitor) 
-				new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
+				new ModifyInvoiceCommunicationTypeVisitor(domain, user, invoice)
 					.setTbaiConfiguration(config.getTbaiConfiguration())
 					.setCompany(config.getCompany())
 					.setPerson(config.getPerson());

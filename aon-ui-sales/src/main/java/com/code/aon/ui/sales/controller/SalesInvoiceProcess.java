@@ -10,7 +10,7 @@ import com.code.aon.sales.Sales;
 import com.code.aon.ui.common.ILongProcess;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 public class SalesInvoiceProcess implements ILongProcess {
 

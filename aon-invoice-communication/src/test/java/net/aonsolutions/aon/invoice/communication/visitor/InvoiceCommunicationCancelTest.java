@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
@@ -24,13 +25,11 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -40,22 +39,24 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -68,7 +69,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SinRegistroPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
-import net.aonsolutions.aon.invoice.communication.CommunicatorContext;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
@@ -77,30 +77,29 @@ import net.aonsolutions.aon.verifactu.VerifactuUtils;
 class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 
 	@Test
-	void venta_nacional_simpleAEATTest() {
+	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
 
-	private void save(Invoice invoice) {
+	private void save(Invoice invoice) throws InvoiceCommunicationException {
 		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = SecurityDAO.getUser(ctx, USER);
-		JSONObject inputInvoiceJSON = InvoiceJSON.toJSON(invoice);
-		CommunicatorContext cc = new CommunicatorContext(domain, user, invoice, inputInvoiceJSON);
-		cc.setConfig(config());
+		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
+			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
+		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicator.acceptInvoice(cc);
 		InvoiceCommunicationTracking acceptTracking = assertAcceptedInvoiceBatch(invoice);
-		DataResponse acceptResponse = assertAcceptedDataResponse(cc, acceptTracking);
+		DataResponse acceptResponse = assertAcceptedDataResponse(cc, invoice, acceptTracking);
 		assertAcceptedDataRequest(invoice, acceptResponse);
 		assertAcceptedInvoiceData(invoice);
 		assertAcceptedInvoiceInfo(invoice);
 		
 		InvoiceCommunicator.cancelInvoice(cc);
-		DataResponse cancelResponse = assertCanceledDataResponse( cc );
-//		assertCanceledDataRequest(invoice, cancelResponse);
-		
-		
-		
+		// DataResponse cancelResponse = 
+				assertCanceledDataResponse( cc, invoice );
+		// assertCanceledDataRequest(invoice, cancelResponse);
 	}
 
 	private InvoiceCommunicationTracking assertAcceptedInvoiceBatch(Invoice i) {
@@ -130,7 +129,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		return tracking;
 	}
 
-	private DataResponse assertAcceptedDataResponse(CommunicatorContext cc, InvoiceCommunicationTracking tracking) {
+	private DataResponse assertAcceptedDataResponse(InvoiceCommunicatorContext cc, Invoice invoice, InvoiceCommunicationTracking tracking) {
 		assertNotNull(tracking);
 		assertNotNull(tracking.getInvoiceBatch());
 		Integer dataResponseId = tracking.getInvoiceBatch().getDataResponse();
@@ -141,24 +140,24 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		DataResponse dataResponse = optDataResponse.get();
 		assertNotNull(dataResponse);
 		assertEquals(dataResponse.getId(),dataResponseId);
-		assertEquals(dataResponse.getDomain(), cc.getInvoice().getDomain());
+		assertEquals(dataResponse.getDomain(), invoice.getDomain());
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(cc.getInvoice().getDomain())
+		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(response.getData());
-		try {
-			System.out.println( "** Verifactu Response **" );
-			AonIOUtils.write(response.getData(), System.out);
-			System.out.println( );
-		} catch (IOException e) {
-			System.out.println( "WRITE ERROR!" );
-		}
-		assertAcceptedVerifactuResponse(cc, response.getData());
+//		try {
+//			System.out.println( "** Verifactu Response **" );
+//			AonIOUtils.write(response.getData(), System.out);
+//			System.out.println( );
+//		} catch (IOException e) {
+//			System.out.println( "WRITE ERROR!" );
+//		}
+		assertAcceptedVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}
 	
@@ -214,7 +213,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(huella.getValue());
 	}
 	
-	private void assertAcceptedVerifactuResponse(CommunicatorContext cc, byte[] data) {
+	private void assertAcceptedVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
 		try {
 			InputStream is = new ByteArrayInputStream(data);
 			SOAPMessage response = MessageFactory.newInstance().createMessage(null, is);
@@ -240,8 +239,8 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	    		IDFacturaExpedidaType idFactura = ret.getIDFactura();
 	    	    assertNotNull( idFactura );
 	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
-	    	    assertEquals(cc.getInvoice().getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(cc.getInvoice().getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
+	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
 	    		
 	    		OperacionType operacion = ret.getOperacion();
 	    		assertNotNull(operacion);
@@ -254,7 +253,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	    		assertNull(operacion.getSinRegistroPrevio());
 	    		
 	    		assertNotNull(ret.getRefExterna());
-	    		String stringId = AonNumberUtils.toString(cc.getInvoice().getId());
+	    		String stringId = AonNumberUtils.toString(invoice.getId());
 				assertEquals( stringId , ret.getRefExterna());
 	        	
 	    		EstadoRegistroType estado = ret.getEstadoRegistro();
@@ -290,10 +289,10 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		}
 	}
 	
-	private DataResponse assertCanceledDataResponse(CommunicatorContext cc) {
+	private DataResponse assertCanceledDataResponse(InvoiceCommunicatorContext cc, Invoice invoice) {
 		assertNotNull(cc);
-		assertNotNull(cc.getResponse());
-		Integer dataResponseId = cc.getResponse().getId();
+		assertNotNull(cc.getDataResponse());
+		Integer dataResponseId = cc.getDataResponse().getId();
 		assertNotNull(dataResponseId);
 		assertTrue(dataResponseId > 0);
 		
@@ -303,28 +302,28 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		DataResponse dataResponse = optDataResponse.get();
 		assertNotNull(dataResponse);
 		assertEquals(dataResponse.getId(),dataResponseId);
-		assertEquals(dataResponse.getDomain(), cc.getInvoice().getDomain());
+		assertEquals(dataResponse.getDomain(), invoice.getDomain());
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(cc.getInvoice().getDomain())
+		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(response.getData());
-		try {
-			System.out.println( "** Verifactu Response **" );
-			AonIOUtils.write(response.getData(), System.out);
-			System.out.println( );
-		} catch (IOException e) {
-			System.out.println( "WRITE ERROR!" );
-		}
-		assertCanceledVerifactuResponse(cc, response.getData());
+//		try {
+//			System.out.println( "** Verifactu Response **" );
+//			AonIOUtils.write(response.getData(), System.out);
+//			System.out.println( );
+//		} catch (IOException e) {
+//			System.out.println( "WRITE ERROR!" );
+//		}
+		assertCanceledVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}
 	
-	private void assertCanceledVerifactuResponse(CommunicatorContext cc, byte[] data) {
+	private void assertCanceledVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
 		try {
 			InputStream is = new ByteArrayInputStream(data);
 			SOAPMessage response = MessageFactory.newInstance().createMessage(null, is);
@@ -350,8 +349,8 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	    		IDFacturaExpedidaType idFactura = ret.getIDFactura();
 	    	    assertNotNull( idFactura );
 	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
-	    	    assertEquals(cc.getInvoice().getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(cc.getInvoice().getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
+	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
 	    		
 	    		OperacionType operacion = ret.getOperacion();
 	    		assertNotNull(operacion);
@@ -364,7 +363,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	    		assertEquals(SinRegistroPrevioType.N, operacion.getSinRegistroPrevio());
 	    		
 	    		assertNotNull(ret.getRefExterna());
-	    		String stringId = AonNumberUtils.toString(cc.getInvoice().getId());
+	    		String stringId = AonNumberUtils.toString(invoice.getId());
 				assertEquals( stringId , ret.getRefExterna());
 	        	
 	    		EstadoRegistroType estado = ret.getEstadoRegistro();

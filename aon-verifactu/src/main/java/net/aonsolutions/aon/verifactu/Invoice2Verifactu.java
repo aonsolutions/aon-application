@@ -8,6 +8,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.EncadenamientoFacturaAnteriorType;
@@ -16,8 +19,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SistemaInformaticoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2Verifactu {
 	
@@ -29,26 +30,38 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws VerifactuException {
-		RegFactuSistemaFacturacion regFactu = new RegFactuSistemaFacturacion();
-		regFactu.setCabecera(getCabecera(vc));
-		for (Invoice invoice : vc.getInvoices()) {
-			RegistroFacturaType factura = getFactura(vc, invoice);
-			regFactu.getRegistroFactura().add(factura);
-			vc.setBlockchain( newBlockchain( factura) );
+	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws InvoiceCommunicationException {
+		try {
+			RegFactuSistemaFacturacion regFactu = new RegFactuSistemaFacturacion();
+			regFactu.setCabecera(getCabecera(vc));
+			vc.invoiceStream()
+				.forEach(invoice -> {
+					try {
+						RegistroFacturaType factura = getFactura(vc, invoice);
+						regFactu.getRegistroFactura().add(factura);
+						vc.setBlockchain( newBlockchain( factura) );
+					} catch (InvoiceCommunicationException e) {
+						throw new AonCoreException( e );
+					}
+			});
+			return regFactu;
+		} catch (AonCoreException e) {
+			if (e.getCause() instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw e;
 		}
-		return regFactu;
 	}
 	
 	
-	private static VerifactuBlockchain newBlockchain(RegistroFacturaType factura) throws VerifactuException {
+	private static VerifactuBlockchain newBlockchain(RegistroFacturaType factura) throws InvoiceCommunicationException {	
 		if (factura.getRegistroAlta() != null) {
 			return Invoice2VerifactuAlta.newBlockchain( factura.getRegistroAlta() );
 		}
 		if (factura.getRegistroAnulacion() != null) {
 			return Invoice2VerifactuAnulacion.newBlockchain( factura.getRegistroAnulacion() );
 		}
-		throw new VerifactuException( VerifactuError.AON_0009 ); 
+		throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_0009 ); 
 	}
 
 	private static CabeceraType getCabecera(VerifactuContext vc) { 
@@ -73,7 +86,7 @@ class Invoice2Verifactu {
 		return c; 
 	}
 	
-	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+	private static RegistroFacturaType getFactura(VerifactuContext vc, Invoice invoice) throws InvoiceCommunicationException {
 		RegistroFacturaType factura = new RegistroFacturaType();
 		if (vc.isAnnulment()) {
 			factura.setRegistroAnulacion( Invoice2VerifactuAnulacion.get(vc, invoice) );
@@ -93,13 +106,13 @@ class Invoice2Verifactu {
 	}
 
 
-	static XMLGregorianCalendar getXmlDate() throws VerifactuException {
+	static XMLGregorianCalendar getXmlDate() throws InvoiceCommunicationException {
 		 try {
 			 XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar( new GregorianCalendar());
 			 xmlGregorianCalendar.setFractionalSecond(null);
 			 return xmlGregorianCalendar;
 		 } catch (DatatypeConfigurationException e) {
-			 throw new VerifactuException( e );
+			 throw new InvoiceCommunicationException( e );
 		}
 	}
 	

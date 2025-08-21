@@ -48,7 +48,6 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
@@ -58,6 +57,9 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -92,7 +95,6 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
-import net.aonsolutions.aon.invoice.communication.CommunicatorContext;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
@@ -640,7 +642,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
 		
 		if (!(invoice.isSales() && tbaiConfiguration.isActive()) ) {
-			return acceptAndCommunicateInvoice(api).getOutputInvoiceJSON();
+			return acceptAndCommunicateInvoice(api);	
 		}
 		// ***********************************
 		// ***********************************
@@ -735,6 +737,27 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	static void processInvoiceFile2(AonApiData api, Invoice invoice) {
+		JSONObject fileJSON = JsonUtils.getJSONObject(api.getData(), IJsonNames.FILE);
+		if(!fileJSON.isEmpty()) {
+			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
+			String contentType = JsonUtils.getString(fileJSON, "content_type");
+					
+			if(s3Key != null) {
+				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+				InvoiceDoc invoiceDoc = new InvoiceDoc()
+						.setExternalStorage(ExternalStorage.AWS)
+						.setS3Bucket("aon-upload-post")
+						.setS3Key(s3Key)
+						.setInvoice(invoice.getId())
+						.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+						.setType(InvoiceAttachmentType.INVOICE)
+						.setDomain(invoice.getDomain());
+				invoice.setDoc(invoiceDoc);
+			}
+		}
+	}
+
 	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws Exception {
 		if(invoice.isSales() && tbaiConfiguration.isActive() && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
@@ -1095,27 +1118,34 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	// ************************************************************
 	// ******************************* [ACCEPT AND COMMUNICATE] ***
 	// ************************************************************
-	public static CommunicatorContext acceptAndCommunicateInvoice(AonApiData api) {
+	public static JSONObject acceptAndCommunicateInvoice(AonApiData api) throws InvoiceCommunicationException {
 		checkApiData(api);
-		
+		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
 		Invoice invoice = InvoiceJSON.from(api.getData())
 			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
-		
-		CommunicatorContext communicator = new CommunicatorContext(api.getDomain(), api.getUser(), invoice, api.getData());
+		processInvoiceFile2(api, invoice);
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices);
 		InvoiceCommunicator.acceptInvoice(communicator);
-		return communicator;
+		
+		// TODO ---> JSON VERSION 2.0???
+		// cc.setOutputInvoiceJSON( InvoiceJSON.to(invoice)
+		//	.orElseThrow(() --> new InvoiceCommunicationException("Error al convertir la factura a JSON.")) );
+		// -----
+		
+		return getInvoice(api.getDomain(), api.getUser().getLogin(), invoice.getId());
 	}
 	
 	// ************************************************************
 	// ******************************* [CANCEL AND COMMUNICATE] ***
 	// ************************************************************
-	public static CommunicatorContext cancelAndCommunicateInvoice(AonApiData api) {
+	public static InvoiceCommunicatorContext cancelAndCommunicateInvoice(AonApiData api) throws InvoiceCommunicationException {
 		checkApiData(api);
-		
+		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
 		Invoice invoice = InvoiceJSON.from(api.getData())
 			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
-		
-		CommunicatorContext communicator = new CommunicatorContext(api.getDomain(), api.getUser(), invoice, api.getData());
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices);
 		InvoiceCommunicator.cancelInvoice(communicator);
 		return communicator;
 	}

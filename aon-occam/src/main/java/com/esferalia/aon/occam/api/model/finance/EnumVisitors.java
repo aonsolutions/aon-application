@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 
 public class EnumVisitors {
 
@@ -120,13 +121,13 @@ public class EnumVisitors {
 	}
 	
 	public static interface IInvoiceCommunicationTypeVisitor {
-		void visitSII() throws Exception;
-		void visitTBAI();
-		void visitLROE() throws Exception;
-		void visitSERES();		
-		void visitEMAIL();
-		void visitCLOSING();
-		void visitVERIFACTU() throws Exception;
+		void visitSII() throws InvoiceCommunicationException;
+		void visitTBAI() throws InvoiceCommunicationException;
+		void visitLROE() throws InvoiceCommunicationException;
+		void visitSERES() throws InvoiceCommunicationException;
+		void visitEMAIL() throws InvoiceCommunicationException;
+		void visitCLOSING() throws InvoiceCommunicationException;
+		void visitVERIFACTU() throws InvoiceCommunicationException;
 	}
 	
 	public static interface IFiscalModelKeyInfoVisitor<T> {

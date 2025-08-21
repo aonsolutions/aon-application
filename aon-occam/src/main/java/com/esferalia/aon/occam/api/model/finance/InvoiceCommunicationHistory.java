@@ -3,6 +3,9 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+
 public class InvoiceCommunicationHistory implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

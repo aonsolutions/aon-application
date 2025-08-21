@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
@@ -80,21 +81,43 @@ class DomainProviderForTests {
 	}
 	
 	private static Domain createFullDomain(AONContext ctx,String domainName, String user) {
-		int newDomainId = ctx
+		
+		Domain consoleDomain = DomainDAO.getDomain(ctx, 0);
+		if (consoleDomain == null ) {
+			int newConsoleId = ctx
 				.getDslContext()
 				.insertInto(DOMAIN)
 				.set(DOMAIN.CREATION_USER, user)
 				.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
-				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.TYPE, DomainType.ADMIN.value())
 				.set(DOMAIN.OWNER, user )
-				.set(DOMAIN.NAME, domainName )
-				.set(DOMAIN.DESCRIPTION, domainName )
+				.set(DOMAIN.NAME, "console-aonsolutions.test" )
+				.set(DOMAIN.DESCRIPTION, "console-aonsolutions.test" )
 				.set(DOMAIN.ENABLEHEREDITY, (byte) 1)
 				.set(DOMAIN.MAXDEFINEDUSERS, 1)
 				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
 				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16).returning(DOMAIN.ID)
 				.fetchOne().getId();
+			ctx.getDslContext().execute("UPDATE domain SET id = 0 WHERE id = " + newConsoleId);
+			ctx.log().info("Dominio CONSOLE insertado correctamente");
+		}
+		
+		int newDomainId = ctx
+			.getDslContext()
+			.insertInto(DOMAIN)
+			.set(DOMAIN.CREATION_USER, user)
+			.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+			.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
+			.set(DOMAIN.TYPE, DomainType.ENTERPRISE.value())
+			.set(DOMAIN.OWNER, user )
+			.set(DOMAIN.NAME, domainName )
+			.set(DOMAIN.DESCRIPTION, domainName )
+			.set(DOMAIN.ENABLEHEREDITY, (byte) 1)
+			.set(DOMAIN.MAXDEFINEDUSERS, 1)
+			.set(DOMAIN.MAXDOCUMENTSIZE, 1)
+			.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16).returning(DOMAIN.ID)
+			.fetchOne().getId();
 		Domain domain = DomainDAO.getDomain(ctx, newDomainId);
 		ctx.log().info("Dominio " + domain.getName() + " insertado correctamente");
 		
@@ -318,7 +341,7 @@ class DomainProviderForTests {
 		insertCustomers( context, domain );
 		insertCertificate( context, domain );
 	}
-	
+
 	private static void insertGeozones(AONContext ctx, Domain domain) {
 		GeoZone spain = GeoZoneDAO.insert(ctx, new GeoZone().setDomain( domain.getId() ).setCode("ES").setName("ESPAÑA"));
 		GeoZoneDAO.bind(ctx, domain.getId(), null, spain.getId());
@@ -536,7 +559,7 @@ class DomainProviderForTests {
 			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
 		CustomerDAO.save(ctx, C_X1485566L);
 	}
-	
+
 	private static void insertCertificate(AONContext ctx, Domain domain) {
 		Integer userId = null;
 		Certificate certificate = AonSecret.getSigCert();

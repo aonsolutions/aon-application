@@ -2,19 +2,18 @@ package net.aonsolutions.aon.verifactu;
 
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.model.Domain;
-
 class VerifactuContextTest {
 
 	@Test
 	void testContext() {
-		VerifactuContext vc1 = VerifactuMocker.mock( VerifactuContext.class ); 
-		 
-		VerifactuContext vc2 = new VerifactuContext();
-		vc2.setConfig(vc1.getConfig());
-		vc2.setCompany(vc1.getCompany());
+		
+		VerifactuContext vc1 = VerifactuMocker.mock( VerifactuContext.class );
+		
+		VerifactuContext vc2 = new VerifactuContext( vc1.getInvoiceCommunicatorContext());
+		
+		VerifactuAsserts.assertClassEquals( vc1.getInvoiceCommunicatorContext(), vc2.getInvoiceCommunicatorContext());
+		
 		vc2.setActivities(vc1.getActivities());
-		vc2.setInvoices(vc1.getInvoices());
 		vc2.setBlockchain(vc1.getBlockchain());
 		vc2.setRequest(vc1.getRequest());
 		vc2.setRequestBytes(vc1.getRequestBytes());
@@ -23,9 +22,6 @@ class VerifactuContextTest {
 		
 		VerifactuAsserts.assertClassEquals( vc1, vc2);
 		
-		Domain d = vc1.getDomain();
-		VerifactuAsserts.assertClassEquals( vc1.getCompany().getDomain(), d);
-
 	}
 	
 }

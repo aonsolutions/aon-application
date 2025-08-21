@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -11,7 +12,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAnulacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAnulacionType.Encadenamiento;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SinRegistroPrevioType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 class Invoice2VerifactuAnulacion {
 	
@@ -19,7 +19,7 @@ class Invoice2VerifactuAnulacion {
 	
 	}
 	
-	static RegistroFacturacionAnulacionType get(VerifactuContext vc, Invoice invoice) throws VerifactuException {
+	static RegistroFacturacionAnulacionType get(VerifactuContext vc, Invoice invoice) throws InvoiceCommunicationException {
 		RegistroFacturacionAnulacionType anul = new RegistroFacturacionAnulacionType();
 		anul.setIDVersion(Invoice2Verifactu.VERSION);
 		IDFacturaExpedidaBajaType idFactura = new IDFacturaExpedidaBajaType();

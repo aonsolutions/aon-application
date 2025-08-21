@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -13,8 +15,6 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuError;
-import net.aonsolutions.aon.verifactu.exceptions.VerifactuException;
 
 enum ClaveRegimen {
 	/**
@@ -36,7 +36,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_NATIONAL.getBasicWithVat( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			return detalle;
@@ -61,7 +61,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_ISP.getBasicWithVat( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_2);
 			return detalle;
@@ -87,7 +87,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_INTRACOMMUNITY_SERVICE.getBasic( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
 			return detalle;
@@ -112,7 +112,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_PREPAYMENT.getBasic(ib);
 			detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
 			return detalle;
@@ -146,7 +146,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_EXENTA_E1.getBasic( ib );
 			detalle.setOperacionExenta(OperacionExentaType.E_1);
 			return detalle;
@@ -174,7 +174,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C01_EXENTA_E5.getBasic(ib);
 			detalle.setOperacionExenta(OperacionExentaType.E_5);
 			return detalle;
@@ -188,7 +188,7 @@ enum ClaveRegimen {
 			return inv.isExtracommunity() || inv.isCanCeuMel();
 		}
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C02.getBasic(ib);
 			detalle.setOperacionExenta(OperacionExentaType.E_2);
 			return detalle;
@@ -236,7 +236,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C07.getBasicWithVat( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			return detalle;
@@ -310,7 +310,7 @@ enum ClaveRegimen {
 		}
 		
 		@Override
-		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
+		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
 			DetalleType detalle = C18.getBasicWithVat( ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setTipoRecargoEquivalencia(VerifactuUtils.toString(ib.getSurcharge()));
@@ -368,17 +368,17 @@ enum ClaveRegimen {
 	}
 
 	
-	public static DetalleType get( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib ) throws VerifactuException {
+	public static DetalleType get( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib ) throws InvoiceCommunicationException {
 		LinkedList<ClaveRegimen> claveRegimes = AonCollectionUtils.stream( values() )
 			.filter( cr -> cr.accept(vc, inv, ib))
 			.collect(Collectors.toCollection(LinkedList::new));
-		if (AonCollectionUtils.isEmpty(claveRegimes)) throw new VerifactuException( VerifactuError.AON_9001 );
-		if (AonCollectionUtils.size(claveRegimes) > 1) throw new VerifactuException( VerifactuError.AON_9002 );
+		if (AonCollectionUtils.isEmpty(claveRegimes)) throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_9001 );
+		if (AonCollectionUtils.size(claveRegimes) > 1) throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_9002 );
 		return claveRegimes.get(0).getDetalleType(vc, inv, ib);
 	}
 	
-	protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws VerifactuException {
-		throw new VerifactuException(new UnsupportedOperationException("Not implented!"));
+	protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
+		throw new InvoiceCommunicationException(new UnsupportedOperationException("Not implented!"));
 	}
 	
 	protected abstract boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib);

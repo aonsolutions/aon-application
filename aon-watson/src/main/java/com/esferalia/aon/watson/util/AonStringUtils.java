@@ -7742,4 +7742,29 @@ public class AonStringUtils {
         }
         return false;
     }
-}
+
+	
+    /**
+     * Returns true if the value is in the options.
+	 * @param value The value to check
+	 * @param options The options to check against
+	 * @return true if the value is in the options, false otherwise
+     */
+    public static boolean in(String value, String ... options) {
+		if (value == null || options == null || options.length == 0) {
+			return false;
+		}
+		return AonCollectionUtils.stream(options)
+			.filter(Objects::nonNull)
+			.anyMatch(option -> option.equals(value));
+	}
+	/**
+	 * Returns true if the value is not in the options.
+	 * 
+	 * @param value The value to check
+	 * @param options The options to check against
+	 * @return true if the value is not in the options, false otherwise
+	 */
+	public static boolean notIn(String value, String ... options) {
+		return !in(value, options);
+	}}

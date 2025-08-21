@@ -23,9 +23,9 @@ import com.esferalia.aon.occam.api.model.Properties.InvoiceCommunicationTracking
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;

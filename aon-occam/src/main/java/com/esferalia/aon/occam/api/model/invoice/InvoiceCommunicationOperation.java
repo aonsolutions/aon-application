@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
@@ -6,10 +6,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationOperation implements Serializable{
 
-	REGISTER("Alta"),
-	MODIFICATION("Modificación"),
-	ANNULMENT("Anulación"),
-	CONSULTATION("Consulta")
+	REGISTER("Alta") 				{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitRegister();}},	
+	MODIFICATION("Modificación") 	{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitModification();}},
+	ANNULMENT("Anulación") 			{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitAnnulment();}},
+	CONSULTATION("Consulta") 		{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitConsultation();}}
 	;
 	
 	
@@ -58,4 +58,12 @@ public enum InvoiceCommunicationOperation implements Serializable{
 	public boolean isAnnulment() {
 		return InvoiceCommunicationOperation.ANNULMENT.equals(this);
 	}
+	
+	public abstract <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor);
+	public interface InvoiceCommunicationOperationVisitor<T> {
+		T visitRegister();
+		T visitModification();
+		T visitAnnulment();
+		T visitConsultation();
+	}	
 }

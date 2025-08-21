@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
@@ -9,11 +9,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public enum InvoiceCommunicationType implements Serializable{
  
 	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
-	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();}},
+	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
 	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
-	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}},
-	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitEMAIL();}},
-	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitCLOSING();}},
+	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
+	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
+	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
 	VERIFACTU { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}}
 	;
 	

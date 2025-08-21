@@ -233,7 +233,13 @@ public enum InvoiceErrorKey implements Serializable {
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
 			visitor.visitExpenseAccount(t);
 		}
-	}
+	},
+	COMMUNICATION("Comunicaci\u00F3n") {
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitCommunication(t);
+		}
+	},
 	;
 
 	private String description;

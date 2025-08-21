@@ -2,50 +2,59 @@ package net.aonsolutions.aon.verifactu;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 
-public class VerifactuContext {
-	
-	private InvoiceCommunicationConfiguration config;
-	private Company company;
+public class VerifactuContext  {
+	private final InvoiceCommunicatorContext invoiceCommunicatorContext;
 	private List<EnterpriseActivity> activities;
-	private List<Invoice> invoices;
 	private VerifactuBlockchain blockchain;
-//	private String user;
 	private InvoiceCommunicationOperation operation;
-	
 	private RegFactuSistemaFacturacion request;
 	private byte[] requestBytes;	
 	private VerifactuResponse response;
 	
-	public InvoiceCommunicationConfiguration getConfig() {
-		return config;
-	}
-	public VerifactuContext setConfig(InvoiceCommunicationConfiguration config) {
-		this.config = config;
-		return this;
+	public VerifactuContext(InvoiceCommunicatorContext invoiceCommunicatorContext) {
+		this.invoiceCommunicatorContext = invoiceCommunicatorContext;
 	}
 	
-	public Company getCompany() {
-		return company;
-	}
-	public VerifactuContext setCompany(Company company) {
-		this.company = company;
-		return this;
+	public InvoiceCommunicatorContext getInvoiceCommunicatorContext() {
+		return invoiceCommunicatorContext;
 	}
 	public Domain getDomain() {
-		return company.getDomain();
+		return getInvoiceCommunicatorContext().getDomain();
 	}
+	public User getUser() {
+		return getInvoiceCommunicatorContext().getUser();
+	}
+	public Company getCompany() {
+		return getInvoiceCommunicatorContext().getCompany();
+	}
+	public InvoiceCommunicationConfiguration getConfig() {
+		return getInvoiceCommunicatorContext().getConfig();
+	}
+	public Integer getCertificateId() {
+		return getInvoiceCommunicatorContext().getCertificateId();
+	}
+	public Stream<Invoice> invoiceStream() {
+		return getInvoiceCommunicatorContext().invoiceStream();
+	}
+	public int invoiceCount() {
+		return getInvoiceCommunicatorContext().invoiceCount();
+	}
+
 	
 	public List<EnterpriseActivity> getActivities() {
 		return activities;
@@ -60,14 +69,6 @@ public class VerifactuContext {
 			.findAny();
 	}
 	
-	public List<Invoice> getInvoices() {
-		return invoices;
-	}
-	public VerifactuContext setInvoices(List<Invoice> invoices) {
-		this.invoices = invoices;
-		return this;
-	}
-	
 	public VerifactuBlockchain getBlockchain() {
 		return blockchain;
 	}
@@ -76,14 +77,6 @@ public class VerifactuContext {
 		return this;
 	}
 
-//	public String getUser() {
-//		return user;
-//	}
-//	public VerifactuContext setUser(String user) {
-//		this.user = user;
-//		return this;
-//	}
-	
 	public RegFactuSistemaFacturacion getRequest() {
 		return request;
 	}

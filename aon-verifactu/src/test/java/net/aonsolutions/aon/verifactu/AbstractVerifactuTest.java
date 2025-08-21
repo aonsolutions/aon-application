@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -29,10 +30,15 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -46,6 +52,7 @@ public abstract class AbstractVerifactuTest {
 	protected static CloseableAONContext ctx;
 	protected static Integer DOMAIN_ID;
 	private InvoiceCommunicationConfiguration communicationConfiguration;
+	private InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
 	private VerifactuConfiguration verifactuConfiguration;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "verifactutest.aonsolutions.test");	
@@ -157,6 +164,29 @@ public abstract class AbstractVerifactuTest {
 		return CompanyDAO.getCompany(ctx, DOMAIN_ID);
 	}
 	
+	protected Domain domain() {
+		return DomainDAO.getDomain(ctx, DOMAIN_ID);
+	}
+
+	protected User user() {
+		return UserDAO.get(ctx, DOMAIN_ID, USER)
+			.orElseThrow( () -> new IllegalStateException("User " + USER + " not found in domain " + DOMAIN_ID) );
+	}
+	
+	protected InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
+		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
+			.setCompany( company() )
+			.setConfig( config() )
+		;
+	}
+	protected InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
+		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
+			.setCompany( company() )
+			.setConfig( configWithCertificate() )
+		;
+	}
+
+	
 	protected VerifactuConfiguration verifactuConfig() {
 		if (verifactuConfiguration == null) {
 			verifactuConfiguration = VerifactuConfigurationDAO.get(ctx); 
@@ -177,9 +207,19 @@ public abstract class AbstractVerifactuTest {
 		assertNotNull(communicationConfiguration,"communicationConfiguration NULL" );
 		assertTrue(communicationConfiguration.isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
 		assertTrue(communicationConfiguration.isTest(),"communicationConfiguration NO ENTORNO TEST" );
+		return communicationConfiguration;
+	}
+
+	protected InvoiceCommunicationConfiguration configWithCertificate() {
+		if (communicationConfigurationWithCertificate == null) {
+			communicationConfigurationWithCertificate = InvoiceCommunicationConfigurationDAO.get(ctx); 
+		}
+		assertNotNull(communicationConfigurationWithCertificate,"communicationConfigurationWithCertificate NULL" );
+		assertTrue(communicationConfigurationWithCertificate.isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
+		assertTrue(communicationConfigurationWithCertificate.isTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
 		Certificate c = AonSecret.getSigCert();
 		assertNotNull(c, "Verifactu Certificate NULL");
-		communicationConfiguration.setCertificate(AonSecret.getSigCert()); 
-		return communicationConfiguration;
+		communicationConfigurationWithCertificate.setCertificate(AonSecret.getSigCert()); 
+		return communicationConfigurationWithCertificate;
 	}
 }

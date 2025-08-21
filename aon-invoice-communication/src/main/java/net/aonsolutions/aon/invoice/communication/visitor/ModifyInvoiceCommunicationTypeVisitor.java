@@ -1,8 +1,8 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
