@@ -208,6 +208,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -6453,6 +6454,18 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Tag> getTagList(TagParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getCommon().getTagList(ctx, params);
+		}
+	}
+	
+	public static Tag saveTag(String domainName, Integer domainId, String login, Tag tag){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().saveTag(ctx, tag);
+		}
+	}
+	
 	public static Tag insertTag(String domainName, Integer domainId, String login, Tag tag) {
 		CloseableAONContext ctx = null;
 		try {
@@ -8547,6 +8560,12 @@ public class AON {
 	public static DomainLinked saveDomainLinked(String domainName, Integer domainId, String login, DomainLinked domainLinked) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().saveDomainLinked(ctx, domainLinked);
+		}
+	}
+	
+	public static Domain updateDomainStatus(String domainName, Integer domainId, String login, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().updateDomainStatus(ctx, domain);
 		}
 	}
 	

@@ -1,29 +1,37 @@
 package net.aonsolutions.aon.api.servlet.registry;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TargetJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
@@ -37,6 +45,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 	public static final String CUSTOMERS = "/";
 	public static final String CUSTOMER = "/:id";
 	public static final String CUSTOMER_EMAILS = "/:id/emails";
+	public static final String CUSTOMER_NOTE = "/note";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -73,8 +82,11 @@ public class CustomersServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 
-			Object object = new AonRouting(api).addRoute(CUSTOMERS, CustomersServlet::saveCustomer)
-					.addRoute(CUSTOMER, CustomersServlet::saveCustomer).apply();
+			Object object = new AonRouting(api)
+					.addRoute(CUSTOMER_NOTE, CustomersServlet::saveCustomerNote)
+					.addRoute(CUSTOMERS, CustomersServlet::saveCustomer)
+					.addRoute(CUSTOMER, CustomersServlet::saveCustomer)
+					.apply();
 
 			response(req, resp, object);
 		} catch (Exception e) {
@@ -221,6 +233,62 @@ public class CustomersServlet extends AonApiHttpServlet {
 				customer);
 		RegistryServlet.saveRegistryAdditionalInfo(api, customer.getId(), customer.getDomain().getId());
 		return CustomerJSON.toJSON(customer);
+	}
+	
+	public static JSONObject saveCustomerNote(AonApiData api) {
+		
+		System.out.println(api.getData());
+		
+		Integer customerId = JsonUtils.getInteger(api.getData(), "customerId");
+		
+		String newStatusStr = JsonUtils.getString(api.getData(), "status");
+		RegistryStatus newStatus = RegistryStatus.valueOf(newStatusStr);
+		
+		String tagName = JsonUtils.getString(api.getData(), "tagName");
+		
+		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getIdProperty().eq(customerId));
+		
+		if(!newStatus.equals(customer.getStatus())) {
+			
+			String comments = "Cambio estado de " + customer.getStatus().getDescription() + " a " + newStatus.getDescription() + ". ";
+			
+			if(newStatus.equals(RegistryStatus.BLOCKED) || newStatus.equals(RegistryStatus.INACTIVE))
+				comments += "Motivo: " + tagName;
+			
+			RegistryNote note = new RegistryNote()
+					.setDomain(api.getDomain().getId())
+					.setRegistry(customerId)
+					.setNoteDate(new Date())
+					.setNoteType(NoteType.CUSTOMER_STATUS)
+					.setConfidential(true)
+					.setDescription("Estado nuevo: " + newStatus.getDescription())
+					.setComments(comments)
+					;
+		
+			AON.saveRegistryNote(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), note);
+			
+			// Update domain (work for all except SIG)
+			Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(customerId));
+			if(rrelationship.isPresent()) {
+				Enterprise enterprise = AON.getEnterprise(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rrelationship.get().getRelatedRegistry());
+				if(null != enterprise) {
+					Domain domainCustomer = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(enterprise.getDomain()));
+					
+					String dateStr = JsonUtils.getString(api.getData(), "date");
+					Date expirationDate = AonDateUtils.simpleParse(dateStr);
+					
+					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+					domainCustomer.setActive(newStatus.equals(RegistryStatus.ACTIVE));
+					
+					AON.updateDomainStatus(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainCustomer);
+				}
+			}
+			
+		}
+		
+		
+		return new JSONObject();
 	}
 
 }

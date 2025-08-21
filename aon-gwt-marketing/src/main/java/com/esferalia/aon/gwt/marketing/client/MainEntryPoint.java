@@ -159,6 +159,18 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.removeItem("notesSource");
 	}-*/;
 	
+	public static native String getTagType()
+	/*-{
+		return $wnd.localStorage.getItem("tagType");
+	}-*/;
+	
+	public static native void removeTagType()
+	/*-{
+		return $wnd.localStorage.removeItem("tagType");
+	}-*/;
+	
+	
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

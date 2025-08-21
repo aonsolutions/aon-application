@@ -256,27 +256,27 @@ public class ConnectSaleInvoiceWriter {
 		String ediIV = SeresUtils.isDia(customer.getDocument()) ? ediCodes.getCustomerEdiInvoice() : ediHeader;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
-				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
+				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
-		        ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
+		        ediCodes.getCompanyEdiCode(), company, companyAddress, recordData, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				ediCodes.getCustomerEdiPoint(), customer, invoiceAddress, null));
+				ediCodes.getCustomerEdiPoint(), customer, invoiceAddress, null, customer.getDocument()));
 //		if(!SeresUtils.isECI(invoice.getRegistryDocument()) && !SeresUtils.isEroski(invoice.getRegistryDocument())) {
 //			list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 //					ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
 //		}
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
+				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
-				ediIV, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
+				ediIV, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
-				ediCodes.getCompanyEdiCode(), company, companyAddress, null));
+				ediCodes.getCompanyEdiCode(), company, companyAddress, null, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
-				ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
+				ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS,
-		        ediCodes.getCompanyEdiCode(), company, companyAddress, null));
+		        ediCodes.getCompanyEdiCode(), company, companyAddress, null, customer.getDocument()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.RECEPTOR_DEL_MENSAJE_MR,
-				ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
+				ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null, customer.getDocument()));
 
 		return list;
 	}
@@ -399,12 +399,12 @@ public class ConnectSaleInvoiceWriter {
 	 * Información partes involucradas
 	 */
 	private SINCP createSINCPRecord(SINCP.SINCP_2 type, String ediCode, Registry registry,
-			RegistryAddress rAddress, RecordData recordData) {
-		return createSINCPRecord(type, ediCode, registry, rAddress, recordData, null, null);
+			RegistryAddress rAddress, RecordData recordData, String customerDocument) {
+		return createSINCPRecord(type, ediCode, registry, rAddress, recordData, null, null, customerDocument);
 	}
 	
 	private SINCP createSINCPRecord(SINCP.SINCP_2 type, String ediCode, Registry registry,
-			RegistryAddress rAddress, RecordData recordData, String calificadorReferenciaAdicional, String referenciaAdicional) {
+			RegistryAddress rAddress, RecordData recordData, String calificadorReferenciaAdicional, String referenciaAdicional, String customerDocument) {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
 		sincp.setCodigoInterlocutor(ediCode);
@@ -426,8 +426,10 @@ public class ConnectSaleInvoiceWriter {
 			sincp.setCodigoPais(rAddress.getGeozone().getGeoZoneCountry().getCode());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-		}
-		sincp.setNumeroDeIdentificacionFiscal(registry.getDocument());
+		}	
+		String documentCountry = SeresUtils.isAldi(customerDocument) && registry.getDocumentCountry() != null 
+				? registry.getDocumentCountry().getValue() : ""; 
+		sincp.setNumeroDeIdentificacionFiscal(documentCountry + registry.getDocument());
 		sincp.setCodigoAdicional(null);
 		sincp.setFuncionDeContacto(null);
 		sincp.setCodigoDepartamentoOEmpleado(null);
@@ -593,7 +595,7 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setImporteOtroTipoDeImpuesto(null);
 		sincl.setNumeroPedido_ON_(SeresUtils.isDia(detail.getInvoice().getRegistryDocument())? null : obtainSalesNumber(detail));
 		if(!SeresUtils.isDia(detail.getInvoice().getRegistryDocument())
-				&& !SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
+//				&& !SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
 				&& delivery != null && delivery.getId() != null)
 			sincl.setNumeroDeAlbaran_DQ_(delivery.getReferenceCode());
 		sincl.setNumeroDeEmbalajes(null);

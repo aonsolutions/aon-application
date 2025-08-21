@@ -469,8 +469,9 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} 
 			}
-				let appElement = this.buildTopApp(app);
-				aonTopMenuDiv.appendChild(appElement);
+			
+			let appElement = this.buildTopApp(app);
+			aonTopMenuDiv.appendChild(appElement);
 		}
 		
 	

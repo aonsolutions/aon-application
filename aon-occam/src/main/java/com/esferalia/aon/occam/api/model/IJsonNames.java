@@ -706,6 +706,8 @@ public final class IJsonNames {
 	public static final String TOTAL_WEIGHT = "totalWeight";
 	public static final String TRACKING_NUMBER = "trackingNumber";	
 	public static final String TRANSACTION = "transaction";
+	public static final String TRIAL = "trial";
+	public static final String TRIAL_VALUE = "trialValue";
 	public static final String TYPE = "type";
 	// ---------------------------------------------------------------------------------------------	[U] 
 	public static final String UNDEDUCTIBLE = "undeductible";

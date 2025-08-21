@@ -755,6 +755,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DESAYUNO_Y_CAMA_SUIZA_DIARIO", "DESAYUNO_CAMA_SZ_D");
 		
 		variablesMap.put("DIA_IT_ACC__TRABAJO_DIARIO", "DIA_IT_ACC_D");
+		variablesMap.put("DIA_FESTIVO_ESPECIAL_ANUAL", "DIA_FESTIVO_ESPECIAL_A");
 		variablesMap.put("DIA_FESTIVO_ESPECIAL_DIARIO", "DIA_FESTIVO_ESPECIAL_D");
 		variablesMap.put("DIA_FESTIVO_ESPECIAL_HORAS", "DIA_FESTIVO_ESPECIAL_H");
 		variablesMap.put("DESAYUNO_Y_CAMA_PORTUGAL_DIARIO", "DES_CAMA_PORT_D");
@@ -1570,6 +1571,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_EXTRASALARIAL_MENSUAL", "PLUS_XS_MENSUAL");
 		variablesMap.put("PLUS_EXTRA_CATEGORIA_ANUAL", "PLUS_EXTRA_CATEGORIA_A");
 		variablesMap.put("PLUS_EXTRA_CATEGORIA_MENSUAL", "PLUS_EXTRA_CATEGORIA_M");
+		variablesMap.put("PLUS_EXTRA_CATEGORIA_DIARIO", "PLUS_EXTRA_CATEGORIA_D");
 		variablesMap.put("PLUS_EXTRA_CATEGORIA_NOCTURNIDAD_HORAS", "PLUS_EXTRA_NOCTURNIDAD");
 		variablesMap.put("PLUS_EXTRA_SALARIAL_DIARIO", "PLUS_XS_DIARIO");
 		variablesMap.put("PLUS_EXTRA_SALARIAL_FIJO_MENSUAL", "PLUS_XS_FIJO");
@@ -1647,12 +1649,14 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_IDIOMAS_ANUAL", "PLUS_IDIOMAS_A");
 		variablesMap.put("PLUS_IDIOMAS_MENSUAL", "PLUS_IDIOMAS_M");
 		variablesMap.put("PLUS_IDIOMAS_HORAS", "PLUS_IDIOMAS_H");
+		variablesMap.put("PLUS_IDIOMAS_DIARIO", "PLUS_IDIOMAS_D");
 		variablesMap.put("PLUS_INDUSTRIAL_DIARIO", "INDUSTRIAL_D");
 		variablesMap.put("PLUS_INDUSTRIAL_TALLER_DIARIO", "INDUSTRIAL_TALLER_D");
 		variablesMap.put("PLUS_INTENSIDAD_ANUAL", "INTENSIDAD_A");
 		variablesMap.put("PLUS_INTENSIDAD_MENSUAL", "INTENSIDAD_M");
 		variablesMap.put("PLUS_INVERNAL_DIARIO", "PLUS_INVERNAL_D");
 		variablesMap.put("PLUS_INVERNAL_MENSUAL", "PLUS_INVERNAL_M");
+		variablesMap.put("PLUS_JEFATURA_EQUIPO_MENSUAL", "JEFATURA_EQUIPO_M");
 		variablesMap.put("PLUS_JEFE_DE_EQUIPO_ANUAL", "JEFE_EQUIPO_A");
 		variablesMap.put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "JEFE_EQUIPO_M");
 		variablesMap.put("PLUS_JEFE_DE_EQUIPO_DIARIO", "JEFE_EQUIPO_D");

@@ -163,6 +163,10 @@ export class AonOfficePanel extends AonElement {
 				page: 1,
 			});
 		options.push(customer);
+		
+		let customerTags = OfficeOptions.AON_CUSTOMER_STATUS;
+		customerTags.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_STATUS.id);
+		options.push(customerTags);
 
 		let taskHolder = OfficeOptions.AON_TASK_HOLDER;
 		/*
@@ -221,7 +225,6 @@ export class AonOfficePanel extends AonElement {
 				const customerRegistry = event.data.payload;
 				this.getCustomerCustom(customerRegistry)
 					.then(customer => {
-						console.log(customer);
 						this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER, { customer });
 					});
 			}
@@ -680,12 +683,10 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case ServiceOptions.AON_SALES_ENTERPRISE.id:
 					this.clearToolbar();
-					//application.closeSidenav();
 					GWT.iLoad(GWT.SALES_ENTERPRISE_MODULE, this.getApplication().CONTENT);
 					break;
 				case ServiceOptions.AON_TARGET_ENTERPRISE.id:
 					this.clearToolbar();
-					//application.closeSidenav();
 					GWT.iLoad(GWT.TARGET_ENTERPRISE_MODULE, this.getApplication().CONTENT);
 					break;
 				case LINK_DOMAINS.id:
@@ -693,17 +694,20 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case OfficeOptions.AON_SELLER_LIST.id:
 					this.clearToolbar();
-					// application.closeSidenav();
 					GWT.iLoad(GWT.SELLER_MODULE, this.getApplication().CONTENT);
 					break;
 				case OfficeOptions.AON_SELLER_WORKLOAD.id:
 					this.clearToolbar();
-					// application.closeSidenav();
 					GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE, this.getApplication().CONTENT);
 					break;
 				case OfficeOptions.AON_SCOPE.id:
 					this.clearToolbar();
 					GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT);
+					break;
+				case OfficeOptions.AON_CUSTOMER_STATUS.id:
+					this.clearToolbar();
+					localStorage.setItem("tagType", "CUSTOMER_STATUS");
+					GWT.iLoad(GWT.TAG_MODULE, this.getApplication().CONTENT);
 					break;
 				case officeViews.AON_OFFICE_PANEL:
 					aonView = new AonOfficePanel();
@@ -754,9 +758,7 @@ export class AonOfficePanel extends AonElement {
 					aonView = new AonTaskHolder();
 					break;
 				case officeViews.AON_TASK_HOLDER_LIST:
-					//aonView = new AonTaskHolderList(this);
 					this.clearToolbar();
-					//application.closeSidenav();
 					GWT.iLoad(GWT.TASK_HOLDER_MODULE, this.getApplication().CONTENT);
 					break;
 				case officeViews.AON_WORKGROUP_LIST:
@@ -772,9 +774,6 @@ export class AonOfficePanel extends AonElement {
 				}
 
 				if (data) {
-
-					console.log("---- show view");
-					console.log(data);
 
 					if (data.customer) {
 						aonView.setCustomer(data.customer);

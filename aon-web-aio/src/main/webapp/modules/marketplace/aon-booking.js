@@ -38,6 +38,9 @@ export class AonBooking extends AonElement {
 	dur;
 	domainPayer;
 	sessionData;
+	
+	trial;
+	trialValue;
 
 	options
 
@@ -63,6 +66,8 @@ export class AonBooking extends AonElement {
 				this.completeDomainApps(this.dur);
 			this.users = this.dur.maxDefinedUsers;
 			this.definedUsers = this.dur.definedUsers;
+			this.trial = this.dur.isTrial();
+			this.trialValue = this.dur.getTrialValue();
 			this.build();			
 		});
 	}
@@ -126,7 +131,26 @@ export class AonBooking extends AonElement {
 		const dur = this.getDur();
 		let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
-		this.buildUser(content);
+		
+		let userTrialContent = this.createElement(TAG.DIV); 
+		userTrialContent.style.display = 'flex';
+		content.appendChild(userTrialContent);
+		
+		let userContent = this.createElement(TAG.DIV); 
+		userContent.style.display = 'flex';
+		userContent.style.flexDirection = 'column';
+		userTrialContent.appendChild(userContent);
+		
+		this.buildUser(userContent);
+		
+		if(dur.isTrial()){
+			let trialContent = this.createElement(TAG.DIV); 
+			trialContent.style.display = 'flex';
+			trialContent.style.flexDirection = 'column';
+			userTrialContent.appendChild(trialContent);
+			
+			this.buildTrial(trialContent);
+		}
 
 		if(dur.getDomain().isConsultancy()){
 			this.buildTitle(content, 'Packs');
@@ -260,6 +284,47 @@ export class AonBooking extends AonElement {
 			]);
 			div2.appendChild(companies);
 		}
+	} 
+	
+	buildTrial(content) {
+		this.buildTitle(content, 'FREEMIUM');
+
+		let div = this.createElement(TAG.DIV); 
+		div.style.display = 'flex';
+		content.appendChild(div);
+
+		let div1 = this.createElement(TAG.DIV); 
+		div1.style.marginLeft = '60px';
+		div1.style.width = '250px';
+		div.appendChild(div1);
+
+		let trialInput = createInput('trial1', 'Facturas Prueba');
+		trialInput.value = this.trialValue;
+		div1.appendChild(trialInput);
+		trialInput.onChange(() => {
+			this.trialValue = trialInput.value;
+			if(this.trialValue == '0'){
+				this.trial = false;
+				trialSwitch.checked = this.trial;
+			}
+		});
+		
+		let trialSwitch = new AonSwitch();
+		trialSwitch.id = 'trialSwitch';
+		trialSwitch.checked = this.trial;
+		trialSwitch.addEventListener(EVENT.CHANGE, (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			this.trial = trialSwitch.checked;
+			
+			if(this.trial == 'false'){
+				this.trialValue = '0';
+				trialInput.setValue(this.trialValue);
+			}
+		});
+		trialInput.addEndWidget(trialSwitch);
+
 	} 
 
 	buildApps(content, apps, dur) {
@@ -629,7 +694,9 @@ export class AonBooking extends AonElement {
 				type: this.dur.domain.type,
 				apps: this.apps,
 				users: this.users,
-				domainPayer: this.domainPayer
+				domainPayer: this.domainPayer,
+				trial: this.trial,
+				trialValue: this.trialValue
 			}, this.sessionData).then(() => {
 				toast.start({
 					type: 'success',
