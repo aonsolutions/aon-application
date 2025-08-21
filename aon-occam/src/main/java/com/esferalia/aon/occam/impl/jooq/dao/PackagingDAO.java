@@ -400,7 +400,7 @@ public class PackagingDAO {
 		});
 	}
 	
-	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny) {
+	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity) {
 		Item destinyItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getSerialNumberProperty().eq(destiny)));
 		
@@ -799,7 +799,6 @@ public class PackagingDAO {
 		for(Integer i = 0; i < packaging.getCopies(); i++) {
 			Packaging p = packaging.copy(); 
 			String sscc = generateSSCC(ctx);
-			System.out.println(sscc);
 			Item container = packaging.getContainer().copy();
 			container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date()).setStatus(ProductStatus.ACTIVE);
 			container = ItemDAO.save(ctx, container);

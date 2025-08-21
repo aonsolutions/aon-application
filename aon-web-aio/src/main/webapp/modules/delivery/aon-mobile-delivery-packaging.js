@@ -38,6 +38,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	DELIVERY_TOOLBAR;
 
 	SUBTRACT_PACKAGING_PRODUCT;
+	SUBTRACT_PACKAGING_QUANTITY;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -78,6 +79,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
 
 		this.SUBTRACT_PACKAGING_PRODUCT = this.id + 'SubtractPackagingProduct';
+		this.SUBTRACT_PACKAGING_QUANTITY = this.id + 'SubtractPackagingQuantity';
 
 		this.TAG = this.id + CONSTANT.TAG.initCap();
 		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
@@ -226,6 +228,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		table.addCell(product);
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
 
+		table.addRow();
+		let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		quantityBox.setTags(composition.composition);
+		table.addCell(quantityBox);
+
 		// let addButton = new AonIconButton();
 		// addButton.id = this.id + 'AddButton';
 		// addButton.title = MSG.ADD;
@@ -244,6 +254,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			subtractDeliveryPackagingComposition({
 				delivery: this.delivery,
 				composition,
+				quantity: quantityBox.getQuantity(),
 				destiny: product.value
 			}).then(() => this.aonDelivery());
 		});
@@ -298,7 +309,6 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		});
 		d.open();
 	}
-
 
 	aonDelivery() {
 		this.getElement('aonDelivery').backToDelivery(this.delivery);
