@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingExpenseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingOperationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingOperationNewDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
@@ -637,7 +638,7 @@ public class AccountingImpl implements IAccounting {
 				,params);
 	}
 	public Stream<OperationBreakdownNew> getOperationBreakdownNew(AONContext ctx, int domain, OperationParamsNew params) {
-		return AccountingOperationDAO.getOperationBreakdownNew(ctx, domain, params);
+		return AccountingOperationNewDAO.getOperationBreakdownNew(ctx, domain, params);
 	}
 	
 	// AMORTIZATION TYPE

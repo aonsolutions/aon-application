@@ -15,7 +15,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 		AonDisplayGridHeaderRow row = getGrid().addHeaderRow()
 										  		.addCell(new Label("Ep. IAE."), AON.CSS.aonWidth40());
 		
-		if (getParams().getType() != 0) {
+		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("Concepto Ingreso"), AON.CSS.aonWidth40())
 			   .addCell(new Label("Ingreso Computable"), AON.CSS.aonWidth80());
 		}
@@ -33,7 +33,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 			.addCell(new Label("Cuota REq."), AON.CSS.aonWidth80())
 			.addCell(new Label("Total Fra."), AON.CSS.aonWidth80());
 		
-		if (getParams().getType() != 0) {
+		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("% Ret."), AON.CSS.aonWidth40())
 			   .addCell(new Label("Importe Retenci\u00F3n"), AON.CSS.aonWidth80())
 			;
@@ -52,7 +52,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 		
 		addCell(row, br.getActivityIAE(), AON.CSS.aonTextCenter());
 		
-		if (getParams().getType() != 0) {
+		if (getParams().getBookType() != 0) {
 			addCell(row, br.getConceptCode(), AON.CSS.aonTextCenter());
 			addCell(row, br.getConceptAmount());
 		}
@@ -70,7 +70,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 		addCell(row, br.getSurchargeQuota());
 		addCell(row, br.getTotal());
 			
-		if (getParams().getType() != 0) {
+		if (getParams().getBookType() != 0) {
 			addCell(row, br.getRetentionPercent());
 			addCell(row, br.getRetentionQuota());
 		}
@@ -93,7 +93,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 			AonDisplayGridFooterRow row = getGrid().addFooterRow()
 				.addCell(new Label());
 			
-			if (getParams().getType() != 0) {
+			if (getParams().getBookType() != 0) {
 				row.addCell(new Label())
 				   .addCell(new Label());
 			}
@@ -111,7 +111,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(getSumSurchargeQuota())),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(getSumTotal())),AON.CSS.aonTextRight(),AON.CSS.aonBold());
 				
-			if (getParams().getType() != 0) {
+			if (getParams().getBookType() != 0) {
 				row.addCell(new Label())
 				   .addCell(new Label());
 			}

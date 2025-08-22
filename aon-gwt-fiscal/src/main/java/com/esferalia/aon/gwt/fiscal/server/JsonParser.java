@@ -713,9 +713,14 @@ public class JsonParser {
 			params.setToDate( FORMATTER.parse(toDate));			
 		}
 		
-		Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
-		if (type != null) {
-			params.setType(type.intValue());
+		Long bookType = (Long) jsonParams.get(IRequestParamsNames.BOOK_TYPE);
+		if (bookType != null) {
+			params.setBookType(bookType.intValue());
+		}
+		
+		Long tabType = (Long) jsonParams.get(IRequestParamsNames.TAB_TYPE);
+		if (tabType != null) {
+			params.setTabType(tabType.intValue());
 		}
 		
 		return params;

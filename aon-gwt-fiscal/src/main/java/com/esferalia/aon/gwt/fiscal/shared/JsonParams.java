@@ -254,7 +254,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.ACTIVITY_DESCRIPTION, params.getActivityDescription()== null? JSON_NULL : new JSONString( params.getActivityDescription()));		
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate() 	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
-		json.put(IRequestParamsNames.TYPE			,new JSONNumber( params.getType()));
+		json.put(IRequestParamsNames.BOOK_TYPE		,new JSONNumber(params.getBookType()));
+		json.put(IRequestParamsNames.TAB_TYPE		,new JSONNumber(params.getTabType()));
 		return json.toString();
 	}
 	

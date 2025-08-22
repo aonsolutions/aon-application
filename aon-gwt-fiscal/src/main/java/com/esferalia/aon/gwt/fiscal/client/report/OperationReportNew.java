@@ -300,7 +300,7 @@ public class OperationReportNew extends MainEntryPoint {
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
-			.setType(type.getSelectedIndex())
+			.setBookType(type.getSelectedIndex())
 			;
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
 			if (activity.getSelectedIndex() > 0) {
@@ -326,13 +326,13 @@ public class OperationReportNew extends MainEntryPoint {
 
 	private void refreshTab0(OperationParamsNew params) {
 		tab0Content.clear();
-		// FALTA - PASARLE QUE QUEREMOS SOLO EXPEDIDAS E INGRESOS
+		params.setTabType(TAB_0);
 		tab0Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabExpIngPanelNew()));
 	}
 	
 	private void refreshTab1(OperationParamsNew params) {
 		tab1Content.clear();
-		// FALTA - PASARLE QUE QUEREMOS SOLO RECIBIDAS Y GASTOS
+		params.setTabType(TAB_1);
 		tab1Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabRecGasPanelNew()));
 	}
 

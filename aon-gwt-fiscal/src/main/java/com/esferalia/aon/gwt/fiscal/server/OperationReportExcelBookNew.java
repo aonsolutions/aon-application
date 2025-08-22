@@ -1,6 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.util.Base64;
 import java.util.function.Consumer;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -18,6 +27,7 @@ import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
@@ -26,10 +36,13 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -88,12 +101,12 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			String sheetName2 = "";
 			String filename = AonDateUtils.getYear(params.getFromDate()) + companyDocument;
 			
-			if (params.getType() == 0) {
+			if (params.getBookType() == 0) {
 				filename = filename + "C";   // Libros Registro del IVA
 			    sheetName1 = "EXPEDIDAS";
 				sheetName2 = "RECIBIDAS";
 			}
-			else if (params.getType() == 1) {
+			else if (params.getBookType() == 1) {
 				filename = filename + "D";   // Libros Registro del IRPF
 			    sheetName1 = "INGRESOS";
 				sheetName2 = "GASTOS";
@@ -107,12 +120,13 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			filename = filename + companyName;
 			
 			// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos			
-			//ExcelAction action = new ExcelAction(occam, params);
+			params.setTabType(0);
 			ExcelAction action = new ExcelAction(params);
 			action.initialize(sheetName1);
 			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
 			
 			// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
+			params.setTabType(1);
 			action.createSheet(sheetName2);
 			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
 			
@@ -121,6 +135,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			resp.setHeader("Content-disposition", "attachment; filename=\""+filename+"."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			
 			action.finalize(resp.getOutputStream());
+			
+			// FALTA - PRUEBA VALIDAR FICHERO CON SERVICIO DE VALIDACION - EL SERVICIO ESTA DESACTIVADO TEMPORALMENTE
+//			try {
+//				pruebaValidar(resp.getOutputStream());
+//			} catch (Exception e) {
+//				System.err.println("Error en la validación del fichero: " + e.getMessage());
+//			}
+			
 			resp.flushBuffer();
 			
 		} catch (Throwable e) {
@@ -129,6 +151,41 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		
 	}
 	
+	// FALTA - PRUEBA VALIDAR FICHERO
+	private void pruebaValidar(ServletOutputStream outputStream) throws IOException, InterruptedException {
+		
+		String url = "https://prewww2.aeat.es/wlpl/PACM-SERV/ServletValidarLLRSI";
+		
+//		AonIOUtils.write( Base64.getEncoder().encode(data), resp.getOutputStream() );
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+		baos.writeTo(outputStream); 
+		baos.toByteArray();
+		byte[] data = Base64.getEncoder().encode(baos.toByteArray());
+		
+		String parameters = MessageFormat.format("EJER={0}&FIC={1}"
+				,AonNumberUtils.toString(2025) // PARA PROBAR EJERCICIO 2025
+				,ModelAdmonUtils.getEncodedFile(data,StandardCharsets.ISO_8859_1));
+		
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(url))
+				.POST(HttpRequest.BodyPublishers.ofString(parameters))
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+				.build();
+			HttpClient httpClient = HttpClient.newBuilder()
+	            .version(HttpClient.Version.HTTP_2)
+	            .connectTimeout(Duration.ofSeconds(10))
+	            .build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			String respuesta = new String(response.body());
+			System.out.println("Respuesta validación del fichero:");
+			System.out.println(respuesta);
+		
+	}
+
 	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdownNew>{
 		
 		private Row row2;
@@ -225,8 +282,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addHeaderCell("Tipo");
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
-    		addVerticalMergedRegion("Concepto de Ingreso", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		addVerticalMergedRegion("Ingreso Computable", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Concepto de Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Ingreso Computable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
 	    	addHorizontalMergedRegion("Identificación de la Factura", 3);
@@ -238,9 +295,9 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    addHeaderCell("Código País");
 		    addHeaderCell("Identificación");
 	    	addVerticalMergedRegion("Nombre Destinatario");
-		    addVerticalMergedRegion("Clave de Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-		    addVerticalMergedRegion("Calificación de la Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-		    addVerticalMergedRegion("Operación Exenta", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Clave de Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Calificación de la Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Operación Exenta", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Total Factura");
 		    addVerticalMergedRegion("Base Imponible");
 		    addVerticalMergedRegion("Tipo de IVA");
@@ -252,9 +309,9 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    addHeaderCell("Importe");
 		    addHeaderCell("Medio Utilizado");
 		    addHeaderCell("Identificación Medio Utilizado");		    
-	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addHorizontalMergedRegion("Inmueble", 2);
 	    	addHeaderCell("Situación");
 	    	addHeaderCell("Referencia Catastral");
@@ -271,14 +328,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addHeaderCell("Tipo");
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
-    		addVerticalMergedRegion("Concepto de Gasto", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		addVerticalMergedRegion("Gasto Deducible", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Concepto de Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addVerticalMergedRegion("Gasto Deducible", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
 	    	addHorizontalMergedRegion("Identificación Factura del Expedidor", 2);
 	    	addHeaderCell("(Serie-Número)");
 	    	addHeaderCell("Número-Final");
-	    	addVerticalMergedRegion("Fecha Recepción", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Fecha Recepción", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addVerticalMergedRegion("Número Recepción");
 	    	addVerticalMergedRegion("Número Recepción Final");
 	        addHorizontalMergedRegion("NIF Expedidor",3);
@@ -286,13 +343,13 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    addHeaderCell("Código País");
 		    addHeaderCell("Identificación");
 	    	addVerticalMergedRegion("Nombre Expedidor");
-		    addVerticalMergedRegion("Clave de Operación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-		    addVerticalMergedRegion("Bien de Inversión", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-		    addVerticalMergedRegion("Inversión del Sujeto Pasivo", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-		    addVerticalMergedRegion("Deducible en Periodo Posterior", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
-	    	addHorizontalMergedRegion("Periodo Deducción", 2, params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle); 
-	    	addHeaderCell("Ejercicio", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);                        
-	    	addHeaderCell("Periodo", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);                          
+		    addVerticalMergedRegion("Clave de Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Bien de Inversión", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Inversión del Sujeto Pasivo", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addVerticalMergedRegion("Deducible en Periodo Posterior", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHorizontalMergedRegion("Periodo Deducción", 2, params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle); 
+	    	addHeaderCell("Ejercicio", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);                        
+	    	addHeaderCell("Periodo", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);                          
 		    addVerticalMergedRegion("Total Factura");
 		    addVerticalMergedRegion("Base Imponible");
 		    addVerticalMergedRegion("Tipo de IVA");
@@ -305,9 +362,9 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    addHeaderCell("Importe");
 		    addHeaderCell("Medio Utilizado");
 		    addHeaderCell("Identificación Medio Utilizado");		    
-	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Tipo Retención del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Importe Retenido del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addVerticalMergedRegion("Registro Acuerdo Facturación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
 	    	addHorizontalMergedRegion("Inmueble", 2);
 	    	addHeaderCell("Situación");
 	    	addHeaderCell("Referencia Catastral");
@@ -343,8 +400,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(AonStringUtils.trimToEmpty(op.getActivityIAE()).replace(".","")).setCellStyle(centerCellStyle); // Actividad - Grupo o Epígrafe IAE
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
 			
-			addCell(params.getType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Ingreso (excepto Libro de IVA)
-			if (params.getType() == 0) {
+			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Ingreso (excepto Libro de IVA)
+			if (params.getBookType() == 0) {
 				// Libro de IVA
 				addCell(""); // Ingreso computable
 			} else {
@@ -379,9 +436,9 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getName());     // Nombre Destinatario
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addCell(params.getType() == 1 ? "" : op.getOperationKey()).setCellStyle(centerCellStyle);           // Clave de Operación (excepto Libro de IRPF)
-			addCell(params.getType() == 1 ? "" : op.getOperationQualification()).setCellStyle(centerCellStyle); // Calificador de la Operación (excepto Libro de IRPF)
-			addCell(params.getType() == 1 ? "" : op.getExemptOperation()).setCellStyle(centerCellStyle);        // Operación Exenta (excepto Libro de IRPF)
+			addCell(params.getBookType() == 1 ? "" : op.getOperationKey()).setCellStyle(centerCellStyle);           // Clave de Operación (excepto Libro de IRPF)
+			addCell(params.getBookType() == 1 ? "" : op.getOperationQualification()).setCellStyle(centerCellStyle); // Calificador de la Operación (excepto Libro de IRPF)
+			addCell(params.getBookType() == 1 ? "" : op.getExemptOperation()).setCellStyle(centerCellStyle);        // Operación Exenta (excepto Libro de IRPF)
 			
 			addCell(op.getTotal());   // Total Factura
 			addCell(op.getBase());    // Base Imponible
@@ -397,8 +454,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getPayMethodName());                           // Cobro RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
-			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
+			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
+			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
 			addCell("");                                                     // Registro Acuerdo Facturacion (no se usa)
 			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); // Inmueble - Situación
@@ -418,8 +475,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(AonStringUtils.trimToEmpty(op.getActivityIAE()).replace(".","")).setCellStyle(centerCellStyle); // Actividad - Grupo o Epígrafe IAE
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
 			
-			addCell(params.getType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
-			if (params.getType() == 0) {
+			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
+			if (params.getBookType() == 0) {
 				// Libro de IVA
 				addCell(""); // Gasto Deducible
 			} else {
@@ -434,7 +491,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    addCell("");                     // Identificación de la Factura - Número-Final (no se usa)
 		    sheet.setColumnWidth(cellCount-1, 15 * 256);
 		    
-		    if (params.getType() == 1) {
+		    if (params.getBookType() == 1) {
 		    	// Libro de IRPF
 				addCell(""); // Fecha Recepción
 		    } else {
@@ -443,6 +500,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    }
 		    
 		    addCell(op.getReceptionNumber()); // Número Recepción
+		    sheet.autoSizeColumn(cellCount-1);
 		    addCell("");                      // Número Recepción Final (no se usa)
 			
 			if (AonStringUtils.isBlank(op.getDocumentCountry()) || op.getDocumentCountry().equals("ES")) {
@@ -466,9 +524,9 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getName());     // Nombre Expedidor
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addCell(params.getType() == 1 ? "" : op.getOperationKey()).setCellStyle(centerCellStyle);           // Clave de Operación (excepto Libro de IRPF)
-			addCell(params.getType() == 1 ? "" : op.isInvestment() ? "S" : "N").setCellStyle(centerCellStyle);  // Bien de Inversión	
-			addCell(params.getType() == 1 ? "" : op.isIsp() ? "S" : "N").setCellStyle(centerCellStyle);         // Inversión del Sujeto Pasivo	
+			addCell(params.getBookType() == 1 ? "" : op.getOperationKey()).setCellStyle(centerCellStyle);           // Clave de Operación (excepto Libro de IRPF)
+			addCell(params.getBookType() == 1 ? "" : op.isInvestment() ? "S" : "N").setCellStyle(centerCellStyle);  // Bien de Inversión	
+			addCell(params.getBookType() == 1 ? "" : op.isIsp() ? "S" : "N").setCellStyle(centerCellStyle);         // Inversión del Sujeto Pasivo	
 			addCell(""); // Deducible en Periodo Posterior (no se usa)	
 			addCell(""); // Periodo Deducción - Ejercicio (no se usa)
 			addCell(""); // Periodo Deducción - Periodo (no se usa)
@@ -488,8 +546,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getPayMethodName());       						// Pago RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
-			addDoubleCell(params.getType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
+			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
+			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
 			addCell(""); 														// Registro Acuerdo Facturacion (no se usa)
 			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); 	// Inmueble - Situación

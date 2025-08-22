@@ -29,6 +29,7 @@ public interface IRequestParamsNames {
 	String BALANCING_ACCOUNT = "balancingAccount";
 	String BATCHED = "batched";
 	String BLOCKED = "blocked";
+	String BOOK_TYPE = "bookType";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
 	String BY_MONTH = "byMonth";
@@ -150,6 +151,7 @@ public interface IRequestParamsNames {
 	String SUBJECT = "subject";
 	String SURCHARGE = "surcharge";
 	String SURCHARGE_PERCENT = "surchargePercent";
+	String TAB_TYPE = "tabType";
 	String TEST = "test";
 	String TITLE = "title";
 	String TO_DATE = "toDate";

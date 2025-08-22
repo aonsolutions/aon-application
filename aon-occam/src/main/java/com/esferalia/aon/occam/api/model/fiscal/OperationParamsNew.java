@@ -13,12 +13,8 @@ public class OperationParamsNew implements Serializable {
 	private Date toDate;        // Hasta Fecha
 	private Integer activity;   // Actividad (ID)
 	private String activityDescription;  // Actividad (Descripción)
-	private int type;    // 0-Libro de IVA, 1-Libro de IRPF, 2-Libro Unificado de IVA e IRPF
-//	private int subType; // 0-Expedidas/Ventas e Ingresos, 1-Recibidas/Compras y Gastos
-
-//	public OperationParamsNew() {
-//		super();
-//	}
+	private int bookType;       // 0-Libro de IVA, 1-Libro de IRPF, 2-Libro Unificado de IVA e IRPF
+	private int tabType;        // 0-Expedidas/Ventas e Ingresos, 1-Recibidas/Compras y Gastos
 
 	public int getDomain() {
 		return domain;
@@ -55,19 +51,21 @@ public class OperationParamsNew implements Serializable {
 		this.toDate = toDate;
 		return this;
 	}
-	public int getType() {
-		return type;
+	
+	public int getBookType() {
+		return bookType;
 	}
-	public OperationParamsNew setType(int type) {
-		this.type = type;
+	public OperationParamsNew setBookType(int bookType) {
+		this.bookType = bookType;
 		return this;
 	}
-//	public int getSubType() {
-//		return subType;
-//	}
-//	public OperationParamsNew setSubType(int subType) {
-//		this.subType = subType;
-//		return this;
-//	}
+	
+	public int getTabType() {
+		return tabType;
+	}
+	public OperationParamsNew setTabType(int tabType) {
+		this.tabType = tabType;
+		return this;
+	}
 	
 }

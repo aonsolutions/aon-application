@@ -18,7 +18,7 @@ public class OperationBreakdownNew implements Serializable {
 	private String invoiceSeries; 			// Identificación de la Factura: Serie (Emitidas)
 	private String invoiceNumber; 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
 	private String receptionNumber; 		// Número recepción (Recibidas)
-	private Date receptionDate; 			// Fecha Recepción (Fecha Asiento)
+	private Date receptionDate; 			// Fecha Recepción (Recibidas) (Fecha Asiento)
 	private String documentType; 			// NIF Destinatario/Expedidor: Tipo
 	private String documentCountry;  		// NIF Destinatario/Expedidor: Código País
 	private String document; 				// NIF Destinatario/Expedidor: Identificación
@@ -26,8 +26,8 @@ public class OperationBreakdownNew implements Serializable {
 	private String operationKey; 			// Clave de Operación 	
 	private String operationQualification; 	// Calificación de la Operación (Emitidas)	
 	private String exemptOperation;  		// Operación Exenta (Emitidas)
-	private boolean investment; 			// Bien de Inversión
-	private boolean isp; 					// Inversión del Sujeto Pasivo
+	private boolean investment; 			// Bien de Inversión (Recibidas)
+	private boolean isp; 					// Inversión del Sujeto Pasivo (Recibidas)
 	private double total; 					// Total Factura (Base + IVA + REQ)	
 	private double base;               		// Base Imponible	
 	private double percent;            		// Tipo de IVA	
@@ -43,7 +43,7 @@ public class OperationBreakdownNew implements Serializable {
 	private double retentionQuota;    		// Importe Retenido del IRPF	
 	private String buildingLocation; 		// Situación del Inmueble;	
 	private String cadasdralReference; 		// Referencia Catastral del Inmueble
-	private Integer entryId;                // ID del apunte
+	private Integer entryId;                // ID del asiento
 	
 	public String getActivityCode() {
 		return activityCode;
