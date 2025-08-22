@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -1234,10 +1235,11 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		Stream<RegistryMedia> sellerSupportMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
 		Optional<RegistryMedia> sellerSupportEmailOpt = sellerSupportMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
 		
-		if(sellerSupportEmailOpt.isEmpty() || AonStringUtils.isBlank(sellerSupportEmailOpt.get().getValue()))
-			throw new AonApiException("No existe email para el agente de soporte seleccionado");
+		List<String> bcc = new ArrayList<String>();
 		
-		List<String> bcc = List.of(sellerSupportEmailOpt.get().getValue(), from);
+		//throw new AonApiException("No existe email para el agente de soporte seleccionado");
+		if(!sellerSupportEmailOpt.isEmpty() && !AonStringUtils.isBlank(sellerSupportEmailOpt.get().getValue()))
+			bcc = List.of(sellerSupportEmailOpt.get().getValue(), from);
 		
 		Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst();
 		Stream<RegistryMedia> targetMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(targetOpt.get().getId()));
