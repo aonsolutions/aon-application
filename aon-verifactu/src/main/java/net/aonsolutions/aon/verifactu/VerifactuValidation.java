@@ -13,6 +13,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
@@ -58,6 +60,9 @@ public class VerifactuValidation {
 				.andThen(ALTA_FRA_NUM_SERIE)
 				.andThen(ALTA_FRA_RECHAZO_PREVIO)
 				.andThen(ALTA_FRA_TIPO_RECTIFICATIVA)
+				.andThen(ALTA_FRA_AGRUPACION_RECTIFICADAS)
+				.andThen(ALTA_FRA_AGRUPACION_SUSTITUIDAS)
+				.andThen(ALTA_FRA_AGRUPACION_RECTIFICACION)
 			.accept(v, alta);
 		});
 		return invoice;
@@ -168,6 +173,45 @@ public class VerifactuValidation {
 			}
 		}
 	};
+	
+	/*
+	 * 4. Agrupación FacturasRectificadas
+	*/
+	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_RECTIFICADAS = (v,fra) -> {
+		if (fra.getFacturasRectificadas() != null) { 
+			// - Sólo podrá incluirse esta agrupación (no es obligatoria) si TipoFactura es igual a "R1", "R2","R3", "R4" o "R5". 
+			if (!AonStringUtils.in(fra.getTipoFactura().value(), "R1", "R2", "R3", "R4", "R5")) {
+				v.addError(InvoiceCommunicationError.VERIFACTU_1117);
+			}
+		}
+	};
+	
+	/*
+	 * 5. Agrupación FacturasSustituidas
+	*/
+	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_SUSTITUIDAS = (v,fra) -> {
+		if (fra.getFacturasSustituidas() != null) { 
+			// - Sólo podrá incluirse esta agrupación (no es obligatoria) cuando el campo TipoFactura="F3". 
+			if (fra.getTipoFactura() != ClaveTipoFacturaType.F_3) {
+				v.addError(InvoiceCommunicationError.VERIFACTU_1116);
+			}
+		}
+	};
+	
+	/*
+	 * 6. Agrupación ImporteRectificacion
+	*/
+	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_RECTIFICACION = (v,fra) -> {
+		// - Obligatorio si TipoRectificativa = "S".
+		if (fra.getImporteRectificacion() == null && fra.getTipoRectificativa() == ClaveTipoRectificativaType.S) {
+			v.addError(InvoiceCommunicationError.VERIFACTU_1118);
+		}
+		// - Sólo deberá incluirse esta agrupación si el campo TipoRectificativa = "S".
+		if (fra.getImporteRectificacion() != null && fra.getTipoRectificativa() != ClaveTipoRectificativaType.S) {
+			v.addError(InvoiceCommunicationError.VERIFACTU_1119);
+		}
+		
+	};
 }
 
 // *********************************************************
@@ -177,21 +221,7 @@ public class VerifactuValidation {
 
 /*
 
-3. TipoRectificativa
-	
-	- Campo obligatorio si TipoFactura es igual a "R1", "R2", "R3", "R4" o "R5".
-
-4. Agrupación FacturasRectificadas
-	- El NIF del campo IDEmisorFactura debe estar identificado.
-	- Sólo podrá incluirse esta agrupación (no es obligatoria) si TipoFactura es igual a "R1", "R2","R3", "R4" o "R5". 
-
-5. Agrupación FacturasSustituidas
-	- El NIF del campo IDEmisorFactura debe estar identificado.
-	- Sólo podrá incluirse esta agrupación (no es obligatoria) cuando el campo TipoFactura="F3".
-
 6. Agrupación ImporteRectificacion
-	- Sólo deberá incluirse esta agrupación si el campo TipoRectificativa = "S".
-	- Obligatorio si TipoRectificativa = "S".
 
 7. FechaOperacion
 	- La FechaOperacion no debe ser inferior a la fecha actual menos veinte años y no debe ser superior al año siguiente de la fecha actual.

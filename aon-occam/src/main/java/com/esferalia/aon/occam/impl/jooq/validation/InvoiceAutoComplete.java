@@ -553,8 +553,8 @@ public class InvoiceAutoComplete {
 					it = detail.getInvoiceTaxes().get(i);
 					if(detail.getInvoiceTaxes().get(i).getAccount() == null) {
 						Account a = inv.isSales() 
-							? ctx.getConfiguration().accounting().getDefaultChargedRetAccount()
-							: ctx.getConfiguration().accounting().getDefaultPaidRetAccount();
+							? ctx.getConfiguration().accounting().getDefaultChargedVatAccount()
+							: ctx.getConfiguration().accounting().getDefaultPaidVatAccount();
 						if (a != null) {
 							detail.getInvoiceTaxes().get(i).setAccount(a.getId());
 						}

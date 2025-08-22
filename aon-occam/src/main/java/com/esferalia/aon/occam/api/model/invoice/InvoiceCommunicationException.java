@@ -4,7 +4,7 @@ public class InvoiceCommunicationException extends Exception {
 
 	private static final long serialVersionUID = -3730190195705367708L;
 
-	private final InvoiceCommunicationError invoiceCommunicationError;
+	private InvoiceCommunicationError invoiceCommunicationError;
 	
 	public InvoiceCommunicationException() {
 		this(InvoiceCommunicationError.AON_9000); 
