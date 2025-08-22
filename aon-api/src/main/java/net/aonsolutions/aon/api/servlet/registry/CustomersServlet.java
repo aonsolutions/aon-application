@@ -2,9 +2,12 @@ package net.aonsolutions.aon.api.servlet.registry;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,11 +26,13 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -82,11 +87,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 
-			Object object = new AonRouting(api)
-					.addRoute(CUSTOMER_NOTE, CustomersServlet::saveCustomerNote)
+			Object object = new AonRouting(api).addRoute(CUSTOMER_NOTE, CustomersServlet::saveCustomerNote)
 					.addRoute(CUSTOMERS, CustomersServlet::saveCustomer)
-					.addRoute(CUSTOMER, CustomersServlet::saveCustomer)
-					.apply();
+					.addRoute(CUSTOMER, CustomersServlet::saveCustomer).apply();
 
 			response(req, resp, object);
 		} catch (Exception e) {
@@ -139,12 +142,10 @@ public class CustomersServlet extends AonApiHttpServlet {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(),
 					api.getUser().getLogin());
 			filter = f.getRelatedRegistryProperty().eq(company.getId());
-		} 
-		else {
+		} else {
 			filter = f.getDomainProperty().eq(api.getDomain().getId());
 			// .and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
 		}
-
 
 		if (api.getData().opt(IJsonNames.DOCUMENT) != null) {
 			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
@@ -234,60 +235,107 @@ public class CustomersServlet extends AonApiHttpServlet {
 		RegistryServlet.saveRegistryAdditionalInfo(api, customer.getId(), customer.getDomain().getId());
 		return CustomerJSON.toJSON(customer);
 	}
-	
+
 	public static JSONObject saveCustomerNote(AonApiData api) {
-		
+
 		System.out.println(api.getData());
-		
+
+		boolean isSig = JsonUtils.getboolean(api.getData(), "isSig");
+
 		Integer customerId = JsonUtils.getInteger(api.getData(), "customerId");
-		
+
 		String newStatusStr = JsonUtils.getString(api.getData(), "status");
 		RegistryStatus newStatus = RegistryStatus.valueOf(newStatusStr);
-		
+
 		String tagName = JsonUtils.getString(api.getData(), "tagName");
-		
-		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> f.getIdProperty().eq(customerId));
-		
-		if(!newStatus.equals(customer.getStatus())) {
-			
-			String comments = "Cambio estado de " + customer.getStatus().getDescription() + " a " + newStatus.getDescription() + ". ";
-			
-			if(newStatus.equals(RegistryStatus.BLOCKED) || newStatus.equals(RegistryStatus.INACTIVE))
-				comments += "Motivo: " + tagName;
-			
-			RegistryNote note = new RegistryNote()
-					.setDomain(api.getDomain().getId())
-					.setRegistry(customerId)
-					.setNoteDate(new Date())
-					.setNoteType(NoteType.CUSTOMER_STATUS)
-					.setConfidential(true)
-					.setDescription("Estado nuevo: " + newStatus.getDescription())
-					.setComments(comments)
-					;
-		
+
+		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(),
+				api.getUser().getLogin(), f -> f.getIdProperty().eq(customerId));
+
+		if (!newStatus.equals(customer.getStatus())) {
+
+			String comments = "Cambio estado de " + customer.getStatus().getDescription() + " a "
+					+ newStatus.getDescription() + ". ";
+			comments += "\nMotivo: " + tagName;
+
+			String dateStr = JsonUtils.getString(api.getData(), "date");
+			if (AonStringUtils.isNotBlank(dateStr))
+				comments += "\nF. Expiracion: " + dateStr;
+
+			RegistryNote note = new RegistryNote().setDomain(api.getDomain().getId()).setRegistry(customerId)
+					.setNoteDate(new Date()).setNoteType(NoteType.CUSTOMER_STATUS).setConfidential(true)
+					.setDescription(newStatus.getDescription()).setComments(comments);
+
 			AON.saveRegistryNote(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), note);
-			
+
 			// Update domain (work for all except SIG)
-			Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(customerId));
-			if(rrelationship.isPresent()) {
-				Enterprise enterprise = AON.getEnterprise(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rrelationship.get().getRelatedRegistry());
-				if(null != enterprise) {
-					Domain domainCustomer = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(enterprise.getDomain()));
-					
-					String dateStr = JsonUtils.getString(api.getData(), "date");
+			Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(),
+					api.getUser(), f -> f.getRegistryProperty().eq(customerId));
+			if (rrelationship.isPresent()) {
+				Enterprise enterprise = AON.getEnterprise(api.getDomain().getName(), api.getDomain().getId(),
+						api.getUser().getLogin(), rrelationship.get().getRelatedRegistry());
+				if (null != enterprise) {
+					Domain domainCustomer = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+							api.getUser().getLogin(), f -> f.getIdProperty().eq(enterprise.getDomain()));
+
 					Date expirationDate = AonDateUtils.simpleParse(dateStr);
-					
+
 					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
-					domainCustomer.setActive(newStatus.equals(RegistryStatus.ACTIVE));
-					
-					AON.updateDomainStatus(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainCustomer);
+
+					AON.updateDomainStatus(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+							domainCustomer);
+
 				}
+			} else if (isSig) {
+				Stream<RegistryAddInfo> registryAddInfoStream = AON.getRegistryAddInfoStream(api.getDomain().getName(),
+						api.getDomain().getId(), api.getUser().getLogin(),
+						f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")
+								.or(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA"))));
+
+				if(registryAddInfoStream.count() > 0) {
+					Map<Integer, String> domainMap = new HashMap<>();
+
+					Map<String, Map<String, String>> grouped = registryAddInfoStream.collect(
+							Collectors.groupingBy(rec -> rec.getAttribute().replaceAll("AON_DOMAIN(\\d+)_.*", "$1"),
+									Collectors.toMap(rec -> rec.getAttribute().endsWith("_ID") ? "ID" : "SCHEMA",
+											RegistryAddInfo::getValue)));
+
+					grouped.values().forEach(entry -> {
+						Integer id = Integer.parseInt( entry.get("ID") );
+						String schema = entry.get("SCHEMA");
+						if (id != null && schema != null) {
+							domainMap.put(id, schema);
+						}
+					});
+					
+					domainMap.entrySet().forEach(entry -> {
+						Integer domainId = entry.getKey();
+						String schema = entry.getValue();
+						
+						Domain domainCustomer = AON_SOLUTIONS.getDomainBySchema(schema, domainId);
+						
+						Date expirationDate = AonDateUtils.simpleParse(dateStr);
+
+						domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+
+						AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
+								domainCustomer);
+					});
+				} else {
+					Domain domainCustomer = AON_SOLUTIONS.getDomainByAonCustomer(customerId);
+					
+					Date expirationDate = AonDateUtils.simpleParse(dateStr);
+
+					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+
+					AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
+							domainCustomer);
+				}
+
 			}
-			
+
 		}
-		
-		
+
 		return new JSONObject();
 	}
 
