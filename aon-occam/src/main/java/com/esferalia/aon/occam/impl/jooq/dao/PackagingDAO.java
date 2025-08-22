@@ -204,10 +204,8 @@ public class PackagingDAO {
 		}).distinct().forEach(id -> {
 			Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
 			boolean notDelivered = ss.getDetails().stream().filter(f -> !f.getStatus().equals(SalesDetailStatus.SETTLED)).count() > 0;
-			if(!notDelivered) {
-				ss.setStatus(SalesStatus.SERVED);
-				SalesDAO.save(ctx, ss);
-			}
+			ss.setStatus(notDelivered ? SalesStatus.PENDING : SalesStatus.SERVED); 
+			SalesDAO.save(ctx, ss);
 		});
 		
 		// TODO Marcar como descatalogados todos los item de envases (sscc).
