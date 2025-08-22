@@ -2,8 +2,8 @@ import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { deleteDeliveryPackaging, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
-import { createCard, createInput } from '../../components/CreateComponent.js';
+import { deleteDeliveryPackaging, getItem, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
+import { createCard, createInput, createQuantity } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { round } from '../../services/utils.js';
 
@@ -158,7 +158,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		card.setContent(div);
 
 		let table = new AonBasicTable();
-		table.id = this.PACKAGE_COMPOSITION_TABLE;
+		table.id = this.COMPOSITION_TABLE;
 		div.appendChild(table);
 		
 		// Array.prototype.forEach.call(this.packaging.composition, i => {
@@ -214,51 +214,41 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	}
 
 	subtractDialog(composition) {
-		let table = new AonBasicTable();
-		table.id = this.id + 'SubstractTable';
+		getItem({id: composition.composition.id, full: true}).then(item => {
+			let table = new AonBasicTable();
+			table.id = this.id + 'SubstractTable';
 
-		let d = this.getApplication().getDialog();
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.ACCEPT);
-		d.setContent(table);
+			let d = this.getApplication().getDialog();
+			d.clear();
 
-		table.addRow();
-		let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
-		table.addCell(product);
-		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ACCEPT);
+			d.setContent(table);
 
-		table.addRow();
-		let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
-		quantityBox.addEventListener(EVENT.CHANGE, () => {
-			quantityBox.setQuantityFormat(quantityBox.value);
+			table.addRow();
+			let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
+			table.addCell(product);
+			// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+
+			table.addRow();
+			let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
+			quantityBox.addEventListener(EVENT.CHANGE, () => {
+			 	quantityBox.setQuantityFormat(quantityBox.value);
+			});
+			quantityBox.setTags(item);
+			table.addCell(quantityBox);
+			quantityBox.setQuantity(composition.quantity);
+
+			d.addAcceptAction(() => {
+				subtractDeliveryPackagingComposition({
+					delivery: this.delivery,
+					composition,
+					quantity: quantityBox.getQuantity(),
+					destiny: product.value
+				}).then(() => this.aonDelivery());
+			});
+			d.open();
 		});
-		quantityBox.setTags(composition.composition);
-		table.addCell(quantityBox);
-
-		// let addButton = new AonIconButton();
-		// addButton.id = this.id + 'AddButton';
-		// addButton.title = MSG.ADD;
-		// addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
-		// addButton.addEventListener(EVENT.CLICK, () => {
-		// 	this.packaging = {};
-
-		// 	while(table.rows >= 1) {
-		// 		table.removeRow(table.rows);
-		// 	}
-		// 	this.buildSubstractDestinyNew(table);
-		// });
-		// table.addCell(addButton);
-
-		d.addAcceptAction(() => {
-			subtractDeliveryPackagingComposition({
-				delivery: this.delivery,
-				composition,
-				quantity: quantityBox.getQuantity(),
-				destiny: product.value
-			}).then(() => this.aonDelivery());
-		});
-		d.open();
 	}	
 	
 	buildTag(){

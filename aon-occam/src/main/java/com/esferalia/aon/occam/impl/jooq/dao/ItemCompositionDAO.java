@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemCompositionProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class ItemCompositionDAO {
 	
@@ -157,6 +158,59 @@ public class ItemCompositionDAO {
 			.where(ITEM_COMPOSITION_PROPERTIES.getConditions(filter))
 			.and(ITEM_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
 			.execute();
+	}
+	
+
+	public static void transfer(AONContext ctx, Item sourcePackage, Item destinyPackage, Item composition, double quantity) {
+		if((sourcePackage == null || sourcePackage.isEmpty()) && (destinyPackage == null || destinyPackage.isEmpty())) {
+			throw new AonCoreException("El envase origen y el envase destino no existen.");
+		}
+		
+		if(destinyPackage != null && !destinyPackage.isEmpty()) {
+			add(ctx, destinyPackage, composition, quantity);
+		}
+		
+		if(sourcePackage != null && !sourcePackage.isEmpty()) {
+			subtract(ctx, sourcePackage, composition, quantity);
+		}		
+	}
+	
+	public static ItemComposition add(AONContext ctx, Item pack, Item composition, double quantity) {
+		ItemComposition itemComposition = get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getItemProperty().eq(pack.getId()))					
+				.and(f.getCompositionItemProperty().eq(composition.getId())));
+		
+		if(itemComposition != null && itemComposition.getId() != null) {
+			itemComposition.setQuantity(itemComposition.getQuantity() + quantity);
+			return save(ctx, itemComposition);
+		} else return save(ctx, createItemComposition(pack, composition, quantity));
+	}
+	
+	public static void subtract(AONContext ctx, Item pack, Item composition, double quantity) {
+		ItemComposition itemComposition = get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getItemProperty().eq(pack.getId()))					
+				.and(f.getCompositionItemProperty().eq(composition.getId())));
+		
+		if(itemComposition != null && itemComposition.getId() != null) {
+			itemComposition.setQuantity(itemComposition.getQuantity() - quantity);
+			if(itemComposition.getQuantity() <= 0) {
+				delete(ctx, itemComposition.getId());
+			} else {
+				save(ctx, itemComposition);
+			}
+		}
+	}
+	
+	private static ItemComposition createItemComposition(Item pack, Item composition, double quantity) {
+		return new ItemComposition()
+			.setDomain(pack.getDomain().getId())
+			.setItemId(pack.getId())
+			.setComposition(composition)
+			.setCompositionItemId(composition.getId())
+			.setDescription(composition.getDescription())	
+			.setQuantity(quantity)
+			.setDiscountExpression("0.0")
+			.setSequence(1);
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
