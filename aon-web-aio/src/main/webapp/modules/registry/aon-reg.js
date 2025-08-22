@@ -402,9 +402,7 @@ export class AonReg extends AonElement {
 				icon:"toggle_on", 
 				fn: async () => {
 					this.registry.status = "ACTIVE";
-					this.buildStatusRegistry();
-					await this.saveNote();
-					this.save();
+					this.openCustomerInactiveBloqued();
 				}
 			},
 			{ 

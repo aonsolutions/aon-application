@@ -762,7 +762,7 @@ export class AonCustomer extends AonReg {
 			dialog.width = "30%";
 		}
 
-		const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : "Motivo inactividad";
+		const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : ( this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
 
 		dialog.setTitle(title);
 
@@ -791,14 +791,15 @@ export class AonCustomer extends AonReg {
 		let datePicker = new AonNewDate();
 	    datePicker.id = "aonDBloquedDatePicker";
 	    
-	    const dateTitle = this.registry.status === "BLOCKED" ? "F. Bloqueo Empresa" : "F. Inactividad Empresa";
+	    const dateTitle = "F. Expiración Empresa";
 	    datePicker.title = dateTitle;
 	    
-	    div.appendChild(datePicker);
+	    if(this.registry.status !== "ACTIVE")
+	    	div.appendChild(datePicker);
 
 		dialog.addSendAction(async () => {
 			if (selectTag.value) {
-				await this.saveNote(selectTag.getDetail().name, datePicker.getDateValue());
+				await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined );
 				this.buildStatusRegistry();
 				this.save();
 				dialog.close();
@@ -813,7 +814,8 @@ export class AonCustomer extends AonReg {
 			tagName: tagName,
 			customerId: this.registry.id,
 			status: this.registry.status,
-			date : date
+			date : date,
+			isSig: this.isSig()
 		}
 		
 		await saveCustomerNote(params);

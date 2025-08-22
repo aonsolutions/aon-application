@@ -41,7 +41,7 @@ const AON_SCOPE = {
 
 const AON_CUSTOMER_STATUS= {
     id: 'sideNavTag',
-    name: "Estados C. Bloqueados",
+    name: "Estados Cliente",
     icon: MATERIAL_ICONS.INFO
 }
 
