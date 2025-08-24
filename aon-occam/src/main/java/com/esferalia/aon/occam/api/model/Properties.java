@@ -70,6 +70,19 @@ public interface Properties {
 		Property<String> getTypeDescriptionProperty();
 	}
 	
+	public interface ProjectTasProperties extends ProjectProperties {
+		Property<Integer> getIdTasProperty();
+		Property<String> getSeriesProperty();
+		Property<Integer> getNumberProperty();
+		Property<Integer> getTargetProperty();
+		Property<Integer> getTasItemProperty();
+		Property<Double> getCounterProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Byte> getStatusProperty();
+		Property<Date> getStatusDateProperty();
+		Property<Integer> getWorkplaceProperty();
+	}
+	
 	public interface ProjectHolderProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

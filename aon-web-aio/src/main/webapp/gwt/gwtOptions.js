@@ -660,3 +660,9 @@ export const TAG_MODULE = {
   entryPoint: 'TagModule'
 };
 
+export const PROJECT_TAS_MODULE = {
+  title: "Órdenes de Reparación (Excel)",
+  module: GWT_AIO,
+  entryPoint: 'ProjectTasExcelModule'
+};
+
