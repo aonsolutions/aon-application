@@ -204,10 +204,8 @@ public class PackagingDAO {
 		}).distinct().forEach(id -> {
 			Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
 			boolean notDelivered = ss.getDetails().stream().filter(f -> !f.getStatus().equals(SalesDetailStatus.SETTLED)).count() > 0;
-			if(!notDelivered) {
-				ss.setStatus(SalesStatus.SERVED);
-				SalesDAO.save(ctx, ss);
-			}
+			ss.setStatus(notDelivered ? SalesStatus.PENDING : SalesStatus.SERVED); 
+			SalesDAO.save(ctx, ss);
 		});
 		
 		// TODO Marcar como descatalogados todos los item de envases (sscc).
@@ -400,9 +398,15 @@ public class PackagingDAO {
 		});
 	}
 	
-	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny) {
+	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity) {
+		Item sourceItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getIdProperty().eq(composition.getItemId())));
+		
 		Item destinyItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getSerialNumberProperty().eq(destiny)));
+		
+		Item compositionItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getIdProperty().eq(composition.getCompositionItemId())));
 		
 		if(destinyItem == null ||  destinyItem.isEmpty()) {
 			throw new AonCoreException("El envase destino no existe.");
@@ -411,6 +415,11 @@ public class PackagingDAO {
 		DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(destinyItem.getId()));
 		if(dp != null && !dp.isEmpty()) {
 			throw new AonCoreException("El envase destino ya está en un albarán.");
+		}
+
+		// comprobar si la cantidad a eliminar es mayor que la cantidad del item composition
+		if(AonMathUtils.isLessThan(composition.getQuantity(), quantity)) {
+			throw new AonCoreException("La cantidad a eliminar es mayor que la cantidad del envase.");
 		}
 		
 		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
@@ -423,7 +432,18 @@ public class PackagingDAO {
 					for(Integer i = 0; i < packaging.getContent().size(); i++) {
 						for(Integer j = 0; j < packaging.getContent().get(i).getComposition().size(); j++) {
 							if(packaging.getContent().get(i).getComposition().get(j).getId().equals(composition.getId())) {
-								packaging.getContent().get(i).getComposition().remove(j.intValue());
+								if(AonMathUtils.isLessThan(packaging.getContent().get(i).getComposition().get(j).getQuantity(), quantity)) {
+									throw new AonCoreException("La cantidad a eliminar es mayor que la cantidad del envase.");
+								}
+								if(AonMathUtils.equals(packaging.getContent().get(i).getComposition().get(j).getQuantity(), quantity)) {
+									// Eliminar el item composition del envase
+									packaging.getContent().get(i).getComposition().remove(j.intValue());
+								} else {
+									// Actualizar el item composition del envase
+									packaging.getContent().get(i).getComposition().get(j).setQuantity(
+										packaging.getContent().get(i).getComposition().get(j).getQuantity() - quantity);
+								}
+								// Actualizar el DataResponseDetail
 								drd.setDataValue(PackagingDeliveryJSON.toJSON(packaging).toString());
 								DataResponseDAO.updateDataResponseDetail(ctx, drd, f -> f.getIdProperty().eq(drd.getId()));
 							}
@@ -432,10 +452,9 @@ public class PackagingDAO {
 				}
 			}
 		});
-		
-		// TRASPASAR CONTENIDO AL NUEVO ENVASE
-		composition.setItemId(destinyItem.getId());
-		ItemCompositionDAO.save(ctx, composition);
+
+		// TRANSFERIR ITEM COMPOSITION
+		ItemCompositionDAO.transfer(ctx, sourceItem, destinyItem, compositionItem, quantity);
 
 		// SUMAR STOCK Y ACTUALIZAR PEDIDO
 		
@@ -443,7 +462,7 @@ public class PackagingDAO {
 		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
 			.and(f.getItem().eq(composition.getCompositionItemId())));
 	
-		double dq = dd.getQuantity() - composition.getQuantity();
+		double dq = dd.getQuantity() - quantity;// composition.getQuantity();
 		if(dq == 0) {
 			DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
 		} else {
@@ -452,7 +471,7 @@ public class PackagingDAO {
 		}
 		
 		SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
-		sd.setDelivered(sd.getDelivered() - composition.getQuantity());
+		sd.setDelivered(sd.getDelivered() - quantity);
 		sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
 		SalesDetailDAO.save(ctx, sd);
 		
@@ -468,17 +487,21 @@ public class PackagingDAO {
 			SalesDAO.save(ctx, sales);
 		}
 		
-		// TODO UTILIZAR StockDAO.subtract(...) ES NECESARIO SABER EL ALMACÉN (warehouse). 
-		Stock stock = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getItemProperty().eq(composition.getCompositionItemId())));
-		if(stock.getId() != null) {
-			stock.setQuantity(stock.getQuantity() + composition.getQuantity());
-			StockDAO.save(ctx, stock);
+		// OBTENER EL ALMACÉN DEL DESTINO
+		Integer warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getItemProperty().eq(destinyItem.getId()))).getWarehouse();
+		if(warehouse == null) {
+			warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
 		}
+		if(warehouse == null) {
+			warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
+		}
+		
+		// AÑADIR STOCK
+		StockDAO.add(ctx, composition.getCompositionItemId(), warehouse, quantity);
 	
 		deleteItemBox(ctx, deliveryId, productId, composition.getQuantity());
-
-		
 	}
 	
 	public static void deleteDeliveryPackaging(AONContext ctx, Integer delivery) {
@@ -799,7 +822,6 @@ public class PackagingDAO {
 		for(Integer i = 0; i < packaging.getCopies(); i++) {
 			Packaging p = packaging.copy(); 
 			String sscc = generateSSCC(ctx);
-			System.out.println(sscc);
 			Item container = packaging.getContainer().copy();
 			container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date()).setStatus(ProductStatus.ACTIVE);
 			container = ItemDAO.save(ctx, container);

@@ -20,6 +20,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.warehouse.DeliveryTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.MultipleWarehouseTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.PackagingTag;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseSaleTemplate;
@@ -30,9 +31,18 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class PdfMaker {
-
+	
+	public static void printDelivery(OutputStream out, CompanyFull company, Delivery delivery, Warehouse warehouse, byte[] logo) {
+		try (DeliveryTemplate template = new DeliveryTemplate(delivery, warehouse, company, logo)) {
+			template.save(out);
+		} catch (CanNotCreatePdfException | IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
 	/**
 	 * CREATE INVOICE PDF
 	 * 
