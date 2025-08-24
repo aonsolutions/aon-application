@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.ProjectParams;
+import com.esferalia.aon.occam.api.model.ProjectTasFilter;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -159,6 +160,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -3998,6 +4000,12 @@ public class AON {
 	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProject().getProjectStream(ctx, filter);
+		}
+	}
+	
+	public static List<ProjectTas> getProjectTasStream(String domainName, Integer domainId, String login, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectTasStream(ctx, filter).collect(Collectors.toList());
 		}
 	}
 	
