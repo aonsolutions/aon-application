@@ -655,11 +655,6 @@ export class AonApplication extends AonElement {
       ul.appendChild(li);
       
       if(option.options) {
-
-    consoleLog("///////////////////////////////////////////", "blue", true);
-    consoleLog(option.options);
-    consoleLog("///////////////////////////////////////////", "blue", true);
-
         let arrow  = new AonIcon();
         arrow.icon = MATERIAL_ICONS.CHEVRON_RIGHT;
         li.classList.add('sidenav-submenu-hidden');
