@@ -201,6 +201,9 @@ public class DeliveryDAO {
 		if(delivery.getId() != null) {
 			delivery.setPackaging(DeliveryPackagingDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())));
 		}
+		if(delivery.getAddress().getId() != null) {
+			delivery.setAddress(RegistryAddressDAO.get(ctx, f -> f.getIdProperty().eq(delivery.getAddress().getId())));
+		}
 		return delivery; 
 	}
 	

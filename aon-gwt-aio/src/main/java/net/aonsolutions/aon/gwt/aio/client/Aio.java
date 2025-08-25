@@ -3,6 +3,7 @@ package net.aonsolutions.aon.gwt.aio.client;
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonProjectTasExcelDialog;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.issues.client.Issues;
@@ -14,6 +15,7 @@ import com.esferalia.aon.gwt.marketing.client.marketing.campaign.MarketingCompai
 import com.esferalia.aon.gwt.marketing.client.project.ProjectModule;
 import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
 import com.esferalia.aon.gwt.marketing.client.scope.ScopeModule;
+import com.esferalia.aon.gwt.marketing.client.tag.TagModule;
 import com.esferalia.aon.gwt.marketing.client.taskholder.TaskHolderModule;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
@@ -85,7 +87,18 @@ public class Aio implements EntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 		
-		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
+		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
+		
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+			
+			@Override public void onSuccess(AonData result) {
+				result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				selection(entryPoint, result);
+			}
+			
+			@Override public void onFailure(Throwable arg0) {}
+		});
+		
 //		if(isAonSolutions()) {
 //			impl.getAonDataToken(getCurrentDomainName(), Integer.toString(getCurrentDomain()), getToken(), new AsyncCallback<AonData>() {
 //				
@@ -97,15 +110,15 @@ public class Aio implements EntryPoint {
 //				@Override public void onFailure(Throwable arg0) {}
 //			});
 //		} else {
-			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-				
-				@Override public void onSuccess(AonData result) {
-					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
-					selection(entryPoint, result);
-				}
-				
-				@Override public void onFailure(Throwable arg0) {}
-			});			
+//			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+//				
+//				@Override public void onSuccess(AonData result) {
+//					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
+//					selection(entryPoint, result);
+//				}
+//				
+//				@Override public void onFailure(Throwable arg0) {}
+//			});
 //		}
 
 		
@@ -431,7 +444,40 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
+			
+		case Modules.TAG_MODULE:
+			GWT.runAsync(TagModule.class, new RunAsyncCallback() {
 
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					TagModule tagModule = new TagModule();
+					tagModule.onModuleLoad();
+				}
+			});		
+			break;
+
+			
+		case Modules.PROJECT_TAS_EXCEL_MODULE:
+			GWT.runAsync(TagModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new AonProjectTasExcelDialog(getCurrentDomainName(), getCurrentDomain(), getCurrentUser());
+				}
+			});		
+			break;
+
+			
 		default:
 			break;
 		}

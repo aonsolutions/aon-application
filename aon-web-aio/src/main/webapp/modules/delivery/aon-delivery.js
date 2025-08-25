@@ -7,8 +7,6 @@ import {AonButton} from "../../components/aon-button.js";
 
 import { COLORS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
-import * as ACTION from '../actions.js';
-
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTab } from '../../components/aon-tab.js';
@@ -18,10 +16,13 @@ import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getProdu
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import * as UA from '../../services/userAgentService.js';
 import { openBarcode } from '../../services/actionService.js';
 import { createCard, createInput, createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
+
+import * as ACTION from '../actions.js';
+import * as UA from '../../services/userAgentService.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonDelivery extends AonElement {
 
@@ -90,6 +91,39 @@ export class AonDelivery extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
+
+		toolbar.addButton('Options', 'more_vert', (e) => {
+			e.preventDefault();
+			let rect = e.target.getBoundingClientRect();
+			let x = e.clientX - rect.left;
+			let y = e.clientY - rect.top;
+	
+			const top  = rect.top + y;
+			const left = rect.left + x;
+	
+			let d = document.getElementById(this.getApplication().OPTION_DIALOG);
+			let moreActions = [];
+
+			let downloadDelivery = {
+   				id: CONSTANT.DOWNLOAD.initCap() + 'Albaran',
+   				name: "Pdf Albarán",
+   				icon: MATERIAL_ICONS.FILE_DOWNLOAD
+			};
+			downloadDelivery.fn = () => this.downloadDelivery();
+			moreActions.push(downloadDelivery);
+
+			let downloadHojaAlmacen = {
+   				id: CONSTANT.DOWNLOAD.initCap() + 'HojaAlmacen',
+   				name: "Hoja Almacén",
+   				icon: MATERIAL_ICONS.FILE_DOWNLOAD
+			};
+			downloadHojaAlmacen.fn = () => this.downloadHojaAlmacen();
+			moreActions.push(downloadHojaAlmacen);
+
+			d.setMenuOptions(moreActions, top, left);
+			d.open();
+		});
+
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.ADD, () => this.addPackaging());
 		if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
@@ -104,6 +138,26 @@ export class AonDelivery extends AonElement {
 		this.appendChild(div);
 
 		this.buildDelivery();
+	}
+
+	downloadHojaAlmacen() {
+		let data = {
+			delivery: this.delivery.id,
+			domain_id: LS.getDomainId(),
+			domain_name: LS.getDomainName(),
+			login: LS.getDomainLogin()
+		};
+		window.open("/ms/api/download_packaging_sales_pdf?json=" + btoa(JSON.stringify(data)));
+	}
+
+	downloadDelivery() {
+		let data = {
+			id: this.delivery.id,
+			domain_id: LS.getDomainId(),
+			domain_name: LS.getDomainName(),
+			login: LS.getDomainLogin()
+		};
+		window.open("/ms/api/download_delivery_pdf?json=" + btoa(JSON.stringify(data)));
 	}
 
 	buildTabs() {

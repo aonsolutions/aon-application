@@ -21,7 +21,8 @@ public enum TagType implements Serializable{
 	TASK_DOCUMENT,
 	CERTIFICATE,
 	NOTE,
-	MARKETING
+	MARKETING,
+	CUSTOMER_STATUS
 	; // Tipo de Aviso
 
 

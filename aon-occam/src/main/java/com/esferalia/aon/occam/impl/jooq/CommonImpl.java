@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -342,6 +343,18 @@ public class CommonImpl implements ICommon {
 	public void deleteTag(AONContext ctx, TagFilter filter){
 		 ctx.getDslContext().transaction(configuration -> 
 		 	TagDAO.deleteTag(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<Tag> getTagList(CloseableAONContext ctx, TagParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TagDAO.getList(ctx, params));
+	}
+	
+	@Override
+	public Tag saveTag(CloseableAONContext ctx, Tag tag) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TagDAO.save(ctx, tag));
 	}
 
 	// ------------------ TAX

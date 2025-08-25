@@ -655,3 +655,14 @@ export const SCOPE_MODULE = {
   entryPoint: 'ScopeModule'
 };
 
+export const TAG_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'TagModule'
+};
+
+export const PROJECT_TAS_MODULE = {
+  title: "Órdenes de Reparación (Excel)",
+  module: GWT_AIO,
+  entryPoint: 'ProjectTasExcelModule'
+};
+

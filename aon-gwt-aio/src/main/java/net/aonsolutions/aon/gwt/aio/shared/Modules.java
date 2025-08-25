@@ -26,4 +26,7 @@ public interface Modules {
 	public static final String CUSTOMER_NOTES_MODULE = "CustomerNotesModule";
 	public static final String TASK_HOLDER_MODULE = "TaskHolderModule";
 	public static final String SCOPE_MODULE = "ScopeModule";
+	public static final String TAG_MODULE = "TagModule";
+	
+	public static final String PROJECT_TAS_EXCEL_MODULE = "ProjectTasExcelModule";
 }

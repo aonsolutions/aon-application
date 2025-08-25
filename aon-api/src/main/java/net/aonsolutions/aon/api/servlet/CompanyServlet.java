@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
+import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -123,6 +125,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 				break;	
 			case "/activities":
 				response(req, resp, getActivities(api));
+				break;	
+			case "/tags":
+				response(req, resp, getCustomerStatusTags(api));
 				break;	
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -606,6 +611,20 @@ public class CompanyServlet extends AonApiHttpServlet{
 			json.put("logo", "https://" + company.getDomain().getName() + "/aonDocuments/company.logo");
 		}
 		return json;	
+	}
+	
+	private JSONArray getCustomerStatusTags(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getTagList(
+				api.getDomain().getName(), 
+				api.getDomain().getId(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getTypeProperty().eq(TagType.CUSTOMER_STATUS.value()))
+				)
+			.forEach(tag -> array.put(TagJSON.toJSON(tag)));;
+		
+		return array;		
 	}
 	
 	private JSONArray getActivities(AonApiData api) {
