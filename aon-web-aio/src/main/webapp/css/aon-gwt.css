@@ -52,7 +52,7 @@
 
 .aon-direct-access-list-element {
     background: none !important;
-    padding: 5px 0 8px 12px !important;
+    padding: 5px 12px !important;
     border-bottom: none !important;
 }	
 .aon-direct-access-list-element:hover {

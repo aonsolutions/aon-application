@@ -81,7 +81,7 @@ export class AonSwitch extends AonElement {
         title.innerHTML = this.hasAttribute(CONSTANT.TITLE) ? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
     } else if (CONSTANT.DISABLED === name) {
       if (el) {
-        if (newValue ==CONSTANT.FALSE)
+        if (newValue == CONSTANT.FALSE)
           el.removeAttribute(CONSTANT.DISABLED);
         else
           el.setAttribute(CONSTANT.DISABLED, newValue);

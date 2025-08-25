@@ -191,7 +191,7 @@ export class AonInvoice extends AonElement {
 	initializeFunctions() {
 		window.getInvoice = () => {
 			return JSON.stringify(this.getInvoice());
-		}
+		};
 
 		window.reloadInvoice = (invoiceId) => {
 			if(invoiceId) {
@@ -200,9 +200,8 @@ export class AonInvoice extends AonElement {
 					this.reload();
 				});
 				this.getApplication().getParent().buildCounter();
-				
-			} 
-		}
+			}
+		};
 	}
 
 	getConfiguration() {

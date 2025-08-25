@@ -44,10 +44,10 @@ $icon-gap : calc(v.$gap / 2);
     li{
       font-family    : v.$font-primary-regular;
       font-size      : v.$px-12;
-      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding + v.$padding);
+      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding * 2);
       cursor         : pointer;
       display        : flex;
-      gap            : v.$gap;
+      gap            : calc(v.$gap / 2);
       justify-content: space-between;
       &>span{
         display    : flex;
@@ -69,6 +69,40 @@ $icon-gap : calc(v.$gap / 2);
           }
         }
       }
+    // subapartado
+      &:not(.sidenav-submenu-hidden) aon-icon[icon="chevron-right"] {
+        transform: rotate(+90deg);
+        transition: transform 0.3s ease-in-out;
+      }
+      // Ocultar un subapartado
+      &.elementHidden{
+        opacity       : 0;
+        transform     : translateY(20px);
+        pointer-events: none;
+        visibility    : hidden;
+        height        : 0;
+        margin        : 0;
+        padding       : 0;
+        overflow      : hidden;
+      }
+      // Mostrar un subapartado
+      &.elementVisible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        visibility: visible;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      &:has(ul){
+        padding: 0;
+        ul{
+          width: v.$pct-100;
+          li{
+            padding: v.$px-10 v.$padding v.$px-10 (v.$padding * 3);
+          }
+        }
+      }
+    // FIN subapartado  
     }
   }
   // Ocultar un apartado

@@ -46,14 +46,14 @@ export class AonMarketplace extends AonElement {
 		let cbutton = document.createElement('button');
 		cbutton.id = 'aonMarketplaceContractButton';
 		cbutton.className = 'aonButton';
-		cbutton.style.width = '110px';
-		cbutton.style.padding = '0.3rem 0.8rem';
-		cbutton.style.borderRadius = '25px';
+//		cbutton.style.width = '110px';
+//		cbutton.style.padding = '0.3rem 0.8rem';
+//		cbutton.style.borderRadius = '25px';
 		cbutton.innerHTML = MSG.CONTRACT;
 		cbutton.style.backgroundColor = '#12ccd1';
-		cbutton.style.position = 'absolute';
-		cbutton.style.right = '70px';
-		cbutton.style.top = '15px';
+//		cbutton.style.position = 'absolute';
+//		cbutton.style.right = '70px';
+//		cbutton.style.top = '15px';
 		cbutton.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
@@ -78,8 +78,8 @@ export class AonMarketplace extends AonElement {
 		let ul = document.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP_TOP);
-		ul.style.marginLeft = '60px';
-		ul.style.marginRight = '60px';
+//		ul.style.marginLeft = '60px';
+//		ul.style.marginRight = '60px';
 		this.appendChild(ul);
 		for (let key in apps){
 			const app = apps[key];
@@ -88,14 +88,14 @@ export class AonMarketplace extends AonElement {
 		  	li.classList.add(CSS.AON_LIST_GROUP_ITEM);
 		    li.classList.add(CSS.AON_APP_LI);
 			let span = document.createElement('span');
-			span.style.margin = '20px';
+//			span.style.margin = '20px';
 
 			if(app.icon) {
 				let color = contratado || app.app.includes('pack') ? app.color : 'lightgray';
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
 			} else {
 				let img = document.createElement('img');
-				img.style.width = '30px';
+//				img.style.width = '30px';
 				img.src = app.logo;
 				span.appendChild(img);
 			}
@@ -108,8 +108,8 @@ export class AonMarketplace extends AonElement {
 			if(app.subtitle){
 				let span3 = document.createElement('span');
 				span3.innerHTML = app.subtitle;
-				span3.style.color = 'gray';
-				span3.style.fontWeight = '400';
+//				span3.style.color = 'gray';
+//				span3.style.fontWeight = '400';
 				span2.appendChild(span3);
 			}
 
@@ -119,14 +119,14 @@ export class AonMarketplace extends AonElement {
 
 			let price = document.createElement('span');
 			price.id = this.APP + app.app + 'Price';
-			price.style.margin = '10px';
-			price.style.color = 'gray';
+//			price.style.margin = '10px';
+//			price.style.color = 'gray';
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
 
 			let moreInfo = document.createElement(TAG.A);
-			moreInfo.style.margin = '10px';
-			moreInfo.style.color = 'gray';
+//			moreInfo.style.margin = '10px';
+//			moreInfo.style.color = 'gray';
 			moreInfo.style.cursor = 'pointer';
 			moreInfo.innerHTML = 'Más Info';
 			moreInfo.addEventListener('click', () => {
@@ -137,15 +137,15 @@ export class AonMarketplace extends AonElement {
 			let contratar = document.createElement('button');
 			contratar.id = this.APP + app.app + 'ContractButton';
 			contratar.className = 'aonButton';
-			contratar.style.width = '110px';
-			contratar.style.padding = '0.3rem 0.8rem';
-			contratar.style.borderRadius = '25px';
+//			contratar.style.width = '110px';
+//			contratar.style.padding = '0.3rem 0.8rem';
+//			contratar.style.borderRadius = '25px';
 			contratar.innerHTML = contratado ? MSG.DEACTIVATE : MSG.ACTIVATE;
 			contratar.style.backgroundColor = '#002469';
-			contratar.style.opacity = contratado ? '0.3' : '1';
+//			contratar.style.opacity = contratado ? '0.3' : '1';
 			if(this.isDisabled(dur, app.app.toUpperCase()) || this.hasParentApp(dur, app.app.toUpperCase()) || app.disabled){
 				contratar.disabled = true;
-				contratar.style.opacity = '0.3';
+//				contratar.style.opacity = '0.3';
 				contratar.style.backgroundColor = 'gray';
 			}
 
@@ -169,7 +169,7 @@ export class AonMarketplace extends AonElement {
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
 		let contractButton = this.getElement(this.APP + app.app + 'ContractButton');
 		contractButton.innerHTML = contract ? MSG.DEACTIVATE : MSG.ACTIVATE;
-		contractButton.style.opacity = contract ? '0.3' : '1';
+//		contractButton.style.opacity = contract ? '0.3' : '1';
 
 		if(contract && !disabled) {
 			this.apps.push(app.app.toUpperCase());
@@ -180,7 +180,7 @@ export class AonMarketplace extends AonElement {
 
 		if((contract && disabled) || app.disabled) {
 			contractButton.disabled = true;
-			contractButton.style.opacity = '0.3';
+//			contractButton.style.opacity = '0.3';
 			contractButton.style.backgroundColor = 'gray';
 		} else {
 			contractButton.disabled = false;
@@ -218,10 +218,10 @@ export class AonMarketplace extends AonElement {
 
 	buildTitle(title) {
 		let div = document.createElement('div');
-		div.style.color = 'gray';
-		div.style.paddingTop = '20px';
-		div.style.paddingBottom = '20px';
-		div.style.marginLeft = '60px';
+//		div.style.color = 'gray';
+//		div.style.paddingTop = '20px';
+//		div.style.paddingBottom = '20px';
+//		div.style.marginLeft = '60px';
 		div.innerHTML = title.toUpperCase();
 		this.appendChild(div);
 	}

@@ -384,8 +384,8 @@ export const NO_SCROLLBAR = "noScrollbar";
 export const NO_FOCUS = "noFocus";
 export const CONTENT_EDITABLE = "contentEditable";
 export const FOCUS_COLOR_MINUS = "focusColorMinus";
-export const TRANSITION_CASCADE = "transitionCascade"
-export const TRANSITION_QUICK = "transitionQuick"
+export const TRANSITION_CASCADE = "transitionCascade";
+export const TRANSITION_QUICK = "transitionQuick";
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
 export const PULSE = "pulse";
@@ -394,7 +394,8 @@ export const MESSAGE_CONTENT = "messageContent";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 
-export const ELEMENT_HIDDEN = "elementHidden";
+export const ELEMENT_HIDDEN  = "elementHidden";
+export const ELEMENT_VISIBLE = "elementVisible";
 export const OUTLINE_HIDDEN = "outlineHidden";
 
 export const MESSAGE_AFTER = "messageAfter";

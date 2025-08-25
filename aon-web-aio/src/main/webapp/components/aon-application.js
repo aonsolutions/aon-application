@@ -392,36 +392,36 @@ export class AonApplication extends AonElement {
     if(first) sidenav.insertBefore(div, sidenav.firstChild);
     else sidenav.appendChild(div);
 
-    if(data.button && !this.isMobile()) {
-      let buttonDiv = this.createElement(TAG.DIV);
-      buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
-      let button = new AonIconButton();
-      button.icon = data.button.icon;
-      button.id = div.id + data.button.id;
-      button.getIcon().title = data.button.title;
-      buttonDiv.appendChild(button);
-      div.appendChild(buttonDiv);
-      button.addEventListener(EVENT.CLICK, data.button.fn);
-    }
-
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
     sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
 
     let arrowTitle  = new AonIcon();
-    arrowTitle.icon = "chevron-down";
+    arrowTitle.icon = MATERIAL_ICONS.CHEVRON_DOWN;
     sidenavTitle.appendChild(arrowTitle);
 
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
       div.classList.toggle('sidenav-hidden');
     });
 
-    let span       = this.createElement(TAG.SPAN);
-	span.id        = `aonSidenavTitle${data.id}Name`;
-	span.className = `aonSidenavTitleName`;
-    span.innerHTML = data.name.toUpperCase();
-    sidenavTitle.appendChild(span);
+    let divNanme       = this.createElement(TAG.DIV);
+	divNanme.id        = `aonSidenavTitle${data.id}Name`;
+	divNanme.className = `aonSidenavTitleName`;
+    divNanme.innerHTML = data.name.toUpperCase();
+    sidenavTitle.appendChild(divNanme);
+
+    if(data.button && !this.isMobile()) {
+      let buttonDiv       = this.createElement(TAG.DIV);
+      buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
+      let button             = new AonIconButton();
+      button.icon            = data.button.icon;
+      button.id              = div.id + data.button.id;
+      button.getIcon().title = data.button.title;
+      buttonDiv.appendChild(button);
+      sidenavTitle.appendChild(buttonDiv);
+      button.addEventListener(EVENT.CLICK, data.button.fn);
+    }
 
     if (newButton && !this.isMobile()) {
       let aonIconButton = new AonIconButton();
@@ -445,12 +445,11 @@ export class AonApplication extends AonElement {
       let div = this.getElement(sidenav.id + data.id);
       if(div){
         const idUl = div.id + "List";
-        let ul =  this.getElement(idUl); 
+        let ul =  this.getElement(idUl);
         if(!ul){
-          ul = this.createElement(TAG.UL);
-          ul.id =idUl;
-          ul.classList.add(CSS.AON_UL);
-          ul.classList.add(CSS.AON_CLIP);
+          ul    = this.createElement(TAG.UL);
+          ul.id = idUl;
+          ul.classList.add(CSS.AON_UL, CSS.AON_CLIP);
           div.appendChild(ul);
         }
         options.forEach((option, i) => {
@@ -635,8 +634,7 @@ export class AonApplication extends AonElement {
 
   buildSidenavSubOptions(data, options) {
     let ul = this.createElement(TAG.UL);
-    ul.classList.add(CSS.AON_UL);
-    ul.classList.add(CSS.AON_CLIP);
+    ul.classList.add(CSS.AON_UL, CSS.AON_CLIP);
 //    ul.style.paddingLeft = '12px';
     options.forEach((option, i) => {
       this.addSidenavOptionsListValue(data, option, ul);
@@ -648,20 +646,23 @@ export class AonApplication extends AonElement {
     let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden && ul) {
-      let id = sidenavId + (option.id || Math.random().toString(36).substring(7));
-      let li = this.createElement(TAG.LI);
-      li.id = id;
-      li.title = option.title || option.name;
-
+      let id       = sidenavId + (option.id || Math.random().toString(36).substring(7));
+      let li       = this.createElement(TAG.LI);
+      li.id        = id;
+      li.title     = option.title || option.name;
       li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
+
       ul.appendChild(li);
+      
       if(option.options) {
-//        li.style.paddingLeft = '6px';
-        let arrow = this.createElement(TAG.I);
-        arrow.className = "material-icons aonVerticalMiddle";
-        arrow.innerHTML = option.opened
-          ? MATERIAL_ICONS.ARROW_DROP_DOWN 
-          : MATERIAL_ICONS.ARROW_RIGHT;
+
+    consoleLog("///////////////////////////////////////////", "blue", true);
+    consoleLog(option.options);
+    consoleLog("///////////////////////////////////////////", "blue", true);
+
+        let arrow  = new AonIcon();
+        arrow.icon = MATERIAL_ICONS.CHEVRON_RIGHT;
+        li.classList.add('sidenav-submenu-hidden');
         li.appendChild(arrow);
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
@@ -670,15 +671,17 @@ export class AonApplication extends AonElement {
         this.hiddenElement(newLi, !option.opened);
         ul.appendChild(newLi);
         if(option.clickable) {
-          arrow.addEventListener(EVENT.CLICK, (e => {
+          li.addEventListener(EVENT.CLICK, (e => {
             e.preventDefault();
-            arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
-            this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
+            li.classList.toggle('sidenav-submenu-hidden');
+            const isHidden = li.classList.contains('sidenav-submenu-hidden');
+            this.hiddenElement(newLi, isHidden);
           }));
         } else {
-          li.addEventListener(EVENT.CLICK,() => {
-            arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
-            this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
+          li.addEventListener(EVENT.CLICK, () => {
+            li.classList.toggle('sidenav-submenu-hidden');
+            const isHidden = li.classList.contains('sidenav-submenu-hidden');
+            this.hiddenElement(newLi, isHidden);
           });
         } 
       }
@@ -1219,13 +1222,9 @@ export class AonApplication extends AonElement {
   }
 
   hiddenElement(element, condition = false){
-    if(element){
-      if(condition){
-        element.classList.add(CSS.ELEMENT_HIDDEN);
-      } else {
-        element.classList.remove(CSS.ELEMENT_HIDDEN);
-      }
-    }
+    if (!element) return;
+    element.classList.toggle(CSS.ELEMENT_HIDDEN, condition);
+    element.classList.toggle(CSS.ELEMENT_VISIBLE, !condition);
   }
 
   dragoverFn = (event) => {

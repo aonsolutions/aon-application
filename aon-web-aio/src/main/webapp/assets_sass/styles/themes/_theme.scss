@@ -166,8 +166,10 @@
       background-color : $color-box;
       ul {
         li{
-          &:hover, &.aonAppMenuSidenavListSelected{
-            background-color : $color-100;
+          &:not(:has(ul)) {
+            &:hover, &.aonAppMenuSidenavListSelected {
+              background-color: $color-100;
+            }
           }
         }
       }

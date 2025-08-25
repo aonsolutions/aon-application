@@ -1,3 +1,4 @@
+import { consoleLog } from './modules/utils/functionGlobal';
 import * as LS from './services/localStorageService.js';
 import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';
@@ -6,8 +7,8 @@ import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
 import { favicon, title, loadLink } from './css/aon-customView.js';
-
 import { loadTheme } from './modules/utils/theme';
+
 /*
 import './css/noto-sans.css';
 import './css/material-symbols-outlined.css';

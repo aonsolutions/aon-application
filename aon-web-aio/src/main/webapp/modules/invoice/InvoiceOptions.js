@@ -514,8 +514,8 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     //   ? [MAIN_INCOMES_BETA, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT]
     //   : [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
     return [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
-  }
+  };
 
   export const getNewOptions = () => {
     return [NEW_ISSUED_INVOICE, NEW_RECEIVED_INVOICE, NEW_TICKET];
-  }
+  };
