@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts, getAuth, getHelpDatas} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -1002,7 +1002,35 @@ export class AonHeader extends AonElement {
 				employeesSpan.innerText = `${contracts.length > 25 ? '>': ''} ${contracts.length} ${MSG.EMPLOYEES}`;
 				employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 					
+				aonHeaderSearchDialogMenu.addMenuOptions([{
+					icon: MATERIAL_ICONS.HELP,
+					name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Help" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.HELP}</span>`,
+				}]);
+
+				getHelpDatas({pattern: aonHeaderSearchBoxValue, limit: 11})
+				.then(helpDatas => {
+					
+					let helpOptions = [];
+					helpDatas.forEach(helpData => {
+						const helpFile = helpData.file;
+						const helpTitle = this.decorateMatching(helpData.title, aonHeaderSearchBoxValue);
+						helpOptions.push({
+							icon : MATERIAL_ICONS.OPEN_IN_NEW,
+							name: `<span style="text-transform : uppercase;" >${helpTitle}</span><span style="float:right;">${helpFile}</span>`, 
+							fn : () => {
+								window.open(helpData.uri,'_blank');
+							},					
+						});
+					});
+					aonHeaderSearchDialogMenu.addMenuOptions(helpOptions);
+					
+					let helpSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Help`);
+					helpSpan.innerText = `${helpDatas.length > 10 ? '>': ''} ${helpDatas.length} ${MSG.HELP}`;
+					helpSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+
+				});
 			}).catch(error => console.log(error));
+			
 			
 		});
 		
