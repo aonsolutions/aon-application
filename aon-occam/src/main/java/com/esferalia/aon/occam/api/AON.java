@@ -8439,9 +8439,9 @@ public class AON {
 		}
 	}
 	
-	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity) {
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity);
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny);
 		}
 	}
 	
