@@ -345,7 +345,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		composite = new AonCustomCheckBox("Pack");
 		composite.setWidth("3rem");
-		composite.setValue(null == product.getComposition() ? false : product.getComposition());
+		composite.setValue(product.isComposition());
 		composite.addValueChangeHandler(e -> {
 			product.setComposition(composite.getValue());
 			

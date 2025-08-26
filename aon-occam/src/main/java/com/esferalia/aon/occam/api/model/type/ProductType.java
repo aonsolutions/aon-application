@@ -47,8 +47,37 @@ public enum ProductType implements Serializable {
 		}
 		return null;
 	}
+
+	public boolean isService() {
+		return SERVICE.equals(this);
+	}
 	
 	public boolean isAuxiliary() {
 		return AUXILIARY.equals(this);
 	}
+	
+	public boolean isLabour() {
+		return LABOUR.equals(this);
+	}
+	
+	public boolean isCommercialProduct() {
+		return COMMERCIAL_PRODUCT.equals(this);
+	}
+	
+	public boolean isExternalWork() {
+		return EXTERNAL_WORK.equals(this);
+	}
+	
+	public boolean isExpense() {
+		return EXPENSE.equals(this);		
+	}
+	
+	public boolean isPrepayment() {
+		return PREPAYMENT.equals(this);		
+	}
+
+	public boolean isIncrease() {
+		return INCREASE.equals(this);
+	}
+
 }

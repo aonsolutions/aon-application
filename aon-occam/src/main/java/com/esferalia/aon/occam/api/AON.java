@@ -2763,16 +2763,12 @@ public class AON {
 		return getDeliveryDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
 	}
 	
-	public static DeliveryDetail insertDeliveryDetail(String domainName, Integer domainId, String login, DeliveryDetail deliveryDetail) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getManagement().insertDeliveryDetail(ctx, deliveryDetail);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static DeliveryDetail saveDeliveryDetail(Occam occam, DeliveryDetail deliveryDetail) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getManagement().saveDeliveryDetail(ctx, deliveryDetail);
+		} 
 	}
-	
+
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************
