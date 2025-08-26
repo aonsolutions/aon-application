@@ -1263,12 +1263,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    	
 	    
 		try {
-			if ( expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN) ) 
-				return;
-			for ( ContextVariable daysVariable : new ContextVariable [] {WORKED_DAYS, NO_HOLIDAYS, LEAVE_DAYS} ) {
-			    fixBaseCgcMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator,
-        				issueDate, leavePeriods, offPeriods, daysVariable);
+			if (expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN)) {
+				quoteCalculator.quote(newBaseCgcMinPayment(start, end, salaryType, WORKED_DAYS), start, end,
+						cgcBase - rawCgcbase);
+			} else {
+				for (ContextVariable daysVariable : new ContextVariable[] { WORKED_DAYS, NO_HOLIDAYS, LEAVE_DAYS }) {
+					fixBaseCgcMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator, issueDate,
+							leavePeriods, offPeriods, daysVariable);
+				}
 			}
+
 		} catch ( UndefinedContextVariablesException e ) {
 			
 		}
@@ -1279,16 +1283,19 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 			List<Period> offPeriods, Double rawCgcbase, Double cgcBase, ContextVariable baseVariable) throws AonException {
 	    	
-	    	
-	    	
-	    
 		try {
-			if ( expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN) ) 
+			if (expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN)) {
+				quoteCalculator.quote(
+						newBaseMinPayment(start, end, salaryType, baseVariable), 
+						start, 
+						end, 
+						cgcBase - rawCgcbase);
 				return;
-			   fixBaseMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator,
-        				issueDate, leavePeriods, offPeriods, baseVariable);
-		} catch ( UndefinedContextVariablesException e ) {
-			
+			}
+			fixBaseMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator, issueDate,
+					leavePeriods, offPeriods, baseVariable);
+		} catch (UndefinedContextVariablesException e) {
+
 		}
 	}
 
@@ -1424,7 +1431,22 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 		List<Period> offPeriods, ContextVariable daysVariable) throws AonException {
 	    resolvePayment(
-	    new SimpleContractPayment()
+	    newBaseCgcMinPayment(start, end, salaryType, daysVariable)
+	    , 
+	    start, 
+	    end, 
+	    issueDate, 
+	    expressionContext, 
+	    taxCalculator, 
+	    quoteCalculator, 
+	    leavePeriods, 
+	    offPeriods
+	    );
+	}
+
+	private SimpleContractPayment newBaseCgcMinPayment(Date start, Date end, SalaryType salaryType,
+			ContextVariable daysVariable) {
+		return new SimpleContractPayment()
 	    .setId(Integer.MAX_VALUE)
 	    .setName("FIX_BASE_CGC_MIN")
 	    .setStartDate(start)
@@ -1437,8 +1459,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    .setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
 	    .setQuoteExpression("/*fixBaseCgcMin*/_A=BASE_CGP;_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC - BASE_CGC_BRUTA))" )
 //	    .setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP_BRUTA=BASE_CGP=MAX(_B,_A);_P" )
-	    .setIrpfExpression("/*fixBaseCgcMin*/SELF.setBaseVariable('BASE_CGP', MAX(_B,_A));SELF.setBaseVariable('BASE_CGP_BRUTA', MAX(_B,_A));_P" )
-	    
+	    .setIrpfExpression("/*fixBaseCgcMin*/SELF.setBaseVariable('BASE_CGP', MAX(_B,_A));SELF.setBaseVariable('BASE_CGP_BRUTA', MAX(_B,_A));_P" );
+	}
+	
+	private void addBaseMinPayment(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+		List<Period> offPeriods, ContextVariable baseName ) throws AonException {
+	    resolvePayment(
+	    newBaseMinPayment(start, end, salaryType, baseName)
 	    , 
 	    start, 
 	    end, 
@@ -1450,12 +1478,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    offPeriods
 	    );
 	}
-	
-	private void addBaseMinPayment(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
-		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
-		List<Period> offPeriods, ContextVariable baseName ) throws AonException {
-	    resolvePayment(
-	    new SimpleContractPayment()
+
+	private SimpleContractPayment newBaseMinPayment(Date start, Date end, SalaryType salaryType,
+			ContextVariable baseName) {
+		return new SimpleContractPayment()
 	    .setId(Integer.MAX_VALUE)
 	    .setName(baseName.getName().replace("BASE_", ""))
 	    .setStartDate(start)
@@ -1466,17 +1492,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    .setSalaryType(salaryType)
 	    .setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
 	    .setQuoteExpression(String.format("/*fixBaseCgcMin*/MAX(_P,(%s - %s_BRUTA))", baseName, baseName ) )
-	    .setIrpfExpression("/*fixBaseCgcMin*/_P" )
-	    , 
-	    start, 
-	    end, 
-	    issueDate, 
-	    expressionContext, 
-	    taxCalculator, 
-	    quoteCalculator, 
-	    leavePeriods, 
-	    offPeriods
-	    );
+	    .setIrpfExpression("/*fixBaseCgcMin*/_P" );
 	}
 
 	// ------------------------------------------------------------------------
@@ -2331,5 +2347,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return false;
 		}
 	}
+	
+	
 	
 }

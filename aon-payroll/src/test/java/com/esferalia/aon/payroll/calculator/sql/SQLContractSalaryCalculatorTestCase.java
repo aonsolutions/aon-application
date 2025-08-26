@@ -1469,6 +1469,80 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 	}	
 
 	@Test
+	public void testBaseCgcMinPPEII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES","30.00");
+				
+				put("BASE_CGP_MIN",
+						"1381.20");
+				put("BASE_CGP_MAX",
+						"4099.50");
+				put("BASE_CGC_MIN",
+						"1381.20");
+				put("BASE_CGC_MAX",
+						"4099.50");
+				
+			}
+		});
+
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		ppeConcept.setQuoteExpression("__PPE");
+		ppeConcept.update();
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] {}, new Payment[] {
+				new Payment() {
+					{
+						this.concept = ppeConcept.getId();
+						this.expression = "TOTAL_DEVENGADO; __PPE =(/*user*/APORTACION_EMPRESA_PPE/**/ * DIAS_COTIZADOS / DIAS_MES * COEFICIENTE_PARCIALIDAD ); SELF.setBaseVariable('TOTAL_PPE', __PPE); 0.00" ;
+					}
+				}
+		});
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION","\"01\"");
+						put("APORTACION_EMPRESA_PPE", "100.00");
+						put("HIDE_BASE_CGC_MIN", "VERDADERO()");
+					}
+				},
+				new String[] { 
+						"1000.20 * DIAS_TRABAJADOS / DIAS_MES"
+				},
+				new String[] { 
+				}, 
+				category);
+		
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder() );
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getPaymentS().forEach(s -> System.out.println(s.getName() +" = " + s.getAmount() +", " + s.getQuote()  ));
+
+		Assert.assertEquals(1000.20, salary.getTotalPayment());
+		Assert.assertEquals(1481.20, salary.getCommonBase());
+		Assert.assertEquals(1481.20, salary.getProfessionalBase());
+		Assert.assertEquals(1000.20, salary.getIrpfBase());
+		
+		
+	}	
+	@Test
 	public void testDeferred()
 			throws ExpressionException, SQLException, SalaryException {
 
