@@ -96,8 +96,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryPackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -983,11 +985,24 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public void deleteDeliveryPackaging() {
-		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		Delivery delivery = (Delivery) getTo();
-		try(CloseableAONContext ctx = AONContext.getAONContext(domain, "")){
+		try(CloseableAONContext ctx = AONContext.getAONContext(getOccam())){
 			PackagingDAO.deleteDeliveryPackaging(ctx, delivery.getId());
 		}
+	}
+	
+	public boolean hasPackaging() {
+		Delivery delivery = (Delivery) getTo();
+		try(CloseableAONContext ctx = AONContext.getAONContext(getOccam())){
+			return DeliveryPackagingDAO.getStream(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())).findFirst().isPresent();
+		}
+	}
+	
+	private Occam getOccam() {
+		return new Occam()
+				.setDomain(DomainManager.getCurrentDomain())
+				.setDomainName(AonUtil.getDomainName())
+				.setUser("");
 	}
 	
 }
