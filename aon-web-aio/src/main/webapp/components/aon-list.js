@@ -90,8 +90,6 @@ export class AonList extends AonElement {
         }
     }
     
-    
-
 	loadMore() {
 		this.more = false;
 		let table = this.getTable();
