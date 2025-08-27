@@ -104,6 +104,14 @@ export class AonDelivery extends AonElement {
 			let d = document.getElementById(this.getApplication().OPTION_DIALOG);
 			let moreActions = [];
 
+			let downloadDelivery = {
+   				id: CONSTANT.DOWNLOAD.initCap() + 'Albaran',
+   				name: "Pdf Albarán",
+   				icon: MATERIAL_ICONS.FILE_DOWNLOAD
+			};
+			downloadDelivery.fn = () => this.downloadDelivery();
+			moreActions.push(downloadDelivery);
+
 			let downloadHojaAlmacen = {
    				id: CONSTANT.DOWNLOAD.initCap() + 'HojaAlmacen',
    				name: "Hoja Almacén",
@@ -140,6 +148,16 @@ export class AonDelivery extends AonElement {
 			login: LS.getDomainLogin()
 		};
 		window.open("/ms/api/download_packaging_sales_pdf?json=" + btoa(JSON.stringify(data)));
+	}
+
+	downloadDelivery() {
+		let data = {
+			id: this.delivery.id,
+			domain_id: LS.getDomainId(),
+			domain_name: LS.getDomainName(),
+			login: LS.getDomainLogin()
+		};
+		window.open("/ms/api/download_delivery_pdf?json=" + btoa(JSON.stringify(data)));
 	}
 
 	buildTabs() {

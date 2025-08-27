@@ -98,7 +98,6 @@ public class DomainLinkedDAO {
 	public static Domain updateDomainStatus(AONContext ctx, Domain domain) {
 		ctx.getDslContext().update(DOMAIN)
 			.set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql(domain.getExpirationDate()))
-			.set(DOMAIN.ACTIVE, domain.isActive() ? (byte)1 : (byte)0)
 			.where(DOMAIN.ID.eq(domain.getId()))
 			.execute();
 		

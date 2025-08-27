@@ -166,13 +166,14 @@ public class PackagingServlet extends AonApiHttpServlet {
 	
 	private JSONObject deleteDeliveryPackagingComposition(AonApiData api) {
 		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		Double quantity = JsonUtils.getDouble(api.getData(), IJsonNames.QUANTITY);
 		ItemComposition composition = ItemCompositionJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPOSITION));
 
 		String sscc = JsonUtils.getString(api.getData(), "destiny");
 		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
 		else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
 		
-		AON.deleteDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, sscc);		
+		AON.deleteDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, sscc, quantity);		
 		return new JSONObject();
 	}
 	
