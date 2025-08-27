@@ -90,6 +90,11 @@ $color-yellow-700 : #a16207;
 $color-yellow-800 : #854d0e;
 $color-yellow-900 : #713f12;
 
+// Colores corporativos sin gama
+$color-corp-orange   : #FB5722;
+$color-corp-turquoise: #09E7FC;
+$color-corp-blue     : #004BFB;
+
 // Colores textos
 $color-text-secundary     : $color-dark-100;
 $color-text               : $color-dark-0;
@@ -143,6 +148,7 @@ $color-menu-green : $color-green-400;
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,
+    $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
     $logoHead, $logoHead-width, $logoHead-height,
     $logo, $logo-width, $logo-height
   );

@@ -1,0 +1,32 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-invoice-panel{
+    #aonInvoiceContent{
+    // aon-invoice-home
+      &:has(aon-invoice-home) {
+        padding: v.$px-0;
+      }
+      aon-invoice-home{
+        #aonInvoiceHomeDashboard{
+          display       : flex;
+          flex-direction: column;
+          gap           : v.$gap;
+          #aonInvoiceHomeFastPanel{
+            display  : flex;
+            flex-wrap: wrap;
+            gap      : v.$gap;
+          }
+          #aonInvoiceHomeCardPanel{
+            width           : v.$pct-100;
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            justify-content : center;
+          }
+        }
+      }
+    // FIN aon-invoice-home
+    }
+  }
+}

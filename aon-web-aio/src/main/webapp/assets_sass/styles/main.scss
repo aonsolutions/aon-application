@@ -17,6 +17,7 @@
 @use './pages/home_desktop' as home_desktop;  // home  - en empresa
 @use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen
 @use './pages/plans' as plans;                // plans - Listado de planes que se pueden contratar
+@use './pages/invoices' as invoices;          // invoices- Facturacion
 @use './pages/documental' as doc;             // doc   - Documentos
 @use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
 @use './pages/notes' as notes;                // notes - Notas que se crean

@@ -89,13 +89,16 @@ export class AonInvoicePanel extends AonElement {
   }
 
   connectedCallback() {
+    
+    consoleLog(" -- aon-invoice-panel.js -- ","red", true);
+    
     this.initialize();
     this.innerHTML = `
-			<aon-application id='${this.INVOICE}' title='${MSG.BILLING}' drag_and_drop='true'></aon-application>
-			<aon-dialog-menu id='aonDialogAddOption'> </aon-dialog-menu>
-			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
-			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
-		`;
+      <aon-application id='${this.INVOICE}' title='${MSG.BILLING}' drag_and_drop='true'></aon-application>
+      <aon-dialog-menu id='aonDialogAddOption'> </aon-dialog-menu>
+      <input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
+      <input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
+    `;
     this.buildDur().then((r) => {
       this.build();
     });
@@ -116,12 +119,11 @@ export class AonInvoicePanel extends AonElement {
     this.filter = {
       status: this.status || CONSTANT.INBOX,
       page: 0,
-      per_page: 50,
+      per_page: 50
     };
     this.counterActive = true;
 
-    this.option =
-      this.option || (CONSTANT.REJECTED === this.status ? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX);
+    this.option = this.option || (CONSTANT.REJECTED === this.status ? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX);
   }
 
   getFilter() {
@@ -186,7 +188,7 @@ export class AonInvoicePanel extends AonElement {
 
   async importBidoqDocumentsToAon() {
 	// Crear overlay
-	let loadingOverlay = document.createElement('div');
+	let loadingOverlay = document.createElement(TAG.DIV);
 	loadingOverlay.id = 'aonDocumentalLoadingOverlay';
 	loadingOverlay.style.position = 'absolute';
 	loadingOverlay.style.top = '0';
@@ -200,13 +202,13 @@ export class AonInvoicePanel extends AonElement {
 	loadingOverlay.style.zIndex = '10';
 
 	// Contenedor del spinner + texto
-	let spinnerContainer = document.createElement('div');
+	let spinnerContainer = document.createElement(TAG.DIV);
 	spinnerContainer.style.display = 'flex';
 	spinnerContainer.style.flexDirection = 'column';
 	spinnerContainer.style.alignItems = 'center';
 
 	// Spinner
-	let spinner = document.createElement('div');
+	let spinner = document.createElement(TAG.DIV);
 	spinner.classList.add('preloader-wrapper', 'active');
 	spinner.innerHTML = `
 		<span class="material-symbols-outlined">
@@ -219,7 +221,7 @@ export class AonInvoicePanel extends AonElement {
 	icon.style.animation = 'rotate 2s linear infinite';
 
 	// Texto
-	let text = document.createElement('div');
+	let text = document.createElement(TAG.DIV);
 	text.textContent = 'Importando documentos desde Bidoq...';
 	text.style.marginTop = '12px';
 	text.style.fontSize = '16px';

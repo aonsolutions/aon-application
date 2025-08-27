@@ -51,6 +51,7 @@ import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { AonConsoleMenu } from './console/aon-console-menu.js';
 import { Superset } from './superset/superset.js';
 import { AonSearchBox } from '../components/aon-search-box.js';
+import { AonMenuButton } from '../components/aon-menu-button';
 
 import { AonParent } from "./aon-parent.js";
 
@@ -180,10 +181,10 @@ export class AonNewMenu extends AonElement {
 				case PLANS.app:
 					this.rootPanel(new AonPlans());
 					break;
-				case NEW.app:
-					this.removeOldNewDialogContents();
-					this.showNewDialogMenu(this.getElement(app.app));
-					break;
+//				case NEW.app:
+//					this.removeOldNewDialogContents();
+//					this.showNewDialogMenu(this.getElement(app.app));
+//					break;
 				case HOME.app:
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
@@ -384,7 +385,17 @@ export class AonNewMenu extends AonElement {
 
 		for (let item in MENU_APPS) {
           	if (this.isSidenavApp(MENU_APPS[item])) {
-				let app = MENU_APPS[item];
+              const app = MENU_APPS[item];
+
+              if(app.app === CONSTANT.NEW){
+                
+                consoleLog('Esta en aon-new-menu.js', 'blue');
+                consoleLog(' - OK - ',"green");
+                consoleLog(app);
+
+                // El nuevo menu es un boton in dependiente
+                this.appendChild(new AonMenuButton());
+              } else 
 				this.addMenuSidenavApp(ul, app);
 			}
 		}
@@ -404,7 +415,7 @@ export class AonNewMenu extends AonElement {
 
 	addMenuSidenavApp(ul, app) {
       if (((this.isAyudaT() && app.app != CONSTANT.PLANS)  || (this.isAyudaT() && app.app == CONSTANT.PLANS && (this.getDur().isAdmin() || this.getDur().isEnterprise()))) || (app.app != CONSTANT.PLANS && !this.isAyudaT())){
-		let li = this.createElement(TAG.LI);
+        let li = this.createElement(TAG.LI);
 		li.id = `aonMenuList-${app.app}`;
 		li.classList.add("aonNewMenuSideNavLi");
 

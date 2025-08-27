@@ -12,6 +12,7 @@
   $color-red-100,  $color-red-500, $color-red-900,
   $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
   $color-blue-100, $color-blue-500, $color-blue-900,
+  $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
   $logoHead, $logoHead-width, $logoHead-height,
   $logo, $logo-width, $logo-height
 ) {
@@ -41,7 +42,7 @@
   $loginbutton-backgorund-position   : v.$px-0 v.$px-0;
   $loginbutton-transition            : background v.$t-03 ease;
   $loginbutton-hover-background-size : v.$pct-100 v.$px-0;
-
+  
   $magicbutton-background-color : $color-input;
   $magicbutton-color            : $color-text-button-transp;
   $magicbutton-border           : v.$px-1 solid $color-300;
@@ -49,6 +50,18 @@
   $magicbutton-hover-border     : v.$px-1 solid $color-900;
   $magicbutton-hover-padding    : v.$px-7 v.$px-15;
 
+  $gradient-turquoise-background : linear-gradient(to right, $color-corp-turquoise, $color-corp-turquoise, $color-grad-max, $color-grad-min);
+  $gradient-turquoise-size       : $loginbutton-background-size;
+  $gradient-turquoise-position   : $loginbutton-backgorund-position;
+  $gradient-turquoise-transition : background v.$t-01 ease;
+  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;  
+  
+  $gradient-box-background : linear-gradient(to right, $color-box, $color-box, $color-grad-max, $color-grad-min);
+  $gradient-box-size       : $loginbutton-background-size;
+  $gradient-box-position   : $loginbutton-backgorund-position;
+  $gradient-box-transition : background v.$t-01 ease;
+  $gradient-box-hover-background-size : $loginbutton-hover-background-size;  
+  
   $iconbutton-hover-background-color : transparent;
 
   $input-border : v.$px-1 solid $color-300;
@@ -234,7 +247,6 @@
         }
       }
     }
-
     // dialog-menu
     aon-dialog-menu{
       background-color : $color-700;
@@ -243,6 +255,73 @@
         li{
           &:hover, &.selected{
             background-color : $color-500;
+          }
+        }
+      }
+    }
+    // Boton menu dedo
+    aon-menu-button{
+      #aon-menu-button-content{
+        aon-icon-button{
+          &#aon-menu-button-button, button{
+            background            : $gradient-turquoise-background;
+            background-size       : $gradient-turquoise-size;
+            background-position   : $gradient-turquoise-position;
+            transition            : $gradient-turquoise-transition;
+            box-shadow            : $box-shadow-dialog;
+            &:hover{
+              background-position : $gradient-turquoise-hover-background-size ;
+              aon-icon{
+                background-color : $color-text-button;
+              }
+            }
+          }
+        }
+      }
+      // Abierto
+      &[opened="true"]{
+        background-color: $color-dialog-alpha;
+        #aon-menu-button-content{
+          aon-icon-button{
+            &#aon-menu-button-button, button{
+              background: $color-900;
+              aon-icon{
+                background-color : $color-text-button;
+              }
+              &:hover{
+                background : $color-500;
+              }
+            }
+          }
+          ul{
+            &#aon-menu-button-list{
+              // submenu cerrado
+              .aonAppLi span{
+                background            : $gradient-box-background;
+                background-size       : $gradient-box-size;
+                background-position   : $gradient-box-position;
+                transition            : $gradient-box-transition;
+                box-shadow            : $box-shadow-dialog;
+                &:hover{
+                  background-position : $gradient-box-hover-background-size;
+                  color               : $color-text-button;
+                  aon-icon{
+                    background-color : $color-text-button;
+                  }
+                }
+              }
+              // submenu abierto
+              .aonAppLi span.submenu-open{
+                background: $color-900;
+                color     : $color-text-button;
+                aon-icon{
+                  background-color : $color-text-button;
+                }
+                &:hover{
+                  background : $color-500;
+                }
+              }
+            }
           }
         }
       }
@@ -452,6 +531,17 @@
           color: $color-text-general;
         }
       }
+    }
+    // Invoices
+    aon-invoice-panel .aonFlex #aonInvoiceContent{
+      // aon-invoice-home
+        &:has(aon-invoice-home) {
+          background-color: unset;
+        }
+        aon-invoice-home{
+
+        }
+      // FIN aon-invoice-home
     }
     // Notas
     aon-notes .aonFlex #notesContainer{

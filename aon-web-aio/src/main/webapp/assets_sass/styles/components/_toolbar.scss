@@ -9,7 +9,7 @@ aon-toolbar{
     align-items: center;
     section{
       display: flex;
-      gap    : v.$gap;
+      gap    : calc(v.$gap / 2);
       width  : v.$pct-100;
       &:last-child{
         justify-content: flex-end;

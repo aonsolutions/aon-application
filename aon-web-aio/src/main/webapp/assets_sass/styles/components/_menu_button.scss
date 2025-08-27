@@ -1,0 +1,79 @@
+@use '../variables' as v;
+
+aon-menu-button{
+  position: fixed;
+  right   : v.$px-0;
+  bottom  : v.$px-0;
+  z-index : v.$num-1;
+  #aon-menu-button-content{
+    position      : fixed;
+    right         : v.$px-20;
+    bottom        : v.$px-40;
+    display       : flex;
+    flex-direction: column-reverse;
+    align-items   : flex-end;
+    gap           : v.$gap;
+    z-index       : v.$num-1;
+    aon-icon-button{
+      &#aon-menu-button-button, button{
+        width        : v.$px-68;
+        height       : v.$px-68;
+        border-radius: v.$pct-100;
+        padding      : unset;
+        display      : flex;
+        align-items  : center;
+        aon-icon{
+          width      : v.$px-42;
+          height     : v.$px-42;
+        }
+      }
+    }
+    ul{
+      &#aon-menu-button-list{
+        display: none;
+      }
+    }
+  }
+  // Abierto
+  &[opened="true"]{
+    width   : v.$pct-100;
+    height  : v.$pct-100;
+    z-index : v.$num-99;
+    #aon-menu-button-content{
+      ul{
+        &#aon-menu-button-list{
+          display       : flex;
+          flex-direction: column;
+          align-items   : flex-end;
+          gap           : v.$gap;
+          list-style    : none;
+          margin        : v.$px-0;
+          padding       : v.$px-0;
+          .aonAppLi{
+            display   : inline-block;
+            text-align: right;
+            span{
+              display       : flex;
+              justify-content: center;
+              align-content : center;
+              gap           : v.$gap;
+              cursor        : pointer;
+              padding       : calc(v.$padding/2) v.$padding;
+              border-radius : v.$border-radius;
+            }
+            ul{
+              &.aonSubUl{
+                display       : flex;
+                align-items   : flex-end;
+                gap           : v.$gap;
+                list-style    : none;
+                margin        : v.$px-0;
+                padding       : v.$gap v.$px-0 v.$px-0 v.$px-0;
+              }
+            }
+          } 
+        }
+      }
+    }
+  }
+}
