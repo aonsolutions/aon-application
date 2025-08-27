@@ -23,13 +23,13 @@ public class Product implements Serializable{
 	ProductKind kind;
 	Tax vat;
 	Tax retention;
-	Boolean inventoriable;
-	Boolean serializable;
-	Boolean lotable;
-	Boolean manufactured;
-	Boolean composition;
-	Boolean compositionPrice;
-	Boolean packaged;
+	boolean inventoriable;
+	boolean serializable;
+	boolean lotable;
+	boolean manufactured;
+	boolean composition;
+	boolean compositionPrice;
+	boolean packaged;
 	boolean perishable;
 	Integer daysToExpire;
 	Account salesAccount;
@@ -170,108 +170,65 @@ public class Product implements Serializable{
 		return this;
 	}
 
-	public Boolean isInventoriable() {
-		return getInventoriable();
-	}
-	
-	public Boolean getInventoriable() {
-		if(inventoriable == null) 
-			inventoriable = false; 
+	public boolean isInventoriable() {
 		return inventoriable;
 	}
-
-	public Product setInventoriable(Boolean inventoriable) {
+	
+	public Product setInventoriable(boolean inventoriable) {
 		this.inventoriable = inventoriable;
 		return this;
 	}
 
-	public Boolean isSerializable() { 
-		return getSerializable();
-	}
-	
-	public Boolean getSerializable() {
-		if(serializable == null) 
-			serializable = false; 
+	public boolean isSerializable() { 
 		return serializable;
 	}
-
-	public Product setSerializable(Boolean serializable) {
+		
+	public Product setSerializable(boolean serializable) {
 		this.serializable = serializable;
 		return this;
 	}
 
-	public Boolean isLotable() {
-		return getLotable();
-	}
-	
-	public Boolean getLotable() {
-		if(lotable == null) 
-			lotable = false;
+	public boolean isLotable() {
 		return lotable;
 	}
 
-	public Product setLotable(Boolean lotable) {
+	public Product setLotable(boolean lotable) {
 		this.lotable = lotable;
 		return this;
 	}
 
-	public Boolean isManufactured() {
-		return getManufactured();
-	}
-	
-	public Boolean getManufactured() {
-		if(manufactured == null) 
-			manufactured = false;
+	public boolean isManufactured() {
 		return manufactured;
 	}
 
-	public Product setManufactured(Boolean manufactured) {
+	public Product setManufactured(boolean manufactured) {
 		this.manufactured = manufactured;
 		return this;
 	}
 
-	public Boolean isComposition() {
-		return getComposition();
-	}
-	
-	public Boolean getComposition() {
-		if(composition == null) 
-			composition = false;
+	public boolean isComposition() {
 		return composition;
 	}
 
-	public Product setComposition(Boolean composition) {
+	public Product setComposition(boolean composition) {
 		this.composition = composition;
 		return this;
 	}
 
-
-	public Boolean isCompositionPrice() {
-		return getCompositionPrice();
-	}
-	
-	public Boolean getCompositionPrice() {
-		if(compositionPrice == null) 
-			compositionPrice = false;
+	public boolean isCompositionPrice() {
 		return compositionPrice;
 	}
-
-	public Product setCompositionPrice(Boolean compositionPrice) {
+	
+	public Product setCompositionPrice(boolean compositionPrice) {
 		this.compositionPrice = compositionPrice;
 		return this;
 	}
 
-	public Boolean isPackaged() {
-		return getPackaged();
-	}
-	
-	public Boolean getPackaged() {
-		if(packaged == null)
-			packaged = false;
+	public boolean isPackaged() {
 		return packaged;
 	}
-
-	public Product setPackaged(Boolean packaged) {
+	
+	public Product setPackaged(boolean packaged) {
 		this.packaged = packaged;
 		return this;
 	}

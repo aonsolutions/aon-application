@@ -35,8 +35,8 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -150,16 +150,10 @@ public class DBInvoice {
 	}
 	
 	public static String getInvoicesUrl(Domain domain, String login, Invoice invoice) {
-		String url = "";
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(invoice.getId()), AttachType.INVOICE, false);
-		if(attach != null && !attach.isEmpty()) {
-			JSONObject data = new JSONObject();
-			data.put("domain_name", domain.getName());
-			data.put("domain_id", domain.getId());
-			data.put("id", attach.getId());
-			data.put("attach_type", AttachType.INVOICE.getName());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			url = "https://" + domain.getName() + "/ms/api/file/" +  result;
+		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
+		InvoiceDoc invoiceDoc = AON.getInvoiceDoc(occam, invoice.getDomain(), invoice.getId()).orElse(null);
+		if(invoiceDoc != null && invoiceDoc.getUrl() != null) {
+			return invoiceDoc.getUrl();
 		} else if(invoice.isSales()) {
 			JSONObject json = new JSONObject();
 			json.put(IJsonNames.ID, invoice.getId());
@@ -168,9 +162,8 @@ public class DBInvoice {
 			json.put("domain_name", domain.getName());
 			json.put("login", login);
 			String result = Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
-			url = "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" + result;	
-		}
-		return url;
+			return "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" + result;	
+		} else return "";
 	}
 	
 	private static class InvoiceFiller extends Filler implements Function<Record,Invoice> {

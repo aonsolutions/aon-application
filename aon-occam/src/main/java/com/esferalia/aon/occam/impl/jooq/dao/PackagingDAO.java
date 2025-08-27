@@ -397,25 +397,28 @@ public class PackagingDAO {
 			}
 		});
 	}
-	
-	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity) {
+
+	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		Item sourceItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getIdProperty().eq(composition.getItemId())));
 		
-		Item destinyItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+		Item destinyItem = skipDestiny ? null : ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getSerialNumberProperty().eq(destiny)));
 		
 		Item compositionItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getIdProperty().eq(composition.getCompositionItemId())));
+	
+		if(!skipDestiny) {
+			if(destinyItem == null ||  destinyItem.isEmpty()) {
+				throw new AonCoreException("El envase destino no existe.");
+			}
 		
-		if(destinyItem == null ||  destinyItem.isEmpty()) {
-			throw new AonCoreException("El envase destino no existe.");
+			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(destinyItem.getId()));
+			if(dp != null && !dp.isEmpty()) {
+				throw new AonCoreException("El envase destino ya está en un albarán.");
+			}			
 		}
-		
-		DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(destinyItem.getId()));
-		if(dp != null && !dp.isEmpty()) {
-			throw new AonCoreException("El envase destino ya está en un albarán.");
-		}
+
 
 		// comprobar si la cantidad a eliminar es mayor que la cantidad del item composition
 		if(AonMathUtils.isLessThan(composition.getQuantity(), quantity)) {
@@ -462,7 +465,7 @@ public class PackagingDAO {
 		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
 			.and(f.getItem().eq(composition.getCompositionItemId())));
 	
-		double dq = dd.getQuantity() - quantity;// composition.getQuantity();
+		double dq = dd.getQuantity() - quantity;
 		if(dq == 0) {
 			DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
 		} else {
@@ -487,20 +490,21 @@ public class PackagingDAO {
 			SalesDAO.save(ctx, sales);
 		}
 		
-		// OBTENER EL ALMACÉN DEL DESTINO
-		Integer warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getItemProperty().eq(destinyItem.getId()))).getWarehouse();
-		if(warehouse == null) {
-			warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
-		}
-		if(warehouse == null) {
-			warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
-		}
+		if(!skipDestiny) {
+			// OBTENER EL ALMACÉN DEL DESTINO
+			Integer warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getItemProperty().eq(destinyItem.getId()))).getWarehouse();
+			if(warehouse == null) {
+				warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+						.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
+			}
+			if(warehouse == null) {
+				warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
+			}
 		
-		// AÑADIR STOCK
-		StockDAO.add(ctx, composition.getCompositionItemId(), warehouse, quantity);
-	
+			// AÑADIR STOCK
+			StockDAO.add(ctx, composition.getCompositionItemId(), warehouse, quantity);
+		}
 		deleteItemBox(ctx, deliveryId, productId, composition.getQuantity());
 	}
 	

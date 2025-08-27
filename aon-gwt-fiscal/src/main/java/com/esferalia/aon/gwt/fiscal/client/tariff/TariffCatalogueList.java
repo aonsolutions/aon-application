@@ -158,7 +158,7 @@ public class TariffCatalogueList extends HTMLPanel {
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
 						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-						tab.addRow(row, new Label(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio")), col.getWidth());
+						tab.addRow(row, new Label(product.isComposition() ? "Pack" : "Servicio"), col.getWidth());
 					}else {
 						Optional<ItemTariff> itemTariffOpt = itemTariffs.stream().filter(itemTariff -> itemTariff.getItem().equals(product.getItem().getId()) && AonStringUtils.equalsIgnoreCase(itemTariff.getTariff().getCode(), col.getDescription())).findFirst();
 						Tariff tariffObj = tariffs.stream().filter(tariffIt -> AonStringUtils.equalsIgnoreCase(tariffIt.getCode(), col.getDescription())).findFirst().get();
@@ -200,7 +200,7 @@ public class TariffCatalogueList extends HTMLPanel {
 			
 			@Override
 			public void onSuccess(List<Product> products) {
-				products.sort(Comparator.comparing(Product::getComposition).reversed());
+				products.sort(Comparator.comparing(Product::isComposition).reversed());
 				success.accept(products);
 			}
 			
