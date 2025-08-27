@@ -173,6 +173,7 @@ export const GROUPS = 'groups';
 
 // ----- H
 export const HANDSHAKE = 'handshake';
+export const HELP = 'help';
 export const HIGHLIGHT_OFF = 'highlight_off';
 export const HDR_AUTO = 'hdr_auto';
 export const HOME = 'home';
