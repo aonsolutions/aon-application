@@ -85,7 +85,7 @@ export class AonDialogMenu extends AonElement {
 		content.id = this.CONTENT;
 		content.className = `aonDialogMenuContent`;
 		content.style.position = 'absolute';
-		content.style.width = '200px';
+		content.style.width = 'auto';
 	 	content.style.padding = '0px';
 		content.style.borderRadius = '5px';
 		dialog.appendChild(content);
@@ -319,6 +319,16 @@ export class AonDialogMenu extends AonElement {
 			ul.style.padding = '0px';
 			content.appendChild(ul);
 			options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
+
+			this.onVisible(ul).then( () => {
+				const clientRect = content.getBoundingClientRect();
+				if ( clientRect.left + clientRect.width > window.innerWidth ){
+					content.style.left = `${window.innerWidth - clientRect.width  - 10 }px`;
+				}
+				if ( clientRect.top + clientRect.height > window.innerHeight ){
+					content.style.top = `${window.innerHeight - clientRect.height - 10 }px`;
+				}
+			});
 		}
 	}
 
@@ -409,6 +419,7 @@ export class AonDialogMenu extends AonElement {
 						
 					}
 				});
+				
 				d.open();
 			});
 
@@ -457,6 +468,21 @@ export class AonDialogMenu extends AonElement {
 		
 		return li;
 	} 
+	
+	onVisible(element, callback) {
+		new IntersectionObserver((entries, observer) => {
+			entries.forEach(entry => {
+				if (entry.intersectionRatio > 0) {
+					callback(element);
+					observer.disconnect();
+				}
+			});
+		}).observe(element);
+
+		if (!callback) {
+			return new Promise(r => callback = r);
+		}
+	}	
 
 }
 if(!window.customElements.get('aon-dialog-menu')){

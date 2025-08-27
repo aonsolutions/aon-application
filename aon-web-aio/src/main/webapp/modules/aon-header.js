@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts, getAuth, getHelpDatas} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth, getHelpDatas} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -18,12 +18,10 @@ import { AonDialog } from '../components/aon-dialog.js';
 import { AonSearchBox } from '../components/aon-search-box.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
-import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 import { AonParent } from './aon-parent.js';
 import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
-import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
 import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
 
 import {AonStringUtils} from './utils/AonStringUtils.js'
@@ -1014,18 +1012,34 @@ export class AonHeader extends AonElement {
 					helpDatas.forEach(helpData => {
 						const helpFile = helpData.file;
 						const helpTitle = this.decorateMatching(helpData.title, aonHeaderSearchBoxValue);
+						const helpFileName = helpFile.replace(/\.[^/.]+$/, '');
+						
+						let tooltipUrl ;
+						if(helpData.uri.lastIndexOf('#') == -1) {
+							tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?page=0&filename=${helpFile}`);						
+						} else {
+							const helpName =  helpData.uri.substr(helpData.uri.lastIndexOf('#')+1);					
+							tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?name=${helpName}&filename=${helpFileName}`);						
+						}
+
 						helpOptions.push({
 							icon : MATERIAL_ICONS.OPEN_IN_NEW,
-							name: `<span style="text-transform : uppercase;" >${helpTitle}</span><span style="float:right;">${helpFile}</span>`, 
+							title: `${helpTitle} ${helpFile}`,
+							name: `<span style="text-transform : uppercase;" >${helpTitle}</span><span style="float:right;">${helpFileName}</span>`, 
 							fn : () => {
 								window.open(helpData.uri,'_blank');
-							},					
+							},
+							options: [
+								{
+									name: `<div style='width: 50rem;' ><iframe style='height: 16rem; width: 100%; border: none;' src='html/pdfjs/viewer.html?encoded=true&amp;file=${tooltipUrl}#zoom=page-width'><iframe></div>`
+								}
+							],					
 						});
 					});
 					aonHeaderSearchDialogMenu.addMenuOptions(helpOptions);
 					
 					let helpSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Help`);
-					helpSpan.innerText = `${helpDatas.length > 10 ? '>': ''} ${helpDatas.length} ${MSG.HELP}`;
+					helpSpan.innerText = `${helpDatas.length > 10 ? '>': ''} ${helpDatas.length} ${MSG.HELP_RESULTS}`;
 					helpSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 
 				});

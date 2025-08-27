@@ -337,6 +337,7 @@ export const GROUPED = "Agrupadas";//TODO
 
 export const HEADER = MSG.HEADER;
 export const HELP = MSG.HELP;
+export const HELP_RESULTS = MSG.HELP_RESULTS;
 export const HIDE_FIELDS = "Ocultar campos"; //TODO
 export const HIRING = MSG.HIRING;
 export const HIRING_DATA = MSG.HIRING_DATA;
@@ -644,6 +645,7 @@ export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESTORED_DATA = MSG.RESTORED_DATA;
+export const RESULTS = MSG.RESULTS;
 export const RESUME_COSTS = "Resumen Costes"; // TODO
 export const RETENTION_PANEL = 'Panel de IRPF';
 export const RETENTION_PERCENT = "% Retención"; 
