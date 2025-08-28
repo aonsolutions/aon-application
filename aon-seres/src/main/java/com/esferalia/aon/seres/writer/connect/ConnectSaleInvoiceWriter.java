@@ -185,22 +185,19 @@ public class ConnectSaleInvoiceWriter {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
 		}
-		if(SeresUtils.isDia(invoice.getRegistryDocument())) {
-			Double total = CommonUtil.round(invoice.getTotal(), 2);
-			Double quota = CommonUtil.round(invoice.getVatQuota(), 2);
-			Double taxablebase = total-quota;
-			sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(taxablebase, 2));
-			sincc.setBaseImponible_125_(invoice.getTaxableBase());
-			sincc.setImporteBrutoTotalDeFactura_98_(total);
-			sincc.setImporteTotalDeImpuestos_Tasas_176_(quota);
-			sincc.setImporteTotalAPagar_139_(total);
-		} else {
-			sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(invoice.getTaxableBase(), 3));
-			sincc.setBaseImponible_125_(invoice.getTaxableBase());
-			sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(invoice.getTotal(), 3));
-			sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getVatQuota(), 3));
-			sincc.setImporteTotalAPagar_139_(invoice.getTotal());
-		}
+
+		Integer roundPrecission = SeresUtils.getRoundPrecission(invoice.getRegistryDocument());
+		
+		double total = CommonUtil.round(invoice.getTotal(), 2);
+		double quota = CommonUtil.round(invoice.getVatQuota(), roundPrecission);
+		double taxableBase = CommonUtil.round(invoice.getVatQuota(), roundPrecission);
+
+		sincc.setImporteNetoTotalDeFactura_79_(taxableBase);
+		sincc.setBaseImponible_125_(taxableBase);
+		sincc.setImporteBrutoTotalDeFactura_98_(total);
+		sincc.setImporteTotalDeImpuestos_Tasas_176_(quota);
+		sincc.setImporteTotalAPagar_139_(total);
+
 		sincc.setSubvencionesVinculadasAlPrecio_80A_(null);
 		sincc.setTotalIncrementosDelImporteBruto_259_(null);
 		sincc.setTotalMinoracionesDelImporteBruto_260_(null);
@@ -563,8 +560,9 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setUnidadDeMedida(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
 				? "CT" : null);
 		sincl.setUnidadesEntregadas(null);
+		Integer packUnits = detail.getItem().getPackUnits();
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(SeresUtils.isAldi(detail.getInvoice().getRegistryDocument())
-				 ? unitQuantity : null);
+				 ? packUnits.doubleValue() : null);
 		
 		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
@@ -787,9 +785,8 @@ public class ConnectSaleInvoiceWriter {
 		return null;
 	}
 	
-	private Double obtainPackageQuantity(InvoiceDetail detail,
-			String customerPackingTag) {
-		if(detail!=null && customerPackingTag!=null){
+	private double obtainPackageQuantity(InvoiceDetail detail, String customerPackingTag) {
+		if(detail != null && customerPackingTag != null){
 			Item item = detail.getItem();
 			Double quantity = detail.getQuantity();
 			Tag itemPackFormatTag = item.getPackFormatTag();
@@ -797,8 +794,7 @@ public class ConnectSaleInvoiceWriter {
 			Tag itemPackingTag = item.getPackUnitsTag();
 			double itemPackMeasurement = item.getPackMeasurement();
 			int itemPackUnits = item.getPackUnits();
-			if (customerPackingTag != null && itemPackingTag != null
-					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+			if (itemPackingTag != null && itemPackFormatTag != null && itemPackMeasurementTag != null) {
 				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {
 					return quantity;
 				} else if (customerPackingTag.equals(
@@ -811,6 +807,6 @@ public class ConnectSaleInvoiceWriter {
 			}
 			return quantity;
 		}
-		return null;
+		return 0.0;
 	}
 }

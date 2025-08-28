@@ -41,4 +41,7 @@ public class SeresUtils {
 			|| "B56242407".equalsIgnoreCase(document);
 	}
 
+	public static Integer getRoundPrecission(String document) {
+		return isDia(document) || isAldi(document) ? 2 : 3;
+	}
 }
