@@ -1,7 +1,7 @@
 @use '../variables' as v;
 
 $icon-size: v.$px-16;
-$icon-gap : calc(v.$gap / 2);
+$icon-gap : v.$gap-min;
 
 // Submenu que carga dentro de las paginas
 .aonSidenav{
@@ -47,7 +47,7 @@ $icon-gap : calc(v.$gap / 2);
       padding        : v.$px-10 v.$padding v.$px-10 (v.$padding * 2);
       cursor         : pointer;
       display        : flex;
-      gap            : calc(v.$gap / 2);
+      gap            : v.$gap-min;
       justify-content: space-between;
       &>span{
         display    : flex;
@@ -137,7 +137,7 @@ $icon-gap : calc(v.$gap / 2);
         display       : flex;
         flex-direction: column;
         align-items   : center;
-        gap           : calc(v.$gap / 2);
+        gap           : v.$gap-min;
       }
     }
   }

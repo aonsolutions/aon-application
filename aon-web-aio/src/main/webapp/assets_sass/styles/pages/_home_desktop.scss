@@ -1,7 +1,5 @@
 @use '../variables' as v;
 
-$gap-min: calc(v.$gap / 2);
-
 #rootPanel {
   aon-desktop{
     aon-toolbar{
@@ -36,14 +34,14 @@ $gap-min: calc(v.$gap / 2);
             }
             #aonSign{
               display : grid;
-              gap     : $gap-min;
+              gap     : v.$gap-min;
               #aonSignTime{
                 cursor      : default;
                 justify-self: center;
               }
               #aonSignContent{
                 display : grid;
-                gap     : $gap-min;
+                gap     : v.$gap-min;
                 #lastTimeUser{
                   cursor      : default;
                   justify-self: center;

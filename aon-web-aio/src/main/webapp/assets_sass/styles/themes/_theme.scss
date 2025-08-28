@@ -272,7 +272,9 @@
             &:hover{
               background-position : $gradient-turquoise-hover-background-size ;
               aon-icon{
-                background-color : $color-text-button;
+                &::after {
+                  background-color: $color-text-button;
+                }
               }
             }
           }
@@ -286,7 +288,9 @@
             &#aon-menu-button-button, button{
               background: $color-900;
               aon-icon{
-                background-color : $color-text-button;
+                &::after {
+                  background-color : $color-text-button;
+                }
               }
               &:hover{
                 background : $color-500;
@@ -305,8 +309,10 @@
                 &:hover{
                   background-position : $gradient-box-hover-background-size;
                   color               : $color-text-button;
-                  aon-icon{
-                    background-color : $color-text-button;
+                  aon-icon-button aon-icon{
+                    &::after {
+                      background-color : $color-text-button;
+                    }
                   }
                 }
               }
@@ -314,13 +320,37 @@
               .aonAppLi span.submenu-open{
                 background: $color-900;
                 color     : $color-text-button;
-                aon-icon{
-                  background-color : $color-text-button;
+                aon-icon-button aon-icon{
+                  &::after {
+                    background-color : $color-text-button;
+                  }
                 }
                 &:hover{
                   background : $color-500;
                 }
               }
+            }
+          }
+        }
+      }
+    }
+    // Botones dashboard
+    aon-dashboard-button {
+      button{
+        background-color: $color-box;
+        color           : $color-text;
+        aon-icon-button aon-icon{
+          &::after {
+            background-color: $color-text;
+          }
+        }
+      }
+      &:hover{
+        button{
+          color: $color-text-button;
+          aon-icon-button aon-icon{
+            &::after {
+              background-color: $color-text-button;
             }
           }
         }

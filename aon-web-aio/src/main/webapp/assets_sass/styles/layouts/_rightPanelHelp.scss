@@ -23,7 +23,7 @@ aon-right-panel{
               .help-row{
                 display     : flex;
                 align-items : center;
-                gap         : calc(v.$gap / 2);
+                gap         : v.$gap-min;
               }
             }
           }

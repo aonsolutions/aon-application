@@ -6,7 +6,7 @@ $switch-width : v.$px-40;
 aon-switch{
   .aonSwitch{
     display: flex;
-    gap    : calc(v.$gap / 2);
+    gap    : v.$gap-min;
     height : $switch-height;
     .title{
       height     : $switch-height;

@@ -59,7 +59,7 @@
             .note-buttons{
               display        : flex;
               justify-content: center;
-              gap            : calc(v.$gap / 2);
+              gap            : v.$gap-min;
             }
           }
         }

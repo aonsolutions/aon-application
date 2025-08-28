@@ -22,9 +22,13 @@ aon-menu-button{
         padding      : unset;
         display      : flex;
         align-items  : center;
-        aon-icon{
-          width      : v.$px-42;
-          height     : v.$px-42;
+        button aon-icon{
+          width  : v.$px-42;
+          height : v.$px-42;
+          &::after {
+            width  : v.$px-42;
+            height : v.$px-42;
+          }
         }
       }
     }

@@ -1,12 +1,13 @@
 @use '../variables' as v;
 
-$gap-min: calc(v.$gap / 2);
-
 aon-card{
   display       : block;
   border-radius : v.$border-radius;
   
   .aonCardTitle{
+    display        : flex;
+    justify-content: space-between;
+    align-items    : center;
     section{
       padding        : v.$px-12 v.$padding;
       font-family    : v.$font-primary-semibold;
@@ -30,7 +31,7 @@ aon-card{
     .card-footer {
       display    : flex;
       align-items: flex-end;
-      gap        : $gap-min;
+      gap        : v.$gap-min;
     }
     .right-align{
       justify-content: flex-end;
@@ -46,7 +47,7 @@ aon-card{
           padding     : v.$px-8 v.$padding;
           display     : flex;
           align-items : center;
-          gap         : $gap-min;
+          gap         : v.$gap-min;
           cursor      : pointer;
         }
       }

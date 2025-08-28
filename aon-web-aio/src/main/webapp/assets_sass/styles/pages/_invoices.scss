@@ -1,5 +1,7 @@
 @use '../variables' as v;
 
+$size-space: v.$px-300;
+
 #rootPanel {
   aon-invoice-panel{
     #aonInvoiceContent{
@@ -13,16 +15,23 @@
           flex-direction: column;
           gap           : v.$gap;
           #aonInvoiceHomeFastPanel{
-            display  : flex;
-            flex-wrap: wrap;
-            gap      : v.$gap;
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            /*justify-content : center;*/
+            aon-dashboard-button{
+              width: $size-space;
+            }
           }
           #aonInvoiceHomeCardPanel{
             width           : v.$pct-100;
             display         : flex;
             flex-wrap       : wrap;
             gap             : v.$gap;
-            justify-content : center;
+            /*justify-content : center;*/
+            aon-card{
+              width: $size-space;
+            }
           }
         }
       }

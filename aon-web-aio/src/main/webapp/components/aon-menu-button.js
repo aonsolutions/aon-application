@@ -204,7 +204,7 @@ export class AonMenuButton extends AonElement {
       if (this.getDur().isMessenger() || this.getDur().isMessengerManager()) {
         optionsMenu.push({
           name: MSG.CREATE_QUERY,
-          icon: 'concierge-bell',
+          icon: 'message-square',
           fn  : () => {
             let aonMessengerChat = new AonMessenger();
             aonMessengerChat.data = { source: TASK_SOURCE.QUERY };

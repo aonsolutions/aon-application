@@ -284,7 +284,8 @@ $border-radius : $px-6;
 $padding : $px-20;
 
 // GAP GENERAL
-$gap : $px-16;
+$gap    : $px-16;
+$gap-min: calc($gap / 2);
 
 // ALTURA DE LA CABECERA
 $height-cabecera : $px-64;
