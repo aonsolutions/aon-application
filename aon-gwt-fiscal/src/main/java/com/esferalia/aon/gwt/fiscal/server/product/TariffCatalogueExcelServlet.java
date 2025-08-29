@@ -98,7 +98,7 @@ public class TariffCatalogueExcelServlet extends HttpServlet {
 					productTariffs.add(new ProductTariffsEntryExcel()
 						.setCode(product.getCode())
 						.setDescription(product.getName())
-						.setType(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio"))
+						.setType(product.isComposition() ? "Pack" : "Servicio")
 						.setPrice(product.getItem().getPrice())
 						.setTariffs(tariffsMap)
 					);

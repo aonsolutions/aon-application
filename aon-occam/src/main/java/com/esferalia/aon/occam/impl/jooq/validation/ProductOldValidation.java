@@ -315,7 +315,7 @@ public class ProductOldValidation {
 	 */
 	public static BiConsumer<Integer, AONContext> CHECK_INVENTORIABLE = (itemId,ctx) -> {
 		Item item = ItemDAO.get(ctx, f -> f.getIdProperty().eq(itemId));
-		if(!item.getProduct().getInventoriable()) {
+		if(!item.getProduct().isInventoriable()) {
 			throw new AonCoreException("El producto no es inventariable");
 		}	
 	};

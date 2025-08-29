@@ -33,13 +33,13 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.DeliveryDetailValidation;
-import com.esferalia.aon.occam.impl.jooq.validation.DeliveryValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DeliveryDetailDAO {
 	
 	private static final DeliveryDetailPropertiesDAO DELIVERY_DETAIL_PROPERTIES = new DeliveryDetailPropertiesDAO();
 
+	// Private constructor to prevent instantiation
 	private DeliveryDetailDAO() {
 	
 	}
@@ -117,7 +117,6 @@ public class DeliveryDetailDAO {
 	}
 	
 	public static DeliveryDetail save(AONContext ctx, DeliveryDetail detail) {
-		// TODO AUTOCOMPLETE & VALIDATE
 		DeliveryDetailValidation.validate(ctx, detail);
 		
 		return detail.getId() != null

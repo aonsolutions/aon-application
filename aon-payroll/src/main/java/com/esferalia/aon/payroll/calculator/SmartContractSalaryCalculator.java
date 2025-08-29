@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.calculator.TaxCalculator.getMonth;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -1264,8 +1265,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    
 		try {
 			if (expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN)) {
+				expressionContext.setVariable(ALL, 0.00, start, end);
 				quoteCalculator.quote(newBaseCgcMinPayment(start, end, salaryType, WORKED_DAYS), start, end,
-						cgcBase - rawCgcbase);
+						0.00);
 			} else {
 				for (ContextVariable daysVariable : new ContextVariable[] { WORKED_DAYS, NO_HOLIDAYS, LEAVE_DAYS }) {
 					fixBaseCgcMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator, issueDate,
@@ -1285,11 +1287,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    	
 		try {
 			if (expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN)) {
+				expressionContext.setVariable(ALL, 0.00, start, end);
 				quoteCalculator.quote(
 						newBaseMinPayment(start, end, salaryType, baseVariable), 
 						start, 
 						end, 
-						cgcBase - rawCgcbase);
+						0.00);
 				return;
 			}
 			fixBaseMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator, issueDate,

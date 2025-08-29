@@ -10,6 +10,7 @@ import { round } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import * as ACTION from '../actions.js';
 import * as UA from '../../services/userAgentService.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -229,6 +230,23 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
 			table.addCell(product);
 			// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+			let skipDestiny = false;
+			if(!this.isMobile()){
+				table.addRow();
+	
+				let checkBox = new AonCheckbox();
+				checkBox.id = this.id + 'SubstractCheckbox';
+				checkBox.description = 'Restar sin destino.';
+				checkBox.addEventListener(EVENT.CHANGE, () => {
+					skipDestiny = checkBox.isChecked();
+					if(checkBox.isChecked()) {
+						product.setValue("");
+						product.setDisabled(true);
+					} else product.setDisabled(false);
+				});
+				let cell = table.addCell(checkBox);
+				cell.style.padding = '10px';
+			}
 
 			table.addRow();
 			let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
@@ -244,7 +262,8 @@ export class AonMobileDeliveryPackaging extends AonElement {
 					delivery: this.delivery,
 					composition,
 					quantity: quantityBox.getQuantity(),
-					destiny: product.value
+					destiny: product.value,
+					skipDestiny: skipDestiny
 				}).then(() => this.aonDelivery());
 			});
 			d.open();

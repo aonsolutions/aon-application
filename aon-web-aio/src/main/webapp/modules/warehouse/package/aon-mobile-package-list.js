@@ -93,8 +93,10 @@ export class AonMobilePackageList extends AonMobileList {
     }
 
     getRowIconColor(packaging) {
-		if(packaging.item.status === 'DISCONTINUED' || (packaging.delivery && packaging.delivery.id)){
+		if(packaging.delivery && packaging.delivery.id){
             return "red";
+        } else if(packaging.item.status === 'DISCONTINUED') {
+            return "gray";
         } else if(packaging.item.itemComposition && // this.packaging.item.itemComposition.length > 0 &&
 			(packaging.item.itemComposition.length === 0
 				|| packaging.item.itemComposition.length > 1 
@@ -102,7 +104,7 @@ export class AonMobilePackageList extends AonMobileList {
 				|| packaging.item.itemComposition[0].quantity !== packaging.composition[0].quantity)
 		){
             return "orange";
-        } return undefined;
+        } else return "green";
 	}
 
     addItemRow(item, i) {
