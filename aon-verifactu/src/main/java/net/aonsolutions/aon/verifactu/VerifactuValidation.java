@@ -20,7 +20,6 @@ import static https.www2_agenciatributaria_gob_es.static_files.common.internet.d
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -29,6 +28,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -93,56 +93,32 @@ public class VerifactuValidation {
 		}
 	}
 	
-	public static Invoice validate(RegFactuSistemaFacturacion fras, RegistroFacturaType fraType,Invoice invoice ) {
-		ValidatorContext v = new ValidatorContext(fras, fraType, invoice);
-		 
-		CABECERA_OBLIGADO_EMISION
-			.andThen(CABECERA_REPRESENTANTE)
-			.accept(v);
-		v.getAlta()
-			.ifPresent( alta -> 
-				ALTA_FRA_NIF
-					.andThen(ALTA_FRA_FECHA)
-					.andThen(ALTA_FRA_FECHA_EXP)
-					.andThen(ALTA_FRA_NUM_SERIE)
-					.andThen(ALTA_FRA_RECHAZO_PREVIO)
-					.andThen(ALTA_FRA_TIPO_RECTIFICATIVA)
-					.andThen(ALTA_FRA_AGRUPACION_RECTIFICADAS)
-					.andThen(ALTA_FRA_AGRUPACION_SUSTITUIDAS)
-					.andThen(ALTA_FRA_AGRUPACION_RECTIFICACION)
-					.andThen(ALTA_FRA_FECHA_OPERACION)
-					.andThen(ALTA_FRA_SIMPLIFICADA_ART_7273)
-					.andThen(ALTA_FRA_SIN_IDENTIF_DESTINATARIO_ART61D)
-					.andThen(ALTA_FRA_MACRODATO)
-					.andThen(ALTA_FRA_EMITIDA_POR_TERCERO)
-					.andThen(ALTA_FRA_AGRUPACIÓN_TERCERO)
-					.andThen(ALTA_FRA_AGRUPACIÓN_DESTINATARIOS)
-					.andThen(ALTA_FRA_CUPON)
-					.andThen(ALTA_FRA_DESGLOSE)
-					.andThen(ALTA_FRA_DESGLOSE_SUM_SIMPLIFICADAS)
-					.andThen(ALTA_FRA_CUOTA_TOTAL)
-					.andThen(ALTA_FRA_IMPORTE_TOTAL)
-					.andThen(ALTA_FRA_HUELLA)
-					.andThen(ALTA_FRA_SISTEMA_INFORMATICO_ID)
-					.andThen(ALTA_FRA_SISTEMA_INFORMATICO_OTHERS)
-				.accept(v, alta)
-		);
-		return invoice;
-	}
-	
 	// *********************************************************
 	// *************** [VALIDACION CABECERA] *******************
 	// *********************************************************
+	public static void validateHeader(RegFactuSistemaFacturacion message) throws InvoiceCommunicationException {
+		try {
+			CABECERA_OBLIGADO_EMISION
+				.andThen(CABECERA_REPRESENTANTE)
+				.accept(message);
+		} catch( AonCoreException e) {
+			if (e.getCause() instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw e;
+		}
+	}
+	
 	/**
 	 * 1. ObligadoEmision
 	 * 
 	 * 	- El dato Cabecera >> ObligadoEmision >> NIF debe existir y ser válido.
 	 */
-	private static final Consumer<ValidatorContext> CABECERA_OBLIGADO_EMISION = v -> {
-		if (AonStringUtils.isBlank(v.verifactu.getCabecera().getObligadoEmision().getNIF())) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_4104);
-		} else if (!AonDocumentUtil.isValid(v.verifactu.getCabecera().getObligadoEmision().getNIF())) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_4116);
+	private static final Consumer<RegFactuSistemaFacturacion> CABECERA_OBLIGADO_EMISION = v -> {
+		if (AonStringUtils.isBlank(v.getCabecera().getObligadoEmision().getNIF())) {
+			throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4104));
+		} else if (!AonDocumentUtil.isValid(v.getCabecera().getObligadoEmision().getNIF())) {
+			throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4116));
 		}
 	};
 	
@@ -153,31 +129,68 @@ public class VerifactuValidation {
 	 * 	- El NIF del representante/asesor del obligado a expedir (emitir) facturas asociado a la remisión debe estar identificado en la AEAT.
 	 * 
 	 */
-	private static final Consumer<ValidatorContext> CABECERA_REPRESENTANTE = v -> {
-		if (v.verifactu.getCabecera().getRepresentante() != null) {
-			if (AonStringUtils.isBlank(v.verifactu.getCabecera().getRepresentante().getNIF())) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_4105);
-			} else if (!AonDocumentUtil.isValid(v.verifactu.getCabecera().getRepresentante().getNIF())) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_4117);
+	private static final Consumer<RegFactuSistemaFacturacion> CABECERA_REPRESENTANTE = v -> {
+		if (v.getCabecera().getRepresentante() != null) {
+			if (AonStringUtils.isBlank(v.getCabecera().getRepresentante().getNIF())) {
+				throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4105));
+			} else if (!AonDocumentUtil.isValid(v.getCabecera().getRepresentante().getNIF())) {
+				throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4117));
 			}
 		}
 	};
 	
 	
-	/*
+		/*
 
-3.FechaFinVeriFactu
-	-Sólo se permite contenido en sistemas que emite facturas verificables.
-	-La fecha debe tener el formato 31-12-20XX.
-	-El año de la fecha deberá ser igual al año de la fecha del sistema de la AEAT, o al año anterior (para admitir casos excepcionales y puntuales que pudieran darse a finales de un año y comienzo del siguiente).
-4.Incidencia
-	-Sólo se permite contenido en sistemas que emite facturas verificables.
-5.RefRequerimiento
-	-Sólo se permite contenido en sistemas que emiten facturas no verificables.
-	-Obligatorio en sistemas que emiten facturas no verificables.
-	-La referencia del requerimiento deberá existir en la AEAT. 
-*/
+			3.FechaFinVeriFactu
+				-Sólo se permite contenido en sistemas que emite facturas verificables.
+				-La fecha debe tener el formato 31-12-20XX.
+				-El año de la fecha deberá ser igual al año de la fecha del sistema de la AEAT, o al año anterior (para admitir casos excepcionales y puntuales que pudieran darse a finales de un año y comienzo del siguiente).
+			4.Incidencia
+				-Sólo se permite contenido en sistemas que emite facturas verificables.
+			5.RefRequerimiento
+				-Sólo se permite contenido en sistemas que emiten facturas no verificables.
+				-Obligatorio en sistemas que emiten facturas no verificables.
+				-La referencia del requerimiento deberá existir en la AEAT.
+				 
+		*/
 	
+	
+	
+	public static void validate(RegFactuSistemaFacturacion fras, RegistroFacturaType fraType,Invoice invoice ) {
+		ValidatorContext v = new ValidatorContext(fras, fraType, invoice);
+		v.getAlta().ifPresent( alta -> validateAlta(v,alta)); 
+	}
+	
+	
+	private static record AltaContext(ValidatorContext vc, RegistroFacturacionAltaType fra) {}
+	public static void validateAlta(ValidatorContext vc, RegistroFacturacionAltaType alta) {
+			ALTA_FRA_NIF
+			.andThen(ALTA_FRA_FECHA)
+			.andThen(ALTA_FRA_FECHA_EXP)
+			.andThen(ALTA_FRA_NUM_SERIE)
+			.andThen(ALTA_FRA_RECHAZO_PREVIO)
+			.andThen(ALTA_FRA_TIPO_RECTIFICATIVA)
+			.andThen(ALTA_FRA_AGRUPACION_RECTIFICADAS)
+			.andThen(ALTA_FRA_AGRUPACION_SUSTITUIDAS)
+			.andThen(ALTA_FRA_AGRUPACION_RECTIFICACION)
+			.andThen(ALTA_FRA_FECHA_OPERACION)
+			.andThen(ALTA_FRA_SIMPLIFICADA_ART_7273)
+			.andThen(ALTA_FRA_SIN_IDENTIF_DESTINATARIO_ART61D)
+			.andThen(ALTA_FRA_MACRODATO)
+			.andThen(ALTA_FRA_EMITIDA_POR_TERCERO)
+			.andThen(ALTA_FRA_AGRUPACIÓN_TERCERO)
+			.andThen(ALTA_FRA_AGRUPACIÓN_DESTINATARIOS)
+			.andThen(ALTA_FRA_CUPON)
+			.andThen(ALTA_FRA_DESGLOSE)
+			.andThen(ALTA_FRA_DESGLOSE_SUM_SIMPLIFICADAS)
+			.andThen(ALTA_FRA_CUOTA_TOTAL)
+			.andThen(ALTA_FRA_IMPORTE_TOTAL)
+			.andThen(ALTA_FRA_HUELLA)
+			.andThen(ALTA_FRA_SISTEMA_INFORMATICO_ID)
+			.andThen(ALTA_FRA_SISTEMA_INFORMATICO_OTHERS)
+		.accept(new AltaContext(vc,alta));
+	}
 	
 	// *********************************************************
 	// *************** [VALIDACION REGISTRO ALTA] **************
@@ -188,11 +201,11 @@ public class VerifactuValidation {
 	 * 	 - El NIF del campo IDEmisorFactura debe ser el mismo que el del campo NIF
 	 * 	   de la agrupación ObligadoEmision del bloque Cabecera.
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_NIF = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_NIF = a -> {
 		if (AonStringUtils.notEquals(
-			v.verifactu.getCabecera().getObligadoEmision().getNIF(),
-			fra.getIDFactura().getIDEmisorFactura())) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1108);
+			a.vc.verifactu.getCabecera().getObligadoEmision().getNIF(),
+			a.fra.getIDFactura().getIDEmisorFactura())) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1108);
 		}
 	};
 
@@ -201,13 +214,13 @@ public class VerifactuValidation {
 	 * 
 	 * 	 - La FechaExpedicionFactura no podrá ser superior a la fecha actual.
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_FECHA = (v,fra) -> {
-		Date expDate = VerifactuUtils.toDate(fra.getIDFactura().getFechaExpedicionFactura());
+	private static final Consumer<AltaContext> ALTA_FRA_FECHA = a -> {
+		Date expDate = VerifactuUtils.toDate(a.fra.getIDFactura().getFechaExpedicionFactura());
 		if (expDate == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1105);
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1105);
 		}
 		if (AonDateUtils.isAfter(expDate, AonDateUtils.today())) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1112);
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1112);
 		}
 	};
 	
@@ -216,13 +229,13 @@ public class VerifactuValidation {
 	 * 
 	 * - La FechaExpedicionFactura no debe ser inferior a 28/10/2024 (fecha de entrada en vigor de la Orden Ministerial de VERI*FACTU).
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_FECHA_EXP = (v,fra) -> {
-		String fecha = fra.getIDFactura().getFechaExpedicionFactura();
+	private static final Consumer<AltaContext> ALTA_FRA_FECHA_EXP = a -> {
+		String fecha = a.fra.getIDFactura().getFechaExpedicionFactura();
 		if (AonStringUtils.isNotBlank(fecha)) {
 			Date expDate = VerifactuUtils.toDate(fecha);
 			Date limit = AonDateUtils.getDate(2024,9,28);
 			if (expDate.before(limit) ) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1152);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1152);
 			}
 		}
 	};
@@ -232,44 +245,44 @@ public class VerifactuValidation {
 	 *
 	 *	- NumSerieFactura solo puede contener caracteres ASCII del 32 a 126 (caracteres imprimibles)
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_NUM_SERIE = (v,fra) -> {
-		String numSerie = fra.getIDFactura().getNumSerieFactura();
+	private static final Consumer<AltaContext> ALTA_FRA_NUM_SERIE = a -> {
+		String numSerie = a.fra.getIDFactura().getNumSerieFactura();
 		if (!AonStringUtils.isAsciiPrintable(numSerie)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1130);
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1130);
 		}
 	};
 	
 	/*
 	 * 2. RechazoPrevio
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_RECHAZO_PREVIO = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_RECHAZO_PREVIO = a -> {
 		// - Solo podrá incluirse el campo RechazoPrevio con valor "X" si se ha informado el campo Subsanacion y tiene el valor "S".
-		if (fra.getRechazoPrevio() == RechazoPrevioType.X && fra.getSubsanacion() != SubsanacionType.S) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1153);
+		if (a.fra.getRechazoPrevio() == RechazoPrevioType.X && a.fra.getSubsanacion() != SubsanacionType.S) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1153);
 		}
 		// - No podrá informarse el campo RechazoPrevio con valor "S" si no se informa el campo Subsanación o éste tiene el valor "N"
-		if (fra.getRechazoPrevio() == RechazoPrevioType.S && (fra.getSubsanacion() == null || fra.getSubsanacion() == SubsanacionType.N)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1161);
+		if (a.fra.getRechazoPrevio() == RechazoPrevioType.S && (a.fra.getSubsanacion() == null || a.fra.getSubsanacion() == SubsanacionType.N)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1161);
 		}
 	};
 	
 	/*
 	 * 	3. TipoRectificativa
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_TIPO_RECTIFICATIVA = (v,fra) -> {
-		if (fra.getTipoFactura() == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1106);
+	private static final Consumer<AltaContext> ALTA_FRA_TIPO_RECTIFICATIVA = a -> {
+		if (a.fra.getTipoFactura() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1106);
 		} else {
-			if (AonEnumUtils.in(fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
+			if (AonEnumUtils.in(a.fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
 				// - Campo obligatorio si TipoFactura es igual a "R1", "R2", "R3", "R4" o "R5".
-				if (fra.getTipoRectificativa() == null) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1114);
+				if (a.fra.getTipoRectificativa() == null) {
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1114);
 				}
 			} else {
 				// - Solo podrá incluirse el campo TipoRectificativa si el valor del campo 
 				//	 TipoFactura es igual a "R1", "R2", "R3", "R4" o "R5"
-				if (fra.getTipoRectificativa() != null) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1115);
+				if (a.fra.getTipoRectificativa() != null) {
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1115);
 				}
 			}
 		}
@@ -278,52 +291,52 @@ public class VerifactuValidation {
 	/*
 	 * 4. Agrupación FacturasRectificadas
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_RECTIFICADAS = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACION_RECTIFICADAS = a -> {
 		// - Sólo podrá incluirse esta agrupación (no es obligatoria) si TipoFactura es igual a "R1", "R2","R3", "R4" o "R5". 
-		if (fra.getFacturasRectificadas() != null && !AonEnumUtils.in(fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1117);
+		if (a.fra.getFacturasRectificadas() != null && !AonEnumUtils.in(a.fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1117);
 		}
 	};
 	
 	/*
 	 * 5. Agrupación FacturasSustituidas
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_SUSTITUIDAS = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACION_SUSTITUIDAS = a -> {
 		// - Sólo podrá incluirse esta agrupación (no es obligatoria) cuando el campo TipoFactura="F3". 
-		if (fra.getFacturasSustituidas() != null && fra.getTipoFactura() != F_3) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1116);
+		if (a.fra.getFacturasSustituidas() != null && a.fra.getTipoFactura() != F_3) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1116);
 		}
 	};
 	
 	/*
 	 * 6. Agrupación ImporteRectificacion
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACION_RECTIFICACION = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACION_RECTIFICACION = a -> {
 		// - Obligatorio si TipoRectificativa = "S".
-		if (fra.getImporteRectificacion() == null && fra.getTipoRectificativa() == ClaveTipoRectificativaType.S) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1118);
+		if (a.fra.getImporteRectificacion() == null && a.fra.getTipoRectificativa() == ClaveTipoRectificativaType.S) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1118);
 		}
 		// - Sólo deberá incluirse esta agrupación si el campo TipoRectificativa = "S".
-		if (fra.getImporteRectificacion() != null && fra.getTipoRectificativa() != ClaveTipoRectificativaType.S) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1119);
+		if (a.fra.getImporteRectificacion() != null && a.fra.getTipoRectificativa() != ClaveTipoRectificativaType.S) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1119);
 		}
 	};
 	
 	/*
 	 * 7. FechaOperacion
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_FECHA_OPERACION = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_FECHA_OPERACION = a -> {
 		// - La FechaOperacion no debe ser inferior a la fecha actual menos veinte años y no debe ser superior al año siguiente de la fecha actual.
 		Date today = new Date();
-		Date fechaOperacion = VerifactuUtils.toDate(fra.getFechaOperacion());
-		if (AonStringUtils.isNotBlank(fra.getFechaOperacion())) {
+		Date fechaOperacion = VerifactuUtils.toDate(a.fra.getFechaOperacion());
+		if (AonStringUtils.isNotBlank(a.fra.getFechaOperacion())) {
 			Date minDate = AonDateUtils.addYears(today, -20);
 			if (fechaOperacion.before(minDate)) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1134);	
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1134);	
 			}
 			Date maxDate = AonDateUtils.addYears(today, 1);
 			if (fechaOperacion.after(maxDate)) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1125);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1125);
 			}
 		}
 	};
@@ -331,69 +344,69 @@ public class VerifactuValidation {
 	/*
 	 * 8. FacturaSimplificadaArt7273
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_SIMPLIFICADA_ART_7273 = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_SIMPLIFICADA_ART_7273 = a -> {
 		// - El campo FacturaSimplificadaArticulos7273 solo acepta valores N o S.
-		if ( fra.getFacturaSimplificadaArt7273() == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1136);
+		if ( a.fra.getFacturaSimplificadaArt7273() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1136);
 		}
 		//	- Sólo se podrá rellenar con "S" si TipoFactura="F1" o "F3" o "R1" o "R2" o "R3" o "R4".
-		if ( fra.getFacturaSimplificadaArt7273() == SimplificadaCualificadaType.S
-			&& AonEnumUtils.notIn(fra.getTipoFactura(), F_1, F_3, R_1, R_2, R_3, R_4)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1183);
+		if ( a.fra.getFacturaSimplificadaArt7273() == SimplificadaCualificadaType.S
+			&& AonEnumUtils.notIn(a.fra.getTipoFactura(), F_1, F_3, R_1, R_2, R_3, R_4)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1183);
 		}
 	};
 
 	/*
 	 * 9. FacturaSinIdentifDestinatarioArt61d
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_SIN_IDENTIF_DESTINATARIO_ART61D = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_SIN_IDENTIF_DESTINATARIO_ART61D = a -> {
 		// El campo FacturaSinIdentifDestinatarioArt61d solo acepta valores S o N.
-		if (fra.getFacturaSinIdentifDestinatarioArt61D() == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1184);
+		if (a.fra.getFacturaSinIdentifDestinatarioArt61D() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1184);
 		}
 		// - Sólo se podrá rellenar con "S" si TipoFactura="F2" o "R5".
-		if (fra.getFacturaSinIdentifDestinatarioArt61D() == CompletaSinDestinatarioType.S
-			&& AonEnumUtils.notIn(fra.getTipoFactura(), F_2, R_5)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1185);
+		if (a.fra.getFacturaSinIdentifDestinatarioArt61D() == CompletaSinDestinatarioType.S
+			&& AonEnumUtils.notIn(a.fra.getTipoFactura(), F_2, R_5)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1185);
 		}
 	};
 
 	/*
 	 * 10. Macrodato
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_MACRODATO = (v,fra) -> {
-		double d = VerifactuUtils.todouble( fra.getImporteTotal());
+	private static final Consumer<AltaContext> ALTA_FRA_MACRODATO = a -> {
+		double d = VerifactuUtils.todouble( a.fra.getImporteTotal());
 		// El campo Macrodato solo acepta valores N o S.
-		if (fra.getMacrodato() == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1137);
+		if (a.fra.getMacrodato() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1137);
 		}
 		// - El campo Macrodato solo debe ser informado con valor S si el valor de ImporteTotal es igual o superior a +-100.000.000
 		if ( AonMathUtils.absRounded(d) < 100000000.00
-		  && fra.getMacrodato() == MacrodatoType.S )  {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1138);
+		  && a.fra.getMacrodato() == MacrodatoType.S )  {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1138);
 		}
 	};
 	
 	/*
 	 * 11. EmitidaPorTerceroODestinatario
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_EMITIDA_POR_TERCERO = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_EMITIDA_POR_TERCERO = a -> {
 		// "El campo EmitidaPorTerceroODestinatario solo acepta valores T o D."),
-		if ( fra.getEmitidaPorTerceroODestinatario() == null) {
-			// v.addError(InvoiceCommunicationError.VERIFACTU_1151);
-			if ( fra.getTercero() != null) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1155);
+		if ( a.fra.getEmitidaPorTerceroODestinatario() == null) {
+			// a.vc.addError(InvoiceCommunicationError.VERIFACTU_1151);
+			if ( a.fra.getTercero() != null) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1155);
 			}
 		} else {
 			// - Si es igual a "T", el bloque Tercero será de cumplimentación obligatoria.
-			if (fra.getEmitidaPorTerceroODestinatario() == TercerosODestinatarioType.T) {
-				if ( fra.getTercero() == null ) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1186);
+			if (a.fra.getEmitidaPorTerceroODestinatario() == TercerosODestinatarioType.T) {
+				if ( a.fra.getTercero() == null ) {
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1186);
 				}
 			} else {
 				//- Solo podrá cumplimentarse si EmitidaPorTerceroODestinatario es "T".
-				if ( fra.getTercero() != null ) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1187);
+				if ( a.fra.getTercero() != null ) {
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1187);
 				}
 			}
 		}
@@ -402,22 +415,22 @@ public class VerifactuValidation {
 	/*
 	 * 12. Agrupación Tercero
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACIÓN_TERCERO = (v,fra) -> {
-		PersonaFisicaJuridicaType tercero = fra.getTercero();
-		if ( fra.getTercero() != null ) {
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACIÓN_TERCERO = a -> {
+		PersonaFisicaJuridicaType tercero = a.fra.getTercero();
+		if ( a.fra.getTercero() != null ) {
 			//- Si se identifica mediante NIF, el NIF debe estar identificado y ser distinto 
 			//  del NIF del campo IDEmisorFactura de la agrupación IDFactura.
 			if (AonStringUtils.isNotBlank(tercero.getNIF())) {
-				if ( AonStringUtils.equals(tercero.getNIF(), fra.getIDFactura().getIDEmisorFactura())) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1188);
+				if ( AonStringUtils.equals(tercero.getNIF(), a.fra.getIDFactura().getIDEmisorFactura())) {
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1188);
 				}
 				if ( tercero.getIDOtro() != null) {
 					//- Si se cumplimenta NIF, no deberá existir la agrupación IDOtro y viceversa, pero es 
 					//		obligatorio que se cumplimente uno de los dos.
-					v.addError(InvoiceCommunicationError.VERIFACTU_1211);
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1211);
 				}
 			} else if ( tercero.getIDOtro() != null) {
-				checkIDOtroNo07( v, fra, tercero.getIDOtro() );
+				checkIDOtroNo07( a.vc, a.fra, tercero.getIDOtro() );
 			}
 		}
 	};
@@ -425,47 +438,47 @@ public class VerifactuValidation {
 	/*
 	 * 13. Agrupación Destinatarios
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_AGRUPACIÓN_DESTINATARIOS = (v,fra) -> {
-		if (AonEnumUtils.in(fra.getTipoFactura(), F_2, R_5)) {
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACIÓN_DESTINATARIOS = a -> {
+		if (AonEnumUtils.in(a.fra.getTipoFactura(), F_2, R_5)) {
 			// - Si TipoFactura es "F2" o "R5", la agrupación Destinatarios no puede estar cumplimentada.
-			if (fra.getDestinatarios() != null && AonCollectionUtils.isNotEmpty(fra.getDestinatarios().getIDDestinatario())) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1190);
+			if (a.fra.getDestinatarios() != null && AonCollectionUtils.isNotEmpty(a.fra.getDestinatarios().getIDDestinatario())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1190);
 			}
 		} else {
 			// - Si TipoFactura es "F1", "F3", "R1", "R2", "R3" o "R4", la agrupación Destinatarios tiene que estar cumplimentada, con al menos un destinatario.
-			if (fra.getDestinatarios() == null || AonCollectionUtils.isEmpty(fra.getDestinatarios().getIDDestinatario())) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1189);
+			if (a.fra.getDestinatarios() == null || AonCollectionUtils.isEmpty(a.fra.getDestinatarios().getIDDestinatario())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1189);
 			} else {
-				for ( PersonaFisicaJuridicaType destinatario : fra.getDestinatarios().getIDDestinatario() ) {
+				for ( PersonaFisicaJuridicaType destinatario : a.fra.getDestinatarios().getIDDestinatario() ) {
 					// - Si se cumplimenta NIF, no deberá existir la agrupación IDOtro y viceversa, pero es 
 					// 	 obligatorio que se cumplimente uno de los dos.
 					if ((AonStringUtils.isNotBlank(destinatario.getNIF()) && destinatario.getIDOtro() != null ) 
 					 || (AonStringUtils.isBlank(destinatario.getNIF()) && destinatario.getIDOtro() == null )) {
-						v.addError(InvoiceCommunicationError.VERIFACTU_1239);
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1239);
 					} else if (AonStringUtils.isNotBlank(destinatario.getNIF())) {
 						if (!AonDocumentUtil.isValid(destinatario.getNIF())) {
-							v.addError(InvoiceCommunicationError.VERIFACTU_1123);	
+							a.vc.addError(InvoiceCommunicationError.VERIFACTU_1123);	
 						}
 					} else if (destinatario.getIDOtro() != null) {
 						IDOtroType idOtro = destinatario.getIDOtro();
 						// - Si el campo IDType = "07" (No censado), el campo CodigoPais debe ser "ES".					
 						if (AonStringUtils.equals("07", idOtro.getIDType())) {
 							if (!isSpain(idOtro.getCodigoPais())) {
-								v.addError(InvoiceCommunicationError.VERIFACTU_1126);
+								a.vc.addError(InvoiceCommunicationError.VERIFACTU_1126);
 							}
 						} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
 							// - Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
 							// - Cuando uno o varios destinatarios se identifiquen a través de la agrupación IDOtro e IDType sea "02", se validará que el campo identificador se ajuste a la estructura de NIF-IVA de alguno de los Estados Miembros y debe estar identificado. Ver nota (1).
-							checkIDOtro02(v, fra, idOtro);
+							checkIDOtro02(a.vc, a.fra, idOtro);
 						} else {
 							if (idOtro.getCodigoPais() == null) {
 								//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
-								v.addError(InvoiceCommunicationError.VERIFACTU_1111);
+								a.vc.addError(InvoiceCommunicationError.VERIFACTU_1111);
 							} else {
 								// - Cuando uno o varios destinatarios se identifiquen a través de la agrupación IDOtro 
 								//   y CodigoPais sea "ES", se validará que el campo IDType sea "03" o "07".
 								if (AonStringUtils.equals(idOtro.getIDType(),"03") && !isSpain(idOtro.getCodigoPais())) {
-									v.addError(InvoiceCommunicationError.VERIFACTU_1126);
+									a.vc.addError(InvoiceCommunicationError.VERIFACTU_1126);
 								}
 							}
 						}
@@ -479,10 +492,10 @@ public class VerifactuValidation {
 	/*
 	 * 14. Cupón
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_CUPON = (v,fra) -> {
+	private static final Consumer<AltaContext> ALTA_FRA_CUPON = a -> {
 		// - Sólo se podrá rellenar con "S" (no es obligatorio) si TipoFactura = "R5" o "R1"
-		if (fra.getCupon() == CuponType.S && AonEnumUtils.notIn(fra.getTipoFactura(), R_1, R_5)) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1157);
+		if (a.fra.getCupon() == CuponType.S && AonEnumUtils.notIn(a.fra.getTipoFactura(), R_1, R_5)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1157);
 		}
 	};
 
@@ -800,7 +813,7 @@ public class VerifactuValidation {
 	private static final Consumer<DegloseContext> ALTA_FRA_DESGLOSE_CLAVE_REGIMEN_07_CRITERIO_DE_CAJA = ctx -> {
 		if ( AonStringUtils.equals("07",ctx.det.getClaveRegimen())
 			&& isIVAoIGIC(ctx.det.getImpuesto())
-			&& (AonEnumUtils.in(ctx.det.getCalificacionOperacion(), S_1, N_1, N_2) 
+			&& (AonEnumUtils.in(ctx.det.getCalificacionOperacion(), S_2, N_1, N_2) 
 			 || AonEnumUtils.in(ctx.det.getOperacionExenta(), E_2, E_3, E_4, E_5))) {
 			ctx.v.addError(InvoiceCommunicationError.VERIFACTU_1203);
 		}
@@ -936,19 +949,19 @@ public class VerifactuValidation {
 	 * 			campo FacturaSinIdentifDestinatarioArticulo61d = "S".
 	 * 
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_DESGLOSE_SUM_SIMPLIFICADAS = (v,fra) -> {
-		if ( fra.getTipoFactura() == F_2
-		 && (fra.getNumRegistroAcuerdoFacturacion() == null || fra.getFacturaSinIdentifDestinatarioArt61D() != CompletaSinDestinatarioType.S)) {
+	private static final Consumer<AltaContext> ALTA_FRA_DESGLOSE_SUM_SIMPLIFICADAS = a -> {
+		if ( a.fra.getTipoFactura() == F_2
+		 && (a.fra.getNumRegistroAcuerdoFacturacion() == null || a.fra.getFacturaSinIdentifDestinatarioArt61D() != CompletaSinDestinatarioType.S)) {
 			double sum = 0.0;
-			for ( DetalleType det : fra.getDesglose().getDetalleDesglose() ) {
+			for ( DetalleType det : a.fra.getDesglose().getDetalleDesglose() ) {
 				double base = VerifactuUtils.todouble(det.getBaseImponibleOimporteNoSujeto());
 				double quot = VerifactuUtils.todouble(det.getCuotaRepercutida());
 				sum = AonMathUtils.round(sum + base + quot);
 			}
 			sum = AonMathUtils.absRounded(sum);
 			if (sum > 3010.0) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1150);
-			};
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1150);
+			}
 		}
 	};
 	
@@ -959,10 +972,10 @@ public class VerifactuValidation {
 	 * 		  generará rechazo), admitiéndose un margen de error de +/- 10,00 euros.
 	 * 
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_CUOTA_TOTAL = (v,fra) -> {
-		double qTotal = VerifactuUtils.todouble(fra.getCuotaTotal());
+	private static final Consumer<AltaContext> ALTA_FRA_CUOTA_TOTAL = a -> {
+		double qTotal = VerifactuUtils.todouble(a.fra.getCuotaTotal());
 		double sum = 0.0;
-		for ( DetalleType det : fra.getDesglose().getDetalleDesglose() ) {
+		for ( DetalleType det : a.fra.getDesglose().getDetalleDesglose() ) {
 			double q1 = VerifactuUtils.todouble(det.getCuotaRepercutida());
 			double q2 = VerifactuUtils.todouble(det.getCuotaRecargoEquivalencia());
 			sum = AonMathUtils.round(sum + q1 + q2);
@@ -970,8 +983,8 @@ public class VerifactuValidation {
 		sum = AonMathUtils.absRounded(sum);
 		double gap = AonMathUtils.absRounded(qTotal - sum);
 		if (gap > 10.0) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1216);
-		};
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1216);
+		}
 	};
 	
 	/*
@@ -982,13 +995,13 @@ public class VerifactuValidation {
 	 * 
 	 * 		-Esta validación no se aplicará cuando ClaveRegimen sea "03", "05", "06", "08" o "09".
 	 */
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_IMPORTE_TOTAL = (v,fra) -> {
-		if (AonCollectionUtils.stream(fra.getDesglose().getDetalleDesglose())
+	private static final Consumer<AltaContext> ALTA_FRA_IMPORTE_TOTAL = a -> {
+		if (AonCollectionUtils.stream(a.fra.getDesglose().getDetalleDesglose())
 				.noneMatch( d -> AonStringUtils.in(d.getClaveRegimen(), "03", "05", "06", "08", "09"))) { 
 		
-			double total = VerifactuUtils.todouble(fra.getImporteTotal());
+			double total = VerifactuUtils.todouble(a.fra.getImporteTotal());
 			double sum = 0.0;
-			for ( DetalleType det : fra.getDesglose().getDetalleDesglose() ) {
+			for ( DetalleType det : a.fra.getDesglose().getDetalleDesglose() ) {
 			
 				double b  = VerifactuUtils.todouble(det.getBaseImponibleOimporteNoSujeto());
 				double q1 = VerifactuUtils.todouble(det.getCuotaRepercutida());
@@ -998,7 +1011,7 @@ public class VerifactuValidation {
 			sum = AonMathUtils.absRounded(sum);
 			double gap = AonMathUtils.absRounded(total - sum);
 			if (gap > 10.0) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1210);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1210);
 			}
 		}
 	};
@@ -1007,10 +1020,10 @@ public class VerifactuValidation {
 	 * 15. Agrupación Desglose / DetalleDesglose.
 	 * 
 	*/
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_DESGLOSE = (v,fra) -> {
-			List<DetalleType> list = AonObjectUtils.ifNotNullGet( fra.getDesglose(), d -> d.getDetalleDesglose());
+	private static final Consumer<AltaContext> ALTA_FRA_DESGLOSE = a -> {
+			List<DetalleType> list = AonObjectUtils.ifNotNullGet( a.fra.getDesglose(), d -> d.getDetalleDesglose());
 			AonCollectionUtils.stream( list )
-				.map(det -> new DegloseContext(v, fra, det) )
+				.map(det -> new DegloseContext(a.vc, a.fra, det) )
 				.forEach( c -> 
 					ALTA_FRA_DESGLOSE_TIPOIMPOSITIVO
 						.andThen(ALTA_FRA_DESGLOSE_BASE_IMPONIBLE_A_COSTE)
@@ -1041,10 +1054,10 @@ public class VerifactuValidation {
 	 * 
 	*/
 	private static final Pattern SHA256_PATTERN = Pattern.compile("^[A-F0-9]{64}$");
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_HUELLA = (v,fra) -> {
-		String huella = fra.getHuella();
+	private static final Consumer<AltaContext> ALTA_FRA_HUELLA = a -> {
+		String huella = a.fra.getHuella();
 	    if (huella == null || !SHA256_PATTERN.matcher(huella).matches()) {
-	    	v.addError(InvoiceCommunicationError.VERIFACTU_2000);
+	    	a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);
 	    }
 	};
 	
@@ -1061,47 +1074,47 @@ public class VerifactuValidation {
 	 * 		- No se admite el tipo de identificación IDType "07" ("No censado").
 	 */
 
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_SISTEMA_INFORMATICO_ID = (v,fra) -> {
-		SistemaInformaticoType sis = fra.getSistemaInformatico();
+	private static final Consumer<AltaContext> ALTA_FRA_SISTEMA_INFORMATICO_ID = a -> {
+		SistemaInformaticoType sis = a.fra.getSistemaInformatico();
 		if (sis == null) {
-			v.addError(InvoiceCommunicationError.VERIFACTU_1179);
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1179);
 		} else {
 			if (AonStringUtils.isNotBlank(sis.getNIF()) && sis.getIDOtro() != null) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1223);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
 			} else if (AonStringUtils.isBlank(sis.getNIF()) && sis.getIDOtro() == null) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1223);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
 			} else if (AonStringUtils.isNotBlank(sis.getNIF())) {
 				if (!AonDocumentUtil.isValid(sis.getNIF())) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1123);	
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1123);	
 				}
 			} else if (sis.getIDOtro() != null) {
 				IDOtroType idOtro = sis.getIDOtro();
 				if (AonStringUtils.equals("07", idOtro.getIDType())) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1221);
+					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
 				} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
 					if (idOtro.getCodigoPais() != null) {
 						if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
 							if (!AonDocumentUtil.isValidComunitaryCode(idOtro.getCodigoPais().value(), idOtro.getID())) {
-								v.addError(InvoiceCommunicationError.VERIFACTU_1221);						
+								a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);						
 							} else {
 								String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
 								if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
-									v.addError(InvoiceCommunicationError.VERIFACTU_1221);			
+									a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);			
 								}
 							}
 						} else {
-							v.addError(InvoiceCommunicationError.VERIFACTU_1221);
+							a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
 						}
 					}
 				} else {
 					if (idOtro.getCodigoPais() == null) {
 						//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
-						v.addError(InvoiceCommunicationError.VERIFACTU_1221);
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
 					} else {
 						//- Si se identifica a través de la agrupación IDOtro y CodigoPais sea "ES", se validará 
 						//		que el campo IDType sea "03".
 						if (isSpain(idOtro.getCodigoPais()) && AonStringUtils.notEquals(idOtro.getIDType(),"03")) {
-							v.addError(InvoiceCommunicationError.VERIFACTU_1221);
+							a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
 						}
 					}
 				}
@@ -1118,20 +1131,20 @@ public class VerifactuValidation {
 	 * 		- El campo TipoUsoPosibleMultiOT es obligatorio y debe tener contenido.
 	 */
 	private static final Pattern PATRON = Pattern.compile("^[A-MO-Z0-9]{2}$");
-	private static final BiConsumer<ValidatorContext,RegistroFacturacionAltaType> ALTA_FRA_SISTEMA_INFORMATICO_OTHERS = (v,fra) -> {
-		SistemaInformaticoType sis = fra.getSistemaInformatico();
+	private static final Consumer<AltaContext> ALTA_FRA_SISTEMA_INFORMATICO_OTHERS = a -> {
+		SistemaInformaticoType sis = a.fra.getSistemaInformatico();
 		if (sis != null) {
 			if (sis.getIdSistemaInformatico() == null || !PATRON.matcher(sis.getIdSistemaInformatico()).matches()) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1177);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1177);
 			}
 			if (AonStringUtils.isBlank(sis.getNombreSistemaInformatico())) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1220);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1220);
 			}
 			if (sis.getTipoUsoPosibleSoloVerifactu() == null ) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1212);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1212);
 			}
 			if (sis.getTipoUsoPosibleMultiOT() == null ) {
-				v.addError(InvoiceCommunicationError.VERIFACTU_1213);
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1213);
 			}
 		}
 	};
@@ -1159,21 +1172,21 @@ public class VerifactuValidation {
 	// ************ [VALIDACION REGISTRO ANULACION] ************
 	// *********************************************************
 
-	private static void checkIDOtroNo07(ValidatorContext v, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
+	private static void checkIDOtroNo07(ValidatorContext vc, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
 		if (AonStringUtils.equals("07", idOtro.getIDType())) {
 			//- No se admite el tipo de identificación IDType "07" (No censado). 
-			v.addError(InvoiceCommunicationError.VERIFACTU_1222);
+			vc.addError(InvoiceCommunicationError.VERIFACTU_1222);
 		} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
-				checkIDOtro02(v, fra, idOtro);
+				checkIDOtro02(vc, fra, idOtro);
 		} else {
 			if (idOtro.getCodigoPais() == null) {
 				//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
-				v.addError(InvoiceCommunicationError.VERIFACTU_1111);
+				vc.addError(InvoiceCommunicationError.VERIFACTU_1111);
 			} else {
 				//- Si se identifica a través de la agrupación IDOtro y CodigoPais sea "ES", se validará 
 				//		que el campo IDType sea "03".
 				if (isSpain(idOtro.getCodigoPais()) && AonStringUtils.notEquals(idOtro.getIDType(),"03")) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1126);
+					vc.addError(InvoiceCommunicationError.VERIFACTU_1126);
 				}
 			}
 		}
@@ -1208,24 +1221,25 @@ public class VerifactuValidation {
 		return country != null && AonStringUtils.equals("ES", country.value());
 	}
 	
-	private static void checkIDOtro02(ValidatorContext v, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
+	private static void checkIDOtro02(ValidatorContext vc, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
 		if (idOtro.getCodigoPais() != null) {
 			if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
-				//- Cuando el tercero se identifique a través de la agrupación IDOtro e IDType sea "02", 
-				//		se validará que el campo identificador ID se ajuste a la estructura de NIF-IVA de alguno 
-				//		de los Estados Miembros y debe estar identificado. Ver nota (1).
-				if (!AonDocumentUtil.isValidComunitaryCode(idOtro.getCodigoPais().value(), idOtro.getID())) {
-					v.addError(InvoiceCommunicationError.VERIFACTU_1222);						
+				// - El campo CodigoPais indicado no coincide con los dos primeros d\u00EDgitos del identificador.
+				String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
+				if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
+					vc.addError(InvoiceCommunicationError.VERIFACTU_1122);			
 				} else {
-					// - El campo CodigoPais indicado no coincide con los dos primeros d\u00EDgitos del identificador.
-					String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
-					if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
-						v.addError(InvoiceCommunicationError.VERIFACTU_1122);			
+					//- Cuando el tercero se identifique a través de la agrupación IDOtro e IDType sea "02", 
+					//		se validará que el campo identificador ID se ajuste a la estructura de NIF-IVA de alguno 
+					//		de los Estados Miembros y debe estar identificado. Ver nota (1).
+					String doc = AonStringUtils.substring(idOtro.getID(), 2);
+					if (!AonDocumentUtil.isValidComunitaryCode(idOtro.getCodigoPais().value(), doc )) {
+						vc.addError(InvoiceCommunicationError.VERIFACTU_1222);						
 					}
 				}
 			} else {
 				// - El valor del campo CodigoPais es incorrecto.
-				v.addError(InvoiceCommunicationError.VERIFACTU_1101);
+				vc.addError(InvoiceCommunicationError.VERIFACTU_1101);
 			}
 		}
 	}

@@ -84,8 +84,7 @@ public class InvoiceCommunicator {
 
 					@Override
 					public void visitVERIFACTU() throws InvoiceCommunicationException  {
-						DataResponse response = VERIFACTU.accept(ctx,cc);
-						cc.setDataResponse(response);
+						VERIFACTU.accept(ctx,cc);
 					}
 				});
 			}

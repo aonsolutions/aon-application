@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
@@ -221,16 +222,14 @@ enum ClaveTipoFactura {
 			destinatario.setNIF(invoice.getRegistryDocument().replace(" ", ""));	
 		} else {
 			IDOtroType other = new IDOtroType();
-			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
-				other.setCodigoPais(CountryType2.GB);
-			} else other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+			other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
 			other.setIDType(invoice.isIntracommunity() 
 					? VerifactuIDType.NIF_IVA.getName()
 					: VerifactuIDType.OTRO.getName());
 			
 			String doc = invoice.getRegistryDocument().replace(" ", "");
-			if(!doc.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
-				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+			if(AonStringUtils.notEquals(doc.substring(0,2), invoice.getRegistryDocumentCountry().getIso2())) {
+				boolean isGrecia = Country.GR == invoice.getRegistryDocumentCountry();
 				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
 				doc = countryDocument + doc;
 			}

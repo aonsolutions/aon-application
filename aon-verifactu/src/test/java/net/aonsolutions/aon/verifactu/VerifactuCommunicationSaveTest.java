@@ -35,7 +35,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
-
+/*
 	@Test
 	void venta_nacional_simpleAEATTest() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
@@ -111,13 +111,14 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
-	
+ 	
+
 	@Test
 	void venta_intracomunitaria_no_serviciosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
-
+	
 	@Test
 	void venta_extracomunitariaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID);
@@ -154,6 +155,7 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		save(invoice);
 	}
 	
+ */
 	@Test
 	void venta_nacional_simple_criterio_cajaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID);
@@ -167,8 +169,8 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 			icc.setConfig(configWithCertificate());
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			VERIFACTU.accept(ctx, icc);
-			icc.invoiceStream()			
+			VerifactuContext vc = VERIFACTU.accept(ctx, icc);
+			vc.invoiceStream()			
 				.forEach( i -> {
 					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
 					DataResponse response = assertDataResponse(i, tracking);

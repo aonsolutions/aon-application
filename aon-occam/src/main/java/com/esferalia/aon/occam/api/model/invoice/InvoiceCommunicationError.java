@@ -34,6 +34,7 @@ public enum InvoiceCommunicationError {
 	AON_0021("0021", "Error al obtener el certificado."),
 	AON_0022("0022", "El certificado o la contrase\u00F1a no son correctos."),
 	AON_0023("0023", "El certificado no existe."),
+	AON_0024("0024", "Se han producido errores en la validaci\u00F3n VERIFACTU."),
 	
 
 	// TODO REFACTOR

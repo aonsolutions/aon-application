@@ -60,7 +60,7 @@ public class VERIFACTU {
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
 	
-	public static DataResponse accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
 		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
 			.setBlockchain( getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER)
@@ -68,7 +68,7 @@ public class VERIFACTU {
 		return accept(ctx, vc);
 	}
 	
-	private static DataResponse accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		check(vc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		vc.setRequest( request );
@@ -79,7 +79,7 @@ public class VERIFACTU {
 		return saveAccept( ctx, vc );
 	}
 
-	private static DataResponse saveAccept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext saveAccept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
 		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
 		for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {		
@@ -106,7 +106,7 @@ public class VERIFACTU {
 				});
 			}
 		}
-		return dataResponse;
+		return vc.setDataResponse(dataResponse);
 	}
 	
 	// **************************************************************

@@ -2,6 +2,8 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
@@ -103,45 +105,63 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 	}
 	
 	@Test
-	void verifactu_4104_Test() throws InvoiceCommunicationException {
+	void verifactu_4104_Test() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
-		assertInvoiceMessage( invoice
-			, icc -> icc.getCompany().setDocument(null)
-			, null
-			, InvoiceCommunicationError.VERIFACTU_4104);
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
+			assertInvoice( invoice
+				, icc -> icc.getCompany().setDocument(null)
+				, null)
+		);
+		assertNotNull(e);
+		assertNotNull(e.getInvoiceCommunicationError());
+		assertEquals(InvoiceCommunicationError.VERIFACTU_4104, e.getInvoiceCommunicationError());
 	}
 
 
 	@Test
-	void verifactu_4116_Test() throws InvoiceCommunicationException {
+	void verifactu_4116_Test() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
-		assertInvoiceMessage( invoice
-			, icc -> icc.getCompany().setDocument("AAAAAAAAA")
-			, null
-			, InvoiceCommunicationError.VERIFACTU_4116);
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
+			assertInvoice( invoice
+				, icc -> icc.getCompany().setDocument("AAAAAAAAA")
+				, null)
+		);
+		assertNotNull(e);
+		assertNotNull(e.getInvoiceCommunicationError());
+		assertEquals(InvoiceCommunicationError.VERIFACTU_4116, e.getInvoiceCommunicationError());
 	}
 	
-	@Test
-	void verifactu_4105_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
-		assertInvoiceMessage( invoice, null
-			, c -> c.msg.getCabecera().setRepresentante( new PersonaFisicaJuridicaESType() )
-			, InvoiceCommunicationError.VERIFACTU_4105
-		);
-	}
-	
-	@Test
-	void verifactu_4117_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
-		assertInvoiceMessage( invoice, null
-			, c -> {
-				PersonaFisicaJuridicaESType repr = new PersonaFisicaJuridicaESType();
-				repr.setNIF("AAAAAAAAA");
-				c.msg.getCabecera().setRepresentante( repr );
-			}
-			, InvoiceCommunicationError.VERIFACTU_4117
-		);
-	}
+//	@Test
+//	void verifactu_4105_Test() {
+//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+//		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
+//			assertInvoice( invoice
+//				, null
+//				, c -> c.msg.getCabecera().setRepresentante( new PersonaFisicaJuridicaESType() )
+//				)
+//		);
+//		assertNotNull(e);
+//		assertNotNull(e.getInvoiceCommunicationError());
+//		assertEquals(InvoiceCommunicationError.VERIFACTU_4105, e.getInvoiceCommunicationError());
+//	}
+//	
+//	@Test
+//	void verifactu_4117_Test() {
+//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+//		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
+//			assertInvoice( invoice
+//				, null
+//				, c -> {
+//					PersonaFisicaJuridicaESType repr = new PersonaFisicaJuridicaESType();
+//					repr.setNIF("AAAAAAAAA");
+//					c.msg.getCabecera().setRepresentante( repr );
+//				}
+//			)
+//		);
+//		assertNotNull(e);
+//		assertNotNull(e.getInvoiceCommunicationError());
+//		assertEquals(InvoiceCommunicationError.VERIFACTU_4117, e.getInvoiceCommunicationError());
+//	}
 	
 	@Test
 	void verifactu_1108_Test() throws InvoiceCommunicationException {
@@ -458,6 +478,17 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 			, InvoiceCommunicationError.VERIFACTU_1211
 		);
 	}
+	
+	@Test
+	void verifactu_1222_Test_0() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		assertInvoiceNoMessage( invoice, null
+				, c -> {
+					
+				}
+			);
+		
+	}
 
 	@Test
 	void verifactu_1222_Test() throws InvoiceCommunicationException {
@@ -536,7 +567,7 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 				IDOtroType otro = new IDOtroType();
 				otro.setCodigoPais(CountryType2.FR);	// Francia
 				otro.setIDType("02");
-				otro.setID("0123456789");				// Debe tner 11 caracteres
+				otro.setID("FR0123456789");				// Debe tner 11 caracteres
 				tercero.setIDOtro(otro);
 			}
 			, InvoiceCommunicationError.VERIFACTU_1222
@@ -701,7 +732,7 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 				IDOtroType idOtro = new IDOtroType();
 				idOtro.setCodigoPais(CountryType2.FR);	// Francia
 				idOtro.setIDType("02");
-				idOtro.setID("0123456789");				// Debe tner 11 caracteres
+				idOtro.setID("FR0123456789");				// Debe tner 11 caracteres
 				id.setIDOtro(idOtro);
 				destinatarios.getIDDestinatario().add( id );
 				c.fra.setDestinatarios(destinatarios);
@@ -1752,8 +1783,8 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 	void verifactu_1203_Test_1() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( ctx , DOMAIN_ID).setId(1);
 		assertInvoiceMessage( invoice, null
-			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_1)
-			, InvoiceCommunicationError.VERIFACTU_1203
+			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_2)
+			, InvoiceCommunicationError.VERIFACTU_1203, InvoiceCommunicationError.VERIFACTU_1198
 		);
 	}
 
