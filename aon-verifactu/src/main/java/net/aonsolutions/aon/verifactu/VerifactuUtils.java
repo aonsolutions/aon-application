@@ -28,6 +28,9 @@ public class VerifactuUtils {
 		String ds = AonNumberUtils.toString( AonMathUtils.round(d) );
 		return new BigDecimal(ds).stripTrailingZeros().toPlainString();
 	}
+	public static double todouble(String d) {
+		return AonNumberUtils.todouble( d );
+	}
 	
 
 }

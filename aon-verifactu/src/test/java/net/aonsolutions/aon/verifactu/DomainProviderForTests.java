@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -58,6 +59,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IAEDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 class DomainProviderForTests {
@@ -262,19 +264,24 @@ class DomainProviderForTests {
 		Iae iae = IAEDAO.getRandom(context, null);
 		Cnae2009 cnae2009 = Cnae2009DAO.getRandom(context, null);
 		Company company = CompanyDAO.getCompany(context, context.getDomainId());
-		context.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
-			.set(ENTERPRISE_ACTIVITY.DOMAIN, context.getDomainId())
-			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte) 1)
-			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, company.getId())
-			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, AonStringUtils.abbreviate(iae.getTitle(), 64))
-			.set(ENTERPRISE_ACTIVITY.IAE, iae.getId())
-			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
-			.set(ENTERPRISE_ACTIVITY.TYPE, SSRegimeType.GENERAL.getValue())
-			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, VATRegime.GENERAL.value())
-			.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, IRPFRegime.NORMAL.value())
-			.set(ENTERPRISE_ACTIVITY.START_DATE, AonDateUtils.toSql( AonDateUtils.getYearFirstDay(2010) ) )
-			.execute();
-		context.log().info("EnterpriseActivity created");
+		AonCollectionUtils.stream(VATRegime.values())
+			.forEach( v -> {
+				context.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
+					.set(ENTERPRISE_ACTIVITY.DOMAIN, context.getDomainId())
+					.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte) 1)
+					.set(ENTERPRISE_ACTIVITY.ENTERPRISE, company.getId())
+					.set(ENTERPRISE_ACTIVITY.DESCRIPTION, AonStringUtils.abbreviate(iae.getTitle(), 64))
+					.set(ENTERPRISE_ACTIVITY.IAE, iae.getId())
+					.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
+					.set(ENTERPRISE_ACTIVITY.TYPE, SSRegimeType.GENERAL.getValue())
+					.set(ENTERPRISE_ACTIVITY.VAT_REGIME, v.value())
+					.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, VATExemptionCause.E1.value())
+					.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, IRPFRegime.NORMAL.value())
+					.set(ENTERPRISE_ACTIVITY.START_DATE, AonDateUtils.toSql( AonDateUtils.getYearFirstDay(2010) ) )
+				.execute();
+				context.log().info("EnterpriseActivity created. Regime:  " + v.name());
+		});
+		
 
 		ApplicationParameter betaParam = AppParamDAO.fetchOne(context, AppParam.AON_BETA_ENABLED.toString());
 		if (betaParam == null || betaParam.getId() == null) {

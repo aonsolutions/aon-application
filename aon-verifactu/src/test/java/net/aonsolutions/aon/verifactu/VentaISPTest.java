@@ -60,7 +60,7 @@ class VentaISPTest extends AbstractVerifactuTest {
 	void ventaActGeneralTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = new LinkedList<>();
 		Invoice invoice = getTestInvoice();
-		invoice.setActivity(InvoiceTypes.ACTIVITY_GENERAL);
+		invoice.setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
 		invoices.add( invoice );
 		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);

@@ -162,10 +162,11 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
 	private Invoice save(Invoice invoice) {
 		return ctx.getDslContext().transactionResult(config -> {
-			Invoice inv = InvoiceDAO.save(ctx, invoice);
-			List<Invoice> invoices = AonCollectionUtils.toList(inv);
+			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 			icc.setConfig(configWithCertificate());
+			Invoice inv = InvoiceDAO.save(ctx, invoice);
+			invoices = AonCollectionUtils.toList(inv);
 			VERIFACTU.accept(ctx, icc);
 			icc.invoiceStream()			
 				.forEach( i -> {

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -18,8 +19,8 @@ public class MyTestWatcher implements TestWatcher {
 
     @Override
     public void testFailed(ExtensionContext extensionContext, Throwable throwable) {
-        System.out.println( "testFailed" );
-        
+        System.out.println( "TEST FAILED " + extensionContext.getTestMethod().map(Method::getName).orElse(null) );
+        System.out.println(" ------------ ");
     }
 
     @Override

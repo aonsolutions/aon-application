@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
@@ -141,7 +142,7 @@ enum ClaveRegimen {
 				&& !inv.isSalesOSS()
 				&& !ib.isPrepayment()
 				&& VatDeductionType.safeSujetoExento(ib.getVatDeductionType())
-				&& ib.getVatExemptionCause() == VATExemptionCause.E1
+				//&& ib.getVatExemptionCause() == VATExemptionCause.E1
 			;
 		}
 		
@@ -381,5 +382,12 @@ enum ClaveRegimen {
 		throw new InvoiceCommunicationException(new UnsupportedOperationException("Not implented!"));
 	}
 	
+	protected static boolean isValid(String code) {
+		return AonCollectionUtils.stream( values() )
+			.anyMatch(c -> AonStringUtils.equals(code,c.getValue() ));
+	}
+	protected static boolean isNotValid(String code) {
+		return !isValid(code);
+	}
 	protected abstract boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib);
 }

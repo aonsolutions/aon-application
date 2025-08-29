@@ -1401,6 +1401,12 @@ public class AonDateUtils {
 		return first.after(second);
 	}
 	
+	public static boolean isBefore(Date first, Date second) {
+		if (first == null) return false;
+		if (second == null) return false;
+		return first.before(second);
+	}
+
 	public static Date today() {
 		return Date.from(
 			LocalDate
@@ -1409,4 +1415,14 @@ public class AonDateUtils {
 				.toInstant()
 		);
 	}
+	
+    /**
+     * Verifica si target está entre start y end (inclusive).
+     * Si target es null -> false.
+     * Si start o end son null -> se ignora ese límite.
+     */
+    public static boolean isBetween(Date value, Date start, Date end) {
+        if (value == null || start == null || end == null) return false;
+        return !value.before(start) && !value.after(end);
+    }	
 }

@@ -60,7 +60,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	void ventaActGeneralTest() throws InvoiceCommunicationException {
 		Invoice invoice = getTestInvoice();
 		List<Invoice> invoices = AonCollectionUtils.toList( invoice );
-		invoice.setActivity(InvoiceTypes.ACTIVITY_GENERAL);
+		invoice.setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
 		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );

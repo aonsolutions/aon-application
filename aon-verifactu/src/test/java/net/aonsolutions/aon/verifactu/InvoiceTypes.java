@@ -18,24 +18,26 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceTypes {
-	
-	static final EnterpriseActivity ACTIVITY_GENERAL = new EnterpriseActivity()
-		.setId(1)
-		.setDescription("PANADERIA")
-		.setPrincipal(true)
-		.setVatRegime(VATRegime.GENERAL)
-	;
-
-	private static final EnterpriseActivity ACTIVITY_EXENTA = new EnterpriseActivity()
-		.setId(1)
-		.setDescription("FISIOTERAPIA")
-		.setPrincipal(true)
-		.setVatRegime(VATRegime.EXEMPT)
-	;
+	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain, VATRegime regime ) {
+		return CompanyDAO.getEnterpriseActivities(ctx,domain)
+			.filter(a -> a.getVatRegime() == regime)
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("No se ha encontrado actividad para regime " + regime));
+	}
+	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain ) {
+		return getActivityGeneral(ctx, domain, VATRegime.GENERAL);
+	};
+	static EnterpriseActivity getActivityExempt( AONContext ctx, int domain ) {
+		return getActivityGeneral(ctx, domain, VATRegime.EXEMPT);
+	};
+	static EnterpriseActivity getActivitySimplified( AONContext ctx, int domain ) {
+		return getActivityGeneral(ctx, domain, VATRegime.SIMPLIFIED);
+	};
 	
 	public enum Invoices {
 		VENTA_NACIONAL_SIMPLE {
@@ -587,7 +589,7 @@ public class InvoiceTypes {
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setActivity(ACTIVITY_EXENTA)
+					.setActivity(getActivityExempt(ctx, domain))
 					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
 					.setNumber(0)
 					.setReferenceCode(VerifactuTestsUtils.referenceCode())
@@ -619,7 +621,7 @@ public class InvoiceTypes {
 							.setPercentage(0.0)
 							.setQuota(0.0)
 							.setDeductibleQuota(0.0)
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+							.setVatDeductionType(VatDeductionType.WITHOUT_RIGHT)
 						)
 					)
 					.setVatQuota(0.0)
