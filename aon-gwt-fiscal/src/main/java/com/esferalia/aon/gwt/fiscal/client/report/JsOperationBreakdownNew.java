@@ -10,13 +10,17 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	protected JsOperationBreakdownNew() {
 	}
 	
-	private Date ensureDate(String dateString) {
-		return dateString == null ? null : AonDateUtils.parseDate(dateString); // FECHAS FORMATEADAS COMO TEXTO dd/MM/yyyy
-	}
-	
 	public final native int getEntryId() /*-{
 		return this.entryId;
 	}-*/;
+	
+	public final native int getEntryJournal() /*-{
+		return this.entryJournal;
+	}-*/;
+	
+	private Date ensureDate(String dateString) {
+		return dateString == null ? null : AonDateUtils.parseDate(dateString); // FECHAS FORMATEADAS COMO TEXTO dd/MM/yyyy
+	}
 	
 	public final Date getEntryDate() {
 		return ensureDate(getEntryDateString());
@@ -84,6 +88,14 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	}-*/;
 	public final native double getRetentionQuota() /*-{
 		return this.retentionQuota;
+	}-*/;
+	
+	public final native boolean isFacturaRECC() /*-{
+		return this.operationKey == "07";
+	}-*/;
+	
+	public final native double getPayAmount() /*-{
+		return this.payAmount;
 	}-*/;
 	
 }

@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -112,6 +113,10 @@ public abstract class JsOperationGridPanelNew extends FlowPanel implements HasSe
 	
 	protected void addCell(AonDisplayGridRow row, double value) {
 		row.addCell(new Label(AON.CURRENCY_FORMAT.format(value)), AON.CSS.aonTextRight());
+	}
+	
+	protected void addCell(AonDisplayGridRow row, int value) {
+		row.addCell(new Label(AonNumberUtils.toString(value)), AON.CSS.aonTextRight());
 	}
 
 }

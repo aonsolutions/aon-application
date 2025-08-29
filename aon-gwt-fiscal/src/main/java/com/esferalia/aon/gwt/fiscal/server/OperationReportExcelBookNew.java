@@ -88,15 +88,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			companyName = sb.toString();
 			
 			// NOMBRE DEL FICHERO			
-//			El nombre del fichero será formado por la concatenación de los siguientes campos y en el siguiente orden:
-//				1) Ejercicio
-//				2) NIF
-//				3) Tipo de Libros Registro que contiene el fichero, mediante uno de los siguientes valores:
-//				- C: Todos los Libros Registro del IVA requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una C, correspondiente a la presentación de todos los libros del IVA, incluyendo las facturas expedidas en una pestaña denominada EXPEDIDAS, las facturas recibidas en otra pestaña denominada RECIBIDAS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
-//				- D: Todos los Libros Registro del IRPF requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una D,	correspondiente a la presentación de todos los libros del IRPF, incluyendo las ventas e ingresos en una pestaña denominada INGRESOS, las compras y gastos en otra pestaña denominada GASTOS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
-//				- T: Todos los Libros Registro Unificados del IRPF e IVA requeridos en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una T, correspondiente a la presentación conjunta de todos los libros de ambos impuestos, incluyendo las "facturas expedidas" y "ventas e ingresos" en una pestaña denominada EXPEDIDAS_INGRESOS, las "facturas recibidas" y "compras y gastos" en otra pestaña denominada RECIBIDAS_GASTOS, y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
-//				4) Nombre o Razón social				
-	
+            //	El nombre del fichero será formado por la concatenación de los siguientes campos y en el siguiente orden:
+            //	 1) Ejercicio
+            //	 2) NIF
+            //	 3) Tipo de Libros Registro que contiene el fichero, mediante uno de los siguientes valores:
+            //	    - C: Todos los Libros Registro del IVA requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una C, correspondiente a la presentación de todos los libros del IVA, incluyendo las facturas expedidas en una pestaña denominada EXPEDIDAS, las facturas recibidas en otra pestaña denominada RECIBIDAS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
+            //	    - D: Todos los Libros Registro del IRPF requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una D,	correspondiente a la presentación de todos los libros del IRPF, incluyendo las ventas e ingresos en una pestaña denominada INGRESOS, las compras y gastos en otra pestaña denominada GASTOS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
+            //	    - T: Todos los Libros Registro Unificados del IRPF e IVA requeridos en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una T, correspondiente a la presentación conjunta de todos los libros de ambos impuestos, incluyendo las "facturas expedidas" y "ventas e ingresos" en una pestaña denominada EXPEDIDAS_INGRESOS, las "facturas recibidas" y "compras y gastos" en otra pestaña denominada RECIBIDAS_GASTOS, y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
+            //	 4) Nombre o Razón social				
 			String sheetName1 = "";
 			String sheetName2 = "";
 			String filename = AonDateUtils.getYear(params.getFromDate()) + companyDocument;
@@ -151,7 +150,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		
 	}
 	
-	// FALTA - PRUEBA VALIDAR FICHERO
+	// PRUEBA VALIDAR FICHERO
 	private void pruebaValidar(ServletOutputStream outputStream) throws IOException, InterruptedException {
 		
 		String url = "https://prewww2.aeat.es/wlpl/PACM-SERV/ServletValidarLLRSI";
@@ -406,7 +405,10 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				addCell(""); // Ingreso computable
 			} else {
 				// Resto
-				addCell(op.getConceptAmount()); // Ingreso computable
+				if (AonStringUtils.isBlank(op.getConceptCode()))
+					addCell(""); // Ingreso computable (si el código de concepto está vacio, no se pone importe)
+				else
+					addCell(op.getConceptAmount()); // Ingreso computable
 			}
 						
 			addCell(op.getEntryDate());      // Fecha Expedición
@@ -440,40 +442,48 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(params.getBookType() == 1 ? "" : op.getOperationQualification()).setCellStyle(centerCellStyle); // Calificador de la Operación (excepto Libro de IRPF)
 			addCell(params.getBookType() == 1 ? "" : op.getExemptOperation()).setCellStyle(centerCellStyle);        // Operación Exenta (excepto Libro de IRPF)
 			
-			addCell(op.getTotal());   // Total Factura
-			addCell(op.getBase());    // Base Imponible
-			addCell(op.getPercent()); // Tipo de IVA
-			addCell(op.getQuota());   // Cuota IVA Repercutida				
+			if (isCobroPagoRECC(op)) {
+				// Cobro RECC no lleva estos datos de la factura
+				addCell("");   // Total Factura
+				addCell("");   // Base Imponible
+				addCell("");   // Tipo de IVA
+				addCell("");   // Cuota IVA Repercutida
+			} else {
+				addCell(op.getTotal());   // Total Factura
+				addCell(op.getBase());    // Base Imponible
+				addCell(op.getPercent()); // Tipo de IVA
+				addCell(op.getQuota());   // Cuota IVA Repercutida
+			}
 			
-			addDoubleCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
-			addDoubleCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
+			addDoubleEmptyCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
+			addDoubleEmptyCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
 			
 			addCell(op.getPayDate());                                 // Cobro RECC - Fecha
-			addDoubleCell(op.getPayAmount());                         // Cobro RECC - Importe
+			addDoubleEmptyCell(op.getPayAmount());                    // Cobro RECC - Importe
 			addCell(op.getPayMethod()).setCellStyle(centerCellStyle); // Cobro RECC - Medio Utilizado
 			addCell(op.getPayMethodName());                           // Cobro RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
-			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
+			addDoubleEmptyCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
+			addDoubleEmptyCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
 			addCell("");                                                     // Registro Acuerdo Facturacion (no se usa)
 			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); // Inmueble - Situación
 			addCell(op.getCadasdralReference());                             // Inmueble - Referencia Catastral
 			sheet.autoSizeColumn(cellCount-1);
-			addCell("");                                                     // Referencia Externa (no se usa)	
+			addCell(op.getEntryJournal());  								 // Referencia Externa (Número de diario del asiento)
 			
 		}
 		
 		// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 		private void addDetailRowRecGas(OperationBreakdownNew op) {
 			
-			addCell(Integer.toString(AonDateUtils.getYear(op.getTaxDate()))).setCellStyle(centerCellStyle);     // Autoliquidación - Ejercicio
+			addCell(Integer.toString(AonDateUtils.getYear(op.getTaxDate()))).setCellStyle(centerCellStyle);                      // Autoliquidación - Ejercicio
 			addCell(Period.getQuarterlyPeriod(AonDateUtils.getMonth(op.getTaxDate())).getName()).setCellStyle(centerCellStyle);  // Autoliquidación - Periodo
-			addCell(op.getActivityCode()).setCellStyle(centerCellStyle);  // Actividad - Código
-			addCell(op.getActivityType()).setCellStyle(centerCellStyle);  // Actividad - Tipo
+			addCell(op.getActivityCode()).setCellStyle(centerCellStyle);                                            // Actividad - Código
+			addCell(op.getActivityType()).setCellStyle(centerCellStyle);                                            // Actividad - Tipo
 			addCell(AonStringUtils.trimToEmpty(op.getActivityIAE()).replace(".","")).setCellStyle(centerCellStyle); // Actividad - Grupo o Epígrafe IAE
-			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
+			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);                                             // Tipo de Factura
 			
 			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
 			if (params.getBookType() == 0) {
@@ -481,7 +491,10 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				addCell(""); // Gasto Deducible
 			} else {
 				// Resto
-				addCell(op.getConceptAmount()); // Gasto Deducible
+				if (AonStringUtils.isBlank(op.getConceptCode()))
+					addCell(""); // Gasto Deducible (si el código de concepto está vacio, no se pone importe)
+				else
+					addCell(op.getConceptAmount()); // Gasto Deducible
 			}
 						
 			addCell(op.getEntryDate());      // Fecha Expedición
@@ -530,35 +543,48 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(""); // Deducible en Periodo Posterior (no se usa)	
 			addCell(""); // Periodo Deducción - Ejercicio (no se usa)
 			addCell(""); // Periodo Deducción - Periodo (no se usa)
+
+			if (isCobroPagoRECC(op)) {
+				// Pago RECC no lleva estos datos de la factura
+				addCell("");   // Total Factura
+				addCell("");   // Base Imponible
+				addCell("");   // Tipo de IVA
+				addCell("");   // Cuota IVA Soportado
+				addCell("");   // Cuota Deducible
+			} else {
+				addCell(op.getTotal());   			// Total Factura
+				addCell(op.getBase());             	// Base Imponible
+				addCell(op.getPercent());          	// Tipo de IVA
+				addCell(op.getQuota());            	// Cuota IVA Soportado
+				addCell(op.getDeductibleQuota());  	// Cuota Deducible
+			}
 			
-			addCell(op.getTotal());   			// Total Factura
-			addCell(op.getBase());             	// Base Imponible
-			addCell(op.getPercent());          	// Tipo de IVA
-			addCell(op.getQuota());            	// Cuota IVA Soportado
-			addCell(op.getDeductibleQuota());  	// Cuota Deducible
-			
-			addDoubleCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
-			addDoubleCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
+			addDoubleEmptyCell(op.getSurchargePercent()); // Tipo de Recargo Eq.
+			addDoubleEmptyCell(op.getSurchargeQuota());   // Cuota Recargo Eq.
 			
 			addCell(op.getPayDate());             						// Pago RECC - Fecha
-			addDoubleCell(op.getPayAmount());     						// Pago RECC - Importe
+			addDoubleEmptyCell(op.getPayAmount());     					// Pago RECC - Importe
 			addCell(op.getPayMethod()).setCellStyle(centerCellStyle); 	// Pago RECC - Medio Utilizado
 			addCell(op.getPayMethodName());       						// Pago RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
-			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
-			addDoubleCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
+			addDoubleEmptyCell(params.getBookType() == 0 ? 0.0 : op.getRetentionPercent()); // Tipo Retención IRPF (excepto Libro de IVA)
+			addDoubleEmptyCell(params.getBookType() == 0 ? 0.0 : op.getRetentionQuota());   // Importe Retenido IRPF (excepto Libro de IVA)
 			
 			addCell(""); 														// Registro Acuerdo Facturacion (no se usa)
 			addCell(op.getBuildingLocation()).setCellStyle(centerCellStyle); 	// Inmueble - Situación
 			addCell(op.getCadasdralReference());                             	// Inmueble - Referencia Catastral
 			sheet.autoSizeColumn(cellCount-1);
-			addCell(""); 														// Referencia Externa (no se usa)	
+			addCell(op.getEntryJournal());  									// Referencia Externa (Número de diario del asiento)
 			
 		}	
 
+		private boolean isCobroPagoRECC(OperationBreakdownNew op) {
+			return (op.getPayDate() != null);
+		}
+
 		// Solo se pone el importe si es distinto de cero
-		private Cell addDoubleCell(Double number) {			
+		private Cell addDoubleEmptyCell(Double number) {			
 			if (number == 0.0)
 				return addCell("");								
 			else return addCell(number);  							

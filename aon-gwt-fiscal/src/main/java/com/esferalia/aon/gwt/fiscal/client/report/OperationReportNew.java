@@ -174,10 +174,22 @@ public class OperationReportNew extends MainEntryPoint {
 		
 		fromDate = new AonDateBox();
 		fromDate.addStyleName(AON.CSS.aonMarginLeft());
-		fromDate.addValueChangeHandler(event -> onSearch()); 
+		fromDate.addValueChangeHandler(event -> {
+			// Las fechas deben ser del ejercicio indicado
+			if (DateUtils.getYear(fromDate.getValue()) == year.getValue())
+				onSearch();
+			else 
+				fillDates();
+		}); 
 		
 		toDate = new AonDateBox();
-		toDate.addValueChangeHandler(event -> onSearch()); 
+		toDate.addValueChangeHandler(event -> {
+			// Las fechas deben ser del ejercicio indicado
+			if (DateUtils.getYear(toDate.getValue()) == year.getValue())
+				onSearch();
+			else 
+				fillDates();
+		}); 
 	
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			activity = new ListBox();
@@ -261,7 +273,7 @@ public class OperationReportNew extends MainEntryPoint {
 	private void fillDates() {
 		Integer y = year.getValue();
 		Period p = period.getValue();
-		if ( y == null) {
+		if (y == null) {
 			fromDate.setValue(null,false);
 			toDate.setValue(null,false);
 		} else {

@@ -13,7 +13,8 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 	private void paintHeader() {
 		
 		AonDisplayGridHeaderRow row = getGrid().addHeaderRow()
-				  .addCell(new Label("Ep. IAE."), AON.CSS.aonWidth40());
+				.addCell(new Label("Fecha IVA."), AON.CSS.aonWidth80())
+				.addCell(new Label("Ep. IAE."), AON.CSS.aonWidth40());
 
 		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("Concepto Gasto"), AON.CSS.aonWidth40())
@@ -21,7 +22,6 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 		}
 		
 		row.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
-			.addCell(new Label("Fecha IVA."), AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00FAmero Fra."), AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00FAmero Recepci\u00F3n"), AON.CSS.aonWidth80())
 			.addCell(new Label("NIF Expedidor"), AON.CSS.aonWidth80())
@@ -39,6 +39,11 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 				.addCell(new Label("Importe Retenci\u00F3n"), AON.CSS.aonWidth80());
 		}
 		
+		row.addCell(new Label("RECC"), AON.CSS.aonWidth40());
+		if (getParams().getBookType() != 1)
+			row.addCell(new Label("Pago RECC"), AON.CSS.aonWidth40());
+		row.addCell(new Label("N\u00FAmero Diario"), AON.CSS.aonWidth40());
+		
 	}
 	
 	public void addRow(JsOperationBreakdownNew br) {
@@ -50,6 +55,7 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 		AonDisplayGridRow row = getGrid().addRow();
 		row.addClickHandler(event -> SelectionEvent.fire(this, br));
 
+		addCell(row, br.getTaxDate());
 		addCell(row, br.getActivityIAE(), AON.CSS.aonTextCenter());
 		
 		if (getParams().getBookType() != 0) {
@@ -58,7 +64,6 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 		}
 		
 		addCell(row, br.getEntryDate());
-		addCell(row, br.getTaxDate());
 		addCell(row, br.getInvoiceNumber());
 		addCell(row, br.getReceptionNumber()); 
 		addCell(row, br.getDocument());
@@ -75,6 +80,11 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 			addCell(row, br.getRetentionPercent());
 			addCell(row, br.getRetentionQuota());
 		}
+		
+		addCell(row, br.isFacturaRECC() ? "S" : "N", AON.CSS.aonTextCenter());
+		if (getParams().getBookType() != 1)
+			addCell(row, br.getPayAmount());
+		addCell(row, br.getEntryJournal());
 		
 		setSumBase(getSumBase() + br.getBase());
 		setSumQuota(getSumQuota() + br.getQuota());
@@ -94,6 +104,7 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 			add( noDataLabel );
 		} else {
 			AonDisplayGridFooterRow row = getGrid().addFooterRow()
+					.addCell(new Label())
 					.addCell(new Label());
 				
 				if (getParams().getBookType() != 0) {
@@ -102,7 +113,6 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 				}
 				
 				row.addCell(new Label())
-					.addCell(new Label())
 					.addCell(new Label())
 					.addCell(new Label())
 					.addCell(new Label())
@@ -119,6 +129,11 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 					row.addCell(new Label())
 					   .addCell(new Label());
 				}
+				
+				row.addCell(new Label()); // RECC
+				if (getParams().getBookType() != 1)
+					row.addCell(new Label()); // Pago RECC
+				row.addCell(new Label()); // Número de diario
 		}
 		
 	}

@@ -43,7 +43,8 @@ public class OperationBreakdownNew implements Serializable {
 	private double retentionQuota;    		// Importe Retenido del IRPF	
 	private String buildingLocation; 		// Situación del Inmueble;	
 	private String cadasdralReference; 		// Referencia Catastral del Inmueble
-	private Integer entryId;                // ID del asiento
+	private int entryId;                    // ID del asiento
+	private int entryJournal;               // Número de Diario del asiento
 	
 	public String getActivityCode() {
 		return activityCode;
@@ -297,11 +298,18 @@ public class OperationBreakdownNew implements Serializable {
 		this.cadasdralReference = cadasdralReference;
 		return this;
 	}
-	public Integer getEntryId() {
+	public int getEntryId() {
 		return entryId;
 	}
-	public OperationBreakdownNew setEntryId(Integer entryId) {
+	public OperationBreakdownNew setEntryId(int entryId) {
 		this.entryId = entryId;
+		return this;
+	}
+	public int getEntryJournal() {
+		return entryJournal;
+	}
+	public OperationBreakdownNew setEntryJournal(int entryJournal) {
+		this.entryJournal = entryJournal;
 		return this;
 	}
 	

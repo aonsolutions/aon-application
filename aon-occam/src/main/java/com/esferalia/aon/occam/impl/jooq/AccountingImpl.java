@@ -638,7 +638,7 @@ public class AccountingImpl implements IAccounting {
 				,params);
 	}
 	public Stream<OperationBreakdownNew> getOperationBreakdownNew(AONContext ctx, int domain, OperationParamsNew params) {
-		return AccountingOperationNewDAO.getOperationBreakdownNew(ctx, domain, params);
+		return AccountingOperationNewDAO.getOperationBreakdownNew(ctx, params);
 	}
 	
 	// AMORTIZATION TYPE
