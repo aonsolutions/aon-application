@@ -53,6 +53,8 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 	private ScrollPanel scrollPanel;
 	private HTMLPanel saleContainer = new HTMLPanel(AonStringUtils.EMPTY);
 	
+	private AonCustomListBox schema = new AonCustomListBox("Esquema dominio");
+	
 	private AonCustomListBox supportSeller;
 	private AonCustomListBox feePeriod;
 	private AonCustomListBox feeWorkplace;
@@ -140,6 +142,12 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		saleContainer.addStyleName(AON.CSS.aonFlexColumn());
 		saleContainer.setWidth("100%");
 		saleContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
+		
+		if(isSigDomain()) {
+			getSchemas(schemas -> schemas.forEach(s -> schema.addItem(s, s)));
+			
+			saleContainer.add(createRow(schema, null));
+		}
 		
 		AonCustomTextBox document = new AonCustomTextBox("Documento");
 		document.setWidth("6rem");
@@ -346,6 +354,8 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			body.put("sellerCommercial", new JSONString(sale.getSeller().getId().toString()));
 			
 			body.put("saleId", new JSONString(sale.getId().toString()));
+			body.put("isSig", new JSONString(Boolean.toString(isSigDomain())));
+			body.put("schema", new JSONString(schema.getValue()));
 			
 			body.put("feePeriod", new JSONString(feePeriod.getValue()));
 			body.put("feeWorkplace", new JSONString(feeWorkplace.getValue()));
@@ -404,6 +414,10 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			}
 			
 		}
+	}
+	
+	private boolean isSigDomain() {
+		return AonStringUtils.containsIgnoreCase(params.getDomainName(), "sig.aonsolutions.org") || AonStringUtils.equalsIgnoreCase(params.getDomainName(), "sig.aonsolutions.org");
 	}
 	
 	private void getSale(Consumer<Sales> success) {
@@ -498,6 +512,21 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error direcciones del cliente: " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void getSchemas(Consumer<List<String>> success) {
+		COMMON_SERVICE.getSchemas(new AsyncCallback<List<String>>() {
+			
+			@Override
+			public void onSuccess(List<String> schemas) {
+				success.accept(schemas);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obtencias schemas: " + caught.getMessage());
 			}
 		});
 	}

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.registry.Raddinfo;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -273,6 +275,23 @@ public class RegistryDAO {
 			.where(REGISTRY.ID.eq(id))
 			.execute();
 		ctx.log().debug("DELETE REGISTRY id: {0} ({1} rows)",id,count);
+	}
+	
+	public static Raddinfo insertAddInfo(AONContext ctx, Raddinfo raddInfo) {
+		ctx.checkWrite();
+		
+		Integer newRaddinfoId = ctx.getDslContext().insertInto(RADDINFO)
+			.set(RADDINFO.DOMAIN, raddInfo.getDomain())
+			.set(RADDINFO.REGISTRY, raddInfo.getRegistry())
+			.set(RADDINFO.ATTRIBUTE, raddInfo.getAttribute())
+			.set(RADDINFO.VALUE, raddInfo.getValue())
+			.set(RADDINFO.VALUE_DATE, AonDateUtils.toSql( raddInfo.getValueDate() ))
+			.returning(RADDINFO.ID)
+			.fetchOne(RADDINFO.ID);
+		
+		raddInfo.setId(newRaddinfoId);
+		
+		return raddInfo;
 	}
 	
 	// *************************************************
