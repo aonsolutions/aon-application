@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,7 +35,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
@@ -113,8 +113,8 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 				, null)
 		);
 		assertNotNull(e);
-		assertNotNull(e.getInvoiceCommunicationError());
-		assertEquals(InvoiceCommunicationError.VERIFACTU_4104, e.getInvoiceCommunicationError());
+		assertNotNull(e.getMessages());
+		assertThat(InvoiceCommunicationError.VERIFACTU_4104).isIn(e.getMessages());
 	}
 
 
@@ -127,8 +127,8 @@ class VerifactuValidationTest extends AbstractVerifactuTest {
 				, null)
 		);
 		assertNotNull(e);
-		assertNotNull(e.getInvoiceCommunicationError());
-		assertEquals(InvoiceCommunicationError.VERIFACTU_4116, e.getInvoiceCommunicationError());
+		assertNotNull(e.getMessages());
+		assertThat(InvoiceCommunicationError.VERIFACTU_4116).isIn(e.getMessages());
 	}
 	
 //	@Test

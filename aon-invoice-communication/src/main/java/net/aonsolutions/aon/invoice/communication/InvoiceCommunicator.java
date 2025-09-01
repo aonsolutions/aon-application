@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -58,7 +60,6 @@ public class InvoiceCommunicator {
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
-			fillCompany( ctx, cc);
 			if(invoice.isSales()) {
 				// third Part???
 				if(cc.getConfig().isVerifactu()) {
@@ -107,7 +108,6 @@ public class InvoiceCommunicator {
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
-			fillCompany( ctx, cc);
 			if(invoice.isSales()) {
 				// third Part???
 				if(cc.getConfig().isVerifactu()) {
@@ -217,14 +217,6 @@ public class InvoiceCommunicator {
 		if (cc.invoiceCount() > 1) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9007);
 		}
-	}
-	
-	private static void fillCompany(AONContext ctx, InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
-		Company company = CompanyDAO.getByDomain(ctx, cc.getDomain().getId());
-		if (company == null) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0002);
-		}
-		cc.setCompany(company);
 	}
 	
 	private static void invoiceValidation(Invoice invoice) throws InvoiceCommunicationException {

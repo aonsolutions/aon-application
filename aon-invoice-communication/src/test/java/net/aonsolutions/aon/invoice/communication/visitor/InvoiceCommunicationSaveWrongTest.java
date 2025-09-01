@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,7 +36,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 	void noContextTest() {
 		InvoiceCommunicatorContext cc = null;
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
-		assertEquals(InvoiceCommunicationError.AON_0001, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0001).isIn(e.getMessages());
 	}
 
 	@Test
@@ -47,7 +47,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
-		assertEquals(InvoiceCommunicationError.AON_0003, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0003).isIn(e.getMessages());
 	}
 
 	@Test
@@ -58,7 +58,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
-		assertEquals(InvoiceCommunicationError.AON_0003, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0003).isIn(e.getMessages());
 	}
 
 	@Test
@@ -68,7 +68,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
-		assertEquals(InvoiceCommunicationError.AON_0004, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0004).isIn(e.getMessages());
 	}
 
 	@Test
@@ -78,7 +78,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
-		assertEquals(InvoiceCommunicationError.AON_0004, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0004).isIn(e.getMessages());
 	}
 	
 	@Test
@@ -91,7 +91,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0006, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0006).isIn(ice.getMessages());
 	}
 	
 	@Test
@@ -104,7 +104,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0002, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0002).isIn(ice.getMessages());
 	}
 
 	@Test
@@ -117,7 +117,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0002, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0002).isIn(ice.getMessages());
 	}
 
 	@Test
@@ -132,7 +132,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0002, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0002).isIn(ice.getMessages());
 	}
 
 	@Test
@@ -147,7 +147,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0002, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0002).isIn(ice.getMessages());
 	}
 
 	@Test
@@ -160,7 +160,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0005, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0005).isIn(ice.getMessages());
 	}
 
 
@@ -175,7 +175,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0005, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_0005).isIn(ice.getMessages());
 	}
 
 	@Test
@@ -193,7 +193,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_9007, ice.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_9007).isIn(ice.getMessages());
 	}
 
 	

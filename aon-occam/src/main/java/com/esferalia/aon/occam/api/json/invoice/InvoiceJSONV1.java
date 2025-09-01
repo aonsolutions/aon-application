@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.json.invoice;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +18,9 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -162,6 +165,18 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
 			.put(IJsonNames.THIRD_PART, invoice.isThirdPart())
 			.put(IJsonNames.INVOICE_DOC, invoice.getDoc().map(InvoiceDocJSON::to).orElse(null));
+		
+			json.put( IJsonNames.MESSAGES,JsonUtils.nullIfEmpty(
+					invoice.messageStream()
+					.map(m -> new JSONObject() 
+							.put(IJsonNames.CODE, m.getCode())
+							.put(IJsonNames.MESSAGE, m.getMessage())
+							.put(IJsonNames.LEVEL, InvoiceErrorLevel.name(m.getLevel()))
+							.put(IJsonNames.CONTEXT, toInvoiceErrorContextJSON(m.getContext()))
+					)
+					.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED))
+				))			
+			;
 				
 		if(invoice.isRectifier() || invoice.isRectified()) {
 			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
@@ -187,6 +202,13 @@ class InvoiceJSONV1 {
 			registry.put(IJsonNames.ADDRESS, address);
 		}
 		return json;
+	}
+	
+	private static JSONObject toInvoiceErrorContextJSON(InvoiceErrorContext iec) {
+		if (iec == null) return null;
+		return new JSONObject()
+			.put(IJsonNames.LINE, iec.getLine())
+			.put(IJsonNames.KEY, InvoiceErrorKey.name(iec.getKey()));
 	}
 	
 	private static InvoiceType getType(String t, String account) {

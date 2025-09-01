@@ -25,7 +25,7 @@ public class InvoiceCommunicationDAO {
 	}
 	
 	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoice) {
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
 		if(config.isVerifactu()) {
 			return InvoiceCommunicationTrackingDAO.getStream(ctx, f -> f.getInvoiceProperty().eq(invoice)
 					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))

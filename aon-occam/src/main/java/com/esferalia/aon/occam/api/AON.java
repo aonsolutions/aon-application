@@ -7864,6 +7864,11 @@ public class AON {
 			return getRawdoc().rawdocSave(ctx, rawdoc);
 		}	
 	}
+	public static Rawdoc rawdocSave(Occam occam, Integer rawdocId, String invoiceJson) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().rawdocSave(ctx, rawdocId, invoiceJson);
+		}	
+	}
 	
 	public static void rawdocDelete(Occam occam, Integer rawdocId) {
 		rawdocDelete(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
@@ -8175,7 +8180,7 @@ public class AON {
 	
 	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationConfiguration(ctx);
+			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain());
 		}
 	}
 	

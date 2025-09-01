@@ -202,7 +202,7 @@ public abstract class AbstractVerifactuTest {
 
 	protected InvoiceCommunicationConfiguration config() {
 		if (communicationConfiguration == null) {
-			communicationConfiguration = InvoiceCommunicationConfigurationDAO.get(ctx); 
+			communicationConfiguration = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId()); 
 		}
 		assertNotNull(communicationConfiguration,"communicationConfiguration NULL" );
 		assertTrue(communicationConfiguration.isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
@@ -212,7 +212,7 @@ public abstract class AbstractVerifactuTest {
 
 	protected InvoiceCommunicationConfiguration configWithCertificate() {
 		if (communicationConfigurationWithCertificate == null) {
-			communicationConfigurationWithCertificate = InvoiceCommunicationConfigurationDAO.get(ctx); 
+			communicationConfigurationWithCertificate = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId()); 
 		}
 		assertNotNull(communicationConfigurationWithCertificate,"communicationConfigurationWithCertificate NULL" );
 		assertTrue(communicationConfigurationWithCertificate.isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");

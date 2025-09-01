@@ -433,8 +433,8 @@ public class AccountingInvoiceDAO {
 		return refreshInvoice(ctx, type, registryId, ai);
 	}
 	
-	private static void checkCommunicationForSales( final AONContext ctx, final InvoiceType type ) {
-		InvoiceCommunicationConfiguration c = InvoiceCommunicationConfigurationDAO.get(ctx);
+	private static void checkCommunicationForSales( final AONContext ctx, int domainId, final InvoiceType type ) {
+		InvoiceCommunicationConfiguration c = InvoiceCommunicationConfigurationDAO.get(ctx, domainId);
 		if (type == InvoiceType.SALES) {
 			if (c.isTbai()) {
 				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
@@ -446,7 +446,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
-		checkCommunicationForSales( ctx, type);	
+		checkCommunicationForSales( ctx, ctx.getDomainId(), type);	
 		
 		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
@@ -1549,7 +1549,7 @@ public class AccountingInvoiceDAO {
 		if (registry == null) throw new AonCoreException("No se pudo inicializar una factura sin titular");
 		if (ai.getInvoice() == null) throw new AonCoreException("No se pudo inicializar un apunte sin factura");
 		
-		checkCommunicationForSales( ctx, type);
+		checkCommunicationForSales( ctx, ctx.getDomainId(), type);
 		
 		boolean hasRegistry = ai.getInvoice().getRegistry() != null;
 		boolean registryChanged = hasRegistry

@@ -15,12 +15,12 @@ public class InvoiceCommunicationConfigurationDAO {
 
 	}
 	
-	public static InvoiceCommunicationConfiguration get(AONContext ctx) {
+	public static InvoiceCommunicationConfiguration get(AONContext ctx, int domainId) {
 		ctx.checkRead();
 		InvoiceCommunicationConfiguration configuration = new InvoiceCommunicationConfiguration();
 		
 		ApplicationParameter administration = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
+			f.getDomainProperty().eq(domainId)	
 			.and(f.getNameProperty().eq(AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
 			.findFirst().orElse(new ApplicationParameter());
 		

@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -123,13 +124,13 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitVERIFACTU() {
 		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
-			InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx);
+			InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId());
 			config.setCertificate(getVerifactuConfiguration().getCertificate());
 			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext( getDomain(), getUser(), null, getInvoices() );
 			cc.setConfig(config);
+			Company company = CompanyDAO.getByDomain(ctx, getOccam().getDomain());
+			cc.setCompany(company);
 			ctx.getDslContext().transaction(configuration -> VERIFACTU.accept(ctx, cc));
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -616,6 +617,11 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice addMessage(InvoiceError message) {
 		ensureMessages().add(message);
+	    return this;
+	}
+	public Invoice addMessages(Collection<InvoiceError> messages) {
+    	AonCollectionUtils.stream(messages )
+			.forEach( m -> ensureMessages().add(m) );
 	    return this;
 	}
 	

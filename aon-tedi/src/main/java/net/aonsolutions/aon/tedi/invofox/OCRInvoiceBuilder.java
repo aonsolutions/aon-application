@@ -97,6 +97,9 @@ public class OCRInvoiceBuilder {
 		public void add(InvoiceError err) {
 			result.add(err);
 		}
+		public void addAll(Collection<InvoiceError> err) {
+			result.addAll(err);
+		}
 	}
 	
 
@@ -766,7 +769,7 @@ public class OCRInvoiceBuilder {
 	    try {
 	    	fillFinanceDueDate(ocr.getOCRDue(), ocr.getFinance(), ocr.getInvoice());
 	    } catch (InvoiceErrorException e) {
-	    	ocr.add(e.getInvoiceError());
+	    	ocr.addAll( e.getMessages() );
 	    }
 	};
 	
@@ -916,7 +919,7 @@ public class OCRInvoiceBuilder {
 		    try {
 		    	fillFinanceDueDate(ocrInvoiceDue, finance, invoice);
 		    } catch (InvoiceErrorException e) {
-		    	invoice.addMessage(e.getInvoiceError());
+		    	invoice.addMessages( e.getMessages());
 		    }
 		    // INVOICE_FINANCE_AMOUNT
 		    fillFinanceAmount(ocrInvoiceDue, finance);

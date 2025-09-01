@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.invoice.communication.exceptions;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -16,7 +17,7 @@ class InvoiceCommunicationExceptionTest {
 	@Test
 	void empty() {
 		InvoiceCommunicationException e = new InvoiceCommunicationException();
-		assertEquals(InvoiceCommunicationError.AON_9000, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_9000).isIn(e.getMessages());
 		assertNull( e.getCause());
 	}
 	
@@ -24,7 +25,7 @@ class InvoiceCommunicationExceptionTest {
 	void delegated() {
 		IllegalArgumentException e0 = new  IllegalArgumentException("AAA");
 		InvoiceCommunicationException e = new InvoiceCommunicationException(e0);
-		assertEquals(InvoiceCommunicationError.AON_9000, e.getInvoiceCommunicationError());
+		assertThat(InvoiceCommunicationError.AON_9000).isIn(e.getMessages());
 		assertNotNull( e.getCause());
 		assertEquals(e0, e.getCause());
 	}
@@ -34,6 +35,7 @@ class InvoiceCommunicationExceptionTest {
 		Integer i = PodamUtils.getIntegerInRange(0, InvoiceCommunicationError.values().length - 1);
 		InvoiceCommunicationError e = InvoiceCommunicationError.values()[i];
 		InvoiceCommunicationException ex = new InvoiceCommunicationException(e);
-		assertEquals(e, ex.getInvoiceCommunicationError());
+		assertThat(ex.getMessages()).hasSize(1);
+		assertThat(e).isIn(ex.getMessages()); 
 	}
 }

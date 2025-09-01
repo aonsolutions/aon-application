@@ -709,9 +709,9 @@ public class FinanceImpl implements IFinance {
 	// ---------- INVOICE COMMUNICATION CONFIGURATION
 	
 	@Override
-	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx) {
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int domainId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationConfigurationDAO.get(ctx));
+				configuration -> InvoiceCommunicationConfigurationDAO.get(ctx, domainId));
 	}
 	
 	@Override

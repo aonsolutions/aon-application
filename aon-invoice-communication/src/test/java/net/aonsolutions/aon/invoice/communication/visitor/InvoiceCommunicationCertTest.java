@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,8 +52,7 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertEquals(InvoiceCommunicationError.AON_0023, ice.getInvoiceCommunicationError());
-
+		assertThat(InvoiceCommunicationError.AON_0023).isIn(ice.getMessages());
 	}
 
 }

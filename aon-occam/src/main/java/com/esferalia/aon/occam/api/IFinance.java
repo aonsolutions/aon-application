@@ -233,7 +233,7 @@ public interface IFinance {
 	// 	********** TICKET BAI CONFIGURATION ***********
 	// 	***********************************************
 
-	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx);
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice);
 	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(AONContext ctx, Integer invoice);
 	
 	// 	***********************************************

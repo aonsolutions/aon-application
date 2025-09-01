@@ -2681,7 +2681,26 @@ export class AonInvoice extends AonElement {
 					}).catch(e => {
 						this.accept = true;
 						this.getApplication().stopLoader(); 
-						this.showError(e)
+						// this.showError(e)
+						if (typeof e === "string") {
+							try {
+								e = JSON.parse(e);
+							} catch (err) {
+								console.error("No es un JSON válido:", err);
+								return;
+							}
+						}
+						 if (e && e.messages) {
+							if (this.invoice.messages) {
+								this.invoice.messages.push(...e.messages);
+							} else {
+								this.invoice.messages = e.messages;
+							}
+							this.reload();
+						} else {
+							this.showError(e);
+						}
+						
 					});
 				});
 			}
