@@ -30,6 +30,8 @@ public class PrintInvoiceConfiguration {
 	private PrintInvoiceThemeConfiguration theme;
 	
 	public Administration getAdministration() {
+		if(administration == null) 
+			administration = Administration.COMMON_TERRITORY;
 		return administration;
 	}
 	
