@@ -199,6 +199,7 @@ public class ExpressionContext {
 
 	private static final Set<String> RESERVED_WORDS = new HashSet<String>() {
 		{
+			add("O");
 			add("isdef");
 		}
 	};
