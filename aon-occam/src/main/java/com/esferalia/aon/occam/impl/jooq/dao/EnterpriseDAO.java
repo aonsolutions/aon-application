@@ -23,6 +23,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -175,6 +176,15 @@ public class EnterpriseDAO {
 		
 		return enterprise;
 	}
+	
+	public static void updatrEnterpriseScope(AONContext ctx, Domain domain) {
+		ctx.getDslContext()
+			.update(ENTERPRISE)
+			.set(ENTERPRISE.SCOPE, domain.getScope())
+			.where(ENTERPRISE.DOMAIN.eq(domain.getId()))
+			.execute();
+	}
+	
 	
 	private static void saveRegistryAddress(DSLContext dslContext, Enterprise enterprise) {
 		Record1<Integer> geozone = dslContext.select(GEOZONE.ID)

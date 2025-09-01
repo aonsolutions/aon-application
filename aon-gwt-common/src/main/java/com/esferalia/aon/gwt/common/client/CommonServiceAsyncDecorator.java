@@ -1320,4 +1320,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.deleteTag(domainName, domainId, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getSchemas(AsyncCallback<List<String>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSchemas(new AsyncCallbackWrapper<>(callback));
+	}
+
 }

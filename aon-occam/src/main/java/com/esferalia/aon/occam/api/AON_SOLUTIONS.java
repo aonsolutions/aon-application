@@ -455,6 +455,10 @@ public class AON_SOLUTIONS {
 		return stream;
 	}
 	
+	public static List<String> getSchemas() {
+		return AONContext.getSchemas();
+	}
+	
 	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		List<AonCompany> list = new ArrayList<>();

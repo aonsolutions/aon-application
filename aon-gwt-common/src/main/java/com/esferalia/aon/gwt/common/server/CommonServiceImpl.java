@@ -1422,5 +1422,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void deleteTag(String domainName, int domainId, String user, Integer id) throws AonCoreException {
 		AON.deleteTag(domainName, domainId, user, f -> f.getIdProperty().eq(id));
 	}
+	@Override
+	public List<String> getSchemas() throws AonCoreException {
+		return AON_SOLUTIONS.getSchemas();
+	}
 
 }
