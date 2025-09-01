@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -87,17 +88,30 @@ public class PackagingDAO {
 			});
 			
 			boolean contain = false;
+			Map<Integer, Double> compositionProductMap = new HashMap<>();
 			for(ItemComposition r : item.getItemComposition()) {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
 				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
+				if(compositionProductMap.containsKey(productId)) {
+					compositionProductMap.put(productId, compositionProductMap.get(productId) + r.getQuantity());
+				} else compositionProductMap.put(productId, r.getQuantity());
+				
 				if(productMap.containsKey(productId)) {
 					contain = true;
-					if(r.getQuantity() > productMap.get(productId)) {
-						throw new AonCoreException("El envase incluye más cantidad de la correspondiente al albarán");
-					}
 				}
 			}
+			
+			compositionProductMap.keySet().stream().forEach(k -> {
+				if(!productMap.containsKey(k)) {
+					throw new AonCoreException("El envase incluye productos que no corresponden al pedido.");
+				}
+				
+				if(AonMathUtils.isGreaterThan(compositionProductMap.get(k).doubleValue(), productMap.get(k).doubleValue())) {
+					throw new AonCoreException("El envase incluye más cantidad de la correspondiente al albarán");
+				}
+			});
+			 
 			if(!contain && !item.getItemComposition().isEmpty()) {
 				throw new AonCoreException("El envase no incluye ningún producto correspondiente al albarán.");
 			}

@@ -19,13 +19,18 @@ import com.esferalia.aon.gwt.template.jooq.DBInvoice;
 import com.esferalia.aon.gwt.template.server.exports.InvoiceExcelExport;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "DownloadInvoiceExcelTemplate", urlPatterns = { "/ms/api/downloadInvoiceExcel"
@@ -52,10 +57,13 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
 		User user = AON.getUser(domainName, domainId, login);
 
 		List<Invoice> invoices = DBInvoice.getInvoices(domain, user, f -> invoiceFilter(f, domainId, json));
+		ApplicationParameter param = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_DEFAULT_ADMINISTRATION);
+		Administration administration = Administration.safeValueOf(AonNumberUtils.toInteger(param.getValue()));
 		try {
 			resp.setContentType("application/msexcel");
 			resp.addHeader("Content-Disposition","attachment; filename=\"" + "Facturas.xls" +"\"");
-			InvoiceExcelExport.getInstance().create(resp.getOutputStream(), invoices);
+			InvoiceExcelExport.getInstance().create(resp.getOutputStream(), invoices, 
+				administration != null && administration.isCanarias() ? "IGIC" : "IVA");
 			resp.flushBuffer();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -399,7 +399,7 @@
 				<aon:commandLink id="salesDetailInPreparation" immediate="true"
 					styleClass="aon-icon-package"
 					style="padding-right: 20px;" 
-					rendered="#{to.delivery != null}"
+					rendered="#{to.delivery.id != null}"
 					title="Albarán #{to.delivery.referenceCode}">
 				</aon:commandLink>
 			</aon:column>

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { COLORS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { deleteDeliveryPackaging, getItem, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
@@ -105,8 +105,8 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		}	
 
 		if(this.DELIVERY_TOOLBAR) {
-			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);
-			deliveryToolbar.addButtonAfter(ACTION.DELETE, () => this.deleteFromDelivery());
+			// let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);
+			// deliveryToolbar.addButtonAfter(ACTION.DELETE, () => this.deleteFromDelivery());
 		}
 	}
 
@@ -117,8 +117,8 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		}
 
 		if(this.DELIVERY_TOOLBAR) {
-			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
-			if(deliveryToolbar) deliveryToolbar.removeButton(ACTION.DELETE.id);
+			// let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
+			// if(deliveryToolbar) deliveryToolbar.removeButton(ACTION.DELETE.id);
 		}
 	}
 
@@ -131,7 +131,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	buildPackageGeneral(parent){
 		let card = createCard(this.PACKAGE_CARD, MSG.PACKAGING, parent);
-		card.addTitleButton(MSG.PRINT, MATERIAL_ICONS.PRINT, false, () => this.print());
+		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_HORIZ, false, (e) => this.options(e));
 
 		let table = new AonBasicTable();
 		table.id = this.PACKAGE_TABLE;
@@ -283,6 +283,44 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	save() {
 	
+	}
+
+	options(e) {
+		e.preventDefault();
+		let rect = e.target.getBoundingClientRect();
+		let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+	
+		const top  = rect.top + y;
+		const left = rect.left + x;
+	
+		let d = document.getElementById(this.getApplication().OPTION_DIALOG);
+		let moreActions = [];
+
+		let printAction = {
+			id: CONSTANT.PRINT,
+			name: "Imprimir Envase",
+			title: "Imprimir Envase",
+			permission: true,
+			backgroundColor: `var(${COLORS.AON_BLUE})`,
+			icon: MATERIAL_ICONS.PRINT,
+			fn: () => this.print()
+		};
+		moreActions.push(printAction);
+
+		let deleteAction = {
+			id: CONSTANT.DELETE,
+			name: "Eliminar Envase",
+			title: "Eliminar Envase",
+			permission: true,
+			backgroundColor: `var(${COLORS.AON_BLUE})`,
+			icon: MATERIAL_ICONS.DELETE,
+			fn: () => this.deleteFromDelivery()
+		};
+		moreActions.push(deleteAction);
+		
+		d.setMenuOptions(moreActions, top, left);
+		d.open();
 	}
 
 	print() {
