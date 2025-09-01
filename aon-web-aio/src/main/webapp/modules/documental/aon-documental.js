@@ -107,6 +107,7 @@ export class AonDocumental extends AonElement {
 			newView.id = this.id + "NewView";
 			newView.title = "Nueva Vista";
 			newView.checked = isNewView();
+			LS.setBetaDoc(newView.checked);
 			newView.addEventListener(EVENT.CHANGE, () => {
 				setNewView(newView.checked);
 				this.rootPanel(new AonDocumental());
