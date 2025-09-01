@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.CharEncoding;
@@ -53,6 +54,7 @@ import net.aonsolutions.core.dbutils.AonSQLFile;
 import net.aonsolutions.core.dbutils.AonSQLScript;
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class DomainDAO {
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
@@ -331,6 +333,7 @@ public class DomainDAO {
 		
 		return domain;
 	}
+	
 	protected static void insertScript( Integer domain, String domainName, String scriptPath ) throws AonSQLException, IOException {
 		Connection connection = null;
 		try {			
@@ -346,7 +349,123 @@ public class DomainDAO {
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}
-	}	
+	}
+	
+	public static Domain insertDomainStandalone(AONContext ctx, Domain domain, Registry registry, String schema, String document) throws Exception {
+		Domain d = getDomain(ctx, f -> f.getNameProperty().eq(domain.getName()));
+		if (d.getId() != null) {
+			throw new Exception("Ya existe el dominio");
+		}
+
+		int newDomainId = ctx
+				.getDslContext()
+				.insertInto(DOMAIN)
+				.set(DOMAIN.CREATION_USER, ctx.getUser())
+				.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.MODIFICATION_USER, ctx.getUser())
+				.set(DOMAIN.MODIFICATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
+				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.PARENT, domain.getParentId())
+				.set(DOMAIN.OWNER, domain.getOwner())
+				.set(DOMAIN.NAME, domain.getName())
+				.set(DOMAIN.DESCRIPTION, domain.getDescription())
+				.set(DOMAIN.ENABLEHEREDITY, domain.isEnableHeredity()? (byte) 1 : (byte) 0)
+				.set(DOMAIN.MAXDEFINEDUSERS, 0)
+				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
+				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16)
+				.set(DOMAIN.SCOPE, domain.getScope())
+				.set(DOMAIN.AONCUSTOMER, domain.getAonCustomer())
+				.returning(DOMAIN.ID)
+				.fetchOne().getId();
+		domain.setId(newDomainId);
+		
+		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
+				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
+				.set(DOMAIN_APPLICATION.APPLICATION, 28)
+				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
+				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
+
+
+		try {
+			if (!domain.isEnableHeredity()) {
+				insertScriptStandalone(domain.getId(), domain.getName(), schema, IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
+			}
+			if (DomainType.GARAGE.equals(domain.getDomainType())) {
+				insertScript(domain.getId(), domain.getName(), IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, newDomainId)
+				.set(REGISTRY.DOCUMENT, registry.getDocument())
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) 0)
+				.set(REGISTRY.NAME, registry.getName())
+				.set(REGISTRY.TYPE, (byte) 1)
+				.returning(REGISTRY.ID).fetchOne()
+				.getId();
+		
+		Scope scope = createScopeStandalone(ctx, domain, document);
+		
+		ctx.getDslContext().insertInto(COMPANY)
+				.set(COMPANY.REGISTRY, newRegistryId)
+				.set(COMPANY.DOMAIN, newDomainId).execute();
+
+
+		ctx.getDslContext()
+				.insertInto(ENTERPRISE)
+				.set(ENTERPRISE.REGISTRY, newRegistryId)
+				.set(ENTERPRISE.DOMAIN, newDomainId)
+				.set(ENTERPRISE.SCOPE, scope.getId())
+				.execute();
+		
+		return domain;
+	}
+	
+
+	private static Scope createScopeStandalone(AONContext ctx, Domain newDomain, String document) throws Exception {
+
+		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(document));
+
+		if (scopes.count() != 0)
+			throw new IllegalArgumentException("Ya existe un ambito en el entorno cuya descripci\u00f3n es " + document);
+		else {
+			Scope newScope = new Scope().setDomain(newDomain.getId()).setDescription(document);
+
+			newScope = SecurityDAO.insertScope(ctx, newScope);
+			
+			newDomain.setScope(newScope.getId());
+			
+			DomainDAO.updateDomainScope(ctx, newDomain);
+			
+			return newScope;
+		}
+
+	}
+	
+	protected static void insertScriptStandalone( Integer domain, String domainName, String schema, String scriptPath ) throws AonSQLException, IOException {
+		Connection connection = null;
+		try {			
+			URL script = VersionManager.getScript(scriptPath);
+			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
+			file.setFileName(scriptPath);
+			connection = getConnectionSchema(schema);
+			AonSQLScript sqlScript = new AonSQLScript(file, connection);
+			sqlScript.setDomain(domain);
+			sqlScript.execute();
+		} catch (AonConnectionException e) {
+			throw new AonSQLException(e.getMessage(),e);
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+	}
+	
+	public static Connection getConnectionSchema(String schema) throws AonConnectionException {
+		AonDataSource ds = AonDataSource.getInstance();
+		return ds.getDatabaseConnection(schema);
+	}
 
 	public static DomainRecord getParentDomain(AONContext ctx, Integer domain) {
 		return ctx.getDslContext().selectFrom(DOMAIN)
