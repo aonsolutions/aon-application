@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -52,6 +53,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import junit.framework.Assert;
@@ -1628,6 +1630,79 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + ", " + payment.getDescription() );
 		}
 		fail();
+	}
+
+	@Test
+	public void testDefinedAndUndefinedVars()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				Collections.singletonMap("DIAS_NO_TRABAJADOS", "DIAS_VACACIONES"),
+				new String[] { 
+						"1500.00 * ( DIAS_VACACIONES OR DIAS_IT OR DIAS_NO O DIAS_TRABAJADOS )  / DIAS_MES",
+						},
+				new String[] { },
+				null);
+	
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		int monthDays = AonDateUtils.get(end, Calendar.DAY_OF_MONTH);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		double totalDays =
+		ctx.getExpressionContext()
+				.eval(" isdef DIAS_VACACIONES  ? DIAS_VACACIONES : DIAS_TRABAJADOS ", start, end, Double.class).stream()
+				.collect(Collectors.summingDouble(ITimedResult::getValue));
+		org.junit.Assert.assertEquals(monthDays, totalDays, DELTA);
+
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		ISalary salary = calculator.calculate(ctx);
+		org.junit.Assert.assertEquals(1500.00, salary.getTotalPayment(), DELTA);
+		
+		addData(aonContext, contract, start, add(start, Calendar.DAY_OF_MONTH, 9), "DIAS_VACACIONES", "10" );
+		
+		ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract);
+		totalDays =
+		ctx.getExpressionContext()
+				.eval(" isdef DIAS_VACACIONES  ? DIAS_VACACIONES : DIAS_TRABAJADOS ", start, end, Double.class).stream()
+				.collect(Collectors.summingDouble(ITimedResult::getValue));
+		org.junit.Assert.assertEquals(monthDays, totalDays, DELTA);
+
+		salary = calculator.calculate(ctx);
+		for ( IPayment payment :  salary.getPaymentS()) {
+			System.out.println(payment.getName() + ", " + payment.getDescription() + " [" + payment.getAmount() + "] ");
+		}
+		org.junit.Assert.assertEquals(1500.00, salary.getTotalPayment(), DELTA);
+
+		ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract);
+		totalDays =
+		ctx.getExpressionContext()
+				.eval(" DIAS_VACACIONES or DIAS_TRABAJADOS ", start, end, Double.class).stream()
+				.collect(Collectors.summingDouble(ITimedResult::getValue));
+		org.junit.Assert.assertEquals(monthDays, totalDays, DELTA);
+		
+		ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract);
+		totalDays =
+		ctx.getExpressionContext()
+				.eval(" DIAS_VACACIONES o DIAS_TRABAJADOS ", start, end, Double.class).stream()
+				.collect(Collectors.summingDouble(ITimedResult::getValue));
+		org.junit.Assert.assertEquals(monthDays, totalDays, DELTA);
+		
+
+		salary = calculator.calculate(ctx);
+		for ( IPayment payment :  salary.getPaymentS()) {
+			System.out.println(payment.getName() + ", " + payment.getDescription() + " [" + payment.getAmount() + "] ");
+		}
+		org.junit.Assert.assertEquals(1500.00, salary.getTotalPayment(), DELTA);
 	}
 
 	private static void load(Map<String, ITimedVariable<?>> context,

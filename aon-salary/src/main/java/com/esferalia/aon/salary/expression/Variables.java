@@ -461,15 +461,17 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
-	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end)			{
-		List<PeriodMap> list = new LinkedList<PeriodMap>();
 
-		List<Period> periods = new LinkedList<Period>();
-		periods.add(new Period(start, end));
+	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end)			{
+		List<PeriodMap> list = new LinkedList<>();
+		List<Period> periods = new LinkedList<>();
+		Period mainPeriod = new Period(start, end);
+
+		periods.add(mainPeriod);
 
 		for (String var : vars) {
 			List<Period> varPeriods = getPeriods(var);
-			if (varPeriods == null) {
+			if (varPeriods == null || varPeriods.isEmpty()) {
 				continue;// throw new UndefinedVariablesException(var);
 			}
 			List<Period> intersectedPeriods = Period.intersect(periods,
@@ -477,6 +479,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 			if (intersectedPeriods.size() > 0) {
 				periods = intersectedPeriods;
+			} else {
+				periods.addAll(Period.intersect(Collections.singleton(mainPeriod), varPeriods));
 			}
 		}
 
