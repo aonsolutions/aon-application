@@ -230,31 +230,41 @@
     }
     // dialog
     aon-dialog{
-      /*background-color: */
-      background-color: $color-dialog-alpha;
-      // Contenido
-      .aonDialog{
-        background-color: $color-box;
-        .dialog-head{
-          border-bottom: v.$px-1-6 solid $color-300;
-          aon-icon-button aon-icon {
-            &::after {
-              background-color: $color-text;
+      &[type="menu"]{
+        .aonDialog{
+          background-color: $color-box;
+          box-shadow      : $box-shadow-dialog;
+        }
+      }
+      &:not([type]) {
+        /*background-color: */
+        background-color: $color-dialog-alpha;
+        // Contenido
+        .aonDialog{
+          background-color: $color-box;
+          box-shadow      : $box-shadow-dialog;
+          .dialog-head{
+            border-bottom: v.$px-1-6 solid $color-300;
+            aon-icon-button aon-icon {
+              &::after {
+                background-color: $color-text;
+              }
             }
           }
-        }
-        .dialog-body{
+          .dialog-body{
+          }
         }
       }
     }
     // dialog-menu
     aon-dialog-menu{
-      background-color : $color-700;
+      background-color : $color-box;
       box-shadow       : $box-shadow-dialog;
       ul{
         li{
           &:hover, &.selected{
             background-color : $color-500;
+            color            : $color-text-button;
           }
         }
       }

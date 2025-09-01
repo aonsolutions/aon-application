@@ -90,10 +90,15 @@ export class AonDialog extends AonElement {
 //    else if (this.isTypeFullScreen())
 //      this.buildFullScreen();
 //    else
+//      this.build();
+    if (this.isTypeMenu())
+      this.buildMenu();
+    else
       this.build();
   }
 
   initialize() {
+    this.classList.add('aon-dialog-hidden');
     this.DIALOG       = this.id     + 'Dialog';
     this.MAIN         = this.DIALOG + 'Main';
     this.TITLE        = this.DIALOG + CONSTANT.TITLE;
@@ -115,76 +120,37 @@ export class AonDialog extends AonElement {
   }
 
   buildBlank() {
-    this.innerHTML = "";
+//    this.innerHTML = "";
     this.buildMenu();
-    this.onClick();
   }
 
   buildMenu() {
-    let dialog = this.createElement(TAG.DIV);
-    dialog.id = this.DIALOG;
-    dialog.className = "aonDialog";
-//		dialog.style.backgroundColor = 'transparent';
-//		dialog.style.paddingTop = '0px';
-    this.appendChild(dialog);
-
-    let content = this.createElement(TAG.DIV);
-    content.id = this.CONTENT;
-    content.className = "aonDialogContent";
-//		content.style.position = 'absolute';
-//		content.style.width = '200px';
-//		content.style.padding = '0px';
-    dialog.appendChild(content);
-
-    this.onClick();
+    // Se limpia el dialog
+    this.innerHTML = "";
+    // Montamos el HTML - div padre
+    const dialog = this.createDialog();
+    // main
+    const main = this.createMain(dialog);
+    // contenido
+    const body = this.createBodyContent(main);
+    // Si salimos del dialog
+    dialog.addEventListener("mouseleave", () => {this.close();});
   }
 
+  // Modales normales
   build() {
     // Se limpia el dialog
     this.innerHTML = "";
     // Montamos el HTML - div padre
-    let dialog       = this.createElement(TAG.DIV);
-    dialog.id        = this.DIALOG;
-    dialog.className = "aonDialog";
-    this.appendChild(dialog);
-    // main que crea por no partir mas la logica que existe
-    let main       = this.createElement(TAG.DIV);
-    main.id        = this.MAIN;
-    main.className = "aonDialogContent";
-    dialog.appendChild(main);
+    let dialog  = this.createDialog();
+    // main
+    let main = this.createMain(dialog);
     // cabecera
-    let head       = this.createElement(TAG.DIV);
-    head.className = "dialog-head";
-    main.appendChild(head);
-    // Titulo del dialog
-    let title       = this.createElement(TAG.DIV);
-    title.id        = this.TITLE;
-    title.className = "dialog-title";
-    head.appendChild(title);
-    // Boton de cerrar
-    let closeDesktop       = new AonIconButton(); 
-    closeDesktop.id        = "dialog-head-close";
-    closeDesktop.className = "dialog-head-close";
-    closeDesktop.title     = MSG.CLOSE;
-    closeDesktop.icon      = 'close';
-    closeDesktop.onclick   = () => this.close();
-    head.appendChild(closeDesktop);
+    this.createHead(main);
     // contenido
-    let body       = this.createElement(TAG.DIV);
-    body.className = "dialog-body";
-    main.appendChild(body);
-    // Contenido
-    let content       = this.createElement(TAG.DIV);
-    content.id        = this.CONTENT;
-    content.className = "dialog-body-content";
-    body.appendChild(content);
+    const body = this.createBodyContent(main);
     // action (botones)
-    let action       = this.createElement(TAG.DIV);
-    action.id        = this.ACTION;
-    action.className = "dialog-body-action";
-    body.appendChild(action);
-    // Iniciar - (se controla con la clase 'aon-dialog-hidden' si mostrar o no)
-    this.onClick();
+    this.createBodyAction(body);
   }
 
   buildFullScreen() {
@@ -192,50 +158,125 @@ export class AonDialog extends AonElement {
     // Si se quiere boton de volver solo cargar ese en el buid.
     // Si se quiere pantalla completa, solo es agragar una clase en build()
     this.build();
-    this.innerHTML = "";
-    let dialog = this.createElement(TAG.DIV);
-    dialog.id = this.DIALOG;
+//    this.innerHTML = "";
+//    let dialog = this.createElement(TAG.DIV);
+//    dialog.id = this.DIALOG;
+//    dialog.className = "aonDialog";
+//    this.appendChild(dialog);
+//
+//    let main = this.createElement(TAG.DIV);
+//    main.id = this.MAIN;
+//    dialog.appendChild(main);
+//
+//    let action = this.createElement(TAG.DIV);
+//    action.id = this.ACTION;
+//
+//    let title = this.createElement(TAG.DIV);
+//    title.id = this.TITLE;
+//    title.className = "dialog-title";
+//
+//    let content = this.createElement(TAG.DIV);
+//    content.id = this.CONTENT;
+//
+//    main.appendChild(action);
+//    main.appendChild(content);
+//
+//    let divButtonsLeft = this.createElement(TAG.DIV);
+//    divButtonsLeft.id = this.BUTTON_LEFT;
+//    action.appendChild(divButtonsLeft);
+//
+//    action.appendChild(title);//ADD TITLE
+//
+//    let divButtonRight = this.createElement(TAG.DIV);
+//    divButtonRight.id = this.BUTTON_RIGHT;
+//    action.appendChild(divButtonRight);
+//
+//    this.addAction({
+//      id: this.CANCEL,
+//      title: MSG.CLOSE,
+//      icon: MATERIAL_ICONS.ARROW_BACK,
+//      position: "left"
+//    }, () => this.close());
+//    this.onClick();
+  }
+
+  createDialog(){
+    const dialog     = this.createElement(TAG.DIV);
+    dialog.id        = this.DIALOG;
     dialog.className = "aonDialog";
     this.appendChild(dialog);
-
-    let main = this.createElement(TAG.DIV);
-    main.id = this.MAIN;
-    dialog.appendChild(main);
-
-    let action = this.createElement(TAG.DIV);
-    action.id = this.ACTION;
-
-    let title = this.createElement(TAG.DIV);
-    title.id = this.TITLE;
-    title.className = "dialog-title";
-
-    let content = this.createElement(TAG.DIV);
-    content.id = this.CONTENT;
-
-    main.appendChild(action);
-    main.appendChild(content);
-
-    let divButtonsLeft = this.createElement(TAG.DIV);
-    divButtonsLeft.id = this.BUTTON_LEFT;
-    action.appendChild(divButtonsLeft);
-
-    action.appendChild(title);//ADD TITLE
-
-    let divButtonRight = this.createElement(TAG.DIV);
-    divButtonRight.id = this.BUTTON_RIGHT;
-    action.appendChild(divButtonRight);
-
-    this.addAction({
-      id: this.CANCEL,
-      title: MSG.CLOSE,
-      icon: MATERIAL_ICONS.ARROW_BACK,
-      position: "left"
-    }, () => this.close());
-    this.onClick();
+    return dialog;
   }
 
   getDialog() {
     return this.getElement(this.DIALOG);
+  }
+
+  createMain(dialog) {
+    const main     = this.createElement(TAG.DIV);
+    main.id        = this.MAIN;
+    main.className = "aonDialogContent";
+    dialog.appendChild(main);
+    return main;
+  }
+
+  getMain() {
+    return this.getElement(this.MAIN);
+  }
+  
+  createHead(main) {
+    const head     = this.createElement(TAG.DIV);
+    head.className = "dialog-head";
+    main.appendChild(head);
+    // Titulo del dialog
+    const title     = this.createElement(TAG.DIV);
+    title.id        = this.TITLE;
+    title.className = "dialog-title";
+    head.appendChild(title);
+    // Boton de cerrar
+    const closeDesktop     = new AonIconButton(); 
+    closeDesktop.id        = "dialog-head-close";
+    closeDesktop.className = "dialog-head-close";
+    closeDesktop.title     = MSG.CLOSE;
+    closeDesktop.icon      = 'close';
+    closeDesktop.onclick   = () => this.close();
+    head.appendChild(closeDesktop);
+  }
+
+  setTitle(title) {
+    if (title)
+      this.getElement(this.TITLE).innerHTML = title;
+  }
+
+  createBodyContent(main){
+    const body     = this.createElement(TAG.DIV);
+    body.className = "dialog-body";
+    main.appendChild(body);
+    // Contenido
+    const content     = this.createElement(TAG.DIV);
+    content.id        = this.CONTENT;
+    content.className = "dialog-body-content";
+    body.appendChild(content);
+    return body;
+  }
+
+  getContent() {
+    return this.getElement(this.CONTENT);
+  }
+
+  createBodyAction(body){
+    const action     = this.createElement(TAG.DIV);
+    action.id        = this.ACTION;
+    action.className = "dialog-body-action";
+    body.appendChild(action);
+  }
+
+  getButtonAccept() {
+    return this.getElement(this.ACCEPT);
+  }
+
+  getButtonCancel() {
+    return this.getElement(this.CANCEL);
   }
 
   onClick() {
@@ -249,7 +290,7 @@ export class AonDialog extends AonElement {
       dialog.onclick = ({target}) => {
         if (target === dialog && this.autoclose) {
           this.close();
-      }
+        }
       };
     }
   }
@@ -290,31 +331,14 @@ export class AonDialog extends AonElement {
     });
   }
 
-  getContent() {
-    return this.getElement(this.CONTENT);
-  }
-
-  getButtonAccept() {
-    return this.getElement(this.ACCEPT);
-  }
-
-  getButtonCancel() {
-    return this.getElement(this.CANCEL);
-  }
-
-  getMain() {
-    return this.getElement(this.MAIN);
-  }
-
   setContent(widget, top = null, left = null, width = null) {
     let content       = this.getContent();
     content.innerHTML = '';
     content.appendChild(widget);
-//    if (top && left) {
-//      let dialog = this.getElement(this.DIALOG);
-//      content.style.top = top + 'px' || '90px';
-//      content.style.left = (left > (dialog.offsetWidth / 2) ? left - 180 : left) + 'px';
-//    }
+    if (this.isTypeMenu() && top && left) {
+      this.style.top  = top + 'px';
+      this.style.left = (left > (this.offsetWidth / 2) ? left - 180 : left) + 'px';
+    }
 
 //		if(width) {
 //			content.style.width = width;
@@ -332,7 +356,7 @@ export class AonDialog extends AonElement {
 
   setMenuOptions(options, top, left) {
     let dialog = this.getDialog();
-    let content = this.getContent()
+    let content = this.getContent();
     content.style.top = top || '90px';
     content.style.left = left > (dialog.offsetWidth / 2) ? left - 180 : left;
     content.innerHTML = '';
@@ -370,11 +394,6 @@ export class AonDialog extends AonElement {
         item.fn();
       });
     });
-  }
-
-  setTitle(title) {
-    if (title)
-      this.getElement(this.TITLE).innerHTML = title;
   }
 
   getButtonLeft() {

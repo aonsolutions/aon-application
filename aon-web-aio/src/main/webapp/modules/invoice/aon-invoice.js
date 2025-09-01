@@ -263,8 +263,8 @@ export class AonInvoice extends AonElement {
 				if(tax) tax.style.width = '100%';
 				if(remarksCard) remarksCard.style.width = '100%';
 				if(commentCard) commentCard.style.width = '100%';
-			} 
-				
+			}
+
 			if(window.innerWidth && window.innerWidth < 900){
 				this.getApplication().closeSidenav();
 			}
@@ -983,21 +983,21 @@ export class AonInvoice extends AonElement {
 			
 			
 			let contentCard = errorsCard.getContent();
-			contentCard.style.paddingTop = "15px";
-			contentCard.style.paddingLeft = "22px"; 
-			contentCard.style.paddingRight = "22px"; 
+			contentCard.style.paddingTop = "15px"
+			contentCard.style.paddingLeft = "22px";
+			contentCard.style.paddingRight = "22px";
 			contentCard.style.paddingBottom = "15px";
 
 			contentCard.style.display = "none"; 
 			collapseSpan.onclick = function() { 
 				contentCard.style.display = "none";
 				collapseSpan.style.display = "none"; 
-				expandSpan.style.removeProperty("display"); 
+				expandSpan.style.removeProperty("display");
 			};
 			expandSpan.onclick = function() { 
 				contentCard.style.display = "block";
 				expandSpan.style.display = "none"; 
-				collapseSpan.style.removeProperty("display"); 
+				collapseSpan.style.removeProperty("display");
 			};
 			collapseSpan.onclick();
 			
@@ -1045,17 +1045,17 @@ export class AonInvoice extends AonElement {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
-		let dialog = new AonDialog();
-		dialog.id = this.DIALOG_BLANK;
-		dialog.type = CONSTANT.BLANK;
+  consoleLog(' -- LLEGA --- ', 'red', true);
+
+		let dialog  = new AonDialog();
+		dialog.id   = this.DIALOG_BLANK;
+		dialog.type = "menu";
 		this.appendChild(dialog);
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
 			let div = this.createElement(TAG.DIV);
-			div.style.margin = '15px';
 			let button  = this.getElement(card.TITLE_SECTION2 + MSG.OPTIONS + 'Button');
 
 			// ----- SERVICE
-
 			let service = new AonSwitch();
 			service.id = this.SERVICE;
 			service.title = MSG.SERVICE;
@@ -1066,9 +1066,7 @@ export class AonInvoice extends AonElement {
 				this.invoice.setService(service.checked);
 			});
 
-
 			// ----- BIENES INVERSION
-
 			let investment = new AonSwitch();
 			investment.id = this.INVESTMENT;
 			investment.title = MSG.INVESTMENT;
@@ -1079,9 +1077,7 @@ export class AonInvoice extends AonElement {
 				this.invoice.setInvestment(investment.checked);
 			});
 
-
 			// ----- RECTIFICATIVA
-
 			let rectified = new AonSwitch();
 			rectified.id = this.RECTIFIED;
 			rectified.title = MSG.RECTIFIED;
@@ -1093,8 +1089,6 @@ export class AonInvoice extends AonElement {
 			rectified.checked = this.invoice.isRectified();
 
 			// ----- EMITIDA POR TERCEROS
-
-
 			let thirdPart = new AonSwitch();
 			if(this.invoice.isEmitida()){
 				thirdPart.id = this.THIRD_PART;
@@ -1106,27 +1100,15 @@ export class AonInvoice extends AonElement {
 				});
 				thirdPart.checked = this.invoice.isThirdPart();
 			}
-
-
+ 
+           // ----- Montamos
 			const top  = button.getBoundingClientRect().top;
-			const left = button.getBoundingClientRect().left;
+			const left = button.getBoundingClientRect().left;            
 			dialog.setContent(div, top, left);
 			dialog.open();
-
-			service.setWidth('150px');
-			service.setMarginBottom('10px');
-
-			investment.setWidth('150px');
-			investment.setMarginBottom('10px');
-
-			rectified.setWidth('150px');
-			rectified.setMarginBottom('10px');
-		
-			if(this.invoice.isEmitida()){
-				thirdPart.setWidth('150px');
-				thirdPart.setMarginBottom('10px');
-			}
 		});
+
+  consoleLog(' -- FIN LLEGA --- ', 'red', true);
 
 		let table = new AonBasicTable();
 		table.id = this.GENERAL_CARD_TABLE;
@@ -1243,7 +1225,6 @@ export class AonInvoice extends AonElement {
 		}
 
 		// ----- DATE
-
 		let dateSpan = this.createTableSpan("30%", "2px");
 		div.appendChild(dateSpan);
 
@@ -1256,9 +1237,7 @@ export class AonInvoice extends AonElement {
 		});
 		dateSpan.appendChild(date);
 
-	
 		// ----- TOTAL
-
 		let totalSpan = this.createTableSpan("25%", "0px");
 		div.appendChild(totalSpan);
 
@@ -1292,7 +1271,7 @@ export class AonInvoice extends AonElement {
 			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
 				this.invoice.receiver.address = customer.getCustomer().address;
 			});
-			table.addCell(customer, '4');	
+			table.addCell(customer, '4');
 		} else {
 			let registry = new AonRegistrySuggestion();
 			registry.id = this.REGISTRY;
@@ -1304,7 +1283,7 @@ export class AonInvoice extends AonElement {
 			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
 				this.invoice.receiver.address = registry.getRegistry().address;
 			});
-			table.addCell(registry, '6');	
+			table.addCell(registry, '6');
 		}
 
 		table.addRow(); // ----- ROW 3
@@ -1346,7 +1325,7 @@ export class AonInvoice extends AonElement {
 		} else if(this.configuration.workplaces.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
 	}
 
-	onChangeSerie(value) {	
+	onChangeSerie(value) {
 		this.invoice.setSeries(value);
 		if(this.invoice.isInbox()) {
 			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.series).length === 0;
@@ -1372,12 +1351,10 @@ export class AonInvoice extends AonElement {
 
 		let dialog = this.getElement(this.DIALOG_BLANK);
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
-			let div = this.createElement(TAG.DIV);
-			div.style.margin = '15px';
+			let div     = this.createElement(TAG.DIV);
 			let button  = this.getElement(card.TITLE_SECTION2 + MSG.OPTIONS + 'Button');
 
 			// ----- VAT ACCRUAL PAYMENT - CRITERIO DE CAJA
-
 			let accrual = new AonSwitch();
 			accrual.id = this.VAT_ACCRUAL_PAYMENT;
 			accrual.title = MSG.VAT_ACCRUAL_PAYMENT;
@@ -1389,7 +1366,6 @@ export class AonInvoice extends AonElement {
 			});
 
 			// ----- SURCHARGE - RECARGO DE EQUIVALENCIA
-
 			let surcharge = new AonSwitch();
 			surcharge.id = this.SURCHARGE;
 			surcharge.title = MSG.SURCHARGE_RE;
@@ -1403,7 +1379,6 @@ export class AonInvoice extends AonElement {
 			surcharge.checked = this.invoice.isSurcharge();
 
 			// ----- REGIMEN ESPECIAL AGRARIO
-
 			let farmer = new AonSwitch();
 			farmer.id = this.WITHHOLDING_FARMER;
 			farmer.title = MSG.WITHHOLDING_FARMER;
@@ -1424,20 +1399,11 @@ export class AonInvoice extends AonElement {
 	
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
-			dialog.setContent(div, top, left, '225px');
+			dialog.setContent(div, top, left);
 			dialog.open();
-
-			farmer.setWidth('200px');
-			farmer.setMarginBottom('10px');
-
-			surcharge.setWidth('200px');
-			surcharge.setMarginBottom('10px');
-
-			accrual.setWidth('200px');
-			accrual.setMarginBottom('10px');
 		});
 
-		this.buildTaxCardContent(card);	
+		this.buildTaxCardContent(card);
 	}
 
 	buildTaxCardContent(card) {
