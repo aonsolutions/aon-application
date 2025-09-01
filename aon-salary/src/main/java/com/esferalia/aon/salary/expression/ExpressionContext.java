@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -21,16 +22,15 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
-import org.mvel2.DataConversion;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
-import org.mvel2.ast.ASTNode;
-import org.mvel2.integration.impl.CachingMapVariableResolverFactory;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.code.aon.AonVersion;
@@ -38,6 +38,7 @@ import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 public class ExpressionContext {
+	
 
 	public static class RetryExpressionException extends MacroException {
 
@@ -188,6 +189,13 @@ public class ExpressionContext {
 	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>();
 
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("[A-Za-z_\u00F1][A-Za-z0-9_\u00D1]*");
+	
+
+	private static Pattern CHAINED_OR_PATTERN = Pattern.compile(
+			String.format("(%1$s)\\s+(?:O|OR)\\s+(%1$s)%2$s", 
+					VARIABLE_PATTERN.pattern(),
+					String.format("(?:\\s+(?:O|OR)\\s+(%1$s))?", VARIABLE_PATTERN.pattern()).repeat(10)),
+			Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	private static final Set<String> RESERVED_WORDS = new HashSet<String>() {
 		{
@@ -994,6 +1002,9 @@ public class ExpressionContext {
 				setCurrentBindings(bindings);
 				// Fix MVEL 2.2.4-Final BUG with multiline scripts
 				String fixedScript = script.replaceAll("\\]\\s+\\[", "][");
+				
+				fixedScript = chainedOr2Isdef(fixedScript);
+				
 				T value = MVEL.eval(fixedScript, bindings, toType);
 				values.add(new TimedResult<T>(value, bindings.getPeriod(), bindings.getRead()));
 			} catch (PropertyAccessException e) {
@@ -1184,7 +1195,37 @@ public class ExpressionContext {
 		Object result = TemplateRuntime.eval(template, map);
 		return result != null ? round(result.toString()) : null;
 	}
+	
+	public static String chainedOr2Isdef(String expression) {
+		int start = 0;
+		Matcher matcher = CHAINED_OR_PATTERN.matcher(expression);
+		StringBuilder expressionBuilder = new StringBuilder();
+		while (matcher.find()) {
+			
+			int[] groups = IntStream.rangeClosed(1, matcher.groupCount()).filter(group -> matcher.group(group) != null)
+					.toArray();
 
-	// ------------------------------------------------------------------------
+			String isDefExpression = "" ;
+			
+			int i = groups.length -1 ;
+			if ( i >= 0 ) {
+				isDefExpression = matcher.group(groups[i--]);
+			}
+
+			for (; i >= 0; i--) {
+				String variable = matcher.group(groups[i]);
+				isDefExpression = String.format("isdef %1$s ? %1$s : ( %2$s ) ", variable, isDefExpression );
+				
+			}
+
+			expressionBuilder.append(expression.substring(start, matcher.start())).append(isDefExpression);
+			
+			
+			start = matcher.end();
+		}
+		expressionBuilder.append(expression.substring(start));
+		return expressionBuilder.toString();
+	}
+
 
 }
