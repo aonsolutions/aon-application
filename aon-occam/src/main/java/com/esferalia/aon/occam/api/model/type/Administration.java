@@ -56,11 +56,7 @@ public enum Administration implements Serializable {
 	}
 	
 	public boolean isCanarias() {
-		return (this == Administration.COMMON_TERRITORY);
-	}
-	
-	public boolean isUnknown() {
-		return (this == Administration.UNKNOWN);
+		return (this == Administration.CANARIAS);
 	}
 	
 	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
@@ -74,7 +70,6 @@ public enum Administration implements Serializable {
 		}
 		return null;
 	}
-	
 	
 	public static Administration safeValueOf( Byte i ) {
 		if (i == null) return null;

@@ -213,6 +213,7 @@ export const LOGOUT = 'logout';
 export const MAIL = 'mail';
 export const MANAGE_ACCOUNTS = 'manage_accounts';
 export const MORE_VERT = 'more_vert';
+export const MORE_HORIZ = 'more_horiz';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';
 export const MONITORING = 'monitoring';

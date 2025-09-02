@@ -840,16 +840,18 @@ export class AonMobileDelivery extends AonElement {
 					if(i.composition.product.id === data.product) {
 						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 						saveButton.setDisabled(false);
-						let pendingQuantity = detail.quantity - detail.delivered;
-						if(!auto && q < pendingQuantity) pendingQuantity = q;
-						let quantityValue = i.quantity > pendingQuantity
-							? pendingQuantity : i.quantity;
+						let pendingQuantity = detail.quantity - detail.delivered - quantity;
+						if(pendingQuantity > 0) {
+							if(!auto && q < pendingQuantity) pendingQuantity = q;
+							let quantityValue = i.quantity > pendingQuantity
+								? pendingQuantity : i.quantity;
 						
-						let object = i;
-						object.quantity = quantityValue;
-						composition.push(object);
+							let object = i;
+							object.quantity = quantityValue;
+							composition.push(object);
 
-						quantity = quantity + quantityValue;
+							quantity = quantity + quantityValue;
+						}
 					}
 				});
 				source = r.item.id;

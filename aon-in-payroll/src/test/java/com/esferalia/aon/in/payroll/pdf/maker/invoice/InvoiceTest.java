@@ -80,6 +80,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -710,7 +711,7 @@ public class InvoiceTest {
 			PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
 			Attach attach = new Attach();
 			attach.setData(back);
-			
+			config.setAdministration(Administration.COMMON_TERRITORY);
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
@@ -1598,7 +1599,7 @@ public class InvoiceTest {
 			PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
 			Attach attach = new Attach();
 			attach.setData(back);
-			
+			config.setAdministration(Administration.COMMON_TERRITORY);
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);

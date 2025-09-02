@@ -24,6 +24,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class InvoiceExcelExport extends ExcelExport {
 
 	List<Invoice> invoices;
+	String vatName = "IVA";
 	
 	public static InvoiceExcelExport getInstance() {
 		return new InvoiceExcelExport();
@@ -32,10 +33,14 @@ public class InvoiceExcelExport extends ExcelExport {
 	public InvoiceExcelExport() {
 		this.invoices = new LinkedList<>();
 	}
-	
 	public void create(OutputStream out, List<Invoice> invoices) {
+		create(out, invoices, null);
+		
+	}
+	public void create(OutputStream out, List<Invoice> invoices, String vatName) {
 		try {
 			this.invoices = invoices;
+			this.vatName = AonStringUtils.isBlank(vatName) ? "IVA" : vatName;
 			sheetName = "Facturas";
 			build();
 			buildColumns();
@@ -67,8 +72,8 @@ public class InvoiceExcelExport extends ExcelExport {
         columns.add(new AonExcelColumn("Cuenta Explotación", 12));
         columns.add(new AonExcelColumn("Descripción Cuenta", 12));
         columns.add(new AonExcelColumn("Base Imponible", 12));
-        columns.add(new AonExcelColumn("%IVA", 12));
-        columns.add(new AonExcelColumn("Cuota IVA", 12));
+        columns.add(new AonExcelColumn("%" + vatName, 12));
+        columns.add(new AonExcelColumn("Cuota " + vatName , 12));
         columns.add(new AonExcelColumn("%RE", 12));
         columns.add(new AonExcelColumn("Couta RE", 12));
         columns.add(new AonExcelColumn("%Retención", 12));
