@@ -93,6 +93,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/deliveryPackaging/accept":
 				response(req, resp, acceptDeliveryPackaging(api));
 				break;
+			case "/deliveryPackagingComposition/add":
+				response(req, resp, addDeliveryPackagingComposition(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -174,9 +177,23 @@ public class PackagingServlet extends AonApiHttpServlet {
 		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
 		else if(sscc.length() != 18 && !skipDestiny) throw new AonApiException("El SSCC introducido no es correcto.");
 		
-		AON.deleteDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, sscc, quantity, skipDestiny);		
+		AON.subtractDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, sscc, quantity, skipDestiny);		
 		return new JSONObject();
 	}
+	
+	private JSONObject addDeliveryPackagingComposition(AonApiData api) {
+		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		Double quantity = JsonUtils.getDouble(api.getData(), IJsonNames.QUANTITY);
+		ItemComposition composition = ItemCompositionJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPOSITION));
+		boolean skipSource = JsonUtils.getboolean(api.getData(), "skipSource");
+
+		String sscc = JsonUtils.getString(api.getData(), IJsonNames.SOURCE);
+		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+		else if(sscc.length() != 18 && !skipSource) throw new AonApiException("El SSCC introducido no es correcto.");
+		
+		AON.addDeliveryPackagingComposition(api.getDomain(), api.getUser(), delivery, composition, sscc, quantity, skipSource);		
+		return new JSONObject();
+	}	
 	
 	private void seres(AonApiData api, Integer deliveryId) {
 		Delivery delivery = AON.getDelivery(api.getDomain(), api.getUser().getLogin(), f ->

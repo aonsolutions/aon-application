@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { COLORS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { deleteDeliveryPackaging, getItem, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
+import { deleteDeliveryPackaging, getItem, openFileUrl, subtractDeliveryPackagingComposition, addDeliveryPackagingComposition} from '../../services/service.js';
 import { createCard, createInput, createQuantity } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { round } from '../../services/utils.js';
@@ -180,7 +180,6 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			let td2 = table.addCell(span2)
 			td2.style.paddingBottom = '10px';
 
-
 			let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
 			aonIconButton.icon = MATERIAL_ICONS.DO_NOT_DISTURB_ON; ;
 			aonIconButton.addEventListener(EVENT.CLICK, () => {
@@ -188,6 +187,16 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			});
 			let td3 = table.addCell(aonIconButton);
 			td3.style.paddingBottom = '10px';
+
+			if(!this.isMobile()){
+				let addIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
+				addIconButton.icon = MATERIAL_ICONS.ADD_CIRCLE;
+				addIconButton.addEventListener(EVENT.CLICK, () => {
+					this.addDialog(c);
+				});
+				let td4 = table.addCell(addIconButton);
+				td4.style.paddingBottom = '10px';
+			}
 		});
 	}
 
@@ -264,7 +273,67 @@ export class AonMobileDeliveryPackaging extends AonElement {
 					quantity: quantityBox.getQuantity(),
 					destiny: product.value,
 					skipDestiny: skipDestiny
-				}).then(() => this.aonDelivery());
+				})
+				.then(() => this.aonDelivery())
+				.catch(err => this.showError(err));
+			});
+			d.open();
+		});
+	}	
+
+	addDialog(composition) {
+		getItem({id: composition.composition.id, full: true}).then(item => {
+			let table = new AonBasicTable();
+			table.id = this.id + 'SubstractTable';
+
+			let d = this.getApplication().getDialog();
+			d.clear();
+
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ACCEPT);
+			d.setContent(table);
+
+			table.addRow();
+			let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Origen');
+			table.addCell(product);
+			// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+			let skipSource = false;
+			if(!this.isMobile()){
+				table.addRow();
+	
+				let checkBox = new AonCheckbox();
+				checkBox.id = this.id + 'AddCheckbox';
+				checkBox.description = 'Sumar sin origen.';
+				checkBox.addEventListener(EVENT.CHANGE, () => {
+					skipSource = checkBox.isChecked();
+					if(checkBox.isChecked()) {
+						product.setValue("");
+						product.setDisabled(true);
+					} else product.setDisabled(false);
+				});
+				let cell = table.addCell(checkBox);
+				cell.style.padding = '10px';
+			}
+
+			table.addRow();
+			let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
+			quantityBox.addEventListener(EVENT.CHANGE, () => {
+			 	quantityBox.setQuantityFormat(quantityBox.value);
+			});
+			quantityBox.setTags(item);
+			table.addCell(quantityBox);
+			quantityBox.setQuantity(0.0);
+
+			d.addAcceptAction(() => {
+				addDeliveryPackagingComposition({
+					delivery: this.delivery,
+					composition,
+					quantity: quantityBox.getQuantity(),
+					source: product.value,
+					skipSource: skipSource
+				})
+				.then(() => this.aonDelivery())
+				.catch(err => this.showError(err));
 			});
 			d.open();
 		});

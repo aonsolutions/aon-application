@@ -8435,9 +8435,15 @@ public class AON {
 		}
 	}
 	
-	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
+	public static void subtractDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny);
+			getWarehouse().subtractDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny);
+		}
+	}
+	
+	public static void addDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String source, Double quantity, boolean skipSource) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().addDeliveryPackagingComposition(ctx, deliveryId, composition, source, quantity, skipSource);
 		}
 	}
 	

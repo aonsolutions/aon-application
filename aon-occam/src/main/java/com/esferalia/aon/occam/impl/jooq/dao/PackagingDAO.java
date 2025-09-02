@@ -411,7 +411,7 @@ public class PackagingDAO {
 		});
 	}
 	
-	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
+	public static void subtractDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		Item sourceItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getIdProperty().eq(composition.getItemId())));
 		
@@ -518,7 +518,99 @@ public class PackagingDAO {
 			// AÑADIR STOCK
 			StockDAO.add(ctx, composition.getCompositionItemId(), warehouse, quantity);
 		}
-		deleteItemBox(ctx, deliveryId, productId, composition.getQuantity());
+		deleteItemBox(ctx, deliveryId, productId, quantity);
+	}
+	
+	public static void addDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String source, Double quantity, boolean skipSource) {
+		Item destinyItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getIdProperty().eq(composition.getItemId())));
+		
+		Item sourceItem = skipSource ? null : ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getSerialNumberProperty().eq(source)));
+		
+		Item compositionItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getIdProperty().eq(composition.getCompositionItemId())));
+	
+		if(!skipSource) {
+			if(sourceItem == null ||  sourceItem.isEmpty()) {
+				throw new AonCoreException("El envase origen no existe.");
+			}
+		
+			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(sourceItem.getId()));
+			if(dp != null && !dp.isEmpty()) {
+				throw new AonCoreException("El envase origen ya está en un albarán.");
+			}			
+		}
+		
+		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
+		.and(f.getSourceIdProperty().eq(deliveryId))).forEach(dr -> {
+			DataResponseDetail drd = DataResponseDAO.getDataResponseDetailStream(ctx, g -> g.getDataResponseProperty().eq(dr.getId()))
+					.findFirst().orElse(null);
+			if(drd != null) {
+				PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(new JSONObject(drd.getDataValue()));				
+				if(packaging.getContainer().getItem().equals(composition.getItemId())) {
+					for(Integer i = 0; i < packaging.getContent().size(); i++) {
+						for(Integer j = 0; j < packaging.getContent().get(i).getComposition().size(); j++) {
+							if(packaging.getContent().get(i).getComposition().get(j).getId().equals(composition.getId())) {
+								packaging.getContent().get(i).getComposition().get(j).setQuantity(
+										packaging.getContent().get(i).getComposition().get(j).getQuantity() + quantity);
+								// Actualizar el DataResponseDetail
+								drd.setDataValue(PackagingDeliveryJSON.toJSON(packaging).toString());
+								DataResponseDAO.updateDataResponseDetail(ctx, drd, f -> f.getIdProperty().eq(drd.getId()));
+							}
+						}
+					}				
+				}
+			}
+		});
+
+		// TRANSFERIR ITEM COMPOSITION
+		ItemCompositionDAO.transfer(ctx, sourceItem, destinyItem, compositionItem, quantity);
+
+		// RESTAR STOCK Y ACTUALIZAR PEDIDO
+		Integer productId = composition.getComposition().getProduct().getId();
+		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+			.and(f.getItem().eq(composition.getCompositionItemId())));
+	
+		dd.setQuantity(dd.getQuantity() + quantity);
+		DeliveryDetailDAO.save(ctx, dd);
+		
+		SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));		
+		sd.setDelivered(sd.getDelivered() + quantity);
+		sd.setStatus(sd.getDelivered() == sd.getQuantity() ? SalesDetailStatus.SETTLED : SalesDetailStatus.PARTIAL_SETTLED);
+		if(AonMathUtils.isGreaterThan(sd.getDelivered(), sd.getQuantity())) {
+			throw new AonCoreException("La cantidad a añadir es mayor que la cantidad del pedido.");
+		}
+		SalesDetailDAO.save(ctx, sd);
+		
+		// TODO FALTA REVISAR PEDIDO!!!
+		List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+			f.getSalesProperty().eq(sd.getSales().getId())
+			.and(f.getDomainProperty().eq(sd.getDomain()))
+			.and(f.getDeliveryProperty().isNotNull()))
+			.toList();
+		if(list.isEmpty()) {
+			Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
+			sales.setStatus(SalesStatus.PENDING);
+			SalesDAO.save(ctx, sales);
+		}
+		
+		if(!skipSource) {
+			// OBTENER EL ALMACÉN DEL ORIGEN
+			Integer warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getItemProperty().eq(destinyItem.getId()))).getWarehouse();
+			if(warehouse == null) {
+				warehouse = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+						.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
+			}
+			if(warehouse == null) {
+				warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
+			}
+		
+			// AÑADIR STOCK
+			StockDAO.subtract(ctx, composition.getCompositionItemId(), warehouse, quantity);
+		}
+		addItemBox(ctx, deliveryId, productId, quantity);
 	}
 	
 	public static void deleteDeliveryPackaging(AONContext ctx, Integer delivery) {
@@ -775,6 +867,33 @@ public class PackagingDAO {
 			}
 			
 			// TODO STOCK DE CAJAS... 
+		}
+	}
+	
+	private static void addItemBox(AONContext ctx, Integer delivery, Integer productId, double quantity) {
+		Item base = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getProductProperty().eq(productId))
+				.and(f.getSerialNumberProperty().isNull()));
+		
+		ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getItemProperty().eq(base.getId()));
+		if(ic != null && ic.getId() != null) {
+			Double boxQuantity = quantity;
+			if(base.getStockUnitTag().getId().equals(base.getPackMeasurementTag().getId())) {
+				boxQuantity = quantity / base.getPackMeasurement();
+				boxQuantity = boxQuantity / base.getPackUnits().doubleValue();	
+			} else if(base.getStockUnitTag().getId().equals(base.getPackUnitsTag().getId())) {
+				boxQuantity = quantity / base.getPackUnits().doubleValue();	
+			}    
+			boxQuantity = AonMathUtils.round(boxQuantity);
+			
+			Item box = ic.getComposition();
+		
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery)
+					.and(f.getItem().eq(box.getId())));
+			if(dd.getId() != null) {
+				dd.setQuantity(dd.getQuantity() + boxQuantity);
+				DeliveryDetailDAO.save(ctx, dd);
+			}
 		}
 	}
 	
