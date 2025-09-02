@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -411,7 +410,7 @@ public class PackagingDAO {
 			}
 		});
 	}
-
+	
 	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		Item sourceItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getIdProperty().eq(composition.getItemId())));
@@ -564,7 +563,7 @@ public class PackagingDAO {
 		});
 	}
 	
-	private static void deletePackagingDelivery(AONContext ctx, Integer deliveryId, PackagingDelivery packaging, boolean bool) {
+	private static void deletePackagingDelivery(AONContext ctx, Integer deliveryId, PackagingDelivery packaging, boolean salesToPending) {
 		// BORRANDO EL VINCULO DEL PALET (CON SSCC) CON EL ALBARÁN
 		DeliveryPackagingDAO.delete(ctx, h -> h.getDomainProperty().eq(ctx.getDomainId())
 				.and(h.getDeliveryProperty().eq(deliveryId))
@@ -613,23 +612,14 @@ public class PackagingDAO {
 						
 						SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
 						sd.setDelivered(sd.getDelivered() - c.getQuantity());
-						if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
+						if(salesToPending && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
 							sd.setDelivery(null);
+						else sd.setDelivery(deliveryId);
 						sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
 						SalesDetailDAO.save(ctx, sd);
 						
-						// TODO FALTA REVISAR PEDIDO!!!
-						List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
-							f.getSalesProperty().eq(sd.getSales().getId())
-							.and(f.getDomainProperty().eq(sd.getDomain()))
-							.and(f.getDeliveryProperty().isNotNull()))
-							.toList();
-						if(list.isEmpty()) {
-							Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
-							sales.setStatus(SalesStatus.PENDING);
-							SalesDAO.save(ctx, sales);
-						}
-					
+						updateSalesOnDeletePackagingDelivery(ctx, sd.getDomain(), sd.getSales().getId(), salesToPending);
+						
 						// TODO UTILIZAR StockDAO.subtract(...) ES NECESARIO SABER EL ALMACÉN (warehouse). 
 						Stock stock = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 							.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
@@ -659,22 +649,14 @@ public class PackagingDAO {
 				}
 				SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
 				sd.setDelivered(sd.getDelivered() - itemComposition.getQuantity());
-				if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
+				if(salesToPending && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
 					sd.setDelivery(null);
+				else sd.setDelivery(deliveryId);
+				
 				sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
 				SalesDetailDAO.save(ctx, sd);
 				
-				// TODO FALTA REVISAR PEDIDO!!!
-				List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
-					f.getSalesProperty().eq(sd.getSales().getId())
-					.and(f.getDomainProperty().eq(sd.getDomain()))
-					.and(f.getDeliveryProperty().isNotNull()))
-					.toList();
-				if(list.isEmpty()) {
-					Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
-					sales.setStatus(SalesStatus.PENDING);
-					SalesDAO.save(ctx, sales);
-				}
+				updateSalesOnDeletePackagingDelivery(ctx, sd.getDomain(), sd.getSales().getId(), salesToPending);
 				
 				// TODO UTILIZAR StockDAO.add(...) ES NECESARIO SABER EL ALMACÉN (warehouse). 
 				Stock stock = StockDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
@@ -701,6 +683,24 @@ public class PackagingDAO {
 				dd.setQuantity(bq);
 				DeliveryDetailDAO.save(ctx, dd);
 			} else DeliveryDetailDAO.delete(ctx, dd.getId());
+		}
+	}
+	
+	private static void updateSalesOnDeletePackagingDelivery(AONContext ctx, Integer domain, Integer salesId, boolean salesToPending) {
+		Sales sales = SalesDAO.get(ctx, salesId);						
+		if(salesToPending && sales.getStatus() != SalesStatus.PENDING) {
+			List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+				f.getSalesProperty().eq(salesId)
+				.and(f.getDomainProperty().eq(domain))
+				.and(f.getDeliveryProperty().isNotNull()))
+				.toList();
+			if(list.isEmpty()) {
+				sales.setStatus(SalesStatus.PENDING);
+				SalesDAO.save(ctx, sales);
+			}
+		} else if ( !salesToPending && sales.getStatus() != SalesStatus.IN_PREPARATION) {
+			sales.setStatus(SalesStatus.IN_PREPARATION);
+			SalesDAO.save(ctx, sales);
 		}
 	}
 	
