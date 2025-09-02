@@ -112,14 +112,14 @@ public class VERIFACTU {
 	// **************************************************************
 	// ************************************************ [CANCEL] ****
 	// **************************************************************
-	public static DataResponse cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+	public static VerifactuContext cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
 		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
 			.setBlockchain( getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		return cancel(ctx, vc);
 	}
 	
-	private static DataResponse cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		check(vc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		vc.setRequest( request );
@@ -130,7 +130,7 @@ public class VERIFACTU {
 		return saveCancel( ctx, vc );
 	}
 	
-	private static DataResponse saveCancel(AONContext ctx, VerifactuContext vc) {
+	private static VerifactuContext saveCancel(AONContext ctx, VerifactuContext vc) {
 		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
 		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
 		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	// save BLOCKCHAIN DATA
@@ -146,7 +146,7 @@ public class VERIFACTU {
 				});
 			}
 		}
-		return dataResponse;
+		return  vc.setDataResponse(dataResponse);
 	}
 	
 	// **************************************************************

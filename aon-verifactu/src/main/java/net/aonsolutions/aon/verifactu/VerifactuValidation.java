@@ -43,12 +43,14 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CountryType2;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CuponType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.GeneradoPorType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAnulacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SimplificadaCualificadaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SistemaInformaticoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
@@ -85,9 +87,9 @@ public class VerifactuValidation {
 		Optional<RegistroFacturacionAltaType> getAlta() {
 			return Optional.ofNullable( fraType.getRegistroAlta() );
 		}
-//		Optional<RegistroFacturacionAnulacionType> getAnulacion() {
-//			return Optional.ofNullable( fraType.getRegistroAnulacion() );
-//		}
+		Optional<RegistroFacturacionAnulacionType> getAnulacion() {
+			return Optional.ofNullable( fraType.getRegistroAnulacion() );
+		}
 		void addError( InvoiceCommunicationError error) {
 			this.invoice.addMessage( InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,error.getCode(),error.getMessage()));
 		}
@@ -159,10 +161,14 @@ public class VerifactuValidation {
 	
 	public static void validate(RegFactuSistemaFacturacion fras, RegistroFacturaType fraType,Invoice invoice ) {
 		ValidatorContext v = new ValidatorContext(fras, fraType, invoice);
-		v.getAlta().ifPresent( alta -> validateAlta(v,alta)); 
+		v.getAlta().ifPresent( alta -> validateAlta(v,alta));
+		v.getAnulacion().ifPresent( anulacion-> validateAnulacion(v, anulacion));
 	}
 	
 	
+	// *********************************************************
+	// *************** [VALIDACION REGISTRO ALTA] **************
+	// *********************************************************
 	private static record AltaContext(ValidatorContext vc, RegistroFacturacionAltaType fra) {}
 	public static void validateAlta(ValidatorContext vc, RegistroFacturacionAltaType alta) {
 			ALTA_FRA_NIF
@@ -192,9 +198,6 @@ public class VerifactuValidation {
 		.accept(new AltaContext(vc,alta));
 	}
 	
-	// *********************************************************
-	// *************** [VALIDACION REGISTRO ALTA] **************
-	// *********************************************************
 	/**
 	 * 1. Agrupación IDFactura
 	 * 
@@ -469,7 +472,7 @@ public class VerifactuValidation {
 						} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
 							// - Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
 							// - Cuando uno o varios destinatarios se identifiquen a través de la agrupación IDOtro e IDType sea "02", se validará que el campo identificador se ajuste a la estructura de NIF-IVA de alguno de los Estados Miembros y debe estar identificado. Ver nota (1).
-							checkIDOtro02(a.vc, a.fra, idOtro);
+							checkIDOtro02(a.vc, idOtro);
 						} else {
 							if (idOtro.getCodigoPais() == null) {
 								//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
@@ -1076,51 +1079,7 @@ public class VerifactuValidation {
 
 	private static final Consumer<AltaContext> ALTA_FRA_SISTEMA_INFORMATICO_ID = a -> {
 		SistemaInformaticoType sis = a.fra.getSistemaInformatico();
-		if (sis == null) {
-			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1179);
-		} else {
-			if (AonStringUtils.isNotBlank(sis.getNIF()) && sis.getIDOtro() != null) {
-				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
-			} else if (AonStringUtils.isBlank(sis.getNIF()) && sis.getIDOtro() == null) {
-				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
-			} else if (AonStringUtils.isNotBlank(sis.getNIF())) {
-				if (!AonDocumentUtil.isValid(sis.getNIF())) {
-					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1123);	
-				}
-			} else if (sis.getIDOtro() != null) {
-				IDOtroType idOtro = sis.getIDOtro();
-				if (AonStringUtils.equals("07", idOtro.getIDType())) {
-					a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
-				} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
-					if (idOtro.getCodigoPais() != null) {
-						if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
-							if (!AonDocumentUtil.isValidComunitaryCode(idOtro.getCodigoPais().value(), idOtro.getID())) {
-								a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);						
-							} else {
-								String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
-								if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
-									a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);			
-								}
-							}
-						} else {
-							a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
-						}
-					}
-				} else {
-					if (idOtro.getCodigoPais() == null) {
-						//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
-						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
-					} else {
-						//- Si se identifica a través de la agrupación IDOtro y CodigoPais sea "ES", se validará 
-						//		que el campo IDType sea "03".
-						if (isSpain(idOtro.getCodigoPais()) && AonStringUtils.notEquals(idOtro.getIDType(),"03")) {
-							a.vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
-						}
-					}
-				}
-				
-			}
-		}
+		checkSistemaInformatico( a.vc, sis );
 	};
 	
 	/* 	19. Agrupación SistemaInformatico
@@ -1169,7 +1128,7 @@ public class VerifactuValidation {
 	 */
 	
 	// *********************************************************
-	// ************ [VALIDACION REGISTRO ANULACION] ************
+	// ********************* [UTIL] ****************************
 	// *********************************************************
 
 	private static void checkIDOtroNo07(ValidatorContext vc, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
@@ -1177,7 +1136,7 @@ public class VerifactuValidation {
 			//- No se admite el tipo de identificación IDType "07" (No censado). 
 			vc.addError(InvoiceCommunicationError.VERIFACTU_1222);
 		} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
-				checkIDOtro02(vc, fra, idOtro);
+				checkIDOtro02(vc, idOtro);
 		} else {
 			if (idOtro.getCodigoPais() == null) {
 				//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
@@ -1192,6 +1151,55 @@ public class VerifactuValidation {
 		}
 	}
 	
+	private static void checkSistemaInformatico(ValidatorContext vc, SistemaInformaticoType sis) {
+		
+		if (sis == null) {
+			vc.addError(InvoiceCommunicationError.VERIFACTU_1179);
+		} else {
+			if (AonStringUtils.isNotBlank(sis.getNIF()) && sis.getIDOtro() != null) {
+				vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
+			} else if (AonStringUtils.isBlank(sis.getNIF()) && sis.getIDOtro() == null) {
+				vc.addError(InvoiceCommunicationError.VERIFACTU_1223);
+			} else if (AonStringUtils.isNotBlank(sis.getNIF())) {
+				if (!AonDocumentUtil.isValid(sis.getNIF())) {
+					vc.addError(InvoiceCommunicationError.VERIFACTU_1123);	
+				}
+			} else if (sis.getIDOtro() != null) {
+				IDOtroType idOtro = sis.getIDOtro();
+				if (AonStringUtils.equals("07", idOtro.getIDType())) {
+					vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
+				} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
+					if (idOtro.getCodigoPais() != null) {
+						if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
+							if (!AonDocumentUtil.isValidComunitaryCode(idOtro.getCodigoPais().value(), idOtro.getID())) {
+								vc.addError(InvoiceCommunicationError.VERIFACTU_1221);						
+							} else {
+								String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
+								if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
+									vc.addError(InvoiceCommunicationError.VERIFACTU_1221);			
+								}
+							}
+						} else {
+							vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
+						}
+					}
+				} else {
+					if (idOtro.getCodigoPais() == null) {
+						//- Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
+						vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
+					} else {
+						//- Si se identifica a través de la agrupación IDOtro y CodigoPais sea "ES", se validará 
+						//		que el campo IDType sea "03".
+						if (isSpain(idOtro.getCodigoPais()) && AonStringUtils.notEquals(idOtro.getIDType(),"03")) {
+							vc.addError(InvoiceCommunicationError.VERIFACTU_1221);
+						}
+					}
+				}
+				
+			}
+		}
+	}
+
 	private static boolean notValidGap(String baseS, String tipoS, String cuotaS) {
 		double base = VerifactuUtils.todouble(baseS);
 		double tipo = VerifactuUtils.todouble(tipoS);
@@ -1221,7 +1229,7 @@ public class VerifactuValidation {
 		return country != null && AonStringUtils.equals("ES", country.value());
 	}
 	
-	private static void checkIDOtro02(ValidatorContext vc, RegistroFacturacionAltaType fra, IDOtroType idOtro) {
+	private static void checkIDOtro02(ValidatorContext vc, IDOtroType idOtro) {
 		if (idOtro.getCodigoPais() != null) {
 			if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
 				// - El campo CodigoPais indicado no coincide con los dos primeros d\u00EDgitos del identificador.
@@ -1244,4 +1252,140 @@ public class VerifactuValidation {
 		}
 	}
 	
+	// *********************************************************
+	// *********** [VALIDACION REGISTRO ANULACION] *************
+	// *********************************************************
+	private static record AnulacionContext(ValidatorContext vc, RegistroFacturacionAnulacionType fra) {}
+	public static void validateAnulacion(ValidatorContext vc, RegistroFacturacionAnulacionType anulacion) {
+		ANULACION_FRA_NIF
+			.andThen(ANULACION_FRA_GENERADO_POR)
+			.andThen(ANULACION_FRA_GENERADOR)
+			.andThen(ANULACION_FRA_HUELLA)
+			.andThen(ANULACION_FRA_SISTEMA_INFORMATICO_ID)
+		.accept(new AnulacionContext(vc,anulacion));
+	}
+	
+	/**
+	 * 1. Agrupación IDFactura
+	 * 
+	 * 	 - El NIF del campo IDEmisorFacturaAnulada debe ser el mismo que el del campo 
+	 * 	   NIF de la agrupación ObligadoEmision del bloque Cabecera.
+	 */
+	private static final Consumer<AnulacionContext> ANULACION_FRA_NIF = a -> {
+		if (AonStringUtils.notEquals(
+			a.vc.verifactu.getCabecera().getObligadoEmision().getNIF(),
+			a.fra.getIDFactura().getIDEmisorFacturaAnulada())) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1108);
+		}
+	};
+	
+	/**
+	 * 2. GeneradoPor
+	 * 
+	 * 	 - Si se informa este campo, deberá informarse la agrupación Generador.
+	 */
+	private static final Consumer<AnulacionContext> ANULACION_FRA_GENERADO_POR = a -> {
+		if (a.fra.getGeneradoPor() != null && a.fra.getGenerador() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1224);
+		}
+	};
+	
+	/**
+	 * 3. Agrupación Generador
+	 * 
+	 * 	 
+	 */
+	private static final Consumer<AnulacionContext> ANULACION_FRA_GENERADOR = a -> {
+		// - Si se informa esta agrupación, debe haberse informado el campo GeneradoPor.
+		if (a.fra.getGenerador() != null && a.fra.getGeneradoPor() == null) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1224);
+		}
+		if (a.fra.getGenerador() != null) {
+			PersonaFisicaJuridicaType generador = a.fra.getGenerador();
+			
+			// - Si se identifica mediante NIF, el NIF debe estar identificado y ser distinto 
+			//   del campo NIF de la agrupación ObligadoEmisión del bloque Cabecera.
+			if (AonStringUtils.isNotBlank(generador.getNIF()) 
+				&& AonStringUtils.equals(a.vc.verifactu.getCabecera().getObligadoEmision().getNIF(),generador.getNIF())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1259);
+			}
+			
+			// - Si se identifica mediante NIF, el NIF debe ser válido
+			if (AonStringUtils.isNotBlank(generador.getNIF()) && !AonDocumentUtil.isValid(generador.getNIF())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1258);	
+			}
+			
+			// - Si se cumplimenta NIF, no deberá existir la agrupación IDOtro y viceversa, pero es 
+			// 	 obligatorio que se cumplimente uno de los dos.
+			if ((AonStringUtils.isNotBlank(generador.getNIF()) && generador.getIDOtro() != null ) 
+			 || (AonStringUtils.isBlank(generador.getNIF()) && generador.getIDOtro() == null )) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1228);
+			} 
+			
+			// - Si el valor de GeneradoPor es igual a "E", debe estar relleno el campo NIF en el generador.
+			if (a.fra.getGeneradoPor() == GeneradoPorType.E && AonStringUtils.isBlank(generador.getNIF())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1227);
+			}
+			if (generador.getIDOtro() != null) {
+				IDOtroType idOtro = generador.getIDOtro();
+				
+				if (AonStringUtils.equals("02", idOtro.getIDType())) {
+					// - Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
+					// - Cuando uno o varios destinatarios se identifiquen a través de la agrupación IDOtro e IDType sea "02", se validará que el campo identificador se ajuste a la estructura de NIF-IVA de alguno de los Estados Miembros y debe estar identificado. Ver nota (1).
+					checkIDOtro02(a.vc, idOtro);
+				} if (a.fra.getGeneradoPor() == GeneradoPorType.D) {
+					//- Si el valor de GeneradoPor es igual a "D", cuando el Generador se identifique a través del 
+					//  bloque IDOtro y CodigoPais sea "ES", se validará que el campo IDType sea "03" o "07".
+					if (AonStringUtils.in(idOtro.getIDType(),"03","07") && !isSpain(idOtro.getCodigoPais())) {
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1230);
+					} else if (AonStringUtils.equals("02", idOtro.getIDType())) {
+						// - Si el campo IDType = "02" (NIF-IVA), no será exigible el campo CodigoPais.
+						// - Cuando uno o varios destinatarios se identifiquen a través de la agrupación IDOtro e IDType sea "02", se validará que el campo identificador se ajuste a la estructura de NIF-IVA de alguno de los Estados Miembros y debe estar identificado. Ver nota (1).
+						checkIDOtro02(a.vc, idOtro);
+					}
+				} else if (a.fra.getGeneradoPor() == GeneradoPorType.T) {
+					//- Si el valor del campo GeneradoPor es igual a "T":
+					//	o Si se identifica a través de la agrupación IDOtro y CodigoPais sea "ES", se validará que el campo IDType sea "03".
+					if (AonStringUtils.equals(idOtro.getIDType(),"03") && !isSpain(idOtro.getCodigoPais())) {
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1231);
+					} else if (AonStringUtils.equals("07", idOtro.getIDType())) {
+						// - No se admite el tipo de identificación IDType "07" ("No censado").					
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_1229);
+					}
+				}
+				
+			}
+		}
+	};
+	
+	/**
+	 * 4. Huella (del registro anterior)
+	 *	- Se validará que la huella del encadenamiento del registro anterior cumpla el formato de salida del 
+	 *    algoritmo SHA-256, siendo de 64 caracteres en hexadecimal y en mayúsculas. En caso contrario se 
+	 *    devolverá un aviso de error (no generará rechazo). 
+	 */
+	private static final Consumer<AnulacionContext> ANULACION_FRA_HUELLA = a -> {
+		String huella = a.fra.getHuella();
+	    if (huella == null || !SHA256_PATTERN.matcher(huella).matches()) {
+	    	a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);
+	    }
+	};
+	
+	/**
+	 * 5. Agrupación SistemaInformatico
+	 *	- Se validará que la huella del encadenamiento del registro anterior cumpla el formato de salida del 
+	 *    algoritmo SHA-256, siendo de 64 caracteres en hexadecimal y en mayúsculas. En caso contrario se 
+	 *    devolverá un aviso de error (no generará rechazo). 
+	 */
+	private static final Consumer<AnulacionContext> ANULACION_FRA_SISTEMA_INFORMATICO_ID = a -> {
+		SistemaInformaticoType sis = a.fra.getSistemaInformatico();
+		checkSistemaInformatico( a.vc, sis );
+	};
 }
+
+/*
+	6. FechaHoraHusoGenRegistro
+		- Se validará que la FechaHoraHusoGenRegistro sea menor o igual que la fecha del sistema de la AEAT, admitiéndose un margen de error. En caso de superar el umbral, se devolverá un aviso de error (no generará rechazo).
+	7. Huella
+		-Se validará que la huella o «hash» generado sea acorde a las especificaciones y formato detallados en el documento "Especificaciones técnicas para generación de la huella o «hash» de los registros de facturación" publicado en Sede Electrónica de la AEAT. En caso contrario, se devolverá un aviso de error (no generará rechazo).
+*/ 

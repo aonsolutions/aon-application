@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
@@ -46,8 +45,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-@ExtendWith(MyTestWatcher.class)
-class VerifactuValidationTest extends AbstractVerifactuTest {
+class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	private static record Context( RegFactuSistemaFacturacion msg, RegistroFacturacionAltaType fra, DetalleType det ) {}
 	private interface CompleteRegistroFacturaType {
 		void complete( Context c );

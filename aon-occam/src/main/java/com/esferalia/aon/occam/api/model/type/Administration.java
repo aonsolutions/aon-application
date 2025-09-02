@@ -59,6 +59,10 @@ public enum Administration implements Serializable {
 		return (this == Administration.CANARIAS);
 	}
 	
+	public boolean isUnknown() {
+		return (this == Administration.UNKNOWN);
+	}
+
 	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
 	
 
