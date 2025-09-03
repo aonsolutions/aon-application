@@ -110,7 +110,6 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	close() {
-      console.log('entrar para cerrar');
       this.hide().then(this.clear());
 	}
 	
@@ -196,11 +195,11 @@ export class AonDialogMenu extends AonElement {
 		options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i )); });
 	}
 
-    setMenuOptions(options) {
+    setMenuOptions(options, top, left) {
       this.innerHTML = '';
       this.clear();
       // Posicionar
-      this.positionDialogWithinViewport();
+      this.positionDialogWithinViewport(top, left);
       // Menu
       let ul = document.createElement(TAG.UL);
       ul.id = this.LIST;
@@ -209,53 +208,41 @@ export class AonDialogMenu extends AonElement {
       options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
     }
 
-    positionDialogWithinViewport(){
+    positionDialogWithinViewport(anchorY, anchorX){
       this.style.display    = 'block';
       this.style.visibility = 'hidden';
       // Para poder coger la altura automatica
       requestAnimationFrame(() => {
-        const remToPx       = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const dialogWidthPx = this.offsetWidth;
-        const dialogHeight  = this.offsetHeight;
-        const margin        = remToPx(1.25);
+        const remToPx = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
+        const margin = remToPx(1.25);
 
-        // Obtener la posición actual del elemento relativo al viewport
+        // medidas del dialogo (tal y como están en el layout actual)
+        const dialogWidthPx  = this.offsetWidth;
+        const dialogHeightPx = this.offsetHeight;
+
+        // rect relativo al viewport
         const rect = this.getBoundingClientRect();
-        let left   = rect.left;
-        let top    = rect.top;
-        // Mide su altura real
-        let newLeft = left;
-        let newTop  = top;
-        // Evitar que se salga por el lado derecho
-        if (left + dialogWidthPx > window.innerWidth) {
-          newLeft = window.innerWidth - dialogWidthPx - margin;
-        }
 
-        // Evitar que se salga por el lado izquierdo
-        if (newLeft < 0) {
-          newLeft = margin;
-        }
+        // punto base para posicionar: o el punto ancla (cursor) o la posicion actual del rect
+        let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
+        let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
 
-        // Evitar que se salga por la parte inferior
-        if (top + dialogHeight > window.innerHeight) {
-          newTop = window.innerHeight - dialogHeight - margin;
-        }
+        // clamp: evitar salirse por los 4 lados dejando 'margin' de separacion
+        const minLeft = margin;
+        const maxLeft = Math.max(margin, window.innerWidth  - dialogWidthPx - margin);
+        const minTop  = margin;
+        const maxTop  = Math.max(margin, window.innerHeight - dialogHeightPx - margin);
 
-        // Evitar que se salga por la parte superior
-        if (newTop < 0) {
-          newTop = margin;
-        } else {
-          newTop = margin + remToPx(1.6);
-        }
+        const newLeft = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+        const newTop  = Math.min(Math.max(baseTop,  minTop),  maxTop);
 
-        // Aplicar estilos finales
-        this.style.left = newLeft + 'px';
-        this.style.top  = newTop + 'px';
+        this.style.left = Math.round(newLeft) + 'px';
+        this.style.top  = Math.round(newTop)  + 'px';
       });
     }
 
 	addButtons(buttons) {
-		let divMain = this.createElement(TAG.DIV);		
+		let divMain = this.createElement(TAG.DIV);
 		divMain.classList.add(CSS.FLEX_WRAP, CSS.FLEX_JUSTIFY_BETWEEN);
 		this.setContent(divMain);
 
@@ -324,7 +311,7 @@ export class AonDialogMenu extends AonElement {
 			d.id = 'newDialog';
 			this.appendChild(d);
 			d.clear();
-						
+
 			li.addEventListener(EVENT.MOUSEOVER, () => {
 				const rect = li.getBoundingClientRect();
 				d.setMenuOptions(item.options, rect.top, rect.right);
@@ -332,7 +319,6 @@ export class AonDialogMenu extends AonElement {
 					// out of submenu but inside option
 					if ( !this.isElementAt(e, li) ){
 						d.clear();
-						
 					}
 				});
 				d.open();
@@ -344,31 +330,17 @@ export class AonDialogMenu extends AonElement {
 					d.clear();
 				}
 			});
+		}
 
-		}
-		if(item.image) {
-			let img = document.createElement('img');
-			img.style.maxWidth = `${item.size || 24}px`;
-			img.src = item.image;
-			li.appendChild(img);
+        if(item.image) {
+          item.icon = item.image;
 		} else if(item.aonIcon) {
-			let ai = document.createElement(TAG.SPAN);
-			ai.style.verticalAlign = 'middle';
-			let aonIcon = new AonIcon();
-			aonIcon.icon = item.aonIcon;
-			aonIcon.size = item.size || 15;
-			aonIcon.color = item.color;
-			ai.appendChild(aonIcon);
-			li.appendChild(ai);
-		} else if(item.icon){
-			let ic = document.createElement('i');
-			ic.className = item.icon_class || 'material-icons';
-			ic.style.color = item.color ;
-			ic.style.verticalAlign = 'middle';
-			ic.style.fontSize = `${item.size || 16}px`;
-			ic.innerHTML = item.icon;
-			li.appendChild(ic);
+          item.icon = item.aonIcon;
 		}
+
+        const aonIcon = new AonIcon();
+        aonIcon.icon = item.icon;
+        li.appendChild(aonIcon);
 
 		let span = document.createElement(TAG.SPAN);
 		span.innerHTML = item.name;

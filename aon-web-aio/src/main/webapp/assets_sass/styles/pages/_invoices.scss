@@ -1,6 +1,7 @@
 @use '../variables' as v;
 
-$size-space: v.$px-300;
+$size-space    : v.$pct-25;
+$min-size-space: v.$px-300;
 
 #rootPanel {
   aon-invoice-panel{
@@ -21,6 +22,7 @@ $size-space: v.$px-300;
             /*justify-content : center;*/
             aon-dashboard-button{
               width: $size-space;
+              min-width: $min-size-space;
             }
           }
           #aonInvoiceHomeCardPanel{
@@ -31,6 +33,7 @@ $size-space: v.$px-300;
             /*justify-content : center;*/
             aon-card{
               width: $size-space;
+              min-width: $min-size-space;
             }
           }
         }

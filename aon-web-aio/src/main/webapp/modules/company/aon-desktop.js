@@ -1041,7 +1041,7 @@ export class AonDesktop extends AonElement {
 			span.appendChild(span2);
 
 			let buttons = this.createElement(TAG.SPAN);
-			buttons.id = li.id + 'Buttons'
+			buttons.id = li.id + 'Buttons';
 
 			if (app.options && app.options.stat) {
 				let stat = new AonIconButton();
@@ -1059,7 +1059,7 @@ export class AonDesktop extends AonElement {
 			if (app.options && app.options.upload && this.hasUploadRole(app)) {
 				let upload = new AonIconButton();
 				upload.id = li.id + 'Upload';
-				upload.icon = "file_upload";
+				upload.icon = MATERIAL_ICONS.FILE_UPLOAD;
 				upload.title = MSG.UPLOAD_FILE;
 				upload.addEventListener(EVENT.CLICK, (event) => {
 					this.appOption = true;

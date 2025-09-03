@@ -102,14 +102,14 @@ export const REMARKS = {
     id: CONSTANT.REMARKS.initCap(),
     name: MSG.ADD_REMARKS,
     title: MSG.ADD_REMARKS,
-    icon: MATERIAL_ICONS.COMMENT,
+    icon: "paperclip"
 };
 
 export const COMMENT = {
     id: CONSTANT.COMMENT.initCap(),
     name: MSG.ADD_COMMENT,
     title: MSG.ADD_COMMENT,
-    icon: MATERIAL_ICONS.COMMENT,
+    icon: "paperclip"
 };
 
 export const DELETE = {
