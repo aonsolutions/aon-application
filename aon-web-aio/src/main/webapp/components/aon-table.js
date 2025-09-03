@@ -7,9 +7,7 @@ import { AonIcon } from "./aon-icon.js";
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 import * as LS from "../services/localStorageService.js";
 
-
 export class AonTable extends AonElement {
-  
   columns;
   selected;
   selectedTr;
@@ -57,24 +55,16 @@ export class AonTable extends AonElement {
     table.appendChild(thead);
     let tr = this.createElement(TAG.TR);
     tr.id = this.THEADER;
-    if(LS.isNewTheme()) {
-      tr.style.paddingLeft = '10px';
-      tr.style.paddingRight = '10px';
-    }
     thead.appendChild(tr);
 
     let tbody = this.createElement("tbody");
     tbody.id = this.TBODY;
-    if(LS.isNewTheme()) {
-      tbody.style.paddingLeft = '10px';
-      tbody.style.paddingRight = '10px';
-    }
     table.appendChild(tbody);
 
     if (this.hasAttribute("selectable")){
       this.paintCheckboxHeader();
     }
-
+/*
     if (
       localStorage.getItem("aon_solutions") === undefined ||
       localStorage.getItem("aon_solutions") === null
@@ -87,7 +77,7 @@ export class AonTable extends AonElement {
         tbody.style.height = `calc(100vh - 178px)`;
       }
     }
-
+*/
     if(this.checkFetch){
       tbody.addEventListener("scroll", ({target}) => {
         const scrollTop = target.scrollTop;
@@ -112,7 +102,6 @@ export class AonTable extends AonElement {
         }
       });
     }
-    
   }
 
   setFetchingData(fetching){
@@ -127,7 +116,6 @@ export class AonTable extends AonElement {
     this.selectedAll = false;
   }
 
-
   deselectAll() {
     document.querySelectorAll("aon-checkbox").forEach((item, i) => {
       if (item.getValue()) {
@@ -138,7 +126,6 @@ export class AonTable extends AonElement {
   }
 
   addButton(icon, fn){
-
   }
 
   paintCheckboxHeader(){
@@ -147,7 +134,6 @@ export class AonTable extends AonElement {
     if( !this.getElement(idCheckBox)){
       let th = this.createElement(TAG.TH);
       th.id = idCheckBox;
-      th.style.width = "5%";
       header.appendChild(th);
       
       let aonCheckbox = new AonCheckbox();
@@ -158,8 +144,7 @@ export class AonTable extends AonElement {
         const checked = aonCheckbox.isChecked();
         this.selectedAll = checked;
 
-        document.querySelectorAll("aon-checkbox")
-        .forEach((item) => {
+        document.querySelectorAll("aon-checkbox").forEach((item) => {
           if (item.isChecked() != checked) {
             let it = this.getElement(item.id + "Input");
             it.click();
@@ -180,10 +165,7 @@ export class AonTable extends AonElement {
     let header = this.getElement(this.getId() + "TableHeader");
     let th = this.createElement(TAG.TH);
     th.innerHTML = name;
-    th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
-
-    if(type == "number") th.style.textAlign = "right";
 
     header.appendChild(th);
   }
@@ -197,12 +179,10 @@ export class AonTable extends AonElement {
     aonIconB.title = title;
     aonIconB.noHover = "true";
     th.appendChild(aonIconB);
-    th.style.width = width;
     this.columns.push({ name, type, id, width });
     header.appendChild(th);
     let iconBack = this.getElement(`${this.getId()}Back`);
     if(iconBack) {
-      iconBack.firstChild.style.paddingTop = "15px";
       iconBack.addEventListener(EVENT.CLICK, e => fn(e))
     }
   }
@@ -213,18 +193,11 @@ export class AonTable extends AonElement {
 
       let tr = this.createElement(TAG.TR);
       tr.className    = "aonTableTr";
-      tr.style.cursor = "default";
-      tr.style.border = '0';
-      // Agregar el efecto hover
-      tr.addEventListener('mouseover', function() {
-        tr.style.backgroundColor = 'transparent';
-      });
       // Crear la celda para el mensaje
       let tdMessage = this.createElement(TAG.TD);
-      tdMessage.setAttribute('colspan', '100%');
-      tdMessage.style.textAlign = 'center';
-      tdMessage.style.padding   = '10px';
-      tdMessage.textContent     = message;
+      tdMessage.setAttribute('colspan', '1000');
+      tdMessage.textContent = message;
+      tdMessage.title       = message;
       // A�adir la celda a la fila
       tr.appendChild(tdMessage);
       // A�adir la fila con el mensaje al cuerpo de la tabla
@@ -237,14 +210,7 @@ export class AonTable extends AonElement {
     let tr = this.createElement(TAG.TR);
     // tr.id = Math.random().toString(36).substring(7);
     tr.className ="aonTableTr";
-    tr.style.cursor = "pointer";
-    if(LS.isNewTheme()) {
-      tr.style.marginTop = '10px';
-      tr.style.marginBottom = '10px';
-      tr.style.border = '1px solid #ddd';
-      tr.style.borderRadius = '5px';
-    }  
-    
+
     if(this.selectedColor){
       tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#d3e3fd"));
     }
@@ -253,7 +219,6 @@ export class AonTable extends AonElement {
     let checkBoxId = `aaa${body.children.length}`;
     if (this.hasAttribute("selectable")) {
       let tdCheckBox = this.createElement(TAG.TD);
-      tdCheckBox.style.width = "5%";
       let aonCheckbox = new AonCheckbox();
       aonCheckbox.id = checkBoxId;
       aonCheckbox.addEventListener(EVENT.CHANGE, () => {
@@ -266,7 +231,6 @@ export class AonTable extends AonElement {
           this.selected.forEach((item, i) => {
             if (item == value) {
               this.selected.splice(i, 1);
-              tr.style.backgroundColor = "";
             }
           });
         }
@@ -278,9 +242,6 @@ export class AonTable extends AonElement {
 
     this.columns.forEach((item, i) => {
       let td = this.createElement(TAG.TD);
-      td.style.width = item.width;
-      td.style.textAlign = item.textAlign;
-      if(value.color) td.style.color = value.color;
 
       let id = item.id;
       if ("option" === id && value[id]) {
@@ -294,7 +255,6 @@ export class AonTable extends AonElement {
         icon.id = this.getId() + "Icon";
         icon.className = value.icon_class || "material-icons";
         icon.innerHTML = value[id];
-        icon.style.color = value[id + '_color'] || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
         if(value.fn){
@@ -308,8 +268,8 @@ export class AonTable extends AonElement {
         if(value.fn){
           td.addEventListener(EVENT.CLICK, value.fn);
         }
-      }  else if("icons" === item.type && value[id]) {
-        let span = this.createSpan(this.getId() + 'Icons')
+      } else if("icons" === item.type && value[id]) {
+        let span = this.createSpan(this.getId() + 'Icons');
         value[id].forEach((icon,i) => {
           let icon2 = this.createElement(TAG.I);
           icon2.id = this.getId() + "Icon" + i;
@@ -317,17 +277,13 @@ export class AonTable extends AonElement {
           icon2.classList.add("aonTableRowIcon2");
           icon2.innerHTML = icon.icon;
           icon2.title = icon.title;
-          icon2.style.color = icon.color || "#5f6368"; 
           if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
           span.appendChild(icon2);
         });
-        td.appendChild(span);       
+        td.appendChild(span);
       } else if(item.type && item.type === "list" ) {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);
-        ulList.style.marginTop = "6px";
-        ulList.style.paddingLeft = "0px";
-        ulList.style.listStyleType = "none";
         td.appendChild(ulList);
         td.addEventListener(EVENT.CLICK, fn);
 
@@ -340,9 +296,9 @@ export class AonTable extends AonElement {
           }
           ulList.appendChild(li);
         });
-      
       } else if(item.type && item.type ==="html") {
-        td.appendChild(value[id])
+        td.appendChild(value[id]);
+        td.title = td.textContent.trim();
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -354,9 +310,9 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="date" || item.type ==="creation_date") {
+      } else if(item.type && (item.type ==="date" || item.type ==="creation_date")) {
         const dateRegex = /\d{2,4}\-\d{1,2}\-\d{1,2}(?:T.*)?/;
-        const dateValue = value[id] !== undefined? value[id] : "";
+        const dateValue = value[id] !== undefined ? value[id] : "";
         let val = "";
         try {
           if (dateValue && (dateValue instanceof Date)) {
@@ -365,12 +321,13 @@ export class AonTable extends AonElement {
             let date = new Date(dateValue);
             val = AonDateUtils.formatDate(date);
           } else {
-            val = dateValue;  
+            val = dateValue;
           }
         } catch (error) {
           val = dateValue;
         }
         td.innerHTML = val;
+        td.title = val;
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -382,17 +339,13 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } 
-      else if(item.type && item.type ==="number") {
-        td.innerHTML = value[id] !== undefined? value[id] : "";
-        td.style.textAlign = "right";
-        if(value[id] !== undefined && value[id].includes('-')){
-          td.style.color = "green";
-        }
+      } else if(item.type && item.type ==="number") {
+        td.innerHTML = value[id] !== undefined ? value[id] : "";
+        td.title = value[id] !== undefined ? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
-      } 
-      else {
-        td.innerHTML = value[id] !== undefined? value[id] : "";
+      } else {
+        td.innerHTML = value[id] !== undefined ? value[id] : "";
+        td.title = value[id] !== undefined ? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -455,27 +408,19 @@ export class AonTable extends AonElement {
     if (!body) return true;
 
     let tr = this.createElement(TAG.TR);
-    tr.style.textAlign = 'center';
     body.appendChild(tr);
 
     let td = this.createElement(TAG.TD);
     td.innerHTML = message;
-    td.style.fontWeight = 'bold';
+    td.title     = message;
     tr.appendChild(td);
   }
 
   addBackgroundTr(tr, color){
-    this.querySelectorAll(".aonTableTr")
-    .forEach(el => {
-      el.style.backgroundColor = "#ffffff";
-    });
-    
     if(tr && this.selectedTr !== tr){
       this.selectedTr = tr;
-      tr.style.backgroundColor = color;
     } else this.selectedTr = undefined;
   }
-
 
   loading(b) {
     let body = this.getElement(this.TBODY);
@@ -484,16 +429,10 @@ export class AonTable extends AonElement {
     if (b && !tr) {
       tr = this.createElement(TAG.TR);
       tr.id = id;
-      tr.style.textAlign = 'center';
-      tr.style.position  = 'relative';
-      tr.style.top       = '-14px';
-      tr.style.border    = 'none';
       body.appendChild(tr);
 
       let load = this.createElement(TAG.DIV);
       load.classList.add(CSS.AON_ICON_CONTAINER);
-      load.style.right     = "0";
-      load.style.left      = "0";
       tr.appendChild(load);
 
       let icon = this.createElement(TAG.I);

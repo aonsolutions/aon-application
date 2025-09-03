@@ -2,15 +2,14 @@ import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { deleteDeliveryPackaging, getItem, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
-import { createCard, createInput, createQuantity } from '../../components/CreateComponent.js';
+import { deleteDeliveryPackaging, openFileUrl, subtractDeliveryPackagingComposition} from '../../services/service.js';
+import { createCard, createInput } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { round } from '../../services/utils.js';
 
 import * as LS from '../../services/localStorageService.js';
 import * as ACTION from '../actions.js';
 import * as UA from '../../services/userAgentService.js';
-import { AonCheckbox } from '../../components/aon-checkbox.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -39,7 +38,6 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	DELIVERY_TOOLBAR;
 
 	SUBTRACT_PACKAGING_PRODUCT;
-	SUBTRACT_PACKAGING_QUANTITY;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -80,7 +78,6 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
 
 		this.SUBTRACT_PACKAGING_PRODUCT = this.id + 'SubtractPackagingProduct';
-		this.SUBTRACT_PACKAGING_QUANTITY = this.id + 'SubtractPackagingQuantity';
 
 		this.TAG = this.id + CONSTANT.TAG.initCap();
 		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
@@ -159,7 +156,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		card.setContent(div);
 
 		let table = new AonBasicTable();
-		table.id = this.COMPOSITION_TABLE;
+		table.id = this.PACKAGE_COMPOSITION_TABLE;
 		div.appendChild(table);
 		
 		// Array.prototype.forEach.call(this.packaging.composition, i => {
@@ -215,59 +212,42 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	}
 
 	subtractDialog(composition) {
-		getItem({id: composition.composition.id, full: true}).then(item => {
-			let table = new AonBasicTable();
-			table.id = this.id + 'SubstractTable';
+		let table = new AonBasicTable();
+		table.id = this.id + 'SubstractTable';
 
-			let d = this.getApplication().getDialog();
-			d.clear();
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ACCEPT);
+		d.setContent(table);
 
-			if(!this.isMobile()) d.width = '400px';
-			d.setTitle(MSG.ACCEPT);
-			d.setContent(table);
+		table.addRow();
+		let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
+		table.addCell(product);
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
 
-			table.addRow();
-			let product = createInput(this.SUBTRACT_PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC) Destino');
-			table.addCell(product);
-			// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
-			let skipDestiny = false;
-			if(!this.isMobile()){
-				table.addRow();
-	
-				let checkBox = new AonCheckbox();
-				checkBox.id = this.id + 'SubstractCheckbox';
-				checkBox.description = 'Restar sin destino.';
-				checkBox.addEventListener(EVENT.CHANGE, () => {
-					skipDestiny = checkBox.isChecked();
-					if(checkBox.isChecked()) {
-						product.setValue("");
-						product.setDisabled(true);
-					} else product.setDisabled(false);
-				});
-				let cell = table.addCell(checkBox);
-				cell.style.padding = '10px';
-			}
+		// let addButton = new AonIconButton();
+		// addButton.id = this.id + 'AddButton';
+		// addButton.title = MSG.ADD;
+		// addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		// addButton.addEventListener(EVENT.CLICK, () => {
+		// 	this.packaging = {};
 
-			table.addRow();
-			let quantityBox = createQuantity(this.SUBTRACT_PACKAGING_QUANTITY, MSG.QUANTITY);
-			quantityBox.addEventListener(EVENT.CHANGE, () => {
-			 	quantityBox.setQuantityFormat(quantityBox.value);
-			});
-			quantityBox.setTags(item);
-			table.addCell(quantityBox);
-			quantityBox.setQuantity(composition.quantity);
+		// 	while(table.rows >= 1) {
+		// 		table.removeRow(table.rows);
+		// 	}
+		// 	this.buildSubstractDestinyNew(table);
+		// });
+		// table.addCell(addButton);
 
-			d.addAcceptAction(() => {
-				subtractDeliveryPackagingComposition({
-					delivery: this.delivery,
-					composition,
-					quantity: quantityBox.getQuantity(),
-					destiny: product.value,
-					skipDestiny: skipDestiny
-				}).then(() => this.aonDelivery());
-			});
-			d.open();
+		d.addAcceptAction(() => {
+			subtractDeliveryPackagingComposition({
+				delivery: this.delivery,
+				composition,
+				destiny: product.value
+			}).then(() => this.aonDelivery());
 		});
+		d.open();
 	}	
 	
 	buildTag(){
@@ -318,6 +298,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		});
 		d.open();
 	}
+
 
 	aonDelivery() {
 		this.getElement('aonDelivery').backToDelivery(this.delivery);

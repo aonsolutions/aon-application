@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, TAG, EVENT } from '../environments/environments.js';
-import '../css/aon-color.css';
+//import '../css/aon-color.css';
 
 export class AonColor extends AonElement {
 

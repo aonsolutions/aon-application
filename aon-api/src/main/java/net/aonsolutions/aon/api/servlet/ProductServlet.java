@@ -451,11 +451,6 @@ public class ProductServlet extends AonApiHttpServlet {
 	private Filter itemFilter(AonApiData api, ItemProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if(api.getData().opt(IJsonNames.ID) != null) {
-			Integer id = api.getData().optInt(IJsonNames.ID);
-			filter = filter.and(f.getIdProperty().eq(id));
-		}	
-
 		if(api.getData().opt(IJsonNames.PRODUCT) != null){
 			Integer product = api.getData().optInt(IJsonNames.PRODUCT);
 			filter = filter.and(f.getProductProperty().eq(product));

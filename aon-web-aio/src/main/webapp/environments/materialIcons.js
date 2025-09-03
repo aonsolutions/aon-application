@@ -94,7 +94,8 @@ export const CARD_TRAVEL = 'card_travel';
 export const CHANGE_HISTORY = 'change_history';
 export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
-export const CHEVRON_RIGHT = 'chevron_right';
+export const CHEVRON_DOWN = 'chevron-down';
+export const CHEVRON_RIGHT = 'chevron-right';
 export const CHROME_READER_MODE = 'chrome_reader_mode';
 export const CIRCLE = 'circle';
 export const CLASS = 'class';
@@ -147,7 +148,7 @@ export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
-export const FILE_UPLOAD = 'file_upload';
+export const FILE_UPLOAD = 'upload-cloud';
 export const FILTER_ALT = 'filter_alt';
 export const FILTER_LIST = 'filter_list';
 export const FOLDER = 'folder';
@@ -173,7 +174,6 @@ export const GROUPS = 'groups';
 
 // ----- H
 export const HANDSHAKE = 'handshake';
-export const HELP = 'help';
 export const HIGHLIGHT_OFF = 'highlight_off';
 export const HDR_AUTO = 'hdr_auto';
 export const HOME = 'home';

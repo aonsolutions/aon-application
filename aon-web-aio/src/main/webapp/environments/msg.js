@@ -9,22 +9,29 @@ import { Language } from '../models/Language.js';
 
 let language = localStorage.getItem('aon_language') || Language.SPANISH;
 
-let MSG = undefined;
+let MSG;
 
-if(Language.ENGLISH === language) {
-  MSG = MSG_EN;
-} else if(Language.BASQUE === language){
-  MSG = MSG_EUS;
-} else if(Language.CATALAN === language) {
-  MSG = MSG_CAT;
-} else if(Language.GALICIAN === language) {
-  MSG = MSG_GAL;
-} else if(Language.DEUTSCH == language){
-  MSG = MSG_DE;
-} else if(Language.FRENCH == language){
-  MSG = MSG_FR;
-}else {
-  MSG = MSG_ES;
+switch (language) {
+  case Language.ENGLISH:
+    MSG = MSG_EN;
+    break;
+  case Language.BASQUE:
+    MSG = MSG_EUS;
+    break;
+  case Language.CATALAN:
+    MSG = MSG_CAT;
+    break;
+  case Language.GALICIAN:
+    MSG = MSG_GAL;
+    break;
+  case Language.DEUTSCH:
+    MSG = MSG_DE;
+    break;
+  case Language.FRENCH:
+    MSG = MSG_FR;
+    break;
+  default:
+    MSG = MSG_ES;
 }
 
 // ----- A
@@ -337,7 +344,6 @@ export const GROUPED = "Agrupadas";//TODO
 
 export const HEADER = MSG.HEADER;
 export const HELP = MSG.HELP;
-export const HELP_RESULTS = MSG.HELP_RESULTS;
 export const HIDE_FIELDS = "Ocultar campos"; //TODO
 export const HIRING = MSG.HIRING;
 export const HIRING_DATA = MSG.HIRING_DATA;
@@ -645,7 +651,6 @@ export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESTORED_DATA = MSG.RESTORED_DATA;
-export const RESULTS = MSG.RESULTS;
 export const RESUME_COSTS = "Resumen Costes"; // TODO
 export const RETENTION_PANEL = 'Panel de IRPF';
 export const RETENTION_PERCENT = "% Retención"; 

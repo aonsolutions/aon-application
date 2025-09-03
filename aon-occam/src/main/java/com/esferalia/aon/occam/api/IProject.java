@@ -13,12 +13,10 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.ProjectParams;
-import com.esferalia.aon.occam.api.model.ProjectTasFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
-import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 
@@ -29,7 +27,6 @@ public interface IProject {
 	public Project getProject(AONContext ctx, ProjectFilter filter);	
 	public Project getProjectFull(AONContext ctx, ProjectFilter filter);	
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter);
-	public Stream<ProjectTas> getProjectTasStream(AONContext ctx, ProjectTasFilter filter);
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage);
 	public Integer insertProject(AONContext ctx, Project project);
 	public Project saveProject(AONContext ctx, Project project);

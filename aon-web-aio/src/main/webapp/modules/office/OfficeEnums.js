@@ -6,42 +6,36 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 const AON_CUSTOMER = {
     id: 'sideNavcustomer',
     name: MSG.CUSTOMERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE
 }
 
 const AON_TASK_HOLDER = {
     id: 'sideNavTaskHolder',
     name: "Operarios",
-    icon: MATERIAL_ICONS.PEOPLE
 }
 
 const AON_WORKGROUP_LIST = {
     id: 'sideNavWorkgroup',
     name: "Grupos de Trabajo",
-    icon: MATERIAL_ICONS.GROUPS
 }
 
 const AON_SELLER_LIST = {
     id: 'sideNavSeller',
     name: "Agentes",
-    icon: MATERIAL_ICONS.SUPPORT_AGENT
 }
 
 const AON_SELLER_WORKLOAD = {
     id: 'sideNavSellerWorkload',
     name: "Cargas de Trabajo",
-    icon: MATERIAL_ICONS.PERSON_PLAY
 }
 
 const AON_SCOPE = {
     id: 'sideNavScope',
     name: "Ámbitos",
-    icon: MATERIAL_ICONS.ACTIVITY_ZONE
 }
 
 const AON_CUSTOMER_STATUS= {
     id: 'sideNavTag',
-    name: "Estados Cliente",
+    name: "Estados C. Bloqueados",
     icon: MATERIAL_ICONS.INFO
 }
 
@@ -54,13 +48,11 @@ const AON_SERVICE = {
 const AON_SALES_ENTERPRISE = {
     id: 'sideNavSalesEnterprise',
     name: 'Procesar Pedidos',
-    icon: MATERIAL_ICONS.EMIT
 }
 
 const AON_TARGET_ENTERPRISE = {
     id: 'sideNavTargetEnterprise',
     name: 'Procesar C. Potenciales',
-    icon: MATERIAL_ICONS.DOMAIN_ADD
 }
 
 

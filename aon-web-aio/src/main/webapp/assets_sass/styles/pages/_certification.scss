@@ -1,0 +1,88 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-certification{
+    display         : flex;
+    gap             : v.$gap;
+    flex-wrap       : wrap;
+    justify-content : center;
+    width           : v.$pct-100;
+    aon-card{
+      flex-grow   : 1;
+      flex-shrink : 1;
+      flex-basis  : v.$px-400;
+      max-width   : v.$px-480;
+      // no usamos space-between;
+      &.no-space {
+        .aonCardContent{
+          justify-content: flex-start;
+        }
+      }
+      .aonCardContent{
+        height          : v.$px-320;
+        display         : flex;
+        gap             : v.$gap;
+        flex-direction  : column;
+        justify-content : space-between;
+        
+        // eat
+        .card-img-aeat{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image   : url('../images/agencias/aeat.png');
+          background-size    : contain;
+          background-repeat  : no-repeat;
+          background-position: center;
+        }
+        // veri*factu
+        .card-img-veri{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image: 
+            url('../images/agencias/aeat.png'),
+            url('../images/agencias/verifactu.png'),
+            url('../images/agencias/atc.png');
+          background-repeat  : no-repeat;
+          background-size    : v.$px-60 v.$px-60, v.$px-250 v.$px-60, v.$px-60 v.$px-60;
+          background-position: left center, center center, right center;
+        }
+        // haciendas forales
+        .card-img-haciendas{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image   : url('../images/agencias/haciendasForales.png');
+          background-size    : contain;
+          background-repeat  : no-repeat;
+          background-position: center;
+        }
+        // canaria
+        .card-img-atc{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image   : url('../images/agencias/atc.png');
+          background-size    : contain;
+          background-repeat  : no-repeat;
+          background-position: center;
+        }
+        // tgss
+        .card-img-tgss{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image   : url('../images/agencias/tgss.png');
+          background-size    : contain;
+          background-repeat  : no-repeat;
+          background-position: center;
+        }
+        // tgss
+        .card-img-sepe{
+          width : v.$pct-100;
+          height: v.$px-60;
+          background-image   : url('../images/agencias/sepe.png');
+          background-size    : contain;
+          background-repeat  : no-repeat;
+          background-position: center;
+        }
+      }
+    }
+  }
+}

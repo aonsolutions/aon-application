@@ -546,8 +546,8 @@ public class WarehouseImpl implements IWarehouse {
 	}
 
 	@Override
-	public void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
-		ctx.getDslContext().transaction(configuration -> PackagingDAO.deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny));
+	public void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny));
 	}
 
 	// DELIVERY

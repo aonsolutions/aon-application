@@ -1,10 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
-  EMPLOYEE_TYPE_OPTION,
-  ASESOR_TYPE,
-  EMPLOYEE_TYPE,
-  ENTERPRISE_TYPE
+  EMPLOYEE_TYPE_OPTION, ASESOR_TYPE, EMPLOYEE_TYPE, ENTERPRISE_TYPE
 } from './DocumentalEnums.js';
 import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document, sendS3DocumentMail, sendDocumentMail, getS3DocumentCount } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
@@ -129,7 +126,6 @@ export class AonDocument extends AonElement {
           this.buildData();
           this.buildDocumentToolbar();
       });
-    
     } else {
       fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
@@ -147,7 +143,6 @@ export class AonDocument extends AonElement {
       this.buildData();
       this.buildDocumentToolbar();
     }
-
   }
 
   buildData() {

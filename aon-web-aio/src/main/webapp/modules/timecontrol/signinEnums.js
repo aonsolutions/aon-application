@@ -1,68 +1,91 @@
 import { MATERIAL_ICONS } from "../../environments/environments.js";
 
 export const SigninSidenav = {
-  PRESENCE: {
-    icon: "account_box",
-    name: "Presencia",
-    id: "presence",
-  },
-  LOCATION: {
-    icon: "location_on",
-    name: "Ubicaciones",
-    id: "location",
-  },
-  ADD: {
-    name: "Agregar",
-    icon: MATERIAL_ICONS.ADD,
-    id: MATERIAL_ICONS.ADD,
-  },
-  FILTER:{
-    name: "Filter",
-    icon: "tune",
-    id: "filter",
-  },
-  MORE:{
-    name: "Ver",
-    icon: MATERIAL_ICONS.MORE_VERT,
-    id: MATERIAL_ICONS.MORE_VERT,
-  },
-  SYNCHRONIZE:{
-    name: "SYNCHRONIZE",
-    icon: "autorenew",
-    id: "SYNCHRONIZE",
-  },
-  EXCEL:{
-    name: "Excel",
-    aonIcon: "aon_excel",
-    id: "excel",
-  },
+//  PRESENCE: {
+//    icon: "account_box",
+//    name: "Presencia",
+//    id: "presence"
+//  },
+//  LOCATION: {
+//    icon: "location_on",
+//    name: "Ubicaciones",
+//    id: "location"
+//  },
   PERIOD: {
     TODAY: {
       icon: "today",
       name: "Hoy",
-      id: "today",
+      id: "today"
     },
     YESTERDAY: {
       icon: "today",
       name: "Ayer",
-      id: "yesterday",
+      id: "yesterday"
     },
     THIS_WEEK: {
       icon: "today",
       name: "Semana actual",
-      id: "this_week",
+      id: "this_week"
     },
     LAST_WEEK: {
       icon: "today",
       name: "Semana pasada",
-      id: "last_week",
+      id: "last_week"
     },
     THIS_MONTH: {
       icon: "today",
       name: "Mes actual",
-      id: "this_month",
+      id: "this_month"
+    }
+  }
+};
+
+export const sidenavOptions = {
+//  PRESENCE: {
+//    icon: "account_box",
+//    name: "Presencia",
+//    id: "presence"
+//  },
+//  LOCATION: {
+//    icon: "location_on",
+//    name: "Ubicaciones",
+//    id: "location"
+//  },
+  PERIOD: {
+    TODAY: {
+      name: "Hoy",
+      id: "today"
     },
+    YESTERDAY: {
+      name: "Ayer",
+      id: "yesterday"
+    },
+    THIS_WEEK: {
+      name: "Semana actual",
+      id: "this_week"
+    },
+    LAST_WEEK: {
+      name: "Semana pasada",
+      id: "last_week"
+    },
+    THIS_MONTH: {
+      name: "Mes actual",
+      id: "this_month"
+    }
+  }
+};
+
+export const ToolbarOptions = {
+  ADD: {
+    name: "Agregar",
+    icon: MATERIAL_ICONS.ADD,
+    id: MATERIAL_ICONS.ADD
   },
+  MORE:{
+    name: "Ver",
+    icon: MATERIAL_ICONS.MORE_VERT,
+    id: MATERIAL_ICONS.MORE_VERT
+  }
 };
 
 export const PRESENCE_FILTER = [
@@ -70,20 +93,20 @@ export const PRESENCE_FILTER = [
     type: "select",
     id: "period",
     name: "period",
-    title: "Período",
+    title: "Período"
   },
   {
     type: "date",
     name: "startDate",
     id: "startDate",
-    title: "Desde",
+    title: "Desde"
   },
   {
     type: "date",
     name: "endDate",
     id: "endDate",
-    title: "Hasta",
-  },
+    title: "Hasta"
+  }
 ];
 
 export const EVENT_LIST_FILTER = [
@@ -91,7 +114,7 @@ export const EVENT_LIST_FILTER = [
     type: "select",
     id: "group",
     name: "group",
-    title: "Agrupar por ",
+    title: "Agrupar por "
   },
   ...PRESENCE_FILTER
 ];

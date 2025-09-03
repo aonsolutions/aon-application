@@ -753,7 +753,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					} else {
 						// exp.setExpression(String.format("SELF.br(%s) * %d", IT_START,
 						// guaranteedDays));
-						exp.setExpression(String.format(Locale.US, "SELF.br(%s, %s) * %s", IT_START, type.name(), GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US, "SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
@@ -764,7 +764,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						@Override
 						public Object getValue(Period period) {
 							try {
-								return SQLNoItContractSalaryCalculatorContext.this.br(itStart, type);
+								return SQLNoItContractSalaryCalculatorContext.this.br(itStart);
 							} catch (ExpressionException | SalaryException | SQLException e) {
 								return 0.00;
 							}

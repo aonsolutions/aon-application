@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -1350,8 +1349,7 @@ public class DeliveryImport {
 					.setQuantity(r.getCantidad())
 					.setPrice(r.getPrecio())
 					.setDiscountExpression(r.getDescuentos() != null ? r.getDescuentos() : "0.0");
-				Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
-				AON.saveDeliveryDetail(occam, dd);
+				AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
 			}
 		});
 	}

@@ -98,7 +98,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -1186,8 +1185,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		String series = Integer.toString(AonDateUtils.getYear(date));
 		Sales to = (Sales)this.getTo();
-		
-		Occam occam = new Occam().setDomain(to.getDomain()).setDomainName(domainName).setUser(login);
 		to.setCarrier(getPrepareSaleProcess().getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
 		Integer packingListId = null;
@@ -1239,22 +1236,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		AON.getSalesDetailStream(domainName, to.getDomain(), login, f -> f.getSalesProperty().eq(to.getId()))
 		.forEach(detail -> {
 			if(!getPrepareSaleProcess().isPartialPreparation() || (getPrepareSaleProcess().isPartialPreparation() && getPrepareSaleProcess().getSalesDetailsChecks().contains(detail.getId()))) {
-				if(!detail.getItem().getProduct().isSerializable() && detail.getItem().getProduct().getType().isService()) {
-					com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail dd = new com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail()
-							.setDomain(detail.getDomain())
-							.setDelivery(new com.esferalia.aon.occam.api.model.warehouse.Delivery().setId(deliveryIdAux))
-							.setItem(detail.getItem())
-							.setLine(detail.getLine())
-							.setDescription(detail.getDescription())
-							.setQuantity(detail.getQuantity())
-							.setPrice(detail.getPrice())
-							.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr())
-							.setSalesDetail(detail.getId());
-					AON.saveDeliveryDetail(occam, dd);
-				} else {
-					detail.setDelivery(deliveryIdAux);
-					AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
-				}
+				detail.setDelivery(deliveryIdAux);
+				AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
 			}
 		});
 		prepareSaleProcess = null;

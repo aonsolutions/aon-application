@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -199,9 +200,6 @@ public class DeliveryDAO {
 		Delivery delivery = getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
 		if(delivery.getId() != null) {
 			delivery.setPackaging(DeliveryPackagingDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())));
-		}
-		if(delivery.getAddress().getId() != null) {
-			delivery.setAddress(RegistryAddressDAO.get(ctx, f -> f.getIdProperty().eq(delivery.getAddress().getId())));
 		}
 		return delivery; 
 	}
@@ -477,6 +475,30 @@ public class DeliveryDAO {
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new DeliveryDetailFiller())
 			.map(detail -> detail.setItem(completeItemPackingTag(detail.getItem(), tagList)));
+	}
+	
+	public static DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail detail) {
+		ctx.checkWrite();
+		return ctx.getDslContext()
+				.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
+						DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
+						DELIVERY_DETAIL.ITEM, DELIVERY_DETAIL.DESCRIPTION,
+						DELIVERY_DETAIL.WAREHOUSE, DELIVERY_DETAIL.QUANTITY,
+						DELIVERY_DETAIL.PRICE, DELIVERY_DETAIL.DISCOUNT_EXPR,
+						DELIVERY_DETAIL.SALES_DETAIL,
+						DELIVERY_DETAIL.CREATION_USER,
+						DELIVERY_DETAIL.CREATION_DATE,
+						DELIVERY_DETAIL.MODIFICATION_USER,
+						DELIVERY_DETAIL.MODIFICATION_DATE)
+				.values(detail.getDomain(), detail.getDelivery().getId(),
+						detail.getLine(), detail.getItem().getId(),
+						detail.getDescription(), detail.getWarehouse(),
+						detail.getQuantity(), detail.getPrice(),
+						detail.getDiscountExpression(),
+						detail.getSalesDetail(), 
+						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+				.returning().fetch().stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
 	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter,

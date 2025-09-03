@@ -38,13 +38,4 @@ public enum InvoiceStatus implements Serializable {
 		return PENDING;
 	}
 	
-	public static InvoiceStatus safeValueOf2( String str) {
-		if(AonStringUtils.isBlank(str)) return null;
-		for (InvoiceStatus rs : values()) {
-			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
-				return rs;
-		}
-		return null;
-	}
-	
 }

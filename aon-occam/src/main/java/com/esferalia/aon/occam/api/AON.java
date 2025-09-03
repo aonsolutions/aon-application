@@ -78,7 +78,6 @@ import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.ProjectParams;
-import com.esferalia.aon.occam.api.model.ProjectTasFilter;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -160,7 +159,6 @@ import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
-import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -2763,12 +2761,16 @@ public class AON {
 		return getDeliveryDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
 	}
 	
-	public static DeliveryDetail saveDeliveryDetail(Occam occam, DeliveryDetail deliveryDetail) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getManagement().saveDeliveryDetail(ctx, deliveryDetail);
-		} 
+	public static DeliveryDetail insertDeliveryDetail(String domainName, Integer domainId, String login, DeliveryDetail deliveryDetail) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertDeliveryDetail(ctx, deliveryDetail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
-
+	
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************
@@ -3996,12 +3998,6 @@ public class AON {
 	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProject().getProjectStream(ctx, filter);
-		}
-	}
-	
-	public static List<ProjectTas> getProjectTasStream(String domainName, Integer domainId, String login, ProjectTasFilter filter){
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getProject().getProjectTasStream(ctx, filter).collect(Collectors.toList());
 		}
 	}
 	
@@ -8435,9 +8431,9 @@ public class AON {
 		}
 	}
 	
-	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny);
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny);
 		}
 	}
 	
@@ -8452,12 +8448,6 @@ public class AON {
 	public static DomainLinked saveDomainLinked(String domainName, Integer domainId, String login, DomainLinked domainLinked) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().saveDomainLinked(ctx, domainLinked);
-		}
-	}
-	
-	public static Domain updateDomainStatus(String domainName, Integer domainId, String login, Domain domain) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getRegistry().updateDomainStatus(ctx, domain);
 		}
 	}
 	

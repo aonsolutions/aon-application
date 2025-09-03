@@ -58,21 +58,18 @@ export class AonPayrollBeta extends AonElement {
 			let configurationOptions = [];
 			configurationOptions.push({
 				id: "parameteraPayroll",
-				icon: "settings_applications",
 				name: "Parametros Laboral",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfPayrollParams()),
 			});
 
 			configurationOptions.push({
 				id: "parametersContracts",
-				icon: "settings_applications",
 				name: "Parametros Contratos",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfContractParams()),
 			});
 
 			configurationOptions.push({
 				id: "observations",
-				icon: "speaker_notes",
 				name: "Observaciones",
 				fn: () => this.buildObservations(),
 			});
@@ -85,7 +82,6 @@ export class AonPayrollBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				icon: "dashboard",
 				name: "Panel Contabilidad",
 				fn: () => this.buildPayrollMenu(),
 			});

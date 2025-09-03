@@ -9,7 +9,7 @@ import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { Media } from '../../models/registry/Media.js';
-import { getSegments, saveRegistry, saveRegistryNote } from '../../services/registryService.js';
+import { getSegments, saveRegistry } from '../../services/registryService.js';
 import { Registry } from '../../models/registry/Registry.js';
 import { RegistrySegment } from '../../models/registry/RegistrySegment.js';
 import { Address } from '../../models/registry/Address.js';
@@ -203,6 +203,7 @@ export class AonReg extends AonElement {
 		card.firstChild.firstChild.style.marginBottom = "5px";
 
 		if(this.registry.id){
+			console.log(this.clientFile)
 			if(this.isCustomer() && !this.clientFile){
 				this.buildEnterpriseLinked();
 			}
@@ -400,27 +401,30 @@ export class AonReg extends AonElement {
 				name: "Activar", 
 				value:"ACTIVE",
 				icon:"toggle_on", 
-				fn: async () => {
+				fn:()=> {
 					this.registry.status = "ACTIVE";
-					this.openCustomerInactiveBloqued();
+					this.buildStatusRegistry();
+					this.save();
 				}
 			},
 			{ 
 				name: "Inactivar", 
 				value:"INACTIVE",
 				icon:"toggle_off", 
-				fn: async () => {
+				fn:()=> {
 					this.registry.status = "INACTIVE";
-					this.openCustomerInactiveBloqued();
+					this.buildStatusRegistry();
+					this.save();
 				}
 			},
 			{ 
 				name: "Bloquear", 
 				value:"BLOCKED",
 				icon:"block", 
-				fn: async () => {
+				fn:()=> {
 					this.registry.status = "BLOCKED";
-					this.openCustomerInactiveBloqued();
+					this.buildStatusRegistry();
+					this.save();
 				}
 			}
 		];

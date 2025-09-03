@@ -1,0 +1,39 @@
+@use '../variables' as v;
+
+.aonToolbar2, aon-header{
+  height          : v.$height-cabecera;
+  min-height      : v.$height-cabecera;
+  position        : sticky;
+  z-index         : v.$num-1; 
+  top             : v.$px-0;
+  padding         : v.$px-0 v.$padding;
+  display         : flex;
+  justify-content : space-between;
+  align-items     : center;
+  
+  #aonLoginLogoDiv{
+    max-height        : v.$height-cabecera;
+    background-size   : contain;
+    background-repeat : no-repeat;
+  }
+  #loginConfiguration{
+    display : flex;
+  }
+  
+  // Cabecera que no es login (Vamos la cabecera logueado)
+  #aonHeaderWeb{
+    display         : flex;
+    width           : v.$pct-100;
+    justify-content : inherit;
+    align-items     : center;
+    
+    #aonHeaderButtons{
+      display     : flex;
+      gap         : v.$gap;
+      align-items : center;
+      span{
+        height : v.$px-24; // Centrar iconos... ya que no se cargan todos igual
+      }
+    }
+  }
+}

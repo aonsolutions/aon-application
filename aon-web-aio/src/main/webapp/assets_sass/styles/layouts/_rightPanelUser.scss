@@ -1,0 +1,39 @@
+@use '../variables' as v;
+
+aon-right-panel{
+  aon-login-panel #loginContent{
+    display: grid;
+    gap    : v.$gap;
+
+    aon-avatar{
+      display         : flex;
+      justify-content : center;
+      .profile-avatar-letters{
+        width           : v.$px-96;
+        height          : v.$px-96;
+        border-radius   : v.$pct-50;
+        display         : flex;
+        justify-content : center;
+        align-items     : center;
+        font-size       : v.$px-32;
+      }
+    }
+    .userPanelDivUserInfo{
+      display        : grid;
+      gap            : v.$gap;
+      padding        : v.$padding;
+      border-radius  : v.$border-radius;
+      
+      .userPanelNameInfoDiv{
+        display      : flex;
+        gap          : v.$gap;
+        align-items  : center;
+        &:first-of-type {
+          justify-content : center;
+          font-weight     : v.$font-weight-semibold;
+          font-size       : v.$px-20;
+         }
+      }
+    }
+  }
+}

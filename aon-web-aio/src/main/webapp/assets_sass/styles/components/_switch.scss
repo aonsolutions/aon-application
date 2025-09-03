@@ -1,0 +1,56 @@
+@use '../variables' as v;
+
+$switch-height: v.$px-22;
+$switch-width : v.$px-40;
+
+aon-switch{
+  .aonSwitch{
+    display: flex;
+    gap    : v.$gap-min;
+    height : $switch-height;
+    .title{
+      height     : $switch-height;
+      display    : flex;
+      align-items: center;
+      cursor     : pointer;
+    }
+    .aonSwitch-slider{
+      position : relative;
+      display  : inline-block;
+      width    : $switch-width;
+      min-width: $switch-width;
+      max-width: $switch-width;
+      height   : $switch-height;
+      input{
+        opacity : v.$num-0;
+        width   : v.$px-0;
+        height  : v.$px-0;
+        &:checked + .slider {
+          &::before {
+            transform : translateX(v.$px-18);
+          }
+        }
+      }
+      .slider{
+        position: absolute;
+        cursor: pointer;
+        top           : v.$px-0;
+        left          : v.$px-0;
+        right         : v.$px-0;
+        bottom        : v.$px-0;
+        border-radius : v.$px-22;
+        transition    : background-color v.$t-03;
+        &::before {
+          content: "";
+          position      : absolute;
+          height        : v.$px-18;
+          width         : v.$px-18;
+          left          : v.$px-2;
+          bottom        : v.$px-2;
+          border-radius : v.$pct-50;
+          transition    : transform v.$t-03;
+        }
+      }
+    }
+  }
+}

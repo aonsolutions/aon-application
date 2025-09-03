@@ -12,11 +12,9 @@ import { NotificationUtils } from "../modules/notification/utils/NotificationUti
 import { AonApplication } from "../components/aon-application.js";
 import * as LS from '../services/localStorageService.js';
 
-
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export class AonNotificationPanel extends AonElement {
-
     DIV_GENERAL;
     AON_NOTIFICATION_PANEL;
 
@@ -36,15 +34,15 @@ export class AonNotificationPanel extends AonElement {
 
     connectedCallback () {
         this.initialize();
-        this.build();   
+        this.build();
     }
 
     goAonNotification(){
-        try {
-            this.rootPanel(new AonNotification());
-        } catch(e){
-            console.log(e);
-        }
+      try {
+        this.rootPanel(new AonNotification());
+      } catch(e){
+        console.log(e);
+      }
     }
 
     initialize() {
@@ -67,22 +65,29 @@ export class AonNotificationPanel extends AonElement {
   
         let welcome = this.getElement("aonCompanyTabFilter");
         if(!welcome){
-			let openButton = this.getElement("openNotificationButton");
+          let openButton = this.getElement("openNotificationButton") || new AonIconButton();
+          if(!this.isNewStyle()){
 			openButton.style.display = "block";
-       
-            openButton.addEventListener(EVENT.CLICK, () =>  {
-                this.goAonNotification();
-                let rightPanel = document.querySelector('aon-right-panel'); 
-                if (rightPanel) {
-                    rightPanel.close(); 
-                }
-                header.className = "aonHeader aonHeaderNotification";
-                apps.className = "aonMenuLeftop aonMenuLeftopNotification";
-                aonHeader.buildApp(NOTIFICATION);
-                aonHeader.setVisibleLogo(false);
-                aonHeader.setVisibleApp(true);
-            });
-            
+          } else {
+            const divButtons = this.getElement("aonRightPanelButtons");
+            openButton.id = "openNotificationButton";
+            openButton.icon = "open_in_new";
+            openButton.title = "Ver en pantalla completa";
+            openButton.className = "rightPanelButtons";
+            divButtons.insertBefore(openButton, divButtons.firstChild); // Agregamos delante del cerrar
+          }
+          openButton.addEventListener(EVENT.CLICK, () =>  {
+            this.goAonNotification();
+            let rightPanel = document.querySelector('aon-right-panel');
+            if (rightPanel) {
+                rightPanel.close(); 
+            }
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+            aonHeader.setVisibleLogo(false);
+            aonHeader.setVisibleApp(true);
+          });
         } 
         
         let enterprise = this.getElement("aonHeaderCompanyListButton");
@@ -125,17 +130,19 @@ export class AonNotificationPanel extends AonElement {
 
         if(res.source){
             let icon = new AonIcon();
-            icon.size = "40px";
+            if(!this.isNewStyle()){
+              icon.size = "40px";
+            }
             icon.classList.add("notificationPanelRowIcon");
-            if(res.source == "DOCUMENTAL")
+            if(res.source == "DOCUMENTAL"){
                 icon.icon = "aon_new_documental";
-            else if (res.source == "MESSENGER")
+            }else if (res.source == "MESSENGER"){
                 icon.icon = "aon_new_messenger";
-            else if (res.source == "COMUNICA")
+            }else if (res.source == "COMUNICA"){
                 icon.icon = "aon_new_payroll";
-            else if (res.source == "INVOICE")
+            }else if (res.source == "INVOICE"){
                 icon.icon = "aon_new_invoice";
-                
+            }
             if(LS.isDarkBetaTheme())
             	icon.color = "var(--aonNewWhite)";
             else
@@ -143,7 +150,6 @@ export class AonNotificationPanel extends AonElement {
             icon.title = "Solicitudes";
             
             divGeneral.appendChild(icon);
-
         }else{
             let noti = this.createElement(TAG.SPAN);
             noti.className = "material-icons notificationPanelRowNoti";
@@ -167,29 +173,29 @@ export class AonNotificationPanel extends AonElement {
         let subDiv3 = this.createDiv();
         subDiv3.classList.add("notificationPanelRowSubDiv3");
         subDiv3.innerHTML = "( "+firstLetters(this.formatDate(res))+" )";
-        div.appendChild(subDiv1);   
+        div.appendChild(subDiv1);
         div.appendChild(subDiv3);
         div.appendChild(subDiv2);
 
         divGeneral.appendChild(div);
 
-        let span = this.createElement(TAG.SPAN);
-        span.className = "material-icons";
-        span.classList.add("notificationPanelRowSpan");
-        span.title = "Marcar como leído";
-        span.innerHTML = "visibility_off";
-        span.style.visibility = "hidden";
-
-        divGeneral.appendChild(span);
+        let iconVisibility = new AonIcon();
+        iconVisibility.className = "material-icons";
+        iconVisibility.classList.add("notificationPanelRowSpan");
+        iconVisibility.title = "Marcar como leído";
+        iconVisibility.innerHTML = "visibility_off";
+        iconVisibility.setAttribute("data-icon", "visibility_off");
+        iconVisibility.style.visibility = "hidden";
+        divGeneral.appendChild(iconVisibility);
 
         divPrincipal.appendChild(divGeneral);
 
         divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
-            span.style.visibility = "visible";
+            iconVisibility.style.visibility = "visible";
         });
 
         divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
-            span.style.visibility = "hidden";
+            iconVisibility.style.visibility = "hidden";
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
@@ -208,13 +214,12 @@ export class AonNotificationPanel extends AonElement {
             }
         });
         
-        span.addEventListener(EVENT.CLICK, (event) => {
+        iconVisibility.addEventListener(EVENT.CLICK, (event) => {
             event.stopPropagation(); 
             this.markReadNotification(res);
             divGeneral.style.display = "none";
         });
         
-
         return divPrincipal;
     }
 

@@ -226,7 +226,6 @@ export const GROUPS = 'Groups';
 
 export const HEADER = 'Header';
 export const HELP = 'Help';
-export const HELP_RESULTS = "Results in Help";
 export const HIRING = 'Hiring';
 export const HIRING_DATA = "Hiring data";
 export const HOLDER = 'Holder';
@@ -427,7 +426,6 @@ export const RESTORE = 'Restore';
 export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
-export const RESULTS = "Results";
 export const RESUME_COSTS = "Resumen de costes";
 export const REVIEW = 'Review';
 

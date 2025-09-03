@@ -27,7 +27,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -271,7 +270,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		List<RegistryNote> messages = new ArrayList<RegistryNote>();
 		
 		if(AonStringUtils.isBlank(notesSource))
-			messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.MESSAGE) || note.getNoteType().equals(NoteType.CUSTOMER_STATUS)).collect(Collectors.toList());
+			messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.MESSAGE)).collect(Collectors.toList());
 		else
 			messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.safeValueOf(notesSource)) && null != note.getNoteDate()).collect(Collectors.toList());
 		
@@ -315,7 +314,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 				
 				TextBox description = new TextBox();
 				description.setValue(message.getDescription());
-				description.setEnabled(!message.getNoteType().equals(NoteType.CUSTOMER_STATUS));
 				description.getElement().getStyle().setProperty("font-size", "1rem");
 				description.getElement().getStyle().setProperty("font-weight", "700");
 				description.getElement().getStyle().setProperty("color", "#5f6368");
@@ -330,7 +328,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 				
 				TextArea comments = new TextArea();
 				comments.setValue(message.getComments());
-				comments.setEnabled(!message.getNoteType().equals(NoteType.CUSTOMER_STATUS));
 				comments.setVisibleLines(4);
 				comments.getElement().getStyle().setProperty("font-size", ".8rem");
 				comments.getElement().getStyle().setProperty("font-weight", "500");
@@ -347,7 +344,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 				
 				DateBoxEx noteDate = new DateBoxEx();
 				noteDate.setValue(message.getNoteDate());
-				noteDate.setEnabled(!message.getNoteType().equals(NoteType.CUSTOMER_STATUS));
 				noteDate.getElement().getStyle().setProperty("font-size", ".8rem");
 				noteDate.getElement().getStyle().setProperty("font-weight", "500");
 				noteDate.getElement().getStyle().setProperty("color", "#5f6368");
@@ -378,7 +374,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 				footerPanel.add(buttonsPanel);
 				
 				AonTableButton deleteBtn = new AonTableButton("Borrar nota", AON.CSS.aonIconDelete());
-				deleteBtn.setEnabled(!message.getNoteType().equals(NoteType.CUSTOMER_STATUS));
 				deleteBtn.addClickHandler(e -> {
 					e.stopPropagation();
 					
@@ -390,8 +385,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 					AonTableButton confidentialBtn = new AonTableButton(
 							message.isConfidential() ? "Confidencial" : "Publico", 
 							message.isConfidential() ? AON.CSS.aonIconNoEncryption() : AON.CSS.aonIconLock());
-					
-					confidentialBtn.setEnabled(!message.getNoteType().equals(NoteType.CUSTOMER_STATUS));
 					
 					confidentialBtn.addClickHandler(e -> {
 						e.stopPropagation();

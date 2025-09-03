@@ -1,7 +1,6 @@
 import { MSG, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as JSF from '../aon-jsf-app.js';
-import * as GWT from '../../gwt/gwt.js';
 
 export class AonGarageMenu extends AonSuiteMenu {
 
@@ -51,11 +50,6 @@ export class AonGarageMenu extends AonSuiteMenu {
                 description: "Órdenes de Reparación",
                 title: "Órdenes de Reparación",
                 action: () => this.rootPanel(new JSF.AonJsfProjectTas())
-            },
-            {
-                description: "Órdenes de Reparación (Excel)",
-                title: "Órdenes de Reparación (Excel)",
-                action: () => GWT.iLoad(GWT.PROJECT_TAS_MODULE)
             }, {
                 description: "Operarios",
                 title: "Operarios",

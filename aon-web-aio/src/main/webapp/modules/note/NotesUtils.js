@@ -3,7 +3,7 @@ import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
 import { Note } from "../../models/note/Note.js";
-import Apps from "../../services/app.js";
+import { Apps } from "../../services/app.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
 import { addZero } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
@@ -96,7 +96,7 @@ const addNote = (parent, note) => {
     if(!note.getId()){
         subject.focus();
     }
-}
+};
 
 const dialogMoreVert = (ev, dialog, li, note, textAreaId) => {
     ev.preventDefault();
@@ -197,7 +197,7 @@ const addDate = (note, dialog, textAreaId)=>{
         div.addEventListener(EVENT.MOUSELEAVE,()=> iconX.style.display = "none" )
         div.addEventListener(EVENT.MOUSEOVER,()=> iconX.style.display = "contents" );
     }
-}
+};
 
 const reminder = (ev, dialog, note, textAreaId) => {
     const rect = ev.target.getBoundingClientRect();
@@ -235,15 +235,14 @@ const reminder = (ev, dialog, note, textAreaId) => {
     }
 
     dialog.open();
-}
+};
 
 const dateFormat = (d) => {
     let day = AonDateUtils.lastThreeDayStr(d);
     const date = new Date(d);
     return day ? day : `${addZero(date.getDate(),2)} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
-}
-
+};
 
 export const NotesUtils = {
     addNote
-}
+};

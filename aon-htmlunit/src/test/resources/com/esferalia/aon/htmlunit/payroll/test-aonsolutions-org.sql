@@ -834,7 +834,6 @@ CREATE TABLE `alcatraz` (
   `finance` int DEFAULT NULL COMMENT 'ID Vto',
   `finance_tracking` int DEFAULT NULL COMMENT 'ID Seguimiento Vto',
   `invoice_batch` int DEFAULT NULL COMMENT 'Id Lote Factura',
-  `liquidation` int DEFAULT NULL COMMENT 'Id de la liquidacion y/o calculo de la TGSS',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
@@ -843,14 +842,12 @@ CREATE TABLE `alcatraz` (
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
   KEY `IDX_ALCATRAZ_INVOICE_BATCH` (`invoice_batch`),
-  KEY `IDX_ALCATRAZ_LIQUIDATION` (`liquidation`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_LIQUIDATION` FOREIGN KEY (`liquidation`) REFERENCES `salary` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1618,7 +1615,6 @@ CREATE TABLE `bank_statement` (
   `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad',
   `status` tinyint DEFAULT '0' COMMENT 'Estado',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios',
-  `nordigen_id` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Identificador interno de Nordigen',
   PRIMARY KEY (`id`),
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
   KEY `IDX_BANK_STATEMENT_DOMAIN` (`domain`),
@@ -7366,7 +7362,7 @@ CREATE TABLE `invoice_batch` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del lote',
   `date` datetime NOT NULL COMMENT 'Fecha de comunicacion',
-  `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
+  `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
   `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operación',
   `data_response` int DEFAULT NULL COMMENT 'Envio de la comunicacion',
@@ -15024,4 +15020,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-20 21:47:42
+-- Dump completed on 2025-07-30  9:27:45

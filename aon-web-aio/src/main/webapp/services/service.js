@@ -18,8 +18,6 @@ export * from './userService.js';
 
 export * from './fileService.js';
 
-export * from './helpService.js';
-
 export * from './comunicaService.js';
 
 export * from './registryService.js';

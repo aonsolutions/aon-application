@@ -24,7 +24,6 @@ export const getCustomers = (data) => post(CUSTOMERS, data);
 export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
 export const getCustomerEmails = (data) => post(`${CUSTOMERS}/${data.id}/${EMAILS}`, data);
 export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
-export const saveCustomerNote = (data) => put(`${CUSTOMERS}/note`, data);
 
 export const getTarget = (data) => get(`${TARGETS}/${data.id}`, data);
 export const saveTarget = (data) => post(`${TARGETS}`, data);

@@ -140,7 +140,6 @@ export class AonAppMenu extends AonElement {
         return null;
       }
 
-
       addSidenavOptionsListValue(data, option, ul) {
         let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
         ul = ul || this.getElement(sidenavId + data.id + "List");
@@ -149,25 +148,24 @@ export class AonAppMenu extends AonElement {
           let li = this.createElement(TAG.LI);
           li.id = id;
           li.title = option.name;
-    
+
           li.className = LS.isNewTheme() 
               ? "aonAppMenuSidenavListBeta aonOpacity"
               : "aonAppMenuSidenavList aonOpacity sidenavHover";  
-          
-          if(LS.isNewTheme() ) {
-            li.addEventListener(EVENT.MOUSEOVER, () => {
-                        li.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb';
-                    });
-    
-                    li.addEventListener(EVENT.MOUSELEAVE, () => {
-                        li.style.backgroundColor = 'transparent';
-                    });
-          }
-    
-    
+
+//          if(LS.isNewTheme() ) {
+//            li.addEventListener(EVENT.MOUSEOVER, () => {
+//              li.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb';
+//            });
+//
+//            li.addEventListener(EVENT.MOUSELEAVE, () => {
+//              li.style.backgroundColor = 'transparent';
+//            });
+//          }
+
           ul.appendChild(li);
           if(option.options) {
-            li.style.paddingLeft = '6px';
+//            li.style.paddingLeft = '6px';
             let arrow = this.createElement(TAG.I);
             arrow.className = "material-icons aonVerticalMiddle";
             arrow.innerHTML = MATERIAL_ICONS.ARROW_RIGHT;
@@ -175,7 +173,7 @@ export class AonAppMenu extends AonElement {
             let newLi =  this.createElement(TAG.LI);
             newLi.id = id + 'Options';
             newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
-            newLi.style.transition = "opacity 1s ease-out";
+//            newLi.style.transition = "opacity 1s ease-out";
             this.hiddenElement(newLi, true);
             ul.appendChild(newLi);
             if(option.clickable) {
@@ -189,7 +187,7 @@ export class AonAppMenu extends AonElement {
                 arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
                 this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
               });
-            } 
+            }
           }
     
           let span = this.createElement(TAG.SPAN);
@@ -197,23 +195,27 @@ export class AonAppMenu extends AonElement {
           span.title =  option.name;
           if (option.count) {
             span.innerHTML = option.name + " (" + option.count + ")";
-            span.style.fontWeight = "bold";
+//            span.style.fontWeight = "bold";
           } else span.innerHTML = option.name;
-    
+
           if (option.icon) {
-            let i = this.createElement(TAG.I);
-            let iconClass = "material-icons";
-            i.style.color = this.getApp().color;
-            if(option.icon_color) i.style.color = option.icon_color;
-            if(option.icon_class) iconClass = option.icon_class;
-            i.className = `${iconClass} aonVerticalMiddle`;
-            i.innerHTML = option.icon;
-            li.appendChild(i);
+            const icon = new AonIcon();
+            icon.id    = id + 'icon';
+            icon.icon  = option.icon;
+            li.appendChild(icon);
+//            let i = this.createElement(TAG.I);
+//            let iconClass = "material-icons";
+//            i.style.color = this.getApp().color;
+//            if(option.icon_color) i.style.color = option.icon_color;
+//            if(option.icon_class) iconClass = option.icon_class;
+//            i.className = `${iconClass} aonVerticalMiddle`;
+//            i.innerHTML = option.icon;
+//            li.appendChild(i);
           } else if (option.aonIcon) {
             let ai = new AonIcon();
             ai.id    = id + "AonIcon";
             ai.icon  = option.aonIcon.icon;
-            ai.size  = "18px";
+//            ai.size  = "18px";
             li.appendChild(ai);
             ai.color = this.getApp().color;
             li.addEventListener(EVENT.MOUSEOVER, () => {
@@ -227,13 +229,15 @@ export class AonAppMenu extends AonElement {
             let img = this.createElement(TAG.IMG);
             if(option.style) {
               img.className = option.style;
-              span.style.paddingLeft = '20px'
-            } else img.style.width = '18px';
+//              span.style.paddingLeft = '20px'
+            } 
+//            else img.style.width = '18px';
             img.src = option.img;
             li.appendChild(img);
-          } else {
-            span.style.marginLeft = '28px';
-          }
+          } 
+//          else {
+//            span.style.marginLeft = '28px';
+//          }
           li.appendChild(span);
     
           // li.addEventListener(EVENT.MOUSEOVER, () => {

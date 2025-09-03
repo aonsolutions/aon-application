@@ -1,6 +1,6 @@
 import { AonElement } from "./AonElement.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG} from '../environments/environments.js'
-import '../css/aon-new-textarea.css';
+//import '../css/aon-new-textarea.css';
 import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewTextarea extends AonElement {

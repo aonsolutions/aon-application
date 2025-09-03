@@ -1,0 +1,44 @@
+@use '../variables' as v;
+
+$size-space    : v.$pct-25;
+$min-size-space: v.$px-300;
+
+#rootPanel {
+  aon-invoice-panel{
+    #aonInvoiceContent{
+    // aon-invoice-home
+      &:has(aon-invoice-home) {
+        padding: v.$px-0;
+      }
+      aon-invoice-home{
+        #aonInvoiceHomeDashboard{
+          display       : flex;
+          flex-direction: column;
+          gap           : v.$gap;
+          #aonInvoiceHomeFastPanel{
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            /*justify-content : center;*/
+            aon-dashboard-button{
+              width: $size-space;
+              min-width: $min-size-space;
+            }
+          }
+          #aonInvoiceHomeCardPanel{
+            width           : v.$pct-100;
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            /*justify-content : center;*/
+            aon-card{
+              width: $size-space;
+              min-width: $min-size-space;
+            }
+          }
+        }
+      }
+    // FIN aon-invoice-home
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { createDiv } from "../../../services/utilsComponents.js";
 
 // import { xmlToJson } from "../../../services/xmlToJson.js";
 
-import '../../../css/aon-rss.css';
+//import '../../../css/aon-rss.css';
 
 const openRss = async (rss) => {
     // const resElement = buildRss(rss);

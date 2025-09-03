@@ -2268,14 +2268,15 @@ color:#000;
 }
 
 .aonDataScroller .aon-dataScroller-buttons tr td {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 	margin: 3px;
-	height: 27px;
+	min-height: 34px;
 	min-width: 34px;
-	padding-top: 7px;
-	border-radius: 17px;
-	background-color: #f6f8fc ;
+	border-radius: 100%;
+	background-color: #f6f8fc;
 }
-
 
 .aonDataScroller .aon-dataScroller-button-next::before {
 	display: block;
@@ -2906,17 +2907,22 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 
 .aon-direct-access-list{
+	width:100%;
 	margin:0;
 	padding:0;
 	list-style-type:none;
-	display:block;
-	width:100%;
+	display:flex;
+    flex-direction: column;
+    gap: 0.3rem;
 }
 
 .aon-direct-access-list-element{
  	background:transparent url(images/aon-icon/aon-ul-list.png) scroll left 6px no-repeat;
- 	padding:5px 0 5px 12px;
+ 	padding:5px 12px;
  	border-bottom:#f4f3f3 1px solid;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 .aon-menu-icon{
 	padding-left: 8px;

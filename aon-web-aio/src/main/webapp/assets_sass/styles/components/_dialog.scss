@@ -1,0 +1,87 @@
+@use '../variables' as v;
+
+@mixin flex-column-gap {
+  display       : flex;
+  flex-direction: column;
+  gap           : v.$gap;
+}
+
+aon-dialog{
+  // no es un modal es una especie de menu al lado del boton
+  &[type="menu"]{
+    position: fixed;
+    .aonDialog{
+      border-radius: v.$border-radius;
+      .dialog-body{
+        padding: v.$padding;
+        .dialog-body-content{
+          @include flex-column-gap;
+          > :first-child {
+            @include flex-column-gap;
+          }
+          // si contiene switch
+          aon-switch .aonSwitch{
+            justify-content: space-between;
+          }
+        }
+      }
+    }
+  }
+  // Normal modal
+  &:not([type]) {
+    position: fixed;
+    top     : v.$num-0;
+    left    : v.$num-0;
+    width   : v.$vw-100;
+    height  : v.$vh-100;
+    z-index : v.$num-99;
+    // Posicionar contenido en el centro
+    display       : flex;
+    align-items   : center;
+    justify-content: center;
+    // Contenido
+    .aonDialog{
+      width        : v.$pct-90;
+      border-radius: v.$border-radius;
+      max-width    : v.$px-800;
+      max-height   : v.$vh-90;
+      overflow-y   : auto;
+      transition   : all v.$t-03 ease;
+      .dialog-head{
+        display        : flex;
+        justify-content: space-between;
+        align-items    : center;
+        padding        : v.$px-12 v.$padding;
+        font-family    : v.$font-primary-semibold;
+        font-size      : v.$font-size-h4;
+        line-height    : v.$line-height-h4;
+        letter-spacing : v.$letter-spacing-h4;
+        &:empty {
+          display : none;
+        }
+      }
+      .dialog-body{
+        padding: v.$padding;
+        display: grid;
+        gap    : v.$gap;
+
+        .dialog-body-content{
+          @include flex-column-gap;
+        }
+        .dialog-body-action{
+          display        : flex;
+          gap            : 1rem;
+          justify-content: flex-end;
+          button{
+            min-width: v.$pct-27;
+            width    : unset;
+          }
+        }
+      }
+    }
+  }
+  // No mostrar
+  &.aon-dialog-hidden{
+    display: none;
+  }
+}

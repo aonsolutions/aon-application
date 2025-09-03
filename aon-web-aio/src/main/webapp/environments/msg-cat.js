@@ -222,7 +222,6 @@ export const GROUPS = 'Grups';
 
 export const HEADER = 'Capçalera';
 export const HELP = 'Ajuda';
-export const HELP_RESULTS = 'Resultats en Ajuda';
 export const HIRING = 'Contractació';
 export const HIRING_DATA = 'Dades de contractació';
 export const HOLDER = 'Titular';
@@ -422,7 +421,6 @@ export const RESTORE = 'Restaurar';
 export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
-export const RESULTS = "Resultats";
 export const RESUME_COSTS = "Resumen de costes";
 export const REVIEW = "Revisar";
 

@@ -1,0 +1,56 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+#rootPanel {
+  aon-plans .aonFlex #Content{
+    display        : flex;
+    gap            : v.$gap;
+    flex-wrap      : wrap;
+    justify-content: center;
+    padding        : v.$px-0;
+    .title-plans{
+      display: grid;
+      width  : v.$pct-100;
+      h2{
+        margin-top: 0;
+      }
+    }
+    .plansGrid{
+      display         : flex;
+      gap             : v.$gap;
+      flex-wrap       : wrap;
+      justify-content : center;
+      width           : v.$pct-100;
+      aon-card{
+        flex-grow   : 1;
+        flex-shrink : 1;
+        flex-basis  : v.$px-320;
+        max-width   : v.$px-400;
+        .aonCardContent{
+          display        : flex;
+          gap            : v.$gap;
+          height         : v.$px-288;
+          flex-direction : column;
+          justify-content: space-between;
+          .planDescription {
+            height: v.$px-176;
+          }
+          .contracted{
+            height          : v.$px-40;
+            display         : flex;
+            justify-content : center;
+            align-items     : center;
+            font-family     : v.$font-primary-semibold;
+          }
+        }
+      }
+    }
+    aon-card.plansFooter{
+     .aonCardContent{
+        display       : flex;
+        gap           : v.$gap;
+        flex-direction: column;
+      }
+    }
+  }
+}

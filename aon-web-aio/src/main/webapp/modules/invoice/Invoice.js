@@ -531,7 +531,7 @@ export class Invoice {
   }
 
   isWithholdingFarmer() {
-    return this.withholdingFarmer  && this.withholdingFarmer != CONSTANT.FALSE;;
+    return this.withholdingFarmer && this.withholdingFarmer !== CONSTANT.FALSE;
   }
 
   setWithholdingType(withholdingType) {

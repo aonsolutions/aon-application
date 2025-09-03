@@ -484,30 +484,6 @@ public class AON_SOLUTIONS {
 		}
 		return null;
 	}
-	
-	public static Domain getDomainBySchema(String schema, Integer domainId) { 
-		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-			Domain domain = getCommon().getDomain(ctx, f -> f.getIdProperty().eq(domainId));
-			if ( domain != null && domain.getId() != null ) 
-				return domain;
-		} catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
-	
-	public static Domain getDomainByAonCustomer(Integer aonCustomer) { 
-		for (String schema : AONContext.getSchemas()) {
-			try (CloseableAONContext ctx = AONContext.getAONContext(AONContext.getSchemaFirstDomain(schema), 0, "")) {
-				Domain domain = getCommon().getDomain(ctx, f -> f.getAonCustomerProperty().eq(aonCustomer));
-				if ( domain != null && domain.getId() != null ) 
-					return domain;
-			} catch (Exception e) {
-				continue;
-			}
-		}
-		return null;
-	}
 
 	public static Domain getDomain(String token, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(token)){

@@ -14,22 +14,23 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
+
+import org.apache.commons.lang.StringUtils;
+
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -57,8 +58,9 @@ public class DeliveryTemplate implements AutoCloseable  {
 	
 	private Delivery delivery;
 	private Warehouse warehouse;
+	public Workplace workplace;
 	private CompanyFull company;
-
+	private CustomerFull customer;
 	private byte[] logo;
 	
 	private float x;
@@ -92,15 +94,18 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 * @param logo
 	 * @throws CanNotCreatePdfException
 	 */
-	public DeliveryTemplate(Delivery delivery, Warehouse warehouse, CompanyFull company, byte[] logo) throws CanNotCreatePdfException {
+	public DeliveryTemplate(Delivery delivery, Warehouse warehouse, Workplace workplace, CompanyFull company, CustomerFull customer,
+	byte[] logo) throws CanNotCreatePdfException {
 		try {
-			if (delivery == null || warehouse == null || company == null) {
+			if (delivery == null || warehouse == null || company == null || customer == null) {
 				throw new CanNotCreatePdfException("No delivery");
 			}
 
 			this.delivery = delivery;
 			this.warehouse = warehouse;
+			this.workplace = workplace;
 			this.company = company;
+			this.customer = customer;
 			this.logo = logo;
 			
 			this.document = new PDDocument();
@@ -342,8 +347,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 		String phone = "Tel\u00E9fono: ";
 		String cellphone = "M\u00F3vil: ";
 		
-		if (delivery.getCustomer() != null && delivery.getCustomer().getName() != null) {
-			name = "Cliente: " + delivery.getCustomer().getName();
+		if (customer.getRegistry() != null && customer.getRegistry().getName() != null) {
+			name = "Cliente: " + customer.getRegistry().getName();
 		}
 		
 		if (medias != null) {
@@ -409,18 +414,25 @@ public class DeliveryTemplate implements AutoCloseable  {
 		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
 		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1 + TEXTFONTSIZE;
 		
-		String address = delivery.getAddress().getFullAddress();
+		String address = delivery.getShippingAlternativeAddress();
 		String contact = delivery.getShippingContact();
-		String zip = delivery.getAddress().getZip();
-		String city = delivery.getAddress().getCity();
+		String zip = delivery.getShippingAlternativeZip();
+		String city = delivery.getShippingAlternativeCity();
 		String province = delivery.getAddress().getProvince();
+		
+		if (address == null || address.isEmpty() || contact == null || contact.isEmpty() &&
+			zip == null || zip.isEmpty() || city == null || city.isEmpty()) {
+			address = delivery.getAddress().getFullAddress();
+			zip = delivery.getAddress().getZip();
+			city = delivery.getAddress().getCity();
+		}
 		
 		address = (address == null) ? StringUtils.EMPTY : address;
 		contact = (contact == null) ? StringUtils.EMPTY : contact;
 		zip = (zip == null) ? StringUtils.EMPTY : zip;
 		city = (city == null) ? StringUtils.EMPTY : city;
 
-		String destinatary = "Destinatario: " + delivery.getCustomer().getName();
+		String destinatary = "Destinatario: " + contact;
 		address = "Direcci\u00F3n: " + address + " " + zip + " " + city + " (" + province + ")";
 		
 		final float nameWidth = (maxLogoWidth*3);
@@ -490,8 +502,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 		String workplaceName = "Centro de Trabajo: ";
 		
-		if (delivery.getWorkplace() != null && delivery.getWorkplace().getDescription() != null) {
-			workplaceName = workplaceName.concat(delivery.getWorkplace().getDescription());
+		if (workplace != null && workplace.getDescription() != null) {
+			workplaceName = workplaceName.concat(workplace.getDescription());
 		}
 		
 		nameLines = PDFToolkit.getLines(workplaceName, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
@@ -624,15 +636,12 @@ public class DeliveryTemplate implements AutoCloseable  {
 					if (detail.getValue().get(0) != null && detail.getValue().get(0).getCreationDate() != null) {
 						date = AonDateUtils.format(detail.getValue().get(0).getCreationDate(), "dd/MM/yyyy");
 					}
-
+					
 					if (detail.getValue().get(0) != null && detail.getValue().get(0).getPurchaseReference() != null) {
 						reference = detail.getValue().get(0).getPurchaseReference();
 					}
-					Domain domain = company.getRegistry().getDomain();
-					SalesDetail salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(id)).findFirst().orElse(null);
-					String salesReference = salesDetail.getSales() != null 
-							? salesDetail.getSales().getReferenceCode() : "";
-					String pedido = "Pedido: " + salesReference + " del " + date + " Ref. compra: " + reference;
+					
+					String pedido = "Pedido: " + id.toString() + " del " + date + " Ref. compra: " + reference;
 					
 					nameLines = PDFToolkit.getLines(pedido, nameWidth, DEFAULT_BOLD_FONT, TEXTFONTSIZE);
 					
@@ -875,7 +884,9 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 * @throws IOException
 	 */
 	private void drawPaymentTableSecondRow() throws IOException {
-		if (!InvoiceTransactionType.NATIONAL.equals(delivery.getCustomer().getTransaction())) {
+		Customer simpleCustomer = customer.getRegistry();
+		
+		if (simpleCustomer.getTransaction() != InvoiceTransactionType.NATIONAL) {
 			drawAmounthNotNational();
 		} else {
 			drawAmounthNational();

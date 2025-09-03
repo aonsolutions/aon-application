@@ -1,0 +1,28 @@
+@use '../variables' as v;
+
+aon-dialog-menu{
+  min-width     : v.$px-200;
+  height        : auto;
+  /*position      : absolute;*/
+  position      : fixed;
+  z-index       : v.$num-2;
+  border-radius : v.$border-radius;
+  ul{
+    list-style-type : none;
+    padding         : v.$px-0;
+    margin          : v.$px-0;
+    display         : grid;
+    li{
+      padding : v.$px-16; /* lo mismo que de gap */
+      cursor  : pointer;
+      display : flex;
+      gap     : v.$gap-min;
+      &:first-child{
+        border-radius : v.$border-radius v.$border-radius v.$px-0 v.$px-0;
+      }
+      &:last-child{
+        border-radius : v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
+      }
+    }
+  }
+}

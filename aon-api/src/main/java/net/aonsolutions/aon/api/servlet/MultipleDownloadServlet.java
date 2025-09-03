@@ -17,6 +17,13 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,18 +35,13 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.doc.ExternalStorage.ExternalStorageVisitor;
-import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -52,17 +54,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 import net.aonsolutions.aon.tbai.TbaiData;
-import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "MultipleDownloadServlet", urlPatterns = {"/ms/api/multiple_download/*"})
 public class MultipleDownloadServlet extends HttpServlet{
@@ -153,37 +147,59 @@ public class MultipleDownloadServlet extends HttpServlet{
 
 	
 	private LinkedList<File> getInvoiceFiles(Domain domain, User user, JSONObject json) {
-		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
-		
-		LinkedList<Integer> ids = toList(json.optJSONArray("ids"));
+   		LinkedList<Integer> ids = toList(json.optJSONArray("ids"));
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
 		LinkedList<File> list = new LinkedList<>();
 		
 		String status = JsonUtils.getString(json, IJsonNames.STATUS);
 		
 		if(!AonStringUtils.isBlank(status) && !isRawdoc(status)) {
-			if(ids.isEmpty()) {
-				InvoiceFilter filter = new InvoiceFilter()
-						.setDescription(JsonUtils.getString(json, "description"))
-						.setStatus(JsonUtils.getString(json, IConstants.STATUS))
-						.setRecorded(InvoiceStatus.safeValueOf2(JsonUtils.getString(json, "recorded")) != null 
-								? InvoiceStatus.safeValueOf2(JsonUtils.getString(json, "recorded")).value() : null)
-						.setTypes(JsonUtils.has(json, IConstants.TYPE)
-							? JsonUtils.getString(json, IConstants.TYPE).split(",") : null)
-						.setFrom(JsonUtils.getDate(json, IJsonNames.FROM))
-						.setTo(JsonUtils.getDate(json, IJsonNames.TO))
-						.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY));
-				AON.getInvoiceStream(occam, f -> InvoiceServlet.invoiceFilter(f, domain.getId(), filter))
-					.forEach(i -> {
-						File file = getInvoiceFile(domain, user, occam, i.getId(), "Factura " + i.getReferenceCode());
-						if(file != null) list.add(file);
-					});
-			} else {
-				ids.stream().forEach(id -> {
-    				File file = getInvoiceFile(domain, user, occam, id, null);
-    				if(file != null) list.add(file);
-    			});
-			}
+    		ids.stream().forEach(id ->{
+    			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().eq(id)
+        				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
+    			try {
+    				if(attach != null && attach.getId() != null) {
+    					String prefix = attach.getDescription() != null && attach.getDescription().length() > 2 
+    							? attach.getDescription() : "invoice";
+    					File file = File.createTempFile(prefix, "." + attach.getMimeType().getExtension());
+    					AonFileUtils.writeByteArrayToFile(file, attach.getData());
+    					list.add(file);
+    				
+    				} else {
+    					Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
+    					if(InvoiceType.SALES.equals(invoice.getType())) {
+    						CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
+    						Attach logo = new Attach();
+    						PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), user.getLogin(), true);
+    						if(config.isLogo()) {
+    							Integer regId = company.getRegistry().getId();
+    							logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(regId)
+    								.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+    						}
+    						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
+    						FileOutputStream out = new FileOutputStream(file);
+    						
+    						String qrUrl = "https://" +  domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
+    								+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
+    								+ "&s=" + invoice.getSeries()
+    								+ "&n=" + invoice.getNumber()
+    								+ "&t=" + invoice.getTotal();  
+    						TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
+    						String tbaiId = "";
+    						if(tbai.isActive()) {	
+    							TbaiData tbaiData = TbaiData.getInstance(tbai);
+    							String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+    							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+    							tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+    						}
+    						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+    						list.add(file);	
+    					}
+    				}
+    			} catch (IOException e) {
+					e.printStackTrace();
+				}
+    		});
     	} else if(!AonStringUtils.isBlank(status) && isRawdoc(status)) { 
     		AON.getRawdocFullStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().in(idsArray)).forEach(r -> {
     			JSONObject data = new JSONObject(r.getJson());
@@ -215,100 +231,6 @@ public class MultipleDownloadServlet extends HttpServlet{
     		});
     	}
 		return list;
-	}
-	
-	private File getInvoiceFile(Domain domain, User user, Occam occam, Integer id, String pfx) {
-		InvoiceDoc invoiceDoc = AON.getInvoiceDoc(occam, occam.getDomain(), id).orElse(null);
-		if(invoiceDoc != null) {
-			return invoiceDoc.getExternalStorage().visit(new ExternalStorageVisitor<File>() {
-
-				@Override
-				public File visitAon() {
-					Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().eq(id)
-	        				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
-	    			if(attach != null && attach.getId() != null) {
-	    				String prefix = pfx;
-	    				if(AonStringUtils.isBlank(prefix)){
-	    					prefix = attach.getDescription() != null && attach.getDescription().length() > 2 
-	    							? attach.getDescription() : "invoice";
-	    				}
-	    				try {
-	    					File f = File.createTempFile(prefix, "." + attach.getMimeType().getExtension());
-	    					AonFileUtils.writeByteArrayToFile(f, attach.getData());
-		    				return f;
-		    			} catch (IOException e) {
-	    					e.printStackTrace();
-	    				}
-	    			}
-	    			return null;
-				}
-
-				@Override
-				public File visitDrive() {
-					return null;
-				}
-
-				@Override
-				public File visitAws() {
-					try {
-						String prefix = pfx;
-	    				if(AonStringUtils.isBlank(prefix)){
-	    					prefix = invoiceDoc.getDescription() != null && invoiceDoc.getDescription().length() > 2 
-    							? invoiceDoc.getDescription() : "invoice";
-	    				}
-						byte[] data = S3.getInstance().download(invoiceDoc.getS3Bucket(), invoiceDoc.getS3Key());
-						File f = File.createTempFile(prefix, "." + invoiceDoc.getMimeType().getExtension());
-    					AonFileUtils.writeByteArrayToFile(f, data);
-	    				return f;
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}
-
-				@Override
-				public File visitScaleway() {
-					return null;
-				}
-
-			});
-		} else {
-			Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
-			if(InvoiceType.SALES.equals(invoice.getType())) {
-				CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
-				Attach logo = new Attach();
-				PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), user.getLogin(), true);
-				if(config.isLogo()) {
-					Integer regId = company.getRegistry().getId();
-					logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(regId)
-						.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
-				}
-				
-				try {
-					File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
-					FileOutputStream out = new FileOutputStream(file);
-					
-					String qrUrl = "https://" +  domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
-							+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
-							+ "&s=" + invoice.getSeries()
-							+ "&n=" + invoice.getNumber()
-							+ "&t=" + invoice.getTotal();  
-					TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
-					String tbaiId = "";
-					if(tbai.isActive()) {	
-						TbaiData tbaiData = TbaiData.getInstance(tbai);
-						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
-						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
-					}
-					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
-					return file;
-	    		} catch (IOException e) {
-    				e.printStackTrace();
-    			}
-			}
-		}
-		return null;
 	}
 	
 	private LinkedList<File> getDocumentalFiles(Domain domain, User user, JSONObject json) {

@@ -100,12 +100,12 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.addStyleName(AON.CSS.aonFlexColumn());
 		cataloguePanel.getElement().getStyle().setProperty("gap", "3rem");
 		
-		List<Product> packsProducts = products.stream().filter(Product::isComposition).collect(Collectors.toList());
+		List<Product> packsProducts = products.stream().filter(product -> product.getComposition()).collect(Collectors.toList());
 		if(!packsProducts.isEmpty()) {
 			createPacks(cataloguePanel, packsProducts);
 		}
 		
-		List<Product> aonServices = products.stream().filter(product -> !product.isComposition()).collect(Collectors.toList());
+		List<Product> aonServices = products.stream().filter(product -> !product.getComposition()).collect(Collectors.toList());
 		if(!aonServices.isEmpty()) {
 			createServices(cataloguePanel, aonServices);
 		}

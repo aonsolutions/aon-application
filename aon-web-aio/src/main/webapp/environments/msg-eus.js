@@ -223,7 +223,6 @@ export const GROUPS = 'Taldeak';
 
 export const HEADER = 'Goiburu';
 export const HELP = 'Laguntza';
-export const HELP_RESULTS = 'Emaitzak Laguntzan';
 export const HIRING = 'Kontratazioa';
 export const HIRING_DATA = "Kontratazio data";
 export const HOLDER = 'Titularra';
@@ -424,7 +423,6 @@ export const RESTORE = 'Berreskuratu';
 export const RESTORED_DATA = 'Datuak zuzen berreskuratu dira';
 export const RESTORE_INVOICE = 'Faktura Berreskuratu';
 export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
-export const RESULTS = "Emaitzak";
 export const RESUME_COSTS = "Resumen de costes";
 export const REVIEW = 'Berrikusi';
 

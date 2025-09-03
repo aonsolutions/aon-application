@@ -51,11 +51,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductDAO {
 	
-	// Private constructor to prevent instantiation
-	private ProductDAO() {
-	
-	}
-	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	public static final com.esferalia.aon.jooq.tables.Tax VAT_ALIAS = TAX.as("vat");
 	public static final com.esferalia.aon.jooq.tables.Tax RETENTION_ALIAS = TAX.as("retention");

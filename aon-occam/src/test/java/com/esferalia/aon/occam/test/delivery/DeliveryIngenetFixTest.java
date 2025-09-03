@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonFaker;
@@ -35,7 +34,7 @@ public class DeliveryIngenetFixTest extends AbstractOccamTest {
 		delivery = DeliveryDAO.save(ctx, delivery);
 		DeliveryDetail detail = AonFaker.getDeliveryDetail(ctx, delivery);
 		detail.setSalesDetail(salesDetail.getId());
-		DeliveryDetailDAO.save(ctx, detail);
+		DeliveryDAO.insertDeliveryDetail(ctx, detail);
 		
 		LinkedList<Delivery> list = new LinkedList<>();
 		list.add(delivery);

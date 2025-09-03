@@ -275,15 +275,6 @@
 			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/scope.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	<!-- AON GARAGE -->
-	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_project_tas_excel</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/garage/projectTasExcel.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
 </faces-config>
 		

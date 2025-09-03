@@ -1,10 +1,9 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG } from '../environments/environments.js'
-import '../css/aon-new-input.css';
+//import '../css/aon-new-input.css';
 import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewInput extends AonElement {
-
 	ROOT;
 	BOX;
 	LABEL;
@@ -14,7 +13,6 @@ export class AonNewInput extends AonElement {
 	TITLE;
 	MSG;
 	MSG_SPAN;
-
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -138,7 +136,6 @@ export class AonNewInput extends AonElement {
 		if (this.isDisabled()) input.setAttribute("disabled", "true");
 		if (this.isReadonly()) input.setAttribute("readonly", "true");
 
-
 		input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
 		input.addEventListener(EVENT.BLUR, this.onBlur);
 		input.addEventListener(EVENT.INPUT, this.onInput);
@@ -156,11 +153,12 @@ export class AonNewInput extends AonElement {
 		label.appendChild(span);
 
 		if (this.isPassword()) {
-			this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined, () => {
-				const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-				this.getElement(this.ICON_BUTTON).icon = type === 'password' ? 'visibility' : 'visibility_off';
-				input.type = type;
-			})
+          this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
+            const iconButton = this.getElement(this.ICON_BUTTON);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            iconButton.setIcon(type === 'password' ? 'visibility' : 'visibility_off');
+            input.type = type;
+          });
 		}
 	}
 
@@ -213,7 +211,6 @@ export class AonNewInput extends AonElement {
 		}
 	}
 
-
 	addIcon(icon, color, fn) {
 		let div = this.getElement(this.BOX);
 		let iconLabel = this.getElement(this.ICON);
@@ -222,7 +219,7 @@ export class AonNewInput extends AonElement {
 			div.appendChild(iconLabel);
 		}
 		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-		iconLabel.style.top = '5px';
+//		iconLabel.style.top = '5px';
 		iconLabel.id = this.ICON;
 		iconLabel.setAttribute("for", this.INPUT);
 		let aonIconButton = new AonIconButton();
@@ -233,7 +230,7 @@ export class AonNewInput extends AonElement {
 		iconLabel.appendChild(aonIconButton);
 
 		if (color) iconLabel.color = color;
-		this.getElement(this.INPUT).style.paddingRight = '40px';
+//		this.getElement(this.INPUT).style.paddingRight = '40px';
 	}
 
 	addIconWithRemove(icon, color, removeFn) {
@@ -244,7 +241,7 @@ export class AonNewInput extends AonElement {
 			div.appendChild(iconLabel);
 		}
 		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-		iconLabel.style.top = '5px';
+//		iconLabel.style.top = '5px';
 		iconLabel.id = this.ICON;
 		iconLabel.setAttribute("for", this.INPUT);
 		let aonIconButton = new AonIconButton();
@@ -262,7 +259,7 @@ export class AonNewInput extends AonElement {
 		iconLabel.appendChild(aonIconButton);
 
 		if (color) iconLabel.color = color;
-		this.getElement(this.INPUT).style.paddingRight = '40px';
+//		this.getElement(this.INPUT).style.paddingRight = '40px';
 	}
 
 	addEndWidget(widget) {
@@ -273,8 +270,8 @@ export class AonNewInput extends AonElement {
 			div.appendChild(iconLabel);
 		}
 		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-		iconLabel.style.top = '15px';
-		iconLabel.style.right = '15px';
+//		iconLabel.style.top = '15px';
+//		iconLabel.style.right = '15px';
 		iconLabel.id = this.ICON;
 		iconLabel.setAttribute("for", this.INPUT);
 		
@@ -359,7 +356,7 @@ export class AonNewInput extends AonElement {
 
 	setValue(value) {
 		this.value = value;
-		if (value == undefined) value = CONSTANT.EMPTY
+		if (value === undefined) value = CONSTANT.EMPTY;
 		let input = this.getElement(this.INPUT);
 		if (input) input.value = value;
 	}
@@ -378,7 +375,6 @@ export class AonNewInput extends AonElement {
 	}
 
 	setReadonly(readonly) {
-
 		this.setAttribute(CONSTANT.READONLY, readonly);
 		let input = this.getElement(this.INPUT);
 		if (input) {
@@ -410,6 +406,7 @@ export class AonNewInput extends AonElement {
 		this.getElement(this.INPUT).focus();
 	}
 }
+
 if (!window.customElements.get(TAG.AON_NEW_INPUT)) {
 	window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);
 }

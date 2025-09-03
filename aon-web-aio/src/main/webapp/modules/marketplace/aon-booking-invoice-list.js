@@ -1,22 +1,16 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getSigInvoices } from '../../services/service.js';
-
-
 import { addInvoices, setInvoices } from '../invoice/InvoiceCache.js';
-
-import '../../components/aon-table.js';
-
 import { CONSTANT, MSG } from '../../environments/environments.js';
-
 import { formatNumber } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonTable } from '../../components/aon-table.js';
 
-export class AonBookingInvoiceList extends AonElement {
+//import '../../components/aon-table.js';
 
+export class AonBookingInvoiceList extends AonElement {
 	more;
 	dur;
-
 
 	constructor () {
 		super();
@@ -63,8 +57,6 @@ export class AonBookingInvoiceList extends AonElement {
 			if(this.more)
 				this.loadMore();
 		});
-
-
 	}
 
 	loadMore() {
@@ -136,8 +128,7 @@ export class AonBookingInvoiceList extends AonElement {
 			
 		}
 	}
-
-
+    
 	getFilter() {
 		return this.filter;
 	}

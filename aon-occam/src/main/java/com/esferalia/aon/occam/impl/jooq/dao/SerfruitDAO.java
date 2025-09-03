@@ -302,10 +302,10 @@ public class SerfruitDAO {
             product = new Product();
             product.setDomain(new Domain().setId(ctx.getDomainId()));
             product.setStatus(ProductStatus.ACTIVE);
-            product.setLotable(false);
-            product.setSerializable(false);
-            product.setPackaged(false);
-            product.setInventoriable(true);
+            product.setLotable(Boolean.FALSE);
+            product.setSerializable(Boolean.FALSE);
+            product.setPackaged(Boolean.FALSE);
+            product.setInventoriable(Boolean.TRUE);
             product.setCategory(pc);
             product.setCode(dp.getProduct().getCode());
             product.setName(AonStringUtils.isBlank(dp.getProduct().getName())

@@ -108,10 +108,10 @@ public class ProductUtils {
             product = new Product();
             product.setDomain(new Domain().setId(ctx.getDomainId()));
             product.setStatus(ProductStatus.ACTIVE);
-            product.setLotable(false);
-            product.setSerializable(false);
-            product.setPackaged(false);
-            product.setInventoriable(true);
+            product.setLotable(Boolean.FALSE);
+            product.setSerializable(Boolean.FALSE);
+            product.setPackaged(Boolean.FALSE);
+            product.setInventoriable(Boolean.TRUE);
             product.setCode(productotype.getCODIGO());
             product.setName("ENVASE AUTOGENERADO ("+productotype.getCODIGO()+")");
             product.setType(ProductType.AUXILIARY);

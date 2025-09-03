@@ -57,14 +57,12 @@ export class AonFiscalBeta extends AonElement {
 			let configurationOptions = [];
 			configurationOptions.push({
 				id: "parameters",
-				icon: "settings_applications",
 				name: "Parametros",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
 			});
 
 			configurationOptions.push({
 				id: "observations",
-				icon: "speaker_notes",
 				name: "Observaciones",
 				fn: () => this.buildObservations(),
 			});
@@ -77,7 +75,6 @@ export class AonFiscalBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				icon: "dashboard",
 				name: "Panel Contabilidad",
 				fn: () => this.buildFiscalMenu(),
 			});

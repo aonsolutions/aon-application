@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,10 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class DomainLinkedDAO {
@@ -93,15 +89,6 @@ public class DomainLinkedDAO {
 		RegistryOldDAO.insertRegistryAddInfo(ctx, addInfo3);
 
 		return domainLinked;
-	}
-	
-	public static Domain updateDomainStatus(AONContext ctx, Domain domain) {
-		ctx.getDslContext().update(DOMAIN)
-			.set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql(domain.getExpirationDate()))
-			.where(DOMAIN.ID.eq(domain.getId()))
-			.execute();
-		
-		return domain;
 	}
 	
 	public static void delete(AONContext ctx, DomainLinked domainLinked) {

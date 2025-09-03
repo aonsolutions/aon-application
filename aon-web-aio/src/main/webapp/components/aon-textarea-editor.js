@@ -3,8 +3,7 @@ import { getReader } from '../services/utils.js';
 import { openFileUrl } from '../services/fileService.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG} from '../environments/environments.js';
 import { AonDialog } from "./aon-dialog.js";
-import '../css/aon-textarea-editor.css';
-
+//import '../css/aon-textarea-editor.css';
 
 export class AonTextareaEditor extends AonElement {
 

@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -280,8 +281,6 @@ public interface IRegistry {
 	// ------------------- DOMAIN LINKED
 	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
 	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);
-	public Domain updateDomainStatus(AONContext ctx, Domain domain);
-	
 	
 	// QUESTION
 	public List<Question> getQuestionList(CloseableAONContext ctx, QuestionParams params);

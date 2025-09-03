@@ -15,19 +15,16 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.ProjectParams;
-import com.esferalia.aon.occam.api.model.ProjectTasFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
-import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.impl.jooq.dao.ActivityTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProjectTasDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
 
 public class ProjectImpl implements IProject{
@@ -51,12 +48,6 @@ public class ProjectImpl implements IProject{
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.getStream(ctx, filter));
-	}
-	
-	@Override
-	public Stream<ProjectTas> getProjectTasStream(AONContext ctx, ProjectTasFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> ProjectTasDAO.getStream(ctx, filter));
 	}
 	
 	@Override

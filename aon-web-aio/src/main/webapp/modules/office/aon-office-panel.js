@@ -225,6 +225,7 @@ export class AonOfficePanel extends AonElement {
 				const customerRegistry = event.data.payload;
 				this.getCustomerCustom(customerRegistry)
 					.then(customer => {
+						console.log(customer);
 						this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER, { customer });
 					});
 			}
@@ -774,6 +775,9 @@ export class AonOfficePanel extends AonElement {
 				}
 
 				if (data) {
+
+					console.log("---- show view");
+					console.log(data);
 
 					if (data.customer) {
 						aonView.setCustomer(data.customer);

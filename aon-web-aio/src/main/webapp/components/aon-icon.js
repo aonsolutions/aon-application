@@ -22,6 +22,7 @@ export class AonIcon extends AonElement {
 
   set icon(icon) {
     this.setAttribute('icon', icon);
+    this.textContent = icon;
   }
 
   get color() {
@@ -56,15 +57,22 @@ export class AonIcon extends AonElement {
   }
 
   constructor () {
-		super();
-	}
+      super();
+  }
 
-	connectedCallback () {
-    this.build();
+  connectedCallback () {
+    if(!this.isNewStyle()){
+      this.build();
+    }
   }
 
   build() {
     let icon = icons[this.getAttribute('icon')];
+    // Icono que no esta ---
+    if (!icon) {
+      throw new Error('El icono no está definido o no existe: ' + this.getAttribute('icon'));
+    }
+    
     let left = icon.left || 0;
     let top = icon.top || 0;
     let transform = icon.transform || "";
@@ -83,21 +91,21 @@ export class AonIcon extends AonElement {
           html = html + `
           <path d="${p.path}" style="fill:${p.fill ? p.fill : (this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368')};"/>
           `;
-        } 
+        }
 
       });
       html = html + `</g></svg>`;
       this.innerHTML = html;
     } else if (icon && icon.path) {
       this.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
-          width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
-          height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
-        <g id="${this.getAttribute('icon')}" transform="${transform}">
-          <path d="${icon.path}" style="fill:${this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368'};"/>
-        </g>
-      </svg>
-		  `;
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
+            width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
+            height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
+          <g id="${this.getAttribute('icon')}" transform="${transform}">
+            <path d="${icon.path}" style="fill:${this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368'};"/>
+          </g>
+        </svg>
+      `;
     }
     let svg = this.querySelector('svg');
     svg.style.verticalAlign = 'middle';

@@ -1,0 +1,150 @@
+@use './theme' as t;
+@use '../variables' as v;
+
+$theme  : 'theme-etl';
+$favicon: 'dist/favicons/etl/favicon.svg';
+$title  : 'ETL GLOBAL';
+
+// Variables colores
+$color-0        : #fff;
+$color-50       : #f8fafc;
+$color-100      : #f1f5f9;
+$color-200      : #e2e8f0;
+$color-300      : #cbd5e1;
+$color-400      : #94a3b8;
+$color-500      : #64748b;
+$color-600      : #475569;
+$color-700      : #334155;
+$color-800      : #1e293b;
+$color-900      : #0f172a;
+$color-grad-min : #e62a25;
+$color-grad-max : #0E1030;
+
+$color-sky-50  : #f0f9ff;
+$color-sky-100 : #e0f2fe;
+$color-sky-200 : #bae6fd;
+$color-sky-300 : #7dd3fc;
+$color-sky-400 : #38bdf8;
+$color-sky-500 : #0ea5e9;
+$color-sky-600 : #0284c7;
+$color-sky-700 : #0369a1;
+$color-sky-800 : #075985;
+$color-sky-900 : #0c4a6e;
+
+$color-blue-50  : #eff6ff;
+$color-blue-100 : #dbeafe;
+$color-blue-200 : #bfdbfe;
+$color-blue-300 : #93c5fd;
+$color-blue-400 : #60a5fa;
+$color-blue-500 : #3b82f6;
+$color-blue-600 : #2563eb;
+$color-blue-700 : #1d4ed8;
+$color-blue-800 : #1e40af;
+$color-blue-900 : #1e3a8a;
+
+$color-violet-50  : #f5f3ff;
+$color-violet-100 : #ede9fe;
+$color-violet-200 : #ddd6fe;
+$color-violet-300 : #c4b5fd;
+$color-violet-400 : #a78bfa;
+$color-violet-500 : #8b5cf6;
+$color-violet-600 : #7c3aed;
+$color-violet-700 : #6d28d9;
+$color-violet-800 : #5b21b6;
+$color-violet-900 : #4c1d95;
+
+$color-red-50  : #fef2f2;
+$color-red-100 : #fee2e2;
+$color-red-200 : #fecaca;
+$color-red-300 : #fca5a5;
+$color-red-400 : #f87171;
+$color-red-500 : #ef4444;
+$color-red-600 : #dc2626;
+$color-red-700 : #b91c1c;
+$color-red-800 : #991b1b;
+$color-red-900 : #7f1d1d;
+
+$color-green-50  : #f0fdf4;
+$color-green-100 : #dcfce7;
+$color-green-200 : #bbf7d0;
+$color-green-300 : #86efac;
+$color-green-400 : #4ade80;
+$color-green-500 : #22c55e;
+$color-green-600 : #16a34a;
+$color-green-700 : #15803d;
+$color-green-800 : #166534;
+$color-green-900 : #14532d;
+
+$color-yellow-50  : #fefce8;
+$color-yellow-100 : #fef08a;
+$color-yellow-200 : #fef08a;
+$color-yellow-300 : #facc15;
+$color-yellow-400 : #facc15;
+$color-yellow-500 : #eab308;
+$color-yellow-600 : #ca8a04;
+$color-yellow-700 : #a16207;
+$color-yellow-800 : #854d0e;
+$color-yellow-900 : #713f12;
+
+// Colores corporativos sin gama
+$color-corp-orange   : #FB5722;
+$color-corp-turquoise: #09E7FC;
+$color-corp-blue     : #004BFB;
+
+// Colores textos
+$color-text               : $color-800;
+$color-text-head          : $color-0;
+$color-text-login         : $color-500;
+$color-text-general       : $color-500;
+$color-text-button        : $color-0;
+$color-text-button-transp : $color-800;
+
+// Colores card
+$color-text-card          : $color-text-general;
+$color-button-card        : $color-100;
+$color-button-card-hover  : $color-300;
+$color-notif-hover        : $color-200;
+$color-icon-menu          : $color-900;
+
+// Colores login
+$color-login      : $color-0;
+$color-login-form : $color-0;
+$color-input      : $color-0;
+$color-box        : $color-0;
+
+// Colores switch
+$color-switch     : $color-300;
+$color-switch-on  : $color-700;
+$color-switch-off : $color-0;
+
+// Logo del header
+$logoHead        : "../images/etl/logo-horizontal-bicolor.svg";
+$logoHead-width  : v.$px-222;
+$logoHead-height : v.$px-27;
+
+// Logo
+$logo        : "../images/etl/logo.svg";
+$logo-width  : v.$px-150;
+$logo-height : v.$px-150;
+
+// Colores icono y texto del menu
+$color-menu-green : $color-green-600;
+
+@mixin etl-theme {
+  @include t.theme(
+    $theme, $favicon, $title,
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
+    $color-400, $color-500, $color-600, $color-700, 
+    $color-800, $color-900, $color-input, $color-box,
+    $color-grad-min, $color-grad-max,
+    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
+    $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
+    $color-switch-off, $color-switch-on, $color-switch,
+    $color-red-100,  $color-red-500, $color-red-900,
+    $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
+    $color-blue-100, $color-blue-500, $color-blue-900,
+    $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
+    $logoHead, $logoHead-width, $logoHead-height,
+    $logo, $logo-width, $logo-height
+  );
+}

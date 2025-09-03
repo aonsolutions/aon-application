@@ -1,0 +1,20 @@
+/*
+  Created on : May 8, 2025, 10:11:14?AM
+*/
+@use './base/typography';
+
+// Importamos componentes
+@use './components/buttons' as button;
+@use './components/card' as card;
+@use './components/dashboard_button' as dashboardButton;
+@use './components/dialog' as dialog;
+@use './components/dialog_menu' as dialogMenu;
+@use './components/icons' as icon;
+@use './components/inputs' as input;
+@use './components/loader' as loader;
+@use './components/menu_button' as menuButton;
+@use './components/sidenav' as sidenav;
+@use './components/switch' as switch;
+@use './components/table' as table;
+@use './components/toast' as toast;
+@use './components/toolbar' as toolbar;

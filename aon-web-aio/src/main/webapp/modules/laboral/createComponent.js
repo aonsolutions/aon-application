@@ -4,8 +4,8 @@ import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
-import '../../css/aon-grid.css';
-import '../../css/aon-css-utils.css';
+//import '../../css/aon-grid.css';
+//import '../../css/aon-css-utils.css';
 
 
 export const createBajaDialogContent = () =>{

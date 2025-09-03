@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IManagement;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
@@ -12,7 +13,6 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
@@ -241,9 +240,9 @@ public class ManagementImpl implements IManagement {
 	}
 	
 	@Override
-	public DeliveryDetail saveDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail) {
+	public DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> DeliveryDetailDAO.save(ctx, deliveryDetail));
+			configuration -> DeliveryDAO.insertDeliveryDetail(ctx, deliveryDetail));
 	}
 
 	// ------------------ INCOME DETAIL

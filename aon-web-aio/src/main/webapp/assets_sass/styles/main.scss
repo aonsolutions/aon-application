@@ -1,0 +1,27 @@
+// Confi Global
+@use './base-global' as global;
+
+// Importamos layouts
+@use './layouts/globalLayout' as globalLayout;
+@use './layouts/header' as header;
+@use './layouts/rightPanel' as rightPanel;
+@use './layouts/rightPanelConfig' as rightPanelConfig;
+@use './layouts/rightPanelUser' as rightPanelUser;
+@use './layouts/rightPanelHelp' as rightPanelHelp;
+@use './layouts/rightPanelNotif' as rightPanelNotif;
+@use './layouts/menu' as menu;
+
+// Importamos vistas
+@use './pages/index' as index;                // login
+@use './pages/home' as home;                  // home  - logueado
+@use './pages/home_desktop' as home_desktop;  // home  - en empresa
+@use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen
+@use './pages/plans' as plans;                // plans - Listado de planes que se pueden contratar
+@use './pages/invoices' as invoices;          // invoices- Facturacion
+@use './pages/documental' as doc;             // doc   - Documentos
+@use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
+@use './pages/notes' as notes;                // notes - Notas que se crean
+@use './pages/marketplace' as marketplace;    // marketplace - Contratacion
+
+// Temas y Resoluciones
+@use './theme-base' as themeBase;
