@@ -110,6 +110,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/":
 				response(req, resp, getInvoiceObject(api));
 				break;
+			case "/count":
+				response(req, resp, getInvoiceCount(api));
+				break;
 			case "/invoice_new_portal":
 				response(req, resp, getInvoiceNewPortalObject(api));
 				break;
@@ -231,6 +234,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return jsArray;
 	}
 
+	private JSONObject getInvoiceCount(AonApiData api) {
+		String domainName = api.getDomain().getName();
+		Integer domainId = api.getDomain().getId();
+		String login = api.getUser().getLogin();
+		
+		Integer count = AON_SOLUTIONS.getInvoicesCount(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
+		
+		return new JSONObject().put("invoiceCount", count);
+	}
+	
 	private Object getInvoiceObject(AonApiData api) {
 		if(api.getData().opt(IConstants.ID) != null) {
 			Integer id = api.getData().optInt(IConstants.ID);
