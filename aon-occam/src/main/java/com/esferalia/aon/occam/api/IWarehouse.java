@@ -207,7 +207,9 @@ public interface IWarehouse {
 	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
 	void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId);
 	void deleteDeliveryPackaging(AONContext ctx, Integer deliveryId, String sscc);
-	void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity);
+	void subtractDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny);
+	void addDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String source, Double quantity, boolean skipSource);
+
 	
 	// 	***********************************************
 	// 	**************************** DELIVERY *********

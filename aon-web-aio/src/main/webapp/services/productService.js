@@ -32,5 +32,6 @@ export const saveDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliver
 export const acceptDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliveryPackaging/accept`, data);
 export const deleteDeliveryPackaging = (data) => remove(`${API_URL}/packaging/deliveryPackaging`, data);
 export const subtractDeliveryPackagingComposition = (data) => remove(`${API_URL}/packaging/deliveryPackagingComposition`, data);
+export const addDeliveryPackagingComposition = (data) => put(`${API_URL}/packaging/deliveryPackagingComposition/add`, data);
 
 export const deleteDelivery = (data) => remove(`${API_URL}/delivery`, data);

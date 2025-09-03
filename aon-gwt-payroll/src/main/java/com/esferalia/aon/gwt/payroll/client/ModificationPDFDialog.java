@@ -21,8 +21,10 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ModificationPDFDialog extends AonCustomDialog {
+public abstract class ModificationPDFDialog extends AonCustomDialog implements RequiresResize {
 	
 	// ------------------------------------------------- Variables
 	
@@ -147,6 +149,14 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 		
 		showDialog();
 	}
+
+    @Override
+    public void onResize() {
+        Widget parent = getParent();
+        if (parent instanceof RequiresResize) {
+            ((RequiresResize) parent).onResize();
+        }
+    }
 	
 	private void parseJSON(JSONObject json) {
 		JSONValue success = json.get("success");

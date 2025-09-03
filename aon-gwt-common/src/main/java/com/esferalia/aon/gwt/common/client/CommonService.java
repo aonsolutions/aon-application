@@ -453,5 +453,6 @@ public interface CommonService extends RemoteService {
 	Tag saveTag(String domainName, Integer domainId, String user, Tag tag) throws AonCoreException;
 	void deleteTag(String domainName, int domain, String user, Integer id) throws AonCoreException;
 
+	List<String> getSchemas() throws AonCoreException;
 	
 }

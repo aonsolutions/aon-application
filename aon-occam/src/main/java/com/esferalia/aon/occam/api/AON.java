@@ -2763,16 +2763,12 @@ public class AON {
 		return getDeliveryDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
 	}
 	
-	public static DeliveryDetail insertDeliveryDetail(String domainName, Integer domainId, String login, DeliveryDetail deliveryDetail) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getManagement().insertDeliveryDetail(ctx, deliveryDetail);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static DeliveryDetail saveDeliveryDetail(Occam occam, DeliveryDetail deliveryDetail) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getManagement().saveDeliveryDetail(ctx, deliveryDetail);
+		} 
 	}
-	
+
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************
@@ -8439,9 +8435,15 @@ public class AON {
 		}
 	}
 	
-	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity) {
+	public static void subtractDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny, Double quantity, boolean skipDestiny) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity);
+			getWarehouse().subtractDeliveryPackagingComposition(ctx, deliveryId, composition, destiny, quantity, skipDestiny);
+		}
+	}
+	
+	public static void addDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String source, Double quantity, boolean skipSource) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().addDeliveryPackagingComposition(ctx, deliveryId, composition, source, quantity, skipSource);
 		}
 	}
 	

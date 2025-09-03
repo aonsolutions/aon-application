@@ -387,7 +387,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 		
 		tab.addRow(row, new Label(null == product.getStatus() ? "" : product.getStatus().getDescription()), COLS.STA.getColWidth());
 		
-		tab.addRow(row, new Label(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio")), COLS.PCK.getColWidth());
+		tab.addRow(row, new Label(product.isComposition() ? "Pack" : "Servicio"), COLS.PCK.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
