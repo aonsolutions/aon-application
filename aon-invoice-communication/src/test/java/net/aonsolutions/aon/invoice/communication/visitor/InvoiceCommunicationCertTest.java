@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -43,7 +42,7 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 	}
 
 	@Test
-	void invalidCertIdTest() throws InvoiceCommunicationException {
+	void invalidCertIdTest() {
 		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
 		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
 			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
