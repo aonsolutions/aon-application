@@ -19,6 +19,7 @@ export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
 export const getRawdocCount = (data) => get(`${API_URL}/invoices/count`, data);
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
+export const getInvoiceCount = (data) => get(`${API_URL}/invoice/count`, data);
 
 export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`, data, await generateTokenSig({}));
 
