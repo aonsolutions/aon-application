@@ -60,7 +60,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 		requestData.append("&domainName=" + options.getDomainName() );
 		requestData.append("&domainId=" + options.getDomain() );
 		requestData.append("&user=" + options.getUser() );
-		requestData.append("&irpfParams=" + JsonParams.convert(params));
+		requestData.append("&operationParams=" + JsonParams.convert(params));
 		xhr.send(requestData.toString());
 		
 	}

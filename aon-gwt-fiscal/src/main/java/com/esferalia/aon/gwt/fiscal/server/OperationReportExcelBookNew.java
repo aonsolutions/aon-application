@@ -1,15 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.time.Duration;
-import java.util.Base64;
 import java.util.function.Consumer;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -27,7 +18,6 @@ import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
@@ -36,13 +26,10 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -135,53 +122,11 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			
 			action.finalize(resp.getOutputStream());
 			
-			// FALTA - PRUEBA VALIDAR FICHERO CON SERVICIO DE VALIDACION - EL SERVICIO ESTA DESACTIVADO TEMPORALMENTE
-//			try {
-//				pruebaValidar(resp.getOutputStream());
-//			} catch (Exception e) {
-//				System.err.println("Error en la validación del fichero: " + e.getMessage());
-//			}
-			
 			resp.flushBuffer();
 			
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
-		
-	}
-	
-	// PRUEBA VALIDAR FICHERO
-	private void pruebaValidar(ServletOutputStream outputStream) throws IOException, InterruptedException {
-		
-		String url = "https://prewww2.aeat.es/wlpl/PACM-SERV/ServletValidarLLRSI";
-		
-//		AonIOUtils.write( Base64.getEncoder().encode(data), resp.getOutputStream() );
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-		baos.writeTo(outputStream); 
-		baos.toByteArray();
-		byte[] data = Base64.getEncoder().encode(baos.toByteArray());
-		
-		String parameters = MessageFormat.format("EJER={0}&FIC={1}"
-				,AonNumberUtils.toString(2025) // PARA PROBAR EJERCICIO 2025
-				,ModelAdmonUtils.getEncodedFile(data,StandardCharsets.ISO_8859_1));
-		
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.POST(HttpRequest.BodyPublishers.ofString(parameters))
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
-				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.build();
-			HttpClient httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_2)
-	            .connectTimeout(Duration.ofSeconds(10))
-	            .build();
-			HttpResponse<byte[]> response = httpClient
-				.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			
-			String respuesta = new String(response.body());
-			System.out.println("Respuesta validación del fichero:");
-			System.out.println(respuesta);
 		
 	}
 
@@ -442,7 +387,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(params.getBookType() == 1 ? "" : op.getOperationQualification()).setCellStyle(centerCellStyle); // Calificador de la Operación (excepto Libro de IRPF)
 			addCell(params.getBookType() == 1 ? "" : op.getExemptOperation()).setCellStyle(centerCellStyle);        // Operación Exenta (excepto Libro de IRPF)
 			
-			if (isCobroPagoRECC(op)) {
+			if (op.getPayDate() != null) {
 				// Cobro RECC no lleva estos datos de la factura
 				addCell("");   // Total Factura
 				addCell("");   // Base Imponible
@@ -544,7 +489,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(""); // Periodo Deducción - Ejercicio (no se usa)
 			addCell(""); // Periodo Deducción - Periodo (no se usa)
 
-			if (isCobroPagoRECC(op)) {
+			if (op.getPayDate() != null) {
 				// Pago RECC no lleva estos datos de la factura
 				addCell("");   // Total Factura
 				addCell("");   // Base Imponible
@@ -578,10 +523,6 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getEntryJournal());  									// Referencia Externa (Número de diario del asiento)
 			
 		}	
-
-		private boolean isCobroPagoRECC(OperationBreakdownNew op) {
-			return (op.getPayDate() != null);
-		}
 
 		// Solo se pone el importe si es distinto de cero
 		private Cell addDoubleEmptyCell(Double number) {			

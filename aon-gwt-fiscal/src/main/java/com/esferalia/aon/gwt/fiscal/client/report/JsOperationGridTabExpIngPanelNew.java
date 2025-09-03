@@ -80,7 +80,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 			addCell(row, br.getRetentionQuota());
 		}
 		
-		addCell(row, br.isFacturaRECC() ? "S" : "N", AON.CSS.aonTextCenter());
+		addCell(row, br.isInvoiceRECC() ? "S" : "N", AON.CSS.aonTextCenter());
 		if (getParams().getBookType() != 1)
 			addCell(row, br.getPayAmount());
 		addCell(row, br.getEntryJournal());

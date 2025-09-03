@@ -21,8 +21,8 @@ public interface IRequestParamsNames {
 	String ACTIVE = "active";
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
-	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT
-	String AEAT_PARAMS = "aeatParams";  // Libro Registro AEAT
+	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT (OLD)
+	String AEAT_PARAMS = "aeatParams";  
 	String ALIAS = "document";
 	String AMOUNT = "amount";
 	String BALANCE_TYPE = "balanceType";
@@ -162,7 +162,7 @@ public interface IRequestParamsNames {
 	String TO_LAST_ACCESS_DATE = "toLastAccessDate";
 	String TO_USER = "toUser";
 	String TYPE = "type";
-	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
+	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF) (OLD)
 	String USER = "user";
 	String VALIDATE = "validate";
 	String VAT_PARAMS = "vatParams";

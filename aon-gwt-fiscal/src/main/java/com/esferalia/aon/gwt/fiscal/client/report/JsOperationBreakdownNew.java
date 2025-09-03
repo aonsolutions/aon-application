@@ -90,7 +90,7 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 		return this.retentionQuota;
 	}-*/;
 	
-	public final native boolean isFacturaRECC() /*-{
+	public final native boolean isInvoiceRECC() /*-{
 		return this.operationKey == "07";
 	}-*/;
 	

@@ -162,15 +162,6 @@ public class AccountingOperationNewDAO {
 	
 	public static Stream<OperationBreakdownNew> getOperationBreakdownNew(final AONContext ctx, OperationParamsNew params) {
 		
-		// FALTA - PRUEBAS -------------------------------------------------------------
-//		ArrayList<OperationBreakdownNew> lista = new ArrayList<OperationBreakdownNew>();
-//		for (int i=0; i<10; i++) {
-//			lista.add(params.getTabType() == 0 ? prueba1() : prueba2());   
-//		}
-//		return lista.stream(); // PRUEBA PARA CREAR VARIAS LINEAS 
-//		return Stream.empty(); // PRUEBA SIMULAR QUE NO HAY DATOS
-		// -----------------------------------------------------------------------------
-		
 		// Ordenar los datos por: Fecha IVA, Serie, Número Factura, Número Diario
 		Comparator<OperationBreakdownNew> comparator = Comparator.comparing(OperationBreakdownNew::getTaxDate).thenComparing(OperationBreakdownNew::getInvoiceSeries).thenComparing(OperationBreakdownNew::getInvoiceNumber).thenComparing(OperationBreakdownNew::getEntryJournal);
 		
@@ -390,21 +381,10 @@ public class AccountingOperationNewDAO {
 		@Override
 		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
 			
-			// FALTA - CAMPO NUMERO DE RECEPCION
-//			- En los campos "Número Recepción" y "Número Recepción Final" se numerarán correlativamente todas las facturas, justificantes 
-//			contables y documentos de Aduanas correspondientes a los bienes adquiridos o importados y a los servicios recibidos en el desarrollo 
-//			de su actividad empresarial o profesional. Ahora bien cuando el asiento se corresponda a una operación cuyo "Tipo de Factura" tenga 
-//			consignado el valor "SF" el gasto llevará una numeración correlativa independiente del resto de valores previstos para el "Tipo de Factura"; 
-//			por ejemplo, podríamos tener la siguiente secuencia de asientos (Tipo de Factura - Número Recepción): F1-1, F1-2, F1-3, F5-4, R1-5, SF-1, F1-6, F2-7, LC-8, SF-2, F1-9, SF-3, F1-10, ... en la que se observa que hay 2 series de numeración correlativa (la correspondiente al tipo de factura "SF" y la correspondiente al resto de valores del campo "Tipo de Factura")
-			
 			// FALTA - HACIENDOLO ASI, NO SALEN LAS FACTURAS DE GASTO NO DEDUCIBLES, PUES NO CREAN REGISTRO EN INVOICE_TAX
 			// SE PODRIA HACER AQUI HACIENDO UN LEFT JOIN DE INVOICE_TAX Y TENIENDOLO EN CUENTA EN LA LECTURA DE LOS DATOS 
 			// O BIEN LEER LA FACTURA CUANDO SE LEEN LOS ASIENTOS, PERO ENTONCES HABRIA QUE HACER UN JOIN DESDE EL APUNTE 
 			// HASTA LA LINEA DE FACTURA QUE AHORA NO SE SI SE PUEDE
-			
-			// FALTA - ERROR FACTURAS EMITIDAS VENTANILLA UNICA CON IVA DEL PAIS, DICE QUE EL PORCENTAJE DE IVA TIENE QUE SER EL 
-			// DE ESPAÑA, IGUAL NO HAY QUE PONER EL TIPO DE IVA. EN UN EJEMPLO QUE TIENEN SI ES N2 EL PORCENTAJE Y CUOTA DE IVA ES CERO
-			// POR LO TANTO LO DEJO ASI
 			
 			isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
 			invoiceTransactionType = InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION));
@@ -428,7 +408,8 @@ public class AccountingOperationNewDAO {
 			boolean isp = !isSales && isIsp; // ISP Recibidas
 			
 			String conceptCode = getConceptCode(rec.getValue(accountCode));
-			double conceptAmount = rec.getValue(INVOICE_TAX.BASE); 
+			double conceptAmount = rec.getValue(INVOICE_TAX.BASE);
+			
 			// Libro Unificado de IVA e IRPF: Facturas cuya cuenta no es 7 o 6, el ingreso o gasto es cero y no lleva concepto
 			if (params.getBookType() == 2) {
 				if (params.getTabType() == 0 && !rec.getValue(accountCode).startsWith("7")) {
@@ -456,12 +437,12 @@ public class AccountingOperationNewDAO {
 			//  D - Arrendadores de inmuebles no incluidos en los códigos anteriores
 			String buildingLocation = "";
 			String cadasdralReference = "";
-			boolean isArrendamiento = (isSales && (Arrays.asList(new String[]{"11", "12", "13"}).contains(operationKey))) || 
-									  (!isSales && ("12".equals(operationKey))) ||					
-									  ("A01".equals(activityCode+activityType)) ||
-									  ("D".equals(activityCode));   
+			boolean isRenting = (isSales && (Arrays.asList(new String[]{"11", "12", "13"}).contains(operationKey))) || 
+								(!isSales && ("12".equals(operationKey))) ||					
+								("A01".equals(activityCode+activityType)) ||
+								("D".equals(activityCode));   
 			String properties = rec.getValue(INVEST_ASSET.PROPERTIES);
-			if (isArrendamiento && AonStringUtils.isNotBlank(properties)) {				
+			if (isRenting && AonStringUtils.isNotBlank(properties)) {				
 				JSONObject jsonObject = new JSONObject(properties);
 
 				cadasdralReference = jsonObject.optString("catastral");
@@ -512,7 +493,7 @@ public class AccountingOperationNewDAO {
 				.setDocumentType(documentType) 												// NIF Destinatario/Expedidor: Tipo
 				.setDocumentCountry(getDocumentCountry(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))  // NIF Destinatario/Expedidor: Código País
 				.setDocument(rec.getValue(INVOICE.RDOCUMENT)) 								// NIF Destinatario/Expedidor: Identificación
-				.setName(name) 										// Nombre Destinatario/Expedidor	
+				.setName(name) 																// Nombre Destinatario/Expedidor	
 				.setOperationKey(operationKey) 												// Clave de Operación 	
 				.setOperationQualification(operationQualification) 							// Calificación de la Operación (Emitidas)	
 				.setExemptOperation(exemptOperation)  										// Operación Exenta (Emitidas)
@@ -593,9 +574,9 @@ public class AccountingOperationNewDAO {
 				boolean isVatImportation = AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_IMPORTATION));
 				// SE PONE LA CLAVE 11 SI ES ARRENDAMIENTO CON RETENCION. 
 				// SE PODRIA PONER TAMBIEN LA CLAVE 12 ARRENDAMIENTO SIN RETENCION, SI TUVIERAMOS EL BIEN AFECTO EN LAS FACTURAS EMITIDAS, PERO ACTUALMENTE NO LO TENEMOS EN AON
-				boolean isRetencionArrendamiento =
+				boolean isRetentionRenting =
 						AonNumberUtils.notEquals(rec.getValue(retInvoiceTax.PERCENTAGE), 0.0) && AonNumberUtils.equals(rec.getValue(retInvoiceTax.WITHHOLDING_TYPE), 1);
-				boolean isLocalArrendamiento = // ESTO AHORA NO SE DARA NUNCA PORQUE NO SE PUEDEN PONER BIEN AFECTO EN LAS FACTURAS EMITIDAS
+				boolean isPremisesRenting = // ESTO AHORA NO SE DARA NUNCA PORQUE NO SE PUEDEN PONER BIEN AFECTO EN LAS FACTURAS EMITIDAS
 						AonNumberUtils.equals(rec.getValue(INVEST_ASSET.TYPE), 0);
 				
 				if (isVatUnion || isVatUnionExternal || isVatImportation) {
@@ -604,9 +585,9 @@ public class AccountingOperationNewDAO {
 					return "07"; // RECC
 				} else if (isExtracommunity || isCanCeuMel) {
 					return "02"; // Extracomunitaria o Ceuta/Melilla
-				} else  if (isRetencionArrendamiento) {
+				} else  if (isRetentionRenting) {
 					return "11"; // Operaciones de arrendamiento de local de negocio sujetas a retención
-				} else if (isLocalArrendamiento) {
+				} else if (isPremisesRenting) {
 					return "12"; // Operaciones de arrendamiento de local de negocio no sujetos a retención
 				} else {
 					return "01"; // Resto
@@ -679,7 +660,6 @@ public class AccountingOperationNewDAO {
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
 			String documentType = getDocumentType(rec);
 			String invoiceType = getInvoiceType(rec, false);			
-//			String operationKey = "07";
 			boolean investment = !isSales && AonEnumUtils.getBoolean(rec.getValue(INVOICE.INVESTMENT)); // Recibidas Bienes de Inversión
 			Date payDate = rec.getValue(FINANCE_TRACKING.TRACKING_DATE) == null ? params.getToDate() : rec.getValue(FINANCE_TRACKING.TRACKING_DATE);
 			double payAmount = rec.getValue(FINANCE_TRACKING.AMOUNT) == null ? rec.getValue(FINANCE.AMOUNT) : rec.getValue(FINANCE_TRACKING.AMOUNT); 
@@ -764,8 +744,7 @@ public class AccountingOperationNewDAO {
 
 		@Override
 		public OperationBreakdownNew apply(Record rec) {
-			
-			
+		
 			isIncomes = rec.getValue(ACCOUNT.CODE).startsWith("7");
 			
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
@@ -775,25 +754,27 @@ public class AccountingOperationNewDAO {
 			double credit = AonNumberUtils.todouble(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT));
 			double amount = isIncomes ? credit - debit : debit - credit;
 			
-			// FALTA - CLAVE DE OPERACION DEBE ESTAR CUMPLIMENTADA (LE PONGO 01)
-			// FALTA - CALIFICADOR DE LA OPERACION Y OPERACION EXENTA NO PUEDEN ESTAR VACIOS LOS DOS (LE PONGO EXENTA E6)
+			// CLAVE DE OPERACION DEBE ESTAR CUMPLIMENTADA (LE PONGO 01)
 			String operationKey = "01";
+			
+			// CALIFICADOR DE LA OPERACION Y OPERACION EXENTA NO PUEDEN ESTAR VACIOS LOS DOS (LE PONGO EXENTA E6)
 			String exemptOperation = isIncomes ? "E6" : "";
 			
-			// FALTA - ME PIDE IDENTIFICAR AL EXPEDIDOR EN LOS GASTOS
-			String name = isIncomes ? "" : rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT);
+			// FALTA - ME PIDE IDENTIFICAR AL EXPEDIDOR EN LOS GASTOS - LE PONGO EL CONCEPTO EN EL NOMBRE, SIGUE DANDO ERROR, QUIERE DECIR QUE LE TENGO QUE PONER EL NIF?, PERO QUE NIF LE PONGO SI SON APUNTES?
+//			String name = isIncomes ? "" : rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT);
+			String name = "";
 			
-			// FALTA - LA FECHA DE RECEPCION EN LOS GASTOS ES OBLIGATORIA (LE PONGO LA FECHA DEL ASIENTO)
+			// LA FECHA DE RECEPCION EN LOS GASTOS ES OBLIGATORIA AUNQUE SEA EXCLUSIVA DEL LIBRO DE IVA (LE PONGO LA FECHA DEL ASIENTO)
 			Date receptionDate = isIncomes ? null : rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE);
 			
-			// FALTA - TIPO DE FACTURA PARA LOS GASTOS PONEMOS F6 SINO DA ERROR LA VALIDACION EN EL UNIFICADO DICIENDO QUE SF SE USA PARA EL AJUSTE DE PRORRATA DE IVA
+			// TIPO DE FACTURA PARA LOS GASTOS PONEMOS F6 SINO DA ERROR LA VALIDACION EN EL UNIFICADO DICIENDO QUE SF SE USA PARA EL AJUSTE DE PRORRATA DE IVA
 			String invoiceType = isIncomes ? "SF" : "F6";
 			
 			return new OperationBreakdownNew()
 				.setActivityCode(activityCode) 								// Actividad: Código
 				.setActivityType(activityType) 								// Actividad: Tipo
 				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 				// Actividad: Grupo o Epígrafe del IAE
-				.setInvoiceType(invoiceType) 									    // Tipo de Factura (Asientos sin factura)	
+				.setInvoiceType(invoiceType) 								// Tipo de Factura (Asientos sin factura)	
 				.setConceptCode(getConceptCode(rec.getValue(ACCOUNT.CODE)))	// Codigo Concepto de Ingreso o Gasto
 				.setConceptAmount(amount) 									// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE)) 		// Fecha Expedición
@@ -822,8 +803,8 @@ public class AccountingOperationNewDAO {
 //				.setPayAmount() 			                                // Importe Cobro/Pago
 //				.setPayMethod() 			                                // Medio Utilizado Cobro/Pago
 //				.setPayMethodName() 		                                // Identificación Medio Utilizado Cobro/Pago
-//				.setRetentionPercent(0.0)  	                                // Tipo Retención del IRPF	
-//				.setRetentionQuota(0.0)    	                                // Importe Retenido del IRPF	
+//				.setRetentionPercent()  	                                // Tipo Retención del IRPF	
+//				.setRetentionQuota()    	                                // Importe Retenido del IRPF	
 //				.setBuildingLocation() 		                                // Situación del Inmueble;	
 //				.setCadasdralReference() 	                                // Referencia Catastral del Inmueble
 				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))				    // ID del asiento
@@ -834,7 +815,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Tipo de Actividad (según el IAE) (Para el Código A) 
-	//	A01	Arrendadores de bienes inmuebles								Sección 1, Agrupación 86
+	//	A01	Arrendadores de bienes inmuebles								Sección 1, Epígrafes 861.x
 	//	A02	Ganadería independiente											Sección 1, Division 0
 	//	A03	Resto de actividades empresariales no incluidas en A01 y A02	Resto Sección 1
 	//	A04	Actividades profesionales de carácter artístico o deportivo		Sección 3
@@ -848,7 +829,7 @@ public class AccountingOperationNewDAO {
 			return "05";
 		}
 		else if (AonStringUtils.isNotBlank(iae)) {
-			if (iae.startsWith("86"))
+			if (iae.startsWith("861"))
 				return "01";
 			else if (iae.startsWith("0"))
 				return "02";
@@ -969,95 +950,5 @@ public class AccountingOperationNewDAO {
 		return registryDocumentType;
 		
 	}
-	
-	// PRUEBA EMITIDAS
-//	private static OperationBreakdownNew prueba1() {
-//		Date date = AonDateUtils.getDate(2025, 7, 1);
-//		Date date2 = AonDateUtils.getDate(2025, 8, 1);
-//		OperationBreakdownNew op1 = new OperationBreakdownNew();
-//		op1.setActivityCode("A"); 			// Actividad: Código
-//		op1.setActivityType("03"); 			// Actividad: Tipo
-//		op1.setActivityIAE("411.1");  			// Actividad: Grupo o Epígrafe del IAE
-//		op1.setInvoiceType("F1"); 			// Tipo de Factura	
-//		op1.setConceptCode("I01"); 			// Codigo Concepto de Ingreso o Gasto
-//		op1.setConceptAmount(1100.0); 			// Ingreso computable o Gasto deducible 	
-//		op1.setEntryDate(date); 				// Fecha Expedición
-//		op1.setTaxDate(date2);        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
-//		op1.setInvoiceSeries("A20"); 			// Identificación de la Factura: Serie (Emitidas)
-//		op1.setInvoiceNumber("00001"); 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
-//		op1.setReceptionNumber(""); 		// Número recepción (Recibidas)
-//		op1.setReceptionDate(date); 			// Fecha Recepción (Fecha Asiento)
-//		op1.setDocumentType(""); 			// NIF Destinatario/Expedidor: Tipo
-//		op1.setDocumentCountry("");  		// NIF Destinatario/Expedidor: Código País
-//		op1.setDocument("12345678Z"); 				// NIF Destinatario/Expedidor: Identificación
-//		op1.setName("CLIENTE CLIENTE, PRUEBA"); 					// Nombre Destinatario/Expedidor	
-//		op1.setOperationKey("01"); 			// Clave de Operación 	
-//		op1.setOperationQualification("S1"); 	// Calificación de la Operación (Emitidas)	
-//		op1.setExemptOperation("");  		// Operación Exenta (Emitidas)
-//		op1.setInvestment(false); 			// Bien de Inversión
-//		op1.setIsp(false); 					// Inversión del Sujeto Pasivo
-//		op1.setTotal(1210.0); 					// Total Factura (Base + IVA + REQ)	
-//		op1.setBase(1000.0);               		// Base Imponible	
-//		op1.setPercent(21.0);            		// Tipo de IVA	
-//		op1.setQuota(210.0);	           		// Cuota IVA Repercutido/Soportado
-//		op1.setDeductibleQuota(0.0);    		// Cuota Deducible (Recibidas)
-//		op1.setSurchargePercent(0.0);	   	// Tipo de Recargo Eq.	
-//		op1.setSurchargeQuota(0.0);     		// Cuota Recargo Eq.	
-//		op1.setPayDate(null); 					// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
-//		op1.setPayAmount(0.0); 				// Importe Cobro/Pago
-//		op1.setPayMethod(""); 				// Medio Utilizado Cobro/Pago
-//		op1.setPayMethodName(""); 			// Identificación Medio Utilizado Cobro/Pago
-//		op1.setRetentionPercent(0.0);   		// Tipo Retención del IRPF	
-//		op1.setRetentionQuota(0.0);    		// Importe Retenido del IRPF	
-//		op1.setBuildingLocation("1"); 		// Situación del Inmueble;	
-//		op1.setCadasdralReference("9872023VH5797S0001WX"); 		// Referencia Catastral del Inmueble
-//		op1.setEntryId(0);                // ID del apunte
-//		return op1;
-//	}
-	
-	// PRUEBA RECIBIDAS
-//	private static OperationBreakdownNew prueba2() {
-//		Date date = AonDateUtils.getDate(2025, 7, 1);
-//		Date date2 = AonDateUtils.getDate(2025, 8, 1);
-//		OperationBreakdownNew op1 = new OperationBreakdownNew();
-//		op1.setActivityCode("A"); 			// Actividad: Código
-//		op1.setActivityType("03"); 			// Actividad: Tipo
-//		op1.setActivityIAE("411.1");  			// Actividad: Grupo o Epígrafe del IAE
-//		op1.setInvoiceType("F1"); 			// Tipo de Factura	
-//		op1.setConceptCode("G01"); 			// Codigo Concepto de Ingreso o Gasto
-//		op1.setConceptAmount(1200.0); 			// Ingreso computable o Gasto deducible 	
-//		op1.setEntryDate(date); 				// Fecha Expedición
-//		op1.setTaxDate(date2);        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
-//		op1.setInvoiceSeries(""); 			// Identificación de la Factura: Serie (Emitidas)
-//		op1.setInvoiceNumber("25H00001"); 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
-//		op1.setReceptionNumber("R2025/00001"); 		// Número recepción (Recibidas)
-//		op1.setReceptionDate(date); 			// Fecha Recepción (Fecha Asiento)
-//		op1.setDocumentType(""); 			// NIF Destinatario/Expedidor: Tipo
-//		op1.setDocumentCountry("");  		// NIF Destinatario/Expedidor: Código País
-//		op1.setDocument("B50111111"); 				// NIF Destinatario/Expedidor: Identificación
-//		op1.setName("PROVEEDOR PROVEEDOR, S.L."); 					// Nombre Destinatario/Expedidor	
-//		op1.setOperationKey("01"); 			// Clave de Operación 	
-//		op1.setOperationQualification(""); 	// Calificación de la Operación (Emitidas)	
-//		op1.setExemptOperation("");  		// Operación Exenta (Emitidas)
-//		op1.setInvestment(false); 			// Bien de Inversión
-//		op1.setIsp(false); 					// Inversión del Sujeto Pasivo
-//		op1.setTotal(1210.0); 					// Total Factura (Base + IVA + REQ)	
-//		op1.setBase(1000.0);               		// Base Imponible	
-//		op1.setPercent(21.0);            		// Tipo de IVA	
-//		op1.setQuota(210.0);	           		// Cuota IVA Repercutido/Soportado
-//		op1.setDeductibleQuota(205.0);    		// Cuota Deducible (Recibidas)
-//		op1.setSurchargePercent(0.0);	   	// Tipo de Recargo Eq.	
-//		op1.setSurchargeQuota(0.0);     		// Cuota Recargo Eq.	
-//		op1.setPayDate(null); 					// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
-//		op1.setPayAmount(0.0); 				// Importe Cobro/Pago
-//		op1.setPayMethod(""); 				// Medio Utilizado Cobro/Pago
-//		op1.setPayMethodName(""); 			// Identificación Medio Utilizado Cobro/Pago
-//		op1.setRetentionPercent(15.0);   		// Tipo Retención del IRPF	
-//		op1.setRetentionQuota(150.0);    		// Importe Retenido del IRPF	
-//		op1.setBuildingLocation("4"); 		// Situación del Inmueble;	
-//		op1.setCadasdralReference(""); 		// Referencia Catastral del Inmueble
-//		op1.setEntryId(0);                // ID del apunte
-//		return op1;
-//	}
 	
 }

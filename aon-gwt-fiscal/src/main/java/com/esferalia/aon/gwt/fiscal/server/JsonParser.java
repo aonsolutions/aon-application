@@ -698,11 +698,6 @@ public class JsonParser {
 		if (activity != null) {
 			params.setActivity(activity.intValue());	
 		}
-		
-		String activityDescription = (String) jsonParams.get(IRequestParamsNames.ACTIVITY_DESCRIPTION);
-		if (activityDescription != null) {
-			params.setActivityDescription(activityDescription);	
-		}			
 
 		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
 		if (AonStringUtils.isNotBlank(fromDate)) {

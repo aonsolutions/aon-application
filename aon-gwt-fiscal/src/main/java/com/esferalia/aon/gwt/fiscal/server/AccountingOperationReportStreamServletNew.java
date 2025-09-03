@@ -29,7 +29,7 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			String operationParams = req.getParameter(IRequestParamsNames.IRPF_PARAMS);
+			String operationParams = req.getParameter("operationParams");
 			String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			String user = req.getParameter(IRequestParamsNames.USER);
@@ -38,7 +38,7 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 				.setDomain(domainId)
 				.setUser(user);
 			OperationParamsNew params = JsonParser.parseOperationParamsNew(operationParams);
-			System.out.println("AccountingOperationReportStreamServletNew: params="+operationParams);
+//			System.out.println("AccountingOperationReportStreamServletNew: params="+operationParams);
 			
 			resp.setContentType(MimeType.HTML.getName());
 			PrintWriter wr = resp.getWriter();
@@ -53,10 +53,10 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 					jsonObject.put("payDate", ensureDate(op.getPayDate()));
 					jsonArray.put(jsonObject);
 				});
-			System.out.println("jsonArray="+jsonArray);
-			wr.print(jsonArray);
-			wr.flush();
+//			System.out.println("jsonArray="+jsonArray);
 			
+			wr.print(jsonArray);
+			wr.flush();			
 			resp.flushBuffer();
 		} catch (ParseException | java.text.ParseException e) {
 			throw new ServletException(e);

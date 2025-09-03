@@ -57,7 +57,7 @@ public class OperationReportNew extends MainEntryPoint {
 	private SimpleLayoutPanel tab0Content;
 	private SimpleLayoutPanel tab1Content;
 	
-	private ListBox type;  // Libro de IVA, Libro de IRPF, Libro de IVA e IRPF
+	private ListBox type;  // Libros de IVA, Libros de IRPF, Libros de IVA e IRPF
 	private AonIntegerBox year;
 	private PeriodListBox period;
 	private AonDateBox fromDate;
@@ -317,17 +317,14 @@ public class OperationReportNew extends MainEntryPoint {
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
 			if (activity.getSelectedIndex() > 0) {
 				params.setActivity(AonNumberUtils.toInteger(activity.getSelectedValue()));
-				params.setActivityDescription((activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*","")).trim());
 			} else {
 				params.setActivity(null);
-				params.setActivityDescription("");			
 			}
 		}
 		return params;
 	}
 
 	private void onSearch() {
-//		Window.alert("ON SEARCH");
 		paintTextTab();
 		if (tabLayout.getSelectedIndex() == TAB_0) {
 			refreshTab0(getWidgetParams());
