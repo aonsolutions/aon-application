@@ -141,7 +141,7 @@ public class VERIFACTU {
 					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
 					if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
 							&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
-						InvoiceDAO.delete(ctx, invoiceId);
+						InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
 					}
 				});
 			}

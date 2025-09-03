@@ -43,7 +43,14 @@ public class InvoiceCommunicationException extends Exception implements Serializ
 		this.errors.addAll(errors);
 	}
 	
-	@Override
+   	@Override
+   	public String getUniqueMessage() {
+   		return AonCollectionUtils.size(errors) == 1
+			? errors.get(0).getMessage()
+			: null;
+   	}
+
+   	@Override
 	public List<InvoiceCommunicationError> getMessages() {
 		return errors;
 	}

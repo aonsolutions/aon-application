@@ -130,6 +130,9 @@ public class InvoiceCommunicator {
 			}
 			return cc;
 		} catch (Exception e) {
+			if (e instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
 		}
 	}

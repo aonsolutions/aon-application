@@ -2201,7 +2201,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			verifactuConfiguration = AON.getVerifactuConfiguration(domainName, domainId, login);
 		}
-		System.out.println("verifactu -> " + verifactuConfiguration.isActive());
 		return verifactuConfiguration;
 	}
 	

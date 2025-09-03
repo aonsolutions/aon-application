@@ -18,6 +18,7 @@ public class InvoiceCommunicatorContext {
 	private InvoiceCommunicationConfiguration config;
 	private Company company;
 	private DataResponse dataResponse;
+	private boolean preserveRawdocOnDeletion;
 
 	public InvoiceCommunicatorContext(Domain domain,User user, Integer certificateId, List<Invoice> invoices) {
 		this.domain = domain;
@@ -59,9 +60,17 @@ public class InvoiceCommunicatorContext {
 	public DataResponse getDataResponse() {
 		return dataResponse;
 	}
-	public void setDataResponse(DataResponse dataResponse) {
+	public InvoiceCommunicatorContext setDataResponse(DataResponse dataResponse) {
 		this.dataResponse = dataResponse;
+		return this;
 	}
 	
+	public boolean isPreserveRawdocOnDeletion() {
+		return preserveRawdocOnDeletion;
+	}
+	public InvoiceCommunicatorContext setPreserveRawdocOnDeletion(boolean preserveRawdocOnDeletion) {
+		this.preserveRawdocOnDeletion = preserveRawdocOnDeletion;
+		return this;
+	}
 	
 }

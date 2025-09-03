@@ -49,6 +49,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -63,10 +64,12 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceNotice;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -81,6 +84,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -93,6 +97,9 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RawdocNature;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -842,16 +849,18 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 
+	public static void delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
+		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
+	}
 	public static void delete(AONContext ctx, Integer id) {
-		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
+		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
 	}
 	
-	private static void delete(AONContext ctx, AonConfiguration config, Integer id) {
-	ctx.checkWrite();
+	private static void delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
+		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
 		InvoiceValidation.validateInvoiceDeletion(ctx, config, invoice);
-		
 		if (invoice.isRectifier()) {
 			if (invoice.getRectificationInvoice() != null) {
 				final Invoice rectified = getInvoice(ctx, invoice.getRectificationInvoice());
@@ -904,19 +913,19 @@ public class InvoiceDAO {
 				}
 			}
 		}
-		invoice.setDetails(
-			ctx.getDslContext()
-				.select(INVOICE_DETAIL.ID,INVOICE_DETAIL.DOMAIN,INVOICE_DETAIL.SOURCE) 
-				.from( INVOICE_DETAIL )
-				.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
-				.fetch()
-				.stream()
-				.map( rec -> new InvoiceDetail()
-					.setId(rec.getValue(INVOICE_DETAIL.ID))
-					.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
-					.setSource(AonEnumUtils.enumValue(InvoiceSource.class,rec.getValue(INVOICE_DETAIL.SOURCE))))
-				.collect(Collectors.toCollection(LinkedList::new))
-				);
+//		invoice.setDetails(
+//			ctx.getDslContext()
+//				.select(INVOICE_DETAIL.ID,INVOICE_DETAIL.DOMAIN,INVOICE_DETAIL.SOURCE) 
+//				.from( INVOICE_DETAIL )
+//				.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
+//				.fetch()
+//				.stream()
+//				.map( rec -> new InvoiceDetail()
+//					.setId(rec.getValue(INVOICE_DETAIL.ID))
+//					.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
+//					.setSource(AonEnumUtils.enumValue(InvoiceSource.class,rec.getValue(INVOICE_DETAIL.SOURCE))))
+//				.collect(Collectors.toCollection(LinkedList::new))
+//				);
 		
 		deleteDetails(ctx, config, invoice);
 		
@@ -965,6 +974,15 @@ public class InvoiceDAO {
 				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",id,count);
 			}
 		}
+		
+		byte[] attachData = null;
+		if (preserveRawdoc) {
+			attachData = invoice.getDoc()
+				.filter(d -> d.getExternalStorage() == ExternalStorage.AON)
+				.flatMap( d -> AttachmentDAO.getInvoiceAttachStream(ctx, f -> f.getIdProperty().eq(d.getAonId()), true).findFirst())
+				.map( Attach::getData)
+				.orElse(null);
+		}
 
 		int count = ctx.getDslContext()
 			.delete(INVOICE_ATTACH)
@@ -988,10 +1006,29 @@ public class InvoiceDAO {
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
 		// ONLY IF IS TICKET BAI.
-		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		VerifactuConfiguration verifactuConfiguration = VerifactuConfigurationDAO.get(ctx);
-		if((verifactuConfiguration.isActive() || tbaiConfiguration.isActive()) && invoice.getNumber() > 0 && invoice.isSales()) {
-			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+		if (invoice.isSales() && invoice.getNumber() > 0) {
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
+			if((icc.isVerifactu() || icc.isTbai())) {
+				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+			}
+		}
+		
+		if (preserveRawdoc) {
+			invoice.setId(null);
+			invoice.detailStream()
+				.map(d -> d.setId(null))
+				.flatMap(d -> d.taxStream())
+				.forEach(t -> t.setId(null));
+			Rawdoc rawdoc = new Rawdoc()
+				.setData( attachData )
+				.setDomain(invoice.getDomain())
+				.setJson(InvoiceJSON.toJSON(invoice).toString())
+				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
+				.setNature(RawdocNature.INVOICE)
+				.setStatus(RawdocStatus.DRAFT)
+				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
+			;
+			RawdocDAO.save(ctx, rawdoc);
 		}
 	}
 

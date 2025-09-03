@@ -3085,15 +3085,23 @@ export class AonInvoice extends AonElement {
 					this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
-				}).catch(e => this.showError(e));
+				}).catch(e => {
+					this.getApplication().stopLoader(); 
+					this.showError(e);
+				});
 			});			
 			d.open();
 		} else {
+			this.getApplication().startLoader();
 			deleteInvoice(data).then(() => {
+				this.getApplication().stopLoader(); 
 				this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 				this.showMessage(MSG.DELETED_DATA);
 				this.back();
-			}).catch(e => this.showError(e));
+			}).catch(e => {
+				this.getApplication().stopLoader(); 
+				this.showError(e);
+			});
 		}
 	}
 	

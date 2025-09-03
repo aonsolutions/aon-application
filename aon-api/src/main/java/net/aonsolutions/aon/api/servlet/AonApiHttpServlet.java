@@ -181,14 +181,23 @@ public class AonApiHttpServlet extends HttpServlet{
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
 		String className =  e.getClass().getSimpleName();
-		String message = e.getMessage()!= null ? e.getMessage() : className;
+
+		String message = e.getMessage();
+		if (e instanceof HasMessagesException<?> em) {
+			json.put(IConstants.MESSAGES, em.toJSON() );
+			if (AonStringUtils.isBlank(message)) {
+				message = em.getUniqueMessage();
+			}
+		}
+		
+		if (AonStringUtils.isBlank(message)) {
+			message = className;
+		}
+		
 		json.put(IConstants.MESSAGE, message);
 		json.put(IConstants.TYPE, IConstants.ERROR);
 		json.put(IConstants.CLASS_NAME, className);
 		
-		if (e instanceof HasMessagesException<?> em) {
-			json.put(IConstants.MESSAGES, em.toJSON() );
-		}
 		addCorsHeader(resp);
 		giveBack(req, resp, json, new JSONObject());
 	}

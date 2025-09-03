@@ -9,8 +9,10 @@ import com.esferalia.aon.occam.api.GwtIncompatible;
 public interface HasMessagesException<T> {
 	
 	public List<T> getMessages();
+	public String getUniqueMessage();
 	
 	@GwtIncompatible
 	public JSONArray toJSON();
+
 	
 }

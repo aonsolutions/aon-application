@@ -1,9 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -17,10 +15,8 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
 public class VerifactuContext  {
 	private final InvoiceCommunicatorContext invoiceCommunicatorContext;
@@ -59,6 +55,9 @@ public class VerifactuContext  {
 	public VerifactuContext setDataResponse(DataResponse dataResponse) {
 		getInvoiceCommunicatorContext().setDataResponse(dataResponse);
 		return this;
+	}
+	public boolean isPreserveRawdocOnDeletion() {
+		return getInvoiceCommunicatorContext().isPreserveRawdocOnDeletion();
 	}
 	
 	public Stream<Invoice> invoiceStream() {

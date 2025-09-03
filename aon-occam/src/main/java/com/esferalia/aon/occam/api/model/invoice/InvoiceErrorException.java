@@ -23,7 +23,14 @@ public class InvoiceErrorException extends Exception implements HasMessagesExcep
    	public InvoiceErrorException(InvoiceError invoiceError) {
     	errors.add(invoiceError);
     }
-    
+
+   	@Override
+   	public String getUniqueMessage() {
+   		return AonCollectionUtils.size(errors) == 1
+			? errors.get(0).getMessage()
+			: null;
+   	}
+   	
 	@Override
 	public List<InvoiceError> getMessages() {
 		return errors;

@@ -64,7 +64,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -319,47 +318,43 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private JSONObject deleteInvoice(AonApiData api) {
+	private JSONObject deleteInvoice(AonApiData api) throws Exception {
 		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
-
-		boolean accepted = true;
-		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
-			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
-				f.getInvoiceProperty().eq(invoiceId)
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-			accepted = info.isAccepted() || info.isAcceptedWithErrors();
-		}
-
-		if(invoice.isSales() && tbaiConfiguration.isActive() && accepted) {
-			tbaiConfiguration.setCertificate(checkCertificate(api));
-			TbaiMain tbai = new TbaiMain();
-			try {
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new AonApiException(e.getMessage());
-			}
-		}
 		
-		if(invoice.isSales() && verifactuConfiguration.isActive()) {
-			try {
-				verifactuConfiguration.setCertificate(checkCertificate(api));
-				CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
-					new CancelInvoiceCommunicationTypeVisitor(api.getDomain(), api.getUser(), invoice)
-						.setCompany(company)
-						.setVerifactuConfiguration(verifactuConfiguration);
-
-				InvoiceCommunicationType.VERIFACTU.visit(visitor);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new AonApiException(e.getMessage());
+		
+		// ***********************************
+		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
+		if (invoice.isSales()) {
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+			if (config.isVerifactu()) {
+				cancelAndCommunicateInvoice(api, config, company, invoice);
+				return new JSONObject();
 			}
-		} 
+			if (config.isTbai()) {
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+				boolean accepted = true;
+				if(tbaiConfiguration.isBizkaia()) {
+					InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
+						f.getInvoiceProperty().eq(invoiceId)
+						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
+					accepted = info.isAccepted() || info.isAcceptedWithErrors();
+				}
+				if (accepted) {
+					tbaiConfiguration.setCertificate(checkCertificate(api));
+					TbaiMain tbai = new TbaiMain();
+					try {
+						tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AonApiException(e.getMessage());
+					}
+				}
+				
+			}
+		}
+		// ***********************************
 		
 		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getAttachModuleProperty().eq(invoiceId)
@@ -1161,16 +1156,25 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	// ************************************************************
 	// ******************************* [CANCEL AND COMMUNICATE] ***
 	// ************************************************************
-	public static InvoiceCommunicatorContext cancelAndCommunicateInvoice(AonApiData api, Company company) throws InvoiceCommunicationException {
+	private static void cancelAndCommunicateInvoice(AonApiData api, InvoiceCommunicationConfiguration config,Company company, Invoice invoice) throws InvoiceCommunicationException, InvoiceErrorException {
 		checkApiData(api);
 		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
-		Invoice invoice = InvoiceJSON.from(api.getData())
-			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices);
-		communicator.setCompany(company);
-		InvoiceCommunicator.cancelInvoice(communicator);
-		return communicator;
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
+				.setConfig(config)
+				.setCompany(company)
+				.setPreserveRawdocOnDeletion(true);
+		try {
+			InvoiceCommunicator.cancelInvoice(communicator);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvoiceErrorException(
+				invoice.messageStream().collect(Collectors.toCollection(LinkedList::new))
+			);
+		}
+		
+		
+		
 	}
 
 	private static void checkApiData(AonApiData api) {
