@@ -19,6 +19,9 @@ public class InvoiceCommunicatorContext {
 	private Company company;
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
+	
+//	private boolean error;
+//	private String errorMessage;
 
 	public InvoiceCommunicatorContext(Domain domain,User user, Integer certificateId, List<Invoice> invoices) {
 		this.domain = domain;
@@ -72,5 +75,22 @@ public class InvoiceCommunicatorContext {
 		this.preserveRawdocOnDeletion = preserveRawdocOnDeletion;
 		return this;
 	}
+
+//	public boolean isError() {
+//		return error;
+//	}
+//	public InvoiceCommunicatorContext setError(boolean error) {
+//		this.error = error;
+//		return this;
+//	}
+//
+//	public String getErrorMessage() {
+//		return errorMessage;
+//	}
+//	public InvoiceCommunicatorContext setErrorMessage(String errorMessage) {
+//		this.errorMessage = errorMessage;
+//		return this;
+//	}
+	
 	
 }

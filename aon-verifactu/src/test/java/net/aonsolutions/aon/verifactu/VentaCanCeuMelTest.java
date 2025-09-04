@@ -42,9 +42,10 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
-		return InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL
 			.get( ctx , DOMAIN_ID)
 			.setId(1);
+		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 	}
 	
 	@Test

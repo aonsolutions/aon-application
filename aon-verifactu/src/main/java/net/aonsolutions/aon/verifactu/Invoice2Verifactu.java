@@ -46,6 +46,7 @@ class Invoice2Verifactu {
 						regFactu.getRegistroFactura().add(factura);
 						vc.setBlockchain( newBlockchain( factura) );
 					} catch (InvoiceCommunicationException e) {
+						e.printStackTrace();
 						throw new AonCoreException( e );
 					}
 			});

@@ -2,7 +2,6 @@ package net.aonsolutions.aon.invoice.communication;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
-import java.util.Date;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -12,13 +11,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.security.CertificateType;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.verifactu.VERIFACTU;
@@ -27,28 +21,20 @@ public class InvoiceCommunicator {
 	
 	private InvoiceCommunicator() {
 	}
+
+
+	// *************************************************************
+	// ******************************************* [ISSUE] ********
+	// *************************************************************
+	public static InvoiceCommunicatorContext issueInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
+		checkAONContextValues(communicator);
+		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
+			return ctx.getDslContext().transactionResult(configuration -> 
+				issue(ctx, communicator));
+		}
+	}
 	
-		
-	public static InvoiceCommunicatorContext acceptInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
-		checkAONContextValues(communicator);
-		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
-			return ctx.getDslContext().transactionResult(configuration -> 
-				accept(ctx, communicator));
-		}
-	}
-
-	public static InvoiceCommunicatorContext cancelInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
-		checkAONContextValues(communicator);
-		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
-			return ctx.getDslContext().transactionResult(configuration -> 
-				cancel(ctx, communicator));
-		}
-	}
-
-	// *************************************************************
-	// ******************************************* [ACCEPT] ********
-	// *************************************************************
-	private static InvoiceCommunicatorContext accept(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
+	private static InvoiceCommunicatorContext issue(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
 		try {
 			check(ctx, cc);
 			checkUniqueInvoice(cc);
@@ -56,14 +42,52 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 			if(invoice.isSales()) {
-				// third Part???
-				if(cc.getConfig().isVerifactu()) {
-					Certificate certificate = checkCertificate(ctx, cc);
-					cc.getConfig().setCertificate(certificate);
-					invoiceValidation(invoice);
+				InvoiceDAO.issue(ctx, invoice.getId());
+				if (cc.getConfig().hasCommunication() ) {
+					cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
+						
+						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
+						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
+						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
+						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
+						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
+						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+						
+						@Override
+						public void visitVERIFACTU() throws InvoiceCommunicationException  {
+							VERIFACTU.accept(ctx,cc);
+						}
+					});
 				}
 			}
-			
+			return cc;
+		} catch (Exception e) {
+			if (e instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
+		}
+	}
+	
+	// *************************************************************
+	// ******************************************* [ACCEPT] ********
+	// *************************************************************
+	public static InvoiceCommunicatorContext acceptInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
+		checkAONContextValues(communicator);
+		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
+			return ctx.getDslContext().transactionResult(configuration -> 
+				accept(ctx, communicator));
+		}
+	}
+	
+	private static InvoiceCommunicatorContext accept(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
+		try {
+			check(ctx, cc);
+			checkUniqueInvoice(cc);
+			Invoice invoice = cc.invoiceStream()
+				.findFirst()
+				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
+
 			invoice = InvoiceDAO.accept(ctx, invoice, invoice.getRawdocId().orElse(null));
 			// TODO Cambiarlo cuando accept2 sea viable para la pantalla del portal.
 			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
@@ -96,6 +120,14 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [CANCEL] ********
 	// *************************************************************
+	public static InvoiceCommunicatorContext cancelInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
+		checkAONContextValues(communicator);
+		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
+			return ctx.getDslContext().transactionResult(configuration -> 
+				cancel(ctx, communicator));
+		}
+	}
+	
 	public static InvoiceCommunicatorContext cancel(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
 		try {
 			check(ctx,cc);
@@ -103,15 +135,6 @@ public class InvoiceCommunicator {
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
-			if(invoice.isSales()) {
-				// third Part???
-				if(cc.getConfig().isVerifactu()) {
-					Certificate certificate = checkCertificate(ctx, cc);
-					cc.getConfig().setCertificate(certificate);
-					invoiceValidation(invoice);
-				}
-			}
-			
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
 				cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
 	
@@ -169,38 +192,39 @@ public class InvoiceCommunicator {
 		checkCertificate(ctx, cc);
 	}
 	
-	private static Certificate checkCertificate(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
-		if (cc.getConfig().getCertificate() != null) {
-			return cc.getConfig().getCertificate();
-		}
-		Certificate cert = null;
-		try {
-			if(cc.getCertificateId() != null) {
-				cert = CertificateDAO.getStream(ctx, f -> f.getIdProperty().eq(cc.getCertificateId()))
-					.findFirst()
-					.orElse(null);
-			} else {
-				cert = SecurityDAO.getCertificate(ctx, cc.getUser().getId(), CertificateType.AEAT.name());  
-			}
-		} catch (Exception e) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021,e);
-		}
-		if (cert != null) {
+	private static void checkCertificate(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
+		if (cc.getConfig().getCertificate() == null) {
 			try {
-				if(!checkCert(cert.getData(), cert.getPassword())) {
+				if (cc.getCertificateId() != null) {
+					cc.getConfig().setCertificate(
+						CertificateDAO.getStream(ctx, f -> f.getIdProperty().eq(cc.getCertificateId()))
+							.findFirst()
+							.orElse(null)
+					);
+//				} else {
+//					cc.getConfig().setCertificate(SecurityDAO.getCertificate(ctx, cc.getUser().getId(), CertificateType.AEAT.name()));  
+				}
+			} catch (Exception e) {
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021,e);
+			}
+			try {
+				if (cc.getConfig().getCertificate() != null 
+				 && !checkCert(cc.getConfig().getCertificate())) {
 					throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0022);
 				}
 			} catch (Exception e) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0022,e);
-			}		
+			}
+			if(cc.getConfig().getCertificate() == null || cc.getConfig().getCertificate().isEmpty()) {
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
+			}
 		}
-		if(cert == null || cert.isEmpty()) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
-		}
-		return cert;	
 	}
-	
-	private static boolean checkCert(byte[] cert, String password) {
+
+	private static boolean checkCert(Certificate certificate) {
+		if (certificate == null) return false;
+		byte[] cert = certificate.getData();
+		String password = certificate.getPassword();
 		try {
 			ByteArrayInputStream is = new ByteArrayInputStream(cert);
 			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -213,28 +237,6 @@ public class InvoiceCommunicator {
 	private static void checkUniqueInvoice(InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
 		if (cc.invoiceCount() > 1) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9007);
-		}
-	}
-	
-	private static void invoiceValidation(Invoice invoice) throws InvoiceCommunicationException {
-		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0010);
-		}
-		
-		Date date = AonDateUtils.getDateWithoutTime(invoice.getIssueDate());
-		if(date.after(new Date())) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0011);
-		}
-
-		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
-				&& !invoice.isSimplified()) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0019);
-		}
-			
-		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
-				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
-				&& !invoice.isSimplified()) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0020);
 		}
 	}
 

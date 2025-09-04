@@ -1,12 +1,15 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import uk.co.jemos.podam.api.PodamUtils;
 
@@ -18,19 +21,39 @@ class VerifactuTestsUtils {
 		
 	}
 	// ********************************* [INVOICE NUMBER]
-	static String referenceCode() {
-		return referenceCode("A");
+//	static String referenceCode() {
+//		return referenceCode("A");
+//	}
+//	static String rectifierReferenceCode() {
+//		return referenceCode("R");
+//	}
+	static String series() {
+		return series( "A" );
 	}
-	static String rectifierReferenceCode() {
-		return referenceCode("R");
+	static String series(String prefix) {
+		Date issueDate = new Date();
+		int year = AonDateUtils.getYear(issueDate);
+		int dayOfYear = AonDateUtils.getDayOfYear(issueDate); 
+		year = (year - 2000) * 1000;
+		int s = year + dayOfYear;
+		return (prefix + Integer.toHexString(s));
 	}
-	static String referenceCode(String prefix) {
-		Date now = new Date();
-		return prefix 
-			+ AonDateUtils.getYear(now) 
-			+ "/"
-			+ now.getTime()
-		;
+	
+	public static int number() {
+		// Milisegundos desde el inicio del día
+		LocalTime now = LocalTime.now();
+		return (int) (now.toSecondOfDay() * 1000L + now.getNano() / 1_000_000);
+	}
+	
+	public static String referenceCode(Invoice invoice) {
+		return referenceCode(invoice.getSeries(),invoice.getNumber());
+	}
+	static String referenceCode(String series, int number) {
+		String referenceCode = AonStringUtils.leftPad(Integer.toString(number), 6, "0");
+		if (!AonStringUtils.isBlank(series)) {
+			referenceCode = series + "/" + referenceCode;
+		}
+		return referenceCode;
 	}
 		
 	// ******************************************* [DATE]
@@ -106,5 +129,5 @@ class VerifactuTestsUtils {
 			.findFirst()
 			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento " + document));
 	}
-
+	
 }

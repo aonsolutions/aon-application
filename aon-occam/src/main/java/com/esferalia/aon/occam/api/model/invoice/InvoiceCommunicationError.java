@@ -1,5 +1,10 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
+import java.util.Optional;
+
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 // Á --> \u00C1 á --> \u00E1
 // É --> \u00C9 é --> \u00E9
 // Í --> \u00CD í --> \u00ED
@@ -96,7 +101,7 @@ public enum InvoiceCommunicationError {
 		VERIFACTU_1101("1101", "El valor del campo CodigoPais es incorrecto."),
 	VERIFACTU_1102("1102", "El valor del campo IDType es incorrecto."),
 	VERIFACTU_1103("1103", "El valor del campo ID es incorrecto."),
-	VERIFACTU_1104("1104", "El valor del campo NumSerieFactura es incorrecto."),
+		VERIFACTU_1104("1104", "El valor del campo NumSerieFactura es incorrecto."),
 		VERIFACTU_1105("1105", "El valor del campo FechaExpedicionFactura es incorrecto."),
 	VERIFACTU_1106("1106", "El valor del campo TipoFactura no est\u00E1 incluido en la lista de valores permitidos."),
 		VERIFACTU_1107("1107", "El valor del campo TipoRectificativa es incorrecto."),
@@ -304,6 +309,12 @@ public enum InvoiceCommunicationError {
 	
 	public String getMessage() {
 		return message;
+	}
+	
+	public static Optional<InvoiceCommunicationError> safeValueof(String code) {
+		return AonCollectionUtils.stream(InvoiceCommunicationError.values())
+			.filter(e -> AonStringUtils.equals(e.getCode(), code))
+			.findFirst();
 	}
 
 }

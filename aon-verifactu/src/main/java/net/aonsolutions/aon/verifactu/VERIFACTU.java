@@ -27,6 +27,8 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -40,10 +42,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RegistroFacturacionAltaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
@@ -55,6 +61,7 @@ public class VERIFACTU {
 	private VERIFACTU() {
 		
 	}
+
 	
 	// **************************************************************
 	// ************************************************ [ACCEPT] ****
@@ -75,9 +82,11 @@ public class VERIFACTU {
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage));
+		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(true),requestMessage);
+		vc.setResponse( dataResponse );
 		return saveAccept( ctx, vc );
 	}
+	
 
 	private static VerifactuContext saveAccept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
@@ -89,23 +98,10 @@ public class VERIFACTU {
 		InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain()	// save INVOICE BATCH
 			, dataResponse	
 			, InvoiceCommunicationOperation.REGISTER);								
-		if (vc.getResponse().isError()) {
-			vc.invoiceStream()
-			.forEach(inv -> {
-				saveInvoiceInfo(ctx, vc.getDomain(), inv.getId(), InvoiceCommunicationStatus.WRONG);
-				saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, inv.getId(), InvoiceCommunicationStatus.WRONG);					
-			});
-		} else {
-			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
-					saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status); 
-					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);				
-				});
-			}
-		}
+		RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+		AonCollectionUtils.stream(respuesta.getRespuestaLinea())
+			.forEach(r -> doInAON( ctx, vc, invoiceBatch, r) )
+		;
 		return vc.setDataResponse(dataResponse);
 	}
 	
@@ -133,25 +129,66 @@ public class VERIFACTU {
 	private static VerifactuContext saveCancel(AONContext ctx, VerifactuContext vc) {
 		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
 		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
-		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	// save BLOCKCHAIN DATA
-		if (!vc.getResponse().isError()) {	// DELETE ANNULLED INVOICES
-			RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
-			if (!respuesta.getRespuestaLinea().isEmpty()) {
-				respuesta.getRespuestaLinea().stream().forEach(r -> {
-					Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
-					if(TipoOperacionType.ANULACION.equals(r.getOperacion().getTipoOperacion()) 
-							&& EstadoRegistroType.CORRECTO.equals(r.getEstadoRegistro())) {
-						InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
-					}
-				});
+		InvoiceBatch invoiceBatch =  saveInvoiceBatch(ctx, vc.getDomain(), dataResponse, InvoiceCommunicationOperation.ANNULMENT);
+		RespuestaRegFactuSistemaFacturacionType respuesta = vc.getResponse().getResponse();
+		AonCollectionUtils.stream(respuesta.getRespuestaLinea())
+			.forEach(r -> doInAON( ctx, vc, invoiceBatch, r) )
+		;
+		return  vc.setDataResponse(dataResponse);
+	}
+	
+	private static void doInAON(AONContext ctx, VerifactuContext vc, InvoiceBatch invoiceBatch, RespuestaExpedidaType r) {
+		if ( r == null) return; 
+		if ( r.getOperacion() == null) return;
+		Integer invoiceId = AonNumberUtils.toInteger(r.getRefExterna());
+		if ( invoiceId == null) return;
+		if ( AonMathUtils.isZero(invoiceId)) return;
+		TipoOperacionType operacion = r.getOperacion().getTipoOperacion();
+		boolean correcto = AonEnumUtils.in(r.getEstadoRegistro(), EstadoRegistroType.CORRECTO, EstadoRegistroType.ACEPTADO_CON_ERRORES);
+		switch (operacion) {
+		
+			case ALTA: {
+				InvoiceCommunicationStatus status = getInvoiceCommunicationStatus(r.getEstadoRegistro());
+				saveInvoiceCommunication(ctx, vc, invoiceBatch, invoiceId, status);
+				if (AonEnumUtils.in(r.getEstadoRegistro(), EstadoRegistroType.INCORRECTO, EstadoRegistroType.ACEPTADO_CON_ERRORES)) {
+					vc.invoiceStream()
+						.filter(i -> AonNumberUtils.equals(i.getId(),invoiceId ))
+						.forEach(i -> i.addMessage( InvoiceErrorMessages.C051.err(InvoiceErrorKey.COMMUNICATION,r.getCodigoErrorRegistro(),r.getDescripcionErrorRegistro())))							
+					;
+				}
+				break;
+			}
+			
+			case ANULACION: {
+				if (correcto) {
+					// Si la respuesta es correcta, se borra la factura.
+					InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
+				} else {
+					// Si la respuesta es incorrecta, se guarda la comunicación.
+					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, InvoiceCommunicationStatus.WRONG);
+				}
+				break;
+			}
+			
+			default: {
+				// Nothing
 			}
 		}
-		return  vc.setDataResponse(dataResponse);
 	}
 	
 	// **************************************************************
 	// ************************************************ [PRIVATE] ***
 	// **************************************************************
+	
+	private static void saveInvoiceCommunication(AONContext ctx
+		, VerifactuContext vc
+		, InvoiceBatch invoiceBatch
+		, Integer invoiceId
+		, InvoiceCommunicationStatus status) {
+		saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status);
+		saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);					
+	}
+	
 	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0001);
@@ -315,4 +352,5 @@ public class VERIFACTU {
 			.setDate(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE))
 			.setHuella(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA));
 	}
+	
 }

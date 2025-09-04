@@ -250,7 +250,9 @@ public class VerifactuValidation {
 	 */
 	private static final Consumer<AltaContext> ALTA_FRA_NUM_SERIE = a -> {
 		String numSerie = a.fra.getIDFactura().getNumSerieFactura();
-		if (!AonStringUtils.isAsciiPrintable(numSerie)) {
+		if (AonStringUtils.isBlank(numSerie)) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1104);
+		} else if (!AonStringUtils.isAsciiPrintable(numSerie)) {
 			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1130);
 		}
 	};
@@ -1365,6 +1367,7 @@ public class VerifactuValidation {
 	 *    devolverá un aviso de error (no generará rechazo). 
 	 */
 	private static final Consumer<AnulacionContext> ANULACION_FRA_HUELLA = a -> {
+		a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);
 		String huella = a.fra.getHuella();
 	    if (huella == null || !SHA256_PATTERN.matcher(huella).matches()) {
 	    	a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);

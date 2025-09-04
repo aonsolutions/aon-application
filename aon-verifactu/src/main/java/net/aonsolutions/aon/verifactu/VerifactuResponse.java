@@ -1,29 +1,32 @@
 package net.aonsolutions.aon.verifactu;
 
+import com.esferalia.aon.watson.server.AonEnumUtils;
+
+import eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.EstadoEnvioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
 public class VerifactuResponse {
 	
-	private boolean error;
-	private String errorMessage;
+//	private boolean error;
+//	private String errorMessage;
 	private RespuestaRegFactuSistemaFacturacionType response;
 	private byte[] bytes;
 	
-	public boolean isError() {
-		return error;
-	}
-	public VerifactuResponse setError(boolean error) {
-		this.error = error;
-		return this;
-	}
-	
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-	public VerifactuResponse setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-		return this;
-	}
+//	public boolean isError() {
+//		return error;
+//	}
+//	public VerifactuResponse setError(boolean error) {
+//		this.error = error;
+//		return this;
+//	}
+//	
+//	public String getErrorMessage() {
+//		return errorMessage;
+//	}
+//	public VerifactuResponse setErrorMessage(String errorMessage) {
+//		this.errorMessage = errorMessage;
+//		return this;
+//	}
 	
 	public RespuestaRegFactuSistemaFacturacionType getResponse() {
 		return response;

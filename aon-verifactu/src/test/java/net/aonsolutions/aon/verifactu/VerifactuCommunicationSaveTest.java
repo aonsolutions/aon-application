@@ -47,7 +47,7 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID);
 		save(invoice);
 	}
-
+	
 	@Test
 	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID);

@@ -43,9 +43,10 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	
 	private Invoice getTestInvoice() {
-		return InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA
 			.get( ctx , DOMAIN_ID)
 			.setId(1);
+		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 	}
 	
 	@Test

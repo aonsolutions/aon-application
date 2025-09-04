@@ -36,6 +36,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C020("La divisa de la factura no es euro"),
 	
 	C050("Error comunicaci\u00F3n: \"{0}\" \"{1}\""),
+	C051("Factura comunicada con errores: \"{0}\" \"{1}\""),
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),

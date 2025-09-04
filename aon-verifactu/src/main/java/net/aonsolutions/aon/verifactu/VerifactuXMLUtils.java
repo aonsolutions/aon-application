@@ -16,6 +16,8 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -142,15 +144,22 @@ class VerifactuXMLUtils {
 	        if (faults.getLength() > 0) {
 	            Element faultElem = (Element) faults.item(0);
 	            String faultString = faultElem.getElementsByTagName(FAULTSTRING2_ELEMENT).item(0).getTextContent();
-	            vr.setError(true);
-	            vr.setErrorMessage( faultString );            
+	            Pattern p = Pattern.compile("Codigo\\[(\\d+)\\]");
+	            Matcher m = p.matcher(faultString);
+	            if (m.find()) {
+	                String numero = m.group(1); 
+	                InvoiceCommunicationException e = InvoiceCommunicationError.safeValueof(numero)
+	                	.map(ex -> new InvoiceCommunicationException( ex ))
+	                	.orElse(null);
+	                if (e != null) throw e;
+	            }	            
+	            throw new InvoiceCommunicationException( faultString );
 	        } else {	        
 	        	// SOAP Response to RespuestaRegFactuSistemaFacturacionType
 	        	JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
 	        	Unmarshaller um = jc.createUnmarshaller();
 	        	JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(bodyDoc, RespuestaRegFactuSistemaFacturacionType.class);
-	        	vr.setError(false)
-	        		.setResponse(o.getValue());
+	        	vr.setResponse(o.getValue());
 	        }
 			return vr.setBytes( stringResp.getBytes() );
 		} catch (SOAPException | JAXBException | IOException e) {
@@ -160,10 +169,7 @@ class VerifactuXMLUtils {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			return new VerifactuResponse()
-			 	.setError( true )
-			 	.setErrorMessage(e.getMessage())
-			 	.setBytes(sw.toString().getBytes());
+			throw new InvoiceCommunicationException( e.getMessage() );
 		}
 	}
 	

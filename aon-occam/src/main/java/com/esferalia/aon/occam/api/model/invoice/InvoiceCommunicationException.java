@@ -39,8 +39,13 @@ public class InvoiceCommunicationException extends Exception implements Serializ
 		errors.add(error);
 	}
 	public InvoiceCommunicationException(List<InvoiceCommunicationError> errors) {
-		this(InvoiceCommunicationError.AON_9000);
-		this.errors.addAll(errors);
+		if (AonCollectionUtils.isEmpty(errors)) {
+			errors.add(InvoiceCommunicationError.AON_9000);
+		} else {
+			this.errors.addAll(errors);
+		}
+		
+		
 	}
 	
    	@Override

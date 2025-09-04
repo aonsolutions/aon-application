@@ -486,7 +486,6 @@ public class InvoiceAutoComplete {
 									: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
 					invoiceTax.add(it1);
 				}
-				
 				InvoiceTax it = new InvoiceTax()
 						.setDomain(inv.getDomain())
 						.setTaxType(TaxType.VAT)
@@ -497,10 +496,13 @@ public class InvoiceAutoComplete {
 						.setSurchargeQuota(b.getSurchargeQuota())
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(b.getQuota())
-						.setAccount(inv.isSales()
-								? ctx.getConfiguration().accounting().getDefaultChargedVatAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidVatAccount().getId());
+						.setDeductibleQuota(b.getQuota());
+				Account a = inv.isSales() 
+						? ctx.getConfiguration().accounting().getDefaultChargedVatAccount()
+						: ctx.getConfiguration().accounting().getDefaultPaidVatAccount();
+				if (a != null) {
+					it.setAccount(a.getId());
+				}
 				invoiceTax.add(it);
 				
 				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());

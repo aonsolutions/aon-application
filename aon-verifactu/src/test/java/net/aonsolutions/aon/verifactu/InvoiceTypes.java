@@ -31,25 +31,26 @@ public class InvoiceTypes {
 	}
 	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain ) {
 		return getActivityGeneral(ctx, domain, VATRegime.GENERAL);
-	};
+	}
 	static EnterpriseActivity getActivityExempt( AONContext ctx, int domain ) {
 		return getActivityGeneral(ctx, domain, VATRegime.EXEMPT);
-	};
+	}
 	static EnterpriseActivity getActivitySimplified( AONContext ctx, int domain ) {
 		return getActivityGeneral(ctx, domain, VATRegime.SIMPLIFIED);
-	};
+	}
 	
 	public enum Invoices {
 		VENTA_NACIONAL_SIMPLE {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx, domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -91,12 +92,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -138,12 +140,13 @@ public class InvoiceTypes {
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				customer.getAddresses().clear();
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -184,12 +187,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -237,21 +241,22 @@ public class InvoiceTypes {
 		VENTA_NACIONAL_RECTIFICATIVA_SIMPLE {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
-				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
+				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series("R");
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode("R"))
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NORMAL_RECTIFIER)
 					.setRectificationInvoice( 1 )
 					.setRectificationInvoiceSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setRectificationInvoiceReference(VerifactuTestsUtils.referenceCode())
 					.setRectificationInvoiceNumber( 1 )
+					.setRectificationInvoiceReference("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()) + "/1")
 					.setRectificationInvoiceDate(VerifactuTestsUtils.issueDate())
 					.setConfidential(false)
 					.setRegistry(customer.getRegistry().getId())
@@ -290,20 +295,21 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
+				String series = VerifactuTestsUtils.series("R");
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("R" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode("R"))
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.setRectificationType(RectificationType.NORMAL_RECTIFIER)
 					.setRectificationInvoice( 1 )
 					.setRectificationInvoiceSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setRectificationInvoiceReference(VerifactuTestsUtils.referenceCode())
 					.setRectificationInvoiceNumber( 1 )
+					.setRectificationInvoiceReference("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()) + "/1")
 					.setRectificationInvoiceDate(VerifactuTestsUtils.issueDate())
 					.setConfidential(false)
 					.setRegistry(customer.getRegistry().getId())
@@ -341,12 +347,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.OTHER_ISP)
@@ -388,12 +395,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -436,12 +444,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -492,12 +501,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.INTRACOMMUNITY)
@@ -539,12 +549,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.INTRACOMMUNITY)
@@ -586,13 +597,14 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
 					.setActivity(getActivityExempt(ctx, domain))
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -634,12 +646,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -682,12 +695,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -729,12 +743,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerNoCensado(ctx, domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -776,12 +791,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerCedilla(ctx, domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.NATIONAL)
@@ -823,12 +839,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY)
@@ -862,12 +879,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY)
@@ -901,12 +919,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.CAN_CEU_MEL)
@@ -940,12 +959,13 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
+				String series = VerifactuTestsUtils.series();
+				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
 					.setType(InvoiceType.SALES)
-					.setSeries("A" + AonDateUtils.getYear(VerifactuTestsUtils.issueDate()))
-					.setNumber(0)
-					.setReferenceCode(VerifactuTestsUtils.referenceCode())
+					.setSeries(series)
+					.setNumber(number)
 					.setIssueDate(VerifactuTestsUtils.issueDate())
 					.setTaxDate(VerifactuTestsUtils.issueDate())
 					.setTransaction(InvoiceTransactionType.CAN_CEU_MEL)

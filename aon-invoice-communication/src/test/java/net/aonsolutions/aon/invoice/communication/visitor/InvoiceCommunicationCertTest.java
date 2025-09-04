@@ -31,14 +31,16 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 	}
 	
 	@Test
-	void noCertTest() throws InvoiceCommunicationException {
+	void noCertTest() {
 		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
 		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
 			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(config()).setCompany(company());
-		InvoiceCommunicatorContext a = InvoiceCommunicator.acceptInvoice(cc);
-		assertNotNull(a);
+		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
+		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
+		assertNotNull(ice);
+		assertThat(InvoiceCommunicationError.AON_0023).isIn(ice.getMessages());
 	}
 
 	@Test

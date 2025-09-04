@@ -5,8 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -64,6 +66,8 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -467,9 +471,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
 		return filter;
     }
-
 	private static JSONObject getInvoice(Domain domain, String login, Integer id) {
+		return getInvoice(domain, login, id, null); 
+	}
+	private static JSONObject getInvoice(Domain domain, String login, Integer id, List<InvoiceError> previousErrors) {
 		Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, id);
+		
+		AonCollectionUtils.stream(previousErrors).forEach(invoice::addMessage);
+		
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 
 		TbaiConfiguration tbai = AON.getTbaiConfiguration(domain, login);
@@ -1144,13 +1153,37 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			if (rawdocId != null && json != null && invoice.hasMessages()) {
 				List<InvoiceError> errors = invoice.messageStream()
 					.collect(Collectors.toCollection(LinkedList::new));
-//				AON.rawdocSave( api.getOccam(), rawdocId, json.toString());
 				e.printStackTrace();
 				throw new InvoiceErrorException(errors);
 			}
-			throw e;
+			
+			// Para evitar recursividad --- 
+			Set<Throwable> visited = new HashSet<>();
+			Throwable current = e;
+			while (current != null && !visited.contains(current)) {
+				visited.add(current);
+				current = current.getCause();
+			}
+			// ------------------------------			
+			e.printStackTrace();
+			InvoiceErrorException ti = AonCollectionUtils.stream(visited)
+				.filter( InvoiceCommunicationException.class::isInstance )
+				.map(ex -> (InvoiceCommunicationException) ex)
+				.map(ice -> 
+					AonCollectionUtils.stream(ice.getMessages())
+						.map(icm -> InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,icm.getCode(),icm.getMessage()) )
+						.collect(Collectors.toCollection(LinkedList::new))
+					)
+				.map( es -> new InvoiceErrorException(es) )
+				.findFirst()
+				.orElse( new InvoiceErrorException(InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,"",e.getMessage())))
+			;
+			System.out.println("***************");
+			System.out.println("***************");
+			ti.printStackTrace();
+			throw ti;
 		}
-		return getInvoice(api.getDomain(), api.getUser().getLogin(), invoice.getId());
+		return getInvoice(api.getDomain(), api.getUser().getLogin(), invoice.getId(), invoice.messageStream().toList());
 	}
 	
 	// ************************************************************
@@ -1160,21 +1193,40 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		checkApiData(api);
 		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
+		InvoiceCommunicatorContext icc = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
 				.setConfig(config)
 				.setCompany(company)
 				.setPreserveRawdocOnDeletion(true);
 		try {
-			InvoiceCommunicator.cancelInvoice(communicator);
+			InvoiceCommunicator.cancelInvoice(icc);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvoiceErrorException(
-				invoice.messageStream().collect(Collectors.toCollection(LinkedList::new))
-			);
+			if (invoice.hasMessages()) {
+				List<InvoiceError> errors = invoice.messageStream()
+					.collect(Collectors.toCollection(LinkedList::new));
+				e.printStackTrace();
+				throw new InvoiceErrorException(errors);
+			}
+
+			// Para evitar recursividad --- 
+			Set<Throwable> visited = new HashSet<>();
+			Throwable current = e;
+			while (current != null && !visited.contains(current)) {
+				visited.add(current);
+				current = current.getCause();
+			}
+			// ------------------------------			
+			InvoiceCommunicationException iee = AonCollectionUtils.stream(visited)
+				.filter( InvoiceCommunicationException.class::isInstance )
+				.map(ex -> (InvoiceCommunicationException) ex)
+				.findFirst()
+				.orElse( new InvoiceCommunicationException(e.getMessage()))
+			;
+			throw iee;
 		}
 		
-		
-		
+//		if (icc.isError()) {
+//			throw new InvoiceCommunicationException(icc.getErrorMessage());
+//		}
 	}
 
 	private static void checkApiData(AonApiData api) {

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -678,17 +679,12 @@ public class InvoiceDAO {
 	
 	private static void generateMD5(AONContext ctx, Invoice invoice) {
 		String md5 = AonDigestUtils.md5Hex(invoice.flat());
-		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getInvoiceProperty().eq(invoice.getId()))
-				.and(f.getNameProperty().eq("MD5")));
-		if(invoiceData == null) invoiceData = new InvoiceData();
-		
-		invoiceData.setDomain(invoice.getDomain())
-				.setInvoice(invoice.getId())
-				.setName("MD5")
-				.setValue(md5)
-				.setStartDate(new Date());
-		
+		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, invoice.getId(), "MD5").orElse(new InvoiceData())
+			.setDomain(invoice.getDomain())
+			.setInvoice(invoice.getId())
+			.setName("MD5")
+			.setValue(md5)
+			.setStartDate(new Date());
 		InvoiceDataDAO.save(ctx, invoiceData);
 	}
 	
@@ -1838,5 +1834,38 @@ public class InvoiceDAO {
 		});
 		
 	}
+	
+	public static Invoice issue(AONContext ctx, Integer invoiceId) {
+		ctx.checkWrite();
+		Invoice invoice = getFullInvoice(ctx, invoiceId);
+		if (invoice == null || invoice.getId() == null) throw new AonCoreException("Factura no encontrada");
+		if (!invoice.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
+		if(invoice.getNumber() >=0) throw new AonCoreException("Sólo se pueden emitir facturas proforma");
+		Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+		Integer number = getNextNumber(ctx, types, invoice.getSeries());
+		invoice.setNumber(number);
+		invoice.setReferenceCode(null);
+		
+		int i = ctx.getDslContext()
+			.update(INVOICE)
+				.set(INVOICE.NUMBER, invoice.getNumber() )
+				.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
+				.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+				.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoice.getId()))
+			.execute();
+		ctx.log().info("ISSUE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		generateMD5(ctx, invoice);
+		int f = ctx.getDslContext()
+			.update(FINANCE)
+			.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
+			.where(FINANCE.INVOICE.eq(invoice.getId()))
+			.execute();
+		ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
+		return invoice;
+	}
+	
+
+	
 }
 
