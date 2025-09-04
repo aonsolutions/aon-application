@@ -136,11 +136,19 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	************************************ STOCK ****
 	// 	***********************************************
-	
+
+	Stock getStock(AONContext ctx, StockFilter filter);
 	Stream<Stock> getStockStream(AONContext ctx, StockFilter filter);
 	Optional<Stock> insertStock(AONContext ctx, Stock stock);
 	Optional<Stock> updateStock(AONContext ctx, Stock stock);
 	Optional<Stock> deleteStock(AONContext ctx, Integer stockId);
+	
+	Stock saveStock(AONContext ctx, Stock stock);
+	Stock addStock(AONContext ctx, Integer itemId, Integer warehouse, double quantity);
+	Stock subtractStock(AONContext ctx, Integer itemId, Integer warehouse, double quantity);
+
+	Stock addPackageStock(AONContext ctx, Integer item, Integer warehouse);
+	void movePackageStock(AONContext ctx, Integer item, Integer sourceWarehouse, Integer destinyWarehouse);
 	
 	// 	***********************************************
 	// 	************************** CARRIER PACKING ****
@@ -172,13 +180,14 @@ public interface IWarehouse {
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration deleteElaboration(AONContext ctx, Integer id);
-	Integer insertElaborationDetail(AONContext ctx, ElaborationDetail detail);
-	ElaborationDetail updateElaborationDetail(AONContext ctx, ElaborationDetail detail);
-	ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id);
-	ElaborationDetail deleteElaborationDetail(AONContext ctx, ElaborationDetailFilter filter);
-	Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
-	ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
-	ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, ElaborationDetailCompositionFilter filter);
+	
+	ElaborationDetail saveElaborationDetail(AONContext ctx, ElaborationDetail detail, boolean updateStock);
+
+	ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id, boolean updateStock);
+	
+	Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition, boolean updateStock);
+	ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition, boolean updateStock);
+	ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, Integer id, boolean updateStock);
 	
 	Integer getElaborationNextNumber(AONContext ctx, String serie);
 

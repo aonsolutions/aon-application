@@ -17,6 +17,7 @@ export const ADD_INVEST_ASSET = 'addInvestAsset'
 export const ADD_INVOICE = 'addInvoice'
 export const ADD_PRODUCT = 'addProduct'
 export const ADD_SUPPLIER = 'addSupplier';
+export const ADD_TO_STOCK = 'addToStock';
 export const ADVANCED_BUTTON = 'advancedButton';
 export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
@@ -213,6 +214,7 @@ export const MAXLENGTH = 'maxlength';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
+export const MOVE_STOCK = 'moveStock';
 export const MSG = 'msg';
 
 // ----- N

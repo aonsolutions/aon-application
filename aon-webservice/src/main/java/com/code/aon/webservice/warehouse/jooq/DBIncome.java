@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -319,8 +320,8 @@ public class DBIncome {
 			OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getItem().getId()));
 			OldProduct product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
 			if(product.isInventoriable()){
-				Double q = AON.substractStock(domain, login, incomeDetail.get().getItem().getId(), incomeDetail.get().getQuantity(), incomeDetail.get().getWarehouse());
-				if(product.isLotable() && q == 0.0){
+				Stock stock = AON.subtractStock(domain, login, incomeDetail.get().getItem().getId(), incomeDetail.get().getQuantity(), incomeDetail.get().getWarehouse());
+				if(product.isLotable() && stock.getQuantity() == 0.0){
 					AON.deleteItem(domain.getName(), domain.getId(), login, item);
 				}
 			}
