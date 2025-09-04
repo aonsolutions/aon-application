@@ -192,26 +192,24 @@ public class DBWarehouse {
 		}
 		
 		detail.setItem(item);
-		Integer detailId = AON.insertElaborationDetail(domain.getName(), domain.getId(), login, detail);
-		detail.setId(detailId);
-		
+		ElaborationDetail detail2 = AON.saveElaborationDetail(domain.getName(), domain.getId(), login, detail);		
 		// create composition
 		AON.getItemCompositionList(domain.getName(), domain.getId(), login, baseItemId).forEach(ic -> {
 			ElaborationDetailComposition composition = new ElaborationDetailComposition();
-			composition.setElaborationDetail(detail);
+			composition.setElaborationDetail(detail2);
 			composition.setItem(new Item().setId(ic.getCompositionItemId()));
 			composition.setQuantity(detail.getQuantity()*ic.getQuantity());
 			composition.setWarehouse(detail.getWarehouse());
 			AON.insertElaborationDetailComposition(domain.getName(), domain.getId(), login, composition);
 		});
 		
-		return ToJSON.elaborationDetailToJSON(detail);
+		return ToJSON.elaborationDetailToJSON(detail2);
 	}
 	
 	public static JSONObject updateElaborationDetail(Domain domain,String login, int id, JSONObject json){
 		ElaborationDetail detail = AON.getFullElaborationDetail(domain.getName(), domain.getId(), login, id);
 		detail = getElaborationDetail(domain, login, json, detail);
-		AON.updateElaborationDetail(domain.getName(), domain.getId(), login, detail);
+		AON.saveElaborationDetail(domain.getName(), domain.getId(), login, detail);
 		return ToJSON.elaborationDetailToJSON(detail);
 	}
 	

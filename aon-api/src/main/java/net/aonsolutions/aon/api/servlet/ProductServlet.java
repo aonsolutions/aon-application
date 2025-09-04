@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.RegistryItemJSON;
+import com.esferalia.aon.occam.api.json.StockJSON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -206,7 +207,13 @@ public class ProductServlet extends AonApiHttpServlet {
 		Delivery delivery = AON.getDeliveryByPackage(api.getOccam(), item.getId());
 		if(delivery != null && delivery.getId() != null) 
 			packageJSON.put(IJsonNames.DELIVERY, DeliveryJSON.toJSON(delivery));
-		
+
+		packageJSON.put(IJsonNames.STOCK, StockJSON.toJSON(
+			AON.getStock(api.getOccam(), f ->
+				f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getItemProperty().eq(item.getId())))
+		));
+
 		return packageJSON; 
 	}
 	
@@ -221,13 +228,16 @@ public class ProductServlet extends AonApiHttpServlet {
 			Integer itemId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 			AON.deletePackage(api.getDomain(), api.getUser(), itemId);
 		} else if(JsonUtils.has(api.getData(), IJsonNames.SSCC)) {
-			String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
-			if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
-			else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+			String sscc = parseSscc(JsonUtils.getString(api.getData(), IJsonNames.SSCC));
 			AON.deletePackage(api.getDomain(), api.getUser(), sscc);			
-		} else throw new AonApiException("No se ha especificado el envase.");
-		
+		} else throw new AonApiException("No se ha especificado el envase.");		
 		return new JSONObject();
+	}
+	
+	private String parseSscc(String sscc) {
+		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+		else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+		return sscc;
 	}
 	
 	private JSONArray getBarcodeItems(AonApiData api) {
@@ -507,9 +517,7 @@ public class ProductServlet extends AonApiHttpServlet {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
 		if(JsonUtils.has(api.getData(), IJsonNames.SSCC)) {
-			String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
-			if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
-			else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+			String sscc = parseSscc(JsonUtils.getString(api.getData(), IJsonNames.SSCC));
 			filter = filter.and(f.getSerialNumberProperty().eq(sscc));
 		}
 		

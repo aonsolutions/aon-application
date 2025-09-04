@@ -57,8 +57,7 @@ export class AonMobilePackaging extends AonElement {
 		getWarehouses().then(warehouses => {
 			this.warehouses = warehouses;
 			this.build();
-		})
-
+		});
     }
 
 	initialize() {

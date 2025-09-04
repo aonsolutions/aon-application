@@ -16,6 +16,7 @@ export const DELIVERIES = `${API}/deliveries`;
 export const ELABORATION = `${API}/elaboration`;
 export const ELABORATIONS= `${API}/elaborations`;
 export const PRODUCT = `${API}/product`;
+export const PACKAGE = `${API}/package`;
 
 export const PROJECTS = `${API}/projects`;
 export const WAREHOUSES = `${API}/warehouses`;

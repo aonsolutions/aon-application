@@ -70,6 +70,20 @@ export const ADD_CREDITOR = {
     icon: MATERIAL_ICONS.ADD
 };
 
+export const ADD_TO_STOCK = {
+    id: CONSTANT.ADD_TO_STOCK.initCap(),
+    name: MSG.ADD_TO_STOCK,
+    title: MSG.ADD_TO_STOCK,
+    icon: MATERIAL_ICONS.BOX_ADD
+}
+
+export const MOVE_STOCK = {
+    id: CONSTANT.MOVE_STOCK.initCap(),
+    name: MSG.MOVE_STOCK,
+    title: MSG.MOVE_STOCK,
+    icon: MATERIAL_ICONS.BOX_EDIT
+}
+
 export const BACK = {
     id: CONSTANT.BACK.initCap(),
     name: MSG.BACK,
