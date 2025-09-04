@@ -2135,6 +2135,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.tbaiUrl = tbaiUrl;
 	}
 	
+	public boolean isIssueableToVerifactu() {
+		return !isNevv()
+			&& isVerifactu()
+			&& !isVerifactuInvoice()
+			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
+	}
 	public String getVerifactuUrl() {
 		Invoice invoice = (Invoice) this.getTo();
 		if(invoice == null || invoice.getId() == null) verifactuUrl = null;

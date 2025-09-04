@@ -42,7 +42,7 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 			if(invoice.isSales()) {
-				InvoiceDAO.issue(ctx, invoice.getId());
+				InvoiceDAO.issue(ctx, invoice );
 				if (cc.getConfig().hasCommunication() ) {
 					cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
 						

@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.event;
 import com.code.aon.AonVersion;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
@@ -23,5 +24,12 @@ public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.SALES);
 	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		SaleInvoiceController controller = (SaleInvoiceController) event.getController();
+		controller.setVerifactuStatus(null);
+	}
+	
 
 }

@@ -124,6 +124,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -1835,11 +1836,16 @@ public class InvoiceDAO {
 		
 	}
 	
-	public static Invoice issue(AONContext ctx, Integer invoiceId) {
+	public static Invoice issue(AONContext ctx, Invoice invoice) {
 		ctx.checkWrite();
-		Invoice invoice = getFullInvoice(ctx, invoiceId);
-		if (invoice == null || invoice.getId() == null) throw new AonCoreException("Factura no encontrada");
-		if (!invoice.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
+		if (invoice == null) throw new AonCoreException("Factura NULA");
+		Invoice inv = getFullInvoice(ctx, invoice.getId());
+		if (inv == null || inv.getId() == null) throw new AonCoreException("Factura no encontrada");
+		if (!inv.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
+		if ( AonObjectUtils.notEquals(inv.getSeries(),invoice.getSeries())
+		  || AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
+			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	
+		}
 		if (invoice.getNumber() < 0) {
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			Integer number = getNextNumber(ctx, types, invoice.getSeries());

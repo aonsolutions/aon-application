@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -87,12 +86,10 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -106,8 +103,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
-import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
-import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -770,6 +765,7 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		try {
 			InvoiceCommunicator.issueInvoice(communicator);
+			refresh( null );
 		} catch (Exception e) {
 			e.printStackTrace();
 			JSONObject json = InvoiceJSON.to(invoice).orElse(null);
@@ -1055,6 +1051,36 @@ public class SaleInvoiceController extends InvoiceController {
 		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
 				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
 		return info.getStatus().isAccepted();
+	}
+	
+	private InvoiceCommunicationStatus verifactuStatus;
+	public InvoiceCommunicationStatus getVerifactuStatus() {
+		if (verifactuStatus == null) {
+			Invoice inv = (Invoice) getTo();
+			InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
+					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
+			if (info != null && info.getId() != null && info.getStatus() != null) {
+				setVerifactuStatus( info.getStatus());
+			}
+			setVerifactuStatus( verifactuStatus );
+		}
+		return verifactuStatus;
+	}
+	public void setVerifactuStatus(InvoiceCommunicationStatus invoiceCommunicationStatus) {
+		this.verifactuStatus = invoiceCommunicationStatus;
+	}
+	public String getVerifactuStatusDescription() {
+		return StringUtils.upperCase(this.verifactuStatus == null ? "" : this.verifactuStatus.getDescription());
+	}
+	
+	public boolean isVerifactuAccepted() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED;		
+	}
+	public boolean isVerifactuAcceptedWithErrors() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;
+	}
+	public boolean isVerifactuWrong() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.WRONG;
 	}
 	
 	public boolean isPass() {	
