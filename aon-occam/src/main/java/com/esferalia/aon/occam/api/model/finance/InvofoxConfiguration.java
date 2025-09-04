@@ -8,6 +8,7 @@ public class InvofoxConfiguration implements Serializable{
 
 	public static final String DEFAULT_API_URL = "https://api.invofox.com";
 
+	private boolean beta;
 	private boolean personalized;
 	private String user;
 	private String pass;
@@ -18,6 +19,15 @@ public class InvofoxConfiguration implements Serializable{
 
 	private boolean autoAccept;
 	private boolean autoRecord;
+	
+	public boolean isBeta() {
+		return beta;
+	}
+	
+	public InvofoxConfiguration setBeta(boolean beta) {
+		this.beta = beta;
+		return this;
+	}
 	
 	public boolean isPersonalized() {
 		return personalized;

@@ -264,7 +264,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     protected static JSONObject loadDocuments(InvofoxConfiguration invofoxConfiguration, DocumentType type, String companyId, String loadBatchId, JSONObject clientData , String ...downloadURLs) throws URISyntaxException, IOException, InterruptedException {
-    	return Invofox.loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURLs);
+    	return Invofox.loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), DocumentType.INVOICE, companyId, loadBatchId, clientData, invofoxConfiguration.isBeta(), downloadURLs);
     }
     
     
