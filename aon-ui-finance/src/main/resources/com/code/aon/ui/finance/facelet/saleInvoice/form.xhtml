@@ -38,7 +38,7 @@
 						<aon:if test="#{saleInvoice.verifactuInvoice and !saleInvoice.recorded}"> 
 							<aon:commandButton id="verifactuInvoiceRemove"	
 								value="Anular"
-								action="#{saleInvoice.tbai}"
+								action="#{saleInvoice.verifactu}"
 								onclick="#{saveOnClick}" 
 								styleClass="aon-finding-toolbar-item aon-icon-delete"
 								reRender="showCertVerifactuAnularWindow">
@@ -61,7 +61,7 @@
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.verifactu and !saleInvoice.verifactuInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
 							<aon:commandButton id="acceptVerifactu"	
 								value="Emitir"
-								action="#{saleInvoice.tbai}"
+								action="#{saleInvoice.verifactu}"
 								onclick="#{saveOnClick}" 
 								styleClass="aon-finding-toolbar-item aon-icon-check-black"
 								reRender="showCertVerifactuWindow">

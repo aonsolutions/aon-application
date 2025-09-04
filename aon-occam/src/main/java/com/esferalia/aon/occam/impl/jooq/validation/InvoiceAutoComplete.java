@@ -113,7 +113,7 @@ public class InvoiceAutoComplete {
 				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
-			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
+			if (AonStringUtils.isBlank(inv.getReferenceCode())) {
 				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
 				if (!AonStringUtils.isBlank(inv.getSeries())) {
 					referenceCode = inv.getSeries() + "/" + referenceCode;

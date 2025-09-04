@@ -1367,7 +1367,6 @@ public class VerifactuValidation {
 	 *    devolverá un aviso de error (no generará rechazo). 
 	 */
 	private static final Consumer<AnulacionContext> ANULACION_FRA_HUELLA = a -> {
-		a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);
 		String huella = a.fra.getHuella();
 	    if (huella == null || !SHA256_PATTERN.matcher(huella).matches()) {
 	    	a.vc.addError(InvoiceCommunicationError.VERIFACTU_2000);

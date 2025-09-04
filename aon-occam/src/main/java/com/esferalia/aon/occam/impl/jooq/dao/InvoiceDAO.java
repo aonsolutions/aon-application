@@ -1840,28 +1840,33 @@ public class InvoiceDAO {
 		Invoice invoice = getFullInvoice(ctx, invoiceId);
 		if (invoice == null || invoice.getId() == null) throw new AonCoreException("Factura no encontrada");
 		if (!invoice.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
-		if(invoice.getNumber() >=0) throw new AonCoreException("Sólo se pueden emitir facturas proforma");
-		Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
-		Integer number = getNextNumber(ctx, types, invoice.getSeries());
-		invoice.setNumber(number);
-		invoice.setReferenceCode(null);
-		
-		int i = ctx.getDslContext()
-			.update(INVOICE)
-				.set(INVOICE.NUMBER, invoice.getNumber() )
-				.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
-				.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-				.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			.where(INVOICE.ID.equal( invoice.getId()))
-			.execute();
-		ctx.log().info("ISSUE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
-		generateMD5(ctx, invoice);
-		int f = ctx.getDslContext()
-			.update(FINANCE)
-			.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
-			.where(FINANCE.INVOICE.eq(invoice.getId()))
-			.execute();
-		ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
+		if (invoice.getNumber() < 0) {
+			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+			Integer number = getNextNumber(ctx, types, invoice.getSeries());
+			invoice.setNumber(number);
+			String referenceCode = AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			if (!AonStringUtils.isBlank(invoice.getSeries())) {
+				referenceCode = invoice.getSeries() + "/" + referenceCode;
+			}
+			invoice.setReferenceCode(referenceCode);
+			
+			int i = ctx.getDslContext()
+					.update(INVOICE)
+					.set(INVOICE.NUMBER, invoice.getNumber() )
+					.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
+					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.where(INVOICE.ID.equal( invoice.getId()))
+					.execute();
+			ctx.log().info("ISSUE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+			generateMD5(ctx, invoice);
+			int f = ctx.getDslContext()
+					.update(FINANCE)
+					.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
+					.where(FINANCE.INVOICE.eq(invoice.getId()))
+					.execute();
+			ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
+		}
 		return invoice;
 	}
 	

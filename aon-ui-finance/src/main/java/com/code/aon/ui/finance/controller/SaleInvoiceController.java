@@ -876,6 +876,11 @@ public class SaleInvoiceController extends InvoiceController {
 		anular = false;
 	}
 	
+	public void verifactu() {
+		lroe = false;
+		anular = false;
+	}
+
 	public void lroe() {
 		lroe = true;
 		anular = false;
