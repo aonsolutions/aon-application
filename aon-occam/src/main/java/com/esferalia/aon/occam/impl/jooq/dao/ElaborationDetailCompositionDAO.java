@@ -94,7 +94,7 @@ public class ElaborationDetailCompositionDAO {
 	}
 	
 	public static int insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition elaborationDetailComposition) {
-		return insertElaborationDetailComposition(ctx, elaborationDetailComposition);
+		return insertElaborationDetailComposition(ctx, elaborationDetailComposition, false);
 	}
 
 	
