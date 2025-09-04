@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
 import net.aonsolutions.db.up2date.tgss.BaseCgpMin2025Fix;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix510;
 
 public class Up2Date {
 
@@ -556,7 +557,8 @@ public class Up2Date {
 			// TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
 			// AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
 			// InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
-			BaseCgpMin2025Fix.BASECGPMIN2025FIX,
+			// BaseCgpMin2025Fix.BASECGPMIN2025FIX,
+			RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
