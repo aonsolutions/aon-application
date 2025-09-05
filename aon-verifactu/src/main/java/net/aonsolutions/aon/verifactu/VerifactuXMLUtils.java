@@ -66,7 +66,8 @@ class VerifactuXMLUtils {
 	private static final String SOAP_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
 	private static final String FAULT_ELEMENT = "Fault";
 	private static final String FAULTSTRING2_ELEMENT = "faultstring";
-
+	private static final Pattern FAULT_STRING = Pattern.compile("Codigo\\[(\\d+)\\]");
+	
 	private VerifactuXMLUtils() {
 		
 	}
@@ -144,12 +145,11 @@ class VerifactuXMLUtils {
 	        if (faults.getLength() > 0) {
 	            Element faultElem = (Element) faults.item(0);
 	            String faultString = faultElem.getElementsByTagName(FAULTSTRING2_ELEMENT).item(0).getTextContent();
-	            Pattern p = Pattern.compile("Codigo\\[(\\d+)\\]");
-	            Matcher m = p.matcher(faultString);
-	            if (m.find()) {
-	                String numero = m.group(1); 
-	                InvoiceCommunicationException e = InvoiceCommunicationError.safeValueof(numero)
-	                	.map(ex -> new InvoiceCommunicationException( ex ))
+	            Matcher matcher = FAULT_STRING.matcher(faultString);
+	            if (matcher.find()) {
+	                String number = matcher.group(1); 
+	                InvoiceCommunicationException e = InvoiceCommunicationError.safeValueof(number)
+	                	.map(InvoiceCommunicationException::new)
 	                	.orElse(null);
 	                if (e != null) throw e;
 	            }	            
@@ -223,5 +223,4 @@ class VerifactuXMLUtils {
 			return true;
 		}
 	}
-
 }

@@ -1162,39 +1162,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		try {
 			InvoiceCommunicator.acceptInvoice(communicator);
 		} catch (Exception e) {
-			JSONObject json = InvoiceJSON.to(invoice).orElse(null);
-			if (rawdocId != null && json != null && invoice.hasMessages()) {
-				List<InvoiceError> errors = invoice.messageStream()
-					.collect(Collectors.toCollection(LinkedList::new));
-				e.printStackTrace();
-				throw new InvoiceErrorException(errors);
-			}
-			
-			// Para evitar recursividad --- 
-			Set<Throwable> visited = new HashSet<>();
-			Throwable current = e;
-			while (current != null && !visited.contains(current)) {
-				visited.add(current);
-				current = current.getCause();
-			}
-			// ------------------------------			
-			e.printStackTrace();
-			InvoiceErrorException ti = AonCollectionUtils.stream(visited)
-				.filter( InvoiceCommunicationException.class::isInstance )
-				.map(ex -> (InvoiceCommunicationException) ex)
-				.map(ice -> 
-					AonCollectionUtils.stream(ice.getMessages())
-						.map(icm -> InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,icm.getCode(),icm.getMessage()) )
-						.collect(Collectors.toCollection(LinkedList::new))
-					)
-				.map( es -> new InvoiceErrorException(es) )
-				.findFirst()
-				.orElse( new InvoiceErrorException(InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,"",e.getMessage())))
-			;
-			System.out.println("***************");
-			System.out.println("***************");
-			ti.printStackTrace();
-			throw ti;
+			InvoiceCommunicator.throwRightException( e, invoice  );
 		}
 		return getInvoice(api.getDomain(), api.getUser().getLogin(), invoice.getId(), invoice.messageStream().toList());
 	}

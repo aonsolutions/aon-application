@@ -88,10 +88,8 @@
 										value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
-						<!-- 
-						<aon:if test="#{!saleInvoice.issueableToVerifactu}">
-						-->
-						<aon:if test="#{!saleInvoice.nevv and saleInvoice.verifactu and !saleInvoice.verifactuInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}">
+
+							<aon:if test="#{!saleInvoice.nevv and saleInvoice.verifactu and !saleInvoice.verifactuInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}">
 							<aon:commandButton id="acceptVerifactu"	
 								value="Emitir"
 								action="#{saleInvoice.verifactu}"
@@ -425,53 +423,70 @@
 				</aon:if>			
 				<aon:if test="#{!saleInvoice.nevv}">
 					<!-- ************************* VERIFACTU INFO ************************* -->				
-					<aon:if test="#{saleInvoice.verifactuInvoice}">
-						<aon:div styleClass="aon-margin-top aon-margin-bottom" style="padding-left: 15px;">
-							<aon:outputText value="Veri*Factu"
-								style="padding-left: 20px;"
-								styleClass="aon-icon-aeat aon-bold"
-							/>
+					<aon:if test="#{saleInvoice.verifactu}">
+						<aon:panelGrid id="verifactuBlock" columns="5" 
+						styleClass="aon-width-all aon-margin-top aon-margin-bottom"
+						columnClasses="
+							 aon-width-40
+							,aon-width-100
+							,aon-width-150
+							,aon-width-auto">
 							
-							<aon:outputLink id="verifactuUrl"	
-								target="_blank" 
-								value="#{saleInvoice.verifactuUrl}"
-								style="margin-left: 50px"
-								styleClass="aon-finding-toolbar-item aon-icon-check-blue">
-								Comprobar
-							</aon:outputLink>
+							<aon:div styleClass="aon-icon-aeat" style="background-size: cover; background-position: center center; height: 30px;">
+								<aon:outputText value="" style="padding-left: 20px;"/>
+							</aon:div>
 							
+							<aon:div style="padding: 0px 5px; border: solid #3a85c3 0.5px; height: 30px; line-height: 30px; background-color: #3a85c3;">
+								<aon:outputText value="Veri*Factu" styleClass="aon-bold" style="color: white; font-size: 1.5em;"/>
+							</aon:div>
+							 
+							<aon:div style="padding: 0px 5px; height: 30px; line-height: 30px; text-align: center middle;">
+								<aon:if test="#{saleInvoice.verifactuAccepted}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-green"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuAcceptedWithErrors}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-yellow"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuWrong}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px; color: red;"
+										styleClass="aon-bold aon-icon-point-red"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuNoStatus}">
+									<aon:outputText value="SIN ESTADO"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-orange"
+									/>
+								</aon:if>
+							</aon:div>
+							
+							<aon:div  style="padding: 0 5px; border: solid #3a85c3 0.5px; height: 30px; display: flex; align-items: center; gap: 5px;">
+								<aon:commandButton id="verifactuInfo"	
+									value="Envíos realizados"
+									style="margin-left: 10px;"
+									styleClass="aon-icon-commandButton aon-icon-category"
+									reRender="showVerifactuWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showVerifactuWindow}" value="#{true}" />							
+								</aon:commandButton>
 								
-							<aon:commandButton id="verifactuInfo"	
-								value="Envíos VERI*FACTU"
-								style="margin-left: 50px"
-								styleClass="aon-finding-toolbar-item aon-icon-category"
-								reRender="showVerifactuWindow">
-								<f:setPropertyActionListener target="#{saleInvoice.showVerifactuWindow}" value="#{true}" />							
-							</aon:commandButton>
-					
-							<aon:if test="#{saleInvoice.verifactuAccepted}">
-								<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
-									style="padding-left: 20px; margin-left: 50px;"
-									styleClass="aon-bold aon-icon-point-green"
-								/>
-							</aon:if>
-							<aon:if test="#{saleInvoice.verifactuAcceptedWithErrors}">
-								<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
-									style="padding-left: 20px; margin-left: 50px;"
-									styleClass="aon-bold aon-icon-point-yellow"
-								/>
-							</aon:if>
-							<aon:if test="#{saleInvoice.verifactuWrong}">
-								<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
-									style="padding-left: 20px; margin-left: 50px; color: red;"
-									styleClass="aon-bold aon-icon-point-red"
-								/>
-							</aon:if>
-							
-							
-									
-							
-						</aon:div>
+								<aon:if test="#{saleInvoice.verifactuInvoice}">		
+									<aon:outputLink id="verifactuUrl"	
+										target="_blank" 
+										value="#{saleInvoice.verifactuUrl}"
+										style="margin-left: 10px;"
+										styleClass="aon-icon-commandButton aon-icon-check-blue">
+										Comprobar factura
+									</aon:outputLink>
+								</aon:if>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:if>
 							
 	

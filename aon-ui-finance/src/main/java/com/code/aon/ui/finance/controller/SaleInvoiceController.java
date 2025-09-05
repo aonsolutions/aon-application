@@ -90,6 +90,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -767,24 +768,24 @@ public class SaleInvoiceController extends InvoiceController {
 			InvoiceCommunicator.issueInvoice(communicator);
 			refresh( null );
 		} catch (Exception e) {
-			e.printStackTrace();
-			JSONObject json = InvoiceJSON.to(invoice).orElse(null);
-			if (json != null && invoice.hasMessages()) {
-				invoice.messageStream()
-					.map(m -> m.getMessage())
-					.forEach( AonUtil::addErrorMessage );
-			} else {
+			
+			try {
+				InvoiceCommunicator.throwRightException(e, invoice);
 				AonUtil.addErrorMessage(e.getMessage());
+			} catch (InvoiceErrorException e1) {
+				AonCollectionUtils.stream(e1.getMessages())
+					.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
 			}
-			throw new AbortProcessingException();
 		}
 	}
 
 	private void updateFinances(String domainName, String login, com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
-		invoice.getFinances().stream().forEach(finance -> {
-			finance.setConcept(invoice.getDocumentNumber());
-			AON.saveFinance(domainName, invoice.getDomain(), login, finance);
-		});
+		invoice.financeStream()
+			.forEach(finance -> {
+				finance.setConcept(invoice.getDocumentNumber());
+				AON.saveFinance(domainName, invoice.getDomain(), login, finance);
+			}
+		);
 	}
 	
 	private void tbaiValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
@@ -893,7 +894,7 @@ public class SaleInvoiceController extends InvoiceController {
 		resetTo();
 	}
 
-	private void anularInvoice() {
+	public String onAnularVerifactu() {
 		if(isVerifactuInvoice()) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
@@ -913,33 +914,26 @@ public class SaleInvoiceController extends InvoiceController {
 				.setCompany(company);
 			try {
 				InvoiceCommunicator.cancelInvoice(communicator);
+				initializeModel();
+				resetTo();
+				return backAction();
 			} catch (Exception e) {
-				e.printStackTrace();
-				JSONObject json = InvoiceJSON.to(invoice).orElse(null);
-				if (json != null && invoice.hasMessages()) {
-					invoice.messageStream()
-						.map(m -> m.getMessage())
-						.forEach( AonUtil::addErrorMessage );
-				} else {
+				try {
+					InvoiceCommunicator.throwRightException(e, invoice);
 					AonUtil.addErrorMessage(e.getMessage());
+				} catch (InvoiceErrorException e1) {
+					AonCollectionUtils.stream(e1.getMessages())
+						.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
 				}
-				throw new AbortProcessingException();
+				return null;
 			}
-			
-//			VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
-//			verifactuConfiguration.setCertificate(getCertData());
-//			try {
-//				CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
-//						new CancelInvoiceCommunicationTypeVisitor(company.getDomain(), new User().setLogin(login), invoice)
-//							.setCompany(company)
-//							.setVerifactuConfiguration(verifactuConfiguration);
-//
-//				InvoiceCommunicationType.VERIFACTU.visit(visitor);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				AonUtil.addErrorMessage(e.getMessage());
-//			}
-		} else if(isTbaiInvoice()) {
+		} else {
+			throw new AbortProcessingException("La factura no es Verifactu");
+		}
+	}
+	
+	private void anularInvoice() {
+		if(isTbaiInvoice()) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -1073,6 +1067,9 @@ public class SaleInvoiceController extends InvoiceController {
 		return StringUtils.upperCase(this.verifactuStatus == null ? "" : this.verifactuStatus.getDescription());
 	}
 	
+	public boolean isVerifactuNoStatus() {
+		return getVerifactuStatus() == null;		
+	}
 	public boolean isVerifactuAccepted() {
 		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED;		
 	}

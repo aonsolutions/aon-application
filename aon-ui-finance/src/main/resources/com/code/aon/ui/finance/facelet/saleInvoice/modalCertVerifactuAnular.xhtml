@@ -38,9 +38,10 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="certVerifactuAnularAccept"	
 											value="Anular"
-											actionListener="#{saleInvoice.onAnular}"
-											action="#{saleInvoice.backAction}"
-											styleClass="aon-finding-toolbar-item aon-icon-delete">											
+											action="#{saleInvoice.onAnularVerifactu}"
+											styleClass="aon-finding-toolbar-item aon-icon-delete"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
 												<rich:componentControl for="fiscalCertVerifactuAnularModalPanel"
 													event="onclick" operation="hide"/>		
 												<f:setPropertyActionListener
