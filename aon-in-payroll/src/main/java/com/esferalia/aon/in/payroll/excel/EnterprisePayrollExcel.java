@@ -2299,11 +2299,10 @@ public class EnterprisePayrollExcel {
 					.mapToDouble(Embargo::getAmount).sum();
 			// PICKING UP COSTS
 			Double cgcEnterprise = s.getCosts().stream()
-					.filter(c -> c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
+					.filter(c -> c != null && c.getCostType() != null && c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
 					.mapToDouble(Cost::getAmount).sum();
 			Double cgpEnterprise = s.getCosts().stream()
-					.filter(c -> c.getCostType().ordinal() == DeductionType.IT.ordinal()
-					|| c.getCostType().ordinal() == DeductionType.IMS.ordinal())
+					.filter(c -> c != null && c.getCostType() != null && ( c.getCostType().ordinal() == DeductionType.IT.ordinal() || c.getCostType().ordinal() == DeductionType.IMS.ordinal() ) )
 					.mapToDouble(Cost::getAmount).sum();
 			
 			Double unemploymentEnterprise = s.getCosts().stream()
@@ -2316,10 +2315,10 @@ public class EnterprisePayrollExcel {
 					.filter(c -> c != null && c.isFogasa())
 					.mapToDouble(Cost::getAmount).sum();
 			Double estrucEnterprise = s.getCosts().stream()
-					.filter(c -> c != null && c.getCostType().equals(DeductionType.STRUCTURAL_OVERTIME))
+					.filter(c -> c != null && c.getCostType() != null && c.getCostType().equals(DeductionType.STRUCTURAL_OVERTIME))
 					.mapToDouble(Cost::getAmount).sum();
 			Double noEstrucEnterprise = s.getCosts().stream()
-					.filter(c -> c.getCostType().equals(DeductionType.NON_STRUCTURAL_OVERTIME))
+					.filter(c -> c != null && c.getCostType() != null && c.getCostType().equals(DeductionType.NON_STRUCTURAL_OVERTIME))
 					.mapToDouble(Cost::getAmount).sum();
 			
 			Double itCompensation = s.getCosts().stream()

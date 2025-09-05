@@ -216,13 +216,18 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration -> 
 				WarehouseDAO.getDepartmentList(ctx, workplaceId, filter));
 	}
+
+	@Override
+	public Stock getStock(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			StockDAO.get(ctx, filter));
+	}
 	
 	@Override
 	public Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
 			StockDAO.getStream(ctx, filter));
 	}
-
 
 	@Override
 	public Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
@@ -353,28 +358,17 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ElaborationDAO.getElaborationDetailList(ctx, filter));
 	}
-	
+
 	@Override
-	public Integer insertElaborationDetail(AONContext ctx, ElaborationDetail detail) {
+	public ElaborationDetail saveElaborationDetail(AONContext ctx, ElaborationDetail detail, boolean updateStock) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.insertElaborationDetail(ctx, detail));
+			ElaborationDetailDAO.save(ctx, detail, updateStock));
 	}
 	
 	@Override
-	public ElaborationDetail updateElaborationDetail(AONContext ctx, ElaborationDetail detail) {
+	public ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id, boolean updateStock) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.updateElaborationDetail(ctx, detail));
-	}
-	
-	@Override
-	public ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id) {
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDetailDAO.delete(ctx, id));
-	}
-	@Override
-	public ElaborationDetail deleteElaborationDetail(AONContext ctx, ElaborationDetailFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDetailDAO.delete(ctx, filter));
+			ElaborationDetailDAO.delete(ctx, id, updateStock));
 	}
 
 	// ---------- ELABORATION DETAIL COMPOSITION
@@ -386,32 +380,32 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
-	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
-		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, id));
+	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer elaborationDetailId){
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ElaborationDetailCompositionDAO.getListByElaborationDetail(ctx, elaborationDetailId));
 	}
 	@Override
 	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, filter));
+			ElaborationDetailCompositionDAO.getList(ctx, filter));
 	}
 	
 	@Override
-	public Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition) {
+	public Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition, boolean updateStock) {
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, composition));
+			ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, composition));
 	}
 	
 	@Override
-	public ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition) {
+	public ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition, boolean updateStock) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDetailCompositionDAO.updateElaborationDetailComposition(ctx, composition));
+			ElaborationDetailCompositionDAO.updateElaborationDetailComposition(ctx, composition, updateStock));
 	}
 
 	@Override
-	public ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, ElaborationDetailCompositionFilter filter) {
+	public ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, Integer id, boolean updateStock) {
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDetailCompositionDAO.deleteElaborationDetailComposition(ctx, filter));
+			ElaborationDetailCompositionDAO.deleteElaborationDetailComposition(ctx, id, updateStock));
 	}
 	
 	// ---------- ELABORATION PACKAGE
@@ -468,6 +462,14 @@ public class WarehouseImpl implements IWarehouse {
 	}
 
 	@Override
+	public Optional<Income> deleteIncome(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		IncomeDAO.deleteIncome(ctx, id));
+	}
+
+	// -------------------------- STOCK
+	
+	@Override
 	public Optional<Stock> insertStock(AONContext ctx, Stock stock) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			StockDAO.insert(ctx, stock));
@@ -484,11 +486,35 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		StockDAO.delete(ctx, stockId));
 	}
+	
+	@Override
+	public Stock saveStock(AONContext ctx, Stock stock) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			StockDAO.save(ctx, stock));
+	}
+	
+	@Override
+	public Stock addPackageStock(AONContext ctx, Integer item, Integer warehouse) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PackagingDAO.addPackageStock(ctx, item, warehouse));
+	}
+	
+	@Override
+	public void movePackageStock(AONContext ctx, Integer item, Integer sourceWarehouse, Integer destinyWarehouse) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.movePackageStock(ctx, item, sourceWarehouse, destinyWarehouse));
+	}
+	
+	
+	@Override
+	public Stock addStock(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			StockDAO.add(ctx, itemId, warehouse, quantity));
+	}
 
 	@Override
-	public Optional<Income> deleteIncome(AONContext ctx, Integer id) {
-		return ctx.getDslContext().transactionResult(configuration ->
-		IncomeDAO.deleteIncome(ctx, id));
+	public Stock subtractStock(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			StockDAO.subtract(ctx, itemId, warehouse, quantity));
 	}
 	
 	// -------------------------- DELIVERY
@@ -598,4 +624,5 @@ public class WarehouseImpl implements IWarehouse {
 	public void adjustPackageComposition(AONContext ctx, ItemComposition ic) {
 		ctx.getDslContext().transaction(configuration -> PackagingDAO.adjustPackageComposition(ctx, ic));
 	}
+
 }

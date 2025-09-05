@@ -41,6 +41,8 @@ public class InvofoxConfigurationDAO {
 				invofoxConfiguration.setAutoRecord(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_PERSONALIZED.toString())) {
 				invofoxConfiguration.setPersonalized(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_BETA.toString())) {
+				invofoxConfiguration.setBeta(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
 			}
 		});
 

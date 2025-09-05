@@ -26,6 +26,7 @@ export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
 export const ADD_TYPE = 'Mota Gehitu';
+export const ADD_TO_STOCK = 'Stock-era gehitu';
 export const ADDITIONAL_HIRING = "Gehigarrizko kontratazioa";
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
