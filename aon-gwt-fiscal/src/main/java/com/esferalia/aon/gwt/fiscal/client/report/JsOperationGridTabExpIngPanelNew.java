@@ -25,7 +25,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanelNew {
 			.addCell(new Label("Serie"), AON.CSS.aonWidth60())
 			.addCell(new Label("N\u00FAmero Fra."), AON.CSS.aonWidth80())
 			.addCell(new Label("NIF Destinatario"), AON.CSS.aonWidth80())
-			.addCell(new Label("Nombre Destinatario"), AON.CSS.aonWidthAuto())
+			.addCell(new Label(getParams().getBookType() == 0 ? "Nombre Destinatario" : "Nombre Destinatario / Descripci\u00F3n"), AON.CSS.aonWidthAuto())
 			.addCell(new Label("Base Imp."), AON.CSS.aonWidth80())		
 			.addCell(new Label("% IVA."), AON.CSS.aonWidth40())
 			.addCell(new Label("Cuota IVA."), AON.CSS.aonWidth80())

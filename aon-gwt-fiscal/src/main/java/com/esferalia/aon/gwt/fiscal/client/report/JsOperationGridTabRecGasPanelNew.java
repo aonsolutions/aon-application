@@ -25,7 +25,7 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 			.addCell(new Label("N\u00FAmero Fra."), AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00FAmero Recepci\u00F3n"), AON.CSS.aonWidth80())
 			.addCell(new Label("NIF Expedidor"), AON.CSS.aonWidth80())
-			.addCell(new Label("Nombre Expedidor"), AON.CSS.aonWidthAuto())
+			.addCell(new Label(getParams().getBookType() == 0 ? "Nombre Expedidor" : "Nombre Expedidor / Descripci\u00F3n"), AON.CSS.aonWidthAuto())
 			.addCell(new Label("Base Imp."), AON.CSS.aonWidth80())		
 			.addCell(new Label("% IVA."), AON.CSS.aonWidth40())
 			.addCell(new Label("Cuota IVA. Soportado"), AON.CSS.aonWidth80())

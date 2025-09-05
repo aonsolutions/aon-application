@@ -91,6 +91,7 @@ public class AccountingOperationNewDAO {
 	 	,INVOICE.WITHHOLDING_FARMER	
 	 	,INVOICE.VAT_ACCRUAL_PAYMENT
 	 	,INVOICE.RECTIFICATION_TYPE
+	 	,INVOICE_DETAIL.TAXABLE_BASE
 	 	,INVOICE_TAX.BASE				
 	 	,INVOICE_TAX.PERCENTAGE		
 		,INVOICE_TAX.QUOTA				
@@ -207,13 +208,18 @@ public class AccountingOperationNewDAO {
 	
 	// Facturas 
 	private static SelectOnConditionStep<Record> getSelectFac(AONContext ctx) {
+
+		// SE HACE UN LEFT JOIN CON INVOIVE_TAX, PARA QUE SALGAN LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, PUES 
+		// ACTUALMENTE NO CREAN REGISTRO EN INVOICE_TAX Y SI SE HACE UN INNER JOIN NO SALDRIAN
+
 		return ctx.getDslContext()
 			.select(SELECT_FIELDS_FAC)
 			.from(INVOICE_DETAIL)
 			.join(INVOICE).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value())))
+//			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value())))
 			.join(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) // Facturas contabilizadas
 			.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+			.leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value())))
 			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
@@ -289,8 +295,8 @@ public class AccountingOperationNewDAO {
 		
 		// Condicion completa
 		Condition condition = INVOICE_DETAIL.DOMAIN.equal(ctx.getDomainId())
-//						.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
-						.and(condition1.or(condition2));
+							.and(INVOICE_DETAIL.PREPAYMENT.equal((byte) 0)) // Lineas que no son suplidos (SI SE HACE LEFT JOIN CON INVOICE_TAX)
+							.and(condition1.or(condition2));
 		
 		if (params.getActivity() != null) {
 			condition = condition.and(INVOICE.ACTIVITY.eq( params.getActivity()));
@@ -300,6 +306,12 @@ public class AccountingOperationNewDAO {
 			condition = condition.and(INVOICE.TYPE.eq(InvoiceType.SALES.value())); // Ventas
 		else 
 			condition = condition.and(INVOICE.TYPE.ne(InvoiceType.SALES.value())); // Resto (Compras, Gastos, No deducibles)
+		
+		// SI SE HACE LEFT JOIN CON INVOICE_TAX EN EL LIBRO DE IVA NO SALDRAN LOS GASTOS NO DEDUCIBLES EN IVA (AUNQUE ESTO IGUAL DEPENDE DE QUE SE INTRODUZCA EN ESA GESTION)
+		// Libro de IVA (RECIBIDAS): No salen las facturas que son Gastos No Deducibles
+		if (params.getBookType() == 0 && params.getTabType() == 1) {
+			condition = condition.and(INVOICE.TYPE.ne(InvoiceType.UNDEDUCTIBLE.value()));
+		}
 		
 		// Libro de IRPF: No salen las facturas que no son de cuentas del grupo 6 o 7
 		if (params.getBookType() == 1) {
@@ -381,11 +393,6 @@ public class AccountingOperationNewDAO {
 		@Override
 		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
 			
-			// FALTA - HACIENDOLO ASI, NO SALEN LAS FACTURAS DE GASTO NO DEDUCIBLES, PUES NO CREAN REGISTRO EN INVOICE_TAX
-			// SE PODRIA HACER AQUI HACIENDO UN LEFT JOIN DE INVOICE_TAX Y TENIENDOLO EN CUENTA EN LA LECTURA DE LOS DATOS 
-			// O BIEN LEER LA FACTURA CUANDO SE LEEN LOS ASIENTOS, PERO ENTONCES HABRIA QUE HACER UN JOIN DESDE EL APUNTE 
-			// HASTA LA LINEA DE FACTURA QUE AHORA NO SE SI SE PUEDE
-			
 			isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
 			invoiceTransactionType = InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION));
 			isIntracommunity = (invoiceTransactionType == InvoiceTransactionType.INTRACOMMUNITY);
@@ -408,7 +415,9 @@ public class AccountingOperationNewDAO {
 			boolean isp = !isSales && isIsp; // ISP Recibidas
 			
 			String conceptCode = getConceptCode(rec.getValue(accountCode));
-			double conceptAmount = rec.getValue(INVOICE_TAX.BASE);
+			// LA BASE SE COGE DE INVOICE_DETAIL, PORQUE LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, NO CREAN REGISTRO EN INVOICE_TAX
+//			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
+			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
 			
 			// Libro Unificado de IVA e IRPF: Facturas cuya cuenta no es 7 o 6, el ingreso o gasto es cero y no lleva concepto
 			if (params.getBookType() == 2) {
@@ -422,7 +431,9 @@ public class AccountingOperationNewDAO {
 			}
 			
 			// Total factura = base + IVA + REQ (excepto recibidas ISP o intracomunitarias o UOSS)
-			double total = isp || isIntracommunity || isVatUnion ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE_TAX.BASE)+getQuota(rec)+getSurchargeQuota(rec);
+//			double base = rec.getValue(INVOICE_TAX.BASE);
+			double base = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
+			double total = isp || isIntracommunity || isVatUnion ? base : base + getQuota(rec) + getSurchargeQuota(rec);
 			
 			// Datos del bien afecto (Arrendamientos)
 			// Se considera arrendamiento si Emitidas con clave de operación 11, 12 O 13, Recibidas con clave de operación 12, o Actvidad A01 o D
@@ -500,11 +511,11 @@ public class AccountingOperationNewDAO {
 				.setInvestment(investment) 													// Bien de Inversión (Recibidas)
 				.setIsp(isp) 																// Inversión del Sujeto Pasivo (Recibidas)
 				.setTotal(total )															// Total Factura (Base + IVA + REQ)	
-				.setBase(rec.getValue(INVOICE_TAX.BASE))               						// Base Imponible	
-				.setPercent(isVatUnion ? 0.0 : rec.getValue(INVOICE_TAX.PERCENTAGE))        // Tipo de IVA (porcentaje)	
+				.setBase(base)               												// Base Imponible	
+				.setPercent(isVatUnion ? 0.0 : AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.PERCENTAGE))) // Tipo de IVA (porcentaje)	
 				.setQuota(isVatUnion ? 0.0 : getQuota(rec))	           						// Cuota IVA Repercutido/Soportado
 				.setDeductibleQuota(isSales ? 0.0 : getDeductibleQuota(rec))    			// Cuota Deducible (Recibidas)
-				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE))	   				// Tipo de Recargo Eq. (porcentaje)	
+				.setSurchargePercent(AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE))) // Tipo de Recargo Eq. (porcentaje)	
 				.setSurchargeQuota(getSurchargeQuota(rec))     								// Cuota Recargo Eq.	
 				.setPayDate(null) 															// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
 				.setPayAmount(0.0) 															// Importe Cobro/Pago
@@ -521,29 +532,29 @@ public class AccountingOperationNewDAO {
 		}
 
 		private double getQuota(Record rec) {
-			double quota = rec.getValue(INVOICE_TAX.QUOTA);
+			double quota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.QUOTA));
 			if (AonMathUtils.isZero(quota)) {
-				double base = rec.getValue(INVOICE_TAX.BASE);
-				double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+				double base = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
+				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.PERCENTAGE));
 				quota = AonMathUtils.round(base * percent / 100);
 			}
 			return quota;
 		}
 
 		private double getSurchargeQuota(Record rec) {
-			double quota = rec.getValue(INVOICE_TAX.SURCHARGE_QUOTA);
+			double quota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE_QUOTA));
 			if (AonMathUtils.isZero(quota)) {
-				double base = rec.getValue(INVOICE_TAX.BASE);
-				double percent = rec.getValue(INVOICE_TAX.SURCHARGE);
+				double base = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
+				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE));
 				quota = AonMathUtils.round(base * percent / 100);
 			}
 			return quota;
 		}
 		
 		private double getDeductibleQuota(Record rec) {
-			double dedQuota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
+			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			if (AonMathUtils.isZero(dedQuota)) {
-				double percent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
+				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT));
 				double quota = getQuota(rec);
 				if (AonMathUtils.isZero(percent) || percent == 100) {
 					dedQuota = quota;
@@ -760,9 +771,8 @@ public class AccountingOperationNewDAO {
 			// CALIFICADOR DE LA OPERACION Y OPERACION EXENTA NO PUEDEN ESTAR VACIOS LOS DOS (LE PONGO EXENTA E6)
 			String exemptOperation = isIncomes ? "E6" : "";
 			
-			// FALTA - ME PIDE IDENTIFICAR AL EXPEDIDOR EN LOS GASTOS - LE PONGO EL CONCEPTO EN EL NOMBRE, SIGUE DANDO ERROR, QUIERE DECIR QUE LE TENGO QUE PONER EL NIF?, PERO QUE NIF LE PONGO SI SON APUNTES?
-//			String name = isIncomes ? "" : rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT);
-			String name = "";
+			// FALTA - LE PONGO EL CONCEPTO EN EL NOMBRE, PERO LA VALIDACION ME PIDE IDENTIFICAR AL EXPEDIDOR EN LOS GASTOS, QUIERE DECIR QUE LE TENGO QUE PONER EL NIF?, PERO QUE NIF LE PONGO SI SON APUNTES?
+			String name = rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT); 
 			
 			// LA FECHA DE RECEPCION EN LOS GASTOS ES OBLIGATORIA AUNQUE SEA EXCLUSIVA DEL LIBRO DE IVA (LE PONGO LA FECHA DEL ASIENTO)
 			Date receptionDate = isIncomes ? null : rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE);
