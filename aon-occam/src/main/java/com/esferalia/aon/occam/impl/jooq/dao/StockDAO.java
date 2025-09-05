@@ -83,7 +83,12 @@ public class StockDAO {
 		return stock;
 	}
 	
-	public static void add(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
+	public static void move(AONContext ctx, Integer itemId, Integer sourceWarehouse, Integer destinyWarehouse, double quantity) {
+		subtract(ctx, itemId, sourceWarehouse, quantity);
+		add(ctx, itemId, destinyWarehouse, quantity);
+	}
+
+	public static Stock add(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
 		Optional<Stock> stockOptional = opt(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getItemProperty().eq(itemId))
 			.and(f.getWarehouseProperty().eq(warehouse)));
@@ -98,10 +103,15 @@ public class StockDAO {
 			stock = stockOptional.get();
 			stock.setQuantity(stock.getQuantity() + quantity);
 		}
-		save(ctx, stock);
+		
+		if(stock.getQuantity() != 0.0) {
+			stock = save(ctx, stock);
+		} else delete(ctx, stock.getId());
+		
+		return stock;
 	}
 	
-	public static void subtract(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
+	public static Stock subtract(AONContext ctx, Integer itemId, Integer warehouse, double quantity) {
 		Optional<Stock> stockOptional = opt(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getItemProperty().eq(itemId))
 			.and(f.getWarehouseProperty().eq(warehouse)));
@@ -116,7 +126,12 @@ public class StockDAO {
 			stock = stockOptional.get();
 			stock.setQuantity(stock.getQuantity() - quantity);
 		}
-		save(ctx, stock);
+		
+		if(stock.getQuantity() != 0.0) {
+			stock = save(ctx, stock);
+		} else delete(ctx, stock.getId());
+		
+		return stock;
 	}
 	
 	private static class StockFiller extends Filler implements Function<Record, Stock> {

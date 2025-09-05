@@ -3178,6 +3178,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		assertText("cgc_e_tempPercentLabel", "3,26 %");
 		click("costsCheck-input");
+		
+		draft("INTERINIDAD, PARCIAL");
+		calculate(Calendar.SEPTEMBER,2025);
+		click("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		click("costsCheck-input");
+		
+		
 	}
 
 	// -------------------------------------------------------------------------

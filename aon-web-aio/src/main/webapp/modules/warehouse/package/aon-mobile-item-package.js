@@ -14,7 +14,7 @@ import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { ToolbarType } from '../../../models/enums.js';
 import { createCard, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
 import { round } from '../../../services/utils.js';
-import { adjustComposition, deletePackage } from '../../../services/warehouseService.js';
+import { addPackageStock, adjustComposition, deletePackage, getWarehouses, movePackageStock, saveStock } from '../../../services/warehouseService.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 
 
@@ -30,7 +30,8 @@ export class AonMobileItemPackage extends AonElement {
 	PACKAGE_QUANTITY;
 	PACKAGE_SERIAL_NUMBER;
 	PACKAGE_SERIAL_DATE;
-	PACKAGE_COMPOSITION_TABLE
+	PACKAGE_COMPOSITION_TABLE;
+	PACKAGE_WAREHOUSE;
 
 	COMPOSITION;
 	COMPOSITION_CARD;
@@ -83,6 +84,7 @@ export class AonMobileItemPackage extends AonElement {
 		this.PACKAGE_SERIAL_NUMBER = this.id + 'SerialNumber';
 		this.PACKAGE_SERIAL_DATE = this.id + 'SerialDate';
 		this.PACKAGE_COMPOSITION_TABLE = this.id + 'CompositionTable';
+		this.PACKAGE_WAREHOUSE = this.id + 'Warehouse';
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
@@ -114,7 +116,12 @@ export class AonMobileItemPackage extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = MSG.PACKAGE; 
 		this.appendChild(toolbar);
-		if(!this.itemPackage.delivery && this.itemPackage.status === 'ACTIVE') 
+
+		if(!this.itemPackage.stock || this.itemPackage.stock.quantity == 0) {
+			toolbar.addButton2(ACTION.ADD_TO_STOCK, () => this.addToStock());
+		} else toolbar.addButton2(ACTION.MOVE_STOCK, () => this.moveToWarehouse());
+
+		if(!this.itemPackage.delivery && this.itemPackage.status === 'ACTIVE')
 			toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(this.back) toolbar.addButton2(ACTION.BACK, () => this.back());
 	}
@@ -236,6 +243,65 @@ export class AonMobileItemPackage extends AonElement {
 
 	save() {
 	
+	}
+
+	addToStock() {
+		getWarehouses()
+		.then(warehouses => {
+			let aonWarehouse = this.getElement('aonWarehouse');
+
+			let warehouse = createSelect(this.PACKAGE_WAREHOUSE, MSG.WAREHOUSE);
+			warehouse.setAlias("id", "name");
+			warehouse.setOptions(warehouses);
+			warehouse.value = warehouses[0].id;
+
+			let d = document.getElementById(aonWarehouse.DIALOG);
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ADD_TO_STOCK);
+			d.setContent(warehouse);
+			d.addAcceptAction(() => {
+				let data = {
+					item: this.itemPackage.id,
+					warehouse: warehouse.value,
+				}
+				addPackageStock(data)
+				.then(stock => {})
+				.catch(err => this.showError(err));
+			});
+			d.open();
+		})
+		.catch(e => this.showError(e));
+	}
+
+	moveToWarehouse() {
+		getWarehouses()
+		.then(warehouses => {
+			let aonWarehouse = this.getElement('aonWarehouse');
+
+			let warehouse = createSelect(this.PACKAGE_WAREHOUSE, MSG.WAREHOUSE);
+			warehouse.setAlias("id", "name");
+			warehouse.setOptions(warehouses);
+			warehouse.value = warehouses[0].id;
+
+			let d = document.getElementById(aonWarehouse.DIALOG);
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.MOVE_STOCK);
+			d.setContent(warehouse);
+			d.addAcceptAction(() => {
+				let data = {
+					item: this.itemPackage.id,
+					sourceWarehouse: this.itemPackage.stock.warehouse,
+					destinyWarehouse: warehouse.value,
+				}
+				movePackageStock(data)
+				.then(stock => {})
+				.catch(err => this.showError(err));
+			});
+			d.open();
+		})
+		.catch(e => this.showError(e));
 	}
 
 	print() {

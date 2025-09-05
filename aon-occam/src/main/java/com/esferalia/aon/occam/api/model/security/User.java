@@ -162,6 +162,9 @@ public class User implements Serializable {
 	}
 	
 	public UserToolbar getToolbar() {
+		if(toolbar == null) {
+			toolbar = UserToolbar.GOOGLE;
+		}
 		return toolbar;
 	}
 	

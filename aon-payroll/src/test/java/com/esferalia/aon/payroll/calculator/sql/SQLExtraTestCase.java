@@ -71,6 +71,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import junit.framework.Assert;
 
@@ -9685,5 +9686,170 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
 		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 	}
+
+	@Test
+	public void testProrationFunctionIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "15/12";
+						this.month = Month.DECEMBER;
+						this.concept = pagaExtra.getId();
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "01/07";
+						this.month = Month.JUNE;
+						this.concept = pagaExtra.getId();
+					}
+				}});
+
+		PaymentConceptRecord concept = addConcept(aonContext, "P");
+		
+		ContractRecord contract = newContract(aonContext,
+				add(getToday(), Calendar.YEAR, -2) 
+				,new HashMap<String, String>() {
+					{ 
+						put("SALARIO_DIARIO", "51.20"); 
+					}
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, concept, 
+				String.format("51.20 * %s ", WORKED_DAYS )
+				);
+		
+		addPayment(aonContext, contract, pagaExtra, "PRORRATEAR(SALARIO_DIARIO * 30 * DIAS_TRABAJADOS / DIAS_MES, '01/01', '30/06')");
+		addPayment(aonContext, contract, pagaExtra, "PRORRATEAR(SALARIO_DIARIO * 30 * DIAS_TRABAJADOS / DIAS_MES, '01/07', '31/12')");
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date lastDayOfYear = getLastDayOfYear(firstDayOfYear);
+		Date firstDayOfJuly = set(firstDayOfYear, Calendar.MONTH, Calendar.JULY);
+		Date lastDayOfJune = add(firstDayOfJuly, Calendar.DAY_OF_MONTH, -1);
+		long julyPayDays  = AonDateUtils.getDaysBetweenDates(firstDayOfYear, lastDayOfJune) + 1;
+		long decemberPayDays= AonDateUtils.getDaysBetweenDates(firstDayOfJuly, lastDayOfYear) + 1;
+		// JANUARY
+		for ( int i = 0; i < 6; i++ ) {
+			Date startDate = add(getFirstDayOfYear(getToday()), Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			long monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+			assertEquals(51.20 * monthDays + ( 51.20 * monthDays ) /  julyPayDays  * 30 , salary.getTotalPayment(), DELTA);
+		}
+		
+		for ( int i = 6; i < 11; i++ ) {
+			Date startDate = add(getFirstDayOfYear(getToday()), Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			long monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+			
+			assertEquals(51.20 * monthDays + ( 51.20 * monthDays ) /  decemberPayDays  * 30 , salary.getTotalPayment(), DELTA);
+		}
+		
+	}
+
+	@Test
+	public void testProrationFunctionIV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "15/12";
+						this.month = Month.DECEMBER;
+						this.concept = pagaExtra.getId();
+						this.quoteExpression = "PRORRATEAR(_P, '01/07', '31/12')";
+						this.expression = "51.20 * 30 * DIAS_TRABAJADOS / DIAS_MES";
+					}
+				}, 
+				new Extra() {
+					{
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "01/07";
+						this.month = Month.JUNE;
+						this.concept = pagaExtra.getId();
+						this.quoteExpression = "PRORRATEAR('01/01', '30/06')";
+						this.expression = "51.20 * 30 * DIAS_TRABAJADOS / DIAS_MES";
+					}
+				}});
+
+		PaymentConceptRecord concept = addConcept(aonContext, "P");
+		
+		ContractRecord contract = newContract(aonContext,
+				add(getToday(), Calendar.YEAR, -2) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, concept, 
+				String.format("51.20 * %s ", WORKED_DAYS )
+				);
+		
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date lastDayOfYear = getLastDayOfYear(firstDayOfYear);
+		Date firstDayOfJuly = set(firstDayOfYear, Calendar.MONTH, Calendar.JULY);
+		Date lastDayOfJune = add(firstDayOfJuly, Calendar.DAY_OF_MONTH, -1);
+		long julyPayDays  = AonDateUtils.getDaysBetweenDates(firstDayOfYear, lastDayOfJune) + 1;
+		long decemberPayDays= AonDateUtils.getDaysBetweenDates(firstDayOfJuly, lastDayOfYear) + 1;
+		// JANUARY
+		for ( int i = 0; i < 6; i++ ) {
+			Date startDate = add(getFirstDayOfYear(getToday()), Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			long monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+			System.out.println(( 51.20 * monthDays ) /  julyPayDays  * 30);
+			assertEquals(51.20 * monthDays + ( 51.20 * monthDays ) /  julyPayDays  * 30 , salary.getCommonBase(), DELTA);
+		}
+		
+		for ( int i = 6; i < 11; i++ ) {
+			Date startDate = add(getFirstDayOfYear(getToday()), Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			long monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+			
+			assertEquals(51.20 * monthDays + ( 51.20 * monthDays ) /  decemberPayDays  * 30 , salary.getCommonBase(), DELTA);
+		}
+		
+	}
+
 
 }

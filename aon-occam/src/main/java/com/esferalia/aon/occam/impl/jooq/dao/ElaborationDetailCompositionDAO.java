@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -51,24 +51,7 @@ public class ElaborationDetailCompositionDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE);}
 	}
 
-	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
-			AONContext ctx, Integer elaborationDetailId) {
-		ctx.checkRead();
-		return ctx
-				.getDslContext()
-				.select()
-				.from(ELABORATION_DETAIL_COMPOSITION)
-				.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL_COMPOSITION.ITEM))
-				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.where(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL
-						.eq(elaborationDetailId))
-				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
-				.map(new ElaborationDetailCompositionFiller())
-				.collect(Collectors.toList());
-	}
-	
-	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
-			AONContext ctx, ElaborationDetailCompositionFilter filter) {
+	public static Stream<ElaborationDetailComposition> getStream(AONContext ctx, ElaborationDetailCompositionFilter filter) {
 		ctx.checkRead();
 		return ctx
 				.getDslContext()
@@ -78,9 +61,18 @@ public class ElaborationDetailCompositionDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
-				.fetch().stream()
-				.map(new ElaborationDetailCompositionFiller())
-				.collect(Collectors.toList());
+				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
+				.map(new ElaborationDetailCompositionFiller());
+	}
+	
+	public static List<ElaborationDetailComposition> getListByElaborationDetail(AONContext ctx, Integer elaborationDetailId) {
+		ctx.checkRead();
+		return getStream(ctx, f -> f.getElaborationDetailProperty().eq(elaborationDetailId)).toList();
+	}
+
+	public static List<ElaborationDetailComposition> getList(AONContext ctx, ElaborationDetailCompositionFilter filter) {
+		ctx.checkRead();
+		return getStream(ctx, filter).toList();
 	}
 	
 	public static ElaborationDetailComposition getElaborationDetailComposition(
@@ -102,10 +94,19 @@ public class ElaborationDetailCompositionDAO {
 	}
 	
 	public static int insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition elaborationDetailComposition) {
+		return insertElaborationDetailComposition(ctx, elaborationDetailComposition, false);
+	}
+
+	
+	public static int insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition elaborationDetailComposition, boolean updateStock) {
 		ctx.checkWrite();
 		Timestamp now = AonDateUtils.toTimestamp(new Date());
-		return ctx
-				.getDslContext()
+		
+		if(updateStock) {
+			StockDAO.subtract(ctx, elaborationDetailComposition.getItem().getId(), elaborationDetailComposition.getWarehouse().getId(), elaborationDetailComposition.getQuantity());
+		}
+		
+		return ctx.getDslContext()
 				.insertInto(ELABORATION_DETAIL_COMPOSITION,
 						ELABORATION_DETAIL_COMPOSITION.DOMAIN,
 						ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL,
@@ -131,10 +132,17 @@ public class ElaborationDetailCompositionDAO {
 	}
 	
 	public static ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx,
-			ElaborationDetailComposition elaborationDetailComposition) {
+			ElaborationDetailComposition elaborationDetailComposition, boolean updateStock) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
+		
+		if(updateStock) {
+			ElaborationDetailComposition composition = getElaborationDetailComposition(ctx, elaborationDetailComposition.getId());
+			StockDAO.subtract(ctx, composition.getItem().getId(), composition.getWarehouse().getId(), composition.getQuantity());
+			StockDAO.add(ctx, elaborationDetailComposition.getItem().getId(), elaborationDetailComposition.getWarehouse().getId(), elaborationDetailComposition.getQuantity());
+		}
+		
 		return ctx
 				.getDslContext()
 				.update(ELABORATION_DETAIL_COMPOSITION)
@@ -162,10 +170,20 @@ public class ElaborationDetailCompositionDAO {
 				.fetch().stream().map(new ElaborationDetailCompositionFiller()).findFirst()
 				.orElse(null);
 	}
+
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, Integer id, boolean updateStock) {
+		return deleteElaborationDetailComposition(ctx, f -> f.getIdProperty().eq(id), updateStock);
+	}
 	
 	public static ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx,
-			ElaborationDetailCompositionFilter filter) {
+			ElaborationDetailCompositionFilter filter, boolean updateStock) {
 		ctx.checkWrite();
+		
+		if(updateStock) {
+			getStream(ctx, filter).forEach(c -> 
+				StockDAO.add(ctx, c.getItem().getId(), c.getWarehouse().getId(), c.getQuantity())
+			);
+		}
 		return ctx
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)

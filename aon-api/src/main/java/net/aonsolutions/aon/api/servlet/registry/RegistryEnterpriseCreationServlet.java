@@ -1124,7 +1124,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 			throw new AonApiException("No existe email para el cliente potencial seleccionado");
 
 		SESMessage msg = new SESMessage().setFrom(from).setTo(targetEmailOpt.get().getValue())
-//				.setBcc(bcc)
+				.setBcc(bcc)
 				.setReplyTo(from)
 //				.setAlias(name)
 				.setSubject("Empresa " + name).setBody(createEnterpriseCreatedBody(logoUrl, parent, from, name));

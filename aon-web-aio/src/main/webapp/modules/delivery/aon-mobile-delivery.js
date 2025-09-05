@@ -170,7 +170,7 @@ export class AonMobileDelivery extends AonElement {
 			table.addCell(span);
 
 			let span2 = this.createElement(TAG.SPAN);
-			span2.innerHTML = this.delivery.details[i].quantity;
+			span2.innerHTML = this.getFormat(this.delivery.details[i].item, this.delivery.details[i].quantity);
 			table.addCell(span2);
 		}
 	}
@@ -757,10 +757,10 @@ export class AonMobileDelivery extends AonElement {
 		let packMeasurement = item.packMeasurement;
 		
 		let formatQuantity = quantity;
-		if(stockUnitTag === packMeasurementTag) {
+		if( stockUnitTag && packMeasurementTag && stockUnitTag === packMeasurementTag) {
 			formatQuantity = quantity / packMeasurement;
 			formatQuantity = formatQuantity / packUnits;	
-		} else if(stockUnitTag === packUnitsTag) {
+		} else if(stockUnitTag && packUnitsTag && stockUnitTag === packUnitsTag) {
 			formatQuantity = quantity / packUnits;	
 		}
 		return round(formatQuantity);

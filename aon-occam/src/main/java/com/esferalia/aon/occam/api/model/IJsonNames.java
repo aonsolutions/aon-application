@@ -189,6 +189,8 @@ public final class IJsonNames {
 	public static final String DELIVERED = "delivered";
 	public static final String DEPARTMENT = "department";
 	public static final String DESCRIPTION = "description";
+	public static final String DESTINY = "destiny";
+	public static final String DESTINY_WAREHOUSE = "destinyWarehouse";
 	public static final String DETAIL = "detail";
 	public static final String DETAIL2 = "detail2";
 	public static final String DETAIL3 = "detail3";
@@ -648,12 +650,14 @@ public final class IJsonNames {
 	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
+	public static final String SOURCE_WAREHOUSE = "sourceWarehouse";
 	public static final String SSCC = "sscc";
 	public static final String START_DATE = "start_date";
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
 	public static final String STATUS = "status";
 	public static final String STATUS_MODIFICATION_DATE = "statusModificationDate";
+	public static final String STOCK = "stock";
 	public static final String STOCK_UNIT_TAG = "stockUnitTag";
 	public static final String STORAGE = "storage";
 	public static final String STREET_TYPE = "streetType";
