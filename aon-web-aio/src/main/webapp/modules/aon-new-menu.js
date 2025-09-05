@@ -450,7 +450,7 @@ export class AonNewMenu extends AonElement {
 		let aonTopMenuDiv = this.createElement(TAG.DIV);
 		aonTopMenuDiv.classList.add("aonNewMenuTopNavDiv");
 		aonTopMenuDiv.id = "aonTopMenuDiv";
-	
+		
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 
 		for (let item in TOP_MENU_APPS) {
@@ -1030,10 +1030,9 @@ export class AonNewMenu extends AonElement {
 
 	isApp(app) {
 		if (OFFICE.app === app.app)
+			//return this.getDur().isManagementManager();
 			return (this.isBeta() || this.isAyudaTorInfoautonomos()) 
-				&& this.getDur().getDomain().isOffice() 
-				//&& this.getDur().isManagementManager()
-				;
+				&& this.getDur().getDomain().isOffice() ;
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
 		if (COMMERCE.app === app.app)

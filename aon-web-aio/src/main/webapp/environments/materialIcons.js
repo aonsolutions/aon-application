@@ -70,6 +70,7 @@ export const BOOK_ONLINE = 'book_online';
 export const BOOKMARK = 'bookmark';
 export const BOOKMARK_BORDER = 'bookmark_border';
 export const BOOKMARKS = 'bookmarks';
+export const BROWSE_ACTIVITY = 'browse_activity';
 export const BUG_REPORT = 'bug_report';
 export const BUILD = 'build';
 export const BUILD_CIRCLE = 'build_circle';
