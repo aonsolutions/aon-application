@@ -32,6 +32,7 @@
     rgba(0, 0, 0, 0.07) v.$px-0 v.$px-8 v.$px-8, 
     rgba(0, 0, 0, 0.07) v.$px-0 v.$px-16 v.$px-16;
   $border           : v.$px-1 solid $color-200;
+  $color-separator  : $color-200;
   $transition       : background-color v.$t-03 ease;
   $box-sizing       : border-box;
 
@@ -64,7 +65,8 @@
   
   $iconbutton-hover-background-color : transparent;
 
-  $input-border : v.$px-1 solid $color-300;
+  $input-border       : v.$px-1 solid $color-300;
+  $input-border-focus : v.$px-1 solid $color-500;
 
   --favicon-#{$theme}: #{$favicon};
   --title-#{$theme}: #{$title};
@@ -201,6 +203,14 @@
   // 
   // Componentes
   // 
+    // separador
+    .aonSeparator{
+      border: none;
+      margin: 0;
+      width : v.$px-1;
+      height: v.$px-24;
+      background-color: $color-separator;
+    }
     // cargandos
     aon-loader{
       // Barra de progreso
@@ -236,7 +246,7 @@
           box-shadow      : $box-shadow-dialog;
         }
       }
-      &:not([type]) {
+      &:not([type]), &[type=""] {
         /*background-color: */
         background-color: $color-dialog-alpha;
         // Contenido
@@ -422,7 +432,8 @@
       }
     }
     // Input
-    aon-input, aon-new-input{ 
+    aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
+    aon-new-date, aon-new-select, aon-new-textarea{
       .aonInputMsg{
         .aonInputMsgError{
           color: $color-red-500;
@@ -440,6 +451,53 @@
         &::placeholder{
           color   : $color-300;
           opacity : 0.9;
+        }
+        &:focus {
+          outline: none;
+          border : $input-border-focus;
+        }
+      }
+      //
+      // Datepicker
+      //
+      .aonDatepicker{
+        &.is-visible{
+          background-color: $color-input;
+          box-shadow      : $box-shadow-dialog;
+          .date-picker-title{
+            border-bottom: $input-border;
+            .date-picker-title-icon aon-icon {
+              &::after {
+                background-color: $color-text;
+              }
+            }
+            .date-picker-title-icon:hover{
+              background-color: $color-100;
+            }
+          }
+          .day-content:hover{
+            background-color: $color-100;
+            color           : $color-text;
+          }
+          .day-selected{
+            color           : $color-text-button;
+            background-color: $color-300;
+          }
+        }
+      }
+      //
+      // Select
+      //
+      .aonInputListOptions{
+        &.is-visible{
+          background-color: $color-input;
+          box-shadow      : $box-shadow-dialog;
+          ul{
+            li:hover{
+              background-color: $color-100;
+              color           : $color-text;
+            }
+          }
         }
       }
     }

@@ -9,105 +9,104 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     let parent = application.getParent();
     parent.buildEmptyToolbarOptions();
     application.setContent(new JSF.AonJsfOffer());
-  }
+  };
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     document.body.classList.add('gwt-Selector');
     GWT.iLoad(option, application.CONTENT);
-  }
+  };
 
   export const newInvoice = (type) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.aonInvoice(type);
-  }
+  };
 
   export const invoiceList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting', filter && filter.status === CONSTANT.PROCESSING);
     parent.aonInvoiceList(filter);
-  }
+  };
 
   export const invoiceIssued = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     application.setContent(new AonInvoiceIssued());
-  }
+  };
 
   export const invoiceProcessing = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     application.setContent(new AonInvoiceProcessing());
-  }
+  };
 
   export const income = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildIncomeToolbarOptions();
     parent.aonIncome(/*filter*/);
-  }
+  };
 
   export const expense = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildExpenseToolbarOptions();
     parent.aonExpense(/*filter*/);
-  }
+  };
 
   export const info = (title, description) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     application.confirmDialog(title, description, () => {});
-  }
+  };
 
   export const customerList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildCustomerToolbarOptions();
     parent.aonCustomerList(filter);
-  }
+  };
 
   export const supplierList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildSupplierToolbarOptions();
     parent.aonSupplierList(filter);
-  }
+  };
 
   export const creditorList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildCreditorToolbarOptions();
     parent.aonCreditorList(filter);
-  }
+  };
 
   export const productList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildProductToolbarOptions();
     parent.aonProductList(filter);
-  }
+  };
 
   export const expenseList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildExpenseToolbarOptions();
     parent.aonProductList(filter);
-  }
+  };
 
   export const investList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildInvestToolbarOptions();
     parent.aonInvestList(filter);
-  }
-
+  };
 
   export const closingInvoiceList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.buildClosingInvoiceToolbarOptions();
     parent.aonClosingInvoiceList(filter);
-  }
+  };
 
   export const CREATE_INVOICE_ISSUED = {
     id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
@@ -141,7 +140,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
       status: "accounting",
       type: "sales",
       page: 1,
-      per_page: 50,
+      per_page: 50
     })
   };
 
@@ -179,7 +178,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   };
 
   // RAWDOC 
-
   export const RAWDOC_INBOX_ISSUED = {
     id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
     name: MSG.ISSUEDS,
@@ -282,7 +280,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   };
 
   // MAIN OPTION
-
   export const MAIN_INCOMES = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
@@ -480,27 +477,27 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const NEW_ISSUED_INVOICE = {
     name: MSG.ISSUEDS,
     title: MSG.ISSUEDS,
-    icon: MATERIAL_ICONS.UNARCHIVE,
+//    icon: MATERIAL_ICONS.UNARCHIVE,
     permission: true,
-    backgroundColor: "#4472C4",
+//    backgroundColor: "#4472C4",
     fn: () => newInvoice("emitida")
   };
 
   export const NEW_RECEIVED_INVOICE = {
     name: MSG.RECEIVEDS,
     title: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE,
+//    icon: MATERIAL_ICONS.ARCHIVE,
     permission: true,
-    backgroundColor: "#4472C4",
+//    backgroundColor: "#4472C4",
     fn: () => newInvoice("recibida")
   };
 
   export const NEW_TICKET = {
     name: MSG.TICKET,
     title: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT,
+//    icon: MATERIAL_ICONS.RECEIPT,
     permission: true,
-    backgroundColor: "#4472C4",
+//    backgroundColor: "#4472C4",
     fn: () => newInvoice("ticket")
   };
 

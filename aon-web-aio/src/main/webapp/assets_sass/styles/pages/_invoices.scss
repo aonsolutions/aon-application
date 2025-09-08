@@ -1,7 +1,8 @@
 @use '../variables' as v;
 
-$size-space    : v.$pct-25;
-$min-size-space: v.$px-300;
+$size-space        : v.$pct-25;
+$min-size-space    : v.$px-300;
+$panding-icon-table: calc(v.$input-height / 4);
 
 #rootPanel {
   aon-invoice-panel{
@@ -38,7 +39,42 @@ $min-size-space: v.$px-300;
           }
         }
       }
-    // FIN aon-invoice-home
+    // FIN - aon-invoice-home
+    // aon-invoice 
+      aon-invoice{
+        #aonInvoiceSheetDataGeneral{
+          display: flex;
+          aon-card{
+            flex: v.$num-1 v.$num-1 v.$pct-50;
+          }
+        }
+        table{
+          tr{
+            display    : flex;
+            align-items: end;
+          }
+        }
+        #irpfTableTable{
+          .add-irpf {
+            .add-irpf-padding{
+              padding-bottom: $panding-icon-table;
+            }
+          }
+        }
+        #aonInvoiceTaxTable2Table{
+          .invoice-tax{
+            td:last-child:has(> aon-icon-button) {
+              padding-bottom: $panding-icon-table;
+            }
+          }
+        }
+        #aonInvoiceDetailTableTable, #aonInvoiceFinanceTableTable{
+          td:has(> aon-icon-button) {
+            padding-bottom: $panding-icon-table;
+          }
+        }
+      }
+    // FIN - aon-invoice 
     }
   }
 }

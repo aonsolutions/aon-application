@@ -103,7 +103,6 @@ export class AonNewInput extends AonElement {
 		this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
 		this.value = this.value || CONSTANT.EMPTY;
 		this.type = this.type || CONSTANT.TEXT;
-
 	}
 
 	build() {
@@ -165,7 +164,7 @@ export class AonNewInput extends AonElement {
 	buildMsg(parent) {
 		let msgDiv = this.createElement(TAG.DIV)
 		msgDiv.id = this.MSG;
-		msgDiv.className = CSS.AON_INPUT_MSG
+		msgDiv.className = CSS.AON_INPUT_MSG;
 		parent.appendChild(msgDiv);
 		msgDiv.style.display = 'none';
 	}
@@ -226,12 +225,18 @@ export class AonNewInput extends AonElement {
 		aonIconButton.id = this.ICON_BUTTON;
 		aonIconButton.icon = icon;
 		aonIconButton.noHover = "true";
-		if (fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
+        if (typeof fn === 'function') {
+          aonIconButton.addEventListener(EVENT.CLICK, fn);
+        }
 		iconLabel.appendChild(aonIconButton);
 
 		if (color) iconLabel.color = color;
 //		this.getElement(this.INPUT).style.paddingRight = '40px';
 	}
+
+    getIconButton() {
+      return this.getElement(this.ICON_BUTTON);
+    }
 
 	addIconWithRemove(icon, color, removeFn) {
 		let div = this.getElement(this.BOX);

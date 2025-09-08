@@ -1,8 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, 
-  getBidoqToOCR, getBidoqToOCRCount, getInvoice, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
-  checkBidoq,
-  getCompanyActivities
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel,
+  getBidoqToOCR, getBidoqToOCRCount, getInvoice, getRawdocCount, invoiceDuplicateFix,
+  saveInvoiceClosing, downloadRegistryExcel, checkBidoq, getCompanyActivities
 } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
@@ -24,7 +23,7 @@ import { AonSupplier } from "../registry/supplier/aon-supplier.js";
 import { AonCreditor } from "../registry/creditor/aon-creditor.js";
 import { AonInvestList } from "../product/aon-invest-list.js";
 import { AonInvest } from "../product/aon-invest.js";
-import { AonSelect } from "../../components/aon-select.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
 import { AonInvoiceList } from "./aon-invoice-list.js";
 import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
@@ -89,9 +88,6 @@ export class AonInvoicePanel extends AonElement {
   }
 
   connectedCallback() {
-    
-    consoleLog(" -- aon-invoice-panel.js -- ","red", true);
-    
     this.initialize();
     this.innerHTML = `
       <aon-application id='${this.INVOICE}' title='${MSG.BILLING}' drag_and_drop='true'></aon-application>
@@ -407,7 +403,7 @@ export class AonInvoicePanel extends AonElement {
       this.getElement('recorded').setOptions([
         { name: "-", value: undefined },
         { name: MSG.PENDING, value: "PENDING" },
-        { name: MSG.ACCOUNTED, value: "SCORED" },
+        { name: MSG.ACCOUNTED, value: "SCORED" }
       ]);
     }
   }
@@ -424,7 +420,7 @@ export class AonInvoicePanel extends AonElement {
       status: this.getFilter().status,
       type: this.getFilter().type,
       from: this.getFilter().from,
-      to: this.getFilter().to,
+      to: this.getFilter().to
     };
     let json = btoa(JSON.stringify(data));
     downloadInvoiceExcel(json);
@@ -461,7 +457,7 @@ export class AonInvoicePanel extends AonElement {
   invoiceCounter() {
     getRawdocCount({}).then((r) => {
       this.counterActive = true;
-  
+
       // FACTURAS EMITIDAS 
       if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
         addCounter(OPTION.INVOICE_ISSUED_BETA, r.invoice.emitida);
@@ -539,7 +535,6 @@ export class AonInvoicePanel extends AonElement {
 
   updateCounterHome() {
     // FACTURAS
-
     let issued = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
     let invoiceIssuedNumber = this.getElement("invoiceIssuedNumber");
     if(invoiceIssuedNumber) invoiceIssuedNumber.innerHTML = issued;  
@@ -553,7 +548,6 @@ export class AonInvoicePanel extends AonElement {
     if(invoiceTicketNumber) invoiceTicketNumber.innerHTML = ticket;
 
     // BORRADORES
-
     let pendingIssuedCounter = getCounter()[OPTION.PROFORMA_INVOICES.id] || 0;
     let pendingIssuedNumber = this.getElement("pendingIssuedNumber");
     if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
@@ -567,7 +561,6 @@ export class AonInvoicePanel extends AonElement {
     if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
 
     // PENDIENTES
-
     let processingCounter = getCounter()[OPTION.RAWDOC_PROCESSING.id] || 0;
     let processingNumber = this.getElement("processingNumber");
     if(processingNumber) processingNumber.innerHTML = processingCounter;
@@ -606,11 +599,9 @@ export class AonInvoicePanel extends AonElement {
     }
   }
 
-
   aonInvoiceProcessing() {
     this.getApplication().setContent(new AonInvoiceProcessing());
   }
-
 
   aonInvoiceList(filter, invofoxFilter) {
     this.filter = filter;
@@ -771,10 +762,10 @@ export class AonInvoicePanel extends AonElement {
       let importSelfconta = {
         name: "Importación Selfconta",
         title: "Importación Selfconta",
-        icon: "import_export",
+//        icon: "import_export",
         permission: ayudat,
-        backgroundColor: "#4472C4",
-        fn: () => this.importSelfconta(),
+//        backgroundColor: "#4472C4",
+        fn: () => this.importSelfconta()
       };
       options.push(importSelfconta);
     }
@@ -785,8 +776,8 @@ export class AonInvoicePanel extends AonElement {
         title: MSG.UPLOAD_FILE,
         icon: MATERIAL_ICONS.FILE_UPLOAD,
         permission: true,
-        backgroundColor: "#4472C4",
-        fn: () => this.addInvoiceFile(),
+//        backgroundColor: "#4472C4",
+        fn: () => this.addInvoiceFile()
       };
 
       options.push(uploadFile);
@@ -796,7 +787,7 @@ export class AonInvoicePanel extends AonElement {
         title: "Camara",
         icon: "camera_alt",
         permission: true,
-        backgroundColor: "#4472C4",
+//        backgroundColor: "#4472C4",
         fn: () => {
           if(UA.isApp()) {
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' };
@@ -821,7 +812,7 @@ export class AonInvoicePanel extends AonElement {
     div2.innerHTML = "¿Desea importar las facturas?";
     div.appendChild(div2);
 
-    let yearSelect = new AonSelect();
+    let yearSelect = new AonNewSelect();
     yearSelect.id = "aonInvoiceSelfcontaYear";
     yearSelect.title = MSG.YEAR;
     yearSelect.options = JSON.stringify([
@@ -831,7 +822,7 @@ export class AonInvoicePanel extends AonElement {
       { name: "2021", value: 2021 },
       { name: "2020", value: 2020 },
       { name: "2019", value: 2019 },
-      { name: "2018", value: 2018 },
+      { name: "2018", value: 2018 }
     ]);
     div.appendChild(yearSelect);
 
@@ -847,7 +838,7 @@ export class AonInvoicePanel extends AonElement {
         await selfconta(yearSelect.value);
         this.showToast({
           type: "success",
-          message: "Datos Importados. Revisa las facturas rechazadas.",
+          message: "Datos Importados. Revisa las facturas rechazadas."
         });
       } catch (error) {
         this.showToast(error);
@@ -932,9 +923,8 @@ export class AonInvoicePanel extends AonElement {
     d.setTitle("Cierre de Facturas Recibidas");
     d.setContentHTML(`Va a cerrar el periodo comprendido entre la fecha  ${this.getStartDate(data)} e ${this.getEndDate(data)}, ¿Está seguro?`);
     d.addAcceptAction(() => {
-      saveInvoiceClosing(data)
-      .then(r => this.showToast({
-          type: "success",
+      saveInvoiceClosing(data).then(r => this.showToast({
+          type   : "success",
           message: "El cierre se ha realizado correctamente.",
         }))
       .catch(error => this.showToast(error));
@@ -976,55 +966,55 @@ export class AonInvoicePanel extends AonElement {
 
   upload(files) {
     getCompanyActivities({}).then(activities => {
-			let data = { uploaded: 0 };
-			if(activities.length > 1) {
+      let data = { uploaded: 0 };
+      if(activities.length > 1) {
         activities.push({
           id: "all",
           description: "TODAS"
         });
-				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);  
-				activity.setAlias("id", "description");
-				if(activities.length > 0) {
-					activity.setOptions(activities);
-					activity.value = activities[0].id;
-				}
-	
-				let d = new AonDialog();
-				let rootPanel = document.getElementById("rootPanel");
-				rootPanel.appendChild(d);
-				d.clear();
-	
-				d.setTitle(MSG.UPLOAD_INVOICE);
-				d.setContent(activity);
-				d.addAcceptAction(() => {
-					data.activity = activity.getValueObject().id;
-					let uploadToast = this.getElement('aonUploadToast');
-					if (!uploadToast) {
-						uploadToast = new AonUploadToast();
-						this.appendChild(uploadToast);
-					}
-			
-					uploadToast.setJobId(generateJobId());
-					for (let file of files) {
-						uploadToast.addFile("invoice", file, data);
-					}
-				});
-				d.open();
-			} else {
- 				if(activities.length > 0) {
-					data.activity = activities[0].id;
-				}
-				let uploadToast = this.getElement('aonUploadToast');
-				if (!uploadToast) {
-					uploadToast = new AonUploadToast();
-					this.appendChild(uploadToast);
-				}
-				uploadToast.setJobId(generateJobId());
-				for (let file of files) {
-					uploadToast.addFile("invoice", file, data);
-				}
-			}
-		});
+        let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);  
+        activity.setAlias("id", "description");
+        if(activities.length > 0) {
+            activity.setOptions(activities);
+            activity.value = activities[0].id;
+        }
+
+        let d = new AonDialog();
+        let rootPanel = document.getElementById("rootPanel");
+        rootPanel.appendChild(d);
+        d.clear();
+
+        d.setTitle(MSG.UPLOAD_INVOICE);
+        d.setContent(activity);
+        d.addAcceptAction(() => {
+            data.activity = activity.getValueObject().id;
+            let uploadToast = this.getElement('aonUploadToast');
+            if (!uploadToast) {
+                uploadToast = new AonUploadToast();
+                this.appendChild(uploadToast);
+            }
+
+            uploadToast.setJobId(generateJobId());
+            for (let file of files) {
+                uploadToast.addFile("invoice", file, data);
+            }
+        });
+        d.open();
+      } else {
+        if(activities.length > 0) {
+            data.activity = activities[0].id;
+        }
+        let uploadToast = this.getElement('aonUploadToast');
+        if (!uploadToast) {
+            uploadToast = new AonUploadToast();
+            this.appendChild(uploadToast);
+        }
+        uploadToast.setJobId(generateJobId());
+        for (let file of files) {
+            uploadToast.addFile("invoice", file, data);
+        }
+      }
+    });
   }
 
   uploadCamera(files) {

@@ -3,9 +3,7 @@ import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import './aon-icon-button.js';
 import { AonNewInput } from './aon-new-input.js';
 
-
 export class AonNewNumber extends AonNewInput {
-
 
     static get observedAttributes() {
         return [CONSTANT.VALUE, CONSTANT.DISABLED, CONSTANT.READONLY, CONSTANT.VISIBLE, CONSTANT.OPTIONS, CONSTANT.DESCRIPTION];

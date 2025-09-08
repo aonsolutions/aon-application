@@ -28,7 +28,7 @@ aon-dialog{
     }
   }
   // Normal modal
-  &:not([type]) {
+  &:not([type]), &[type=""] {
     position: fixed;
     top     : v.$num-0;
     left    : v.$num-0;

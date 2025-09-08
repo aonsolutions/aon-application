@@ -1,9 +1,10 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
-	getPaymethod} from '../../services/service.js';
+import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice,
+  deleteRawdocInvoices, getCompanyActivities, getPaymethods,  getRegistryBanks,
+  sendInvoice2Mail, getSalesSeries, signInvoice, getInvoiceConfiguration, getAeatCertificates,
+  getTbaiHistory, downloadFacturae, getCustomerEmails, getInvofoxTextContent,
+  getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, getPaymethod
+} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -12,7 +13,10 @@ import { AonCard } from '../../components/aon-card.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { Transactions } from '../../services/transaction.js';
-import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
+import { 
+  ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, 
+  TaxType, WithholdingType
+} from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDialog } from '../../components/aon-dialog.js';
@@ -23,7 +27,9 @@ import { AonTab } from '../../components/aon-tab.js';
 import {INVOICE} from  '../../services/app.js';
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { addCounter, transferCounter } from './InvoiceCounter.js';
-import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
+import { 
+  createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea
+} from '../../components/CreateComponent.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
@@ -248,8 +254,8 @@ export class AonInvoice extends AonElement {
 			
 			if(window.innerWidth && window.innerWidth > 1100 && !this.fileOpened){
 				if(general) general.style.display='flex';
-				if(generalCard) generalCard.style.width = '50%';
-				if(tax) tax.style.width = '50%';
+//				if(generalCard) generalCard.style.width = '50%';
+//				if(tax) tax.style.width = '50%';
 				let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
 				let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
 				if(hasComment && hasRemarks) {
@@ -259,8 +265,7 @@ export class AonInvoice extends AonElement {
 
 			} else if(window.innerWidth && window.innerWidth < 1050){
 				if(general) general.style.display='block';
-				if(generalCard) generalCard.style.width = '100%';
-				if(tax) tax.style.width = '100%';
+//				if(generalCard) generalCav
 				if(remarksCard) remarksCard.style.width = '100%';
 				if(commentCard) commentCard.style.width = '100%';
 			}
@@ -543,7 +548,7 @@ export class AonInvoice extends AonElement {
 
 	buildTbaiCard(parent) {
 		let card = this.createAonElement(new AonCard(), this.TBAI_CARD, MSG.TICKETBAI);
-		card.style.width = this.fileOpened ? '100%' : '50%';
+//		card.style.width = this.fileOpened ? '100%' : '50%';
 		parent.appendChild(card);
 
 		let table = this.getElement(this.DETAIL_TABLE);
@@ -603,12 +608,10 @@ export class AonInvoice extends AonElement {
 		let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
 		let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
 
-		let remarksCard = new AonCard();
-		remarksCard.id = this.REMARKS_CARD;
-		remarksCard.title = MSG.REMARKS;
-		if(hasComment && hasRemarks) 
-			remarksCard.style.width = '50%';
-		else remarksCard.style.width = '100%';
+		let remarksCard         = new AonCard();
+		remarksCard.id          = this.REMARKS_CARD;
+		remarksCard.title       = MSG.REMARKS;
+		remarksCard.style.width = hasComment && hasRemarks ? '50%' :'100%';
 
 		if(!hasRemarks) remarksCard.className = CSS.AON_NONE;
 		commentsDiv.appendChild(remarksCard);
@@ -637,17 +640,14 @@ export class AonInvoice extends AonElement {
 			});
 		}
 
-		let commentsCard = new AonCard();
-		commentsCard.id = this.COMMENT_CARD;
-		commentsCard.title = MSG.COMMENT;
-		if(hasComment && hasRemarks) 
-			commentsCard.style.width = '50%';
-		else commentsCard.style.width = '100%';
+		let commentsCard         = new AonCard();
+		commentsCard.id          = this.COMMENT_CARD;
+		commentsCard.title       = MSG.COMMENT;
+        commentsCard.style.width = hasComment && hasRemarks ? '50%' : '100%';
 		if(!hasComment) commentsCard.className = CSS.AON_NONE;
 		commentsDiv.appendChild(commentsCard);
 
 		commentsCard.setContentHTML('');
-		// commentsCard.setBackground('#ECC0EF');
 		commentsCard.setBackground('#D3D8FF');
 		
 		if(hasComment) {
@@ -674,13 +674,13 @@ export class AonInvoice extends AonElement {
 		let getText = ( err ) => {
 			switch ( err.code ) {
 				case ErrCode.ERR_EMPTY_VALUE: 
-					return "Sin valor"
+					return "Sin valor";
 				case ErrCode.ERR_LOW_CONFIDENCE: 
-					return "Poca confianza"
+					return "Poca confianza";
 				case ErrCode.ERR_INVALID_FORMAT: 
-					return "Formato no válido"
+					return "Formato no válido";
 				case ErrCode.ERR_INCORRECT_VALUE: 
-					return "Valor incorrecto"
+					return "Valor incorrecto";
 				default:
 					return err.message;
 			}
@@ -841,7 +841,7 @@ export class AonInvoice extends AonElement {
 			iconSpan.className = CSS.MATERIAL_ICONS;
 			iconSpan.className += " " + CSS.AON_INPUT_MSG_ERROR;
 			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
-			iconSpan.style.color = className === CSS.AON_INVOICE_ERROR ? "#e83151": "#e3a733" ; 
+			iconSpan.style.color = className === CSS.AON_INVOICE_ERROR ? "#e83151": "#e3a733" ;
 			errorDiv.appendChild(iconSpan);
 
 			let spaceSpan = this.createElement(TAG.SPAN);
@@ -949,11 +949,11 @@ export class AonInvoice extends AonElement {
 			mainCard.style.backgroundColor = "white";
 			mainCard.style.borderColor = errorColor;
 			let titleCard = errorsCard.getCardTitle();
-			titleCard.style.paddingTop = "15px"; 
-			titleCard.style.paddingLeft = "22px"; 
-			titleCard.style.paddingRight = "22px"; 
-			titleCard.style.marginBottom = "0px"; 
-			titleCard.style.paddingBottom = "15px"; 
+			titleCard.style.paddingTop = "15px";
+			titleCard.style.paddingLeft = "22px";
+			titleCard.style.paddingRight = "22px";
+			titleCard.style.marginBottom = "0px";
+			titleCard.style.paddingBottom = "15px";
 			titleCard.style.color = "white";
 			titleCard.style.backgroundColor = errorColor;
 			
@@ -983,7 +983,7 @@ export class AonInvoice extends AonElement {
 			
 			
 			let contentCard = errorsCard.getContent();
-			contentCard.style.paddingTop = "15px"
+			contentCard.style.paddingTop = "15px";
 			contentCard.style.paddingLeft = "22px";
 			contentCard.style.paddingRight = "22px";
 			contentCard.style.paddingBottom = "15px";
@@ -1042,10 +1042,8 @@ export class AonInvoice extends AonElement {
 			dn = MSG.DOCUMENT_DATA;
 		}
 		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, dn);
-		card.style.width = '50%';
+//		card.style.width = '50%';
 		parent.appendChild(card);
-
-  consoleLog(' -- LLEGA --- ', 'red', true);
 
 		let dialog  = new AonDialog();
 		dialog.id   = this.DIALOG_BLANK;
@@ -1103,12 +1101,10 @@ export class AonInvoice extends AonElement {
  
            // ----- Montamos
 			const top  = button.getBoundingClientRect().top;
-			const left = button.getBoundingClientRect().left;            
+			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
 			dialog.open();
 		});
-
-  consoleLog(' -- FIN LLEGA --- ', 'red', true);
 
 		let table = new AonBasicTable();
 		table.id = this.GENERAL_CARD_TABLE;
@@ -1346,7 +1342,7 @@ export class AonInvoice extends AonElement {
 		let card = new AonCard();
 		card.id = this.TAX;
 		card.title = MSG.TAXES_DETAIL;
-		card.style.width = '50%';
+//		card.style.width = '50%';
 		parent.appendChild(card);
 
 		let dialog = this.getElement(this.DIALOG_BLANK);
@@ -1461,7 +1457,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		// ----- TAXES
-
 		let taxesTable = this.getElement(this.TAX_TABLE2);
 		if(!taxesTable) {
 			taxesTable = new AonBasicTable();
@@ -1491,7 +1486,6 @@ export class AonInvoice extends AonElement {
 			}
 		}
 
-
 		// let div = this.getElement(this.TAX_DIV);
 		// if(!div) {
 		// 	div = this.createElement(TAG.DIV);
@@ -1509,11 +1503,10 @@ export class AonInvoice extends AonElement {
 			card.addContent(irpfTable);
 		}
 		irpfTable.removeRows();
-		irpfTable.addRow();
+		irpfTable.addRow('add-irpf');
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
-
 			let addButton = new AonIconButton();
 			addButton.id = this.TAX_ADD;
 			addButton.title = MSG.ADD_TAX;
@@ -1527,7 +1520,7 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				}
 			});
-			irpfTable.addCell(addButton);
+			irpfTable.addCell(addButton, undefined, undefined, 'add-irpf-padding');
 			addButton.setDisabled(!this.invoice.isVatEnabled());
 		}
 
@@ -1541,7 +1534,7 @@ export class AonInvoice extends AonElement {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		irpfTable.addCell(irpf, '1');
+		irpfTable.addCell(irpf, '1', undefined, 'add-irpf-padding');
 		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			irpf.setDisabled(true);
 		}
@@ -1635,10 +1628,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	printTax(taxesTable, tax, i) {
-		taxesTable.addRow(); // ----- ROW i
+		taxesTable.addRow("invoice-tax"); // ----- ROW i
 
 		// ----- TAX PERCENT
-
 		tax.type = tax.type || tax.tax;
 		let administration = this.configuration ? this.configuration.administration : '';
 		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), administration));
@@ -1661,7 +1653,6 @@ export class AonInvoice extends AonElement {
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
-
 		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
 		base.onChange(() => this.onChangeTaxBase(tax, base.value, i))
 		taxesTable.addCell(base);
@@ -1673,7 +1664,6 @@ export class AonInvoice extends AonElement {
 			base.disabled = CONSTANT.TRUE;
 
 		// ----- TAX QUOTA
-
 		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
 
 		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
@@ -1683,7 +1673,6 @@ export class AonInvoice extends AonElement {
 			quota.disabled = CONSTANT.TRUE;
 
 		// ----- TAX DELETE
-
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			let taxDelete = new AonIconButton();
 			taxDelete.id = this.TAX_DELETE + i;
@@ -1871,7 +1860,6 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-		
 		let description = createTextarea(this.DETAIL_DESCRIPTION + i, MSG.CONCEPT);
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
@@ -1906,9 +1894,7 @@ export class AonInvoice extends AonElement {
 		let td = table.addCell(description);
 		td.style.width = '50%';
 
-
 		// ----- DETAIL QUANTITY
-
 		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + i, MSG.QUANTITY, detail.quantity);
 		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i));
 		let td2 = table.addCell(quantity);
@@ -1916,7 +1902,6 @@ export class AonInvoice extends AonElement {
 		quantity.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL PRICE
-
 		let price = this.createAonNumber(this.DETAIL_PRICE + i, MSG.PRICE, detail.price);
 		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i));
 		let td3 = table.addCell(price);
@@ -1924,7 +1909,6 @@ export class AonInvoice extends AonElement {
 		price.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL DISCOUNT
-
 		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + i, '%Dto', detail.discount);
 		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i));
 		let td4 = table.addCell(discount);
@@ -1932,7 +1916,6 @@ export class AonInvoice extends AonElement {
 		discount.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL AMOUNT
-
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		let td5 = table.addCell(amount);
 		td5.style.verticalAlign = "bottom";
@@ -1969,7 +1952,6 @@ export class AonInvoice extends AonElement {
 		}
 
 		// ----- DETAIL OPTIONS
-
 		let detailOptions = new AonIconButton();
 		detailOptions.id = this.DETAIL_OPTIONS + i;
 		detailOptions.title = MSG.OPTIONS;
@@ -1981,7 +1963,6 @@ export class AonInvoice extends AonElement {
 		
 
 		// ----- DETAIL DELETE
-
 		if(!this.invoice.isReadonly()) {
 			let detailDelete = new AonIconButton();
 			detailDelete.id = this.DETAIL_DELETE + i;
@@ -2079,14 +2060,12 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 2
 
 		// ----- DETAIL QUANTITY
-
 		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
 		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
 		table.addCell(quantity);
 		quantity.readonly = this.invoice.isReadonly()
 	
 		// ----- DETAIL PRICE
-
 		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
 		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
 		table.addCell(price);
@@ -2095,14 +2074,12 @@ export class AonInvoice extends AonElement {
 		// table.addRow(); // ----- ROW 3
 
 		// ----- DETAIL DISCOUNT
-
 		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
 		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
 		table.addCell(discount);
 		discount.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL AMOUNT
-
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
@@ -2145,13 +2122,12 @@ export class AonInvoice extends AonElement {
 		getInvestAssets({}).then(investAssets => {
 			bienAfecto.options = JSON.stringify(investAssets);
 			if(detail.investAsset)
-				bienAfecto.value = detail.investAsset;		
+				bienAfecto.value = detail.investAsset;
 		});
 		
 		table.addRow();
 
 		// ----- PREPAYMENT | SUPLIDO
-		
 		let prepayment = new AonSwitch();
 		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
 		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;

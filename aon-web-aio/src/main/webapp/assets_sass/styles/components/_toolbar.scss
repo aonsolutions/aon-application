@@ -8,9 +8,10 @@ aon-toolbar{
     justify-content: space-between;
     align-items: center;
     section{
-      display: flex;
-      gap    : v.$gap-min;
-      width  : v.$pct-100;
+      display     : flex;
+      align-items : center;
+      gap         : v.$gap-min;
+      width       : v.$pct-100;
       &:last-child{
         justify-content: flex-end;
       }

@@ -3,7 +3,7 @@
 // Variables estandar boton
 $btn-padding       : v.$px-8 v.$px-16;
 $btn-width         : v.$pct-100;
-$btn-height        : v.$pct-100;
+$btn-height        : v.$px-40;
 $btn-cursor        : pointer;
 $btn-display       : flex;
 $btn-text-align    : center;
@@ -16,15 +16,16 @@ $iconbutton-margin  : unset;
 
 // ESTILO BOTON
 button {
-  width            : $btn-width;
-  padding          : $btn-padding;
-  border-radius    : v.$border-radius;
-  cursor           : $btn-cursor;
-  display          : $btn-display;
-  justify-content  : $btn-text-align;
-  text-align       : $btn-text-align;
-  gap              : $btn-gap;
-  text-transform   : $text-transform-l;
+  width           : $btn-width;
+  height          : v.$px-40;
+  padding         : $btn-padding;
+  border-radius   : v.$border-radius;
+  cursor          : $btn-cursor;
+  display         : $btn-display;
+  justify-content : $btn-text-align;
+  text-align      : $btn-text-align;
+  gap             : $btn-gap;
+  text-transform  : $text-transform-l;
   &::first-letter{
     text-transform : $text-transform-u;
   }
@@ -34,5 +35,20 @@ button {
   &.aonIconButton{
     padding : $iconbutton-padding;
     margin  : $iconbutton-margin;
+  }
+}
+
+// visualizador en facturas
+#aonViewerButtonsDiv{
+  // por ahora -- seria crear una clase
+  aon-icon-button{
+    button{
+      border-radius  : v.$pct-100;
+      width          : v.$px-40;
+      height         : v.$px-40;
+      display        : flex;
+      justify-content: center;
+      align-items    : center;
+    }
   }
 }

@@ -420,7 +420,10 @@ export class AonApplication extends AonElement {
       button.getIcon().title = data.button.title;
       buttonDiv.appendChild(button);
       sidenavTitle.appendChild(buttonDiv);
-      button.addEventListener(EVENT.CLICK, data.button.fn);
+      button.addEventListener(EVENT.CLICK, function (event) {
+        event.stopPropagation();
+        data.button.fn(event);
+      });
     }
 
     if (newButton && !this.isMobile()) {
@@ -428,7 +431,6 @@ export class AonApplication extends AonElement {
       aonIconButton.icon = "add";
       aonIconButton.id = sidenavTitle.id + "NewButton";
       sidenavTitle.appendChild(aonIconButton);
-      aonIconButton.addEventListener(EVENT.CLICK, newButton);
       aonIconButton.addEventListener(EVENT.CLICK, function (event) {
         event.stopPropagation();
         newButton(event);
@@ -1194,8 +1196,8 @@ export class AonApplication extends AonElement {
   }
   
   development(title=MSG.INFORMATION, subtitle=MSG.IN_DEVELOPMENT) {
-		this.confirmDialog(title, subtitle, () => {});
-	}
+      this.confirmDialog(title, subtitle, () => {});
+  }
 
   confirmDialog(title, subtitle, fn, buttonTitle = undefined){
     let d = this.getDialog();
@@ -1211,8 +1213,9 @@ export class AonApplication extends AonElement {
           d.close();
           return fn();
         }, buttonTitle);
+      } else {
+        d.addAcceptAction(() => fn());
       }
-      else d.addAcceptAction(() => fn());
     }
   }
 
