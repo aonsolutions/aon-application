@@ -226,7 +226,7 @@ export class AonInvoicePanel extends AonElement {
 		text.style.color = '#333';
 		text.style.fontFamily = 'Arial, sans-serif';
 
-		// Estilo para la animación del spinner
+		// Estilo para la animacion del spinner
 		if (!document.getElementById('spinner-style')) {
 			let style = document.createElement('style');
 			style.id = 'spinner-style';
@@ -295,7 +295,7 @@ export class AonInvoicePanel extends AonElement {
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_PRODUCT, () => this.addProduct());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PRODUCTO EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR PRODUCTO EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_PRODUCT, () => this.addProduct());
@@ -309,7 +309,7 @@ export class AonInvoicePanel extends AonElement {
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_EXPENSE, () => this.addExpense());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR GASTO EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR GASTO EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_EXPENSE, () => this.addExpense());
@@ -322,7 +322,7 @@ export class AonInvoicePanel extends AonElement {
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR BIEN AFECTO EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR BIEN AFECTO EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
@@ -343,7 +343,7 @@ export class AonInvoicePanel extends AonElement {
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('customer'));
 
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR CLIENTE EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR CLIENTE EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_CUSTOMER, () => this.addCustomer());
@@ -358,7 +358,7 @@ export class AonInvoicePanel extends AonElement {
 		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('supplier'));
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PROVEEDOR EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR PROVEEDOR EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_SUPPLIER, () => this.addSupplier());
@@ -373,7 +373,7 @@ export class AonInvoicePanel extends AonElement {
 		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('creditor'));
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR ACREEDOR EN EL MÓVIL
+		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR ACREEDOR EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
 		//   this.getApplication().addFloatOption(ACTION.ADD_CREDITOR, () => this.addCreditor());
@@ -753,8 +753,8 @@ export class AonInvoicePanel extends AonElement {
 			
 			if (result.invoiceCount >= this.getDur().getTrialValue()) {
 				this.getApplication().confirmDialog(
-					"Límite alcanzado",
-					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+					"LÃ­mite alcanzado",
+					"Ha alcanzado el lÃ­mite de prueba del mÃ³dulo de facturaciÃ³n. Para poder registrar nuevas facturas debe ampliar su plan actual. Â¿Desea navegar a los planes disponibles?",
 					async () => {
 						let apps = this.getElement('apps');
 						apps.click();
@@ -784,8 +784,8 @@ export class AonInvoicePanel extends AonElement {
 		let options = OPTION.getNewOptions();
 		if (ayudat) {
 			let importSelfconta = {
-				name: "Importación Selfconta",
-				title: "Importación Selfconta",
+				name: "ImportaciÃ³n Selfconta",
+				title: "ImportaciÃ³n Selfconta",
 //				icon: "import+_export",
 				permission: ayudat,
 //				backgroundColor: "#4472C4",
@@ -833,7 +833,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let div2 = this.createElement(TAG.DIV);
 		div2.id = "aonInvoiceSelfcontaDiv2";
-		div2.innerHTML = "¿Desea importar las facturas?";
+		div2.innerHTML = "Â¿Desea importar las facturas?";
 		div.appendChild(div2);
 
 		let yearSelect = new AonNewSelect();
@@ -933,7 +933,7 @@ export class AonInvoicePanel extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle("Cierre de Facturas Recibidas");
-		d.setContentHTML(`¿Está seguro que quiere cerrar el periodo entre la fecha ${this.getStartDate(data)} e ${this.getEndDate(data)}?`);
+		d.setContentHTML(`Â¿EstÃ¡ seguro que quiere cerrar el periodo entre la fecha ${this.getStartDate(data)} e ${this.getEndDate(data)}?`);
 		d.addAcceptAction(() => {
 			this.closingInvoiceConfirm2(data);
 		});
@@ -945,7 +945,7 @@ export class AonInvoicePanel extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle("Cierre de Facturas Recibidas");
-		d.setContentHTML(`Va a cerrar el periodo comprendido entre la fecha  ${this.getStartDate(data)} e ${this.getEndDate(data)}, ¿Está seguro?`);
+		d.setContentHTML(`Va a cerrar el periodo comprendido entre la fecha  ${this.getStartDate(data)} e ${this.getEndDate(data)}, Â¿EstÃ¡ seguro?`);
 		d.addAcceptAction(() => {
           saveInvoiceClosing(data).then(r => this.showToast({
             type   : "success",
