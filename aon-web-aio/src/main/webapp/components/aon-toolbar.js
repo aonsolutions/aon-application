@@ -174,7 +174,6 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.style.marginBottom = '2px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
@@ -220,32 +219,27 @@ export class AonToolbar extends AonElement {
 	}
 
 	addButton2(action, fn) {
-		let aib = new AonIconButton();
-		aib.id = this.TOOL_SECTION + action.id + 'Button';;
-		if(!this.getElement(aib.id)){
-			let span = this.createElement(TAG.SPAN);
+      let aib = new AonIconButton();
+      aib.id  = this.TOOL_SECTION + action.id + 'Button';
+      if(!this.getElement(aib.id)){
+        let toolSection = this.getElement(this.TOOL_SECTION);
 
-			aib.title = action.name;
-			aib.addEventListener(EVENT.CLICK, fn);
-			if(action.aonIcon){
-				aib.aonIcon = action.aonIcon;
-			} else if (action.image)  {
-				aib.image = action.image;
-			} else{
-				aib.icon = action.icon;
-			}
-			
-			span.appendChild(aib);
+        aib.title = action.name;
+        aib.addEventListener(EVENT.CLICK, fn);
+        if(action.aonIcon){
+            aib.aonIcon = action.aonIcon;
+        } else if (action.image)  {
+            aib.image = action.image;
+        } else{
+            aib.icon = action.icon;
+        }
 
-			let aonMenu = this.getElement('aonMenu');
-			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.style.marginBottom = '2px';
-			if(toolSection.children.length > 0) {
-				toolSection.insertBefore(span, toolSection.children[0]);
-			} else toolSection.appendChild(span);
-		}
-		return aib;
+        if(toolSection.children.length > 0) {
+          toolSection.insertBefore(aib, toolSection.children[0]);
+        } else 
+          toolSection.appendChild(aib);
+      }
+      return aib;
 	}
 
 	addButton2End(action, fn) {

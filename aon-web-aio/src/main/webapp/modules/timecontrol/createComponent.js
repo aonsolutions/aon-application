@@ -2,8 +2,8 @@ import { CSS } from "../../environments/environments.js";
 import { createDiv } from "../../services/utilsComponents.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 
-import '../../css/aon-css-utils.css';
-import '../../css/aon-grid.css';
+//import '../../css/aon-css-utils.css';
+//import '../../css/aon-grid.css';
 
 export const createFormEvent = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");

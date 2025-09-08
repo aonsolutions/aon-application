@@ -1,0 +1,185 @@
+@use '../variables' as v;
+
+// Generales
+$padding-top    : v.$px-8;
+$padding-right  : v.$px-12;
+$padding-bottom : v.$px-8;
+$padding-left   : v.$px-12;
+$padding: $padding-top $padding-right $padding-bottom $padding-left;
+// .aonInputBox
+$inputbox-display : grid;
+// .aonInputBoxLabel
+$inputboxlabel-display        : flex;
+$inputboxlabel-flex-direction : column-reverse;
+$inputboxlabel-width          : v.$pct-100;
+$inputboxlabel-gap            : v.$px-6;
+// input
+$input-height     : v.$input-height;
+$input-box-sizing : border-box;
+// span
+$span-height      : v.$px-24;
+$span-display     : flex;
+$span-align-items : center;
+// .aonInputIconLabel
+$inputiconlabel-display         : flex;
+$inputiconlabel-position        : relative;
+$inputiconlabel-justify-content : flex-end;
+// aonIconButton
+$iconbutton-height        : v.$px-0;
+$iconbutton-align-content : center;
+// button
+$button-height : v.$px-24;
+$button-width  : v.$px-24;
+// icono
+$icon-padding-right : v.$px-40;
+
+aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
+aon-new-date, aon-new-select, aon-new-textarea{
+  .aonInputBox, .aonTextareaBox{
+    display : $inputbox-display;
+    
+    .aonInputBoxLabel, .aonTextareaBoxLabel{
+      display        : $inputboxlabel-display;
+      flex-direction : $inputboxlabel-flex-direction;
+      width          : $inputboxlabel-width;
+      max-width      : $inputboxlabel-width;
+      gap            : $inputboxlabel-gap;
+      box-sizing     : border-box;
+      overflow       : hidden;
+      input{
+        height        : $input-height;
+        padding       : $padding;
+        border-radius : v.$border-radius;
+        box-sizing    : $input-box-sizing;
+      }
+      textarea{
+        padding       : $padding;
+        border-radius : v.$border-radius;
+        box-sizing    : $input-box-sizing;
+      }
+      span{
+        height      : $span-height;
+        display     : $span-display;
+        align-items : $span-align-items;
+      }
+    }
+    // El Boton que se inyecta en el label esta configurado en _buttons.css
+    .aonInputIconLabel{
+      display         : $inputiconlabel-display;
+      position        : $inputiconlabel-position;
+      justify-content : $inputiconlabel-justify-content;
+      top             : -($input-height - $padding-top);
+      right           : calc($icon-padding-right / 4);
+      aon-icon-button {
+        height        : $iconbutton-height;
+        align-content : $iconbutton-align-content;
+        button{
+          width  : $button-height;
+          height : $button-width;
+        }
+      }
+    }
+  }
+  // Mensaje de error en los input
+  .aonInputMsg{
+    padding-left : $padding-left;
+  }
+  // Este input tiene un icono, por lo que tiene un padding distinto
+  &[type="password"]{
+    .aonInputBox .aonInputBoxLabel input{
+      padding-right : $icon-padding-right;
+    }
+  }
+  //
+  // Datepicker
+  //
+  .aonDatepicker{
+    position  : absolute;
+    display   : grid;
+    gap       : v.$gap-min;
+    visibility: hidden;
+    &.is-visible{
+      visibility    : visible;
+      padding       : $padding;
+      border-radius : v.$border-radius;
+      z-index       : v.$num-1;
+      .date-picker-title{
+        display        : flex;
+        justify-content: space-between;
+        align-items    : center;
+        padding-bottom : v.$gap-min;
+        .date-picker-title-icon{
+          width          : v.$px-34;
+          height         : v.$px-34;
+          border-radius  : v.$pct-100;
+          display        : flex;
+          justify-content: center;
+          align-items    : center;
+        }
+      }
+      table{
+        .day-content-title{
+          font-family: v.$font-primary-semibold;
+        }
+        .day-content-title, .day-content{
+          width          : v.$px-34;
+          height         : v.$px-34;
+          padding        : v.$px-0;
+          display        : flex;
+          justify-content: center;
+          align-items    : center;
+          cursor         : pointer;
+          border-radius  : v.$pct-100;
+          &:empty {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  //
+  // Select
+  //
+  .aonInputListOptions{
+    position  : absolute;
+    display   : grid;
+    gap       : v.$gap-min;
+    visibility: hidden;
+    &.is-visible{
+      visibility    : visible;
+      border-radius : v.$border-radius;
+      z-index       : v.$num-1;
+      padding       : $padding;
+      max-height    : v.$px-222;
+      overflow-y    : auto;
+      overflow-x    : hidden;
+      ul{
+        list-style: none;
+        margin    : v.$px-0;
+        padding   : v.$px-0;
+        display   : grid;
+        gap       : v.$gap-min;
+        li{
+          padding : $padding;
+          cursor  : pointer;
+          display : flex;
+          gap     : v.$gap-min;
+          border-radius : v.$border-radius;
+          div{
+            display: flex;
+            &:first-child{
+              width : v.$px-24;
+              height: v.$px-24;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+// Padding para el icono
+aon-new-date, aon-new-select{
+  .aonInputBox .aonInputBoxLabel input{
+    padding-right : $icon-padding-right;
+  }
+}

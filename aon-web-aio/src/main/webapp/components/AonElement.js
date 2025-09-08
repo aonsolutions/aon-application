@@ -7,7 +7,6 @@ import * as LS from '../services/localStorageService.js';
 import * as UA from '../services/userAgentService.js';
 
 export class AonElement extends HTMLElement{
-
   ROOT_PANEL = 'rootPanel';
   dur;
   sessionData;
@@ -107,7 +106,6 @@ export class AonElement extends HTMLElement{
     return this.getElement(this.ROOT_PANEL);
   }
 
-
   // rootPanel(element) {
   //   let rp = this.getRootPanel();
   //   if(rp) {
@@ -186,22 +184,31 @@ export class AonElement extends HTMLElement{
   isBetaDoc(){
     return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
   }
-  
-  isAyudaTorInfoautonomos(){
-	const href = localStorage.getItem("aon_domain_name")
-    return href?.includes('ayudat') || href?.includes('infoautonomos')
+
+  isNewStyle(){
+    return localStorage.getItem('sass') === 'true';
+  };
+
+  isAyudaTorInfoautonomos() {
+    const href = LS.getDomainName();
+    return href ? href.includes('ayudat') || href.includes('infoautonomos') : false;
   }
-  
-  isAyudaT(){
-	const href = localStorage.getItem("aon_domain_name")
-    return href?.includes('ayudat')
+
+  isAyudaT() {
+    const href = LS.getDomainName();
+    return href ? href.includes('ayudat') : false;
+  }
+
+  isInfoautonomos() {
+    const href = LS.getDomainName();
+    return href ? href.includes('infoautonomos') : false;
   }
 
   isSig(){
     const href = window.location.href;
 		return href.includes('sig.aonsolutions.org')
       || LS.getDomainName() === 'sig.aonsolutions.org';
-	}
+  }
 
   isConsole(){
     const href = window.location.href;
@@ -213,7 +220,7 @@ export class AonElement extends HTMLElement{
       || href.includes('console-ayudat.aonsolutions.net')
       || href.includes('console-grupoayudat.aonsolutions.net')
       || href.includes('console-demos.aonsolutions.org');
-	}
+  }
 
   showMessage(msg) {
     this.showToast({

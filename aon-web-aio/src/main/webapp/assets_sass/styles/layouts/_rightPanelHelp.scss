@@ -1,0 +1,38 @@
+@use '../variables' as v;
+
+aon-right-panel{
+  #aonRightPanel{   
+    #aonRightPanelContent{
+      #aonHelp{
+        #helpContent{
+          display        : flex;
+          flex-direction : column;
+          gap            : v.$gap;
+          #supportContent{
+            padding         : v.$px-0 v.$padding !important;
+            display         : flex;
+            justify-content : space-between;
+            span{
+              font-size     : v.$px-16;
+            }
+          }
+          aon-card{
+            .aonCardContent{
+              display: grid;
+              gap    : v.$gap;
+              .help-row{
+                display     : flex;
+                align-items : center;
+                gap         : v.$gap-min;
+              }
+            }
+          }
+          .divInfo{
+            display: grid;
+            justify-content: flex-end;
+          }
+        }  
+      } 
+    }
+  }
+}

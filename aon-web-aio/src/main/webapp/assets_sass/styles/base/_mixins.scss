@@ -1,0 +1,27 @@
+@use '../variables' as v;
+@use "sass:map";
+
+// breakpoints
+$breakpoints: (
+  "8k"        : v.$breakpoint-8k,
+  "5k"        : v.$breakpoint-5k,
+  "4k"        : v.$breakpoint-4k,
+  "2k"        : v.$breakpoint-2k,
+  "xl"        : v.$breakpoint-xl,
+  "lg"        : v.$breakpoint-lg,
+  "md"        : v.$breakpoint-md,
+  "sm"        : v.$breakpoint-sm,
+  "xs"        : v.$breakpoint-xs,
+  "mobile"    : v.$breakpoint-mobile,
+  "mobile-sm" : v.$breakpoint-mobile-sm,
+  "mobile-xs" : v.$breakpoint-mobile-xs
+);
+
+@mixin respond($size) {
+  $value: map.get($breakpoints, $size);
+  @if $value != null {
+    @media (max-width: $value) {
+      @content;
+    }
+  }
+}

@@ -416,7 +416,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ACCEPT);
-		d.setContentHTML(`EstÃ¡s seguro de restar el palet ${this.packaging.item.serialNumber}`);
+		d.setContentHTML(`Estás seguro de restar el palet ${this.packaging.item.serialNumber}`);
 		d.addAcceptAction(() => {
 			deleteDeliveryPackaging({
 				delivery: this.delivery,

@@ -9,8 +9,6 @@ import { NewsEnums } from "../NewsEnums.js";
 import {AonCategoryAdd} from "../../category/aon-category-add.js";
 import { AonUpload } from "../../../components/aon-upload.js";
 
-
-
 const createForm = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form);
@@ -31,8 +29,8 @@ const createForm = (id, parent) => {
     return {
         cardOne,
         cardTwo
-    }
-}
+    };
+};
 
 const buildFormGeneral = (parent, news) => {
     let divC;

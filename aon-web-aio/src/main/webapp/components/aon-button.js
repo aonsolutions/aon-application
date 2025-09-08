@@ -2,7 +2,6 @@ import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, TAG } from '../environments/environments.js';
 
 export class AonButton extends AonElement {
-
   BUTTON;
   ICON;
   TEXT;
@@ -48,10 +47,10 @@ export class AonButton extends AonElement {
   }
 
   constructor () {
-		super();
-	}
+    super();
+  }
 
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     this.build();
   }
@@ -73,7 +72,7 @@ export class AonButton extends AonElement {
     this.appendChild(button);
 
     if(this.color) {
-      button.style.backgroundColor =this.color;
+      //button.style.backgroundColor =this.color;
     }
 
     if(this.icon) {

@@ -1,0 +1,104 @@
+@use '../variables' as v;
+
+/*  
+  Fila 1: [ Menu superior (100% ancho de #rootPanel)     ] ? #aonMenuTopnav
+  Fila 2: [ Menu lateral izquierda | Contenido principal ] ? #aonMenuSidenav | #rootPanel (IN _home.scss)
+
+  <div id="content">
+    <div id="aon-new-menu">
+      <div id="aonMenuSidenav">Menu lateral izquierda</div>
+      <div id="aonMenuTopnav">Menu superior</div>
+    </div>
+    <div id="rootPanel">Contenido</div>
+  </div>
+*/
+
+#aonMenu{
+  /* Menu izquierda */
+  #aonMenuSidenav {
+    width     : v.$left-aonMenuLeft;
+    min-width : v.$left-aonMenuLeft;
+    max-width : v.$left-aonMenuLeft;
+    ul {
+      list-style-type : none;
+      margin          : v.$px-0;
+      padding         : v.$padding v.$px-0;
+      li{
+        height : v.$px-48;
+        a{
+          div{
+            display         :flex;
+            height          : v.$px-48;
+            align-items     : center;
+            justify-content : flex-start !important;
+            flex-direction  : row !important;
+            gap             : v.$padding;
+            padding         : v.$px-0 v.$padding;
+            cursor          : pointer;
+
+            .aonNewMenuAppIcon{
+              display     : inline-block;
+              width       : v.$px-24;
+              height      : v.$px-24;
+              // Oculta el texto
+              font-size   : v.$px-0;
+              line-height : v.$px-0;
+              color       : transparent;
+              overflow    : hidden;
+            }
+            // texto visible
+            .aonNewMenuAppSpan{
+              font-size   : v.$px-16;
+              line-height : v.$px-24;
+            }
+          }
+        }
+        &:empty {
+          display: none;
+        }
+      }
+    }
+  }
+  /* Menu superior */
+  #aonMenuTopnav {
+    width      : calc(v.$pct-100 - v.$menu-top-Left); // 100% menos lo que ocupa el menu de la izquierda
+    height     : v.$menu-top-height; // Altura del menu
+    position   : fixed;
+    top        : v.$height-cabecera;
+    left       : v.$menu-top-Left;   // lo que ocupa el menu de la izquierda
+    overflow-x : hidden;
+    z-index    : 2;
+    #aonTopMenuDiv{
+      display         : flex;
+      justify-content : center;
+      height          : v.$pct-100;
+      gap             : v.$gap;
+      >div >a{
+        cursor : pointer;
+        &:hover {
+          >div{
+            i{
+              transform : scale(1.3);
+            }
+            span{
+              transform : scale(1.1);
+            }
+          }
+        }
+        >div{
+          height        : v.$pct-100;
+          display       : grid;
+          align-content : center;
+          justify-items : center;
+          i{
+            transition : transform v.$t-02 ease;
+          }
+          span{
+            transition : transform v.$t-02 ease;
+            font-size  : v.$px-10;
+          }
+        }
+      }
+    }
+  }
+}

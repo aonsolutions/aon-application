@@ -4,7 +4,7 @@ import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/
 import { Address } from '../models/registry/Address.js';
 import { getDomains, getCustomers, updateDomains } from '../services/domainsService.js';
 
-import '../css/aon-domain-customer.css';
+//import '../css/aon-domain-customer.css';
 
 export class AonDomainCustomer extends AonElement {
 

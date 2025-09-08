@@ -62,7 +62,6 @@ export class AonAccountingBeta extends AonElement {
 			let configurationOptions = [];
 			configurationOptions.push({
 				id: "parameters",
-				icon: "settings_applications",
 				name: "Parametros",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
 			});
@@ -70,7 +69,6 @@ export class AonAccountingBeta extends AonElement {
 			
 			configurationOptions.push({
 				id: "observations",
-				icon: "speaker_notes",
 				name: "Observaciones",
 				fn: () => this.buildObservations(),
 			});
@@ -83,7 +81,6 @@ export class AonAccountingBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				icon: "dashboard",
 				name: "Panel Contabilidad",
 				fn: () => this.buildAccountingMenu(),
 			});
@@ -132,11 +129,11 @@ export class AonAccountingBeta extends AonElement {
 						titleToolbar.innerHTML = notesTitle;
 						
 						let existsNotes = notes.some(item => item.date);
-						let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
-						if(existsNotes)
-							notesIcon.style.color = 'green';
-						else
-							notesIcon.style.color = 'rgb(95, 99, 104)';
+						// let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
+						// if(existsNotes)
+						// 	notesIcon.style.color = 'green';
+						// else
+						// 	notesIcon.style.color = 'rgb(95, 99, 104)';
 					});
 			}
 		});
@@ -157,8 +154,8 @@ export class AonAccountingBeta extends AonElement {
 					const existsNotes = notes.some(item => item.date);
 					
 					if(existsNotes){
-						let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
-						notesIcon.style.color = 'green';
+						// let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
+						// notesIcon.style.color = 'green';
 					}
 					
 					let existsObservation = notes.some(item => !item.date && item.comments && item.comments.trim() !== "");
@@ -171,7 +168,7 @@ export class AonAccountingBeta extends AonElement {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
 		
-		let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
+		// let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
 
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -209,7 +206,7 @@ export class AonAccountingBeta extends AonElement {
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 		}
 		
-		notesIcon.classList.toggle("material-icons-selected");
+		// notesIcon.classList.toggle("material-icons-selected");
 
 		this.getApplication().toogleRightSidenav();
 	}

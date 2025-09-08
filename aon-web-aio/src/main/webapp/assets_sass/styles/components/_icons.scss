@@ -1,0 +1,153 @@
+@use '../variables' as v;
+
+$iconbutton-font-size        : v.$px-16;
+$position                    : relative;
+$iconbutton-font-size-hidden : v.$px-0;
+$icon-size                   : v.$px-24;
+$content                     : '';
+$display                     : inline-flex;
+$mask                        : no-repeat center;
+$mask-size                   : contain;
+
+// Mapa con iconos y texto
+$icons: (
+  "aon"                  : '../icons/aon.svg',
+  "visibility"           : '../icons/eye.svg',
+  "visibility_off"       : '../icons/eye-off.svg',
+  "settings"             : '../icons/settings.svg',
+  "close"                : '../icons/x-square.svg',
+  "open_in_new"          : '../icons/maximize-2.svg',
+  "language"             : '../icons/globe.svg',
+  "palette"              : '../icons/palette.svg',
+  "account_circle"       : '../icons/user.svg',
+  "notifications"        : '../icons/bell.svg',
+  "notification_add"     : '../icons/bell-plus.svg',
+  "help_outline"         : '../icons/help-circle.svg',
+  "business"             : '../icons/building.svg',
+  "home"                 : '../icons/home.svg',
+  "chevron-down"         : '../icons/chevron-down.svg',
+  "chevron-right"        : '../icons/chevron-right.svg',
+  "delete"               : '../icons/trash-2.svg',
+  "edit"                 : '../icons/edit.svg', 
+  "add"                  : '../icons/plus.svg',
+  "award"                : '../icons/award.svg',
+  "push_pin"             : '../icons/pin.svg',
+  "aon_pin_off"          : '../icons/pin-off.svg',
+  "label"                : '../icons/tag.svg',
+  "move_to_inbox"        : '../icons/archive.svg',
+  "filter_list"          : '../icons/filter.svg',
+  "arrow_back"           : '../icons/arrow-left.svg',
+  "plus-circle"          : '../icons/plus-circle.svg',
+  "x-circle"             : '../icons/x-circle.svg',
+  "file-plus-2"          : '../icons/file-plus-2.svg',
+  "user-plus"            : '../icons/user-plus.svg',
+  "upload-cloud"         : '../icons/upload-cloud.svg',
+  "coins"                : '../icons/coins.svg',
+  "message-square"       : '../icons/message-square.svg',
+  "file-up"              : '../icons/file-up.svg',
+  "file-down"            : '../icons/file-down.svg',
+  "file-plus"            : '../icons/file-plus.svg',
+  "file-minus"           : '../icons/file-minus.svg',
+  "sticker"              : '../icons/sticker.svg',
+  "more_vert"            : '../icons/more-vertical.svg',
+  "file_copy"            : '../icons/copy.svg',
+  "paperclip"            : '../icons/paperclip.svg',
+  "calendar_today"       : '../icons/calendar-days.svg',
+  "keyboard_arrow_left"  : '../icons/chevron-left.svg',
+  "keyboard_arrow_right" : '../icons/chevron-right.svg',
+  "arrow_drop_down"      : '../icons/chevron-down.svg',
+  "arrow_drop_up"        : '../icons/chevron-up.svg',
+  "check"                : '../icons/check.svg',
+  "done"                 : '../icons/check.svg',
+  "autorenew"            : '../icons/refresh-cw.svg',
+  "refresh"              : '../icons/rotate-cw.svg',
+  "remove_circle"        : '../icons/minus-circle.svg',
+  "save"                 : '../icons/save.svg',
+  "email"                : '../icons/mail.svg',
+  "print"                : '../icons/printer.svg',
+  "download"             : '../icons/download.svg',
+  "zoom_out_map"         : '../icons/expand.svg',
+  "zoom_in"              : '../icons/zoom-in.svg',
+  "zoom_out"             : '../icons/zoom-out.svg',
+  /* nombres que le han puesto en los iconos de la izquierda... */
+  "widgets"            : '../icons/box.svg',
+  "add_circle_outline" : '../icons/plus-square.svg',
+  "monitoring"         : '../icons/calculator.svg',
+  "folder_open"        : '../icons/folder-open.svg',
+  "calculate"          : '../icons/calculator.svg',
+  "account_balance"    : '../icons/building-2.svg',
+  "group"              : '../icons/users.svg',
+  "alarm"              : '../icons/timer.svg',
+  "pinboard"           : '../icons/bookmark.svg',
+  "speaker_notes"      : '../icons/sticky-note.svg',
+  "trolley"            : '../icons/package.svg',
+  "info"               : '../icons/info.svg',
+  /* nombres que le han puesto en los iconos de arriba... */
+  "euro_symbol"     : '../icons/euro.svg',
+  "note_stack"      : '../icons/files.svg',
+  "ads_click"       : '../icons/target.svg',
+  "construction"    : '../icons/settings-2.svg',
+  "handshake"       : '../icons/heart-handshake.svg',
+  "business_center" : '../icons/briefcase.svg',
+  /* nombres que le han puesto en los iconos de la derecha - usuario... */
+  "mail"           : '../icons/mail.svg',
+  "phone"          : '../icons/phone.svg',
+  "assignment_ind" : '../icons/user.svg',
+  "logout"         : '../icons/log-out.svg',
+  /* nombres que le han puesto en los iconos de la derecha - help... */
+  "school"   : '../icons/graduation-cap.svg',
+  "rss_feed" : '../icons/bell.svg',
+  "schedule" : '../icons/clock.svg',
+  /* nombres que le han puesto en los iconos de la derecha - notificaciones... */
+  // aun no estan funcionando, hay que modificar el icono en el js (el de la izquierda)
+  "aon_new_documental" : '../icons/folder-open.svg',
+  "aon_new_messenger"  : '../icons/message-square.svg',
+  "aon_new_payroll"    : '../icons/SeguridadSocial.svg',
+  "aon_new_invoice"    : '../icons/file-euro.svg'
+);
+
+// Estilos para los iconos usando el mapa
+@each $icon-name, $icon-data in $icons {
+  aon-icon-button[icon="#{$icon-name}"]{
+    width  : $icon-size;
+    height : $icon-size;
+    button{
+      width  : $icon-size;
+      height : $icon-size;
+      aon-icon {
+        font-size : $iconbutton-font-size;
+        position  : $position;
+        font-size : $iconbutton-font-size-hidden; /* Ocultar el texto */
+        width     : $icon-size;
+        height    : $icon-size;
+        &::before {
+          content : #{$icon-name}; /* Cargar el icono SVG */
+          width   : $icon-size;
+          height  : $icon-size;
+        }
+        &::after {
+          width             : $icon-size;
+          height            : $icon-size;
+          content           : $content;
+          display           : $display;
+          mask              : url(#{$icon-data}) $mask;
+          mask-size         : $mask-size;
+          -webkit-mask      : url(#{$icon-data}) $mask;
+          -webkit-mask-size : $mask-size;
+        }
+      }
+    }
+  }
+  i[data-icon="#{$icon-name}"], aon-icon[data-icon="#{$icon-name}"], aon-icon[icon="#{$icon-name}"]{
+    display          : inline-block;
+    width            : $icon-size;
+    height           : $icon-size;
+    font-size        : 0; // ocultar texto si queda alguno
+    background-color : currentColor;
+
+    mask: url(#{$icon-data}) $mask;
+    mask-size         : $mask-size;
+    -webkit-mask      : url(#{$icon-data}) $mask;
+    -webkit-mask-size : $mask-size;
+  }
+}

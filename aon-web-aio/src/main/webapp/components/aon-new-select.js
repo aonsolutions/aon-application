@@ -1,11 +1,10 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
-import { AonInput } from './aon-input.js';
 import { AonCheckbox } from './aon-checkbox.js';
 import { AonNewInput } from './aon-new-input.js';
+import { AonIcon } from "./aon-icon.js";
 
 export class AonNewSelect extends AonNewInput {
-
   OPTIONS;
   detail;
   _selected;
@@ -14,10 +13,10 @@ export class AonNewSelect extends AonNewInput {
   nameAlias;
   disableKeyUp = true;
   selectable;
+
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
-
 
   get multiple() {
     return this.getAttribute("multiple");
@@ -31,9 +30,9 @@ export class AonNewSelect extends AonNewInput {
     return this.getAttribute(CONSTANT.OPTIONS);
   }
 
-	set options(options) {
-		this.setAttribute(CONSTANT.OPTIONS, options);
-	}
+  set options(options) {
+    this.setAttribute(CONSTANT.OPTIONS, options);
+  }
 
   get autocomplete() {
     return this.getAttribute(CONSTANT.AUTOCOMPLETE);
@@ -108,10 +107,6 @@ export class AonNewSelect extends AonNewInput {
         input.setAttribute(CONSTANT.READONLY, true);
       }
 
-      this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN, undefined, () => this.showOptions());
-
-      input.addEventListener(EVENT.CLICK, () => this.showOptions());
-
       const emptyclear = this.hasAttribute("emptyclear");
 
       input.addEventListener(EVENT.BLUR, ()=>{
@@ -174,20 +169,22 @@ export class AonNewSelect extends AonNewInput {
       if (this.multiple) {
         this.displayMultiple();
       }
+
+      this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN, undefined, () => this.showOptions());
+      input.addEventListener(EVENT.CLICK, () => this.showOptions());
     }
   }
 
   buildOptions(options) {
-
     this.clearElementById(this.OPTIONS);
-
     if(options.length === 0) return null;
 
+    const iconButton = this.getIconButton();
     let input = this.getElement(this.INPUT);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
     div.style.width = this.getBoundingClientRect().width;
-    if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
+    if(this.default || this.hasAttribute(CONSTANT.DEFAULT)) {
       let empty = {};
       empty[this.nameAlias] = '-';
       empty[this.valueAlias] = '';
@@ -205,11 +202,11 @@ export class AonNewSelect extends AonNewInput {
       isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
     }
 
-    
     document.addEventListener(EVENT.CLICK, function(event) {
       this.value = this._selected ? this._selected[this.nameAlias] : '';
-      let isClickInside = input.contains(event.target);
-      if(!isClickInside){
+      const isClickInside = input.contains(event.target);
+      const isClickOnIcon = iconButton && iconButton.contains(event.target);
+      if (!isClickInside && !isClickOnIcon) {
         if(div.classList.contains('is-visible')){
           div.classList.remove('is-visible');
         }
@@ -222,9 +219,41 @@ export class AonNewSelect extends AonNewInput {
     
     let li = this.createElement(TAG.LI);
     li.className = 'aonInputListOptionsItem';
-    li.innerHTML = option[this.nameAlias];
+    let icono = document.createElement(TAG.DIV);
+    li.appendChild(icono); // se rellena solo si tiene datos
+    let texto = document.createElement(TAG.DIV);
+    texto.innerHTML = option[this.nameAlias];
+    li.appendChild(texto);
     li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
     ul.appendChild(li);
+
+    //
+    // El que esta seleccionado
+    //
+      const optionValue = option[this.valueAlias];
+      let normalizedValue;
+
+      switch (typeof optionValue) {
+        case "number":
+          normalizedValue = Number(this.value);
+          break;
+        case "string":
+          normalizedValue = String(this.value);
+          break;
+        case "boolean":
+          normalizedValue = this.value === "true" || this.value === true;
+          break;
+        default:
+          console.warn("Tipo no esperado:", typeof optionValue, optionValue);
+          normalizedValue = this.value; // fallback sin conversión
+      }
+
+      if (normalizedValue === optionValue) {
+        this.isSelected(li, icono);
+      }
+    //
+    // FIN - El que esta seleccionado
+    //
 
     li.addEventListener(EVENT.CLICK, () => {
       div.classList.remove('is-visible');
@@ -237,8 +266,14 @@ export class AonNewSelect extends AonNewInput {
     return li;
   }
 
-  buildLiMultiple(option, ul){
+  isSelected(li, icono){
+    li.classList.add('is-selected');
+    let icon  = new AonIcon();
+    icon.icon = "check";
+    icono.appendChild(icon);
+  }
 
+  buildLiMultiple(option, ul){
     const valueAlias = option[this.valueAlias];
     if(this.isBetaDoc()){
       var checkBoxId = `${this.id}_checkbox_${valueAlias}`;

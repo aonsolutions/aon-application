@@ -25,55 +25,55 @@ export const createAonElement = (el, id, title, parent) => {
   el.description = title || '';
   if(parent) parent.appendChild(el);
   return el;
-}
+};
 
 export const createCard = (id, title, parent) => {
   return createAonElement(new AonCard(), id, title, parent);
-}
+};
 
 export const createInput = (id, title, parent) => {
   return createAonElement(new AonNewInput(), id, title, parent); // AonInput
-}
+};
 
 export const createEmail = (id, title, parent) => {
   return createAonElement(new AonEmail(), id, title, parent);
-}
+};
 
 export const createDate = (id, title, parent) => {
   return createAonElement(new AonNewDate(), id, title, parent); // AonDate
-}
+};
 
 export const createNumber = (id, title, parent) => {
   return createAonElement(new AonNewNumber(), id, title, parent); // AonNumber
-}
+};
 
 export const createSelect = (id, title, parent) => {
   return createAonElement(new AonNewSelect(), id, title, parent); // AonSelect
-}
+};
 
 export const createList = (id, parent) => {
   return createAonElement(new AonTable(), id, '', parent);
-}
+};
 
 export const createFetchingList = (id, parent) => {
   return createAonElement(new AonTable(true), id, '', parent);
-}
+};
 
 export const createTable = (id, parent) => {
   return createAonElement(new AonBasicTable(), id, '', parent);
-}
+};
 
 export const createSuggestion = (id, title, parent) => {
   return createAonElement(new AonNewSuggestion(), id, title, parent); // AonSuggestion
-}
+};
 
 export const createTextarea = (id, title, parent) => {
   return createAonElement(new AonNewTextarea(), id, title, parent); // AonAutosizeTextarea
-}
+};
 
 export const createQuantity = (id, title, parent) => {
   return createAonElement(new AonQuantity(), id, title, parent); // AonAutosizeTextarea
-}
+};
 
 /**
  * 
@@ -95,7 +95,7 @@ export const createQuantity = (id, title, parent) => {
   if(parent) parent.appendChild(element);
 
   return element;
-}
+};
 
 /**
  * 
@@ -121,7 +121,7 @@ const createAonSelectAutocomplete = ({attributes, events}, parent, autocomplete)
   if(parent) parent.appendChild(element);
 
   return element;
-}
+};
 
 /**
  * 
@@ -134,7 +134,7 @@ const createAonInput = ({attributes, events}, parent) => {
   if(events) setEvents(input, events);
   if(parent) parent.appendChild(input);
   return input;
-}
+};
 
 /**
  * 
@@ -147,7 +147,7 @@ const createAonInput = ({attributes, events}, parent) => {
   if(events) setEvents(icon, events);
   if(parent) parent.appendChild(icon);
   return icon;
-}
+};
 
 /**
  * 
@@ -160,8 +160,7 @@ const createAonDate = ({attributes, events}, parent) => {
   if(events) setEvents(date, events);
   if(parent) parent.appendChild(date);
   return date;
-}
-
+};
 
 /**
  * 
@@ -174,7 +173,7 @@ const createAonDate = ({attributes, events}, parent) => {
   if(events) setEvents(input, events);
   if(parent) parent.appendChild(input);
   return input;
-}
+};
 
 /**
  * 
@@ -187,7 +186,7 @@ const createAonDate = ({attributes, events}, parent) => {
   if(events) setEvents(input, events);
   if(parent) parent.appendChild(input);
   return input;
-}
+};
 
 /**
  * 
@@ -202,7 +201,7 @@ const createAonCard = (attributes, parent) => {
   });
   if(parent) parent.appendChild(element);
   return element;
-}
+};
 
 /**
  * 
@@ -214,7 +213,7 @@ const createAonToolbar = (attributes, parent) => {
   const element = setAttributes( new AonToolbar(), attributes);
   if(parent) parent.appendChild(element);
   return element;
-}
+};
 
 /**
  * 
@@ -242,4 +241,4 @@ export const CreateComponent = {
   createAonDate,
   createAonToolbar,
   createForm
-}
+};

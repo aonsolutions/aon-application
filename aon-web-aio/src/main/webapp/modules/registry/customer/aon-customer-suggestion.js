@@ -10,7 +10,6 @@ import { Countries } from '../../../services/country.js';
 import { createSelect, createSuggestion } from '../../../components/CreateComponent.js';
 
 export class AonCustomerSuggestion extends AonElement {
-
   OPTIONS;
   OPTIONS_UL;
   OPTIONS_LI;
@@ -248,11 +247,10 @@ export class AonCustomerSuggestion extends AonElement {
     table.addCell(removeRegistry);
 
     let options = this.createElement(TAG.DIV);
-		options.id = this.OPTIONS;
-		options.className = CSS.AON_INPUT_LIST_OPTIONS;
-    options.style.width = div.clientWidth;
-    options.style.marginTop = "-16px";
-		this.appendChild(options);
+      options.id = this.OPTIONS;
+      options.className = CSS.AON_INPUT_LIST_OPTIONS;
+      options.style.width = div.clientWidth;
+      this.appendChild(options);
   }
 
   clearAddress() {

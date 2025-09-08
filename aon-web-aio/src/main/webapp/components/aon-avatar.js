@@ -24,7 +24,6 @@ export class AonAvatar extends AonElement {
         this.setAttribute('src', src);
     }
 
-
     attributeChangedCallback(name, oldValue, newValue) {
 		if("src" === name) {
 			let img = this.getElement(this.IMAGE);
@@ -48,27 +47,20 @@ export class AonAvatar extends AonElement {
  
     build() {
         if(this.auth){
-            let divImagen = this.createDiv();
-            divImagen.appendChild(this.buildImage(this.getName(this.auth)));
-            this.appendChild(divImagen);
+          this.appendChild(this.buildImage(this.getName(this.auth)));
         }else{
-            
-            let img = this.createElement(TAG.IMG);
-            img.id  = this.IMAGE;
-            img.src = this.src && this.src != 'undefined' && this.src != 'null' 
-                ? this.src  : 'assets/img/profile.png';
-            img.className = CSS.AON_IMG_AVATAR;
-            img.style.objectFit = "cover";
-            
+          let img = this.createElement(TAG.IMG);
+          img.id  = this.IMAGE;
+          img.src = this.src && this.src != 'undefined' && this.src != 'null' 
+              ? this.src  : 'assets/img/profile.png';
+          img.className = CSS.AON_IMG_AVATAR;
+          img.style.objectFit = "cover";
+
+          if(this.scale){
+              img.style.scale = this.scale;
+              img.style.marginLeft = this.marginLeft;
+          }
         }
-        
-        if(this.scale){
-            img.style.scale = this.scale;
-            img.style.marginLeft = this.marginLeft;
-        }
-        
-        //this.appendChild(img);
-        
     }
 
     setScale(scale,marginLeft) {
@@ -89,7 +81,6 @@ export class AonAvatar extends AonElement {
 		let div = this.createDiv();
 		div.className = "profile-avatar-letters";
 		div.innerHTML = letters;
-	
 		return div;
 	}
 }

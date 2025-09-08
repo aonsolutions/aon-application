@@ -28,9 +28,7 @@ const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
 
-
 export class AonMenu extends AonElement {
-
 	dur;
 	AON_MENU_SIDENAV;
 	CLOSE;

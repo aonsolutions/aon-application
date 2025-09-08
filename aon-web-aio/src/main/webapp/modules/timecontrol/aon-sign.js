@@ -6,7 +6,7 @@ import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
-import * as LS from "../../services/localStorageService.js";
+// import * as LS from "../../services/localStorageService.js";
 
 export class AonSign extends AonElement {
   _taskHolders;
@@ -71,25 +71,25 @@ export class AonSign extends AonElement {
   }
 
   build(){
-    let divGeneral = this.createElement(TAG.DIV);
-    divGeneral.style.display = "flex";   
-    divGeneral.style.flexDirection = "column"; 
-    divGeneral.style.alignItems = "center";  
-    divGeneral.style.gap = ".5rem";  
+//    let divGeneral = this.createElement(TAG.DIV);
+//    divGeneral.style.display = "flex";   
+//    divGeneral.style.flexDirection = "column"; 
+//    divGeneral.style.alignItems = "center";  
+//    divGeneral.style.gap = ".5rem";  
      
-    this.appendChild(divGeneral);
+//    this.appendChild(divGeneral);
 
-    if(this.isMobile()){
-      this.parentNode.style.marginLeft = 0;
-    } else {
-      this.parentNode.style.paddingLeft = 0;
-    }
+//    if(this.isMobile()){
+//      this.parentNode.style.marginLeft = 0;
+//    } else {
+//      this.parentNode.style.paddingLeft = 0;
+//    }
 
     if(this.parent && this._taskHolders.length > 1){
       let company = this.createElement(TAG.DIV);
-      company.style.marginLeft = '20px';
-      company.style.width = '200px';
-      divGeneral.appendChild(company);
+//      company.style.marginLeft = '20px';
+//      company.style.width = '200px';
+      this.appendChild(company);
 
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
@@ -102,25 +102,25 @@ export class AonSign extends AonElement {
         getTimeControl({parent:true, task_holder: this._taskHolder}).then(r => this.buildSignin(r));
       });
       
-      select.value = this._taskHolders[0].id
+      select.value = this._taskHolders[0].id;
     }
 
-    if(!this.getElement(this.TIME)||this.isMobile()){
-      let time = this.createElement(TAG.DIV);
-      time.style.fontSize = '1.6rem';
+//    if(!this.getElement(this.TIME)||this.isMobile()){
+      let time = this.createElement(TAG.BIG);
+//      time.style.fontSize = '1.6rem';
       time.id = this.TIME;
       time.innerHTML = "00:00:00";
-      divGeneral.appendChild(time);
-    }
+      this.appendChild(time);
+//    }
 
     let div = this.createElement(TAG.DIV);
     div.id = this.CONTENT;
-    div.style.display = "flex";
-    div.style.flexDirection = "column";
-    div.style.alignItems = "center";
-    div.style.gap = ".5rem";
+//    div.style.display = "flex";
+//    div.style.flexDirection = "column";
+//    div.style.alignItems = "center";
+//    div.style.gap = ".5rem";
 
-    divGeneral.appendChild(div);
+    this.appendChild(div);
 
     if(this.tc){
       this.buildSignin(this.tc);
@@ -129,22 +129,22 @@ export class AonSign extends AonElement {
 
   entrada() {
     let content = this.getElement(this.CONTENT);
-		if(content){
+    if(content){
       this.clearElement(content);
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Entrada";
       button.className = 'aonButton';
       button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#86D364';
+//      button.style.backgroundColor = '#86D364';
       button.innerHTML = MSG.ENTRY.toUpperCase();
       if(this.isMobile()){
-        button.style.width = "60%";
-        button.style.borderRadius = "12px";
+//        button.style.width = "60%";
+//        button.style.borderRadius = "12px";
       }
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
-	}
+  }
 
   vuelta() {
     let content = this.getElement(this.CONTENT);
@@ -154,47 +154,38 @@ export class AonSign extends AonElement {
       button.id = this.id+"Vuelta";
       button.className = 'aonButton';
       button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#86D364';
+//      button.style.backgroundColor = '#86D364';
       button.innerHTML = 'VUELTA';
       if(this.isMobile()){
-        button.style.width = "60%";
-        button.style.borderRadius = "12px";
+//        button.style.width = "60%";
+//        button.style.borderRadius = "12px";
       }
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
-	}
+  }
 
   salida() {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
 
-      let buttons = this.createElement(TAG.DIV);
-      buttons.style.display = "flex";
-      buttons.style.justifyContent = "center";
-      buttons.style.gap = "1rem";
-
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Salida";
       button.className = 'aonButton';
       button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#DC4D30';
       button.innerHTML = MSG.EXIT.toUpperCase();
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
-      buttons.appendChild(button);
-  
+      content.appendChild(button);
+
       let button2 = this.createElement(TAG.BUTTON);
       button2.className = 'aonButton';
       button2.classList.add('aonTimeControlButton');
-      button2.style.backgroundColor = '#F39F1D';
       button2.innerHTML = 'PAUSA';
       button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
-      buttons.appendChild(button2);
-
-      content.appendChild(buttons);
+      content.appendChild(button2);
     }
-	}
+  }
 
   async saveTimeCtrl(status){
 	let divGeneral = this.getElement(this.id);
@@ -205,13 +196,11 @@ export class AonSign extends AonElement {
     this.disabledButton(true);
     let timeOutPosition = false;
 
-    await getPosition()
-    .then(position=>{
+    await getPosition().then(position=>{
       if(position){
         signin.coordinates = position.latitude + ',' + position.longitude;
       }
-    })
-    .catch(error=>{
+    }).catch(error=>{
       timeOutPosition = error && error.timeout;
 //      this.showToast(error);
     });
@@ -221,16 +210,14 @@ export class AonSign extends AonElement {
 	});
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
-      getPosition()
-      .then(position=>{
+      getPosition().then(position=>{
         if(position){
           r.coordinates = position.latitude + ',' + position.longitude;
           saveTimeControl({...resp, ...signin})
           .then(console.log)
           .catch(console.error);
         }
-      })
-      .catch(console.error);
+      }).catch(console.error);
     }
 
     this.buildSignin(resp);
@@ -258,7 +245,7 @@ export class AonSign extends AonElement {
     this._taskHolder = signin.task_holder.id;
     const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
-    timeEl.style.cursor = "default";
+//    timeEl.style.cursor = "default";
 
     let time = signin.time;
     localStorage.removeItem(this.TIME_ID);
@@ -288,15 +275,12 @@ export class AonSign extends AonElement {
   }
 
   async timeAction(time, id) {
-    
     this.changeTime(time);
-
     this.updateHour();
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const aonSign = document.querySelector(`#`+this.id);
-
     const timeIdStorage = parseFloat(localStorage.getItem(this.TIME_ID));
 
     if(aonSign && (id ===  timeIdStorage)) {
@@ -325,11 +309,11 @@ export class AonSign extends AonElement {
           break;
       }
       const id = 'lastTimeUser';
-      const div = this.getElement(id) || this.createElement(TAG.DIV);
+      const div = this.getElement(id) || this.createElement(TAG.SMALL);
       div.id = id;
-      div.style.color = "grey";
-      div.style.cursor = "default";
-      div.style.fontSize  = ".8rem";
+//      div.style.color = "grey";
+//      div.style.cursor = "default";
+//      div.style.fontSize  = ".8rem";
       div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();
@@ -353,13 +337,13 @@ export class AonSign extends AonElement {
             let content = this.getElement(this.CONTENT);
             const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
             div.id = this.TOTAL_HOUR;
-            div.style.color =  LS.isDarkTheme() ? "#ffffff" : "gray";
-            div.style.fontSize = "12px";
-            div.style.cursor = "default";
+//            div.style.color =  LS.isDarkTheme() ? "#ffffff" : "gray";
+//            div.style.fontSize = "12px";
+//            div.style.cursor = "default";
             div.dataset.sumHour = sumHour;
             div.innerHTML = "Horas semana actual: ";
             const span = this.createElement(TAG.SPAN);
-            span.style.fontWeight = 800;
+//            span.style.fontWeight = 800;
             span.id = this.TOTAL_HOUR+"Span";
             div.appendChild(span);
             content.append(div);
@@ -378,7 +362,7 @@ export class AonSign extends AonElement {
         const hour = Number(dataset.sumHour);
         const span = this.getElement(div.id+"Span");
         span.innerHTML = timeHour(hour);
-        span.style.color =  LS.isDarkTheme() ? "#ffffff" : "black";
+//        span.style.color =  LS.isDarkTheme() ? "#ffffff" : "black";
         dataset.sumHour  = hour + 1000;
       }
     } catch (error) {}

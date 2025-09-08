@@ -40,12 +40,14 @@ export class AonBasicTable extends AonElement {
     this.appendChild(table);
   }
 
-  addCell(elem, colspan, row) {
+  addCell(elem, colspan, row, className) {
     row = row || this.rows;
     let tr = this.getElement(this.TABLE_ROW + row);
     let td = this.createElement(TAG.TD);
     td.colSpan = colspan || '1';
-    
+    if (className) {
+      td.classList.add(className);
+    }
     td.appendChild(elem);
     tr.appendChild(td);
     return td;
@@ -63,10 +65,17 @@ export class AonBasicTable extends AonElement {
     return null;
   }
 
-  addRow() {
+  addRow(classes) {
     this.rows = this.rows + 1;
     let tr = this.createElement(TAG.TR);
     tr.id = this.TABLE_ROW + this.rows;
+    if (classes) {
+      if (Array.isArray(classes)) {
+        tr.classList.add(...classes);
+      } else {
+        tr.classList.add(classes);
+      }
+    }
     this.getElement(this.TABLE).appendChild(tr);
     return this.rows;
   }

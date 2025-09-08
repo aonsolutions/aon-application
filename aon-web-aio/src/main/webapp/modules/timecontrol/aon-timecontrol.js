@@ -5,7 +5,7 @@ import { getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getT
 import { isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
-import { SigninSidenav, SIGNIN_VIEWS } from "./signinEnums.js";
+import { sidenavOptions, SigninSidenav, SIGNIN_VIEWS } from "./signinEnums.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { AonEventList } from "./time-control/event/aon-event-list.js";
 import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
@@ -15,7 +15,7 @@ import { MSG,TAG,CSS } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
 import * as OPTIONS from './TimecontrolOptions.js';
-import 'aoncss';
+//import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
 import { getPosition } from "../../services/maps.js";
@@ -56,7 +56,7 @@ export class AonTimecontrol extends AonElement {
   build() {
     this.filterInit();
     this.paintView();
-    this.buildToolbar();
+    this.buildSidenav();
     if(this.isMobile())
       this.showView(SIGNIN_VIEWS.AON_STATISTICS);
     else
@@ -66,79 +66,54 @@ export class AonTimecontrol extends AonElement {
   filterInit(){
     const periodEnums = SigninSidenav.PERIOD;
     const period = getPeriod(this.isEmployee() ? periodEnums.THIS_WEEK.id : periodEnums.TODAY.id);
-    this._filter = { 
-      group:"DAY",
+    this._filter = {
+      group: "DAY",
       period: period.value,
       startDate: period.startDate,
       endDate: period.endDate,
-      active:true
-    }
+      active: true
+    };
   }
   paintView() {
     this.createApplication(this.AON_SIGNIN, MSG.TIMECONTROL, new AonApplication());
     this.applicationEl = this.getApplication();
   }
   
-  buildToolbar() {
+  buildSidenav() { // En el fondo es el Sidenav
     if(this.isMobile()){
       this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
     }
 
-    let data = OPTIONS.TIMECONTROL;
+    // Control horario
+    let data = OPTIONS.TIMECONTROL_SIDENAV;
     if(this.isEmployee()) data.options = [OPTIONS.PRESENCE];
-    
     this.applicationEl.addSidenavOptions3(data);
 
-    const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
-    const options2 = [
-      {
-        ...TODAY,
-        fn: () => this.setDataFilter({period:TODAY.id})
-      },
-      {
-        ...YESTERDAY,
-        fn: () =>this.setDataFilter({period:YESTERDAY.id})
-      },
-      {
-        ...THIS_WEEK,
-        fn: () =>this.setDataFilter({period:THIS_WEEK.id})
-      },
-      {
-        ...LAST_WEEK,
-        fn: () =>this.setDataFilter({period:LAST_WEEK.id})
-      },
-      {
-        ...THIS_MONTH,
-        fn: () => this.setDataFilter({period:THIS_MONTH.id})
-      }
-    ];
-    
-    let data2 = {
-			id: "Periodo",
-			title: "Periodo",
+    // Periodos
+    const periods  = Object.values(sidenavOptions.PERIOD);
+    const options2 = periods.map(period => ({
+      ...period,
+      fn: () => this.setDataFilter({ period: period.id })
+    }));
+
+    const data2 = {
+      id: "Periodo",
+      title: "Periodo",
       name: "Periodo",
       app: Apps.TIMECONTROL,
       options: options2
-		}
-    
+    };
     this.applicationEl.addSidenavOptions3(data2);
 
     if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
-			getTimeControl().then(r => {
-		    let data3 = {
-          id: "signing",
-          title: MSG.SIGNING.toUpperCase(),
-          name: MSG.SIGNING.toUpperCase(),
-          app: Apps.TIMECONTROL
-        }
-    
+      getTimeControl().then(r => {
         let aonSign = new AonSign();
-        this.applicationEl.addSidenavWidget2(data3, aonSign);
-				aonSign.buildSignin(r);
+        this.applicationEl.addSidenavWidgetComponet(aonSign);
+        aonSign.buildSignin(r);
         let aonHeader = this.getElement('aonHeader');
         aonHeader.timeControlStatus(r);
-			});
-		}
+      });
+    }
   }
 
   periodSideNavDisplay(b){

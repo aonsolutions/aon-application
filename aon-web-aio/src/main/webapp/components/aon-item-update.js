@@ -3,7 +3,7 @@ import { AonElement } from "./AonElement.js";
 import {CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS} from "../environments/environments.js";
 import {getBooking, getDomains, updateDomainBooking} from "../services/domainsService.js";
 
-import "../css/aon-domain-customer.css";
+//import "../css/aon-domain-customer.css";
 import { AonButton } from "./aon-button.js";
 
 export class AonItemUpdate extends AonElement {

@@ -15,7 +15,6 @@ import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoiceList extends AonElement {
-
 	more;
 	filter;	
 	TABLE;
@@ -50,7 +49,8 @@ export class AonInvoiceList extends AonElement {
 	}
 
  	build() {
-		if(this.isProcessing()) this.buildProcessing();
+		if(this.isProcessing())
+			this.buildProcessing();
 		else {
 			let aonInvoiceTable = createList(this.TABLE); 
 			aonInvoiceTable.selectable = 'true';
@@ -436,15 +436,13 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	downloadInvoices() {
-		let data = this.getFilter();
-		data.domainId = LS.getDomainId();
-		data.domainName = LS.getDomainName();
-		data.domainLogin = LS.getDomainLogin();
-		alert(this.getTable().selectedAll);
-		if(!this.getTable().selectedAll) {
-			data.ids = this.getTable().selected.map(r => r.id);
-		}
-
+		let data = {
+			domainId: localStorage.getItem('aon_domain_id'),
+			domainName: localStorage.getItem('aon_domain_name'),
+			domainLogin: localStorage.getItem('aon_domain_login'),
+			ids: this.getTable().selected.map(r => r.id),
+			status: this.getFilter().status
+		};
 		let json = btoa(JSON.stringify(data));
 		downloadInvoices(json);
 	}

@@ -1,0 +1,59 @@
+@use '../variables' as v;
+
+aon-table{
+  table{
+    width           : v.$pct-100;
+    border-collapse : separate;
+    border-spacing  : 0 v.$gap;
+    margin-top      : -(v.$gap);
+    th, td {
+      border    : none;
+      padding   : 0 v.$padding;
+      font-size : v.$px-13;
+    }
+    thead{
+      tr{
+        cursor      : default;
+        user-select : none;
+        height      : v.$px-60;
+        text-align  : left;
+        th:has(aon-checkbox) {
+          width    : v.$px-16;
+          min-width: v.$px-16;
+          max-width: v.$px-16;
+        }
+      }
+    }
+    tbody{
+      tr{
+        cursor: pointer;
+        td {
+          height        : v.$px-58;
+          border-radius : 0;
+          // ponemos ... si tenemos mucho texto
+          white-space   : nowrap;
+          overflow      : hidden;
+          text-overflow : ellipsis;
+          max-width     : v.$px-150;
+          // Primer td de la fila ? esquinas izquierda
+          &:first-child {
+            border-top-left-radius    : v.$border-radius;
+            border-bottom-left-radius : v.$border-radius;
+          }
+          // Ultimo td de la fila ? esquinas derecha
+          &:last-child {
+            border-top-right-radius   : v.$border-radius;
+            border-bottom-right-radius: v.$border-radius;
+          }
+        }
+      }
+    }
+  }
+
+  // Media query para movil, para abajo
+  @media (max-width: v.$breakpoint-sm) {
+    th, td {
+      font-size : v.$px-12;
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { setValueName, sortBy, isEmptyObject } from "../../../../services/utils.
 import { setAttributes } from "../../../../services/utilsComponents.js";
 import { getPeriod, getStatus, getTaskHolderTimeControl } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { EVENT_LIST_FILTER, ToolbarOptions, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
@@ -111,9 +111,9 @@ export class AonEventList extends AonElement {
 
     if(!this.applicationParentEl.isEmployee()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>this.aonEventAdd());
+        this.applicationEl.addFloatOption(ToolbarOptions.ADD, () =>this.aonEventAdd());
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>this.aonEventAdd());
+        this.applicationEl.addToolbarOption2(ToolbarOptions.ADD, () =>this.aonEventAdd());
       }
     }
 

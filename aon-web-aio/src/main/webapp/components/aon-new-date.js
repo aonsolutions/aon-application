@@ -135,17 +135,25 @@ export class AonNewDate extends AonNewInput {
     let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
     datepicker.id = this.DATEPICKER;
     datepicker.classList.add('aonDatepicker', CSS.AON_BOX_SHADOW);
-    datepicker.style.width = this.width || '250px';
+    if(this.width)
+      datepicker.style.width = this.width;
     span.appendChild(datepicker);
     let datepickerHeaderId =this.DATEPICKER +"Header";
     let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement(TAG.DIV);
-    datepickerHeader.style.height = '50px';
     datepickerHeader.id = datepickerHeaderId;
+    datepickerHeader.className = "date-picker-title";
 
     let aib1 = new AonIconButton();
     aib1.id = this.DATEPICKER_PREVIOUS;
+    aib1.className = "date-picker-title-icon";
     aib1.icon = "keyboard_arrow_left";
     datepickerHeader.appendChild(aib1);
+
+    aib1.addEventListener(EVENT.CLICK, (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.previousMonth();
+    });
 
     let span1 = this.createElement(TAG.SPAN);
     span1.id = this.DATEPICKER_MONTH;
@@ -159,41 +167,17 @@ export class AonNewDate extends AonNewInput {
 
     let aib2 = new AonIconButton();
     aib2.id = this.DATEPICKER_NEXT;
+    aib2.className = "date-picker-title-icon";
     aib2.icon = "keyboard_arrow_right";
     datepickerHeader.appendChild(aib2);
 
-    datepicker.appendChild(datepickerHeader);
-
-    let previous = this.getElement(this.DATEPICKER_PREVIOUS);
-    previous.style.position = 'absolute';
-    previous.style.left = '0px';
-    previous.style.top = '5px';
-    previous.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.previousMonth();
-    });
-
-    let datepickerMonth = this.getElement(this.DATEPICKER_MONTH);
-    datepickerMonth.style.position = 'absolute';
-    datepickerMonth.style.left = '50px';
-    datepickerMonth.style.top = '15px';
-
-    let datepickerYear = this.getElement(this.DATEPICKER_YEAR);
-    datepickerYear.style.position = 'absolute';
-    datepickerYear.style.left = '150px';
-    datepickerYear.style.top = '15px';
-
-
-    let next = this.getElement(this.DATEPICKER_NEXT);
-    next.style.position = 'absolute';
-    next.style.right = '0px';
-    next.style.top = '5px';
-    next.addEventListener(EVENT.CLICK, (ev) => {
+    aib2.addEventListener(EVENT.CLICK, (ev) => {
       ev.stopPropagation();
       ev.preventDefault();
       this.nextMonth();
     });
+
+    datepicker.appendChild(datepickerHeader);
 
     let datepickerDays = this.createElement(TAG.DIV);
     let table = this.createElement(TAG.TABLE);
@@ -204,7 +188,7 @@ export class AonNewDate extends AonNewInput {
     datepicker.appendChild(datepickerDays);
     this.buildCalendar();
 
-    document.addEventListener(EVENT.CLICK, (event) => {      
+    document.addEventListener(EVENT.CLICK, (event) => {
       let isClickInside = this.contains(event.target);
       if(!isClickInside){
         if(datepicker.classList.contains('is-visible')){
@@ -222,7 +206,11 @@ export class AonNewDate extends AonNewInput {
     for(let d = 0; d < 7; d++) {
       let td = this.createElement(TAG.TD);
       td.className = 'aonDatepickerDays aonDatepickerDaysTitle';
-      td.innerHTML = this.getDayName(d);
+      let innerDiv = this.createElement(TAG.DIV);
+      innerDiv.className = 'day-content-title';
+      innerDiv.innerHTML = this.getDayName(d);
+
+      td.appendChild(innerDiv);
       trDays.appendChild(td);
     }
 
@@ -231,8 +219,13 @@ export class AonNewDate extends AonNewInput {
       datepickerDaysTable.appendChild(tr);
       for(let j = 0; j < 7; j++) {
         let td = this.createElement(TAG.TD);
-        td.className = 'aonDatepickerDays'
+        td.className = 'aonDatepickerDays';
         td.id = this.DATEPICKER_DAYS + i + j;
+
+        let innerDiv = this.createElement(TAG.DIV);
+        innerDiv.className = 'day-content';
+
+        td.appendChild(innerDiv);
         tr.appendChild(td);
       }
     }
@@ -245,23 +238,22 @@ export class AonNewDate extends AonNewInput {
       let actDate = date;
       let pos = (date.getDay() - 1 < 0) ? 6 : date.getDay() - 1;
       let td = this.getElement(this.DATEPICKER_DAYS + line + pos);
-      td.style.height = '34px';
-      td.style.borderRadius = '50%';
-      td.style.cursor = 'pointer';
-      if(this.isSameDate(date)){
-        td.style.backgroundColor = '#002469';
-        td.style.color = 'white';
-      }
-      td.innerHTML = date.getDate();
-      td.addEventListener('mouseover', () => {
-        if(!this.isSameDate(actDate))
-          td.style.backgroundColor = '#f1f1f1';
-      });
+      // Crear el div contenedor
+      let innerDiv = document.createElement(TAG.DIV);
+      innerDiv.className = 'day-content';  // La clase para aplicar flex y estilos
 
-      td.addEventListener('mouseleave', () => {
-        if(!this.isSameDate(actDate))
-          td.style.backgroundColor = 'transparent';
-      });
+      // Poner la fecha como texto dentro del div
+      innerDiv.textContent = date.getDate();
+
+      // Limpiar contenido anterior y añadir el div al td
+      td.innerHTML = '';
+      td.appendChild(innerDiv);
+
+      if (this.isSameDate(date)) {
+        innerDiv.classList.add('day-selected');
+      } else {
+        innerDiv.classList.remove('day-selected');
+      }
 
       td.addEventListener(EVENT.CLICK, () => {
         this.setDate(actDate);

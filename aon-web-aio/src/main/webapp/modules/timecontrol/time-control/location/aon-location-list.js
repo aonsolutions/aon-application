@@ -1,11 +1,10 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation } from "../../../../services/service.js";
-import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { ToolbarOptions, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { TIMECONTROL } from "../../../../services/app.js";
-
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
@@ -68,9 +67,9 @@ export class AonLocationList extends AonElement {
     this.applicationEl.removeToolbarOptions();
 
     if (this.isMobile()) 
-      this.applicationEl.addFloatOption(SigninSidenav.ADD,() => this.add());
+      this.applicationEl.addFloatOption(ToolbarOptions.ADD,() => this.add());
     else 
-      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
+      this.applicationEl.addToolbarOption2(ToolbarOptions.ADD, () => this.add());
   }
 
   async getTable() {

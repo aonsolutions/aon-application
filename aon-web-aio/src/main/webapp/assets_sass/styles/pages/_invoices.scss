@@ -1,0 +1,80 @@
+@use '../variables' as v;
+
+$size-space        : v.$pct-25;
+$min-size-space    : v.$px-300;
+$panding-icon-table: calc(v.$input-height / 4);
+
+#rootPanel {
+  aon-invoice-panel{
+    #aonInvoiceContent{
+    // aon-invoice-home
+      &:has(aon-invoice-home) {
+        padding: v.$px-0;
+      }
+      aon-invoice-home{
+        #aonInvoiceHomeDashboard{
+          display       : flex;
+          flex-direction: column;
+          gap           : v.$gap;
+          #aonInvoiceHomeFastPanel{
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            /*justify-content : center;*/
+            aon-dashboard-button{
+              width: $size-space;
+              min-width: $min-size-space;
+            }
+          }
+          #aonInvoiceHomeCardPanel{
+            width           : v.$pct-100;
+            display         : flex;
+            flex-wrap       : wrap;
+            gap             : v.$gap;
+            /*justify-content : center;*/
+            aon-card{
+              width: $size-space;
+              min-width: $min-size-space;
+            }
+          }
+        }
+      }
+    // FIN - aon-invoice-home
+    // aon-invoice 
+      aon-invoice{
+        #aonInvoiceSheetDataGeneral{
+          display: flex;
+          aon-card{
+            flex: v.$num-1 v.$num-1 v.$pct-50;
+          }
+        }
+        table{
+          tr{
+            display    : flex;
+            align-items: end;
+          }
+        }
+        #irpfTableTable{
+          .add-irpf {
+            .add-irpf-padding{
+              padding-bottom: $panding-icon-table;
+            }
+          }
+        }
+        #aonInvoiceTaxTable2Table{
+          .invoice-tax{
+            td:last-child:has(> aon-icon-button) {
+              padding-bottom: $panding-icon-table;
+            }
+          }
+        }
+        #aonInvoiceDetailTableTable, #aonInvoiceFinanceTableTable{
+          td:has(> aon-icon-button) {
+            padding-bottom: $panding-icon-table;
+          }
+        }
+      }
+    // FIN - aon-invoice 
+    }
+  }
+}

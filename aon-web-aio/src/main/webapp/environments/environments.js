@@ -1,4 +1,3 @@
-
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
@@ -27,7 +26,6 @@ export const CONFIG_FB   = {
     appId: "1:292041697338:web:81dbe6e044074cbc58ed03",
     measurementId: "G-7MQDKLET0Y",
 };
-
 
 import * as MSG from './msg.js';
 import * as EVENT from './aonEvent.js';

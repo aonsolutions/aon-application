@@ -1,0 +1,144 @@
+@use '../variables' as v;
+
+$icon-size: v.$px-16;
+$icon-gap : v.$gap-min;
+
+// Submenu que carga dentro de las paginas
+.aonSidenav{
+  display       : flex;
+  flex-direction: column;
+  border-radius : v.$border-radius;
+  gap           : v.$gap;
+  padding-bottom: v.$padding;
+  div:first-child .aonSidenavTitle{
+    padding-top: v.$padding;
+  }
+  .aonSidenavTitle{
+    padding        : 0 v.$padding;
+    display        : flex;
+    gap            : $icon-gap;
+    justify-content: space-between;
+    align-items    : center;
+    cursor         : pointer;
+    &> * {
+      font-size  : v.$px-14;
+      font-family: v.$font-primary-bold;
+    }
+    aon-icon[icon="chevron-down"] {
+      transform : rotate(0deg);
+      transition: transform 0.3s ease;
+    }
+    .aonSidenavTitleName{
+      width      : v.$pct-100;
+    }
+  }
+  ul {
+    list-style    : none;
+    margin        : 0;
+    padding       : 0;
+    opacity       : 1;
+    transform     : translateY(0);
+    pointer-events: auto;
+    visibility    : visible;
+    transition    : opacity 0.3s ease, transform 0.3s ease;
+    li{
+      font-family    : v.$font-primary-regular;
+      font-size      : v.$px-12;
+      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding * 2);
+      cursor         : pointer;
+      display        : flex;
+      gap            : v.$gap-min;
+      justify-content: space-between;
+      &>span{
+        display    : flex;
+        gap        : $icon-gap;
+        align-items: center;
+        &.aonMenuItemSpan{
+          width      : v.$pct-100;
+        } 
+        button{
+          width : $icon-size;
+          height: $icon-size;
+          aon-icon {
+            width : $icon-size;
+            height: $icon-size;
+            &::after {
+              width : $icon-size;
+              height: $icon-size;
+            }
+          }
+        }
+      }
+    // subapartado
+      &:not(.sidenav-submenu-hidden) aon-icon[icon="chevron-right"] {
+        transform: rotate(+90deg);
+        transition: transform 0.3s ease-in-out;
+      }
+      // Ocultar un subapartado
+      &.elementHidden{
+        opacity       : 0;
+        transform     : translateY(20px);
+        pointer-events: none;
+        visibility    : hidden;
+        height        : 0;
+        margin        : 0;
+        padding       : 0;
+        overflow      : hidden;
+      }
+      // Mostrar un subapartado
+      &.elementVisible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        visibility: visible;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      &:has(ul){
+        padding: 0;
+        ul{
+          width: v.$pct-100;
+          li{
+            padding: v.$px-10 v.$padding v.$px-10 (v.$padding * 3);
+          }
+        }
+      }
+    // FIN subapartado  
+    }
+  }
+  // Ocultar un apartado
+  .sidenav-hidden{
+    .aonSidenavTitle aon-icon[icon="chevron-down"] {
+      transform: rotate(-90deg);
+    }
+    ul{
+      opacity       : 0;
+      transform     : translateY(20px);
+      pointer-events: none;
+      visibility    : hidden;
+      height        : 0;
+      margin        : 0;
+      padding       : 0;
+      overflow      : hidden;
+    }
+  }
+  // si tenemos contenido vacio
+  div:empty {
+    display: none;
+  }
+  // Componente dentro de este
+  .sidenav-component{
+    padding: 0 v.$padding;
+    // Marcaje
+    aon-sign{
+      display       : flex;
+      flex-direction: column;
+      align-items   : center;
+      #aonSignContent{
+        display       : flex;
+        flex-direction: column;
+        align-items   : center;
+        gap           : v.$gap-min;
+      }
+    }
+  }
+}

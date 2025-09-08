@@ -1,26 +1,39 @@
 
 export const loadCustomView = (customCssUrl) => {
-	return loadLink(customCssUrl, 'stylesheet', 'text/css');
-}
+  return new Promise((resolve, reject) => {
+      try {
+          loadLink(customCssUrl, 'stylesheet', 'text/css');
+          let tries = 0;
+          let interval = setInterval(() => {
+              if ( tries++ > 5 ) {
+                  resolve();
+                  clearInterval(interval);
+              }
+          }, 200);
+
+      } catch ( err ) {
+          reject(new Error(`Something was wrong with theme '${customCssUrl}'`));
+      }
+  });
+};
 
 export const favicon = () => {
 	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
 	if ( favicon ) {
 		loadLink(favicon, 'icon', 'image/x-icon')
 		.then( faviconLink  => {
+            favicon += `?v=${Date.now()}`;
 			faviconLink.href = favicon;
-		}).catch( err => {
-			faviconLink.href = favicon; // Fallback if the link fails to load
 		});
 	}
-}
+};
 
 export const title = () => {
 	let title = getComputedStyle(document.body).getPropertyValue('--title').trim();
 	if (title) {
 		document.title = title;
 	}
-}
+};
 
 export const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
     const link = document.createElement('link');
@@ -31,9 +44,6 @@ export const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
 	link.type = type || "text/css";
 
 	document.head.appendChild(link);
-	
-	
-		
 });
 
 export const loadImg = (src) => {
@@ -44,4 +54,4 @@ export const loadImg = (src) => {
         img.src = src;
 		document.body.appendChild(img);
     });
-}
+};

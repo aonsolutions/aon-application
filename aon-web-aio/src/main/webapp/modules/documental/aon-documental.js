@@ -24,13 +24,14 @@ import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
-import '../../css/aon-mobile.css';
-import 'aoncss';
+//import '../../css/aon-mobile.css';
+//import 'aoncss';
 import { uploadOption } from './DocumentalUtils.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 
 import * as LS from '../../services/localStorageService.js';
+import { isNewView, setNewView } from '../utils/functionGlobal.js';
 
 export class AonDocumental extends AonElement {
 	_filter;
@@ -79,11 +80,6 @@ export class AonDocumental extends AonElement {
               domain  : localStorage.getItem('aon_domain_id')
           };
 
-		//   this.innerHTML = `
-		//   <aon-application id="${this.DOCUMENTAL}" title="${}" drag_and_drop='true'></aon-application>
-		//   <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
-		// `;
-
 		let aonApplication = new AonApplication();
 		aonApplication.setAttribute("drag_and_drop", true);
 		this.createApplication(this.DOCUMENTAL, MSG.DOCUMENTARY, aonApplication);
@@ -107,12 +103,13 @@ export class AonDocumental extends AonElement {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
 
 			let newView = new AonSwitch();
-			newView.style.marginLeft = '20px';
+//			newView.style.marginLeft = '20px';
 			newView.id = this.id + "NewView";
 			newView.title = "Nueva Vista";
-			newView.checked = this.isBetaDoc();
+			newView.checked = isNewView();
+			LS.setBetaDoc(newView.checked);
 			newView.addEventListener(EVENT.CHANGE, () => {
-				LS.setBetaDoc(newView.checked);
+				setNewView(newView.checked);
 				this.rootPanel(new AonDocumental());
 			});
 			titleSection.appendChild(newView);
@@ -189,7 +186,7 @@ export class AonDocumental extends AonElement {
               {
                   id  : MSG.ALL_FILES,
                   name: MSG.ALL_FILES,
-                  icon: 'insert_drive_file',
+//                  icon: 'insert_drive_file',
                   fn: () => {
                       this._filter.category = undefined;
                       this._filter.tag = undefined;
@@ -209,7 +206,7 @@ export class AonDocumental extends AonElement {
 			if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 				let typeOptions = [{
 					name: MSG.ENTERPRISE,
-					icon: MATERIAL_ICONS.BUSINESS,
+//					icon: MATERIAL_ICONS.BUSINESS,
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
@@ -218,7 +215,7 @@ export class AonDocumental extends AonElement {
 					}
 				}, {
 					name: MSG.EMPLOYEE,
-					icon: MATERIAL_ICONS.PERSON,
+//					icon: MATERIAL_ICONS.PERSON,
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
@@ -229,7 +226,7 @@ export class AonDocumental extends AonElement {
 				if (this.getDur().isDocumentalManager()) {
 					typeOptions.push({
 						name: MSG.ASESOR,
-						icon: 'work',
+//						icon: 'work',
 						fn: () => {
 							this._filter.category = undefined;
 							this._filter.tag = undefined;
@@ -304,7 +301,6 @@ export class AonDocumental extends AonElement {
                 let documentOptions = {
                   id  : MSG.ALL_FILES,
                   name: MSG.ALL_FILES,
-                  icon: 'insert_drive_file',
                   fn: () => {
                     this._filter.category = undefined;
                     this._filter.tag = undefined;
@@ -322,7 +318,6 @@ export class AonDocumental extends AonElement {
 						let optionDefaultCategory = {
                             id  : item.id,
 							name: item.name,
-							icon: 'insert_drive_file',
 							fn: () => {
 								this._filter.tag = undefined;
 								this._filter.category = item.id;
@@ -336,7 +331,6 @@ export class AonDocumental extends AonElement {
 						let optionUserCategories = {
                             id  : item.id,
 							name: item.name,
-							icon: 'insert_drive_file',
 							fn: () => {
 								this._filter.tag = undefined;
 								this._filter.category = item.id;
@@ -372,7 +366,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-						icon: 'label',
+//						icon: 'label',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -572,15 +566,15 @@ export class AonDocumental extends AonElement {
 	}
 
 	addTagOptions() {
-		if (!this.isBetaDoc()) {
-			let application = this.getApplication();
-			let data = DocumentalSidenav.TAGS;
-			data.options = [];
-			if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
-				application.addSidenavOptions3(data, () => this.createTag());
-			} else application.addSidenavOptions3(data);
-			this.loadTags();
-		}
+      if (!this.isBetaDoc()) {
+          let application = this.getApplication();
+          let data = DocumentalSidenav.TAGS;
+          data.options = [];
+          if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+              application.addSidenavOptions3(data, () => this.createTag());
+          } else application.addSidenavOptions3(data);
+          this.loadTags();
+      }
 	}
 
 	loadTags() {
@@ -596,7 +590,7 @@ export class AonDocumental extends AonElement {
 			tags.forEach((item, i) => {
 				let option = {
 					name: item.name,
-					icon: 'label',
+//					icon: 'label',
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = item.id;
@@ -615,7 +609,6 @@ export class AonDocumental extends AonElement {
 					}
 					];
 				}
-
 				application.addSidenavOptionsListValue(DocumentalSidenav.TAGS, option);
 			});
 		});
@@ -717,10 +710,10 @@ export class AonDocumental extends AonElement {
 		// Texto
 		let text = document.createElement('div');
 		text.textContent = 'Importando documentos desde Bidoq...';
-		text.style.marginTop = '12px';
-		text.style.fontSize = '16px';
-		text.style.color = '#333';
-		text.style.fontFamily = 'Arial, sans-serif';
+//		text.style.marginTop = '12px';
+//		text.style.fontSize = '16px';
+//		text.style.color = '#333';
+//		text.style.fontFamily = 'Arial, sans-serif';
 	
 		// Estilo para la animación del spinner
 		if (!document.getElementById('spinner-style')) {

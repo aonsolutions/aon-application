@@ -181,8 +181,6 @@ export const SERES = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
-
-
 export const COMMERCIAL = {
   app: CONSTANT.COMMERCIAL,
   title: MSG.COMMERCIAL,
@@ -601,7 +599,7 @@ export const CUSTOM_VIEW = {
   color: "#CAF509",
   backgroundColor: "rgba(202, 245, 9, .2)",
   hover: 'aonSidenavHover',
-  price: " ",
+  price: " "
 };
 
 export const MenuApps = {
@@ -625,9 +623,7 @@ export const MenuApps = {
   MARKETING,
   // GROUPWARE,
   NOTES,
-  TOOLS,
-  
-  
+  TOOLS
 };
 
 export const MobileMenuApps = [
@@ -647,7 +643,7 @@ export const EmployeeApps = [
   "timecontrol",
   "payroll",
   "messenger",
-  "invoice",
+  "invoice"
 ];
 
 export const EnterpriseApps = [
@@ -728,7 +724,7 @@ export const KIT_DIGITAL_FACE = {
   subtitle: " Factura Electrónica",
   color: "#002469",
   apps: [],
-  price: " ",
+  price: " "
 };
 
 export const KIT_DIGITAL_CRM = {
@@ -738,7 +734,7 @@ export const KIT_DIGITAL_CRM = {
   subtitle: " Gestión de Clientes",
   color: "#002469",
   apps: [],
-  price: " ",
+  price: " "
 };
 
 export const KIT_DIGITAL_ERP = {
@@ -748,7 +744,7 @@ export const KIT_DIGITAL_ERP = {
   subtitle: " Gestión de Procesos",
   color: "#002469",
   apps: [],
-  price: " ",
+  price: " "
 };
 
 export const BASIC_MANAGEMENT = {
@@ -758,7 +754,7 @@ export const BASIC_MANAGEMENT = {
   subtitle: " Facturas | Comercial",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL],
-  price: " ",
+  price: " "
 };
 
 export const STANDAR_MANAGEMENT = {
@@ -768,7 +764,7 @@ export const STANDAR_MANAGEMENT = {
   subtitle: " Gestión Básica | Marketing | Tesoreria ",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING],
-  price: " ",
+  price: " "
 };
 
 export const PROFESSIONAL_MANAGEMENT = {
@@ -778,7 +774,7 @@ export const PROFESSIONAL_MANAGEMENT = {
   subtitle: " Gestión Estándar | Expedientes | Almacén ",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING, Apps.WAREHOUSE, GROUPWARE],
-  price: " ",
+  price: " "
 };
 
 export const ENTERPRISE = {
@@ -786,10 +782,8 @@ export const ENTERPRISE = {
   icon: AON_ICONS.AON_ENTERPRISE,
   title: "Empresa",
   color: "black",
-  domainType: true,
+  domainType: true
 };
-
-
 
 export const ACADEMY = {
   app: "academy",
@@ -798,7 +792,7 @@ export const ACADEMY = {
   title: "Academia",
   description: MSG.ACADEMY,
   color: "var(--aonTopMenuSpecial)",
-  domainType: true,
+  domainType: true
 };
 
 export const GARAGE = {
@@ -808,7 +802,7 @@ export const GARAGE = {
   title: "Taller",
   description: MSG.GARAGE,
   color: "var(--aonTopMenuSpecial)",
-  domainType: true,
+  domainType: true
 };
 
 export const COMMERCE = {
@@ -818,7 +812,7 @@ export const COMMERCE = {
   title: "Comercio",
   description: MSG.COMMERCE,
   color: "var(--aonTopMenuSpecial)",
-  domainType: true,
+  domainType: true
 };
 
 export const HOTEL = {
@@ -826,7 +820,7 @@ export const HOTEL = {
   icon: AON_ICONS.AON_HOTEL,
   title: "Hotel",
   color: "black",
-  domainType: true,
+  domainType: true
 };
 
 export const PACK_PORTAL = {
@@ -841,7 +835,7 @@ export const PACK_PORTAL = {
     Apps.INVOICE,
     Apps.MESSENGER
   ],
-  price: " ", 
+  price: " "
 };
 
 export const PACK_PAYROLL = {
@@ -851,7 +845,7 @@ export const PACK_PAYROLL = {
   subtitle: " Laboral | Comunic@",
   color: "#002469",
   apps: [Apps.PAYROLL, Apps.COMUNICA],
-  price: " ", 
+  price: " "
 };
 
 export const PACK_FISCAL_ACCOUNTING = {
@@ -861,7 +855,7 @@ export const PACK_FISCAL_ACCOUNTING = {
   subtitle: " Fiscal | Contabilidad",
   color: "var(--aonAccounting)",
   apps: [Apps.FISCAL, Apps.ACCOUNTING],
-  price: " ", 
+  price: " "
 };
 
 export const PACK_SUITE = {
@@ -883,7 +877,7 @@ export const PACK_SUITE = {
     PACK_PAYROLL,
     PACK_PORTAL
   ],
-  price: " ", 
+  price: " "
 };
 
 export const Packs = {
@@ -1023,116 +1017,116 @@ export const AccountingMenu = [
   {
     title: "Mantenimiento de Apuntes.",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountEntryModuleTEDI",
+    entryPoint: "AccountEntryModuleTEDI"
   },
   {
     title: "Documentos Pendientes.",
     module: "aon_gwt_fiscal",
-    entryPoint: "RawdocModule",
+    entryPoint: "RawdocModule"
   },
   {
     title: "Cartera de cobros y pagos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Finance",
+    entryPoint: "Finance"
   },
   {
     title: "Extracto de cuenta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "StatementReportModule",
+    entryPoint: "StatementReportModule"
   },
   {
     title: "Cuenta de Explotación (P Y G).",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountOperatingReport",
+    entryPoint: "AccountOperatingReport"
   },
   {
     title: "Balance de Sumas y Saldos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountTrialBalanceReport",
+    entryPoint: "AccountTrialBalanceReport"
   },
   {
     title: "Listado Diario de Movimientos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "JournalReportModule",
+    entryPoint: "JournalReportModule"
   },
   {
     title: "Listado Mayor de Cuentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "LedgerReportModule",
+    entryPoint: "LedgerReportModule"
   },
   {
     title: "Balances de Cuentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountBalanceReport",
+    entryPoint: "AccountBalanceReport"
   },
   {
     title: "Panel de control de IVA.",
     module: "aon_gwt_fiscal",
-    entryPoint: "VATReport",
+    entryPoint: "VATReport"
   },
   {
     title: "Panel de control de IRPF.",
     module: "aon_gwt_fiscal",
-    entryPoint: "IRPFReport",
+    entryPoint: "IRPFReport"
   },
   {
     title: "Panel de Compras y Gastos / Ventas e Ingresos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "OperationReport",
+    entryPoint: "OperationReport"
   },
   {
     title: "Deposito de Cuentas (D2).",
     module: "aon_gwt_aio",
-    entryPoint: "deposit",
+    entryPoint: "deposit"
   },
   {
     title: "Fichas de Amortización",
-    initAction: "amortization_list",
+    initAction: "amortization_list"
   },
   {
     title: "Tabla de tipos de Amortización",
-    initAction: "amortizationType_list",
+    initAction: "amortizationType_list"
   },
   {
     title: "Bienes Afectos o de Inversión",
-    initAction: "investAsset_search",
+    initAction: "investAsset_search"
   },
   {
     title: "Extractos Bancarios",
-    initAction: "bankStatement_search",
-  },
+    initAction: "bankStatement_search"
+  }
 ];
 
 export const AccountingPortalMenu = [
   {
     title: "Extracto de cuenta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "StatementReportModule",
+    entryPoint: "StatementReportModule"
   },
   {
     title: "Cuenta de Explotación (P Y G).",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountOperatingReport",
+    entryPoint: "AccountOperatingReport"
   },
   {
     title: "Balance de Sumas y Saldos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountTrialBalanceReport",
+    entryPoint: "AccountTrialBalanceReport"
   },
   {
     title: "Listado Diario de Movimientos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "JournalReportModule",
+    entryPoint: "JournalReportModule"
   },
   {
     title: "Listado Mayor de Cuentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "LedgerReportModule",
+    entryPoint: "LedgerReportModule"
   },
   {
     title: "Balances de Cuentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "AccountBalanceReport",
+    entryPoint: "AccountBalanceReport"
   }
 ];
 
@@ -1147,437 +1141,436 @@ export const PayrollMenu = [
   GWT.PAYROLL_TRASH,
   {
     title: "Remesa Transferencia de Nóminas",
-    initAction: "fbatch_search-Payroll",
+    initAction: "fbatch_search-Payroll"
   },
   {
     title: "Vencimientos de Nóminas",
-    initAction: "finance_search-Payroll",
-  },
+    initAction: "finance_search-Payroll"
+  }
 ];
 
 export const ToolsMenu = [
   {
     title: "Creación de Empresas.",
     initAction: "newDomain_form-enterprise",
-    parent: true,
+    parent: true
   },
   {
     title: "Carga de datos desde ficheros Excel (Predefinidos)",
     module: "aon_gwt_aio",
-    entryPoint: "import",
+    entryPoint: "import"
   },
   {
     title: "Gestión Plantillas para carga de datos",
     module: "aon_gwt_aio",
-    entryPoint: "templates",
+    entryPoint: "templates"
   },
   {
     title: "Carga de datos",
-    content: "<aon-imports></aon-imports>",
+    content: "<aon-imports></aon-imports>"
   },
   {
     title: "Expedientes",
-    content: "<aon-project-panel></aon-project-panel>",
-  },
+    content: "<aon-project-panel></aon-project-panel>"
+  }
 ];
 
 export const ArabaFiscalMenu = [
   {
     title: "Modelo 300 - IVA. Autoliquidación.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model303",
+    entryPoint: "Model303"
   },
   {
     title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model347",
+    entryPoint: "Model347"
   },
   {
     title:
       "Modelo 349 - Declaración recapitulativa de operaciones intracomunitarias.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model349",
+    entryPoint: "Model349"
   },
   {
     title: "Modelo 390 - Haciendas Forales. Declaración resumen anual IVA.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model390HF",
+    entryPoint: "Model390HF"
   },
   {
     title:
       "Modelo 110/111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model111",
+    entryPoint: "Model111"
   },
   {
     title:
       "Modelo 115-A - Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model115",
+    entryPoint: "Model115"
   },
   {
     title:
       "Modelo 123 - Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model123",
+    entryPoint: "Model123"
   },
   {
     title:
       "Modelo 180 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model180",
+    entryPoint: "Model180"
   },
   {
     title:
       "Modelo 184 - Declaración anual. Entidades en régimen de atribución de rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model184",
+    entryPoint: "Model184"
   },
   {
     title:
       "Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model190",
+    entryPoint: "Model190"
   },
   {
     title:
       "Modelo 193 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model193",
+    entryPoint: "Model193"
   },
   {
     title: "SII - Suministro Inmediato de Información.",
     module: "aon_gwt_aio",
-    entryPoint: "sii",
-  },
+    entryPoint: "sii"
+  }
 ];
 
 export const GipuzkoaFiscalMenu = [
   {
     title: "Modelo 300/320 - IVA. Autoliquidación.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model303",
+    entryPoint: "Model303"
   },
   {
     title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model347",
+    entryPoint: "Model347"
   },
   {
     title:
       "Modelo 349 - Declaración recapitulativa de operaciones intracomunitarias.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model349",
+    entryPoint: "Model349"
   },
   {
     title: "Modelo 390 - Haciendas Forales. Declaración resumen anual IVA.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model390HF",
+    entryPoint: "Model390HF"
   },
   {
     title:
       "Modelo 110/111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model111",
+    entryPoint: "Model111"
   },
   {
     title:
       "Modelo 115 - Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model115",
+    entryPoint: "Model115"
   },
   {
     title:
       "Modelo 123 - Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model123",
+    entryPoint: "Model123"
   },
   {
     title:
       "Modelo 180 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model180",
+    entryPoint: "Model180"
   },
   {
     title:
       "Modelo 184 - Declaración anual. Entidades en régimen de atribución de rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model184",
+    entryPoint: "Model184"
   },
   {
     title:
       "Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model190",
+    entryPoint: "Model190"
   },
   {
     title:
       "Modelo 193 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model193",
+    entryPoint: "Model193"
   },
   {
     title: "SII - Suministro Inmediato de Información.",
     module: "aon_gwt_aio",
-    entryPoint: "sii",
-  },
+    entryPoint: "sii"
+  }
 ];
 
 export const BizkaiaFiscalMenu = [
   {
     title: "Modelo 303 - IVA. Autoliquidación.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model303",
+    entryPoint: "Model303"
   },
   {
     title: "Modelo 140 - Libro-registro de operaciones económicas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model140",
+    entryPoint: "Model140"
   },
   {
     title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model347",
+    entryPoint: "Model347"
   },
   {
     title:
       "Modelo 349 - Declaración recapitulativa de operaciones intracomunitarias.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model349",
+    entryPoint: "Model349"
   },
   {
     title: "Modelo 390 - Haciendas Forales. Declaración resumen anual IVA.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model390HF",
+    entryPoint: "Model390HF"
   },
   {
     title:
       "Modelo 110/111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model111",
+    entryPoint: "Model111"
   },
   {
     title:
       "Modelo 115 - Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model115",
+    entryPoint: "Model115"
   },
   {
     title:
       "Modelo 123 - Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model123",
+    entryPoint: "Model123"
   },
   {
     title:
       "Modelo 130 - I.R.P.F. Pago fraccionado. Empresarios y profesionales en estimación directa.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model130",
+    entryPoint: "Model130"
   },
   {
     title:
       "Modelo 180 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model180",
+    entryPoint: "Model180"
   },
   {
     title:
       "Modelo 184 - Declaración anual. Entidades en régimen de atribución de rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model184",
+    entryPoint: "Model184"
   },
   {
     title:
       "Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model190",
+    entryPoint: "Model190"
   },
   {
     title:
       "Modelo 193 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model193",
+    entryPoint: "Model193"
   },
   {
     title: "SII - Suministro Inmediato de Información.",
     module: "aon_gwt_aio",
-    entryPoint: "sii",
-  },
+    entryPoint: "sii"
+  }
 ];
 
 export const NavarraFiscalMenu = [
   {
     title: "Modelo F69 - IVA. Autoliquidación.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model303",
+    entryPoint: "Model303"
   },
   {
     title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model347",
+    entryPoint: "Model347"
   },
   {
     title:
       "Modelo 349 - Declaración recapitulativa de operaciones intracomunitarias.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model349",
+    entryPoint: "Model349"
   },
   {
     title:
       "Modelo 745/715 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model111",
+    entryPoint: "Model111"
   },
   {
     title:
       "Modelo 759/760 - Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model115",
+    entryPoint: "Model115"
   },
   {
     title:
       "Modelo 716 - Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model123",
+    entryPoint: "Model123"
   },
   {
     title:
       "Modelo 180 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model180",
+    entryPoint: "Model180"
   },
   {
     title:
       "Modelo 184 - Declaración anual. Entidades en régimen de atribución de rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model184",
+    entryPoint: "Model184"
   },
   {
     title:
       "Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model190",
+    entryPoint: "Model190"
   },
   {
     title:
       "Modelo 193 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model193",
+    entryPoint: "Model193"
   },
   {
     title: "SII - Suministro Inmediato de Información.",
     module: "aon_gwt_aio",
-    entryPoint: "sii",
-  },
+    entryPoint: "sii"
+  }
 ];
 
 export const AeatFiscalMenu = [
   {
     title: "Modelo 303 - IVA. Autoliquidación.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model303",
+    entryPoint: "Model303"
   },
   {
     title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model347",
+    entryPoint: "Model347"
   },
   {
     title:
       "Modelo 349 - Declaración recapitulativa de operaciones intracomunitarias.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model349",
+    entryPoint: "Model349"
   },
   {
     title: "Modelo 390 - Declaración resumen anual IVA.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model390",
+    entryPoint: "Model390"
   },
   {
     title:
       "Modelo 111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model111",
+    entryPoint: "Model111"
   },
   {
     title:
       "Modelo 115 - Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model115",
+    entryPoint: "Model115"
   },
   {
     title:
       "Modelo 123 - Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model123",
+    entryPoint: "Model123"
   },
   {
     title:
       "Modelo 130 - I.R.P.F. Pago fraccionado. Empresarios y profesionales en estimación directa.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model130",
+    entryPoint: "Model130"
   },
   {
     title:
       "Modelo 131 - I.R.P.F. Pago fraccionado. Empresarios y profesionales en estimación objetiva.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model131",
+    entryPoint: "Model131"
   },
   {
     title:
       "Modelo 180 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model180",
+    entryPoint: "Model180"
   },
   {
     title:
       "Modelo 184 - Declaración anual. Entidades en régimen de atribución de rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model184",
+    entryPoint: "Model184"
   },
   {
     title:
       "Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model190",
+    entryPoint: "Model190"
   },
   {
     title:
       "Modelo 193 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model193",
+    entryPoint: "Model193"
   },
   {
     title: "Modelo 202 - Impuesto Sociedades. Pago fraccionado.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model202",
+    entryPoint: "Model202"
   },
   {
     title: "Modelo 200 - Impuesto sobre Sociedades.",
     module: "aon_gwt_fiscal",
-    entryPoint: "Model200",
+    entryPoint: "Model200"
   },
   {
     title: "SII - Suministro Inmediato de Información.",
     module: "aon_gwt_aio",
-    entryPoint: "sii",
-  },
+    entryPoint: "sii"
+  }
 ];
-
 
 export const NEW = {
 	home : true,
 	title: MSG.NEW,
 	description: MSG.NEW,
 	app: CONSTANT.NEW,
-	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
+	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE
 };
 
 export const NOTIFICATION = {
 	app: "notification",
 	symbol: MATERIAL_ICONS.NOTIFICATIONS,
 	title: MSG.NOTIFICATIONS,
-	subtitle: "Notification",
+	subtitle: "Notification"
 }
 
 export const HOME = {
@@ -1585,7 +1578,7 @@ export const HOME = {
 	title: MSG.HOME,
 	description: MSG.HOME,
 	app: CONSTANT.HOME,
-	symbol: MATERIAL_ICONS.HOME,
+	symbol: MATERIAL_ICONS.HOME
 };
 
 export const APPS = {
@@ -1593,66 +1586,47 @@ export const APPS = {
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
 	description: MSG.APPLICATIONS,
-	symbol: MATERIAL_ICONS.APPS,
+	symbol: MATERIAL_ICONS.APPS
 };
 
 export const APPLICATIONS = {
 	home : true,
 	title: MSG.APPLICATIONS,
 	app: CONSTANT.APPLICATIONS,
-	symbol: MATERIAL_ICONS.APPLICATIONS,
+	symbol: MATERIAL_ICONS.APPLICATIONS
 };
 
 export const AON_CLASSIC = {
 	app: CONSTANT.AON_APPLICATION,
 	title: MSG.CLASSIC_VIEW,
 	description: MSG.CLASSIC_VIEW,
-	logo: "../assets/aon.png",
+	symbol: "aon"
 };
 
 export const SUPERSET = {
 	app: CONSTANT.SUPERSET,
 	title: MSG.SUPERSET,
 	description: MSG.SUPERSET,
-	logo: "../assets/apps/superset.png",
+	logo: "../assets/apps/superset.png"
 };
 
-export function getConstNewApps(dur, isAyudaT) {
-//  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise)) || (url.includes('infoautonomos')) && (dur.isAdmin() || dur.isEnterprise)) {
-  if((isAyudaT && (dur.isAdmin() || dur.isEnterprise()))) {
-    return {
-      app: CONSTANT.APPS,
-      title: MSG.PLAN,
-      description: MSG.PLAN,
-      symbol: MATERIAL_ICONS.APPS
-    }
-  } else {
-      return {
-      app: CONSTANT.APPS,
-      title: MSG.APPLICATIONS,
-      description: MSG.APPLICATIONS,
-      symbol: MATERIAL_ICONS.APPS
-    }
-  }
+export const PLANS = {
+  app: CONSTANT.PLANS,
+  title: MSG.PLAN,
+  description: MSG.PLAN,
+  symbol: MATERIAL_ICONS.APPS
 };
 
-export const NEW_APPS = {
-	app: CONSTANT.APPS,
-	title: MSG.APPLICATIONS,
-	description: MSG.APPLICATIONS,
-	symbol: MATERIAL_ICONS.APPS
-};
-
-export const AON_APPS = [ 
+export const AON_APPS = [
 	AON_SOLUTIONS, 
 	BIDOQ, 
 	SELFCONTA, 
-	AON_SALTRA,
+	AON_SALTRA
 ];
 
 export const MENU_APPS = [
   NEW,
-  NEW_APPS,
+  PLANS,
   INVOICE,
   DOCUMENTAL,
   ACCOUNTING,
@@ -1663,8 +1637,7 @@ export const MENU_APPS = [
   NOTES,
   MESSENGER,
   WAREHOUSE,
-  AON_CLASSIC,
-
+  AON_CLASSIC
 ];
 
 export const DESKTOP_APPS = [
@@ -1676,9 +1649,8 @@ export const DESKTOP_APPS = [
   TIMECONTROL,
   NOTES,
   MESSENGER,
-  AON_CLASSIC,
+  AON_CLASSIC
 ];
-
 
 /*
 export const Apps = Apps;
@@ -1691,7 +1663,6 @@ export const HomeApps = {
 	APPLICATIONS
 };
 
-
 export const COMMERCIAL_MENU = {
 	app: "comercialMenu",
 	symbol: MATERIAL_ICONS.HANDSHAKE,
@@ -1701,7 +1672,7 @@ export const COMMERCIAL_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavCommercialButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const MANAGEMENT_MENU = {
@@ -1713,7 +1684,7 @@ export const MANAGEMENT_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavManagementButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const TREASURY_MENU = {
@@ -1725,7 +1696,7 @@ export const TREASURY_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavTreasuryButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const WAREHOUSE_MENU = {
@@ -1737,7 +1708,7 @@ export const WAREHOUSE_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavWarehouseButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const GROUPWARE_MENU = {
@@ -1749,7 +1720,7 @@ export const GROUPWARE_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavGroupwareButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const ACCOUNTING_MENU = {
@@ -1761,7 +1732,7 @@ export const ACCOUNTING_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavAccountingButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const FISCAL_MENU = {
@@ -1773,7 +1744,7 @@ export const FISCAL_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavFiscalButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const PAYROLL_MENU = {
@@ -1785,7 +1756,7 @@ export const PAYROLL_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavPayrollButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const MARKETING_MENU = {
@@ -1797,7 +1768,7 @@ export const MARKETING_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavMarketingButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const CONFIGURATION_MENU = {
@@ -1809,9 +1780,8 @@ export const CONFIGURATION_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavConfigurationButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
-
 
 export const ENTERPRISE_MENU = {
 	app: "enterpriseMenu",
@@ -1822,7 +1792,7 @@ export const ENTERPRISE_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavEnterpriseButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const CONSOLE_MENU = {
@@ -1834,7 +1804,7 @@ export const CONSOLE_MENU = {
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavConfigurationButton",
 	apps: [],
-	price: " ",
+	price: " "
 };
 
 export const TOP_MENU_APPS = [
@@ -1855,7 +1825,7 @@ export const TOP_MENU_APPS = [
 	MARKETING_MENU,
 	CONFIGURATION_MENU,
 
-	CONSOLE_MENU,
+	CONSOLE_MENU
 ];
 
 export const TOP_MENU_APPS_HOME = [
@@ -1878,7 +1848,7 @@ export const TOP_MENU_APPS_HOME = [
 	CONFIGURATION_MENU,
 	
 	CONSOLE,
-	CONSOLE_MENU,
+	CONSOLE_MENU
 ];
 
 export default Apps;

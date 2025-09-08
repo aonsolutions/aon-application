@@ -2,10 +2,9 @@ import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
-
+import * as LS from '../services/localStorageService';
 
 export class AonDialogMenu extends AonElement {
-
 	LIST;
 	DIALOG;
 	TITLE;
@@ -35,7 +34,6 @@ export class AonDialogMenu extends AonElement {
 		this.setAttribute(CONSTANT.TITLE, title);
 	}
 
-
 	constructor (dialog) {
 		super();
 		this.dialog = dialog;
@@ -47,184 +45,83 @@ export class AonDialogMenu extends AonElement {
   	}
 
 	initialize() {
-		this.id = this.id || "aonDialogMenu";
-		this.DIALOG = this.id + 'DialogMenu';
-		this.CONTENT = this.DIALOG + 'Content';
-		if(this.isMobile()) {
-			this.BODY = this.DIALOG + 'Body';
-			this.HEADER = this.DIALOG + 'Header';
-			this.TITLE = this.DIALOG + CONSTANT.TITLE;
-			this.HEADER_HEIGHT = 0;
-			this.INITIAL_DRAG_Y = 0;
-			this.START_TOP = 0;
-			this.Y_DRAG = 0;
-		}
-		this.LIST = this.DIALOG + 'List';
+      this.id = this.id || "aonDialogMenu";
+      this.DIALOG = this.id + 'DialogMenu';
+      this.CONTENT = this.DIALOG + 'Content';
+      this.LIST = this.DIALOG + 'List';
 	}
   
 	build() {
-		if(this.isMobile()) {
-			this.buildMobile();
-		} else {
-			this.buildDesktop();
-		}
+      let dialog = this.getDialog();
+      if (  dialog == null ) { 
+        dialog = this.createElement(TAG.DIV);
+        dialog.id = this.DIALOG;
+        dialog.className = `aonDialog`;
+        this.appendChild(dialog);
+      }
+
+      let content = this.createElement(TAG.DIV);
+      content.id = this.CONTENT;
+      content.className = `aonDialogMenuContent`;
+      dialog.appendChild(content);
+
+      const onClose = (ev) => ev.target === dialog ? this.close() : null;
+
+      dialog.onclick = (ev) => onClose(ev);
+
+      dialog.oncontextmenu = (ev) => {
+          ev.preventDefault();
+          onClose(ev);
+      };
 	}
 
-	buildDesktop() {
-		let dialog = this.getDialog();
-		if (  dialog == null ) { 
-			dialog = this.createElement(TAG.DIV);
-			dialog.id = this.DIALOG;
-			dialog.className = `aonDialog`;
-			dialog.style.backgroundColor = 'transparent';
-			dialog.style.paddingTop = '0px';
-			this.appendChild(dialog);
-		}
-
-		let content = this.createElement(TAG.DIV);
-		content.id = this.CONTENT;
-		content.className = `aonDialogMenuContent`;
-		content.style.position = 'absolute';
-		content.style.width = 'auto';
-	 	content.style.padding = '0px';
-		content.style.borderRadius = '5px';
-		dialog.appendChild(content);
-
-		const onClose = (ev) => ev.target === dialog ? this.close() : null;
-
-		dialog.onclick = (ev) => onClose(ev);
-
-		dialog.oncontextmenu = (ev) => {
-			ev.preventDefault();
-			onClose(ev);
-		}
-	}
-
-	buildMobile() {
-		this.style.color = "#5f6368";
-		let dialog = this.createElement(TAG.DIV);
-		dialog.id = this.DIALOG;
-		dialog.className = 'aonDialog';
-		dialog.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
-		this.appendChild(dialog);
-
-		let content = this.createElement(TAG.DIV);
-		content.id = this.CONTENT;
-		content.style.position = 'fixed';
-		content.style.backgroundColor = '#fefefe';
-		content.style.width = '100%';
-		content.style.transition = 'bottom .3s';
-		content.style.bottom = '-300px';
-
-		const eventOpt = { passive: false };
-		content.addEventListener(EVENT.TOUCHSTART, (ev)=>  this.startDraggingEvent(ev), eventOpt);
-		content.addEventListener(EVENT.TOUCHMOVE, (ev)=>  this.draggingEvent(ev), eventOpt);
-		content.addEventListener(EVENT.TOUCHEND, (ev)=>  this.stopDraggingEvent(ev), eventOpt);
-		dialog.appendChild(content);
-
-		let header = this.createElement(TAG.DIV);
-		header.id = this.HEADER;
-		header.style.cursor = 'move';
-		header.style.textAlign = 'center';
-		content.appendChild(header);
-
-		let thumb  = this.createElement(TAG.DIV);
-		thumb.style.margin = 'auto';
-		thumb.style.borderRadius = '50px';
-		thumb.style.width = '35px';
-		thumb.style.height = '4px';
-		thumb.style.overflow = 'hidden';
-		thumb.style.backgroundColor = '#dbdbdb';
-		thumb.style.boxShadow = '0px 0px 0px 1px #dbdbdb';
-		header.appendChild(thumb);
-
-		let title = this.createElement(TAG.DIV);
-		title.id = this.TITLE;
-		title.style.margin = '12px 0 0';
-		title.style.fontWeight = '600';
-		header.appendChild(title);
-
-		let body = this.createElement(TAG.DIV);
-		body.id = this.BODY;
-		body.style.padding = '10px 16px';
-		content.appendChild(body);
-
-		this.onclick = (ev) => {
-			if (ev.target == dialog) {
-				this.close();
-			}
-		}
-	}
-	
-
-
-	open(){
-		let dialog = this.getDialog();
-		if(this.isMobile()) {
-			let aonMobileMenuSidenav = this.getElement('aonMobileMenuSidenav');
-			if(aonMobileMenuSidenav) aonMobileMenuSidenav.style.zIndex = "-1";
-			this.setDrag(this.START_TOP);
-			dialog.style.display = "block";
-			setTimeout(()=>{
-				let content = this.getContent();
-				content.style.bottom = this.START_TOP;
-				this.HEADER_HEIGHT = content.getBoundingClientRect().height;
-			}, 1);
-		} else {
-			dialog.style.display = 'block';
-			this.getContent().style.display = 'block';
-		}
-	}
+    open() {
+      this.style.visibility = 'visible';
+      // Agregamos el cerrar
+      if (this.isMobile()) {
+        // Esperamos un tick para evitar cerrar con el mismo clic que abre
+        setTimeout(() => {
+          const onClickOutside = (event) => {
+            if (!this.contains(event.target)) {
+              this.close();
+              document.removeEventListener('click', onClickOutside);
+            }
+          };
+          document.addEventListener('click', onClickOutside);
+        }, 0);
+      } else {
+        const onMouseLeave = () => {
+          this.close();
+          this.removeEventListener('mouseleave', onMouseLeave);
+        };
+        this.addEventListener('mouseleave', onMouseLeave);
+      }
+    }
 
 	clear() {
-		if(this.isMobile()) {
-			if(this.getTitle()) this.getTitle().innerHTML = '';
-			if(this.getBody()) this.getBody().innerHTML = '';
-		} else {
-			this.getContent().innerHTML = '';
-			this.getContent().style.display = 'none';
-		}
+      this.innerHTML = '';
 	}
 
 	hide() {
-		if(this.isMobile()) {
-			this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
-			return new Promise((resolve/*, reject*/) => {
-				setTimeout(()=>	{
-					this.getDialog().style.display = "none";
-					if(this.getElement('aonMobileMenuSidenav'))
-						this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
-					resolve();
-				}, 400);
-			});
-		} else {
-			return new Promise((resolve/*, reject*/) => {
-				let dialog = this.getDialog();
-				dialog.style.display = 'none';
-				resolve();
-			});
-		}
+      return new Promise((resolve) => {
+        this.style.display = 'none';
+        resolve();
+      });
 	}
 
 	close() {
-		this.hide().then(this.clear());
+      this.hide().then(this.clear());
 	}
 	
 	setContentHTML(html) {
-		let content = this.isMobile() ? this.getBody() : this.getContent();
-		content.innerHTML = html;
+      this.innerHTML = html;
 	}
 
 	setContent(element, top, left) {
-		let content = this.isMobile() ? this.getBody() : this.getContent();
-		content.innerHTML = "";
-		if(!this.isMobile() && top && left) {
-			content.style.top = top + 'px' || '90px';
-			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;	
-		}
-		if(element){
-			content.appendChild(element);
-		}
+      this.innerHTML = "";	
+      if(element){
+          this.appendChild(element);
+      }
 	}
 
 	setTitle(title) {
@@ -287,10 +184,6 @@ export class AonDialogMenu extends AonElement {
 		let content = this.getContent();
 		let p = this.createElement('p');
 		p.innerHTML = title;
-		p.style.fontWeight = "600";
-		p.style.margin = "auto";
-		p.style.marginTop = "3px";
-		p.style.textAlign = "center";
 
 		if(content.children.length > 0) {
 			content.insertBefore(p, content.firstElementChild);
@@ -302,41 +195,55 @@ export class AonDialogMenu extends AonElement {
 		options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i )); });
 	}
 
-	setMenuOptions(options, top, left) {
-		if(this.isMobile()) {
-			this.addButtons(options);
-		} else {
-			let content = this.getContent();
-			this.clear();
+    setMenuOptions(options, top, left) {
+      this.innerHTML = '';
+      this.clear();
+      // Posicionar
+      this.positionDialogWithinViewport(top, left);
+      // Menu
+      let ul = document.createElement(TAG.UL);
+      ul.id = this.LIST;
+      ul.className = CSS.AON_UL;
+      this.appendChild(ul);
+      options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
+    }
 
-  			content.style.top = top + 'px' || '90px';
-			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;
+    positionDialogWithinViewport(anchorY, anchorX){
+      this.style.display    = 'block';
+      this.style.visibility = 'hidden';
+      // Para poder coger la altura automatica
+      requestAnimationFrame(() => {
+        const remToPx = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
+        const margin = remToPx(1.25);
 
-			content.innerHTML = '';
-			let ul = document.createElement(TAG.UL);
-			ul.id = this.LIST;
-			ul.className = CSS.AON_UL;
-			ul.style.padding = '0px';
-			content.appendChild(ul);
-			options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
+        // medidas del dialogo (tal y como están en el layout actual)
+        const dialogWidthPx  = this.offsetWidth;
+        const dialogHeightPx = this.offsetHeight;
 
-			this.onVisible(ul).then( () => {
-				const clientRect = content.getBoundingClientRect();
-				if ( clientRect.left + clientRect.width > window.innerWidth ){
-					content.style.left = `${window.innerWidth - clientRect.width  - 10 }px`;
-				}
-				if ( clientRect.top + clientRect.height > window.innerHeight ){
-					content.style.top = `${window.innerHeight - clientRect.height - 10 }px`;
-				}
-			});
-		}
-	}
+        // rect relativo al viewport
+        const rect = this.getBoundingClientRect();
+
+        // punto base para posicionar: o el punto ancla (cursor) o la posicion actual del rect
+        let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
+        let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
+
+        // clamp: evitar salirse por los 4 lados dejando 'margin' de separacion
+        const minLeft = margin;
+        const maxLeft = Math.max(margin, window.innerWidth  - dialogWidthPx - margin);
+        const minTop  = margin;
+        const maxTop  = Math.max(margin, window.innerHeight - dialogHeightPx - margin);
+
+        const newLeft = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+        const newTop  = Math.min(Math.max(baseTop,  minTop),  maxTop);
+
+        this.style.left = Math.round(newLeft) + 'px';
+        this.style.top  = Math.round(newTop)  + 'px';
+      });
+    }
 
 	addButtons(buttons) {
-		let divMain = this.createElement(TAG.DIV);		
+		let divMain = this.createElement(TAG.DIV);
 		divMain.classList.add(CSS.FLEX_WRAP, CSS.FLEX_JUSTIFY_BETWEEN);
-		divMain.style.marginBottom = "15px";
-		divMain.style.gap = "10px";
 		this.setContent(divMain);
 
 		buttons.forEach(button =>
@@ -376,7 +283,6 @@ export class AonDialogMenu extends AonElement {
 	
 		//ADD TITLE
 		let span = this.createElement(TAG.SPAN);
-		span.style.textAlign = 'center';
 		span.innerHTML = button.title; 
 		icon.appendChild(span);
 	}
@@ -390,8 +296,7 @@ export class AonDialogMenu extends AonElement {
 			if ( element === el ){
 				return true;
 			}
-				
-		}		
+		}
 		return false;
 	}
 	
@@ -400,15 +305,13 @@ export class AonDialogMenu extends AonElement {
 		let li = document.createElement('li');
 		if(item.id) li.id = item.id;
 		li.className = 'aonAppLi';
-		li.style.padding = '10px';
-		li.style.cursor = 'pointer';
 
 		if(item.options) {
 			let d = new AonDialogMenu(dialog);
 			d.id = 'newDialog';
 			this.appendChild(d);
 			d.clear();
-						
+
 			li.addEventListener(EVENT.MOUSEOVER, () => {
 				const rect = li.getBoundingClientRect();
 				d.setMenuOptions(item.options, rect.top, rect.right);
@@ -416,10 +319,8 @@ export class AonDialogMenu extends AonElement {
 					// out of submenu but inside option
 					if ( !this.isElementAt(e, li) ){
 						d.clear();
-						
 					}
 				});
-				
 				d.open();
 			});
 
@@ -429,62 +330,40 @@ export class AonDialogMenu extends AonElement {
 					d.clear();
 				}
 			});
+		}
 
-		}
-		if(item.image) {
-			let img = document.createElement('img');
-			img.style.maxWidth = `${item.size || 24}px`;
-			img.src = item.image;
-			li.appendChild(img);
+        if(item.image) {
+          item.icon = item.image;
 		} else if(item.aonIcon) {
-			let ai = document.createElement(TAG.SPAN);
-			ai.style.verticalAlign = 'middle';
-			let aonIcon = new AonIcon();
-			aonIcon.icon = item.aonIcon;
-			aonIcon.size = item.size || 15;
-			aonIcon.color = item.color;
-			ai.appendChild(aonIcon);
-			li.appendChild(ai);
-		} else if(item.icon){
-			let ic = document.createElement('i');
-			ic.className = item.icon_class || 'material-icons';
-			ic.style.color = item.color ;
-			ic.style.verticalAlign = 'middle';
-			ic.style.fontSize = `${item.size || 16}px`;
-			ic.innerHTML = item.icon;
-			li.appendChild(ic);
+          item.icon = item.aonIcon;
 		}
+
+        const aonIcon = new AonIcon();
+        aonIcon.icon = item.icon;
+        li.appendChild(aonIcon);
 
 		let span = document.createElement(TAG.SPAN);
-		span.style.marginLeft = '5px';
-		span.style.fontSize = '13px';
 		span.innerHTML = item.name;
 		span.title     = item.title || item.name;
+        // mostrando menu de idomas, seleccionamos en el que estamos
+        if(item.selectLanguage && item.selectLanguage === this.lenguajeSelect()){
+          li.classList.add('selected');
+        }
 		li.appendChild(span);
 		li.addEventListener(EVENT.CLICK, (ev) => {
 			this.close();
 			item.fn(ev);
 		});
-		
 		return li;
-	} 
-	
-	onVisible(element, callback) {
-		new IntersectionObserver((entries, observer) => {
-			entries.forEach(entry => {
-				if (entry.intersectionRatio > 0) {
-					callback(element);
-					observer.disconnect();
-				}
-			});
-		}).observe(element);
-
-		if (!callback) {
-			return new Promise(r => callback = r);
-		}
-	}	
-
+	}
+    
+    lenguajeSelect(){
+      if(LS.getLanguage()){
+        return LS.getLanguage();
+      } else return MSG.SPANISH;
+    }
 }
+
 if(!window.customElements.get('aon-dialog-menu')){
 	window.customElements.define('aon-dialog-menu', AonDialogMenu);
 }

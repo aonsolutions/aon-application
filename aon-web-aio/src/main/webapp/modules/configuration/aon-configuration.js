@@ -175,7 +175,6 @@ export class AonConfiguration extends AonElement {
 			if (this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())) {
 				companyOptions.push({
 					name: MSG.GENERAL_INFORMATION,
-					icon: MATERIAL_ICONS.BUSINESS,
 					fn: () => this.buildGeneral(),
 				});
 			}
@@ -191,27 +190,23 @@ export class AonConfiguration extends AonElement {
 			if (this.dur.isAdmin()) {
 				companyOptions.push({
 					name: MSG.USER_MANAGEMENT,
-					icon: MATERIAL_ICONS.PEOPLE,
 					fn: () => this.buildUser(),
 				});
 				if (!this.company.domain.parentId) {
 					companyOptions.push({
 						name: MSG.COMPANY_MANAGEMENT,
-						icon: MATERIAL_ICONS.BUSINESS,
 						fn: () => this.buildCompanyList(),
 					});
 				}
 
 				companyOptions.push({
 					name: MSG.GROUP_MANAGEMENT,
-					icon: MATERIAL_ICONS.GROUPS,
 					fn: () => this.buildGroups(),
 				});
 
 				if (this.dur.isApiService()) {
 					companyOptions.push({
 						name: MSG.SERVICE_ACCOUNTS,
-						icon: MATERIAL_ICONS.API,
 						fn: () => this.buildServiceAccount(),
 					});
 				}
@@ -219,7 +214,6 @@ export class AonConfiguration extends AonElement {
 				if (!this.isMobile()) {
 					companyOptions.push({
 						name: MSG.HIRING,
-						icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
 						fn: () => this.buildStore(),
 					});
 				}
@@ -232,7 +226,6 @@ export class AonConfiguration extends AonElement {
 			if (this.dur.isInvoice()) {
 				appOptions.push({
 					name: INVOICE.title,
-					icon: MATERIAL_ICONS.MONITORING,
 					fn: () => this.buildInvoiceConfiguration(),
 				});
 			}
@@ -241,7 +234,6 @@ export class AonConfiguration extends AonElement {
 				appOptions.push({
 					id: MESSENGER.title,
 					name: MESSENGER.title,
-					icon: MATERIAL_ICONS.SPEAKER_NOTES,
 					fn: () => this.buildMessengerConfiguration(),
 				});
 			}
@@ -250,14 +242,12 @@ export class AonConfiguration extends AonElement {
 				appOptions.push({
 					id: AON_SALTRA.title,
 					name: AON_SALTRA.title,
-					icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
 					fn: () => this.buildComunicaConfiguration(),
 				});
 			} else if (this.dur.isComunicaManager()) {
 				appOptions.push({
 					id: COMUNICA.title,
 					name: COMUNICA.title,
-					icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
 					fn: () => this.buildComunicaConfiguration(),
 				});
 			}
@@ -265,7 +255,6 @@ export class AonConfiguration extends AonElement {
 			if (!this.dur.isEmployee() && this.isBeta()) {
 				appOptions.push({
 					id: "notice",
-					icon: "rss_feed",
 					name: "Comunicaciones",
 					fn: () => this.buildNews(),
 				});
@@ -279,7 +268,6 @@ export class AonConfiguration extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				icon: "dashboard",
 				name: "Panel Configuración",
 				fn: () => this.buildConfigurationMenu(),
 			});

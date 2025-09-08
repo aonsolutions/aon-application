@@ -1,0 +1,58 @@
+@use '../variables' as v;
+
+aon-card{
+  display       : block;
+  border-radius : v.$border-radius;
+  
+  .aonCardTitle{
+    display        : flex;
+    justify-content: space-between;
+    align-items    : center;
+    section{
+      display       : flex;
+      gap           : v.$gap-min;
+      padding       : v.$px-12 v.$padding;
+      font-family   : v.$font-primary-semibold;
+      font-size     : v.$font-size-h4;
+      line-height   : v.$line-height-h4;
+      letter-spacing: v.$letter-spacing-h4;
+      &:empty {
+        display : none;
+      }
+    }
+  }
+  .aonCardContent{
+    padding : v.$padding;
+    p{
+      margin: v.$px-0;
+    }
+    ul{
+      margin      : v.$px-0;
+      padding-left: v.$padding;
+    }
+    .card-footer {
+      display    : flex;
+      align-items: flex-end;
+      gap        : v.$gap-min;
+    }
+    .right-align{
+      justify-content: flex-end;
+    }
+  }
+  // Listado como si fueran botones
+  &.card-list-buttom{
+    .aonCardContent{
+      padding : v.$px-0;
+      .buttoms{
+        padding : v.$px-16 v.$px-0 v.$px-16 v.$px-0;
+        .buttom{
+          padding     : v.$px-8 v.$padding;
+          display     : flex;
+          align-items : center;
+          gap         : v.$gap-min;
+          cursor      : pointer;
+        }
+      }
+    }
+  }
+}

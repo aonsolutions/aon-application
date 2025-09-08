@@ -1,0 +1,32 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-marketplace-panel{
+    background-color: #09e7fc;
+    
+    // aon-booking.js 
+    aon-booking{
+      ul{
+        background-color: #09e7fc;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        li{
+          display: flex;
+          >span{
+            width: 100%;
+          }
+          span{
+            display: flex;
+            align-items: center;
+            gap: v.$gap;
+            &.aonMarketplaceApp-buttons{
+              width: 100%;
+              justify-content: flex-end;
+            }
+          }
+        }
+      }
+    }
+  }
+}

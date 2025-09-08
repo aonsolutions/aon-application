@@ -1,0 +1,674 @@
+@use '../variables' as v;
+
+@mixin theme(
+  $theme, $favicon, $title,
+  $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
+  $color-400, $color-500, $color-600, $color-700, 
+  $color-800, $color-900, $color-input, $color-box,
+  $color-grad-min, $color-grad-max,
+  $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
+  $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
+  $color-switch-off, $color-switch-on, $color-switch,
+  $color-red-100,  $color-red-500, $color-red-900,
+  $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
+  $color-blue-100, $color-blue-500, $color-blue-900,
+  $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
+  $logoHead, $logoHead-width, $logoHead-height,
+  $logo, $logo-width, $logo-height
+) {
+  
+  $color-900-alpha   : #{$color-900}0D;
+  $color-dialog-alpha: #{$color-800}80;
+  
+  $body-margin       : unset;
+  $aonmodule-display : flex;
+  $aonmodule-width   : v.$vw-100;
+  $aonmodule-height  : v.$vh-100;
+
+  $box-shadow       : v.$px-0 v.$px-4 v.$px-6 v.$px-0 $color-900-alpha;
+  $box-shadow-dialog: rgba(0, 0, 0, 0.07) v.$px-0 v.$px-1 v.$px-1,
+    rgba(0, 0, 0, 0.07) v.$px-0 v.$px-2 v.$px-2, 
+    rgba(0, 0, 0, 0.07) v.$px-0 v.$px-4 v.$px-4, 
+    rgba(0, 0, 0, 0.07) v.$px-0 v.$px-8 v.$px-8, 
+    rgba(0, 0, 0, 0.07) v.$px-0 v.$px-16 v.$px-16;
+  $border           : v.$px-1 solid $color-200;
+  $color-separator  : $color-200;
+  $transition       : background-color v.$t-03 ease;
+  $box-sizing       : border-box;
+
+  $button-border : v.$px-0;
+
+  $loginbutton-background            : linear-gradient(to right, $color-900, $color-900, $color-grad-max, $color-grad-min);
+  $loginbutton-background-size       : v.$pct-300 v.$pct-100;
+  $loginbutton-backgorund-position   : v.$px-0 v.$px-0;
+  $loginbutton-transition            : background v.$t-03 ease;
+  $loginbutton-hover-background-size : v.$pct-100 v.$px-0;
+  
+  $magicbutton-background-color : $color-input;
+  $magicbutton-color            : $color-text-button-transp;
+  $magicbutton-border           : v.$px-1 solid $color-300;
+  $magicbutton-padding          : v.$px-7 v.$px-15;
+  $magicbutton-hover-border     : v.$px-1 solid $color-900;
+  $magicbutton-hover-padding    : v.$px-7 v.$px-15;
+
+  $gradient-turquoise-background : linear-gradient(to right, $color-corp-turquoise, $color-corp-turquoise, $color-grad-max, $color-grad-min);
+  $gradient-turquoise-size       : $loginbutton-background-size;
+  $gradient-turquoise-position   : $loginbutton-backgorund-position;
+  $gradient-turquoise-transition : background v.$t-01 ease;
+  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;  
+  
+  $gradient-box-background : linear-gradient(to right, $color-box, $color-box, $color-grad-max, $color-grad-min);
+  $gradient-box-size       : $loginbutton-background-size;
+  $gradient-box-position   : $loginbutton-backgorund-position;
+  $gradient-box-transition : background v.$t-01 ease;
+  $gradient-box-hover-background-size : $loginbutton-hover-background-size;  
+  
+  $iconbutton-hover-background-color : transparent;
+
+  $input-border       : v.$px-1 solid $color-300;
+  $input-border-focus : v.$px-1 solid $color-500;
+
+  --favicon-#{$theme}: #{$favicon};
+  --title-#{$theme}: #{$title};
+  body{
+    color            : $color-text;
+    margin           : $body-margin;
+    aon-module{
+      display : $aonmodule-display;
+      width   : $aonmodule-width;
+      height  : $aonmodule-height;
+    }
+    // Cabecera
+    .aonToolbar2, aon-header{
+      background-color  : $color-900;
+      color             : $color-text-head;
+      .aonLoginLogo{
+        background-image : url($logoHead);
+        width            : $logoHead-width;
+        height           : $logoHead-height; 
+      }
+      aon-icon-button {
+        aon-icon {
+          &::after {
+            background-color : $color-text-head;
+          }
+        }
+      }
+    }
+    // Menu de la derecha
+    aon-right-panel{
+      background : $color-50;
+      #aonRightPanel{
+        #aonToolbarPanel{
+          background : $color-600;
+          color      : $color-text-head;
+          aon-icon-button{
+            aon-icon{
+              &::after{
+                background-color : $color-text-head;
+              }
+            }
+          }
+        }
+        #aonRightPanelContent{
+          // Menu derecha - Usuario
+          #aonLoginPanel{
+            #loginContent{
+              aon-avatar{
+                .profile-avatar-letters{
+                  background-color : $color-600;
+                  color : WHITE;
+                }
+              }
+              .userPanelDivUserInfo{
+                background-color: $color-box;
+              }
+            }
+          }
+          // Menu derecha - Notificaciones
+          #aonNotificationPanel{
+            .notificationPanelGeneralDiv{
+              background-color : $color-box;
+              .notificationPanelRowPrincipalDiv{
+                &:hover{
+                  background-color : $color-notif-hover;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // Menu izquierda y top
+    #aonMenu{
+      background-color : $color-50;
+      // Menu izquierda
+      #aonMenuSidenav {
+        ul{
+          background-color : $color-box;
+          li{
+            &:hover, &.aonMenuSidenavLiSeleted{
+              background-color : $color-100;
+            }
+            a{
+              div{
+                i{
+                  background-color : $color-icon-menu;
+                }
+              }
+              &.color-green{
+                i{
+                  background-color : $color-menu-green;
+                }
+                span{
+                  color : $color-menu-green;
+                }
+              }
+            }
+          }
+        }
+      }
+      #aonMenuTopnav{
+        background-color : $color-box;
+      }
+    }
+    // Carga el contenido
+    #rootPanel{
+      background-color : $color-100;
+    }
+    // submenu in content
+    .aonSidenav{
+      background-color : $color-box;
+      ul {
+        li{
+          &:not(:has(ul)) {
+            &:hover, &.aonAppMenuSidenavListSelected {
+              background-color: $color-100;
+            }
+          }
+        }
+      }
+      aon-icon-button{
+        aon-icon{
+          &::after{
+            background-color: $color-text;
+          }
+        }
+      }
+    }
+    // content
+    .aonContentBeta{
+      background-color: $color-box;
+    }
+  // 
+  // Componentes
+  // 
+    // separador
+    .aonSeparator{
+      border: none;
+      margin: 0;
+      width : v.$px-1;
+      height: v.$px-24;
+      background-color: $color-separator;
+    }
+    // cargandos
+    aon-loader{
+      // Barra de progreso
+      .aonProgress {
+        background-color : $color-200;
+        &:before {
+          background-color : $color-500;
+        }
+      }
+    }
+    // toast
+    aon-toast {
+      > div {
+        &.error{
+          background-color : $color-red-100;
+          color            : $color-red-900;
+        }
+        &.success{
+          background-color : $color-green-100;
+          color            : $color-green-900;
+        }
+        &.primary{
+          background-color : $color-blue-100;
+          color            : $color-blue-900;
+        }
+      }
+    }
+    // dialog
+    aon-dialog{
+      &[type="menu"]{
+        .aonDialog{
+          background-color: $color-box;
+          box-shadow      : $box-shadow-dialog;
+        }
+      }
+      &:not([type]), &[type=""] {
+        /*background-color: */
+        background-color: $color-dialog-alpha;
+        // Contenido
+        .aonDialog{
+          background-color: $color-box;
+          box-shadow      : $box-shadow-dialog;
+          .dialog-head{
+            border-bottom: v.$px-1-6 solid $color-300;
+            aon-icon-button aon-icon {
+              &::after {
+                background-color: $color-text;
+              }
+            }
+          }
+          .dialog-body{
+          }
+        }
+      }
+    }
+    // dialog-menu
+    aon-dialog-menu{
+      background-color : $color-box;
+      box-shadow       : $box-shadow-dialog;
+      ul{
+        li{
+          &:hover, &.selected{
+            background-color : $color-500;
+            color            : $color-text-button;
+          }
+        }
+      }
+    }
+    // Boton menu dedo
+    aon-menu-button{
+      #aon-menu-button-content{
+        aon-icon-button{
+          &#aon-menu-button-button, button{
+            background            : $gradient-turquoise-background;
+            background-size       : $gradient-turquoise-size;
+            background-position   : $gradient-turquoise-position;
+            transition            : $gradient-turquoise-transition;
+            box-shadow            : $box-shadow-dialog;
+            &:hover{
+              background-position : $gradient-turquoise-hover-background-size ;
+              aon-icon{
+                &::after {
+                  background-color: $color-text-button;
+                }
+              }
+            }
+          }
+        }
+      }
+      // Abierto
+      &[opened="true"]{
+        background-color: $color-dialog-alpha;
+        #aon-menu-button-content{
+          aon-icon-button{
+            &#aon-menu-button-button, button{
+              background: $color-900;
+              aon-icon{
+                &::after {
+                  background-color : $color-text-button;
+                }
+              }
+              &:hover{
+                background : $color-500;
+              }
+            }
+          }
+          ul{
+            &#aon-menu-button-list{
+              // submenu cerrado
+              .aonAppLi span{
+                background            : $gradient-box-background;
+                background-size       : $gradient-box-size;
+                background-position   : $gradient-box-position;
+                transition            : $gradient-box-transition;
+                box-shadow            : $box-shadow-dialog;
+                &:hover{
+                  background-position : $gradient-box-hover-background-size;
+                  color               : $color-text-button;
+                  aon-icon-button aon-icon{
+                    &::after {
+                      background-color : $color-text-button;
+                    }
+                  }
+                }
+              }
+              // submenu abierto
+              .aonAppLi span.submenu-open{
+                background: $color-900;
+                color     : $color-text-button;
+                aon-icon-button aon-icon{
+                  &::after {
+                    background-color : $color-text-button;
+                  }
+                }
+                &:hover{
+                  background : $color-500;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // Botones dashboard
+    aon-dashboard-button {
+      button{
+        background-color: $color-box;
+        color           : $color-text;
+        aon-icon-button aon-icon{
+          &::after {
+            background-color: $color-text;
+          }
+        }
+      }
+      &:hover{
+        button{
+          color: $color-text-button;
+          aon-icon-button aon-icon{
+            &::after {
+              background-color: $color-text-button;
+            }
+          }
+        }
+      }
+    }
+    // Botones
+    button{
+      background-color  : $color-900;
+      color             : $color-text-button;
+      border            : $button-border;
+      &:hover{
+        background-color : $color-500;
+      }      
+      aon-icon-button aon-icon {
+        &::after {
+          background-color : $color-300;
+        }
+      }
+      &.aonButton{
+        transition : $transition;
+      }
+      &.aonLoginButton{
+        background            : $loginbutton-background;
+        background-size       : $loginbutton-background-size;
+        background-position   : $loginbutton-backgorund-position;
+        transition            : $loginbutton-transition;
+        &:hover{
+          background-position : $loginbutton-hover-background-size;
+        }
+      }
+      &.aonMagicButton, &.button-transparent{
+        background-color   : $magicbutton-background-color;
+        color              : $magicbutton-color;
+        border             : $magicbutton-border;
+        transition         : $transition;
+        padding            : $magicbutton-padding;
+        &:hover{
+          background-color : $color-900;
+          color            : $color-text-button;
+          border           : $magicbutton-hover-border;
+          box-sizing       : $box-sizing;
+          padding          : $magicbutton-hover-padding;
+        }
+      }
+      &.aonIconButton{
+        background-color   : $color-600;
+        color              : $color-300;
+        &:hover{
+          background-color : $iconbutton-hover-background-color;
+        }
+      }
+      &.dialog-button-save{
+      }
+      &.dialog-button-delete{
+        background-color : $color-red-900;
+        &:hover{
+        background-color : $color-red-500;
+        }
+      }
+    }
+    // Input
+    aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
+    aon-new-date, aon-new-select, aon-new-textarea{
+      .aonInputMsg{
+        .aonInputMsgError{
+          color: $color-red-500;
+        }
+      }
+      aon-icon-button aon-icon {
+        &::after {
+          background-color: $color-300;
+        }
+      }
+      input{
+        border           : $input-border;
+        background-color : $color-input;
+        color            : $color-text;
+        &::placeholder{
+          color   : $color-300;
+          opacity : 0.9;
+        }
+        &:focus {
+          outline: none;
+          border : $input-border-focus;
+        }
+      }
+      //
+      // Datepicker
+      //
+      .aonDatepicker{
+        &.is-visible{
+          background-color: $color-input;
+          box-shadow      : $box-shadow-dialog;
+          .date-picker-title{
+            border-bottom: $input-border;
+            .date-picker-title-icon aon-icon {
+              &::after {
+                background-color: $color-text;
+              }
+            }
+            .date-picker-title-icon:hover{
+              background-color: $color-100;
+            }
+          }
+          .day-content:hover{
+            background-color: $color-100;
+            color           : $color-text;
+          }
+          .day-selected{
+            color           : $color-text-button;
+            background-color: $color-300;
+          }
+        }
+      }
+      //
+      // Select
+      //
+      .aonInputListOptions{
+        &.is-visible{
+          background-color: $color-input;
+          box-shadow      : $box-shadow-dialog;
+          ul{
+            li:hover{
+              background-color: $color-100;
+              color           : $color-text;
+            }
+          }
+        }
+      }
+    }
+    // Card
+    aon-card{
+      background-color: $color-box;
+      .aonCardTitle{
+        border-bottom: v.$px-1-6 solid $color-300;
+      }
+      .aonCardContent{
+        color: $color-text-card;
+        // Listado como si fueran botones de menu
+        .buttoms{
+          .buttom{
+            &:hover{
+              background-color: $color-50;
+            }
+            &.active{
+              background-color: $color-100;
+            }
+          }
+        }
+      }
+    }
+    // Switch
+    aon-switch{
+      .aonSwitch-slider{
+        .slider{
+          // fondo
+          background-color: $color-switch;
+          box-shadow: inset 0 v.$px-3 v.$px-5 rgba(126, 126, 126, 0.3), inset 0 -#{v.$px-3} v.$px-5 rgba(255, 255, 255, 0.7);
+          &::before {
+            // circulo
+            background-color: $color-switch-off;
+            box-shadow: 0 v.$px-1 v.$px-0 rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+      &[checked="true"]{
+        .aonSwitch-slider{
+          .slider{
+            &::before {
+              // circulo
+              background-color: $color-switch-on;
+              box-shadow: 0 v.$px-1 v.$px-0 rgba(0, 0, 0, 0.1);
+            }
+          }
+        } 
+      }
+    }
+    // Tables
+    aon-table{
+      table{
+        thead{
+          background-color: $color-200;
+        }
+        tbody{
+          tr{
+            td {
+              border-top   : $border;
+              border-bottom: $border;
+              color        : $color-text-general;
+              // Primer td de la fila ? esquinas izquierda
+              &:first-child {
+                border-left: $border;
+              }
+              // Ultimo td de la fila ? esquinas derecha
+              &:last-child {
+                border-right: $border;
+              }
+            }
+          }
+        }
+      }
+    }
+  // 
+  // Pages
+  // 
+    // login
+    aon-new-login{
+      #logoContent{
+        background-color: $color-login;
+        #logoSVG{
+          background-image: url($logo);
+          width           : $logo-width;
+          height          : $logo-height;
+        }
+      }
+      #loginContent, #magicLinkContent{
+        background-color : $color-login;
+        .aonLoginForm{
+          background-color : $color-0;
+          border           : $border;
+          box-shadow       : $box-shadow;
+          .aonLoginTitle{
+            color : $color-text-login;
+          }
+        }
+      }
+    }
+    // Desktop
+    aon-desktop .aonFlex #aonDesktopMainContent{
+      background-color: unset;
+      // Control horario
+      #aonSign{
+        #aonSignContent{
+          #lastTimeUser{
+            color: $color-text-general;
+          }
+          #totalHour{
+            color: $color-text-general;
+          }
+        }
+      }
+    }
+    // Plans
+    aon-plans .aonFlex #Content{
+      background-color: unset;
+      .plansGrid{
+        .planDescription {
+          color: $color-text-general;
+        }
+        .contracted{
+          color: $color-menu-green;
+        }
+      }
+      aon-card.plansFooter{
+        .aonCardContent{
+          color: $color-text-general;
+        }
+      }
+    }
+    // Invoices
+    aon-invoice-panel .aonFlex #aonInvoiceContent{
+      // aon-invoice-home
+        &:has(aon-invoice-home) {
+          background-color: unset;
+        }
+        aon-invoice-home{
+
+        }
+      // FIN aon-invoice-home
+    }
+    // Notas
+    aon-notes .aonFlex #notesContainer{
+      .noteCard{
+        border: $border;
+        box-shadow: v.$px-0 v.$px-4 v.$px-2 rgba(0, 0, 0, 0.1);
+        &::after {
+          background: transparent;
+          box-shadow: v.$px-0 v.$px-6 v.$px-8 -#{v.$px-4} rgba(0, 0, 0, 0.05);
+        }
+        .noteTitleCard{
+          aon-new-input label{
+            input{
+              background-color: transparent;
+              border: none;
+              &::placeholder{
+                color  : unset;
+                opacity: unset;
+              }
+            }
+          }
+        }
+        .noteBodyContent{
+          textarea{
+            background-color: transparent;
+            border: unset;
+          }
+        }
+      }
+    }
+  }
+}
