@@ -168,11 +168,9 @@ export class AonOfficePanel extends AonElement {
 		customerTags.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_STATUS.id);
 		options.push(customerTags);
 		
-		if (!this.isSig()) {
-			let customerPayrollActivity = OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY;
-			customerPayrollActivity.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id);
-			options.push(customerPayrollActivity);
-		}
+		let customerPayrollActivity = OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY;
+		customerPayrollActivity.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id);
+		options.push(customerPayrollActivity);
 
 		let taskHolder = OfficeOptions.AON_TASK_HOLDER;
 		/*
@@ -717,6 +715,7 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id:
 					this.clearToolbar();
+					localStorage.setItem("isSig", this.isSig());
 					GWT.iLoad(GWT.CUSTOMER_PAYROLL_ACTIVITY_MODULE, this.getApplication().CONTENT);
 					break;
 				case officeViews.AON_OFFICE_PANEL:

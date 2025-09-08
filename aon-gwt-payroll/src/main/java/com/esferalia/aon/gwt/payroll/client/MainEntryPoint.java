@@ -438,6 +438,16 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
 	
+	public static native boolean isSig()
+	/*-{
+		return $wnd.localStorage.getItem("isSig");
+	}-*/;
+	
+	public static native void removeIsSig()
+	/*-{
+		return $wnd.localStorage.removeItem("isSig");
+	}-*/;
+	
 	
 
 }

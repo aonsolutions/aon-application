@@ -77,6 +77,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 	// String Domian
 	
 	private String domainName;
+	private boolean isSig = false;
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -264,45 +265,94 @@ public class ActivitySummary extends AonCustomDockLayout {
 		
 	}
 	
-	public void showCustomerDomainInfo(Integer customerId) {
-		service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
+	public void setIsSig(boolean isSig) {
+		this.isSig = isSig;
+	}
+	
+	public void showCustomerDomainInfo(Integer customerId, String customerName) {
+		centerPanel.clear();
+		
+		getToolbar().setTitle("Act. Laboral " + customerName);
+		
+		if(isSig) {
+			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<String>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("No se ha podido cargar la empresa especifica");
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No se ha podido cargar la empresa especifica");
+				}
 
-			@Override
-			public void onSuccess(RegistryRelationship rrelationship) {
-				if(null != rrelationship && null != rrelationship.getId()) {
-					domainName = rrelationship.getComments();
-					
-					service.getDomainByName(domainName, new AsyncCallback<Domain>() {
+				@Override
+				public void onSuccess(String domainNameAddInfo) {
+					if(AonStringUtils.isNotBlank(domainNameAddInfo)) {
+						domainName = domainNameAddInfo;
 						
-						@Override
-						public void onSuccess(Domain domainDB) {
-							if(null == domainDB || null == domainDB.getId()) {
-								 showEmptyInfo();
-							} else {
-								domain = domainDB;
-								
-								//onSearch();
-								period.getListBox().setSelectedIndex(0);
-								period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
+							
+							@Override
+							public void onSuccess(Domain domainDB) {
+								if(null == domainDB || null == domainDB.getId()) {
+									 showEmptyInfo();
+								} else {
+									domain = domainDB;
+									
+									//onSearch();
+									period.getListBox().setSelectedIndex(0);
+									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+								}
 							}
-						}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
-						}
-					});
-				} else 
-					showEmptyInfo();
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
+							}
+						});
+					} else 
+						showEmptyInfo();
+				}
 				
-			}
-			
-		});
+			});
+		} else {
+			service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No se ha podido cargar la empresa especifica");
+				}
+
+				@Override
+				public void onSuccess(RegistryRelationship rrelationship) {
+					if(null != rrelationship && null != rrelationship.getId()) {
+						domainName = rrelationship.getComments();
+						
+						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
+							
+							@Override
+							public void onSuccess(Domain domainDB) {
+								if(null == domainDB || null == domainDB.getId()) {
+									 showEmptyInfo();
+								} else {
+									domain = domainDB;
+									
+									//onSearch();
+									period.getListBox().setSelectedIndex(0);
+									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+								}
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
+							}
+						});
+					} else 
+						showEmptyInfo();
+				}
+				
+			});
+		}
+		
+		
 	}
 
 	private void showEmptyInfo() {

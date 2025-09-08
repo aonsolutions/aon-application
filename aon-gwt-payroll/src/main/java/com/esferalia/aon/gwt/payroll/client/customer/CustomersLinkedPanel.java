@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client.customer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -15,12 +16,27 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 	
 	private SimplePanel centerPanel;
 	
-	private CustomerPanel scopePanel;
+	private CustomerPanel customerPanel;
 	
-	public CustomersLinkedPanel() {
+	private boolean isSig;
+	
+	public CustomersLinkedPanel(boolean isSig) {
 		super("Clientes vinculados");
 		
-		hideSearchWidget();
+		this.isSig = isSig;
+		
+		hideFilterButton();
+		
+		setSearchPlaceholder("Busqueda por documento/nombre...");
+		
+		addKeyUpHandler(e -> {
+			String value = getSearchTextBox().getValue();
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+				onSearch();
+			} else if(AonStringUtils.isBlank(value)) {
+				onSearch();
+			}
+		});
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -38,12 +54,19 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 	}
 
 	@Override
-	protected void onClearFilter() {}
+	protected void onClearFilter() {
+		customerPanel.resetSearchOffset();
+		getSearchTextBox().setValue(null, false);
+		onSearch();
+	}
 
 	
 	public void onSearch() {
 		centerPanel.clear();
-		scopePanel = new CustomerPanel() {
+		
+		String searchQuery = getSearchTextBox().getValue();
+		
+		customerPanel = new CustomerPanel(isSig, searchQuery) {
 
 			@Override
 			protected void onShowErrorMessage(String errorMessage) {
@@ -51,15 +74,15 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 			}
 
 			@Override
-			protected void onCusotmerOpen(Integer customerId) {
-				onCustomerSelect(customerId);
+			protected void onCusotmerOpen(Integer customerId, String customerName) {
+				onCustomerSelect(customerId, customerName);
 			}
 		
 		};
 		
-		centerPanel.setWidget(scopePanel);
+		centerPanel.setWidget(customerPanel);
 	}
 	
-	protected abstract void onCustomerSelect(Integer customerId);
+	protected abstract void onCustomerSelect(Integer customerId, String customerName);
 
 }

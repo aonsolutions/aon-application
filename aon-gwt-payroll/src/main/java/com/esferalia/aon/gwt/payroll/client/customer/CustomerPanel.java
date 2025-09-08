@@ -37,6 +37,9 @@ public abstract class CustomerPanel extends ScrollPanel {
 	
 	private Map<Integer, Customer> rowCustomers = new HashMap<>();
 	
+	private String searchQuery;
+	private boolean isSig;
+	
 	private static enum COLS {
 		
 		  DOC(AON.MSG.document()				,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -67,9 +70,12 @@ public abstract class CustomerPanel extends ScrollPanel {
 		}
 	}
 
-	public CustomerPanel() {
+	public CustomerPanel(boolean isSig, String searchQuery) {
+		this.searchQuery = searchQuery;
+		this.isSig = isSig;
+		
 		this.rowCustomers.clear();
-
+		
 		addScrollHandler(new ScrollHandler() {
 
 			public void onScroll(ScrollEvent event) {
@@ -172,7 +178,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 
 	private void paintRow(Customer customer) {
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onCusotmerOpen(customer.getId()), ClickEvent.getType());
+		row.addDomHandler(e -> onCusotmerOpen(customer.getId(), customer.getName()), ClickEvent.getType());
 		
 		Label document = new Label(customer.getDocument());
 		tab.addInlineStyle(document, COLS.DOC.getStyles());
@@ -190,9 +196,13 @@ public abstract class CustomerPanel extends ScrollPanel {
 		
 		rowCustomers.put(customer.getId(), customer);
 	}
+
+	public void resetSearchOffset() {
+		offset.setValue(0);
+	}
 	
 	private void getList(Consumer<List<Customer>> success) {
-		service.getCustomersLinked(offset.intValue(), limit,  new AsyncCallback<List<Customer>>() {
+		service.getCustomersLinked(isSig, searchQuery, offset.intValue(), limit,  new AsyncCallback<List<Customer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -207,7 +217,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 	
 	protected abstract void onShowErrorMessage(String errorMessage);
-	protected abstract void onCusotmerOpen(Integer customerId);
+	protected abstract void onCusotmerOpen(Integer customerId, String customerName);
 	
 }
 
