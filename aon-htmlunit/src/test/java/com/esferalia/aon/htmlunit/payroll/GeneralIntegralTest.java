@@ -2884,6 +2884,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL, 2025);
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
+		click("costsCheck-input");
+		assertElement("red_ppe_ePercentLabel");
+		assertElement("editor-reduccion_aportacion_empresa_ppe");
+		click("costsCheck-input");
 		
 		draft("ENFERMEDAD PROFESIONAL, PPE");
 		
