@@ -3,6 +3,7 @@ package net.aonsolutions.aon.gwt.udapa.client.quality;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.api.client.API;
@@ -246,8 +247,11 @@ public class QualitySheet extends Composite {
 		productData.setWidget(2, 0, new Label("Proveedor"));
 		productData.setWidget(2, 1, new Label(map.get("product_supplier")));
 		productData.setWidget(2, 4, new Label("Destino"));
-		productData.setWidget(2, 5, listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1));
-		
+
+		Destiny destiny = getDestiny();
+		if(destiny == null || destiny.isActive())
+			productData.setWidget(2, 5, destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny));
+		else productData.setWidget(2, 5, new Label(destiny.getName()));
 		productData.setWidget(3, 0, new Label("Origen"));
 		productData.setWidget(3, 1, new Label(map.get("full_address")));
 		productData.setWidget(3, 4, new Label("Rechazado"));
@@ -571,8 +575,84 @@ public class QualitySheet extends Composite {
 		});
 		return cb;
 	}
+
+	protected Destiny getDestiny() {
+		try {
+			String value = map.get(QualitySheetCode.UFQDP1.getName());
+			return Destiny.safeValueOf(Integer.parseInt(value));
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
-	protected ListBox listBox(LinkedList<String> options, QualitySheetCode code){
+	protected ListBox destinyListBox(List<Destiny> options, QualitySheetCode code, Destiny destiny){
+		ListBox listBox = new ListBox();
+		listBox.setStyleName(AON.AON_CSS.aonTextBox());
+		listBox.addItem("-");
+		
+		Integer selectedIndex = 0;
+		for(Integer i = 0; i < options.size(); i++) {
+			Destiny o = options.get(i);
+			listBox.addItem(o.getName(), o.value().toString());
+			if(destiny != null && destiny.equals(o)) {
+				selectedIndex = i + 1;
+			}
+		}
+
+		listBox.setSelectedIndex(selectedIndex);
+		listBox.addChangeHandler(new AonListBoxChangeHandler(listBox) {
+			
+			@Override
+			public void onChange(Integer prevIndex) {
+				String value = listBox.getSelectedValue();
+				WidgetStack ws = new WidgetStack(listBox, code);
+				ws.setWidgetType(WidgetType.LISTBOX);
+				ws.setPrevValue(prevIndex);
+				ws.setValue(value);
+				undo.push(ws);
+
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+
+				impl.updateValue(domainName, domainId,Integer.parseInt(id), code.getName(), value, map, new AsyncCallback<HashMap<String, String>>() {
+
+					@Override public void onFailure(Throwable caught) {}
+
+					@Override
+					public void onSuccess(HashMap<String, String> result) {
+						map = result;
+						
+						if(QualitySheetCode.UFQDP1.equals(code)){
+							Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
+							Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
+							if(siembra){
+								qualityTest.setWidget(3, 2, new Label(""));
+								qualityTest.setWidget(3, 3, new Label(""));
+								calibresSiembra();
+							} else if(propaco){
+								qualityTest.setWidget(3, 2, new Label("Color"));
+								qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
+								calibresConsumo();
+							} else {
+								qualityTest.setWidget(3, 2, new Label(""));
+								qualityTest.setWidget(3, 3, new Label(""));
+								calibresConsumo();
+							}
+							defectControl();
+						}
+						
+						FootPanel fp = (FootPanel) southContent.getWidget();	
+						fp.calculatePanel();
+					}
+				});
+			}
+		});
+		
+		return listBox;		
+	}
+	
+	protected ListBox listBox(List<String> options, QualitySheetCode code){
 		ListBox listBox = new ListBox();
 		listBox.setStyleName(AON.AON_CSS.aonTextBox());
 		listBox.addItem("-");
