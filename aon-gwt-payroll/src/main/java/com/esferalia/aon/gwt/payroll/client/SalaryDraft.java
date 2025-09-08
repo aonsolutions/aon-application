@@ -309,6 +309,16 @@ public class SalaryDraft extends ResizeComposite
 			"BASE_MTNAD",
 			"BASE_MTNAD_BRUTA",
 			"BASE_EXCESO",
+
+			"BASE_PPE",
+			"TOTAL_PPE",
+			"TOTAL_BASE_CGC",
+			"TOTAL_BASE_CGP", 
+			"TOTAL_BASE_CGC_E", 
+			"TOTAL_BASE_CGP_E", 
+			"TOTAL_BONF_SEPE",
+			"TOTAL_BONF_SEPE_E",
+			"TOTAL_DIAS_BONF_SEPE_E",
 			
 			"BASE_IRPF_DINERO",
 			"BASE_IRPF_ESPECIE",
@@ -348,6 +358,7 @@ public class SalaryDraft extends ResizeComposite
 			"COEFICIENTE_TRABAJADO",
 
 			"CONTEXT", 
+			"READ", 
 			"SELF", 
 			"THIS", 
 			"CONCEPTO", // context
@@ -408,7 +419,7 @@ public class SalaryDraft extends ResizeComposite
 			"BONIFICACION_TUTORIA",
 			"BONIFICACION_FORMACION_CONTINUA",
 			
-			"MODELO_COTIZACION_AGRARIO"
+			"MODELO_COTIZACION_AGRARIO",
 			
 			
 	};
@@ -7448,7 +7459,7 @@ public class SalaryDraft extends ResizeComposite
 		String name = variable.getName();
 		
 		// super private, insane
-		if ( AonStringUtils.startsWith(name, "__"))
+		if ( AonStringUtils.startsWith(name, "_"))
 			return true;
 		// IRPF quotas & bases
 		if ( AonStringUtils.startsWith(name, "CRA_00"))
