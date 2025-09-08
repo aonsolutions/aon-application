@@ -9,8 +9,11 @@ import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
 import static com.code.aon.common.enumeration.AppParam.AON_HIDE_VERSION;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
+import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME_DARK;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
+import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME_DARK;
 import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
+import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME_DARK;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_FAILED_NAME;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_START_NAME;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_STOP_NAME;
@@ -159,8 +162,11 @@ public class CompanyCustomizeController extends RegistryAttachController {
 	public List<SelectItem> getImages() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		list.add( new SelectItem(FAVICON_NAME, FAVICON_NAME + " (16x16)") );
+		list.add( new SelectItem(FAVICON_NAME_DARK, FAVICON_NAME_DARK + " (16x16)") );
 		list.add( new SelectItem(LOGIN_LOGO_NAME, LOGIN_LOGO_NAME + " (130x44)") );
+		list.add( new SelectItem(LOGIN_LOGO_NAME_DARK, LOGIN_LOGO_NAME_DARK + " (130x44)") );
 		list.add( new SelectItem(HEADER_LOGO_NAME, HEADER_LOGO_NAME + " (97x32)") );
+		list.add( new SelectItem(HEADER_LOGO_NAME_DARK, HEADER_LOGO_NAME_DARK + " (97x32)") );
 		list.add( new SelectItem(TOOLBAR_LOGO_NAME, TOOLBAR_LOGO_NAME + " (16x16)") );
 		list.add( new SelectItem(STATUS_START_NAME, STATUS_START_NAME + " (114x37)") );
 		list.add( new SelectItem(STATUS_STOP_NAME, STATUS_STOP_NAME + " (114x37)") );
