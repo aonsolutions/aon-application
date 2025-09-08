@@ -2969,7 +2969,6 @@ export class AonInvoice extends AonElement {
 
 		d.setContent(div);
 		d.addAcceptAction(() => {
-			alert(period.value);
 			let data = {
 				id: this.invoice.id,
 				domainName: LS.getDomainName(),
