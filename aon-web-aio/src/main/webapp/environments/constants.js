@@ -70,6 +70,7 @@ export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CATEGORY_NAME = 'categoryName';
+export const CERTIFICATE = 'certificate';
 export const CHANGE_PASSWORD = 'changePassword';
 export const CHANGE_TYPE = 'changeType';
 export const CHARGES_PAYMENTS = 'chargesPayments';
@@ -141,6 +142,7 @@ export const EXPORTED = "exported";
 
 // ----- F
 
+export const FACTURAE = 'facturae';
 export const FAIL = 'fail';
 export const FALSE = 'false';
 export const FARMER = 'farmer';
@@ -196,6 +198,7 @@ export const ITEM = 'item';
 export const LABEL = 'label';
 export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
+export const LEGAL_LITERALS = 'legalLiterals';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
 export const LOCATION = 'location';
@@ -265,6 +268,7 @@ export const PENDING_CORRECTION = 'pendingCorrection';
 export const PENDING_DECISSION = 'pendingDecission';
 export const PENDINGS = 'pendings';
 export const PERCENTAGE = 'percentage';
+export const PERIOD = 'period';
 export const PERSON = 'person';
 export const PRESENCE = 'presence';
 export const PREPAYMENT = 'prepayment';
