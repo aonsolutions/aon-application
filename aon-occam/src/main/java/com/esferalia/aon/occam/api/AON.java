@@ -5181,6 +5181,12 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<Customer> getSigCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));

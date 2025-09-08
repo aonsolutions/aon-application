@@ -23,9 +23,13 @@ public class CustomerActivityModule extends MainEntryPoint {
 	
 	private RootLayoutPanel root;
 
+	private boolean isSig;
+	
 	@Override
 	public void onModuleLoad() {
 		root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		
+		isSig = isSig();
 
 //		Window.alert("domainName : " + Wnd.getCurrentDomainNameURL() + "\ndomainId : " + Wnd.getCurrentDomain() + "\nuser : " + Wnd.getCurrentUser());
 
@@ -37,16 +41,17 @@ public class CustomerActivityModule extends MainEntryPoint {
 
 		deckLayoutPanel = new DeckLayoutPanel();
 
-		customersLinkedPanel = new CustomersLinkedPanel() {
+		customersLinkedPanel = new CustomersLinkedPanel(isSig) {
 
 			@Override
-			protected void onCustomerSelect(Integer customerId) {
-				showSelectedCustomer(customerId);
+			protected void onCustomerSelect(Integer customerId, String customerName) {
+				showSelectedCustomer(customerId, customerName);
 			}
 
 		};
 		
 		activitySummary = new ActivitySummary();
+		activitySummary.setIsSig(isSig);
 		
 		AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack());
 		back.addClickHandler(e -> showCustomersLinkedPanel());
@@ -60,7 +65,7 @@ public class CustomerActivityModule extends MainEntryPoint {
 		root.add(deckLayoutPanel);
 		
 		// Remove customer from LS
-		// removeCustomer();
+		removeIsSig();
 	}
 
 	private void showCustomersLinkedPanel() {
@@ -68,9 +73,9 @@ public class CustomerActivityModule extends MainEntryPoint {
 		customersLinkedPanel.onSearch();
 	}
 
-	private void showSelectedCustomer(Integer customerId) {
+	private void showSelectedCustomer(Integer customerId, String customerName) {
+		activitySummary.showCustomerDomainInfo(customerId, customerName);
 		deckLayoutPanel.showWidget(activitySummary);
-		activitySummary.showCustomerDomainInfo(customerId);
 	}
 
 }

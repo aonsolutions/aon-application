@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -505,9 +506,11 @@ public interface EnterprisesService extends RemoteService {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
-	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, int offset, int limit) throws IllegalArgumentException ;
+	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, boolean isSig, String searchQuery, int offset, int limit) throws IllegalArgumentException ;
 	
 	RegistryRelationship getRRelationShip(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
 
 	Domain getDomainByName(String domainName) throws IllegalArgumentException;
+	
+	String getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
 }

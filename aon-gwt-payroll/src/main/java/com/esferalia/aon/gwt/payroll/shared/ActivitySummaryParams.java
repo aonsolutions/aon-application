@@ -198,4 +198,6 @@ public class ActivitySummaryParams implements Serializable {
 		this.asc = asc;
 		return this;
 	}
+	
+	
 }

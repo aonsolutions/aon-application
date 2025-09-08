@@ -870,8 +870,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
 	}
 	
-	public void getCustomersLinked(int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), offset, limit, asyncCallback);
+	public void getCustomersLinked(boolean isSig, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.getCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), isSig, searchQuery, offset, limit, asyncCallback);
 	}
 
 	public void getRRelationShip(Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException {
@@ -880,6 +880,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
+	}
+
+	public void getRegistryDomainNameAddInfo(Integer customerId, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getRegistryDomainNameAddInfo(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
 	}
 	
 	// ----------------------------------------------------------------- static

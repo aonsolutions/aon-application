@@ -379,12 +379,6 @@ public class DomainDAO {
 				.returning(DOMAIN.ID)
 				.fetchOne().getId();
 		domain.setId(newDomainId);
-		
-		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
-				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
-				.set(DOMAIN_APPLICATION.APPLICATION, 28)
-				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
-				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
 
 
 		try {
@@ -397,6 +391,12 @@ public class DomainDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
+				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
+				.set(DOMAIN_APPLICATION.APPLICATION, 28)
+				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
+				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
 		
 		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
 				.set(REGISTRY.DOMAIN, newDomainId)
