@@ -31,6 +31,7 @@ import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 
 import * as LS from '../../services/localStorageService.js';
+import { isNewView, setNewView } from '../utils/functionGlobal.js';
 
 export class AonDocumental extends AonElement {
 	_filter;
@@ -98,7 +99,6 @@ export class AonDocumental extends AonElement {
 
 	async build() {
 		let aonDocumental = this.getApplication();
-		LS.setBetaDoc(true);
 		if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
 
@@ -106,9 +106,10 @@ export class AonDocumental extends AonElement {
 //			newView.style.marginLeft = '20px';
 			newView.id = this.id + "NewView";
 			newView.title = "Nueva Vista";
-			newView.checked = this.isBetaDoc();
+			newView.checked = isNewView();
+			LS.setBetaDoc(newView.checked);
 			newView.addEventListener(EVENT.CHANGE, () => {
-				LS.setBetaDoc(newView.checked);
+				setNewView(newView.checked);
 				this.rootPanel(new AonDocumental());
 			});
 			titleSection.appendChild(newView);
