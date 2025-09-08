@@ -12,7 +12,7 @@ import { AonCard } from '../../components/aon-card.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { Transactions } from '../../services/transaction.js';
-import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
+import { BillingPeriods, ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDialog } from '../../components/aon-dialog.js';
@@ -45,6 +45,11 @@ export class AonInvoice extends AonElement {
 	DATA;
 	FILE;
 	RECORD_INVOICE_DIALOG;
+
+	FACTURAE;
+	FACTURAE_CERTIFICATE;
+	FACTURAE_LEGAL_LITERALS;	
+	FACTURAE_PERIOD;
 
 	fileOpened;
 
@@ -190,6 +195,11 @@ export class AonInvoice extends AonElement {
 		this.ERRORS_CARD = this.DATA + 'ErrorsCard';
 
 		this.RECORD_INVOICE_DIALOG = this.id + 'RecordInvoiceDialog';
+
+		this.FACTURAE = this.id + CONSTANT.FACTURAE.initCap();
+		this.FACTURAE_CERTIFICATE = this.FACTURAE + CONSTANT.CERTIFICATE.initCap();
+		this.FACTURAE_LEGAL_LITERALS = this.FACTURAE + CONSTANT.LEGAL_LITERALS.initCap();
+		this.FACTURAE_PERIOD = this.FACTURAE + CONSTANT.PERIOD.initCap();
 	}
 
 	initializeFunctions() {
@@ -2946,30 +2956,28 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle("FACTURAE");
+		d.setTitle(MSG.FACTURAE);
 		let div  =this.createDiv();
-		let certSelect = createSelect("cert", "Certificado");
-		div.appendChild(certSelect);
-		getAeatCertificates().then(certs => {
-			certSelect.setOptions(certs.map(s => {
-				return {
-				  value: s.id,
-				  name: s.name
-				}
-			  }));
-		}); 
-		let span = this.createSpan();
-		span.innerHTML = '<textarea id="legalLiterals" maxlength="250" style="width:100%;" class="aonTextarea" placeholder="Literales Legales..."></textarea>';
-		div.appendChild(span);
+		let certSelect = createSelect(this.FACTURAE_CERTIFICATE, MSG.CERTIFICATE, div);
+		certSelect.setAlias('id', 'name');
+		getAeatCertificates().then(certs =>	certSelect.setOptions(certs));
+
+		let period = createSelect(this.FACTURAE_PERIOD, MSG.PERIOD, div);
+		period.setOptions(BillingPeriods);
+		
+		let legalLiterals = createTextarea(this.FACTURAE_LEGAL_LITERALS, MSG.LEGAL_LITERALS, div);
+
 		d.setContent(div);
 		d.addAcceptAction(() => {
 			let data = {
 				id: this.invoice.id,
 				domainName: LS.getDomainName(),
 				domainId: LS.getDomainId()
-			}
+			};
+			data.domainLogin = LS.getDomainLogin();
 			data.cert = certSelect.value;
-			data.legalLiterals = this.getElement('legalLiterals').value;
+			data.period = period.value;
+			data.legalLiterals = legalLiterals.getValue();
 			downloadFacturae(data).then(r => {});
 		});			
 		d.open();

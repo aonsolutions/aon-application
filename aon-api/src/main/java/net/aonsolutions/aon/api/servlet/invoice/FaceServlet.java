@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.code.aon.facturae.v322.FacturaeWriter;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -44,13 +46,12 @@ public class FaceServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		AonApiData api = initialize(req, false);
 		try {
-			String idStr = req.getParameter("id");
-			Integer id = Integer.parseInt(idStr);
-			String domainName = req.getParameter(IJsonNames.DOMAIN_NAME);
-			String domainIdStr = req.getParameter(IJsonNames.DOMAIN_ID);
-			Integer domainId = Integer.parseInt(domainIdStr);
-			String login = "";
-			String legalLiterals = req.getParameter("legalLiterals");
+			Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+			String domainName = JsonUtils.getString(api.getData(), IJsonNames.DOMAIN_NAME);
+			Integer domainId = JsonUtils.getInteger(api.getData(), IJsonNames.DOMAIN_ID);
+			String login = JsonUtils.getString(api.getData(), IJsonNames.DOMAIN_LOGIN);
+			String legalLiterals = JsonUtils.getString(api.getData(), "legalLiterals");
+			BillingPeriod period = BillingPeriod.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.PERIOD));
 
 			Domain domain = new Domain()
 				.setName(domainName)
@@ -60,7 +61,7 @@ public class FaceServlet extends AonApiHttpServlet {
 					.setLogin(login);
 		
 			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
-			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
+			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
 			Workplace workplace = new Workplace();
 			if(!invoice.getDetails().isEmpty() && invoice.getDetails().get(0).getWorkplace() != null &&
 					invoice.getDetails().get(0).getWorkplace().getId() != null) {
@@ -72,7 +73,7 @@ public class FaceServlet extends AonApiHttpServlet {
 			}
 
 //			Version 3.2.2
-			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice, legalLiterals);
+			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice, legalLiterals, period);
 			byte[] data = facturae.generate();
 			try {
 				Certificate certificate = checkCertificate(api);
