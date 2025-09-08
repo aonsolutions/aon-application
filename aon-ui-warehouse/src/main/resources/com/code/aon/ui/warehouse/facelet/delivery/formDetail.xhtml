@@ -17,6 +17,8 @@
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
 		<ui:param name="skipResetButton" value="#{!delivery.pending}" />
+		<!-- SI LA LÍNEA ESTÁ VINCULADA CON UN ENVASE -->
+		<!-- <ui:param name="skipRemoveButton" value="#{delivery.hasPackaging()}" /> -->
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
@@ -203,7 +205,7 @@
 				<aon:commandLink id="DeliveryDetail_quantity-adjust"
 					styleClass="aon-finding-toolbar-item aon-noborder aon-icon-edit-blue"
 					value="&#160;" title="#{bundle.aon_quantity_adjust}"
-					rendered="#{delivery.pending and formList and !controller.modelEditable}" 
+					rendered="#{delivery.pending and !delivery.hasPackaging() and formList and !controller.modelEditable}" 
 					actionListener="#{controller.onSalesQuantityAdjustShow}"
 					reRender="showQuantityAdjustWindow">
 					<f:setPropertyActionListener target="#{deliveryDetail.showQuantityAdjustWindow}"

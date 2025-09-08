@@ -70,6 +70,7 @@ export const ADD_REMARKS = MSG.ADD_REMARKS;
 export const ADD_SUPPLIER = "Añadir Proveedor" // TODO
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
+export const ADD_TO_STOCK = MSG.ADD_TO_STOCK;
 export const ADD_TYPE = MSG.TYPE;
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_HIRING = MSG.ADDITIONAL_HIRING;
@@ -485,6 +486,7 @@ export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
+export const MOVE_STOCK = "Mover Stock"; //TODO
 export const MINS = "Minutos"; //TODO
 
 // ----- N

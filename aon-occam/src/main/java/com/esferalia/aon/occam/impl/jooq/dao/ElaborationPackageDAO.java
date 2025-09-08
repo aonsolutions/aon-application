@@ -18,7 +18,7 @@ public class ElaborationPackageDAO {
 		
 		ElaborationDetailCompositionDAO.deleteElaborationDetailComposition(ctx, f -> 
 				f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getElaborationDetailProperty().eq(id)));
+				.and(f.getElaborationDetailProperty().eq(id)), false);
 		
 		ElaborationDetailDAO.delete(ctx, id);
 		

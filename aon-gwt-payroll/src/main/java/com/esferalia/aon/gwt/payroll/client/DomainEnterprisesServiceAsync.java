@@ -65,12 +65,14 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -828,8 +830,8 @@ public class DomainEnterprisesServiceAsync {
 	
 	// ------------------------------------------------ Activity Summary
 	
-	public void getActivitySummary(ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getActivitySummary(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	public void getActivitySummary(String domainName, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivitySummary(domainName, getCurrentUser(), params, asyncCallback);
 	}
 	
 	// ------------------------------------------------ Salaries
@@ -866,7 +868,19 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void fixAgreementIntegrity(Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
-		}
+	}
+	
+	public void getCustomersLinked(int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.getCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), offset, limit, asyncCallback);
+	}
+
+	public void getRRelationShip(Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getRRelationShip(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
+	}
+	
+	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
+	}
 	
 	// ----------------------------------------------------------------- static
 	
@@ -880,6 +894,10 @@ public class DomainEnterprisesServiceAsync {
 
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
+	}
+	
+	private static int getCurrentDomainId() {
+		return Wnd.getCurrentDomain();
 	}
 
 }

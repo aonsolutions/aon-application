@@ -39,6 +39,12 @@ const AON_CUSTOMER_STATUS= {
     icon: MATERIAL_ICONS.INFO
 }
 
+const AON_CUSTOMER_PAYROLL_ACTIVITY = {
+	id: 'sideNavCustomerPayrollActivity',
+    name: "Actividad Laboral Cliente",
+    icon: MATERIAL_ICONS.BROWSE_ACTIVITY
+}
+
 const AON_SERVICE = {
     id: 'sideNavService',
     name: MSG.AON_SERVICES,
@@ -86,7 +92,8 @@ const OfficeOptions = {
     AON_SELLER_LIST,
     AON_SELLER_WORKLOAD,
     AON_SCOPE,
-    AON_CUSTOMER_STATUS
+    AON_CUSTOMER_STATUS,
+    AON_CUSTOMER_PAYROLL_ACTIVITY
 };
 
 const ServiceOptions = {

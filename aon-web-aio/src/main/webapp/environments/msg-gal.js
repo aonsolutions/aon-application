@@ -25,6 +25,7 @@ export const ADD_NEW = "Engadir novo";
 export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
+export const ADD_TO_STOCK = 'Engadir a stock';
 export const ADD_TYPE = 'Añadir Tipo';
 export const ADDITIONAL_HIRING = "Contratación adicional";
 export const ADDITIONAL_INFORMATION = 'Información Adicional';

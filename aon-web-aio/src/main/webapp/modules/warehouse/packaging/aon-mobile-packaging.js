@@ -11,6 +11,7 @@ import { openBarcode } from '../../../services/actionService.js';
 import * as ACTION from '../../actions.js';
 import * as LS from '../../../services/localStorageService.js';
 import * as UA from '../../../services/userAgentService.js';
+import { AonButton } from '../../../components/aon-button.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -27,6 +28,9 @@ export class AonMobilePackaging extends AonElement {
 	PACKAGING_QUANTITY;
 	PACKAGING_WAREHOUSE;
 	PACKAGING_COPIES;
+
+	PACKAGING_SAVE;
+	PACKAGING_PRINT;
 
 	TAG_CARD;
 
@@ -57,8 +61,7 @@ export class AonMobilePackaging extends AonElement {
 		getWarehouses().then(warehouses => {
 			this.warehouses = warehouses;
 			this.build();
-		})
-
+		});
     }
 
 	initialize() {
@@ -75,6 +78,9 @@ export class AonMobilePackaging extends AonElement {
 		this.PACKAGING_WAREHOUSE = this.id + 'Warehouse';
 		this.PACKAGING_COPIES = this.id + 'Copies';
 		this.TAG_CARD = this.id + 'Tag' + CONSTANT.CARD.initCap();
+
+		this.PACKAGING_SAVE = this.id + 'Save';
+		this.PACKAGING_PRINT = this.id + 'Print';
 
 		this.VIEWER = this.id + 'Viewer';
 
@@ -106,6 +112,25 @@ export class AonMobilePackaging extends AonElement {
 		// toolbar.addButton2(ACTION.BACK, () => this.back());
 
 		this.buildPackaging(div);
+
+		let saveButton2 = new AonButton();
+		saveButton2.id = this.PACKAGING_SAVE;
+		saveButton2.title = 'Generar Etiqueta';
+		saveButton2.style.padding = '15px';	
+		saveButton2.style.position = 'absolute';
+		saveButton2.addEventListener(EVENT.CLICK, () => this.save(div, saveButton, printButton, downloadButton));
+
+		div.appendChild(saveButton2);
+
+		let printButton2 = new AonButton();
+		printButton2.id = this.PACKAGING_PRINT;
+		printButton2.title = 'Imprimir Etiqueta';
+		printButton2.style.padding = '15px';	
+		printButton2.style.position = 'absolute';
+		printButton2.style.display = 'none';
+		printButton2.addEventListener(EVENT.CLICK, () => this.print());
+
+		div.appendChild(printButton2);
 	}
 
 	resetPackaging() {
@@ -324,6 +349,8 @@ export class AonMobilePackaging extends AonElement {
 			this.showError({message:`El fecha de caducidad no es correcta.`, type:CONSTANT.ERROR});
 		} else {
 			saveButton.style.display = 'none';
+			this.getElement(this.PACKAGING_SAVE).style.display = 'none';
+			this.getElement(this.PACKAGING_PRINT).style.display = 'block';
 			this.getApplication().startLoader();
 			this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).getQuantity();
 			this.packaging.copies = this.getElement(this.PACKAGING_COPIES).value || 1;

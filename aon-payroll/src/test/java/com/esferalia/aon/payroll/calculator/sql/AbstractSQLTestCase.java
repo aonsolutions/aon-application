@@ -620,7 +620,7 @@ public abstract class AbstractSQLTestCase {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
 				//new VersionManager().uptodateDatabase(connection);
-				//System.out.println("use " + rs.getString(1));
+				System.out.println("use " + rs.getString(1));
 				return connection;
 			}
 		}
@@ -740,13 +740,13 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreement.getDomain())
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, extra.concept)
-					.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
+					.set(AGREEMENT_PAYMENT.MONTH, extra.month != null ?  (byte) extra.month.ordinal(): null)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) PaymentType.CRA_0004.ordinal())
 					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT.getName())
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE, extra.month != null ? (byte) EXTRA.ordinal(): (byte) SalaryType.SALARY.ordinal() )
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, extra.quoteExpression == UNSET ? String.format("%s/12", PAYMENT.getName()): extra.quoteExpression).returning()
 					.fetchOne();
 
@@ -763,8 +763,8 @@ public abstract class AbstractSQLTestCase {
 			Extra extra) {
 
 		aonContext.getDslContext().update(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
-				.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, extra.month != null ? (byte) EXTRA.ordinal(): (byte) SalaryType.SALARY.ordinal() )
+				.set(AGREEMENT_PAYMENT.MONTH, extra.month != null  ? (byte) extra.month.ordinal():null)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 
 		return aonContext.getDslContext().insertInto(AGREEMENT_EXTRA).set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())

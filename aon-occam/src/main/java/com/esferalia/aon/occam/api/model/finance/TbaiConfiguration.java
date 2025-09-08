@@ -17,6 +17,9 @@ public class TbaiConfiguration implements Serializable{
 	private Certificate certificate;
 	private Date includeDate;
 	private String registryDate;
+	
+	// TO FIX || DELETE
+	private boolean skipTracking;
 
 	public boolean isActive() {
 		return active;
@@ -24,6 +27,15 @@ public class TbaiConfiguration implements Serializable{
 	
 	public TbaiConfiguration setActive(boolean active) {
 		this.active = active;
+		return this;
+	}
+	
+	public boolean isSkipTracking() {
+		return skipTracking;
+	}
+	
+	public TbaiConfiguration setSkipTracking(boolean skipTracking) {
+		this.skipTracking = skipTracking;
 		return this;
 	}
 	
