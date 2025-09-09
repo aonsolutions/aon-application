@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresInsert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEUpdate2CostFix;
 
@@ -553,7 +554,8 @@ public class Up2Date {
 			// InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
 			// BaseCgpMin2025Fix.BASECGPMIN2025FIX,
 			// RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
-			PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
+			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
+			BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

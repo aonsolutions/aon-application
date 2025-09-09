@@ -421,7 +421,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			"MODELO_COTIZACION_AGRARIO",
 			
-			
+			"LEFT_BONF_SEPE_E"
 	};
 
 	// @formatter:off
