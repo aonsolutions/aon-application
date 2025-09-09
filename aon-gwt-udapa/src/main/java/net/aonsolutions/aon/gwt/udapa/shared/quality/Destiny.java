@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Destiny {
@@ -18,7 +19,7 @@ public enum Destiny {
 	ECI_FREIR("ECI Freir", false),
 	ECI_HERVIR("ECI Hervir", false),
 	EUROPOOL("Europool", false),
-	EUSKOLABEL("Euskolabel", false),
+	EUSKOLABEL("Euskolabel", true),
 	GUARNICION("Guarnici\u00f3n", true),
 	INDUSTRIA("Industria", true),
 	MERCADOS("Mercados", true),
@@ -103,6 +104,14 @@ public enum Destiny {
 			.filter(Destiny::isActive)
 			.sorted((s1, s2) -> s1.getName().compareTo(s2.getName()))
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public boolean isPropaco() {
+		return this == BASERRI || this == EUSKOLABEL;
+	}
+	
+	public boolean isSiembra() {
+		return this == SIEMBRA;
 	}
 
 }
