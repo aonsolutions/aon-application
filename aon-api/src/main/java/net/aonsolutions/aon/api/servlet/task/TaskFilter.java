@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -46,8 +47,11 @@ public class TaskFilter {
 		String search      = params.optString(IJsonNames.SEARCH);
 		String status      = params.optString(IJsonNames.STATUS);
 		String source      = params.optString(IJsonNames.SOURCE);
+		Integer sourceId   = params.optInt(IJsonNames.SOURCE_ID);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer tag        = params.optInt(IJsonNames.TAG);
+		
+		JSONArray sourceIds  = new JSONArray(params.optString(IJsonNames.SOURCE_IDS, "[]"));
 
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
@@ -90,7 +94,19 @@ public class TaskFilter {
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		}
 
-		if(TaskUtils.isCau(api.getData())) {
+		if(sourceId != 0 ) {			
+			filter = filter.and(f.getSourceIdProperty().eq(sourceId));
+		}
+
+		if(sourceIds != null && !sourceIds.isEmpty()) {
+			// If sourceIds is a JSONArray, we need to convert it to an array of integers
+			Integer[] ids = new Integer[sourceIds.length()];
+			for (int i = 0; i < sourceIds.length(); i++) {
+				ids[i] =  sourceIds.optInt(i, 0);
+				
+			}
+			filter = filter.and(f.getSourceIdProperty().in(ids));
+		} else if(TaskUtils.isCau(api.getData())) {
 			filter = filter.and(getFilterCau(api, f));
 		} else if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			
