@@ -238,9 +238,8 @@ public class FootPanel extends Composite {
 	}
 
 	public void calculatePanel() {
-		Double dest = Double.parseDouble(parent.getMap().get(QualitySheetCode.UFQDP1.getName())) - 1;
-		Destiny destiny = parent.getMap().containsKey(QualitySheetCode.UFQDP1.getName()) && dest >= 0 ? Destiny.values()[dest.intValue()]: Destiny.CALIDAD;
-		if(Destiny.BASERRI.equals(destiny) || Destiny.EUSKOLABEL.equals(destiny)) {
+		Destiny destiny = parent.getDestiny();
+		if(destiny != null && destiny.isPropaco()) {
 			String product_quantity = parent.getMap().containsKey("product_quantity") ? parent.getMap().get("product_quantity") : "0.0";
 			Double productQuantity = Double.parseDouble(product_quantity);
 			String transport_quantity = parent.getMap().containsKey("neto") ? parent.getMap().get("neto") : "0.0";

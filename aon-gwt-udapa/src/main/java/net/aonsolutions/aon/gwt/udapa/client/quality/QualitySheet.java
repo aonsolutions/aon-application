@@ -98,10 +98,9 @@ public class QualitySheet extends Composite {
 		return map;
 	}
 	
-	private Boolean isPropaco() {
-		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
-			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	private boolean isPropaco() {
+		Destiny destiny = getDestiny();
+		return destiny != null && destiny.isPropaco();
 	}
 
 	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
@@ -320,9 +319,8 @@ public class QualitySheet extends Composite {
 		hp2.add(lpercent2);
 		caliberControl.setWidget(1, 3, hp2); setWidth(caliberControl, 1, 3, "300px");
 	
-		Boolean siembra = map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-				map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.SIEMBRA.ordinal() + 1));
-		if(siembra){
+		Destiny destiny = getDestiny();
+		if(destiny != null && destiny.isSiembra()){
 			calibresSiembra();
 		} else calibresConsumo();
 		
@@ -624,13 +622,12 @@ public class QualitySheet extends Composite {
 						map = result;
 						
 						if(QualitySheetCode.UFQDP1.equals(code)){
-							Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
-							Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
-							if(siembra){
+							Destiny d = Destiny.safeValueOf(Integer.parseInt(listBox.getSelectedValue()));
+							if(d != null && d.isSiembra()){
 								qualityTest.setWidget(3, 2, new Label(""));
 								qualityTest.setWidget(3, 3, new Label(""));
 								calibresSiembra();
-							} else if(propaco){
+							} else if(d != null && d.isPropaco()){
 								qualityTest.setWidget(3, 2, new Label("Color"));
 								qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
 								calibresConsumo();
@@ -683,13 +680,12 @@ public class QualitySheet extends Composite {
 						map = result;
 						
 						if(QualitySheetCode.UFQDP1.equals(code)){
-							Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
-							Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
-							if(siembra){
+							Destiny d = Destiny.safeValueOf(Integer.parseInt(listBox.getSelectedValue()));
+							if(d != null && d.isSiembra()){
 								qualityTest.setWidget(3, 2, new Label(""));
 								qualityTest.setWidget(3, 3, new Label(""));
 								calibresSiembra();
-							} else if(propaco){
+							} else if(d != null && d.isPropaco()){
 								qualityTest.setWidget(3, 2, new Label("Color"));
 								qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
 								calibresConsumo();

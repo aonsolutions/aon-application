@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Destiny {
@@ -43,7 +44,7 @@ public enum Destiny {
 	GRANEL("Granel", true),
 	GRANEL_TOP("Granel Top", true),
 	GUISAR("Guisar", true),
-	LABEL("Label", false),
+	LABEL("Label", true),
 	MERCADONA_3KG("Mercadona 3Kg", true),
 	MERCADONA_5KG("Mercadona 5Kg", true),
 	MERCADONA_BOLSA("Mercadona Bolsa", true),
@@ -103,6 +104,14 @@ public enum Destiny {
 			.filter(Destiny::isActive)
 			.sorted((s1, s2) -> s1.getName().compareTo(s2.getName()))
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public boolean isPropaco() {
+		return this == BASERRI || this == EUSKOLABEL;
+	}
+	
+	public boolean isSiembra() {
+		return this == SIEMBRA;
 	}
 
 }
