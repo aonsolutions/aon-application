@@ -77,7 +77,6 @@ public class ActivitySummary extends AonCustomDockLayout {
 	// String Domian
 	
 	private String domainName;
-	private boolean isSig = false;
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -265,16 +264,14 @@ public class ActivitySummary extends AonCustomDockLayout {
 		
 	}
 	
-	public void setIsSig(boolean isSig) {
-		this.isSig = isSig;
-	}
-	
 	public void showCustomerDomainInfo(Integer customerId, String customerName) {
 		centerPanel.clear();
 		
 		getToolbar().setTitle("Act. Laboral " + customerName);
 		
-		if(isSig) {
+		if(getCurrentIsSig()) {
+			LOGGER.info("Entrando en getRegistryDomainNameAddInfo (campo de ActivitySummary)");
+			
 			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<String>() {
 
 				@Override
@@ -313,6 +310,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 				
 			});
 		} else {
+			LOGGER.info("Entrando en getRRelationShip (campo de ActivitySummary)");
+			
 			service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
 
 				@Override
@@ -699,4 +698,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 			
 		});
 	}
+	
+	public static native boolean getCurrentIsSig()
+    /*-{
+        var value = $wnd.localStorage.getItem("isSig");
+        return value === "true" || value === true;
+    }-*/;
 }

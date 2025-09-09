@@ -506,7 +506,9 @@ public interface EnterprisesService extends RemoteService {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
-	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, boolean isSig, String searchQuery, int offset, int limit) throws IllegalArgumentException ;
+	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, int offset, int limit) throws IllegalArgumentException ;
+	
+	List<Customer> getSigCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, int offset, int limit) throws IllegalArgumentException ;
 	
 	RegistryRelationship getRRelationShip(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
 

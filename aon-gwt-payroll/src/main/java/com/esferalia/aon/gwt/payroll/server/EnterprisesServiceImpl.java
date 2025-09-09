@@ -5057,11 +5057,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			Domain domain = AON_SOLUTIONS.getDomain(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), domain.getParentId());
 			
-			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domain.getId(), domain.getParentId(), userId, params);
 			return list;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -5215,30 +5214,32 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Customer> getCustomersLinked(String domainName, int domain, String user, boolean isSig, String searchQuery, int offset, int limit) throws IllegalArgumentException {
-		if(isSig) 
-			return AON.getSigCustomerStream(domainName, domain, user, 
-					f -> f.getDomainProperty().eq(domain)
-					.and(AonStringUtils.isBlank(searchQuery)
-							? f.getIdProperty().isNotNull()
-							: f.getDocumentProperty().like("%" + searchQuery + "%")
-								.or(f.getNameProperty().like("%" + searchQuery + "%"))
-								.or(f.getAliasProperty().like("%" + searchQuery + "%"))
-					), 
-					offset, limit)
-				.collect(Collectors.toList());
-		else 
-			return AON.getCustomerStream(domainName, domain, user, 
-					f -> f.getDomainProperty().eq(domain)
-					.and(f.getRegistryRelationProperty().isNotNull())
-					.and(AonStringUtils.isBlank(searchQuery)
-							? f.getIdProperty().isNotNull()
-							: f.getDocumentProperty().like("%" + searchQuery + "%")
-								.or(f.getNameProperty().like("%" + searchQuery + "%"))
-								.or(f.getAliasProperty().like("%" + searchQuery + "%"))
-					), 
-					offset, limit)
-				.collect(Collectors.toList());
+	public List<Customer> getCustomersLinked(String domainName, int domain, String user, String searchQuery, int offset, int limit) throws IllegalArgumentException {
+		return AON.getCustomerStream(domainName, domain, user, 
+				f -> f.getDomainProperty().eq(domain)
+				.and(f.getRegistryRelationProperty().isNotNull())
+				.and(AonStringUtils.isBlank(searchQuery)
+						? f.getIdProperty().isNotNull()
+						: f.getDocumentProperty().like("%" + searchQuery + "%")
+							.or(f.getNameProperty().like("%" + searchQuery + "%"))
+							.or(f.getAliasProperty().like("%" + searchQuery + "%"))
+				), 
+				offset, limit)
+			.collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<Customer> getSigCustomersLinked(String domainName, int domain, String user,String searchQuery, int offset, int limit) throws IllegalArgumentException {
+		return AON.getSigCustomerStream(domainName, domain, user, 
+				f -> f.getDomainProperty().eq(domain)
+				.and(AonStringUtils.isBlank(searchQuery)
+						? f.getIdProperty().isNotNull()
+						: f.getDocumentProperty().like("%" + searchQuery + "%")
+							.or(f.getNameProperty().like("%" + searchQuery + "%"))
+							.or(f.getAliasProperty().like("%" + searchQuery + "%"))
+				), 
+				offset, limit)
+			.collect(Collectors.toList());
 	}
 
 	@Override
