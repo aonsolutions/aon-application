@@ -401,6 +401,8 @@ public final class IJsonNames {
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
+	public static final String NOTIFICATION_DATE = "notification_date";
+	public static final String NOTIFICATION_USER = "notification_user";
 	public static final String NRC = "nrc";
 	public static final String NRS = "nrs";
 	public static final String NULL = "null";
@@ -625,6 +627,7 @@ public final class IJsonNames {
 	public static final String SIZE = "size";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
+	public static final String SOURCE_IDS = "source_ids";
 	public static final String SSCC = "sscc";
 	public static final String START_DATE = "start_date";
 	public static final String STATEMENT = "statement";
