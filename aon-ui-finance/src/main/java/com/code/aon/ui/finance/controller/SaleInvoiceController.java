@@ -132,6 +132,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private FtpSaleInvoiceDownloadHandler ftpEdiDownloader;
 	
 	private FtpSaleInvoiceUploaderHandler ftpEdiUploader;
+	private InvoiceCommunicationStatus verifactuStatus;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -766,12 +767,12 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		try {
 			InvoiceCommunicator.issueInvoice(communicator);
+			setVerifactuStatus( null );
 			refresh( null );
 		} catch (Exception e) {
 			
 			try {
 				InvoiceCommunicator.throwRightException(e, invoice);
-				AonUtil.addErrorMessage(e.getMessage());
 			} catch (InvoiceErrorException e1) {
 				AonCollectionUtils.stream(e1.getMessages())
 					.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
@@ -914,13 +915,13 @@ public class SaleInvoiceController extends InvoiceController {
 				.setCompany(company);
 			try {
 				InvoiceCommunicator.cancelInvoice(communicator);
+				setVerifactuStatus( null );
 				initializeModel();
 				resetTo();
 				return backAction();
 			} catch (Exception e) {
 				try {
 					InvoiceCommunicator.throwRightException(e, invoice);
-					AonUtil.addErrorMessage(e.getMessage());
 				} catch (InvoiceErrorException e1) {
 					AonCollectionUtils.stream(e1.getMessages())
 						.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
@@ -1041,22 +1042,27 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	public boolean isInvoiceVerifactuAccepted() {
-		Invoice inv = (Invoice) getTo();
-		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
-		return info.getStatus().isAccepted();
+		return isVerifactuAccepted();
+//		Invoice inv = (Invoice) getTo();
+//		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
+//				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
+//		return info.getStatus().isAccepted();
 	}
 	
-	private InvoiceCommunicationStatus verifactuStatus;
 	public InvoiceCommunicationStatus getVerifactuStatus() {
 		if (verifactuStatus == null) {
 			Invoice inv = (Invoice) getTo();
-			InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
-			if (info != null && info.getId() != null && info.getStatus() != null) {
-				setVerifactuStatus( info.getStatus());
-			}
-			setVerifactuStatus( verifactuStatus );
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			AON.getInvoiceInfo(occam, inv.getId(), InvoiceCommunicationType.VERIFACTU)
+				.ifPresentOrElse( 
+					info -> setVerifactuStatus( info.getStatus() ),
+					()  -> setVerifactuStatus( InvoiceCommunicationStatus.PENDING )
+				);
 		}
 		return verifactuStatus;
 	}
@@ -1068,7 +1074,7 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	public boolean isVerifactuNoStatus() {
-		return getVerifactuStatus() == null;		
+		return getVerifactuStatus() == null || getVerifactuStatus() == InvoiceCommunicationStatus.PENDING;		
 	}
 	public boolean isVerifactuAccepted() {
 		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED;		

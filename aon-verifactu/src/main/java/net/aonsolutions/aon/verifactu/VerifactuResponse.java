@@ -1,32 +1,17 @@
 package net.aonsolutions.aon.verifactu;
 
-import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-import eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.EstadoEnvioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoEnvioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
 public class VerifactuResponse {
 	
-//	private boolean error;
-//	private String errorMessage;
 	private RespuestaRegFactuSistemaFacturacionType response;
 	private byte[] bytes;
-	
-//	public boolean isError() {
-//		return error;
-//	}
-//	public VerifactuResponse setError(boolean error) {
-//		this.error = error;
-//		return this;
-//	}
-//	
-//	public String getErrorMessage() {
-//		return errorMessage;
-//	}
-//	public VerifactuResponse setErrorMessage(String errorMessage) {
-//		this.errorMessage = errorMessage;
-//		return this;
-//	}
 	
 	public RespuestaRegFactuSistemaFacturacionType getResponse() {
 		return response;
@@ -43,5 +28,19 @@ public class VerifactuResponse {
 		this.bytes = bytes;
 		return this;
 	}
-
+	
+	public boolean isIncorrecto(){
+		return response == null || response.getEstadoEnvio() == EstadoEnvioType.INCORRECTO; 
+	}
+	
+	public boolean isIncorrecta( Integer invoiceId ){
+		if (isIncorrecto()) return true;
+		return AonCollectionUtils.stream(response.getRespuestaLinea())
+			.filter(rl -> AonStringUtils.equals(AonNumberUtils.toString(invoiceId),rl.getRefExterna()) )
+			.anyMatch(rl -> rl.getEstadoRegistro() == EstadoRegistroType.INCORRECTO)
+		;
+	}
+	public boolean isCorrecta( Integer invoiceId ){
+		return !isIncorrecta(invoiceId);
+	}
 }

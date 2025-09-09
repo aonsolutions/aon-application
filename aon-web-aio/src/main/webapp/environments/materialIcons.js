@@ -95,6 +95,7 @@ export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
 export const CHANGE_HISTORY = 'change_history';
+export const CHAT_ERROR  = 'chat_error';
 export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
 export const CHEVRON_RIGHT = 'chevron_right';

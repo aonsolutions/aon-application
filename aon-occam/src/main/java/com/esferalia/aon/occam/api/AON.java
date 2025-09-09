@@ -121,7 +121,6 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -136,6 +135,7 @@ import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -8078,11 +8078,11 @@ public class AON {
 	
 	// INVOICE COMMUNICATION HISTORY
 	
-	public static List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(Occam occam, Integer invoice) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationHistory(ctx, invoice);
-		}
-	}
+//	public static List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(Occam occam, Integer invoice) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+//			return getFinance().getInvoiceCommunicationHistory(ctx, invoice);
+//		}
+//	}
 	
 	// INVOICE COMMUNICATION CONFIGURATION
 	
@@ -8343,6 +8343,12 @@ public class AON {
 	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceInfo(ctx, filter);
+		}
+	}
+
+	public static Optional<InvoiceInfo> getInvoiceInfo(Occam occam, Integer invoiceId, InvoiceCommunicationType type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceInfo(ctx, invoiceId, type);
 		}
 	}
 

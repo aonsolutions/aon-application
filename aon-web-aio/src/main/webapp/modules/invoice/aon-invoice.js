@@ -179,6 +179,10 @@ export class AonInvoice extends AonElement {
 		this.DETAIL_CATEGORY = this.DETAIL + CONSTANT.CATEGORY.initCap();
 		// TODO BIEN AFECTO
 
+		// ----- COMMUNICATION
+		this.COMMUNICATION = CONSTANT.AON_INVOICE_COMMUNICATION;
+		this.COMMUNICATION_TABLE = this.DETAIL + CONSTANT.TABLE.initCap();
+
 		// ----- FINANCE
 
 		this.FINANCE = CONSTANT.AON_INVOICE_FINANCE;
@@ -562,10 +566,10 @@ export class AonInvoice extends AonElement {
 		card.style.width = this.fileOpened ? '100%' : '50%';
 		parent.appendChild(card);
 
-		let table = this.getElement(this.DETAIL_TABLE);
+		let table = this.getElement(this.COMMUNICATION_TABLE);
 		if(!table) {
 			table = new AonBasicTable();
-			table.id = this.DETAIL_TABLE;
+			table.id = this.COMMUNICATION_TABLE;
 			card.setContent(table);
 		}
 		table.removeRows();
@@ -579,23 +583,30 @@ export class AonInvoice extends AonElement {
 	}
 
 	printCommunicationHistory(table, history, i) {
-		table.addRow(); // ----- ROW i
+		let mainRowNumber = table.addRow(); // ----- ROW i
+		let mainTr  = table.getRow(mainRowNumber);
 		
-		let span = this.createElement(TAG.SPAN);
-		span.innerHTML = history.date;
-		table.addCell(span);
-
-		let span2 = this.createElement(TAG.SPAN);
-		span2.innerHTML = history.operation;
-		table.addCell(span2);
+		let span1 = this.createElement(TAG.SPAN);
+		span1.innerHTML = history.operation;
+		table.addCell(span1);
 
 		let icon = this.createElement(TAG.I);
 		icon.className = "material-icons";
+		icon.title = this.getCommunicationStatusLabel(history.status);;
 		icon.style.color = this.getCommunicationStatusColor(history.status);
         icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
 		table.addCell(icon);
 
+		let span2 = this.createElement(TAG.SPAN);
+		span2.innerHTML = history.date;
+		table.addCell(span2);
+
+		let span3 = this.createElement(TAG.SPAN);
+		span3.innerHTML = history.creation_user ?  history.creation_user : "";
+		table.addCell(span3);
+
 		let requestDownload = new AonIconButton();
+		requestDownload.title = "Descargar petición";
 		requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
 		requestDownload.addEventListener(EVENT.CLICK, () => {
 			open(history.requestUrl, '_blank');
@@ -604,10 +615,48 @@ export class AonInvoice extends AonElement {
 
 		let responseDownload = new AonIconButton();
 		responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+		responseDownload.title= "Descargar respuesta";
 		responseDownload.addEventListener(EVENT.CLICK, () => {
 			open(history.responseUrl, '_blank');
 		});
 		table.addCell(responseDownload);
+
+		if (history.responseMessages) {
+			let showErrors  = new AonIconButton();
+			showErrors.icon = MATERIAL_ICONS.CHAT_ERROR;
+			showErrors.title= "Mostrar errores";
+			table.addCell(showErrors);
+
+			let historyRowNumber = table.addRow();
+			let historyTr = table.getRow(historyRowNumber);
+			historyTr.style.display = "none";
+			showErrors.addEventListener(EVENT.CLICK, () => {
+				historyTr.style.display = historyTr.style.display == "none" ? "contents" : "none";
+			});
+			let ul = this.createElement(TAG.UL);
+			ul.classList.add(CSS.AON_UL);
+			ul.style.width = '100%';
+			for(let i = 0; i < history.responseMessages.length; i++) {
+				let item = history.responseMessages[i];
+				let li = this.createElement(TAG.LI);
+				li.style.paddingLeft = "20px";
+				li.style.backgrounColor = 'transparent !important';
+				let errSpan = this.createElement(TAG.SPAN);
+				errSpan.innerHTML = item;
+				li.appendChild(errSpan);
+				ul.appendChild(li);
+			}
+			table.addCell(ul, "7" );
+		}
+
+	}
+
+	getCommunicationStatusLabel(status) {
+		if("PENDING" === status) return "Pendiente";
+		else if("ACCEPTED" === status) return "Aceptada";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("WRONG" === status) return "Incorrecta";
+		else return "Sin Estado";
 	}
 
 	getCommunicationStatusColor(status) {

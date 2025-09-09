@@ -1,24 +1,21 @@
 package net.aonsolutions.aon.api.servlet.invoice;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,6 +25,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
@@ -74,11 +72,47 @@ public class InvoiceCommunicationServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
+	private static class JSONArrayCollector {
+	    public static <T> Collector<T, JSONArray, JSONArray> toJSONArray() {
+	        return Collector.of(
+	            JSONArray::new,                  // supplier
+	            JSONArray::put,                  // accumulator
+	            (left, right) -> {               // combiner
+	                for (int i = 0; i < right.length(); i++) {
+	                    left.put(right.get(i));
+	                }
+	                return left;
+	            },
+	            Collector.Characteristics.IDENTITY_FINISH
+	        );
+	    }
+	}	
 	private JSONArray getInvoiceCommunicationHistory(AonApiData api) {
 		Integer invoice = JsonUtils.getInteger(api.getData(), IJsonNames.INVOICE);
 		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-		
-		if(config.isTbai()) {
+		if (config.isVerifactu()) {
+			try {
+				Occam occam = api.getOccam();
+				return AonCollectionUtils.stream( InvoiceCommunicator.history(occam, invoice) )
+					.map( h -> new JSONObject() 
+						.put(IJsonNames.DATE, h.getDate())
+						.put(IJsonNames.CREATION_USER, h.getCreationUser())
+						.put(IJsonNames.OPERATION, h.getOperation().getDescription())
+						.put(IJsonNames.REQUEST_URL, h.getRequestUrl())
+						.put(IJsonNames.RESPONSE_URL, h.getResponseUrl())
+						.put(IJsonNames.RESPONSE_MESSAGES, 
+							AonCollectionUtils.stream(h.getResponseMessages())
+							.filter(AonStringUtils::isNotBlank)
+							.collect(JSONArrayCollector.toJSONArray())
+							)
+						.put(IJsonNames.STATUS, h.getStatus().name())
+					)
+					.collect( JSONArray::new, JSONArray::put, JSONArray::putAll )
+				;
+			} catch (InvoiceCommunicationException e) {
+				// Nothingis shown
+			}
+		} else  if(config.isTbai()) {
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
 			if(tbaiConfiguration.isBizkaia()) {	
 				LROEInformation lroeInfo = LroeData.get(api.getDomain(), api.getUser(), invoice, InvoiceType.SALES);		
@@ -87,55 +121,56 @@ public class InvoiceCommunicationServlet extends AonApiHttpServlet{
 				TBAIInformation tbaiInfo = TbaiData.getInstance(tbaiConfiguration).get(api.getDomain(), api.getUser(), invoice);
 				return tbaiInfo2JSON(tbaiInfo);
 			}			
-		} else if(config.isVerifactu()) {
-			JSONArray arr = new JSONArray();
-			AON.getInvoiceCommunicationTrackingStream(api.getOccam(), f -> f.getInvoiceProperty().eq(invoice)
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))
-			.forEach(tracking -> {
-				DataResponse dr = AON.getDataResponse(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-					f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getIdProperty().eq(tracking.getInvoiceBatch().getDataResponse())));
-				
-				JSONObject json = new JSONObject();
-				json.put(IJsonNames.DATE, tracking.getInvoiceBatch().getDate());
-				json.put("operation", tracking.getInvoiceBatch().getOperation().getDescription());
-				json.put("requestUrl", getVerifactuRequestUrl(api, dr.getDataRequest()));
-				json.put("responseUrl", getVerifactuResponseUrl(api, dr.getId()));
-				json.put("status", tracking.getInvoiceBatchDetail().getStatus().name());
-				arr.put(json);
-			});
-			return arr;			
-		} else return new JSONArray();
+		}  
+//		} else if (config.isVerifactu()) {
+//			JSONArray arr = new JSONArray();
+//			AON.getInvoiceCommunicationTrackingStream(api.getOccam(), f -> f.getInvoiceProperty().eq(invoice)
+//					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))
+//			.forEach(tracking -> {
+//				DataResponse dr = AON.getDataResponse(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+//					f.getDomainProperty().eq(api.getDomain().getId())
+//					.and(f.getIdProperty().eq(tracking.getInvoiceBatch().getDataResponse())));
+//				
+//				JSONObject json = new JSONObject();
+//				json.put(IJsonNames.DATE, tracking.getInvoiceBatch().getDate());
+//				json.put("operation", tracking.getInvoiceBatch().getOperation().getDescription());
+//				json.put("requestUrl", getVerifactuRequestUrl(api, dr.getDataRequest()));
+//				json.put("responseUrl", getVerifactuResponseUrl(api, dr.getId()));
+//				json.put("status", tracking.getInvoiceBatchDetail().getStatus().name());
+//				arr.put(json);
+//			});
+//			return arr;			
+		return new JSONArray();
 	}
 	
-	private String getVerifactuRequestUrl(AonApiData api, Integer dataRequest) {
-		Attach requestAttach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
-				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-				.and(f.getSourceBatchProperty().eq(dataRequest)), AttachType.DATA, false);
-			
-		JSONObject requestData = new JSONObject();
-		requestData.put("domain_name", api.getDomain().getName());
-		requestData.put("domain_id", api.getDomain().getId());
-		requestData.put("id", requestAttach.getId());
-		requestData.put("attach_type", AttachType.DATA.getName());
-		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
-		return "ms/api/file/" +  result;
-	}
-	
-	private String getVerifactuResponseUrl(AonApiData api, Integer dataResponse) {
-		Attach responseAttach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
-				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
-					.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
-				.and(f.getSourceBatchProperty().eq(dataResponse)), AttachType.DATA, false);
-			
-		JSONObject responseData = new JSONObject();
-		responseData.put("domain_name", api.getDomain().getName());
-		responseData.put("domain_id", api.getDomain().getId());
-		responseData.put("id", responseAttach.getId());
-		responseData.put("attach_type", AttachType.DATA.getName());
-		String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
-		return "ms/api/file/" +  responseResult;
-	}
+//	private String getVerifactuRequestUrl(AonApiData api, Integer dataRequest) {
+//		Attach requestAttach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
+//				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+//				.and(f.getSourceBatchProperty().eq(dataRequest)), AttachType.DATA, false);
+//			
+//		JSONObject requestData = new JSONObject();
+//		requestData.put("domain_name", api.getDomain().getName());
+//		requestData.put("domain_id", api.getDomain().getId());
+//		requestData.put("id", requestAttach.getId());
+//		requestData.put("attach_type", AttachType.DATA.getName());
+//		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+//		return "ms/api/file/" +  result;
+//	}
+//	
+//	private String getVerifactuResponseUrl(AonApiData api, Integer dataResponse) {
+//		Attach responseAttach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
+//				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
+//					.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
+//				.and(f.getSourceBatchProperty().eq(dataResponse)), AttachType.DATA, false);
+//			
+//		JSONObject responseData = new JSONObject();
+//		responseData.put("domain_name", api.getDomain().getName());
+//		responseData.put("domain_id", api.getDomain().getId());
+//		responseData.put("id", responseAttach.getId());
+//		responseData.put("attach_type", AttachType.DATA.getName());
+//		String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
+//		return "ms/api/file/" +  responseResult;
+//	}
 	
 	public JSONArray tbaiInfo2JSON(TBAIInformation tbaiInfo) {
 		JSONArray arr = new JSONArray();

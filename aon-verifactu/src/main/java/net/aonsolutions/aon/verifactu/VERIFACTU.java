@@ -3,6 +3,7 @@ package net.aonsolutions.aon.verifactu;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.soap.SOAPMessage;
 
@@ -329,12 +330,16 @@ public class VERIFACTU {
 		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
-	private static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoice, InvoiceCommunicationStatus status) {
-		InvoiceInfo info = new InvoiceInfo()
-			.setDomain(domain.getId())
-			.setInvoice(invoice)
-			.setType(InvoiceCommunicationType.VERIFACTU)
-			.setStatus(status);
+	private static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
+		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, InvoiceCommunicationType.VERIFACTU)
+			.orElse( 
+				new InvoiceInfo()
+					.setDomain(domain.getId())
+					.setInvoice(invoiceId)
+					.setType(InvoiceCommunicationType.VERIFACTU)
+			)
+		;
+		info.setStatus(status);
 		return InvoiceInfoDAO.save(ctx, info);
 	}
 	
@@ -351,6 +356,15 @@ public class VERIFACTU {
 			.setReference(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE))
 			.setDate(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE))
 			.setHuella(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA));
+	}
+
+
+	public static List<String> history(byte[] responseData, Integer invoiceId) {
+		try {
+			return VerifactuXMLUtils.parseHistory(responseData, invoiceId);
+		} catch (InvoiceCommunicationException e) {
+			return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );
+		}
 	}
 	
 }

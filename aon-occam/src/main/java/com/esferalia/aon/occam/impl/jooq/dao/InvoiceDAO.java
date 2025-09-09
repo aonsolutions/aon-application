@@ -1836,15 +1836,14 @@ public class InvoiceDAO {
 		});
 		
 	}
-	
-	public static Invoice issue(AONContext ctx, Invoice invoice) {
+	public static Invoice preIssue(AONContext ctx, Invoice invoice) {
 		ctx.checkWrite();
 		if (invoice == null) throw new AonCoreException("Factura NULA");
 		Invoice inv = getFullInvoice(ctx, invoice.getId());
 		if (inv == null || inv.getId() == null) throw new AonCoreException("Factura no encontrada");
 		if (!inv.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
 		if ( AonObjectUtils.notEquals(inv.getSeries(),invoice.getSeries())
-		  || AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
+				|| AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
 			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	
 		}
 		if (invoice.getNumber() < 0) {
@@ -1856,24 +1855,27 @@ public class InvoiceDAO {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
 			invoice.setReferenceCode(referenceCode);
-			
-			int i = ctx.getDslContext()
-					.update(INVOICE)
-					.set(INVOICE.NUMBER, invoice.getNumber() )
-					.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
-					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-					.where(INVOICE.ID.equal( invoice.getId()))
-					.execute();
-			ctx.log().info("ISSUE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
-			generateMD5(ctx, invoice);
-			int f = ctx.getDslContext()
-					.update(FINANCE)
-					.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
-					.where(FINANCE.INVOICE.eq(invoice.getId()))
-					.execute();
-			ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
-		}
+		}		
+		return invoice;
+	}
+	public static Invoice postIssue(AONContext ctx, Invoice invoice) {
+		ctx.checkWrite();
+		int i = ctx.getDslContext()
+			.update(INVOICE)
+				.set(INVOICE.NUMBER, invoice.getNumber() )
+				.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
+				.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+				.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoice.getId()))
+			.execute();
+		ctx.log().info("ISSUE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		generateMD5(ctx, invoice);
+		int f = ctx.getDslContext()
+			.update(FINANCE)
+				.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
+			.where(FINANCE.INVOICE.eq(invoice.getId()))
+			.execute();
+		ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
 		return invoice;
 	}
 	

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -55,6 +56,14 @@ public class InvoiceInfoDAO {
 				.where(INVOICE_INFO_PROPERTIES.getConditions(filter));
 	}
 	
+	public static Optional<InvoiceInfo> get(AONContext ctx, Integer invoiceId, InvoiceCommunicationType verifactu) {
+		return select(ctx, f -> f.getInvoiceProperty().eq(invoiceId)
+			.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))
+			.fetch()
+			.stream()
+			.map(new InvoiceInfoFiller())
+			.findFirst();	
+	}
 	public static InvoiceInfo get(AONContext ctx, InvoiceInfoFilter filter) {
 		return select(ctx, filter).limit(1)
 			.fetch().stream().map(new InvoiceInfoFiller())

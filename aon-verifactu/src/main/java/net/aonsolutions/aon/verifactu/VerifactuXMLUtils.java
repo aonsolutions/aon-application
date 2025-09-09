@@ -16,6 +16,8 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +59,9 @@ import org.w3c.dom.NodeList;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
@@ -222,5 +227,46 @@ class VerifactuXMLUtils {
 		public boolean verify(String hostname, SSLSession session) {
 			return true;
 		}
+	}
+
+	static List<String> parseHistory(byte[] xmlBytes, Integer invoiceId) throws InvoiceCommunicationException {
+		try {
+			List<String> messages = new LinkedList<>();
+			ByteArrayInputStream bais = new ByteArrayInputStream(xmlBytes);
+	        MessageFactory messageFactory = MessageFactory.newInstance();
+	        SOAPMessage soapResponse = messageFactory.createMessage(null, bais);
+	        SOAPBody soapBody = soapResponse.getSOAPBody();
+	        Document bodyDoc = soapBody.extractContentAsDocument();
+	        NodeList faults = bodyDoc.getElementsByTagNameNS(SOAP_NAMESPACE, FAULT_ELEMENT);
+	        if (faults.getLength() > 0) {
+	            Element faultElem = (Element) faults.item(0);
+	            String faultString = faultElem.getElementsByTagName(FAULTSTRING2_ELEMENT).item(0).getTextContent();
+	            Matcher matcher = FAULT_STRING.matcher(faultString);
+	            if (matcher.find()) {
+	                String number = matcher.group(1); 
+	                InvoiceCommunicationException e = InvoiceCommunicationError.safeValueof(number)
+	                	.map(InvoiceCommunicationException::new)
+	                	.orElse(null);
+	                if (e != null) {
+	                	messages.add(e.getMessage());
+	                }
+	            }
+	            messages.add(faultString);
+	        } else {
+	        	String id = AonNumberUtils.toString(invoiceId);
+	        	// SOAP Response to RespuestaRegFactuSistemaFacturacionType
+	        	JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
+	        	Unmarshaller um = jc.createUnmarshaller();
+	        	JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(bodyDoc, RespuestaRegFactuSistemaFacturacionType.class);
+	        	RespuestaRegFactuSistemaFacturacionType r = o.getValue();
+	        	AonCollectionUtils.stream(r.getRespuestaLinea())
+	        		.filter(l -> AonStringUtils.equals(id, l.getRefExterna()))
+	        		.forEach(l ->  messages.add(l.getDescripcionErrorRegistro()) );
+	        }
+	        return messages;
+		} catch (SOAPException | JAXBException | IOException e) {
+			e.printStackTrace();
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
+		}		
 	}
 }

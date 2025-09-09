@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -808,6 +809,12 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceInfoDAO.get(ctx, filter));
 	}
 	
+	@Override
+	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceInfoDAO.get(ctx, invoiceId, type));
+	}
+
 	@Override
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo) {
 		return ctx.getDslContext().transactionResult(

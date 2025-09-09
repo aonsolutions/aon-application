@@ -435,6 +435,7 @@ public final class IJsonNames {
 	public static final String OLD_PARENT_DOMAIN_MODULES = "oldParentDomainModules";
 	public static final String OLD_STATUS = "oldStatus";
 	public static final String OPENING_ENTRIES_EXCLUDED = "openingEntriesExcluded";
+	public static final String OPERATION = "operation";
 	public static final String OPERATING_ENTRIES_EXCLUDED = "operatingEntriesExcluded";
 	public static final String ORDER_BY = "orderBy";
 	public static final String ORDER = "order";
@@ -579,8 +580,11 @@ public final class IJsonNames {
 	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
+	public static final String REQUEST_URL = "requestUrl";
 	public static final String REQUISITION = "requisition";
 	public static final String RESERVATION = "reservation";
+	public static final String RESPONSE_URL = "responseUrl";
+	public static final String RESPONSE_MESSAGES = "responseMessages";
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";

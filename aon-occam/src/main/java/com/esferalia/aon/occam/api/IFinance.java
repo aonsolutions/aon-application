@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -273,6 +274,7 @@ public interface IFinance {
 	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
+	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId);
 	

@@ -127,6 +127,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -135,6 +136,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
@@ -2237,7 +2239,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Occam occam = new Occam().setDomain(domainId).setDomainName(domainName).setUser(login);
-		return AON.getInvoiceCommunicationHistory(occam, getInvoice().getId());
+		try {
+			return InvoiceCommunicator.history(occam, getInvoice().getId());
+		} catch (InvoiceCommunicationException e) {
+			return new LinkedList<>();
+		}
 	}
 	
 	public String getExpDate() {
