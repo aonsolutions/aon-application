@@ -1338,11 +1338,17 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCustomersLinked(String domainName, int domain, String currentUser, boolean isSig, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
+	public void getCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getCustomersLinked(domainName, domain, currentUser, isSig, searchQuery, offset, limit, callback);
+		enterprisesServiceAsync.getCustomersLinked(domainName, domain, currentUser, searchQuery, offset, limit, callback);
 	}
 
+	@Override
+	public void getSigCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSigCustomersLinked(domainName, domain, currentUser, searchQuery, offset, limit, callback);
+	}
+	
 	@Override
 	public void getRRelationShip(String domainName, int domain, String currentUser, Integer customerId, AsyncCallback<RegistryRelationship> callback) throws IllegalArgumentException {
 		AON.start();
