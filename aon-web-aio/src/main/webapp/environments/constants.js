@@ -17,6 +17,7 @@ export const ADD_INVEST_ASSET = 'addInvestAsset'
 export const ADD_INVOICE = 'addInvoice'
 export const ADD_PRODUCT = 'addProduct'
 export const ADD_SUPPLIER = 'addSupplier';
+export const ADD_TO_STOCK = 'addToStock';
 export const ADVANCED_BUTTON = 'advancedButton';
 export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
@@ -69,6 +70,7 @@ export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CATEGORY_NAME = 'categoryName';
+export const CERTIFICATE = 'certificate';
 export const CHANGE_PASSWORD = 'changePassword';
 export const CHANGE_TYPE = 'changeType';
 export const CHARGES_PAYMENTS = 'chargesPayments';
@@ -140,6 +142,7 @@ export const EXPORTED = "exported";
 
 // ----- F
 
+export const FACTURAE = 'facturae';
 export const FAIL = 'fail';
 export const FALSE = 'false';
 export const FARMER = 'farmer';
@@ -195,6 +198,7 @@ export const ITEM = 'item';
 export const LABEL = 'label';
 export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
+export const LEGAL_LITERALS = 'legalLiterals';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
 export const LOCATION = 'location';
@@ -213,6 +217,7 @@ export const MAXLENGTH = 'maxlength';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
+export const MOVE_STOCK = 'moveStock';
 export const MSG = 'msg';
 
 // ----- N
@@ -263,6 +268,7 @@ export const PENDING_CORRECTION = 'pendingCorrection';
 export const PENDING_DECISSION = 'pendingDecission';
 export const PENDINGS = 'pendings';
 export const PERCENTAGE = 'percentage';
+export const PERIOD = 'period';
 export const PERSON = 'person';
 export const PRESENCE = 'presence';
 export const PREPAYMENT = 'prepayment';

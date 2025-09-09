@@ -95,14 +95,14 @@ public class ElaborationDetailDAO {
 		// TODO Cambiar el método de ElaborationDetailCompositionDAO
 		return getStream(ctx, filter, page, perPage)
 			.map(r -> r.setComposition(ElaborationDetailCompositionDAO
-					.getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
+					.getList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
 	}
 	
 	public static Stream<ElaborationDetail> getFullStream(AONContext ctx, ElaborationDetailFilter filter) {
 		// TODO Cambiar el método de ElaborationDetailCompositionDAO
 		return getStream(ctx, filter)
 			.map(r -> {
-				r.setComposition(ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId())));
+				r.setComposition(ElaborationDetailCompositionDAO.getList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId())));
 				r.setItem(ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(r.getItem().getId())));
 				DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getItemProperty().eq(r.getItem().getId())), new Options().setFull(true));
@@ -135,20 +135,29 @@ public class ElaborationDetailDAO {
 		// TODO Cambiar el método de ElaborationDetailCompositionDAO
 		if(!elaborationDetail.isEmpty()) {
 			elaborationDetail.setComposition(ElaborationDetailCompositionDAO
-					.getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(elaborationDetail.getId())));
+					.getList(ctx, f-> f.getElaborationDetailProperty().eq(elaborationDetail.getId())));
 		}
 		return elaborationDetail;
 	}
 
-	public static ElaborationDetail save(AONContext ctx, ElaborationDetail elaborationDetail) {
+	public static ElaborationDetail save(AONContext ctx, ElaborationDetail elaborationDetail, boolean updateStock) {
 		return elaborationDetail.getId() != null
-			? update(ctx, elaborationDetail)
-			: insert(ctx, elaborationDetail);
+			? update(ctx, elaborationDetail, updateStock)
+			: insert(ctx, elaborationDetail, updateStock);
 	}
 	
-	public static ElaborationDetail insert(AONContext ctx, ElaborationDetail elaborationDetail) {
+	public static ElaborationDetail save(AONContext ctx, ElaborationDetail elaborationDetail) {
+		return elaborationDetail.getId() != null
+			? update(ctx, elaborationDetail, false)
+			: insert(ctx, elaborationDetail, false);
+	}
+	
+	public static ElaborationDetail insert(AONContext ctx, ElaborationDetail elaborationDetail, boolean updateStock) {
 		ctx.checkWrite();
 		Timestamp now = AonDateUtils.toTimestamp(new Date());
+		if(updateStock) {
+			StockDAO.add(ctx, elaborationDetail.getItem().getId(), elaborationDetail.getWarehouse().getId(), elaborationDetail.getQuantity());
+		}
 		Integer id = ctx
 				.getDslContext()
 				.insertInto(ELABORATION_DETAIL, ELABORATION_DETAIL.DOMAIN,
@@ -174,10 +183,17 @@ public class ElaborationDetailDAO {
 		return elaborationDetail.setId(id);
 	}
 	
-	public static ElaborationDetail update(AONContext ctx, ElaborationDetail elaborationDetail) {
+	public static ElaborationDetail update(AONContext ctx, ElaborationDetail elaborationDetail, boolean updateStock) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
+
+		if(updateStock) {
+			ElaborationDetail oldDetail = get(ctx, f -> f.getIdProperty().eq(elaborationDetail.getId()));
+			StockDAO.subtract(ctx, oldDetail.getItem().getId(), oldDetail.getWarehouse().getId(), oldDetail.getQuantity());
+			StockDAO.add(ctx, elaborationDetail.getItem().getId(), elaborationDetail.getWarehouse().getId(), elaborationDetail.getQuantity());
+		}
+		
 		ctx.getDslContext()
 				.update(ELABORATION_DETAIL)
 				.set(ELABORATION_DETAIL.DOMAIN, ctx.getDomainId())
@@ -200,9 +216,18 @@ public class ElaborationDetailDAO {
 				.execute();
 		return elaborationDetail;
 	}
-
 	public static ElaborationDetail delete(AONContext ctx, ElaborationDetailFilter filter) {
+		return delete(ctx, filter, false);
+	}
+	
+	public static ElaborationDetail delete(AONContext ctx, ElaborationDetailFilter filter, boolean updateStock) {
 		ctx.checkWrite();
+		if(updateStock) {
+			getStream(ctx, filter).forEach(detail -> {
+				StockDAO.subtract(ctx, detail.getItem().getId(), detail.getWarehouse().getId(), detail.getQuantity());
+			});
+		}
+		
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
@@ -215,6 +240,10 @@ public class ElaborationDetailDAO {
 	
 	public static ElaborationDetail delete(AONContext ctx, Integer id) {
 		return delete(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static ElaborationDetail delete(AONContext ctx, Integer id, boolean updateStock) {
+		return delete(ctx, f -> f.getIdProperty().eq(id), updateStock);
 	}
 
 	public static class ElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {

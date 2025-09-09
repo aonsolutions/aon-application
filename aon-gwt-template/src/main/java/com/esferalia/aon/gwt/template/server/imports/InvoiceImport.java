@@ -252,12 +252,14 @@ public class InvoiceImport extends ImportUtils{
 	private boolean isPorcentajeImpuesto(String value) {
 		value = value.replace(" ", "");
 		return compare("%" + IConstants.IMPUESTO, value)
-			|| compare("%" + IConstants.IVA, value);
+			|| compare("%" + IConstants.IVA, value)
+			|| compare("%" + IConstants.IGIC, value);
 	}
 	
 	private boolean isCuotaImpuesto(String value) {
 		return compare(IConstants.CUOTA_IMPUESTO, value)
-			|| compare(IConstants.CUOTA_IVA, value);
+			|| compare(IConstants.CUOTA_IVA, value)
+			|| compare(IConstants.CUOTA_IGIC, value);
 	}
 	
 	private boolean isPorcentajeRe(String value) {

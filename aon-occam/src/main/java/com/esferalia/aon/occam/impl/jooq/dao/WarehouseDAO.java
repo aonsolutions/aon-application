@@ -23,11 +23,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep8;
 import org.jooq.Record;
@@ -36,7 +36,6 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -47,12 +46,10 @@ import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
-import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
@@ -64,7 +61,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
-import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -76,7 +72,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailPro
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.WarehouseValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -417,13 +412,20 @@ public class WarehouseDAO {
 	}
 
 	
-	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
-		Result<Record1<Integer>> result = null;
-		if(serie != null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
-			.where(WAREHOUSE_TRANSFER.SERIES.eq(serie)).fetch();
-		if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
-			.where(WAREHOUSE_TRANSFER.SERIES.isNull()).fetch();
-		return result.isEmpty() ? 0 : result.get(0).value1()+1;
+	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {		
+		AggregateFunction<Integer> max = DSL.max(WAREHOUSE_TRANSFER.NUMBER);
+		Condition condition = serie != null 
+			? WAREHOUSE_TRANSFER.SERIES.eq(serie)
+			: WAREHOUSE_TRANSFER.SERIES.isNull();
+
+		return ctx.getDslContext().select(max).from(WAREHOUSE_TRANSFER)
+			.where(condition)
+			.fetch()
+			.stream()
+			.map(r -> r.getValue(max))
+			.filter(f -> f != null)
+			.map(m -> m + 1)
+			.findFirst().orElse(1);
 	}
 	
 	

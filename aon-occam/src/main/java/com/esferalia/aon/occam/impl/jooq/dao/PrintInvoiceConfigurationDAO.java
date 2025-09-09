@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -84,6 +85,15 @@ public class PrintInvoiceConfigurationDAO {
 			config.setLegal(new String(legalAttach.getData()));
 		}
 		
+		ApplicationParameter administration = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+				f.getDomainProperty().eq(ctx.getDomainId())	
+				.and(f.getNameProperty().eq(AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
+				.findFirst().orElse(new ApplicationParameter());
+
+		config.setAdministration(administration.getValue() != null
+				? Administration.safeValueOf(Integer.parseInt(administration.getValue()))
+				: Administration.UNKNOWN);
+		
 		return config;	
 	}
 	
@@ -147,6 +157,15 @@ public class PrintInvoiceConfigurationDAO {
 		if(legalAttach.getData() != null) {
 			config.setLegal(new String(legalAttach.getData()));
 		}
+		
+		ApplicationParameter administration = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+				f.getDomainProperty().eq(ctx.getDomainId())	
+				.and(f.getNameProperty().eq(AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
+				.findFirst().orElse(new ApplicationParameter());
+
+		config.setAdministration(administration.getValue() != null
+				? Administration.safeValueOf(Integer.parseInt(administration.getValue()))
+				: Administration.UNKNOWN);
 		
 		return config;	
 	}

@@ -19,6 +19,7 @@ export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
 export const getRawdocCount = (data) => get(`${API_URL}/invoices/count`, data);
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
+export const getInvoiceCount = (data) => get(`${API_URL}/invoice/count`, data);
 
 export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`, data, await generateTokenSig({}));
 
@@ -48,7 +49,7 @@ export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});
 
 export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 
-    openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&cert=${data.cert}&legalLiterals=${data.legalLiterals}`);
+    openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&domainLogin=${data.domainLogin}&cert=${data.cert}&period=${data.period}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
 
 export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});

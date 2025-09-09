@@ -450,5 +450,6 @@ public interface CommonServiceAsync {
 	void saveTag(String domainName, Integer domainId, String user, Tag tag, AsyncCallback<Tag> asyncCallback) throws AonCoreException;
 	void deleteTag(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
+	void getSchemas(AsyncCallback<List<String>> asyncCallback) throws AonCoreException;
 	
 }

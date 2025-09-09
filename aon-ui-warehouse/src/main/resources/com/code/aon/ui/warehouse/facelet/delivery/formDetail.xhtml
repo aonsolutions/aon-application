@@ -16,7 +16,9 @@
 		<ui:param name="controller" value="#{deliveryDetail}" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!delivery.pending or delivery.hasPackaging()}" />
+		<ui:param name="skipResetButton" value="#{!delivery.pending}" />
+		<!-- SI LA LÍNEA ESTÁ VINCULADA CON UN ENVASE -->
+		<!-- <ui:param name="skipRemoveButton" value="#{delivery.hasPackaging()}" /> -->
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
@@ -31,7 +33,7 @@
 			<aon:commandLink id="#{dataTableId}-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{delivery.pending and !delivery.hasPackaging()}"
+				rendered="#{delivery.pending}"
 				actionListener="#{deliveryDetail.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"

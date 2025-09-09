@@ -35,12 +35,14 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -104,6 +106,7 @@ public class FacturaeWriter {
 	private CompanyFull company;
 	private Workplace workplace;
 	private String legalLiterals;
+	private BillingPeriod billingPeriod;
 	
 	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
 		this.domain = domain;
@@ -113,13 +116,14 @@ public class FacturaeWriter {
 		this.invoice = invoice;
 	}
 	
-	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice, String legalLiterals) {
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice, String legalLiterals, BillingPeriod billingPeriod) {
 		this.domain = domain;
 		this.user = user;
 		this.company = company;
 		this.workplace = workplace;
 		this.invoice = invoice;
 		this.legalLiterals = legalLiterals;
+		this.billingPeriod = billingPeriod;
 	}
 	
 	// ----- GETTERS & SETTERS
@@ -589,7 +593,7 @@ public class FacturaeWriter {
 		invoiceIssueData.setOperationDate(issuedDate);
 		PeriodDates period = new PeriodDates();
 		period.setStartDate(issuedDate);
-		period.setEndDate(issuedDate);
+		period.setEndDate(Util.toXMLCalendar(getEndDate(getInvoice().getIssueDate(), billingPeriod)));
 		invoiceIssueData.setInvoicingPeriod(period);
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
@@ -605,6 +609,17 @@ public class FacturaeWriter {
 			invoiceIssueData.setFileReference(filereference);
 		}
 		return invoiceIssueData;
+	}
+	
+	private Date getEndDate(Date date, BillingPeriod period) {
+		if(period == null || BillingPeriod.NO_PERIOD == period) return date;
+		else if(BillingPeriod.MONTHLY == period ) return AonDateUtils.addMonths(date, 1);
+		else if(BillingPeriod.BI_MONTHLY == period ) return AonDateUtils.addMonths(date, 2);
+		else if(BillingPeriod.THREE_MONTHLY == period ) return AonDateUtils.addMonths(date, 3);
+		else if(BillingPeriod.FOUR_MONTHLY == period ) return AonDateUtils.addMonths(date, 4);
+		else if(BillingPeriod.SIX_MONTHLY == period ) return AonDateUtils.addMonths(date, 6);
+		else if(BillingPeriod.YEARLY == period ) return AonDateUtils.addYears(date, 1);		
+		else return date;
 	}
 	
 	private void addTaxes(InvoiceType invoiceType) {

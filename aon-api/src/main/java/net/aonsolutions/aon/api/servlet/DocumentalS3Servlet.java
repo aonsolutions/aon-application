@@ -368,7 +368,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		JSONObject json = api.getData();
 		Integer registry = api.getUser().getRegistry().getId(); 
 		if(api.getUser().getRegistry().getId() == null) {
-			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+//			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+			registry = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getId();
 		}
 		ArrayList<Integer> tags = new ArrayList<Integer>();
 		if(api.getData().has(IJsonNames.TAG)) {			

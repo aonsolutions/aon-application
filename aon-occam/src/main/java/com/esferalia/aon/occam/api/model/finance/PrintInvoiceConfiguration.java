@@ -6,10 +6,12 @@ import java.io.InputStream;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class PrintInvoiceConfiguration {
 	
+	private Administration administration;
 	private Integer header;
 	private Integer footer;
 	private boolean detailed;
@@ -26,6 +28,17 @@ public class PrintInvoiceConfiguration {
 	private boolean active;
 	
 	private PrintInvoiceThemeConfiguration theme;
+	
+	public Administration getAdministration() {
+		if(administration == null) 
+			administration = Administration.COMMON_TERRITORY;
+		return administration;
+	}
+	
+	public PrintInvoiceConfiguration setAdministration(Administration administration) {
+		this.administration = administration;
+		return this;
+	}
 
 	@Deprecated
 	public InputStream getBackgroundImage() {

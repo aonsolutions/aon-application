@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.payroll.client.customer.CustomerActivityModule;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -68,7 +69,9 @@ public class MainEntryPoint implements EntryPoint {
 			runAsync(PensionPlanAFIModule.class, new PensionPlanAFIModule());
 		} else if (entryPoint.equalsIgnoreCase("MainCostModule")) {
 			runAsync(PensionPlanAFIModule.class, new CostModule());
-		}
+		}  else if (entryPoint.equalsIgnoreCase(Constants.CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT)) {
+			runAsync(CustomerActivityModule.class, new CustomerActivityModule());
+		} 
 	}
 	
 
@@ -255,7 +258,8 @@ public class MainEntryPoint implements EntryPoint {
 	                Window.alert("Error al cargar");
 				}
 			});
-		} else if (name == MainSalaryPrint.class ) {
+			
+		}  else if (name == MainSalaryPrint.class ) {
 			GWT.runAsync(MainSalaryPrint.class, new RunAsyncCallback() {
 				
 				@Override
@@ -346,6 +350,20 @@ public class MainEntryPoint implements EntryPoint {
 	                Window.alert("Error al cargar");
 				}
 			});
+		} else if (name == CustomerActivityModule.class ) {
+			GWT.runAsync(CustomerActivityModule.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+			
 		} else {
 			Window.alert("Modulo desconocido '" + name +"'");
 		}
@@ -418,6 +436,16 @@ public class MainEntryPoint implements EntryPoint {
 	public static native String getRootPanel()
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
+	public static native boolean isSig()
+	/*-{
+		return $wnd.localStorage.getItem("isSig");
+	}-*/;
+	
+	public static native void removeIsSig()
+	/*-{
+		return $wnd.localStorage.removeItem("isSig");
 	}-*/;
 	
 	

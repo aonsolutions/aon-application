@@ -42,6 +42,10 @@ public class TbaiConfigurationDAO {
 				tbai.setRegistryDate(r.getValue());
 			}
 			
+			if(r.getName().equalsIgnoreCase(AppParam.TBAI_SKIP_TRACKING.toString())) {
+				tbai.setSkipTracking(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
+			}
+			
 		});
 
 		return tbai.setAdministration(administration.getValue() != null

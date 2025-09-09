@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
@@ -61,7 +62,8 @@ public class InstallmentType {
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar installmentDueDate;
     @XmlElement(name = "InstallmentAmount")
-    protected double installmentAmount;
+    @XmlJavaTypeAdapter(DoubleAdapter.class)
+    protected Double installmentAmount;
     @XmlElement(name = "PaymentMeans", required = true)
     protected String paymentMeans;
     @XmlElement(name = "AccountToBeCredited")
@@ -113,7 +115,7 @@ public class InstallmentType {
      * Define el valor de la propiedad installmentAmount.
      * 
      */
-    public void setInstallmentAmount(double value) {
+    public void setInstallmentAmount(Double value) {
         this.installmentAmount = value;
     }
 
