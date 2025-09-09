@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -72,6 +73,11 @@ public class ActivitySummary extends AonCustomDockLayout {
 	private AonCustomTable tab;
 	
 	private ActivitySummaryParams params;
+	
+	// String Domian
+	
+	private String domainName;
+	private boolean isSig = false;
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -124,6 +130,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	public ActivitySummary() {
 		super("Resumen Actividad");
+		
+		this.domainName = Wnd.getCurrentDomainNameURL();
 		
 		addButtonsToolbar();
 		
@@ -238,7 +246,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 
 		add(container);
 		
-		service.getDomainDetails(new AsyncCallback<Domain>() {
+		service.getDomainByName(domainName, new AsyncCallback<Domain>() {
 			
 			@Override
 			public void onSuccess(Domain domainDB) {
@@ -255,6 +263,105 @@ public class ActivitySummary extends AonCustomDockLayout {
 			}
 		});
 		
+	}
+	
+	public void setIsSig(boolean isSig) {
+		this.isSig = isSig;
+	}
+	
+	public void showCustomerDomainInfo(Integer customerId, String customerName) {
+		centerPanel.clear();
+		
+		getToolbar().setTitle("Act. Laboral " + customerName);
+		
+		if(isSig) {
+			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<String>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No se ha podido cargar la empresa especifica");
+				}
+
+				@Override
+				public void onSuccess(String domainNameAddInfo) {
+					if(AonStringUtils.isNotBlank(domainNameAddInfo)) {
+						domainName = domainNameAddInfo;
+						
+						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
+							
+							@Override
+							public void onSuccess(Domain domainDB) {
+								if(null == domainDB || null == domainDB.getId()) {
+									 showEmptyInfo();
+								} else {
+									domain = domainDB;
+									
+									//onSearch();
+									period.getListBox().setSelectedIndex(0);
+									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+								}
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
+							}
+						});
+					} else 
+						showEmptyInfo();
+				}
+				
+			});
+		} else {
+			service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No se ha podido cargar la empresa especifica");
+				}
+
+				@Override
+				public void onSuccess(RegistryRelationship rrelationship) {
+					if(null != rrelationship && null != rrelationship.getId()) {
+						domainName = rrelationship.getComments();
+						
+						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
+							
+							@Override
+							public void onSuccess(Domain domainDB) {
+								if(null == domainDB || null == domainDB.getId()) {
+									 showEmptyInfo();
+								} else {
+									domain = domainDB;
+									
+									//onSearch();
+									period.getListBox().setSelectedIndex(0);
+									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+								}
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
+							}
+						});
+					} else 
+						showEmptyInfo();
+				}
+				
+			});
+		}
+		
+		
+	}
+
+	private void showEmptyInfo() {
+		centerPanel.clear();
+		FlowPanel line = new FlowPanel();
+		InlineLabel label = new InlineLabel(AON.MSG.noData());
+		line.add(label);
+		centerPanel.clear();
+		centerPanel.add(line);
 	}
 	
 	private void updateDates() {
@@ -578,7 +685,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
-		service.getActivitySummary(params, new AsyncCallback<List<ActivitySummaryObject>>() {
+		service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
 			
 			@Override
 			public void onSuccess(List<ActivitySummaryObject> result) {
@@ -592,5 +699,4 @@ public class ActivitySummary extends AonCustomDockLayout {
 			
 		});
 	}
-
 }

@@ -778,6 +778,13 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getStream(ctx, filter, ofs, limit));
 	}
+	
+	@Override
+	public Stream<Customer> getSigCustomerStream(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getSigStream(ctx, filter, ofs, limit));
+	}
+	
 	@Override
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(

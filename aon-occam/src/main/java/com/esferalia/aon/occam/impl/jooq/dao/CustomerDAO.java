@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
@@ -147,6 +148,26 @@ public class CustomerDAO {
 	
 	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
 		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(RADDINFO.ID)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .join(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)				

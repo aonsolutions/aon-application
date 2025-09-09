@@ -540,7 +540,8 @@ public class InvoiceDAO {
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
 		VerifactuConfiguration verifactuConfiguration = VerifactuConfigurationDAO.get(ctx);
-		if((verifactuConfiguration.isActive() || tbaiConfiguration.isActive()) && InvoiceType.contains(types, InvoiceType.SALES)) {
+		if((verifactuConfiguration.isActive() || ( tbaiConfiguration.isActive() && !tbaiConfiguration.isSkipTracking() ) ) 
+			&& InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)

@@ -667,6 +667,11 @@ export const TAG_MODULE = {
   entryPoint: 'TagModule'
 };
 
+export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
+  module: GWT_PAYROLL,
+  entryPoint: 'CustomerLinkedActivity'
+};
+
 export const PROJECT_TAS_MODULE = {
   title: "Órdenes de Reparación (Excel)",
   module: GWT_AIO,

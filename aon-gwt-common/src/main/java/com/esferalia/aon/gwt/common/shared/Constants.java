@@ -41,4 +41,6 @@ public interface Constants {
 	public static final String CONTRACT_VARIABLES_ENTRY_POINT = "ContractVariablesModule";
 	
 	public static final String AFI_PENSION_PLAN_ENTRY_POINT = "AFIPensionPlan";
+	
+	public static final String CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT = "CustomerLinkedActivity";
 }

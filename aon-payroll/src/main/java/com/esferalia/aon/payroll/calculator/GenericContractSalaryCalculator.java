@@ -1391,6 +1391,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 					total += cost;
 					
+				} catch (HideException  e) {
+					e.getContext().forEach(salaryBuilder::addData);
+					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (RemoveException | RemoveVariableError e) {
 					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
