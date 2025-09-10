@@ -348,7 +348,16 @@
 		<url-pattern>/oauth2callback/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- JSF STANDARD CONFIGURATION -->
+	<servlet>
+    	<servlet-name>classic</servlet-name>
+    	<jsp-file>/classic</jsp-file>
+	</servlet> 
+	<servlet-mapping>
+		<servlet-name>classic</servlet-name>
+		<url-pattern>/classic</url-pattern>
+	</servlet-mapping>
+ 
+ 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See
 			JSF Specification 2.5.2
@@ -558,7 +567,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>AuditFilter</filter-name>
-		<url-pattern>/index.jsp</url-pattern>
+		<url-pattern>/classic</url-pattern>
 	</filter-mapping>
 
 	<!-- Listener, that enables Audit Sessions per User. -->
@@ -584,7 +593,7 @@
 	</listener>
 
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>app</welcome-file>
 	</welcome-file-list>
 
 	<security-constraint>
@@ -612,6 +621,10 @@
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>classic</web-resource-name>
+			<url-pattern>/classic</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>
