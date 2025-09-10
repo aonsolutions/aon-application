@@ -44,7 +44,7 @@ public enum Destiny {
 	GRANEL("Granel", true),
 	GRANEL_TOP("Granel Top", true),
 	GUISAR("Guisar", true),
-	LABEL("Label", true),
+	LABEL("Label", false),
 	MERCADONA_3KG("Mercadona 3Kg", true),
 	MERCADONA_5KG("Mercadona 5Kg", true),
 	MERCADONA_BOLSA("Mercadona Bolsa", true),
