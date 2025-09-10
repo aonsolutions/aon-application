@@ -8,7 +8,7 @@ export class AonNewDate extends AonNewInput {
   day;
   month;
   year;
-  today = new Date();
+  today = undefined;
   INPUT;
   SPAN;
   DATEPICKER;
@@ -245,7 +245,7 @@ export class AonNewDate extends AonNewInput {
       // Poner la fecha como texto dentro del div
       innerDiv.textContent = date.getDate();
 
-      // Limpiar contenido anterior y añadir el div al td
+      // Limpiar contenido anterior y aï¿½adir el div al td
       td.innerHTML = '';
       td.appendChild(innerDiv);
 

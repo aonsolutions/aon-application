@@ -223,7 +223,7 @@ export class AonSearch extends AonElement {
         //   `;
           div.textContent = count;
           div.title       = `${count} ${MSG.FILTERS}`;
-          this.getElement(this.SPAN).appendChild(div);
+//          this.getElement(this.SPAN).appendChild(div);
 		}
 	}
 
