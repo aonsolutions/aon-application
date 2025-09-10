@@ -6,38 +6,45 @@ const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // s�lo en local
 const themes = [
   {
     hostnameIncludes: ['ayudat.aon.solutions', 'leevy.aon.solutions', fakeHost],
+    nameIncludes    : ['-ayudat.', '/ayudat.', '-leevy', '/leevy'],
     themeLight      : 'theme-ayudat',
     themeDark       : 'theme-ayudat-dark'
   },
   {
     hostnameIncludes: ['infoautonomos.aon.solutions'],
+    nameIncludes    : ['-infoautonomos.', '/infoautonomos.'],
     themeLight      : 'theme-infoautonomos',
     themeDark       : 'theme-infoautonomos-dark'
   },
   {
     hostnameIncludes: ['openges.aon.solutions'],
+    nameIncludes    : ['-openges.', '/openges.'],
     themeLight      : 'theme-openges',
     themeDark       : 'theme-openges-dark'
   },
   {
     hostnameIncludes: ['etl.aon.solutions'],
+    nameIncludes    : ['-etl.', '/etl.'],
     themeLight      : 'theme-etl',
     themeDark       : 'theme-etl-dark'
   }
 ];
 
+
+
 const getThemeClass = (isDark) => {
   const hostname = window.location.hostname;
   for (const t of themes) {
-    const match = Array.isArray(t.hostnameIncludes)
-      ? t.hostnameIncludes.some(h => hostname.includes(h))
-      : hostname.includes(t.hostnameIncludes);
-    if (match) {
+    const matched = (t.hostnameIncludes?.some(h => hostname.includes(h)) || 
+                     t.nameIncludes?.some(n => hostname.includes(n)));
+
+    if (matched) {
       return isDark ? t.themeDark : t.themeLight;
     }
   }
   return isDark ? 'theme-dark' : 'theme-light';
 };
+
 
 const clearThemeClasses = () => {
   [...root.classList].filter(cls => cls.startsWith('theme-')).forEach(cls => root.classList.remove(cls));
@@ -62,6 +69,38 @@ export const applyTitle = (themeClass) => {
   let title = getComputedStyle(document.body).getPropertyValue(`--title-${themeClass}`).trim();
   if (title) {
     document.title = title;
+  }
+};
+
+export const applyLogoHeader = (themeClass) => {
+  const raw = getComputedStyle(document.body)
+                .getPropertyValue(`--logo-header-${themeClass}`)
+                .trim();
+  if (!raw) return;
+
+  const url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+  if (!url) return;
+
+  if (el.tagName.toLowerCase() === 'img') {
+    el.src = `${url}?v=${Date.now()}`; // evita cache
+  } else {
+    el.style.backgroundImage = `url('${url}?v=${Date.now()}')`;
+  }
+};
+
+export const applyLogo = (themeClass) => {
+  const raw = getComputedStyle(document.body)
+                .getPropertyValue(`--logo-${themeClass}`)
+                .trim();
+  if (!raw) return;
+
+  const url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+  if (!url) return;
+
+  if (el.tagName.toLowerCase() === 'img') {
+    el.src = `${url}?v=${Date.now()}`; // evita cache
+  } else {
+    el.style.backgroundImage = `url('${url}?v=${Date.now()}')`;
   }
 };
 

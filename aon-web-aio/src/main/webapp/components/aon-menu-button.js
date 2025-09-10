@@ -154,52 +154,118 @@ export class AonMenuButton extends AonElement {
     loadDefaultOptions() {
       let optionsMenu = [];
 
-      const invoiceSubOptions = [
-        {
-          name: MSG.ISSUEDS,
-          fn: () => this.newInvoice('Emitida')
-        },
-        {
-          name: MSG.RECEIVEDS,
-          fn: () => this.newInvoice('Recibida')
-        },
-        {
-          name: MSG.TICKETS + " / " + MSG.SUPPORTING_DOCUMENTS,
-          fn: () => this.newInvoice('Ticket')
-        },
-        {
-          name: 'Subir Factura',
-          fn: () => this.newInvoice('Subir Factura')
-        }
-      ];
+      if(this.getDur().isInvoice()){
+        const invoiceSubOptions = [
+          {
+            name: MSG.ISSUEDS,
+            fn: () => this.newInvoice('emitida')
+          },
+          {
+            name: MSG.RECEIVEDS,
+            fn: () => this.newInvoice('recibida')
+          },
+          {
+            name: MSG.TICKETS + " / " + MSG.SUPPORTING_DOCUMENTS,
+            fn: () => this.newInvoice('ticket')
+          },
+          {
+            name: 'Subir Factura',
+            fn: () => {
+						let input = this.createElement(TAG.INPUT);
+						input.type = CONSTANT.FILE;
+						input.accept = this.accept;
+						input.className = CSS.AON_NONE;
+						input.multiple = 'multiple';
+						
+						input.addEventListener(EVENT.CHANGE, ({target}) => {
 
-      optionsMenu.push({
-        name      : 'Nueva Factura',
-        icon      : 'file-plus-2',
-        subOptions: invoiceSubOptions // aqui anidamos las 4 opciones
-      });
+							getCompanyActivities({}).then(activities => {
+								let data = { uploaded: 0}
+								if(activities.length > 1) {
+									activities.push({
+          								id: "all",
+										description: "TODAS"
+        							});
+									let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+									activity.setAlias("id", "description");
+									if(activities.length > 0) {
+										activity.setOptions(activities);
+										activity.value = activities[0].id;
+									}
+							
+									let d = new AonDialog();
+									let rootPanel = document.getElementById("rootPanel");
+									rootPanel.appendChild(d);
+									d.clear();
+							
+									d.setTitle(MSG.UPLOAD_INVOICE);
+									d.setContent(activity);
+									d.addAcceptAction(() => {
+										data.activity = activity.getValueObject().id;
+										let uploadToast = this.getElement('aonUploadToast');
+										if (!uploadToast) {
+											uploadToast = new AonUploadToast();
+											this.getApplication().getContent().appendChild(uploadToast);
+										}
+								
+										uploadToast.setJobId(generateJobId());
+										for (let file of target.files) {
+											uploadToast.addFile("invoice", file, data);
+										}
+									});
+									d.open();
+								} else {
+									if(activities.length > 0) {
+										data.activity = activities[0].id;
+									}
+									let uploadToast = this.getElement('aonUploadToast');
+									if (!uploadToast) {
+										uploadToast = new AonUploadToast();
+										this.getApplication().getContent().appendChild(uploadToast);
+									}
+									
+									uploadToast.setJobId(generateJobId());
+									for (let file of target.files) {
+										uploadToast.addFile("invoice", file, data);
+									}
+								}
+							});
+						});
+						input.click();
+					}
+          }
+        ];
 
-      const gastosSubOptions = [
-        {
-          name: 'Nuevo ingreso',
-          fn: () => this.getApplication().setContent(new AonIncome(new Income()))
-        }, {
-          name: "Nuevo gasto",
-          fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
-        }
-      ];
+        optionsMenu.push({
+          name      : 'Nueva Factura',
+          icon      : 'file-plus-2',
+          subOptions: invoiceSubOptions // aqui anidamos las 4 opciones
+        });
 
-      optionsMenu.push({
-        name: 'Otros gastos/ingresos',
-        icon: 'coins',
-        subOptions: gastosSubOptions
-      });
+        const gastosSubOptions = [
+          {
+            name: 'Nuevo ingreso',
+            fn: () => this.getApplication().setContent(new AonIncome(new Income()))
+          }, {
+            name: "Nuevo gasto",
+            fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
+          }
+        ];
 
-      optionsMenu.push({
-        name: MSG.UPLOAD_DOCUMENT,
-        icon: 'upload-cloud',
-        fn  : () => this.addDocumentalFile()
-      });
+        optionsMenu.push({
+          name: 'Otros gastos/ingresos',
+          icon: 'coins',
+          subOptions: gastosSubOptions
+        });
+      }
+
+      if(this.getDur().isDocumental()){
+        optionsMenu.push({
+          name: MSG.UPLOAD_DOCUMENT,
+          icon: 'upload-cloud',
+          fn  : () => this.addDocumentalFile()
+        });
+      }
 
       if (this.getDur().isMessenger() || this.getDur().isMessengerManager()) {
         optionsMenu.push({
@@ -220,6 +286,16 @@ export class AonMenuButton extends AonElement {
             let aonMessengerChat = new AonMessenger();
             aonMessengerChat.data = { source: TASK_SOURCE.REQUEST };
             this.rootPanel(aonMessengerChat);
+
+            this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
+						sourceTaskSelect.value = "request";
+						this.isElementLoaded("#processType").then(processTypeSelect => {
+							processTypeSelect.value = "2";
+							this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
+								sidenavBtn.click();
+							});
+						});
+					});
           }
         });
       }
@@ -231,11 +307,14 @@ export class AonMenuButton extends AonElement {
     newInvoice(invoice) {
         let invoicePanel = new AonInvoicePanel();
         invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
-        invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice));
         this.rootPanel(invoicePanel);
+        invoicePanel.aonInvoice(invoice); 
         this.setAppClassName(Apps.INVOICE);
-        this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } }));
+        this.dispatchEvent(
+            new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } })
+        );
     }
+
     
     show() {
       const button = this.getElement(this.BUTTON);
@@ -311,6 +390,14 @@ export class AonMenuButton extends AonElement {
     }
 
     addDocumentalFile() {
+        const rootPanel = document.getElementById("rootPanel");
+
+        const oldDialog = document.getElementById("aonDocumentalDialogDialogActionAccept");
+        if(oldDialog) oldDialog.remove();
+
+        const oldOverLay = document.getElementById("aonDialogOverlay");
+        if(oldOverLay) oldOverLay.remove();
+
         const overlay = document.createElement('div');
         overlay.className = 'aonDialogOverlay';
 
@@ -318,7 +405,6 @@ export class AonMenuButton extends AonElement {
         d.id = 'aonDocumentalDialogDialogActionAccept';
         d.classList.add('aonDialogContainer');
 
-        const rootPanel = document.getElementById("rootPanel");
         rootPanel.appendChild(overlay);
         rootPanel.appendChild(d);
 
