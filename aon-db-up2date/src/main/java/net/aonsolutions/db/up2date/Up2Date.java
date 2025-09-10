@@ -19,14 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.accounting.AlterBankStatementAddNordigenInternalId;
-import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
-import net.aonsolutions.db.up2date.finance.InvoiceBatchEndDateTime;
-import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
+import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresInsert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
-import net.aonsolutions.db.up2date.tgss.BaseCgpMin2025Fix;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix510;
+import net.aonsolutions.db.up2date.payroll.PPEUpdate2CostFix;
 
 public class Up2Date {
 
@@ -558,7 +553,9 @@ public class Up2Date {
 			// AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
 			// InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
 			// BaseCgpMin2025Fix.BASECGPMIN2025FIX,
-			RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
+			// RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
+			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
+			BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

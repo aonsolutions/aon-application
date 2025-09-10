@@ -1286,6 +1286,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("BONIF FORM T, DISTAN");
 		calculate(Calendar.JUNE, 2023);
 		assertText("totalEnterpriseLabel", 0.00);
+
+		draft("ENTRENADORES BONIFICACION, LEY 7/2024");
+		calculate(Calendar.JUNE, 2024);
+		click("costsCheck-input");
+		double totalEnterpriseJune = getText("totalEnterpriseLabel");
+		double commonContingencyCost = getText("common_contingency_cost");
+		calculate(Calendar.JULY, 2024);
+		assertText("totalEnterpriseLabel", totalEnterpriseJune - commonContingencyCost);
+		click("costsCheck-input");
 	}
 
 	@Test
@@ -2884,6 +2893,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL, 2025);
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
+		click("costsCheck-input");
+		assertElement("red_ppe_ePercentLabel");
+		assertElement("editor-reduccion_aportacion_empresa_ppe");
+		click("costsCheck-input");
 		
 		draft("ENFERMEDAD PROFESIONAL, PPE");
 		

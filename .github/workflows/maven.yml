@@ -30,6 +30,11 @@ on:
         type: boolean
         required: true
         default: false
+      buildProductionVersion:
+        description: 'Build production version'
+        type: boolean
+        required: true
+        default: false
       javaVersion:
         description: 'Java version'
         type: choice
@@ -69,6 +74,7 @@ env:
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
   SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || github.ref != 'refs/heads/master' }}
+  BUILD_PRODUCTION_VERSION: ${{ github.event.inputs.buildProductionVersion || github.ref == 'refs/heads/master' }}
 
 jobs:
   build:
@@ -209,7 +215,7 @@ jobs:
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
 
     - name: Build production version with Maven
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' }}
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
 
     - name: Build and push Docker aon-application image
@@ -258,7 +264,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
       run: |

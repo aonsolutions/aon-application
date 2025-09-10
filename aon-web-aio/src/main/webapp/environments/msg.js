@@ -107,6 +107,7 @@ export const BANK_ACCOUNTS = 'Cuentas Bancarias';
 export const BANK_DATA = 'Datos Bancarios';// TODO
 export const BASE = MSG.BASE;
 export const BASQUE = MSG.BASQUE;
+export const BI_MONTHLY = 'Bimestral';
 export const BIC_SWIFT = 'Bic / Swift';// TODO
 export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
@@ -302,6 +303,7 @@ export const EXPORTED = "Exportadas";
 
 // ----- F
 
+export const FACTURAE = "Facturae";
 export const FAILED = "Fallido"; // TODO
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
@@ -439,6 +441,7 @@ export const LAST_ACCESS = "Último Acceso";
 export const LAST_LOCATION = MSG.LAST_LOCATION;
 export const LAST_STATUS = MSG.LAST_STATUS;
 export const LAST_MODIFICATION = "Última modificación";
+export const LEGAL_LITERALS = 'Literales Legales';
 export const LINK = MSG.LINK;
 export const LINK_CLIENT = MSG.LINK_CLIENT;
 export const LINKING = MSG.LINKING;
@@ -477,6 +480,7 @@ export const MAXIMIZE = "Maximizar";//TODO
 export const MINIMIZE = "Minimizar";//TODO
 export const MESSENGER_SERVICE = "Mensajería";//TODO
 export const MONTH = "Mes"; //TODO
+export const MONTHLY = "Mensual"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
@@ -508,6 +512,7 @@ export const NIF = MSG.NIF;
 export const NOT_LINKED = MSG.NOT_LINKED;
 export const NO_DATA = MSG.NO_DATA;
 export const NO_LINK_CLIENT = MSG.NO_LINK_CLIENT;
+export const NO_PERIOD = 'Sin Periodo';
 export const NOT_LINKED1 = MSG.NOT_LINKED1;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
@@ -705,6 +710,7 @@ export const STATUS = "Estado"; // TODO
 export const STANDARD = MSG.STANDARD;
 export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
+export const SIX_MONTHLY = 'Semestral';
 export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUMMARIZED = MSG.SUMMARIZED;
 export const SUPERSET = 'Superset' ;
@@ -745,6 +751,7 @@ export const TICKETS = MSG.TICKETS;
 export const TIMECONTROL = MSG.TIMECONTROL;
 export const TIMECTRL = MSG.TIMECTRL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
+export const THREE_MONTHLY = 'Trimestral';
 export const TO = MSG.TO;
 export const TO_REVIEW = "A revisar";
 export const TO_TRASH = MSG.TO_TRASH;
@@ -831,6 +838,7 @@ export const WEEK_FRIDAY_SCHEDULE = MSG.WEEK_FRIDAY_SCHEDULE;
 // ----- Y
 
 export const YEAR = MSG.YEAR;
+export const YEARLY = "Anual";
 export const YESTERDAY = MSG.YESTERDAY;
 
 // ----- Z

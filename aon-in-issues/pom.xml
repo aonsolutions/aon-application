@@ -15,21 +15,19 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<aws.lambda.java.version>1.2.3</aws.lambda.java.version>
 	</properties>
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<exclude>com/esferalia/aon/in/payroll/aws/**</exclude>
+						<exclude>aon/solutions/in/issues/aws/**</exclude>
 					</excludes>
 					<testExcludes>
-						<testExclude>com/esferalia/aon/in/payroll/aws/**</testExclude>
+						<testExclude>aon/solutions/in/issues/**</testExclude>
 					</testExcludes>
 					<source>17</source>
 					<target>17</target>
@@ -38,41 +36,7 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-  			<groupId>software.amazon.awssdk</groupId>
-    		<artifactId>textract</artifactId>
-    		<version>2.28.23</version>
-			<scope>compile</scope>
-		</dependency>
 		
-        <dependency>
-          <groupId>software.amazon.awssdk</groupId>
-          <artifactId>sesv2</artifactId>
-          <version>2.25.47</version> 
-        </dependency>
-
-
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-lambda-java-events</artifactId>
-			<version>3.14.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-lambda-java-core</artifactId>
-			<version>${aws.lambda.java.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-    		<groupId>software.amazon.awssdk</groupId>
-		    <artifactId>s3</artifactId>
-		    <version>2.28.23</version>
-    		<scope>compile</scope>
-   	 	</dependency>
 		
 		<dependency>
          <groupId>commons-cli</groupId>
@@ -80,32 +44,40 @@
          <version>1.6.0</version>
          <scope>compile</scope>
         </dependency>
-        
-        
-        <dependency>
-          <groupId>org.jooq</groupId>
-          <artifactId>jooq</artifactId>
-          <version>3.19.9</version>
-          </dependency>
+
+		<dependency>
+			<groupId>jakarta.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+		
+		<!--
+			
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.19.9</version>
+		</dependency>
          
          <dependency>
            <groupId>ch.qos.logback</groupId>
            <artifactId>logback-classic</artifactId>
            <version>1.2.11</version>
          </dependency>
-         
-         <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>5.2.3</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>5.2.3</version>
-    </dependency>
-         
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.3</version>
+		</dependency>
+        -->
+        
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.api.sdk</artifactId>
@@ -113,6 +85,7 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+	
 	<profiles>
 		<profile>
 			<id>aws-lambda</id>
@@ -124,6 +97,19 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>aon/solutions/in/issues/*.java</exclude>
+							</excludes>
+							<testExcludes>
+							</testExcludes>
+							<source>17</source>
+							<target>17</target>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
@@ -150,6 +136,33 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<!-- Exclude from jar -->
+				
+
+				<!-- Exclude from jar -->
+				
+
+				<dependency>
+					<groupId>com.amazonaws</groupId>
+					<artifactId>aws-lambda-java-core</artifactId>
+					<version>1.3.0</version>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.amazonaws</groupId>
+					<artifactId>aws-lambda-java-events</artifactId>
+					<version>3.16.0</version>
+				</dependency>
+
+				<dependency>
+				  <!-- jsoup HTML parser library @ https://jsoup.org/ -->
+				  <groupId>org.jsoup</groupId>
+				  <artifactId>jsoup</artifactId>
+				  <version>1.21.1</version>
+				</dependency>
+				
+			</dependencies>
 		</profile>
 	</profiles>
 </project>	

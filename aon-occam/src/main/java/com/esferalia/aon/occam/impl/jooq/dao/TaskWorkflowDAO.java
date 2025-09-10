@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
+import static com.esferalia.aon.watson.server.AonObjectUtils.firstNonNull;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 
 public class TaskWorkflowDAO {
 	
@@ -119,8 +121,10 @@ public class TaskWorkflowDAO {
 			.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 			.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 			.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
-			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
-			.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
+			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(taskWorkflow.getModificationDate(), new Date())))
+			.set(TASK_WORKFLOW.MODIFICATION_USER, firstNonNull(taskWorkflow.getModificationUser(), ctx.getUser()))
+			.set(TASK_WORKFLOW.NOTIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(taskWorkflow.getNotificationDate(), new Date())))
+			.set(TASK_WORKFLOW.NOTIFICATION_USER, firstNonNull(taskWorkflow.getNotificationUser(), ctx.getUser()))
 			.where(TASK_WORKFLOW.ID.eq(taskWorkflow.getId()))
 			.execute();
 		ctx.log().info("UPDATE TASK_WORKFLOW id: " + taskWorkflow.getId());		
@@ -135,11 +139,14 @@ public class TaskWorkflowDAO {
 				.set(TASK_WORKFLOW.TYPE, workflow.getType().value())	
 				.set(TASK_WORKFLOW.COMMENT, workflow.getComment())
 				.set(TASK_WORKFLOW.EMAIL, workflow.getEmail())
-				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
-				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
-				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
-			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
+				.set(TASK_WORKFLOW.CREATION_USER, firstNonNull(workflow.getCreationUser(), ctx.getUser()))
+				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(firstNonNull(workflow.getCreationDate(), new Date())))
+				.set(TASK_WORKFLOW.MODIFICATION_USER, firstNonNull(workflow.getModificationUser(), workflow.getCreationUser(), ctx.getUser()))
+				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(workflow.getModificationDate(), workflow.getCreationDate(), new Date())))
+				.set(TASK_WORKFLOW.NOTIFICATION_USER, firstNonNull(workflow.getNotificationUser(), workflow.getCreationUser(), ctx.getUser()))
+				.set(TASK_WORKFLOW.NOTIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(workflow.getNotificationDate(), workflow.getCreationDate(), new Date())))
+
+				.returning(TASK_WORKFLOW.ID).fetchOne().getId();
 		ctx.log().debug("INSERT TASK_WORKFLOW id: " + id);			
 		return workflow.setId(id);
 	}	

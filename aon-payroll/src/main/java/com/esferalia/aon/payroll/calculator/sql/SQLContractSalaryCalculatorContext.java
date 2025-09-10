@@ -4784,6 +4784,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		});
 
+		if (!this.implicitExpressionContext.containsVariable(READ, startDate, getEnd()))
+			this.implicitExpressionContext.putVariable(READ, new ActiveTimedVariable<Map<String, ITimedVariable<?>>>() {
+				@Override
+				public Map<String, ITimedVariable<?>> getValue(Period period) {
+					return getCurrentBindings().getRead();
+				}
+			});
+
 		this.contractExpressionContext = newContractExpressionContext(this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT, contractExpressionContext, startDate, getEnd());

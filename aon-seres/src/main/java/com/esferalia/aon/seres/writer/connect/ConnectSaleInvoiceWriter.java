@@ -206,7 +206,8 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setTotalIncrementosDelImporteBruto_259_(null);
 		sincc.setTotalMinoracionesDelImporteBruto_260_(null);
 		sincc.setPeriodoImposicionesFactura_325_(null);
-		sincc.setFechaPedido(null);
+		sincc.setFechaPedido(SeresUtils.isAldi(invoice.getRegistryDocument()) && sales != null 
+				?  Integer.valueOf(SeresUtils.dateFormat().format(sales.getDate())) : null);
 		sincc.setNumeroConfirmacionDeEntrega(null);
 		return sincc;
 	}
