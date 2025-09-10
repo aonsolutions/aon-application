@@ -1338,15 +1338,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
+	public void getCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getCustomersLinked(domainName, domain, currentUser, searchQuery, offset, limit, callback);
+		enterprisesServiceAsync.getCustomersLinked(domainName, domain, currentUser, searchQuery, customerStatusSearch, offset, limit, callback);
 	}
 
 	@Override
-	public void getSigCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
+	public void getSigCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getSigCustomersLinked(domainName, domain, currentUser, searchQuery, offset, limit, callback);
+		enterprisesServiceAsync.getSigCustomersLinked(domainName, domain, currentUser, searchQuery, customerStatusSearch, offset, limit, callback);
 	}
 	
 	@Override
@@ -1362,9 +1362,27 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getRegistryDomainNameAddInfo(String domainName, int domainId, String currentUser, Integer customerId, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getRegistryDomainNameAddInfo(String domainName, int domainId, String currentUser, Integer customerId, AsyncCallback<HashMap<String, String>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getRegistryDomainNameAddInfo(domainName, domainId, currentUser, customerId, callback);
+	}
+
+	@Override
+	public void getSigActivitySummary(String schema, Integer domainId, Integer parentId, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSigActivitySummary(schema, domainId, parentId, params, callback);
+	}
+
+	@Override
+	public void getCustomerDomain(String domainName, int domainId, String currentUser, Integer customerId, boolean isSig, AsyncCallback<Domain> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCustomerDomain(domainName, domainId, currentUser, customerId, isSig, callback);
+	}
+
+	@Override
+	public void getCustomersDomain(String domainName, int domainId, String currentUser, ArrayList<Integer> customerIds, boolean isSig, AsyncCallback<HashMap<Integer, Domain>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCustomersDomain(domainName, domainId, currentUser, customerIds, isSig, callback);
 	}
 	
 }

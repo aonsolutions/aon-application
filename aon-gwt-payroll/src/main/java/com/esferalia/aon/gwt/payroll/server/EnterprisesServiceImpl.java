@@ -5067,6 +5067,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public List<ActivitySummaryObject> getSigActivitySummary(String schema, Integer domainId, Integer domainParent, ActivitySummaryParams params) throws IllegalArgumentException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			List<ActivitySummaryObject> list = JooqActivitySummary.getSigActivitySummary(ctx.getDslContext(), domainId, domainParent, null, params);
+			return list;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 	// ------------------------------------------------ Salaries
 
 	@Override
@@ -5214,7 +5224,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Customer> getCustomersLinked(String domainName, int domain, String user, String searchQuery, int offset, int limit) throws IllegalArgumentException {
+	public List<Customer> getCustomersLinked(String domainName, int domain, String user, String searchQuery, Byte[] status, int offset, int limit) throws IllegalArgumentException {
 		return AON.getCustomerStream(domainName, domain, user, 
 				f -> f.getDomainProperty().eq(domain)
 				.and(f.getRegistryRelationProperty().isNotNull())
@@ -5223,13 +5233,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						: f.getDocumentProperty().like("%" + searchQuery + "%")
 							.or(f.getNameProperty().like("%" + searchQuery + "%"))
 							.or(f.getAliasProperty().like("%" + searchQuery + "%"))
-				), 
+				)
+				.and(f.getStatusProperty().in(status)), 
 				offset, limit)
 			.collect(Collectors.toList());
 	}
 	
 	@Override
-	public List<Customer> getSigCustomersLinked(String domainName, int domain, String user,String searchQuery, int offset, int limit) throws IllegalArgumentException {
+	public List<Customer> getSigCustomersLinked(String domainName, int domain, String user,String searchQuery, Byte[] status, int offset, int limit) throws IllegalArgumentException {
 		return AON.getSigCustomerStream(domainName, domain, user, 
 				f -> f.getDomainProperty().eq(domain)
 				.and(AonStringUtils.isBlank(searchQuery)
@@ -5237,7 +5248,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						: f.getDocumentProperty().like("%" + searchQuery + "%")
 							.or(f.getNameProperty().like("%" + searchQuery + "%"))
 							.or(f.getAliasProperty().like("%" + searchQuery + "%"))
-				), 
+				)
+				.and(f.getStatusProperty().in(status)), 
 				offset, limit)
 			.collect(Collectors.toList());
 	}
@@ -5255,9 +5267,61 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException {
-		Optional<RegistryAddInfo> addInfo = AON.getRegistryAddInfo(currentDomainName, customerId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_NAME")));
-		return addInfo.isEmpty() ? null : addInfo.get().getValue();
+	public HashMap<String, String> getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException {
+		Optional<RegistryAddInfo> addDomainNameInfo = AON.getRegistryAddInfo(currentDomainName, customerId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_NAME")));
+		Optional<RegistryAddInfo> addSchemaInfo = AON.getRegistryAddInfo(currentDomainName, customerId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_SCHEMA")));
+		
+		if( addDomainNameInfo.isEmpty() && addSchemaInfo.isEmpty() ) return null;
+		
+		HashMap<String, String> result = new HashMap<String, String>();
+		result.put(addSchemaInfo.get().getValue(), addDomainNameInfo.get().getValue());
+		
+		return result;
+	}
+
+	@Override
+	public Domain getCustomerDomain(String domainName, int domainId, String currentUser, Integer customerId, boolean isSig) throws IllegalArgumentException {
+		
+		if(isSig) {
+			Optional<RegistryAddInfo> addDomainIdInfo = AON.getRegistryAddInfo(domainName, domainId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_ID")));
+			Optional<RegistryAddInfo> addSchemaInfo = AON.getRegistryAddInfo(domainName, domainId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_SCHEMA")));
+			
+			Domain domain = AON_SOLUTIONS.getDomainBySchema(addSchemaInfo.get().getValue(), Integer.parseInt(addDomainIdInfo.get().getValue()) );
+			
+			return domain;
+		} else {
+			RegistryRelationship registryRelationship = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(currentUser), f -> f.getRegistryProperty().eq(customerId)).get();
+			
+			Domain domain = AON.getDomain(domainName, domainId, currentUser, f -> f.getNameProperty().eq(registryRelationship.getComments()));
+			
+			return domain;
+		}
+		
+	}
+
+	@Override
+	public HashMap<Integer, Domain> getCustomersDomain(String domainName, int domainId, String currentUser, ArrayList<Integer> customerIds, boolean isSig) throws IllegalArgumentException {
+		
+		HashMap<Integer, Domain> customers = new HashMap<Integer, Domain>();
+		
+		customerIds.forEach(customerId -> {
+			if(isSig) {
+				Optional<RegistryAddInfo> addDomainIdInfo = AON.getRegistryAddInfo(domainName, domainId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_ID")));
+				Optional<RegistryAddInfo> addSchemaInfo = AON.getRegistryAddInfo(domainName, domainId, currentUser, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().eq("AON_DOMAIN0_SCHEMA")));
+				
+				Domain domain = AON_SOLUTIONS.getDomainBySchema(addSchemaInfo.get().getValue(), Integer.parseInt(addDomainIdInfo.get().getValue()) );
+				
+				customers.put(customerId, domain);
+			} else {
+				RegistryRelationship registryRelationship = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(currentUser), f -> f.getRegistryProperty().eq(customerId)).get();
+				
+				Domain domain = AON.getDomain(domainName, domainId, currentUser, f -> f.getNameProperty().eq(registryRelationship.getComments()));
+				
+				customers.put(customerId, domain);
+			}
+		});
+		
+		return customers;
 	}
 	
 	

@@ -117,8 +117,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "Listado de costes",
 		        title: "Listado de costes",
-		        action: () => GWT.iLoad(GWT.MAIN_COST)
-				//filter: () => this.isDomainManagementAvailable()
+		        action: () => GWT.iLoad(GWT.MAIN_COST),
+				filter: () => this.isNotDomainManagementAvailable()
 		    },{
 		        description: "Resumen de actividad",
 		        title: "Resumen de actividad",
