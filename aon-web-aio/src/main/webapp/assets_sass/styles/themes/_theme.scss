@@ -70,6 +70,8 @@
 
   --favicon-#{$theme}: #{$favicon};
   --title-#{$theme}: #{$title};
+  // --logoHeader-#{$theme}: url(#{$logoHeader});
+  // --logo-#{$theme}: url(#{$logo});
   body{
     color            : $color-text;
     margin           : $body-margin;
