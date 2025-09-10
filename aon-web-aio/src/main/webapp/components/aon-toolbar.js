@@ -112,10 +112,10 @@ export class AonToolbar extends AonElement {
 			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;
 			titleSection.className = "aonToolbarSection";
-			let aib = new AonIconButton();
-			aib.id = this.TITLE_SECTION_MENU;
-			aib.icon  = "menu";
-			titleSection.appendChild(aib);
+			// let aib = new AonIconButton();
+			// aib.id = this.TITLE_SECTION_MENU;
+			// // aib.icon  = "menu";
+			// titleSection.appendChild(aib);
 
 			let title = this.createElement(TAG.SPAN);
 			title.id = this.TITLE_SECTION_SPAN;
@@ -125,11 +125,11 @@ export class AonToolbar extends AonElement {
 
 			let option = this.createElement(TAG.SPAN);
 			option.id = this.TITLE_SECTION_OPTION;
-			option.style.color = 'gray';
-			option.style.fontSize = '14px';
-			option.style.height = '16px';
+			// option.style.color = 'gray';
+			// option.style.fontSize = '14px';
+			// option.style.height = '16px';
 
-			option.innerHTML = this.option ? ' / ' + this.option : '';
+			option.innerHTML = this.option ? '/ ' + this.option : '';
 			titleSection.appendChild(option);
 
 			header.appendChild(titleSection);
@@ -190,11 +190,11 @@ export class AonToolbar extends AonElement {
 
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.style.marginBottom = '2px';
+//			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+//			toolSection.style.marginBottom = '2px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(search, toolSection.children[0]);
-			} else{
+			} else {
 				toolSection.appendChild(search);
 			}
 

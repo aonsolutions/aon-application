@@ -1,29 +1,24 @@
 import { AonElement } from '../../components/AonElement.js';
 import {
-	DocumentalSidenav, ASESOR_TYPE_OPTION,
-	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION,
-	EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
+	DocumentalSidenav, EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
 } from './DocumentalEnums.js';
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
-	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File,
-	getBidoqDocuments, checkBidoq
+	deleteCategory, editTag, deleteTag, getScopes, getDomainUserRoles, 
+	getDocument, getS3Category, getS3Document, getBidoqDocuments, checkBidoq
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import { AonSelect } from '../../components/aon-select.js';
 import { MSG, MATERIAL_ICONS, EVENT, CONSTANT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonNewInput } from '../../components/aon-new-input';
-import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
 
-import './aon-documental-list.js';
-import './aon-document.js';
-import './aon-mobile-documental-list.js';
-import './aon-mobile-document.js';
+// import './aon-documental-list.js';
+// import './aon-document.js';
+// import './aon-mobile-documental-list.js';
+// import './aon-mobile-document.js';
 //import '../../css/aon-mobile.css';
 //import 'aoncss';
 import { uploadOption } from './DocumentalUtils.js';
@@ -103,9 +98,8 @@ export class AonDocumental extends AonElement {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
 
 			let newView = new AonSwitch();
-//			newView.style.marginLeft = '20px';
 			newView.id = this.id + "NewView";
-			newView.title = "Nueva Vista";
+			newView.title = " | Nueva Vista";
 			newView.checked = isNewView();
 			LS.setBetaDoc(newView.checked);
 			newView.addEventListener(EVENT.CHANGE, () => {
@@ -115,7 +109,6 @@ export class AonDocumental extends AonElement {
 			titleSection.appendChild(newView);
 		}
 
-		this.getElement("aonDocumentalToolbarHeaderTitleSection");
 
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 			aonDocumental.drag_and_drop = true;

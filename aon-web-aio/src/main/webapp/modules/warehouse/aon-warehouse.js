@@ -3,7 +3,7 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER, PRODUCT, PACKAGE } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING, DELIVERY, TAGS, CARRIER, PRODUCT, PACKAGE } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../../services/warehouseService.js';
@@ -22,7 +22,6 @@ import { AonPackageList } from './package/aon-package-list.js';
 import { AonMobilePackageSearch } from './package/aon-mobile-package-search.js';
 
 export class AonWarehouse extends AonElement {
-
 	WAREHOUSE;
 	WAREHOUSE_EDIT_DIV;
 	WAREHOUSE_EDIT_NAME;
@@ -77,7 +76,6 @@ export class AonWarehouse extends AonElement {
 			warehouses.forEach((warehouse, i) => {
 				let option = {
 				  name: warehouse.name,
-				  icon: MATERIAL_ICONS.WAREHOUSE,
 				  actions: [
 					  	{	
 							id: 'Delete',
@@ -104,8 +102,7 @@ export class AonWarehouse extends AonElement {
 		let div = this.createDiv(this.WAREHOUSE_EDIT_DIV);
 
 		let warehouseName = createInput(this.WAREHOUSE_NAME, MSG.WAREHOUSE);
-		warehouseName.value = warehouse && warehouse.name 
-			? warehouse.name : CONSTANT.EMPTY;
+		warehouseName.value = warehouse && warehouse.name ? warehouse.name : CONSTANT.EMPTY;
 		warehouseName.addEventListener(EVENT.CHANGE, () => {
 			warehouse.name = warehouseName.value;
 		});
@@ -202,7 +199,7 @@ export class AonWarehouse extends AonElement {
 	aonElaboration() {
 		this.getApplication().getToolbar().option = MSG.ELABORATION;
 		this.getApplication().removeFloatOption();
-		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
+		// this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
 		this.getApplication().setContent(new AonMobileElaborationList()
 			// this.isMobile()
 			// ? new AonMobileElaborationList()

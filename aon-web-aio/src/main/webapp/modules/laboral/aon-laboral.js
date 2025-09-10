@@ -6,7 +6,6 @@ import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 
 export class AonLaboral extends AonComunicaUtils {
-
   cardFilter;
 
   constructor(cardFilter) {

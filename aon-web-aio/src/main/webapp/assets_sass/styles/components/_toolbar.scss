@@ -1,13 +1,23 @@
 @use '../variables' as v;
 
 aon-toolbar{
+  display        : block;
+  width          : v.$pct-100;
+  padding-bottom : v.$padding;
+  &[type="secondary"]{
+    padding-bottom : v.$px-0;
+  }
   header{
-    display: flex;
-    gap    : v.$gap;
-    width  : v.$pct-100;
+    display        : flex;
+    gap            : v.$gap;
+    width          : v.$pct-100;
+    box-sizing     : border-box;
+    padding        : v.$padding-min v.$padding;
+    border-radius  : v.$border-radius;
     justify-content: space-between;
-    align-items: center;
+    align-items    : center;
     section{
+      position    : relative;
       display     : flex;
       align-items : center;
       gap         : v.$gap-min;

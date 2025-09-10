@@ -5,13 +5,15 @@ import { AonIconButton } from './aon-icon-button.js';
 import {AonElement} from './AonElement.js';
 
 import { AonSwitch } from './aon-switch.js';
-import {AonInput} from './aon-input.js';
-import {AonDate} from './aon-date.js';
-import {AonSelect} from './aon-select.js';
+import {AonNewInput} from './aon-new-input.js';
+// import {AonDate} from './aon-date.js';
+// import {AonSelect} from './aon-select.js';
 
 //import '../css/aon-search.css';
 import { AonNewDate } from './aon-new-date.js';
 import { AonNewSelect } from "./aon-new-select.js";
+
+import { createInput } from "./CreateComponent";
 
 export class AonSearch extends AonElement {
     formComponents = [];
@@ -78,24 +80,25 @@ export class AonSearch extends AonElement {
 	}
 
 	build() {
-		let isMobile = this.isMobile();
+		// let isMobile = this.isMobile();
 		let span = this.createElement(TAG.SPAN);
 		span.id = this.SPAN;
-		span.style.display = 'inline-flex';
-		span.style.position = 'relative';
-
+		// span.style.display = 'inline-flex';
+		// span.style.position = 'relative';
 		this.appendChild(span);
 
 		let searchButton = new AonIconButton();
 		searchButton.id = this.SEARCH_BUTTON;
 		searchButton.icon = MATERIAL_ICONS.SEARCH;
 		span.appendChild(searchButton);
-		let input = this.createElement(TAG.INPUT);
-		input.id = this.SEARCH_INPUT;
+
+		const input = createInput(this.SEARCH_INPUT, null, span);
+		// let input = this.createElement(TAG.INPUT);
+		// input.id = this.SEARCH_INPUT;
 		input.className = CSS.AON_SEARCH_INPUT;
 		input.autocomplete = 'off';
-		input.style.display = 'none';
-		span.appendChild(input);
+		// input.style.display = 'none';
+		// span.appendChild(input);
 
         // El boton de filtro
         let advancedButton = new AonIconButton();
@@ -134,23 +137,23 @@ export class AonSearch extends AonElement {
                   this.closeSearch();
               }
           });
-      }
+		}
 
 		let divOpts = this.createElement(TAG.DIV);
 		divOpts.id = this.OPTIONS;
 		divOpts.className = CSS.AON_INPUT_LIST_OPTIONS;
-		divOpts.style.maxHeight = "none";
-		divOpts.style.padding = "10px";
-        if(!this.newStyle){
-          divOpts.style.display = "none";
-        } else {
-          divOpts.style.display = "grid";
-          divOpts.style.gap     = ".5rem";
-        }
-		if(!isMobile){
-			input.style.width = "300px";
-			divOpts.style.width = "380px";
-		}
+		// divOpts.style.maxHeight = "none";
+		// divOpts.style.padding = "10px";
+        // if(!this.newStyle){
+        //   divOpts.style.display = "none";
+        // } else {
+        //   divOpts.style.display = "grid";
+        //   divOpts.style.gap     = ".5rem";
+        // }
+		// if(!isMobile){
+		// 	input.style.width = "300px";
+		// 	divOpts.style.width = "380px";
+		// }
 
 		this.appendChild(divOpts);
 
@@ -204,20 +207,20 @@ export class AonSearch extends AonElement {
 		if(count && !clear){
           div       = this.createElement(TAG.DIV);
           div.id    = id;
-          div.style = `
-              position: relative; 
-              background: #002469;
-              top: 14px;
-              right: 5px;
-              border-radius: 50%;
-              color: white;
-              font-size: 10px;
-              font-weight: 800;
-              text-align: center;
-              height: 14px;
-              width: 14px;
-              line-height: 14px;
-          `;
+        //   div.style = `
+        //       position: relative; 
+        //       background: #002469;
+        //       top: 14px;
+        //       right: 5px;
+        //       border-radius: 50%;
+        //       color: white;
+        //       font-size: 10px;
+        //       font-weight: 800;
+        //       text-align: center;
+        //       height: 14px;
+        //       width: 14px;
+        //       line-height: 14px;
+        //   `;
           div.textContent = count;
           div.title       = `${count} ${MSG.FILTERS}`;
           this.getElement(this.SPAN).appendChild(div);
@@ -250,8 +253,8 @@ export class AonSearch extends AonElement {
 	}
 
 	openSearch(){
-		let span = this.getElement(this.SPAN);
-        let advancedButton = this.getElement(this.ADVANCED_BUTTON);
+		// let span = this.getElement(this.SPAN);
+        // let advancedButton = this.getElement(this.ADVANCED_BUTTON);
 		if(this.newStyle){
           const searchButton = this.getElement(this.SEARCH_BUTTON);
           // Que no tenga opcion del cursor el hijo
@@ -259,22 +262,22 @@ export class AonSearch extends AonElement {
           searchButtonSelector.style.cursor = 'default';
         }
         
-		let input = this.getElement(this.SEARCH_INPUT);
-		if(span && advancedButton && input){
-			if(this.isMobile()) {
-				this.style.position = 'absolute';
-				this.style.width = '100%';
-				this.style.background = 'white';
-				span.style.width = '100%';
-				advancedButton.style.position = 'absolute';
-				advancedButton.style.right = '0px';
-			}
-			input.style.display = 'block';
-            if(!this.newStyle){
-              advancedButton.style.display = 'block';
-            } 
-			span.style.borderBottom = '2px solid #002469';
-		}
+		// let input = this.getElement(this.SEARCH_INPUT);
+		// if(span && advancedButton && input){
+		// 	if(this.isMobile()) {
+		// 		this.style.position = 'absolute';
+		// 		this.style.width = '100%';
+		// 		this.style.background = 'white';
+		// 		span.style.width = '100%';
+		// 		advancedButton.style.position = 'absolute';
+		// 		advancedButton.style.right = '0px';
+		// 	}
+		// 	input.style.display = 'block';
+        //     if(!this.newStyle){
+        //       advancedButton.style.display = 'block';
+        //     } 
+		// 	span.style.borderBottom = '2px solid #002469';
+		// }
 	}
 
 	closeSearch(){
@@ -354,18 +357,20 @@ export class AonSearch extends AonElement {
 		});
 
 		let buttonsPanel = this.createElement(TAG.DIV);
-		buttonsPanel.style.display = "flex";
-		buttonsPanel.style.justifyContent = "center";
-		buttonsPanel.style.alignItems = "center";
+		buttonsPanel.classList.add("search-button");
+		
+		// buttonsPanel.style.display = "flex";
+		// buttonsPanel.style.justifyContent = "center";
+		// buttonsPanel.style.alignItems = "center";
 
 		let reset = this.createElement(TAG.BUTTON);
 		reset.textContent = "Limpiar";
 		reset.classList.add(CSS.AON_BUTTON, CSS.AON_FLEX);
-		reset.style.padding = "0.5rem 1rem"; 
-		reset.style.margin = "9px auto 0 auto";
-		reset.style.background = "transparent";
-		reset.style.border = "1px solid var(--aonBlue)";
-		reset.style.color = "black";
+		// reset.style.padding = "0.5rem 1rem"; 
+		// reset.style.margin = "9px auto 0 auto";
+		// reset.style.background = "transparent";
+		// reset.style.border = "1px solid var(--aonBlue)";
+		// reset.style.color = "black";
 		reset.addEventListener(EVENT.CLICK, ()=>{
 			this.dispatchCleanEventSearch(input.value, EVENT.CLICK);
 			this.openOrClose();
@@ -375,8 +380,8 @@ export class AonSearch extends AonElement {
 		let button = this.createElement(TAG.BUTTON);
 		button.textContent = MSG.ACCEPT;
 		button.classList.add(CSS.AON_BUTTON, CSS.AON_FLEX);
-		button.style.padding = "0.5rem 1rem"; 
-		button.style.margin = "9px auto 0 auto";
+		// button.style.padding = "0.5rem 1rem"; 
+		// button.style.margin = "9px auto 0 auto";
 		button.addEventListener(EVENT.CLICK, ()=>{
 			this.dispatchEventSearch(input.value, EVENT.CLICK)
 			this.openOrClose();
@@ -407,19 +412,14 @@ export class AonSearch extends AonElement {
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.TEXT:
-          component = new AonInput();
+          component = new AonNewInput();
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.SELECT:
-          component = !this.newStyle 
-            ? new AonSelect()
-            : new AonNewSelect();
+          component = new AonNewSelect();
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.DATE:
-          component = new AonDate();
-          html = setAttributes(component, attributes);
-        break;
         case CONSTANT.NEW_DATE:
           component = new AonNewDate();
           html = setAttributes(component, attributes);

@@ -176,6 +176,13 @@
     #rootPanel{
       background-color : $color-100;
     }
+    // cabecera arriba del cuerpo
+    aon-toolbar{
+      background-color : $color-100;
+      header{
+        background-color: $color-box;
+      }
+    }
     // submenu in content
     .aonSidenav{
       background-color : $color-box;
@@ -501,6 +508,15 @@
         }
       }
     }
+    // search
+    aon-search{
+      .aonInputListOptions{
+        &.is-visible{
+          background-color: $color-input;
+          box-shadow      : $box-shadow-dialog;
+        }
+      }
+    }
     // Card
     aon-card{
       background-color: $color-box;
@@ -637,7 +653,41 @@
           background-color: unset;
         }
         aon-invoice-home{
-
+          aon-card{
+            #aonInvoiceHomeInvoiceResumeContent{
+              &.aonCardContent .aonInvoiceHomeDiv{
+                >div{
+                  .aonInvoiceHomePendingCounterRow{
+                    border-bottom: $border;
+                    .aonInvoiceHomeOptionDiv:hover{
+                      background-color: $color-100;
+                    }
+                  }
+                  &:last-child{
+                    .aonInvoiceHomePendingCounterRow{
+                      border: none;
+                    }
+                  }
+                  &.invoice-content{
+                    .aonInvoiceHomePendingCounterRow .aonInvoiceHomeOptionDiv > div:first-child{
+                      color: $color-green-500;
+                    }
+                  }
+                  &.pending-content{
+                    .aonInvoiceHomePendingCounterRow .aonInvoiceHomeOptionDiv > div:first-child{
+                      color: $color-corp-blue;
+                    }
+                  }
+                  &.other-content{
+                    .aonInvoiceHomePendingCounterRow .aonInvoiceHomeOptionDiv > div:first-child{
+                      color: $color-red-500;
+                    }
+                  }
+                }
+               
+              }
+            }
+          }
         }
       // FIN aon-invoice-home
     }

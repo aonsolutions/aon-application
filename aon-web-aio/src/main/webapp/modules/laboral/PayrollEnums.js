@@ -5,27 +5,27 @@ import { PAYROLL } from "../../services/app.js";
 export const PAYSHEET = {
   id: 'Paysheet',
   name: MSG.PAYSHEETS,
-  icon: 'text_snippet'
+  // icon: 'text_snippet'
 };
 
 export const COMPANY_COSTS = {
   id: 'CompanyCosts',
   name: MSG.COMPANY_COSTS,
-  icon: MATERIAL_ICONS.ASSIGNMENT
+  // icon: MATERIAL_ICONS.ASSIGNMENT
 };
 
 export const AON_CCC = {
   name: 'CCC',
-  icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+  // icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
   id: "CCC"
 };
 
 export const AON_CERT = {
   name: MSG.CERTIFICATES,
-  aonIcon: {
-    icon: 'cert',
-    color: 'black'
-  },
+  // aonIcon: {
+  //   icon: 'cert',
+  //   color: 'black'
+  // },
 };
 
 export const AON_LABORAL = {
@@ -36,33 +36,33 @@ export const AON_LABORAL = {
 
 export const AON_COMUNICA = {
   name: 'Comunic@',
-  aonIcon: {
-    icon: 'aon_seg_social',
-    color: 'black'
-  }
+  // aonIcon: {
+  //   icon: 'aon_seg_social',
+  //   color: 'black'
+  // }
 }
 
 export const MOVEMENTS = {
   name: 'Movimientos',
-  aonIcon: {
-    icon: 'aon_seg_social',
-    color: 'black'
-  }
+  // aonIcon: {
+  //   icon: 'aon_seg_social',
+  //   color: 'black'
+  // }
 }
 
 export const SEPA_FILES = {
   id: 'SepaFiles',
   name: MSG.SEPA_FILES,
-  icon: 'account_balance'
+  // icon: 'account_balance'
 }
 
 export const AON_CONTRACT = {
   id: 'contractSidenav',
   name: MSG.CONTRACTS,
-  aonIcon: {
-    icon: 'contract',
-    color: 'black'
-  },
+  // aonIcon: {
+  //   icon: 'contract',
+  //   color: 'black'
+  // },
 }
 
 export const PAYROLL_FILTER = [

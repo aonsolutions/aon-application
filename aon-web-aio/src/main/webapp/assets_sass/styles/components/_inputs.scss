@@ -32,6 +32,7 @@ $button-height : v.$px-24;
 $button-width  : v.$px-24;
 // icono
 $icon-padding-right : v.$px-40;
+$icon-padding-left  : v.$px-40;
 
 aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
 aon-new-date, aon-new-select, aon-new-textarea{
@@ -181,5 +182,48 @@ aon-new-date, aon-new-select, aon-new-textarea{
 aon-new-date, aon-new-select{
   .aonInputBox .aonInputBoxLabel input{
     padding-right : $icon-padding-right;
+  }
+}
+// Buscar INPUT
+aon-search{
+  position   : relative;
+  display    : flex;
+  align-items: center;
+  gap        : v.$gap-min;
+  span{
+    aon-icon-button{
+      position: absolute;
+      top     : $padding-top;
+      left    : $padding-left;
+    }
+    aon-new-input{
+      .aonInputBox .aonInputBoxLabel{
+        input{
+          padding-left: $icon-padding-left;
+        }
+        span{
+          display: none;
+        }
+      }    
+    }
+  }
+  .aonInputListOptions{
+    display      : none;
+    position     : absolute;
+    top          : $input-height;
+    z-index      : 1;
+    padding      : v.$padding;
+    gap          : v.$gap-min;
+    border-radius: v.$border-radius;
+    &:last-child{
+      gap: v.$gap;
+    }
+    &.is-visible{
+      display: block;
+    }
+    .search-button{
+      display: flex;
+      gap    : v.$gap-min;
+    }
   }
 }

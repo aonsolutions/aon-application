@@ -349,7 +349,7 @@ export class AonFiscal extends AonElement {
 	
 			let currentPeriodObj = {
 				name: currentPeriodText,
-				icon: MATERIAL_ICONS.EVENT,
+				// icon: MATERIAL_ICONS.EVENT,
 				clickable: true,
 				id: "Future",
 				fn: () => {
@@ -396,7 +396,7 @@ export class AonFiscal extends AonElement {
 	
 			let currentPeriodObj = {
 				name: currentPeriodText,
-				icon: MATERIAL_ICONS.EVENT,
+				// icon: MATERIAL_ICONS.EVENT,
 				clickable: true,
 				id: "Current",
 				fn: () => {
@@ -445,7 +445,7 @@ export class AonFiscal extends AonElement {
 	
 			let futurePeriodObj = {
 				name: futurePeriodText,
-				icon: MATERIAL_ICONS.EVENT,
+				// icon: MATERIAL_ICONS.EVENT,
 				clickable: true,
 				id: "Future",
 				fn: () => {

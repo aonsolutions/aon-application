@@ -35,6 +35,50 @@ $panding-icon-table: calc(v.$input-height / 4);
             aon-card{
               width: $size-space;
               min-width: $min-size-space;
+              #aonInvoiceHomeInvoiceResumeContent{
+                &.aonCardContent .aonInvoiceHomeDiv{
+                  display       : flex;
+                  flex-direction: column;
+                  gap           : v.$gap;
+                  >div{
+                    display       : flex;
+                    flex-direction: column;
+                    gap           : v.$gap;
+                    .aonInvoiceHomePendingNameRow{
+                      font-family: v.$font-primary-semibold;
+                    }
+                    .aonInvoiceHomePendingCounterRow{
+                      display        : flex;
+                      padding-bottom : v.$padding-min;
+                      gap            : v.$gap;
+                      .aonInvoiceHomeOptionDiv{
+                        display       : flex;
+                        flex          : 1;
+                        flex-direction: column;
+                        align-items   : center;
+                        padding-bottom: v.$padding-min;
+                        gap           : v.$gap-min;
+                        cursor        : pointer;
+                        >div:first-child{
+                          font-family: v.$font-primary-semibold;
+                          font-size  : v.$px-40;
+                        }
+                        >div:last-child{
+                          font-size: v.$px-10;
+                        }
+                        &:hover{
+                          border-radius: v.$border-radius;
+                        }
+                      }
+                    }
+                    &:last-child{
+                      .aonInvoiceHomePendingCounterRow{
+                        padding-bottom: v.$px-0;
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }

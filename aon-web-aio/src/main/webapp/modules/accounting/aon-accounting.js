@@ -152,11 +152,10 @@ export class AonAccounting extends AonElement {
 			}
 		];
 
-
 		let options = [{
 			id: 'PyG',
 			name: 'Pérdidas y Ganancias',
-			icon: MATERIAL_ICONS.BAR_CHART,
+			// icon: MATERIAL_ICONS.BAR_CHART,
 			fn: () => {
 				application.removeSidenavById(CONSTANT.OPTIONS);
 				
@@ -198,7 +197,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'banksnordigen',
 				name: MSG.BANKS,
-				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+				// icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -211,7 +210,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'extracto',
 				name: "Extracto de cuenta",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -222,7 +221,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'cuentapyg1',
 				name: "Cuenta Explotación (P y G)",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -233,7 +232,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'balanceSS',
 				name: "Balance de Sumas y Saldos",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -244,7 +243,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'listadoD',
 				name: "Diario de Movimientos",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -255,7 +254,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'listadoM',
 				name: "Listado Mayor de Cuentas",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
@@ -266,7 +265,7 @@ export class AonAccounting extends AonElement {
 			options.push({
 				id: 'balanceO',
 				name: "Balances oficiales",
-				icon: MATERIAL_ICONS.LIST_ALT,
+				// icon: MATERIAL_ICONS.LIST_ALT,
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);

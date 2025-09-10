@@ -213,10 +213,10 @@ export class AonInvoiceHome extends AonElement {
 			cardPanel.appendChild(invoiceResumeCard);
 			invoiceResumeCard.setContent(this.buildInvoiceResumeCard());
 
-			invoiceResumeCard.firstChild.style.marginLeft = '0';
-			invoiceResumeCard.firstChild.style.minHeight = "460px";
-			invoiceResumeCard.firstChild.children.item(1).style.height = "315px";
-			invoiceResumeCard.firstChild.style.margin = '0';
+			// invoiceResumeCard.firstChild.style.marginLeft = '0';
+			// invoiceResumeCard.firstChild.style.minHeight = "460px";
+			// invoiceResumeCard.firstChild.children.item(1).style.height = "315px";
+			// invoiceResumeCard.firstChild.style.margin = '0';
 		}
 
 		if(!LS.isSuite() && this.getDur().isTrial()) {
@@ -289,7 +289,7 @@ export class AonInvoiceHome extends AonElement {
 		// INVOICE
 		let invoiceDiv = this.createDiv();
 		invoiceDiv.id = this.ID + 'Invoice';
-		invoiceDiv.classList.add("aonInvoiceHomePendingDiv");
+		invoiceDiv.classList.add("aonInvoiceHomePendingDiv", "invoice-content");
 		invoiceDiv.overflow = 'hidden';
 		div.appendChild(invoiceDiv);
 
@@ -321,7 +321,7 @@ export class AonInvoiceHome extends AonElement {
 		invoiceIssuedNumber.id = 'invoiceIssuedNumber';
 		invoiceIssuedNumber.innerHTML = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
 		invoiceIssuedNumber.classList.add("aonInvoiceHomePendingIssuedNumber");
-		invoiceIssuedNumber.style.color = 'var(--aonGreen)';
+		// invoiceIssuedNumber.style.color = 'var(--aonGreen)';
 		invoiceIssuedDiv.appendChild(invoiceIssuedNumber);
 
 		let invoiceIssuedName = this.createDiv();
@@ -345,7 +345,7 @@ export class AonInvoiceHome extends AonElement {
 		invoiceReceivedNumber.id = 'invoiceReceivedNumber';
 		invoiceReceivedNumber.innerHTML = getCounter()[OPTION.INVOICE_RECEIVED_BETA.id] || 0;
 		invoiceReceivedNumber.classList.add("aonInvoiceHomePendingReceivedNumber");
-		invoiceReceivedNumber.style.color = 'var(--aonGreen)';
+		// invoiceReceivedNumber.style.color = 'var(--aonGreen)';
 		invoiceReceivedDiv.appendChild(invoiceReceivedNumber);
 
 		let invoiceReceivedName = this.createDiv();
@@ -368,7 +368,7 @@ export class AonInvoiceHome extends AonElement {
 		invoiceTicketNumber.id = 'invoiceTicketNumber';
 		invoiceTicketNumber.innerHTML = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
 		invoiceTicketNumber.classList.add("aonInvoiceHomePendingTicketNumber");
-		invoiceTicketNumber.style.color = 'var(--aonGreen)';
+		// invoiceTicketNumber.style.color = 'var(--aonGreen)';
 		invoiceTicketDiv.appendChild(invoiceTicketNumber);
 
 		let invoiceTicketName = this.createDiv();
@@ -380,7 +380,7 @@ export class AonInvoiceHome extends AonElement {
 		// PENDING
 		let pendingDiv = this.createDiv();
 		pendingDiv.id = 'pending';
-		pendingDiv.classList.add("aonInvoiceHomePendingDiv");
+		pendingDiv.classList.add("aonInvoiceHomePendingDiv", "pending-content");
 		pendingDiv.overflow = 'hidden';
 		div.appendChild(pendingDiv);
 
@@ -467,7 +467,7 @@ export class AonInvoiceHome extends AonElement {
 		// PROCESSING-PENDING / REJECTED / TRASH
 		let otherDiv = this.createDiv();
 		otherDiv.id = 'other';
-		otherDiv.classList.add("aonInvoiceHomePendingDiv");
+		otherDiv.classList.add("aonInvoiceHomePendingDiv", "other-content");
 		otherDiv.overflow = 'hidden';
 		div.appendChild(otherDiv);
 
