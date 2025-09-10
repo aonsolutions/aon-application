@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.client.ActivitySummary;
 import com.esferalia.aon.gwt.payroll.client.MainEntryPoint;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
 public class CustomerActivityModule extends MainEntryPoint {
