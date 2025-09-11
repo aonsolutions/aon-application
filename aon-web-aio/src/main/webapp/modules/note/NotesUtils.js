@@ -1,4 +1,4 @@
-import { AonDate } from "../../components/aon-date.js";
+import { AonNewDate } from "../../components/aon-new-date.js";
 import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
@@ -215,7 +215,7 @@ const reminder = (ev, dialog, note, textAreaId) => {
     content.style.width = "185px";
     content.style.borderRadius = "6px";
 
-    const aonDate = new AonDate(); 
+    const aonDate = new AonNewDate(); 
     aonDate.id    = "date"+ idRand;
     aonDate.name  = "date"+ idRand;
     aonDate.title = MSG.DATE;

@@ -1,6 +1,6 @@
-import { AonSelect } from "../../../components/aon-select.js";
-import { AonDate } from "../../../components/aon-date.js";
 import { AonElement } from "../../../components/AonElement.js";
+import { AonNewSelect } from '../../../components/aon-new-select.js';
+import { AonNewDate } from "../../../components/aon-new-date.js";
 import { EVENT, MSG } from "../../../environments/environments.js";
 import {
   getItems,
@@ -156,7 +156,7 @@ export class AonSellerAdd extends AonElement {
     this.buildSelectType();
     this.buildSelectStatus();
 
-    this.START_DATE_INPUT = new AonDate();
+    this.START_DATE_INPUT = new AonNewDate();
     this.START_DATE_INPUT.id = this.id + "startDateInput";
     this.START_DATE_INPUT.title = MSG.START_DATE;
     this.DIV.appendChild(this.START_DATE_INPUT);
@@ -173,7 +173,7 @@ export class AonSellerAdd extends AonElement {
       this.setStartDate(this.START_DATE_INPUT.value);
     });
 
-    this.END_DATE_INPUT = new AonDate();
+    this.END_DATE_INPUT = new AonNewDate();
     this.END_DATE_INPUT.id = this.id + "endDateInput";
     this.END_DATE_INPUT.title = MSG.END_DATE;
     this.DIV.appendChild(this.END_DATE_INPUT);
@@ -191,7 +191,7 @@ export class AonSellerAdd extends AonElement {
   }
 
   buildSelectItem() {
-    this.ITEM_SELECT = new AonSelect();
+    this.ITEM_SELECT = new AonNewSelect();
     this.ITEM_SELECT.title = "Agente";
     this.ITEM_SELECT.id = this.id + "seller";
     this.ITEM_SELECT.autocomplete = true;
@@ -235,7 +235,7 @@ export class AonSellerAdd extends AonElement {
   }
 
   buildSelectStatus() {
-    this.STATUS_SELECT = new AonSelect();
+    this.STATUS_SELECT = new AonNewSelect();
     this.STATUS_SELECT.title = MSG.STATUS;
     this.STATUS_SELECT.id = this.id + "status";
     this.STATUS_SELECT.default = true;
@@ -259,7 +259,7 @@ export class AonSellerAdd extends AonElement {
   }
 
   buildSelectType() {
-    this.TYPE_SELECT = new AonSelect();
+    this.TYPE_SELECT = new AonNewSelect();
     this.TYPE_SELECT.title = MSG.TYPE;
     this.TYPE_SELECT.id = this.id + "TYPE";
     this.TYPE_SELECT.default = true;

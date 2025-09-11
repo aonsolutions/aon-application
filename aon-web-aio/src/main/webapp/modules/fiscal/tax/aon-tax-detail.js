@@ -39,10 +39,10 @@ import { ToolbarType } from "../../../models/enums.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
 import { AonTax } from "./aon-tax.js";
 import { FiscalUtils } from "../FiscalUtils.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonInput } from "../../../components/aon-input.js";
-import { AonNumber } from "../../../components/aon-number.js";
-import { AonDate } from "../../../components/aon-date.js";
+import { AonNewNumber } from "../../../components/aon-new-number.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { CONST_FISCAL } from "../FiscalEnums.js";
 import { getDocumentNumber } from "../../invoice/Invoice.js";
@@ -280,7 +280,7 @@ export class AonTaxDetail extends AonElement {
   async loadTable(){
     console.log("--- loadTable ---");
     console.log(this.SELECTED_FILTER);
-    
+
     if(this.SELECTED_TYPE === 'invoice'){
       if (this.type == "tax") {
         if(this.SELECTED_INVOICE_TYPE == 'received'){
@@ -675,8 +675,8 @@ export class AonTaxDetail extends AonElement {
     invoiceTable.selectedColor = true;
     content.appendChild(invoiceTable);
 
-    let invoiceTableBody = invoiceTable.getElementsByTagName("tbody")[0];
-    invoiceTableBody.style.height = "calc(100vh - 240px)";
+    // let invoicseTableBody = invoiceTable.getElementsByTagName("tbody")[0];
+    // invoiceTableBody.style.height = "calc(100vh - 240px)";
 
     invoiceTable.addColumn(MSG.DATE, "date", "dateTable", "90px");
     invoiceTable.addColumn(MSG.INVOICE_NUMBER, "string", "reference", "150px");
@@ -838,7 +838,6 @@ export class AonTaxDetail extends AonElement {
 
         invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 
-       
         let icons = [];
         let icon = {
           icon: MATERIAL_ICONS.VISIBILITY,
@@ -890,8 +889,8 @@ export class AonTaxDetail extends AonElement {
     aonSalaryDetailTable.selectedColor = true;
     content.appendChild(aonSalaryDetailTable);
 
-    let aonSalaryDetailTableBody =aonSalaryDetailTable.getElementsByTagName("tbody")[0];
-    aonSalaryDetailTableBody.style.height = "calc(100vh - 240px)";
+    // let aonSalaryDetailTableBody =aonSalaryDetailTable.getElementsByTagName("tbody")[0];
+    // aonSalaryDetailTableBody.style.height = "calc(100vh - 240px)";
 
     aonSalaryDetailTable.addColumn(MSG.DATE, "date", "endDate", "120px");
     aonSalaryDetailTable.addColumn(MSG.EMPLOYEE, "string", "employeeName", "auto");
@@ -938,7 +937,6 @@ export class AonTaxDetail extends AonElement {
         salary.deductionParse = formatNumber(salary.totalDeduction, 2, 2, "EUR");
         salary.irpfParse =  formatNumber(salary.irpf, 2, 2, "EUR");
         salary.totalParse = formatNumber(salary.totalLiquid, 2, 2, "EUR");
-
         let icons = [];
         let icon = {
           icon: MATERIAL_ICONS.VISIBILITY,
@@ -997,18 +995,18 @@ export class AonTaxDetail extends AonElement {
 
     let visibilityButton = this.visibilityOffButton(visibilityButtonId, index);
 
-    let visible = "visibility_off" === visibilityButton.innerHTML;
+    let visible = "visibility_off" === visibilityButton.icon;
 
     let fileDiv = this.getElement(this.FILE);
     let contentDiv = this.getElement(this.CONTENT);
 
     if (visible) {
-      visibilityButton.innerHTML = "visibility";
+      visibilityButton.icon = "visibility";
       fileDiv.style.display = "none";
       contentDiv.style.width = "100%";
       toolbar.removeButton(ACTION.CLOSE_PDF.id);
     } else {
-      visibilityButton.innerHTML = "visibility_off";
+      visibilityButton.icon = "visibility_off";
       fileDiv.style.display = "block";
       fileDiv.style.width = "50%";
       contentDiv.style.width = "50%";
@@ -1299,7 +1297,7 @@ export class AonTaxDetail extends AonElement {
         { value: "DEFERRAL", name: "Solicitud de aplazamiento" },
       ];
 
-      const aonSelectTipo = new AonSelect();
+      const aonSelectTipo = new AonNewSelect();
       aonSelectTipo.name = "tipodec";
       aonSelectTipo.id = "tipodec";
       aonSelectTipo.title = "Tipo";
@@ -1312,7 +1310,7 @@ export class AonTaxDetail extends AonElement {
       form.appendChild(aonSelectTipo);
     }
 
-    const aonSelect = new AonSelect();
+    const aonSelect = new AonNewSelect();
     aonSelect.name = "iban";
     aonSelect.id = "iban";
     aonSelect.title = "IBAN";
@@ -1353,14 +1351,14 @@ export class AonTaxDetail extends AonElement {
     divAplazamiento.id = "divAplazamiento";
     form.appendChild(divAplazamiento);
 
-    const aonInputPlazos = new AonNumber();
+    const aonInputPlazos = new AonNewNumber();
     aonInputPlazos.className = "aonWidth75";
     aonInputPlazos.id = "plazos";
-    aonInputPlazos.description = "Número de Plazos";
+    aonInputPlazos.title = "Número de Plazos";
     if (resp.plazos) aonInputPlazos.value = resp.plazos;
     divAplazamiento.appendChild(aonInputPlazos);
 
-    const aonInputFechaPlazo = new AonDate();
+    const aonInputFechaPlazo = new AonNewDate();
     aonInputFechaPlazo.className = "aonWidth75";
     aonInputFechaPlazo.id = "fechaPlazo";
     aonInputFechaPlazo.title = "Fecha Primer Plazo";
@@ -1369,7 +1367,7 @@ export class AonTaxDetail extends AonElement {
 
     // CERTIFICADO ELECTRONICO
 
-    const aonSelect2 = new AonSelect();
+    const aonSelect2 = new AonNewSelect();
     aonSelect2.name = "certi";
     aonSelect2.id = "certi";
     aonSelect2.title = "Certificado para la Presentación";

@@ -14,7 +14,7 @@ import {
 } from "../../../services/service.js";
 import { CONST_FISCAL, FISCAL_VIEWS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import {
   EVENT,
@@ -29,8 +29,8 @@ import { FiscalUtils } from "../FiscalUtils.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
 import * as LS from "../../../services/localStorageService.js";
-import { AonNumber } from "../../../components/aon-number.js";
-import { AonDate } from "../../../components/aon-date.js";
+import { AonNewNumber } from "../../../components/aon-new-number.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
 import { AonTaxDetail } from "./aon-tax-detail.js";
 
 export class AonTax extends AonElement {
@@ -353,7 +353,7 @@ export class AonTax extends AonElement {
 			{ value: 'DEFERRAL', name: 'Solicitud de aplazamiento'}
 		];
 			
-	    const aonSelectTipo = new AonSelect();
+	    const aonSelectTipo = new AonNewSelect();
 	    aonSelectTipo.name = "tipodec";
 	    aonSelectTipo.id = "tipodec";
 	    aonSelectTipo.title = "Tipo";
@@ -366,7 +366,7 @@ export class AonTax extends AonElement {
 	    form.appendChild(aonSelectTipo);
     }
 
-    const aonSelect = new AonSelect();
+    const aonSelect = new AonNewSelect();
     aonSelect.name = "iban";
     aonSelect.id = "iban";
     aonSelect.title = "IBAN";
@@ -407,14 +407,14 @@ export class AonTax extends AonElement {
     divAplazamiento.id= "divAplazamiento";
     form.appendChild(divAplazamiento);
     
-    const aonInputPlazos = new AonNumber();
+    const aonInputPlazos = new AonNewNumber();
     aonInputPlazos.className = "aonWidth75";
     aonInputPlazos.id = "plazos";
-    aonInputPlazos.description = "Número de Plazos";
+    aonInputPlazos.title = "Número de Plazos";
     if (resp.plazos) aonInputPlazos.value = resp.plazos;  
     divAplazamiento.appendChild(aonInputPlazos);
     
-    const aonInputFechaPlazo = new AonDate();
+    const aonInputFechaPlazo = new AonNewDate();
     aonInputFechaPlazo.className = "aonWidth75";
     aonInputFechaPlazo.id = "fechaPlazo";
 	aonInputFechaPlazo.title = "Fecha Primer Plazo";
@@ -423,7 +423,7 @@ export class AonTax extends AonElement {
 		
     // CERTIFICADO ELECTRONICO
     
-    const aonSelect2 = new AonSelect();
+    const aonSelect2 = new AonNewSelect();
     aonSelect2.name = "certi";
     aonSelect2.id = "certi";
     aonSelect2.title = "Certificado para la Presentación";

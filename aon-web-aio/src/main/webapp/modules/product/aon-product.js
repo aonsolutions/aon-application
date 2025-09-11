@@ -9,10 +9,10 @@ import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 
 import { Product } from '../../models/product/Product.js';
-import { AonNumber } from '../../components/aon-number.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
 import { Item } from '../../models/product/Item.js';
 import { getProductCategories, saveItem, saveProduct } from '../../services/productService.js';
 import { TaxIVAPercentage, TaxIVAPercentage2, TaxRetentionPercentage, TaxRetentionPercentage2 } from '../invoice/invoiceEnums.js';
@@ -21,11 +21,10 @@ import { AonProductList } from './aon-product-list.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 
 export class AonProduct extends AonElement {
-
 	PRODUCT_TOOLBAR;
-    PRODUCT_CARD;
-    PRODUCT_TABLE;
-    PRODUCT_CODE;
+	PRODUCT_CARD;
+	PRODUCT_TABLE;
+	PRODUCT_CODE;
 	PRODUCT_NAME;
 	PRODUCT_TYPE;
 	PRODUCT_CATEGORY;
@@ -60,7 +59,7 @@ export class AonProduct extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
-    }
+	}
 
 	initialize() {
 		this.id = this.id || 'aonProduct';
@@ -335,7 +334,7 @@ export class AonProduct extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;
@@ -349,9 +348,9 @@ export class AonProduct extends AonElement {
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
+		let number = new AonNewNumber();
 		number.id = id;
-		number.description = title;
+		number.title = title;
 		return number;
 	}
 }

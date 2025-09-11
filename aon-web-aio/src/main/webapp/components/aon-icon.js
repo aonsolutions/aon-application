@@ -109,6 +109,9 @@ export class AonIcon extends AonElement {
     }
     let svg = this.querySelector('svg');
     svg.style.verticalAlign = 'middle';
+    if (this.hasAttribute('title')) {
+      this.setAttribute('title', this.getAttribute('title'));
+    }
   }
 }
 if(!window.customElements.get('aon-icon')){

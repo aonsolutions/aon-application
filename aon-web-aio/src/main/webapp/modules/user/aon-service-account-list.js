@@ -3,7 +3,7 @@ import {getUserListSpeed, generateToken, deleteUser} from  '../../services/servi
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import * as LS from '../../services/localStorageService.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 
 export class AonServiceAccountList extends AonElement {
 
@@ -78,7 +78,7 @@ export class AonServiceAccountList extends AonElement {
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("Generar Token");
 
-		let select = this.createAonElement(new AonSelect(), "generateTokenTime", "Expira en");
+		let select = this.createAonElement(new AonNewSelect(), "generateTokenTime", "Expira en");
 		select.setOptions([{
 			value: 0,
 			name: '1 mes'

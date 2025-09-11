@@ -200,7 +200,7 @@ export class AonTable extends AonElement {
       tdMessage.title       = message;
       // A�adir la celda a la fila
       tr.appendChild(tdMessage);
-      // A�adir la fila con el mensaje al cuerpo de la tabla
+      // Agregar la fila con el mensaje al cuerpo de la tabla
       body.appendChild(tr);
   }
 
@@ -250,20 +250,32 @@ export class AonTable extends AonElement {
         aonIconB.icon = MATERIAL_ICONS.MORE_VERT;
         td.appendChild(aonIconB);
         td.addEventListener(EVENT.CLICK, () => this.getOptions(tr, td, value[id]));
-      } else if("icon" === item.type && value[id]) {
-        let icon = this.createElement(TAG.I);
-        icon.id = this.getId() + "Icon";
-        icon.className = value.icon_class || "material-icons";
-        icon.innerHTML = value[id];
-        icon.title = value.icon_title;
-        td.appendChild(icon);
-        if(value.fn){
-          td.addEventListener(EVENT.CLICK, value.fn);
-        }
-      } else if("aonIcon" === item.type && value[id]) {
+      } 
+      // else if("icon" === item.type && value[id]) {
+      //   let icon = this.createElement(TAG.I);
+      //   icon.id = this.getId() + "Icon";
+      //   icon.className = value.icon_class || "material-icons";
+      //   icon.innerHTML = value[id];
+      //   icon.title = value.icon_title;
+      //   td.appendChild(icon);
+      //   if(value.fn){
+      //     td.addEventListener(EVENT.CLICK, value.fn);
+      //   }
+      // } else if("aonIcon" === item.type && value[id]) {
+      //   let aonIcon = new AonIcon();
+      //   aonIcon.id = this.getId()+ "AonIcon";
+      //   aonIcon.icon = value[id];
+      //   td.appendChild(aonIcon);
+      //   if(value.fn){
+      //     td.addEventListener(EVENT.CLICK, value.fn);
+      //   }
+      // }
+      else if("icon" === item.type && value[id] || "aonIcon" === item.type && value[id]) {
         let aonIcon = new AonIcon();
         aonIcon.id = this.getId()+ "AonIcon";
         aonIcon.icon = value[id];
+        if(value.icon_title)
+          aonIcon.title = value.icon_title;
         td.appendChild(aonIcon);
         if(value.fn){
           td.addEventListener(EVENT.CLICK, value.fn);
@@ -271,12 +283,16 @@ export class AonTable extends AonElement {
       } else if("icons" === item.type && value[id]) {
         let span = this.createSpan(this.getId() + 'Icons');
         value[id].forEach((icon,i) => {
-          let icon2 = this.createElement(TAG.I);
+          let icon2 = new AonIcon();
           icon2.id = this.getId() + "Icon" + i;
-          icon2.className = icon.class || "material-icons";
-          icon2.classList.add("aonTableRowIcon2");
-          icon2.innerHTML = icon.icon;
+          icon2.icon = icon.icon;
           icon2.title = icon.title;
+          // let icon2 = this.createElement(TAG.I);
+          // icon2.id = this.getId() + "Icon" + i;
+          // icon2.className = icon.class || "material-icons";
+          // icon2.classList.add("aonTableRowIcon2");
+          // icon2.innerHTML = icon.icon;
+          // icon2.title = icon.title;
           if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
           span.appendChild(icon2);
         });

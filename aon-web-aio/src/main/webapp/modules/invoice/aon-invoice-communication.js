@@ -3,8 +3,8 @@ import { CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { AonCard } from "../../components/aon-card.js";
 import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { AonSelect} from "../../components/aon-select.js";
-import { AonDate} from "../../components/aon-date.js";
+import { AonNewSelect} from "../../components/aon-new-select.js";
+import { AonNewDate} from "../../components/aon-new-date.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 
@@ -86,7 +86,7 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'CANARIAS', name: 'A.T. Canaria'}
         ];
 
-        let administration = this.createAonElement(new AonSelect(), this.ADMINISTRATION, 'Administración');
+        let administration = this.createAonElement(new AonNewSelect(), this.ADMINISTRATION, 'Administración');
         administration.setOptions(administrationOptions);
         administration.value = this.configuration.administration;
         administration.onChange(() => {
@@ -152,7 +152,7 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'audit', name: 'Fecha Auditoria'}
         ];
 
-        let tbaiRegistryDate = this.createAonElement(new AonSelect(), this.TBAI_REGISTRY_DATE, 'Fecha Registro (TBAI)');
+        let tbaiRegistryDate = this.createAonElement(new AonNewSelect(), this.TBAI_REGISTRY_DATE, 'Fecha Registro (TBAI)');
         tbaiRegistryDate.setOptions(options);
         tbaiRegistryDate.value = this.configuration.tbai.registryDate;
         if(!this.configuration.tbai.active) {
@@ -164,7 +164,7 @@ export class AonInvoiceCommunication extends AonElement {
         });
         table.addCell(tbaiRegistryDate, 1).style.height = '50px';
 
-        let tbaiIncludeDate = this.createAonElement(new AonDate(), this.TBAI_INCLUDE_DATE, 'Fecha Inclusión TBAI');
+        let tbaiIncludeDate = this.createAonElement(new AonNewDate(), this.TBAI_INCLUDE_DATE, 'Fecha Inclusión TBAI');
         if(!this.configuration.tbai.active) {
             tbaiIncludeDate.classList.add(CSS.AON_NONE);
         }
@@ -231,7 +231,7 @@ export class AonInvoiceCommunication extends AonElement {
 
         table.addRow();
 
-        let siiRegistryDate = this.createAonElement(new AonSelect(), this.SII_REGISTRY_DATE, 'Fecha Registro (SII)');
+        let siiRegistryDate = this.createAonElement(new AonNewSelect(), this.SII_REGISTRY_DATE, 'Fecha Registro (SII)');
         siiRegistryDate.setOptions(options);
         siiRegistryDate.value = this.configuration.sii.registryDate;
         if(!this.configuration.sii.active) {
@@ -243,7 +243,7 @@ export class AonInvoiceCommunication extends AonElement {
         });
         table.addCell(siiRegistryDate, 1).style.height = '50px';
 
-        let siiIncludeDate = this.createAonElement(new AonDate(), this.SII_INCLUDE_DATE, 'Fecha Inclusión SII');
+        let siiIncludeDate = this.createAonElement(new AonNewDate(), this.SII_INCLUDE_DATE, 'Fecha Inclusión SII');
         if(!this.configuration.sii.active) {
             siiIncludeDate.classList.add(CSS.AON_NONE);
         }

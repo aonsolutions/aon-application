@@ -1,13 +1,11 @@
-import { AonDate } from "../../components/aon-date.js";
-import { AonSelect } from "../../components/aon-select.js";
+import { AonNewDate } from "../../components/aon-new-date.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
 import { updateAllTargetItem } from "../../services/productService.js";
 import { AonItemAdd } from "../registry/target/item/aon-item-add.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
-
-
 
 /**
  * 
@@ -51,13 +49,13 @@ const buildFormExpediente = (aonOfficePanel, project) => {
     div.style.display = "flex";
     div.style.flexDirection = "column";
 
-    let type = new AonSelect();
+    let type = new AonNewSelect();
     type.title =  MSG.TYPE;
     type.autocomplete = true;
     type.id = "projectType1"+idRandom;
     div.appendChild(type);
 
-    let workgroup = new AonSelect();
+    let workgroup = new AonNewSelect();
     workgroup.title = MSG.WORKGROUP;
     workgroup.autocomplete = true;
     workgroup.id = "workgroup1"+idRandom;
@@ -65,7 +63,7 @@ const buildFormExpediente = (aonOfficePanel, project) => {
     div.appendChild(workgroup);
 
         
-    let taskHolder = new AonSelect();
+    let taskHolder = new AonNewSelect();
     taskHolder.title = "Asignar a";
     taskHolder.autocomplete = true;
     taskHolder.id = "taskHolder1"+idRandom;
@@ -157,7 +155,7 @@ const buildDialogProductsUpdate = (aonOfficePanel) => {
     div.style.width = "100%";
     dialog.setContent(div);
 
-    let aonDate = new AonDate();
+    let aonDate = new AonNewDate();
     aonDate.id = "aonDate1";
     aonDate.title = "A partir de las facturas con fecha:";
     div.appendChild(aonDate);

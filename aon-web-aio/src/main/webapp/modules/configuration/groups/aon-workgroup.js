@@ -1,6 +1,6 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSearch } from "../../../components/aon-search.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonElement } from "../../../components/AonElement.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { assignTaskHolderWorkgroup, removeTaskHolderWorkgroup, getTastHoldersList, getTaskHolderWorkGroups } from "../../../services/taskHolderService.js";
@@ -204,7 +204,7 @@ saveData(taskholder, workgroup) {
   buildFormProject(div, workgroup) {
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 
-    let ITEM_SELECT = new AonSelect();
+    let ITEM_SELECT = new AonNewSelect();
     ITEM_SELECT.title = "Operarios";
     ITEM_SELECT.id = "OperariosList";
     ITEM_SELECT.autocomplete = true;

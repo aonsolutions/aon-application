@@ -1,8 +1,8 @@
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonCard } from '../../../components/aon-card.js';
-import { AonDate } from '../../../components/aon-date.js';
+import { AonNewDate } from '../../../components/aon-new-date.js';
 import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import {AonElement} from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
@@ -111,7 +111,7 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let printer = this.createAonElement(new AonSelect(), this.PRINTER, MSG.PRINTER);
+		let printer = this.createAonElement(new AonNewSelect(), this.PRINTER, MSG.PRINTER);
 		table.addCell(printer);
 		printer.options = JSON.stringify([{
 			name: 'ZEBRA 93',
@@ -126,7 +126,7 @@ export class AonDeliveryTag extends AonElement {
 			this.printer = printer.value;
  		});
 
-		let tag = this.createAonElement(new AonSelect(), this.TAG, MSG.TAG);
+		let tag = this.createAonElement(new AonNewSelect(), this.TAG, MSG.TAG);
 		table.addCell(tag);
 		tag.options = JSON.stringify([{
 			name: 'Mercadona',
@@ -186,7 +186,7 @@ export class AonDeliveryTag extends AonElement {
 			this.data.LOTE = lote.value;
 		});
 
-		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
+		let fecha = this.createAonElement(new AonNewDate(), this.DATE, 'Fecha');
 		table.addCell(fecha);
 		fecha.addEventListener(EVENT.CHANGE, () => {
 			this.data.F_CONSUMO_PREFERENTE = fecha.value;
@@ -228,7 +228,7 @@ export class AonDeliveryTag extends AonElement {
 			this.data.LOTE = lote.value;
 		});
 
-		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
+		let fecha = this.createAonElement(new AonNewDate(), this.DATE, 'Fecha');
 		table.addCell(fecha);
 		fecha.addEventListener(EVENT.CHANGE, () => {
 			this.data.F_CONSUMO_PREFERENTE = fecha.value;

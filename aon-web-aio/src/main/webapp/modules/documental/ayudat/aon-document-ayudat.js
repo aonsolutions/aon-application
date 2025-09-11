@@ -1,7 +1,7 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { ToolbarType } from '../../../models/enums.js';
 import {  openFileUrl } from '../../../services/service.js';
-import { AonSelect } from '../../../components/aon-select.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../../../environments/environments.js';
 import * as ACTION from '../../actions.js';
 import { extensionsType } from '../../../services/extensionsEnums.js';
@@ -153,7 +153,7 @@ export class AonDocumentAyudat extends AonElement {
     // CATEGORY
     let tdCategory = this.createElement(TAG.TD);
     tdCategory.setAttribute('colspan', '1');
-    let categorySelect = new AonSelect();
+    let categorySelect = new AonNewSelect();
     categorySelect.id = 'category';
     categorySelect.readonly = true;
     categorySelect.disabled = CONSTANT.DISABLED;
@@ -175,7 +175,7 @@ export class AonDocumentAyudat extends AonElement {
     tdTag.setAttribute('colspan', '1');
     tr3.appendChild(tdTag);
 
-    let tagSelect = new AonSelect();
+    let tagSelect = new AonNewSelect();
     tagSelect.id = 'tag';
     tagSelect.title = MSG.TAG;
     tdTag.appendChild(tagSelect);

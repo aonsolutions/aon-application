@@ -171,9 +171,11 @@ export class AonIconButton extends AonElement {
       this.style.display = "none";
     }
 
-    if (this.hasAttribute("icon") || this.hasAttribute("aonIcon")) {
+    if (this.hasAttribute("icon") || this.hasAttribute("aonIcon") || this.hasAttribute("aonicon")) {
       this.getButton().innerHTML = "";
-      const iconType = this.getAttribute("icon") ? this.getAttribute("icon") : this.hasAttribute("aonIcon");
+      // llega como = icon, aonIcon, aonicon
+      let iconType = this.getAttribute("icon") ? this.getAttribute("icon") : this.hasAttribute("aonIcon");
+      iconType     = this.getAttribute("aonicon") ? this.getAttribute("aonicon") : iconType;
       let icon          = new AonIcon();
       icon.id           = this.AON_ICON;
       icon.icon         = iconType;

@@ -2,8 +2,8 @@ import { AonElement } from '../../../components/AonElement.js';
 import { AonCard } from "../../../components/aon-card.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
-import { AonNumber } from '../../../components/aon-number.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
+import { AonNewNumber } from '../../../components/aon-new-number.js';
 import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
@@ -270,7 +270,7 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;
@@ -284,9 +284,9 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
+		let number = new AonNewNumber();
 		number.id = id;
-		number.description = title;
+		number.title = title;
 		return number;
 	}
 

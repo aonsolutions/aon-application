@@ -372,7 +372,7 @@ export class AonConfiguration extends AonElement {
 		input.description = MSG.NAME;
 		div.appendChild(input);
 
-		// let expireDate =  this.createAonElement(new AonDate(), CONSTANT.DATE, MSG.EXPIRATION_DATE);
+		// let expireDate =  this.createAonElement(new AonNewDate(), CONSTANT.DATE, MSG.EXPIRATION_DATE);
 		// div.appendChild(expireDate);
 
 		d.clear();

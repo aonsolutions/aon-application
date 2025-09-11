@@ -1,6 +1,6 @@
-import { AonDate } from "../../components/aon-date.js";
+import { AonNewDate } from "../../components/aon-new-date.js";
 import { AonInput } from "../../components/aon-input.js";
-import { AonSelect } from "../../components/aon-select.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { ProjectHolder } from "../../models/project/ProjectHolder.js";
 import { ProjectType } from "../../models/project/ProjectType.js";
@@ -59,13 +59,13 @@ const buildFormProject = (parent, project, div) => {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 
-    let projectType = new AonSelect();
+    let projectType = new AonNewSelect();
     projectType.title = MSG.TYPE;
     projectType.autocomplete = true;
     projectType.id = "projectType2"+idRandom;
     div.appendChild(projectType);
 
-    let activityType = new AonSelect();
+    let activityType = new AonNewSelect();
     activityType.title = MSG.ACTIVITY;
     activityType.autocomplete = true;
     activityType.id = "activityType2"+idRandom;
@@ -73,14 +73,14 @@ const buildFormProject = (parent, project, div) => {
     activityType.multiple = true;
     div.appendChild(activityType);
 
-    let workgroup = new AonSelect();
+    let workgroup = new AonNewSelect();
     workgroup.title = MSG.WORKGROUP;
     workgroup.autocomplete = true;
     workgroup.id = "workgroup2"+idRandom;
     workgroup.default = true;
     div.appendChild(workgroup);
 
-    let taskHolder = new AonSelect();
+    let taskHolder = new AonNewSelect();
     taskHolder.title = "Asignar a";
     taskHolder.autocomplete = true;
     taskHolder.id = "taskHolder2"+idRandom;
@@ -235,14 +235,14 @@ const buildFormHolder = (parent, div, holder) => {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 
-    let workgroup = new AonSelect();
+    let workgroup = new AonNewSelect();
     workgroup.title = MSG.WORKGROUP;
     workgroup.autocomplete = true;
     workgroup.id = "workgroup2"+idRandom;
     workgroup.default = true;
     div.appendChild(workgroup);
 
-    let taskHolder = new AonSelect();
+    let taskHolder = new AonNewSelect();
     taskHolder.title = "Asignar a";
     taskHolder.autocomplete = true;
     taskHolder.id = "taskHolder2"+idRandom;
@@ -254,7 +254,7 @@ const buildFormHolder = (parent, div, holder) => {
     datesDiv.style.columnGap = "10px";
     div.appendChild(datesDiv);
 
-    let startDate = new AonDate();
+    let startDate = new AonNewDate();
     startDate.id = "date2startDate"+idRandom;
     startDate.title = "Desde"; 
     startDate.style.width = "50%";
@@ -267,7 +267,7 @@ const buildFormHolder = (parent, div, holder) => {
         startDate.value = AonDateUtils.formatDateOrigin(holder.getStartDate());
     }
 
-    let endDate = new AonDate();
+    let endDate = new AonNewDate();
     endDate.id = "date2EndDate"+idRandom;
     endDate.title = `Hasta (${MSG.OPTIONAL})`; 
     endDate.style.width = "50%";
@@ -389,7 +389,7 @@ const buildDialogActivityType = (parent, type=null, projectTypeId=null) => {
     aonCheckbox.description = "Vincular actividad con:"
     div.appendChild(aonCheckbox);
 
-    let projectType = new AonSelect();
+    let projectType = new AonNewSelect();
     projectType.title = "Tipo de proyecto";
     projectType.autocomplete = true;
     projectType.id = "projectType72";

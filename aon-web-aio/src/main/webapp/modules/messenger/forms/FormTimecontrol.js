@@ -1,6 +1,6 @@
-import { AonDate } from "../../../components/aon-date.js";
+import { AonNewDateDate } from "../../../components/aon-new-date.js";
 import { AonInput } from "../../../components/aon-input.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import { serializeForm, sortBy } from "../../../services/utils.js";
@@ -59,14 +59,14 @@ const createDataForm = (task, form) => {
     taskHolder.style.display = "none"; 
     form.appendChild( taskHolder );
    
-    let times = setAttributes(new AonSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
+    let times = setAttributes(new AonNewSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
     TaskCreationUtils.createDivGrid(form, times, {classes:[CSS.AON_COL_XS_12]})
 
     fillTimeControl(times, data.timeId, taskHolderId);
     if(data.timeId)
         times.setDisabled(CONSTANT.TRUE);
 
-    let date = setAttributes(new AonDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
+    let date = setAttributes(new AonNewDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
     TaskCreationUtils.createDivGrid(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
 

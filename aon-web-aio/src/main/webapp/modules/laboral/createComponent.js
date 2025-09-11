@@ -1,4 +1,4 @@
-import { AonNumber } from "../../components/aon-number.js";
+import { AonNewNumber } from "../../components/aon-new-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
@@ -417,10 +417,10 @@ const partTime = (divH) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
-    let numberC = setAttributes(new AonNumber(),{
+    let numberC = setAttributes(new AonNewNumber(),{
         id:"horas_convenio", 
         name:"horas_convenio", 
-        description:"Hrs/convenio",
+        title:"Hrs/convenio",
         format:CONSTANT.TRUE,
         decimals:"2"
     })
@@ -429,9 +429,9 @@ const partTime = (divH) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
-    numberC = setAttributes(new AonNumber(),{
+    numberC = setAttributes(new AonNewNumber(),{
         id:"horas", 
-        description:MSG.HOURS,
+        title:MSG.HOURS,
         format:CONSTANT.TRUE,
         decimals:"2"
     })
@@ -439,10 +439,10 @@ const partTime = (divH) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
-    numberC = setAttributes(new AonNumber(),{
+    numberC = setAttributes(new AonNewNumber(),{
         id:"coef", 
         name:"coef",
-        description:"Coef. Parcial"
+        title:"Coef. Parcial"
     })
     divC.appendChild(numberC);
     addSpanDecimal(numberC);

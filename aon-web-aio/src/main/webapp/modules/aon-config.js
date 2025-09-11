@@ -64,7 +64,7 @@ export class AonConfig extends AonElement {
         let configContentIndexSpan = this.createDiv();
         configContentIndexSpan.className = CSS.AON_CARD_TEXT;
         configContentIndexSpan.classList.add("aonHelpSpan2");
-        configContentIndexSpan.innerHTML = "Cofiguración Datos de Empresa";
+        configContentIndexSpan.innerHTML = "Cofiguraciï¿½n Datos de Empresa";
         configDiv.appendChild(configContentIndexSpan);
         this.appendChild(configDiv);
 
@@ -149,7 +149,7 @@ export class AonConfig extends AonElement {
     div.appendChild(this.buildLanguageData(MSG.DEUTSCH, Language.DEUTSCH));
     div.appendChild(this.buildLanguageData(MSG.BASQUE, Language.BASQUE));
     div.appendChild(this.buildLanguageData(MSG.CATALAN, Language.CATALAN));
-    div.appendChild(this.buildLanguageData(MSG.BASQUE, Language.GALICIAN));
+    div.appendChild(this.buildLanguageData(MSG.GALICIAN, Language.GALICIAN));
     return div;    
   }
   

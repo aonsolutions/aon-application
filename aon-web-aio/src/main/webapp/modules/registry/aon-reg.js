@@ -4,7 +4,7 @@ import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 import {COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input';
 import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
@@ -16,20 +16,19 @@ import { Address } from '../../models/registry/Address.js';
 import { getReader } from '../../services/utils.js';
 import { deleteAttach, getAttach, uploadAttach } from '../../services/fileService.js';
 import { Countries } from '../../services/country.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonTab } from '../../components/aon-tab.js';
 import { Bank } from './bank/Bank.js';
 import { AonIban } from '../../components/aon-iban.js';
-import { AonNumber } from '../../components/aon-number.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
-import { AonDate } from '../../components/aon-date.js';
+import { AonNewDate } from '../../components/aon-new-date';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { getCompanyBanks } from '../../services/companyService.js';
 
 export class AonReg extends AonElement {
-
 	registry;
 	type; 
 	showLogo;
@@ -262,16 +261,16 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let nameInput = new AonInput();
+		let nameInput = new AonNewInput();
 		nameInput.id = 'aonConfigurationGeneralName';
-		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
+		nameInput.title = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
 		nameInput.value = this.registry.getName();
 		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
 		table.addCell(nameInput, 3);
 
 		table.addRow();
 
-		let countryInput = new AonSelect();
+		let countryInput = new AonNewSelect();
 		countryInput.id = 'aonConfigurationGeneralCountry';
 		countryInput.title = MSG.COUNTRY;
 		countryInput.options = JSON.stringify(
@@ -285,18 +284,18 @@ export class AonReg extends AonElement {
 		let countryTd = table.addCell(countryInput);
 		countryTd.style.width = '20%';
 
-		let documentInput = new AonInput();
+		let documentInput = new AonNewInput();
 		documentInput.id = 'aonConfigurationGeneralNif';
-		documentInput.description = MSG.NIF;
+		documentInput.title = MSG.NIF;
 		documentInput.value = this.registry.getDocument();
 		documentInput.addEventListener(EVENT.CHANGE, () => this.registry.setDocument(documentInput.value));
 
 		let td = table.addCell(documentInput);
 		td.style.width = '25%';
 
-		let aliasInput = new AonInput();
+		let aliasInput = new AonNewInput();
 		aliasInput.id = 'aonConfigurationGeneralAlias';
-		aliasInput.description = MSG.COMMERCIAL_NAME + ' / ' + MSG.ALIAS;
+		aliasInput.title = MSG.COMMERCIAL_NAME + ' / ' + MSG.ALIAS;
 		aliasInput.value = this.registry.getAlias();
 		aliasInput.addEventListener(EVENT.CHANGE, () => this.registry.setAlias(aliasInput.value));
 		let td1 = table.addCell(aliasInput);
@@ -482,7 +481,7 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let paymethodSelect = new AonSelect();
+		let paymethodSelect = new AonNewSelect();
 		paymethodSelect.setAlias('id', 'name');
 		paymethodSelect.id = this.PAYMETHOD_PAYMETHOD;
 		paymethodSelect.title = MSG.PAYMETHOD;
@@ -494,7 +493,7 @@ export class AonReg extends AonElement {
 		let banks = (this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')
 			? [] : this.registry.getBanks();
 
-		let bankSelect = new AonSelect()
+		let bankSelect = new AonNewSelect()
 		bankSelect.id = this.PAYMETHOD_BANK;
 		bankSelect.title = MSG.BANK_ACCOUNT;
 		bankSelect.setAlias('id', 'fullName');
@@ -541,30 +540,30 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let numPayNumber = new AonNumber();
+		let numPayNumber = new AonNewNumber();
 		numPayNumber.id = this.PAYMETHOD_NUMPAY;
-		numPayNumber.description = 'Nº Pagos';
+		numPayNumber.title = 'Nº Pagos';
 		numPayNumber.value = this.registry.getPaymethod().getNumberOfPymnts();
 		numPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setNumberOfPymnts(numPayNumber.value));
 		table.addCell(numPayNumber, 1);
 
-		let firstPayNumber = new AonNumber();
+		let firstPayNumber = new AonNewNumber();
 		firstPayNumber.id = this.PAYMETHOD_FIRSTPAY;
-		firstPayNumber.description = 'Días 1º Pago';
+		firstPayNumber.title = 'Días 1º Pago';
 		firstPayNumber.value = this.registry.getPaymethod().getDaysToFirstPymnt();
 		firstPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setDaysToFirstPymnt(firstPayNumber.value));
 		table.addCell(firstPayNumber, 1);
 
-		let betweenPayNumber = new AonNumber();
+		let betweenPayNumber = new AonNewNumber();
 		betweenPayNumber.id = this.PAYMETHOD_BETWEENPAY;
-		betweenPayNumber.description = 'Días entre Pagos';
+		betweenPayNumber.title = 'Días entre Pagos';
 		betweenPayNumber.value = this.registry.getPaymethod().getDaysBetweenPymnts();
 		betweenPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setDaysBetweenPymnts(betweenPayNumber.value));
 		table.addCell(betweenPayNumber, 1);
 
-		let payDayInput = new AonInput();
+		let payDayInput = new AonNewInput();
 		payDayInput.id = this.PAYMETHOD_PAYDAY;
-		payDayInput.description = 'Días Pago';
+		payDayInput.title = 'Días Pago';
 		payDayInput.value = this.registry.getPaymethod().getPymntDays();
 		payDayInput.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setPymntDays(payDayInput.value));
 		table.addCell(payDayInput, 1);		
@@ -585,9 +584,9 @@ export class AonReg extends AonElement {
 		div.appendChild(table);
 
 		table.addRow();
-		let description = new AonInput()
+		let description = new AonNewInput()
 		description.id = this.REGISTRAL_DESCRIPTION;
-		description.description = MSG.DESCRIPTION;
+		description.title = MSG.DESCRIPTION;
 		description.value = this.registry.getRecordData().getDescription();
 		description.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setDescription(description.value);
@@ -596,7 +595,7 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let creationDate = new AonDate();
+		let creationDate = new AonNewDate();
 		creationDate.id = this.REGISTRAL_CREATION_DATE;
 		creationDate.value = this.registry.getRecordData().getCreationDate();
 		creationDate.title = MSG.CREATION_DATE;
@@ -606,7 +605,7 @@ export class AonReg extends AonElement {
 		});
 		table.addCell(creationDate, 2);
 
-		let recordDate = new AonDate();
+		let recordDate = new AonNewDate();
 		recordDate.id = this.REGISTRAL_RECORD_DATE;
 		recordDate.title = MSG.REGISTRATION_DATE;
 		recordDate.value = this.registry.getRecordData().getRecordDate();
@@ -618,9 +617,9 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 		
-		let notary = new AonInput()
+		let notary = new AonNewInput()
 		notary.id = this.REGISTRAL_NOTARY;
-		notary.description = MSG.NOTARY;
+		notary.title = MSG.NOTARY;
 		notary.value = this.registry.getRecordData().getNotary();
 		notary.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setNotary(notary.value);
@@ -629,18 +628,18 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let protocol = new AonInput()
+		let protocol = new AonNewInput()
 		protocol.id = this.REGISTRAL_PROTOCOL_NUMBER;
-		protocol.description = MSG.PROTOCOL;
+		protocol.title = MSG.PROTOCOL;
 		protocol.value = this.registry.getRecordData().getNumber();
 		protocol.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setNumber(protocol.value);
 		});
 		table.addCell(protocol, 1);
 
-		let inscription = new AonInput()
+		let inscription = new AonNewInput()
 		inscription.id = this.REGISTRAL_INSCRIPTION;
-		inscription.description = MSG.INSCRIPTION;
+		inscription.title = MSG.INSCRIPTION;
 		inscription.value = this.registry.getRecordData().getRegistration();
 		inscription.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setRegistration(inscription.value);
@@ -649,36 +648,36 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
-		let tomo = new AonInput()
+		let tomo = new AonNewInput()
 		tomo.id = this.REGISTRAL_TOMO;
-		tomo.description = MSG.VOLUME;
+		tomo.title = MSG.VOLUME;
 		tomo.value = this.registry.getRecordData().getVolume();
 		tomo.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setVolume(tomo.value);
 		});
 		table.addCell(tomo, 1);
 
-		let section = new AonInput()
+		let section = new AonNewInput()
 		section.id = this.REGISTRAL_SECTION;
-		section.description = MSG.SECTION;
+		section.title = MSG.SECTION;
 		section.value = this.registry.getRecordData().getSection();
 		section.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setSection(section.value);
 		});
 		table.addCell(section, 1);
 
-		let folio = new AonInput()
+		let folio = new AonNewInput()
 		folio.id = this.REGISTRAL_FOLIO;
-		folio.description = MSG.FOLIO;
+		folio.title = MSG.FOLIO;
 		folio.value = this.registry.getRecordData().getPage();
 		folio.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setPage(folio.value);
 		});
 		table.addCell(folio, 1);
 
-		let hoja = new AonInput()
+		let hoja = new AonNewInput()
 		hoja.id = this.REGISTRAL_HOJA;
-		hoja.description = MSG.SHEET;
+		hoja.title = MSG.SHEET;
 		hoja.value = this.registry.getRecordData().getSheet();
 		hoja.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setSheet(hoja.value);
@@ -853,9 +852,9 @@ export class AonReg extends AonElement {
 		if(!email.isRemoved()) {
 			let rowNum = table.addRow();
 
-			let aonInput = new AonInput();
+			let aonInput = new AonNewInput();
 			aonInput.id = this.EMAIL_INPUT + i;
-			aonInput.description = MSG.EMAIL + ' ' + (this.emails.length > 1 ? i + 1 : '');
+			aonInput.title = MSG.EMAIL + ' ' + (this.emails.length > 1 ? i + 1 : '');
 			aonInput.value = email.getValue();
 			aonInput.addEventListener(EVENT.CHANGE, () => this.emails[i].setValue(aonInput.value));
 
@@ -922,16 +921,16 @@ export class AonReg extends AonElement {
 		if(!phone.isRemoved()){
 			let rowNum = table.addRow();
 	
-			let aonInput = new AonInput();
+			let aonInput = new AonNewInput();
 			aonInput.id = this.PHONE_INPUT + i;
-			aonInput.description = MSG.PHONE + ' ' + (this.phones.length > 1 ? i + 1 : '');
+			aonInput.title = MSG.PHONE + ' ' + (this.phones.length > 1 ? i + 1 : '');
 			aonInput.value = phone.getValue();
 	
 			aonInput.addEventListener(EVENT.CHANGE, () => this.phones[i].setValue(aonInput.value));
 
-			let aonCommentInput = new AonInput();
+			let aonCommentInput = new AonNewInput();
 			aonCommentInput.id = this.PHONE_COMMENT_INPUT + i;
-			aonCommentInput.description = MSG.COMMENT + ' ' + (this.phones.length > 1 ? i + 1 : '');
+			aonCommentInput.title = MSG.COMMENT + ' ' + (this.phones.length > 1 ? i + 1 : '');
 			aonCommentInput.value = phone.getComment();
 	
 			aonCommentInput.addEventListener(EVENT.CHANGE, () => this.phones[i].setComment(aonCommentInput.value));
@@ -1033,7 +1032,7 @@ export class AonReg extends AonElement {
 
 		const rowCount = table.getRowsCount();
 		
-		let segment = new AonSelect();
+		let segment = new AonNewSelect();
 		segment.id = "selectSegment" + rowNum;
 		segment.title = "Segmento";
 		segment.autocomplete = true;
@@ -1116,9 +1115,9 @@ export class AonReg extends AonElement {
 		if(!web.isRemoved()){
 			let rowNum = table.addRow();
 	
-			let aonInput = new AonInput();
+			let aonInput = new AonNewInput();
 			aonInput.id = this.WEB_INPUT + i;
-			aonInput.description = MSG.WEB + ' ' + (this.webs.length > 1 ? i + 1 : '');
+			aonInput.title = MSG.WEB + ' ' + (this.webs.length > 1 ? i + 1 : '');
 			aonInput.value = web.getValue();
 	
 			aonInput.addEventListener(EVENT.CHANGE, () => this.webs[i].setValue(aonInput.value));

@@ -10,11 +10,11 @@ import { saveTastHolder, getTaskHolderWorkGroups } from "../../../services/taskH
 import { TaskHolder } from "../../../models/registry/TaskHolder.js";
 import { AonCard } from "../../../components/aon-card.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { getWorkgroups } from "../../../services/workgroupService.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { Workgroup } from "../../../models/project/Workgroup.js";
-import { AonInput } from "../../../components/aon-input.js";
+import { AonNewInput } from "../../../components/aon-new-input";
 import { AonTaskholderWorkgroupList } from "./aon-taskholder-workgroup-list.js";
 
 export class AonTaskHolder extends AonReg {
@@ -75,18 +75,18 @@ export class AonTaskHolder extends AonReg {
 
     table.addRow();
 
-    let nameInput = new AonInput();
+    let nameInput = new AonNewInput();
     nameInput.id = "aonConfigurationGeneralName";
-    nameInput.description = MSG.NAME;
+    nameInput.title = MSG.NAME;
     nameInput.value = this.registry.getName();
     nameInput.addEventListener(EVENT.CHANGE, () =>
       this.registry.setName(nameInput.value)
     );
     table.addCell(nameInput);
 
-    let documentInput = new AonInput();
+    let documentInput = new AonNewInput();
     documentInput.id = "aonConfigurationGeneralNif";
-    documentInput.description = MSG.NIF;
+    documentInput.title = MSG.NIF;
     documentInput.value = this.registry.getDocument();
     documentInput.addEventListener(EVENT.CHANGE, () =>
       this.registry.setDocument(documentInput.value)
@@ -171,7 +171,7 @@ export class AonTaskHolder extends AonReg {
 
     const rowCount = table.getRowsCount();
 
-    let workgroupSelect = new AonSelect();
+    let workgroupSelect = new AonNewSelect();
     workgroupSelect.id = "selectworkgroupSelect" + rowNum;
     workgroupSelect.title = MSG.WORKGROUP + " " + rowNum;
     workgroupSelect.autocomplete = true;

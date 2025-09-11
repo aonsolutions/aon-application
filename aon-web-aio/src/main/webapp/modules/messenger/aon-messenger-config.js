@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { EVENT, MSG, TAG, CSS, COLORS } from "../../environments/environments.js";
 import * as ACTION from '../actions.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { setAttributes, setStyles } from '../../services/utilsComponents.js';
 import { AonCard } from '../../components/aon-card.js';
@@ -111,10 +111,10 @@ export class AonMessengerConfig extends AonElement {
     
     const {APP_REQUESTS_INT_WORKGROUP, APP_REQUESTS_INT_TASK_HOLDER , APP_REQUESTS_INT_OPENED, APP_REQUESTS_INT_CLOSED,  APP_REQUESTS_INT_EMAIL_OPENED, APP_REQUESTS_INT_EMAIL_CLOSED, APP_REQUESTS_INT_EMAIL_ASSIGN, APP_REQUESTS_INT_COMMENT, APP_REQUESTS_INT_ASSIGN} = APP_PARAMS_REQUEST;
 
-    let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_INT_WORKGROUP, default:true});
+    let workgroup = setAttributes(new AonNewSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_INT_WORKGROUP, default:true});
     divContent.appendChild(workgroup);
 
-    let taskHolder = setAttributes(new AonSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_INT_TASK_HOLDER, default:true});
+    let taskHolder = setAttributes(new AonNewSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_INT_TASK_HOLDER, default:true});
     divContent.appendChild(taskHolder);
 
 
@@ -181,10 +181,10 @@ export class AonMessengerConfig extends AonElement {
 
     const {APP_REQUESTS_EMAIL_RATING, APP_REQUESTS_EXT_WORKGROUP, APP_REQUESTS_EXT_TASK_HOLDER , APP_REQUESTS_EXT_OPENED, APP_REQUESTS_EXT_CLOSED, APP_REQUESTS_EXT_EMAIL_OPENED, APP_REQUESTS_EXT_EMAIL_CLOSED, APP_REQUESTS_EXT_COMMENT, APP_REQUESTS_EXT_ASSIGN, APP_REQUESTS_EMAIL_RATING_CLOSED} = APP_PARAMS_REQUEST;
 
-    let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_EXT_WORKGROUP, default:true});
+    let workgroup = setAttributes(new AonNewSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_EXT_WORKGROUP, default:true});
     divContent.appendChild(workgroup);
 
-    let taskHolder = setAttributes(new AonSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_EXT_TASK_HOLDER, default:true});
+    let taskHolder = setAttributes(new AonNewSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_EXT_TASK_HOLDER, default:true});
     divContent.appendChild(taskHolder);
 
 

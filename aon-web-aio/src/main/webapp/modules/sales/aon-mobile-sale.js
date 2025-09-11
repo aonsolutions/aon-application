@@ -9,9 +9,9 @@ import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/env
 
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 
-import { AonNumber } from '../../components/aon-number.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialog } from '../../components/aon-dialog.js';
@@ -173,7 +173,7 @@ export class AonMobileSale extends AonElement {
 			});
 		} else {
 			table.addRow();
-			let deliverySelect = new AonSelect();
+			let deliverySelect = new AonNewSelect();
 			deliverySelect.id = this.id + 'DialogDelivery';
 			deliverySelect.title = MSG.DELIVERY;
 			deliverySelect.addEventListener(EVENT.SELECT, () => {
@@ -210,7 +210,7 @@ export class AonMobileSale extends AonElement {
 
 	buildNewDelivery(table, detail) {
 		table.addRow();
-		let deliverySelect = new AonSelect();
+		let deliverySelect = new AonNewSelect();
 		deliverySelect.id = this.id + 'DialogDelivery';
 		deliverySelect.title = MSG.DELIVERY;
 		deliverySelect.disabled = true;
@@ -296,7 +296,7 @@ export class AonMobileSale extends AonElement {
 
 	buildNewPackaging(table, detail) {
 		table.addRow();
-		let envaseSelect = new AonSelect();
+		let envaseSelect = new AonNewSelect();
 		envaseSelect.id = this.id + 'DialogEnvase';
 		envaseSelect.title = 'Nuevo Envase';
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
@@ -467,7 +467,7 @@ export class AonMobileSale extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;
@@ -481,9 +481,9 @@ export class AonMobileSale extends AonElement {
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
+		let number = new AonNewNumber();
 		number.id = id;
-		number.description = title;
+		number.title = title;
 		return number;
 	}
 }

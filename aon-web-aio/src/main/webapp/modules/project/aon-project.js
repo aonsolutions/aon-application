@@ -10,7 +10,7 @@ import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonRegistry } from '../../components/aon-registry.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { getProjectTypes, saveProject, deleteProject } from '../../services/projectService.js';
 
 import { getWorkgroups } from '../../services/workgroupService.js';
@@ -206,7 +206,7 @@ export class AonProject extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;

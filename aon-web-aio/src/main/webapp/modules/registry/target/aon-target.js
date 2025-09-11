@@ -9,7 +9,7 @@ import {
   TAG,
 } from "../../../environments/environments.js";
 import { AonCard } from "../../../components/aon-card.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
@@ -87,7 +87,7 @@ export class AonTarget extends AonReg {
 
     table.addRow();
 
-    let scope = new AonSelect();
+    let scope = new AonNewSelect();
     scope.id = "selectScope";
     scope.title = MSG.SCOPE;
     scope.autocomplete = true;
@@ -133,7 +133,7 @@ export class AonTarget extends AonReg {
 
     table.addRow();
 
-    let transaction = new AonSelect();
+    let transaction = new AonNewSelect();
     transaction.id = this.FISCAL_TRANSACTION;
     transaction.title = MSG.TRANSACTION_TYPE;
     transaction.options = JSON.stringify(Transactions);
@@ -433,7 +433,7 @@ export class AonTarget extends AonReg {
     div.style.marginTop = "10px";
     dialog.setContent(div);
 
-    let selectCompany = new AonSelect();
+    let selectCompany = new AonNewSelect();
     selectCompany.id = "selectCompany";
     selectCompany.title = MSG.COMPANY;
     selectCompany.autocomplete = true;

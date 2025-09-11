@@ -13,8 +13,8 @@ import {
   getTaskHolderWorkGroups,
   saveTaskHolderWorkGroups,
 } from "../../../services/taskHolderService.js";
-import { AonDate } from "../../../components/aon-date.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { getWorkgroups } from "../../../services/workgroupService.js";
 import { AonElement } from "../../../components/AonElement.js";
 
@@ -260,24 +260,24 @@ export class AonTaskholderWorkgroupList extends AonElement {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 
-    let workgroupSelect = new AonSelect();
+    let workgroupSelect = new AonNewSelect();
     workgroupSelect.title = MSG.WORKGROUP;
     workgroupSelect.autocomplete = true;
     workgroupSelect.id = "workgroupSelect2" + idRandom;
     div.appendChild(workgroupSelect);
 
-    let taskHolderWorkgroupType = new AonSelect();
+    let taskHolderWorkgroupType = new AonNewSelect();
     taskHolderWorkgroupType.title = "Tipo Usuario";
     taskHolderWorkgroupType.autocomplete = true;
     taskHolderWorkgroupType.id = "taskHolderWorkgroupType2" + idRandom;
     div.appendChild(taskHolderWorkgroupType);
 
-    let startDate = new AonDate();
+    let startDate = new AonNewDate();
     startDate.title = "F. Inicio";
     startDate.id = "startDate2" + idRandom;
     div.appendChild(startDate);
 
-    let endDate = new AonDate();
+    let endDate = new AonNewDate();
     endDate.title = "F. Fin";
     endDate.id = "endDate2" + idRandom;
     div.appendChild(endDate);

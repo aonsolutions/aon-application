@@ -24,6 +24,7 @@ button {
   display         : $btn-display;
   justify-content : $btn-text-align;
   text-align      : $btn-text-align;
+  align-items     : $btn-text-align;
   gap             : $btn-gap;
   text-transform  : $text-transform-l;
   &::first-letter{

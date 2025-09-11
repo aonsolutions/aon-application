@@ -1,7 +1,7 @@
 import { AonReg } from '../aon-reg.js';
 import { EVENT, MSG, TAG } from '../../../environments/environments.js'; 
 import { AonCard } from '../../../components/aon-card.js';
-import { AonSelect } from '../../../components/aon-select.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { AonSwitch } from '../../../components/aon-switch.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { Transactions } from '../../../services/transaction.js';
@@ -48,7 +48,7 @@ export class AonSupplier extends AonReg {
 
 		table.addRow();
 
-		let transaction = new AonSelect()
+		let transaction = new AonNewSelect()
 		transaction.id = this.FISCAL_TRANSACTION;
 		transaction.title = MSG.TRANSACTION_TYPE;
 		transaction.options = JSON.stringify(Transactions);

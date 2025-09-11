@@ -1,6 +1,6 @@
 import { AonCard } from "../../../components/aon-card.js";
 import { AonInput } from "../../../components/aon-input.js";
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonTextareaEditor } from "../../../components/aon-textarea-editor.js";
@@ -397,21 +397,21 @@ const checkProperties = (properties) => {
 }
 
 //----------------TYPE REQUEST CAU 
-const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
+const createSelectCau = (name, id, title) => setAttributes( new AonNewSelect(),{
   name,
   id,
   title,
 });
 
 //----------------TYPE REQUEST   
-const createRequestType = () =>setAttributes( new AonSelect(),{
+const createRequestType = () =>setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
   name: MESSENGER_IDS.SOURCE_TASK,
   title: MSG.TYPE_REQUEST
 });
 
 //----------------WORKGROUP   
-const createWorkgroup = () =>setAttributes( new AonSelect(),{
+const createWorkgroup = () =>setAttributes( new AonNewSelect(),{
     id: MESSENGER_IDS.WORKGROUP,
     name: MESSENGER_IDS.WORKGROUP,
     title: MSG.WORKGROUP,
@@ -419,14 +419,14 @@ const createWorkgroup = () =>setAttributes( new AonSelect(),{
 });
 
 //----------------PROCESS
-const createProcessType = () =>setAttributes( new AonSelect(),{
+const createProcessType = () =>setAttributes( new AonNewSelect(),{
     id: MESSENGER_IDS.PROCESS_TYPE,
     name: MESSENGER_IDS.PROCESS_TYPE,
     title: MSG.PROCESS_TYPE
 });
 
  //-----------------TASK HOLDER
-const createTaskHolder = () => setAttributes( new AonSelect(),{
+const createTaskHolder = () => setAttributes( new AonNewSelect(),{
     id: MESSENGER_IDS.TASKHOLDER,
     name: MESSENGER_IDS.TASKHOLDER,
     title: "Asignar a", // TODO
@@ -434,14 +434,14 @@ const createTaskHolder = () => setAttributes( new AonSelect(),{
 });
 
  //-----------------TAG
-const createTaskTag = () => setAttributes( new AonSelect(),{
+const createTaskTag = () => setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.TASKTAG,
   name: MESSENGER_IDS.TASKTAG,
   title: MSG.TAG
 });
 
  //-----------------CUSTOMER
-const createCustomer = () => setAttributes( new AonSelect(),{
+const createCustomer = () => setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.CUSTOMER,
@@ -450,7 +450,7 @@ const createCustomer = () => setAttributes( new AonSelect(),{
 });
 
  //-----------------PROJECT
-const createProject = () => setAttributes( new AonSelect(),{
+const createProject = () => setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: "Receptor", // TODO
@@ -458,7 +458,7 @@ const createProject = () => setAttributes( new AonSelect(),{
 });
 
  //-----------------ADVISORY
-const createAdvisory = () => setAttributes( new AonSelect(),{
+const createAdvisory = () => setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.ADVISORY_TASK,
   name: MESSENGER_IDS.ADVISORY_TASK,
   title: "Asesoria", // TODO

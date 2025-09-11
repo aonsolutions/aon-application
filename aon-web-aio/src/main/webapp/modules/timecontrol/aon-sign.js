@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
@@ -91,7 +91,7 @@ export class AonSign extends AonElement {
 //      company.style.width = '200px';
       this.appendChild(company);
 
-      let select = new AonSelect();
+      let select = new AonNewSelect();
       select.id = this.AON_SIGN +'Select2';
       select.title = MSG.COMPANY;
       select.setOptions(this._taskHolders.map(c => ({value: c.id, name: c.company}) ) );

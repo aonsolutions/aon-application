@@ -1,6 +1,6 @@
 
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
-import { AonDate } from "../../../components/aon-date.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { saveVacation } from "../../../services/contractService.js";
@@ -101,7 +101,7 @@ const addDates = (table, i, data={}) =>{
     const rowIndex = table.addRow(); // ----- RETURN ROW INDEX
     
     //DATE INI
-    let startDate = setAttributes(new AonDate(),{
+    let startDate = setAttributes(new AonNewDate(),{
         id:"startDate" + i,
         title:MSG.START_DATE,
     });
@@ -110,7 +110,7 @@ const addDates = (table, i, data={}) =>{
     startDate.value = data.startDate || AonDateUtils.formatDateOrigin(new Date());
 
     //DATE END
-    let endDate = setAttributes(new AonDate(),{
+    let endDate = setAttributes(new AonNewDate(),{
         id: "endDate" + i,
         title:MSG.END_DATE
     });

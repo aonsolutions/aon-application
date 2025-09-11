@@ -1,5 +1,5 @@
 
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonButton } from '../../components/aon-button.js';
 import { AonSimpleList } from '../../components/aon-simple-list.js';
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -134,7 +134,7 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 		let div = document.createElement(TAG.DIV);
 		div.style.padding = "12px";
 	
-		let selectCompany   = new AonSelect();
+		let selectCompany   = new AonNewSelect();
 		selectCompany.id    = "selectCompany"+ customer.id;
 		selectCompany.title = MSG.COMPANY;
 		selectCompany.autocomplete = true;

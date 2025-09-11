@@ -14,8 +14,7 @@ import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
 import { setStyles } from "../../../../services/utilsComponents.js";
 import { AonBasicTable } from "../../../../components/aon-basic-table.js";
-import { AonSelect } from "../../../../components/aon-select.js";
-
+import { aonSelect } from "../../../../components/aon-new-select.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -372,7 +371,7 @@ export class AonEventAdd extends AonElement {
         const parent = name.parentNode;
         name.remove();
 
-        let aonSelect = new AonSelect();
+        let aonSelect = new AonNewSelect();
         aonSelect.id = aonSelect.name = "task_holder";
         aonSelect.title = MSG.EMPLOYEE;
         aonSelect.autocomplete = true;

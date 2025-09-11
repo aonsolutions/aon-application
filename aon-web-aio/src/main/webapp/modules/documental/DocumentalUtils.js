@@ -1,5 +1,4 @@
 import { AonDialog } from "../../components/aon-dialog.js";
-import { AonSelect } from "../../components/aon-select.js";
 import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonNewDate } from "../../components/aon-new-date.js";
 import { EVENT, MSG, CONSTANT } from "../../environments/environments.js";
@@ -78,7 +77,7 @@ function oldDocumentalSelects(dur) {
 	let tdCategory = document.createElement('td');
 	tdCategory.setAttribute('colspan', '1');
 
-	let selCat = new AonSelect();
+	let selCat = new AonNewSelect();
 	selCat.id = "aonDocumentalUploadCategory";
 	selCat.title = MSG.CATEGORY;
 	tdCategory.appendChild(selCat);
@@ -99,7 +98,7 @@ function oldDocumentalSelects(dur) {
 	let tdScope = document.createElement('td');
 	tdScope.setAttribute('colspan', '1');
 
-	let selScp = new AonSelect();
+	let selScp = new AonNewSelect();
 	selScp.id = "aonDocumentalUploadScope";
 	selScp.title = MSG.SCOPE;
 	tdScope.appendChild(selScp);
@@ -120,7 +119,7 @@ function oldDocumentalSelects(dur) {
 	// TAG
 	let tdTag = document.createElement('td');
 	tdTag.setAttribute('colspan', '1');
-	let selTag = new AonSelect();
+	let selTag = new AonNewSelect();
 	selTag.id = "aonDocumentalUploadTag";
 	selTag.title = MSG.TAG;
 	tdTag.appendChild(selTag);
@@ -141,7 +140,7 @@ function oldDocumentalSelects(dur) {
 	// TYPE
 	let tdType = document.createElement('td');
 	tdType.setAttribute('colspan', '1');
-	let selType = new AonSelect();
+	let selType = new AonNewSelect();
 	selType.id = "aonDocumentalUploadType";
 	selType.title = MSG.TYPE;
 

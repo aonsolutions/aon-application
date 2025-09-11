@@ -1,5 +1,5 @@
-import { AonSelect } from '../../../../components/aon-select.js';
 import { AonElement } from '../../../../components/AonElement.js';
+import { AonNewSelect } from '../../../../components/aon-new-select.js';
 import { EVENT, MSG } from '../../../../environments/environments.js';
 import { getProducts } from '../../../../services/productService.js';
 import { Product } from '../../../../models/product/Product.js';
@@ -95,7 +95,7 @@ export class AonTargetProductAdd extends AonElement {
 	}
 
 	buildSelectProduct(){
-		this.PRODUCT_SELECT = new AonSelect();
+		this.PRODUCT_SELECT = new AonNewSelect();
 		this.PRODUCT_SELECT.title = MSG.PRODUCTS;
 		this.PRODUCT_SELECT.id = this.id+"product";
 		this.PRODUCT_SELECT.autocomplete = true;
@@ -145,7 +145,7 @@ export class AonTargetProductAdd extends AonElement {
 	}
 
 	buildSelectStatus(){
-		this.STATUS_SELECT = new AonSelect();
+		this.STATUS_SELECT = new AonNewSelect();
 		this.STATUS_SELECT.title = MSG.STATUS;
 		this.STATUS_SELECT.id = this.id+"status";
 		this.STATUS_SELECT.default = true;

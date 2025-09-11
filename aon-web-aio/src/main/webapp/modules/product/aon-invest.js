@@ -1,9 +1,9 @@
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonCard } from '../../components/aon-card.js';
-import { AonDate } from '../../components/aon-date.js';
+import { AonNewDate } from '../../components/aon-new-date.js';
 import { AonInput } from '../../components/aon-input.js';
-import { AonNumber } from '../../components/aon-number.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import {AonElement} from '../../components/AonElement.js';
 import { TAG, CONSTANT, MSG, EVENT } from '../../environments/environments.js';
@@ -214,7 +214,7 @@ export class AonInvest extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;
@@ -228,16 +228,16 @@ export class AonInvest extends AonElement {
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
+		let number = new AonNewNumber();
 		number.id = id;
-		number.description = title;
+		number.title = title;
 		number.format = CONSTANT.TRUE;
 		number.decimals = "2";
 		return number;
 	}
 
 	createDate(id, title) {
-		let date = new AonDate();
+		let date = new AonNewDate();
 		date.id = id;
 		date.title = title;
 		return date;

@@ -1,6 +1,6 @@
 import { MSG, TAG } from "../../../environments/environments.js";
 
-import { AonSelect } from "../../../components/aon-select.js";
+import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { APRIL, AUGUST, DECEMBER, FEBRUARY, JANUARY, JULY, JUNE, MARCH, MAY, NOVEMBER, OCTOBER, SEPTEMBER } from "../../../environments/msg.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
@@ -89,7 +89,7 @@ const createContent = (type="")=> {
 }
 
 const createSelect = (id, title) => {
-  const aonSelect = new AonSelect();
+  const aonSelect = new AonNewSelect();
   aonSelect.id = id;
   aonSelect.title = title;
   aonSelect.style.margin = "5px";
