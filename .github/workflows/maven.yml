@@ -191,6 +191,7 @@ jobs:
         127.0.0.1    home-payroll-test.aonsolutions.org
         127.0.0.1    agrarian-payroll-test.aonsolutions.org
         127.0.0.1    general-payroll-test.aonsolutions.org
+        127.0.0.1    inactiva-payroll-test.aonsolutions.org
         127.0.0.1    trainning-payroll-test.aonsolutions.org
         EOF
 
