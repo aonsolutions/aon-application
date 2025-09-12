@@ -106,6 +106,8 @@ public class AccountAppParamsController implements Serializable {
 	
 	private Account accDefDuaVatAccount;
 	private Account accDefDuaDutyAccount;
+	private Account accDefPrepaymentAccount;
+	
 	
 	private Item ocrDefaultItem;
 
@@ -187,6 +189,8 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccDirectTaxAdjustAccount();
 		initializeAccDefDuaVatAccount();
 		initializeAccDefDuaDutyAccount();
+		initializeAccDefPrepaymentAccount();
+		
 		
 		try {
 			Item defaultOcrItem = initializeItem(AppParam.OCR_DEFAULT_ITEM);
@@ -562,6 +566,22 @@ public class AccountAppParamsController implements Serializable {
 	public void setAccDefDuaDutyAccount(Account accDefDuaDutyAccount) {
 		this.accDefDuaDutyAccount = accDefDuaDutyAccount;
 		putAccount(AppParam.ACC_DEF_DUA_DUTY_ACC,accDefDuaDutyAccount);
+	}
+
+	private void initializeAccDefPrepaymentAccount() {
+		try {
+			setAccDefPrepaymentAccount( initializeAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefDuaDutyAccount( new Account() );	
+		}
+	}
+	public Account getAccDefPrepaymentAccount() {
+		return accDefPrepaymentAccount;
+	}
+	public void setAccDefPrepaymentAccount(Account accDefPrepaymentAccount) {
+		this.accDefPrepaymentAccount = accDefPrepaymentAccount;
+		putAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC,accDefPrepaymentAccount);
 	}
 
 	public Item getOcrDefaultItem() {
