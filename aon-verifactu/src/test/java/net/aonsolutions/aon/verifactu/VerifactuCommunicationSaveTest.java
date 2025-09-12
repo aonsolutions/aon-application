@@ -18,8 +18,10 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
@@ -176,6 +179,9 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 					assertDataRequest(i, response);
 					assertInvoiceData(i);
 					assertInvoiceInfo(i);
+					assertInvoiceCommunication(i);
+					assertCommunicationHistory(i);		
+
 			});
 			return inv;
 		});
@@ -281,4 +287,44 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(huella.getValue());
 	}
 	
+	private void assertInvoiceCommunication(Invoice i) {
+		Invoice inv = InvoiceDAO.getFullInvoice(ctx, i.getId());
+		assertNotNull(inv);
+		assertNotNull(inv.getId());
+		assertNotNull(inv.getCommunicationInfo());
+		assertTrue(AonCollectionUtils.isNotEmpty( inv.getCommunicationInfo()));
+		assertNotNull(inv.getVerifactuInfo());
+		assertTrue(inv.getVerifactuInfo().isPresent());
+		InvoiceInfo invoiceInfo = inv.getVerifactuInfo().get();
+		assertNotNull(invoiceInfo);
+		assertNotNull(invoiceInfo.getId());
+		assertNotNull(invoiceInfo.getDomain());
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+	}
+	
+	private void assertCommunicationHistory(Invoice i) {
+		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(ctx, i.getId(), t -> {
+			if (t.getResponseData() != null && t.getResponseData().length > 0) {
+				t.setResponseMessages( VERIFACTU.history(t.getResponseData(), i.getId()) );
+			}
+			return t.getResponseMessages();
+		});
+		assertNotNull(history);
+		assertTrue(AonCollectionUtils.isNotEmpty( history ));
+		assertEquals(1, history.size());
+		InvoiceCommunicationHistory h = history.get(0);
+		assertEquals(i.getId(), h.getInvoiceId());
+		assertEquals(USER, h.getCreationUser());
+		assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
+		assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+			|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertNotNull(h.getDate() );
+		assertNotNull(h.getRequestUrl());
+		assertNotNull(h.getResponseMessages());
+		assertNotNull(h.getResponseData());
+		assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
+	}
 }
