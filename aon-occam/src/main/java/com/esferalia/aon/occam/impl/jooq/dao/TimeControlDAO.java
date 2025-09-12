@@ -128,8 +128,8 @@ public class TimeControlDAO {
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
 
-		TaskHolderDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getUserIdProperty().isNotNull())).forEach(th -> {
+		TaskHolderDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()))
+		.forEach(th -> {
 				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
 				tcList.add(tc);
 			});
