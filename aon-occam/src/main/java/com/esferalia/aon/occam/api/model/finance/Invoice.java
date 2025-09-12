@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -808,7 +807,7 @@ public class Invoice implements Serializable, HasAudit {
 	public Map<InvoiceCommunicationType, InvoiceInfo> getCommunicationInfo() {
 		return communicationInfo;
 	}
-	public Invoice addCommunicationInfo(EnumMap<InvoiceCommunicationType, InvoiceInfo> map) {
+	public Invoice addCommunicationInfo(Map<InvoiceCommunicationType, InvoiceInfo> map) {
 		if (map != null) this.communicationInfo.putAll(map);
 		return this;
 	}

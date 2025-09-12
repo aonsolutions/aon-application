@@ -1,12 +1,12 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collector;
 
 import org.json.JSONArray;
@@ -235,9 +235,9 @@ class InvoiceJSONV1 {
 	}
 	
 	// ---------------------------- [FROM INVOICE INFO] ----------------------------
-	private static Optional<EnumMap<InvoiceCommunicationType, InvoiceInfo>> getCommunicationInfo(JSONObject json) {
+	private static Optional<Map<InvoiceCommunicationType, InvoiceInfo>> getCommunicationInfo(JSONObject json) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
-		EnumMap<InvoiceCommunicationType, InvoiceInfo> map = new EnumMap<>(InvoiceCommunicationType.class);
+		HashMap<InvoiceCommunicationType, InvoiceInfo> map = new HashMap<>();
 		for(Entry<String, Object> e : json.toMap().entrySet()) {
 			InvoiceCommunicationType type = InvoiceCommunicationType.safeValueOf(e.getKey());
 			if (type != null) {
