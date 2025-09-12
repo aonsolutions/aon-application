@@ -69,7 +69,6 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -77,7 +76,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -1337,52 +1335,10 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.fixAgreementIntegrity(domainName, agreementId, callback);
 	}
 
-	@Override
-	public void getCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getCustomersLinked(domainName, domain, currentUser, searchQuery, customerStatusSearch, offset, limit, callback);
-	}
-
-	@Override
-	public void getSigCustomersLinked(String domainName, int domain, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getSigCustomersLinked(domainName, domain, currentUser, searchQuery, customerStatusSearch, offset, limit, callback);
-	}
 	
-	@Override
-	public void getRRelationShip(String domainName, int domain, String currentUser, Integer customerId, AsyncCallback<RegistryRelationship> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getRRelationShip(domainName, domain, currentUser, customerId, callback);
-	}
-
 	@Override
 	public void getDomainByName(String domainName, AsyncCallback<Domain> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getDomainByName(domainName, callback);
 	}
-
-	@Override
-	public void getRegistryDomainNameAddInfo(String domainName, int domainId, String currentUser, Integer customerId, AsyncCallback<HashMap<String, String>> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getRegistryDomainNameAddInfo(domainName, domainId, currentUser, customerId, callback);
-	}
-
-	@Override
-	public void getSigActivitySummary(String schema, Integer domainId, Integer parentId, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getSigActivitySummary(schema, domainId, parentId, params, callback);
-	}
-
-	@Override
-	public void getCustomerDomain(String domainName, int domainId, String currentUser, Integer customerId, boolean isSig, AsyncCallback<Domain> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getCustomerDomain(domainName, domainId, currentUser, customerId, isSig, callback);
-	}
-
-	@Override
-	public void getCustomersDomain(String domainName, int domainId, String currentUser, ArrayList<Integer> customerIds, boolean isSig, AsyncCallback<HashMap<Integer, Domain>> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getCustomersDomain(domainName, domainId, currentUser, customerIds, isSig, callback);
-	}
-	
 }

@@ -65,14 +65,12 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -870,36 +868,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
 	}
 	
-	public void getCustomersLinked(String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), searchQuery, customerStatusSearch, offset, limit, asyncCallback);
-	}
 	
-	public void getSigCustomersLinked(String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getSigCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), searchQuery, customerStatusSearch, offset, limit, asyncCallback);
-	}
-
-	public void getRRelationShip(Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getRRelationShip(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
-	}
 	
 	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
-	}
-
-	public void getRegistryDomainNameAddInfo(Integer customerId, AsyncCallback<HashMap<String, String>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getRegistryDomainNameAddInfo(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
-	}
-
-	public void getSigActivitySummary(String schema, Integer domainId, Integer parentId, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getSigActivitySummary(schema, domainId, parentId, params, asyncCallback);	
-	}
-	
-	public void getCustomerDomain(Integer customerId, boolean isSig, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getCustomerDomain(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, isSig, asyncCallback);
-	}
-	
-	public void getCustomersDomain(ArrayList<Integer> customerIds, boolean isSig, AsyncCallback<HashMap<Integer, Domain>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getCustomersDomain(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerIds, isSig, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

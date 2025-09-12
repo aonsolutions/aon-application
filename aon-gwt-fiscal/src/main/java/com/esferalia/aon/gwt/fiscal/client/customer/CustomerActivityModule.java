@@ -1,12 +1,13 @@
-package com.esferalia.aon.gwt.payroll.client.customer;
+package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.client.ActivitySummary;
-import com.esferalia.aon.gwt.payroll.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
@@ -23,9 +24,17 @@ public class CustomerActivityModule extends MainEntryPoint {
 	
 	private RootLayoutPanel root;
 	
+	private CustomersLinkedParams params;
+	
 	@Override
 	public void onModuleLoad() {
 		root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		
+		params = new CustomersLinkedParams();
+		params.setDomainName(getCurrentDomainName());
+		params.setDomainId(getCurrentDomain());
+		params.setUser(getCurrentUser());
+		
 		moduleLoad();
 	}
 
@@ -34,16 +43,16 @@ public class CustomerActivityModule extends MainEntryPoint {
 
 		deckLayoutPanel = new DeckLayoutPanel();
 
-		customersLinkedPanel = new CustomersLinkedPanel() {
+		customersLinkedPanel = new CustomersLinkedPanel(params) {
 
 			@Override
-			protected void onCustomerSelect(Integer customerId, String customerName) {
-				showSelectedCustomer(customerId, customerName);
+			protected void onCustomerSelect(Integer customerId, String customerName, Domain customerDomain) {
+				showSelectedCustomer(customerId, customerName, customerDomain);
 			}
 
 		};
 		
-		activitySummary = new ActivitySummary();
+		activitySummary = new ActivitySummary(params.getUser());
 		
 		AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack());
 		back.addClickHandler(e -> showCustomersLinkedPanel());
@@ -62,8 +71,8 @@ public class CustomerActivityModule extends MainEntryPoint {
 		customersLinkedPanel.onSearch();
 	}
 
-	private void showSelectedCustomer(Integer customerId, String customerName) {
-		activitySummary.showCustomerDomainInfo(customerId, customerName);
+	private void showSelectedCustomer(Integer customerId, String customerName, Domain customerDomain) {
+		activitySummary.showCustomerDomainInfo(customerId, customerName, customerDomain);
 		deckLayoutPanel.showWidget(activitySummary);
 	}
 

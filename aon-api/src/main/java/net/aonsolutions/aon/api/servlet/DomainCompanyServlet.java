@@ -16,7 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.json.ActivitySummaryJSON;
 import com.esferalia.aon.occam.api.json.BookingJSON;
 import com.esferalia.aon.occam.api.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
@@ -28,6 +30,8 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -39,6 +43,7 @@ import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -61,6 +66,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String BOOKING_CUSTOMER = "/booking-customer/";
 	public static final String REMOTE = "/remote/";
 	public static final String CHECK_ITEMS = "/check-items/";
+	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -89,6 +95,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 					.addRoute(CHECK_ITEMS, DomainCompanyServlet::getCheckedItems)
 					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
+					.addRoute(CUSTOMER_SUMMARY_ACTIVITY, DomainCompanyServlet::getActivitySummary)
 					.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
 					.apply();
 			
@@ -190,6 +197,44 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
   		Integer customerId = vars.getInt(IJsonNames.CUSTOMER);
   		CONSOLE.getCustomerDomains(customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
 		return domains;
+	}
+	
+	private static JSONArray getActivitySummary(AonApiData api) {
+		String domainName = api.getData().optString(IJsonNames.DOMAIN_NAME);
+		Integer domainId = api.getData().optInt(IJsonNames.DOMAIN_ID);
+		String login = api.getData().optString(IJsonNames.USER);
+		
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		User user = AON.getUser(domainName, domainId, login);
+		
+		ActivitySummaryParams params = new ActivitySummaryParams();
+		params.setChildomain(api.getData().optIntegerObject("childomain", null));
+		params.setDescription(api.getData().optString("description"));
+		
+		params.setStart(AonDateUtils.parse(api.getData().optString("start")));
+		params.setEnd(AonDateUtils.parse(api.getData().optString("end")));
+		
+		params.setStartContract(api.getData().getBoolean("startContract"));
+		params.setEndContract(api.getData().getBoolean("endContract"));
+		params.setSalary(api.getData().getBoolean("salary"));
+		params.setSettle(api.getData().getBoolean("settle"));
+		params.setExtra(api.getData().getBoolean("extra"));
+		
+		params.setItCD(api.getData().getBoolean("itCD"));
+		params.setItOD(api.getData().getBoolean("itOD"));
+		params.setItMP(api.getData().getBoolean("itMP"));
+		params.setItOT(api.getData().getBoolean("itOT"));
+		
+		params.setOrderBy(api.getData().optString("orderBy"));
+		params.setAsc(api.getData().getBoolean("asc"));
+		
+		params.setOffset(api.getData().optInt("offset"));
+		params.setLimit(api.getData().optInt("limit"));
+		
+		List<ActivitySummaryObject> list = AON.getActivitySummary(domainName, domainId, user.getLogin(), domain.getParentId(), user.getId(), params);
+		
+		return ActivitySummaryJSON.toJSON(list);
+		
 	}
 	
 	private static JSONArray updateCustomerDomains(AonApiData api) {
