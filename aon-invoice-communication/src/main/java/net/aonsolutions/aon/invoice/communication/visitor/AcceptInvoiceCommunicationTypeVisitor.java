@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -20,6 +19,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -34,7 +34,7 @@ import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 
-public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
+public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements InvoiceCommunicationTypeVisitor {
 		
 	public AcceptInvoiceCommunicationTypeVisitor(Occam occam, List<Invoice> invoices) {
 		super(occam, invoices);

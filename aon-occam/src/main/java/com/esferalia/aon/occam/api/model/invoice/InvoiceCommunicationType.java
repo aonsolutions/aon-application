@@ -2,19 +2,18 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public enum InvoiceCommunicationType implements Serializable{
  
-	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
-	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
-	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
-	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
-	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
-	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
-	VERIFACTU { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}}
+	SII { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
+	TBAI { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
+	LROE { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
+	SERES { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
+	EMAIL { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
+	CLOSING { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
+	VERIFACTU { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}}
 	;
 	
 	private InvoiceCommunicationType() {
@@ -23,10 +22,6 @@ public enum InvoiceCommunicationType implements Serializable{
 	
 	public Byte value(){
 		return (byte) ordinal();
-	}
-	
-	public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception {
-		// Redefine
 	}
 	
 	public static String name( InvoiceCommunicationType i ) {
@@ -72,4 +67,17 @@ public enum InvoiceCommunicationType implements Serializable{
 	public boolean isVerifactu() {
 		return VERIFACTU.equals(this);
 	}
+	
+	public abstract void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception;
+	
+	public static interface InvoiceCommunicationTypeVisitor {
+		void visitSII() throws InvoiceCommunicationException;
+		void visitTBAI() throws InvoiceCommunicationException;
+		void visitLROE() throws InvoiceCommunicationException;
+		void visitSERES() throws InvoiceCommunicationException;
+		void visitEMAIL() throws InvoiceCommunicationException;
+		void visitCLOSING() throws InvoiceCommunicationException;
+		void visitVERIFACTU() throws InvoiceCommunicationException;
+	}
+	
 }

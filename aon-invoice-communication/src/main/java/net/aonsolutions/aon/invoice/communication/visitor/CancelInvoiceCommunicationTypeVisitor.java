@@ -11,16 +11,16 @@ import javax.xml.soap.SOAPException;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.User;
 
 import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAI;
 
-public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
+public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements InvoiceCommunicationTypeVisitor {
 
 	public CancelInvoiceCommunicationTypeVisitor(Domain domain, User user, Invoice invoice) {
 		super(domain, user, invoice);

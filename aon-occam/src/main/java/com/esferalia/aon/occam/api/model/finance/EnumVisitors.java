@@ -120,16 +120,6 @@ public class EnumVisitors {
 		void visitM369();
 	}
 	
-	public static interface IInvoiceCommunicationTypeVisitor {
-		void visitSII() throws InvoiceCommunicationException;
-		void visitTBAI() throws InvoiceCommunicationException;
-		void visitLROE() throws InvoiceCommunicationException;
-		void visitSERES() throws InvoiceCommunicationException;
-		void visitEMAIL() throws InvoiceCommunicationException;
-		void visitCLOSING() throws InvoiceCommunicationException;
-		void visitVERIFACTU() throws InvoiceCommunicationException;
-	}
-	
 	public static interface IFiscalModelKeyInfoVisitor<T> {
 		T visitNone();
 		T visitCompute();

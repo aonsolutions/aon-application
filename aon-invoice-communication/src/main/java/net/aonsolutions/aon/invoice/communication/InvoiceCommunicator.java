@@ -16,12 +16,12 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
@@ -58,7 +58,7 @@ public class InvoiceCommunicator {
 			@Override
 			public List<String> apply(InvoiceCommunicationHistory t) {
 				try {
-					config.getType().visit( new IInvoiceCommunicationTypeVisitor() {
+					config.getType().visit( new InvoiceCommunicationTypeVisitor() {
 						
 						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
 						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
@@ -103,7 +103,7 @@ public class InvoiceCommunicator {
 			if(invoice.isSales()) {
 				InvoiceDAO.preIssue(ctx, invoice );
 				if (cc.getConfig().hasCommunication() ) {
-					cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
+					cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
 						
 						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
 						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
@@ -155,7 +155,7 @@ public class InvoiceCommunicator {
 			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
 					
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
-				cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
+				cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
 
 					@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
 					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
@@ -198,7 +198,7 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 			if (invoice.isSales() && cc.getConfig().hasCommunication() ) {
-				cc.getConfig().getType().visit( new IInvoiceCommunicationTypeVisitor() {
+				cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
 	
 					@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
 					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }

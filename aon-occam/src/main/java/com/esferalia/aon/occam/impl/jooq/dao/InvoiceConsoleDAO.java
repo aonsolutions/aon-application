@@ -20,10 +20,10 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -33,7 +33,7 @@ public class InvoiceConsoleDAO {
 
 	}
 
-	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+//	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
 	private static final Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
 	
 	// ---------------------------------------------------------------------	
@@ -72,6 +72,7 @@ public class InvoiceConsoleDAO {
 			.map( ic -> fillAttach(ctx, ic))
 			.map( ic -> fillSource(ic))
 			.map( ic -> fillMessages(ctx, ic))
+			.map( ic -> fillCommunicationInfo(ctx, ic))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -89,7 +90,7 @@ public class InvoiceConsoleDAO {
 
 	private static InvoiceConsole fillSource(InvoiceConsole ic) {
 		return ic.setSource( 
-			AonCollectionUtils.stream( ic.getInvoice().getDetails())
+			ic.getInvoice().detailStream()
 			 	.map( id -> id.getSource() )
 			 	.distinct()
 	            .limit(2)
@@ -102,6 +103,11 @@ public class InvoiceConsoleDAO {
 		return ic;
 	}
 	
+	private static InvoiceConsole fillCommunicationInfo(AONContext ctx, InvoiceConsole ic) {
+		ic.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, ic.getInvoice().getId()).orElse(null));
+		return ic;
+	}
+
 	public static Condition getWhere(InvoiceConsoleParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
