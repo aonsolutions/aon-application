@@ -261,6 +261,7 @@ class VerifactuXMLUtils {
 	        	RespuestaRegFactuSistemaFacturacionType r = o.getValue();
 	        	AonCollectionUtils.stream(r.getRespuestaLinea())
 	        		.filter(l -> AonStringUtils.equals(id, l.getRefExterna()))
+	        		.filter(l -> AonStringUtils.isNotEmpty(l.getDescripcionErrorRegistro()))
 	        		.forEach(l ->  messages.add(l.getDescripcionErrorRegistro()) );
 	        }
 	        return messages;
