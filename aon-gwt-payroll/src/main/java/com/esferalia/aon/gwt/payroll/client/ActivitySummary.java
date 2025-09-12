@@ -2,8 +2,10 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -77,7 +79,9 @@ public class ActivitySummary extends AonCustomDockLayout {
 	// String Domian
 	
 	private String domainName;
-	private boolean isSig = false;
+	
+	// SIG
+	private String schema;
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -265,17 +269,16 @@ public class ActivitySummary extends AonCustomDockLayout {
 		
 	}
 	
-	public void setIsSig(boolean isSig) {
-		this.isSig = isSig;
-	}
-	
 	public void showCustomerDomainInfo(Integer customerId, String customerName) {
 		centerPanel.clear();
+		AonMessagePanel.hideMessage(messagePanel);
 		
 		getToolbar().setTitle("Act. Laboral " + customerName);
 		
-		if(isSig) {
-			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<String>() {
+		if(getCurrentIsSig()) {
+			LOGGER.info("Entrando en getRegistryDomainNameAddInfo (campo de ActivitySummary)");
+			
+			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<HashMap<String, String>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -283,9 +286,13 @@ public class ActivitySummary extends AonCustomDockLayout {
 				}
 
 				@Override
-				public void onSuccess(String domainNameAddInfo) {
-					if(AonStringUtils.isNotBlank(domainNameAddInfo)) {
-						domainName = domainNameAddInfo;
+				public void onSuccess(HashMap<String, String> domainInfo) {
+					if(null != domainInfo && !domainInfo.isEmpty()) {
+						
+						Entry<String, String> domainInfoFirst = domainInfo.entrySet().stream().findFirst().get();
+
+						schema = domainInfoFirst.getKey();
+						domainName = domainInfoFirst.getValue();
 						
 						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
 							
@@ -313,6 +320,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 				
 			});
 		} else {
+			LOGGER.info("Entrando en getRRelationShip (campo de ActivitySummary)");
+			
 			service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
 
 				@Override
@@ -685,18 +694,40 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
-		service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
-			
-			@Override
-			public void onSuccess(List<ActivitySummaryObject> result) {
-				success.accept(result);
-			}
+		
+		if(getCurrentIsSig()) {
+			service.getSigActivitySummary(schema, domain.getId(), domain.getParentId(), params, new AsyncCallback<List<ActivitySummaryObject>>() {
+				
+				@Override
+				public void onSuccess(List<ActivitySummaryObject> result) {
+					success.accept(result);
+				}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen : " + caught.getMessage());
-			}
-			
-		});
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen Sig : " + caught.getMessage());
+				}
+				
+			});
+		} else
+			service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
+				
+				@Override
+				public void onSuccess(List<ActivitySummaryObject> result) {
+					success.accept(result);
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen : " + caught.getMessage());
+				}
+				
+			});
 	}
+	
+	public static native boolean getCurrentIsSig()
+    /*-{
+        var value = $wnd.localStorage.getItem("isSig");
+        return value === "true" || value === true;
+    }-*/;
 }

@@ -95,7 +95,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	}
 
 	static MimeMessage getMimeMessage(String bucket, String key) throws IOException, MessagingException {
-		try (InputStream is = new ByteArrayInputStream(S3.download(bucket, key))) {
+		try (InputStream is = new ByteArrayInputStream(S3.getInstance().download(bucket, key))) {
 			return MimeMessageUtils.getMimeMessage(is);
 		}
 	}
@@ -104,7 +104,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 		String preffix = args[1];
 		String bucket = args[0];
 		
-		List<S3Object> s3Objects = S3.listObjects(bucket, preffix);
+		List<S3Object> s3Objects = S3.getInstance().listObjects(bucket, preffix);
 		for (S3Object s3Object : s3Objects) {
 			MimeMessage mimeMessage = getMimeMessage(bucket, s3Object.key());
 			

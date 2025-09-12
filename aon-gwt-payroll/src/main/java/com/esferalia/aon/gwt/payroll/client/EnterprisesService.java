@@ -75,7 +75,6 @@ import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -506,11 +505,20 @@ public interface EnterprisesService extends RemoteService {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
-	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, boolean isSig, String searchQuery, int offset, int limit) throws IllegalArgumentException ;
+	List<Customer> getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit) throws IllegalArgumentException ;
+	
+	List<Customer> getSigCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit) throws IllegalArgumentException ;
 	
 	RegistryRelationship getRRelationShip(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
 
 	Domain getDomainByName(String domainName) throws IllegalArgumentException;
 	
-	String getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
+	HashMap<String, String> getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId) throws IllegalArgumentException;
+	
+	List<ActivitySummaryObject> getSigActivitySummary(String schema, Integer domainId, Integer parentId, ActivitySummaryParams params) throws IllegalArgumentException;
+	
+	Domain getCustomerDomain(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, boolean isSig) throws IllegalArgumentException;
+	
+	HashMap<Integer, Domain> getCustomersDomain(String currentDomainName, int currentDomainId, String currentUser, ArrayList<Integer> customerIds, boolean isSig) throws IllegalArgumentException;
 }
+

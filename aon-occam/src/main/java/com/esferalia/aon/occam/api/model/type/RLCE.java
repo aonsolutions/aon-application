@@ -67,6 +67,10 @@ public class RLCE {
 		rlceTableMap.put("9937", "Contrato acceso personal Investigador Doctor.");
 		rlceTableMap.put("9938", "Personal investigador I+D+i. No bonificado.");
 		rlceTableMap.put("9939", "Pr\u00E1cticas Form. Remuneradas (D.A. 52 LGSS).");
+
+		rlceTableMap.put("9941", "Entrenadores/Monitores. Bonificados. Ley 7/2024");
+		rlceTableMap.put("9942", "No Bonific.Entrenadores/Monitores. Ley 7/2024");
+		
 		rlceTableMap.put("9999", "Declaraci\u00F3n Responsable inexistencia de RLCE.");
 		
 		rlceTable = Collections.unmodifiableMap(rlceTableMap);

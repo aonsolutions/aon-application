@@ -12,7 +12,8 @@ public enum TaskSource {
 	QUERY,
 	REQUEST,
 	GROUPED,
-	TASK;
+	TASK,
+	EMAIL;
 
 	public String getName() {
     	return this.toString().toLowerCase();
@@ -66,7 +67,7 @@ public enum TaskSource {
 		if(this.equals(GROUPED)) return "Agrupadas";
 		if(this.equals(REQUEST)) return "Tr\u00e1mites";
 		if(this.equals(TASK)) return "Tarea";
-		if(this.equals(MANUAL) || this.equals(ASSIGNED) || this.equals(PROCESS) || this.equals(GITHUB)) return getName();
+		if(this.equals(MANUAL) || this.equals(ASSIGNED) || this.equals(PROCESS) || this.equals(GITHUB) || this.equals(EMAIL)) return getName();
 		else return "";
     }
 	

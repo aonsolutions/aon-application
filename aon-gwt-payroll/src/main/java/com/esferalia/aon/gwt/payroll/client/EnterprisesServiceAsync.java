@@ -370,13 +370,20 @@ public interface EnterprisesServiceAsync {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
-	void getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, boolean isSig, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException ;
+	void getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException ;
+	
+	void getSigCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, String searchQuery, Byte[] customerStatusSearch, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException ;
 	
 	void getRRelationShip(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException;
 	
 	void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException;
 	
-	void getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	void getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, AsyncCallback<HashMap<String, String>> asyncCallback) throws IllegalArgumentException;
 	
+	void getSigActivitySummary(String schema, Integer domainId, Integer parentId, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException;
+	
+	void getCustomerDomain(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, boolean isSig, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException;
+	
+	void getCustomersDomain(String currentDomainName, int currentDomainId, String currentUser, ArrayList<Integer> customerIds, boolean isSig, AsyncCallback<HashMap<Integer, Domain>> asyncCallback) throws IllegalArgumentException;
 
 }

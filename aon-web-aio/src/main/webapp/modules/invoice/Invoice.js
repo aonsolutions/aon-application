@@ -585,14 +585,15 @@ export class Invoice {
     this.transaction = transaction;
     if(!this.isVatEnabled()){
       this.surcharge = false;
+      let auxTaxes = [];
       if(this.isCcm())
-        this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+        auxTaxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
       else {
         this.withholding = false;
         this.withholdingFarmer = false;
       }        
       
-      this.taxes.push({
+      auxTaxes.push({
         tax:TaxType.IVA,
         type: TaxType.IVA,
         percentage: 0.0,
@@ -601,6 +602,7 @@ export class Invoice {
         surcharge: 0.0,
         surcharge_quota: 0.0
       });
+      this.taxes = auxTaxes;
       
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;

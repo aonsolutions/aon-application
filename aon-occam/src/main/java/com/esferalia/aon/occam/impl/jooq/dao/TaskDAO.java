@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.watson.server.AonObjectUtils.firstNonNull;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -64,6 +65,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 
 public class TaskDAO {
 
@@ -164,7 +166,7 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+		return getParentOrChildStream(ctx, filter, Optional.ofNullable(page), Optional.ofNullable(perPage));
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
@@ -254,8 +256,8 @@ public class TaskDAO {
 		.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
 		.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 		.set(TASK.PARENT, task.getParent())
-		.set(TASK.MODIFICATION_USER, ctx.getUser())
-		.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
+		.set(TASK.MODIFICATION_USER, firstNonNull( task.getModificationUser(), ctx.getUser()))
+		.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull( task.getModificationDate(),new Date())));
 		
 		task.getGtaskId().ifPresent(d-> sets.set(TASK.GTASK_ID, d));
 
@@ -575,8 +577,8 @@ public class TaskDAO {
 			DSL.val(task.getDescription()),
 			DSL.val(task.getTitle()),
 			DSL.val(task.getDomain().getId()),
-			DSL.val(AonDateUtils.toTimestamp(new Date())),
-			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(AonDateUtils.toTimestamp(firstNonNull(task.getDueDate(), new Date()))),
+			DSL.val(AonDateUtils.toTimestamp(firstNonNull(task.getEndDate(), new Date()))),
 			DSL.val(gtaskId.isPresent() ? gtaskId.get() : null),
 			DSL.val(task.getGtasklistId()),
 			DSL.val(task.getPercent()),
@@ -588,14 +590,14 @@ public class TaskDAO {
 			DSL.val(task.getSender().getId()),
 			DSL.val(task.getSource().value()),
 			DSL.val(task.getSourceId()),
-			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(AonDateUtils.toTimestamp(firstNonNull(task.getStartDate(), new Date()))),
 			DSL.val(task.getStatus().value()),
 			DSL.val(task.getTaskHolder().getId()),
 			DSL.val(task.getWorkgroup().getId()),
-			DSL.val(ctx.getUser()),
-			DSL.val( AonDateUtils.toTimestamp(new Date())),
-			DSL.val(ctx.getUser()),
-			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(firstNonNull( task.getCreationUser(), ctx.getUser())),
+			DSL.val(AonDateUtils.toTimestamp(firstNonNull(task.getCreationDate(), new Date()))),
+			DSL.val(firstNonNull(task.getModificationUser(), ctx.getUser())),
+			DSL.val(AonDateUtils.toTimestamp(firstNonNull(task.getModificationDate(), new Date()))),
 		   	DSL.coalesce(
 				DSL.max(TASK.NUMBER), DSL.inline(0)
 			).plus(DSL.inline(1))

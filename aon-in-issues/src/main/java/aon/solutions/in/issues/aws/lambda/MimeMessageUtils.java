@@ -28,8 +28,6 @@ import jakarta.mail.Part;
 import jakarta.mail.Session;
 import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimePart;
-import jakarta.mail.internet.ParseException;
 
 public class MimeMessageUtils {
 
@@ -117,6 +115,13 @@ public class MimeMessageUtils {
 		Session session = Session.getDefaultInstance(properties);
 		return new MimeMessage(session, is);
 	}
+
+	public static MimeMessage getMimeMessage(byte[] data) throws MessagingException, IOException {
+		try (InputStream is = new java.io.ByteArrayInputStream(data)) {
+			return getMimeMessage(is);
+		}
+	}
+
 
 	public static Collection<BodyPart> getBodyParts(Part part, Predicate<BodyPart> filter)
 			throws IOException, MessagingException {
