@@ -89,6 +89,12 @@ export const CLIENT_FILE = 'Ficha Cliente';
 export const CLOSE = 'Cerrar';
 export const CLOSE_SESSION = 'Cerrar Sesión';
 export const CLOSED = 'Cerrado';
+
+export const CLOUD_LABEL = 'Mi nube'; // Etiqueta principal del módulo de nube
+export const CLOUD_FILE_LABEL = 'Archivo'; // Etiqueta para archivos individuales en la nube
+export const CLOUD_UPLOAD_ACTION = 'Subir a mi nube'; // Acción para subir archivos a la nube
+
+
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';

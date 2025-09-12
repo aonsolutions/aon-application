@@ -15,8 +15,8 @@ import { AonNewInput } from '../../components/aon-new-input';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
 
-// import './aon-documental-list.js';
-// import './aon-document.js';
+import './aon-documental-list.js';
+import './aon-document.js';
 // import './aon-mobile-documental-list.js';
 // import './aon-mobile-document.js';
 //import '../../css/aon-mobile.css';

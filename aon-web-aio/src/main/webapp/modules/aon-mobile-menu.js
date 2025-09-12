@@ -345,9 +345,9 @@ export class AonMobileMenu extends AonElement {
 
     const uploadDocument = {
       icon: 'upload',
-      title:"Subir documento",
+      title: MSG.UPLOAD_DOCUMENT,
       permission: isDocumentalManager,
-      backgroundColor: "#6986BB",
+      // backgroundColor: "#6986BB",
       fn :  () => {
         if(isDocumentalManager){
           dialog.close();

@@ -1,16 +1,15 @@
 import { AonElement } from "./AonElement";
-import Apps from "../services/app.js";
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { Apps } from "../services/app.js";
+import { MSG, CONSTANT, CSS, EVENT, TAG } from '../environments/environments';
 import { AonDialog } from "./aon-dialog";
 import { AonUploadToast } from "./aon-upload-toast";
 import { AonIconButton } from "./aon-icon-button";
 import { AonIcon } from "./aon-icon";
-import { OPTION } from "../environments/constants.js";
 import { AonInvoicePanel } from "../modules/invoice/aon-invoice-panel.js";
-import { EVENT } from "../environments/materialIcons.js";
 import { AonMessenger } from "../modules/messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../modules/messenger/MessengerEnums.js";
 import { uploadOption } from "../modules/documental/DocumentalUtils.js";
+import * as OPTION from '../modules/invoice/InvoiceOptions';
 
 export class AonMenuButton extends AonElement {
     dur;
@@ -305,17 +304,32 @@ export class AonMenuButton extends AonElement {
  
     //funcion de aon-menu
     newInvoice(invoice) {
-        let invoicePanel = new AonInvoicePanel();
-        invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
-        this.rootPanel(invoicePanel);
-        invoicePanel.aonInvoice(invoice); 
-        this.setAppClassName(Apps.INVOICE);
-        this.dispatchEvent(
-            new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } })
-        );
+      let invoicePanel = new AonInvoicePanel();
+      invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+      invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
+      this.rootPanel(invoicePanel);
+      this.setAppClassName(Apps.INVOICE);
+      this.setSelectedMenuSidenav(Apps.INVOICE);
+      this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));
+    }
+ 
+    setSelectedMenuSidenav(app) {
+
+//
+// Revisar para marcar en menu y submen --- 
+//
+
+      const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+      const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);
+      for ( const aonMenuSidenavLi of aonMenuSidenavLis  ) {
+        if ( aonMenuSidenavLi.id === `aonMenuList-${app?.app}` ) {
+          aonMenuSidenavLi.classList.add("aonMenuSidenavLiSeleted");
+        } else {
+          aonMenuSidenavLi.classList.remove("aonMenuSidenavLiSeleted");
+        }
+      }
     }
 
-    
     show() {
       const button = this.getElement(this.BUTTON);
       const list   = this.getElement(this.LIST);
