@@ -7,10 +7,12 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -55,9 +57,9 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 	
 	@Override
-	public void getInvoices(String domainName, int domainId, String user, InvoiceParams params, AsyncCallback<List<Invoice>> callback) {
+	public void getInvoices(Occam occam, InvoiceCommunicationParams params, AsyncCallback<List<Invoice>> callback) {
 		AON.start();
-		ssa.getInvoices(domainName, domainId, user, params, new AsyncCallbackWrapper<>(callback));
+		ssa.getInvoices(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

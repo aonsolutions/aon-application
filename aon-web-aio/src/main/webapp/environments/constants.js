@@ -30,6 +30,7 @@ export const AON_INVOICE = 'aonInvoice';
 export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
 export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
 export const AON_INVOICE_COMMUNICATION = 'aonInvoiceCommunication';
+export const AON_INVOICE_COMMUNICATION_INFO = 'aonInvoiceCommunicationInfo';
 export const AON_INVOICE_TAX = 'aonInvoiceTax';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const AON_MOBILE_PROFILE = 'aonMobileProfile';

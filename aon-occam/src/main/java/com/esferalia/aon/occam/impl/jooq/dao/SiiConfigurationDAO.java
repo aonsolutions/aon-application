@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 
 import java.util.LinkedList;
@@ -123,7 +124,10 @@ public class SiiConfigurationDAO {
 	
 	public static void prepareNewSii(AONContext ctx) {
 		ctx.getDslContext()
-			.select().from(DATA_RESPONSE)
+			.select(DATA_RESPONSE.fields())
+			.select(DATA_RESPONSE_DETAIL.fields())
+			.from(DATA_RESPONSE)
+			.join(INVOICE).on(INVOICE.ID.eq(DATA_RESPONSE.SOURCE_ID))
 			.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
 			.where(DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()))
 			.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
@@ -134,15 +138,12 @@ public class SiiConfigurationDAO {
 			.map(new PrepareNewSiiFiller()).forEach( dr -> {
 				if(dr.getDetails() != null && !dr.getDetails().isEmpty() && dr.getSourceId() != null) {
 					String status = dr.getDetails().get(0).getDataValue();
-					InvoiceInfo info = InvoiceInfoDAO.get(ctx, f -> f.getDomainProperty().eq(dr.getDomain()).and(f.getInvoiceProperty().eq(dr.getSourceId())));
-					if(info == null || info.isEmpty()) {
-						info = new InvoiceInfo()
-							.setDomain(dr.getDomain())
-							.setInvoice(dr.getSourceId())
-							.setType(InvoiceCommunicationType.SII)
-							.setStatus(InvoiceCommunicationStatus.safeValueOf(status));	
-						InvoiceInfoDAO.save(ctx, info);
-					}
+					InvoiceInfo info = new InvoiceInfo()
+						.setDomain(dr.getDomain())
+						.setInvoice(dr.getSourceId())
+						.setType(InvoiceCommunicationType.SII)
+						.setStatus(InvoiceCommunicationStatus.safeValueOf(status));
+					InvoiceInfoDAO.save(ctx, info);
 				}
 			});	
 	

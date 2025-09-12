@@ -110,6 +110,8 @@ export class AonInvoice extends AonElement {
 		this.DATA = this.id + 'Data';
 		this.COMMUNICATION = this.id + 'Communication';
 		this.COMMUNICATION_CARD = this.COMMUNICATION + CONSTANT.CARD.initCap();
+		this.COMMUNICATION_INFO = this.id + 'CommunicationInfo';
+		this.COMMUNICATION__INFO_CARD = this.COMMUNICATION_INFO + CONSTANT.CARD.initCap();
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
@@ -180,8 +182,10 @@ export class AonInvoice extends AonElement {
 		// TODO BIEN AFECTO
 
 		// ----- COMMUNICATION
+		this.COMMUNICATION_INFO = CONSTANT.AON_INVOICE_COMMUNICATION_INFO;
+		this.COMMUNICATION_INFO_TABLE = this.COMMUNICATION_INFO + CONSTANT.TABLE.initCap();
 		this.COMMUNICATION = CONSTANT.AON_INVOICE_COMMUNICATION;
-		this.COMMUNICATION_TABLE = this.DETAIL + CONSTANT.TABLE.initCap();
+		this.COMMUNICATION_TABLE = this.COMMUNICATION + CONSTANT.TABLE.initCap();
 
 		// ----- FINANCE
 
@@ -545,12 +549,82 @@ export class AonInvoice extends AonElement {
 		let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
 
+		if ( this.invoice.communicationInfo ) {
+			let communicationInfo = this.createElement(TAG.DIV);
+			communicationInfo.id = this.COMMUNICATION;
+			communicationInfo.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
+			content.appendChild(communicationInfo);
+			this.buildCommunicationInfoCard(communicationInfo);
+		}
+
 		let communication = this.createElement(TAG.DIV);
 		communication.id = this.COMMUNICATION;
 		communication.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
 		content.appendChild(communication);
 		this.buildCommunicationCard(communication);
 	}
+
+	buildCommunicationInfoCard(parent) {
+		let title = "Estado actual de las comunicaciones";
+		let card = this.createAonElement(new AonCard(), this.COMMUNICATION_INFO_CARD, title);
+		card.style.width = this.fileOpened ? '100%' : '50%';
+		parent.appendChild(card);
+		let table = this.getElement(this.COMMUNICATION_INFO_TABLE);
+		if(!table) {
+			table = new AonBasicTable();
+			table.id = this.COMMUNICATION_INFO_TABLE;
+			card.setContent(table);
+		}
+		table.removeRows();
+
+		Object.keys(this.invoice.communicationInfo)
+			.forEach(key => {
+				table.addRow();
+
+				let span1 = this.createElement(TAG.SPAN);
+				span1.innerHTML = key;
+				table.addCell(span1);
+
+				let info = this.invoice.communicationInfo[key];
+
+				let icon = this.createElement(TAG.I);
+				icon.className = "material-icons";
+				icon.title = this.getCommunicationStatusLabel(info.communicationStatus);
+				icon.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+				icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+				table.addCell(icon);
+
+				let span2 = this.createElement(TAG.SPAN);
+				span2.innerHTML = this.getCommunicationStatusLabel(info.communicationStatus);
+				span2.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+				table.addCell(span2);
+
+				let infoDate = info.modification_date ?
+					info.modification_date : info.creation_date;
+				let span3 = this.createElement(TAG.SPAN);
+				span3.innerHTML = infoDate ? this.formatDate(infoDate) : "";
+				table.addCell(span3);
+
+				let infoUser = info.modification_user ?
+					info.modification_user : info.creation_user;
+				let span4 = this.createElement(TAG.SPAN);
+				span4.innerHTML = infoUser ? infoUser : "";
+				table.addCell(span4);
+			});
+	}
+
+	formatDate(isoString) {
+		const d = new Date(isoString);
+		const pad = n => n.toString().padStart(2, "0");
+		const day    = pad(d.getDate());
+		const month  = pad(d.getMonth() + 1);
+		const year   = d.getFullYear();
+		const hours  = pad(d.getHours());
+		const mins   = pad(d.getMinutes());
+		const secs   = pad(d.getSeconds());
+		return `${day}/${month}/${year} ${hours}:${mins}:${secs}`;
+	}
+
 
 	buildFileContent() {
 		let div = this.getElement(this.DIV);
@@ -561,7 +635,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildCommunicationCard(parent) {
-		let title = this.invoice.isTbai() ? MSG.TICKETBAI : "Verifactu";
+		let title = "Histórico de comunicación " + (this.invoice.isTbai() ? MSG.TICKETBAI : "Verifactu");
 		let card = this.createAonElement(new AonCard(), this.COMMUNICATION_CARD, title);
 		card.style.width = this.fileOpened ? '100%' : '50%';
 		parent.appendChild(card);

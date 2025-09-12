@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FINANCE;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
@@ -52,8 +55,6 @@ import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -66,8 +67,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -84,6 +83,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -129,9 +129,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/count":
 				response(req, resp, getInvoiceCount(api));
-				break;
-			case "/invoice_new_portal":
-				response(req, resp, getInvoiceNewPortalObject(api));
 				break;
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
@@ -231,26 +228,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private Object getInvoiceNewPortalObject(AonApiData api) {
-		InvoiceFilter filter = new InvoiceFilter()
-				.setDescription(api.getData().optString("description"))
-				.setStatus(api.getData().optString(IConstants.STATUS))
-				.setTypes(api.getData().opt(IConstants.TYPE) != null 
-					? api.getData().optString(IConstants.TYPE).split(","): null)
-				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
-				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
-				.setPage(api.getData().optInt("page"))
-				.setPerPage(api.getData().optInt("per_page"))
-				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
-		JSONArray jsArray = new JSONArray();
-		AON_SOLUTIONS.getInvoiceNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter))
-		.forEach(invoice -> {
-			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
-		});
-		return jsArray;
-	}
-
 	private JSONObject getInvoiceCount(AonApiData api) {
 		String domainName = api.getDomain().getName();
 		Integer domainId = api.getDomain().getId();
@@ -353,10 +330,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 				boolean accepted = true;
 				if(tbaiConfiguration.isBizkaia()) {
-					InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
-						f.getInvoiceProperty().eq(invoiceId)
-						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-					accepted = info.isAccepted() || info.isAcceptedWithErrors();
+					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+						accepted = InvoiceInfoDAO.getMap(ctx, invoiceId)
+								.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
+								.filter( Objects::nonNull )
+								.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+								.orElse( true )
+							;
+					}
 				}
 				if (accepted) {
 					tbaiConfiguration.setCertificate(checkCertificate(api));
@@ -615,44 +596,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			json.put("altered", !md5.equalsIgnoreCase(invoiceData.getValue()));
 		}
 
-		return json;
-	}
-	
-	private static JSONObject InvoiceNewPortalList2JSON(InvoiceNewPortal invoice, AonApiData api) {
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.ID, invoice.getId());
-		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
-		json.put(IJsonNames.NAME, invoice.getRegistryName());
-		json.put(IJsonNames.TOTAL, invoice.getTotal());
-		json.put(IJsonNames.TYPE, invoice.getType());
-		json.put(IJsonNames.STATUS, invoice.isRecorded() 
-				? InvoiceStatus.SCORED.name().toLowerCase() 
-				: InvoiceStatus.PENDING.name().toLowerCase());
-		json.put(IJsonNames.NUMBER, invoice.getNumber());
-		json.put(IJsonNames.SERIE, invoice.getSeries());
-		if(invoice.getMimeType() != null) {
-			JSONObject data = new JSONObject();
-			data.put("domain_name", api.getDomain().getName());
-			data.put("domain_id", api.getDomain().getId());
-			data.put("id", invoice.getId());
-			data.put("attach_type", AttachType.RAWDOC.getName());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "/ms/api/file/" +  result;
-			json.put(IJsonNames.FILE, url);
-			json.put(IJsonNames.CONTENT_TYPE, invoice.getMimeType().getName());
-		} else {
-			JSONObject data = new JSONObject();
-			data.put("id", invoice.getId());
-			data.put("source", "rawdoc");
-			data.put("domain_id", api.getDomain().getId());
-			data.put("domain_name", api.getDomain().getName());
-			data.put("login", api.getUser().getLogin());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "/ms/api/download_invoice_pdf?json=" +  result;
-			json.put(IJsonNames.FILE, url);
-			json.put(IJsonNames.CONTENT_TYPE, MimeType.PDF.getName());
-		}
 		return json;
 	}
 	

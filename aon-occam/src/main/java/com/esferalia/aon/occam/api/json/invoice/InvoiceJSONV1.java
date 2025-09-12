@@ -1,8 +1,12 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.stream.Collector;
 
 import org.json.JSONArray;
@@ -16,7 +20,10 @@ import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.doc.InvoiceDocJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
@@ -27,7 +34,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 class InvoiceJSONV1 {
@@ -62,47 +69,49 @@ class InvoiceJSONV1 {
 		LinkedList<InvoiceError> messages = new LinkedList<>();
 		messages.addAll(messageList);
 		return new Invoice()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-				.setType(type)
-				.setSeries(json.optString(IJsonNames.SERIES))
-				.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
-				.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
-				.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
-				.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE))
-				.setIssueDate(date) //JsonUtils.getDate(json, IJsonNames.DATE))
-				.setTaxDate(date)// JsonUtils.getDate(json, IJsonNames.DATE))
-				.setInvestment(json.optBoolean(IJsonNames.INVESTMENT))
-				.setService(json.optBoolean(IJsonNames.SERVICE))
-				.setWithholding(json.optBoolean(IJsonNames.WITHHOLDING))
-				.setWithholdingFarmer(json.optBoolean(IJsonNames.WITHHOLDING_FARMER))
-				.setVatAccrualPayment(json.optBoolean(IJsonNames.VAT_ACCRUAL_PAYMENT))
-				.setSurcharge(json.optBoolean(IJsonNames.SURCHARGE))
-				.setRectificationType(rtype)
-				.setComments(json.optString(IJsonNames.COMMENTS))
-				.setRemarks(json.optString(IJsonNames.REMARKS))
-				.setRectificationInvoice(rectificationInvoice.getId())
-				.setRectificationInvoiceSeries(rectificationInvoice.getSeries())
-				.setRectificationInvoiceNumber(rectificationInvoice.getNumber())
-				.setRectificationInvoiceDate(rectificationInvoice.getIssueDate())
-				.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
-				.setRegistryData(registry)
-				.setRegistry(registry.getId())
-				.setRegistryDocument(registry.getDocument())
-				.setRegistryDocumentCountry(registry.getDocumentCountry())
-				.setRegistryDocumentType(registry.getDocumentType())
-				.setRegistryName(registry.getName())
-				.setRegistryAddress(raddress.getId())
-				.setAddress(raddress)
-				.setSigned(JsonUtils.getboolean(json, IJsonNames.SIGNED))
-				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
-				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
-				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
-				.setMessages(messages)
-				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
-				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-				.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART))
-				.setDoc(InvoiceDocJSON.from(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null));
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+			.setType(type)
+			.setSeries(json.optString(IJsonNames.SERIES))
+			.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
+			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
+			.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
+			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE))
+			.setIssueDate(date) //JsonUtils.getDate(json, IJsonNames.DATE))
+			.setTaxDate(date)// JsonUtils.getDate(json, IJsonNames.DATE))
+			.setInvestment(json.optBoolean(IJsonNames.INVESTMENT))
+			.setService(json.optBoolean(IJsonNames.SERVICE))
+			.setWithholding(json.optBoolean(IJsonNames.WITHHOLDING))
+			.setWithholdingFarmer(json.optBoolean(IJsonNames.WITHHOLDING_FARMER))
+			.setVatAccrualPayment(json.optBoolean(IJsonNames.VAT_ACCRUAL_PAYMENT))
+			.setSurcharge(json.optBoolean(IJsonNames.SURCHARGE))
+			.setRectificationType(rtype)
+			.setComments(json.optString(IJsonNames.COMMENTS))
+			.setRemarks(json.optString(IJsonNames.REMARKS))
+			.setRectificationInvoice(rectificationInvoice.getId())
+			.setRectificationInvoiceSeries(rectificationInvoice.getSeries())
+			.setRectificationInvoiceNumber(rectificationInvoice.getNumber())
+			.setRectificationInvoiceDate(rectificationInvoice.getIssueDate())
+			.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
+			.setRegistryData(registry)
+			.setRegistry(registry.getId())
+			.setRegistryDocument(registry.getDocument())
+			.setRegistryDocumentCountry(registry.getDocumentCountry())
+			.setRegistryDocumentType(registry.getDocumentType())
+			.setRegistryName(registry.getName())
+			.setRegistryAddress(raddress.getId())
+			.setAddress(raddress)
+			.setSigned(JsonUtils.getboolean(json, IJsonNames.SIGNED))
+			.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
+			.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
+			.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
+			.setMessages(messages)
+			.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
+			.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
+			.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART))
+			.setDoc(InvoiceDocJSON.from(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null))
+			.addCommunicationInfo(getCommunicationInfo( JsonUtils.getJSONObject(json, IJsonNames.COMMUNICATION_INFO) ).orElse(null))
+		;
 	}
 
 	private static RectificationType getRectificationType(JSONObject json) {
@@ -164,19 +173,21 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
 			.put(IJsonNames.THIRD_PART, invoice.isThirdPart())
-			.put(IJsonNames.INVOICE_DOC, invoice.getDoc().map(InvoiceDocJSON::to).orElse(null));
+			.put(IJsonNames.INVOICE_DOC, invoice.getDoc().map(InvoiceDocJSON::to).orElse(null))
+			.put(IJsonNames.COMMUNICATION_INFO, getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null))
+		;
 		
-			json.put( IJsonNames.MESSAGES,JsonUtils.nullIfEmpty(
-					invoice.messageStream()
-					.map(m -> new JSONObject() 
-							.put(IJsonNames.CODE, m.getCode())
-							.put(IJsonNames.MESSAGE, m.getMessage())
-							.put(IJsonNames.LEVEL, InvoiceErrorLevel.name(m.getLevel()))
-							.put(IJsonNames.CONTEXT, toInvoiceErrorContextJSON(m.getContext()))
-					)
-					.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED))
-				))			
-			;
+		json.put( IJsonNames.MESSAGES,JsonUtils.nullIfEmpty(
+				invoice.messageStream()
+				.map(m -> new JSONObject() 
+						.put(IJsonNames.CODE, m.getCode())
+						.put(IJsonNames.MESSAGE, m.getMessage())
+						.put(IJsonNames.LEVEL, InvoiceErrorLevel.name(m.getLevel()))
+						.put(IJsonNames.CONTEXT, toInvoiceErrorContextJSON(m.getContext()))
+				)
+				.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED))
+			))			
+		;
 				
 		if(invoice.isRectifier() || invoice.isRectified()) {
 			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
@@ -223,5 +234,62 @@ class InvoiceJSONV1 {
 		} else return InvoiceType.EXPENSES;
 	}
 	
+	// ---------------------------- [FROM INVOICE INFO] ----------------------------
+	private static Optional<EnumMap<InvoiceCommunicationType, InvoiceInfo>> getCommunicationInfo(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		EnumMap<InvoiceCommunicationType, InvoiceInfo> map = new EnumMap<>(InvoiceCommunicationType.class);
+		for(Entry<String, Object> e : json.toMap().entrySet()) {
+			InvoiceCommunicationType type = InvoiceCommunicationType.safeValueOf(e.getKey());
+			if (type != null) {
+				JSONObject j = (JSONObject)e.getValue();
+				getInvoiceInfo(j).ifPresent( info -> map.put(type, info) );
+			}
+		}
+		return map.isEmpty() ? Optional.empty() : Optional.of(map);
+	}
 	
+	private static Optional<InvoiceInfo> getInvoiceInfo(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of( new InvoiceInfo()
+			.setType(InvoiceCommunicationType.safeValueOf(JsonUtils.getString(json,IJsonNames.COMMUNICATION_TYPE)))
+			.setStatus(InvoiceCommunicationStatus.safeValueOf(JsonUtils.getString(json,IJsonNames.COMMUNICATION_STATUS)))
+			.setCreationUser(JsonUtils.getString(json,IJsonNames.CREATION_USER))		
+			.setCreationDate(JsonUtils.getDateTime(json,IJsonNames.CREATION_DATE))
+			.setModificationUser(JsonUtils.getString(json,IJsonNames.MODIFICATION_USER))
+			.setModificationDate(JsonUtils.getDateTime(json,IJsonNames.MODIFICATION_DATE))
+		);
+	}
+	
+	// ---------------------------- [TO INVOICE INFO] ----------------------------
+	private static Optional<JSONObject> getCommunicationInfoJSON(Map<InvoiceCommunicationType, InvoiceInfo> enumMap) {
+		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
+		JSONObject map = 
+			AonCollectionUtils.stream(enumMap)
+				.filter( e -> e.getKey() != null )
+				.filter( e -> e.getValue() != null )
+				.collect(Collector.of(
+					JSONObject::new
+					,(obj, e) -> obj.put( 
+						InvoiceCommunicationType.name(e.getKey())
+						,getInvoiceInfoJSON(e.getValue()).orElse(null) )
+					,(left, right) -> left
+					,Collector.Characteristics.UNORDERED
+				)
+			)
+		;
+		if (JsonUtils.isEmpty(map)) return Optional.empty();
+		return Optional.of(map);
+	}
+	
+	private static Optional<JSONObject> getInvoiceInfoJSON(InvoiceInfo info) {
+		if (info == null) return Optional.empty();
+		return Optional.of( new JSONObject()
+			.put(IJsonNames.COMMUNICATION_TYPE, InvoiceCommunicationType.name(info.getType()))
+			.put(IJsonNames.COMMUNICATION_STATUS, InvoiceCommunicationStatus.name(info.getStatus()))
+			.put(IJsonNames.CREATION_USER, info.getCreationUser())
+			.put(IJsonNames.CREATION_DATE, JsonUtils.getDateTimeJSON(info.getCreationDate()))
+			.put(IJsonNames.MODIFICATION_USER, info.getModificationUser())
+			.put(IJsonNames.MODIFICATION_DATE, JsonUtils.getDateTimeJSON(info.getModificationDate()))
+		);
+	}
 }

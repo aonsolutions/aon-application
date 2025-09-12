@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -13,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -104,7 +108,7 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	private InvoiceDoc doc;
 	
-	private InvoiceInfo invoiceInfo;
+	private HashMap<InvoiceCommunicationType,InvoiceInfo> communicationInfo = new HashMap<>();
 		
 	private List<InvoiceError> messages;
 	
@@ -801,22 +805,31 @@ public class Invoice implements Serializable, HasAudit {
 		return getNumber() <= 0;
 	}
 	
-	/**
-	 * @deprecated
-	 * @use optInfo()
-	 */
-	@Deprecated
-	public InvoiceInfo getInvoiceInfo() {
-		if(invoiceInfo == null) {
-			invoiceInfo = new InvoiceInfo();
-		}
-		return invoiceInfo;
+	public Map<InvoiceCommunicationType, InvoiceInfo> getCommunicationInfo() {
+		return communicationInfo;
 	}
-	public Optional<InvoiceInfo> optInfo() {
-		return Optional.ofNullable(invoiceInfo);
+	public Invoice addCommunicationInfo(EnumMap<InvoiceCommunicationType, InvoiceInfo> map) {
+		if (map != null) this.communicationInfo.putAll(map);
+		return this;
 	}
-	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
-		this.invoiceInfo = invoiceInfo;
+	
+	public Optional<InvoiceInfo> getInvoiceInfo( InvoiceCommunicationType type ) {
+		InvoiceInfo info = communicationInfo.get(type);
+		return Optional.ofNullable( info );
+	}
+	
+	public Optional<InvoiceInfo> getVerifactuInfo() { return getInvoiceInfo(InvoiceCommunicationType.VERIFACTU); }
+	public Optional<InvoiceInfo> getLroeInfo() { return getInvoiceInfo(InvoiceCommunicationType.LROE); }
+	public Optional<InvoiceInfo> getTbaiInfo() { return getInvoiceInfo(InvoiceCommunicationType.TBAI); }
+	public Optional<InvoiceInfo> getSiiInfo() { return getInvoiceInfo(InvoiceCommunicationType.SII); }
+	
+	
+	public Invoice putInvoiceInfo(InvoiceInfo invoiceInfo) {
+		return putInvoiceInfo(invoiceInfo.getType(), invoiceInfo);	
+	}
+	
+	public Invoice putInvoiceInfo(InvoiceCommunicationType type, InvoiceInfo invoiceInfo) {
+		communicationInfo.put(type, invoiceInfo);
 		return this;
 	}
 	

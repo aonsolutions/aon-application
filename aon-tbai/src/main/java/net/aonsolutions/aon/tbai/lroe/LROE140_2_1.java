@@ -275,7 +275,9 @@ public class LROE140_2_1 extends LROE140 {
 		Invoice invoice = ic.getInvoice();
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
+		boolean mod = invoice.getLroeInfo()
+			.map(i -> i.isAccepted() || i.isAcceptedWithErrors())
+			.orElse(false);
 		return alta(ic, invoices, mod);
 	}
 

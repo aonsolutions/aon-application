@@ -32,9 +32,11 @@ import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -156,10 +158,10 @@ public class SiiMain extends DockLayoutPanel {
 		});
 	}
 	
-	InvoiceParams filterParams;
+	InvoiceCommunicationParams filterParams;
 	
-	public InvoiceParams getFilterParams() {
-		if(filterParams == null) filterParams = new InvoiceParams(); 
+	public InvoiceCommunicationParams getFilterParams() {
+		if(filterParams == null) filterParams = new InvoiceCommunicationParams(); 
 		return filterParams;
 	}
 	
@@ -182,9 +184,8 @@ public class SiiMain extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.SII)
-				.setType(InvoiceType.PURCHASE)
-				.addType(InvoiceType.EXPENSES);
+					.setCommunicationType(InvoiceCommunicationType.SII)
+					.setType(InvoiceType.PURCHASE, InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -252,7 +253,7 @@ public class SiiMain extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(String value) {
-				getFilterParams().setValue(value).setPage(1).setPerPage(30);
+				getFilterParams().setQuery(value).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -291,7 +292,7 @@ public class SiiMain extends DockLayoutPanel {
 					getSii().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
+							if(invoice.isSales() && invoice.getSiiInfo().map(i -> i.isAccepted()).orElse(false)) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
@@ -340,7 +341,7 @@ public class SiiMain extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -357,7 +358,7 @@ public class SiiMain extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -381,7 +382,7 @@ public class SiiMain extends DockLayoutPanel {
 			@Override
 			public void onChange(ChangeEvent event) {
 				InvoiceCommunicationStatus st = InvoiceCommunicationStatus.safeValueOf(status.getSelectedValue());
-				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(30);
+				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -399,7 +400,7 @@ public class SiiMain extends DockLayoutPanel {
 	}
 	
 	public void initializeFilter() {
-		this.filterParams = new InvoiceParams()
+		this.filterParams = new InvoiceCommunicationParams()
 			.setDomain(getOptions().getDomain())
 			.setCommunicationType(InvoiceCommunicationType.SII)
 			.setType(InvoiceType.SALES);

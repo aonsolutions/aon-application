@@ -334,7 +334,7 @@ public class InvoiceDAO {
 			}
 			
 			invoice.setDoc(InvoiceDocDAO.get(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
-			
+			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice.getId()).orElse(null));
 		}
 		return invoice;
 	}
@@ -994,7 +994,7 @@ public class InvoiceDAO {
 		
 		InvoiceAddressDAO.delete(ctx, id);
 		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
-		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceInfoDAO.deleteByInvoice(ctx, id );
 		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
@@ -1474,8 +1474,9 @@ public class InvoiceDAO {
 	}
 	
 
-	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
+	public static Invoice fillBreakdown(AONContext ctx, Invoice invoice) {
 		fillBreakdown(ctx, invoice, false);
+		return invoice;
 	}
 	
 	

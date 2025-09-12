@@ -8,11 +8,17 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationStatus implements Serializable{
 	
-	PENDING("Pendiente"),
-	ACCEPTED("Aceptada", "Correcto"),
-	ACCEPTED_WITH_ERRORS("Aceptada con Errores", "AceptadoConErrores"),
-	WRONG("Incorrecta", "Incorrecto"),
-	CANCELLED("Anulada");
+	PENDING("Pendiente") {
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) {visitor.visitPending();}},
+	ACCEPTED("Aceptada", "Correcto") { 
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) {visitor.visitAccepted();}},
+	ACCEPTED_WITH_ERRORS("Aceptada con Errores", "AceptadoConErrores"){
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) {visitor.visitAcceptedWithErrors();}},
+	WRONG("Incorrecta", "Incorrecto"){
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitWrong();}},
+	CANCELLED("Anulada") {
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitCancelled();}}
+	;
 	
 	String[] description;
 	private InvoiceCommunicationStatus(String... description) {
@@ -55,23 +61,19 @@ public enum InvoiceCommunicationStatus implements Serializable{
 		return null;
 	}
 	
-	public boolean isPending() {
-		return InvoiceCommunicationStatus.PENDING.equals(this);
+	public boolean isPending() 				{return this == InvoiceCommunicationStatus.PENDING;}
+	public boolean isAccepted() 			{return this == InvoiceCommunicationStatus.ACCEPTED;}
+	public boolean isAcceptedWithErrors() 	{return this == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
+	public boolean isWrong() 				{return this == InvoiceCommunicationStatus.WRONG;}
+	public boolean isAnnulled() 			{return this == InvoiceCommunicationStatus.CANCELLED;}
+	
+	public abstract void accept( InvoiceCommunicationStatusVisitor visitor );
+	public interface InvoiceCommunicationStatusVisitor {
+		void visitPending();
+		void visitAccepted();
+		void visitAcceptedWithErrors();
+		void visitWrong();
+		void visitCancelled();
 	}
 	
-	public boolean isAccepted() {
-		return InvoiceCommunicationStatus.ACCEPTED.equals(this);
-	}
-	
-	public boolean isAcceptedWithErrors() {
-		return InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(this);
-	}
-	
-	public boolean isWrong() {
-		return InvoiceCommunicationStatus.WRONG.equals(this);
-	}
-	
-	public boolean isAnnulled() {
-		return InvoiceCommunicationStatus.CANCELLED.equals(this);
-	}
 }

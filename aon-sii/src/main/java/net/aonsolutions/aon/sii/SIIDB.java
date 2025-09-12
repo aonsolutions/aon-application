@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -88,16 +89,17 @@ public class SIIDB {
 					.setDataValue(status);
 				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
 			}
-
-			InvoiceInfo info = AON.getInvoiceInfo(domain, user, f -> f.getInvoiceProperty().eq(invoiceId));
-			if(info.isEmpty()) {
-				info = new InvoiceInfo()
-						.setDomain(domain.getId())
-						.setInvoice(invoiceId)
-						.setType(InvoiceCommunicationType.SII);
-			} 
-			info.setStatus(InvoiceCommunicationStatus.safeValueOf(status));
-			AON.saveInvoiceInfo(domain, user, info);
+			
+			Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser(login);
+			InvoiceInfo info = new InvoiceInfo()
+				.setDomain(domain.getId())
+				.setInvoice(invoiceId)
+				.setType(InvoiceCommunicationType.SII)
+				.setStatus(InvoiceCommunicationStatus.safeValueOf(status));
+			AON.saveInvoiceInfo(occam, info);
 		
 			if(sendType.isAlta() && (status.equals("Correcto") || status.equals("AceptadoConErrores"))
 				&& vatList.stream().filter(d -> d.getInvoice().equals(invoiceId)).map(f -> f.isIntracommunity()).findFirst().orElse(false)){
@@ -177,15 +179,16 @@ public class SIIDB {
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     		}
     		
-    		InvoiceInfo info = AON.getInvoiceInfo(domain, user, f -> f.getInvoiceProperty().eq(invoiceId));
-			if(info.isEmpty()) {
-				info = new InvoiceInfo()
-						.setDomain(domain.getId())
-						.setInvoice(invoiceId)
-						.setType(InvoiceCommunicationType.SII);
-			} 
-			info.setStatus(InvoiceCommunicationStatus.CANCELLED);
-			AON.saveInvoiceInfo(domain, user, info);
+    		Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser(login);
+    		InvoiceInfo info = new InvoiceInfo()
+				.setDomain(domain.getId())
+				.setInvoice(invoiceId)
+				.setType(InvoiceCommunicationType.SII)
+    			.setStatus(InvoiceCommunicationStatus.CANCELLED);
+			AON.saveInvoiceInfo(occam, info);
     		
     		Attach requestAttach = new Attach()
         			.setDomain(domain)

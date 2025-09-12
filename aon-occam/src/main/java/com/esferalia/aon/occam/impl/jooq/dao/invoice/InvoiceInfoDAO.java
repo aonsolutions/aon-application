@@ -3,100 +3,97 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Timestamp;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceInfoProperties;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
-import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceInfoDAO {
 	
 	private InvoiceInfoDAO() {
 	
 	}
+	// ************************************************************
+	// *********************** [READ] *****************************
+	// ************************************************************
 	
-	private static final InvoiceInfoPropertiesDAO INVOICE_INFO_PROPERTIES = new InvoiceInfoPropertiesDAO();
-	public static class InvoiceInfoPropertiesDAO implements InvoiceInfoProperties {
-		
-		public Condition[] getConditions(InvoiceInfoFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE_INFO.DOMAIN);}
-		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.INVOICE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}
-	}
-	
-	
-	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceInfoFilter filter){	
-		return ctx.getDslContext()
-				.select()
-				.from(INVOICE_INFO)
-				.where(INVOICE_INFO_PROPERTIES.getConditions(filter));
-	}
-	
-	public static Optional<InvoiceInfo> get(AONContext ctx, Integer invoiceId, InvoiceCommunicationType verifactu) {
-		return select(ctx, f -> f.getInvoiceProperty().eq(invoiceId)
-			.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))
+	public static Optional<InvoiceInfo> get(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type) {
+		ctx.checkRead();
+		if (invoiceId == null) return Optional.empty();
+		if (type == null) return Optional.empty();
+		return select(ctx)
+			.where(INVOICE_INFO.INVOICE.eq(invoiceId))
+			.and(INVOICE_INFO.TYPE.eq(type.value()))
+			.orderBy(INVOICE_INFO.CREATION_DATE.desc())
 			.fetch()
 			.stream()
 			.map(new InvoiceInfoFiller())
 			.findFirst();	
 	}
-	public static InvoiceInfo get(AONContext ctx, InvoiceInfoFilter filter) {
-		return select(ctx, filter).limit(1)
-			.fetch().stream().map(new InvoiceInfoFiller())
-			.findFirst().orElse(new InvoiceInfo());
+	
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, Integer invoiceId) {
+		ctx.checkRead();
+		EnumMap<InvoiceCommunicationType,InvoiceInfo> enumMap = select(ctx)
+			.where(INVOICE_INFO.INVOICE.eq(invoiceId))
+			.orderBy(INVOICE_INFO.CREATION_DATE)
+			.fetch()
+			.stream()
+			.map(InvoiceInfoFiller::build)
+			.collect(
+				 () -> new EnumMap<InvoiceCommunicationType,InvoiceInfo>(InvoiceCommunicationType.class)
+				,(m, v) -> m.put(v.getType(), v)
+				,Map::putAll
+			)
+		;
+		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
+		return Optional.of(enumMap);
 	}
 	
+	// ************************************************************
+	// ********************** [WRITE] *****************************
+	// ************************************************************
 	public static InvoiceInfo save(AONContext ctx, InvoiceInfo invoiceInfo) {
-		InvoiceInfoValidation.autoComplete(ctx, invoiceInfo);
-		InvoiceInfoValidation.validate(ctx, invoiceInfo);
-		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceInfo.getInvoice());
-		if(inv != null && inv.getId() != null) {
-			invoiceInfo = invoiceInfo.getId() != null 
-					? update(ctx, invoiceInfo)
-					: insert(ctx, invoiceInfo);
-		}
-		return invoiceInfo;
+		ctx.checkWrite();
+		if (invoiceInfo == null) throw new AonCoreException(AonError.EMPTY_DATA.format("invoiceInfo")) ;
+		InvoiceInfoAutoComplete.autoComplete(invoiceInfo);
+		InvoiceInfoValidation.validate( invoiceInfo );
+		get(ctx, invoiceInfo.getInvoice(), invoiceInfo.getType())
+			.ifPresent(info -> invoiceInfo.setId(info.getId()));
+		return invoiceInfo.getId() != null 
+			? update(ctx, invoiceInfo)
+			: insert(ctx, invoiceInfo);
 	}
-	
+
 	public static InvoiceInfo update(AONContext ctx, InvoiceInfo invoiceInfo) {
-		ctx.getDslContext().update(INVOICE_INFO)
-		.set(INVOICE_INFO.DOMAIN, invoiceInfo.getDomain())
-		.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
-		.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
-		.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
-		.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
-		.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-		.where(INVOICE_INFO.ID.eq(invoiceInfo.getId()))
-		.execute();
+		ctx.getDslContext()
+			.update(INVOICE_INFO)
+				.set(INVOICE_INFO.DOMAIN, invoiceInfo.getDomain())
+				.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
+				.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
+				.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
+				.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
+				.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(INVOICE_INFO.ID.eq(invoiceInfo.getId()))
+			.execute();
 		return invoiceInfo;
 	}
-	
+
 	public static InvoiceInfo insert(AONContext ctx, InvoiceInfo invoiceInfo) {
-		Integer id = ctx.getDslContext().insertInto(INVOICE_INFO)
+		Integer id = ctx.getDslContext()
+			.insertInto(INVOICE_INFO)
 				.set(INVOICE_INFO.DOMAIN, invoiceInfo.getDomain())
 				.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
 				.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
@@ -105,20 +102,39 @@ public class InvoiceInfoDAO {
 				.set(INVOICE_INFO.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 				.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
 				.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-			.returning(INVOICE_INFO.ID).fetchOne().getId();
+			.returning(INVOICE_INFO.ID)
+			.fetchOne()
+			.getId();
 		return invoiceInfo.setId(id);
 	}	
-
-	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
-	}
 	
-	public static void delete(AONContext ctx, InvoiceInfoFilter filter){
+	
+	public static void deleteById(AONContext ctx, Integer id){
+		ctx.checkWrite();
 		ctx.getDslContext().delete(INVOICE_INFO)
-		.where(INVOICE_INFO_PROPERTIES.getConditions(filter))
-		.execute();
+			.where(INVOICE_INFO.ID.eq(id))
+			.execute();
+	}
+
+	public static void deleteByInvoice(AONContext ctx, Integer invoiceId){
+		ctx.checkWrite();
+		ctx.getDslContext().delete(INVOICE_INFO)
+			.where(INVOICE_INFO.INVOICE.eq(invoiceId))
+			.execute();
+	}
+
+	// ************************************************************
+	// ********************* [PRIVATE] ****************************
+	// ************************************************************
+	private static SelectJoinStep<Record> select(AONContext ctx){	
+		return ctx.getDslContext()
+			.select()
+			.from(INVOICE_INFO);
 	}
 	
+	// ***********************************************************
+	// ********************* [FILLER] ****************************
+	// ***********************************************************
 	public static class InvoiceInfoFiller extends Filler implements Function<Record, InvoiceInfo> {
 
 		@Override
@@ -128,63 +144,72 @@ public class InvoiceInfoDAO {
 		
 		public static InvoiceInfo build(Record r) {
 			return new InvoiceInfo()
-				.setId(r.getValue(INVOICE_INFO.ID))
-				.setDomain(r.getValue(INVOICE_INFO.DOMAIN))
-				.setInvoice(r.getValue(INVOICE_INFO.INVOICE))
-				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_INFO.TYPE)))
-				.setStatus(InvoiceCommunicationStatus.safeValueOf(r.getValue(INVOICE_INFO.STATUS)))
+				.setId(getValue(r,INVOICE_INFO.ID))
+				.setDomain(getValue(r,INVOICE_INFO.DOMAIN))
+				.setInvoice(getValue(r,INVOICE_INFO.INVOICE))
+				.setType(InvoiceCommunicationType.safeValueOf(getValue(r,INVOICE_INFO.TYPE)))
+				.setStatus(InvoiceCommunicationStatus.safeValueOf(getValue(r,INVOICE_INFO.STATUS)))
 				.setCreationUser(getValue(r, INVOICE_INFO.CREATION_USER))
 				.setCreationDate(getValue(r, INVOICE_INFO.CREATION_DATE))
 				.setModificationUser(getValue(r, INVOICE_INFO.MODIFICATION_USER))
 				.setModificationDate(getValue(r, INVOICE_INFO.MODIFICATION_DATE));
 		}
 	}
-	
+
+	// ************************************************************
+	// ******************* [VALIDATION] ***************************
+	// ************************************************************
 	private static class InvoiceInfoValidation {
 		
 		private InvoiceInfoValidation() {
-	
 		}
 		
-		public static final BiConsumer<AONContext, InvoiceInfo> EMPTY_DOMAIN = (ctx, invoiceInfo) -> {
-			if (invoiceInfo.getDomain() == null) 
+		public static final Consumer<InvoiceInfo> EMPTY_DOMAIN = i -> {
+			if (i.getDomain() == null) 
 				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		};
 		
-		public static final BiConsumer<AONContext, InvoiceInfo> EMPTY_INVOICE = (ctx, invoiceInfo) -> {
-			if (invoiceInfo.getInvoice() == null) 
+		public static final Consumer<InvoiceInfo> EMPTY_INVOICE = i -> {
+			if (i.getInvoice() == null) 
 				throw new AonCoreException(AonError.EMPTY_DATA.format("invoice")) ;
 		};
 		
-		public static final BiConsumer<AONContext, InvoiceInfo> EMPTY_TYPE = (ctx, invoiceInfo) -> {
-			if (invoiceInfo.getType() == null) 
+		public static final Consumer<InvoiceInfo> EMPTY_TYPE = i -> {
+			if (i.getType() == null) 
 				throw new AonCoreException(AonError.EMPTY_DATA.format("type")) ;
 		};
 		
-		public static final BiConsumer<AONContext, InvoiceInfo> EMPTY_STATUS = (ctx, invoiceInfo) -> {
-			if (invoiceInfo.getStatus() == null) 
+		public static final Consumer<InvoiceInfo> EMPTY_STATUS = i -> {
+			if (i.getStatus() == null) 
 				throw new AonCoreException(AonError.EMPTY_DATA.format("status")) ;
 		};
 		
-		public static void validate(AONContext ctx, InvoiceInfo invoiceInfo) throws AonCoreException {
-				EMPTY_DOMAIN
+		public static void validate(InvoiceInfo invoiceInfo) throws AonCoreException {
+			EMPTY_DOMAIN
 				.andThen(EMPTY_INVOICE)
 				.andThen(EMPTY_TYPE)
 				.andThen(EMPTY_STATUS)
-				.accept(ctx, invoiceInfo);
+				.accept(invoiceInfo);
 		}
+	}
+
+	// ************************************************************
+	// ***************** [AUTO COMPLETE] **************************
+	// ************************************************************
+	private static class InvoiceInfoAutoComplete {
 		
-		public static final BiConsumer<AONContext, InvoiceInfo> COMPLETE_STATUS = (ctx, invoiceInfo) -> {
-			if(invoiceInfo.getStatus() == null) {
-				invoiceInfo.setStatus(InvoiceCommunicationStatus.PENDING);
-			}
+		private InvoiceInfoAutoComplete() {
+		}
+	
+		public static final Consumer<InvoiceInfo> COMPLETE_STATUS = i -> {
+			if (i.getStatus() == null) i.setStatus(InvoiceCommunicationStatus.PENDING);
 		};
 
-		public static void autoComplete(AONContext ctx, InvoiceInfo invoiceInfo) throws AonCoreException {
+		public static void autoComplete(InvoiceInfo invoiceInfo) throws AonCoreException {
 			COMPLETE_STATUS
-			.accept(ctx, invoiceInfo);
-
+				.accept(invoiceInfo);
 		}
 		
 	}
+
 }

@@ -285,7 +285,9 @@ public class LROE240_2 extends LROE240 {
 		} 
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
+		boolean mod = invoice.getLroeInfo()
+			.map(i -> i.isAccepted() || i.isAcceptedWithErrors())
+			.orElse(false);
 		return alta(tbaiConfiguration, company, invoices, mod);
 	}
 	

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.jooq.Condition;
@@ -20,7 +21,6 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -296,11 +296,13 @@ public class InvoiceValidation {
 		if(tbai.isActive()) {
 			boolean accepted = true;
 			if(tbai.isBizkaia()) {
-				InvoiceInfo info = InvoiceInfoDAO.get(ivc.ctx, f -> f.getInvoiceProperty().eq(ivc.inv.getId())
-						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-				accepted = info.isAccepted() || info.isAcceptedWithErrors();
+				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
+					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
+					.filter( Objects::nonNull )
+					.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+					.orElse( true )
+				;
 			}
-			
 			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
@@ -316,11 +318,12 @@ public class InvoiceValidation {
 	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
 		VerifactuConfiguration verifactu = VerifactuConfigurationDAO.get(ivc.ctx);
 		if(verifactu.isActive()) {
-			boolean accepted = true;
-			InvoiceInfo info = InvoiceInfoDAO.get(ivc.ctx, f -> f.getInvoiceProperty().eq(ivc.inv.getId())
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
-			accepted = info.isAccepted() || info.isAcceptedWithErrors();
-			
+			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
+				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
+				.filter( Objects::nonNull )
+				.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+				.orElse( true )
+			;
 			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.VERIFACTU.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");

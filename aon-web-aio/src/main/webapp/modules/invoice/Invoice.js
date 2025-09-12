@@ -58,6 +58,8 @@ export class Invoice {
 
   thirdPart;
 
+  communicationInfo;
+
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -135,6 +137,7 @@ export class Invoice {
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
       this.thirdPart = invoice.thirdPart || false;
+      this.communicationInfo = invoice.communicationInfo;
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
@@ -187,6 +190,7 @@ export class Invoice {
       this.signed = false;
       this.tbaiUrl = '';
       this.thirdPart = false;
+
     }
     // getCompany().then(company => {
     //   this.surcharge = this.surcharge || company.surcharge;

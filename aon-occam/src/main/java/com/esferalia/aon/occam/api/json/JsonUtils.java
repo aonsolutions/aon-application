@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -222,4 +223,23 @@ public class JsonUtils {
 		return isEmpty(jsonArray) ? null : jsonArray;
 	}
 
+	public static class JSONArrayCollector {
+		private JSONArrayCollector() {
+		}
+		
+	    public static <T> Collector<T, JSONArray, JSONArray> toJSONArray() {
+	        return Collector.of(
+	            JSONArray::new,                  // supplier
+	            JSONArray::put,                  // accumulator
+	            (left, right) -> {               // combiner
+	                for (int i = 0; i < right.length(); i++) {
+	                    left.put(right.get(i));
+	                }
+	                return left;
+	            },
+	            Collector.Characteristics.IDENTITY_FINISH
+	        );
+	    }
+	}
+	
 }

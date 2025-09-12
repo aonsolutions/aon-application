@@ -127,6 +127,7 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
+	public static final String COMMUNICATION_INFO = "communicationInfo";
 	public static final String COMMUNICATION_STATUS = "communicationStatus";
 	public static final String COMMUNICATION_TYPE = "communicationType";
 	public static final String COMPANY = "company";

@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -69,9 +71,9 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 
 	@Override
-	public List<Invoice> getInvoices(String domainName, int domainId, String user, InvoiceParams params) {
-		return AON_SOLUTIONS.getInvoices(domainName, domainId, user, f -> getFilter(f, params))
-				.collect(Collectors.toCollection(LinkedList::new));
+	public List<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params) {
+		List<Invoice> list = AON.getCommunicationInvoices(occam, params); 
+		return list;
 	}
 		
 	public Filter getFilter(InvoiceProperties f, InvoiceParams params) {
@@ -100,15 +102,15 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
    				.or(f.getRegistryNameProperty().like("%" + params.getValue() + "%")));
     	}
     	
-    	if(params.getCommunicationType() != null) {
-    		filter = filter.and(f.getInvoiceInfoTypeProperty().eq(params.getCommunicationType().value()).or(f.getInvoiceInfoTypeProperty().isNull()));
-    	}
-    	
-    	if(params.getCommunicationStatus() != null && params.getCommunicationStatus().isPending()) {
-    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value()).or(f.getInvoiceInfoStatusProperty().isNull()));
-    	} else if(params.getCommunicationStatus() != null) {
-    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value())); 
-    	}
+//    	if(params.getCommunicationType() != null) {
+//    		filter = filter.and(f.getInvoiceInfoTypeProperty().eq(params.getCommunicationType().value()).or(f.getInvoiceInfoTypeProperty().isNull()));
+//    	}
+//    	
+//    	if(params.getCommunicationStatus() != null && params.getCommunicationStatus().isPending()) {
+//    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value()).or(f.getInvoiceInfoStatusProperty().isNull()));
+//    	} else if(params.getCommunicationStatus() != null) {
+//    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value())); 
+//    	}
     	
     	filter = filter.page(params.getPage());
     	filter = filter.perPage(params.getPerPage());
@@ -123,7 +125,8 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 			
 			Integer invoiceId = invoice.getId();
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
-			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+//			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user)
+//					, f -> f.getInvoiceProperty().eq(invoiceId)));
 
 			// ***** 
 			EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
@@ -224,7 +227,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 			
 			Integer invoiceId = invoice.getId();
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
-			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+//			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
 			
 			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
 					new AcceptInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())
@@ -249,7 +252,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 			
 			Integer invoiceId = invoice.getId();
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
-			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+//			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
 			
 			CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
 					new CancelInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())

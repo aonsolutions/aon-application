@@ -134,6 +134,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
@@ -8092,6 +8093,16 @@ public class AON {
 		}
 	}
 	
+	// INVOICE COMMUNICATION CONFIGURATION
+	public static List<Invoice> getCommunicationInvoices(Occam occam, InvoiceCommunicationParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getCommunicationInvoices(ctx,params)
+					.collect(Collectors.toCollection(LinkedList::new));
+		}
+		
+	}
+	
+	
 	// TICKET BAI CONFIGURATION
 	
 	public static TbaiConfiguration getTbaiConfiguration(Occam occam) {
@@ -8340,20 +8351,20 @@ public class AON {
 		}
 	}	
 	
-	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceInfo(ctx, filter);
-		}
-	}
-
+//	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+//			return getFinance().getInvoiceInfo(ctx, filter);
+//		}
+//	}
+//
 	public static Optional<InvoiceInfo> getInvoiceInfo(Occam occam, Integer invoiceId, InvoiceCommunicationType type) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceInfo(ctx, invoiceId, type);
 		}
 	}
 
-	public static InvoiceInfo saveInvoiceInfo(Domain domain, User user, InvoiceInfo invoiceInfo) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+	public static InvoiceInfo saveInvoiceInfo(Occam occam, InvoiceInfo invoiceInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().saveInvoiceInfo(ctx, invoiceInfo);
 		}
 	}

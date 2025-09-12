@@ -2,8 +2,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceBatch.INVOICE_BATCH;
 import static com.esferalia.aon.jooq.tables.InvoiceBatchDetail.INVOICE_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -11,7 +13,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.jooq.Condition;
+import org.jooq.conf.ParamType;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.DataAttach;
@@ -21,12 +26,20 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceCommunicationDAO {
 	
@@ -36,6 +49,85 @@ public class InvoiceCommunicationDAO {
 	private InvoiceCommunicationDAO() {
 
 	}
+	// *************************************************************
+	// ************************** [INVOICES] ***********************
+	// *************************************************************
+	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceCommunicationParams params) {
+		if (params == null) throw new AonCoreException("No params");
+		if (params.getDomain() == null) throw new AonCoreException("No domain");
+		if (params.getCommunicationType() == null) throw new AonCoreException("No type");
+		
+		System.out.println( 
+				ctx.getDslContext().select()
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
+				.where(getFilter(params))
+				.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
+				.limit(params.getSafePerPage())
+				.offset(params.getOffset())
+				.getSQL(ParamType.INLINED)
+				);
+		
+		
+		return ctx.getDslContext().select()
+			.from(INVOICE)
+			.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
+			.where(getFilter(params))
+			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
+			.limit(params.getSafePerPage())
+			.offset(params.getOffset())
+			.fetch()
+			.stream()
+			.map( r -> InvoiceFiller
+						.buildInvoice(r)
+						.putInvoiceInfo(InvoiceInfoFiller.build(r))
+				)
+		;
+	}
+	
+	private static Condition getFilter(InvoiceCommunicationParams params) {
+		Condition c = INVOICE.DOMAIN.eq(params.getDomain())
+			.and(
+				INVOICE_INFO.TYPE.isNull().or(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value()))
+			)
+		;
+		
+		if(params.getFrom() != null) {
+			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql( params.getFrom())));
+		}
+		
+		if(params.getTo() != null) {
+			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql( params.getTo())));
+		}
+		
+		if(AonCollectionUtils.isNotEmpty(params.getType())) {
+			LinkedList<Byte> types = AonCollectionUtils.stream(params.getType())
+				.filter(t -> t != null)
+				.map(t -> t.value())
+				.collect(Collectors.toCollection(LinkedList<Byte>::new));
+			c = c.and(INVOICE.TYPE.in(types));
+		}
+		
+    	if(AonStringUtils.isNotBlank(params.getQuery())) {
+    		c = c.and(
+   				INVOICE.REFERENCE_CODE.like("%" + params.getQuery() + "%")
+  				.or(INVOICE.RNAME.like("%" + params.getQuery() + "%"))
+   			);
+    	}
+    	if(params.getCommunicationStatus() != null) {
+    		Condition c1 = INVOICE_INFO.STATUS.eq(params.getCommunicationStatus().value());
+    		if (params.getCommunicationStatus() == InvoiceCommunicationStatus.PENDING) {
+				c1 = INVOICE_INFO.STATUS.isNull().or(c1);
+			} 
+			c = c.and(c1);
+    	}
+    	return c;
+    }
+	
+	// *************************************************************
+	// ************************** [HISTORY] ************************
+	// *************************************************************
+	
 	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor) {
 		return ctx.getDslContext().select(
 				INVOICE_BATCH.DATE,
@@ -79,6 +171,11 @@ public class InvoiceCommunicationDAO {
 		;
 	}
 	
+	@Deprecated
+	/*
+	 * @deprecated 
+	 * Use getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor)
+	 */
 	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoice) {
 		InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
 		if(config.isVerifactu()) {
@@ -99,6 +196,7 @@ public class InvoiceCommunicationDAO {
 		} else return new LinkedList<>();
 	}
 	
+	@Deprecated
 	private static String getVerifactuRequestUrl(AONContext ctx, Integer dataRequest) {
 		Attach requestAttach = AttachmentDAO.getDataAttachStream(ctx
 			, f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
@@ -109,6 +207,7 @@ public class InvoiceCommunicationDAO {
 		return getAttachUrl(ctx.getDomainName(), ctx.getDomainId(), requestAttach.getId());
 	}
 
+	@Deprecated
 	private static String getVerifactuResponseUrl(AONContext ctx, Integer dataResponse) {
 		Attach responseAttach = AttachmentDAO.getDataAttachStream(ctx
 			, f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())

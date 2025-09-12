@@ -281,10 +281,10 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertInvoiceInfo(Invoice i) {
-		InvoiceInfo invoiceInfo = InvoiceInfoDAO.get(ctx, 
-			f -> f.getDomainProperty().eq(i.getDomain())
-			.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())
-			.and(f.getInvoiceProperty().eq(i.getId()))));
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(ctx, i.getId(), InvoiceCommunicationType.VERIFACTU);
+		assertNotNull(invoiceInfoOpt);
+		assertTrue(invoiceInfoOpt.isPresent());
+		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
 		assertNotNull(invoiceInfo);
 		assertNotNull(invoiceInfo.getId());
 		assertNotNull(invoiceInfo.getDomain());

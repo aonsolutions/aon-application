@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -72,21 +73,6 @@ public class InvoiceCommunicationServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private static class JSONArrayCollector {
-	    public static <T> Collector<T, JSONArray, JSONArray> toJSONArray() {
-	        return Collector.of(
-	            JSONArray::new,                  // supplier
-	            JSONArray::put,                  // accumulator
-	            (left, right) -> {               // combiner
-	                for (int i = 0; i < right.length(); i++) {
-	                    left.put(right.get(i));
-	                }
-	                return left;
-	            },
-	            Collector.Characteristics.IDENTITY_FINISH
-	        );
-	    }
-	}	
 	private JSONArray getInvoiceCommunicationHistory(AonApiData api) {
 		Integer invoice = JsonUtils.getInteger(api.getData(), IJsonNames.INVOICE);
 		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());

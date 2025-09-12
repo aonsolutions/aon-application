@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
@@ -121,7 +123,7 @@ class InvoiceJSONV2 {
 			.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 			.setDoc(InvoiceDocJSON.from(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null))
 			.setFiscal( getInvoiceFiscal( JsonUtils.getJSONObject(json, IJsonNames.INVOICE_FISCAL) ).orElse(null))
-			.setInvoiceInfo(getInvoiceInfo(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_INFO) ).orElse(null))
+			.addCommunicationInfo(getCommunicationInfo( JsonUtils.getJSONObject(json, IJsonNames.COMMUNICATION_INFO) ).orElse(null))
 			.setCreationUser(JsonUtils.getString(json,IJsonNames.CREATION_USER))		
 			.setCreationDate(JsonUtils.getDateTime(json,IJsonNames.CREATION_DATE))
 			.setModificationUser(JsonUtils.getString(json,IJsonNames.MODIFICATION_USER))
@@ -227,7 +229,7 @@ class InvoiceJSONV2 {
 				.setDeductiblePercent(JsonUtils.getdouble(json, IJsonNames.DEDUCTIBLE_PERCENT))
 				.setDeductibleQuota(JsonUtils.getdouble(json, IJsonNames.DEDUCTIBLE_QUOTA))
 				.setVatDeductionType(VatDeductionType.safeValue( JsonUtils.getString(json, IJsonNames.VAT_DEDUCTION_TYPE)))
-				.setWithholdingType(WithholdingType.safeValueOf( JsonUtils.getString(json, IJsonNames.WITHHOLDING_TYPE))))
+				.setWithholdingType(WithholdingType.safeValue( JsonUtils.getString(json, IJsonNames.WITHHOLDING_TYPE))))
     		.forEach( detail::addTax );
 		return detail;
 	}
@@ -253,6 +255,19 @@ class InvoiceJSONV2 {
 	}
 	
 	// ---------------------------- [FROM INVOICE INFO] ----------------------------
+	private static Optional<EnumMap<InvoiceCommunicationType, InvoiceInfo>> getCommunicationInfo(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		EnumMap<InvoiceCommunicationType, InvoiceInfo> map = new EnumMap<>(InvoiceCommunicationType.class);
+		for(Entry<String, Object> e : json.toMap().entrySet()) {
+			InvoiceCommunicationType type = InvoiceCommunicationType.safeValueOf(e.getKey());
+			if (type != null) {
+				JSONObject j = (JSONObject)e.getValue();
+				getInvoiceInfo(j).ifPresent( info -> map.put(type, info) );
+			}
+		}
+		return map.isEmpty() ? Optional.empty() : Optional.of(map);
+	}
+	
 	private static Optional<InvoiceInfo> getInvoiceInfo(JSONObject json) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
 		return Optional.of( new InvoiceInfo()
@@ -332,7 +347,7 @@ class InvoiceJSONV2 {
 				.setSurchargeQuota(JsonUtils.getdouble(j, IJsonNames.SURCHARGE_QUOTA))
 				.setDeductibleQuota(JsonUtils.getdouble(j, IJsonNames.DEDUCTIBLE_QUOTA))
 				.setVatDeductionType(VatDeductionType.safeValue( JsonUtils.getString(j, IJsonNames.VAT_DEDUCTION_TYPE)))
-				.setWithholdingType(WithholdingType.safeValueOf( JsonUtils.getString(j, IJsonNames.WITHHOLDING_TYPE)))
+				.setWithholdingType(WithholdingType.safeValue( JsonUtils.getString(j, IJsonNames.WITHHOLDING_TYPE)))
 				)
 			.forEach( inv::addBreakdown )
 		;
@@ -405,7 +420,7 @@ class InvoiceJSONV2 {
 			.put(IJsonNames.CATEGORY, inv.getTediCategory())
 			.put(IJsonNames.INVOICE_DOC, InvoiceDocJSON.to(inv.getDoc()).orElse(null) )
 			.put(IJsonNames.INVOICE_FISCAL, getInvoiceFiscalJSON(inv.getFiscal()).orElse(null))
-			.put(IJsonNames.INVOICE_INFO, getInvoiceInfoJSON(inv.getInvoiceInfo()))
+			.put(IJsonNames.COMMUNICATION_INFO, getCommunicationInfoJSON(inv.getCommunicationInfo()).orElse(null))
 			.put(IJsonNames.CREATION_USER, inv.getCreationUser())
 			.put(IJsonNames.CREATION_DATE, JsonUtils.getDateTimeJSON(inv.getCreationDate()))
 			.put(IJsonNames.MODIFICATION_USER, inv.getModificationUser())
@@ -530,6 +545,21 @@ class InvoiceJSONV2 {
 	}
 
 	// ---------------------------- [TO INVOICE INFO] ----------------------------
+	private static Optional<JSONObject> getCommunicationInfoJSON(Map<InvoiceCommunicationType, InvoiceInfo> enumMap) {
+		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
+		JSONObject json = new JSONObject();
+		AonCollectionUtils.stream(enumMap)
+			.filter( e -> e.getKey() != null )
+			.filter( e -> e.getValue() != null )
+			.forEach( e -> {
+				String key = InvoiceCommunicationType.name(e.getKey());
+				getInvoiceInfoJSON(e.getValue())
+					.ifPresent( infoJson -> json.put(key, infoJson));
+			});
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of( json );
+		
+	}
 	private static Optional<JSONObject> getInvoiceInfoJSON(InvoiceInfo info) {
 		if (info == null) return Optional.empty();
 		return Optional.of( new JSONObject()

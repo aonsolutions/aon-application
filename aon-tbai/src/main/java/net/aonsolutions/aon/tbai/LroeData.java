@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -204,10 +205,12 @@ public class LroeData {
 				.setInvoiceBatchDetail(invoiceBatchDetail);
 		
 			AON.saveInvoiceCommunicationTracking(domain, user, invoiceCommunicationTracking);
-		
-			InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
-				.and(f.getTypeProperty().eq(info.getCommunicationType().value())));
-			if(invoiceInfo.isEmpty()) invoiceInfo = new InvoiceInfo()
+
+			Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser(user.getLogin());
+			InvoiceInfo invoiceInfo = new InvoiceInfo()
 				.setDomain(domain.getId())
 				.setInvoice(invoice.getId())
 				.setType(info.getCommunicationType());
@@ -218,7 +221,7 @@ public class LroeData {
 			} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
 				invoiceInfo.setStatus(InvoiceCommunicationStatus.ACCEPTED);
 			}
-			AON.saveInvoiceInfo(domain, user, invoiceInfo);
+			AON.saveInvoiceInfo(occam, invoiceInfo);
 		}
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())

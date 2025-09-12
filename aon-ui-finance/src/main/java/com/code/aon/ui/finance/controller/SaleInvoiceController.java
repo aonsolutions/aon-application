@@ -1036,9 +1036,16 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public boolean isInvoiceTbaiAccepted() {
 		Invoice inv = (Invoice) getTo();
-		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-		return info.getStatus().isAccepted();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(inv.getDomain())
+			.setUser(login);
+		return AON.getInvoiceInfo(occam, inv.getId(), InvoiceCommunicationType.LROE)
+			.map( InvoiceInfo::getStatus )
+			.map( InvoiceCommunicationStatus::isAccepted )
+			.orElse(false);
 	}
 	
 	public boolean isInvoiceVerifactuAccepted() {
