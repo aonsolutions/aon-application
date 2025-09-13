@@ -1,5 +1,4 @@
 :root {
-	--vistaPersonaliazadaColor: white;
 	--favicon: faviconCustom;
 	--title: titleCustom;
 }
@@ -29,61 +28,8 @@
 .aonMenuSidenav,
 .aonNewMenuTopNavDiv{
 	overflow: hidden;
-	background-color: var(--vistaPersonaliazadaColor);
 }
 
-#academy:hover, 
-#accounting:hover, 
-#accountingMenu:hover, 
-#aonApplication:hover, 
-#comerce:hover, 
-#comercialMenu:hover, 
-#comunica:hover, 
-#documental:hover, 
-#fiscal:hover, 
-#fiscalMenu:hover, 
-#garage:hover, 
-#groupwareMenu:hover, 
-#home:hover, 
-#apps:hover,
-#invoice:hover, 
-#managementMenu:hover, 
-#marketingMenu:hover,
-#messenger:hover, 
-#new:hover, 
-#note:hover, 
-#warehouse:hover,
-#office:hover, 
-#payroll:hover, 
-#payrollMenu:hover, 
-#timecontrol:hover, 
-#treasuryMenu:hover, 
-#warehouseMenu:hover,
-#configurationMenu:hover {
-  background-color: rgba(0,0,0,.1);
-}
-
-#applications {
-	background-color: var(--vistaPersonaliazadaColor);
-}
-
-#applications .material-symbols-outlined{
-	color: var(--gray-50);
-}
-
-.aonHeader #aonHeaderCompanyName,
-.aonHeader .material-icons {
-	color: var(--gray-50);
-}
-
-.aonHeaderAppSpan,
-.aonHeaderAppIcon {
-	color: black;
-}
-
-.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
-	color: var(--gray-50);
-}
 
 .aonSideNavFiscalCircle{
   border: 1px solid var(--aonFiscal);
