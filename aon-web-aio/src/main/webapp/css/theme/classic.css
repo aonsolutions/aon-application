@@ -1,7 +1,84 @@
 :root {
-	--favicon: ../faviconColors.png;
+	--favicon: ../assets/favicon.ico;
+	
+	--aonHeaderBackgroundColor: var(--aonWhiteGray);
 }
 
+.aonLogo,
+.aonNewLogo{
+  background-image: url("/assets/aon-white-logo.svg");
+}
+
+.aonHeaderOffice, 
+.aonMenuLeftopOffice {
+  background-color: black;
+}
+
+.aonHeaderGarage,
+.aonMenuLeftopGarage {
+  background-color: black;
+}
+
+.aonHeaderAcademy,
+.aonMenuLeftopAcademy {
+  background-color: black;
+}
+
+.aonHeaderComerce,
+.aonMenuLeftopComerce {
+  background-color: black;
+}
+
+.aonHeaderConsole,
+.aonMenuLeftopConsole {
+  background-color: black;
+}
+
+.aonHeaderNotification,
+.aonMenuLeftopNotification {
+  background-color: var(--aonBlue);
+}
+
+.aonHeaderComercialMenu,
+.aonMenuLeftopComercialMenu {
+  background-color: var(--aonBlue);
+}
+
+.aonHeaderManagementMenu,
+.aonMenuLeftopManagementMenu {
+  background-color: var(--aonBlue);
+}
+
+.aonHeaderTreasuryMenu,
+.aonMenuLeftopTreasuryMenu {
+  background-color: var(--aonBlue);
+}
+
+.aonHeaderWarehouseMenu,
+.aonMenuLeftopWarehouseMenu ,.aonHeaderGroupwareMenu,
+.aonMenuLeftopGroupwareMenu ,.aonHeaderAccountingMenu,
+.aonMenuLeftopAccountingMenu ,.aonHeaderFiscalMenu,
+.aonMenuLeftopFiscalMenu {
+  background-color: var(--aonBlue);
+}
+
+.aonHeaderApps,
+.aonMenuLeftopApps {
+  background-color: var(--aonBlue);
+}
+
+
+.aonHeaderNewConfigurationMenu,
+.aonHeaderMarketingMenu,.aonMenuLeftopMarketingMenu,
+.aonHeaderNotification,.aonMenuLeftopNotification,
+.aonHeaderConfigurationMenu,.aonMenuLeftTopConfigurationMenu,
+.aonHeaderEnterpriseMenu,.aonMenuLeftopEnterpriseMenu,
+.aonHeaderConsoleMenu,.aonMenuLeftTopConsoleMenu ,
+.aonHeaderWarehouse,.aonMenuLeftopWarehoues,
+.aonHeaderStart, .aonMenuLeftopStart,
+.aonHeaderHome, .aonMenuLeftopHome,
+.aonHeaderComunica, .aonMenuLeftopComunica,
+.aonHeaderApplications, .aonMenuLeftopApplications,
 .aonHeaderDocumental, .aonMenuLeftopDocumental,
 .aonHeaderInvoice, .aonMenuLeftopInvoice,
 .aonHeaderAccounting, .aonMenuLeftopAccounting,
@@ -12,6 +89,65 @@
 .aonHeaderMessenger, .aonMenuLeftopMessenger{
   background-color: var(--aonBlue);
 }
+
+#new:hover,
+#home:hover,
+#topMenuHome:hover,
+#apps:hover,
+#invoice:hover,
+#comunica:hover,
+#documental:hover,
+#accounting:hover,
+#fiscal:hover,
+#payroll:hover,
+#timecontrol:hover,
+#note:hover,
+#messenger:hover,
+#warehouse:hover,
+#office:hover,
+#garage:hover,
+#academy:hover,
+#comerce:hover,
+#console:hover,
+#comercialMenu:hover,
+#managementMenu:hover,
+#treasuryMenu:hover,
+#warehouseMenu:hover,
+#groupwareMenu:hover,
+#accountingMenu:hover,
+#fiscalMenu:hover,
+#payrollMenu:hover,
+#marketingMenu:hover,
+#configurationMenu:hover,
+#enterpriseMenu:hover,
+#consoleMenu:hover,
+#aonApplication:hover,
+#Superset:hover{
+  background-color: var(--aonCardColor);
+  /*transition: background-color 0.2s;*/
+}
+
+#applications {
+	background-color: inherit;
+}
+
+.aonHeader .material-icons,
+.aonHeader #aonHeaderCompanyName,
+#applications .material-symbols-outlined,
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--aonWhite);
+}
+
+
+.aonHeaderAppSpan,
+.aonHeaderAppIcon {
+	color:var(--aonWhite);
+}
+
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--gray-50);
+}
+
 
 #aon-notesSidenav .material-icons,
 #aon-notesSidenav aon-icon {
