@@ -172,6 +172,9 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 
 	private void searchData() {
+		
+		onShowELoadingMessage("Cargando informaci\u00f3n clientes/dominios. Este proceso puede llevar unos segundos...");
+		
 		if (!isMoreData())
 			return;
 
@@ -195,6 +198,8 @@ public abstract class CustomerPanel extends ScrollPanel {
 				disableMoreData();
 			}
 			enableSearch();
+			
+			onHideMessage();
 
 		});
 
@@ -347,6 +352,8 @@ public abstract class CustomerPanel extends ScrollPanel {
 
 
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract void onShowELoadingMessage(String loadingMessage);
+	protected abstract void onHideMessage();
 
 	protected abstract void onCusotmerOpen(Integer customerId, String customerName, Domain customerDomain);
 
