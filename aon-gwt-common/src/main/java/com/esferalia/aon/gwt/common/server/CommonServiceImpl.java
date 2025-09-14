@@ -1466,35 +1466,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<Customer> getCustomersNotLinked(CustomersLinkedParams params) throws AonCoreException {
-		if(params.isSig())
-			return AON.getSigCustomerNotLinkedStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
-					f -> f.getDomainProperty().eq(params.getDomainId())
-					.and(AonStringUtils.isBlank(params.getQuery())
-							? f.getIdProperty().isNotNull()
-							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
-								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
-								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
-					)
-					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
-					params.getOffset(), params.getLimit())
-				.collect(Collectors.toList());
-		else
-			return AON.getCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
-					f -> f.getDomainProperty().eq(params.getDomainId())
-					.and(f.getRegistryRelationProperty().isNull())
-					.and(AonStringUtils.isBlank(params.getQuery())
-							? f.getIdProperty().isNotNull()
-							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
-								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
-								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
-					)
-					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
-					params.getOffset(), params.getLimit())
-				.collect(Collectors.toList());
-	}
-	
-	@Override
 	public HashMap<Integer, Domain> getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException {
 		HashMap<Integer, Domain> customers = new HashMap<Integer, Domain>();
 		

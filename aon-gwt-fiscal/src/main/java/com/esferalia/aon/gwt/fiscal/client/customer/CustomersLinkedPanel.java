@@ -107,7 +107,7 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 	public void onSearch() {
 		centerPanel.clear();
-		
+
 		String searchQuery = getSearchTextBox().getValue();
 		Byte[] customerStatusSearch = mapStatus(customerStatus.getSelectedOptions());
 		
@@ -120,20 +120,10 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 			protected void onShowErrorMessage(String errorMessage) {
 				AonMessagePanel.showError(messagePanel, errorMessage);
 			}
-			
-			@Override
-			protected void onHideMessage() {
-				AonMessagePanel.hideMessage(messagePanel);
-			}
 
 			@Override
 			protected void onCusotmerOpen(Integer customerId, String customerName, Domain customerDomain) {
 				onCustomerSelect(customerId, customerName, customerDomain);
-			}
-
-			@Override
-			protected void onShowELoadingMessage(String loadingMessage) {
-				AonMessagePanel.showLoading(messagePanel, loadingMessage);
 			}
 
 		};

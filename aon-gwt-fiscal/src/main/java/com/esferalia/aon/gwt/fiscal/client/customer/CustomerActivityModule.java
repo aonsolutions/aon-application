@@ -72,8 +72,8 @@ public class CustomerActivityModule extends MainEntryPoint {
 	}
 
 	private void showSelectedCustomer(Integer customerId, String customerName, Domain customerDomain) {
-		deckLayoutPanel.showWidget(activitySummary);
 		activitySummary.showCustomerDomainInfo(customerId, customerName, customerDomain);
+		deckLayoutPanel.showWidget(activitySummary);
 	}
 
 }
