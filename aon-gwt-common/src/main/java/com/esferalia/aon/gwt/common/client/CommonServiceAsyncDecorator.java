@@ -1340,6 +1340,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCustomersLinked(params, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getCustomersNotLinked(CustomersLinkedParams params, AsyncCallback<List<Customer>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomersNotLinked(params, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds,
