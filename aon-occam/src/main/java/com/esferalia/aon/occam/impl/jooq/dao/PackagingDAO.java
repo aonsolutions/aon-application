@@ -1128,7 +1128,7 @@ public class PackagingDAO {
 	
 	public static Stock addPackageStock(AONContext ctx, Integer itemId, Integer warehouse) {
 		Optional<Stock> stock = StockDAO.opt(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(itemId)));
-		if(stock.isPresent()) {
+		if(stock.isPresent() && stock.get().getQuantity() > 0) {
 			throw new AonCoreException("El envase ya está en stock.");
 		}
 		

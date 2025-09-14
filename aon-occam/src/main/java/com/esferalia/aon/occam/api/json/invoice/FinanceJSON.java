@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,16 +12,8 @@ import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FinanceJSON {
@@ -53,6 +42,8 @@ public class FinanceJSON {
 				.setPayMethodName(JsonUtils.getString(json, IJsonNames.PAYMETHOD_NAME))
 				.setPayMethodType(PayMethodType.safeValueOf(JsonUtils.getString(json, IJsonNames.PAYMETHOD_TYPE)))
 				.setBankAccount(new BankAccount(json.optString(IJsonNames.BANK_ACCOUNT)))
+				.setBankAlias(JsonUtils.getString(json, IJsonNames.BANK_ALIAS))
+				.setBic(JsonUtils.getString(json, IJsonNames.BIC))
 				.setAmount(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 				.setDueDate(date);
 	}
