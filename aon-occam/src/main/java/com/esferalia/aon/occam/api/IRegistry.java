@@ -250,6 +250,7 @@ public interface IRegistry {
 	// **************************************************
 	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit);
 	public Stream<Customer> getSigCustomerStream(AONContext ctx, CustomerFilter filter, int ofs, int limit);
+	public Stream<Customer> getSigCustomerNotLinkedStream(AONContext ctx, CustomerFilter filter, int ofs, int limit);
 	
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id);
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);

@@ -19,3 +19,9 @@ export const ConsoleSidenav = {
     options: [LINK_DOMAINS, BOOKING_PANEL]
   }
 }
+
+export const LINK_CUSTOMER_DOMAINS = {
+  id: CONSTANT.LINK_CUSTOMER_DOMAINS.initCap(),
+  name: "Vincular a dominios",
+  icon: MATERIAL_ICONS.DATASET_LINKED
+}

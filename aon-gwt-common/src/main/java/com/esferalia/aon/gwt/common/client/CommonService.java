@@ -103,7 +103,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -466,6 +465,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException;
+	List<Customer> getCustomersNotLinked(CustomersLinkedParams params) throws AonCoreException;
 	HashMap<Integer, Domain> getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException;
 	List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws AonCoreException;
 	

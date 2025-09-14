@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -19,9 +18,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
+public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 
-	private static final Logger LOGGER = Logger.getLogger(CustomersLinkedPanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CustomersNotLinkedPanel.class.getName());
 	static {
 		LOGGER.addHandler(new ConsoleLogHandler());
 	}
@@ -33,12 +32,12 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 	private SimplePanel centerPanel;
 
-	private CustomerPanel customerPanel;
+	private CustomerNotLinkedPanel customerNotLinkedPanel;
 	
 	private CustomersLinkedParams params;
 
-	public CustomersLinkedPanel(CustomersLinkedParams params) {
-		super("Clientes vinculados");
+	public CustomersNotLinkedPanel(CustomersLinkedParams params) {
+		super("Clientes sin vinculaci\u00f3n");
 
 		this.params = params;
 		
@@ -95,7 +94,7 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 	@Override
 	protected void onClearFilter() {
-		customerPanel.resetSearchOffset();
+		customerNotLinkedPanel.resetSearchOffset();
 		getSearchTextBox().setValue(null, false);
 
 		Set<String> selectedOptions = new LinkedHashSet<String>();
@@ -107,28 +106,28 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 	public void onSearch() {
 		centerPanel.clear();
-		
+
 		String searchQuery = getSearchTextBox().getValue();
 		Byte[] customerStatusSearch = mapStatus(customerStatus.getSelectedOptions());
 		
 		this.params.setQuery(searchQuery);
 		this.params.setCustomerStatus(customerStatusSearch);
 
-		customerPanel = new CustomerPanel(params) {
+		customerNotLinkedPanel = new CustomerNotLinkedPanel(params) {
 
 			@Override
 			protected void onShowErrorMessage(String errorMessage) {
 				AonMessagePanel.showError(messagePanel, errorMessage);
 			}
+
+			@Override
+			protected void onCusotmerOpen(Integer customerId, String customerName) {
+				onCustomerSelect(customerId, customerName);
+			}
 			
 			@Override
 			protected void onHideMessage() {
 				AonMessagePanel.hideMessage(messagePanel);
-			}
-
-			@Override
-			protected void onCusotmerOpen(Integer customerId, String customerName, Domain customerDomain) {
-				onCustomerSelect(customerId, customerName, customerDomain);
 			}
 
 			@Override
@@ -138,7 +137,7 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 		};
 
-		centerPanel.setWidget(customerPanel);
+		centerPanel.setWidget(customerNotLinkedPanel);
 	}
 
 	private static Byte[] mapStatus(Set<String> selectedOptions) {
@@ -162,6 +161,6 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 		return result.toArray(new Byte[0]);
 	}
 
-	protected abstract void onCustomerSelect(Integer customerId, String customerName, Domain customerDomain);
+	protected abstract void onCustomerSelect(Integer customerId, String customerName);
 
 }

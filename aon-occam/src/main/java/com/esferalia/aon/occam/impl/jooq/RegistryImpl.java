@@ -786,6 +786,12 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public Stream<Customer> getSigCustomerNotLinkedStream(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getSigNotLinkedStream(ctx, filter, ofs, limit));
+	}
+	
+	@Override
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getFull(ctx, id));
