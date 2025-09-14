@@ -65,14 +65,12 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -370,13 +368,7 @@ public interface EnterprisesServiceAsync {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
-	void getCustomersLinked(String currentDomainName, int currentDomainId, String currentUser, boolean isSig, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException ;
-	
-	void getRRelationShip(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException;
-	
+
 	void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException;
 	
-	void getRegistryDomainNameAddInfo(String currentDomainName, int currentDomainId, String currentUser, Integer customerId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
-	
-
 }

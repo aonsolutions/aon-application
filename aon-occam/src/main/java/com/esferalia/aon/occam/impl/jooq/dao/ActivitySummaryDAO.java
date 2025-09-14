@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.jooq;
+package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
@@ -9,7 +9,6 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,32 +26,18 @@ import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
-import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class JooqActivitySummary {
+public class ActivitySummaryDAO {
 
-	private static Settings SETTINGS = null;
-
-	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
-
-	public static List<ActivitySummaryObject> getActivitySummary(Connection connection, Integer domainId,
-			Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
-
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+	public static List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
 
 		if (params.getStart() != null && params.getEnd() != null) {
 			Map<Integer, ActivitySummaryObject> summaryMap = null;
@@ -64,13 +49,13 @@ public class JooqActivitySummary {
 					Integer[] childDomains = null;
 
 					if (null != userId)
-						childDomains = getChildDomainIDs(dslContext, domainId, userId);
+						childDomains = getChildDomainIDs(ctx.getDslContext(), domainId, userId);
 					else
-						childDomains = getChildDomainIDs(dslContext, domainId, null);
+						childDomains = getChildDomainIDs(ctx.getDslContext(), domainId, null);
 
-					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
-					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
-					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
+					summaryMap = getSummaryEnterprise(ctx.getDslContext(), params, childDomains);
+					salaryMap = getSummaryEnterpriseSalary(ctx.getDslContext(), params, childDomains);
+					itMap = getSummaryEnterpriseIT(ctx.getDslContext(), params, childDomains);
 
 				} catch (SQLException e) {
 					throw new IllegalArgumentException(e.getMessage());
@@ -79,9 +64,9 @@ public class JooqActivitySummary {
 
 				if (params.getChildomain() == null)
 					params.setChildomain(domainId);
-				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
-				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
-				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+				summaryMap = getSummaryEmployee(ctx.getDslContext(), params, params.getChildomain());
+				salaryMap = getSummaryEmployeeSalary(ctx.getDslContext(), params, params.getChildomain());
+				itMap = getSummaryEmployeeIT(ctx.getDslContext(), params, params.getChildomain());
 
 			}
 
@@ -95,47 +80,7 @@ public class JooqActivitySummary {
 		return new ArrayList<>();
 	}
 
-	public static List<ActivitySummaryObject> getSigActivitySummary(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
-		if (params.getStart() != null && params.getEnd() != null) {
-			Map<Integer, ActivitySummaryObject> summaryMap = null;
-			Map<Integer, ActivitySummaryObject> salaryMap = null;
-			Map<Integer, ActivitySummaryObject> itMap = null;
-
-			if (parentDomainId == null && params.getChildomain() == null) {
-				try {
-					Integer[] childDomains = null;
-
-					if (null != userId)
-						childDomains = getChildDomainIDs(dslContext, domainId, userId);
-					else
-						childDomains = getChildDomainIDs(dslContext, domainId, null);
-
-					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
-					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
-					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
-
-				} catch (SQLException e) {
-					throw new IllegalArgumentException(e.getMessage());
-				}
-			} else {
-
-				if (params.getChildomain() == null)
-					params.setChildomain(domainId);
-				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
-				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
-				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
-
-			}
-
-			fillMapData(summaryMap, salaryMap);
-			fillMapData(summaryMap, itMap);
-
-			return sortedList(summaryMap, params);
-
-		}
-
-		return new ArrayList<>();
-	}
+	
 
 	private static List<ActivitySummaryObject> sortedList(Map<Integer, ActivitySummaryObject> summaryMap,
 			ActivitySummaryParams params) {
@@ -411,17 +356,18 @@ public class JooqActivitySummary {
 			ActivitySummaryParams params, Integer domainId) {
 		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(CONTRACT.ID,
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.COMMON_DISEASE.ordinal(),
-								(byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal())).coerce(Integer.class)),
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal()))
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) 0,
+								(byte) 7)).coerce(Integer.class)),
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) 1))
 								.coerce(Integer.class)),
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.MATERNITY.ordinal(),
-								(byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) 2,
+								(byte) 3)).coerce(Integer.class)),
 						DSL.sum(DSL
-								.field(CONTRACT_LEAVE.TYPE.notIn((byte) LeaveType.COMMON_DISEASE.ordinal(),
-										(byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal(),
-										(byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal(),
-										(byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal()))
+								.field(CONTRACT_LEAVE.TYPE.notIn((byte) 0,
+										(byte) 7,
+										(byte) 1,
+										(byte) 2, 
+										(byte) 3))
 								.coerce(Integer.class)))
 				.from(CONTRACT.leftOuterJoin(CONTRACT_LEAVE).on(CONTRACT_LEAVE.CONTRACT.eq(CONTRACT.ID)))
 				.where(CONTRACT_LEAVE.START_DATE.le(AonDateUtils.toSql(params.getEnd())))
@@ -446,17 +392,18 @@ public class JooqActivitySummary {
 			ActivitySummaryParams params, Integer[] childDomainIds) {
 		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(DOMAIN.ID,
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.COMMON_DISEASE.ordinal(),
-								(byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal())).coerce(Integer.class)),
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal()))
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) 0,
+								(byte) 7)).coerce(Integer.class)),
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) 1))
 								.coerce(Integer.class)),
-						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.MATERNITY.ordinal(),
-								(byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(CONTRACT_LEAVE.TYPE.in((byte) 2,
+								(byte)3)).coerce(Integer.class)),
 						DSL.sum(DSL
-								.field(CONTRACT_LEAVE.TYPE.notIn((byte) LeaveType.COMMON_DISEASE.ordinal(),
-										(byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal(),
-										(byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal(),
-										(byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal()))
+								.field(CONTRACT_LEAVE.TYPE.notIn((byte) 0,
+										(byte) 7,
+										(byte) 1,
+										(byte) 2, 
+										(byte) 3))
 								.coerce(Integer.class)))
 				.from(DOMAIN.leftOuterJoin(CONTRACT_LEAVE).on(CONTRACT_LEAVE.DOMAIN.eq(DOMAIN.ID)))
 				.where(CONTRACT_LEAVE.START_DATE.le(AonDateUtils.toSql(params.getEnd())))
@@ -513,11 +460,11 @@ public class JooqActivitySummary {
 	 * IT CONDITIONS
 	 */
 	private static Condition getItCondition(ActivitySummaryParams params) {
-		byte itCommonDiseaseType = (byte) LeaveType.COMMON_DISEASE.ordinal();
-		byte itCommonDiseaseAtLackType = (byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal();
-		byte itOccupationalDiseaseType = (byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal();
-		byte itMaternityType = (byte) LeaveType.MATERNITY.ordinal();
-		byte itPaternityType = (byte) LeaveType.PATERNITY.ordinal();
+		byte itCommonDiseaseType = (byte) 0;
+		byte itCommonDiseaseAtLackType = (byte) 7;
+		byte itOccupationalDiseaseType = (byte) 8;
+		byte itMaternityType = (byte) 2;
+		byte itPaternityType = (byte) 3;
 
 		Condition cond = null;
 		cond = params.isItCD() ? CONTRACT_LEAVE.TYPE.in(itCommonDiseaseType, itCommonDiseaseAtLackType)
@@ -531,5 +478,5 @@ public class JooqActivitySummary {
 				: cond.and(CONTRACT_LEAVE.TYPE.le(itPaternityType));
 		return cond;
 	}
-
+	
 }

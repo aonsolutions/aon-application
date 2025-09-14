@@ -65,14 +65,12 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -870,20 +868,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
 	}
 	
-	public void getCustomersLinked(boolean isSig, String searchQuery, int offset, int limit, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException  {
-		enterprisesServiceAsync.getCustomersLinked(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), isSig, searchQuery, offset, limit, asyncCallback);
-	}
-
-	public void getRRelationShip(Integer customerId, AsyncCallback<RegistryRelationship> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getRRelationShip(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
-	}
+	
 	
 	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
-	}
-
-	public void getRegistryDomainNameAddInfo(Integer customerId, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.getRegistryDomainNameAddInfo(getCurrentDomainName(), getCurrentDomainId(), getCurrentUser(), customerId, asyncCallback);	
 	}
 	
 	// ----------------------------------------------------------------- static

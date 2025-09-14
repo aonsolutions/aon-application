@@ -673,6 +673,9 @@ export class AonOfficePanel extends AonElement {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		rightSidenav.style.flexBasis = "0px";
 		this.clearElement(rightSidenav);
+		
+		// Clean isSig LS
+		localStorage.removeItem("isSig");
 
 		return new Promise(async (resolve) => {
 			let aonView = undefined;

@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +37,13 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -1324,6 +1329,29 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSchemas(AsyncCallback<List<String>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSchemas(new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// *********************** [CUSTOMER LINKED ACTIVITY]
+	// **************************************************
+
+	@Override
+	public void getCustomersLinked(CustomersLinkedParams params, AsyncCallback<List<Customer>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomersLinked(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds,
+			AsyncCallback<HashMap<Integer, Domain>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomersDomain(domainName, domainId, user, customerIds, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getActivitySummary(domainName, userLogin, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }
