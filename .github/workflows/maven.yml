@@ -155,7 +155,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} clean install
+      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} clean install
 
     - name: Build Docker aon-application image
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
