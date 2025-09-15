@@ -260,12 +260,16 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	public void showCustomerDomainInfo(Integer customerId, String customerName, Domain customerDomain) {
-		centerPanel.clear();
+		
 		AonMessagePanel.hideMessage(messagePanel);
 
+		centerPanel.clear();
+		
 		this.domain = customerDomain;
 
 		getToolbar().setTitle("Act. Laboral " + customerName);
+		
+		AonMessagePanel.showLoading(messagePanel, "Cargando actividad laboral de " + customerName + ". Este proceso puede llevar unos segundos...");
 
 		onSearch();
 	}
@@ -404,6 +408,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 				centerPanel.clear();
 				centerPanel.add(line);
 			}
+			
+			AonMessagePanel.hideMessage(messagePanel);
 
 		});
 	}
