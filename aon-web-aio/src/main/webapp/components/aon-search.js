@@ -24,7 +24,7 @@ export class AonSearch extends AonElement {
 
 	constructor (newStyle = false) {
 		super();
-        this.newStyle = newStyle;
+        this.newStyle = true;
 	}
 
 	get id() {
@@ -102,18 +102,18 @@ export class AonSearch extends AonElement {
 
         // El boton de filtro
         let advancedButton = new AonIconButton();
-        if(this.newStyle){
+//        if(this.newStyle){
           // El boton de filtro lo modificamos
           advancedButton.id   = this.ADVANCED_BUTTON;
           advancedButton.icon = MATERIAL_ICONS.FILTER_ALT;
           this.appendChild(advancedButton);
-        } else {
+//        } else {
           // Dejamos el boton de filtro como estaba
-          advancedButton.style.display = 'none';
-          advancedButton.id   = this.ADVANCED_BUTTON;
-          advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
-          span.appendChild(advancedButton);
-        }
+//          advancedButton.style.display = 'none';
+//          advancedButton.id   = this.ADVANCED_BUTTON;
+//          advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
+//          span.appendChild(advancedButton);
+//        }
 
 		advancedButton.addEventListener(EVENT.CLICK, () => {
 			this.openOrClose();
@@ -123,21 +123,21 @@ export class AonSearch extends AonElement {
 			this.dispatchEventSearch(input.value, EVENT.KEYUP);
 		});
 
-        if(!this.newStyle){
-          // La lupa sea un boton fuera del documental
-          searchButton.addEventListener(EVENT.CLICK, () => {
-              if(input.style.display === 'none'){
-                  this.openSearch();
-                  if(this.disabled) {
-                      this.openOrClose();
-                  } else {
-                      input.focus();
-                  }
-              } else {
-                  this.closeSearch();
-              }
-          });
-		}
+//        if(!this.newStyle){
+//          // La lupa sea un boton fuera del documental
+//          searchButton.addEventListener(EVENT.CLICK, () => {
+//              if(input.style.display === 'none'){
+//                  this.openSearch();
+//                  if(this.disabled) {
+//                      this.openOrClose();
+//                  } else {
+//                      input.focus();
+//                  }
+//              } else {
+//                  this.closeSearch();
+//              }
+//          });
+//		}
 
 		let divOpts = this.createElement(TAG.DIV);
 		divOpts.id = this.OPTIONS;
@@ -154,9 +154,7 @@ export class AonSearch extends AonElement {
 		// 	input.style.width = "300px";
 		// 	divOpts.style.width = "380px";
 		// }
-
 		this.appendChild(divOpts);
-
 		this.disabledInputSearch();
 	}
 
@@ -422,6 +420,7 @@ export class AonSearch extends AonElement {
         case CONSTANT.DATE:
         case CONSTANT.NEW_DATE:
           component = new AonNewDate();
+		  console.log(component, attributes);
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.HTML_ELEMENT:

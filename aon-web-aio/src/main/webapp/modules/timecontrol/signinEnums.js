@@ -96,15 +96,17 @@ export const PRESENCE_FILTER = [
     title: "Período"
   },
   {
-    type: "date",
+    type: "newDate",
     name: "startDate",
     id: "startDate",
+	date: "",
     title: "Desde"
   },
   {
-    type: "date",
+    type: "newDate",
     name: "endDate",
     id: "endDate",
+	date: "",
     title: "Hasta"
   }
 ];

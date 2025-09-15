@@ -8,7 +8,7 @@ export class AonNewDate extends AonNewInput {
   day;
   month;
   year;
-  today = undefined;
+  today = new Date();
   INPUT;
   SPAN;
   DATEPICKER;

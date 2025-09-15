@@ -455,15 +455,17 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
   export const INVOICE_SEARCH_OPTIONS = [
     {
-      type: CONSTANT.DATE,
+      type: CONSTANT.NEW_DATE,
       name: "startDate",
       id: "startDate",
+	  date: "",
       title: MSG.FROM,
     },
     {
-      type: CONSTANT.DATE,
+      type: CONSTANT.NEW_DATE,
       name: "endDate",
       id: "endDate",
+	  date: "",
       title: MSG.TO,
     },
     {
