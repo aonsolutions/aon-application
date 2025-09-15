@@ -9,6 +9,10 @@ import { AonInvoicePanel } from "../modules/invoice/aon-invoice-panel.js";
 import { AonMessenger } from "../modules/messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../modules/messenger/MessengerEnums.js";
 import { uploadOption } from "../modules/documental/DocumentalUtils.js";
+import { AonIncome } from '../modules/invoice/aon-income.js';
+import { AonExpense } from '../modules/invoice/aon-expense.js';
+import { Income } from '../modules/invoice/Income.js';
+import { Expense } from '../modules/invoice/Expense.js';
 import * as OPTION from '../modules/invoice/InvoiceOptions';
 
 export class AonMenuButton extends AonElement {
@@ -244,10 +248,10 @@ export class AonMenuButton extends AonElement {
         const gastosSubOptions = [
           {
             name: 'Nuevo ingreso',
-            fn: () => this.getApplication().setContent(new AonIncome(new Income()))
+            fn: () => this.newIncome()
           }, {
             name: "Nuevo gasto",
-            fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
+            fn: () => this.newExpense()
           }
         ];
 
@@ -274,6 +278,8 @@ export class AonMenuButton extends AonElement {
             let aonMessengerChat = new AonMessenger();
             aonMessengerChat.data = { source: TASK_SOURCE.QUERY };
             this.rootPanel(aonMessengerChat);
+            this.setSelectedMenuSidenav(Apps.MESSENGER);
+
           }
         });
       }
@@ -295,6 +301,7 @@ export class AonMenuButton extends AonElement {
 							});
 						});
 					});
+          this.setSelectedMenuSidenav(Apps.MESSENGER);
           }
         });
       }
@@ -312,6 +319,26 @@ export class AonMenuButton extends AonElement {
       this.setSelectedMenuSidenav(Apps.INVOICE);
       this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));
     }
+
+    newIncome() {
+      let invoicePanel = new AonInvoicePanel();
+      invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+      invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonIncome(new Income())) );
+      this.rootPanel(invoicePanel);
+      this.setAppClassName(Apps.INVOICE);
+      this.setSelectedMenuSidenav(Apps.INVOICE);
+      this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+    }
+
+    newExpense() {
+      let invoicePanel = new AonInvoicePanel();
+      invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+      invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonExpense(new Expense())) );
+      this.rootPanel(invoicePanel);
+      this.setAppClassName(Apps.INVOICE);
+      this.setSelectedMenuSidenav(Apps.INVOICE);
+      this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+    }
  
     setSelectedMenuSidenav(app) {
 
@@ -319,9 +346,9 @@ export class AonMenuButton extends AonElement {
 // Revisar para marcar en menu y submen --- 
 //
 
-      const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+      const aonMenuSidenav = document.getElementById("aonMenuSidenav");      
       const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);
-      for ( const aonMenuSidenavLi of aonMenuSidenavLis  ) {
+      for ( const aonMenuSidenavLi of aonMenuSidenavLis  ) {    
         if ( aonMenuSidenavLi.id === `aonMenuList-${app?.app}` ) {
           aonMenuSidenavLi.classList.add("aonMenuSidenavLiSeleted");
         } else {
