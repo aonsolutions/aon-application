@@ -205,23 +205,36 @@ export class AonSearch extends AonElement {
 		if(count && !clear){
           div       = this.createElement(TAG.DIV);
           div.id    = id;
-        //   div.style = `
-        //       position: relative; 
-        //       background: #002469;
-        //       top: 14px;
-        //       right: 5px;
-        //       border-radius: 50%;
-        //       color: white;
-        //       font-size: 10px;
-        //       font-weight: 800;
-        //       text-align: center;
-        //       height: 14px;
-        //       width: 14px;
-        //       line-height: 14px;
-        //   `;
+//		   div.style = `
+//		       position: absolute; 
+//		       background: #002469;
+//		       top: 14px;
+//		       right: 5px;
+//		       border-radius: 50%;
+//		       color: white;
+//		       font-size: 10px;
+//		       font-weight: 800;
+//		       text-align: center;
+//		       height: 14px;
+//		       width: 14px;
+//		       line-height: 14px;
+//			   
+//		   `;
+			div.style = `
+				position: absolute;
+				top: 0;
+				right: 0;
+				height: 14px;
+				width: 14px;
+				font-size: 10px;
+				background: black;
+				color: white;
+				border-radius: 50%;
+				text-align: center;
+			`;
           div.textContent = count;
           div.title       = `${count} ${MSG.FILTERS}`;
-//          this.getElement(this.SPAN).appendChild(div);
+          this.getElement(this.ADVANCED_BUTTON).appendChild(div);
 		}
 	}
 
@@ -420,7 +433,6 @@ export class AonSearch extends AonElement {
         case CONSTANT.DATE:
         case CONSTANT.NEW_DATE:
           component = new AonNewDate();
-		  console.log(component, attributes);
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.HTML_ELEMENT:
