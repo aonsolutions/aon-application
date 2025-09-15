@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -1358,6 +1360,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getActivitySummary(domainName, userLogin, params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAviableSyncDomains(CustomersDomainSyncParams paramsDomains, AsyncCallback<List<DomainCompany>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableSyncDomains(paramsDomains, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.syncCustomer(domainName, domainId, user, customerId, domainCompany, isSig, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

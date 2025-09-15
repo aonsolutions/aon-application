@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -121,8 +122,8 @@ public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 			}
 
 			@Override
-			protected void onCusotmerOpen(Integer customerId, String customerName) {
-				onCustomerSelect(customerId, customerName);
+			protected void onCusotmerOpen(Customer customer) {
+				onCustomerSelect(customer);
 			}
 			
 			@Override
@@ -161,6 +162,6 @@ public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 		return result.toArray(new Byte[0]);
 	}
 
-	protected abstract void onCustomerSelect(Integer customerId, String customerName);
+	protected abstract void onCustomerSelect(Customer customer);
 
 }

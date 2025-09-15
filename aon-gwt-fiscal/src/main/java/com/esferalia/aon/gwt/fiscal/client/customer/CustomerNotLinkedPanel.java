@@ -205,7 +205,7 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 	private void paintRow(Customer customer) {
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onCusotmerOpen(customer.getId(), customer.getName()), ClickEvent.getType());
+		row.addDomHandler(e -> onCusotmerOpen(customer), ClickEvent.getType());
 
 		Label document = new Label(customer.getDocument());
 		tab.addInlineStyle(document, COLS.DOC.getStyles());
@@ -253,7 +253,7 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	protected abstract void onShowELoadingMessage(String loadingMessage);
 	protected abstract void onHideMessage();
 
-	protected abstract void onCusotmerOpen(Integer customerId, String customerName);
+	protected abstract void onCusotmerOpen(Customer customer);
 
 	public static native boolean getCurrentIsSig()
 	/*-{

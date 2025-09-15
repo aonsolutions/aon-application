@@ -6,10 +6,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class CustomerSyncDomainModule extends MainEntryPoint {
@@ -25,6 +26,7 @@ public class CustomerSyncDomainModule extends MainEntryPoint {
 	private RootLayoutPanel root;
 	
 	private CustomersLinkedParams params;
+	private CustomersDomainSyncParams paramsDomains;
 	
 	@Override
 	public void onModuleLoad() {
@@ -34,6 +36,11 @@ public class CustomerSyncDomainModule extends MainEntryPoint {
 		params.setDomainName(getCurrentDomainName());
 		params.setDomainId(getCurrentDomain());
 		params.setUser(getCurrentUser());
+		
+		paramsDomains = new CustomersDomainSyncParams();
+		paramsDomains.setDomainName(getCurrentDomainName());
+		paramsDomains.setDomainId(getCurrentDomain());
+		paramsDomains.setUser(getCurrentUser());
 		
 		moduleLoad();
 	}
@@ -46,8 +53,8 @@ public class CustomerSyncDomainModule extends MainEntryPoint {
 		customersNotLinkedPanel = new CustomersNotLinkedPanel(params) {
 
 			@Override
-			protected void onCustomerSelect(Integer customerId, String customerName) {
-				showSelectedCustomer(customerId, customerName);
+			protected void onCustomerSelect(Customer customer) {
+				showSelectedCustomer(customer);
 			}
 
 		};
@@ -58,19 +65,23 @@ public class CustomerSyncDomainModule extends MainEntryPoint {
 		root.add(deckLayoutPanel);
 	}
 
-	private void showSelectedCustomer(Integer customerId, String customerName) {
+	private void showSelectedCustomer(Customer customer) {
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setHeight("20rem");
 		centerPanel.getElement().getStyle().setProperty("margin", "1rem");
-
-		// Clase que contenga los dominios libres
-		centerPanel.setWidget(new Label(customerId.toString()));
-
+		
 		AonCustomDialog dialog = new AonCustomDialog();
 		dialog.showCloseButton(true);
-		dialog.setCaption(customerName);
+		dialog.setCaption(customer.getName());
 		dialog.setHeight("25rem");
 		dialog.setWidth("65rem");
+
+		DomainSyncPanel domainSyncPanel = new DomainSyncPanel(customer, paramsDomains) {
+			@Override protected void onEndSuccessSync() { dialog.hide(); }
+		};
+		
+		centerPanel.setWidget(domainSyncPanel);
+		
 		dialog.add(centerPanel);
 		dialog.showLoaded();
 	}

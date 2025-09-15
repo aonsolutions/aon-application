@@ -8383,6 +8383,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().updateDomainCustomer(ctx, domainId, customer);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {

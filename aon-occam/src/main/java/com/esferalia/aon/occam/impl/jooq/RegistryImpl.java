@@ -936,6 +936,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> DomainLinkedDAO.updateDomainStatus(ctx, domain));
 	}
 	
+	@Override
+	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer) {
+		ctx.getDslContext().transaction(
+				configuration -> DomainLinkedDAO.updateDomainCustomer(ctx, domainId, customer));
+	}
+	
 	// QUESTION
 
 	@Override

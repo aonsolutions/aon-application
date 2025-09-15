@@ -284,6 +284,7 @@ public interface IRegistry {
 	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
 	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);
 	public Domain updateDomainStatus(AONContext ctx, Domain domain);
+	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer);
 	
 	
 	// QUESTION
