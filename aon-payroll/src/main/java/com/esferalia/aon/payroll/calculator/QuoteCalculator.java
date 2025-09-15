@@ -1035,7 +1035,39 @@ public abstract class QuoteCalculator {
 
 		SSRegimeType ssRegimeType = ctx.getSSRegime();
 
-		QuoteCalculator quoteCalculator = ssRegimeType
+		SalaryType salaryType = ctx.getSalaryType();
+
+		QuoteCalculator  quoteCalculator = salaryType
+				.accept(new SalaryTypeVisitor<QuoteCalculator>() {
+
+					@Override
+					public QuoteCalculator visitSalary(SalaryType salaryType) {
+						return null;
+					}
+
+					@Override
+					public QuoteCalculator visitExtra(SalaryType salaryType) {
+						return new NonQuote();
+					}
+
+					@Override
+					public QuoteCalculator visitSettle(SalaryType salaryType) {
+						return 	new GeneralQuote(expressionContext, startDate,
+								endDate);
+					}
+
+					@Override
+					public QuoteCalculator visitDelay(SalaryType salaryType) {
+						return null;
+					}
+
+				});
+
+		if (quoteCalculator != null) {
+			return quoteCalculator;
+		}
+
+		quoteCalculator = ssRegimeType
 				.accept(new AbstractSSRegimeTypeVisitor<QuoteCalculator>() {
 
 					@Override
@@ -1054,15 +1086,14 @@ public abstract class QuoteCalculator {
 			return quoteCalculator;
 		}
 		
-		if ( ctx.getCCCType() == CCCType.ARTIST) {
+		if ( ctx.getCCCType() == CCCType.ARTIST 
+			&& salaryType != SalaryType.SETTLE) {
 			quoteCalculator = new AllQuote(expressionContext, startDate, endDate);
 		}
 		
 		if (quoteCalculator != null) {
 			return quoteCalculator;
 		}
-		
-		SalaryType salaryType = ctx.getSalaryType();
 
 		quoteCalculator = salaryType
 				.accept(new SalaryTypeVisitor<QuoteCalculator>() {

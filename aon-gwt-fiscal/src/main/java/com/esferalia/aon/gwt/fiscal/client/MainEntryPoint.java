@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.booking.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerActivityModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInvoiceModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSupportAgentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
@@ -309,6 +310,10 @@ public class MainEntryPoint implements EntryPoint {
 	//  ================================================================== TARGET ENTERPRISE
 	//
 	private static final String CUSTOMER_INVOICE_MODULE_ENTRY_POINT = "CustomerInvoiceModule";
+	//  ================================================================== TARGET ENTERPRISE
+	//
+	private static final String CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT = "CustomerLinkedActivity";
+	
 	
 	
 
@@ -1018,9 +1023,26 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if( entryPoint.equalsIgnoreCase(CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT) ) {
+			GWT.runAsync(CustomerActivityModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerActivityModule customerActivityModule = new CustomerActivityModule();
+					customerActivityModule.onModuleLoad();
+				}
+				
+			});
 		}
 		
 	}
+	
+	
 	protected Occam getOccam() {
 		return new Occam()
 			.setDomainName(getCurrentDomainName())
@@ -1076,6 +1098,12 @@ public class MainEntryPoint implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.removeItem("officeDomain");
 	}-*/;
+	
+	public static native boolean isSig()
+	/*-{
+		return $wnd.localStorage.getItem("isSig");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

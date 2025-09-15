@@ -30,6 +30,7 @@ import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
+import { BankAccount } from '../registry/bank/BankAccount.js';
 
 export class AonInvoice extends AonElement {
 
@@ -233,6 +234,12 @@ export class AonInvoice extends AonElement {
 
 	getCompany() {
 		return this.configuration.company;
+	}
+
+	getCompanyBanks() {
+		return this.configuration.company.banks
+			? this.configuration.company.banks.filter(f => f.active)
+			: [];
 	}
 
 	getInvoice() {
@@ -1750,18 +1757,18 @@ export class AonInvoice extends AonElement {
 		} 
 	}
 
-	getIban(invoice, registry) {
-		let firstIban = "";
+	getBank(invoice, registry) {
+		let firstIban;
 		let pm = registry.paymethod.paymethod;
 		if((invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
 			firstIban = registry.banks && registry.banks.length > 0 ? registry.banks[0].bank_account : "";			
 		} else if((!invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-			let banks = this.configuration.company.banks.filter(f => f.active);
+			let banks = this.getCompanyBanks();
 			firstIban = banks && banks.length > 0 
-				? banks[0].bank_account : "";
+				? banks[0] : undefined;
 		}
-		return registry.paymethod && registry.paymethod.bank && registry.paymethod.bank.bank_account
-			   ? registry.paymethod.bank.bank_account : firstIban;
+		return registry.paymethod && registry.paymethod.bank
+			   ? registry.paymethod.bank : firstIban;
 	}
 
 	async onChangeRegistry(registry) { 
@@ -1769,11 +1776,14 @@ export class AonInvoice extends AonElement {
 		if(registry.paymethod) {
 			let pm = registry.paymethod.paymethod;
 			this.invoice.setPaymethod(pm.id);
+			let bank = this.getBank(this.invoice, registry)
 			let finance = {
 				due_date: this.invoice.date,
 				paymethod: this.invoice.paymethod,
 				amount: this.total,
-				bank_account: this.getIban(this.invoice, registry)
+				bank_account: bank ? bank.bank_account : "",
+				bankAlias: bank ? bank.alias : "",
+				bic: bank ? bank.bic : "" 
 			};
 			this.invoice.finances = [finance];				
 		}
@@ -2460,14 +2470,12 @@ export class AonInvoice extends AonElement {
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
 			this.setFocus(this.FINANCE_AMOUNT + i);	
-			finance.bank_account = bankAccount.value;
-			this.invoice.setFinance(finance, i);
+			this.updateBankAccount(finance, i, bankAccount.value);
 		});
 	
 		bankAccount.addEventListener(EVENT.SELECT, (r) => {
 			this.setFocus(this.FINANCE_AMOUNT + i);
-			finance.bank_account = r.detail.name;
-			this.invoice.setFinance(finance, i);
+			this.updateBankAccount(finance, i, r.detail.name);
 		});
 		
 		table.addCell(bankAccount);
@@ -2483,6 +2491,14 @@ export class AonInvoice extends AonElement {
 		dialog.open();
 	}
 
+	updateBankAccount(finance, i, iban) {
+		let ba = new BankAccount(iban);
+		finance.bank_account = ba.iban;
+		finance.bankAlias = ba.bank;
+		finance.bic = ba.bic;
+		this.invoice.setFinance(finance, i);
+	}
+
 	isMinimize() {
 		return this.fileOpened;
 	}
@@ -2491,7 +2507,7 @@ export class AonInvoice extends AonElement {
 		// Rellenamos finance.banks para añadir opciones a BankAccountSuggestion.
 		let fpm = await getPaymethod(finance.paymethod);
 		if((!this.invoice.isEmitida() && fpm.type === 'NEGOTIABLE_DOCUMENT') || (this.invoice.isEmitida() && fpm.type === 'BANK_TRANSFER')) {
-			finance.banks = this.getCompany().banks;
+			finance.banks = this.getCompanyBanks();
 		} else if((this.invoice.isEmitida() && fpm.type === 'NEGOTIABLE_DOCUMENT') || (!this.invoice.isEmitida() && fpm.type === 'BANK_TRANSFER')) { 
 			getRegistryBanks(this.invoice.getRegistry().id).then(r => {
 				finance.banks = r;
@@ -2527,26 +2543,28 @@ export class AonInvoice extends AonElement {
 			bankAccount.readonly = this.invoice.isReadonly();
 			bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
 				bankAccount.buildOptions(finance.banks.filter(f => f.bank_account.includes(bankAccount.value))
-					.map(r => {return {
+					.map(r => {
+						return {
 							name: r.bank_account,
 							value: r.bank_account,
-							rbank: r};}));
+							rbank: r
+						};
+					}));
 			});
 
 			bankAccount.addEventListener(EVENT.SELECT, (r) => {
 				this.setFocus(this.FINANCE_AMOUNT + i);
-				finance.bank_account = r.detail.name;
-				this.invoice.setFinance(finance, i);
+				this.updateBankAccount(finance, i, r.detail.name);
 			});
 
 			bankAccount.addEventListener(EVENT.CHANGE, () => {
 				this.setFocus(this.FINANCE_AMOUNT + i);
-				finance.bank_account = bankAccount.value;
-				this.invoice.setFinance(finance, i);
+				this.updateBankAccount(finance, i, bankAccount.value);
 			});
 		
 			let ibanCell = table.addCell(bankAccount);
 			ibanCell.style.width = '50%';
+
 			finance.bank_account = finance.bank_account || finance.iban;
 			bankAccount.value = finance.bank_account || '';
 			bankAccount.disabled = fpm.type !== 'NEGOTIABLE_DOCUMENT' && fpm.type !== 'BANK_TRANSFER';
@@ -2559,20 +2577,12 @@ export class AonInvoice extends AonElement {
 				const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
 				bankAccount.disabled = pm.type !== 'NEGOTIABLE_DOCUMENT' && pm.type !== 'BANK_TRANSFER';
 				if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-					finance.banks = this.getCompany().banks;
-					finance.bank_account = this.getCompany().banks && this.getCompany().banks.length > 0 
-						? this.getCompany().banks[0].bank_account : "";
+					this.initFinanceBanks(this.getCompanyBanks(), finance, i, bankAccount);
 				} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
 					getRegistryBanks(this.invoice.getRegistry().id).then(r => {
-						finance.banks = r;
-						finance.bank_account = r[0] ? r[0].bank_account : "";
+						this.initFinanceBanks(r, finance, i, bankAccount);
 					});
-				} else {
-					finance.banks = [];
-					finance.bank_account = "";
-				}
-				this.invoice.setFinance(finance, i);
-				bankAccount.value = finance.bank_account;
+				} else this.initFinanceBanks([], finance, i, bankAccount);
 			});
 		}
 
@@ -2605,6 +2615,17 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(financeDelete);
 		}
+	}
+
+	initFinanceBanks(banks, finance, index, bankAccountWidget) {
+		finance.banks = banks.filter(f => f.active);
+		let firstBank = finance.banks && finance.banks.length > 0 
+			? finance.banks[0] : {};
+		finance.bank_account = firstBank.bank_account || "";
+		finance.bankAlias = firstBank.alias || "";
+		finance.bic = firstBank.bic || "";
+		this.invoice.setFinance(finance, index);
+		bankAccountWidget.value = finance.bank_account;
 	}
 
 	buildFinanceDate(table, id, finance, i) {

@@ -642,6 +642,11 @@ export const CONSOLE = {
   entryPoint: 'ConsoleModule'
 };
 
+export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'CustomerLinkedActivity'
+};
+
 export const PROJECT = {
   module: GWT_AIO,
   entryPoint: 'ProjectModule'
@@ -665,11 +670,6 @@ export const SCOPE_MODULE = {
 export const TAG_MODULE = {
   module: GWT_AIO,
   entryPoint: 'TagModule'
-};
-
-export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
-  module: GWT_PAYROLL,
-  entryPoint: 'CustomerLinkedActivity'
 };
 
 export const PROJECT_TAS_MODULE = {

@@ -97,6 +97,8 @@ import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -9022,6 +9024,12 @@ public class AON {
 	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
+	public static List<ActivitySummaryObject> getActivitySummary(String domainName, Integer domainId, String login, Integer parentDomainId,  Integer userId, ActivitySummaryParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getActivitySummary(ctx, domainId, parentDomainId, userId, params);
 		}
 	}
 	

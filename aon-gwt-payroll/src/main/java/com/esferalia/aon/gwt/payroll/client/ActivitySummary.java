@@ -2,10 +2,8 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -24,7 +22,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -79,9 +76,6 @@ public class ActivitySummary extends AonCustomDockLayout {
 	// String Domian
 	
 	private String domainName;
-	
-	// SIG
-	private String schema;
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -267,110 +261,6 @@ public class ActivitySummary extends AonCustomDockLayout {
 			}
 		});
 		
-	}
-	
-	public void showCustomerDomainInfo(Integer customerId, String customerName) {
-		centerPanel.clear();
-		AonMessagePanel.hideMessage(messagePanel);
-		
-		getToolbar().setTitle("Act. Laboral " + customerName);
-		
-		if(getCurrentIsSig()) {
-			LOGGER.info("Entrando en getRegistryDomainNameAddInfo (campo de ActivitySummary)");
-			
-			service.getRegistryDomainNameAddInfo(customerId, new AsyncCallback<HashMap<String, String>>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("No se ha podido cargar la empresa especifica");
-				}
-
-				@Override
-				public void onSuccess(HashMap<String, String> domainInfo) {
-					if(null != domainInfo && !domainInfo.isEmpty()) {
-						
-						Entry<String, String> domainInfoFirst = domainInfo.entrySet().stream().findFirst().get();
-
-						schema = domainInfoFirst.getKey();
-						domainName = domainInfoFirst.getValue();
-						
-						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
-							
-							@Override
-							public void onSuccess(Domain domainDB) {
-								if(null == domainDB || null == domainDB.getId()) {
-									 showEmptyInfo();
-								} else {
-									domain = domainDB;
-									
-									//onSearch();
-									period.getListBox().setSelectedIndex(0);
-									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
-								}
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
-							}
-						});
-					} else 
-						showEmptyInfo();
-				}
-				
-			});
-		} else {
-			LOGGER.info("Entrando en getRRelationShip (campo de ActivitySummary)");
-			
-			service.getRRelationShip(customerId, new AsyncCallback<RegistryRelationship>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("No se ha podido cargar la empresa especifica");
-				}
-
-				@Override
-				public void onSuccess(RegistryRelationship rrelationship) {
-					if(null != rrelationship && null != rrelationship.getId()) {
-						domainName = rrelationship.getComments();
-						
-						service.getDomainByName(domainName, new AsyncCallback<Domain>() {
-							
-							@Override
-							public void onSuccess(Domain domainDB) {
-								if(null == domainDB || null == domainDB.getId()) {
-									 showEmptyInfo();
-								} else {
-									domain = domainDB;
-									
-									//onSearch();
-									period.getListBox().setSelectedIndex(0);
-									period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
-								}
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
-							}
-						});
-					} else 
-						showEmptyInfo();
-				}
-				
-			});
-		}
-		
-		
-	}
-
-	private void showEmptyInfo() {
-		centerPanel.clear();
-		FlowPanel line = new FlowPanel();
-		InlineLabel label = new InlineLabel(AON.MSG.noData());
-		line.add(label);
-		centerPanel.clear();
-		centerPanel.add(line);
 	}
 	
 	private void updateDates() {
@@ -694,40 +584,18 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
-		
-		if(getCurrentIsSig()) {
-			service.getSigActivitySummary(schema, domain.getId(), domain.getParentId(), params, new AsyncCallback<List<ActivitySummaryObject>>() {
-				
-				@Override
-				public void onSuccess(List<ActivitySummaryObject> result) {
-					success.accept(result);
-				}
+		service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
+			
+			@Override
+			public void onSuccess(List<ActivitySummaryObject> result) {
+				success.accept(result);
+			}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen Sig : " + caught.getMessage());
-				}
-				
-			});
-		} else
-			service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
-				
-				@Override
-				public void onSuccess(List<ActivitySummaryObject> result) {
-					success.accept(result);
-				}
-	
-				@Override
-				public void onFailure(Throwable caught) {
-					AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen : " + caught.getMessage());
-				}
-				
-			});
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n resumen : " + caught.getMessage());
+			}
+			
+		});
 	}
-	
-	public static native boolean getCurrentIsSig()
-    /*-{
-        var value = $wnd.localStorage.getItem("isSig");
-        return value === "true" || value === true;
-    }-*/;
 }

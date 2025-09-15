@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client.customer;
+package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -9,6 +9,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -32,10 +34,14 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 	private SimplePanel centerPanel;
 
 	private CustomerPanel customerPanel;
+	
+	private CustomersLinkedParams params;
 
-	public CustomersLinkedPanel() {
+	public CustomersLinkedPanel(CustomersLinkedParams params) {
 		super("Clientes vinculados");
 
+		this.params = params;
+		
 		setSearchPlaceholder("Busqueda por documento/nombre...");
 
 		addKeyUpHandler(e -> {
@@ -104,8 +110,11 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 
 		String searchQuery = getSearchTextBox().getValue();
 		Byte[] customerStatusSearch = mapStatus(customerStatus.getSelectedOptions());
+		
+		this.params.setQuery(searchQuery);
+		this.params.setCustomerStatus(customerStatusSearch);
 
-		customerPanel = new CustomerPanel(searchQuery, customerStatusSearch) {
+		customerPanel = new CustomerPanel(params) {
 
 			@Override
 			protected void onShowErrorMessage(String errorMessage) {
@@ -113,8 +122,8 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 			}
 
 			@Override
-			protected void onCusotmerOpen(Integer customerId, String customerName) {
-				onCustomerSelect(customerId, customerName);
+			protected void onCusotmerOpen(Integer customerId, String customerName, Domain customerDomain) {
+				onCustomerSelect(customerId, customerName, customerDomain);
 			}
 
 		};
@@ -143,6 +152,6 @@ public abstract class CustomersLinkedPanel extends AonCustomDockLayout {
 		return result.toArray(new Byte[0]);
 	}
 
-	protected abstract void onCustomerSelect(Integer customerId, String customerName);
+	protected abstract void onCustomerSelect(Integer customerId, String customerName, Domain customerDomain);
 
 }

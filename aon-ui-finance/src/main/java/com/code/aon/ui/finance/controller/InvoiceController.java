@@ -12,6 +12,7 @@ import static com.code.aon.ui.common.ICommonMessages.GENERATE_INCREASES_ERROR_KE
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -115,6 +116,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -1081,6 +1084,22 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Invoice invoice = getInvoice();
 		invoice.setUpdateEnabled(!invoice.isRecorded());
 		super.accept(event);
+	}
+	
+	public void updateRemarks(ActionEvent event) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Invoice invoice = getInvoice();
+		if (invoice != null && invoice.getId() != null) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+				int i = ctx.getDslContext().update(INVOICE)
+					.set(INVOICE.REMARKS, invoice.getRemarks())
+				.where(INVOICE.ID.equal( invoice.getId() ))
+				.execute();
+				LOGGER.info("Observaciones guardadas (" + i + ")");
+			}
+		}
 	}
 
 	public void refreshEntireInvoice() {

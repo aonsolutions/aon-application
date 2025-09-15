@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class AbstractTestCase {
 
 	protected static String getUrl() {
-		return System.getProperty("url", "http://127.0.0.1:8080/app");
+		return System.getProperty("url", "http://127.0.0.1:8080");
 	}
 
 	protected static String getUser() {
