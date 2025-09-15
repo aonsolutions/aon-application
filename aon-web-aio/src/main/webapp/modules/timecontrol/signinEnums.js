@@ -1,16 +1,41 @@
 import { MATERIAL_ICONS } from "../../environments/environments.js";
 
 export const SigninSidenav = {
-//  PRESENCE: {
-//    icon: "account_box",
-//    name: "Presencia",
-//    id: "presence"
-//  },
-//  LOCATION: {
-//    icon: "location_on",
-//    name: "Ubicaciones",
-//    id: "location"
-//  },
+PRESENCE: {
+    icon: "account_box",
+    name: "Presencia",
+    id: "presence",
+  },
+  LOCATION: {
+    icon: "location_on",
+    name: "Ubicaciones",
+    id: "location",
+  },
+  ADD: {
+    name: "Agregar",
+    icon: MATERIAL_ICONS.ADD,
+    id: MATERIAL_ICONS.ADD,
+  },
+  FILTER:{
+    name: "Filter",
+    icon: "tune",
+    id: "filter",
+  },
+  MORE:{
+    name: "Ver",
+    icon: MATERIAL_ICONS.MORE_VERT,
+    id: MATERIAL_ICONS.MORE_VERT,
+  },
+  SYNCHRONIZE:{
+    name: "SYNCHRONIZE",
+    icon: "autorenew",
+    id: "SYNCHRONIZE",
+  },
+  EXCEL:{
+    name: "Excel",
+    aonIcon: "aon_excel",
+    id: "excel",
+  },
   PERIOD: {
     TODAY: {
       icon: "today",

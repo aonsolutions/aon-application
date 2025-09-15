@@ -433,7 +433,6 @@ export class AonSearch extends AonElement {
         case CONSTANT.DATE:
         case CONSTANT.NEW_DATE:
           component = new AonNewDate();
-		  console.log(component, attributes);
           html = setAttributes(component, attributes);
         break;
         case CONSTANT.HTML_ELEMENT:
