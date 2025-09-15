@@ -1,8 +1,15 @@
 import {AonElement} from './AonElement.js';
 import {icons} from '../assets/icons/icons.js';
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, CSS, TAG } from '../environments/environments.js';
 
 export class AonIcon extends AonElement {
+
+  TYPES = {
+    MATERIAL: 'MATERIAL',
+    AON: 'AON',
+    IMAGE: 'IMAGE' 
+  };
+  type;
 
   static get observedAttributes() {
     return ['icon', 'color', 'size'];
@@ -60,10 +67,38 @@ export class AonIcon extends AonElement {
 	}
 
 	connectedCallback () {
+    this.initialize();
     this.build();
   }
 
+  initialize() {
+    this.type = this.type || this.TYPES.AON;
+  }
+
   build() {
+    if(this.TYPES.MATERIAL === this.type) {
+      this.buildMaterialIcon();
+    } else if(this.TYPES.IMAGE === this.type) {
+      this.buildImageIcon();
+    } else this.buildAonIcon();
+  }
+
+  buildMaterialIcon() {
+    let icon = this.createElement(TAG.I);
+    icon.id = this.id + CONSTANT.MATERIAL.initCap();
+    icon.className = CSS.MATERIAL_ICONS;
+    icon.innerHTML = this.icon;
+    this.appendChild(icon);
+  }
+
+  buildImageIcon() {
+		let img = document.createElement(TAG.IMG);
+		img.style.width = '24px';
+		img.src = this.icon;
+		this.appendChild(img);
+  }
+
+  buildAonIcon() {
     let icon = icons[this.getAttribute('icon')];
     let left = icon.left || 0;
     let top = icon.top || 0;
@@ -103,6 +138,6 @@ export class AonIcon extends AonElement {
     svg.style.verticalAlign = 'middle';
   }
 }
-if(!window.customElements.get('aon-icon')){
-  window.customElements.define('aon-icon', AonIcon);
+if(!window.customElements.get(TAG.AON_ICON)){
+  window.customElements.define(TAG.AON_ICON, AonIcon);
 }

@@ -18,6 +18,7 @@ import { AonNewTextarea } from "./aon-new-textarea.js";
 import { AonEmail } from "./aon-email.js";
 import { AonQuantity } from "./aon-quantity.js";
 import { AonTable } from "./aon-table.js";
+import { AonIcon } from "./aon-icon.js";
 
 export const createAonElement = (el, id, title, parent) => {
   el.id = id || '';
@@ -29,6 +30,13 @@ export const createAonElement = (el, id, title, parent) => {
 
 export const createCard = (id, title, parent) => {
   return createAonElement(new AonCard(), id, title, parent);
+}
+
+export const createIcon = (id, icon, type, parent) => {
+  let aonIcon = createAonElement(new AonIcon(), id, '', parent);
+  aonIcon.type = type;
+  aonIcon.icon = icon;
+  return aonIcon;
 }
 
 export const createInput = (id, title, parent) => {

@@ -19,7 +19,6 @@ import { AonTab } from '../../components/aon-tab.js';
 import { AonBookingInvoiceList } from './aon-booking-invoice-list.js';
 
 import * as GWT from '../../gwt/gwt.js';
-import * as LS from '../../services/localStorageService.js';
 import { createInput, createSelect } from '../../components/CreateComponent.js';
 
 export class AonBooking extends AonElement {

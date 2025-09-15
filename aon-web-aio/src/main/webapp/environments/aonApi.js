@@ -18,5 +18,11 @@ export const ELABORATIONS= `${API}/elaborations`;
 export const PRODUCT = `${API}/product`;
 export const PACKAGE = `${API}/package`;
 
+export const USER = `${API}/user`;
+export const USER_LIST = `${USER}/list`;
+export const USER_ROLES = `${USER}/roles`;
+export const USER_APPROLES = `${USER}/approles`;
+export const USER_SERVICE = `${USER}/service`;
+
 export const PROJECTS = `${API}/projects`;
 export const WAREHOUSES = `${API}/warehouses`;

@@ -475,6 +475,10 @@ export class DomainUserRoles {
 		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
+	isMessengerPortal() {
+		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_PORTAL));
+	}
+
 	// CALL CENTER
 
 	hasCallCenter() {
@@ -688,7 +692,7 @@ export class DomainUserRoles {
 	}
 
 	isAon() {
-		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AIO));
+		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AON_AIO) || this.hasRole(Role.AON) || this.hasRole(Role.AIO));
 	}
 
 	isBidoq() {

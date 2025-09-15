@@ -1,12 +1,14 @@
 import {  post, get, remove, put } from "./request.js";
-import { API_URL } from "../environments/environments.js";
+import { API, API_URL } from "../environments/environments.js";
 
-export const getUserList = (data, sessionData) => get(`${API_URL}/user`, data, sessionData);
-export const getUserListSpeed = (data, sessionData) => get(`${API_URL}/user/list`, data, sessionData);
-export const getUserRoles = (data, sessionData) => get(`${API_URL}/user/roles`, data, sessionData);
-export const saveUser = (data, sessionData) => post(`${API_URL}/user`, data, sessionData);
-export const saveServiceAccount = (data, sessionData) => put(`${API_URL}/user/service`, data, sessionData); 
+export const getUserList = (data, sessionData) => get(`${API.USER}`, data, sessionData);
+export const getUserListSpeed = (data, sessionData) => get(`${API.USER_LIST}`, data, sessionData);
 
+export const saveUser = (data, sessionData) => post(`${API.USER}`, data, sessionData);
+export const saveServiceAccount = (data, sessionData) => put(`${API.USER_SERVICE}`, data, sessionData); 
+
+export const getUserRoles = (data, sessionData) => get(`${API.USER_ROLES}`, data, sessionData);
+export const getUserDomainUserRoles = (data, sessionData) => get(API.USER_APPROLES, data, sessionData);
 
 export const getUser = (data, sessionData) => get(`${API_URL}/user/info`, data, sessionData);
 
