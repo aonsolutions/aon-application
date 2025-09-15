@@ -442,7 +442,7 @@
     }
     // Input
     aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
-    aon-new-date, aon-new-select, aon-new-textarea{
+    aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
       .aonInputMsg{
         .aonInputMsgError{
           color: $color-red-500;
@@ -508,6 +508,13 @@
             }
           }
         }
+      }
+      //
+      // Info IBAN
+      //
+      .info-iban-modal{
+        background-color: $color-input;
+        box-shadow      : $box-shadow-dialog;
       }
     }
     // search

@@ -35,7 +35,7 @@ $icon-padding-right : v.$px-40;
 $icon-padding-left  : v.$px-40;
 
 aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
-aon-new-date, aon-new-select, aon-new-textarea{
+aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
   .aonInputBox, .aonTextareaBox{
     display : $inputbox-display;
     
@@ -180,7 +180,7 @@ aon-new-date, aon-new-select, aon-new-textarea{
   }
 }
 // Padding para el icono
-aon-new-date, aon-new-select{
+aon-new-date, aon-new-select, aon-iban{
   .aonInputBox .aonInputBoxLabel input{
     padding-right : $icon-padding-right;
   }
@@ -225,6 +225,23 @@ aon-search{
     .search-button{
       display: flex;
       gap    : v.$gap-min;
+    }
+  }
+}
+// Submenu que sale en el IBAN
+aon-iban{
+  position: relative;
+  display : block;
+  width   : v.$pct-100;
+  .info-iban-modal{
+    position     : absolute;
+    box-sizing   : border-box;
+    padding      : v.$padding;
+    width        : v.$pct-100;
+    border-radius: v.$border-radius;
+    z-index      : v.$num-1;
+    .aonInputBox .aonInputBoxLabel input{
+      padding-right : $padding-right;
     }
   }
 }

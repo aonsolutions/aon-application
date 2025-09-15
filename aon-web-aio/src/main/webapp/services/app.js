@@ -6,7 +6,7 @@ import * as LS from  "./localStorageService.js";
 
 import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
 import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
-import { MATERIAL } from "../environments/constants.js";
+// import { MATERIAL } from "../environments/constants.js";
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
@@ -651,8 +651,8 @@ export const EnterpriseApps = [
   "fiscal",
   "payroll",
   "comunica",
-  "documental",
   "invoice",
+  "documental",
   "timecontrol",
   "management",
   "messenger",
@@ -918,7 +918,6 @@ export const AllApps = {
 
 export const AllApps2 = {
   INVOICE,
-  DOCUMENTAL,
   MESSENGER,
   ACCOUNTING,
   FISCAL,
@@ -931,6 +930,7 @@ export const AllApps2 = {
   BIDOQ,
   CONVENIOS,
   BANK,
+  DOCUMENTAL,
   TIMECONTROL,
   //MANAGEMENT,
   PACK_SUITE,
@@ -1628,11 +1628,11 @@ export const MENU_APPS = [
   NEW,
   PLANS,
   INVOICE,
-  DOCUMENTAL,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
   COMUNICA,
+  DOCUMENTAL,
   TIMECONTROL,
   NOTES,
   MESSENGER,
@@ -1642,10 +1642,10 @@ export const MENU_APPS = [
 
 export const DESKTOP_APPS = [
   INVOICE,
-  DOCUMENTAL,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
+  DOCUMENTAL,
   TIMECONTROL,
   NOTES,
   MESSENGER,

@@ -780,7 +780,7 @@ export class AonReg extends AonElement {
 
 			let aonBank = new AonIban();
 			aonBank.id = 'aonConfigurationGeneralBank' + i;
-			aonBank.title = MSG.BANK_ACCOUNT + ' ' + (this.registry.getBanks().length > 1 ? i + 1 : '');
+			aonBank.title = MSG.BANK_ACCOUNT;
 			aonBank.setBank(bank);
 			aonBank.addEventListener(EVENT.CHANGE, () => {
 				this.registry.banks[i] = aonBank.getBank();
