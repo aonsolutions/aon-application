@@ -176,6 +176,27 @@ public class CustomerDAO {
 				.map(new CustomerFiller());
 	}
 	
+	public static Stream<Customer> getSigNotLinkedStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(RADDINFO.ID)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
+		        .and(RADDINFO.ID.isNull())
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.map(new CustomerFiller());
+	}
+	
 	public static List<Customer> getList(AONContext ctx, CustomerFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toList());
 	}

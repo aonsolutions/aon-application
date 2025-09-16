@@ -250,6 +250,7 @@ public interface IRegistry {
 	// **************************************************
 	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit);
 	public Stream<Customer> getSigCustomerStream(AONContext ctx, CustomerFilter filter, int ofs, int limit);
+	public Stream<Customer> getSigCustomerNotLinkedStream(AONContext ctx, CustomerFilter filter, int ofs, int limit);
 	
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id);
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
@@ -283,6 +284,7 @@ public interface IRegistry {
 	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
 	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);
 	public Domain updateDomainStatus(AONContext ctx, Domain domain);
+	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer);
 	
 	
 	// QUESTION

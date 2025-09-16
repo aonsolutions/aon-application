@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -266,5 +267,16 @@ public class CONSOLE {
 			return getConsole().updateScopes(ctx,domainId, wrongScopeId, newScopeId);
 		}
 	}
+	
+	public static Stream<DomainCompany> getDomains(Domain domain, User user, DomainFilter filter) {
+		List<DomainCompany> domains = new ArrayList<DomainCompany>();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			domains = getConsole().getDomains(ctx, filter).collect(Collectors.toList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return domains.stream();
+	}
+	
 
 }

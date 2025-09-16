@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonPayMethodGroupPan
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPayMethodPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPayMethodPanel.AonPayMethodPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
@@ -28,7 +28,10 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class PayMethodModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class PayMethodModule  implements EntryPoint {
 	
 	private static CommonServiceAsync COMMON_SERVICE;
 	

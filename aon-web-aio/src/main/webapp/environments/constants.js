@@ -202,6 +202,7 @@ export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
 export const LEGAL_LITERALS = 'legalLiterals';
 export const LINK_DOMAINS = 'linkDomains';
+export const LINK_CUSTOMER_DOMAINS = 'linkCustomerDomains';
 export const LIST = 'list';
 export const LOCATION = 'location';
 export const LOGO = 'logo';

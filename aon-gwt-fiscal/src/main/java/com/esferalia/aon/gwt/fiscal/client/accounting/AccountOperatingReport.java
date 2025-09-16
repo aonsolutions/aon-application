@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.OperatingPanelReport;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -32,7 +32,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 
-public class AccountOperatingReport extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class AccountOperatingReport  implements EntryPoint {
 	
 	private static final String ACC_OPERATING_REPORT_PRINT 		= "/aon_gwt_fiscal/roms/AccountOperatingReportExcelPrint";
 	private static final String ACC_OPERATING_REPORT_PDF_PRINT  = "/aon_gwt_fiscal/roms/AccountOperatingReportPDFPrint";

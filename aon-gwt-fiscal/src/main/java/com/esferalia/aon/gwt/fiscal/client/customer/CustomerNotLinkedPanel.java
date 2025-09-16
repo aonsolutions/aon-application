@@ -1,23 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.customer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
@@ -30,11 +25,11 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public abstract class CustomerPanel extends ScrollPanel {
+public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 	private static CommonServiceAsync COMMON_SERVICE;
 
-	private static final Logger LOGGER = Logger.getLogger(CustomerPanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CustomerNotLinkedPanel.class.getName());
 	static {
 		LOGGER.addHandler(new ConsoleLogHandler());
 	}
@@ -48,10 +43,8 @@ public abstract class CustomerPanel extends ScrollPanel {
 	private int lastScrollPos = 0;
 
 	private Map<Integer, Customer> rowCustomers = new HashMap<>();
-	private Map<Integer, Domain> customersDomain = new HashMap<>();
 
 	private CustomersLinkedParams params;
-
 
 	private BookingApi bookingApi;
 	private CustomerApi customerApi;
@@ -64,10 +57,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 		DES(AON.MSG.name(), "-moz-available",
 				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		STA(AON.MSG.status(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DOM("Dominio", "16rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		STD(AON.MSG.status(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		EXP("F. Expiraci\u00f3n", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		LST("F. Ult. Acceso", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),;
+		;
 
 		String headerLabel;
 		String colWidth;
@@ -92,7 +82,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 		}
 	}
 
-	public CustomerPanel(CustomersLinkedParams params) {
+	public CustomerNotLinkedPanel(CustomersLinkedParams params) {
 		this.params = params;
 
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -172,11 +162,10 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 
 	private void searchData() {
-		
-		onShowELoadingMessage("Cargando informaci\u00f3n clientes/dominios. Este proceso puede llevar unos segundos...");
-		
 		if (!isMoreData())
 			return;
+		
+		onShowELoadingMessage("Cargando informaci\u00f3n clientes...");
 
 		getList(customers -> {
 			boolean something = false;
@@ -198,9 +187,9 @@ public abstract class CustomerPanel extends ScrollPanel {
 				disableMoreData();
 			}
 			enableSearch();
-			
-			onHideMessage();
 
+			onHideMessage();
+			
 		});
 
 	}
@@ -216,7 +205,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 
 	private void paintRow(Customer customer) {
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onCusotmerOpen(customer.getId(), customer.getName(), customersDomain.get(customer.getId())), ClickEvent.getType());
+		row.addDomHandler(e -> onCusotmerOpen(customer), ClickEvent.getType());
 
 		Label document = new Label(customer.getDocument());
 		tab.addInlineStyle(document, COLS.DOC.getStyles());
@@ -232,31 +221,6 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addInlineStyle(customerStatus, COLS.STA.getStyles());
 		tab.addRow(row, customerStatus, COLS.STA.getColWidth());
 
-		Domain customerDomain = customersDomain.get(customer.getId());
-
-		Label domainName = new Label(
-				null == customerDomain || null == customerDomain.getId() ? "" : customerDomain.getName());
-		domainName.setTitle(null == customerDomain || null == customerDomain.getId() ? "" : customerDomain.getName());
-		tab.addInlineStyle(domainName, COLS.DOM.getStyles());
-		tab.addRow(row, domainName, COLS.DOM.getColWidth());
-
-		Label domainStatus = new Label(null == customerDomain || null == customerDomain.getId() ? ""
-				: customerDomain.isActive() ? "Activo" : "Inactivo");
-		domainStatus.setTitle(null == customerDomain || null == customerDomain.getId() ? ""
-				: customerDomain.getAonStatus().getName());
-		tab.addInlineStyle(domainStatus, COLS.STD.getStyles());
-		tab.addRow(row, domainStatus, COLS.STD.getColWidth());
-
-		Label domainExpirationDate = new Label(null == customerDomain || null == customerDomain.getId() ? ""
-				: AonDateUtils.formatDate(customerDomain.getExpirationDate()));
-		tab.addInlineStyle(domainExpirationDate, COLS.EXP.getStyles());
-		tab.addRow(row, domainExpirationDate, COLS.EXP.getColWidth());
-
-		Label domainLastAccessDate = new Label(null == customerDomain || null == customerDomain.getId() ? ""
-				: AonDateUtils.formatDate(customerDomain.getLastAccessDate()));
-		tab.addInlineStyle(domainLastAccessDate, COLS.LST.getStyles());
-		tab.addRow(row, domainLastAccessDate, COLS.LST.getColWidth());
-
 		rowCustomers.put(customer.getId(), customer);
 	}
 
@@ -271,7 +235,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		COMMON_SERVICE.getCustomersLinked(params, new AsyncCallback<List<Customer>>() {
+		COMMON_SERVICE.getCustomersNotLinked(params, new AsyncCallback<List<Customer>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -280,82 +244,16 @@ public abstract class CustomerPanel extends ScrollPanel {
 
 					@Override
 					public void onSuccess(List<Customer> customers) {
-						getCustomersDomain(customers.stream().map(customer -> customer.getId()).collect(Collectors.toCollection(ArrayList::new)), 
-								end -> {
-									success.accept(customers);
-								});
+						success.accept(customers);
 					}
 				});
 	}
-
-	private void getCustomersDomain(ArrayList<Integer> customerIds, Consumer<HashMap<Integer, Domain>> success) {
-		if (getCurrentIsSig()) {
-			checkCustomerDomains(customerIds, customerDomains -> {
-				customersDomain.putAll(customerDomains);
-				success.accept(customerDomains);
-			});
-		} else {
-			COMMON_SERVICE.getCustomersDomain(params.getDomainName(), params.getDomainId(), params.getUser(), customerIds, new AsyncCallback<HashMap<Integer, Domain>>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							onShowErrorMessage("Error obteniendo dominio cliente : " + caught.getMessage());
-						}
-
-						@Override
-						public void onSuccess(HashMap<Integer, Domain> result) {
-							customersDomain.putAll(result);
-							success.accept(result);
-						}
-					});
-		}
-	}
-	
-	private void checkCustomerDomains(ArrayList<Integer> customerIds, Consumer<HashMap<Integer, Domain>> success) {
-	    HashMap<Integer, Domain> result = new HashMap<>();
-	    
-	    int total = customerIds.size();
-	    int[] pending = { total }; 
-
-	    customerIds.forEach(customerId -> {
-	        String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-	        String endPoint = "/ms/api/domain/" + customerId;
-
-	        this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
-	            @Override
-	            public void onSuccess(List<DomainCompany> domainCompanies) {
-	                if (!domainCompanies.isEmpty()) {
-	                    result.put(customerId, domainCompanies.get(0).getDomain());
-	                }
-	                checkFinish();
-	            }
-
-	            @Override
-	            public void onFailure(Throwable exception) {
-	                onShowErrorMessage(exception.getMessage());
-	                checkFinish();
-	            }
-
-	            private void checkFinish() {
-	                pending[0]--;
-	                if (pending[0] == 0) {
-	                	 success.accept(result);
-	                }
-	            }
-	        });
-	    });
-
-	    if (total == 0) {
-	    	 success.accept(result);
-	    }
-	}
-
 
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onShowELoadingMessage(String loadingMessage);
 	protected abstract void onHideMessage();
 
-	protected abstract void onCusotmerOpen(Integer customerId, String customerName, Domain customerDomain);
+	protected abstract void onCusotmerOpen(Customer customer);
 
 	public static native boolean getCurrentIsSig()
 	/*-{

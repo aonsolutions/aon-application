@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
@@ -39,7 +39,10 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class CustomerInvoiceModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class CustomerInvoiceModule  implements EntryPoint {
 	
 	// -------- CustomerInvoiceRow
 	
