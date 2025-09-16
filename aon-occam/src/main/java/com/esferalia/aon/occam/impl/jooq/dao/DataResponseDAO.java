@@ -83,8 +83,6 @@ public class DataResponseDAO {
 				return dr;
 			})
 			.findFirst();
-			
-		
 	}
 	
 	public static DataResponse get(AONContext ctx, DataResponseFilter filter, Options...options) {
@@ -431,6 +429,28 @@ public class DataResponseDAO {
 			AonIOUtils.closeQuietly(is);
 		}
 		return null;
-	}	
+	}
+	
+	public static Optional<String> getDetailValue(AONContext ctx, Integer domainId, Integer invoiceId, DataResponseSource source, String dataVariable) {
+		return getDetail(ctx, domainId, invoiceId, source, dataVariable)
+			.map(drd -> drd.getDataValue());
+	}
+	
+	public static Optional<DataResponseDetail> getDetail(AONContext ctx, Integer domainId, Integer invoiceId, DataResponseSource source, String dataVariable) {
+		return ctx.getDslContext()
+			.select(DATA_RESPONSE_DETAIL.fields())
+			.from(DATA_RESPONSE)
+			.innerJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
+			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.and(DATA_RESPONSE.SOURCE_ID.eq(invoiceId))
+			.and(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(dataVariable))
+			.orderBy(DATA_RESPONSE.ID.desc())
+			.fetch()
+			.stream()
+			.map(new DataResponseDetailFiller())
+			.findFirst()
+		;
+	}
 	
 }

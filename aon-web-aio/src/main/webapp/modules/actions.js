@@ -393,6 +393,13 @@ export const TICKETBAI = {
     icon: MATERIAL_ICONS.QR_CODE_2
 };
 
+export const VERIFACTU = {
+    id: 'Verifactu',
+    name: MSG.VERIFACTU,
+    title: MSG.VERIFACTU,
+    icon: MATERIAL_ICONS.QR_CODE_2
+};
+
 export const SEND_EMAIL = {
     id: CONSTANT.SEND.initCap(),
     name: MSG.SEND,

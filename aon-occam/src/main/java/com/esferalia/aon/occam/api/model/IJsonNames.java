@@ -114,6 +114,7 @@ public final class IJsonNames {
 	public static final String CERT = "cert";
 	public static final String CITY = "city";
 	public static final String CHARGE_DATE = "chargeDate";
+	public static final String CHECK_URL = "checkUrl";
 	public static final String CHILD_COUNT = "childCount";
 	public static final String CHILDS = "childs";
 	public static final String CLASS_NAME = "class_name";
@@ -127,6 +128,7 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
+	public static final String COMMUNICATION_HISTORY = "communicationHistory";
 	public static final String COMMUNICATION_INFO = "communicationInfo";
 	public static final String COMMUNICATION_STATUS = "communicationStatus";
 	public static final String COMMUNICATION_TYPE = "communicationType";

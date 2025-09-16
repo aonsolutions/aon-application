@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -85,19 +86,26 @@ public class TbaiData {
 	}
 	
 	public TBAIInformation get(Domain domain, User user, Integer invoice) {
+		return get( domain.getName(), domain.getId(), user.getLogin(), invoice);
+	}
+	public TBAIInformation get(Occam occam, Integer invoice) {
+		return get( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);	
+	}
+	
+	public TBAIInformation get(String domainName, Integer domainId, String user, Integer invoice) {
 		TBAIInformation info = new TBAIInformation();
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
+		AON.getDataResponseStream(domainName, domainId, user,
 			source, f -> 
-				f.getDomainProperty().eq(domain.getId())
+				f.getDomainProperty().eq(domainId)
 				.and(f.getSourceProperty().eq(source.value()))
 				.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
 					TBAIRequest request = new TBAIRequest();
 					request.setDataResponse(r);
 					if(r.getDataRequest() != null) {
-						request.setDataRequest(AON.getDataRequest(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(r.getDataRequest())));
+						request.setDataRequest(AON.getDataRequest(domainName, domainId, user, f -> f.getIdProperty().eq(r.getDataRequest())));
 					}
-					DataResponseDetail response = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					DataResponseDetail response = AON.getDataResponseDetail(domainName, domainId, user, f -> 
 						f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("response"))).orElse(new DataResponseDetail());
 					if(!AonStringUtils.isBlank(response.getDataValue())) {
 						JSONObject responseJson = new JSONObject(response.getDataValue());
@@ -106,26 +114,26 @@ public class TbaiData {
 						request.setResponse(tbaiResponse);
 					}
 					
-					Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+					Attach requestAttach = AON.getAttach(domainName, domainId, user, f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
 							.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
 							.and(f.getSourceBatchProperty().eq(r.getDataRequest())), AttachType.DATA, false);
 
-					Attach responseAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+					Attach responseAttach = AON.getAttach(domainName, domainId, user, f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
 							.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
 								.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
 							.and(f.getSourceBatchProperty().eq(r.getId())), AttachType.DATA, false);
 						
 					JSONObject requestData = new JSONObject();
-					requestData.put("domain_name", domain.getName());
-					requestData.put("domain_id", domain.getId());
+					requestData.put("domain_name", domainName);
+					requestData.put("domain_id", domainId);
 					requestData.put("id", requestAttach.getId());
 					requestData.put("attach_type", AttachType.DATA.getName());
 					String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
 					request.setRequestUrl("ms/api/file/" +  result);
 					
 					JSONObject responseData = new JSONObject();
-					responseData.put("domain_name", domain.getName());
-					responseData.put("domain_id", domain.getId());
+					responseData.put("domain_name", domainName);
+					responseData.put("domain_id", domainId);
 					responseData.put("id", responseAttach.getId());
 					responseData.put("attach_type", AttachType.DATA.getName());
 					String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));

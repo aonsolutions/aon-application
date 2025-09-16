@@ -804,6 +804,7 @@ export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
 export const VAT_PANEL = 'Panel de IVA';
 export const VAT_PERCENT = '% IVA';
+export const VERIFACTU = 'Verifactu';
 export const VERIFIED = 'Verificado';
 export const VERIFICATION = 'Verificación';
 export const VERIFICATION_CODE = 'Código Verificación';

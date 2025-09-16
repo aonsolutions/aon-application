@@ -451,6 +451,10 @@ export class Invoice {
     return this.tbaiUrl;
   }
 
+  getVerifactuUrl() {
+    return this.verifactuUrl;
+  }
+
   setService(service) {
     this.service = service;
     return this;

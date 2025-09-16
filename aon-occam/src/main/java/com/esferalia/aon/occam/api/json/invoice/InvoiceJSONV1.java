@@ -257,6 +257,7 @@ class InvoiceJSONV1 {
 			.setCreationDate(JsonUtils.getDateTime(json,IJsonNames.CREATION_DATE))
 			.setModificationUser(JsonUtils.getString(json,IJsonNames.MODIFICATION_USER))
 			.setModificationDate(JsonUtils.getDateTime(json,IJsonNames.MODIFICATION_DATE))
+			.setCheckUrl(JsonUtils.getString(json,IJsonNames.CHECK_URL))
 		);
 	}
 	
@@ -290,6 +291,7 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.CREATION_DATE, JsonUtils.getDateTimeJSON(info.getCreationDate()))
 			.put(IJsonNames.MODIFICATION_USER, info.getModificationUser())
 			.put(IJsonNames.MODIFICATION_DATE, JsonUtils.getDateTimeJSON(info.getModificationDate()))
+			.put(IJsonNames.CHECK_URL, info.getCheckUrl())
 		);
 	}
 }

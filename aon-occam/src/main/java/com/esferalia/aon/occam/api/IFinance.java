@@ -236,7 +236,6 @@ public interface IFinance {
 	
 	public Stream<Invoice> getCommunicationInvoices(AONContext ctx, InvoiceCommunicationParams params);
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice);
-	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(AONContext ctx, Integer invoice);
 	
 	// 	***********************************************
 	// 	********** TICKET BAI CONFIGURATION ***********

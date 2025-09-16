@@ -45,51 +45,58 @@ public class LroeData {
 	}
 	
 	public static LROEInformation get(Domain domain, User user, Integer invoice, InvoiceType type) {
+		return get( domain.getName(), domain.getId(), user.getLogin(), invoice, type);
+	}
+	public static LROEInformation get(Occam occam, Integer invoice, InvoiceType type) {
+		return get( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, type);	
+	}
+	
+	public static LROEInformation get(String domainName, Integer domainId, String user, Integer invoice, InvoiceType type) {
 		LROEInformation lroe = new LROEInformation();
-		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
+		AON.getDataResponseStream(domainName, domainId, user,
 			DataResponseSource.LROE, f -> 
-					f.getDomainProperty().eq(domain.getId())
+					f.getDomainProperty().eq(domainId)
 					.and(f.getSourceProperty().eq(DataResponseSource.LROE.value()))
 					.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
 				LROERequest request = new LROERequest();
 				request.setDataResponse(r);
 				if(r.getDataRequest() != null) {
-					request.setDataRequest(AON.getDataRequest(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(r.getDataRequest())));	
+					request.setDataRequest(AON.getDataRequest(domainName, domainId, user, f -> f.getIdProperty().eq(r.getDataRequest())));	
 				}
-				DataResponseDetail info = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				DataResponseDetail info = AON.getDataResponseDetail(domainName, domainId, user, f -> 
 					f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("info"))).orElse(new DataResponseDetail());
 				if(!AonStringUtils.isBlank(info.getDataValue())) {
 					JSONObject infoJson = new JSONObject(info.getDataValue());
 					request.setInfo(new LROEInfo(infoJson));
 				}
 				
-				DataResponseDetail json = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				DataResponseDetail json = AON.getDataResponseDetail(domainName, domainId, user, f -> 
 					f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("json"))).orElse(new DataResponseDetail());
 				if(!AonStringUtils.isBlank(json.getDataValue())) {
 					JSONObject jsonJson = new JSONObject(json.getDataValue());
 					request.setResponse(new LROEResponse(jsonJson));
 				}
 				
-				Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+				Attach requestAttach = AON.getAttach(domainName, domainId, user, f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
 						.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
 						.and(f.getSourceBatchProperty().eq(r.getDataRequest())), AttachType.DATA, false);
 
-				Attach responseAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+				Attach responseAttach = AON.getAttach(domainName, domainId, user, f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
 						.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
 							.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
 						.and(f.getSourceBatchProperty().eq(r.getId())), AttachType.DATA, false);
 					
 				JSONObject requestData = new JSONObject();
-				requestData.put("domain_name", domain.getName());
-				requestData.put("domain_id", domain.getId());
+				requestData.put("domain_name", domainName);
+				requestData.put("domain_id", domainId);
 				requestData.put("id", requestAttach.getId());
 				requestData.put("attach_type", AttachType.DATA.getName());
 				String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
 				request.setRequestUrl("ms/api/file/" +  result);
 				
 				JSONObject responseData = new JSONObject();
-				responseData.put("domain_name", domain.getName());
-				responseData.put("domain_id", domain.getId());
+				responseData.put("domain_name", domainName);
+				responseData.put("domain_id", domainId);
 				responseData.put("id", responseAttach.getId());
 				responseData.put("attach_type", AttachType.DATA.getName());
 				String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));

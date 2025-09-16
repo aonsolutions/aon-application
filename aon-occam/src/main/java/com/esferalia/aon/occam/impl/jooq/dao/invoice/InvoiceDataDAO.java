@@ -68,6 +68,10 @@ public class InvoiceDataDAO {
 			.map(new InvoiceDataFiller());
 	}
 	
+	public static Optional<String> getValue(AONContext ctx, Integer domain, Integer invoiceId, String name ) {
+		return get(ctx, invoiceId, name)
+			.map(id -> id.getValue());
+	}
 	public static Optional<InvoiceData> get(AONContext ctx, Integer domain, Integer invoiceId, String name ) {
 		if (domain == null) return Optional.empty();
 		if (invoiceId == null || AonNumberUtils.equals(0, invoiceId)) return Optional.empty();

@@ -16,25 +16,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.conf.ParamType;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.DataAttach;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -49,6 +44,7 @@ public class InvoiceCommunicationDAO {
 	private InvoiceCommunicationDAO() {
 
 	}
+	
 	// *************************************************************
 	// ************************** [INVOICES] ***********************
 	// *************************************************************
@@ -56,19 +52,6 @@ public class InvoiceCommunicationDAO {
 		if (params == null) throw new AonCoreException("No params");
 		if (params.getDomain() == null) throw new AonCoreException("No domain");
 		if (params.getCommunicationType() == null) throw new AonCoreException("No type");
-		
-		System.out.println( 
-				ctx.getDslContext().select()
-				.from(INVOICE)
-				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
-				.where(getFilter(params))
-				.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
-				.limit(params.getSafePerPage())
-				.offset(params.getOffset())
-				.getSQL(ParamType.INLINED)
-				);
-		
-		
 		return ctx.getDslContext().select()
 			.from(INVOICE)
 			.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
@@ -78,27 +61,17 @@ public class InvoiceCommunicationDAO {
 			.offset(params.getOffset())
 			.fetch()
 			.stream()
-			.map( r -> InvoiceFiller
-						.buildInvoice(r)
-						.putInvoiceInfo(InvoiceInfoFiller.build(r))
-				)
+			.map( r -> InvoiceFiller.buildInvoice(r).putInvoiceInfo(InvoiceInfoFiller.build(ctx,r)))
 		;
 	}
 	
 	private static Condition getFilter(InvoiceCommunicationParams params) {
 		Condition c = INVOICE.DOMAIN.eq(params.getDomain())
-			.and(
-				INVOICE_INFO.TYPE.isNull().or(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value()))
-			)
+			.and(INVOICE_INFO.TYPE.isNull().or(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value())))
 		;
 		
-		if(params.getFrom() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql( params.getFrom())));
-		}
-		
-		if(params.getTo() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql( params.getTo())));
-		}
+		if (params.getFrom() != null) c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql( params.getFrom())));
+		if (params.getTo()   != null) c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql( params.getTo())));
 		
 		if(AonCollectionUtils.isNotEmpty(params.getType())) {
 			LinkedList<Byte> types = AonCollectionUtils.stream(params.getType())
@@ -108,13 +81,12 @@ public class InvoiceCommunicationDAO {
 			c = c.and(INVOICE.TYPE.in(types));
 		}
 		
-    	if(AonStringUtils.isNotBlank(params.getQuery())) {
-    		c = c.and(
-   				INVOICE.REFERENCE_CODE.like("%" + params.getQuery() + "%")
-  				.or(INVOICE.RNAME.like("%" + params.getQuery() + "%"))
-   			);
+    	if (AonStringUtils.isNotBlank(params.getQuery())) {
+    		c = c.and(INVOICE.REFERENCE_CODE.like("%" + params.getQuery() + "%")
+  				.or(INVOICE.RNAME.like("%" + params.getQuery() + "%")));
     	}
-    	if(params.getCommunicationStatus() != null) {
+    	
+    	if (params.getCommunicationStatus() != null) {
     		Condition c1 = INVOICE_INFO.STATUS.eq(params.getCommunicationStatus().value());
     		if (params.getCommunicationStatus() == InvoiceCommunicationStatus.PENDING) {
 				c1 = INVOICE_INFO.STATUS.isNull().or(c1);
@@ -131,6 +103,7 @@ public class InvoiceCommunicationDAO {
 	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor) {
 		return ctx.getDslContext().select(
 				INVOICE_BATCH.DATE,
+				INVOICE_BATCH.TYPE,
 				INVOICE_BATCH.OPERATION,
 				INVOICE_BATCH.CREATION_DATE,
 				INVOICE_BATCH.CREATION_USER,
@@ -142,8 +115,7 @@ public class InvoiceCommunicationDAO {
 				DATA_ATTACH_RESPONSE.DATA
 			)
 			.from(INVOICE_BATCH_DETAIL)
-			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH)
-				.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.VERIFACTU.value())))
+			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
 			.join(DATA_RESPONSE).on(DATA_RESPONSE.ID.eq(INVOICE_BATCH.DATA_RESPONSE))
 			.leftOuterJoin(DATA_ATTACH_REQUEST).on(DATA_ATTACH_REQUEST.SOURCE_ID.eq(DATA_RESPONSE.ID)
 				.and(DATA_ATTACH_REQUEST.SOURCE.eq(DataAttachSource.VERIFACTU.value())
@@ -154,12 +126,14 @@ public class InvoiceCommunicationDAO {
 				.and(DATA_ATTACH_RESPONSE.TYPE.in(DataAttachType.RESPONSE_OK.value(), DataAttachType.RESPONSE_ERROR.value()))
 			)
 			.where( INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId))
+			.orderBy(INVOICE_BATCH.TYPE, INVOICE_BATCH.CREATION_DATE.desc() )
 			.fetch()
 			.stream()
 			.map( r -> new InvoiceCommunicationHistory()
 				.setInvoiceId(invoiceId)
 				.setDate(r.getValue(INVOICE_BATCH.DATE))
 				.setCreationUser(r.getValue(INVOICE_BATCH.CREATION_USER))
+				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_BATCH.TYPE)))
 				.setOperation(InvoiceCommunicationOperation.safeValueOf(r.getValue(INVOICE_BATCH.OPERATION)))
 				.setStatus(InvoiceCommunicationStatus.safeValueOf(r.getValue(INVOICE_BATCH_DETAIL.STATUS)))
 				.setRequestUrl(getAttachUrl(ctx.getDomainName(), ctx.getDomainId(), r.getValue(DATA_ATTACH_REQUEST.ID)))
@@ -171,66 +145,16 @@ public class InvoiceCommunicationDAO {
 		;
 	}
 	
-	@Deprecated
-	/*
-	 * @deprecated 
-	 * Use getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor)
-	 */
-	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoice) {
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
-		if(config.isVerifactu()) {
-			return InvoiceCommunicationTrackingDAO.getStream(ctx, f -> f.getInvoiceProperty().eq(invoice)
-					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())))
-				.map(tracking -> {
-					DataResponse dr = DataResponseDAO.get(ctx, f -> 
-						f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getIdProperty().eq(tracking.getInvoiceBatch().getDataResponse())));
-					
-					return new InvoiceCommunicationHistory()
-						.setDate(tracking.getInvoiceBatch().getDate())
-						.setOperation(tracking.getInvoiceBatch().getOperation())
-						.setStatus(tracking.getInvoiceBatchDetail().getStatus())
-						.setRequestUrl(getVerifactuRequestUrl(ctx, dr.getDataRequest()))
-						.setResponseUrl(getVerifactuResponseUrl(ctx, dr.getId()));
-				}).toList();
-		} else return new LinkedList<>();
-	}
-	
-	@Deprecated
-	private static String getVerifactuRequestUrl(AONContext ctx, Integer dataRequest) {
-		Attach requestAttach = AttachmentDAO.getDataAttachStream(ctx
-			, f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
-				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-				.and(f.getSourceBatchProperty().eq(dataRequest)), false)
-			.findFirst()
-			.orElse(new Attach());
-		return getAttachUrl(ctx.getDomainName(), ctx.getDomainId(), requestAttach.getId());
-	}
-
-	@Deprecated
-	private static String getVerifactuResponseUrl(AONContext ctx, Integer dataResponse) {
-		Attach responseAttach = AttachmentDAO.getDataAttachStream(ctx
-			, f -> f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value())
-				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
-					.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
-				.and(f.getSourceBatchProperty().eq(dataResponse)), false)
-			.findFirst()
-			.orElse(new Attach());
-		return getAttachUrl(ctx.getDomainName(), ctx.getDomainId(), responseAttach.getId());
-	}
-	
 	private static String getAttachUrl(String domainName,Integer domainId, Integer attachId) {
-		JSONObject attachData = new JSONObject();
-		attachData.put("domain_name", domainName);
-		attachData.put("domain_id", domainId);
-		attachData.put("id", attachId);
-		attachData.put("attach_type", AttachType.DATA.getName());
+		if (attachId == null) return null;
+		JSONObject attachData = new JSONObject()
+			.put("domain_name", domainName)
+			.put("domain_id", domainId)
+			.put("id", attachId)
+			.put("attach_type", AttachType.DATA.getName())
+		;
 		String result = Base64.getEncoder().encodeToString(attachData.toString().getBytes(StandardCharsets.UTF_8));
 		return "ms/api/file/" +  result;
 	}
 	
 }
-
-
-
-

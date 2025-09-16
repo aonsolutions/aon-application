@@ -16,6 +16,8 @@ public class InvoiceInfo implements Serializable {
 	private InvoiceCommunicationType type;
 	private InvoiceCommunicationStatus status;
 	
+	private String checkUrl;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -64,6 +66,14 @@ public class InvoiceInfo implements Serializable {
 	public boolean isAcceptedWithErrors() 	{ return getStatus() != null && getStatus().isAcceptedWithErrors();}
 	public boolean isWrong() 				{ return getStatus() != null && getStatus().isWrong();}
 	public boolean isAnnulled() 			{ return getStatus() != null && getStatus().isAnnulled();}
+	
+	public String getCheckUrl() {
+		return checkUrl;
+	}
+	public InvoiceInfo setCheckUrl(String checkUrl) {
+		this.checkUrl = checkUrl;
+		return this;
+	}
 	
 	public String getCreationUser() {
 		return creationUser;

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -294,21 +296,36 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertCommunicationHistory(Invoice i) throws InvoiceCommunicationException {
-		List<InvoiceCommunicationHistory> history = InvoiceCommunicator.history(getOccam(), i.getId());
-		assertNotNull(history);
-		assertTrue(AonCollectionUtils.isNotEmpty( history ));
-		assertEquals(1, history.size());
-		InvoiceCommunicationHistory h = history.get(0);
-		assertEquals(i.getId(), h.getInvoiceId());
-		assertEquals(USER, h.getCreationUser());
-		assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
-		assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
-			|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
-		assertNotNull(h.getDate() );
-		assertNotNull(h.getRequestUrl());
-		assertNotNull(h.getResponseMessages());
-		assertNotNull(h.getResponseData());
-		assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
+		Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> map = InvoiceCommunicator.history(getOccam(), i.getId());
+		assertNotNull(map);
+		assertTrue(AonCollectionUtils.isNotEmpty( map ));
+		AonCollectionUtils.stream(map)
+			.forEach(e -> {
+				assertNotNull(e.getKey());		
+				assertNotNull(e.getValue());
+				InvoiceCommunicationHistoryMapValue v = e.getValue();
+				assertNotNull(v.getInfo());
+				InvoiceInfo info = v.getInfo();
+				assertEquals(e.getKey(), info.getType());
+				assertNotNull(v.getHistory());
+				List<InvoiceCommunicationHistory> history = v.getHistory();
+				assertNotNull(history);
+				assertTrue(AonCollectionUtils.isNotEmpty( history ));
+				assertEquals(1, history.size());
+				InvoiceCommunicationHistory h = history.get(0);
+				assertEquals(i.getId(), h.getInvoiceId());
+				assertEquals(e.getKey(), h.getType());
+				assertEquals(USER, h.getCreationUser());
+				assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
+				assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+						|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+				assertNotNull(h.getDate() );
+				assertNotNull(h.getRequestUrl());
+				assertNotNull(h.getResponseMessages());
+				assertNotNull(h.getResponseData());
+				assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
+			});
+		
 	}
 
 	private void assertDataRequest(Invoice i, DataResponse response) {

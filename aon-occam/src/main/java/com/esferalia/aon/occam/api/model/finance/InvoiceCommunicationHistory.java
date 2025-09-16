@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 
 public class InvoiceCommunicationHistory implements Serializable {
 	
@@ -14,6 +15,7 @@ public class InvoiceCommunicationHistory implements Serializable {
 	private Integer invoiceId;
 	private Date date;
 	private String creationUser;
+	private InvoiceCommunicationType type;
 	private InvoiceCommunicationOperation operation;
 	private InvoiceCommunicationStatus status;
 	private String requestUrl;
@@ -42,6 +44,14 @@ public class InvoiceCommunicationHistory implements Serializable {
 	}
 	public InvoiceCommunicationHistory setCreationUser(String value) {
 		this.creationUser = value;
+		return this;
+	}
+	
+	public InvoiceCommunicationType getType() {
+		return type;
+	}
+	public InvoiceCommunicationHistory setType(InvoiceCommunicationType type) {
+		this.type = type;
 		return this;
 	}
 

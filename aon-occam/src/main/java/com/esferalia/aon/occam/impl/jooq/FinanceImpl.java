@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
@@ -40,7 +39,6 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -720,12 +718,6 @@ public class FinanceImpl implements IFinance {
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int domainId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceCommunicationConfigurationDAO.get(ctx, domainId));
-	}
-	
-	@Override
-	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(AONContext ctx, Integer invoice) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationDAO.getHistory(ctx, invoice));
 	}
 	
 	// ---------- TBAI CONFIGURATION

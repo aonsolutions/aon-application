@@ -2,25 +2,34 @@ package net.aonsolutions.aon.invoice.communication;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
@@ -28,9 +37,9 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -45,43 +54,102 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [HISTORY] *******
 	// *************************************************************
-	public static List<InvoiceCommunicationHistory> history(Occam occam, Integer invoiceId) throws InvoiceCommunicationException {
+	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) throws InvoiceCommunicationException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
-			return history(ctx, config, invoiceId);
+			return history(ctx, occam.getDomain(), invoiceId);
 		}
 	}
 	
-	private static List<InvoiceCommunicationHistory> history(AONContext ctx, final InvoiceCommunicationConfiguration config, final Integer invoiceId ) throws InvoiceCommunicationException{
-		return InvoiceCommunicationDAO.getHistory(ctx, invoiceId, new Function<InvoiceCommunicationHistory, List<String>>() {
-			
-			@Override
-			public List<String> apply(InvoiceCommunicationHistory t) {
-				try {
-					config.getType().visit( new InvoiceCommunicationTypeVisitor() {
-						
-						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
-						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
-						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
-						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
-						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
-						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
-						
-						@Override
-						public void visitVERIFACTU() throws InvoiceCommunicationException  {
-							if (t.getResponseData() != null && t.getResponseData().length > 0) {
-								t.setResponseMessages( VERIFACTU.history(t.getResponseData(), invoiceId) );
-							}
+	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
+		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(ctx, invoiceId, t -> {
+			try {
+				t.getType().visit( new InvoiceCommunicationTypeVisitor() {
+					@Override public void visitSERES() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitSII() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitTBAI() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitLROE() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					
+					@Override
+					public void visitVERIFACTU() throws InvoiceCommunicationException  {
+						if (t.getResponseData() != null && t.getResponseData().length > 0) {
+							t.setResponseMessages( VERIFACTU.history(t.getResponseData(), invoiceId) );
 						}
-					});
-				} catch (Exception e) {
-					return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );						
-				}
-				return t.getResponseMessages();
+					}
+				});
+			} catch (Exception e) {
+				return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );						
 			}
+			return t.getResponseMessages();
 		});
+		
+		EnumMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new EnumMap<>(InvoiceCommunicationType.class);
+		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, invoiceId).orElse(null) )
+			.forEach( e -> map.put(e.getKey(), new InvoiceCommunicationHistoryMapValue().setInfo(e.getValue())));
+		AonCollectionUtils.stream(history)
+			.forEach(t -> {
+				InvoiceCommunicationHistoryMapValue v = map.computeIfAbsent(t.getType(), 
+					k -> {
+						InvoiceInfo info = new InvoiceInfo()
+							.setDomain(domainId) 
+							.setInvoice(invoiceId)
+							.setType(k)
+							.setStatus(t.getStatus())
+							.setCreationUser(t.getCreationUser())
+							.setCreationDate(t.getDate());
+						InvoiceInfoDAO.InvoiceInfoURLFiller.build(ctx, info);
+						return new InvoiceCommunicationHistoryMapValue().setInfo( info);
+					}
+				);
+				v.add(t);
+			});
+		return map;
 	}
-
+	
+	public static Optional<JSONObject> historyToJSON(Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history) {
+		if (AonCollectionUtils.isEmpty(history)) return Optional.empty();
+		JSONObject json = new JSONObject();
+		AonCollectionUtils.stream(history)
+			.forEach(e -> {
+				InvoiceCommunicationHistoryMapValue v = e.getValue();
+				InvoiceInfo info = v.getInfo();
+				JSONObject mapJSON = new JSONObject();
+				JSONObject infoJSON = new JSONObject()
+					.put(IJsonNames.COMMUNICATION_TYPE, InvoiceCommunicationType.name(info.getType()))
+					.put(IJsonNames.COMMUNICATION_STATUS, InvoiceCommunicationStatus.name(info.getStatus()))
+					.put(IJsonNames.CREATION_USER, info.getCreationUser())
+					.put(IJsonNames.CREATION_DATE, JsonUtils.getDateTimeJSON(info.getCreationDate()))
+					.put(IJsonNames.MODIFICATION_USER, info.getModificationUser())
+					.put(IJsonNames.MODIFICATION_DATE, JsonUtils.getDateTimeJSON(info.getModificationDate()))
+					.put(IJsonNames.CHECK_URL, info.getCheckUrl())
+				;
+				mapJSON.put( IJsonNames.COMMUNICATION_INFO, infoJSON);
+				JSONArray historyArray = AonCollectionUtils.stream(v.getHistory())		
+					.map( h -> new JSONObject() 
+						.put(IJsonNames.DATE, JsonUtils.getDateTimeJSON(h.getDate()))
+						.put(IJsonNames.CREATION_USER, h.getCreationUser())
+						.put(IJsonNames.OPERATION, h.getOperation().getDescription())
+						.put(IJsonNames.REQUEST_URL, h.getRequestUrl())
+						.put(IJsonNames.RESPONSE_URL, h.getResponseUrl())
+						.put(IJsonNames.RESPONSE_MESSAGES, 
+							AonCollectionUtils.stream(h.getResponseMessages())
+							.filter(AonStringUtils::isNotBlank)
+							.collect(JSONArrayCollector.toJSONArray())
+							)
+						.put(IJsonNames.STATUS, InvoiceCommunicationStatus.name(h.getStatus()))
+						.put(IJsonNames.TYPE, InvoiceCommunicationType.name(h.getType()))
+				)
+				.collect( JSONArray::new, JSONArray::put, JSONArray::putAll );
+				mapJSON.put( IJsonNames.COMMUNICATION_HISTORY, historyArray );
+				json.put( e.getKey().name(), mapJSON );
+			})
+		;
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		System.out.println( json.toString(1)); 
+		return Optional.ofNullable(json);
+	}
+	
 	// *************************************************************
 	// ******************************************* [ISSUE] ********
 	// *************************************************************

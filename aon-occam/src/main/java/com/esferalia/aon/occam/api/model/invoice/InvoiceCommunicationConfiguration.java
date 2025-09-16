@@ -114,4 +114,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return getType() != null;
 	}
 
+	public boolean isBizkaia() 	{return administration == Administration.BIZKAIA;}
+	public boolean isAraba() 	{return administration == Administration.ALAVA;}
+	public boolean isGipuzkoa() {return administration == Administration.GIPUZKOA;}
+	public boolean isNavarra() 	{return administration == Administration.NAVARRA;}
+	public boolean isAEAT() 	{return administration == Administration.COMMON_TERRITORY;}
+	public boolean isCanarias() {return administration == Administration.CANARIAS;}
+
 }

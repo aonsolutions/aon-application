@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -16,6 +16,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -40,7 +43,7 @@ public class InvoiceInfoDAO {
 			.orderBy(INVOICE_INFO.CREATION_DATE.desc())
 			.fetch()
 			.stream()
-			.map(new InvoiceInfoFiller())
+			.map(r -> InvoiceInfoFiller.build(ctx, r))
 			.findFirst();	
 	}
 	
@@ -51,7 +54,7 @@ public class InvoiceInfoDAO {
 			.orderBy(INVOICE_INFO.CREATION_DATE)
 			.fetch()
 			.stream()
-			.map(InvoiceInfoFiller::build)
+			.map(r -> InvoiceInfoFiller.build(ctx, r))
 			.collect(
 				 () -> new EnumMap<InvoiceCommunicationType,InvoiceInfo>(InvoiceCommunicationType.class)
 				,(m, v) -> m.put(v.getType(), v)
@@ -135,15 +138,15 @@ public class InvoiceInfoDAO {
 	// ***********************************************************
 	// ********************* [FILLER] ****************************
 	// ***********************************************************
-	public static class InvoiceInfoFiller extends Filler implements Function<Record, InvoiceInfo> {
+	public static class InvoiceInfoFiller extends Filler implements BiFunction<AONContext, Record, InvoiceInfo> {
 
 		@Override
-		public InvoiceInfo apply(Record r) {
-			return build(r);
+		public InvoiceInfo apply(AONContext ctx, Record r) {
+			return build(ctx, r);
 		}
 		
-		public static InvoiceInfo build(Record r) {
-			return new InvoiceInfo()
+		public static InvoiceInfo build(AONContext ctx, Record r) {
+			InvoiceInfo info = new InvoiceInfo()
 				.setId(getValue(r,INVOICE_INFO.ID))
 				.setDomain(getValue(r,INVOICE_INFO.DOMAIN))
 				.setInvoice(getValue(r,INVOICE_INFO.INVOICE))
@@ -153,8 +156,57 @@ public class InvoiceInfoDAO {
 				.setCreationDate(getValue(r, INVOICE_INFO.CREATION_DATE))
 				.setModificationUser(getValue(r, INVOICE_INFO.MODIFICATION_USER))
 				.setModificationDate(getValue(r, INVOICE_INFO.MODIFICATION_DATE));
+			return InvoiceInfoURLFiller.build(ctx, info);
 		}
 	}
+	
+	public static class InvoiceInfoURLFiller extends Filler implements BiFunction<AONContext, InvoiceInfo, InvoiceInfo> {
+
+		@Override
+		public InvoiceInfo apply(AONContext ctx, InvoiceInfo info) {
+			return build(ctx, info);
+		}
+		
+		public static InvoiceInfo build(AONContext ctx, InvoiceInfo info) {
+			try {
+				info.getType().visit(new InvoiceCommunicationTypeVisitor() {
+					
+					@Override
+					public void visitVERIFACTU() {
+						InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), "VERIFACTU_QR").ifPresent( info::setCheckUrl );
+					}
+					
+					@Override
+					public void visitTBAI() {
+						 InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), "TBAI_URL")
+							.or( () -> DataResponseDAO.getDetailValue(ctx, info.getDomain(), info.getInvoice(), DataResponseSource.TBAI, "tbaiUrl") )
+							.ifPresent( info::setCheckUrl )
+						;
+					}
+					
+					@Override 
+					public void visitLROE()  {
+						visitTBAI();
+					}
+					
+					@Override public void visitSII()	{ /*Nothing*/ }
+					@Override public void visitSERES() 	{ /*Nothing*/ }
+					@Override public void visitEMAIL() 	{ /*Nothing*/ }
+					@Override public void visitCLOSING(){ /*Nothing*/ }
+				});
+			} catch (Exception e) {
+				// Nothing
+			}
+			return info;
+		}
+		
+	}
+	
+	/*
+		VerifactuConfiguration verifactu = AON.getVerifactuConfiguration(domain, login);
+		if(verifactu.isActive()) {	
+		}
+	 */
 
 	// ************************************************************
 	// ******************* [VALIDATION] ***************************

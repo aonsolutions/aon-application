@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -126,15 +128,18 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -2254,14 +2259,22 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory() {
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		Occam occam = new Occam().setDomain(domainId).setDomainName(domainName).setUser(login);
 		try {
-			return InvoiceCommunicator.history(occam, getInvoice().getId());
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Occam occam = new Occam().setDomain(domainId).setDomainName(domainName).setUser(login);
+			Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> map = InvoiceCommunicator.history(occam, getInvoice().getId());
+			return AonCollectionUtils.stream(map)
+				.filter(e -> e.getKey() == InvoiceCommunicationType.VERIFACTU)
+				.map(Entry::getValue)
+				.filter( v -> v != null)
+				.map(InvoiceCommunicationHistoryMapValue::getHistory)
+				.findFirst()
+				.orElse(new LinkedList<>())
+			;
 		} catch (InvoiceCommunicationException e) {
-			return new LinkedList<>();
+			throw new AbortProcessingException(e);
 		}
 	}
 	
