@@ -1563,7 +1563,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("ID")
+						.setAttribute("AON_DOMAIN0_ID")
 						.setValue(domainCompany.getDomain().getId().toString())
 						.setDate(new Date())
 				);

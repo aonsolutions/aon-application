@@ -80,7 +80,10 @@ public class CustomerSyncDomainModule  implements EntryPoint {
 		dialog.setWidth("65rem");
 
 		DomainSyncPanel domainSyncPanel = new DomainSyncPanel(customer, paramsDomains) {
-			@Override protected void onEndSuccessSync() { dialog.hide(); }
+			@Override protected void onEndSuccessSync() { 
+				dialog.hide(); 
+				customersNotLinkedPanel.onSearch();
+			}
 		};
 		
 		centerPanel.setWidget(domainSyncPanel);

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -41,6 +42,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 	
 	private static final String RELATIONS = "/";
 	private static final String RELATION = "/:id";
+	private static final String RELATION_RADDINFO = "/raddinfo/:id";
 	private static final String RELATION_COMPANY = "/company";
 	private static final String SIBLINGS_OFFICE = "/siblingsOffice";
 	
@@ -72,6 +74,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(RELATION_COMPANY, RelationshipServlet::getRelationshipByCompany)
 				.addRoute(SIBLINGS_OFFICE, RelationshipServlet::getSiblingsOffice)
+				.addRoute(RELATION_RADDINFO, RelationshipServlet::getRelationshipRAddInfo)
 				.addRoute(RELATIONS, RelationshipServlet::getRelationships)
 				.addRoute(RELATION, RelationshipServlet::getRelationship)
 				.apply();
@@ -142,6 +145,44 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		);
 		
 		json.put("companies", CompanyJSON.toJSON(companies));
+		
+		return json;
+	}
+	
+	private static JSONObject getRelationshipRAddInfo(AonApiData api) {
+		JSONObject params = api.getData();
+		JSONObject json = new JSONObject();
+		
+		Integer registry = params.optInt(IJsonNames.REGISTRY);
+		
+		Optional<RegistryAddInfo> domainNameOpt = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().eq(registry))
+					.and(f.getAttributeProperty().like("AON_DOMAIN0_NAME"))
+		);
+		
+		Optional<RegistryAddInfo> domainIdOpt = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().eq(registry))
+					.and(f.getAttributeProperty().like("AON_DOMAIN0_ID"))
+		);
+		
+		Optional<RegistryAddInfo> domainSchemaOpt = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().eq(registry))
+					.and(f.getAttributeProperty().like("AON_DOMAIN0_SCHEMA"))
+		);
+		
+		Optional<RegistryAddInfo> domainTypeOpt = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().eq(registry))
+					.and(f.getAttributeProperty().like("AON_DOMAIN0_TYPE"))
+		);
+		
+		json.put("domainId", domainIdOpt.isPresent() ? domainIdOpt.get().getValue() : null);
+		json.put("domainName", domainNameOpt.isPresent() ? domainNameOpt.get().getValue() : null);
+		json.put("schema", domainSchemaOpt.isPresent() ? domainSchemaOpt.get().getValue() : null);
+		json.put("domainType", domainTypeOpt.isPresent() ? domainTypeOpt.get().getValue() : null);
 		
 		return json;
 	}
