@@ -4860,6 +4860,12 @@ public class AON {
 			return getWarehouse().saveElaboration(ctx, elaboration);
 		}
 	}
+
+	public static Elaboration saveElaborationSerial(Occam occam, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveElaborationSerial(ctx, elaboration);
+		}
+	}
 	
 	/**
 	 * @deprecated  Replaced by saveElaboration

@@ -14,6 +14,7 @@ export const COMPANY_HEADER = `${COMPANY}/header`;
 export const COMPANY_CUSTOMER_TAGS = `${COMPANY}/tags`;
 export const DELIVERIES = `${API}/deliveries`;
 export const ELABORATION = `${API}/elaboration`;
+export const ELABORATION_SERIAL = `${API}/elaboration/serial`;
 export const ELABORATIONS= `${API}/elaborations`;
 export const PRODUCT = `${API}/product`;
 export const PACKAGE = `${API}/package`;
