@@ -191,7 +191,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "Festivos",
 		        title: "Festivos",
-		        action: () => alert("description")
+		        action: () => this.rootPanel(new JSF.AonJsfHolidays)
 		    },{
 		        description: "Variables Calculo Entorno",
 		        title: "Variables Calculo Entorno",
@@ -223,6 +223,12 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: "Comunic@",
 		        action: () => this.rootPanel(new AonComunica()),
 				filter: () => this.isNotDomainManagementAvailable()
+		    },
+		    {
+		        description: "Festivos",
+		        title: "Festivos",
+		        action: () => this.rootPanel(new JSF.AonJsfHolidays),
+		        filter: () => this.isNotDomainManagementAvailable()
 		    }]
 		},{
 		    title: 'Modelos Tributarios',
