@@ -437,8 +437,8 @@ export const TOOLS = {
   backgroundColor: "rgba(83, 83, 83, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
-  is: () => true,
-  has: () => true, 
+  is: () => false,
+  has: () => false, 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -625,7 +625,7 @@ export const OFFICE = {
   hover: 'sidenavHover',
   domainType: true,
   is: (dur) => new DomainUserRoles(dur).isOffice(),
-  has: (dur) => new DomainUserRoles(dur).isOffice(),
+  has: (dur) => new DomainUserRoles(dur).hasOffice(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 

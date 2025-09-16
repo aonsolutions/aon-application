@@ -220,7 +220,7 @@ export class AonBooking extends AonElement {
 			return this.dur.isEnterpriseChild()
 				? {COMMERCE}
 				: {COMMERCE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
-		else if(this.dur.getDomain().isOffice())
+		else if(this.dur.hasOffice())
 			return this.dur.isEnterpriseChild()
 				? {OFFICE}
 				: {OFFICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
@@ -233,15 +233,15 @@ export class AonBooking extends AonElement {
 	}
 
 	getTypeName(){
-		if(this.dur.getDomain().isGarage())
+		if(this.dur.hasGarage())
 			return 'Taller';
 		else if(this.dur.getDomain().isHotel())
 			return 'Hotel';
-		else if(this.dur.getDomain().isAcademy())
+		else if(this.dur.hasAcademy())
 			return 'Academia';
-		else if(this.dur.getDomain().isCommerce())
+		else if(this.dur.hasCommerce())
 			return 'Comercio';
-		else if(this.dur.getDomain().isOffice())
+		else if(this.dur.hasOffice())
 			return 'Despacho';
 		else if(this.dur.getDomain().isKitDigital()) 
 			return 'Kit Digital'
