@@ -119,7 +119,7 @@
               aon-avatar{
                 .profile-avatar-letters{
                   background-color : $color-600;
-                  color : WHITE;
+                  color : $color-text-button;
                 }
               }
               .userPanelDivUserInfo{
@@ -515,6 +515,21 @@
       .info-iban-modal{
         background-color: $color-input;
         box-shadow      : $box-shadow-dialog;
+      }
+    }
+    // aon-new-suggestion
+    // Input que busca mientras escribes, el DIV donde muestras, 
+    // no esta en el componente. Se tiene que reacer
+    .aonInputListOptions{
+      &.is-visible{
+        background-color: $color-input;
+        box-shadow      : $box-shadow-dialog;
+        ul{
+          li:hover{
+            background-color: $color-100;
+            color           : $color-text;
+          }
+        }
       }
     }
     // search

@@ -228,6 +228,39 @@ aon-search{
     }
   }
 }
+// aon-new-suggestion
+// Input que busca mientras escribes, el DIV donde muestras, 
+// no esta en el componente. Se tiene que reacer
+.aonInputListOptions{
+  display   : none;
+  visibility: hidden;
+  &.is-visible{
+    display      : block;
+    visibility   : visible;
+    position     : absolute;
+    box-sizing   : border-box;
+    border-radius: v.$border-radius;
+    padding      : $padding;
+    z-index      : v.$num-1;
+    max-height   : v.$px-222;
+    overflow-y   : auto;
+    overflow-x   : hidden;
+    ul{
+      list-style-type : none;
+      margin          : v.$px-0;
+      padding         : v.$px-0;
+      display         : grid;
+      gap             : v.$gap-min;
+      li{
+        padding       : $padding;
+        cursor        : pointer;
+        display       : flex;
+        gap           : v.$gap-min;
+        border-radius : v.$border-radius;
+      }
+    }
+  }
+}
 // Submenu que sale en el IBAN
 aon-iban{
   position: relative;
