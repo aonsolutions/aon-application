@@ -1,11 +1,9 @@
 import { AonElement } from './AonElement.js';
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG } from '../environments/environments.js';
-import { AonInput } from './aon-input.js';
-import { AonBasicTable } from './aon-basic-table.js';
+import { AonNewInput } from './aon-new-input.js';
 import { Bank } from '../modules/registry/bank/Bank.js';
 
 export class AonIban extends AonElement {
-
   EDIT;
   INPUT;
   IBAN;
@@ -67,13 +65,12 @@ export class AonIban extends AonElement {
 
   build() {
     this.clear();
-    let aonInput = new AonInput();
-    aonInput.id = this.INPUT;
-    aonInput.description = MSG.BANK_ACCOUNT;
-    aonInput.title = this.bank.fullName;
-    aonInput.value = this.bank.fullName;
-    this.appendChild(aonInput);
+    let aonInput      = new AonNewInput();
+    aonInput.id       = this.INPUT;
+    aonInput.title    = this.bank.title ? this.bank.title : MSG.BANK_ACCOUNT;
+    aonInput.value    = this.bank.fullName;
     aonInput.readonly = CONSTANT.READONLY;
+    this.appendChild(aonInput);
 
     this.buildBank();
     
@@ -93,17 +90,15 @@ export class AonIban extends AonElement {
   }
 
   buildBank() {
-    let table = new AonBasicTable();
-    table.id = this.EDIT;
-		table.style.display = "none";
-    table.style.backgroundColor = "#f1f1f1";
-    this.appendChild(table);
-
-    table.addRow();
-
-    let ibanInput = new AonInput();
+    let infoBank           = this.createElement(TAG.DIV);
+		infoBank.style.display = "none";
+    infoBank.id            = this.EDIT;
+    infoBank.classList.add('info-iban-modal');
+    this.appendChild(infoBank);
+    
+    let ibanInput = new AonNewInput();
     ibanInput.id = this.IBAN;
-    ibanInput.description = 'IBAN';
+    ibanInput.title = 'IBAN';
     ibanInput.readonly = this.isReadonly();
     ibanInput.value = this.bank.getBankAccount().getIban();
     ibanInput.addEventListener(EVENT.CHANGE, () => {
@@ -113,29 +108,26 @@ export class AonIban extends AonElement {
       this.getElement(this.BIC).value = this.bank.getBic();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    
-    table.addCell(ibanInput, 2);
+    infoBank.appendChild(ibanInput);
 
-    table.addRow();
-
-    let bankInput = new AonInput();
+    let bankInput = new AonNewInput();
     bankInput.id = this.BANK;
-    bankInput.description = MSG.BANK;
+    bankInput.title = MSG.BANK;
     bankInput.readonly = true;
     bankInput.value = this.bank.getBankAccount().getBank();
-    
-    table.addCell(bankInput, 1);
+    infoBank.appendChild(bankInput);
 
-    let bicInput = new AonInput();
+    let bicInput = new AonNewInput();
     bicInput.id = this.BIC;
-    bicInput.description = MSG.BIC_SWIFT;
+    bicInput.title = MSG.BIC_SWIFT;
     bicInput.readonly = this.isReadonly();
     bicInput.value = this.bank.getBic();
     bicInput.addEventListener(EVENT.CHANGE, () => {
       this.bank.setBic(bicInput.value);
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(bicInput, 1);
+
+    infoBank.appendChild(bicInput);
   }
 
   isReadonly() {

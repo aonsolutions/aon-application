@@ -345,6 +345,7 @@ export class AonDocumentalList extends AonElement {
 	    try {
 	      let categoryEl   = this.getElement("category2");
           let inputElement = categoryEl.querySelector("input[type='select']");
+			if(isNaN(detail.value)) return;
           // limpiamos
           categoryEl.value    = '';
           inputElement.value  = '';
@@ -370,6 +371,7 @@ export class AonDocumentalList extends AonElement {
       try {
         let categoryEl = this.getElement("category3");
         let inputElement = categoryEl.querySelector("input[type='select']");
+			if(isNaN(detail.value)) return;
         // limpiamos
         categoryEl.value    = '';
         inputElement.value  = '';
@@ -395,6 +397,7 @@ export class AonDocumentalList extends AonElement {
         try {
           let categoryEl = this.getElement("category4");
           let inputElement = categoryEl.querySelector("input[type='select']");
+			if(isNaN(detail.value)) return;
           // limpiamos
           categoryEl.value    = '';
           inputElement.value  = '';
