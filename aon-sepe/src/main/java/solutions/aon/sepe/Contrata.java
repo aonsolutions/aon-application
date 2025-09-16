@@ -2171,6 +2171,9 @@ public class Contrata {
 
 		if (sepeId.isPresent()) { // por identificacion de la comunicacion
 			String ide = sepeId.get();
+			
+			if(ide.startsWith("E")) ide = ide.substring(1);
+			
 			String ide1 = ide.substring(0, 2);
 			String ide2 = ide.substring(2, 6);
 			String ide3 = ide.substring(6, 13);
@@ -2182,12 +2185,17 @@ public class Contrata {
 			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
 			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
 			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+			
+			formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
+			formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
+			formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
 
 			DomNode idcomunicacion4Node = formDatos.querySelector("[name=\"idcomunicacion4\"]");
 			if (idcomunicacion4Node != null && ide4Exist) {
 				HtmlInput idcomunicacion4 = ((HtmlInput) idcomunicacion4Node);
 				if (idcomunicacion4.getValue().isEmpty()) {
 					idcomunicacion4.setValue(Toolkit.fillStringLeft(ide4, "0", 2));
+					idcomunicacion4.setValueAttribute(Toolkit.fillStringLeft(ide4, "0", 2));
 				}
 			}
 
@@ -2199,6 +2207,7 @@ public class Contrata {
 					ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
 				idcontrato.setValue(ideStr);
+				idcontrato.setValueAttribute(ideStr);
 			}
 
 		} else {
