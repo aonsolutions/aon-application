@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module rename-to='aon_gwt_mod200'>
+<module rename-to='aon_gwt_fiscal_base'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
-	<!-- 
 	<inherits name='com.google.gwt.visualization.Visualization'/>
-	 -->
-	<inherits name="com.google.gwt.logging.Logging"/>	 
+	<inherits name="com.google.gwt.logging.Logging"/>
 	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
-		 
-	<inherits name="com.esferalia.aon.gwt.common.Common" />
-	<inherits name="com.esferalia.aon.gwt.api.Api" /> 
-	<!-- <inherits name="com.esferalia.aon.occam.api.Occam" /> -->
-	<inherits name="com.esferalia.aon.occam.mod200.api.OccamMod200" />
 	
-	<inherits name="com.esferalia.aon.gwt.fiscal.Base" />
+	<!-- Specify the app entry point class. -->
+	<inherits name="com.esferalia.aon.gwt.common.Common" />
+	<inherits name="com.esferalia.aon.gwt.api.Api" />
+	<inherits name="com.esferalia.aon.occam.api.Occam" />
 
+	<!-- 
+	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>
+	-->
+		 
 	<!-- Spanish language, independent of country -->
 	<!-- extend-property name="locale" values="es" /-->
 
@@ -32,8 +32,6 @@
 	<!--extend-property name="user.agent" values="ie10" /-->
 	
 	<set-configuration-property name="locale.useragent" value="Y" />
-	
-	<!-- Other module inherits -->
 
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
@@ -43,12 +41,11 @@
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 	
-	
-	<!-- Specify the app entry point class. --> 
-	<entry-point class='com.esferalia.aon.gwt.mod200.client.MainEntryPoint' />
-
 	<!-- Specify the paths for translatable code -->
-	<source path='client' />
-	<source path='shared' />
+	<source path='client' >
+		<exclude name="MainEntryPoint.java" />
+		<exclude name="customer/*.java" />
+	</source>
 
+	<source path='shared' />
 </module>
