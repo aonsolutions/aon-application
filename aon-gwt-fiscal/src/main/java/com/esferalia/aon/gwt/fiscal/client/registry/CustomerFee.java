@@ -34,7 +34,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
@@ -80,7 +80,12 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CustomerFee extends MainEntryPoint {
+import com.esferalia.aon.gwt.fiscal.client.EntryPointUtils;
+
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class CustomerFee  implements EntryPoint {
 	
 	// Services
 	private static RegistryServiceAsync SERVICE;
@@ -259,7 +264,7 @@ public class CustomerFee extends MainEntryPoint {
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
 		
-		customerId = getCustomer() > 0 ? getCustomer() : null;
+		customerId = EntryPointUtils.getCustomer() > 0 ? EntryPointUtils.getCustomer() : null;
 		searchDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
 		
 		removeCustomer();
