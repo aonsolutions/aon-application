@@ -5189,6 +5189,12 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<Customer> getSigCustomerNotLinkedStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerNotLinkedStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -8374,6 +8380,12 @@ public class AON {
 	public static Domain updateDomainStatus(String domainName, Integer domainId, String login, Domain domain) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().updateDomainStatus(ctx, domain);
+		}
+	}
+	
+	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().updateDomainCustomer(ctx, domainId, customer);
 		}
 	}
 	

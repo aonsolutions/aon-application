@@ -13,7 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.matrix.FiscalModelService;
 import com.esferalia.aon.gwt.fiscal.client.matrix.FiscalModelServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.matrix.FiscalModelServiceAsyncDecorator;
@@ -39,7 +39,10 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class InvoiceModelReport extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class InvoiceModelReport  implements EntryPoint {
 	
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
