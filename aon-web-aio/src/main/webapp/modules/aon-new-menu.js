@@ -611,7 +611,7 @@ export class AonNewMenu extends AonElement {
             icon.innerHTML = app.symbol;
             icon.setAttribute("data-icon", app.symbol);
             if(app.app == CONSTANT.PLANS && this.isAyudaT()){
-              a.classList.add('color-green');
+              a.classList.add('color-blue');
             }
             icon.classList.add("aonNewMenuAppIcon");
             div.appendChild(icon);

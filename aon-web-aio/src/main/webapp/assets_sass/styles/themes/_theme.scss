@@ -56,6 +56,12 @@
   $gradient-turquoise-position   : $loginbutton-backgorund-position;
   $gradient-turquoise-transition : background v.$t-01 ease;
   $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;  
+
+  $gradient-blue-background : linear-gradient(to right, $color-corp-blue, $color-corp-blue, $color-grad-max, $color-grad-min);
+  $gradient-blue-size       : $loginbutton-background-size;
+  $gradient-blue-position   : $loginbutton-backgorund-position;
+  $gradient-blue-transition : background v.$t-01 ease;
+  $gradient-blue-hover-background-size : $loginbutton-hover-background-size;  
   
   $gradient-box-background : linear-gradient(to right, $color-box, $color-box, $color-grad-max, $color-grad-min);
   $gradient-box-size       : $loginbutton-background-size;
@@ -164,6 +170,14 @@
                 }
                 span{
                   color : $color-menu-green;
+                }
+              }
+              &.color-blue{
+                i{
+                  background-color : $color-corp-blue;
+                }
+                span{
+                  color : $color-corp-blue;
                 }
               }
             }
@@ -293,17 +307,17 @@
       #aon-menu-button-content{
         aon-icon-button{
           &#aon-menu-button-button, button{
-            background            : $gradient-turquoise-background;
-            background-size       : $gradient-turquoise-size;
-            background-position   : $gradient-turquoise-position;
-            transition            : $gradient-turquoise-transition;
+            background            : $gradient-blue-background;
+            background-size       : $gradient-blue-size;
+            background-position   : $gradient-blue-position;
+            transition            : $gradient-blue-transition;
             box-shadow            : $box-shadow-dialog;
             &:hover{
-              background-position : $gradient-turquoise-hover-background-size ;
-              aon-icon{
-                &::after {
-                  background-color: $color-text-button;
-                }
+              background-position : $gradient-blue-hover-background-size ;
+            }
+            aon-icon{
+              &::after {
+                background-color: $color-text-button;
               }
             }
           }

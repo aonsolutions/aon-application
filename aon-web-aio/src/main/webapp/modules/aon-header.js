@@ -153,11 +153,11 @@ export class AonHeader extends AonElement {
 		aonHeaderSearchBox.addEventListener(EVENT.KEYUP, () => {
 			clearTimeout(this.searchTimeoutId);
 			this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
-		} );
+		});
 		aonHeaderSearchBox.addEventListener(EVENT.FOCUS, () => {
 			clearTimeout(this.searchTimeoutId);
 			this.searchTimeoutId = setTimeout( () => this.showSearch(this) , 300 );
-		} );
+		});
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
 		div.appendChild(aonHeaderSearch);
 
@@ -221,16 +221,16 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderHelp);
 
-        let aonHeaderConfig = this.createElement(TAG.SPAN);
-        aonHeaderConfig.id = this.AON_HEADER_CONFIG;
-        aonHeaderConfig.title = MSG.CONFIGURATION;
+		let aonHeaderConfig = this.createElement(TAG.SPAN);
+		aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+		aonHeaderConfig.title = MSG.CONFIGURATION;
 
-        let aonHeaderConfigButton = new AonIconButton();
-        aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
-        aonHeaderConfigButton.icon = "settings"
-        aonHeaderConfig.appendChild(aonHeaderConfigButton);
+		let aonHeaderConfigButton = new AonIconButton();
+		aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
+		aonHeaderConfigButton.icon = "settings"
+		aonHeaderConfig.appendChild(aonHeaderConfigButton);
 
-        aonHeaderButtons.appendChild(aonHeaderConfig);
+		aonHeaderButtons.appendChild(aonHeaderConfig);
 
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
@@ -294,109 +294,106 @@ export class AonHeader extends AonElement {
 			});
 			if(!this.newTheme){
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
-			aonHeaderHelpButton.addEventListener('click', () => {
-				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
-				const left = aonHeaderHelpButton.getBoundingClientRect().left;
-				getDomainUserRoles({}).then(r => {
-					this.dur = new DomainUserRoles(r);
-					let d = this.getElement('aonHeaderDialogHelpOption');
-					let options = []
-					// let support = {
-					// 	name: MSG.SUPPORT + ' / CAU',
-					// 	icon: MATERIAL_ICONS.SUPPORT_AGENT,
-					// 	fn: () =>{
-					// 		let aonMessenger = new AonMessenger();
-					// 		aonMessenger.cau = 1;
-					// 		aonMessenger._filter.source = TASK_SOURCE.CAU;
-					// 		this.rootPanel(aonMessenger);
-					// 	}
-					// };
-					
-					let language = {
-						id: CONSTANT.LANGUAGE,
-						name: MSG.LANGUAGE,
-						icon: 'language',
-						options: [{
-							name: MSG.SPANISH,
-							image: '../assets/img/aonIconCastellano.png',
-							fn: () => LS.setLanguage(Language.SPANISH)
-						}, {
-							name: MSG.ENGLISH,
-							image: '../assets/img/aonIconEnglish.png',
-							fn: () => LS.setLanguage(Language.ENGLISH)
-						}, {
-							name: MSG.DEUTSCH,
-							image: '../assets/img/aonIconDeutsch.png',
-							fn: () => LS.setLanguage(Language.DEUTSCH)
-						}, {
-							name: MSG.BASQUE,
-							image: '../assets/img/aonIconEuskera.png',
-							fn: () => LS.setLanguage(Language.BASQUE)
-						}, {
-							name: MSG.CATALAN,
-							image: '../assets/img/aonIconCatala.png',
-							fn: () => LS.setLanguage(Language.CATALAN)
-						}, {
-							name: MSG.GALICIAN,
-							image: '../assets/img/aonIconGalego.png',
-							fn: () => LS.setLanguage(Language.GALICIAN)
-						} ]
-					};
-
-					// let help = {
-					// 	name: MSG.HELP,
-					// 	icon: 'help_outline',
-					// 	fn: () => {
-					// 		let iframe = document.createElement("iframe");
-					// 		iframe.height = "100%";
-					// 		iframe.width = "100%";
-					// 		iframe.src = "https://faqs.aonsolutions.es";
-					// 		this.rootPanel(iframe);
-					// 	} 
-					// };
-
-					// if(LS.getDomainId())
-					// 	options.push(support)
-					// if(this.isBeta())
-					options.push(language);
-					// options.push(help);
-
-					if(this.dur.isDev()) {
-						options.push({
-							name: MSG.COMPONENTS,
-							icon: MATERIAL_ICONS.EXTENSION,
-							fn: () => this.rootPanel(new AonComponentsDoc())
-						});
+				aonHeaderHelpButton.addEventListener('click', () => {
+					const top  = aonHeaderHelpButton.getBoundingClientRect().top;
+					const left = aonHeaderHelpButton.getBoundingClientRect().left;
+					getDomainUserRoles({}).then(r => {
+						this.dur = new DomainUserRoles(r);
+						let d = this.getElement('aonHeaderDialogHelpOption');
+						let options = []
+						// let support = {
+						// 	name: MSG.SUPPORT + ' / CAU',
+						// 	icon: MATERIAL_ICONS.SUPPORT_AGENT,
+						// 	fn: () =>{
+						// 		let aonMessenger = new AonMessenger();
+						// 		aonMessenger.cau = 1;
+						// 		aonMessenger._filter.source = TASK_SOURCE.CAU;
+						// 		this.rootPanel(aonMessenger);
+						// 	}
+						// };
 						
+						let language = {
+							id: CONSTANT.LANGUAGE,
+							name: MSG.LANGUAGE,
+							icon: 'language',
+							options: [{
+								name: MSG.SPANISH,
+								image: '../assets/img/aonIconCastellano.png',
+								fn: () => LS.setLanguage(Language.SPANISH)
+							}, {
+								name: MSG.ENGLISH,
+								image: '../assets/img/aonIconEnglish.png',
+								fn: () => LS.setLanguage(Language.ENGLISH)
+							}, {
+								name: MSG.DEUTSCH,
+								image: '../assets/img/aonIconDeutsch.png',
+								fn: () => LS.setLanguage(Language.DEUTSCH)
+							}, {
+								name: MSG.BASQUE,
+								image: '../assets/img/aonIconEuskera.png',
+								fn: () => LS.setLanguage(Language.BASQUE)
+							}, {
+								name: MSG.CATALAN,
+								image: '../assets/img/aonIconCatala.png',
+								fn: () => LS.setLanguage(Language.CATALAN)
+							}, {
+								name: MSG.GALICIAN,
+								image: '../assets/img/aonIconGalego.png',
+								fn: () => LS.setLanguage(Language.GALICIAN)
+							} ]
+						};
 
-					}
+						// let help = {
+						// 	name: MSG.HELP,
+						// 	icon: 'help_outline',
+						// 	fn: () => {
+						// 		let iframe = document.createElement("iframe");
+						// 		iframe.height = "100%";
+						// 		iframe.width = "100%";
+						// 		iframe.src = "https://faqs.aonsolutions.es";
+						// 		this.rootPanel(iframe);
+						// 	} 
+						// };
 
-					if(this.dur.hasApiService()) {
-						let iframe = this.createElement(TAG.IFRAME);
-						iframe.src = 'https://aonsolutions.github.io/apidoc';
-						iframe.style.height = '100%';
-						iframe.style.width = '100%';
-						iframe.style.border = '0';
-						options.push({
-							name: MSG.API_DOCUMENTATION,
-							icon: MATERIAL_ICONS.API,
-							fn: () => this.rootPanel(iframe)
-						});
-					}
+						// if(LS.getDomainId())
+						// 	options.push(support)
+						// if(this.isBeta())
+						options.push(language);
+						// options.push(help);
 
-					let about = {
-						name: MSG.ABOUT,
-						icon: MATERIAL_ICONS.INFO,
-						fn: () => this.about()
-					}
-					options.push(about)
+						if(this.dur.isDev()) {
+							options.push({
+								name: MSG.COMPONENTS,
+								icon: MATERIAL_ICONS.EXTENSION,
+								fn: () => this.rootPanel(new AonComponentsDoc())
+							});
+						}
 
-					d.setMenuOptions(options, top, left);
-					d.open();
+						if(this.dur.hasApiService()) {
+							let iframe = this.createElement(TAG.IFRAME);
+							iframe.src = 'https://aonsolutions.github.io/apidoc';
+							iframe.style.height = '100%';
+							iframe.style.width = '100%';
+							iframe.style.border = '0';
+							options.push({
+								name: MSG.API_DOCUMENTATION,
+								icon: MATERIAL_ICONS.API,
+								fn: () => this.rootPanel(iframe)
+							});
+						}
+
+						let about = {
+							name: MSG.ABOUT,
+							icon: MATERIAL_ICONS.INFO,
+							fn: () => this.about()
+						}
+						options.push(about)
+
+						d.setMenuOptions(options, top, left);
+						d.open();
+					});
 				});
-			});
 			}
-
 		}
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
@@ -404,98 +401,98 @@ export class AonHeader extends AonElement {
 		let companySelectorOpenedManually = false;
 		//boton seleccion de empresa
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-		// Marcar que el selector fue abierto manualmente
-		companySelectorOpenedManually = true;
+			// Marcar que el selector fue abierto manualmente
+			companySelectorOpenedManually = true;
 
-		this.buildDur().then(dur => {
-					if(dur && dur.parentDomain) {
-						aonHeaderCompanyName.innerHTML = dur.parentDomain.description || '';
-					}
-				});
+			this.buildDur().then(dur => {
+				if(dur && dur.parentDomain) {
+					aonHeaderCompanyName.innerHTML = dur.parentDomain.description || '';
+				}
+			});
 
-		if (!this.isMobile()) {
-			let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-			let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-			let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+			if (!this.isMobile()) {
+				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 
-			if (!LS.isNewTheme() && !this.newTheme) {
-				let aonShowMenu = this.getElement('aonShowMenu');
+				if (!LS.isNewTheme() && !this.newTheme) {
+					let aonShowMenu = this.getElement('aonShowMenu');
+				}
+
+				let aonMenu = this.getElement('aonMenu');
+				aonMenu.removeAttribute('company');
+				aonMenu.removeAttribute('user');
+				aonMenu.close();
 			}
 
-		let aonMenu = this.getElement('aonMenu');
-		aonMenu.removeAttribute('company');
-		aonMenu.removeAttribute('user');
-		aonMenu.close();
-	}
+			let company = LS.getCompany();
+			let domainId = LS.getDomainId();
 
-	let company = LS.getCompany();
-	let domainId = LS.getDomainId();
+			//  Si ya hay un domainId válido y no se abrió manualmente → no mostrar selector
+			if (domainId && domainId !== 0 && domainId !== 1 && company && !companySelectorOpenedManually) {
+				LS.setCompanySelected(true);
+				LS.setOnlyOne(true);
+				this.rootPanel(new AonDesktop());
+				return;
+			}
 
-	//  Si ya hay un domainId válido y no se abrió manualmente → no mostrar selector
-	if (domainId && domainId !== 0 && domainId !== 1 && company && !companySelectorOpenedManually) {
-		LS.setCompanySelected(true);
-		LS.setOnlyOne(true);
-		this.rootPanel(new AonDesktop());
-		return;
-	}
+			//  Si no hay empresa cargada , detener
+			if (!company) {
+				console.warn('No hay empresa cargada. Deteniendo ejecución.');
+				return;
+			}
 
-	//  Si no hay empresa cargada , detener
-	if (!company) {
-		console.warn('No hay empresa cargada. Deteniendo ejecución.');
-		return;
-	}
+			//  Si estamos en la empresa general (sin parentId), no hacer nada
+			if (!company.parentId) {
+				console.log('Ya estás en la empresa general. No se realiza cambio.');
+				return;
+			}
 
-	//  Si estamos en la empresa general (sin parentId), no hacer nada
-	if (!company.parentId) {
-		console.log('Ya estás en la empresa general. No se realiza cambio.');
-		return;
-	}
+			//  Si ya hay una empresa hija seleccionada y no se abrió manualmente carga directamente
+			if (LS.getCompanySelected() && !companySelectorOpenedManually) {
+				console.log('Empresa hija ya seleccionada, cargando directamente');
+				LS.setOnlyOne(true);
+				LS.setDomainId(parseInt(company.parentId));
+				this.rootPanel(new AonParent());
+				return;
+			}
 
-	//  Si ya hay una empresa hija seleccionada y no se abrió manualmente carga directamente
-	if (LS.getCompanySelected() && !companySelectorOpenedManually) {
-		console.log('Empresa hija ya seleccionada, cargando directamente');
-		LS.setOnlyOne(true);
-		LS.setDomainId(parseInt(company.parentId));
-		this.rootPanel(new AonParent());
-		return;
-	}
+			//  Usuario abrio manualmente el selector de empresas, permitir cambio
+			LS.removeDomain();
+			LS.removeCompany();
+			clearDurum();
 
-	//  Usuario abrio manualmente el selector de empresas, permitir cambio
-	LS.removeDomain();
-	LS.removeCompany();
-	clearDurum();
+			if (company.parentId) {
+				LS.setDomainId(parseInt(company.parentId));
+			} else {
+				LS.setOnlyOne(true);
+			}
 
-	if (company.parentId) {
-		LS.setDomainId(parseInt(company.parentId));
-	} else {
-		LS.setOnlyOne(true);
-	}
+			let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
+			this.removeAttribute('company');
+			this.removeAttribute('user');
 
-	let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
-	this.removeAttribute('company');
-	this.removeAttribute('user');
+			clearDurum();
+			this.rootPanel(new AonParent());
 
-	clearDurum();
-	this.rootPanel(new AonParent());
+			let header = this.getElement("aonHeaderWeb");
+			let apps = this.getElement("aonMenuLeftop-applications");
+			let headerapp = this.getElement("aonHeaderApp");
 
-	let header = this.getElement("aonHeaderWeb");
-	let apps = this.getElement("aonMenuLeftop-applications");
-	let headerapp = this.getElement("aonHeaderApp");
+			let logo = this.getElement("aonLogo");
+			let rootPanel = this.getElement("rootPanel");
+			let enterprise = this.getElement("aonHeaderCompanyName");
+			let appss = this.getElement("applications");
+			let welcome = this.getElement("aonCompanyTabFilter");
 
-	let logo = this.getElement("aonLogo");
-	let rootPanel = this.getElement("rootPanel");
-	let enterprise = this.getElement("aonHeaderCompanyName");
-	let appss = this.getElement("applications");
-	let welcome = this.getElement("aonCompanyTabFilter");
+			let header2 = this.getElement('aonHeaderWeb');
+			header2.className = 'aonHeader aonHeaderStart';
 
-	let header2 = this.getElement('aonHeaderWeb');
-	header2.className = 'aonHeader aonHeaderStart';
+			let applications = this.getElement('applications');
+			applications.className = 'aonMenuLeftopStart';
 
-	let applications = this.getElement('applications');
-	applications.className = 'aonMenuLeftopStart';
-
-	companySelectorOpenedManually = false;
-});
+			companySelectorOpenedManually = false;
+		});
 
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -568,23 +565,23 @@ export class AonHeader extends AonElement {
 			});
 		}
 
-//		let header1 = this.getElement("aonHeaderCompanyName")
-//		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header1 = this.getElement("aonHeaderCompanyName")
+		// header1.style.color = "var--(aonGrayHeaderButtonsColor)";
 
-//		let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
-//		header2.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+		// header2.style.color = "var--(aonGrayHeaderButtonsColor)";
 
-//		let header3 = this.getElement("aonHeaderHelpButtonIconButton")
-//		header3.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+		// header3.style.color = "var--(aonGrayHeaderButtonsColor)";
 
-//		let header4 = this.getElement("aonHeaderConfigButtonIconButton")
-//		header4.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+		// header4.style.color = "var--(aonGrayHeaderButtonsColor)";
 
-//		let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
-//		header5.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+		// header5.style.color = "var--(aonGrayHeaderButtonsColor)";
 
-//		let header6 = this.getElement("aonHeaderUserButtonIconButton")
-//		header6.style.color = "var--(aonGrayHeaderButtonsColor)";
+		// let header6 = this.getElement("aonHeaderUserButtonIconButton")
+		// header6.style.color = "var--(aonGrayHeaderButtonsColor)";
 		
 		let aonHeaderSearchDialogMenu = new AonDialogSearch();
 		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
@@ -1076,7 +1073,8 @@ export class AonHeader extends AonElement {
 				}
 			});  
 	    }
-	}	
+	}
+
 	getIcon(company) {
 		let icon = "business";
 		if(company.type === 'OFFICE') icon = 'work';
@@ -1117,8 +1115,8 @@ export class AonHeader extends AonElement {
 	showCompany(company) {
 		if (company.domainManagement) {
 			this.showParent();
-		} else {			
-			this.showDesktop();		
+		} else {
+			this.showDesktop();
 		}
 	}
 

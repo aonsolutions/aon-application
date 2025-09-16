@@ -31,6 +31,24 @@ $icon-gap : v.$gap-min;
     .aonSidenavTitleName{
       width      : v.$pct-100;
     }
+    .aonSidenavTitleButton{
+      // Si es de INFO es mas chico
+      // aon-icon-button[icon="info"] button aon-icon::after {
+      aon-icon-button[icon="info"]{
+        button{
+          width : $icon-size;
+          height: $icon-size;
+          aon-icon {
+            width : $icon-size;
+            height: $icon-size;
+            &::after {
+              width : $icon-size;
+              height: $icon-size;
+            }
+          }
+        }
+      }
+    }
   }
   ul {
     list-style    : none;
