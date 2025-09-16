@@ -1,4 +1,4 @@
-import { App, OldModule, Role } from './enums.js';
+import { App, OldModule, OldRole, Role } from './enums.js';
 import * as LS from '../services/localStorageService.js';
 import { Domain } from './Domain.js';
 
@@ -267,16 +267,19 @@ export class DomainUserRoles {
 	// MANAGEMENT
 
 	hasManagement() {
-		return this.hasApp(App.MANAGEMENT) || this.hasOldModule(OldModule.MANAGEMENT);
+		return this.hasApp(App.MANAGEMENT) || this.hasOldModule(OldModule.MANAGEMENT)
+			|| this.hasOldModule(OldModule.AON_ONE) || this.hasOldModule(OldModule.AON_FINANCE);
 	}
 
 	hasParentManagement() {
 		return this.hasParentApp(App.MANAGEMENT) || this.hasParentOldModule(OldModule.MANAGEMENT)
+			|| this.hasParentOldModule(OldModule.AON_ONE) || this.hasParentOldModule(OldModule.AON_FINANCE);
 	}
 
 	isManagement() {
-		return (this.hasManagement() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentManagement()))
-			&& (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
+		return (this.hasManagement() || (this.isEnterpriseChild() && this.hasParentManagement()))
+			&& (this.isAdmin() || this.hasRole(Role.MANAGEMENT) || this.hasOldRole(OldRole.SALE)
+					|| this.hasOldRole(OldRole.PURCHASE) || this.hasOldRole(OldRole.FINANCE));
 	}
 
 	isManagementManager() {
@@ -475,6 +478,10 @@ export class DomainUserRoles {
 		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
+	isMessengerPortal() {
+		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_PORTAL));
+	}
+
 	// CALL CENTER
 
 	hasCallCenter() {
@@ -497,7 +504,8 @@ export class DomainUserRoles {
 
 	isInvoice() {
 		return (this.hasInvoice() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentInvoice()))
-			&& (this.isAdmin() || this.hasRole(Role.INVOICE));
+			&& (this.isAdmin() || this.hasRole(Role.INVOICE) ||  this.hasOldRole(OldRole.SALE)
+					|| this.hasOldRole(OldRole.PURCHASE) || this.hasOldRole(OldRole.FINANCE));
 	}
 
 	isInvoiceUser() {
@@ -525,7 +533,8 @@ export class DomainUserRoles {
 	}
 
 	isCommercial() {
-		return this.hasCommercial() && (this.isAdmin() || this.hasRole(Role.COMMERCIAL));
+		return (this.hasCommercial() || (this.isEnterpriseChild() && this.hasParentCommercial()))
+			&& (this.isAdmin() || this.hasRole(Role.COMMERCIAL) || this.hasOldRole(OldRole.COMMERCIAL));
 	}
 
 	// TREASURY - TESORERIA
@@ -539,7 +548,8 @@ export class DomainUserRoles {
 	}
 
 	isTreasury() {
-		return this.hasTreasury() && (this.isAdmin() || this.hasRole(Role.TREASURY));
+		return (this.hasTreasury() || (this.isEnterpriseChild() && this.hasParentTreasury()))
+			&& (this.isAdmin() || this.hasRole(Role.TREASURY) || this.hasOldRole(OldRole.FINANCE));
 	}
 
 	// MARKETING
@@ -553,7 +563,8 @@ export class DomainUserRoles {
 	}
 
 	isMarketing() {
-		return this.hasMarketing() && (this.isAdmin() || this.hasRole(Role.MARKETING));
+		return (this.hasMarketing() || (this.isEnterpriseChild() && this.hasParentMarketing()))
+			&& (this.isAdmin() || this.hasRole(Role.MARKETING));
 	}
 
 	// GROUPWARE - EXPEDIENTES
@@ -567,7 +578,8 @@ export class DomainUserRoles {
 	}
 
 	isGroupware() {
-		return this.hasGroupware() && (this.isAdmin() || this.hasRole(Role.GROUPWARE));
+		return (this.hasGroupware() || (this.isEnterpriseChild() && this.hasParentGroupware()))
+			&& (this.isAdmin() || this.hasRole(Role.GROUPWARE) || this.hasOldRole(OldRole.TASK_MONITORING));
 	}
 
 	// WAREHOUSE - ALMACEN
@@ -581,7 +593,8 @@ export class DomainUserRoles {
 	}
 
 	isWarehouse() {
-		return this.hasWarehouse() && (this.isAdmin() || this.hasRole(Role.WAREHOUSE));
+		return (this.hasWarehouse() || (this.isEnterpriseChild() && this.hasParentWarehouse()))
+			&& (this.isAdmin() || this.hasRole(Role.WAREHOUSE) || this.hasOldRole(OldRole.WAREHOUSE));
 	}
 
 
@@ -688,7 +701,7 @@ export class DomainUserRoles {
 	}
 
 	isAon() {
-		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AIO));
+		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AON_AIO) || this.hasRole(Role.AON) || this.hasRole(Role.AIO));
 	}
 
 	isBidoq() {
@@ -758,25 +771,54 @@ export class DomainUserRoles {
 		return this.domainPayer;
 	}
 
+	// CONSOLE
 
-	isConsole() {
+	hasConsole() {
 		return this.getDomain().getDomainType() == 'ADMIN';
 	}
 
-	isOffice() {
+	isConsole() {
+		return this.hasConsole();
+	}
+
+	// OFFICE
+
+	hasOffice() {
 		return this.getDomain().getDomainType() == 'OFFICE';
 	}
 
-	isGarage() {
+	isOffice() {
+		return this.hasOffice() && this.hasRole(Role.OFFICE);
+	}
+
+	// GARAGE
+
+	hasGarage() {
 		return this.getDomain().getDomainType() == 'GARAGE';
 	}
 
-	isAcademy() {
+	isGarage() {
+		return this.hasGarage(); // && this.hasRole(Role.GARAGE);
+	}
+
+	// ACADEMY 
+
+	hasAcademy() {
 		return this.getDomain().getDomainType() == 'ACADEMY';
 	}
 
-	isCommerce() {
+	isAcademy() {
+		return this.hasAcademy(); // && this.hasRole(Role.ACADEMY);
+	}
+
+	// COMMERCE
+
+	hasCommerce() {
 		return this.getDomain().getDomainType() == 'COMMERCE';
+	}
+
+	isCommerce() {
+		return this.hasCommerce(); // && this.hasRole(Role.COMMERCE); 
 	}
 
 	isTrial() {
@@ -791,9 +833,6 @@ export class DomainUserRoles {
 		return this.domain?.domainManagement;
 	}
 	
-	
 	// ------------------------------------------------------------------------
-	
-	
-	
+
 }

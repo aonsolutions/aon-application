@@ -6,7 +6,7 @@ import * as LS from  "./localStorageService.js";
 
 import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
 import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
-import { MATERIAL } from "../environments/constants.js";
+import { DomainUserRoles } from "../models/DomainUserRoles.js";
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
@@ -39,6 +39,8 @@ export const TIMECONTROL = {
     upload: false,
     stat: false,
   },
+  is: (dur) => new DomainUserRoles(dur).isTimecontrol(),
+  has: (dur) => new DomainUserRoles(dur).hasTimeControl(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -71,6 +73,8 @@ export const ACCOUNTING = {
     upload: false,
     stat: true,
   },
+  is: (dur) => new DomainUserRoles(dur).isAccounting(),
+  has: (dur) => new DomainUserRoles(dur).hasAccounting(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -101,6 +105,8 @@ export const FISCAL = {
     upload: false,
     stat: false,
   },
+  is: (dur) => new DomainUserRoles(dur).isFiscal(),
+  has: (dur) => new DomainUserRoles(dur).hasFiscal(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -135,6 +141,8 @@ export const PAYROLL = {
     upload: false,
     stat: true,
   },
+  is: (dur) => new DomainUserRoles(dur).isPayroll(),
+  has: (dur) => new DomainUserRoles(dur).hasPayroll(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -149,6 +157,8 @@ export const TREASURY = {
   hover: 'aonSidenavHover',
   price: " ",
   disabled: false,
+  is: (dur) => new DomainUserRoles(dur).isTreasury(),
+  has: (dur) => new DomainUserRoles(dur).hasTreasury(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -164,6 +174,8 @@ export const MARKETING = {
   hover: 'aonSidenavHover',
   price: " ", 
   disabled: false,
+  is: (dur) => new DomainUserRoles(dur).isMarketing(),
+  has: (dur) => new DomainUserRoles(dur).hasMarketing(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -178,6 +190,8 @@ export const SERES = {
   hover: 'aonSidenavHover',
   price: " ",
   disabled: false,
+  is: (dur) => new DomainUserRoles(dur).isSeres(),
+  has: (dur) => new DomainUserRoles(dur).hasSeres(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -194,6 +208,8 @@ export const COMMERCIAL = {
   hover: 'aonSidenavHover',
   price: " ",
   disabled: false,
+  is: (dur) => new DomainUserRoles(dur).isCommercial(),
+  has: (dur) => new DomainUserRoles(dur).hasCommercial(), 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -207,6 +223,8 @@ export const GROUPWARE = {
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isGroupware(),
+  has: (dur) => new DomainUserRoles(dur).hasGroupware(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -236,6 +254,8 @@ export const COMUNICA = {
   ],
 // apps: [TIMECONTROL],
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isComunica(),
+  has: (dur) => new DomainUserRoles(dur).hasComunica(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -271,6 +291,8 @@ export const DOCUMENTAL = {
     upload: true,
     stat: false
   },
+  is: (dur) => new DomainUserRoles(dur).isDocumental(),
+  has: (dur) => new DomainUserRoles(dur).hasDocumental(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -291,6 +313,8 @@ export const WAREHOUSE = {
     upload: true,
     stat: false,
   },
+  is: (dur) => new DomainUserRoles(dur).isWarehouse(),
+  has: (dur) => new DomainUserRoles(dur).hasWarehouse(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -312,6 +336,8 @@ export const MANAGEMENT = {
     upload: true,
     stat: false,
   },
+  is: (dur) => new DomainUserRoles(dur).isManagement(),
+  has: (dur) => new DomainUserRoles(dur).hasManagement(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -348,6 +374,8 @@ export const INVOICE = {
     upload: true,
     stat: true,
   },
+  is: (dur) => new DomainUserRoles(dur).isInvoice(),
+  has: (dur) => new DomainUserRoles(dur).hasInvoice(), 
   getMenuOptions: (dur) => InvoiceOptions.getOptions(dur)
 };
 
@@ -358,8 +386,10 @@ export const CONFIGURATION = {
   icon: AON_ICONS.AON_SETTINGS,
   color: "black",
   hover: 'aonSidenavHover',
+  backgroundColor: "rgba(0, 0, 0, .2)", 
+  is: () => true,
+  has: () => true, 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur),
-  backgroundColor: "rgba(0, 0, 0, .2)",
 };
 
 export const MESSENGER = {
@@ -394,6 +424,8 @@ export const MESSENGER = {
     upload: false,
     stat: true,
   },
+  is: (dur) => new DomainUserRoles(dur).isMessenger(),
+  has: (dur) => new DomainUserRoles(dur).hasMessenger(), 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -405,6 +437,8 @@ export const TOOLS = {
   backgroundColor: "rgba(83, 83, 83, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: () => false,
+  has: () => false, 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -419,6 +453,8 @@ export const NOTES = {
   backgroundColor: "rgba(255, 192, 0, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: () => true,
+  has: () => true, 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -431,6 +467,8 @@ export const AON_SOLUTIONS = {
   color: "var(--aonBlue)", 
   logo: "../assets/aon.png",
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isAon(),
+  has: (dur) => new DomainUserRoles(dur).hasAon(),
 };
 
 export const BIDOQ = {
@@ -439,6 +477,8 @@ export const BIDOQ = {
   description: "Bidoq.",
   logo: "../assets/apps/bidoq.png",
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isBidoq(),
+  has: (dur) => new DomainUserRoles(dur).isBidoq(),
 };
 
 export const SELFCONTA = {
@@ -447,6 +487,8 @@ export const SELFCONTA = {
   description: "Selfconta.",
   logo: "../assets/apps/selfconta.png",
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isSelfconta(),
+  has: (dur) => new DomainUserRoles(dur).isSelfconta(),
 };
 
 export const AON_SALTRA = {
@@ -473,6 +515,8 @@ export const AON_SALTRA = {
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isSaltra(),
+  has: (dur) => new DomainUserRoles(dur).hasSaltra(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -482,6 +526,8 @@ export const ALMA = {
   description: "Alma",
   logo: "../assets/apps/alma.png",
   price: " ",
+  is: () => false,
+  has: () => false, 
 };
 
 export const OCR = {
@@ -493,6 +539,8 @@ export const OCR = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ",
+  is: (dur) => new DomainUserRoles(dur).isOcr(),
+  has: (dur) => new DomainUserRoles(dur).hasOcr(),
 };
 
 export const FACTURAE = {
@@ -504,6 +552,8 @@ export const FACTURAE = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ",
+  is: () => true,
+  has: () => true, 
 };
 
 
@@ -519,6 +569,8 @@ export const INVOFOX = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isInvofox(),
+  has: (dur) => new DomainUserRoles(dur).hasInvofox(),
 };
 
 export const CONVENIOS = {
@@ -530,6 +582,8 @@ export const CONVENIOS = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isConvenios(),
+  has: (dur) => new DomainUserRoles(dur).hasConvenios(),
 };
 
 export const BANK = {
@@ -541,6 +595,8 @@ export const BANK = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isBank(),
+  has: (dur) => new DomainUserRoles(dur).hasBank(),
 };
 
 export const CONSOLE = {
@@ -552,6 +608,8 @@ export const CONSOLE = {
   color: COLORS.AON_BLACK,
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'aonSidenavHover',
+  is: () => false,
+  has: () => false,
 };
 
 export const OFFICE = {
@@ -566,6 +624,8 @@ export const OFFICE = {
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'sidenavHover',
   domainType: true,
+  is: (dur) => new DomainUserRoles(dur).isOffice(),
+  has: (dur) => new DomainUserRoles(dur).hasOffice(),
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -602,6 +662,9 @@ export const CUSTOM_VIEW = {
   backgroundColor: "rgba(202, 245, 9, .2)",
   hover: 'aonSidenavHover',
   price: " ",
+  is: (dur) => new DomainUserRoles(dur).hasCustomView(),
+  has: (dur) => new DomainUserRoles(dur).hasCustomView(),
+  
 };
 
 export const MenuApps = {
@@ -642,12 +705,39 @@ export const MobileMenuApps = [
   WAREHOUSE
 ];
 
+export const EmployeeAonApps = [
+  DOCUMENTAL,
+  TIMECONTROL,
+  PAYROLL,
+  MESSENGER,
+  INVOICE,
+];
+
 export const EmployeeApps = [
   "documental",
   "timecontrol",
   "payroll",
   "messenger",
   "invoice",
+];
+
+export const EnterpriseAonApps = [
+  ACCOUNTING,
+  FISCAL,
+  PAYROLL,
+  COMUNICA,
+  DOCUMENTAL,
+  INVOICE,
+  TIMECONTROL,
+  MANAGEMENT,
+  MESSENGER,
+  INVOFOX,
+  OCR,
+  AON_SOLUTIONS,
+  BIDOQ,
+  SELFCONTA,
+  AON_SALTRA,
+  BANK
 ];
 
 export const EnterpriseApps = [
@@ -898,6 +988,29 @@ export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
 export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
+export const AllAonApps = [
+  ACCOUNTING,
+  FISCAL,
+  PAYROLL,
+  COMUNICA,
+  DOCUMENTAL,
+  TIMECONTROL,
+  INVOICE,
+  MESSENGER,
+  COMMERCIAL,
+  MARKETING,
+  TREASURY,
+  GROUPWARE,
+  WAREHOUSE,
+  OCR,
+  INVOFOX,
+  CONVENIOS,
+  BANK,
+  AON_SOLUTIONS,
+  BIDOQ,
+  SELFCONTA,
+  AON_SALTRA];
+  
 export const AllApps = {
   ACCOUNTING,
   FISCAL,

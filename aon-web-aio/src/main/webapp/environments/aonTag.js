@@ -130,6 +130,7 @@ export const AON_PAYROLL_LIST = "aon-payroll-list";
 // MODULES - USER
 
 export const AON_USER = 'aon-user';
+export const AON_NEW_USER = 'aon-new-user';
 export const AON_USER_LIST = 'aon-user-list';
 export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
 

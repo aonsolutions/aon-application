@@ -18,6 +18,7 @@ import { AonNewTextarea } from "./aon-new-textarea.js";
 import { AonEmail } from "./aon-email.js";
 import { AonQuantity } from "./aon-quantity.js";
 import { AonTable } from "./aon-table.js";
+import { AonIcon } from "./aon-icon.js";
 
 export const createAonElement = (el, id, title, parent) => {
   el.id = id || '';
@@ -27,50 +28,146 @@ export const createAonElement = (el, id, title, parent) => {
   return el;
 }
 
+/**
+ * Crea el componente de UI aon-card
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonCard}
+ */
 export const createCard = (id, title, parent) => {
   return createAonElement(new AonCard(), id, title, parent);
 }
 
+/**
+ * Crea el componente de UI aon-icon
+ * @param {string} name id del componente
+ * @param {string} icon icono
+ * @param {string} type Tipo de icono (AON | MATERIAL | IMAGE)
+ * @param {Element} parent Nodo padre
+ * @returns {AonIcon}
+ */
+export const createIcon = (id, icon, type, parent) => {
+  let aonIcon = createAonElement(new AonIcon(), id, '', parent);
+  aonIcon.type = type;
+  aonIcon.icon = icon;
+  return aonIcon;
+}
+
+/**
+ * Crea el componente de UI aon-input
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewInput}
+ */
 export const createInput = (id, title, parent) => {
   return createAonElement(new AonNewInput(), id, title, parent); // AonInput
 }
 
+/**
+ * Crea el componente de UI aon-email
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonEmail}
+ */
 export const createEmail = (id, title, parent) => {
   return createAonElement(new AonEmail(), id, title, parent);
 }
 
+/**
+ * Crea el componente de UI aon-date
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewDate}
+ */
 export const createDate = (id, title, parent) => {
   return createAonElement(new AonNewDate(), id, title, parent); // AonDate
 }
 
+/**
+ * Crea el componente de UI aon-number
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewNumber}
+ */
 export const createNumber = (id, title, parent) => {
   return createAonElement(new AonNewNumber(), id, title, parent); // AonNumber
 }
 
+/**
+ * Crea el componente de UI aon-select
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewSelect}
+ */
 export const createSelect = (id, title, parent) => {
   return createAonElement(new AonNewSelect(), id, title, parent); // AonSelect
 }
 
+/**
+ * Crea el componente de UI aon-table
+ * @param {string} name id of component
+ * @param {Element} parent Parent element node
+ * @returns {AonTable}
+ */
 export const createList = (id, parent) => {
   return createAonElement(new AonTable(), id, '', parent);
 }
 
+/**
+ * Crea el componente de UI fetching aon-table
+ * @param {string} name id of component
+ * @param {Element} parent Parent element node
+ * @returns {AonTable}
+ */
 export const createFetchingList = (id, parent) => {
   return createAonElement(new AonTable(true), id, '', parent);
 }
 
+/**
+ * Crea el componente de UI fetching aon-basic-table
+ * @param {string} name id of component
+ * @param {Element} parent Parent element node
+ * @returns {AonBasicTable}
+ */
 export const createTable = (id, parent) => {
   return createAonElement(new AonBasicTable(), id, '', parent);
 }
 
+/**
+ * Crea el componente de UI aon-suggestion
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewSuggestion}
+ */
 export const createSuggestion = (id, title, parent) => {
   return createAonElement(new AonNewSuggestion(), id, title, parent); // AonSuggestion
 }
 
+/**
+ * Crea el componente de UI aon-textarea
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonNewTextarea}
+ */
 export const createTextarea = (id, title, parent) => {
   return createAonElement(new AonNewTextarea(), id, title, parent); // AonAutosizeTextarea
 }
 
+/**
+ * Crea el componente de UI aon-quantity
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonQuantity}
+ */
 export const createQuantity = (id, title, parent) => {
   return createAonElement(new AonQuantity(), id, title, parent); // AonAutosizeTextarea
 }

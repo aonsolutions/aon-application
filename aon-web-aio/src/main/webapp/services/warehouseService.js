@@ -13,6 +13,7 @@ export const getElaborations = (data) => get(API.ELABORATION, data);
 export const getElaboration = (id) => get(API.ELABORATION, {id});
 export const saveElaboration = (data) => put(API.ELABORATION, data);
 export const deleteElaboration = (id)  => remove(API.ELABORATION, {id});
+export const saveElaborationSerial = (data) => put(API.ELABORATION_SERIAL, data);
 
 export const deleteElaborationPackage = (id)  => remove(`${API.ELABORATIONS}/packages/${id}`, {id});
 

@@ -1,9 +1,37 @@
 import { MSG } from "../environments/environments.js"
 import { SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER  } from "../environments/msg.js"
+import { DomainUserRoles } from "./DomainUserRoles.js"
 
 export const ToolbarType = {
   APPLICATION: 'application',
   SECONDARY: 'secondary'
+}
+
+export const OldRole = {
+	GUEST: "GUEST",								// Invitado
+	ADMIN: "ADMIN",								// Administrador
+	CONFIG: "CONFIG",							// Configuración
+	AUDITOR: "AUDITOR",							// Auditor
+	CONFIDENTIALITY: "CONFIDENTIALITY",			// Acceso a la función de confidencialidad.
+	PRODUCT: "PRODUCT",							// Acceso a Productos
+	COMMERCIAL: "COMMERCIAL",					// Acceso a Comercial
+	SALE: "SALE",								// Acceso a Ventas
+	PURCHASE: "PURCHASE",						// Acceso a Compras
+	WAREHOUSE: "WAREHOUSE",						// Acceso a Almacén
+	ACCOUNTING: "ACCOUNTING",					// Acceso a Contabilidad
+	FINANCE: "FINANCE",							// Acceso a Facturación y Tesoreria
+	STATISTICS: "STATISTICS",					// Acceso a Estadísticas
+	TASK_MONITORING: "TASK_MONITORING",			// Monitor de Tareas.
+	E_SIGNATURE: "E_SIGNATURE",					// Capacidad de firmar documentos electrónicos.
+	SYS_ADMIN: "SYS_ADMIN",						// Capacidad de modificar las expresiones de las percepciones y deducciones.
+	TGC: "TGC",									// Acceso a los informes de nominas.
+	DOCUMENT: "DOCUMENT", 						// Acceso a los documentos.
+	DOCUMENT_MANAGER: "DOCUMENT_MANAGER",	 	// Administrador documental.
+	PAYROLL: "PAYROLL", 						// Capacidad de modificar las expresiones de las percepciones y deducciones.
+	FISCAL: "FISCAL", 				 			// Acceso a los informes de nominas.
+	ACCOUNTING_MANAGER: "ACCOUNTING_MANAGER", 	// Gestor de Contabilidad.
+	CALL_CENTER: "CALL_CENTER", 				// Acceso al Call Center.
+	CALL_CENTER_MANAGER: "CALL_CENTER_MANAGER"	// Administrador Call Center.
 }
 
 export const Role = {
@@ -58,8 +86,62 @@ export const Role = {
 	MARKETING: 'MARKETING',
 	GROUPWARE: 'GROUPWARE',
 	SERES: 'SERES',
-	FACTURAE: 'FACTURAE'
+	FACTURAE: 'FACTURAE',
+	OFFICE: 'OFFICE'
 }
+
+export const Roles = [
+	{ value: Role.ADMIN, is: (dur) => new DomainUserRoles(dur).isAdmin() },
+	{ value: Role.ACCOUNTING, is: (dur) => new DomainUserRoles(dur).isAccounting()},
+	{ value: Role.ACCOUNTING_MANAGER, is: (dur) => new DomainUserRoles(dur).isAccountingManager()},
+	{ value: Role.FISCAL, is: (dur) => new DomainUserRoles(dur).isFiscal()},
+	{ value: Role.FISCAL_MANAGER, is: (dur) => new DomainUserRoles(dur).isFiscalManager()},
+	{ value: Role.PAYROLL, is: (dur) => new DomainUserRoles(dur).isPayroll()},
+	{ value: Role.PAYROLL_MANAGER, is: (dur) => new DomainUserRoles(dur).isPayrollManager()},
+	{ value: Role.PAYROLL_PORTAL, is: (dur) => new DomainUserRoles(dur).isPayrollPortal()},
+	{ value: Role.DOCUMENTAL, is: (dur) => new DomainUserRoles(dur).isDocumental()},
+	{ value: Role.DOCUMENTAL_PORTAL, is: (dur) => new DomainUserRoles(dur).isDocumentalPortal()},
+	{ value: Role.DOCUMENTAL_MANAGER, is: (dur) => new DomainUserRoles(dur).isDocumentalManager()},
+	{ value: Role.COMUNICA, is: (dur) => new DomainUserRoles(dur).isComunica()},
+	{ value: Role.COMUNICA_MANAGER, is: (dur) => new DomainUserRoles(dur).isComunicaManager()},
+	{ value: Role.COMUNICA_PORTAL, is: (dur) => new DomainUserRoles(dur).isComunicaPortal()},
+	{ value: Role.TIMECONTROL, is: (dur) => new DomainUserRoles(dur).isTimecontrol()},
+	{ value: Role.TIMECONTROL_MANAGER, is: (dur) => new DomainUserRoles(dur).isTimecontrolManager()},
+	{ value: Role.TIMECONTROL_PORTAL, is: (dur) => new DomainUserRoles(dur).isTimecontrolPortal()},
+	{ value: Role.MESSENGER, is: (dur) => new DomainUserRoles(dur).isMessenger()},
+	{ value: Role.MESSENGER_PORTAL, is: (dur) => new DomainUserRoles(dur).isMessengerPortal()},
+	{ value: Role.MESSENGER_MANAGER, is: (dur) => new DomainUserRoles(dur).isMessengerManager()},
+	{ value: Role.INVOICE, is: (dur) => new DomainUserRoles(dur).isInvoice()},
+	{ value: Role.INVOICE_MANAGER, is: (dur) => new DomainUserRoles(dur).isInvoiceManager()},
+	{ value: Role.INVOICE_PORTAL, is: (dur) => new DomainUserRoles(dur).isInvoicePortal()},
+	{ value: Role.MANAGEMENT, is: (dur) => new DomainUserRoles(dur).isManagement()},
+	{ value: Role.MANAGEMENT_MANAGER, is: (dur) => new DomainUserRoles(dur).isManagementManager()},
+	{ value: Role.ALMA, is: (dur) => new DomainUserRoles(dur).isAlma()},
+	{ value: Role.OCR, is: (dur) => new DomainUserRoles(dur).isOcr()},
+	{ value: Role.INVOFOX, is: (dur) => new DomainUserRoles(dur).isInvofox()},
+	{ value: Role.BANK, is: (dur) => new DomainUserRoles(dur).isBank()},
+	{ value: Role.CONVENIOS, is: (dur) => new DomainUserRoles(dur).isConvenios()},
+	{ value: Role.AON_AIO, is: (dur) => new DomainUserRoles(dur).isAon()},
+	{ value: Role.BIDOQ, is: (dur) => new DomainUserRoles(dur).isBidoq()},
+	{ value: Role.EMPLOYEE, is: (dur) => new DomainUserRoles(dur).isEmployee()},
+	{ value: Role.ENTERPRISE, is: (dur) => new DomainUserRoles(dur).isEnterprise()},
+	{ value: Role.CONFIDENTIALITY, is: (dur) => new DomainUserRoles(dur).isConfidential()},
+	{ value: Role.ALPHA, is: (dur) => new DomainUserRoles(dur).isAlpha()},
+	{ value: Role.BETA, is: (dur) => new DomainUserRoles(dur).isBeta()},
+	{ value: Role.DEV, is: (dur) => new DomainUserRoles(dur).isDev()},
+	{ value: Role.SELFCONTA, is: (dur) => new DomainUserRoles(dur).isSelfconta()},
+	{ value: Role.SALTRA, is: (dur) => new DomainUserRoles(dur).isSaltra()},
+	{ value: Role.SALTRA_MANAGER, is: (dur) => new DomainUserRoles(dur).isSaltraManager()},
+	{ value: Role.SALTRA_PORTAL, is: (dur) => new DomainUserRoles(dur).isSaltraPortal()},
+	{ value: Role.WAREHOUSE, is: (dur) => new DomainUserRoles(dur).isWarehouse()},
+	{ value: Role.COMMERCIAL, is: (dur) => new DomainUserRoles(dur).isCommercial()},
+	{ value: Role.TREASURY, is: (dur) => new DomainUserRoles(dur).isTreasury()},
+	{ value: Role.MARKETING, is: (dur) => new DomainUserRoles(dur).isMarketing()},
+	{ value: Role.GROUPWARE, is: (dur) => new DomainUserRoles(dur).isGroupware()},
+	{ value: Role.SERES, is: (dur) => new DomainUserRoles(dur).isSeres()},
+	{ value: Role.FACTURAE, is: (dur) => new DomainUserRoles(dur).isFacturae()},
+	{ value: Role.OFFICE, is: (dur) => new DomainUserRoles(dur).isOffice()}
+];
 
 export const OldModule = {
 	MARKETING: 'MARKETING',
