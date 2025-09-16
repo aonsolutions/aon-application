@@ -177,107 +177,113 @@ export class AonCompanyCostsListNew extends AonElement {
 const paintCompanyCostPieChart = async () => {
   try {
     const data = await getData();
-
     let startDate = new Date();
     let endDate = new Date();
     let title = MSG.LABORAL_COSTS;
     let workplaceText = "";
     let total = 0;
-    
     if(data && data.length > 0 ){
       startDate = new Date(data[0].startDate);
       endDate   = new Date(data[0].endDate);
-      
       const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
       const sumEmployeeSs = data.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
       const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
       const totalLiquid = data.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
       const totalSS = sumEnterpriseSs + sumEmployeeSs;
       total = totalSS + importIrpf + totalLiquid;
-
-      const dataChart = {
-        labels: [
-          // 'SS Empresa',
-          // 'SS Empleado',
-          'Total SS',
-          'Total IRPF',
-          'Total Nominas'
-        ],
-        datasets: [{
-          // label: 'My First Dataset',
-          data: [/*sumEnterpriseSs, sumEmployeeSs,*/ totalSS, importIrpf, totalLiquid],
-          backgroundColor: [
-            // '#0051C6',
-            // '#db4437',
-            'black',
-            '#B3B3B3',
-            '#5e97f6'
-          ],
-          hoverOffset: 4
-        }]
-      };
-
-      const config = {
-        type: 'pie',
-        plugins: [ChartDataLabels],
-        data: dataChart,
-        options: {
-          plugins: {
-            legend: {
-                display: false // This hides all text in the legend and also the labels.
-            },
-            datalabels: {
-              display: 'auto',
-              color: 'white',
-              align: 'end',
-              font: {
-                size: 14,
-                weight: 'bold'
-              },
-              formatter: (value, ctx) => {
-                const total = ctx.chart.getDatasetMeta(0).total;
-                let percentage = (value * 100 / total).toFixed(2) + "%";
-                return percentage;
-              },
-            }
-          }
-        }
-      }
-
-      let canvasChart = document.getElementById("aon-company-costs-listChart");
-
-      if(chartCanva){
-        chartCanva.destroy();
-      }
-
-      chartCanva = new Chart(canvasChart, config);
-
-      createLeyend([
-        {color: 'black', title: 'Total SS', amount: totalSS, breakdown:[
-          {color: '#0051C6', title: 'SS Empresa', amount: sumEnterpriseSs},
-          {color: '#db4437', title: 'SS Empleado', amount: sumEmployeeSs},
-        ]},
-        {color: '#B3B3B3', title: 'Total IRPF', amount: importIrpf},
-        {color: '#5e97f6', title: 'Total Nominas', amount: totalLiquid},
-      ]);
-    }
-
+	  const dataChart = getDataChart(totalSS, importIrpf, totalLiquid);
+      const config = getConfig(dataChart);
+	  drawPie(totalSS, sumEnterpriseSs, sumEmployeeSs, importIrpf, totalLiquid, config)
+    } else {
+		const dataChart = getDataChart(0, 0, 0);
+		const config = getConfig(dataChart);
+		drawPie(0, 0, 0, 0, 0, config);
+	}
     let startDateText = AonDateUtils.getMonthYear(startDate),
     endDateText = AonDateUtils.getMonthYear(endDate);
-    
     if(startDateText === endDateText){
       title = title + " "+ startDateText;
     } else {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
-
     title = `${title}<br> ${workplaceText} <span class="aonCompanyCostListNewTitle";">${formatNumber(total, 2, 2, "EUR")}<span>`;
-
     let divTitle = document.getElementById("aon-company-costs-listtitleDiv");
     divTitle.innerHTML = title;
   } catch (error) {
     console.log(error);
   }
+}
+
+
+const getDataChart = (totalSS, importIrpf, totalLiquid) => {
+	return {
+	        labels: [
+	          // 'SS Empresa',
+	          // 'SS Empleado',
+	          'Total SS',
+	          'Total IRPF',
+	          'Total Nominas'
+	        ],
+	        datasets: [{
+	          // label: 'My First Dataset',
+	          data: [/*sumEnterpriseSs, sumEmployeeSs,*/ totalSS, importIrpf, totalLiquid],
+	          backgroundColor: [
+	            // '#0051C6',
+	            // '#db4437',
+	            'black',
+	            '#B3B3B3',
+	            '#5e97f6'
+	          ],
+	          hoverOffset: 4
+	        }]
+	      };
+}
+
+const getConfig = (dataChart) => {
+	return {
+	    type: 'pie',
+	    plugins: [ChartDataLabels],
+	    data: dataChart,
+	    options: {
+	      plugins: {
+	        legend: {
+	            display: false // This hides all text in the legend and also the labels.
+	        },
+	        datalabels: {
+	          display: 'auto',
+	          color: 'white',
+	          align: 'end',
+	          font: {
+	            size: 14,
+	            weight: 'bold'
+	          },
+	          formatter: (value, ctx) => {
+	            const total = ctx.chart.getDatasetMeta(0).total;
+	            let percentage = (value * 100 / total).toFixed(2) + "%";
+	            return percentage;
+	          },
+	        }
+	      }
+	    }
+	}
+}
+
+const drawPie = (totalSS, sumEnterpriseSs, sumEmployeeSs, importIrpf, totalLiquid, config) => {
+	  let canvasChart = document.getElementById("aon-company-costs-listChart");
+      if(chartCanva){
+        chartCanva.destroy();
+      }
+	  chartCanva = new Chart(canvasChart, config);
+      createLeyend([
+		{color: 'black', title: 'Total SS', amount: totalSS, 
+			breakdown:[
+				{color: '#0051C6', title: 'SS Empresa', amount: sumEnterpriseSs},
+				{color: '#db4437', title: 'SS Empleado', amount: sumEmployeeSs},
+      		]
+		},
+        {color: '#B3B3B3', title: 'Total IRPF', amount: importIrpf},
+        {color: '#5e97f6', title: 'Total Nominas', amount: totalLiquid},
+      ]);
 }
 
 const createLeyend = (leyends) => {
