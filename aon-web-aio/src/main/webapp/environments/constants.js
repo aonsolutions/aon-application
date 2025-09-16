@@ -89,10 +89,13 @@ export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CONSOLE = 'console';
+export const CREATE_EXPENSE = 'createExpense';
+export const CREATE_INCOME = 'createIncome';
 export const CREATE_INVOICE = 'createInvoice';
 export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
 export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
 export const CREATE_INVOICE_TICKET = 'createInvoiceTicket';
+export const CREATION = 'creation';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 

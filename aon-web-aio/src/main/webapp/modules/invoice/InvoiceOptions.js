@@ -3,6 +3,10 @@ import * as GWT from "../../gwt/gwt.js";
 import * as JSF from "aio/modules/aon-jsf-app.js";
 import { AonInvoiceIssued } from "./aon-invoice-issued.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
+import { AonIncome } from './aon-income.js';
+import { AonExpense } from './aon-expense.js';
+import { Income } from './Income.js';
+import { Expense } from './Expense.js';
 
   export const jsfOfferLoad = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
@@ -21,6 +25,16 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
     parent.aonInvoice(type);
+  };
+
+  export const newIncome = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new AonIncome(new Income()));
+  };
+
+  export const newExpense = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new AonExpense(new Expense()));
   };
 
   export const invoiceList = (filter) => {
@@ -279,12 +293,40 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     fn: () => alert("EN DESARROLLO. Use temporalmente la opción de otros gastos.")
   };
 
+  export const INCOME_LIST = {
+    id: CONSTANT.LIST.initCap(),
+    title: MSG.LIST,
+    name : MSG.LIST,
+    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
+  };
+
+  export const CREATION_INVOICE_ISSUED = {
+    id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
+    title: MSG.CREATE_INVOICE_ISSUED,
+    name: MSG.CREATE_INVOICE_ISSUED,
+    fn: () => newInvoice('emitida')
+  };
+
+  export const CREATE_INCOME = {
+    id: CONSTANT.CREATE_INCOME.initCap(),
+    title: MSG.CREATE_INCOME,
+    name: MSG.CREATE_INCOME,
+    fn: () => newIncome()
+  };
+
+  export const INCOME_CREATION = {
+    id: CONSTANT.CREATION.initCap(),
+    title: MSG.CREATION,
+    name : MSG.CREATION,
+    options: [CREATION_INVOICE_ISSUED, CREATE_INCOME]
+  };
+
   // MAIN OPTION
   export const MAIN_INCOMES = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
+    options: [INCOME_LIST, INCOME_CREATION],
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
       title: MSG.INFO_INCOMES,
@@ -299,6 +341,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     }
   };
 
+  
   export const MAIN_INCOMES_BETA = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
@@ -318,11 +361,46 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     }
   };
 
+  export const EXPENSE_LIST = {
+    id: CONSTANT.LIST.initCap(),
+    title: MSG.LIST,
+    name : MSG.LIST,
+    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES] //, STAFF_EXPENSES],
+  };
+
+  export const CREATION_INVOICE_RECEIVED = {
+    id: CONSTANT.CREATE_INVOICE_RECEIVED.initCap(),
+    title: MSG.CREATE_INVOICE_RECEIVED,
+    name: MSG.CREATE_INVOICE_RECEIVED,
+    fn: () => newInvoice('recibida')
+  };
+
+  export const CREATION_TICKET = {
+    id: CONSTANT.CREATE_INVOICE_TICKET.initCap(),
+    title: MSG.CREATE_INVOICE_TICKET,
+    name: MSG.CREATE_INVOICE_TICKET,
+    fn: () => newInvoice('ticket')
+  };
+
+  export const CREATE_EXPENSE = {
+    id: CONSTANT.CREATE_EXPENSE.initCap(),
+    title: MSG.CREATE_EXPENSE,
+    name: MSG.CREATE_EXPENSE,
+    fn: () => newExpense()
+  };
+
+  export const EXPENSE_CREATION = {
+    id: CONSTANT.CREATION.initCap(),
+    title: MSG.CREATION,
+    name : MSG.CREATION,
+    options: [CREATION_INVOICE_RECEIVED, CREATION_TICKET, CREATE_EXPENSE]
+  };
+
   export const MAIN_EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES], //, STAFF_EXPENSES],
+    options: [EXPENSE_LIST, EXPENSE_CREATION],
     button: {
       id: CONSTANT.EXPENSES.initCap() + 'Info',
       title: MSG.INFO_EXPENSES,
