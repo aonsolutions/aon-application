@@ -53,6 +53,7 @@ export class AonParent extends AonElement {
 	}
 
 	init(filter) {
+		this.domainId = parseInt(localStorage.getItem('aon_domain_id'));
 		//TODO: aonParent.startLoader();
 		let aonApplication = new AonApplication();
 		aonApplication.setAttribute("sidenav_width", "300px");
@@ -60,12 +61,14 @@ export class AonParent extends AonElement {
 
 		this.build();
 		this.buildSidenav();
-		this.select(filter,companies => {
-			this.decorateTabs(companies);
-			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
-			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`); 
+		this.select(filter, companies => {
+			// Filtrar empresas excluyendo la actual (la que coincide con isLocationCompany)
+			let finalCompanies = companies.filter(company => !this.isLocationCompany(company));
+			// total de la lista filtrada
+			this.decorateTabs(finalCompanies);
+			this.getApplication().updateSidenavCount(this.ENTERPRISES, finalCompanies.length || 0);
+			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`);
 		});
-		
 	}
 
 	select(filter, callback) {
@@ -74,7 +77,9 @@ export class AonParent extends AonElement {
 		let limit = 100;
 		return new Promise((resolve, reject) => {
 			getCompanies({limit}).then( companies => {
-				let cps = companies.filter(r => r.id === parseInt(LS.getDomainId()));
+				let cps = companies.filter(r => {
+					return r.id === parseInt(LS.getDomainId());
+				});
 				if(cps.length > 0 && !cps[0].parent) {
 					this.companySelection(cps[0], companies.length === 1 );
 				} else if ( LS.getCompany() && !LS.getCompany().domainManagement ) {
@@ -85,7 +90,6 @@ export class AonParent extends AonElement {
 					if ( LS.getCompany() ) {
 						this.getAonHeader().showCompanyOption(LS.getCompany(), false);
 					}
-
 					let aonMenu = this.getElement('aonMenu');
 					aonMenu.init().then(() => {
 						LS.setDomainLogin(aonMenu.getDur().getUser().login);
@@ -102,7 +106,6 @@ export class AonParent extends AonElement {
 					this.cleanCompanies();
 					
 	  				let filteredCompanies = this.filterCompanies(companies, filter);
-					
 					this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 					
 					if ( companies.length == limit ){
@@ -181,58 +184,47 @@ export class AonParent extends AonElement {
 	clearSelectedTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.remove(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
-	
 	companyFilter(company, filter) {
-		if(!filter) {
-			filter = {
-				active: true
-			};
+		if (!filter) {
+			filter = { active: true };
+		}
+
+		if (company.id === this.domainId && company.domainManagement || company.id === 1) {
+			return false;
 		}
 
 		let value = true;
 
-		if(filter){
-			
-			if(filter.value) {
-				const document = company?.document?.toUpperCase().includes(filter.value.toUpperCase());
-				const name = company?.name?.toUpperCase().includes(filter.value.toUpperCase());
-				value &&= document || name;
-			}
-	
-			if(filter.active) {
-				value &&= company.active ;
-				//value &&= (company.parentId || company.type !== 'CONSULTANCY') ;
-			}
-	
-			if(filter.inactive) {
-				value &&= !company.active;
-			}
-	
-			if(filter.shared) {
-				value &&= company.shared;
-			} else {
-				value &&= !company.shared;
-			}
-	
-			if(filter.entorno) {
-				value &&= company.domainManagement ;
-			} else {
-				value &&= !company.domainManagement;
-			}
-	
-			if(filter.despacho) {
-				value &&= company.type === 'OFFICE';
-			} else {
-				value &&= company.type !== 'OFFICE';
-			}
-	
-			if(filter.ids) {
-				let found = filter.ids.find(id => company.id == id );
-				console.log( found );
-				value &&= found !== undefined;
-			}
+		if (filter.value) {
+		const document = company?.document?.toUpperCase().includes(filter.value.toUpperCase());
+		const name = company?.name?.toUpperCase().includes(filter.value.toUpperCase());
+		value &&= document || name;
 		}
 
+		if (filter.active !== undefined) {
+		value &&= company.active === filter.active;
+		}
+
+		if (filter.inactive !== undefined) {
+		value &&= !company.active === filter.inactive;
+		}
+
+		if (filter.shared !== undefined) {
+		value &&= company.shared === filter.shared;
+		}
+
+		if (filter.entorno !== undefined) {
+		value &&= company.domainManagement === filter.entorno;
+		}
+
+		if (filter.despacho !== undefined) {
+		value &&= (filter.despacho ? company.type === 'OFFICE' : company.type !== 'OFFICE');
+		}
+
+		if ('ids' in filter && Array.isArray(filter.ids)) {
+			let found = filter.ids.find(id => company.id == id);
+			value &&= found !== undefined;
+		}
 		return value;
 	}
 
@@ -296,7 +288,6 @@ export class AonParent extends AonElement {
 		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
 		this.getApplication().getRightSidenav().appendChild(welcomeImg);		
-
 		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
@@ -427,7 +418,7 @@ export class AonParent extends AonElement {
 					});
 				});
 			}
-		}, 100); 
+		}, 100);
 		if(!LS.isOnlyOne())
 			LS.setCompanySelected(false);
 		else 
@@ -462,7 +453,6 @@ export class AonParent extends AonElement {
 				}
 		  	}]
 		};
-
 		application.addSidenavOptions3(enterprisesOptions);
 
 		let invoiceOptions = {
@@ -600,7 +590,7 @@ export class AonParent extends AonElement {
 
 		let docSpan = this.createElement(TAG.SPAN);
 		docSpan.className = 'aonLiSpanSubtitle'  ;
-		docSpan.innerHTML = company.document || `<span class='${CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING}' >Por favor, introduzca un CIF/NIF/Documento válido.</span>`;
+		docSpan.innerHTML = company.document || `<span class='${CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING}' >Por favor, introduzca un CIF/NIF/Documento vï¿½lido.</span>`;
 
 		companySpan.appendChild(iconI);
 		companySpan.appendChild(nameSpan);
@@ -677,19 +667,34 @@ export class AonParent extends AonElement {
 		});
     }
 
-	getWelcomeMessage() {
-		return new Promise((resolve, reject) => {
-			if ( LS.getCompany()?.name ) {
-				resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${LS.getCompany()?.name}</span>`);
-			} else if ( this.getDur() ) {
-				resolve(`<span style='font-weight:lighter;'  >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${this.getDur().domain.description}</span>`)
-			}  
-			else  {
-				this.buildDur()
-				.then( dur =>  resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${dur.domain.description}</span>`))
-				.catch( err  => resolve( `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>` ) );
-			} 
-		});
+	async getWelcomeMessage() {
+		const company = LS.getCompany();
+		const dur = this.getDur();
+		const isConsultancy = company?.type === 'CONSULTANCY';
+
+		const buildSpan = (textLight, textBold) =>
+			`<span style='font-weight:lighter;'>${textLight}</span> <span style='font-weight:bolder;'>${textBold}</span>`;
+
+		try {
+			if (isConsultancy) {
+				const durBuilt = await this.buildDur();
+				return buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description);
+			}
+
+			if (company?.name) {
+				return buildSpan(MSG.ENVIRONMENT, company.name);
+			}
+
+			if (dur) {
+				return buildSpan(MSG.ENVIRONMENT, dur.domain.description);
+			}
+
+			const durBuilt = await this.buildDur();
+				return buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description);
+
+		} catch (err) {
+			return `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>`;
+		}
 	}
 }
 

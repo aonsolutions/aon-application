@@ -175,6 +175,14 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
+		let currentCompany = LS.getCompany();
+		if (currentCompany && currentCompany.name) {
+			aonHeaderCompanyName.innerHTML = currentCompany.name;
+		} else {
+			this.buildDur().then(dur => {
+				aonHeaderCompanyName.innerHTML = dur?.domain?.description || '';
+			});
+		}
 		aonHeaderCompany.appendChild(aonHeaderCompanyName);
 
 		aonHeaderButtons.appendChild(aonHeaderCompany);
@@ -193,10 +201,11 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
 		aonHeaderCompanyList.classList.add("aonHeaderCompanyList");
 		aonHeaderCompanyList.title = "Listado de empresas";
-
+		aonHeaderCompanyList.style.display = 'none';
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
 		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
 		aonHeaderHomeCompanyListButton.icon = "business";
+		aonHeaderHomeCompanyListButton.style.display = 'none';
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
@@ -392,71 +401,101 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 
+		let companySelectorOpenedManually = false;
+		//boton seleccion de empresa
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-			if (!this.isMobile()) {
-				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-//				aonHeaderSearch.style.display = 'flex';
+		// Marcar que el selector fue abierto manualmente
+		companySelectorOpenedManually = true;
 
-				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+		this.buildDur().then(dur => {
+					if(dur && dur.parentDomain) {
+						aonHeaderCompanyName.innerHTML = dur.parentDomain.description || '';
+					}
+				});
 
-				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
-//				aonHeaderCompany.style.display = 'none';
-				
-				if (!LS.isNewTheme() && !this.newTheme) {
-					let aonShowMenu = this.getElement('aonShowMenu');
-//					aonShowMenu.style.display = 'none';
-				}
-				
-				let aonMenu = this.getElement('aonMenu');
-				aonMenu.removeAttribute('company');
-				aonMenu.removeAttribute('user');
-				aonMenu.close();
+		if (!this.isMobile()) {
+			let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+			let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+			let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+
+			if (!LS.isNewTheme() && !this.newTheme) {
+				let aonShowMenu = this.getElement('aonShowMenu');
 			}
 
-			LS.setCompanySelected(false);
+		let aonMenu = this.getElement('aonMenu');
+		aonMenu.removeAttribute('company');
+		aonMenu.removeAttribute('user');
+		aonMenu.close();
+	}
 
-			let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
-//			aonHeaderCompanyList.style.display = 'none';
+	let company = LS.getCompany();
+	let domainId = LS.getDomainId();
 
-			this.removeAttribute('company');
-			this.removeAttribute('user');
+	//  Si ya hay un domainId válido y no se abrió manualmente → no mostrar selector
+	if (domainId && domainId !== 0 && domainId !== 1 && company && !companySelectorOpenedManually) {
+		LS.setCompanySelected(true);
+		LS.setOnlyOne(true);
+		this.rootPanel(new AonDesktop());
+		return;
+	}
 
-			LS.removeDomain();
-			LS.removeCompany();
+	//  Si no hay empresa cargada , detener
+	if (!company) {
+		console.warn('No hay empresa cargada. Deteniendo ejecución.');
+		return;
+	}
 
-			clearDurum();
-			this.rootPanel(new AonParent());
+	//  Si estamos en la empresa general (sin parentId), no hacer nada
+	if (!company.parentId) {
+		console.log('Ya estás en la empresa general. No se realiza cambio.');
+		return;
+	}
 
-			let header = this.getElement("aonHeaderWeb");
-			let apps = this.getElement("aonMenuLeftop-applications");
-			let headerapp = this.getElement("aonHeaderApp");
-//			headerapp.style.display = "none";
+	//  Si ya hay una empresa hija seleccionada y no se abrió manualmente carga directamente
+	if (LS.getCompanySelected() && !companySelectorOpenedManually) {
+		console.log('Empresa hija ya seleccionada, cargando directamente');
+		LS.setOnlyOne(true);
+		LS.setDomainId(parseInt(company.parentId));
+		this.rootPanel(new AonParent());
+		return;
+	}
 
-			let logo = this.getElement("aonLogo");
-//			logo.style.display = "block";
-//			logo.style.filter = "none";
+	//  Usuario abrio manualmente el selector de empresas, permitir cambio
+	LS.removeDomain();
+	LS.removeCompany();
+	clearDurum();
 
-			let rootPanel = this.getElement("rootPanel");
-//			rootPanel.style.backgroundColor = "transparent";
-			let enterprise = this.getElement("aonHeaderCompanyName");
-			let appss = this.getElement("applications");
-			let welcome = this.getElement("aonCompanyTabFilter");
+	if (company.parentId) {
+		LS.setDomainId(parseInt(company.parentId));
+	} else {
+		LS.setOnlyOne(true);
+	}
 
-			// if (welcome) {
-			// 	const welcomeClickListener = (event) => {
-			// 		event.preventDefault();
-			// 		event.stopPropagation();
-			// 		appss.removeEventListener("click", welcomeClickListener);
-			// 	};
-				
-			// 	appss.addEventListener("click", welcomeClickListener);
-			// }
+	let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
+	this.removeAttribute('company');
+	this.removeAttribute('user');
 
-		let header2 = this.getElement('aonHeaderWeb');
-		header2.className = 'aonHeader aonHeaderStart';
-		let applications = this.getElement('applications');
-		applications.className = 'aonMenuLeftopStart';
-		});
+	clearDurum();
+	this.rootPanel(new AonParent());
+
+	let header = this.getElement("aonHeaderWeb");
+	let apps = this.getElement("aonMenuLeftop-applications");
+	let headerapp = this.getElement("aonHeaderApp");
+
+	let logo = this.getElement("aonLogo");
+	let rootPanel = this.getElement("rootPanel");
+	let enterprise = this.getElement("aonHeaderCompanyName");
+	let appss = this.getElement("applications");
+	let welcome = this.getElement("aonCompanyTabFilter");
+
+	let header2 = this.getElement('aonHeaderWeb');
+	header2.className = 'aonHeader aonHeaderStart';
+
+	let applications = this.getElement('applications');
+	applications.className = 'aonMenuLeftopStart';
+
+	companySelectorOpenedManually = false;
+});
 
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -1055,16 +1094,31 @@ export class AonHeader extends AonElement {
 	}
 
 	showDesktop() {
-		let aonDesktop = new AonDesktop();
+		const aonDesktop = new AonDesktop();
 		aonDesktop.id = "aonDesktop";
 		this.rootPanel(aonDesktop);
+
+		const actualCompanyName = window.location.hostname;
+		const lsCompany = LS.getCompany();
+		const isDifferentDomain = actualCompanyName !== LS.getDomainName();
+		const isNotParent = lsCompany.parent === false;
+
+		const companyList = this.getElement(this.AON_HEADER_COMPANY_LIST);
+		const companyListButton = this.getElement(this.AON_HEADER_COMPANY_LIST_BUTTON);
+
+		if (isDifferentDomain && isNotParent) {
+			companyListButton.style.display = 'block';
+		} else {
+			companyList.style.display = 'none';
+			companyListButton.style.display = 'none';
+		}
 	}
 	
 	showCompany(company) {
-		if  ( company.domainManagement ) {
+		if (company.domainManagement) {
 			this.showParent();
-		} else {
-			this.showDesktop();
+		} else {			
+			this.showDesktop();		
 		}
 	}
 
@@ -1111,15 +1165,20 @@ export class AonHeader extends AonElement {
       Cambio de empresa menu - modifico estilo
 /		
 */		
-		// let aonMenu = this.getElement('aonMenu');
-		// aonMenu.init().then(() => {
-		// 	aonMenu.open();
-		// 	let customUrl =  LS.getDomainName() + '/customview?domain=' + company.domain;
-		// 	loadCustomView(customUrl).then(() => { 
-		// 		favicon();
-		// 		title();
-		// 	}).catch(() => {});
-		// });
+		let aonMenu = this.getElement('aonMenu');
+		if (aonMenu) {
+			aonMenu.init().then(() => {
+				aonMenu.open();
+
+				// let customUrl = LS.getDomainName() + '/customview?domain=' + company.domain;
+				// loadCustomView(customUrl).then(() => { 
+				// 	favicon();
+				// 	title();
+				// }).catch(() => {
+				// 	console.warn("Custom view no disponible para este dominio");
+				// });
+			});
+		}
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);

@@ -469,7 +469,7 @@ export class AonNewLogin extends AonElement {
     login(data)
       .then(() => {
         loader.stop();
-
+        let actualCompanyName = window.location.hostname;
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
@@ -478,7 +478,17 @@ export class AonNewLogin extends AonElement {
           this.getModule().stopLoading();
 		  if (companies.length === 1) {
             this.companySelection(companies[0], true);
-          } else {
+          } else if(companies.length > 1 ) {
+            for (let company of companies) {
+              if (company.domain === actualCompanyName) {
+                localStorage.setItem("company", JSON.stringify(company));
+                localStorage.setItem("aon_domain_id", company.id);
+                localStorage.setItem("aon_domain_name", company.domain);
+                localStorage.setItem("aon_domain_document", company.document);
+                localStorage.setItem("onlyOne", true);
+                this.isMobile() ? new AonMobileParent() : new AonDesktop()
+              }
+            }
             this.getElement("aonHome").showMenu(false);
             this.rootPanel(
               this.isMobile() ? new AonMobileParent() : new AonParent()
