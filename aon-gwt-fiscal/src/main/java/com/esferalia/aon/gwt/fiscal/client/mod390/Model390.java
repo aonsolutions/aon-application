@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021;
@@ -36,7 +36,10 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model390 extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class Model390  implements EntryPoint {
 
 	private static final Logger LOGGER = Logger.getLogger(Model390.class.getName());
 	static {

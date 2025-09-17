@@ -25,7 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -55,7 +55,10 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CustomerModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class CustomerModule  implements EntryPoint {
 	
 	private static final RegistryServiceAsync service;
 	static {

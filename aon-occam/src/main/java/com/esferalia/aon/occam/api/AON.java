@@ -4860,6 +4860,12 @@ public class AON {
 			return getWarehouse().saveElaboration(ctx, elaboration);
 		}
 	}
+
+	public static Elaboration saveElaborationSerial(Occam occam, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveElaborationSerial(ctx, elaboration);
+		}
+	}
 	
 	/**
 	 * @deprecated  Replaced by saveElaboration
@@ -5186,6 +5192,12 @@ public class AON {
 	public static Stream<Customer> getSigCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getSigCustomerStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
+	public static Stream<Customer> getSigCustomerNotLinkedStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerNotLinkedStream(ctx, filter, ofs, limit);
 		} 
 	}
 	
@@ -8374,6 +8386,12 @@ public class AON {
 	public static Domain updateDomainStatus(String domainName, Integer domainId, String login, Domain domain) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().updateDomainStatus(ctx, domain);
+		}
+	}
+	
+	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().updateDomainCustomer(ctx, domainId, customer);
 		}
 	}
 	

@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.ConsolidatedBalancePanelReport;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -33,7 +33,10 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 
-public class AccountConsolidatedBalanceReport extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class AccountConsolidatedBalanceReport  implements EntryPoint {
 	
 	private static final String ACC_BALANCE_REPORT_PDF_PRINT = "/aon_gwt_fiscal/roms/AccountBalanceReportPDFPrint";
 	private static final String ACC_BALANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountBalanceReportExcelPrint";

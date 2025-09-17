@@ -29,6 +29,7 @@ public class DeliveryJSON {
 	}
 	
 	public static Delivery fromJSON(JSONObject json) {
+		if(JsonUtils.isEmpty(json)) return null;
 		return new Delivery()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))

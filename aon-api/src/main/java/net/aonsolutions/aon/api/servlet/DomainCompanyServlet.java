@@ -67,6 +67,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String REMOTE = "/remote/";
 	public static final String CHECK_ITEMS = "/check-items/";
 	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
+	public static final String SYNC_AON_CUSTOMER = "/sync-aon-customer/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -112,6 +113,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
+				.addRoute(SYNC_AON_CUSTOMER, DomainCompanyServlet::syncAonCustomer)
 				.addRoute(DOMAINS, DomainCompanyServlet::updateCustomerDomains)
 				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::saveDomainLinked)
 				.addRoute(BOOKING, DomainCompanyServlet::updateBookingRitems)
@@ -188,6 +190,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		if (api.getData().opt(IJsonNames.DOMAIN_ID) != null) {
 			filter = filter.and(f.getIdProperty().eq(api.getData().optInt(IJsonNames.DOMAIN_ID)));
 		}
+		if (api.getData().opt(IJsonNames.DOCUMENT) != null) {
+			filter = filter.and(f.getNameProperty().like("%" + api.getData().opt(IJsonNames.DOCUMENT) + "%").or(f.getDescriptionProperty().like("%" + api.getData().opt(IJsonNames.DOCUMENT) + "%")));
+		}
 		return filter;
 	}
 	
@@ -235,6 +240,17 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		
 		return ActivitySummaryJSON.toJSON(list);
 		
+	}
+	
+	private static JSONObject syncAonCustomer(AonApiData api) {
+		String domainName = api.getData().getString("domain_name");
+		Integer domainId = api.getData().optIntegerObject("domain_id");
+		String user = api.getData().getString("user");
+		Integer customer = api.getData().optIntegerObject("customer");
+		
+		AON.updateDomainCustomer(domainName, domainId, user, customer);
+		
+		return new JSONObject();
 	}
 	
 	private static JSONArray updateCustomerDomains(AonApiData api) {

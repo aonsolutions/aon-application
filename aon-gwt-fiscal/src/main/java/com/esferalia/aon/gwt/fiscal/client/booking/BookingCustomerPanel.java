@@ -27,7 +27,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFeeDialog;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -78,7 +78,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BookingCustomerPanel extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class BookingCustomerPanel  implements EntryPoint {
 	
 	// ------- FeeWithOutBooking
 	

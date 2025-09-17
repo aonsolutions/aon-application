@@ -4,7 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -20,7 +20,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccountingUtilities extends MainEntryPoint{
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class AccountingUtilities  implements EntryPoint{
 
 	protected static interface IOption extends HasSelectionHandlers<IOption> {
 		Widget getSidebarWidget();

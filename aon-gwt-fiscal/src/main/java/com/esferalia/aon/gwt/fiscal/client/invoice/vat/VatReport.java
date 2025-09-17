@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReportSummaryPanel.VatReportSummaryPanelCallback;
@@ -40,7 +40,10 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class VatReport extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class VatReport  implements EntryPoint {
 
 	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/VatReportExcelPrint";
 	private static final String VAT_PDF_REPORT_PRINT = "/aon_gwt_fiscal/roms/VatReportPDFPrint";

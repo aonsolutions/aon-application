@@ -9,13 +9,16 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetPanel.AonInvestAssetPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.InvestAssetModulePanel;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 
-public class InvestAssetModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class InvestAssetModule  implements EntryPoint {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvestAssetModule.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }

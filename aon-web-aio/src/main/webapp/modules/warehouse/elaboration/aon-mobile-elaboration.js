@@ -12,6 +12,7 @@ import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { AonMobilePackageList } from '../package/aon-mobile-package-list.js';
 import { createCard, createDate, createInput } from '../../../components/CreateComponent.js';
+import { saveElaborationSerial } from '../../../services/warehouseService.js';
 
 export class AonMobileElaboration extends AonElement {
 
@@ -139,20 +140,28 @@ export class AonMobileElaboration extends AonElement {
 
 		let product = createInput(this.ELABORATION_PRODUCT, MSG.PRODUCT);
 		product.value = this.elaboration.detail.item.name;
+		product.disabled = true;
 		table.addCell(product);
 
 		let quantity = createInput(this.ELABORATION_QUANTITY, MSG.QUANTITY);
 		quantity.value = this.elaboration.detail.quantity;
+		quantity.disabled = true;
 		table.addCell(quantity);
 
 		table.addRow();
 
 		let serialNumber = createInput(this.ELABORATION_SERIAL_NUMBER, "Nº Lote");
 		serialNumber.value = this.elaboration.detail.item.serialNumber;
+		serialNumber.addEventListener(EVENT.CHANGE, () => {
+			this.elaboration.detail.item.serialNumber = serialNumber.value;
+		});
 		table.addCell(serialNumber);
 
 		let serialDate = createDate(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
 		serialDate.setDate(this.elaboration.detail.item.serialDate);
+		serialDate.addEventListener(EVENT.CHANGE, () => {
+			this.elaboration.detail.item.serialDate = serialDate.getDateValue();
+		});
 		table.addCell(serialDate);
 	}
 
@@ -212,13 +221,9 @@ export class AonMobileElaboration extends AonElement {
 	}
 
 	save() {
-		let d = this.getApplication().getDialog();
-		d.clear();
-		if(!this.isMobile())d.width = '400px';
-		d.setTitle(MSG.SAVE);
-		d.setContentHTML(MSG.IN_DEVELOPMENT);
-		d.addAcceptAction(() => {});
-		d.open();
+		saveElaborationSerial(this.elaboration)
+		.then(() => this.showMessage(MSG.SAVED_DATA))
+		.catch(e => this.showError(e));
 	}
 	
 	setElaboration(elaboration) {

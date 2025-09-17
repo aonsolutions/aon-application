@@ -786,6 +786,12 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public Stream<Customer> getSigCustomerNotLinkedStream(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getSigNotLinkedStream(ctx, filter, ofs, limit));
+	}
+	
+	@Override
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getFull(ctx, id));
@@ -928,6 +934,12 @@ public class RegistryImpl implements IRegistry{
 	public Domain updateDomainStatus(AONContext ctx, Domain domain) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainLinkedDAO.updateDomainStatus(ctx, domain));
+	}
+	
+	@Override
+	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer) {
+		ctx.getDslContext().transaction(
+				configuration -> DomainLinkedDAO.updateDomainCustomer(ctx, domainId, customer));
 	}
 	
 	// QUESTION

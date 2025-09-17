@@ -1009,6 +1009,14 @@ export class AonJsfContractBatch extends AonJsfApp {
 	}
 }
 
+export class AonJsfHolidays extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/holidays.xhtml');
+	}
+}
+
 export class AonJsfIrpfData extends AonJsfApp {
 
 	constructor() {
@@ -1772,6 +1780,10 @@ if (!window.customElements.get(TAG.AON_JSF_LOADER)) {
 
 if (!window.customElements.get(TAG.AON_JSF_CONTRACT_BATCH)) {
 	window.customElements.define(TAG.AON_JSF_CONTRACT_BATCH, AonJsfContractBatch);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_HOLIDAYS)) {
+	window.customElements.define(TAG.AON_JSF_HOLIDAYS, AonJsfHolidays);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_IRPF_DATA)) {

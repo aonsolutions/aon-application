@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -14,7 +14,10 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
-public class ProductModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class ProductModule  implements EntryPoint {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProductModule.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
