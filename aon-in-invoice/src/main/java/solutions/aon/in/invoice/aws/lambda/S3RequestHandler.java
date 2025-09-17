@@ -122,6 +122,9 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
         		String downloadURL = getDowloadURL(s3UploadEventObject); 
         		JSONObject loadBatchTaskJSON = getLoadBatchTask(invofoxConfiguration, companyId, s3UploadEventObject);
         		String loadBatchId = getLoadBatchId(loadBatchTaskJSON);
+        		
+        		JSONObject loadTask = JsonUtils.getJSONObject(loadBatchTaskJSON, LOAD_TASK);
+        		Integer loadTaskId = JsonUtils.getInteger(loadTask, "id");
 
         		JSONObject clientData = new JSONObject()
        				.put(LOAD_S3, new JSONObject()
@@ -130,7 +133,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
        					.put("domain", s3UploadEventObject.getDomain())
        					.put("bucket", s3UploadEventObject.getBucket()))
        				.put(LOAD_TASK, new JSONObject()
-       					.put("id", loadBatchTaskJSON.getJSONObject(LOAD_TASK).getInt("id")))
+       					.put("id", loadTaskId))
        				.put(RAWDOC, rawdocId);
     	    
         		loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
