@@ -23,7 +23,9 @@ aon-home{
   overflow       : auto;
   margin-top     : v.$menu-top-height; // para que salga el contenido debajo del menu
   padding        : v.$padding;
-
+  &.hidden-top {
+    margin-top   : 0; // No tinee menu arriba
+  }
   &::after {
     content : '';
     display : block;

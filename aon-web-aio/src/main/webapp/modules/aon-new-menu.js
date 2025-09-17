@@ -445,15 +445,20 @@ export class AonNewMenu extends AonElement {
 					continue;
 				}
 			}
-            let appElement = this.buildTopApp(app);
-            aonTopMenuDiv.appendChild(appElement);
+			let appElement = this.buildTopApp(app);
+			aonTopMenuDiv.appendChild(appElement);
 		}
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(aonTopMenuDiv);
 		
+
+consoleLog(aonTopMenuDiv.childElementCount, "blue")
+		
 		if ( aonTopMenuDiv.childElementCount === 0 ){
 			this.hideTopNav();
+		} else {
+			this.showTopNav();
 		}
 	}
 
@@ -473,67 +478,75 @@ export class AonNewMenu extends AonElement {
 	}
 
 	showTopNav() {
-      if(!this.isNewStyle()){
-		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
+		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
+		let rootPanel 		= this.getElement("rootPanel");
+		aonMenuTopnav.classList.remove('hidden');
+		rootPanel.classList.remove('hidden-top');
+		// if(!this.isNewStyle()){
+		// 	let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		// 	let rootPanel = this.getElement("rootPanel");
+		// 	let rightPanel = this.getElement("aonRightPanel");
 
-//		topnav.style.height = '68px';
-//		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
-//		if(rightPanel){
-//			rightPanel.style.marginTop = topnav.offsetHeight;
-//			rightPanel.style.height = `calc(100vh - 61px)`;
-//		}
+		// 	topnav.style.height = '68px';
+		// 	rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
+		// 	if(rightPanel){
+		// 		rightPanel.style.marginTop = topnav.offsetHeight;
+		// 		rightPanel.style.height = `calc(100vh - 61px)`;
+		// 	}
 
-//		rootPanel.style.marginTop = "68px";
-//		rootPanel.style.height = `calc(100vh - 115px )`;
-      }
+		// 	rootPanel.style.marginTop = "68px";
+		// 	rootPanel.style.height = `calc(100vh - 115px )`;
+		// }
 	}
 
 	hideTopNav() {
-      if(!this.isNewStyle()){
-		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-//		topnav.style.height = '0px';
-//		if(rightPanel){
-//			rightPanel.style.marginTop = "1px";
-//			rightPanel.style.height = `calc(100vh - 49px)`;
-//		}
-//		rootPanel.style.marginTop = "1px";
-//		rootPanel.style.height = `calc(100vh - 50px)`;
-      }
+		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
+		let rootPanel 		= this.getElement("rootPanel");
+		aonMenuTopnav.classList.add('hidden');
+		rootPanel.classList.add('hidden-top');
+		// if(!this.isNewStyle()){
+		// 	let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		// 	let rootPanel = this.getElement("rootPanel");
+		// 	let rightPanel = this.getElement("aonRightPanel");
+		// 	topnav.style.height = '0px';
+		// 	if(rightPanel){
+		// 		rightPanel.style.marginTop = "1px";
+		// 		rightPanel.style.height = `calc(100vh - 49px)`;
+		// 	}
+		// 	rootPanel.style.marginTop = "1px";
+		// 	rootPanel.style.height = `calc(100vh - 50px)`;
+		// }
 	}
 
 	isTopNavVisible() {
-		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-//		return topnav.style.height == '68px';
+		// let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		// return topnav.style.height == '68px';
 	}
 
 	showSideNav() {
 		if (LS.isTopMenu())
 			this.reloadTopNav();
-		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-		let menulist = this.getElement("aonMenuList");
-		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");
-		let apps = this.getElement("apps");
+		// let sidenav = this.getElement(this.AON_MENU_SIDENAV);
+		// let menulist = this.getElement("aonMenuList");
+		// let rootPanel = this.getElement("rootPanel");
+		// let aonlogo = this.getElement("aonLogo");
+		// let apps = this.getElement("apps");
 
-//		sidenav.style.transition = 'width 0.3s ease';
-//		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// sidenav.style.transition = 'width 0.3s ease';
+		// rootPanel.style.transition = 'margin-left 0.3s ease';
 		// aonlogo.style.transition = 'left 0.3s ease';
 
-//		sidenav.style.width = '68px';
-//		sidenav.style.display = "";  
+		// sidenav.style.width = '68px';
+		// sidenav.style.display = "";  
 		// sidenav.style.marginTop = "6px";
 		// apps.style.marginTop = "6px";
 
-//		menulist.style.visibility = "visible";
+		// menulist.style.visibility = "visible";
 
 		// aonlogo.style.left = '60px';
 		// aonlogo.style.position = 'relative';
 
-//		rootPanel.style.marginLeft = '68px';
+		// rootPanel.style.marginLeft = '68px';
 	}
 
 	hideSideNav() {
