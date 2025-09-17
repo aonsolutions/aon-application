@@ -81,7 +81,7 @@ public class Invofox {
 			infoJSON.put("type", type.getValue());
 			infoJSON.put("company", company);
 			infoJSON.put("useSplitter", "false");
-			infoJSON.put("clientData", clientData.toString());
+			infoJSON.put("clientData", clientData);
 			
 //			infoJSON.put("loadBatch", loadBatch);
 //			infoJSON.put("closeBatch", "false");
@@ -105,8 +105,12 @@ public class Invofox {
 //			params.put("knownData", new JSONObject(knownData).toString());
 //		
 //		} 
+			
+		JSONArray urlArray = new JSONArray();
+		Arrays.stream(urls).forEach(urlArray::put);
 
-		params.put("urls", Arrays.stream(urls).collect(Collectors.joining(",")));
+		params.put("urls",urlArray.toString());
+//		params.put("urls", Arrays.stream(urls).collect(Collectors.joining(",")));
 //		String path = beta ? "v1/ingest/uploads" : "documents/bulk";
 		String path = "v1/ingest/uploads";
 		
