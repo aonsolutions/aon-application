@@ -205,7 +205,7 @@
 												<f:facet name="header">
 													<aon:outputLabel value="#{bundle.aon_quantity}" />
 												</f:facet>
-												<aon:outputText value="#{to.quantity}">
+												<aon:outputText value="#{to.quantity - to.delivered}">
 													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 												</aon:outputText>
 											</aon:column>
