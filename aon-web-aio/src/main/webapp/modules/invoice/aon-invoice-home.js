@@ -25,22 +25,22 @@ import { getCompanyActivities } from "../../services/companyService.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoiceHome extends AonElement {
-    DASHBOARD;
-    UPLOAD_PANEL;
-    UPLOAD_INVOICE;
-    FAST_PANEL;
+	DASHBOARD;
+	UPLOAD_PANEL;
+	UPLOAD_INVOICE;
+	FAST_PANEL;
 	CARD_PANEL;
 
 	CHARGE_AND_PAYMENTS;
 	INVOICE_RESUME;
 
-    NEW_ISSUED_INVOICE;
-    NEW_RECEIVED_INVOICE;
-    NEW_TICKET_INVOICE;
+	NEW_ISSUED_INVOICE;
+	NEW_RECEIVED_INVOICE;
+	NEW_TICKET_INVOICE;
 	NEW_INCOME;
 	NEW_EXPENSE;
 
-    get id() {
+	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
 
@@ -48,53 +48,50 @@ export class AonInvoiceHome extends AonElement {
 		this.setAttribute(CONSTANT.ID, id);
 	}
 
-    connectedCallback () {
-          
-      consoleLog(" -- aon-invoice-home.js -- ","red", true);
-    
+	connectedCallback () {
 		this.initialize();
 		this.buildDur().then(r => {
 			this.build();
 		});
 	}
 
-    initialize() {
-        this.id =  this.id || 'aonInvoiceHome'
-        this.DASHBOARD = this.id + 'Dashboard';
-        this.UPLOAD_PANEL = this.id + 'UploadPanel';
-        this.UPLOAD_INVOICE = this.id + 'UploadInvoice'
-        this.FAST_PANEL = this.id + 'FastPanel';
+	initialize() {
+		this.id =  this.id || 'aonInvoiceHome'
+		this.DASHBOARD = this.id + 'Dashboard';
+		this.UPLOAD_PANEL = this.id + 'UploadPanel';
+		this.UPLOAD_INVOICE = this.id + 'UploadInvoice'
+		this.FAST_PANEL = this.id + 'FastPanel';
 		this.CARD_PANEL = this.id + 'CardPanel';
-        this.NEW_ISSUED_INVOICE = this.id + 'NewIssuedInvoice';
-        this.NEW_RECEIVED_INVOICE = this.id + 'NewReceivedInvoice';
-        this.NEW_TICKET_INVOICE = this.id + 'NewTicketInvoice';
+		this.NEW_ISSUED_INVOICE = this.id + 'NewIssuedInvoice';
+		this.NEW_RECEIVED_INVOICE = this.id + 'NewReceivedInvoice';
+		this.NEW_TICKET_INVOICE = this.id + 'NewTicketInvoice';
 		this.NEW_INCOME = this.id + "NewIncome";
 		this.NEW_EXPENSE = this.id + "NewExpense";
 		this.CHARGE_AND_PAYMENTS = this.id + 'ChargeAndPayments';
 		this.INVOICE_RESUME = this.id + 'InvoiceResume';
-    }
+	}
 
-    build() {
-        let dashboard = this.createDiv(this.DASHBOARD, CSS.AON_DASHBOARD);
+	build() {
+		let dashboard = this.createDiv(this.DASHBOARD, CSS.AON_DASHBOARD);
 		this.appendChild(dashboard);
 
 		if (!this.getDur().isTrial())
-        	this.buildUploadPanel(dashboard);
+			this.buildUploadPanel(dashboard);
 
 		this.buildFastPanel(dashboard);
 		this.buildCardPanel(dashboard);
-    }
+	}
 
-    buildUploadPanel(dashboard) {
-        let upload = this.createDiv(this.UPLOAD_PANEL, CSS.AON_UPLOAD_PANEL);
-        dashboard.appendChild(upload);
+	buildUploadPanel(dashboard) {
+		let upload = this.createDiv(this.UPLOAD_PANEL, CSS.AON_UPLOAD_PANEL);
+		dashboard.appendChild(upload);
 
-        let uploadInv = new AonNewUpload();
-        uploadInv.id = this.UPLOAD_INVOICE;
-        uploadInv.setMessage(MSG.UPLOAD_INVOICE);
-        uploadInv.setType("Invoice");
-        upload.appendChild(uploadInv);
-    }
+		let uploadInv = new AonNewUpload();
+		uploadInv.id = this.UPLOAD_INVOICE;
+		uploadInv.setMessage(MSG.UPLOAD_INVOICE);
+		uploadInv.setType("Invoice");
+		upload.appendChild(uploadInv);
+	}
 
 	uploadInvoiceHome(input, files) {
 		getCompanyActivities({}).then(activities => {
@@ -103,7 +100,7 @@ export class AonInvoiceHome extends AonElement {
 				activities.push({
 					id: "all",
 					description: "TODAS"
-        		});
+				});
 				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
 				activity.setAlias("id", "description");
 				if(activities.length > 0) {
@@ -258,10 +255,10 @@ export class AonInvoiceHome extends AonElement {
 
 			vygCard.setContent(aonDashboardSalesPurchases);
 			vygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterVyG(vygCard));
-			vygCard.firstChild.style.marginLeft = '0';
-			vygCard.firstChild.style.minHeight = "28rem";
-			vygCard.firstChild.children.item(1).style.height = "22.5rem";
-			vygCard.firstChild.style.margin = '0';
+			// vygCard.firstChild.style.marginLeft = '0';
+			// vygCard.firstChild.style.minHeight = "28rem";
+			// vygCard.firstChild.children.item(1).style.height = "22.5rem";
+			// vygCard.firstChild.style.margin = '0';
 		}
 
 		if(!LS.isSuite()) {
@@ -275,10 +272,10 @@ export class AonInvoiceHome extends AonElement {
 	
 			cypCard.setContent(new AonDashboardChargePayments("current_month"));
 			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
-			cypCard.firstChild.style.marginLeft = '0';
-			cypCard.firstChild.style.minHeight = "28rem";
-			cypCard.firstChild.children.item(1).style.height = "22.5rem";
-			cypCard.firstChild.style.margin = '0';
+			// cypCard.firstChild.style.marginLeft = '0';
+			// cypCard.firstChild.style.minHeight = "28rem";
+			// cypCard.firstChild.children.item(1).style.height = "22.5rem";
+			// cypCard.firstChild.style.margin = '0';
 		}
 	}
 

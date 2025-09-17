@@ -451,10 +451,7 @@ export class AonNewMenu extends AonElement {
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(aonTopMenuDiv);
-		
 
-consoleLog(aonTopMenuDiv.childElementCount, "blue")
-		
 		if ( aonTopMenuDiv.childElementCount === 0 ){
 			this.hideTopNav();
 		} else {

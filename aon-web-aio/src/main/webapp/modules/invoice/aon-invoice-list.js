@@ -18,7 +18,6 @@ export class AonInvoiceList extends AonElement {
 	more;
 	filter;	
 	TABLE;
-
 	fn;
 
 	get id() {
@@ -537,19 +536,22 @@ export class AonInvoiceList extends AonElement {
 			this.getApplication().getParent().updateCounterSpan(to);
 		}
 	}
-	
 
 	removeInvoiceActions() {
 		let aonInvoice = this.getElement('aonInvoice');
-		let toolbar = this.getElement(aonInvoice.TOOLBAR);
-		toolbar.removeSeparators();
-		aonInvoice.removeToolbarOption(ACTION.DELETE_TO_TRASH);
-		aonInvoice.removeToolbarOption(ACTION.REJECT_INVOICE);
-		aonInvoice.removeToolbarOption(ACTION.RESTORE_INVOICE);
-		aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
-		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
-		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
-		aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+		if(aonInvoice){
+			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+			if (toolbar) {
+				toolbar.removeSeparators();
+			}
+			aonInvoice.removeToolbarOption(ACTION.DELETE_TO_TRASH);
+			aonInvoice.removeToolbarOption(ACTION.REJECT_INVOICE);
+			aonInvoice.removeToolbarOption(ACTION.RESTORE_INVOICE);
+			aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
+			aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
+			aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
+			aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+		}
 	}
 
 	getTable(){

@@ -505,11 +505,6 @@ export class AonInvoice extends AonElement {
 		if(!content) {
 			content = this.createElement(TAG.DIV);
 			content.id = this.CONTENT;
-
-consoleLog(this.DATA);
-consoleLog(this.CONTENT);
-
-
 			data.appendChild(content);
 		}
 		this.clearElement(content);
