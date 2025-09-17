@@ -19,6 +19,9 @@
     width     : v.$left-aonMenuLeft;
     min-width : v.$left-aonMenuLeft;
     max-width : v.$left-aonMenuLeft;
+    height    : calc(#{v.$vh-100} - v.$menu-top-height);
+    overflow-y: auto;
+    box-sizing: border-box; 
     ul {
       list-style-type : none;
       margin          : v.$px-0;
@@ -27,7 +30,7 @@
         height : v.$px-48;
         a{
           div{
-            display         :flex;
+            display         : flex;
             height          : v.$px-48;
             align-items     : center;
             justify-content : flex-start !important;
