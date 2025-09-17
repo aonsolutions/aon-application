@@ -76,7 +76,7 @@ public class Invofox {
 			throws URISyntaxException, IOException, InterruptedException {
 
 		Map<String, String> params = new HashMap<>();
-		if(beta) {
+//		if(beta) {
 			JSONObject infoJSON = new JSONObject();
 			infoJSON.put("type", type.getValue());
 			infoJSON.put("company", company);
@@ -89,25 +89,27 @@ public class Invofox {
 			
 			params.put("info", infoJSON.toString());
 //			type, company, data, clientData, useSplitter, contentHash
-		} else {
-			params.put("type", type.getValue());
-			params.put("company", company);
-
-			params.put("loadBatch", loadBatch);
-			params.put("closeBatch", "false");
-
-			params.put("useSplitter", "false");
-			params.put("useClassifier", "true");
-			
-			params.put("clientData", clientData.toString());
-
-			Map<String, ?> knownData = Collections.emptyMap();
-			params.put("knownData", new JSONObject(knownData).toString());
-		
-		} 
+//		} else {
+//			params.put("type", type.getValue());
+//			params.put("company", company);
+//
+//			params.put("loadBatch", loadBatch);
+//			params.put("closeBatch", "false");
+//
+//			params.put("useSplitter", "false");
+//			params.put("useClassifier", "true");
+//			
+//			params.put("clientData", clientData.toString());
+//
+//			Map<String, ?> knownData = Collections.emptyMap();
+//			params.put("knownData", new JSONObject(knownData).toString());
+//		
+//		} 
 
 		params.put("urls", Arrays.stream(urls).collect(Collectors.joining(",")));
-		String path = beta ? "v1/ingest/uploads" : "documents/bulk";
+//		String path = beta ? "v1/ingest/uploads" : "documents/bulk";
+		String path = "v1/ingest/uploads";
+		
 		return postMultipartForm(apiKey, apiUrl, path, params);
 	}
 
