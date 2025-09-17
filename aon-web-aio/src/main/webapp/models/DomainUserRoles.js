@@ -154,7 +154,7 @@ export class DomainUserRoles {
 	}
 
 	hasOldRole(oldRole) {
-		return this.getOldUserRoles() && this.getOldUserRoles().includes(oldRole);
+		return !this.user.portal && this.getOldUserRoles() && this.getOldUserRoles().includes(oldRole);
 	}
 
 	hasApp(aonApp) {

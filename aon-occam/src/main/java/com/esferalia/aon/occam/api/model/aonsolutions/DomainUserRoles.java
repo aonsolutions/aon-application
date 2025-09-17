@@ -193,7 +193,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	private boolean hasOldRole(OldAonRole role) {
-		if ( getUser().getUserRoles() == null )
+		if ( getUser().getUserRoles() == null || getUser().isPortal())
 			return false;
 
 		Boolean bool = false;
