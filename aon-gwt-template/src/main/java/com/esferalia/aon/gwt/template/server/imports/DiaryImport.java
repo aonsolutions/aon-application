@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.template.server.imports;
 
+import static com.esferalia.aon.gwt.template.server.imports.a3.Diary2Template.diary2Template;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -20,6 +22,8 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.server.UnknownFileException;
+import com.esferalia.aon.gwt.template.server.imports.a3.Diary2Template;
 import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -93,7 +97,11 @@ public class DiaryImport extends ImportUtils {
 
 			return new LinkedList<>(diary.values());
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(); 
+		} catch (UnknownFileException e) {
+			// Try A3
+			data = diary2Template(data);
+			return importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {
@@ -137,6 +145,8 @@ public class DiaryImport extends ImportUtils {
 							|| IConstants.N_ASIENTO.equalsIgnoreCase(title)) {
 						asientoIndex = cell.getColumnIndex();
 					}
+				} else if ( asientoIndex == null ) { 
+					throw new UnknownFileException();
 				} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()){
 					if(checkAsiento(domain, row.getCell(asientoIndex), aonCtx)) {
 						String title = titleList.get(cell.getColumnIndex());
