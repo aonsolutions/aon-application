@@ -1,19 +1,16 @@
 import { AonElement } from '../../components/AonElement.js';
 import { saveUser, deleteUser, changePassword, getAuth, sendUserInfoEmail, updateDurDefinedUsers, getUserRoles, getBookingDomainUserRoles, getUserDomainUserRoles } from  '../../services/service.js';
-import { EnterpriseApps, EmployeeApps, getApp, AllAonApps, EnterpriseAonApps, EmployeeAonApps } from  '../../services/app.js';
+import { AllAonApps, EnterpriseAonApps, EmployeeAonApps } from  '../../services/app.js';
 import { Role, Roles, ToolbarType } from '../../models/enums.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-
 import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS, COLORS, EVENT } from '../../environments/environments.js';
-
-import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser, deleteUserCache } from './UserCache.js';
-import { AonSwitch } from '../../components/aon-switch.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
-import { createCard, createIcon, createInput, createSelect, createTable } from '../../components/CreateComponent.js';
+import { createCard, createIcon, createInput, createSelect, createSwitch, createTable } from '../../components/CreateComponent.js';
+
+import * as ACTION from '../actions.js';
 
 export class AonNewUser extends AonElement {
 
@@ -305,9 +302,7 @@ export class AonNewUser extends AonElement {
 		});
 	
 		if(!this.isOnlyAuth()){
-			let portal = new AonSwitch();
-			portal.id = 'aonConfigurationUserCardPortal';
-			portal.title = MSG.ONLY_PORTAL;
+			let portal = createSwitch('aonConfigurationUserCardPortal', MSG.ONLY_PORTAL);
 			portal.disabled = this.user.portal && !this.userDur.checkUsers();
 			portal.checked = this.user.portal;
 			portal.style.marginLeft = '5px';
@@ -365,8 +360,7 @@ export class AonNewUser extends AonElement {
 		span.innerHTML = app.title || app.description;
 		table.addCell(span);
 
-		let active = new AonSwitch();
-		active.id = this.SECURITY_TABLE_ACTIVE + i;
+		let active = createSwitch(this.SECURITY_TABLE_ACTIVE + i);
 		active.checked = app.is(this.userDur);
 		active.disabled = "admin" != app.app && this.userDur.isAdmin() && active.isChecked();
 		active.style.paddingRight = '10px';
@@ -477,14 +471,14 @@ export class AonNewUser extends AonElement {
 		card2.cleanSection2();
 
 		if(this.user.portal) {
-			card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => this.selectionEnterprisePortal());
-			card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => this.selectionEmployeePortal());
+			card2.addTitleButton(MSG.ENTERPRISE, MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => this.selectionEnterprisePortal());
+			card2.addTitleButton(MSG.EMPLOYEE, MATERIAL_ICONS.PERSON, this.isEmployee(), () => this.selectionEmployeePortal());
 		}
 	}
 
 	selectionPersonalizado() {
-		this.updateRole({ role: 'ENTERPRISE', active: false, user: this.user.id});
-		this.updateRole({ role: 'EMPLOYEE', active: false, user: this.user.id});
+		this.updateRole({ role: Role.ENTERPRISE, active: false, user: this.user.id});
+		this.updateRole({ role: Role.EMPLOYEE, active: false, user: this.user.id});
 		this.apps = [this.ADMIN_APP, this.DEV_APP].concat(AllAonApps);
 		this.initApps();
 	}
@@ -526,7 +520,6 @@ export class AonNewUser extends AonElement {
 			toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(!this.isOnlyAuth()) 
 			toolbar.addButton2(ACTION.BACK, () => this.back());
-		
 	}
 
 	editPassword() {
@@ -538,24 +531,21 @@ export class AonNewUser extends AonElement {
         } else {
             d.width = '400px';
         }
-		d.setTitle("Cambiar Contraseña");
+		d.setTitle(MSG.CHANGE_PASSWORD); 
 
-		let div = document.createElement("div");
+		let div = this.createDiv();
 
-        let oldPassword = new AonInput();
-        oldPassword.id = "aonConfigurationUserCardOldPassword";
+		let oldPassword = createInput("aonConfigurationUserCardOldPassword");
         oldPassword.type = "password";
-        oldPassword.description = "Contraseña";
+        oldPassword.description = MSG.PASSWORD;
         div.appendChild(oldPassword);
 
-        let newPassword = new AonInput();
-        newPassword.id = "aonConfigurationUserCardNewPassword";
+		let newPassword = createInput("aonConfigurationUserCardNewPassword")
         newPassword.type = "password";
-        newPassword.description = "Repetir Contraseña";
+        newPassword.description = MSG.NEW_PASSWORD; 
         div.appendChild(newPassword);
 
 		d.setContent(div);
-
 		d.addAcceptAction(() => {
 			changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}, this.sessionData).then(()=>{
 				this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
@@ -609,21 +599,18 @@ export class AonNewUser extends AonElement {
 	}
 
 	next() {
-		let user = getNextUser();
-		this.changeUser(user);
+		this.changeUser(getNextUser());
 	}
 
 	previous() {
-		let user = getPreviousUser();
-		this.changeUser(user);
+		this.changeUser(getPreviousUser());
 	}
 
 	changeUser(user) {
-		getUserRoles({user: user.id}, this.sessionData).then(roles => {
-			user.roles = roles;
-			this.setUser(user);
-			this.init();
-		});
+		this.clear();
+		this.setUser(user);
+		this.initialize();
+		this.build();
 	}
 
 	sendEmail() {
@@ -657,34 +644,16 @@ export class AonNewUser extends AonElement {
 
 	activeAction(app, active) {
 		let rolePortal = app ? app.app.toUpperCase() : 'ADMIN';
-		let roleA = {
-			app: app ? app.app : 'ADMIN',
-			role: rolePortal,
-			user: this.user.id,
-			active
-		};
-		let roles = [roleA];
+		let roles = [this.createRole(app, rolePortal, active)];
 
 		if (app && app.access && this.isPersonalizado()) {
 			let roleManager = app.app.toUpperCase() + '_MANAGER';
-			let roleB = {
-				app: app ? app.app : 'ADMIN',
-				role: roleManager,
-				user: this.user.id,
-				active
-			};
-			roles.push(roleB);
+			roles.push(this.createRole(app, roleManager, active));
 		}
 
 		if (app && app.access && this.isEnterprise()) {
 			let rolePortal = app.app.toUpperCase() + '_PORTAL';
-			let roleC = {
-				app: app ? app.app : 'ADMIN',
-				role: rolePortal,
-				user: this.user.id,
-				active
-			};
-			roles.push(roleC);
+			roles.push(this.createRole(app, rolePortal, active));
 		}
 
 		this.updateRoles(roles);
@@ -697,42 +666,25 @@ export class AonNewUser extends AonElement {
 			let portal = app.app.toUpperCase() + '_PORTAL';
 
 			if('Asesor' === value){
-				roles.push({
-					app: app ? app.app : 'ADMIN',
-					user: this.user.id,
-					role: manager,
-					active: true
-				});
+				roles.push(this.createRole(app, manager, true));
 			} else if('Empresa' === value) {
-				roles.push({
-					app: app ? app.app : 'ADMIN',
-					user: this.user.id,
-					role: manager,
-					active: false
-				});
-				if(app.access.length > 2) {
-					roles.push({
-						app: app ? app.app : 'ADMIN',
-						user: this.user.id,
-						role: portal,
-						active: true
-					});
-				}
+				roles.push(this.createRole(app, manager, false));
+				if(app.access.length > 2) 
+					roles.push(this.createRole(app, portal, true));		
 			} else if('Empleado' === value) {
-				roles.push({
-					app: app ? app.app : 'ADMIN',
-					user: this.user.id,
-					role: manager,
-					active: false
-				});
-				roles.push({
-					app: app ? app.app : 'ADMIN',
-					user: this.user.id,
-					role: portal,
-					active: false
-				});
+				roles.push(this.createRole(app, manager, false));
+				roles.push(this.createRole(app, portal, false));
 			}
 			this.updateRoles(roles);
+		}
+	}
+
+	createRole(app, role, active) {
+		return {
+			app: app ? app.app : 'ADMIN',
+			user: this.user.id,
+			role,
+			active
 		}
 	}
 
@@ -808,17 +760,14 @@ export class AonNewUser extends AonElement {
 	}
 
 	setShowToolbar(showToolbar) {
-		// this.showToolbar = showToolbar;
 		this.setAttribute(CONSTANT.SHOW_TOOLBAR, showToolbar);
 	}
 
 	setShowApps(showApps) {
-		// this.showToolbar = showToolbar;
 		this.setAttribute(CONSTANT.SHOW_APPS, showApps);
 	}
 
 	setOnlyAuth(onlyAuth) {
-		// this.onlyAuth = onlyAuth;
 		this.setAttribute(CONSTANT.ONLY_AUTH, onlyAuth);
 	}
 
