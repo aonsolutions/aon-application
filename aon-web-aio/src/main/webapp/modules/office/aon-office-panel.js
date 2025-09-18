@@ -201,7 +201,7 @@ export class AonOfficePanel extends AonElement {
 		const auxiliars = {
 			id: "AUXILIARS",
 			name: "Auxiliares",
-			icon: MATERIAL_ICONS.CYCLE,
+			icon: MATERIAL_ICONS.LAB_PROFILE,
 			clickable: false,
 			options: [taskHolder, workgroups, seller, scope, customerTags]
 		}
@@ -216,8 +216,8 @@ export class AonOfficePanel extends AonElement {
 		
 		const process = {
 			id: "PROCESS",
-			name: MSG.PROCESS,
-			icon: MATERIAL_ICONS.COGNITION_2,
+			name: "Procesos",
+			icon: MATERIAL_ICONS.VIEW_TIMELINE,
 			clickable: false,
 			options: [sellerWorkload, customerPayrollActivity]
 		}
