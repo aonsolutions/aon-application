@@ -41,7 +41,7 @@ public abstract class DomainSyncPanel extends AonCustomDockLayout {
 		
 		setSearchPlaceholder("Busqueda por documento/nombre...");
 		
-		getSearchTextBox().setValue(this.customer.getDocument());
+		getSearchTextBox().setValue(this.customer.getAlias());
 
 		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
