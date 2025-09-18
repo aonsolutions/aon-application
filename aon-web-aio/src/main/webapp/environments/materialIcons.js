@@ -199,6 +199,7 @@ export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
+export const LAB_PROFILE = 'lab_profile';
 export const LABEL = 'label';
 export const LABEL_IMPORTANT = 'label_important';
 export const LANGUAGE = 'language';
@@ -302,6 +303,7 @@ export const UNARCHIVE = 'unarchive';
 // ----- V
 
 export const VERIFIED = 'verified';
+export const VIEW_TIMELINE = 'view_timeline';
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
 

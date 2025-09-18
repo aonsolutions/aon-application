@@ -172,7 +172,13 @@ public class CustomersServlet extends AonApiHttpServlet {
 
 		if (api.getData().opt(IJsonNames.RRELATIONSHIP) != null) {
 			boolean rrelationship = api.getData().optBoolean(IJsonNames.RRELATIONSHIP);
-			filter = filter.and(rrelationship ? f.getRegistryRelationProperty().isNotNull()
+			boolean isSig = api.getData().optBoolean("isSig");
+			
+			if(isSig)
+				filter = filter.and(rrelationship ? f.getRaddInfoDomainProperty().isNotNull()
+						: f.getRaddInfoDomainProperty().isNull());
+			else
+				filter = filter.and(rrelationship ? f.getRegistryRelationProperty().isNotNull()
 					: f.getRegistryRelationProperty().isNull());
 		}
 

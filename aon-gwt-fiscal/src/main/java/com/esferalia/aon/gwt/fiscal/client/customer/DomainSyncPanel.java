@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -31,6 +32,18 @@ public abstract class DomainSyncPanel extends AonCustomDockLayout {
 	
 	private CustomersDomainSyncParams paramsDomains;
 	
+	private Timer searchTimer = new Timer() {
+	    @Override
+	    public void run() {
+	        String value = getSearchTextBox().getValue();
+	        if (AonStringUtils.isBlank(value)) {
+	            onSearch();
+	        } else if (value.length() > 3) {
+	            onSearch();
+	        }
+	    }
+	};
+	
 	public DomainSyncPanel(Customer customer, CustomersDomainSyncParams paramsDomains) {
 		super("Dominios");
 		
@@ -41,15 +54,18 @@ public abstract class DomainSyncPanel extends AonCustomDockLayout {
 		
 		setSearchPlaceholder("Busqueda por documento/nombre...");
 		
-		getSearchTextBox().setValue(this.customer.getDocument());
+		getSearchTextBox().setValue(this.customer.getAlias());
 
 		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
-			if (AonStringUtils.isNotBlank(value) && value.length() > 2) {
-				onSearch();
-			} else if (AonStringUtils.isBlank(value)) {
-				onSearch();
-			}
+			
+			searchTimer.cancel();
+			
+		    if (AonStringUtils.isBlank(value)) {
+		        onSearch();
+		    } else if (value.length() > 3) {
+		        searchTimer.schedule(1000);
+		    }
 		});
 
 		container = new HTMLPanel("");

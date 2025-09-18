@@ -137,6 +137,11 @@ public class ConsoleImpl implements IConsole {
 	public Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter) {
 		return DomainCustomerDAO.getDomains(ctx, filter);
 	}
+
+	@Override
+	public Stream<DomainCompany> getAviableDomainsForSync(AONContext ctx, boolean isSig, DomainFilter filter) {
+		return DomainCustomerDAO.getAviableDomainsForSync(ctx, isSig, filter);
+	}	
 	
 	@Override
 	public Stream<DomainCompany> areDomainsSync(AONContext ctx, DomainFilter filter) {
@@ -151,5 +156,5 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public String updateScopes(AONContext ctx, Integer domainId, Integer wrongScopeId, Integer newScopeId) {
 		return ConsoleDAO.updateScopes(ctx, domainId, wrongScopeId, newScopeId);
-	}	
+	}
 }
