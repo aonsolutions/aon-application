@@ -465,11 +465,17 @@
           color: $color-red-500;
         }
       }
-      aon-icon-button aon-icon {
-        &::after {
-          background-color: $color-300;
-        }
-      }
+      aon-icon-button{
+		aon-icon {
+		    &::after {
+	          background-color: $color-300;
+    		}
+      	}
+		.aon-spinner-input-loading{
+			border : v.$px-4 solid #ccc;
+			border-top : v.$px-4 solid #000;
+		}
+	  }
       input{
         border           : $input-border;
         background-color : $color-input;
