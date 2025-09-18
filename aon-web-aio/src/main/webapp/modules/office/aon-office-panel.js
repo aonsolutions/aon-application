@@ -115,7 +115,8 @@ export class AonOfficePanel extends AonElement {
 				page: 1,
 				perPage: 50,
 				status: ["ACTIVE", "BLOCKED"],
-				target: false
+				target: false,
+				isSig: this.isSig()
 			});
 		}
 

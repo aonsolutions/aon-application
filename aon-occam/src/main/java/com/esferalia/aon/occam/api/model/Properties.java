@@ -904,6 +904,8 @@ public interface Properties {
 		
 		Property<Integer> getRelatedRegistryProperty();
 		Property<Integer> getRegistryRelationProperty();
+		
+		Property<Integer> getRaddInfoDomainProperty();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties {
