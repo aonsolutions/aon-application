@@ -315,7 +315,7 @@ export class AonMenuButton extends AonElement {
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
       this.rootPanel(invoicePanel);
-      this.setAppClassName(Apps.INVOICE);
+      // this.setAppClassName(Apps.INVOICE);
       this.setSelectedMenuSidenav(Apps.INVOICE);
       this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));
     }
@@ -325,7 +325,7 @@ export class AonMenuButton extends AonElement {
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonIncome(new Income())) );
       this.rootPanel(invoicePanel);
-      this.setAppClassName(Apps.INVOICE);
+      // this.setAppClassName(Apps.INVOICE);
       this.setSelectedMenuSidenav(Apps.INVOICE);
       this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
     }
@@ -335,7 +335,7 @@ export class AonMenuButton extends AonElement {
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonExpense(new Expense())) );
       this.rootPanel(invoicePanel);
-      this.setAppClassName(Apps.INVOICE);
+      // this.setAppClassName(Apps.INVOICE);
       this.setSelectedMenuSidenav(Apps.INVOICE);
       this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
     }
@@ -424,11 +424,11 @@ export class AonMenuButton extends AonElement {
         return document.querySelector(selector);
     };
     //funcion de aon-menu
-    setAppClassName(app) {
-        let appsDiv = this.getElement("aonMenuLeftop-applications");
-        let appName = app.app[0].toUpperCase() + app.app.slice(1);
-        appsDiv.className = `${CSS.AON_MENU_LEFTOP}${appName}`
-    }
+    // setAppClassName(app) {
+    //     let appsDiv = this.getElement("aonMenuLeftop-applications");
+    //     let appName = app.app[0].toUpperCase() + app.app.slice(1);
+    //     appsDiv.className = `${CSS.AON_MENU_LEFTOP}${appName}`
+    // }
 
     addDocumentalFile() {
         const rootPanel = document.getElementById("rootPanel");

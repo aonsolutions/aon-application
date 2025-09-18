@@ -27,6 +27,24 @@
     justify-content : inherit;
     align-items     : center;
     
+    #header-container-lef{
+      #toggle-menu{
+        display : flex;
+        cursor  : pointer;
+        .rotate-icon {
+          transition: transform 0.3s ease;
+          transform: rotate(0deg);
+          will-change: transform;
+        }
+        .rotate-icon.rotated {
+          transform: rotate(-180deg);
+        }
+      }
+      // LOGO - Cuando esta logueado
+      #aon-logo{
+
+      }
+    }
     #aonHeaderButtons{
       display     : flex;
       gap         : v.$gap;
@@ -37,3 +55,4 @@
     }
   }
 }
+

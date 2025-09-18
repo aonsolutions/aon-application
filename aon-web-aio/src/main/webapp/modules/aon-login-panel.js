@@ -8,7 +8,7 @@ import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
 	CARD;
-    NAME;
+  NAME;
 	LOGOUT;
 	EDITBUTTON;
 	CHANGEPASSWORD;
@@ -120,13 +120,10 @@ export class AonLoginPanel extends AonElement {
           let buttonEditPass = this.createElement(TAG.BUTTON);
           buttonEditPass.innerText =  MSG.CHANGE_PASSWORD;
           buttonEditPass.addEventListener("click", (e) => {
-            
-            console.log('editar el pass');
-            
-              let aonUser = new AonUser();
-              aonUser.editPassword();
-              let rightPanel = this.closest('aon-right-panel');
-              rightPanel?.close?.();
+            let aonUser = new AonUser();
+            aonUser.editPassword();
+            let rightPanel = this.closest('aon-right-panel');
+            rightPanel?.close?.();
           });
           loginContent.appendChild(buttonEditPass);
         }
@@ -154,26 +151,26 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	handleDocumentClick(event) {
-      const aonHeaderUser         = document.getElementById('aonHeaderUser');
-      const aonHeaderHelp         = document.getElementById('aonHeaderHelp');
-      const aonHeaderConfig       = document.getElementById('aonHeaderConfig');
-      const aonHeaderNotification = document.getElementById('aonHeaderNotification');
-      
-      if(!this.isNewStyle()){
-		if (this.rightPanel &&
-			this.rightPanel.style.visibility === "visible" &&
-			!this.rightPanel.contains(event.target) &&
-			!this.contains(event.target) &&
-			!(aonHeaderUser && aonHeaderUser.contains(event.target)) &&
-			!(aonHeaderHelp && aonHeaderHelp.contains(event.target)) &&
-			!(aonHeaderConfig && aonHeaderConfig.contains(event.target)) &&
-			!(aonHeaderNotification && aonHeaderNotification.contains(event.target))) {
-			let rightPanel = document.querySelector('aon-right-panel'); 
-			if (rightPanel) {
-				rightPanel.close();
-			}
-		}
+    const aonHeaderUser         = document.getElementById('aonHeaderUser');
+    const aonHeaderHelp         = document.getElementById('aonHeaderHelp');
+    const aonHeaderConfig       = document.getElementById('aonHeaderConfig');
+    const aonHeaderNotification = document.getElementById('aonHeaderNotification');
+    
+    if(!this.isNewStyle()){
+      if (this.rightPanel &&
+        this.rightPanel.style.visibility === "visible" &&
+        !this.rightPanel.contains(event.target) &&
+        !this.contains(event.target) &&
+        !(aonHeaderUser && aonHeaderUser.contains(event.target)) &&
+        !(aonHeaderHelp && aonHeaderHelp.contains(event.target)) &&
+        !(aonHeaderConfig && aonHeaderConfig.contains(event.target)) &&
+        !(aonHeaderNotification && aonHeaderNotification.contains(event.target))) {
+        let rightPanel = document.querySelector('aon-right-panel'); 
+        if (rightPanel) {
+          rightPanel.close();
+        }
       }
+    }
 	}
 
 	buildName(value) {

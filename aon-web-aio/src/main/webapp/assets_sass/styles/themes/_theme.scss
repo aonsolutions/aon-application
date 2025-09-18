@@ -152,6 +152,9 @@
       background-color : $color-50;
       // Menu izquierda
       #aonMenuSidenav {
+        @media (max-width: v.$menu-resolucion-mobile) {
+          background-color : $color-50;
+        }
         ul{
           background-color : $color-box;
           li{

@@ -54,7 +54,7 @@ export class AonNotificationPanel extends AonElement {
 
 	async build() {
         let header = this.getElement("aonHeaderWeb");
-        let apps = this.getElement("aonMenuLeftop-applications");
+        // let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
         let applications = this.getElement("applications");
         applications.className = "";
@@ -83,7 +83,7 @@ export class AonNotificationPanel extends AonElement {
                 rightPanel.close(); 
             }
             header.className = "aonHeader aonHeaderNotification";
-            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            // apps.className = "aonMenuLeftop aonMenuLeftopNotification";
             aonHeader.buildApp(NOTIFICATION);
             aonHeader.setVisibleLogo(false);
             aonHeader.setVisibleApp(true);
@@ -91,9 +91,9 @@ export class AonNotificationPanel extends AonElement {
         } 
         
         let enterprise = this.getElement("aonHeaderCompanyListButton");
-        enterprise.addEventListener(EVENT.CLICK, () => {
-            apps.classList.remove("aonMenuLeftopNotification");
-        });
+        // enterprise.addEventListener(EVENT.CLICK, () => {
+            // apps.classList.remove("aonMenuLeftopNotification");
+        // });
 
         let notifications = await this.getData();  
     
@@ -120,7 +120,7 @@ export class AonNotificationPanel extends AonElement {
 
     buildRow(res){
         let header = this.getElement("aonHeaderWeb");
-        let apps = this.getElement("aonMenuLeftop-applications");
+        // let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
         let divPrincipal = this.createDiv();
         divPrincipal.classList.add("notificationPanelRowPrincipalDiv");
@@ -202,7 +202,7 @@ export class AonNotificationPanel extends AonElement {
             this.markReadNotification(res);
             divGeneral.style.display = "none";
             header.className = "aonHeader aonHeaderNotification";
-            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            // apps.className = "aonMenuLeftop aonMenuLeftopNotification";
             aonHeader.buildApp(NOTIFICATION);
             aonHeader.setVisibleLogo(false);
             aonHeader.setVisibleApp(true);
@@ -260,12 +260,8 @@ export class AonNotificationPanel extends AonElement {
     
         return `${dayMonth} de ${inputDate.getFullYear()}`;
     }
-    
-    
 
-    
     async loadMore(reload) {
-    
        // let application = this.getApplication();
     
       // application.startLoader();

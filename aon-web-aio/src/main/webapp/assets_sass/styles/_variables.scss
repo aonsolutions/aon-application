@@ -281,6 +281,9 @@ $t-07  : 0.7s;
 $t-2   : 2s;
 $t-5-4 : 5.4s;
 
+// Resolucion donde empezamos a considerar que es movil
+$menu-resolucion-mobile: 768px;
+
 // BORDER GENERAL
 $border-radius : $px-6;
 
@@ -296,11 +299,13 @@ $gap-min: calc($gap / 2);
 $height-cabecera : $px-64;
 
 // ANCHO MENU LATERAL IZQUIERDO
-$left-aonMenuLeft : $px-200;
+$left-aonMenuLeft     : $px-200;
+$left-aonMenuLeft-min : $px-64;
 
 // ALTURA DEL MENU ADMIN DE ARRIBA
-$menu-top-Left   : $left-aonMenuLeft; // distancia a la izquierda
-$menu-top-height : $px-60;            // Altura que tiene
+$menu-top-Left    : $left-aonMenuLeft;      // distancia a la izquierda
+$menu-top-Left-min: $left-aonMenuLeft-min ; // distancia a la izquierda cuando esta reducido
+$menu-top-height  : $px-60;                 // Altura que tiene
 
 // cuanto ocupa Input para ajustar otros estilos
 $input-height: $px-40;

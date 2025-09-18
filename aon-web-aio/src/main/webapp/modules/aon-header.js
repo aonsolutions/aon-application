@@ -78,7 +78,6 @@ export class AonHeader extends AonElement {
 	initialize() {
 		this.BASE_ID = 'aonHeader';
 		this.AON_HEADER_WEB = this.BASE_ID + 'Web';
-		this.AON_LOGO = 'aonLogo';
 		this.AON_HEADER_SEARCH = this.BASE_ID + 'Search';
 		this.AON_HEADER_SEARCH_BOX = this.AON_HEADER_SEARCH + 'Box';
 		this.AON_HEADER_SEARCH_DIALOG_MENU = this.AON_HEADER_SEARCH + 'DialogMenu';
@@ -97,7 +96,11 @@ export class AonHeader extends AonElement {
 		this.AON_HEADER_DIALOG_USER_OPTION = this.BASE_ID + 'DialogUserOption';
 		this.AON_HEADER_CONFIG = this.BASE_ID + 'Config';
 		this.AON_HEADER_CONFIG_BUTTON = this.BASE_ID + 'ConfigButton';
-		this.AON_MENU_LEFTOP = 'aonMenuLeftop';
+		// this.AON_MENU_LEFTOP = 'aonMenuLeftop';
+		this.AON_HEADER_LEF = 'header-container-lef';
+		this.TOGGLE_MENU 		= 'toggle-menu';
+		this.AON_LOGO 			= 'aon-logo';
+		this.AON_MENU 			= 'aonMenu';
 	}
 
 	build() {
@@ -113,29 +116,34 @@ export class AonHeader extends AonElement {
 		let userOption = new AonDialogMenu();
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
-		
-		let aonLeftTopMenu = this.createElement(TAG.DIV);
-		aonLeftTopMenu.id = this.AON_MENU_LEFTOP + "Div";
-		aonLeftTopMenu.style.height = "100%";
-		aonLeftTopMenu.style.display = "flex";
-		aonLeftTopMenu.style.alignItems = "center";
-		div.appendChild(aonLeftTopMenu);
 
-		if(!this.getElement(this.AON_MENU_LEFTOP)){
-			let aonMenuLefttop = this.createElement(TAG.DIV);
-			aonMenuLefttop.id = this.AON_MENU_LEFTOP;
-			aonMenuLefttop.classList.add("aonNewMenuLeftTop");
-			aonMenuLefttop.style.visibility = "visible";
-			aonMenuLefttop.style.height = "100%";
-			aonLeftTopMenu.appendChild(aonMenuLefttop);
+		// Montar el contenido de la izquierda de la cabecera
+		this.buildContainerLef(div);
 
-			this.buildMenuLeftop();
-		}
+		// aonLeftTopMenu.id  = this.AON_MENU_LEFTOP + "Div";
 
-		let aonLogo = this.createElement(TAG.DIV);
-		aonLogo.id = "aonLogo";
-		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
-		aonLeftTopMenu.appendChild(aonLogo);
+		// let aonLeftTopMenu = this.createElement(TAG.DIV);
+		// aonLeftTopMenu.id  = this.AON_MENU_LEFTOP + "Div";
+		// aonLeftTopMenu.style.height = "100%";
+		// aonLeftTopMenu.style.display = "flex";
+		// aonLeftTopMenu.style.alignItems = "center";
+		// div.appendChild(aonLeftTopMenu);
+
+		// if(!this.getElement(this.AON_MENU_LEFTOP)){
+			// let aonMenuLefttop = this.createElement(TAG.DIV);
+			// aonMenuLefttop.id = this.AON_MENU_LEFTOP;
+			// aonMenuLefttop.classList.add("aonNewMenuLeftTop");
+			// aonMenuLefttop.style.visibility = "visible";
+			// aonMenuLefttop.style.height = "100%";
+			// aonLeftTopMenu.appendChild(aonMenuLefttop);
+
+			// this.buildMenuLeftop();
+		// }
+
+		// let aonLogo = this.createElement(TAG.DIV);
+		// aonLogo.id = "aonLogo";
+		// aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
+		// aonLeftTopMenu.appendChild(aonLogo);
 		
 		// let aonHeaderApp = this.createElement(TAG.DIV);
 		// aonHeaderApp.id = "aonHeaderApp";
@@ -268,7 +276,7 @@ export class AonHeader extends AonElement {
 
 		div.appendChild(aonHeaderButtons);
 		
-		this.buildLogo();
+		// this.buildLogo();
 
 		if(!this.isMobile()) {
 			if(!LS.isNewTheme() && !this.newTheme) {
@@ -287,8 +295,8 @@ export class AonHeader extends AonElement {
 				// this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 				// let aonDesktop = this.getElement('aonDesktop');
 				// aonDesktop.setAttribute('company', this.getAttribute('company'));
-				let aonLogo = this.getElement('aonLogo');
-				aonLogo.style.display =	"block";
+				// let aonLogo = this.getElement('aonLogo');
+				// aonLogo.style.display =	"block";
 				// let aonHeaderApp = this.getElement('aonHeaderApp');
 				// aonHeaderApp.style.display = 'none';
 			});
@@ -624,17 +632,17 @@ export class AonHeader extends AonElement {
 		});
 	}
 
-	buildLogo() {
-		aonLogo.addEventListener('click', () => {
-			if(LS.getDomainId()){
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			} else {
-				this.rootPanel(new AonParent());
-			}
-		})
-	}
+	// buildLogo() {
+	// 	aonLogo.addEventListener('click', () => {
+	// 		if(LS.getDomainId()){
+	// 			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+	// 			let aonDesktop = this.getElement('aonDesktop');
+	// 			aonDesktop.setAttribute('company', this.getAttribute('company'));
+	// 		} else {
+	// 			this.rootPanel(new AonParent());
+	// 		}
+	// 	})
+	// }
 
 	aonConfiguration() {
 		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
@@ -1184,59 +1192,122 @@ export class AonHeader extends AonElement {
 		});
 	}
 
-	buildMenuLeftop() {
-		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
+	buildContainerLef(head) {
+		const contenedor 	= this.createElement(TAG.DIV);
+		contenedor.id 		= this.AON_HEADER_LEF;
+		head.appendChild(contenedor);
+		
+		const toggleMenu 	= this.createElement(TAG.DIV);
+		toggleMenu.id  		= this.TOGGLE_MENU;
+		contenedor.appendChild(toggleMenu);
+		
+		const logo 	= this.createElement(TAG.DIV);
+		logo.id 		= this.AON_LOGO;
+		contenedor.appendChild(logo);
 
-		let app = {
-			home : true,
-			title: MSG.APPLICATIONS,
-			app: CONSTANT.APPLICATIONS,
-			symbol: MATERIAL_ICONS.APPLICATIONS,
-		};
-
-		let appDiv = this.createElement(TAG.DIV);
-		appDiv.id = `aonMenuLeftop-${app.app}`;
-		appDiv.appendChild(this.buildApplicationsApp(app));
-		aonMenuLeftop.appendChild(appDiv);
-	}
-
-	buildApplicationsApp(app){
-		let a = this.createElement(TAG.A);
-		a.classList.add('aonMenuApp');
-
-		let hoverDiv = this.createElement(TAG.DIV);
-		hoverDiv.innerHTML = app.title;
-		hoverDiv.style.display = 'none';
-		hoverDiv.classList.add('aonMenuAppHover');
-		a.appendChild(hoverDiv);
-
-		let div = this.createElement(TAG.DIV);
-		div.id = app.app;
-		div.style.display = 'flex';
-		div.style.alignItems = 'center';
-		div.style.justifyContent = 'center';
-		div.style.height = '100%';
-		div.style.transition = 'background-color 0.2s';
-		div.style.cursor = "pointer";
-		div.title = app.title;
-
-		if (app.symbol){
-			let icon = this.createElement(TAG.SPAN);
-			icon.id = `aonMenuListAppImgTop-${app.app}`;
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
-			icon.innerHTML = app.symbol;
-			if(app.newColor || app.color) {
-				icon.style.color = app.newColor || app.color;
+		// Funcionalidad de mostrar o ocultar el menu
+		const icon = new AonIcon();
+		icon.icon  = this.isMobile() || this.isMobileResolution() ? "menu" : "arrow-left-circle";
+		icon.classList.add('rotate-icon');
+		toggleMenu.appendChild(icon);
+		
+		// Observamos esperando que exista menu
+		const observer = new MutationObserver(() => {
+			// Cogemos el menu
+			const menu = this.getElement(this.AON_MENU);
+			if (menu) {
+				observer.disconnect(); // Desconectamos el observer una vez que el menu este disponible
+				// Menu lateral
+				if (this.isMobile() || this.isMobileResolution()) {
+					// Recargar si es resolucion chica o movil, esta escondido
+					menu.classList.add('hidden-mobile');
+				}
+				toggleMenu.addEventListener('click', () => {
+					// Obtener el elemento con el ID "aonMenu"
+					if(this.isMobile() || this.isMobileResolution()){
+						menu.classList.toggle('hidden-mobile');
+					} else {
+						// Solo se reduce o amplia
+						menu.classList.toggle('min-hidden');
+						icon.classList.toggle('rotated');
+						menu.classList.remove('hidden-mobile');
+					}
+				});
+				// Escucha cambios en el tamaño de la ventana
+				window.addEventListener('resize', () => {
+					icon.icon  = this.isMobile() || this.isMobileResolution() ? "menu" : "arrow-left-circle";
+					if(this.isMobile() || this.isMobileResolution()){
+						// Rescalar si es resolucion chica o movil, se esconde el menu
+						if(!menu.classList.contains('hidden-mobile')){
+							menu.classList.add('hidden-mobile');
+						}
+						menu.classList.remove('min-hidden');
+						icon.classList.remove('rotated');
+					} else {
+						if(menu.classList.contains('hidden-mobile')){
+							menu.classList.remove('hidden-mobile');
+						}
+					}
+				});
 			}
-			icon.classList.add("aonNewMenuAppIcon");
-			div.appendChild(icon);
-		}
-
-		a.appendChild(div);
-
-		return a;
+		});
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
 	}
+	// buildMenuLeftop() {
+		// let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);=
+		// let app = {
+		// 	home 	: true,
+		// 	title	: MSG.APPLICATIONS,
+		// 	app		: CONSTANT.APPLICATIONS,
+		// 	symbol: MATERIAL_ICONS.APPLICATIONS,
+		// };
+
+		// let appDiv = this.createElement(TAG.DIV);
+		// appDiv.id = `aonMenuLeftop-${app.app}`;
+		// appDiv.appendChild(this.buildApplicationsApp(app));
+		// aonMenuLeftop.appendChild(appDiv);
+	// }
+
+	// buildApplicationsApp(app){
+	// 	let a = this.createElement(TAG.A);
+	// 	a.classList.add('aonMenuApp');
+
+	// 	let hoverDiv = this.createElement(TAG.DIV);
+	// 	hoverDiv.innerHTML = app.title;
+	// 	hoverDiv.style.display = 'none';
+	// 	hoverDiv.classList.add('aonMenuAppHover');
+	// 	a.appendChild(hoverDiv);
+
+	// 	let div = this.createElement(TAG.DIV);
+	// 	div.id = app.app;
+	// 	div.style.display = 'flex';
+	// 	div.style.alignItems = 'center';
+	// 	div.style.justifyContent = 'center';
+	// 	div.style.height = '100%';
+	// 	div.style.transition = 'background-color 0.2s';
+	// 	div.style.cursor = "pointer";
+	// 	div.title = app.title;
+
+	// 	if (app.symbol){
+	// 		let icon = this.createElement(TAG.SPAN);
+	// 		icon.id = `aonMenuListAppImgTop-${app.app}`;
+	// 		icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+	// 		icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
+	// 		icon.innerHTML = app.symbol;
+	// 		if(app.newColor || app.color) {
+	// 			icon.style.color = app.newColor || app.color;
+	// 		}
+	// 		icon.classList.add("aonNewMenuAppIcon");
+	// 		div.appendChild(icon);
+	// 	}
+
+	// 	a.appendChild(div);
+
+	// 	return a;
+	// }
 }
 
 window.customElements.define(TAG.AON_HEADER, AonHeader);

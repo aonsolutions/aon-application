@@ -1,4 +1,4 @@
-import {webkitRequestMobile} from '../services/service.js';
+// import {webkitRequestMobile} from '../services/service.js';
 import { CONSTANT, EVENT, MSG, TAG } from "../environments/environments.js";
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { getDomainUserRoles } from '../services/companyService.js';
@@ -13,6 +13,10 @@ export class AonElement extends HTMLElement{
 
   constructor () {
     super();
+  }
+
+  isMobileResolution() {
+    return UA.isMobileResolution();
   }
 
   isMobile() {

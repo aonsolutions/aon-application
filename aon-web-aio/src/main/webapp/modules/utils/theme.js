@@ -30,8 +30,6 @@ const themes = [
   }
 ];
 
-
-
 const getThemeClass = (isDark) => {
   const hostname = window.location.hostname;
   for (const t of themes) {

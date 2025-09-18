@@ -283,7 +283,7 @@ export class AonParent extends AonElement {
 				
 		let welcomeImg = this.createElement(TAG.IMG);
 		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
-		welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
+		// welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
 		this.getWelcomeImage().then( img => welcomeImg.src = img );
 		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
