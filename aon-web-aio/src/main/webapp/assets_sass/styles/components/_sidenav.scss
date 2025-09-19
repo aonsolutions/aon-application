@@ -10,11 +10,20 @@ $icon-gap : v.$gap-min;
   border-radius : v.$border-radius;
   gap           : v.$gap;
   padding-bottom: v.$padding;
+  max-width     : v.$px-500;
+  transform     : translateX(0);
+  opacity       : v.$num-1;
+  transition: transform v.$t-03 ease-in-out, max-width v.$t-03 ease-in-out, opacity v.$t-03 ease-in-out;
+  &.sidenav-hidden {
+    max-width: v.$num-0;
+    transform: translateX(-100%);
+    opacity  : v.$num-0;
+  }
   div:first-child .aonSidenavTitle{
     padding-top: v.$padding;
   }
   .aonSidenavTitle{
-    padding        : 0 v.$padding;
+    padding        : v.$num-0 v.$padding;
     display        : flex;
     gap            : $icon-gap;
     justify-content: space-between;
@@ -26,7 +35,7 @@ $icon-gap : v.$gap-min;
     }
     aon-icon[icon="chevron-down"] {
       transform : rotate(0deg);
-      transition: transform 0.3s ease;
+      transition: transform v.$t-03 ease;
     }
     .aonSidenavTitleName{
       width      : v.$pct-100;
@@ -58,7 +67,7 @@ $icon-gap : v.$gap-min;
     transform     : translateY(0);
     pointer-events: auto;
     visibility    : visible;
-    transition    : opacity 0.3s ease, transform 0.3s ease;
+    transition    : opacity v.$t-03 ease, transform v.$t-03 ease;
     li{
       font-family    : v.$font-primary-regular;
       font-size      : v.$px-12;
@@ -88,14 +97,17 @@ $icon-gap : v.$gap-min;
         }
       }
     // subapartado
+      aon-icon[icon="chevron-right"] {
+        transform : rotate(0deg);
+        transition: transform v.$t-03 ease-in-out;
+      }
       &:not(.sidenav-submenu-hidden) aon-icon[icon="chevron-right"] {
         transform: rotate(+90deg);
-        transition: transform 0.3s ease-in-out;
       }
       // Ocultar un subapartado
       &.elementHidden{
         opacity       : 0;
-        transform     : translateY(20px);
+        transform     : translateY(v.$px-20);
         pointer-events: none;
         visibility    : hidden;
         height        : 0;
@@ -109,7 +121,7 @@ $icon-gap : v.$gap-min;
         transform: translateY(0);
         pointer-events: auto;
         visibility: visible;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity v.$t-03 ease, transform v.$t-03 ease;
       }
       &:has(ul){
         padding: 0;

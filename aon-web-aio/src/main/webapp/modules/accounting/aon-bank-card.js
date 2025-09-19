@@ -200,8 +200,11 @@ export class AonBankCard extends AonElement {
   }
 
   removeAllChildNodes(parent) {
+    if (!parent){
+      return;
+    }
     while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
+      parent.removeChild(parent.firstChild);
     }
   }
 

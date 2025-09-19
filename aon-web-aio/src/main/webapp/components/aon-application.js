@@ -22,7 +22,6 @@ export class AonApplication extends AonElement {
   MOBILE_SIDENAV_CONTENT;
   selected;
   VIEWS;
-
   content;
 
   static get observedAttributes() {
@@ -115,9 +114,9 @@ export class AonApplication extends AonElement {
 
     let leftSidenav = this.createDiv(this.SIDENAV, this.getSidenavClassName());
     div.appendChild(leftSidenav);
-//    leftSidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : this.getSidenavWidth();
+    // leftSidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : this.getSidenavWidth();
     if(this.isMobile()  && this.isSab()) {
-//      leftSidenav.style.height = 'calc(100vh - 172px)';
+      // leftSidenav.style.height = 'calc(100vh - 172px)';
     }
 
     // Crear div donde metemos el contenido
@@ -140,21 +139,20 @@ export class AonApplication extends AonElement {
     toast.id = this.TOAST;
     this.appendChild(toast);
 
-    toolbar.toogleSidenav(() => this.isMobile() 
-      ? this.toogleMobileSidenav() : this.toogleSidenav());
+    toolbar.toogleSidenav(() => this.toogleSidenav());
 
     this.content = this.getContent();
-    if(this.isMobile()) {
-      this.buildMobileSidenav();
-    }
+    // if(this.isMobile()) {
+    //   this.buildMobileSidenav();
+    // }
 
     if (this.hasAttribute("drag_and_drop")) {
       this.buildDragAndDrop(true);
     }
 
     if (this.hasAttribute("main")) {
-//      toolbar.style.display = "none";
-//      leftSidenav.style.height = "calc(100vh - 61px)";
+    //  toolbar.style.display = "none";
+    //  leftSidenav.style.height = "calc(100vh - 61px)";
     }
 
     if (!localStorage.getItem("aon_solutions")) {
@@ -165,8 +163,8 @@ export class AonApplication extends AonElement {
         top = top + 14;
       } else top = top + 1;
       localStorage.setItem("aon_application_top", top);
-//      leftSidenav.style.height = `calc(100vh - ${top}px)`;
-//      content.style.height = `calc(100vh - ${top}px)`;
+    //  leftSidenav.style.height = `calc(100vh - ${top}px)`;
+    //  content.style.height = `calc(100vh - ${top}px)`;
     }
   }
 
@@ -221,15 +219,15 @@ export class AonApplication extends AonElement {
     if(el) el.stopLoading();
   }
 
-  toogleMobileSidenav() {
-    let sidenav = this.getElement(this.MOBILE_SIDENAV);
-    sidenav.firstChild.classList.add(CSS.AON_TRANSITION_LEFT);
-    if(sidenav.style.display == 'block') {
-      this.closeMobileSidenav();
-    } else {
-      this.openMobileSidenav();
-    }
-  }
+  // toogleMobileSidenav() {
+  //   let sidenav = this.getElement(this.MOBILE_SIDENAV);
+  //   sidenav.firstChild.classList.add(CSS.AON_TRANSITION_LEFT);
+  //   if(sidenav.style.display == 'block') {
+  //     this.closeMobileSidenav();
+  //   } else {
+  //     this.openMobileSidenav();
+  //   }
+  // }
 
   openMobileSidenav() {
     let sidenav =this.getElement(this.MOBILE_SIDENAV);
@@ -248,22 +246,24 @@ export class AonApplication extends AonElement {
   }
 
   toogleSidenav() {
-    if (this.isSidenavBlock()) {
-      this.closeSidenav();
-    } else {
-      let sidenav = this.getElement(this.SIDENAV);
-//      if (sidenav.style.flexBasis === "0px") {
-//        sidenav.style.flexBasis = this.getSidenavWidth();
-//      } else {
-//        sidenav.style.flexBasis = "0px";
-//      }
-    }
+    const sidenav = this.getElement(this.SIDENAV);
+    sidenav.classList.toggle('sidenav-hidden');
+    // if (this.isSidenavBlock()) {
+    //   this.closeSidenav();
+    // } else {
+    //   let sidenav = this.getElement(this.SIDENAV);
+    //   if (sidenav.style.flexBasis === "0px") {
+    //     sidenav.style.flexBasis = this.getSidenavWidth();
+    //   } else {
+    //     sidenav.style.flexBasis = "0px";
+    //   }
+    // }
   }
 
-  closeSidenav() {
-    let sidenav = this.getElement(this.SIDENAV);
-//    sidenav.style.flexBasis = "0px";
-  }
+  // closeSidenav() {
+  //   let sidenav = this.getElement(this.SIDENAV);
+  //   sidenav.style.flexBasis = "0px";
+  // }
 
   toogleRightSidenav() {
    /*

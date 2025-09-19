@@ -77,6 +77,7 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SEARCH_BOX;
 	AON_MENU_SEARCH_DIALOG;
 	CLOSE;
+	AON_MENU = 'aonMenu';
 
 	supersetDashboard;
 
@@ -579,7 +580,11 @@ export class AonNewMenu extends AonElement {
 
 	buildApp(app, style, id) {
 		let a = this.createElement(TAG.A);
+		// Cuando se selecciona algo del menu.
 		a.addEventListener(EVENT.CLICK, () => {
+			// Si Cierra el menu si esta en formato movil o reducido
+			this.closeMenuIsMobile();
+			// Abre lo seleccionado
 			this.appSelection(app);
 		});
 		a.classList.add('aonMenuApp');
@@ -708,6 +713,12 @@ export class AonNewMenu extends AonElement {
 		}
 
       return a;
+	}
+
+	// Si escoge opcion en el menu este se cierre
+	closeMenuIsMobile(){
+		const menu = this.getElement(this.AON_MENU);
+		menu.classList.toggle('hidden-mobile');
 	}
 
 	controlSideNav() {

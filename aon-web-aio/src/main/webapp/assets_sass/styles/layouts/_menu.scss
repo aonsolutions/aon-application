@@ -12,6 +12,7 @@
     <div id="rootPanel">Contenido</div>
   </div>
 */
+$menu-resolucion: v.$menu-resolucion-mobile + 1;
 #aonMenu{
   &.min-hidden{
     /* Menu izquierda reducido */
@@ -20,7 +21,9 @@
       min-width : v.$left-aonMenuLeft-min;
       max-width : v.$left-aonMenuLeft-min;
       span.aonNewMenuAppSpan{
-        display: none !important;
+        display       : none !important;
+        opacity       : 0;
+        pointer-events: none; 
       }
     }
     /* Menu arriba cuando reducimos */
@@ -33,16 +36,22 @@
   @media (max-width: v.$menu-resolucion-mobile) {
     &.hidden-mobile{
       #aonMenuSidenav {
-        display: none;
+        // display: none;
+        transform: translateX(-100%);
+        opacity: 0;
+        pointer-events: none;
       }
     }
     // position: absolute;
     #aonMenuSidenav {
-      position: absolute;
+      position  : absolute;
       width     : v.$pct-100 !important;
       min-width : v.$pct-100 !important;
       max-width : v.$pct-100 !important;
       z-index   : v.$num-5;
+      transform: translateX(0);   // visible por defecto
+      opacity: 1;
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out
     }
     #aonMenuTopnav {
       width     : v.$pct-100 !important;
@@ -56,7 +65,9 @@
     height    : calc(#{v.$vh-100} - v.$menu-top-height);
     overflow-y: auto;
     box-sizing: border-box;
-    
+    @media (min-width: $menu-resolucion) {
+      transition: width v.$t-03 ease-in-out, min-width v.$t-03 ease-in-out, max-width v.$t-03 ease-in-out;
+    }
     ul {
       list-style-type : none;
       margin          : v.$px-0;
@@ -78,6 +89,7 @@
               display     : inline-block;
               width       : v.$px-24;
               height      : v.$px-24;
+              flex-shrink : v.$num-0;
               // Oculta el texto
               font-size   : v.$px-0;
               line-height : v.$px-0;
@@ -89,6 +101,8 @@
               display     : block;
               font-size   : v.$px-16;
               line-height : v.$px-24;
+              opacity     : v.$num-1;
+              transition  : opacity v.$t-03 ease-in-out;
             }
           }
         }

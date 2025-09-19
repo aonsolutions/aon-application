@@ -26,5 +26,23 @@ aon-toolbar{
         justify-content: flex-end;
       }
     }
+    // Las migas de pan
+    &.aonToolbar{
+      section{
+        &:first-child{
+          aon-icon-button{
+            aon-icon{
+              font-size   : v.$px-14;
+              font-family : v.$font-primary-bold;
+              transition  : transform 0.3s ease-in-out;
+              transform   : rotate(0deg);
+            }
+            &.sidenav-hidden aon-icon[icon="chevron-down"] {
+              transform: rotate(-90deg);
+            }
+          }
+        }
+      }
+    }
   }
 }

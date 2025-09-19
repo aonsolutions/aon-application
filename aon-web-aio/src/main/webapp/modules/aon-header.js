@@ -1216,7 +1216,7 @@ export class AonHeader extends AonElement {
 			// Cogemos el menu
 			const menu = this.getElement(this.AON_MENU);
 			if (menu) {
-				observer.disconnect(); // Desconectamos el observer una vez que el menu este disponible
+				observer.disconnect(); // Desconectamos el observer una vez que el menu y botones esten disponibles
 				// Menu lateral
 				if (this.isMobile() || this.isMobileResolution()) {
 					// Recargar si es resolucion chica o movil, esta escondido

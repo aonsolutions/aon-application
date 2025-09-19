@@ -64,8 +64,15 @@ export class AonToolbar extends AonElement {
 	}
 
 	toogleSidenav(fn) {
-		let menu = this.getElement(this.TITLE_SECTION_MENU);
-		if(menu) menu.addEventListener(EVENT.CLICK, fn);
+		const menu 	= this.getElement(this.TITLE_SECTION_MENU);
+		if(menu){
+			menu.addEventListener('click', (e) => {
+				fn(e);
+				menu.classList.toggle('sidenav-hidden');
+				// console.log(menu); // aon-icon-button
+				// console.log(this); // aon-toolbar (donde se agrega el hidden)
+			});
+		}
 	}
 
 	connectedCallback () {
@@ -112,10 +119,10 @@ export class AonToolbar extends AonElement {
 			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;
 			titleSection.className = "aonToolbarSection";
-			// let aib = new AonIconButton();
-			// aib.id = this.TITLE_SECTION_MENU;
-			// // aib.icon  = "menu";
-			// titleSection.appendChild(aib);
+			let aib 	= new AonIconButton();
+			aib.id 		= this.TITLE_SECTION_MENU;
+			aib.icon  = "chevron-down";
+			titleSection.appendChild(aib);
 
 			let title = this.createElement(TAG.SPAN);
 			title.id = this.TITLE_SECTION_SPAN;
