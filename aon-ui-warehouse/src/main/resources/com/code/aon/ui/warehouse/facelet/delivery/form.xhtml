@@ -20,6 +20,7 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
+					<ui:param name="removeConfirmMessage" value="#{delivery.hasPackaging() ? bundle.aon_remove_confirm_delivery_packaging : bundle.aon_remove_confirm}" />
 					<ui:param name="saveButtonReRender" value="deliveryForm" />
 					<ui:param name="showMoreMenu" value="#{!delivery.nevv and deliveryDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">

@@ -1537,7 +1537,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException {
-		return CONSOLE.getDomains(
+		return CONSOLE.getAviableDomainsForSync(
 				new Domain().setName(paramsDomains.getDomainName()).setId(paramsDomains.getDomainId()), 
 				new User().setLogin(paramsDomains.getUser()), 
 				f -> f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")

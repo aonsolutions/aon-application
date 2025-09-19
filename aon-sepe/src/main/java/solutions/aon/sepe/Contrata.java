@@ -839,7 +839,7 @@ public class Contrata {
 			webClient.waitForBackgroundJavaScript(5000);
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
-
+			
 			// For contract 502 check if duration equals or less than 90 days
 			try {
 				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().contains("Obligatorio indicar si el contrato tiene")) {
@@ -863,14 +863,19 @@ public class Contrata {
 			try {
 				if(contract.equals("402")) {
 					webClient.waitForBackgroundJavaScript(5000);
+					
 					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=volver]")).click();
 					
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					setOccupation(cto, form);
 					
-					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
-
+					HtmlSelect select = (HtmlSelect) htmlPage.getElementById("preg28dias");
+					select.setSelectedIndex(cto.isWrittenContract() ? 1 : 2);
+					select.setSelectedAttribute(cto.isWrittenContract() ? "S" : "N", true);
+//					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
+					
 					webClient.waitForBackgroundJavaScript(5000);
+					
 					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {

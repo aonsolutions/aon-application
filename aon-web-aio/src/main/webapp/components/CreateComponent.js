@@ -173,6 +173,17 @@ export const createQuantity = (id, title, parent) => {
 }
 
 /**
+ * Crea el componente de UI aon-switch
+ * @param {string} name id of component
+ * @param {string} title Title of component
+ * @param {Element} parent Parent element node
+ * @returns {AonSwitch}
+ */
+export const createSwitch = (id, title, parent) => {
+  return createAonElement(new AonSwitch(), id, title, parent);
+}
+
+/**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
  * @param {HTMLElement} parent 

@@ -115,7 +115,8 @@ export class AonOfficePanel extends AonElement {
 				page: 1,
 				perPage: 50,
 				status: ["ACTIVE", "BLOCKED"],
-				target: false
+				target: false,
+				isSig: this.isSig()
 			});
 		}
 
@@ -134,14 +135,14 @@ export class AonOfficePanel extends AonElement {
 		const { OfficeOptions } = OfficeEnums;
 		let customerSideNavOpt = this.getElement("aonOfficePanelSidenavsideNavcustomer");
 		customerSideNavOpt.click();
-		
+
 		let aonContentBeta = this.getElementsByClassName("aonContentBeta");
 		aonContentBeta.style.height = 'auto';
-		
+
 		let rootPanel = this.getElement("rootPanel");
-	    rootPanel.style.height = 'auto';
-	    rootPanel.style.marginTop = '4rem';
-		
+		rootPanel.style.height = 'auto';
+		rootPanel.style.marginTop = '4rem';
+
 	}
 
 	buildSidenav() {
@@ -149,10 +150,11 @@ export class AonOfficePanel extends AonElement {
 
 		const { ServiceOptions } = OfficeEnums;
 		const { OfficeViews, OfficeOptions } = OfficeEnums;
-				
+
 		// TODO FUTURE
 		// OPTIONS.getOptions(this.isBeta(), this.isSig()).forEach(option => this.getApplication().addSidenavOptions3(option));
 
+		// CONSOLE
 		if (this.isSig()) {
 			let consoleOptions = [];
 			let linkDomain = LINK_DOMAINS;
@@ -169,61 +171,65 @@ export class AonOfficePanel extends AonElement {
 
 			application.addSidenavOptions(MSG.CONSOLE, consoleOptions);
 		}
-		
-		let customerOptions = [];
-		
+
+		// OFFICE
+		let officeOptions = [];
+
 		let customer = OfficeOptions.AON_CUSTOMER;
 		customer.fn = () =>
 			this.showView(OfficeViews.AON_CUSTOMER_LIST, undefined, {
 				...this.getFilterCustomers(),
 				page: 1,
 			});
-		customerOptions.push(customer);
+		officeOptions.push(customer);
+		
+		let taskHolder = OfficeOptions.AON_TASK_HOLDER;
+		taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
 
+		let workgroups = OfficeOptions.AON_WORKGROUP_LIST
+		workgroups.fn = () => this.showView(OfficeViews.AON_WORKGROUP_LIST);
+
+		let seller = OfficeOptions.AON_SELLER_LIST
+		seller.fn = () => this.showView(OfficeOptions.AON_SELLER_LIST.id);
+		
+		let scope = OfficeOptions.AON_SCOPE;
+		scope.fn = () => this.showView(OfficeOptions.AON_SCOPE.id);
+		
 		let customerTags = OfficeOptions.AON_CUSTOMER_STATUS;
 		customerTags.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_STATUS.id);
-		customerOptions.push(customerTags);
+
+		const auxiliars = {
+			id: "AUXILIARS",
+			name: "Auxiliares",
+			icon: MATERIAL_ICONS.LAB_PROFILE,
+			clickable: false,
+			options: [taskHolder, workgroups, seller, scope, customerTags]
+		}
+
+		officeOptions.push(auxiliars);
 		
+		let sellerWorkload = OfficeOptions.AON_SELLER_WORKLOAD
+		sellerWorkload.fn = () => this.showView(OfficeOptions.AON_SELLER_WORKLOAD.id);
+
 		let customerPayrollActivity = OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY;
 		customerPayrollActivity.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id);
-		customerOptions.push(customerPayrollActivity);
+		
+		const process = {
+			id: "PROCESS",
+			name: "Procesos",
+			icon: MATERIAL_ICONS.VIEW_TIMELINE,
+			clickable: false,
+			options: [sellerWorkload, customerPayrollActivity]
+		}
 		
 		if (this.isSig()) {
 			let linkCustomerDomain = LINK_CUSTOMER_DOMAINS;
 			linkCustomerDomain.fn = () => this.showView(LINK_CUSTOMER_DOMAINS.id);
-			customerOptions.push(linkCustomerDomain);
+			process.options.push(linkCustomerDomain);
 		}
 		
-		application.addSidenavOptions(MSG.CUSTOMERS, customerOptions);
-
-		let officeOptions = [];
-
-		let taskHolder = OfficeOptions.AON_TASK_HOLDER;
-		/*
-		taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST, undefined, {
-			...this.getFilterTaskHolders(),
-			page: 1,
-		});
-		*/
-		taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
-		officeOptions.push(taskHolder);
-
-		let workgroups = OfficeOptions.AON_WORKGROUP_LIST
-		workgroups.fn = () => this.showView(OfficeViews.AON_WORKGROUP_LIST);
-		officeOptions.push(workgroups);
-
-		let seller = OfficeOptions.AON_SELLER_LIST
-		seller.fn = () => this.showView(OfficeOptions.AON_SELLER_LIST.id);
-		officeOptions.push(seller);
-
-		let sellerWorkload = OfficeOptions.AON_SELLER_WORKLOAD
-		sellerWorkload.fn = () => this.showView(OfficeOptions.AON_SELLER_WORKLOAD.id);
-		officeOptions.push(sellerWorkload);
+		officeOptions.push(process);
 		
-		let scope = OfficeOptions.AON_SCOPE;
-		scope.fn = () => this.showView(OfficeOptions.AON_SCOPE.id);
-		officeOptions.push(scope);
-
 		application.addSidenavOptions(MSG.OFFICE, officeOptions);
 
 		let bookingOptions = [];
@@ -233,8 +239,8 @@ export class AonOfficePanel extends AonElement {
 		bookingOptions.push(targetEnterprise);
 
 		window.addEventListener("message", (event) => {
-			if ( (event.origin === "null" || event.origin === window.origin) 
-				&& event.data?.type === "CUSTOMER_ENTERPRISE_DONE" ) {
+			if ((event.origin === "null" || event.origin === window.origin)
+				&& event.data?.type === "CUSTOMER_ENTERPRISE_DONE") {
 				const customerRegistry = event.data.payload;
 				this.getCustomerCustom(customerRegistry)
 					.then(customer => {
@@ -682,7 +688,7 @@ export class AonOfficePanel extends AonElement {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		rightSidenav.style.flexBasis = "0px";
 		this.clearElement(rightSidenav);
-		
+
 		// Clean isSig LS
 		localStorage.removeItem("isSig");
 
@@ -730,23 +736,24 @@ export class AonOfficePanel extends AonElement {
 					localStorage.setItem("isSig", this.isSig());
 					GWT.iLoad(GWT.CUSTOMER_PAYROLL_ACTIVITY_MODULE, this.getApplication().CONTENT);
 					break;
-					
-				case LINK_CUSTOMER_DOMAINS.id: 
+
+				case LINK_CUSTOMER_DOMAINS.id:
 					this.clearToolbar();
 					localStorage.setItem("isSig", this.isSig());
 					GWT.iLoad(GWT.CUSTOMER_SYNC_DOMAIN_MODULE, this.getApplication().CONTENT);
 					break;
-					
+
 				case officeViews.AON_OFFICE_PANEL:
 					aonView = new AonOfficePanel();
 					break;
 				case officeViews.AON_CUSTOMER:
 					let searchPanel = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearch");
-					if(searchPanel) searchPanel.style.display = "none";
+					if (searchPanel) searchPanel.style.display = "none";
 
 					if (this.getFilterCustomers().type == "false") {
 						aonView = new AonTarget();
-						aonView.back = () => {if(searchPanel) searchPanel.style.display = "block";
+						aonView.back = () => {
+							if (searchPanel) searchPanel.style.display = "block";
 
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
 								...this.getFilterCustomers(),
@@ -757,7 +764,7 @@ export class AonOfficePanel extends AonElement {
 						aonView = new AonCustomer();
 						aonView.setOffice(true);
 						aonView.back = () => {
-							if(searchPanel) searchPanel.style.display = "block";
+							if (searchPanel) searchPanel.style.display = "block";
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
 								...this.getFilterCustomers(),
 								page: 1,

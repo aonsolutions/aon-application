@@ -105,6 +105,7 @@ export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
 export const CLOUD_UPLOAD = 'cloud_upload';
 export const CODE = 'code';
+export const COGNITION_2 = "cognition_2";
 export const COMMENT = 'comment';
 export const COMMENT_BANK = 'comment_bank';
 export const COMMUTE = 'commute';
@@ -116,6 +117,7 @@ export const CONTRACT = 'contract';
 export const CONTACTS = 'contacts';
 export const CREDIT_CARD = 'credit_card';
 export const CONTENT_COPY = 'content_copy';
+export const CYCLE = 'cycle';
 
 // ----- D
 export const DASHBOARD = 'dashboard';
@@ -197,6 +199,7 @@ export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
+export const LAB_PROFILE = 'lab_profile';
 export const LABEL = 'label';
 export const LABEL_IMPORTANT = 'label_important';
 export const LANGUAGE = 'language';
@@ -300,6 +303,7 @@ export const UNARCHIVE = 'unarchive';
 // ----- V
 
 export const VERIFIED = 'verified';
+export const VIEW_TIMELINE = 'view_timeline';
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
 
