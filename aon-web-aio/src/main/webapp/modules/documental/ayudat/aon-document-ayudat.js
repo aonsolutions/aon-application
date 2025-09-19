@@ -11,9 +11,8 @@ import { setAttributes } from '../../../services/utilsComponents.js';
 import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { AonCard } from '../../../components/aon-card.js';
-import { AonInput } from '../../../components/aon-input.js';
+import { AonNewInput } from '../../../components/aon-new-input.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
-
 
 export class AonDocumentAyudat extends AonElement {
 
@@ -137,9 +136,9 @@ export class AonDocumentAyudat extends AonElement {
 
     let tdName = this.createElement(TAG.TD);
     tdName.setAttribute('colspan', '2');
-    let inp = setAttributes(new AonInput(),{
+    let inp = setAttributes(new AonNewInput(),{
       id: "name",
-      description: MSG.NAME
+      title: MSG.NAME
     })
     tdName.appendChild(inp)
 		tr2.appendChild(tdName);

@@ -37,20 +37,20 @@ export const linkDomains = () => {
 export const LINK_DOMAINS = {
     id: CONSTANT.LINK_DOMAINS.initCap(),
     name: MSG.LINK_DOMAINS,
-    icon: MATERIAL_ICONS.DATASET_LINKED
+    // icon: MATERIAL_ICONS.DATASET_LINKED
 }
 
 export const BOOKING_PANEL = {
     id: CONSTANT.BOOKING_PANEL.initCap(),
     name: MSG.BOOKING_PANEL,
-    icon: MATERIAL_ICONS.THUNDERSTORM,
+    // icon: MATERIAL_ICONS.THUNDERSTORM,
     fn: () => gwtLoad(GWT.BOOKING_PANEL)
 }
 
 export const AON_SERVICES = {
     id: CONSOLE.AON_SERVICES.initCap(),
     name: MSG.AON_SERVICES,
-    icon: MATERIAL_ICONS.SHOPPING_BAG,
+    // icon: MATERIAL_ICONS.SHOPPING_BAG,
     fn: () => gwtLoad(GWT.PRODUCT_MODULE)
 
 }

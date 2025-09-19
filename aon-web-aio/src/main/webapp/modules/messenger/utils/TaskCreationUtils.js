@@ -1,5 +1,5 @@
 import { AonCard } from "../../../components/aon-card.js";
-import { AonInput } from "../../../components/aon-input.js";
+import { AonNewInput } from "../../../components/aon-new-input.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
@@ -776,16 +776,16 @@ const createCardMessenger = (id, title) =>{
   return aonCard;
 }
 
-const createInputContact = () => setAttributes(new AonInput(),{
+const createInputContact = () => setAttributes(new AonNewInput(),{
   name:MESSENGER_IDS.GTASK_ID_TASK,
   id: MESSENGER_IDS.GTASK_ID_TASK,
-  description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
+  title: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
-const createInputTitle = () => setAttributes(new AonInput(),{
+const createInputTitle = () => setAttributes(new AonNewInput(),{
   name:MESSENGER_IDS.TITLE_TASK,
   id: MESSENGER_IDS.TITLE_TASK,
-  description: MSG.ISSUE
+  title: MSG.ISSUE
 });
 
 

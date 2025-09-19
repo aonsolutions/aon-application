@@ -66,8 +66,8 @@ export class AonButton extends AonElement {
     let button = this.createElement(TAG.BUTTON);
     button.id = this.BUTTON;
     button.className = CSS.AON_BUTTON;
-    button.style.width = '100%';
-    button.style.padding = '10px 20px';
+    // button.style.width = '100%';
+    // button.style.padding = '10px 20px';
     button.disabled = this.isDisabled();
     this.appendChild(button);
 
@@ -76,8 +76,8 @@ export class AonButton extends AonElement {
     }
 
     if(this.icon) {
-      button.style.display = 'flex';
-      button.style.fontSize = '13px';
+      // button.style.display = 'flex';
+      // button.style.fontSize = '13px';
       let icon = this.createElement(TAG.I);
       icon.id = this.ICON;
       icon.className = CSS.MATERIAL_ICONS;
@@ -88,7 +88,7 @@ export class AonButton extends AonElement {
     if(this.title) {
       let text = this.createElement(TAG.SPAN);
       text.id = this.TEXT;
-      text.style.margin = 'auto';
+      // text.style.margin = 'auto';
       text.innerHTML = this.title;
       button.appendChild(text);
     }

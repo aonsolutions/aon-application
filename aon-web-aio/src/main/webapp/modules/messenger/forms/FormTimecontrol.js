@@ -1,5 +1,5 @@
 import { AonNewDateDate } from "../../../components/aon-new-date.js";
-import { AonInput } from "../../../components/aon-input.js";
+import { AonNewInput } from "../../../components/aon-new-input.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
@@ -55,7 +55,7 @@ const createDataForm = (task, form) => {
     
     const taskHolderId = data.task_holder || task.myTaskHolder.id;
 
-    let taskHolder = setAttributes(new AonInput(),{name:"task_holder", value: taskHolderId}) ;
+    let taskHolder = setAttributes(new AonNewInput(),{name:"task_holder", value: taskHolderId}) ;
     taskHolder.style.display = "none"; 
     form.appendChild( taskHolder );
    
@@ -70,11 +70,11 @@ const createDataForm = (task, form) => {
     TaskCreationUtils.createDivGrid(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
 
-    let time = setAttributes(new AonInput(), {
+    let time = setAttributes(new AonNewInput(), {
         name:"time",
         id:"time",
         type:"time",
-        description: `Nueva ${MSG.HOUR}`,
+        title: `Nueva ${MSG.HOUR}`,
         value: data.time ?  data.time : ""
     });
     TaskCreationUtils.createDivGrid(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})

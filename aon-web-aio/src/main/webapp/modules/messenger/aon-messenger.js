@@ -9,7 +9,7 @@ import { APP_PARAMS_REQUEST, MessengerOptions, MessengerSidenav, MESSENGER_VIEWS
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskExcel } from '../../services/taskService.js';
 import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
@@ -735,9 +735,9 @@ export class AonMessenger extends AonElement {
 		}
 		d.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
 
-		let aonInput = new AonInput();
+		let aonInput = new AonNewInput();
 		aonInput.id = "addTag";
-		aonInput.description = type === TAG_TYPE.TASK_LABEL ? MSG.TAG : MSG.TYPE;
+		aonInput.title = type === TAG_TYPE.TASK_LABEL ? MSG.TAG : MSG.TYPE;
 		if(tag.name) {
 			aonInput.value = tag.name;
 		}

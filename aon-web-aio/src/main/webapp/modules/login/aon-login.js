@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { login, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
 
-import "../../components/aon-input.js";
+import "../../components/aon-new-input.js";
 import "../../components/aon-loader.js";
 import "../../components/aon-dialog.js";
 import "../../components/aon-toast.js";
@@ -10,7 +10,7 @@ import "../company/aon-mobile-desktop.js";
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
-import { AonInput } from "../../components/aon-input.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonButton } from "../../components/aon-button.js";
@@ -332,9 +332,9 @@ export class AonLogin extends AonElement {
     dialog.setTitle("MAGIC LINK");
     let form = this.createElement("form");
     form.action = "#";
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "aonLoginMagicLinkEmail";
-    aonInput.description = "Email";
+    aonInput.title = "Email";
     aonInput.autocomplete = "on";
     form.appendChild(aonInput);
     dialog.setContent(form);
@@ -348,9 +348,9 @@ export class AonLogin extends AonElement {
     dialog.setTitle(MSG.RECOVER_PASSWORD);
     let form = this.createElement("form");
     form.action = "#";
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "aonLoginRememberEmail";
-    aonInput.description = "Email";
+    aonInput.title = "Email";
     aonInput.autocomplete = "on";
     form.appendChild(aonInput);
     dialog.setContent(form);

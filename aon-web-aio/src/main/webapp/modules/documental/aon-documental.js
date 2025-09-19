@@ -10,7 +10,6 @@ import {
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { MSG, MATERIAL_ICONS, EVENT, CONSTANT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonNewInput } from '../../components/aon-new-input';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
@@ -500,13 +499,9 @@ export class AonDocumental extends AonElement {
         d.clear();
         if (!this.isMobile()) d.width = '400px';
         d.setTitle(MSG.ADD_CATEGORY);
-        let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
+        let input = new AonNewInput();
         input.id = "aonDocumentalAddCategory";
-        if(this.isBetaDoc()){
-          input.title = MSG.CATEGORY; 
-        } else {
-          input.description = MSG.CATEGORY;
-        }
+				input.title = MSG.CATEGORY;
         d.setContent(input);
 
         d.addAcceptAction(() => {
@@ -524,13 +519,9 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.EDIT_CATEGORY);
-		let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
+		let input = new AonNewInput();
 		input.id = "aonDocumentalAddCategory";
-        if(this.isBetaDoc()){
-          input.title = MSG.CATEGORY; 
-        } else {
-          input.description = MSG.CATEGORY;
-        }
+		input.title = MSG.CATEGORY;
 		if (category.name) input.value = category.name;
 		d.setContent(input);
 		d.addAcceptAction(() => {
@@ -612,9 +603,9 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ADD_TAG);
-		let input = new AonInput();
+		let input = new AonNewInput();
 		input.id = "aonDocumentalAddTag";
-		input.description = MSG.TAG;
+		input.title = MSG.TAG;
 		d.setContent(input);
 		d.addAcceptAction(() => {
 			if (!input.value.isEmpty()) {
@@ -630,9 +621,9 @@ export class AonDocumental extends AonElement {
 		let d = document.getElementById(this.getApplication().DIALOG);
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		let input = new AonInput();
+		let input = new AonNewInput();
 		input.id = "aonDocumentalAddTag";
-		input.description = MSG.TAG;
+		input.title = MSG.TAG;
 		if (tag.name) input.value = tag.name;
 		d.setContent(input);
 		d.setTitle(MSG.EDIT_TAG);

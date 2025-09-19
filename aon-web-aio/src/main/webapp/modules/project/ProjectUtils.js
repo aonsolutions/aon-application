@@ -1,5 +1,5 @@
 import { AonNewDate } from "../../components/aon-new-date.js";
-import { AonInput } from "../../components/aon-input.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonNewSelect } from "../../components/aon-new-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { ProjectHolder } from "../../models/project/ProjectHolder.js";
@@ -326,9 +326,9 @@ const buildDialogProjectType = (parent, type) => {
     
     dialog.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
 
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "eeeInputType";
-    aonInput.description = MSG.TYPE;
+    aonInput.title = MSG.TYPE;
     if(projectType.getDescription()) {
         aonInput.value = projectType.getDescription();
     }
@@ -375,9 +375,9 @@ const buildDialogActivityType = (parent, type=null, projectTypeId=null) => {
     let div = document.createElement("div");
     dialog.setContent(div);
 
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "activityType98";
-    aonInput.description = MSG.ACTIVITY;
+    aonInput.title = MSG.ACTIVITY;
     if(activityType.getDescription()) {
         aonInput.value = activityType.getDescription();
     }

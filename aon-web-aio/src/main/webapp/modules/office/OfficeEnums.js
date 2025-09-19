@@ -2,7 +2,6 @@ import { AonCheckbox } from "../../components/aon-checkbox.js";
 import { AON_WORKGROUP } from "../../environments/aonTag.js";
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
-
 const AON_CUSTOMER = {
     id: 'sideNavcustomer',
     name: MSG.CUSTOMERS,
@@ -36,19 +35,19 @@ const AON_SCOPE = {
 const AON_CUSTOMER_STATUS= {
     id: 'sideNavTag',
     name: "Estados C. Bloqueados",
-    icon: MATERIAL_ICONS.INFO
+    // icon: MATERIAL_ICONS.INFO
 }
 
 const AON_CUSTOMER_PAYROLL_ACTIVITY = {
 	id: 'sideNavCustomerPayrollActivity',
     name: "Actividad Laboral Cliente",
-    icon: MATERIAL_ICONS.BROWSE_ACTIVITY
+    // icon: MATERIAL_ICONS.BROWSE_ACTIVITY
 }
 
 const AON_SERVICE = {
     id: 'sideNavService',
     name: MSG.AON_SERVICES,
-    icon: MATERIAL_ICONS.SHOPPING_BAG
+    // icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 
 const AON_SALES_ENTERPRISE = {

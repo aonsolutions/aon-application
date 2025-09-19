@@ -5,7 +5,7 @@ import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { AonNewSelect} from "../../components/aon-new-select.js";
 import { AonNewDate} from "../../components/aon-new-date.js";
-import { AonInput } from "../../components/aon-input.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoiceCommunication extends AonElement {
@@ -299,23 +299,21 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildPerson() {
         let div = this.createElement(TAG.DIV);
-        let name = new AonInput();
+        let name = new AonNewInput();
 		name.id = this.id + 'personName';
 		name.title = MSG.NAME;
         name.description = MSG.NAME;
 		name.value = this.configuration.company.name;
         div.appendChild(name);
 
-        let surname1 = new AonInput();
+        let surname1 = new AonNewInput();
 		surname1.id = this.id + 'personSurname1';
 		surname1.title = MSG.SURNAME + ' 1';
-        surname1.description = MSG.SURNAME + ' 1';
         div.appendChild(surname1);
         
-        let surname2 = new AonInput();
+        let surname2 = new AonNewInput();
 		surname2.id = this.id + 'personSurname2';
 		surname2.title = MSG.SURNAME + ' 2';
-        surname2.description = MSG.SURNAME + ' 2';
         div.appendChild(surname2);
 
         let d = new AonDialog();

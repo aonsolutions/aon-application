@@ -6,7 +6,7 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
-import '../../components/aon-input.js';
+import '../../components/aon-new-input.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';

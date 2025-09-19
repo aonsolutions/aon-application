@@ -8,7 +8,7 @@ import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 
 import { Product } from '../../models/product/Product.js';
@@ -341,9 +341,9 @@ export class AonProduct extends AonElement {
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
+		let select = new AonNewInput();
 		select.id = id;
-		select.description = title;
+		select.title = title;
 		return select;
 	}
 

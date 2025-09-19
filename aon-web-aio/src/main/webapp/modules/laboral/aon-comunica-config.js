@@ -15,7 +15,7 @@ import { getContractType, getQuoteGroup } from '../../services/comunicaService.j
 import { getApplicationParameters, saveApplicationParameter, } from '../../services/applicationParameterService.js';
 import { APP_PARAMS_PAYROLL } from './PayrollEnums.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 
 export class AonComunicaConfig extends AonElement {
@@ -259,10 +259,10 @@ export class AonComunicaConfig extends AonElement {
 
     let rowCount = table.getRowsCount();
 
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = this.getIdRand() + i;
     aonInput.name = aonInput.id;
-    aonInput.description = MSG.EMAIL + ' ' + (rowCount > 1 ? i + 1 : '');
+    aonInput.title = MSG.EMAIL + ' ' + (rowCount > 1 ? i + 1 : '');
     aonInput.value = email || "";
 
     this.querySelectorAll(`[id*='addEmail']`).forEach(el=>{

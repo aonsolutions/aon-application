@@ -56,4 +56,41 @@ aon-table{
       font-size : v.$px-12;
     }
   }
+  // 
+  // Por mejorar
+  // 
+  @media (max-width: v.$menu-resolucion-mobile) {
+    table {
+      display: block;
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: block;
+
+        tr {
+          display: block;
+          margin-bottom: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          padding: 12px;
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          border-top: none !important;
+          
+
+          &::before {
+            content: attr(data-label);
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
 }

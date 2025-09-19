@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 
 import '../../components/aon-date.js';
-import '../../components/aon-input.js';
+import '../../components/aon-new-input.js';
 import '../../components/aon-slider.js';
 import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
@@ -262,7 +262,7 @@ export class AonInvoicePrint extends AonElement {
 
     table.addRow();
 
-    // let rgpd  = this.createAonElement(new AonInput(), this.RGPD, MSG.RGPD_URL);
+    // let rgpd  = this.createAonElement(new AonNewInput(), this.RGPD, MSG.RGPD_URL);
     // rgpd.value = this.printConfiguration.rgpd;
     // rgpd.addEventListener(EVENT.CHANGE, () => {
     //   this.printConfiguration.rgpd = rgpd.value;

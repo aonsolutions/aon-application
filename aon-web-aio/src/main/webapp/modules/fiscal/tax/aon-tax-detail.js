@@ -40,7 +40,7 @@ import { DataAttachSource } from "../../../models/DataAttachSource.js";
 import { AonTax } from "./aon-tax.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
-import { AonInput } from "../../../components/aon-input.js";
+import { AonNewInput } from "../../../components/aon-new-input.js";
 import { AonNewNumber } from "../../../components/aon-new-number.js";
 import { AonNewDate } from "../../../components/aon-new-date.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -1317,10 +1317,10 @@ export class AonTaxDetail extends AonElement {
     aonSelect.hidden = true;
     form.appendChild(aonSelect);
 
-    const aonInputId = new AonInput();
+    const aonInputId = new AonNewInput();
     aonInputId.name = "id";
     aonInputId.id = "id";
-    aonInputId.description = "id";
+    aonInputId.title = "id";
     aonInputId.value = resp.id;
     aonInputId.visible = false;
     form.appendChild(aonInputId);
@@ -1333,11 +1333,11 @@ export class AonTaxDetail extends AonElement {
     divNrc.id = "divNrc";
     form.appendChild(divNrc);
 
-    const aonInputNrc = new AonInput();
+    const aonInputNrc = new AonNewInput();
     aonInputNrc.className = "aonWidth75";
     aonInputNrc.style.width = "72%";
     aonInputNrc.id = "nrc";
-    aonInputNrc.description = "NRC";
+    aonInputNrc.title = "NRC";
     aonInputNrc.name = "nrc";
     aonInputNrc.type = "text";
     if (resp.nrc) aonInputNrc.value = resp.nrc;

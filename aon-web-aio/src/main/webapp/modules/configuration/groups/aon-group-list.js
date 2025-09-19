@@ -4,7 +4,7 @@ import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import {deleteWorkgroup, getWorkgroups, saveWorkgroup, getWorkgroupProjectsHolders, getWorkgroupTasks} from '../../../services/workgroupService.js';
 import * as ACTION from '../../actions.js';
-import { AonInput } from "../../../components/aon-input.js";
+import { AonNewInput } from "../../../components/aon-new-input.js";
 import { Workgroup } from "../../../models/project/Workgroup.js";
 
 export class AonGroupList extends AonElement {
@@ -143,10 +143,9 @@ export class AonGroupList extends AonElement {
 
   add(wg) {
     let workgroup = new Workgroup(wg);
-    let input = new AonInput();
+    let input = new AonNewInput();
     input.id = this.id + 'AddWorkgroup';
     input.title = MSG.NAME;
-    input.description = MSG.NAME;
     let dialog = this.getApplication().getDialog();
 		dialog.clear();
 

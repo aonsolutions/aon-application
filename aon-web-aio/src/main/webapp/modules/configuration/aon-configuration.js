@@ -2,7 +2,7 @@ import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne, getRelationShipCompany, getSiblingsOffice } from "../../services/service.js";
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
-import "../../components/aon-input.js";
+import "../../components/aon-new-input.js";
 import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
 import "../company/aon-company-list.js";
@@ -26,7 +26,7 @@ import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
-import { AonInput } from "../../components/aon-input.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonNewsList } from "../news/news/aon-news-list.js";
 import { AonCustomerList } from "../registry/customer/aon-customer-list.js";
 
@@ -368,8 +368,8 @@ export class AonConfiguration extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 
-		let input = this.createAonElement(new AonInput(), CONSTANT.NAME, MSG.NAME);
-		input.description = MSG.NAME;
+		let input = this.createAonElement(new AonNewInput(), CONSTANT.NAME, MSG.NAME);
+		input.title = MSG.NAME;
 		div.appendChild(input);
 
 		// let expireDate =  this.createAonElement(new AonNewDate(), CONSTANT.DATE, MSG.EXPIRATION_DATE);

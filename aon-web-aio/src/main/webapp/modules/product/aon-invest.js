@@ -1,7 +1,7 @@
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonNewDate } from '../../components/aon-new-date.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonNewNumber } from '../../components/aon-new-number.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -221,9 +221,9 @@ export class AonInvest extends AonElement {
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
+		let select = new AonNewInput();
 		select.id = id;
-		select.description = title;
+		select.title = title;
 		return select;
 	}
 

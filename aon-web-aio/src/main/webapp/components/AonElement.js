@@ -210,8 +210,8 @@ export class AonElement extends HTMLElement{
 
   isSig(){
     const href = window.location.href;
-		return href.includes('sig.aonsolutions.org')
-      || LS.getDomainName() === 'sig.aonsolutions.org';
+		// return this.isLocal() || ( href.includes('sig.aonsolutions.org') || LS.getDomainName() === 'sig.aonsolutions.org');
+		return href.includes('sig.aonsolutions.org') || LS.getDomainName() === 'sig.aonsolutions.org';
   }
 
   isConsole(){

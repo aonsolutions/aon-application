@@ -1,7 +1,7 @@
 import { AonAvatar } from '../../components/aon-avatar.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { changePassword, getAuth, insertAvatar } from '../../services/authService.js';
@@ -125,16 +125,16 @@ export class AonMobileProfile extends AonElement {
 
         let div = document.createElement("div");
 
-        let oldPassword = new AonInput();
+        let oldPassword = new AonNewInput();
         oldPassword.id = "oldPassword";
         oldPassword.type = "password";
-        oldPassword.description = "Contraseña";
+        oldPassword.title = "Contraseña";
         div.appendChild(oldPassword);
 
-        let newPassword = new AonInput();
+        let newPassword = new AonNewInput();
         newPassword.id = "newPassword";
         newPassword.type = "password";
-        newPassword.description = "Repetir Contraseña";
+        newPassword.title = "Repetir Contraseña";
         div.appendChild(newPassword);
 
 		d.setContent(div);

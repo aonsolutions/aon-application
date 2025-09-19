@@ -15,7 +15,7 @@ import * as LS from '../../services/localStorageService.js';
 import { APP_PARAMS_REQUEST } from './MessengerEnums.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 
 
 export class AonMessengerConfig extends AonElement {
@@ -226,7 +226,7 @@ export class AonMessengerConfig extends AonElement {
     // --------------------PARAMS SEND EMAIL--------------------------------
 
     let divEvaluationEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
-    let ai = new AonInput();
+    let ai = new AonNewInput();
 
     let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
     textEmail.innerText = `${MSG.SEND} ${MSG.EMAIL} al:`;
@@ -251,7 +251,7 @@ export class AonMessengerConfig extends AonElement {
     divContent.appendChild(divEvaluationEmail);
 
     const evaluationEmail = params[APP_REQUESTS_EMAIL_RATING_CLOSED];
-    ai.description  = `${MSG.EMAIL} para notificar calificación`; // TODO
+    ai.title  = `${MSG.EMAIL} para notificar calificación`; // TODO
     ai.autocomplete = "off";
     ai.name = APP_REQUESTS_EMAIL_RATING_CLOSED;
     divEvaluationEmail.appendChild(ai);

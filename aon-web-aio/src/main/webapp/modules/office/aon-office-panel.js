@@ -135,12 +135,12 @@ export class AonOfficePanel extends AonElement {
 		let customerSideNavOpt = this.getElement("aonOfficePanelSidenavsideNavcustomer");
 		customerSideNavOpt.click();
 		
-		let aonContentBeta = this.getElementsByClassName("aonContentBeta");
-		aonContentBeta.style.height = 'auto';
+		// let aonContentBeta = this.getElementsByClassName("aonContentBeta");
+		// aonContentBeta.style.height = 'auto';
 		
-		let rootPanel = this.getElement("rootPanel");
-	    rootPanel.style.height = 'auto';
-	    rootPanel.style.marginTop = '4rem';
+		// let rootPanel = this.getElement("rootPanel");
+		// rootPanel.style.height = 'auto';
+		// rootPanel.style.marginTop = '4rem';
 		
 	}
 

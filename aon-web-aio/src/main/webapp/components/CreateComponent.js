@@ -1,7 +1,7 @@
 import { AonCard } from "./aon-card.js";
 import { AonDate } from "./aon-date.js";
 import { AonIconButton } from "./aon-icon-button.js";
-import { AonInput } from "./aon-input.js";
+// import { AonInput } from "./aon-input.js";
 import { AonSelect } from "./aon-select.js";
 import { AonSwitch } from "./aon-switch.js";
 import { AonToolbar } from "./aon-toolbar.js";
@@ -130,7 +130,7 @@ const createAonSelectAutocomplete = ({attributes, events}, parent, autocomplete)
  * @returns 
  */
 const createAonInput = ({attributes, events}, parent) => {
-  let input = setAttributes(new AonInput(), attributes);
+  let input = setAttributes(new AonNewInput(), attributes);
   if(events) setEvents(input, events);
   if(parent) parent.appendChild(input);
   return input;
