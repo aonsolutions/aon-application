@@ -71,7 +71,6 @@ public class CustomerActivityModule  implements EntryPoint {
 
 	private void showCustomersLinkedPanel() {
 		deckLayoutPanel.showWidget(customersLinkedPanel);
-		customersLinkedPanel.onSearch();
 	}
 
 	private void showSelectedCustomer(Integer customerId, String customerName, Domain customerDomain) {

@@ -556,7 +556,7 @@ public class Up2Date {
 			// BaseCgpMin2025Fix.BASECGPMIN2025FIX,
 			// RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
 			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
-			BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
+			// BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
 			AddAonClassic.ADD_AON_CLASSIC,
 			
 			// ----------------------------------------------------------------

@@ -386,9 +386,9 @@ export class AonTable extends AonElement {
       else if(item.type && item.type ==="number") {
         td.innerHTML = value[id] !== undefined? value[id] : "";
         td.style.textAlign = "right";
-        if(value[id] !== undefined && value[id].includes('-')){
-          td.style.color = "green";
-        }
+        // if(value[id] !== undefined && value[id].includes('-')){
+        //   td.style.color = "green";
+        // }
         td.addEventListener(EVENT.CLICK, fn);
       } 
       else {

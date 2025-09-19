@@ -278,7 +278,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private void getSigDomains(Consumer<List<DomainCompany>> success) {
 		String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-		String endPoint = "/ms/api/domain/";
+		String endPoint = "/ms/api/domain/sync-aon-customer";
 
 		JSONObject body = new JSONObject();
 		body.put("document", new JSONString(paramsDomains.getQuery()));

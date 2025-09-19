@@ -1260,6 +1260,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 							.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr())
 							.setSalesDetail(detail.getId());
 					AON.saveDeliveryDetail(occam, dd);
+					detail.setDelivered(detail.getQuantity());
+					detail.setStatus(com.esferalia.aon.occam.api.model.type.SalesDetailStatus.SETTLED);
+					AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
 				} else {
 					detail.setDelivery(deliveryIdAux);
 					AON.updateSalesDetail(domainName, to.getDomain(), login, detail);

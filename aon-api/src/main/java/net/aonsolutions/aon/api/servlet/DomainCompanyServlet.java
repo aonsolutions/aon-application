@@ -69,6 +69,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
 	public static final String SYNC_AON_CUSTOMER = "/sync-aon-customer/";
 	
+	// TODO: implementar obtener dominios disponibles con limit y offset
+	public static final String AVIABLE_SYNC_DOMAINS = "/aviable-sync-domain/";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);
@@ -95,6 +98,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
 					.addRoute(CHECK_ITEMS, DomainCompanyServlet::getCheckedItems)
+					.addRoute(SYNC_AON_CUSTOMER, DomainCompanyServlet::getAviableSyncDomains)
 					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
 					.addRoute(CUSTOMER_SUMMARY_ACTIVITY, DomainCompanyServlet::getActivitySummary)
 					.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
@@ -170,6 +174,12 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		JSONObject log = new JSONObject();
 		log.put("item", "DomainType: " + domainType.name() + ", App: " + app + ", BarCode: " + barCode);
 		return log;
+	}
+
+	private static JSONArray getAviableSyncDomains(AonApiData api) {
+		JSONArray domains = new JSONArray();
+		CONSOLE.getAviableDomainsForSync(f -> domainFilter(api, f)).map(DomainCompanyJSON::toJSON).forEach(domains::put);
+		return domains;
 	}
 	
 	private static JSONArray getDomains(AonApiData api) {

@@ -14,9 +14,16 @@ export const COMPANY_HEADER = `${COMPANY}/header`;
 export const COMPANY_CUSTOMER_TAGS = `${COMPANY}/tags`;
 export const DELIVERIES = `${API}/deliveries`;
 export const ELABORATION = `${API}/elaboration`;
+export const ELABORATION_SERIAL = `${API}/elaboration/serial`;
 export const ELABORATIONS= `${API}/elaborations`;
 export const PRODUCT = `${API}/product`;
 export const PACKAGE = `${API}/package`;
+
+export const USER = `${API}/user`;
+export const USER_LIST = `${USER}/list`;
+export const USER_ROLES = `${USER}/roles`;
+export const USER_APPROLES = `${USER}/approles`;
+export const USER_SERVICE = `${USER}/service`;
 
 export const PROJECTS = `${API}/projects`;
 export const WAREHOUSES = `${API}/warehouses`;

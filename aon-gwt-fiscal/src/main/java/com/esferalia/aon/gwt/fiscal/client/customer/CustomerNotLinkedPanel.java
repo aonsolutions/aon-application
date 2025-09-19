@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -45,11 +44,6 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	private Map<Integer, Customer> rowCustomers = new HashMap<>();
 
 	private CustomersLinkedParams params;
-
-	private BookingApi bookingApi;
-	private CustomerApi customerApi;
-	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = false;
 
 	private static enum COLS {
 
@@ -87,9 +81,6 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		this.customerApi = new CustomerApi(SESSION_API);
-		this.bookingApi = new BookingApi(SESSION_API);
 
 		this.rowCustomers.clear();
 

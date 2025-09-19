@@ -13,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -146,10 +147,10 @@ public class PrepareSaleProcess implements Serializable {
 	@Transient
 	public List<ITransferObject> getDetailList(Sales sales) {
 		try {
-			System.out.println(IEntityAlias.SALES_DETAIL_SALES_ID);
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
 			criteria.addNullExpression("SalesDetail.delivery");
 			return salesDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {

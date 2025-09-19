@@ -79,8 +79,24 @@ public class CONSOLE {
 				e.printStackTrace();
 			}
 		}
+		return list.stream();	
+	}
+	
+	public static Stream<DomainCompany> getAviableDomainsForSync(DomainFilter filter) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getAviableDomainsForSync(ctx, true, filter).collect(Collectors.toList());
+				domains.forEach(domain -> {
+					domain.setSchema(schema);
+					list.add(domain);						
+				});
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			}
+		}
 		return list.stream();
-		
 	}
 	
 	public static Stream<DomainCompany> areDomainsSync(DomainFilter filter) {
@@ -268,10 +284,10 @@ public class CONSOLE {
 		}
 	}
 	
-	public static Stream<DomainCompany> getDomains(Domain domain, User user, DomainFilter filter) {
+	public static Stream<DomainCompany> getAviableDomainsForSync(Domain domain, User user, DomainFilter filter) {
 		List<DomainCompany> domains = new ArrayList<DomainCompany>();
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			domains = getConsole().getDomains(ctx, filter).collect(Collectors.toList());
+			domains = getConsole().getAviableDomainsForSync(ctx, false, filter).collect(Collectors.toList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

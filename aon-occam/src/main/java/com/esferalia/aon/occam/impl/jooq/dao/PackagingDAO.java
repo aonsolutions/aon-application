@@ -579,8 +579,12 @@ public class PackagingDAO {
 		SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));		
 		sd.setDelivered(sd.getDelivered() + quantity);
 		sd.setStatus(sd.getDelivered() == sd.getQuantity() ? SalesDetailStatus.SETTLED : SalesDetailStatus.PARTIAL_SETTLED);
+
 		if(AonMathUtils.isGreaterThan(sd.getDelivered(), sd.getQuantity())) {
-			throw new AonCoreException("La cantidad a añadir es mayor que la cantidad del pedido.");
+//	 		NO QUIEREN QUE DE ESTE ERROR. CREO QUE AL FINAL HABRÁ QUE VOLVER A PONERLO. 
+//			throw new AonCoreException("La cantidad a añadir es mayor que la cantidad del pedido.");
+			sd.setDelivered(sd.getQuantity());
+			sd.setStatus(SalesDetailStatus.SETTLED);
 		}
 		SalesDetailDAO.save(ctx, sd);
 		

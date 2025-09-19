@@ -28,6 +28,7 @@ export class AonCustomerList extends AonRegistryList {
 
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
+		console.log("Customers", customers);
 		return customers;
 	}
 
@@ -88,7 +89,9 @@ export class AonCustomerList extends AonRegistryList {
 					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
 					type : detail.type,
-					page:1
+					page:1,
+					isSig: this.isSig()
+					
 				}
 				this.setFilter(this.filter);
 				this.parent.setFilterCustomers(this.filter);
@@ -103,7 +106,8 @@ export class AonCustomerList extends AonRegistryList {
 				this.filter = {
 					page: 1,
 					perPage: 50,
-					status: ["ACTIVE", "BLOCKED"]
+					status: ["ACTIVE", "BLOCKED"],
+					isSig: this.isSig()
 				}
 				this.setFilter(this.filter);
 				this.parent.setFilterCustomers(this.filter);

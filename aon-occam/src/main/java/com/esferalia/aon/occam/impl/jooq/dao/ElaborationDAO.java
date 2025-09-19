@@ -252,6 +252,37 @@ public class ElaborationDAO {
 				.orElse(null);
 	}
 
+	public static Elaboration saveSerial(AONContext ctx, Elaboration elaboration) {
+		Integer itemId = elaboration.getDetail().getItem().getId();
+		String serialNumber = elaboration.getDetail().getItem().getSerialNumber();
+		if(itemId != null && serialNumber != null) {
+			ctx.getDslContext().update(ITEM)
+			.set(ITEM.SERIAL_NUMBER, serialNumber)
+			.where(ITEM.DOMAIN.eq(elaboration.getDomain())
+			.and(ITEM.ID.eq(itemId)))
+			.execute();
+			
+			String description = elaboration.getDescription().split("#")[0] + "#" + serialNumber;
+			ctx.getDslContext().update(ELABORATION)
+			.set(ELABORATION.DESCRIPTION, description)
+			.where(ELABORATION.DOMAIN.eq(elaboration.getDomain())
+				.and(ELABORATION.ID.eq(elaboration.getId())))
+			.execute();
+		}
+		
+		Date serialDate = elaboration.getDetail().getItem().getSerialDate();
+		if(itemId != null && serialDate != null) {
+			ctx.getDslContext().update(ITEM)
+			.set(ITEM.SERIAL_DATE, AonDateUtils.toSql(serialDate))
+			.where(ITEM.DOMAIN.eq(elaboration.getDomain())
+			.and(ITEM.ID.eq(itemId)))
+			.execute();
+		}
+		
+		return elaboration;
+	}
+
+	
 	public static Elaboration deleteElaboration(AONContext ctx, ElaborationFilter filter) {
 		ctx.checkWrite();
 		return ctx.getDslContext().delete(ELABORATION)
