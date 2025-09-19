@@ -182,6 +182,9 @@ export class AonDocumentalCard extends AonElement {
   }
 
   removeAllChildNodes(parent) {
+    if (!parent){
+      return;
+    }
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
     }
