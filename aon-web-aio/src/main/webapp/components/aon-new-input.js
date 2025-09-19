@@ -13,6 +13,7 @@ export class AonNewInput extends AonElement {
 	TITLE;
 	MSG;
 	MSG_SPAN;
+	LOADER;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -103,6 +104,7 @@ export class AonNewInput extends AonElement {
 		this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
 		this.value = this.value || CONSTANT.EMPTY;
 		this.type = this.type || CONSTANT.TEXT;
+		this.LOADER = this.id + CONSTANT.SPIN;
 	}
 
 	build() {
@@ -148,7 +150,7 @@ export class AonNewInput extends AonElement {
 		if (this.maxlength) {
 			input.setAttribute("maxlength", this.maxlength);
 		}
-
+		
 		let span = this.createElement(TAG.SPAN);
 		span.id = this.TITLE;
 		let requiredText = this.isRequired() ? " *" : "";
@@ -163,6 +165,11 @@ export class AonNewInput extends AonElement {
             input.type = type;
           });
 		}
+	}
+	
+	removeLabel(){
+		const label = this.getElement(this.TITLE);
+		if(label) label.remove();
 	}
 
 	buildMsg(parent) {
@@ -236,6 +243,39 @@ export class AonNewInput extends AonElement {
 
 		if (color) iconLabel.color = color;
 //		this.getElement(this.INPUT).style.paddingRight = '40px';
+	}
+	
+	addLoader() {
+		const loader = document.createElement("div");
+		loader.id = this.LOADER;
+		loader.className = "aon-spinner-input-loading"
+		let icon = this.getElement(this.ICON_BUTTON);
+		icon.appendChild(loader);
+	}
+	
+	removeLoader() {
+		const loader = this.getElement(this.LOADER);
+		if(loader) loader.remove();
+	}
+	
+	showLoader() {
+		const loader = this.getElement(this.LOADER);
+		if(loader) loader.classList.remove("hidden");
+	}
+	
+	hideLoader() {
+		const loader = this.getElement(this.LOADER);
+		if(loader) loader.classList.add("hidden");
+	}
+	
+	showIcon() {
+		const icon = this.getElement(this.ICON_BUTTON);
+		if(icon != null && icon.id != "undefined") icon.getButton().classList.remove("hidden");
+	}
+	
+	hideIcon() {
+		const icon = this.getElement(this.ICON_BUTTON);
+		if(icon != null && icon.id != "undefined") icon.getButton().classList.add("hidden");
 	}
 
     getIconButton() {
@@ -412,7 +452,8 @@ export class AonNewInput extends AonElement {
 	}
 
 	focus() {
-		this.getElement(this.INPUT).focus();
+		const input = this.getElement(this.INPUT);
+		if(input) input.focus();
 	}
 }
 
