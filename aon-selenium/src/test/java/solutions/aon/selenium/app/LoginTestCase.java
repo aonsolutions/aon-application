@@ -120,6 +120,59 @@ public class LoginTestCase extends AppBaseTestCase {
 	}
 	
 
+	@Test
+	@Ignore
+	public void testDomainByDomainAuthI() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://general-payroll-test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "inactivo@payroll-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.textMatches(By.id("aonLoginToast"), Pattern.compile("El dominio INACTIVA se encuentra actualmente inactivo")));
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
+	@Test
+	public void testLoginIllegalMixOfCollations() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "ñacurutú");
+		String password = System.getProperty("integration.test.env.app.password", "ñacurutú");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
 
 
 
