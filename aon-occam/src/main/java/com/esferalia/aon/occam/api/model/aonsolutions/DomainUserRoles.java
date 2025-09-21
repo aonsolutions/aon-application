@@ -193,7 +193,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	private boolean hasOldRole(OldAonRole role) {
-		if ( getUser().getUserRoles() == null )
+		if ( getUser().getUserRoles() == null || getUser().isPortal())
 			return false;
 
 		Boolean bool = false;
@@ -334,9 +334,8 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isCommercial() {
-		return (hasCommercial() || ((isParentUser() || isEnterpriseChild()) && hasParentCommercial()))
-			&& (isAdmin() || hasRole(AonRole.COMMERCIAL) 
-				|| hasOldRole(OldAonRole.COMMERCIAL));
+		return (hasCommercial() || (isEnterpriseChild() && hasParentCommercial()))
+			&& (isAdmin() || hasRole(AonRole.COMMERCIAL) || hasOldRole(OldAonRole.COMMERCIAL));
 	}
 	
 	// WAREHOUSE
@@ -350,9 +349,8 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isWarehouse() {
-		return (hasWarehouse() || ((isParentUser() || isEnterpriseChild()) && hasParentWarehouse()))
-			&& (isAdmin() || hasRole(AonRole.WAREHOUSE) 
-				|| hasOldRole(OldAonRole.WAREHOUSE));
+		return (hasWarehouse() || (isEnterpriseChild() && hasParentWarehouse()))
+			&& (isAdmin() || hasRole(AonRole.WAREHOUSE) || hasOldRole(OldAonRole.WAREHOUSE));
 	}
 	
 	// COMUNIC@ - COMUNIC@
@@ -498,8 +496,14 @@ public class DomainUserRoles implements Serializable {
 				|| hasOldModule(Module.MANAGEMENT) || hasApp(AonApp.MANAGEMENT);
 	}
 	
+	public boolean hasParentManagement() {
+		return hasParentOldModule(Module.AON_FINANCE) || hasParentOldModule(Module.AON_ONE)
+				|| hasParentOldModule(Module.MANAGEMENT) || hasParentApp(AonApp.MANAGEMENT);
+	}
+	
 	public boolean isManagement() {
-		return hasManagement() && (isAdmin() || hasRole(AonRole.MANAGEMENT));
+		return (hasManagement() || (isEnterpriseChild() && hasParentManagement()))
+			&& (isAdmin() || hasRole(AonRole.MANAGEMENT));
 	}
 	
 	public boolean isManagementManager() {
@@ -671,7 +675,7 @@ public class DomainUserRoles implements Serializable {
 	}
 
 	public boolean isTreasury() {
-		return (hasTreasury() || ((isParentUser() || isEnterpriseChild()) && hasParentTreasury()))
+		return (hasTreasury() || (isEnterpriseChild() && hasParentTreasury()))
 			&& (isAdmin() || hasRole(AonRole.TREASURY) || hasOldRole(OldAonRole.FINANCE));
 	}
 	
@@ -686,7 +690,7 @@ public class DomainUserRoles implements Serializable {
 	}
 
 	public boolean isMarketing() {
-		return (hasMarketing() || ((isParentUser() || isEnterpriseChild()) && hasParentMarketing()))
+		return (hasMarketing() || (isEnterpriseChild() && hasParentMarketing()))
 			 && (this.isAdmin() || this.hasRole(AonRole.MARKETING));
 	}
 	
@@ -701,9 +705,8 @@ public class DomainUserRoles implements Serializable {
 	}
 
 	public boolean isGroupware() {
-		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
-			 && (isAdmin() || hasRole(AonRole.GROUPWARE) 
-				 || hasOldRole(OldAonRole.TASK_MONITORING));
+		return (hasGroupware() || ( isEnterpriseChild() && hasParentGroupware()))
+			 && (isAdmin() || hasRole(AonRole.GROUPWARE) || hasOldRole(OldAonRole.TASK_MONITORING));
 	}
 	
 	public boolean hasCallCenter() {

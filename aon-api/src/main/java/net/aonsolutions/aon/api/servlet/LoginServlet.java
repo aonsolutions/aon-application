@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import org.jooq.tools.json.JSONValue;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -23,7 +20,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;

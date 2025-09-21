@@ -177,6 +177,7 @@ public interface IWarehouse {
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter);
 	Elaboration saveElaboration(AONContext ctx, Elaboration elaboration);
+	Elaboration saveElaborationSerial(AONContext ctx, Elaboration elaboration);
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration deleteElaboration(AONContext ctx, Integer id);
