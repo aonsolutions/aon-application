@@ -5,8 +5,8 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -93,7 +93,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDomainInactiveByDomainAuthII() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
@@ -121,7 +121,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testDomainByDomainAuthI() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://general-payroll-test.aonsolutions.org:8080/app");
