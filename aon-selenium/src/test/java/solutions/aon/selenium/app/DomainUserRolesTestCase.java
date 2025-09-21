@@ -1,8 +1,8 @@
 package solutions.aon.selenium.app;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -10,8 +10,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -64,7 +64,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testConsultancyManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
@@ -201,7 +201,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		List<String> topMenuExpectedIds = Arrays.stream(ids).map(id -> "aonMenuBar-" + id).toList();
 		assertEquals(topMenuExpectedIds.size(), topMenuElements.size());
 		topMenuElements.forEach(
-				menu -> assertTrue(menu.getAttribute("id"), topMenuExpectedIds.contains(menu.getAttribute("id"))));
+				menu -> assertTrue(topMenuExpectedIds.contains(menu.getAttribute("id")), menu.getAttribute("id")));
 	}
 
 	private void assertSideMenu(WebDriver webDriver, WebDriverWait wait, String... ids) {
@@ -212,7 +212,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		List<String> sideMenuElementsIds = Arrays.stream(ids).map(id -> "aonMenuList-" + id).toList();
 		assertEquals(sideMenuElementsIds.size(), sideMenuElements.size());
 		sideMenuElements.forEach(
-				menu -> assertTrue(menu.getAttribute("id"), sideMenuElementsIds.contains(menu.getAttribute("id"))));
+				menu -> assertTrue( sideMenuElementsIds.contains(menu.getAttribute("id")), menu.getAttribute("id")));
 	}
 
 	private void assertCompaniesTabs(WebDriver webDriver, WebDriverWait wait, String... texts) {
@@ -221,8 +221,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		List<WebElement> aonTabItems = aonCompanyTabFilter
 				.findElements(By.xpath("//*[@class='aonTabItem']/*[contains(@class,'aonTabItemText')]"));
 		assertEquals(companyTabsExpectedTexts.size(), aonTabItems.size());
-		aonTabItems.forEach(tab -> assertTrue(tab.getText(),
-				companyTabsExpectedTexts.stream().anyMatch(text -> tab.getText().startsWith(text))));
+		aonTabItems.forEach(tab -> assertTrue(companyTabsExpectedTexts.stream().anyMatch(text -> tab.getText().startsWith(text)), tab.getText()));
 	}
 
 	private void assertHelpNotifications(WebDriver webDriver, WebDriverWait wait) {
