@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -152,6 +154,7 @@ public class LoginServlet extends AonApiHttpServlet{
 					&& !"aonsolutions.org".equals(domainName) 
 					&& !"localhost".contentEquals(domainName) 
 				) {
+				
 				String aux = username;
 				
 				//Domain domain = AON.getDomain(domainName, 0, username, f -> f.getNameProperty().eq(domainName));
@@ -161,7 +164,19 @@ public class LoginServlet extends AonApiHttpServlet{
 						.and(f.getDomainProperty().in(arrayOf(domainId, domainParentId))));
 				
 				if(user.getId() != null) {
-					String pass = SECURITY.getUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+					String pass = "";
+					if ( AonStringUtils.isNotBlank(login)) {
+						boolean isSuppportEnabled = AON
+								.getApplicationParameterStream(domain.getName(), domain.getId(), user.getLogin(),
+										f -> f.getNameProperty().eq(AppParam.AON_SUPPORT_ENABLED.toString()))
+								.findAny().isPresent();
+						if ( isSuppportEnabled ) {
+							User loginUser = AON.getUser(domain.getName(), 0, login);
+							pass = SECURITY.getUserPassword(domain.getName(), 0, login, loginUser.getId());
+						}
+					} else {
+						pass = SECURITY.getUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+					}
 					String userPass = Utils.createPasswordHash(login, password);
 					passSuccess = pass.equals(userPass);
 				}
