@@ -1,5 +1,5 @@
-import { get, post, put, remove } from "./request.js";
-import { API_URL } from "../environments/environments.js";
+import { get, post, put, remove, removePro } from "./request.js";
+import { API_URL, PRO_URL } from "../environments/environments.js";
 import { openFileUrl } from "./fileService.js";
 
 const CUSTOMERS = `${API_URL}/customers`;
@@ -62,6 +62,8 @@ export const getSiblingsOffice = (data) => get(SIBLINGS_OFFICE, data);
 
 // REGISTRY RADDINFO
 export const getCustomerDomainAddInfo = (data) => get(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+export const removeCustomerDomainAddInfo = (data) => remove(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+export const removeAonCustomerDomain = (data, headers) => removePro(`${PRO_URL}/${RELATIONSHIP}/aonCustomer`, data, headers);
 
 // SUGGESTED ACCOUNT
 

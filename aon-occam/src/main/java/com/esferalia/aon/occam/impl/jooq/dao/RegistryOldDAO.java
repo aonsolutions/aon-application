@@ -28,6 +28,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +37,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record6;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
@@ -67,6 +72,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -1059,9 +1065,10 @@ public class RegistryOldDAO {
 		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO.ID.eq(raddinfoId)).execute();
 		ctx.log().info("DELETE RADDINFO ("+i+") id: " + raddinfoId);
 	}
-
+	
 	public static void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter){
-		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
+		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
+		ctx.log().info("DELETE RADDINFO ("+i+")");
 	}
 	
 	public static RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo){
@@ -1148,6 +1155,49 @@ public class RegistryOldDAO {
 					.setValue(r.getValue(RADDINFO.VALUE))
 					.setDate(r.getValue(RADDINFO.VALUE_DATE));
 		}
+	}
+
+
+	public static  List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
+		
+		// Campo calculado: extrae el número del atributo
+		Field<String> domainGroup = DSL.field(
+			    "CASE " +
+			    " WHEN {0} REGEXP 'AON_DOMAIN[0-9]+' THEN REGEXP_REPLACE({0}, 'AON_DOMAIN([0-9]+).*', '\\\\1') " +
+			    " ELSE '' END",
+			    String.class,
+			    RADDINFO.ATTRIBUTE
+			).as("domain_group");
+
+		Result<Record6<Integer, String, String, String, String, String>> result = ctx.getDslContext()
+		    .select(
+		    	RADDINFO.REGISTRY,
+		        domainGroup,
+		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_ID"), RADDINFO.VALUE)).as("domain_id"),
+		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_SCHEMA"), RADDINFO.VALUE)).as("domain_schema"),
+		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_NAME"), RADDINFO.VALUE)).as("domain_name"),
+		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_TYPE"), RADDINFO.VALUE)).as("domain_type")
+		    )
+		    .from(RADDINFO)
+		    .where(RADDINFO.REGISTRY.eq(registry))
+		    .groupBy(RADDINFO.REGISTRY, domainGroup)
+		    .fetch();
+		
+		List<DomainSigAddInfo> sigCustomerDomains = new ArrayList<DomainSigAddInfo>();
+		
+		result.forEach(r -> 
+			sigCustomerDomains.add(
+				new DomainSigAddInfo()
+					.setRegistry(r.getValue(RADDINFO.REGISTRY))
+					.setDomainGroup(r.get("domain_group", String.class))
+					.setDomainId(r.get("domain_id", String.class))
+					.setDomainName(r.get("domain_name", String.class))
+					.setDomainSchema(r.get("domain_schema", String.class))
+					.setDomainType(r.get("domain_type", String.class))
+			)
+		);
+		
+		return sigCustomerDomains;
 	}
 
 }

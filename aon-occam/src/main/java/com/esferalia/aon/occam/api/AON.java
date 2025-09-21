@@ -172,6 +172,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -1775,6 +1776,17 @@ public class AON {
 		}
 	}
 	
+	public static List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String login, Integer registry){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getDomainSigAddInfo(ctx, registry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void insertRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
 		CloseableAONContext ctx = null;
 		try {
@@ -1800,6 +1812,12 @@ public class AON {
 	public static void deleteRegistryAddInfo(Domain domain, String login, Integer raddinfoId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
 			getRegistry().deleteRegistryAddInfo(ctx, raddinfoId);
+		}
+	}
+	
+	public static void deleteRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfoFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryAddInfo(ctx, filter);
 		}
 	}
 	

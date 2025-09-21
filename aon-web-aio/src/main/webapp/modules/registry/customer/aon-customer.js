@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, remo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getCustomerStatusTags, getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -337,9 +337,12 @@ export class AonCustomer extends AonReg {
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
 			})
+			/*
 			.catch((err) => {
 				this.showError(err);
-				});	
+			})
+			*/
+			;	
 		} else {
 			getRelationShip({
 				registry: this.registry.getId(),
@@ -349,9 +352,12 @@ export class AonCustomer extends AonReg {
 			.then((resp) => {
 				this.buildEnterpriseLinkedView(resp);
 			})
+			/*
 			.catch((err) => {
 				this.showError(err);
-				});	
+			})
+			*/
+			;	
 		}
 	}
 
@@ -426,14 +432,12 @@ export class AonCustomer extends AonReg {
 		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
 		
-		const { domainId, domainName, schema, domainType } = resp;
-
-		const link = domainId && domainName;
+		const link = resp && resp.length > 0;
 
 		const color = link ? CSS.variable(COLORS.ONLINE_GREEN) : COLORS.ORANGE;
 
 		let main = this.createElement(TAG.DIV);
-		main.title = "Vinculo con empresa " + (link ? `(${domainName})` : "(No existe)");
+		main.title = "Vinculo con empresa " + (link ? `(${resp && resp.length > 1 ? 'Múltiple' : resp[0].domainName})` : "(No existe)");
 		main.style.display = "flex";
 		main.style.columnGap = "5px";
 		main.style.border = "1px solid";
@@ -469,7 +473,7 @@ export class AonCustomer extends AonReg {
 
 		if (link) {
 			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown, domainName);
+				this.getSigOptionsLinked(iconArrowDown, resp);
 			});
 		} else {
 			statusText.style.marginRight = "5px";
@@ -695,17 +699,6 @@ export class AonCustomer extends AonReg {
 		let options = [];
 
 		if (rrelationship) {
-			if(this.isSig() /*|| this.isAyudaT()*/){
-				options.push(
-					{
-						name: "Acceder",
-						value: "access",
-						icon: MATERIAL_ICONS.OPEN_IN_NEW,
-						fn: () => this.suplant(rrelationship.comments),
-					}
-				);
-			}
-			
 			options.push(
 				{
 					name: "Abrir",
@@ -719,100 +712,12 @@ export class AonCustomer extends AonReg {
 				}
 			);
 			
-			if(this.isSig()){
-				options.push(
-					{
-						name: "Desvincular",
-						value: "UNLINK",
-						icon: MATERIAL_ICONS.LINK_OFF,
-						fn: () => {
-							this.getApplication().startLoading();
-	
-							removeRelationShip(rrelationship)
-								.then(() => {
-									this.showMessage();
-									this.buildEnterpriseLinked();
-								})
-								.catch((err) => this.showError(err))
-								.finally(() => {
-									this.getApplication().stopLoading();
-								});
-						},
-					}
-				);
-			}
-		} else {
-			options.push(
-				{
-					name: "Vincular empresa",
-					value: "LINK",
-					icon: MATERIAL_ICONS.LINK,
-					fn: () => {
-						this.openDialogCompany();
-					},
-				}
-			);
-			if(this.isSig()){
-				options.push(
-					{
-						name: "Crear nueva empresa",
-						value: "ENTERPRISE_NEW",
-						icon: MATERIAL_ICONS.OPEN_IN_NEW,
-						fn: () => {
-							this.getApplication().confirmDialog(
-								MSG.REGISTER,
-								`Desea registrar y vincular a ${this.registry.getName()} ?`,
-								() => {
-									this.getApplication().startLoading();
-									saveCompany({ ...this.registry, id: null })
-										.then((company) => {
-											console.log("company", company);
-											this.saveRegistryRelationship(company);
-										})
-										.catch((err) => {
-											this.showError(err);
-										})
-										.finally(() => {
-											this.getApplication().stopLoading();
-										});
-								}
-							);
-						},
-					}
-				);
-			}
-		}
-
-		if(options && options.length > 0){
-			const top = element.getBoundingClientRect().top + 24;
-			const left = element.getBoundingClientRect().left + 3;
-			let d = this.getApplication().getOptionDialog();
-			d.setMenuOptions(options, top, left);
-			d.open();
-		}
-	}
-	
-	getSigOptionsLinked(element, domainName = undefined) {
-		let options = [];
-
-		if (domainName) {
-			options.push(
-				{
-					name: "Acceder",
-					value: "access",
-					icon: MATERIAL_ICONS.OPEN_IN_NEW,
-					fn: () => this.suplant(domainName),
-				}
-			);
-			
 			options.push(
 				{
 					name: "Desvincular",
 					value: "UNLINK",
 					icon: MATERIAL_ICONS.LINK_OFF,
 					fn: () => {
-						alert("Desvincular");
-						/*
 						this.getApplication().startLoading();
 
 						removeRelationShip(rrelationship)
@@ -824,11 +729,95 @@ export class AonCustomer extends AonReg {
 							.finally(() => {
 								this.getApplication().stopLoading();
 							});
-						*/
+					},
+				}
+			);
+		} else {
+			options.push(
+				{
+					name: "Vincular empresa",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.openDialogCompany();
 					},
 				}
 			);
 		}
+
+		if(options && options.length > 0){
+			const top = element.getBoundingClientRect().top + 24;
+			const left = element.getBoundingClientRect().left + 3;
+			let d = this.getApplication().getOptionDialog();
+			d.setMenuOptions(options, top, left);
+			d.open();
+		}
+	}
+	
+	getSigOptionsLinked(element, resp) {
+		let options = [];
+
+		if (resp && resp.length > 0) {
+			options.push(
+				{
+					name: "Acceder",
+					value: "access",
+					icon: MATERIAL_ICONS.OPEN_IN_NEW,
+					fn: () => {
+						if(resp.length === 1)
+							this.suplant(resp[0].domainName);
+						else
+							this.openSigSuplantCompany(resp);
+					},
+				}
+			);
+			
+			options.push(
+				{
+					name: "Desvincular",
+					value: "UNLINK",
+					icon: MATERIAL_ICONS.LINK_OFF,
+					fn: () => {
+						if(resp.length === 1)
+							this.unlinkSigCompany(resp[0]);
+						else
+							this.openSigUnlinkCompany(resp);
+					},
+				}
+			);
+			
+		} 
+		/*
+		else {
+			options.push(
+				{
+					name: "Crear nueva empresa",
+					value: "ENTERPRISE_NEW",
+					icon: MATERIAL_ICONS.OPEN_IN_NEW,
+					fn: () => {
+						this.getApplication().confirmDialog(
+							MSG.REGISTER,
+							`Desea registrar y vincular a ${this.registry.getName()} ?`,
+							() => {
+								this.getApplication().startLoading();
+								saveCompany({ ...this.registry, id: null })
+									.then((company) => {
+										console.log("company", company);
+										this.saveRegistryRelationship(company);
+									})
+									.catch((err) => {
+										this.showError(err);
+									})
+									.finally(() => {
+										this.getApplication().stopLoading();
+									});
+							}
+						);
+					},
+				}
+			);
+		}
+		*/
 
 		if(options && options.length > 0){
 			const top = element.getBoundingClientRect().top + 24;
@@ -996,6 +985,96 @@ export class AonCustomer extends AonReg {
 		}, MSG.LINK);
 
 		dialog.open();
+	}
+
+	openSigSuplantCompany(resp = []) {
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if (this.isMobile())  dialog.type = "fullscreen";
+		else dialog.width = "30%";
+		
+		dialog.setTitle("Acceder empresa vinculada");
+
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectCompany = new AonSelect();
+		selectCompany.id = "selectSupplantCompany";
+		selectCompany.title = MSG.COMPANY;
+		selectCompany.autocomplete = true;
+		div.appendChild(selectCompany);
+
+		if (resp.length) {
+			selectCompany.setOptions(resp.map((c) => ({ ...c, name: c.domainName, value: c.domainName })));
+		}
+
+		dialog.addSendAction(() => {
+			if (selectCompany.value) {
+				dialog.close();
+				this.suplant(selectCompany.value);
+			}
+		}, 'Acceder');
+
+		dialog.open();
+	}
+	
+	openSigUnlinkCompany(resp = []) {
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if (this.isMobile())  dialog.type = "fullscreen";
+		else dialog.width = "30%";
+		
+		dialog.setTitle("Acceder empresa vinculada");
+
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectCompany = new AonSelect();
+		selectCompany.id = "selectSupplantCompany";
+		selectCompany.title = MSG.COMPANY;
+		selectCompany.autocomplete = true;
+		div.appendChild(selectCompany);
+
+		if (resp.length) {
+			selectCompany.setOptions(resp.map((c) => ({ ...c, name: c.domainName + " (" + c.schema + ")", value: JSON.stringify(c) })));
+		}
+
+		dialog.addSendAction(() => {
+			if (selectCompany.value) {
+				dialog.close();
+				this.unlinkSigCompany(JSON.parse(selectCompany.value) );
+			}
+		}, 'Desvincular');
+
+		dialog.open();
+	}
+	
+	async unlinkSigCompany(relation){
+		let headers = {domain_name: relation.domainName, domain_id: relation.domainId};
+		await removeAonCustomerDomain({...relation}, headers)
+		.then(() => {
+			this.showMessage();
+			this.buildEnterpriseLinked();
+		})
+		.catch((err) => this.showError(err));
+		
+		await removeCustomerDomainAddInfo(relation)
+		.then(async () => {
+			this.showMessage();
+			this.buildEnterpriseLinked();
+		})
+		.catch((err) => this.showError(err))
+		.finally(() => {
+			this.getApplication().stopLoading();
+		});
 	}
 
 	async getDomainCompanies(value) {
