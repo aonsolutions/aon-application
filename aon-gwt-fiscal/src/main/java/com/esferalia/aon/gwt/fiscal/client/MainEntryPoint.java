@@ -22,8 +22,10 @@ import com.esferalia.aon.gwt.fiscal.client.booking.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerActivityModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInvoiceModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSupportAgentModule;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSyncDomainModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
@@ -309,6 +311,13 @@ public class MainEntryPoint implements EntryPoint {
 	//  ================================================================== TARGET ENTERPRISE
 	//
 	private static final String CUSTOMER_INVOICE_MODULE_ENTRY_POINT = "CustomerInvoiceModule";
+	//  ============================================================= CUSTOMER LINKED ACTIVITY
+	//
+	private static final String CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT = "CustomerLinkedActivity";
+//  ================================================================= CUSTOMER SYNC DOMAIN
+	//
+	private static final String CUSTOMER_SYNC_DOMAIN_ENTRY_POINT = "CustomerSyncDomainModule";
+	
 	
 	
 
@@ -1018,9 +1027,41 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if( entryPoint.equalsIgnoreCase(CUSTOMER_LINKED_ACTIVITY_ENTRY_POINT) ) {
+			GWT.runAsync(CustomerActivityModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerActivityModule customerActivityModule = new CustomerActivityModule();
+					customerActivityModule.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(CUSTOMER_SYNC_DOMAIN_ENTRY_POINT) ) {
+			GWT.runAsync(CustomerSyncDomainModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerSyncDomainModule CustomerSyncDomainModule = new CustomerSyncDomainModule();
+					CustomerSyncDomainModule.onModuleLoad();
+				}
+				
+			});
 		}
 		
 	}
+	
+	
 	protected Occam getOccam() {
 		return new Occam()
 			.setDomainName(getCurrentDomainName())
@@ -1076,6 +1117,12 @@ public class MainEntryPoint implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.removeItem("officeDomain");
 	}-*/;
+	
+	public static native boolean isSig()
+	/*-{
+		return $wnd.localStorage.getItem("isSig");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

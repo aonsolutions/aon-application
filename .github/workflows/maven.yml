@@ -30,6 +30,11 @@ on:
         type: boolean
         required: true
         default: false
+      buildProductionVersion:
+        description: 'Build production version'
+        type: boolean
+        required: true
+        default: false
       javaVersion:
         description: 'Java version'
         type: choice
@@ -69,6 +74,7 @@ env:
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
   SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || github.ref != 'refs/heads/master' }}
+  BUILD_PRODUCTION_VERSION: ${{ github.event.inputs.buildProductionVersion || github.ref == 'refs/heads/master' }}
 
 jobs:
   build:
@@ -149,9 +155,10 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
+      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} clean install
 
     - name: Build Docker aon-application image
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -159,6 +166,7 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build Docker aon-db-up2date image
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
@@ -183,6 +191,7 @@ jobs:
         127.0.0.1    home-payroll-test.aonsolutions.org
         127.0.0.1    agrarian-payroll-test.aonsolutions.org
         127.0.0.1    general-payroll-test.aonsolutions.org
+        127.0.0.1    inactiva-payroll-test.aonsolutions.org
         127.0.0.1    trainning-payroll-test.aonsolutions.org
         EOF
 
@@ -200,16 +209,16 @@ jobs:
         -DskipTests=${SKIP_INTEGRATION_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
-        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/classic \
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
 
     - name: Build production version with Maven
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' }}
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
 
     - name: Build and push Docker aon-application image
@@ -258,7 +267,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
       run: |

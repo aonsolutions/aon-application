@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -284,10 +285,18 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		AON.deleteDataResponse(domainName, domainId, "", f -> f.getIdProperty().eq(drId));
 	}
 	
-	private static Boolean isPropaco(HashMap<String, String> map) {
-		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
-			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	private static Destiny getDestiny(Map<String, String> map) {
+		try {
+			String value = map.get(QualitySheetCode.UFQDP1.getName());
+			return Destiny.safeValueOf(Integer.parseInt(value));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private static boolean isPropaco(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isPropaco();
 	}
 	
 	public void updateIncomeDetail(String domainName, Integer domainId, Double price, Double quantity, Integer incomeDetailId) {

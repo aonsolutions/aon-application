@@ -323,6 +323,12 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
+	public Elaboration saveElaborationSerial(AONContext ctx, Elaboration elaboration) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.saveSerial(ctx, elaboration));
+	}
+	
+	@Override
 	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.insertElaboration(ctx, elaboration));

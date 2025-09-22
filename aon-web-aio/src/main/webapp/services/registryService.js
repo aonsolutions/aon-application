@@ -59,6 +59,9 @@ export const removeRelationShip = (data) => remove(`${RELATIONSHIP}/${data.regis
 export const getRelationShipCompany = (data) => get(RELATIONSHIP_COMPANY, data);
 export const getSiblingsOffice = (data) => get(SIBLINGS_OFFICE, data);
 
+// REGISTRY RADDINFO
+export const getCustomerDomainAddInfo = (data) => get(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+
 // SUGGESTED ACCOUNT
 
 export const getRegistrySuggestedAccount = (data) => get(SUGGESTED_ACCOUNT, data);

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client.customer;
+package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonModuleOptions;
 

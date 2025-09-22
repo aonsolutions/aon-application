@@ -140,6 +140,7 @@ public enum ContextVariable implements IResourceable {
 	SOLIDARITY_BASE_THIRD("BASE_SOLIDARIDAD_III", VariableType.DOUBLE), 
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE), CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
+	CGC_BASE_REAL("BASE_CGC_REAL", VariableType.DOUBLE), CGP_BASE_REAL("BASE_CGP_REAL", VariableType.DOUBLE),
 	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE, false), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE, false),
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
@@ -170,7 +171,9 @@ public enum ContextVariable implements IResourceable {
 
 	// Datos 'temporales' del contrato
 	
-	TC2("TC2", VariableType.TC2_DROP, false), CNO("CNO", VariableType.CNO_LOOKUP, false),
+	TC2("TC2", VariableType.TC2_DROP, false), 
+	CNO("CNO", VariableType.CNO_LOOKUP, false),
+	TRL("TRL", VariableType.STRING, false),
 	SMI("SMI", VariableType.DOUBLE, false), 
 	IPREM("IPREM", VariableType.DOUBLE, false), 
 	CATEGORY("CATEGORIA", VariableType.STRING, false),
@@ -421,6 +424,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String ALL = "_P";
 	public static final String SELF = "SELF";
 	public static final String HIDE = "HIDE";
+	public static final String READ = "READ";
 	public static final String REMOVE = "REMOVE";
 	public static final String DISABLE = "DISABLE";
 	public static final String CONTEXT = "CONTEXT";

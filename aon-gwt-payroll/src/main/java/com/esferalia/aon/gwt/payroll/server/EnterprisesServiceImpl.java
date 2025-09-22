@@ -179,7 +179,6 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
@@ -189,7 +188,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -198,7 +196,6 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Pair;
@@ -5057,11 +5054,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			Domain domain = AON_SOLUTIONS.getDomain(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), domain.getParentId());
 			
-			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domain.getId(), domain.getParentId(), userId, params);
 			return list;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -5213,29 +5209,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-
-	@Override
-	public List<Customer> getCustomersLinked(String domainName, int domain, String user, int offset, int limit) throws IllegalArgumentException {
-		return AON.getCustomerStream(domainName, domain, user, 
-				f -> f.getDomainProperty().eq(domain)
-				.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()))
-				.and(f.getRegistryRelationProperty().isNotNull())
-				, 
-				offset, limit)
-			.collect(Collectors.toList());
-	}
-
-	@Override
-	public RegistryRelationship getRRelationShip(String domainName, int domain, String user, Integer customerId) throws IllegalArgumentException {
-		RegistryRelationship registryRelationship = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getRegistryProperty().eq(customerId)).get();
-		return registryRelationship;
-	}
-
+	
+	
 	@Override
 	public Domain getDomainByName(String domainName) throws IllegalArgumentException {
 		Domain domain = AON_SOLUTIONS.getDomain(domainName);
 		return domain;
 	}
-	
 	
 }

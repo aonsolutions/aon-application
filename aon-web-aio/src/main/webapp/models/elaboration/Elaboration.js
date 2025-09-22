@@ -28,7 +28,7 @@ export class Elaboration {
     constructor(elaboration){
         if(elaboration) {
             this.id = elaboration.id;
-            this.domain = new Domain(elaboration.domain);
+            this.domain = elaboration.domain;
             this.serie = elaboration.serie || '';
             this.number = elaboration.number;
             this.reference = elaboration.reference;
@@ -47,9 +47,7 @@ export class Elaboration {
             this.creationDate = elaboration.creationDate;
             this.modificationUser = elaboration.modificationUser;
             this.modificationDate = elaboration.modificationDate;
-        } else {
-            this.domain = new Domain();
-        }
+        } 
     }
 
     getId() {

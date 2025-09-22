@@ -3,6 +3,15 @@ import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 import { IRPF } from "../../environments/msg-en.js";
 
+export const BillingPeriods = [
+  {value: 'NO_PERIOD', name: MSG.NO_PERIOD},
+  {value: 'MONTHLY', name: MSG.MONTHLY},
+  {value: 'BI_MONTHLY', name: MSG.BI_MONTHLY},
+  {value: 'THREE_MONTHLY', name: MSG.THREE_MONTHLY},
+  {value: 'SIX_MONTHLY', name: MSG.SIX_MONTHLY},
+  {value: 'YEARLY', name: MSG.YEARLY}
+];
+
 export const Transactions = [
   {value: 'NAC', name: 'Op. Interiores'},
   {value: 'INTR', name: 'Intracomunitaria'},

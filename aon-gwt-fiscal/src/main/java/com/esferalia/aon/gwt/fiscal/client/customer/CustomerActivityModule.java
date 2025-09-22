@@ -1,16 +1,20 @@
-package com.esferalia.aon.gwt.payroll.client.customer;
+package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.client.ActivitySummary;
-import com.esferalia.aon.gwt.payroll.client.MainEntryPoint;
+
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
-public class CustomerActivityModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class CustomerActivityModule  implements EntryPoint {
 
 	private static final Logger LOGGER = Logger.getLogger(CustomerActivityModule.class.getName());
 	static {
@@ -22,13 +26,18 @@ public class CustomerActivityModule extends MainEntryPoint {
 	private ActivitySummary activitySummary;
 	
 	private RootLayoutPanel root;
-
+	
+	private CustomersLinkedParams params;
+	
 	@Override
 	public void onModuleLoad() {
 		root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-
-//		Window.alert("domainName : " + Wnd.getCurrentDomainNameURL() + "\ndomainId : " + Wnd.getCurrentDomain() + "\nuser : " + Wnd.getCurrentUser());
-
+		
+		params = new CustomersLinkedParams();
+		params.setDomainName(getCurrentDomainName());
+		params.setDomainId(getCurrentDomain());
+		params.setUser(getCurrentUser());
+		
 		moduleLoad();
 	}
 
@@ -37,16 +46,16 @@ public class CustomerActivityModule extends MainEntryPoint {
 
 		deckLayoutPanel = new DeckLayoutPanel();
 
-		customersLinkedPanel = new CustomersLinkedPanel() {
+		customersLinkedPanel = new CustomersLinkedPanel(params) {
 
 			@Override
-			protected void onCustomerSelect(Integer customerId) {
-				showSelectedCustomer(customerId);
+			protected void onCustomerSelect(Integer customerId, String customerName, Domain customerDomain) {
+				showSelectedCustomer(customerId, customerName, customerDomain);
 			}
 
 		};
 		
-		activitySummary = new ActivitySummary();
+		activitySummary = new ActivitySummary(params.getUser());
 		
 		AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack());
 		back.addClickHandler(e -> showCustomersLinkedPanel());
@@ -58,19 +67,15 @@ public class CustomerActivityModule extends MainEntryPoint {
 		deckLayoutPanel.showWidget(customersLinkedPanel);
 
 		root.add(deckLayoutPanel);
-		
-		// Remove customer from LS
-		// removeCustomer();
 	}
 
 	private void showCustomersLinkedPanel() {
 		deckLayoutPanel.showWidget(customersLinkedPanel);
-		customersLinkedPanel.onSearch();
 	}
 
-	private void showSelectedCustomer(Integer customerId) {
+	private void showSelectedCustomer(Integer customerId, String customerName, Domain customerDomain) {
 		deckLayoutPanel.showWidget(activitySummary);
-		activitySummary.showCustomerDomainInfo(customerId);
+		activitySummary.showCustomerDomainInfo(customerId, customerName, customerDomain);
 	}
 
 }

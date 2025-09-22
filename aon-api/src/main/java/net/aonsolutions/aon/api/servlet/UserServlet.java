@@ -41,8 +41,10 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -86,7 +88,7 @@ public class UserServlet extends AonApiHttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON USER SERVLET - GET METHOD");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
 		
@@ -96,6 +98,9 @@ public class UserServlet extends AonApiHttpServlet {
 				break;
 			case "/roles":
 				response(req, resp, getUserRoles(api.getDomain(), JsonUtils.getInteger(api.getData(), IJsonNames.USER)));
+				break;
+			case "/approles":
+				response(req, resp, getUserAppRoles(api.getDomain(), JsonUtils.getInteger(api.getData(), IJsonNames.USER)));
 				break;
 			case "/list":
 				response(req, resp, getUsers(api));
@@ -387,6 +392,12 @@ public class UserServlet extends AonApiHttpServlet {
 		JSONArray userAppRoles = new JSONArray();
 		roles.stream().forEach(uar -> userAppRoles.put(uar.getRole().name()));
 		return userAppRoles;
+	}
+	
+	private JSONObject getUserAppRoles(Domain domain, Integer userId) {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, "", userId);
+		AonDomainUserRoles adur = new AonDomainUserRoles(dur);
+		return adur.toJSON();
 	}
 	
 	private JSONObject setUserAppRole(AonApiData api, User user){

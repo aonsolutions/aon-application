@@ -167,6 +167,10 @@ export class AonElement extends HTMLElement{
     });
   }
 
+  /**
+   * 
+   * @returns {DomainUserRoles}
+   */
   getDur() {
     return this.dur;
   }

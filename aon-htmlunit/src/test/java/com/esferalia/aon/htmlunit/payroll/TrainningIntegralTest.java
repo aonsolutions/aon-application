@@ -350,6 +350,12 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("mei", 1.80);
 		assertText("meiPercentLabel", "0,13 %");
 		
+		draft("FORMACIÓN ALTERNANCIA, PLAN DE PENSIONES");
+		calculate(Calendar.SEPTEMBER, 2025);
+		click("costsCheck-input");
+		assertNotElement("red_ppe_ePercentLabel");
+		assertElement("editor-reduccion_aportacion_empresa_ppe");
+		click("costsCheck-input");
 
 	}
 

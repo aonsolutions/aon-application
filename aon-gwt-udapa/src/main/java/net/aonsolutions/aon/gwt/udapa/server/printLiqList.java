@@ -86,8 +86,8 @@ public class printLiqList extends HttpServlet{
 	public static Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
 				.and(f.getDetailVariableProperty().eq(QualitySheetCode.UFQDP1.getName()).and(
-					f.getDetailValueProperty().eq(Integer.toString(Destiny.BASERRI.ordinal() +1))
-					.or(f.getDetailValueProperty().eq(Integer.toString(Destiny.EUSKOLABEL.ordinal()+ 1)))
+					f.getDetailValueProperty().eq(Integer.toString(Destiny.BASERRI.ordinal()))
+					.or(f.getDetailValueProperty().eq(Integer.toString(Destiny.EUSKOLABEL.ordinal())))
 				));
 		
 		if(filterMap.containsKey("from")){
@@ -226,8 +226,7 @@ public class printLiqList extends HttpServlet{
 					map.put(drd.getDataVariable(), drd.getDataValue());
 				}
 				
-				if(!map.containsKey(QualitySheetCode.UFQDP1.getName()) || (map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-						!Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0]))){
+				if(!isSiembra(map)){
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
 						if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
@@ -258,7 +257,7 @@ public class printLiqList extends HttpServlet{
 							cell(libro, row, style3, 7, incomeDetail.get().getDescription());
 							
 							// DESTINO
-							Destiny destiny = Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) - 1];
+							Destiny destiny = getDestiny(map);
 							cell(libro, row, style3, 8, destiny.name());
 							
 							// % PEQUEÑA
@@ -470,9 +469,6 @@ public class printLiqList extends HttpServlet{
 		return data;
 	}
 	
-
-  
-
 	// -------------------- EXCEL UTILS
 	
 	private Cell boldCell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
@@ -522,5 +518,25 @@ public class printLiqList extends HttpServlet{
 		style3.setBorderLeft(BorderStyle.THIN);
 		style3.setBorderTop(BorderStyle.THIN);	
 		return style3;
+	}
+	
+	
+	private static Destiny getDestiny(Map<String, String> map) {
+		try {
+			String value = map.get(QualitySheetCode.UFQDP1.getName());
+			return Destiny.safeValueOf(Integer.parseInt(value));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private static boolean isPropaco(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isPropaco();
+	}
+	
+	private static boolean isSiembra(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isSiembra();
 	}
 }

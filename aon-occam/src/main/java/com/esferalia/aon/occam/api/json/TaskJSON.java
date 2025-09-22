@@ -51,6 +51,10 @@ public class TaskJSON {
 			.setTags( TagJSON.fromJSON(JsonUtils.getJSONArray(json, "tags")) )
 			.setChilds( TaskJSON.fromJSON(JsonUtils.getJSONArray(json, "childs")) )
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
+			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
+			.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
+			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
+			.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
 			;
 	}
 	

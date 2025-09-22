@@ -1,4 +1,5 @@
 :root{
+  --favicon: /assets/favicon-black.ico;
   --aonDarkColor: rgba(0, 0, 0, 0.87);
   --aonBlue: #002469;
   --aonClearBlue: #4F91FF;
@@ -43,7 +44,6 @@
 
   --aonNewColor: red;
   --aonRightPanelColor: rgb(250, 249, 248);
-  --aonCardColor: white;
 
   --aonSearchBar: white;
   --aonSearchButton: rgb(95, 99, 104);
@@ -78,7 +78,7 @@
   --aonAccountingColor: #c1022d;
   --aonAccountingBackground: rgba(0, 36, 105, .2);
  
-  --aonHeaderBackgroundColor: var(--aonWhiteGray);
+  --aonHeaderBackgroundColor: var(--aonWhite);
 
   --aonHeaderBackgroundAvailable: var(--aonBlue);
 
@@ -162,6 +162,8 @@
   --aonConfigSwitchApps: false;
 
   --aonFontFamily: "Noto Sans", sans-serif
+  
+  
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -564,7 +566,7 @@ h1 {
 
   background-repeat: no-repeat;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-white-logo.svg");
+  background-image: url("../assets/aon-black-logo.svg");
 }
 
 .aonParentLogo {
@@ -2203,7 +2205,7 @@ border-bottom: 1px solid rgb(221, 221, 221);
   position: relative;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-white-logo.svg");
+  background-image: url("../assets/aon-black-logo.svg");
   background-position: 50%;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -2868,18 +2870,18 @@ background-image: url("../favicon.png");
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 
 .aonHeaderHome,
 .aonMenuLeftopHome{
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderApps,
 .aonMenuLeftopApps {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-apps.aonMenuSidenavLiSeleted {
@@ -2899,12 +2901,12 @@ background-image: url("../favicon.png");
 
 .aonHeaderApplications,
 .aonMenuLeftopApplications{
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderNote,
 .aonMenuLeftopNote {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
@@ -2915,7 +2917,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderFiscal,
 .aonMenuLeftopFiscal{
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
@@ -2925,7 +2927,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderPayroll,
 .aonMenuLeftopPayroll {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
@@ -2935,7 +2937,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderInvoice,
 .aonMenuLeftopInvoice {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
@@ -2945,7 +2947,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderComunica,
 .aonMenuLeftopComunica {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 
@@ -2956,7 +2958,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
@@ -2966,7 +2968,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderAccounting,
 .aonMenuLeftopAccounting {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
@@ -2976,7 +2978,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderTimecontrol,
 .aonMenuLeftopTimecontrol {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
@@ -2986,7 +2988,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderMessenger,
 .aonMenuLeftopMessenger {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
@@ -2996,7 +2998,7 @@ background-image: url("../favicon.png");
 
 .aonHeaderWarehouse,
 .aonMenuLeftopWarehoues {
-	background-color: var(--aonBlue);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenuList-warehouse.aonMenuSidenavLiSeleted {
@@ -3006,98 +3008,98 @@ background-image: url("../favicon.png");
 
 .aonHeaderOffice,
 .aonMenuLeftopOffice {
-  background-color: black;
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderGarage,
 .aonMenuLeftopGarage {
-  background-color: black;
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderAcademy,
 .aonMenuLeftopAcademy {
-  background-color: black;
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderComerce,
 .aonMenuLeftopComerce {
-  background-color: black;
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderConsole,
 .aonMenuLeftopConsole {
-  background-color: black;
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderNotification,
 .aonMenuLeftopNotification {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderComercialMenu,
 .aonMenuLeftopComercialMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderManagementMenu,
 .aonMenuLeftopManagementMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderTreasuryMenu,
 .aonMenuLeftopTreasuryMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderWarehouseMenu,
 .aonMenuLeftopWarehouseMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderGroupwareMenu,
 .aonMenuLeftopGroupwareMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderAccountingMenu,
 .aonMenuLeftopAccountingMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderFiscalMenu,
 .aonMenuLeftopFiscalMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 .aonHeaderPayrollMenu,
 .aonMenuLeftopPayrollMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 .aonHeaderMarketingMenu,
 .aonMenuLeftopMarketingMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderNotification,
 .aonMenuLeftopNotification {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 .aonHeaderConfigurationMenu,
 .aonMenuLeftTopConfigurationMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderEnterpriseMenu,
 .aonMenuLeftopEnterpriseMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderConsoleMenu,
 .aonMenuLeftTopConsoleMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderNewConfigurationMenu {
-  background-color: var(--aonBlue);
+  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderNote .material-icons,
@@ -3240,6 +3242,22 @@ color: var(--aonWhite);
 color: var(--aonWhite);
 }
 
+.aonHeader .material-icons,
+.aonHeader #aonHeaderCompanyName,
+#applications .material-symbols-outlined,
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--gray-50);
+}
+
+
+.aonHeaderAppSpan,
+.aonHeaderAppIcon {
+	color: black;
+}
+
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--gray-50);
+}
 
 
 #new:hover,
@@ -3275,7 +3293,7 @@ color: var(--aonWhite);
 #consoleMenu:hover,
 #aonApplication:hover,
 #Superset:hover{
-  background-color: var(--aonCardColor);
+  background-color: rgba(0,0,0,.1);
   /*transition: background-color 0.2s;*/
 }
 
@@ -3303,8 +3321,9 @@ color: var(--aonWhite);
 }
 
 #applications {
-  color: #fff;
-  width: 4.5rem;
+  	color: #fff;
+  	width: 4.5rem;
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #applications:hover{
@@ -4888,5 +4907,9 @@ font-weight: 600;
     to {
         transform:rotate(360deg);
     }
+  }
+
+  .aonHeight62 {
+    height: 62px;  
   }
 

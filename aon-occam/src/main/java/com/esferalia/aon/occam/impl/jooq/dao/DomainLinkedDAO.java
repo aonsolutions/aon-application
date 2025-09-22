@@ -104,6 +104,13 @@ public class DomainLinkedDAO {
 		return domain;
 	}
 	
+	public static void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer) {
+		ctx.getDslContext().update(DOMAIN)
+			.set(DOMAIN.AONCUSTOMER, customer)
+			.where(DOMAIN.ID.eq(domainId))
+			.execute();
+	}
+	
 	public static void delete(AONContext ctx, DomainLinked domainLinked) {
 		if (domainLinked != null) {
 			if (domainLinked.getIndex() != null) {

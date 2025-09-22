@@ -355,9 +355,14 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="number") {
-        td.innerHTML = value[id] !== undefined ? value[id] : "";
+      } 
+      else if(item.type && item.type ==="number") {
+        td.innerHTML = value[id] !== undefined? value[id] : "";
         td.title = value[id] !== undefined ? value[id] : "";
+        // td.style.textAlign = "right";
+        // if(value[id] !== undefined && value[id].includes('-')){
+        //   td.style.color = "green";
+        // }
         td.addEventListener(EVENT.CLICK, fn);
       } else {
         td.innerHTML = value[id] !== undefined ? value[id] : "";

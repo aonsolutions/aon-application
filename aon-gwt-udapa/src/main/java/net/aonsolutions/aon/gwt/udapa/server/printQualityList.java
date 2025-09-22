@@ -250,8 +250,7 @@ public class printQualityList extends HttpServlet{
 					map.put(drd.getDataVariable(), drd.getDataValue());
 				}
 				
-				if(!map.containsKey(QualitySheetCode.UFQDP1.getName()) || (map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-						!Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0]))){
+				if(!isSiembra(map)){
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
 						if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
@@ -284,7 +283,8 @@ public class printQualityList extends HttpServlet{
 							cell(libro, row, style3, 0, r.getCode());
 							cell(libro, row, style3, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
 							cell(libro, row, style3, 2, income.isPresent() ? income.get().getSupplierName() : "-");
-							cell(libro, row, style3, 3, map.containsKey(QualitySheetCode.UFQDP1.getName()) && !"0".equals(map.get(QualitySheetCode.UFQDP1.getName()))? Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) - 1].getName() : "-");
+							Destiny destiny = getDestiny(map);
+							cell(libro, row, style3, 3, destiny != null ? destiny.getName() : "-"); 
 							cell(libro, row, style3, 4, carrierPacking != null ? carrierPacking.getCarrierName() : "-");
 							cell(libro, row, style3, 5, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
 							cell(libro, row, style2, 6, isPropaco(map) ? carrierPacking.getNet() : (incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0));
@@ -351,7 +351,7 @@ public class printQualityList extends HttpServlet{
 					map.put(drd.getDataVariable(), drd.getDataValue());
 				}
 
-				if(map.containsKey(QualitySheetCode.UFQDP1.getName()) && Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0])){
+				if(isSiembra(map)){
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
 						if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
@@ -482,8 +482,7 @@ public class printQualityList extends HttpServlet{
 				map.put(drd.getDataVariable(), drd.getDataValue());
 			}
 
-			if(!map.containsKey(QualitySheetCode.UFQDP1.getName()) || (map.containsKey(QualitySheetCode.UFQDP1.getName()) &&
- 					!Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0]))){
+			if(!isSiembra(map)){
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
 					if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) { 
@@ -590,7 +589,7 @@ public class printQualityList extends HttpServlet{
 				map.put(drd.getDataVariable(), drd.getDataValue());
 			}
 
-			if(map.containsKey(QualitySheetCode.UFQDP1.getName()) && Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0])){
+			if(isSiembra(map)){
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
 					if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
@@ -774,13 +773,24 @@ public class printQualityList extends HttpServlet{
 		font2.setSize(8);
 		return font2;
 	}
-
 	
+	private static Destiny getDestiny(Map<String, String> map) {
+		try {
+			String value = map.get(QualitySheetCode.UFQDP1.getName());
+			return Destiny.safeValueOf(Integer.parseInt(value));
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
-	private static Boolean isPropaco(Map<String, String> map) {
-		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
-			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	private static boolean isPropaco(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isPropaco();
+	}
+	
+	private static boolean isSiembra(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isSiembra();
 	}
 
 }

@@ -75,6 +75,9 @@ public class ElaborationServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, saveElaboration(api));
 				break;
+			case "/serial":
+				response(req, resp, saveElaborationSerial(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -113,6 +116,12 @@ public class ElaborationServlet extends AonApiHttpServlet {
 	private JSONObject saveElaboration(AonApiData api) {
 		Elaboration elaboration = ElaborationJSON.fromJSON(api.getData());
 		elaboration = AON.saveElaboration(api.getDomain(), api.getUser(), elaboration);
+		return ElaborationJSON.toJSON(elaboration);
+	}
+	
+	private JSONObject saveElaborationSerial(AonApiData api) {
+		Elaboration elaboration = ElaborationJSON.fromJSON(api.getData());
+		elaboration = AON.saveElaborationSerial(api.getOccam(), elaboration);
 		return ElaborationJSON.toJSON(elaboration);
 	}
 	

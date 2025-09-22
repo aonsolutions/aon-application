@@ -344,17 +344,16 @@ export class AonMobileDelivery extends AonElement {
 		saveButton.style.position = 'absolute';
 
 		div.appendChild(saveButton);	
+		let saveButtonClick = false;
 		saveButton.addEventListener(EVENT.CLICK, () => {
-			this.packaging.delivery = this.delivery.id;
-			saveDeliveryPackaging(this.packaging).then(r =>{
-				this.backToDelivery(this.delivery.id);
-			}).catch(e => this.backToDelivery(this.delivery.id));
-
-			//RELOAD DELIVERY
-			// let option = WAREHOUSE_OPTION.DELIVERY;
-			// option.delivery = this.delivery.id;
-			// this.getApplication().selectOption(option)
-
+			saveButton.setDisabled(true);
+			if(!saveButtonClick) {
+				saveButtonClick = true;
+				this.packaging.delivery = this.delivery.id;
+				saveDeliveryPackaging(this.packaging).then(r =>{
+					this.backToDelivery(this.delivery.id);
+				}).catch(e => this.backToDelivery(this.delivery.id));
+			}
 		});
 	}
 

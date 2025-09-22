@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +61,57 @@ public class DomainCustomerDAO {
 	
 	public static Stream<DomainCompany> getAllDomains(AONContext ctx){
 		return getDomains(ctx, DOMAIN.ID.gt(0).and(DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull())));
+	}
+	
+	public static Stream<DomainCompany> getAviableDomainsForSync(AONContext ctx, boolean isSig, DomainFilter filter){
+		Condition mainCondition = DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull());
+		Condition[] filterConditions = DOMAIN_PROPERTIES.getConditions(filter);
+		List<Condition> cndLst = new ArrayList<>(filterConditions.length + 1);
+		Arrays.asList(filterConditions).forEach(cndLst::add);
+		cndLst.add(mainCondition);
+		Condition[] allConditions = cndLst.stream().toArray(Condition[]::new);
+		
+		
+		if(!isSig)
+			return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.leftJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+				.leftJoin(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.leftJoin(AppParam.APP_PARAM).on(
+						AppParam.APP_PARAM.DOMAIN.eq(DOMAIN.ID)
+						.and(APP_PARAM.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.AON_DOMAIN_PAYER.toString()))
+						.and(APP_PARAM.VALUE.isNotNull())
+						.and(DSL.trim(APP_PARAM.VALUE).ne(""))
+				)
+				.leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.RELATED_REGISTRY.eq(REGISTRY.ID))
+				.where(allConditions)
+				.and(RRELATIONSHIP.RELATED_REGISTRY.isNull())
+				.fetch()
+				.stream()
+				.map(rec -> new DomainCompany()
+						.setCompany(new CompanyFiller().apply(rec))
+						.setDomain(new DomainFiller().apply(rec)));
+		else
+			return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.leftJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+				.leftJoin(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.leftJoin(AppParam.APP_PARAM).on(
+						AppParam.APP_PARAM.DOMAIN.eq(DOMAIN.ID)
+						.and(APP_PARAM.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.AON_DOMAIN_PAYER.toString()))
+						.and(APP_PARAM.VALUE.isNotNull())
+						.and(DSL.trim(APP_PARAM.VALUE).ne(""))
+				)
+				.leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.RELATED_REGISTRY.eq(REGISTRY.ID))
+				.where(allConditions)
+				.and(DOMAIN.AONCUSTOMER.isNull())
+				.and(DOMAIN.PARENT.isNull().or(DOMAIN.DOMAIN_PAYER.eq(1)))
+				.fetch()
+				.stream()
+				.map(rec -> new DomainCompany()
+						.setCompany(new CompanyFiller().apply(rec))
+						.setDomain(new DomainFiller().apply(rec)));
+		
 	}
 	
 	public static Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter){

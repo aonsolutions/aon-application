@@ -186,6 +186,7 @@ public class ContractType {
 		this.contractTypes.get(350).addNewModel(13, "INDEFINIDO PROCEDENTE DE UN CONTRATO EN PRACTICAS DE ETT");
 		this.contractTypes.get(100).addNewModel(14, "INDEFINIDO DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(200).addNewModel(14, "INDEFINIDO DEL SERVICIO DEL HOGAR FAMILIAR");
+		this.contractTypes.get(300).addNewModel(14, "INDEFINIDO DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(990).addNewModel(15, "INDEFINIDO OTRAS SITUACIONES");
 		this.contractTypes.get(109).addNewModel(16, "CONVERSION DE CONTRATO TEMPORAL EN CONTRATO INDEFINIDO");
 		this.contractTypes.get(139).addNewModel(16, "CONVERSION DE CONTRATO TEMPORAL EN CONTRATO INDEFINIDO");
@@ -242,8 +243,10 @@ public class ContractType {
 		this.contractTypes.get(510).addNewModel(36, "TEMPORAL DE TRABAJOS DE INTERES SOCIAL/FOMENTO DE EMPLEO AGRARIO");
 		this.contractTypes.get(550).addNewModel(36, "TEMPORAL DE TRABAJOS DE INTERES SOCIAL/FOMENTO DE EMPLEO AGRARIO");
 		this.contractTypes.get(401).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
+		this.contractTypes.get(402).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(410).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(501).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
+		this.contractTypes.get(502).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(510).addNewModel(37, "TEMPORAL DE TRABAJADORES DEL SERVICIO DEL HOGAR FAMILIAR");
 		this.contractTypes.get(430).addNewModel(38, "TEMPORAL DE PERSONAS CON DISCAPACIDAD");
 		this.contractTypes.get(530).addNewModel(38, "TEMPORAL DE PERSONAS CON DISCAPACIDAD");

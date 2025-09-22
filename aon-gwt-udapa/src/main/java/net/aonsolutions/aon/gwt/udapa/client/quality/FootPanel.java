@@ -8,15 +8,11 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomButton;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -113,7 +109,7 @@ public class FootPanel extends Composite {
 						Integer domainId = parent.getAonData().getDomain().getId();
 						String domainName = parent.getAonData().getDomain().getName();
 						String login = parent.getAonData().getUser().getLogin();
-						Window.alert(domainId + " " + domainName + " " + login);
+
 						String s = parent.getDataResponse().getId() + "";
 						Integer id = Integer.parseInt(s);
 						impl.uploadImage(domainName, domainId, login, data, type, id, new AsyncCallback<Void>() {
@@ -242,9 +238,8 @@ public class FootPanel extends Composite {
 	}
 
 	public void calculatePanel() {
-		Double dest = Double.parseDouble(parent.getMap().get(QualitySheetCode.UFQDP1.getName())) - 1;
-		Destiny destiny = parent.getMap().containsKey(QualitySheetCode.UFQDP1.getName()) && dest >= 0 ? Destiny.values()[dest.intValue()]: Destiny.CALIDAD;
-		if(Destiny.BASERRI.equals(destiny) || Destiny.EUSKOLABEL.equals(destiny)) {
+		Destiny destiny = parent.getDestiny();
+		if(destiny != null && destiny.isPropaco()) {
 			String product_quantity = parent.getMap().containsKey("product_quantity") ? parent.getMap().get("product_quantity") : "0.0";
 			Double productQuantity = Double.parseDouble(product_quantity);
 			String transport_quantity = parent.getMap().containsKey("neto") ? parent.getMap().get("neto") : "0.0";
@@ -550,14 +545,21 @@ public class FootPanel extends Composite {
 		ft.setWidget(1, 2, b1);
 		HorizontalPanel hp2 = new HorizontalPanel();
 		
-		ListBox lb21 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		Destiny destiny = parent.getDestiny();
+	
+		ListBox lb21 = destiny == null || destiny.isActive()
+				? parent.destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny)
+				: new ListBox();
+	
 		lb21.setStyleName(AON.AON_CSS.aonInputText());
 		lb21.setWidth("100px");
+		lb21.setVisible(destiny == null || destiny.isActive());
 		
 		TextBox tb21 = new TextBox();
 		tb21.setStyleName(AON.AON_CSS.aonInputText());
 		tb21.setWidth("100px");
-		tb21.setVisible(false);
+		tb21.setVisible(destiny != null && !destiny.isActive());
+		tb21.setValue(destiny.getName());
 
 		hp2.add(lb21);
 		hp2.add(tb21);
@@ -574,6 +576,7 @@ public class FootPanel extends Composite {
 		});
 		but1.setStyleName("aon-editDataTable-button");
 		but1.addStyleName("aon-icon-edit");
+		but1.setVisible(destiny == null || destiny.isActive());
 		ft.setWidget(1, 4, but1);
 		
 		Label c = new Label("45/50");
@@ -589,15 +592,20 @@ public class FootPanel extends Composite {
 		ft.setWidget(2, 2, c1);
 		HorizontalPanel hp3 = new HorizontalPanel();
 		
-		ListBox lb31 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		ListBox lb31 = destiny == null || destiny.isActive()
+				? parent.destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny)
+				: new ListBox();
+		
 		lb31.setStyleName(AON.AON_CSS.aonInputText());
 		lb31.setWidth("100px");
+		lb31.setVisible(destiny == null || destiny.isActive());
 		
 		TextBox tb31 = new TextBox();
 		tb31.setStyleName(AON.AON_CSS.aonInputText());
 		tb31.setWidth("100px");
-		tb31.setVisible(false);
-		
+		tb31.setVisible(destiny != null && !destiny.isActive());
+		tb31.setValue(destiny.getName());
+
 		hp3.add(lb31);
 		hp3.add(tb31);
 		ft.setWidget(2, 3, hp3);
@@ -613,6 +621,7 @@ public class FootPanel extends Composite {
 		});
 		but3.setStyleName("aon-editDataTable-button");
 		but3.addStyleName("aon-icon-edit");
+		but3.setVisible(destiny == null || destiny.isActive());
 		ft.setWidget(2, 4, but3);
 		
 		
@@ -629,15 +638,19 @@ public class FootPanel extends Composite {
 		ft.setWidget(3, 2, d1);
 		HorizontalPanel hp4 = new HorizontalPanel();
 		
-		ListBox lb41 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		ListBox lb41 = destiny == null || destiny.isActive()
+				? parent.destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny)
+				: new ListBox();
 		lb41.setStyleName(AON.AON_CSS.aonInputText());
 		lb41.setWidth("100px");
+		lb41.setVisible(destiny == null || destiny.isActive());				
 		
 		TextBox tb41 = new TextBox();
 		tb41.setStyleName(AON.AON_CSS.aonInputText());
 		tb41.setWidth("100px");
-		tb41.setVisible(false);
-		
+		tb41.setVisible(destiny != null && !destiny.isActive());
+		tb41.setValue(destiny.getName());
+
 		hp4.add(lb41);
 		hp4.add(tb41);
 		ft.setWidget(3, 3, hp4);
@@ -653,6 +666,7 @@ public class FootPanel extends Composite {
 		});
 		but4.setStyleName("aon-editDataTable-button");
 		but4.addStyleName("aon-icon-edit");
+		but4.setVisible(destiny == null || destiny.isActive());
 		ft.setWidget(3, 4, but4);
 		
 		Label e = new Label("60/80");
@@ -668,15 +682,20 @@ public class FootPanel extends Composite {
 		ft.setWidget(4, 2, e1);
 		HorizontalPanel hp5 = new HorizontalPanel();
 		
-		ListBox lb51 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		ListBox lb51 = destiny == null || destiny.isActive()
+				? parent.destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny)
+				: new ListBox();
+
 		lb51.setStyleName(AON.AON_CSS.aonInputText());
 		lb51.setWidth("100px");
+		lb51.setVisible(destiny == null || destiny.isActive());
 		
 		TextBox tb51 = new TextBox();
 		tb51.setStyleName(AON.AON_CSS.aonInputText());
 		tb51.setWidth("100px");
-		tb51.setVisible(false);
-		
+		tb51.setVisible(destiny != null && !destiny.isActive());
+		tb51.setValue(destiny.getName());
+
 		hp5.add(lb51);
 		hp5.add(tb51);
 		ft.setWidget(4, 3, hp5);
@@ -692,6 +711,7 @@ public class FootPanel extends Composite {
 		});
 		but5.setStyleName("aon-editDataTable-button");
 		but5.addStyleName("aon-icon-edit");
+		but5.setVisible(destiny == null || destiny.isActive());
 		ft.setWidget(4, 4, but5);
 		
 		Label f = new Label("Sin Calibrar (S/C)");
@@ -707,14 +727,18 @@ public class FootPanel extends Composite {
 		ft.setWidget(5, 2, f1);
 		HorizontalPanel hp6 = new HorizontalPanel();
 		
-		ListBox lb61 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		ListBox lb61 = destiny == null || destiny.isActive()
+				? parent.destinyListBox(Destiny.getActiveList(), QualitySheetCode.UFQDP1, destiny)
+				: new ListBox();
 		lb61.setStyleName(AON.AON_CSS.aonInputText());
 		lb61.setWidth("100px");
+		lb61.setVisible(destiny == null || destiny.isActive());
 		
 		TextBox tb61 = new TextBox();
 		tb61.setStyleName(AON.AON_CSS.aonInputText());
 		tb61.setWidth("100px");
-		tb61.setVisible(false);
+		tb61.setVisible(destiny != null && !destiny.isActive());
+		tb61.setValue(destiny.getName());
 		
 		hp6.add(lb61);
 		hp6.add(tb61);
@@ -732,6 +756,7 @@ public class FootPanel extends Composite {
 		});
 		but6.setStyleName("aon-editDataTable-button");
 		but6.addStyleName("aon-icon-edit");
+		but6.setVisible(destiny == null ||  destiny.isActive());
 		ft.setWidget(5, 4, but6);
 		
 		Label g = new Label("Variedad");

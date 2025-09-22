@@ -65,15 +65,15 @@ export class AonBasicTable extends AonElement {
     return null;
   }
 
-  addRow(classes) {
+  addRow(styleClass) {
     this.rows = this.rows + 1;
     let tr = this.createElement(TAG.TR);
     tr.id = this.TABLE_ROW + this.rows;
-    if (classes) {
-      if (Array.isArray(classes)) {
-        tr.classList.add(...classes);
+    if (styleClass) {
+      if (Array.isArray(styleClass)) {
+        tr.classList.add(...styleClass);
       } else {
-        tr.classList.add(classes);
+        tr.classList.add(styleClass);
       }
     }
     this.getElement(this.TABLE).appendChild(tr);

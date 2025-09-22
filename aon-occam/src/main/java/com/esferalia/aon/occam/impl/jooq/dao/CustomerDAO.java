@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -87,6 +89,9 @@ public class CustomerDAO {
         
         @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}	
         @Override public Property<Integer> getRelatedRegistryProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.RELATED_REGISTRY); }
+		
+        @Override public Property<Integer> getRaddInfoDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ID); }
+        
 		}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -119,21 +124,38 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
-					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null);
+					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || getValue(r, RADDINFO.ID)!=null );
 		}
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
-	    return ctx.getDslContext()
+		
+		System.out.println(ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
 	            .select(RRELATIONSHIP.ID)
+	            .select(RADDINFO.ID)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
+	        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.eq("AON_DOMAIN0_NAME")))
+	        .where(CUSTOMER_PROPERTIES.getConditions(filter)).getSQL(ParamType.INLINED));
+		
+	    return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(RRELATIONSHIP.ID)
+	            .select(RADDINFO.ID)
+	        .from(CUSTOMER)
+	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
+	        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.eq("AON_DOMAIN0_NAME")))
 	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}
@@ -147,6 +169,47 @@ public class CustomerDAO {
 	
 	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
 		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(RADDINFO.ID)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .join(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getSigNotLinkedStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(RADDINFO.ID)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
+		        .and(RADDINFO.ID.isNull())
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)				

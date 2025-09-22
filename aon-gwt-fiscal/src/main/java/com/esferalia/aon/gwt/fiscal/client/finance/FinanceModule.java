@@ -33,7 +33,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePayPanel.FinancePayPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceReturnPanel.FinanceReturnPanelCallback;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -74,7 +74,10 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FinanceModule extends MainEntryPoint {
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
+import com.google.gwt.core.client.EntryPoint;
+
+public class FinanceModule  implements EntryPoint {
 	
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")

@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -35,10 +38,14 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -98,6 +105,8 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -454,5 +463,16 @@ public interface CommonService extends RemoteService {
 	void deleteTag(String domainName, int domain, String user, Integer id) throws AonCoreException;
 
 	List<String> getSchemas() throws AonCoreException;
+	
+	// **************************************************
+	// *********************** [CUSTOMER LINKED ACTIVITY]
+	// **************************************************
+	
+	List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException;
+	List<Customer> getCustomersNotLinked(CustomersLinkedParams params) throws AonCoreException;
+	HashMap<Integer, Domain> getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException;
+	List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws AonCoreException;
+	List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException;
+	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException;
 	
 }

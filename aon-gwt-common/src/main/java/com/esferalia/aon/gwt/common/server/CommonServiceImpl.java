@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.server;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.sql.Connection;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
@@ -37,6 +39,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
@@ -56,18 +59,23 @@ import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Relationship;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
+import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -104,6 +112,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -1425,6 +1434,173 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<String> getSchemas() throws AonCoreException {
 		return AON_SOLUTIONS.getSchemas();
+	}
+	
+	// **************************************************
+	// *********************** [CUSTOMER LINKED ACTIVITY]
+	// **************************************************
+	
+	@Override
+	public List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException {
+		if(params.isSig())
+			return AON.getSigCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+		else
+			return AON.getCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(f.getRegistryRelationProperty().isNotNull())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<Customer> getCustomersNotLinked(CustomersLinkedParams params) throws AonCoreException {
+		if(params.isSig())
+			return AON.getSigCustomerNotLinkedStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+		else
+			return AON.getCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(f.getRegistryRelationProperty().isNull())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+	}
+	
+	@Override
+	public HashMap<Integer, Domain> getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException {
+		HashMap<Integer, Domain> customers = new HashMap<Integer, Domain>();
+		
+		customerIds.forEach(customerId -> {
+			RegistryRelationship registryRelationship = AON_SOLUTIONS.getRegistryRelationship(
+					new Domain().setName(domainName).setId(domainId), 
+					new User().setLogin(user), 
+					f -> f.getRegistryProperty().eq(customerId)).get();
+			
+			if(null != registryRelationship.getRelatedRegistry()) {
+				Enterprise enterprise = AON.getEnterprise(domainName, domainId, user, registryRelationship.getRelatedRegistry());
+				if(null != enterprise) {
+					Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(enterprise.getDomain()));
+					customers.put(customerId, domain);
+				}
+				
+			}	
+		});
+		
+		return customers;
+	}
+	
+	@Override
+	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws AonCoreException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Domain domain = AON_SOLUTIONS.getDomain(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), domain.getParentId());
+			
+			List<ActivitySummaryObject> list = AON.getActivitySummary(domain.getName(), domain.getId(), userLogin, domain.getParentId(), userId, params);
+			
+			return list;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException {
+		return CONSOLE.getAviableDomainsForSync(
+				new Domain().setName(paramsDomains.getDomainName()).setId(paramsDomains.getDomainId()), 
+				new User().setLogin(paramsDomains.getUser()), 
+				f -> f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
+					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
+				).collect(Collectors.toList());
+	}
+	@Override
+	public void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException {
+		if(isSig) {
+			List<RegistryAddInfo> raddInfoList = AON.getRegistryAddInfoStream(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME"))).collect(Collectors.toList());
+			if(!raddInfoList.isEmpty()) throw new IllegalArgumentException("Este cliente ya está vinculado al dominio " + raddInfoList.get(0).getValue());
+			
+			AON.insertRegistryAddInfo(domainName, domainId, user, 
+					new RegistryAddInfo()
+						.setDomain(domainId)
+						.setRegistry(customerId)
+						.setAttribute("AON_DOMAIN0_NAME")
+						.setValue(domainCompany.getDomain().getName())
+						.setDate(new Date())
+				);
+			
+			AON.insertRegistryAddInfo(domainName, domainId, user, 
+					new RegistryAddInfo()
+						.setDomain(domainId)
+						.setRegistry(customerId)
+						.setAttribute("AON_DOMAIN0_ID")
+						.setValue(domainCompany.getDomain().getId().toString())
+						.setDate(new Date())
+				);
+			
+			AON.insertRegistryAddInfo(domainName, domainId, user, 
+					new RegistryAddInfo()
+						.setDomain(domainId)
+						.setRegistry(customerId)
+						.setAttribute("AON_DOMAIN0_SCHEMA")
+						.setValue(domainCompany.getSchema())
+						.setDate(new Date())
+				);
+			
+			AON.insertRegistryAddInfo(domainName, domainId, user, 
+					new RegistryAddInfo()
+						.setDomain(domainId)
+						.setRegistry(customerId)
+						.setAttribute("AON_DOMAIN0_TYPE")
+						.setValue(domainCompany.getDomain().getDomainType().getName())
+						.setDate(new Date())
+				);
+		} else {
+			Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(customerId).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));
+			if(existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya está vinculado al dominio " + existRelationShip.get().getComments());
+			
+			AON_SOLUTIONS.saveRegistryRelationship(
+					new Domain().setName(domainName).setId(domainId), 
+					new User().setLogin(user), 
+					new RegistryRelationship()
+						.setDomain(new Domain().setId(domainId))
+						.setRegistry(customerId)
+						.setRelatedRegistry(domainCompany.getCompany().getId())
+						.setRelationship(new Relationship().setId(-1))
+						.setComments(domainCompany.getDomain().getName())
+					);
+		}
+		
 	}
 
 }

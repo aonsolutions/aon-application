@@ -172,14 +172,6 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/pension_plan_afi.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	<!-- =================== Main Customer Linked Activiy Sumary  ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_customer_linked_activity_summary</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/customerLinkedActivitySummary.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
 </faces-config>
 		

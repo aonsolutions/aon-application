@@ -47,6 +47,8 @@ import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -56,6 +58,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.ActivitySummaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CnoDAO;
@@ -626,5 +629,13 @@ public class CommonImpl implements ICommon {
 	public Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
 				SeriesDAO.getSeries(ctx, filter));
+	}
+	
+	// -------------------- ACTIVITY SUMMARY
+	
+	@Override
+	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ActivitySummaryDAO.getActivitySummary(ctx, domainId, parentDomainId, userId, params));
 	}
 }

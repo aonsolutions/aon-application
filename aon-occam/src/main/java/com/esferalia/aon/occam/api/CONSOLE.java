@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -78,8 +79,24 @@ public class CONSOLE {
 				e.printStackTrace();
 			}
 		}
+		return list.stream();	
+	}
+	
+	public static Stream<DomainCompany> getAviableDomainsForSync(DomainFilter filter) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getAviableDomainsForSync(ctx, true, filter).collect(Collectors.toList());
+				domains.forEach(domain -> {
+					domain.setSchema(schema);
+					list.add(domain);						
+				});
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			}
+		}
 		return list.stream();
-		
 	}
 	
 	public static Stream<DomainCompany> areDomainsSync(DomainFilter filter) {
@@ -266,5 +283,16 @@ public class CONSOLE {
 			return getConsole().updateScopes(ctx,domainId, wrongScopeId, newScopeId);
 		}
 	}
+	
+	public static Stream<DomainCompany> getAviableDomainsForSync(Domain domain, User user, DomainFilter filter) {
+		List<DomainCompany> domains = new ArrayList<DomainCompany>();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			domains = getConsole().getAviableDomainsForSync(ctx, false, filter).collect(Collectors.toList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return domains.stream();
+	}
+	
 
 }

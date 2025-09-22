@@ -228,6 +228,7 @@ public final class IJsonNames {
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
 	public static final String END_DATE = "end_date";
+	public static final String END_COUNT = "end_count";
 	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_CREATION_DATE = "entryCreationDate";
 	public static final String ENTRY_CREATION_USER = "entryCreationUser";	
@@ -267,6 +268,7 @@ public final class IJsonNames {
 	public static final String FINANCE_PENDING = "financePending";
 	public static final String FINANCE = "finance";
 	public static final String FINANCES = "finances";
+	public static final String FIRST_SURNAME = "first_surname";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
@@ -340,6 +342,10 @@ public final class IJsonNames {
 	public static final String IRPF_PARAMS = "irpfParams";
 	public static final String IRPF_REGIME = "irpfRegime";
 	public static final String ISSUE_DATE = "issueDate";
+	public static final String IT_COMMON_DISEASE_COUNT = "it_common_disease_count";
+	public static final String IT_OCCUPATIONAL_DISEASE_COUNT = "it_occupational_disease_count";
+	public static final String IT_MATERNITY_COUNT = "it_maternity_count";
+	public static final String IT_OTHER_COUNT = "it_other_count";
 	public static final String ITEM = "item";
 	public static final String ITEMS = "items";
 	public static final String ITEM_COMPOSITION = "itemComposition";
@@ -395,6 +401,7 @@ public final class IJsonNames {
 	public static final String MONTH = "month";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
+	public static final String NAME_URL = "name_url";
 	public static final String NATIONALITY = "nationality";
 	public static final String NATURE = "nature";
 	public static final String NEARBY_NUMBERS = "nearbyNumbers";
@@ -403,6 +410,8 @@ public final class IJsonNames {
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
+	public static final String NOTIFICATION_DATE = "notification_date";
+	public static final String NOTIFICATION_USER = "notification_user";
 	public static final String NRC = "nrc";
 	public static final String NRS = "nrs";
 	public static final String NULL = "null";
@@ -579,6 +588,10 @@ public final class IJsonNames {
 
 	public static final String S3_BUCKET = "s3Bucket";
 	public static final String S3_KEY = "s3Key";
+	public static final String SALARY_COUNT  = "salary_count";
+	public static final String SALARY_EXTRA_COUNT  = "salary_extra_count";
+	public static final String SALARY_SETTLE_COUNT  = "salary_settle_count";
+	public static final String SALARY_OTHER_COUNT  = "salary_other_count";
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
 	public static final String SALES_DETAIL = "salesDetail";
@@ -586,6 +599,7 @@ public final class IJsonNames {
 	public static final String SCHEMA = "schema";
 	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
+	public static final String SECOND_SURNAME = "second_surname";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
 	public static final String SELECTED = "selected";
@@ -627,9 +641,11 @@ public final class IJsonNames {
 	public static final String SIZE = "size";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
+	public static final String SOURCE_IDS = "source_ids";
 	public static final String SOURCE_WAREHOUSE = "sourceWarehouse";
 	public static final String SSCC = "sscc";
 	public static final String START_DATE = "start_date";
+	public static final String START_COUNT = "start_count";
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
 	public static final String STATUS = "status";

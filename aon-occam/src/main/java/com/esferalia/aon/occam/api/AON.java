@@ -97,6 +97,8 @@ import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -4858,6 +4860,12 @@ public class AON {
 			return getWarehouse().saveElaboration(ctx, elaboration);
 		}
 	}
+
+	public static Elaboration saveElaborationSerial(Occam occam, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveElaborationSerial(ctx, elaboration);
+		}
+	}
 	
 	/**
 	 * @deprecated  Replaced by saveElaboration
@@ -5178,6 +5186,18 @@ public class AON {
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomers(ctx, filter, ofs, limit);
+		} 
+	}
+	
+	public static Stream<Customer> getSigCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
+	public static Stream<Customer> getSigCustomerNotLinkedStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerNotLinkedStream(ctx, filter, ofs, limit);
 		} 
 	}
 	
@@ -8369,6 +8389,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().updateDomainCustomer(ctx, domainId, customer);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
@@ -8882,6 +8908,12 @@ public class AON {
 	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
+	public static List<ActivitySummaryObject> getActivitySummary(String domainName, Integer domainId, String login, Integer parentDomainId,  Integer userId, ActivitySummaryParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getActivitySummary(ctx, domainId, parentDomainId, userId, params);
 		}
 	}
 	

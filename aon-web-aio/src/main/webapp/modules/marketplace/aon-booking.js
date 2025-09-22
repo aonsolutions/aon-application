@@ -15,7 +15,6 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { AonBookingInvoiceList } from './aon-booking-invoice-list.js';
 import * as GWT from '../../gwt/gwt.js';
-//import * as LS from '../../services/localStorageService.js';
 import { createInput, createSelect } from '../../components/CreateComponent.js';
 //import '../../components/aon-icon.js';
 
@@ -214,7 +213,7 @@ export class AonBooking extends AonElement {
 			return this.dur.isEnterpriseChild()
 				? {COMMERCE}
 				: {COMMERCE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
-		else if(this.dur.getDomain().isOffice())
+		else if(this.dur.hasOffice())
 			return this.dur.isEnterpriseChild()
 				? {OFFICE}
 				: {OFFICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
@@ -227,15 +226,15 @@ export class AonBooking extends AonElement {
 	}
 
 	getTypeName(){
-		if(this.dur.getDomain().isGarage())
+		if(this.dur.hasGarage())
 			return 'Taller';
 		else if(this.dur.getDomain().isHotel())
 			return 'Hotel';
-		else if(this.dur.getDomain().isAcademy())
+		else if(this.dur.hasAcademy())
 			return 'Academia';
-		else if(this.dur.getDomain().isCommerce())
+		else if(this.dur.hasCommerce())
 			return 'Comercio';
-		else if(this.dur.getDomain().isOffice())
+		else if(this.dur.hasOffice())
 			return 'Despacho';
 		else if(this.dur.getDomain().isKitDigital()) 
 			return 'Kit Digital';
