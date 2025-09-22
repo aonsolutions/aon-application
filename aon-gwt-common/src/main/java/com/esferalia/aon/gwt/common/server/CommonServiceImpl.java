@@ -1559,6 +1559,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
 				).collect(Collectors.toList());
 	}
+	
 	@Override
 	public void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException {
 		if(isSig) {

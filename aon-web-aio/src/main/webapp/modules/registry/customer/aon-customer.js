@@ -1,12 +1,12 @@
 import { AonReg } from "../aon-reg.js";
-import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME, TAG } from "../../../environments/environments.js";
 import { AonCard } from "../../../components/aon-card.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, remo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getCustomerStatusTags, getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -331,9 +331,10 @@ export class AonCustomer extends AonReg {
 		}
 		
 		if(this.isSig()){
+			let headers = {domain_name: SIG_DOMAIN_NAME, domain_id: SIG_DOMAIN_ID};
 			getCustomerDomainAddInfo({
 				registry: this.registry.getId()
-			})
+			}, headers)
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
 			})
@@ -1075,6 +1076,7 @@ export class AonCustomer extends AonReg {
 		.finally(() => {
 			this.getApplication().stopLoading();
 		});
+
 	}
 
 	async getDomainCompanies(value) {
