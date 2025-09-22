@@ -20,6 +20,7 @@ import { AonProductList } from '../product/aon-product-list.js';
 import { createInput, createSelect } from '../../components/CreateComponent.js';
 import { AonPackageList } from './package/aon-package-list.js';
 import { AonMobilePackageSearch } from './package/aon-mobile-package-search.js';
+import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -203,10 +204,10 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().getToolbar().option = MSG.ELABORATION;
 		this.getApplication().removeFloatOption();
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
-		this.getApplication().setContent(new AonMobileElaborationList()
-			// this.isMobile()
-			// ? new AonMobileElaborationList()
-			// : new AonElaborationList()
+		this.getApplication().setContent(
+			this.isMobile()
+				? new AonMobileElaborationList()
+				: new AonElaborationList()
 		);
 	}
 	

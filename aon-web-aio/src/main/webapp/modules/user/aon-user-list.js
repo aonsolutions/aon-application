@@ -7,6 +7,7 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 
 import * as LS from '../../services/localStorageService.js';
+import { AonNewUser } from './aon-new-user.js';
 
 export class AonUserList extends AonElement {
 
@@ -148,7 +149,7 @@ export class AonUserList extends AonElement {
 		setFilter(this.filter);
 		getUserRoles({user: user.id}, this.sessionData).then(roles => {
 			user.roles = roles;
-			let aonUser = new AonUser();
+			let aonUser = this.isBeta() ? new AonNewUser(): new AonUser();
 			aonUser.sessionData = this.sessionData;
 			aonUser.parent = this.parent;
 			aonUser.id = 'aonUser-' + user.id;

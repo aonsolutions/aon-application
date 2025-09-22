@@ -1,217 +1,58 @@
-import { AonElement } from '../../../components/AonElement.js';
-import { AonTable } from '../../../components/aon-table.js';
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../../environments/environments.js';
-import { WAREHOUSE } from '../../../services/app.js';
-import { getElaboration, getElaborations, getWarehouses } from '../../../services/warehouseService.js';
+import { CONSTANT, MSG, TAG } from '../../../environments/environments.js';
+import { AonList } from '../../../components/aon-list.js';
+import { getElaboration, getElaborations } from '../../../services/warehouseService.js';
+import { AonDateUtils } from '../../utils/AonDateUtils.js';
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
-import { addElements, setElements } from './ElementCache.js';
-import { elaborationStatuses } from '../../../models/elaboration/elaborationStatus.js';
-import { createList } from '../../../components/CreateComponent.js';
 
-export class AonElaborationList extends AonElement {
+export class AonElaborationList extends AonList {
 
-	more;
-	filter;
-	TABLE;
-
-	get id() {
-		return this.getAttribute(CONSTANT.ID);
-	}
-
-	set id(id) {
-		this.setAttribute(CONSTANT.ID, id);
-	}
-
-	constructor () {
-		super();
-		this.more = true;
-	}
-
-	connectedCallback () {
-		this.initialize();
-		this.buildDur().then(() => this.build());
- 	}
-
-	initialize() {
-		this.id = this.id || 'aonElaborationList';
-		this.TABLE = this.id + 'Table';
-		this.filter = this.filter || {
-			page: 1,
-			perPage: 50
-		};
-	}
-
- 	build() {
-		let aonTable = createList(this.TABLE);
-		aonTable.selectable = 'true';
-		this.appendChild(aonTable);
-		aonTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
-		aonTable.addColumn(MSG.REFERENCE, 'string', 'reference', '15%');
-		aonTable.addColumn(MSG.DESCRIPTION, 'string', 'description', '35%');
-		aonTable.addColumn(MSG.QUANTITY, 'number', 'quantity', '10%');
-		aonTable.addColumn(MSG.WAREHOUSE, 'string', 'warehouseName', '20%');
-		aonTable.addColumn('', 'icons', 'icons', '10%');
-
-		this.init();
-		aonTable.addEventListener('more', () => {
-			if(this.more)
-				this.loadMore();
-		});
-
-		aonTable.addEventListener('select', () => {
-			if(aonTable.selected.length === 1) {
-				this.addElaborationActions();
-			} else if(aonTable.selected.length === 0){
-				this.removeElaborationActions();
-			}
-		});
-		this.buildSearch();
-	}
-
-	buildSearch(){
-		const btnSearch = this.getApplication().addSearchOption();
-		let searchFn = (event) => this.search(event.detail);
-		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
-
-		getWarehouses().then(warehouses => {
-			let options = [{
-				type: CONSTANT.DATE,
-				name: "startDate",
-				id: "startDate",
-				title: MSG.FROM,
-			  },
-			  {
-				type: CONSTANT.DATE,
-				name: "endDate",
-				id: "endDate",
-				title: MSG.TO,
-			  },{
-				type: CONSTANT.SELECT,
-				name: "status",
-				id: "status",
-				title: MSG.STATUS,
-				options: JSON.stringify(elaborationStatuses)
-			  }];
-			if(warehouses.length > 1) {
-				options.push({
-					type: CONSTANT.SELECT,
-					name: "warehouse",
-					id: "warehouse",
-					title: MSG.WAREHOUSE,
-					options: JSON.stringify(warehouses.map(r => {
-						let w = {
-							value: r.id,			
-							name: r.name
-						};
-						return w;
-					}))
-				})
-			}
-			btnSearch.buildOptionsFilter(options);
-		});
-
+    constructor () {
+        super();
     }
 
-	search(detail) {
-		this.filter.value = detail.search;
-		this.filter.warehouse = detail.warehouse;
-		this.filter.from = detail.startDate;
-		this.filter.to = detail.endDate; 
-		this.filter.status = detail.status;
-		this.filter.page = 1;
-		this.filter.perPage = 50;
-		this.init();
-	}
+    initialize() {
+        this.id = this.id || 'aonElaborationList';
+		this.TABLE = this.id + CONSTANT.TABLE.initCap();
+        this.filter = this.filter || {
+            page:1,
+            perPage:50
+        }
+        this.more = this.elaborations ? false : true;
+        this.columns = [
+            { name: MSG.DATE, type: 'date', id: 'dateTable', width: '120px' },
+            { name: MSG.REFERENCE, type: 'string', id: 'reference', width: '120px' },
+            { name: MSG.DESCRIPTION, type: 'string', id: 'description', width: 'auto' },
+            { name: MSG.QUANTITY, type: 'number', id: 'quantity', width: '120px' }, 
+            { name: MSG.WAREHOUSE, type: 'string', id: 'warehouseName', width: '120px' },
+            { name: '', type: 'icons', id: 'icons', width: '50px' }
+        ];
+    }
 
-	loadMore() {
-		let aonTable = document.getElementById(this.TABLE);
-		if(aonTable && this.filter.page) {
-			this.filter.page = this.filter.page + 1;
-			getElaborations(this.filter).then(elaborations => {
-				if(elaborations.length == 0)
-					this.more = false;
-				addElements(elaborations);
-				elaborations.forEach((elaboration, i) => {
-					let date = new Date(elaboration.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					elaboration.dateTable = day + '/' + month + '/' + year;
-					elaboration.warehouseName = elaboration.warehouse
-						? elaboration.warehouse.name : '';
-					elaboration.icons = this.buildRowIcons(elaboration); 
-					aonTable.addRow(elaboration, () => this.aonElaboration(elaboration, i), (e) => {});
-				});
-			});
-		}
-	}
-
-	init() {
-		this.more = true;
-		let aonTable = this.getElement(this.TABLE);
-		if(aonTable) {
-			getElaborations(this.getFilter()).then(elaborations => {
-				setElements(elaborations);
-			
-				aonTable.removeRows();
-				aonTable.selected = [];
-				this.removeElaborationActions();
-				elaborations.forEach((elaboration, i) => {
-					let date = new Date(elaboration.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					elaboration.dateTable = day + '/' + month + '/' + year;
-					elaboration.warehouseName = elaboration.warehouse
-						? elaboration.warehouse.name : '';
-					elaboration.icons = this.buildRowIcons(elaboration); 
-					aonTable.addRow(elaboration, () => this.aonElaboration(elaboration, i), (e) => {});
-				});
-			});
-		}
-	}
-
-	buildRowIcons(elaboration) {
-		let icons = [];
-
-		let icon = {
-			icon: MATERIAL_ICONS.CIRCLE,
-			title: "ESTADO",
-			color: "gray"
-		};
-		icons.push(icon);
-		
-		return icons;
-	}
-	
-	addElaborationActions() {
-
-	}
-
-	removeElaborationActions() {
-
-	}
-
-    aonElaboration(elaboration, i) {
-        getElaboration(elaboration.id).then(elaboration => {
-			setIndex(i);
-			let aonElaboration = new AonMobileElaboration();
-            aonElaboration.setElaboration(elaboration);
+    aonObject(object, i) {
+       getElaboration(object.id).then(el => {
+            let aonElaboration = new AonMobileElaboration();
+            aonElaboration.setElaboration(el);
+            aonElaboration.back = () => this.getApplication().setContent(new AonElaborationList());
             this.getApplication().setContent(aonElaboration);
         });
     }
 
-	getFilter() {
-		return this.filter || {		
-			page: 1,
-			perPage: 50
-		};
-	}
-
-	setFilter(filter) {
-		this.filter = filter;
-	}
+    getObjects() {
+        return new Promise((resolve, reject) => {
+            getElaborations(this.getFilter())
+            .then(objects => {
+                resolve(objects.map(r => {
+                    r.dateTable = AonDateUtils.formatDate(r.date);
+                    r.warehouseName = r.warehouse.name;
+                    r.icons = [];
+                    return r;
+                }));
+            })
+            .catch(e => reject(e));
+        });
+    }
 }
-if(!window.customElements.get(TAG.AON_ELABORATION_LIST)){
-	window.customElements.define(TAG.AON_ELABORATION_LIST, AonElaborationList);
+
+if(!window.customElements.get(TAG.AON_ELABORATION_LIST)) {
+    window.customElements.define(TAG.AON_ELABORATION_LIST, AonElaborationList);
 }

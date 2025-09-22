@@ -19,13 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.accounting.AlterBankStatementAddNordigenInternalId;
-import net.aonsolutions.db.up2date.data.DataResponseSourceResponseDateIndex;
-import net.aonsolutions.db.up2date.finance.InvoiceBatchEndDateTime;
-import net.aonsolutions.db.up2date.payroll.AlterAlcatraz4Liquidation;
+import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresInsert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.task.TaskWorkflowCommentModify;
-import net.aonsolutions.db.up2date.tgss.BaseCgpMin2025Fix;
+import net.aonsolutions.db.up2date.payroll.PPEUpdate2CostFix;
+import net.aonsolutions.db.up2date.security.AddAonClassic;
 
 public class Up2Date {
 
@@ -556,7 +553,11 @@ public class Up2Date {
 			// TaskWorkflowCommentModify.TASK_WORKFLOW_COMMENT_MODIFY,
 			// AlterAlcatraz4Liquidation.ALTER_ALCATRAZ_4_LIQUIDATION,
 			// InvoiceBatchEndDateTime.INVOICEBATCH_ENDDATETIME,
-			BaseCgpMin2025Fix.BASECGPMIN2025FIX,
+			// BaseCgpMin2025Fix.BASECGPMIN2025FIX,
+			// RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
+			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
+			// BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
+			AddAonClassic.ADD_AON_CLASSIC,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -615,7 +616,7 @@ public class Up2Date {
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
 			properties.setProperty("password", password);
-			properties.setProperty("useSSL", "false");
+			properties.setProperty("useSSL", "true");
 			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
 			String url = String.format("jdbc:mysql://%s:%s/information_schema", host, port);
 			connection = DriverManager.getConnection(url, properties);

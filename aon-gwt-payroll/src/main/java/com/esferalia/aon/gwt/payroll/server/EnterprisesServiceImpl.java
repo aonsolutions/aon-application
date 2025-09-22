@@ -171,6 +171,7 @@ import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -5053,11 +5054,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			Domain domain = AON_SOLUTIONS.getDomain(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), domain.getParentId());
 			
-			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domain.getId(), domain.getParentId(), userId, params);
 			return list;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -5210,5 +5210,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	
+	@Override
+	public Domain getDomainByName(String domainName) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		return domain;
+	}
 	
 }

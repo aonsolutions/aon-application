@@ -828,8 +828,8 @@ public class DomainEnterprisesServiceAsync {
 	
 	// ------------------------------------------------ Activity Summary
 	
-	public void getActivitySummary(ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getActivitySummary(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	public void getActivitySummary(String domainName, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivitySummary(domainName, getCurrentUser(), params, asyncCallback);
 	}
 	
 	// ------------------------------------------------ Salaries
@@ -866,7 +866,13 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void fixAgreementIntegrity(Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
-		}
+	}
+	
+	
+	
+	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
+	}
 	
 	// ----------------------------------------------------------------- static
 	
@@ -880,6 +886,10 @@ public class DomainEnterprisesServiceAsync {
 
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
+	}
+	
+	private static int getCurrentDomainId() {
+		return Wnd.getCurrentDomain();
 	}
 
 }

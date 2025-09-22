@@ -1334,5 +1334,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.fixAgreementIntegrity(domainName, agreementId, callback);
 	}
+
 	
+	@Override
+	public void getDomainByName(String domainName, AsyncCallback<Domain> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getDomainByName(domainName, callback);
+	}
 }

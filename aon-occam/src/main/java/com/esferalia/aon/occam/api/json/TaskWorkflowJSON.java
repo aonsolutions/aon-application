@@ -28,7 +28,14 @@ public class TaskWorkflowJSON {
 			.setEmail(JsonUtils.optString(json, IJsonNames.EMAIL))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 			.setType(TaskWorkflowType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
-			.setComment(JsonUtils.getString(json, IJsonNames.COMMENT));
+			.setComment(JsonUtils.getString(json, IJsonNames.COMMENT))
+			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
+			.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
+			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
+			.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
+			.setNotificationDate(JsonUtils.getDate(json, IJsonNames.NOTIFICATION_DATE))
+			.setNotificationUser(JsonUtils.getString(json, IJsonNames.NOTIFICATION_USER))
+			;
 	}
 	
 	public static JSONArray toJSON(LinkedList<TaskWorkflow> taskWorkflows) {

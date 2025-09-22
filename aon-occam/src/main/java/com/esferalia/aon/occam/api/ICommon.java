@@ -45,6 +45,8 @@ import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -223,7 +225,8 @@ public interface ICommon {
 	Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter);
 	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
 	
-	
+	// ACTIVITY SUMMARY
+	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params);	
 	
 
 }

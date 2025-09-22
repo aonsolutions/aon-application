@@ -188,7 +188,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		@Override
 		public String getQuoteExpression() {
-			return String.format("%s()",ContextVariable.PRORATION);
+			return AonStringUtils.contains(super.getQuoteExpression(), ContextVariable.PRORATION) ? super.getQuoteExpression() : String.format("%s()",ContextVariable.PRORATION);
 		
 		}
 		

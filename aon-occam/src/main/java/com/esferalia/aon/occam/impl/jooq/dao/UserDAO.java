@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.UserValidation;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class UserDAO {
@@ -91,6 +92,8 @@ public class UserDAO {
     }
 	
 	public static User save(AONContext ctx, User user) {
+		UserValidation.validate(ctx, user);
+		
 		user = user.getId() != null 
 				? update(ctx, user) 
 				: insert(ctx, user);
@@ -99,7 +102,7 @@ public class UserDAO {
 		return user;
 	}
 	
-	public static User insert(AONContext ctx, User user) {
+	private static User insert(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
@@ -115,7 +118,7 @@ public class UserDAO {
 		return user.setId(id);
 	}
 	
-	public static User update(AONContext ctx, User user) {
+	private static User update(AONContext ctx, User user) {
 		ctx.getDslContext().update(USER)
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
@@ -202,7 +205,5 @@ public class UserDAO {
         }
         return result.toString();
     }
-    
-
 	
 }

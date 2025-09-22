@@ -369,4 +369,6 @@ public interface EnterprisesServiceAsync {
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
 
+	void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException;
+	
 }

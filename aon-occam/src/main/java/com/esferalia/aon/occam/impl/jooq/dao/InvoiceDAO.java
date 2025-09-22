@@ -625,6 +625,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setRemarks(r.getValue(INVOICE.REMARKS))
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
@@ -795,7 +796,7 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && InvoiceType.contains(types, InvoiceType.SALES)) {
+		if(tbaiConfiguration.isActive() && !tbaiConfiguration.isSkipTracking() && InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)

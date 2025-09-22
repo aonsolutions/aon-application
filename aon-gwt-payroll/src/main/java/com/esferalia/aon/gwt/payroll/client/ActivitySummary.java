@@ -73,6 +73,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private ActivitySummaryParams params;
 	
+	// String Domian
+	
+	private String domainName;
+	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, ALT("Ini. Contrato"						,"7rem" 			,"text-align: center;")
@@ -124,6 +128,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	public ActivitySummary() {
 		super("Resumen Actividad");
+		
+		this.domainName = Wnd.getCurrentDomainNameURL();
 		
 		addButtonsToolbar();
 		
@@ -238,7 +244,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 
 		add(container);
 		
-		service.getDomainDetails(new AsyncCallback<Domain>() {
+		service.getDomainByName(domainName, new AsyncCallback<Domain>() {
 			
 			@Override
 			public void onSuccess(Domain domainDB) {
@@ -578,7 +584,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
-		service.getActivitySummary(params, new AsyncCallback<List<ActivitySummaryObject>>() {
+		service.getActivitySummary(domainName, params, new AsyncCallback<List<ActivitySummaryObject>>() {
 			
 			@Override
 			public void onSuccess(List<ActivitySummaryObject> result) {
@@ -592,5 +598,4 @@ public class ActivitySummary extends AonCustomDockLayout {
 			
 		});
 	}
-
 }

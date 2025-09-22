@@ -68,7 +68,7 @@ public class MainEntryPoint implements EntryPoint {
 			runAsync(PensionPlanAFIModule.class, new PensionPlanAFIModule());
 		} else if (entryPoint.equalsIgnoreCase("MainCostModule")) {
 			runAsync(PensionPlanAFIModule.class, new CostModule());
-		}
+		} 
 	}
 	
 
@@ -255,7 +255,8 @@ public class MainEntryPoint implements EntryPoint {
 	                Window.alert("Error al cargar");
 				}
 			});
-		} else if (name == MainSalaryPrint.class ) {
+			
+		}  else if (name == MainSalaryPrint.class ) {
 			GWT.runAsync(MainSalaryPrint.class, new RunAsyncCallback() {
 				
 				@Override
@@ -419,7 +420,5 @@ public class MainEntryPoint implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
-	
-	
 
 }

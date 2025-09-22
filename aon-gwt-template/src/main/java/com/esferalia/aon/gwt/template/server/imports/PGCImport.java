@@ -1,15 +1,16 @@
 package com.esferalia.aon.gwt.template.server.imports;
 
+import static com.esferalia.aon.gwt.template.server.imports.a3.PGC2Template.pgc2Template;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.esferalia.aon.gwt.template.shared.AccountImportClass;
-import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,6 +22,9 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.server.UnknownFileException;
+import com.esferalia.aon.gwt.template.shared.AccountImportClass;
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -124,12 +128,22 @@ public class PGCImport {
 				});
 				if(row.getRowNum() != 0 && account.getAccount().getCode() != null && account.getAccount().getDescription() != null) {
 					list.add(account);
+				} else if ( row.getRowNum() == 0 ) {
+					List<String> titles = titleList.stream().filter(Objects::nonNull).map(String::toUpperCase)
+							.map(AonStringUtils::normalized).toList();
+					if (!titles.contains("CODIGO") || !titles.contains("DESCRIPCION")) {
+						throw new UnknownFileException();
+					}
 				}
 			});
 
 			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (UnknownFileException e) {
+			// Try A3
+			data = pgc2Template(data);
+			return importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {

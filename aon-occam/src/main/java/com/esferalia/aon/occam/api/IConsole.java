@@ -35,6 +35,7 @@ public interface IConsole {
 	public Boolean delete(AONContext ctx, ConsoleTableRow row);
 	public Stream<DomainCompany> getAllDomains(AONContext ctx);
 	public Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter);
+	public Stream<DomainCompany> getAviableDomainsForSync(AONContext ctx, boolean isSig, DomainFilter filter);
 	public Stream<DomainCompany> areDomainsSync(AONContext ctx, DomainFilter filter);
 	public Stream<DomainCompany> getCustomerDomains(AONContext ctx, Integer customer);
 	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer);

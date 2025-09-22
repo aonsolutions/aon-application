@@ -5,7 +5,6 @@ import { MOBILE_ACTION, mobileAction } from '../../../services/mobileService.js'
 import { openBarcode } from '../../../services/actionService.js';
 import { AonButton } from '../../../components/aon-button.js';
 import { getPackage } from '../../../services/productService.js';
-import { AonMobilePackage } from './aon-mobile-package.js';
 import { AonMobileItemPackage } from './aon-mobile-item-package.js';
 
 export class AonMobilePackageSearch extends AonElement {

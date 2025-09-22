@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -87,6 +89,9 @@ public class CustomerDAO {
         
         @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}	
         @Override public Property<Integer> getRelatedRegistryProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.RELATED_REGISTRY); }
+		
+        @Override public Property<Integer> getRaddInfoDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ID); }
+        
 		}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -119,16 +124,25 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
-					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null);
+					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || (checkField(r, hasDomain) && r.get(hasDomain)) );
 		}
 	}
 	
+	private static Field<Boolean> hasDomain = DSL.exists(
+		    DSL.selectOne()
+		       .from(RADDINFO)
+		       .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
+		       .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%"))
+		).as("has_domain");
+	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
-	    return ctx.getDslContext()
+		
+		return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
 	            .select(RRELATIONSHIP.ID)
+	            .select(hasDomain)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
@@ -152,6 +166,46 @@ public class CustomerDAO {
 				.limit(limit)				
 				.fetch()
 				.stream()
+				.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(hasDomain)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.filter(r -> r.getValue(hasDomain))
+				.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getSigNotLinkedStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	            .select(hasDomain)
+		        .from(CUSTOMER)
+		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)				
+				.fetch()
+				.stream()
+				.filter(r -> !r.getValue(hasDomain))
 				.map(new CustomerFiller());
 	}
 	

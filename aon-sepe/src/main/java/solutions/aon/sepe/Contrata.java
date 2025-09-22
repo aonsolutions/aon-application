@@ -839,7 +839,7 @@ public class Contrata {
 			webClient.waitForBackgroundJavaScript(5000);
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
-
+			
 			// For contract 502 check if duration equals or less than 90 days
 			try {
 				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().contains("Obligatorio indicar si el contrato tiene")) {
@@ -863,14 +863,19 @@ public class Contrata {
 			try {
 				if(contract.equals("402")) {
 					webClient.waitForBackgroundJavaScript(5000);
+					
 					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=volver]")).click();
 					
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					setOccupation(cto, form);
 					
-					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
-
+					HtmlSelect select = (HtmlSelect) htmlPage.getElementById("preg28dias");
+					select.setSelectedIndex(cto.isWrittenContract() ? 1 : 2);
+					select.setSelectedAttribute(cto.isWrittenContract() ? "S" : "N", true);
+//					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
+					
 					webClient.waitForBackgroundJavaScript(5000);
+					
 					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {
@@ -2171,6 +2176,9 @@ public class Contrata {
 
 		if (sepeId.isPresent()) { // por identificacion de la comunicacion
 			String ide = sepeId.get();
+			
+			if(ide.startsWith("E")) ide = ide.substring(1);
+			
 			String ide1 = ide.substring(0, 2);
 			String ide2 = ide.substring(2, 6);
 			String ide3 = ide.substring(6, 13);
@@ -2182,12 +2190,17 @@ public class Contrata {
 			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
 			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
 			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+			
+			formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
+			formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
+			formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
 
 			DomNode idcomunicacion4Node = formDatos.querySelector("[name=\"idcomunicacion4\"]");
 			if (idcomunicacion4Node != null && ide4Exist) {
 				HtmlInput idcomunicacion4 = ((HtmlInput) idcomunicacion4Node);
 				if (idcomunicacion4.getValue().isEmpty()) {
 					idcomunicacion4.setValue(Toolkit.fillStringLeft(ide4, "0", 2));
+					idcomunicacion4.setValueAttribute(Toolkit.fillStringLeft(ide4, "0", 2));
 				}
 			}
 
@@ -2199,6 +2212,7 @@ public class Contrata {
 					ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
 				idcontrato.setValue(ideStr);
+				idcontrato.setValueAttribute(ideStr);
 			}
 
 		} else {

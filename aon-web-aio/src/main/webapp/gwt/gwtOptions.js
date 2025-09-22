@@ -635,6 +635,16 @@ export const CONSOLE = {
   entryPoint: 'ConsoleModule'
 };
 
+export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'CustomerLinkedActivity'
+};
+
+export const CUSTOMER_SYNC_DOMAIN_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'CustomerSyncDomainModule'
+};
+
 export const PROJECT = {
   module: GWT_AIO,
   entryPoint: 'ProjectModule'

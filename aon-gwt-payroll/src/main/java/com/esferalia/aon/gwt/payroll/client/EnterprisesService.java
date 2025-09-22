@@ -503,4 +503,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
+	
+	Domain getDomainByName(String domainName) throws IllegalArgumentException;
+
 }
+

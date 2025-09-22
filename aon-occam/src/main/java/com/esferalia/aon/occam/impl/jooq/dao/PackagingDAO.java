@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
@@ -578,8 +579,12 @@ public class PackagingDAO {
 		SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));		
 		sd.setDelivered(sd.getDelivered() + quantity);
 		sd.setStatus(sd.getDelivered() == sd.getQuantity() ? SalesDetailStatus.SETTLED : SalesDetailStatus.PARTIAL_SETTLED);
+
 		if(AonMathUtils.isGreaterThan(sd.getDelivered(), sd.getQuantity())) {
-			throw new AonCoreException("La cantidad a añadir es mayor que la cantidad del pedido.");
+//	 		NO QUIEREN QUE DE ESTE ERROR. CREO QUE AL FINAL HABRÁ QUE VOLVER A PONERLO. 
+//			throw new AonCoreException("La cantidad a añadir es mayor que la cantidad del pedido.");
+			sd.setDelivered(sd.getQuantity());
+			sd.setStatus(SalesDetailStatus.SETTLED);
 		}
 		SalesDetailDAO.save(ctx, sd);
 		
@@ -1123,6 +1128,37 @@ public class PackagingDAO {
 			StockDAO.add(ctx, ic.getCompositionItemId(), stock.getWarehouse(), ic.getQuantity());
 			ItemCompositionDAO.save(ctx, ic);
 		}
+	}
+	
+	public static Stock addPackageStock(AONContext ctx, Integer itemId, Integer warehouse) {
+		Optional<Stock> stock = StockDAO.opt(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(itemId)));
+		if(stock.isPresent() && stock.get().getQuantity() > 0) {
+			throw new AonCoreException("El envase ya está en stock.");
+		}
+		
+		if(warehouse == null) {
+			throw new AonCoreException("No se ha indicado el almacén");
+		}
+		
+		Item item = ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(itemId));
+		item.getItemComposition().stream().forEach(ic -> 
+			StockDAO.add(ctx, ic.getCompositionItemId(), warehouse, ic.getQuantity()));
+		return StockDAO.add(ctx, itemId, warehouse, 1.0);
+	}
+	
+	public static void movePackageStock(AONContext ctx, Integer itemId, Integer sourceWarehouse, Integer destinyWarehouse) {
+		if(sourceWarehouse == null) {
+			throw new AonCoreException("No se ha indicado el almacén origen");
+		}
+
+		if(destinyWarehouse == null) {
+			throw new AonCoreException("No se ha indicado el almacén destino");
+		}
+		
+		Item item = ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(itemId));
+		item.getItemComposition().stream().forEach(ic -> 
+			StockDAO.move(ctx, ic.getCompositionItemId(), sourceWarehouse, destinyWarehouse, ic.getQuantity()));
+		StockDAO.move(ctx, itemId, sourceWarehouse, destinyWarehouse, 1.0);
 	}
 	
 }

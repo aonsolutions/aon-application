@@ -97,6 +97,8 @@ import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -170,6 +172,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -1773,6 +1776,17 @@ public class AON {
 		}
 	}
 	
+	public static List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String login, Integer registry){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getDomainSigAddInfo(ctx, registry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void insertRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
 		CloseableAONContext ctx = null;
 		try {
@@ -1798,6 +1812,12 @@ public class AON {
 	public static void deleteRegistryAddInfo(Domain domain, String login, Integer raddinfoId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
 			getRegistry().deleteRegistryAddInfo(ctx, raddinfoId);
+		}
+	}
+	
+	public static void deleteRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfoFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryAddInfo(ctx, filter);
 		}
 	}
 	
@@ -4294,54 +4314,52 @@ public class AON {
 	// ********************************************
 	// ******************************* Warehouse **
 	// ********************************************
-
-	public static Double addStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
-		return stock(domain, login, item, quantity, warehouse);
-	}
-	
-	public static Double substractStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
-		return stock(domain, login, item, -quantity, warehouse);
-	}
-	
-	private static Double stock(Domain domain, String login, Integer item, Double quantity, Integer warehouse) {
-		Double q = quantity;
-		Optional<Stock> stockOptional = getStockStream(domain.getName(), domain.getId(), login, f -> 
-				f.getDomainProperty().eq(domain.getId())
-				.and(f.getItemProperty().eq(item))
-				.and(f.getWarehouseProperty().eq(warehouse))).findFirst();
-		if(stockOptional.isPresent()){
-			Stock stock = stockOptional.get();
-			q = stock.getQuantity() + quantity;
-			if(q == 0.0){
-				AON.deleteStock(domain.getName(), domain.getId(), login, stock.getId());
-			} else {
-				stock.setQuantity(q);
-				AON.updateStock(domain.getName(), domain.getId(), login, stock);
-			}
-		} else {
-			Stock stock = new Stock().setDomain(domain.getId())
-					.setItem(item)
-					.setQuantity(quantity)
-					.setWarehouse(warehouse);
-			AON.insertStock(domain.getName(), domain.getId(), login, stock);
+	public static Stock addPackageStock(Occam occam, Integer item, Integer warehouse){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().addPackageStock(ctx, item, warehouse);
 		}
-		return q;
-	}
-
-	public static LinkedList<Stock> getStockList(String domainName, Integer domainId, String login, 
-			StockFilter filter){
-		return getStockStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<Stock> getStockStream(String domainName, Integer domainId, String login, 
-			StockFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static void movePackageStock(Occam occam, Integer item, Integer sourceWarehouse, Integer destinyWarehouse){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getWarehouse().movePackageStock(ctx, item, sourceWarehouse, destinyWarehouse);
+		}
+	}
+	
+
+	public static Stock addStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
+			return getWarehouse().addStock(ctx, item, warehouse, quantity);
+		}
+	}
+	
+	public static Stock subtractStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
+			return getWarehouse().subtractStock(ctx, item, warehouse, quantity);
+		}
+	}
+	
+	public static Stock saveStock(Occam occam, Stock stock){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().saveStock(ctx, stock);
+		}
+	}
+
+	public static Stock getStock(Occam occam, StockFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().getStock(ctx, filter);
+		}
+	}
+	
+	public static Stream<Stock> getStockStream(Occam occam, StockFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getWarehouse().getStockStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Stream<Stock> getStockStream(String domainName, Integer domainId, String login, StockFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){ 
+			return getWarehouse().getStockStream(ctx, filter);
 		}
 	}
 	
@@ -4860,6 +4878,12 @@ public class AON {
 			return getWarehouse().saveElaboration(ctx, elaboration);
 		}
 	}
+
+	public static Elaboration saveElaborationSerial(Occam occam, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveElaborationSerial(ctx, elaboration);
+		}
+	}
 	
 	/**
 	 * @deprecated  Replaced by saveElaboration
@@ -4953,11 +4977,8 @@ public class AON {
 		}
 	}
 	
-	public static ElaborationDetail getFullElaborationDetail(String domainName,
-			Integer domainId, String login, Integer id) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static ElaborationDetail getFullElaborationDetail(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			ElaborationDetail d = getWarehouse().getElaborationDetail(ctx, id);
 			
 			Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
@@ -4971,49 +4992,12 @@ public class AON {
 					f -> f.getIdProperty().eq(
 							d.getWarehouse().getId())));
 			return d;
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
-	public static Integer insertElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetail detail) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			int id = getWarehouse().insertElaborationDetail(ctx, detail);
-			// addStock 
-			if(detail.getWarehouse()!=null){
-				AON.addStock(getDomain(domainName, domainId, login), login,
-						detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
-				return id;
-			}
-			return null;
-		} finally {
-			if (ctx != null) ctx.close();
-		}
-	}
-	
-	public static ElaborationDetail updateElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetail detail) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			detail = getWarehouse().updateElaborationDetail(ctx, detail);
-			// addStock && substractStock
-			if(detail.getWarehouse()!=null){
-				Integer id = detail.getId();
-				Double oldQuantity = AON.getElaborationStream(domainName, domainId, login,
-						f -> f.getIdProperty().eq(id))
-						.findFirst().get().getQuantity();
-				AON.substractStock(getDomain(domainName, domainId, login), login,
-						detail.getItem().getId(), oldQuantity, detail.getWarehouse().getId());
-				AON.addStock(getDomain(domainName, domainId, login), login,
-						detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
-				return detail;
-			}
-			return null;
-		} finally {
-			if (ctx != null) ctx.close();
+	public static ElaborationDetail saveElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetail detail) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().saveElaborationDetail(ctx, detail, true);
 		}
 	}
 	
@@ -5033,20 +5017,8 @@ public class AON {
 	}
 	
 	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, Integer detailId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			ElaborationDetail detail = getFullElaborationDetail(domainName, domainId, login, detailId);
-			getWarehouse().deleteElaborationDetail(ctx, detailId);
-			// substractStock
-			if(detail.getWarehouse()!=null){
-				AON.substractStock(getDomain(domainName, domainId, login), login,
-						detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
-				return detail;
-			}
-			return null;
-		} finally {
-			if (ctx != null) ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().deleteElaborationDetail(ctx, detailId, true);	
 		}
 	}
 	
@@ -5078,46 +5050,16 @@ public class AON {
 		}
 	}
 	
-	public static Integer insertElaborationDetailComposition(String domainName, Integer domainId, String login,
-			ElaborationDetailComposition composition) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			Integer id =  getWarehouse().insertElaborationDetailComposition(ctx, composition);
-			// substractStock
-			if(composition.getWarehouse()!=null){
-				AON.substractStock(getDomain(domainName, domainId, login), login,
-						composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
-				return id;
-			}
-			return null;
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Integer insertElaborationDetailComposition(String domainName, Integer domainId, String login, ElaborationDetailComposition composition) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().insertElaborationDetailComposition(ctx, composition, true);
 		}
 	}
 
 	public static ElaborationDetailComposition updateElaborationDetailComposition(String domainName, Integer domainId,
 			String login, ElaborationDetailComposition composition) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getWarehouse().updateElaborationDetailComposition(ctx, composition);
-			// addStock && substractStock
-			if(composition.getWarehouse()!=null){
-				Double oldQuantity = AON.getElaborationDetailCompositionList(domainName, domainId, login,
-						composition.getElaborationDetail().getId())
-						.get(0).getQuantity();
-				AON.substractStock(getDomain(domainName, domainId, login), login,
-						composition.getItem().getId(), oldQuantity, composition.getWarehouse().getId());
-				AON.addStock(getDomain(domainName, domainId, login), login,
-						composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
-				return composition;
-			}
-			return null;
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().updateElaborationDetailComposition(ctx, composition, true);
 		}
 	}
 	
@@ -5137,23 +5079,9 @@ public class AON {
 		return null;		
 	}
 	
-	public static ElaborationDetailComposition deleteElaborationDetailComposition(String domainName, Integer domainId,
-			String login, Integer compositionId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			ElaborationDetailComposition composition = getWarehouse().getElaborationDetailComposition(ctx, compositionId);
-			getWarehouse().deleteElaborationDetailComposition(ctx, f -> f.getIdProperty().eq(compositionId));
-			// substractStock  
-			if(composition.getWarehouse()!=null){
-				AON.addStock(getDomain(domainName, domainId, login), login,
-						composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
-				return composition;
-			}
-			return null;
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(String domainName, Integer domainId, String login, Integer compositionId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().deleteElaborationDetailComposition(ctx, compositionId, true);
 		}
 	}
 	
@@ -5276,6 +5204,18 @@ public class AON {
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomers(ctx, filter, ofs, limit);
+		} 
+	}
+	
+	public static Stream<Customer> getSigCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
+	public static Stream<Customer> getSigCustomerNotLinkedStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getSigCustomerNotLinkedStream(ctx, filter, ofs, limit);
 		} 
 	}
 	
@@ -8467,6 +8407,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().updateDomainCustomer(ctx, domainId, customer);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
@@ -8980,6 +8926,12 @@ public class AON {
 	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
+	public static List<ActivitySummaryObject> getActivitySummary(String domainName, Integer domainId, String login, Integer parentDomainId,  Integer userId, ActivitySummaryParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getActivitySummary(ctx, domainId, parentDomainId, userId, params);
 		}
 	}
 	

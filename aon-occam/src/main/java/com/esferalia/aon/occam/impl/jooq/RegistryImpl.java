@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -744,6 +745,11 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter) {
+		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, filter));
+	}
+	
+	@Override
 	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter){
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRAddInfoAviableAttributes(ctx, filter));
@@ -753,6 +759,13 @@ public class RegistryImpl implements IRegistry{
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.saveRegistryAddInfo(ctx, registryAddInfo));
+	}
+	
+
+	@Override
+	public List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getDomainSigAddInfo(ctx, registry));
 	}
 
 
@@ -778,6 +791,19 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getStream(ctx, filter, ofs, limit));
 	}
+	
+	@Override
+	public Stream<Customer> getSigCustomerStream(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getSigStream(ctx, filter, ofs, limit));
+	}
+	
+	@Override
+	public Stream<Customer> getSigCustomerNotLinkedStream(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getSigNotLinkedStream(ctx, filter, ofs, limit));
+	}
+	
 	@Override
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
@@ -921,6 +947,12 @@ public class RegistryImpl implements IRegistry{
 	public Domain updateDomainStatus(AONContext ctx, Domain domain) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainLinkedDAO.updateDomainStatus(ctx, domain));
+	}
+	
+	@Override
+	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer) {
+		ctx.getDslContext().transaction(
+				configuration -> DomainLinkedDAO.updateDomainCustomer(ctx, domainId, customer));
 	}
 	
 	// QUESTION

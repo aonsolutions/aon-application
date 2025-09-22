@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +62,7 @@ public class ContextFunctions {
 	public static final String _PRORATION = "_PRORATION";
 	public static final String _FRACTIONATE = "_FRACC";
 	public static final String MONTHS_IMPL = "MESESIMPL";
+	public static final String _PRORATION_BY_DAYS = "_PRORATION_BY_DAYS";
 
 	public static class UselessGuaranteeException extends CheckException {
 
@@ -106,6 +108,10 @@ public class ContextFunctions {
 
 	public static void hide(String msg) throws HideException {
 		throw new FullHideException(msg);
+	}
+
+	public static void hide(Map<String, ITimedVariable<?>> context) throws HideException {
+		throw new HideException(context);
 	}
 
 	public static void remove() throws RemoveException {
@@ -640,7 +646,19 @@ public class ContextFunctions {
 			@Override
 			public String doMacro(String expr) {
 				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
-						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT))
+						;
+			}
+		};
+	}
+
+	public static Double proration(int months) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,_P,", _PRORATION, ContextVariable.CONTEXT))
+						;
 			}
 		};
 	}
@@ -651,6 +669,26 @@ public class ContextFunctions {
 			public String doMacro(String expr) {
 				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
 						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double proration(String start, String end) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,_P,", _PRORATION_BY_DAYS, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double proration(Double amount, String start, String end) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,", _PRORATION_BY_DAYS, ContextVariable.CONTEXT));
 			}
 		};
 	}
@@ -729,6 +767,87 @@ public class ContextFunctions {
 		int months = ( end - start ) +1 ;
 		
 		return amount / months   ;
+	}
+
+	public static Double prorationByDays(ExpressionContext context, Double amount, String start, String end) 
+			throws ExpressionException {
+		
+		Number guarenteed = ExpressionContext.getCurrentBindings().get(GUARENTEED, v -> (Number)v , 0.00);
+		amount -= guarenteed.doubleValue();
+		
+		if ( amount <= 0.00 )
+			return 0.00;
+
+
+		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
+		Date currentDate = currentPeriod.getEnd();
+		
+		
+		Date endDate = parseExtraDate(end, currentDate).getTime();
+		Date startDate = parseExtraDate(start, currentDate).getTime();
+		
+		Period payPeriod = new Period(startDate, endDate);
+		
+		if ( currentPeriod.intersects(payPeriod))
+			return amount / payPeriod.getDays() * currentPeriod.getDays() ;
+		
+		throw new HideException("NotNowException");
+	}
+
+
+	public static Double prorationByDays(ExpressionContext context, Double amount) 
+			throws ExpressionException {
+		Object payment = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
+		
+
+		if ( payment == null )
+			return amount / 12.00;
+		
+		
+		while ( payment instanceof IHasPayment<?> )
+			payment = ((IHasPayment<?> )payment).getPayment();
+		
+		if ( !( payment instanceof IExtraPayment ) )
+			return amount / 12.00;
+		
+
+		IExtraPayment extraPayment = (IExtraPayment) payment;
+		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
+		Date currentDate = currentPeriod.getEnd();
+		
+		
+		Calendar extraEndCalendar ;
+		Calendar extraStartCalendar ;
+		try {
+			extraEndCalendar = parseExtraDate(extraPayment.getExtraEndDate(), currentDate);
+			extraStartCalendar = parseExtraDate(extraPayment.getExtraStartDate(), currentDate);
+		} catch(Exception e ) {
+			extraEndCalendar = getExtraEndDate(extraPayment.getMonth(), currentDate);
+			extraStartCalendar = getExtraStartDate(extraPayment.getMonth(), currentDate);
+		}
+
+		return prorrationByDates(context, amount, extraStartCalendar.getTime(), extraEndCalendar.getTime());
+	}
+
+	public static Double prorrationByDates(ExpressionContext context, Double amount, Date startDate, Date endDate) 
+			throws ExpressionException {
+		
+		Number guarenteed = ExpressionContext.getCurrentBindings().get(GUARENTEED, v -> (Number)v , 0.00);
+		amount -= guarenteed.doubleValue();
+		
+		if ( amount <= 0.00 )
+			return 0.00;
+
+
+		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
+		
+		
+		Period payPeriod = new Period(startDate, endDate);
+		
+		if ( currentPeriod.intersects(payPeriod))
+			return amount / payPeriod.getDays() * currentPeriod.getDays() ;
+		
+		throw new HideException("NotNowException");
 	}
 
 	public static Double fractionate(Double amount) throws MacroException{ 
@@ -1168,9 +1287,13 @@ public class ContextFunctions {
 
 		// WARNING function
 		try {
-			Method _proration = ContextFunctions.class.getMethod("proration", ExpressionContext.class, Double.class);
-			MethodStub _prorationStub = new MethodStub(_proration);
-			context.setVariable(_PRORATION, _prorationStub, startDate, endDate);
+			Method prorationByMonths = ContextFunctions.class.getMethod("proration", ExpressionContext.class, Double.class);
+			MethodStub prorationByMonthsStub = new MethodStub(prorationByMonths);
+			context.setVariable(_PRORATION, prorationByMonthsStub, startDate, endDate);
+
+			Method prorationByDays = ContextFunctions.class.getMethod("prorationByDays", ExpressionContext.class, Double.class, String.class, String.class);
+			MethodStub prorationByDaysStub = new MethodStub(prorationByDays);
+			context.setVariable(_PRORATION_BY_DAYS, prorationByDaysStub, startDate, endDate);
 
 			Method proration = ContextFunctions.class.getMethod("proration", Double.class);
 			MethodStub prorationStub = new MethodStub(proration);

@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
+import com.esferalia.aon.gwt.template.server.UnknownFileException;
+import com.esferalia.aon.gwt.template.server.imports.a3.Customer2Template;
 import com.esferalia.aon.gwt.template.server.projectCommercial.BankBic11;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
@@ -70,8 +72,13 @@ public class RegistryImport extends Import {
 	}
 
 	public List<RegistryImportClass> importationX(Domain domain, String login, byte[] data){
-		return importation(domain, login, rowIteratorX(data));
-	}
+		try {
+			return importation(domain, login, rowIteratorX(data));
+		} catch ( UnknownFileException e) {
+			data = Customer2Template.customer2Template(data, null);
+			return importation(domain, login, rowIteratorX(data));
+		}
+ 	}
 
 	public List<RegistryImportClass> importation(Domain domain, String login,Iterator<Row> rowIterator){
 		List<String> titleList = new LinkedList<>();
@@ -92,6 +99,9 @@ public class RegistryImport extends Import {
 				indexTitle = indexTitle + 1;
 			} else if(titleList.isEmpty()) {
 				indexTitle = row.getRowNum();
+			} else if ( !titleList.contains(IConstants.CIF)  
+					&&  !titleList.contains(IConstants.NOMBRE )) {
+				throw new UnknownFileException();
 			}
 			cellStream.forEach(cell -> {
 				if(row.getRowNum() == indexTitle) {

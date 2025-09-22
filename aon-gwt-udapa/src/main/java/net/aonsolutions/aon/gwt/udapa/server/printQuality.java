@@ -455,8 +455,8 @@ public class printQuality {
 		c55.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c55);
 			
-		Double index = Double.parseDouble(map.get(QualitySheetCode.UFQDP1.getName())) - 1;
-		String str = (index >= 0.0) ? Destiny.values()[index.intValue()].getName() : "-";
+		Destiny destiny = getDestiny(map);
+		String str = destiny != null ? destiny.getName() : "-";
 		PdfPCell c66 = new PdfPCell(new Phrase(str,getFont2()));
 		c66.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c66);
@@ -587,10 +587,8 @@ public class printQuality {
     
     public static PdfPTable caliberTable(HashMap<String, String> map){
     	PdfPTable content = new PdfPTable(2);
-    	
-    	Double index = Double.parseDouble(map.get(QualitySheetCode.UFQDP1.getName())) - 1;
-		String str = (index >= 0.0) ? Destiny.values()[index.intValue()].getName() : "-";
-		if(Destiny.SIEMBRA.getName().equalsIgnoreCase(str)){
+
+		if(isSiembra(map)){
     		PdfPCell c1 = new PdfPCell(caliberSiembraTable(map));
     		c1.setBorder(PdfPCell.NO_BORDER);
     		content.addCell(c1);
@@ -901,11 +899,23 @@ public class printQuality {
 		return font1;
 	}
 	
+	private static Destiny getDestiny(Map<String, String> map) {
+		try {
+			String value = map.get(QualitySheetCode.UFQDP1.getName());
+			return Destiny.safeValueOf(Integer.parseInt(value));
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
-	private static Boolean isPropaco(Map<String, String> map) {
-		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
-			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	private static boolean isPropaco(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isPropaco();
+	}
+
+	private static boolean isSiembra(Map<String, String> map) {
+		Destiny destiny = getDestiny(map);
+		return destiny != null && destiny.isSiembra();
 	}
 
 }

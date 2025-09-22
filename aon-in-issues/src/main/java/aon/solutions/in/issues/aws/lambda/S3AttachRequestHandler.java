@@ -35,7 +35,7 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
 			String key = paths.subList(1, paths.size() - 1).stream().collect(Collectors.joining("/"));
 			String attachId = paths.getLast();
 
-			byte[] data = S3.download(bucket, key);
+			byte[] data = S3.getInstance().download(bucket, key);
 
 			Session session = Session.getDefaultInstance(System.getProperties());
 			MimeMessage mimeMessage = new MimeMessage(session, new ByteArrayInputStream(data));
