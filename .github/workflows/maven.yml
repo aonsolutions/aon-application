@@ -200,7 +200,7 @@ jobs:
       run: |
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
-        -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
+        -Dtest='app/*TestCase.java' -f aon-selenium/pom.xml integration-test
 
     - name: Running HtmlUnit integration tests
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
