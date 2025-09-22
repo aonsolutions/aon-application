@@ -468,6 +468,7 @@ public interface CommonService extends RemoteService {
 	// *********************** [CUSTOMER LINKED ACTIVITY]
 	// **************************************************
 	
+	List<Customer> getCustomers(CustomersLinkedParams params) throws AonCoreException;
 	List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException;
 	List<Customer> getCustomersNotLinked(CustomersLinkedParams params) throws AonCoreException;
 	HashMap<Integer, Domain> getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException;

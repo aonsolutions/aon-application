@@ -1441,6 +1441,21 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 	
 	@Override
+	public List<Customer> getCustomers(CustomersLinkedParams params) throws AonCoreException {
+		return AON.getCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+	}
+	
+	@Override
 	public List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException {
 		if(params.isSig())
 			return AON.getSigCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
