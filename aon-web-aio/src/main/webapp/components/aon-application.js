@@ -406,8 +406,8 @@ export class AonApplication extends AonElement {
     });
 
     let divNanme       = this.createElement(TAG.DIV);
-	divNanme.id        = `aonSidenavTitle${data.id}Name`;
-	divNanme.className = `aonSidenavTitleName`;
+    divNanme.id        = `aonSidenavTitle${data.id}Name`;
+    divNanme.className = `aonSidenavTitleName`;
     divNanme.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(divNanme);
 
@@ -1009,14 +1009,18 @@ export class AonApplication extends AonElement {
   }
 
   /**
-   * 
+   * Edit name and title
    * @param {String} id  
-   * @param {Number} title 
+   * @param {String} title 
    */
   updateSidenavTitle(id, title){
-    let span = this.getElement(`aonSidenavTitle${id}Name`);
-    if(span){
+    const sidenavTitle = this.getElement("aonSidenavTitle"+id);
+    if(sidenavTitle){
+      sidenavTitle.title = title;
+      const span = this.getElement(`aonSidenavTitle${id}Name`);
+      if(span){
         span.innerHTML = title;
+      }
     }
   }
 

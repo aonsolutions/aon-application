@@ -29,7 +29,7 @@ $icon-gap : v.$gap-min;
     justify-content: space-between;
     align-items    : center;
     cursor         : pointer;
-    &> * {
+    & * {
       font-size  : v.$px-14;
       font-family: v.$font-primary-bold;
     }
@@ -37,7 +37,7 @@ $icon-gap : v.$gap-min;
       transform : rotate(0deg);
       transition: transform v.$t-03 ease;
     }
-    .aonSidenavTitleName{
+    .aonSidenavTitleName, .aonSidenavTitleName >span {
       width      : v.$pct-100;
     }
     .aonSidenavTitleButton{

@@ -1,11 +1,9 @@
-import { AonElement } from './AonElement.js';
-
-import './aon-input.js';
+// import { AonElement } from './AonElement.js';
+// import './aon-input.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonNewInput } from './aon-new-input.js';
 
 export class AonNewSuggestion extends AonNewInput {
-
   OPTIONS;
   OPTIONS_UL;
   OPTIONS_LI;
@@ -103,7 +101,6 @@ export class AonNewSuggestion extends AonNewInput {
     this.OPTIONS = this.id + 'Options';
     this.OPTIONS_UL = this.OPTIONS + 'Ul';
     this.OPTIONS_LI = this.OPTIONS + 'Li';
-
   }
 
   buildSuggestion() {
@@ -158,7 +155,7 @@ export class AonNewSuggestion extends AonNewInput {
 
     let optionsDiv = this.createDiv();
     optionsDiv.id = this.OPTIONS;
-    optionsDiv.className = 'aonInputListOptions';
+    optionsDiv.classList.add('aonInputListOptions', 'suggestion-list');
     span.appendChild(optionsDiv);
   }
 

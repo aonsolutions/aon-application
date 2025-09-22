@@ -111,57 +111,66 @@ export class AonCustomerSuggestion extends AonElement {
     this.dispatchEvent(new Event(EVENT.CHANGE));
   }
 
-  onKeyupDocument(event, value) {
-    if(this.isMobile()) {
-      let options = this.getElement(this.OPTIONS);
-      options.style.marginTop = "-80px";
-    }
+  onkeydownDocument(event, value) {
+    // if(this.isMobile()) {
+    //   let options = this.getElement(this.OPTIONS);
+    //   options.style.marginTop = "-80px";
+    // }
     let data = { types: [RegistryType.CUSTOMER], document: value};
-    this.onKeyup(event, data, value);
+    this.onkeydown(event, data, value);
   }
 
-  onKeyupName(event, value) {
-    if(this.isMobile()) {
-      let options = this.getElement(this.OPTIONS);
-      options.style.marginTop = "-16px";
-    }
+  onkeydownName(event, value) {
+    // if(this.isMobile()) {
+    //   let options = this.getElement(this.OPTIONS);
+    //   options.style.marginTop = "-16px";
+    // }
     let data = { types: [RegistryType.CUSTOMER], name: value};
-    this.onKeyup(event, data, value);
+    this.onkeydown(event, data, value);
   }
 
-  onKeyup(e, data, value) {
-    if(e.key || e.keyCode) {
-      if (e.keyCode == '38' || e.key == 'ArrowUp') {
-        // up arrow
-       let li = this.getElement(this.OPTIONS_LI + this.selected);
-       if(li) li.style.backgroundColor = 'transparent';
-       if(this.selected > -1){
-         this.selected = this.selected - 1;
-         let li2 = this.getElement(this.OPTIONS_LI + this.selected);
-         if(li2) li2.style.backgroundColor = '#f1f1f1';
-       }
-     }
-     else if (e.keyCode == '40' || e.key == 'ArrowDown') {
-       // down arrow
-       let li = this.getElement(this.OPTIONS_LI + this.selected);
-       if(li) li.style.backgroundColor = 'transparent';
-       this.selected = this.selected + 1;
-        let li2 = this.getElement(this.OPTIONS_LI + this.selected);
-        if(li2) li2.style.backgroundColor = '#f1f1f1';
-     } else if (e.keyCode == '13' || e.key == 'Enter') {
-        this.updateCustomer(this.options[this.selected].registry);
-        this.closeOptions();
-     } else {
-       if(value.length > 2) {
-        getRegistries(data).then(r => {
-          this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
-        }).catch(e => {
-          // alert(e);
-        });
-      } else {
-        this.closeOptions();
-       }
-      } 
+  onkeydown(e, data, value) {
+    if(e.key) {
+      switch(e.key){
+        case 'ArrowUp':
+        case 'ArrowDown':
+          const li = this.getElement(this.OPTIONS_LI + this.selected);
+          if(li)
+            li.classList.remove('hover');
+          // El que se va escogiendo
+          if (e.key === 'ArrowUp') {
+            this.selected = Math.max(0, this.selected - 1);
+          } else if (e.key === 'ArrowDown') {
+            this.selected = Math.min(this.options.length - 1, this.selected + 1);
+          }
+          // El que estamos marcando
+          const li2 = this.getElement(this.OPTIONS_LI + this.selected);
+          if (li2) li2.classList.add('hover');
+          li2.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        break;
+        case 'Enter':
+          this.updateCustomer(this.options[this.selected].registry);
+          this.closeOptions();
+        break;
+        default:
+          if(value.length > 1) {
+            getRegistries(data).then(r => {
+              this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
+            }).catch(e => {
+              // alert(e);
+            });
+          } else {
+            this.closeOptions();
+          }
+        break;
+      }
+    }
+  }
+
+  onMouseOver(e) {
+    const li = e.target;
+    if (li && li.classList.contains('hover')) {
+      li.classList.remove('hover');
     }
   }
 
@@ -206,7 +215,7 @@ export class AonCustomerSuggestion extends AonElement {
     let document = createSuggestion(this.DOCUMENT, MSG.NIF);
     document.readonly = this.isReadonly();
     document.value = this.customer.document;
-    document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
+    document.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownDocument(e, document.value));
     document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
     span1.appendChild(document);
     if(this.customer.id) document.disabled = true;
@@ -219,7 +228,7 @@ export class AonCustomerSuggestion extends AonElement {
     name.name = CONSTANT.NAME;
     name.value = this.customer.name;
     name.readonly = this.isReadonly();
-    name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
+    name.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownName(e, name.value));
     name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
     span2.appendChild(name);
     if(this.customer.id) name.disabled = true;
@@ -248,8 +257,8 @@ export class AonCustomerSuggestion extends AonElement {
 
     let options = this.createElement(TAG.DIV);
       options.id = this.OPTIONS;
-      options.className = CSS.AON_INPUT_LIST_OPTIONS;
-      options.style.width = div.clientWidth;
+      options.classList.add(CSS.AON_INPUT_LIST_OPTIONS, 'suggestion-list');
+      options.addEventListener(EVENT.MOUSEOVER, (e) => this.onMouseOver(e, name.value));
       this.appendChild(options);
   }
 

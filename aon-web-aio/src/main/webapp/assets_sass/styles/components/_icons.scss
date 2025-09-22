@@ -92,6 +92,8 @@ $icons: (
   "arrow-left-circle"    : '../icons/arrow-left-circle.svg',
   "arrow-right-circle"   : '../icons/arrow-right-circle.svg',
   "qr_code_scanner"      : '../icons/qr-code.svg',
+  "highlight_off"        : '../icons/x-circle.svg',
+  "loader"               : '../icons/loader.svg',
   /* nombres que le han puesto en los iconos de la izquierda... */
   "widgets"            : '../icons/box.svg',
   "add_circle_outline" : '../icons/plus-square.svg',
@@ -172,5 +174,19 @@ $icons: (
     mask-size         : $mask-size;
     -webkit-mask      : url(#{$icon-data}) $mask;
     -webkit-mask-size : $mask-size;
+  }
+}
+// Esto ahi que cambiarlo (con mas tiempo)
+// solo para la clase loading por ahora
+.aonCompanyFilterLoading, .AONCOMPANYFILTERLOADING{
+  display: flex;
+  gap    : v.$gap-min;
+  &::after {
+    content     : "";
+    width       : $icon-size;
+    height      : $icon-size;
+    display     : block;
+    mask        : url(map-get($icons, "loader")) center / contain no-repeat;
+    -webkit-mask: url(map-get($icons, "loader")) center / contain no-repeat;
   }
 }

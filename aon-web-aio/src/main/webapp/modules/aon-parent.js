@@ -260,7 +260,7 @@ export class AonParent extends AonElement {
 		if(this.notice?.invoice?.processing?.count >0)
 			processingCount = this.notice.invoice.processing.count;
 
-        application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
+		application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
 		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
 		application.updateSidenavCount(this.PENDING_INVOICES, pendingCount);
 		application.updateSidenavCount(this.TRAMIT_INVOICES, processedCount + processingCount);
@@ -438,7 +438,7 @@ export class AonParent extends AonElement {
 	}
 
 	buildSidenav() {
-        const application = this.getApplication();
+		const application = this.getApplication();
 		let enterprisesOptions = {
 		  id: CONSTANT.ENTERPRISES,
 		  app: ClassicApps.AON_SOLUTIONS,

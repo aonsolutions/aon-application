@@ -253,7 +253,7 @@ export class AonRegistrySuggestion extends AonElement {
 
     let options = this.createElement(TAG.DIV);
 		options.id = this.OPTIONS;
-		options.className = CSS.AON_INPUT_LIST_OPTIONS;
+    options.classList.add(CSS.AON_INPUT_LIST_OPTIONS, 'suggestion-list');
     options.style.width = div.clientWidth;
     options.style.marginTop = "-16px";
 		this.appendChild(options);

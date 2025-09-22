@@ -247,6 +247,13 @@
         }
       }
     }
+    // Esto ahi que cambiarlo (con mas tiempo)
+    // solo para la clase loading por ahora
+    .aonCompanyFilterLoading, .AONCOMPANYFILTERLOADING{
+      &::after {
+        background-color: $color-text;
+      }
+    }
     // toast
     aon-toast {
       > div {
@@ -466,16 +473,16 @@
         }
       }
       aon-icon-button{
-		aon-icon {
-		    &::after {
-	          background-color: $color-300;
-    		}
-      	}
-		.aon-spinner-input-loading{
-			border : v.$px-4 solid #ccc;
-			border-top : v.$px-4 solid #000;
-		}
-	  }
+        aon-icon {
+          &::after {
+            background-color: $color-300;
+          }
+        }
+        .aon-spinner-input-loading{
+          border : v.$px-4 solid #ccc;
+          border-top : v.$px-4 solid #000;
+        }
+      }
       input{
         border           : $input-border;
         background-color : $color-input;
@@ -518,8 +525,32 @@
         }
       }
       //
-      // Select
+      // Info IBAN
       //
+      .info-iban-modal{
+        background-color: $color-input;
+        box-shadow      : $box-shadow-dialog;
+      }
+    }
+    // aon-new-suggestion
+    // Input que busca mientras escribes, el DIV donde muestras, 
+    // no esta en el componente. Se tiene que reacer
+    .suggestion-list{
+      &.is-visible{
+        background-color: $color-input;
+        box-shadow      : $box-shadow-dialog;
+        ul{
+          li:hover, .hover{
+            background-color: $color-100;
+            color           : $color-text;
+          }
+        }
+      }
+    }
+    //
+    // Select
+    //
+    aon-new-select{
       .aonInputListOptions{
         &.is-visible{
           background-color: $color-input;
@@ -532,29 +563,7 @@
           }
         }
       }
-      //
-      // Info IBAN
-      //
-      .info-iban-modal{
-        background-color: $color-input;
-        box-shadow      : $box-shadow-dialog;
-      }
-    }
-    // aon-new-suggestion
-    // Input que busca mientras escribes, el DIV donde muestras, 
-    // no esta en el componente. Se tiene que reacer
-    .aonInputListOptions{
-      &.is-visible{
-        background-color: $color-input;
-        box-shadow      : $box-shadow-dialog;
-        ul{
-          li:hover{
-            background-color: $color-100;
-            color           : $color-text;
-          }
-        }
-      }
-    }
+    } 
     // search
     aon-search{
       .aonInputListOptions{

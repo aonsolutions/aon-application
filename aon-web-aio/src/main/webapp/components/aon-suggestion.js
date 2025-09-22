@@ -155,7 +155,7 @@ export class AonSuggestion extends AonElement {
 
     let options = this.createElement('div');
     options.id = this.OPTIONS;
-    options.className = 'aonInputListOptions';
+    options.classList.add('aonInputListOptions', 'suggestion-list');
     span.appendChild(options);
   }
 

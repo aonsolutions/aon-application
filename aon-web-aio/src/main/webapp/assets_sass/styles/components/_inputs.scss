@@ -151,9 +151,11 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
       }
     }
   }
-  //
-  // Select
-  //
+}
+//
+// Select
+//
+aon-new-select{
   .aonInputListOptions{
     position  : absolute;
     display   : grid;
@@ -243,7 +245,7 @@ aon-search{
 // aon-new-suggestion
 // Input que busca mientras escribes, el DIV donde muestras, 
 // no esta en el componente. Se tiene que reacer
-.aonInputListOptions{
+.suggestion-list{
   display   : none;
   visibility: hidden;
   &.is-visible{
