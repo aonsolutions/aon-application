@@ -17,6 +17,9 @@ export class AonNewDate extends AonNewInput {
   DATEPICKER_MONTH;
   DATEPICKER_YEAR;
   DATEPICKER_DAYS;
+  startYear;
+  YEARPICKER;
+  MOTHPICKER;
 
   connectedCallback () {
     this.initialize();
@@ -35,11 +38,15 @@ export class AonNewDate extends AonNewInput {
     this.DATEPICKER_MONTH = this.DATEPICKER + 'Month';
     this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
     this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
+	this.YEARPICKER = this.DATEPICKER + 'YearPicker';
+	this.MONTHPICKER = this.MONTHPICKER + 'MonthPicker';
     this.getDate();
     // Si no tiene date, cogemos la fecha de hoy para montar el calendario
     this.day   = this.date ? this.date.getDate()    : this.today.getDate();
     this.month = this.date ? this.date.getMonth()   : this.today.getMonth();
     this.year  = this.date ? this.date.getFullYear(): this.today.getFullYear();
+	this.startYear = this.date ? this.date.getFullYear(): this.today.getFullYear();
+	this.startYear = this.startYear - (this.startYear % 16);
     this.maxlength = 10;
   }
 
@@ -164,6 +171,20 @@ export class AonNewDate extends AonNewInput {
     span2.id = this.DATEPICKER_YEAR;
     span2.textContent = this.year;
     datepickerHeader.appendChild(span2);
+	
+	span1.addEventListener(EVENT.CLICK, () => {
+		this.showHidePicker(this.MONTHPICKER);
+	});
+	
+	span2.addEventListener(EVENT.CLICK, () => {
+		this.showHidePicker(this.YEARPICKER);
+	});
+	
+	let monthPicker = this.buildMonthPicker();
+	datepickerHeader.appendChild(monthPicker);
+	
+	let yearPicker = this.buildYearPicker();
+	datepickerHeader.appendChild(yearPicker);
 
     let aib2 = new AonIconButton();
     aib2.id = this.DATEPICKER_NEXT;
@@ -196,6 +217,8 @@ export class AonNewDate extends AonNewInput {
         }
       }
     });
+	this.renderYears();
+	this.renderMonths();
   }
 
   buildCalendar() {
@@ -268,8 +291,8 @@ export class AonNewDate extends AonNewInput {
     }
   }
 
-  getMonthName() {
-    switch (this.month) {
+  getMonthName(value) {
+    switch (value != undefined ? value : this.month) {
       case 0: return MSG.JANUARY.toUpperCase();
       case 1: return MSG.FEBRUARY.toUpperCase();
       case 2: return MSG.MARCH.toUpperCase();
@@ -372,7 +395,7 @@ export class AonNewDate extends AonNewInput {
       this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 
-  setValue(value) { 
+  setValue() { 
 
   }
 
@@ -416,6 +439,110 @@ export class AonNewDate extends AonNewInput {
   
   getDateValue() {
     return AonDateUtils.formatDate(this.date, 'yyyy-MM-dd');
+  }
+  
+  buildYearPicker(){
+	/*
+	<div class="year-picker">
+	    <div class="controls">
+	      <button id="prev">Anterior</button>
+	      <span id="range"></span>
+	      <button id="next">Siguiente</button>
+	    </div>
+	    <div class="grid" id="yearGrid"></div>
+  	</div>
+	*/
+	const div = this.createElement(TAG.DIV);
+	div.id = this.YEARPICKER;
+	div.classList.add("hidden");
+	const controls = this.createElement(TAG.DIV);
+	const prev = this.createElement(TAG.AON_ICON_BUTTON);
+	prev.className = "date-picker-title-icon";
+	prev.icon = "keyboard_arrow_left";
+	const next = this.createElement(TAG.AON_ICON_BUTTON);
+	next.className = "date-picker-title-icon";
+    next.icon = "keyboard_arrow_right";
+	const range = this.createElement(TAG.SPAN);
+	range.id = "rangeText"
+	controls.appendChild(prev);
+	controls.appendChild(range);
+	controls.appendChild(next);
+	const grid = this.createElement(TAG.DIV);
+	grid.id = "yearGrid";
+	div.appendChild(controls);
+	div.appendChild(grid);
+	prev.addEventListener(EVENT.CLICK, () => {
+      this.startYear -= 16;
+      this.renderYears();
+    });
+    next.addEventListener(EVENT.CLICK, () => {
+      this.startYear += 16;
+      this.renderYears();
+    });
+	return div;
+  }
+  
+  renderYears() {
+	let yearGrid = this.getElement("yearGrid");
+    yearGrid.innerHTML = "";
+    for (let i = 0; i < 16; i++) {
+      const year = this.startYear + i;
+      const btn = document.createElement("button");
+      btn.textContent = year;
+      btn.className = "year-btn";
+      yearGrid.appendChild(btn);
+	  btn.addEventListener(EVENT.CLICK, (event) => {
+		this.year = +event.target.innerHTML;
+		this.startYear = +event.target.innerHTML - 8;
+		this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
+		this.showHidePicker(this.YEARPICKER);
+		this.buildCalendar();
+		const rangeText = this.getElement("rangeText");
+		rangeText.textContent = `${this.startYear} - ${this.startYear + 15}`;
+		this.renderYears();
+		event.stopPropagation();
+      });
+    }
+    const rangeText = this.getElement("rangeText");
+    rangeText.textContent = `${this.startYear} - ${this.startYear + 15}`;
+  }
+  
+  buildMonthPicker(){
+	const div = this.createElement(TAG.DIV);
+	div.id = this.MONTHPICKER;
+	div.classList.add("hidden");
+	const grid = this.createElement(TAG.DIV);
+	grid.id = "monthGrid";
+	div.appendChild(grid);
+	return div;
+  }
+  
+  renderMonths(){
+	let monthGrid = this.getElement("monthGrid");
+    monthGrid.innerHTML = "";
+    for (let i = 0; i < 12; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = this.getMonthName(i);
+	  btn.value = i;
+      btn.className = "year-btn";
+      monthGrid.appendChild(btn);
+	  btn.addEventListener(EVENT.CLICK, (event) => {
+		this.month = +event.target.value;
+		this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+		this.showHidePicker(this.MONTHPICKER);
+		this.buildCalendar();
+		event.stopPropagation();
+      });
+    }
+  }
+  
+  showHidePicker(elementPicker){
+  	const element = this.getElement(elementPicker);
+  	if(element.classList.contains("hidden")){
+  		element.classList.remove("hidden");
+  	}else{
+  		element.classList.add("hidden");
+  	}
   }
 
 }
