@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -124,38 +124,30 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
-					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || getValue(r, RADDINFO.ID)!=null );
+					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || (checkField(r, hasDomain) && r.get(hasDomain)) );
 		}
 	}
 	
+	private static Field<Boolean> hasDomain = DSL.exists(
+		    DSL.selectOne()
+		       .from(RADDINFO)
+		       .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
+		       .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%"))
+		).as("has_domain");
+	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
 		
-		System.out.println(ctx.getDslContext()
+		return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
 	            .select(RRELATIONSHIP.ID)
-	            .select(RADDINFO.ID)
+	            .select(hasDomain)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
-	        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.eq("AON_DOMAIN0_NAME")))
-	        .where(CUSTOMER_PROPERTIES.getConditions(filter)).getSQL(ParamType.INLINED));
-		
-	    return ctx.getDslContext()
-	            .selectDistinct(CUSTOMER.fields())
-	            .select(REGISTRY.fields())
-	            .select(DOMAIN.fields())
-	            .select(RRELATIONSHIP.ID)
-	            .select(RADDINFO.ID)
-	        .from(CUSTOMER)
-	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
-	        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.eq("AON_DOMAIN0_NAME")))
 	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}
@@ -182,18 +174,18 @@ public class CustomerDAO {
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
-	            .select(RADDINFO.ID)
+	            .select(hasDomain)
 		        .from(CUSTOMER)
 		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .join(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
 		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)				
 				.fetch()
 				.stream()
+				.filter(r -> r.getValue(hasDomain))
 				.map(new CustomerFiller());
 	}
 	
@@ -202,19 +194,18 @@ public class CustomerDAO {
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
-	            .select(RADDINFO.ID)
+	            .select(hasDomain)
 		        .from(CUSTOMER)
 		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .leftOuterJoin(RADDINFO).on(RADDINFO.REGISTRY.eq(REGISTRY.ID).and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN0_NAME")))
 		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
-		        .and(RADDINFO.ID.isNull())
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)				
 				.fetch()
 				.stream()
+				.filter(r -> !r.getValue(hasDomain))
 				.map(new CustomerFiller());
 	}
 	

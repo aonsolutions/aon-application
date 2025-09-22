@@ -123,9 +123,24 @@ public class CustomersServlet extends AonApiHttpServlet {
 		if (isTarget(api)) {
 			return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(),
 					api.getUser().getLogin(), f -> targetFilter(api, f), perPage * (page - 1), perPage));
-		} else
-			return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
-					api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+		} else {
+			
+			boolean isSig = api.getData().optBoolean("isSig");
+			
+			if(isSig && api.getData().opt(IJsonNames.RRELATIONSHIP) != null) {
+				
+				boolean rrelationship = api.getData().optBoolean(IJsonNames.RRELATIONSHIP);
+				
+				return rrelationship 
+						? CustomerJSON.toJSON(AON.getSigCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
+								api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage))
+						: CustomerJSON.toJSON(AON.getSigCustomerNotLinkedStream(api.getDomain().getName(), api.getDomain().getId(),
+									api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+			} else
+				return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
+						api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+		}
+			
 	}
 
 	private static boolean isTarget(AonApiData api) {
@@ -174,12 +189,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 			boolean rrelationship = api.getData().optBoolean(IJsonNames.RRELATIONSHIP);
 			boolean isSig = api.getData().optBoolean("isSig");
 			
-			if(isSig)
-				filter = filter.and(rrelationship ? f.getRaddInfoDomainProperty().isNotNull()
-						: f.getRaddInfoDomainProperty().isNull());
-			else
+			if(!isSig)
 				filter = filter.and(rrelationship ? f.getRegistryRelationProperty().isNotNull()
-					: f.getRegistryRelationProperty().isNull());
+						: f.getRegistryRelationProperty().isNull());
 		}
 
 		if (api.getData().opt(IJsonNames.VALUE) != null) {

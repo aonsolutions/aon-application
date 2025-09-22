@@ -1548,13 +1548,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException {
 		if(isSig) {
 			List<RegistryAddInfo> raddInfoList = AON.getRegistryAddInfoStream(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME"))).collect(Collectors.toList());
-			if(!raddInfoList.isEmpty()) throw new IllegalArgumentException("Este cliente ya está vinculado al dominio " + raddInfoList.get(0).getValue());
 			
 			AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_NAME")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_NAME")
 						.setValue(domainCompany.getDomain().getName())
 						.setDate(new Date())
 				);
@@ -1563,7 +1562,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_ID")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_ID")
 						.setValue(domainCompany.getDomain().getId().toString())
 						.setDate(new Date())
 				);
@@ -1572,7 +1571,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_SCHEMA")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_SCHEMA")
 						.setValue(domainCompany.getSchema())
 						.setDate(new Date())
 				);
@@ -1581,7 +1580,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_TYPE")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_TYPE")
 						.setValue(domainCompany.getDomain().getDomainType().getName())
 						.setDate(new Date())
 				);

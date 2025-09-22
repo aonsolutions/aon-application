@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -744,6 +745,11 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter) {
+		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, filter));
+	}
+	
+	@Override
 	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter){
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRAddInfoAviableAttributes(ctx, filter));
@@ -753,6 +759,13 @@ public class RegistryImpl implements IRegistry{
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.saveRegistryAddInfo(ctx, registryAddInfo));
+	}
+	
+
+	@Override
+	public List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getDomainSigAddInfo(ctx, registry));
 	}
 
 
