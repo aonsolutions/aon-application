@@ -87,11 +87,11 @@ jobs:
           - 4444:4444
           - 7900:7900
         options: |
-          --add-host=test.aonsolutions.org:host-gateway \
-          --add-host=payroll-test.aonsolutions.org:host-gateway \
-          --add-host=general-payroll-test.aonsolutions.org:host-gateway \
-          --add-host=inactiva-payroll-test.aonsolutions.org:host-gateway \
-          --shm-size=2gb \
+          --add-host=test.aonsolutions.org:host-gateway
+          --add-host=payroll-test.aonsolutions.org:host-gateway
+          --add-host=general-payroll-test.aonsolutions.org:host-gateway
+          --add-host=inactiva-payroll-test.aonsolutions.org:host-gateway
+          --shm-size=2gb
 
     permissions:
       contents: read
