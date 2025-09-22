@@ -69,9 +69,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
 	public static final String SYNC_AON_CUSTOMER = "/sync-aon-customer/";
 	
-	// TODO: implementar obtener dominios disponibles con limit y offset
-	public static final String AVIABLE_SYNC_DOMAINS = "/aviable-sync-domain/";
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);

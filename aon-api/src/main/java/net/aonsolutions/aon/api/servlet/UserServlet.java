@@ -797,7 +797,8 @@ public class UserServlet extends AonApiHttpServlet {
 		
 		String url = "";
 		if(user != null && user.isPortal()) {
-			url = "https://aon.solutions";
+//			url = "https://aon.solutions";
+			url = "https://" + api.getDomain().getName() + "/";
 			
 			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
 				url = "https://leevy.aon.solutions";

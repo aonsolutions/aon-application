@@ -174,8 +174,10 @@ export const  getFileBlob = (url, data, sessionData) => {
   });
 };
 
-export const getPro = (url, data) => {
-  return get(url, data, getProSessionData());
+export const getPro = (url, data, headers = {}) => {
+	let sessionData = getProSessionData();
+	sessionData = { ...sessionData, ...headers};
+  return get(url, data, sessionData);
 };
 
 export const post = (url, data, sessionData) => {

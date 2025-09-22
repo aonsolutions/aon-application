@@ -1338,6 +1338,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 
 	@Override
+	public void getCustomers(CustomersLinkedParams params, AsyncCallback<List<Customer>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomers(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
 	public void getCustomersLinked(CustomersLinkedParams params, AsyncCallback<List<Customer>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getCustomersLinked(params, new AsyncCallbackWrapper<>(callback));

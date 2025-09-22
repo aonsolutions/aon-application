@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
@@ -18,8 +19,9 @@ import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -157,18 +159,18 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		
 		Integer registry = params.optInt(IJsonNames.REGISTRY);
 		
-		List<DomainSigAddInfo> domainSigAddInfoList = AON.getDomainSigAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registry);
+		Stream<DomainCompany> domainSigLinks = CONSOLE.getCustomerDomains(registry);
 		
 		JSONArray arr = new JSONArray();
 		
-		domainSigAddInfoList.forEach(domain -> {
+		domainSigLinks.forEach(domainCompany -> {
 			JSONObject json = new JSONObject();
-			json.put("registry", domain.getRegistry());
-			json.put("domainGroup", domain.getDomainGroup());
-			json.put("domainId", domain.getDomainId());
-			json.put("domainName", domain.getDomainName());
-			json.put("schema", domain.getDomainSchema());
-			json.put("domainType", domain.getDomainType());
+			json.put("registry", registry);
+			json.put("domainGroup", "");
+			json.put("domainId", domainCompany.getDomain().getId());
+			json.put("domainName", domainCompany.getDomain().getName());
+			json.put("schema", domainCompany.getSchema());
+			json.put("domainType", domainCompany.getDomain().getDomainType().getName());
 			
 			arr.put(json);
 		});
@@ -416,6 +418,16 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		String domainType = api.getData().optString("domainType");
 		String domainGroup = api.getData().optString("domainGroup");
 		
+		Optional<RegistryAddInfo> registryAddInfo = AON.getRegistryAddInfo(api.getDomain().getName(), 
+				api.getDomain().getId(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getRegistryProperty().eq(registry))
+				.and(f.getAttributeProperty().like("AON_DOMAIN%_NAME"))
+			);
+		
+		String attributeNum = getDomainGroup(registryAddInfo);
+		
 		AON.deleteRegistryAddInfo(
 				api.getDomain().getName(), 
 				api.getDomain().getId(), 
@@ -423,14 +435,25 @@ public class RelationshipServlet extends AonApiHttpServlet {
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getRegistryProperty().eq(registry))
 					.and(
-							f.getAttributeProperty().eq("AON_DOMAIN" + domainGroup + "_SCHEMA").and(f.getValueProperty().eq(schema))
-						.or(f.getAttributeProperty().eq("AON_DOMAIN" + domainGroup + "_NAME").and(f.getValueProperty().eq(domainName)))
-						.or(f.getAttributeProperty().eq("AON_DOMAIN" + domainGroup + "_ID").and(f.getValueProperty().eq(domainId)))
-						.or(f.getAttributeProperty().eq("AON_DOMAIN" + domainGroup + "_TYPE").and(f.getValueProperty().eq(domainType)))
+							f.getAttributeProperty().eq("AON_DOMAIN" + (AonStringUtils.isBlank(attributeNum) ? domainGroup : attributeNum) + "_SCHEMA").and(f.getValueProperty().eq(schema))
+						.or(f.getAttributeProperty().eq("AON_DOMAIN" + (AonStringUtils.isBlank(attributeNum) ? domainGroup : attributeNum) + "_NAME").and(f.getValueProperty().eq(domainName)))
+						.or(f.getAttributeProperty().eq("AON_DOMAIN" + (AonStringUtils.isBlank(attributeNum) ? domainGroup : attributeNum) + "_ID").and(f.getValueProperty().eq(domainId)))
+						.or(f.getAttributeProperty().eq("AON_DOMAIN" + (AonStringUtils.isBlank(attributeNum) ? domainGroup : attributeNum) + "_TYPE").and(f.getValueProperty().eq(domainType)))
 					)
 				);
 		
 		return new JSONObject();
+	}
+	
+	private static String getDomainGroup(Optional<RegistryAddInfo> registryAddInfo) {
+		if(registryAddInfo.isPresent()) {
+			try {
+				String attribute = registryAddInfo.get().getAttribute();
+				return attribute.split("AON_DOMAIN")[1].split("_NAME")[0];	
+			} catch (Exception e) { }
+		}
+		
+		return null;
 	}
 	
 	private static JSONObject deleteAonCustomer(AonApiData api) {
