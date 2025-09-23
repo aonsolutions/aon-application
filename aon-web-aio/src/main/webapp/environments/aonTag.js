@@ -402,6 +402,14 @@ export const AON_ACADEMY_MENU = 'aon-academy-menu';
 
 export const AON_COMMERCE_MENU = 'aon-commerce-menu';
 
+export const AON_JSF_POS = 'aon-jsf-pos';
+export const AON_JSF_POS_SHIFT = 'aon-jsf-pos-shift';
+export const AON_JSF_POS_OPENING = 'aon-jsf-pos-opening';
+export const AON_JSF_POS_CLOSING = 'aon-jsf-pos-closing';
+export const AON_JSF_POS_INVOICE = 'aon-jsf-pos-invoice';
+export const AON_JSF_POS_FINANCE = 'aon-jsf-pos-finance';
+export const AON_JSF_ITEM_TAG_PRINT = 'aon-jsf-item-tag-print';
+
 export const AON_GARAGE_MENU = 'aon-garage-menu';
 
 export const AON_IMAGE_EDITOR = 'aon-image-editor';
