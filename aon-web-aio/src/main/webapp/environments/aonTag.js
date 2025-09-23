@@ -380,7 +380,10 @@ export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 export const AON_JSF_IRPF_DATA = 'aon-jsf-irpf-data' ;
 export const AON_JSF_CONTRACT_BATCH = 'aon-jsf-contract-batch' ;
+export const AON_JSF_CONTRACT_OPTION = 'aon-jsf-contract-option';
+export const AON_JSF_TRAINNING_CENTER = 'aon-jsf-trainning-center';
 export const AON_JSF_HOLIDAYS = 'aon-jsf-holidays' ;
+
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
 export const AON_JSF_MESSAGES = 'aon-jsf-messages' ;
