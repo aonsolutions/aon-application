@@ -267,7 +267,6 @@ export const getVatLabel = (administration) => {
   } else return '%IVA';
 }
 
-
 export const getSurchargeByVat = (vat) => {
   if(vat == 21.0) {
     return 5.2;

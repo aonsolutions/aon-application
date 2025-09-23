@@ -147,11 +147,11 @@ export class AonInvoiceHome extends AonElement {
 		});
 	}
 
-    buildFastPanel(dashboard) {
+	buildFastPanel(dashboard) {
 		let fastPanel = this.createDiv(this.FAST_PANEL, CSS.AON_FAST_ACCESS);
 		dashboard.appendChild(fastPanel);
 
-        let newIssuedInvoice = new AonDashboardButton();
+		let newIssuedInvoice = new AonDashboardButton();
 		newIssuedInvoice.setId(this.NEW_ISSUED_INVOICE);
 		newIssuedInvoice.setIcon("file-up");
 		newIssuedInvoice.setMessage(MSG.NEW_ISSUED_INVOICE);
@@ -160,7 +160,7 @@ export class AonInvoiceHome extends AonElement {
 		});
 		fastPanel.appendChild(newIssuedInvoice);
 
-        let newReceivedInvoice = new AonDashboardButton();
+		let newReceivedInvoice = new AonDashboardButton();
 		newReceivedInvoice.setId(this.NEW_RECEIVED_INVOICE);
 		newReceivedInvoice.setIcon("file-down");
 		newReceivedInvoice.setMessage(MSG.NEW_RECEIVED_INVOICE);
@@ -169,7 +169,7 @@ export class AonInvoiceHome extends AonElement {
 		});
 		fastPanel.appendChild(newReceivedInvoice);
 
-        let newTicket = new AonDashboardButton();
+		let newTicket = new AonDashboardButton();
 		newTicket.setId(this.NEW_TICKET_INVOICE);
 		newTicket.setIcon("sticker");
 		newTicket.setMessage(MSG.NEW_TICKET);
@@ -178,24 +178,24 @@ export class AonInvoiceHome extends AonElement {
 		});
 		fastPanel.appendChild(newTicket);
 
-		let newIncome = new AonDashboardButton();
-		newIncome.setId(this.NEW_INCOME);
-		newIncome.setIcon('file-plus');
-		newIncome.setMessage("Nuevo Ingreso");
-		newIncome.addEventListener(EVENT.CLICK, () => {
-			this.getApplication().setContent(new AonIncome(new Income()));
-		});
-		fastPanel.appendChild(newIncome);
+		// let newIncome = new AonDashboardButton();
+		// newIncome.setId(this.NEW_INCOME);
+		// newIncome.setIcon('file-plus');
+		// newIncome.setMessage("Nuevo Ingreso");
+		// newIncome.addEventListener(EVENT.CLICK, () => {
+		// 	this.getApplication().setContent(new AonIncome(new Income()));
+		// });
+		// fastPanel.appendChild(newIncome);
 
-		let newExpense = new AonDashboardButton();
-		newExpense.setId(this.NEW_EXPENSE);
-		newExpense.setIcon("file-minus");
-		newExpense.setMessage("Nuevo Gasto");
-		newExpense.addEventListener(EVENT.CLICK, () => {
-			this.getApplication().setContent(new AonExpense(new Expense()));
-		});
-		fastPanel.appendChild(newExpense);
-    }
+		// let newExpense = new AonDashboardButton();
+		// newExpense.setId(this.NEW_EXPENSE);
+		// newExpense.setIcon("file-minus");
+		// newExpense.setMessage("Nuevo Gasto");
+		// newExpense.addEventListener(EVENT.CLICK, () => {
+		// 	this.getApplication().setContent(new AonExpense(new Expense()));
+		// });
+		// fastPanel.appendChild(newExpense);
+	}
 
 	buildCardPanel(dashboard) {
 		let cardPanel = this.createDiv(this.CARD_PANEL, CSS.FLEX_ROW);

@@ -4,8 +4,6 @@ import { getDomainUserRoles, getTaskHolder, getTimeControl, getPeriodLaboral, ge
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
-import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
@@ -31,7 +29,6 @@ import { getModelsFiscal } from '../../services/service.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
-import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
@@ -39,7 +36,9 @@ import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
-
+// import { AonDocumentalCard } from '../documental/aon-documental-card.js';
+// import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
+// import { AonDocumental } from '../documental/aon-documental.js';
 export class AonDesktop extends AonElement {
 	dur;
 	AON_DESKTOP;
@@ -75,12 +74,11 @@ export class AonDesktop extends AonElement {
 	}
 
 	connectedCallback() {
-
-      this.initialize();
-      getDomainUserRoles({}).then(r => {
-          this.dur = new DomainUserRoles(r);
-          this.build();
-      });
+		this.initialize();
+		getDomainUserRoles({}).then(r => {
+				this.dur = new DomainUserRoles(r);
+				this.build();
+		});
 	}
 
 	build() {
@@ -88,7 +86,7 @@ export class AonDesktop extends AonElement {
 		this.innerHTML = `<aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
-        let filter = {
+		let filter = {
 			attachType: 'registry',
 			attachModule: company.registry,
 			type: 0
@@ -106,11 +104,11 @@ export class AonDesktop extends AonElement {
 		content.id = "content";
 		aonDesktop.setContent(content);
 
-        this.createDashboard(content, company);
-        // Quitamos el toolbar
-        const toolbar = this.querySelector('aon-toolbar');
-        if (toolbar)
-          toolbar.remove();
+		this.createDashboard(content, company);
+		// Quitamos el toolbar
+		const toolbar = this.querySelector('aon-toolbar');
+		if (toolbar)
+			toolbar.remove();
 	}
 
 	async createDashboard(parent, company) {
@@ -133,7 +131,7 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Timecontrol 
 		// ------------------------------------------------
-		if (this.getDur().isTimecontrol()) {
+		if (this.getDur().isTimecontrol() && this.getDur().isEmployee()) {
 			let timecontrolCard = new AonCard();
 			timecontrolCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
@@ -393,23 +391,23 @@ export class AonDesktop extends AonElement {
 		}
 
 		// ------------------------------------------------
-		// Documental
+		// Documental | No se quiere por ahora
 		// ------------------------------------------------
-		if (this.getDur().isDocumentalUser()) {
-			// Documental
-			let documentalCard = new AonCard();
-			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			documentalCard.id = "documentalCard";
-			documentalCard.title = MSG.DOCUMENTARY;
-			documentalCard.setApp(Apps.DOCUMENTAL);
-			documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
-				this.appSelection(Apps.DOCUMENTAL.app);
-			});
-			cardsPanel.appendChild(documentalCard);
+		// if (this.getDur().isDocumentalUser()) {
+		// 	// Documental
+		// 	let documentalCard = new AonCard();
+		// 	documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
+		// 	documentalCard.id = "documentalCard";
+		// 	documentalCard.title = MSG.DOCUMENTARY;
+		// 	documentalCard.setApp(Apps.DOCUMENTAL);
+		// 	documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
+		// 		this.appSelection(Apps.DOCUMENTAL.app);
+		// 	});
+		// 	cardsPanel.appendChild(documentalCard);
 
-			let aonBankCard = new AonDocumentalCard();
-			documentalCard.setContent(aonBankCard);
-		}
+		// 	let aonBankCard = new AonDocumentalCard();
+		// 	documentalCard.setContent(aonBankCard);
+		// }
 
 		// ------------------------------------------------
 		// Requests ( Issues )
@@ -1113,7 +1111,7 @@ export class AonDesktop extends AonElement {
 		if (!this.appOption)
 			switch (app) {
 				case Apps.DOCUMENTAL.app:
-					this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
+					// this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 					break;
 				case Apps.ACCOUNTING.app:
 					this.rootPanel(new AonAccounting());
