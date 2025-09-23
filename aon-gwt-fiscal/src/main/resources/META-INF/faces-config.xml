@@ -354,11 +354,19 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<!-- =================== Customer Sync Domain Module ========================== -->
+	<!-- =================== Customer Sync Domain Module ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_customer_sync_domain_module</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/customer/customerSyncDomainModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Sync Sig Customer Domain Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_sync_sig_customer_domain_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/customer/syncSigCustomerDomainModule.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

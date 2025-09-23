@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -470,5 +471,6 @@ public interface CommonServiceAsync {
 	void getActivitySummary(String domainName, String userLogin,  ActivitySummaryParams params,AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws AonCoreException;
 	void getAviableSyncDomains(CustomersDomainSyncParams paramsDomains, AsyncCallback<List<DomainCompany>> asyncCallback) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> asyncCallback) throws AonCoreException;
 	
 }
