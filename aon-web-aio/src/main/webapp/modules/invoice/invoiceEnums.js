@@ -20,6 +20,15 @@ export const Transactions = [
   {value: 'ISP', name: 'I.S.P.'},
 ];
 
+function transactionsToObject(transactions) {
+  return transactions.reduce((acc, { value, name }) => {
+    acc[value] = value;
+    return acc;
+  }, {});
+}
+// transactionsObject. Basado en Transactions
+export const transactionsObject = transactionsToObject(Transactions);
+
 export const InvoiceStatus = {
   INBOX: 'inbox',
   REJECTED: 'rejected',

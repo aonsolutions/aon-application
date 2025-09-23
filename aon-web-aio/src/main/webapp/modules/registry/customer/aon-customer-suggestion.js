@@ -185,11 +185,49 @@ export class AonCustomerSuggestion extends AonElement {
     div.className = this.isMobile() ? CSS.AON_BLOCK : CSS.AON_FLEX;
     let td = table.addCell(div);
     td.style.width = '100%';
-
+    //-----------------------------
+    // NIF
+    //-----------------------------
     let span0 = this.createElement(TAG.SPAN);
-    span0.style.width="20%";
+    span0.style.width="25%";
     span0.style.marginRight = "2px";
     div.appendChild(span0);
+
+    let document = createSuggestion(this.DOCUMENT, MSG.NIF);
+    document.readonly = this.isReadonly();
+    document.value = this.customer.document;
+    document.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownDocument(e, document.value));
+    document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
+    span0.appendChild(document);
+    if(this.customer.id) document.disabled = true;
+    //-----------------------------
+    // FIN - NIF
+    //-----------------------------
+    //-----------------------------
+    // Razon social
+    //-----------------------------
+    let span1 = this.createElement(TAG.SPAN);
+    span1.style.width="55%";
+    div.appendChild(span1);
+
+    let name = createSuggestion(this.NAME, MSG.BUSINESS_NAME);
+    name.name = CONSTANT.NAME;
+    name.value = this.customer.name;
+    name.readonly = this.isReadonly();
+    name.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownName(e, name.value));
+    name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
+    span1.appendChild(name);
+    if(this.customer.id) name.disabled = true;
+    //-----------------------------
+    // FIN - Razon social
+    //-----------------------------
+    //-----------------------------
+    // FIN - Pais
+    //-----------------------------
+    let span2 = this.createElement(TAG.SPAN);
+    span2.style.width="20%";
+    span2.style.marginRight = "2px";
+    div.appendChild(span2);
 
     let country = createSelect(this.DOCUMENT_COUNTRY, MSG.COUNTRY);
     country.autocomplete = true;
@@ -201,38 +239,20 @@ export class AonCustomerSuggestion extends AonElement {
     country.readonly = this.isReadonly();
     country.value = this.customer.documentCountry || 'ES';
     country.addEventListener(EVENT.SELECT, () => {
+      // Select transaction from the invoice
+      const transactionSelect = this.getApplication().getElement("aonInvoiceTransactionType")
+      if(transactionSelect){
+        const countryDetails = this.findCountryByIso2(country.value) // Full country details
+        transactionSelect.value = countryDetails.transaction;
+      }
       this.customer.documentCountry = country.value;
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    span0.appendChild(country);
+    span2.appendChild(country);
     if(this.customer.id) country.disabled = true;
-
-    let span1 = this.createElement(TAG.SPAN);
-    span1.style.width="25%";
-    span1.style.marginRight = "2px";
-    div.appendChild(span1);
-
-    let document = createSuggestion(this.DOCUMENT, MSG.NIF);
-    document.readonly = this.isReadonly();
-    document.value = this.customer.document;
-    document.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownDocument(e, document.value));
-    document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
-    span1.appendChild(document);
-    if(this.customer.id) document.disabled = true;
-
-    let span2 = this.createElement(TAG.SPAN);
-    span2.style.width="55%";
-    div.appendChild(span2);
-
-    let name = createSuggestion(this.NAME, MSG.BUSINESS_NAME);
-    name.name = CONSTANT.NAME;
-    name.value = this.customer.name;
-    name.readonly = this.isReadonly();
-    name.addEventListener(EVENT.KEYDOWN, (e) => this.onkeydownName(e, name.value));
-    name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
-    span2.appendChild(name);
-    if(this.customer.id) name.disabled = true;
-
+    //-----------------------------
+    // FIN - Pais
+    //-----------------------------
     let removeRegistry = new AonIconButton();
     removeRegistry.id = this.REMOVE_REGISTRY;
     removeRegistry.title = MSG.DELETE;
@@ -473,6 +493,10 @@ export class AonCustomerSuggestion extends AonElement {
   isReadonly() {
     return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
+  
+  findCountryByIso2(iso2) {
+    return Countries.find(country => country.iso2 === iso2);
   }
 }
 

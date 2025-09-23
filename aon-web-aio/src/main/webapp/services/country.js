@@ -1,3 +1,4 @@
+import { transactionsObject } from '../modules/invoice/invoiceEnums.js';
 export class Country {
     nombre;
     name;
@@ -54,7 +55,8 @@ export const Countries = [{
         iso3: 'AFG',
         phoneCode: 93,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Albania',
@@ -64,7 +66,8 @@ export const Countries = [{
         iso3: 'ALB',
         phoneCode: 355,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Alemania',
@@ -74,7 +77,8 @@ export const Countries = [{
         iso3: 'DEU',
         phoneCode: 49,
         bankIdLength: 8,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Algeria',
@@ -84,8 +88,8 @@ export const Countries = [{
         iso3: 'DZA',
         phoneCode: 213,
         bankIdLength: 4,
-        ibanLength: 34
-        
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Andorra',
@@ -95,7 +99,8 @@ export const Countries = [{
         iso3: 'AND',
         phoneCode: 376,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Angola',
@@ -105,7 +110,8 @@ export const Countries = [{
         iso3: 'AGO',
         phoneCode: 244,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Anguila',
@@ -115,7 +121,8 @@ export const Countries = [{
         iso3: 'AIA',
         phoneCode: '1 264',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Antártida',
@@ -125,7 +132,8 @@ export const Countries = [{
         iso3: 'ATA',
         phoneCode: 672,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Antigua y Barbuda',
@@ -135,7 +143,8 @@ export const Countries = [{
         iso3: 'ATG',
         phoneCode: '1 268',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Antillas Neerlandesas',
@@ -145,7 +154,8 @@ export const Countries = [{
         iso3: 'ANT',
         phoneCode: 599,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Arabia Saudita',
@@ -155,7 +165,8 @@ export const Countries = [{
         iso3: 'SAU',
         phoneCode: 966,
         bankIdLength: 2,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Argentina',
@@ -165,7 +176,8 @@ export const Countries = [{
         iso3: 'ARG',
         phoneCode: 54,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Armenia',
@@ -175,7 +187,8 @@ export const Countries = [{
         iso3: 'ARM',
         phoneCode: 374,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Aruba',
@@ -185,7 +198,8 @@ export const Countries = [{
         iso3: 'ABW',
         phoneCode: 297,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Australia',
@@ -195,7 +209,8 @@ export const Countries = [{
         iso3: 'AUS',
         phoneCode: 61,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Austria',
@@ -205,7 +220,8 @@ export const Countries = [{
         iso3: 'AUT',
         phoneCode: 43,
         bankIdLength: 5,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Azerbayán',
@@ -215,7 +231,8 @@ export const Countries = [{
         iso3: 'AZE',
         phoneCode: 994,
         bankIdLength: 4,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bélgica',
@@ -225,7 +242,8 @@ export const Countries = [{
         iso3: 'BEL',
         phoneCode: 32,
         bankIdLength: 3,
-        ibanLength: 16
+        ibanLength: 16,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Bahamas',
@@ -235,7 +253,8 @@ export const Countries = [{
         iso3: 'BHS',
         phoneCode: '1 242',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bahrein',
@@ -245,7 +264,8 @@ export const Countries = [{
         iso3: 'BHR',
         phoneCode: 973,
         bankIdLength: 4,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bangladesh',
@@ -255,7 +275,8 @@ export const Countries = [{
         iso3: 'BGD',
         phoneCode: 880,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Barbados',
@@ -265,7 +286,8 @@ export const Countries = [{
         iso3: 'BRB',
         phoneCode: '1 246',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Belice',
@@ -275,7 +297,8 @@ export const Countries = [{
         iso3: 'BLZ',
         phoneCode: 501,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Benín',
@@ -285,7 +308,8 @@ export const Countries = [{
         iso3: 'BEN',
         phoneCode: 229,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bhután',
@@ -295,7 +319,8 @@ export const Countries = [{
         iso3: 'BTN',
         phoneCode: 975,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bielorrusia',
@@ -305,7 +330,8 @@ export const Countries = [{
         iso3: 'BLR',
         phoneCode: 375,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Birmania',
@@ -315,7 +341,8 @@ export const Countries = [{
         iso3: 'MMR',
         phoneCode: 95,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bolivia',
@@ -325,7 +352,8 @@ export const Countries = [{
         iso3: 'BOL',
         phoneCode: 591,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bosnia y Herzegovina',
@@ -335,7 +363,8 @@ export const Countries = [{
         iso3: 'BIH',
         phoneCode: 387,
         bankIdLength: 3,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Botsuana',
@@ -345,7 +374,8 @@ export const Countries = [{
         iso3: 'BWA',
         phoneCode: 267,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Brasil',
@@ -355,7 +385,8 @@ export const Countries = [{
         iso3: 'BRA',
         phoneCode: 55,
         bankIdLength: 8,
-        ibanLength: 29
+        ibanLength: 29,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Brunéi',
@@ -365,7 +396,8 @@ export const Countries = [{
         iso3: 'BRN',
         phoneCode: 673,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Bulgaria',
@@ -375,7 +407,8 @@ export const Countries = [{
         iso3: 'BGR',
         phoneCode: 359,
         bankIdLength: 4,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Burkina Faso',
@@ -385,7 +418,8 @@ export const Countries = [{
         iso3: 'BFA',
         phoneCode: 226,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Burundi',
@@ -395,7 +429,8 @@ export const Countries = [{
         iso3: 'BDI',
         phoneCode: 257,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Cabo Verde',
@@ -405,7 +440,8 @@ export const Countries = [{
         iso3: 'CPV',
         phoneCode: 238,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Camboya',
@@ -415,7 +451,8 @@ export const Countries = [{
         iso3: 'KHM',
         phoneCode: 855,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Camerún',
@@ -425,7 +462,8 @@ export const Countries = [{
         iso3: 'CMR',
         phoneCode: 237,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Canadá',
@@ -435,7 +473,8 @@ export const Countries = [{
         iso3: 'CAN',
         phoneCode: 1,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Chad',
@@ -445,7 +484,8 @@ export const Countries = [{
         iso3: 'TCD',
         phoneCode: 235,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Chile',
@@ -455,7 +495,8 @@ export const Countries = [{
         iso3: 'CHL',
         phoneCode: 56,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'China',
@@ -465,7 +506,8 @@ export const Countries = [{
         iso3: 'CHN',
         phoneCode: 86,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Chipre',
@@ -475,7 +517,8 @@ export const Countries = [{
         iso3: 'CYP',
         phoneCode: 357,
         bankIdLength: 3,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Ciudad del Vaticano',
@@ -485,7 +528,8 @@ export const Countries = [{
         iso3: 'VAT',
         phoneCode: 39,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Colombia',
@@ -495,7 +539,8 @@ export const Countries = [{
         iso3: 'COL',
         phoneCode: 57,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Comoras',
@@ -505,7 +550,8 @@ export const Countries = [{
         iso3: 'COM',
         phoneCode: 269,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Congo',
@@ -513,7 +559,8 @@ export const Countries = [{
         nom: 'Congo',
         iso2: 'CG',
         iso3: 'COG',
-        phoneCode: 242
+        phoneCode: 242,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Congo',
@@ -523,7 +570,8 @@ export const Countries = [{
         iso3: 'COD',
         phoneCode: 243,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Corea del Norte',
@@ -533,7 +581,8 @@ export const Countries = [{
         iso3: 'PRK',
         phoneCode: 850,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Corea del Sur',
@@ -543,7 +592,8 @@ export const Countries = [{
         iso3: 'KOR',
         phoneCode: 82,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Costa de Marfil',
@@ -553,7 +603,8 @@ export const Countries = [{
         iso3: 'CIV',
         phoneCode: 225,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Costa Rica',
@@ -563,7 +614,8 @@ export const Countries = [{
         iso3: 'CRI',
         phoneCode: 506,
         bankIdLength: 3,
-        ibanLength: 21
+        ibanLength: 21,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Croacia',
@@ -573,7 +625,8 @@ export const Countries = [{
         iso3: 'HRV',
         phoneCode: 385,
         bankIdLength: 7,
-        ibanLength: 21
+        ibanLength: 21,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Cuba',
@@ -583,7 +636,8 @@ export const Countries = [{
         iso3: 'CUB',
         phoneCode: 53,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Dinamarca',
@@ -593,7 +647,8 @@ export const Countries = [{
         iso3: 'DNK',
         phoneCode: 45,
         bankIdLength: 4,
-        ibanLength: 18
+        ibanLength: 18,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Dominica',
@@ -603,7 +658,8 @@ export const Countries = [{
         iso3: 'DMA',
         phoneCode: '1 767',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Ecuador',
@@ -613,7 +669,8 @@ export const Countries = [{
         iso3: 'ECU',
         phoneCode: 593,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Egipto',
@@ -623,7 +680,8 @@ export const Countries = [{
         iso3: 'EGY',
         phoneCode: 20,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'El Salvador',
@@ -633,7 +691,8 @@ export const Countries = [{
         iso3: 'SLV',
         phoneCode: 503,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Emiratos Árabes Unidos',
@@ -643,7 +702,8 @@ export const Countries = [{
         iso3: 'ARE',
         phoneCode: 971,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Eritrea',
@@ -653,7 +713,8 @@ export const Countries = [{
         iso3: 'ERI',
         phoneCode: 291,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Eslovaquia',
@@ -663,7 +724,8 @@ export const Countries = [{
         iso3: 'SVK',
         phoneCode: 421,
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Eslovenia',
@@ -673,7 +735,8 @@ export const Countries = [{
         iso3: 'SVN',
         phoneCode: 386,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'España',
@@ -683,7 +746,8 @@ export const Countries = [{
         iso3: 'ESP',
         phoneCode: 34,
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.NAC
     },
     {
         nombre: 'Estados Unidos de América',
@@ -693,7 +757,8 @@ export const Countries = [{
         iso3: 'USA',
         phoneCode: 1,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Estonia',
@@ -703,7 +768,8 @@ export const Countries = [{
         iso3: 'EST',
         phoneCode: 372,
         bankIdLength: 2,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Etiopía',
@@ -713,7 +779,8 @@ export const Countries = [{
         iso3: 'ETH',
         phoneCode: 251,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Filipinas',
@@ -723,7 +790,8 @@ export const Countries = [{
         iso3: 'PHL',
         phoneCode: 63,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Finlandia',
@@ -733,7 +801,8 @@ export const Countries = [{
         iso3: 'FIN',
         phoneCode: 358,
         bankIdLength: 3,
-        ibanLength: 18
+        ibanLength: 18,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Fiyi',
@@ -743,7 +812,8 @@ export const Countries = [{
         iso3: 'FJI',
         phoneCode: 679,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Francia',
@@ -753,7 +823,8 @@ export const Countries = [{
         iso3: 'FRA',
         phoneCode: 33,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Gabón',
@@ -763,7 +834,8 @@ export const Countries = [{
         iso3: 'GAB',
         phoneCode: 241,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Gambia',
@@ -773,7 +845,8 @@ export const Countries = [{
         iso3: 'GMB',
         phoneCode: 220,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Georgia',
@@ -783,7 +856,8 @@ export const Countries = [{
         iso3: 'GEO',
         phoneCode: 995,
         bankIdLength: 2,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Ghana',
@@ -793,7 +867,8 @@ export const Countries = [{
         iso3: 'GHA',
         phoneCode: 233,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Gibraltar',
@@ -801,7 +876,8 @@ export const Countries = [{
         nom: 'Gibraltar',
         iso2: 'GI',
         iso3: 'GIB',
-        phoneCode: 350
+        phoneCode: 350,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Granada',
@@ -811,7 +887,8 @@ export const Countries = [{
         iso3: 'GRD',
         phoneCode: '1 473',
         bankIdLength: 4,
-        ibanLength: 23
+        ibanLength: 23,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Grecia',
@@ -821,7 +898,8 @@ export const Countries = [{
         iso3: 'GRC',
         phoneCode: 30,
         bankIdLength: 3,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Groenlandia',
@@ -831,7 +909,8 @@ export const Countries = [{
         iso3: 'GRL',
         phoneCode: 299,
         bankIdLength: 4,
-        ibanLength: 18
+        ibanLength: 18,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guadalupe',
@@ -841,7 +920,8 @@ export const Countries = [{
         iso3: 'GLP',
         phoneCode: '',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Guam',
@@ -851,7 +931,8 @@ export const Countries = [{
         iso3: 'GUM',
         phoneCode: '1 671',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guatemala',
@@ -861,7 +942,8 @@ export const Countries = [{
         iso3: 'GTM',
         phoneCode: 502,
         bankIdLength: 4,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guayana Francesa',
@@ -871,7 +953,8 @@ export const Countries = [{
         iso3: 'GUF',
         phoneCode: '',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Guernsey',
@@ -881,7 +964,8 @@ export const Countries = [{
         iso3: 'GGY',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guinea',
@@ -891,7 +975,8 @@ export const Countries = [{
         iso3: 'GIN',
         phoneCode: 224,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guinea Ecuatorial',
@@ -901,7 +986,8 @@ export const Countries = [{
         iso3: 'GNQ',
         phoneCode: 240,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guinea-Bissau',
@@ -911,7 +997,8 @@ export const Countries = [{
         iso3: 'GNB',
         phoneCode: 245,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Guyana',
@@ -921,7 +1008,8 @@ export const Countries = [{
         iso3: 'GUY',
         phoneCode: 592,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Haití',
@@ -931,7 +1019,8 @@ export const Countries = [{
         iso3: 'HTI',
         phoneCode: 509,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Honduras',
@@ -941,7 +1030,8 @@ export const Countries = [{
         iso3: 'HND',
         phoneCode: 504,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Hong kong',
@@ -951,7 +1041,8 @@ export const Countries = [{
         iso3: 'HKG',
         phoneCode: 852,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Hungría',
@@ -961,7 +1052,8 @@ export const Countries = [{
         iso3: 'HUN',
         phoneCode: 36,
         bankIdLength: 3,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'India',
@@ -971,7 +1063,8 @@ export const Countries = [{
         iso3: 'IND',
         phoneCode: 91,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Indonesia',
@@ -981,7 +1074,8 @@ export const Countries = [{
         iso3: 'IDN',
         phoneCode: 62,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Irán',
@@ -991,7 +1085,8 @@ export const Countries = [{
         iso3: 'IRN',
         phoneCode: 98,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Irak',
@@ -1001,7 +1096,8 @@ export const Countries = [{
         iso3: 'IRQ',
         phoneCode: 964,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Irlanda',
@@ -1011,7 +1107,8 @@ export const Countries = [{
         iso3: 'IRL',
         phoneCode: 353,
         bankIdLength: 4,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Isla Bouvet',
@@ -1021,7 +1118,8 @@ export const Countries = [{
         iso3: 'BVT',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Isla de Man',
@@ -1031,7 +1129,8 @@ export const Countries = [{
         iso3: 'IMN',
         phoneCode: 44,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Isla de Navidad',
@@ -1041,7 +1140,8 @@ export const Countries = [{
         iso3: 'CXR',
         phoneCode: 61,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Isla Norfolk',
@@ -1051,7 +1151,8 @@ export const Countries = [{
         iso3: 'NFK',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islandia',
@@ -1061,7 +1162,8 @@ export const Countries = [{
         iso3: 'ISL',
         phoneCode: 354,
         bankIdLength: 4,
-        ibanLength: 26
+        ibanLength: 26,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Bermudas',
@@ -1071,7 +1173,8 @@ export const Countries = [{
         iso3: 'BMU',
         phoneCode: '1 441',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Caimán',
@@ -1081,7 +1184,8 @@ export const Countries = [{
         iso3: 'CYM',
         phoneCode: '1 345',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Cocos (Keeling)',
@@ -1091,7 +1195,8 @@ export const Countries = [{
         iso3: 'CCK',
         phoneCode: 61,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Cook',
@@ -1101,7 +1206,8 @@ export const Countries = [{
         iso3: 'COK',
         phoneCode: 682,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas de Åland',
@@ -1111,7 +1217,8 @@ export const Countries = [{
         iso3: 'ALA',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Islas Feroe',
@@ -1121,7 +1228,8 @@ export const Countries = [{
         iso3: 'FRO',
         phoneCode: 298,
         bankIdLength: 4,
-        ibanLength: 18
+        ibanLength: 18,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Georgias del Sur y Sandwich del Sur',
@@ -1131,7 +1239,8 @@ export const Countries = [{
         iso3: 'SGS',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Heard y McDonald',
@@ -1141,7 +1250,8 @@ export const Countries = [{
         iso3: 'HMD',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Maldivas',
@@ -1151,7 +1261,8 @@ export const Countries = [{
         iso3: 'MDV',
         phoneCode: 960,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Malvinas',
@@ -1161,7 +1272,8 @@ export const Countries = [{
         iso3: 'FLK',
         phoneCode: 500,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Marianas del Norte',
@@ -1171,7 +1283,8 @@ export const Countries = [{
         iso3: 'MNP',
         phoneCode: '1 670',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Marshall',
@@ -1181,7 +1294,8 @@ export const Countries = [{
         iso3: 'MHL',
         phoneCode: 692,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Pitcairn',
@@ -1191,7 +1305,8 @@ export const Countries = [{
         iso3: 'PCN',
         phoneCode: 870,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Salomón',
@@ -1201,7 +1316,8 @@ export const Countries = [{
         iso3: 'SLB',
         phoneCode: 677,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Turcas y Caicos',
@@ -1211,7 +1327,8 @@ export const Countries = [{
         iso3: 'TCA',
         phoneCode: '1 649',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Ultramarinas Menores de Estados Unidos',
@@ -1221,7 +1338,8 @@ export const Countries = [{
         iso3: 'UMI',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Vírgenes Británicas',
@@ -1231,7 +1349,8 @@ export const Countries = [{
         iso3: 'VG',
         phoneCode: '1 284',
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Islas Vírgenes de los Estados Unidos',
@@ -1241,7 +1360,8 @@ export const Countries = [{
         iso3: 'VIR',
         phoneCode: '1 340',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Israel',
@@ -1251,7 +1371,8 @@ export const Countries = [{
         iso3: 'ISR',
         phoneCode: 972,
         bankIdLength: 3,
-        ibanLength: 23
+        ibanLength: 23,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Italia',
@@ -1261,7 +1382,8 @@ export const Countries = [{
         iso3: 'ITA',
         phoneCode: 39,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Jamaica',
@@ -1271,7 +1393,8 @@ export const Countries = [{
         iso3: 'JAM',
         phoneCode: '1 876',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Japón',
@@ -1281,7 +1404,8 @@ export const Countries = [{
         iso3: 'JPN',
         phoneCode: 81,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Jersey',
@@ -1291,7 +1415,8 @@ export const Countries = [{
         iso3: 'JEY',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Jordania',
@@ -1301,7 +1426,8 @@ export const Countries = [{
         iso3: 'JOR',
         phoneCode: 962,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Kazajistán',
@@ -1311,7 +1437,8 @@ export const Countries = [{
         iso3: 'KAZ',
         phoneCode: 7,
         bankIdLength: 3,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Kenia',
@@ -1321,7 +1448,8 @@ export const Countries = [{
         iso3: 'KEN',
         phoneCode: 254,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Kirgizstán',
@@ -1331,7 +1459,8 @@ export const Countries = [{
         iso3: 'KGZ',
         phoneCode: 996,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Kiribati',
@@ -1341,7 +1470,8 @@ export const Countries = [{
         iso3: 'KIR',
         phoneCode: 686,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Kuwait',
@@ -1351,7 +1481,8 @@ export const Countries = [{
         iso3: 'KWT',
         phoneCode: 965,
         bankIdLength: 4,
-        ibanLength: 30
+        ibanLength: 30,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Líbano',
@@ -1361,7 +1492,8 @@ export const Countries = [{
         iso3: 'LBN',
         phoneCode: 961,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Laos',
@@ -1371,7 +1503,8 @@ export const Countries = [{
         iso3: 'LAO',
         phoneCode: 856,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Lesoto',
@@ -1381,7 +1514,8 @@ export const Countries = [{
         iso3: 'LSO',
         phoneCode: 266,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Letonia',
@@ -1391,7 +1525,8 @@ export const Countries = [{
         iso3: 'LVA',
         phoneCode: 371,
         bankIdLength: 4,
-        ibanLength: 21
+        ibanLength: 21,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Liberia',
@@ -1401,7 +1536,8 @@ export const Countries = [{
         iso3: 'LBR',
         phoneCode: 231,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Libia',
@@ -1411,7 +1547,8 @@ export const Countries = [{
         iso3: 'LBY',
         phoneCode: 218,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Liechtenstein',
@@ -1421,7 +1558,8 @@ export const Countries = [{
         iso3: 'LIE',
         phoneCode: 423,
         bankIdLength: 5,
-        ibanLength: 21
+        ibanLength: 21,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Lituania',
@@ -1431,7 +1569,8 @@ export const Countries = [{
         iso3: 'LTU',
         phoneCode: 370,
         bankIdLength: 5,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Luxemburgo',
@@ -1441,7 +1580,8 @@ export const Countries = [{
         iso3: 'LUX',
         phoneCode: 352,
         bankIdLength: 3,
-        ibanLength: 20
+        ibanLength: 20,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'México',
@@ -1451,7 +1591,8 @@ export const Countries = [{
         iso3: 'MEX',
         phoneCode: 52,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mónaco',
@@ -1461,7 +1602,8 @@ export const Countries = [{
         iso3: 'MCO',
         phoneCode: 377,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Macao',
@@ -1471,7 +1613,8 @@ export const Countries = [{
         iso3: 'MAC',
         phoneCode: 853,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Macedônia',
@@ -1481,7 +1624,8 @@ export const Countries = [{
         iso3: 'MKD',
         phoneCode: 389,
         bankIdLength: 3,
-        ibanLength: 19
+        ibanLength: 19,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Madagascar',
@@ -1491,7 +1635,8 @@ export const Countries = [{
         iso3: 'MDG',
         phoneCode: 261,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Malasia',
@@ -1501,7 +1646,8 @@ export const Countries = [{
         iso3: 'MYS',
         phoneCode: 60,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Malawi',
@@ -1511,7 +1657,8 @@ export const Countries = [{
         iso3: 'MWI',
         phoneCode: 265,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mali',
@@ -1521,7 +1668,8 @@ export const Countries = [{
         iso3: 'MLI',
         phoneCode: 223,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Malta',
@@ -1531,7 +1679,8 @@ export const Countries = [{
         iso3: 'MLT',
         phoneCode: 356,
         bankIdLength: 4,
-        ibanLength: 31
+        ibanLength: 31,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Marruecos',
@@ -1541,7 +1690,8 @@ export const Countries = [{
         iso3: 'MAR',
         phoneCode: 212,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Martinica',
@@ -1551,7 +1701,8 @@ export const Countries = [{
         iso3: 'MTQ',
         phoneCode: '',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Mauricio',
@@ -1561,7 +1712,8 @@ export const Countries = [{
         iso3: 'MUS',
         phoneCode: 230,
         bankIdLength: 6,
-        ibanLength: 30
+        ibanLength: 30,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mauritania',
@@ -1571,7 +1723,8 @@ export const Countries = [{
         iso3: 'MRT',
         phoneCode: 222,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mayotte',
@@ -1581,7 +1734,8 @@ export const Countries = [{
         iso3: 'MYT',
         phoneCode: 262,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Micronesia',
@@ -1591,7 +1745,8 @@ export const Countries = [{
         iso3: 'FSM',
         phoneCode: 691,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Moldavia',
@@ -1601,7 +1756,8 @@ export const Countries = [{
         iso3: 'MDA',
         phoneCode: 373,
         bankIdLength: 2,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mongolia',
@@ -1611,7 +1767,8 @@ export const Countries = [{
         iso3: 'MNG',
         phoneCode: 976,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Montenegro',
@@ -1621,7 +1778,8 @@ export const Countries = [{
         iso3: 'MNE',
         phoneCode: 382,
         bankIdLength: 3,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Montserrat',
@@ -1631,7 +1789,8 @@ export const Countries = [{
         iso3: 'MSR',
         phoneCode: '1 664',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Mozambique',
@@ -1641,7 +1800,8 @@ export const Countries = [{
         iso3: 'MOZ',
         phoneCode: 258,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Namibia',
@@ -1651,7 +1811,8 @@ export const Countries = [{
         iso3: 'NAM',
         phoneCode: 264,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nauru',
@@ -1661,7 +1822,8 @@ export const Countries = [{
         iso3: 'NRU',
         phoneCode: 674,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nepal',
@@ -1671,7 +1833,8 @@ export const Countries = [{
         iso3: 'NPL',
         phoneCode: 977,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nicaragua',
@@ -1681,7 +1844,8 @@ export const Countries = [{
         iso3: 'NIC',
         phoneCode: 505,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Niger',
@@ -1691,7 +1855,8 @@ export const Countries = [{
         iso3: 'NER',
         phoneCode: 227,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nigeria',
@@ -1701,7 +1866,8 @@ export const Countries = [{
         iso3: 'NGA',
         phoneCode: 234,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Niue',
@@ -1711,7 +1877,8 @@ export const Countries = [{
         iso3: 'NIU',
         phoneCode: 683,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Noruega',
@@ -1721,7 +1888,8 @@ export const Countries = [{
         iso3: 'NOR',
         phoneCode: 47,
         bankIdLength: 4,
-        ibanLength: 15
+        ibanLength: 15,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nueva Caledonia',
@@ -1731,7 +1899,8 @@ export const Countries = [{
         iso3: 'NCL',
         phoneCode: 687,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Nueva Zelanda',
@@ -1741,7 +1910,8 @@ export const Countries = [{
         iso3: 'NZL',
         phoneCode: 64,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Omán',
@@ -1751,7 +1921,8 @@ export const Countries = [{
         iso3: 'OMN',
         phoneCode: 968,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Países Bajos',
@@ -1761,7 +1932,8 @@ export const Countries = [{
         iso3: 'NLD',
         phoneCode: 31,
         bankIdLength: 4,
-        ibanLength: 18
+        ibanLength: 18,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Pakistán',
@@ -1771,7 +1943,8 @@ export const Countries = [{
         iso3: 'PAK',
         phoneCode: 92,
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Palau',
@@ -1781,7 +1954,8 @@ export const Countries = [{
         iso3: 'PLW',
         phoneCode: 680,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Palestina',
@@ -1791,7 +1965,8 @@ export const Countries = [{
         iso3: 'PSE',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 29
+        ibanLength: 29,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Panamá',
@@ -1801,7 +1976,8 @@ export const Countries = [{
         iso3: 'PAN',
         phoneCode: 507,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Papúa Nueva Guinea',
@@ -1811,7 +1987,8 @@ export const Countries = [{
         iso3: 'PNG',
         phoneCode: 675,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Paraguay',
@@ -1821,7 +1998,8 @@ export const Countries = [{
         iso3: 'PRY',
         phoneCode: 595,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Perú',
@@ -1831,7 +2009,8 @@ export const Countries = [{
         iso3: 'PER',
         phoneCode: 51,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Polinesia Francesa',
@@ -1841,7 +2020,8 @@ export const Countries = [{
         iso3: 'PYF',
         phoneCode: 689,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Polonia',
@@ -1851,7 +2031,8 @@ export const Countries = [{
         iso3: 'POL',
         phoneCode: 48,
         bankIdLength: 8,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Portugal',
@@ -1861,7 +2042,8 @@ export const Countries = [{
         iso3: 'PRT',
         phoneCode: 351,
         bankIdLength: 4,
-        ibanLength: 25
+        ibanLength: 25,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Puerto Rico',
@@ -1871,7 +2053,8 @@ export const Countries = [{
         iso3: 'PRI',
         phoneCode: 1,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Qatar',
@@ -1881,7 +2064,8 @@ export const Countries = [{
         iso3: 'QAT',
         phoneCode: 974,
         bankIdLength: 4,
-        ibanLength: 29
+        ibanLength: 29,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Reino Unido',
@@ -1891,7 +2075,8 @@ export const Countries = [{
         iso3: 'GBR',
         phoneCode: 44,
         bankIdLength: 4,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'República Centroafricana',
@@ -1901,7 +2086,8 @@ export const Countries = [{
         iso3: 'CAF',
         phoneCode: 236,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'República Checa',
@@ -1911,7 +2097,8 @@ export const Countries = [{
         iso3: 'CZE',
         phoneCode: 420,
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'República Dominicana',
@@ -1921,7 +2108,8 @@ export const Countries = [{
         iso3: 'DOM',
         phoneCode: '1 809',
         bankIdLength: 4,
-        ibanLength: 28
+        ibanLength: 28,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Reunión',
@@ -1931,7 +2119,8 @@ export const Countries = [{
         iso3: 'REU',
         phoneCode: '',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Ruanda',
@@ -1941,7 +2130,8 @@ export const Countries = [{
         iso3: 'RWA',
         phoneCode: 250,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Rumanía',
@@ -1951,7 +2141,8 @@ export const Countries = [{
         iso3: 'ROU',
         phoneCode: 40,
         bankIdLength: 4,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Rusia',
@@ -1961,7 +2152,8 @@ export const Countries = [{
         iso3: 'RUS',
         phoneCode: 7,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Sahara Occidental',
@@ -1971,7 +2163,8 @@ export const Countries = [{
         iso3: 'ESH',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Samoa',
@@ -1981,7 +2174,8 @@ export const Countries = [{
         iso3: 'WSM',
         phoneCode: 685,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Samoa Americana',
@@ -1991,7 +2185,8 @@ export const Countries = [{
         iso3: 'ASM',
         phoneCode: '1 684',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'San Bartolomé',
@@ -2001,7 +2196,8 @@ export const Countries = [{
         iso3: 'BLM',
         phoneCode: 590,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'San Cristóbal y Nieves',
@@ -2011,7 +2207,8 @@ export const Countries = [{
         iso3: 'KNA',
         phoneCode: '1 869',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'San Marino',
@@ -2021,7 +2218,8 @@ export const Countries = [{
         iso3: 'SMR',
         phoneCode: 378,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'San Martín (Francia)',
@@ -2031,7 +2229,8 @@ export const Countries = [{
         iso3: 'MAF',
         phoneCode: '1 599',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'San Pedro y Miquelón',
@@ -2041,7 +2240,8 @@ export const Countries = [{
         iso3: 'SPM',
         phoneCode: 508,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'San Vicente y las Granadinas',
@@ -2051,7 +2251,8 @@ export const Countries = [{
         iso3: 'VCT',
         phoneCode: '1 784',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Santa Elena',
@@ -2061,7 +2262,8 @@ export const Countries = [{
         iso3: 'SHN',
         phoneCode: 290,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Santa Lucía',
@@ -2071,7 +2273,8 @@ export const Countries = [{
         iso3: 'LCA',
         phoneCode: '1 758',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Santo Tomé y Príncipe',
@@ -2081,7 +2284,8 @@ export const Countries = [{
         iso3: 'STP',
         phoneCode: 239,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Senegal',
@@ -2091,7 +2295,8 @@ export const Countries = [{
         iso3: 'SEN',
         phoneCode: 221,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Serbia',
@@ -2101,7 +2306,8 @@ export const Countries = [{
         iso3: 'SRB',
         phoneCode: 381,
         bankIdLength: 3,
-        ibanLength: 22
+        ibanLength: 22,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Seychelles',
@@ -2111,7 +2317,8 @@ export const Countries = [{
         iso3: 'SYC',
         phoneCode: 248,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Sierra Leona',
@@ -2121,7 +2328,8 @@ export const Countries = [{
         iso3: 'SLE',
         phoneCode: 232,
         bankIdLength: 4,
-        ibanLength: 19
+        ibanLength: 19,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Singapur',
@@ -2131,7 +2339,8 @@ export const Countries = [{
         iso3: 'SGP',
         phoneCode: 65,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Siria',
@@ -2141,7 +2350,8 @@ export const Countries = [{
         iso3: 'SYR',
         phoneCode: 963,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Somalia',
@@ -2151,7 +2361,8 @@ export const Countries = [{
         iso3: 'SOM',
         phoneCode: 252,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Sri lanka',
@@ -2161,7 +2372,8 @@ export const Countries = [{
         iso3: 'LKA',
         phoneCode: 94,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Sudáfrica',
@@ -2171,7 +2383,8 @@ export const Countries = [{
         iso3: 'ZAF',
         phoneCode: 27,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Sudán',
@@ -2181,7 +2394,8 @@ export const Countries = [{
         iso3: 'SDN',
         phoneCode: 249,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Suecia',
@@ -2191,7 +2405,8 @@ export const Countries = [{
         iso3: 'SWE',
         phoneCode: 46,
         bankIdLength: 3,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.INTR
     },
     {
         nombre: 'Suiza',
@@ -2201,7 +2416,8 @@ export const Countries = [{
         iso3: 'CHE',
         phoneCode: 41,
         bankIdLength: 5,
-        ibanLength: 21
+        ibanLength: 21,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Surinám',
@@ -2211,7 +2427,8 @@ export const Countries = [{
         iso3: 'SUR',
         phoneCode: 597,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Svalbard y Jan Mayen',
@@ -2221,7 +2438,8 @@ export const Countries = [{
         iso3: 'SJM',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Swazilandia',
@@ -2231,7 +2449,8 @@ export const Countries = [{
         iso3: 'SWZ',
         phoneCode: 268,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tadjikistán',
@@ -2241,7 +2460,8 @@ export const Countries = [{
         iso3: 'TJK',
         phoneCode: 992,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tailandia',
@@ -2251,7 +2471,8 @@ export const Countries = [{
         iso3: 'THA',
         phoneCode: 66,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Taiwán',
@@ -2261,7 +2482,8 @@ export const Countries = [{
         iso3: 'TWN',
         phoneCode: 886,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tanzania',
@@ -2271,7 +2493,8 @@ export const Countries = [{
         iso3: 'TZA',
         phoneCode: 255,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Territorio Británico del Océano Índico',
@@ -2281,7 +2504,8 @@ export const Countries = [{
         iso3: 'IOT',
         phoneCode: '',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Territorios Australes y Antárticas Franceses',
@@ -2291,7 +2515,8 @@ export const Countries = [{
         iso3: 'ATF',
         phoneCode: '',
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Timor Oriental',
@@ -2301,7 +2526,8 @@ export const Countries = [{
         iso3: 'TLS',
         phoneCode: 670,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Togo',
@@ -2311,7 +2537,8 @@ export const Countries = [{
         iso3: 'TGO',
         phoneCode: 228,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tokelau',
@@ -2321,7 +2548,8 @@ export const Countries = [{
         iso3: 'TKL',
         phoneCode: 690,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tonga',
@@ -2331,7 +2559,8 @@ export const Countries = [{
         iso3: 'TON',
         phoneCode: 676,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Trinidad y Tobago',
@@ -2341,7 +2570,8 @@ export const Countries = [{
         iso3: 'TTO',
         phoneCode: '1 868',
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tunez',
@@ -2351,7 +2581,8 @@ export const Countries = [{
         iso3: 'TUN',
         phoneCode: 216,
         bankIdLength: 2,
-        ibanLength: 24
+        ibanLength: 24,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Turkmenistán',
@@ -2361,7 +2592,8 @@ export const Countries = [{
         iso3: 'TKM',
         phoneCode: 993,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Turquía',
@@ -2371,7 +2603,8 @@ export const Countries = [{
         iso3: 'TUR',
         phoneCode: 90,
         bankIdLength: 5,
-        ibanLength: 26
+        ibanLength: 26,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Tuvalu',
@@ -2381,7 +2614,8 @@ export const Countries = [{
         iso3: 'TUV',
         phoneCode: 688,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Ucrania',
@@ -2391,7 +2625,8 @@ export const Countries = [{
         iso3: 'UKR',
         phoneCode: 380,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Uganda',
@@ -2401,7 +2636,8 @@ export const Countries = [{
         iso3: 'UGA',
         phoneCode: 256,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Uruguay',
@@ -2411,7 +2647,8 @@ export const Countries = [{
         iso3: 'URY',
         phoneCode: 598,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Uzbekistán',
@@ -2421,7 +2658,8 @@ export const Countries = [{
         iso3: 'UZB',
         phoneCode: 998,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Vanuatu',
@@ -2431,7 +2669,8 @@ export const Countries = [{
         iso3: 'VUT',
         phoneCode: 678,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Venezuela',
@@ -2441,7 +2680,8 @@ export const Countries = [{
         iso3: 'VEN',
         phoneCode: 58,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Vietnam',
@@ -2451,7 +2691,8 @@ export const Countries = [{
         iso3: 'VNM',
         phoneCode: 84,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Wallis y Futuna',
@@ -2461,7 +2702,8 @@ export const Countries = [{
         iso3: 'WLF',
         phoneCode: 681,
         bankIdLength: 5,
-        ibanLength: 27
+        ibanLength: 27,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Yemen',
@@ -2471,7 +2713,8 @@ export const Countries = [{
         iso3: 'YEM',
         phoneCode: 967,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Yibuti',
@@ -2481,7 +2724,8 @@ export const Countries = [{
         iso3: 'DJI',
         phoneCode: 253,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Zambia',
@@ -2491,7 +2735,8 @@ export const Countries = [{
         iso3: 'ZMB',
         phoneCode: 260,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     },
     {
         nombre: 'Zimbabue',
@@ -2501,7 +2746,8 @@ export const Countries = [{
         iso3: 'ZWE',
         phoneCode: 263,
         bankIdLength: 4,
-        ibanLength: 34
+        ibanLength: 34,
+        transaction: transactionsObject.EXTR
     }
 ];
 
