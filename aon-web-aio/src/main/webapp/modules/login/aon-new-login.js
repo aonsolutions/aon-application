@@ -489,10 +489,17 @@ export class AonNewLogin extends AonElement {
                 this.isMobile() ? new AonMobileParent() : new AonDesktop()
               }
             }
-            this.getElement("aonHome").showMenu(false);
-            this.rootPanel(
-              this.isMobile() ? new AonMobileParent() : new AonParent()
-            );
+			let cps = companies.filter(r => {
+				return r.id === parseInt(LS.getDomainId());
+			});
+			if(cps.length > 0 && !cps[0].parent){
+				this.companySelection(cps[0], true);
+			} else {				
+	            this.getElement("aonHome").showMenu(false);
+	            this.rootPanel(
+	              this.isMobile() ? new AonMobileParent() : new AonParent()
+	            );
+			}
           }
         });
       })
