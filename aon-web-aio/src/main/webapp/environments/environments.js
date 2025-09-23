@@ -14,6 +14,7 @@ export const SIG_URL = "https://aonsolutions.org";
 export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
 export const PRO_URL = "https://aon.solutions";
+export const PRO_TEST_URL = "http://localhost:8080";
 
 //FB
 export const VAPIDKEY_FB = "BCH91WxACVIpylkYRMj3xSpIfrzjz7Ixnctcj25BPMBZKSbGeKjJFIdaRsJGQ3F-SXVFGD0cr4outWLCFwemIkE";

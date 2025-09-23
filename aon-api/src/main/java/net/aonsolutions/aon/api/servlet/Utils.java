@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,9 +56,9 @@ public class Utils {
 		}
 	}
 	
-	public static String checkString(String str) {
-		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
-	}
+//	public static String checkString(String str) {
+//		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
+//	}
 	
 	public static JSONObject getRequestJSON(HttpServletRequest req){
 		String line = "";
@@ -69,7 +70,7 @@ public class Utils {
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		String s = checkString(bld.toString());
+		String s = bld.toString();
 		if(s == null || s.isBlank()){
 			s = "{}";
 		}

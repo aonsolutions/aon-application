@@ -463,6 +463,7 @@ public interface CommonServiceAsync {
 	// *********************** [CUSTOMER LINKED ACTIVITY]
 	// **************************************************
 	
+	void getCustomers(CustomersLinkedParams params, AsyncCallback<List<Customer>> asyncCallback) throws AonCoreException;
 	void getCustomersLinked(CustomersLinkedParams params, AsyncCallback<List<Customer>> asyncCallback) throws AonCoreException;
 	void getCustomersNotLinked(CustomersLinkedParams params, AsyncCallback<List<Customer>> asyncCallback) throws AonCoreException;
 	void getCustomersDomain(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds, AsyncCallback<HashMap<Integer, Domain>> asyncCallback) throws AonCoreException;
