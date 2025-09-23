@@ -242,8 +242,9 @@ export class AonTable extends AonElement {
 
     this.columns.forEach((item, i) => {
       let td = this.createElement(TAG.TD);
-
       let id = item.id;
+      td.setAttribute('data-label', item.name);
+
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
         aonIconB.id = this.getId()+"IconOption";

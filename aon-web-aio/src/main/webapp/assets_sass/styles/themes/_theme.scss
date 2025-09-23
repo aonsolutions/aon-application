@@ -644,6 +644,15 @@
           }
         }
       }
+      @media (max-width: v.$menu-resolucion-mobile) {
+        table {
+          tbody {
+            tr {
+              border: $border;
+            }
+          }
+        }
+      }
     }
   // 
   // Pages

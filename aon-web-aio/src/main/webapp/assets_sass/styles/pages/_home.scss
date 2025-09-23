@@ -22,7 +22,7 @@ aon-home{
   flex-direction : column;
   overflow       : auto;
   margin-top     : v.$menu-top-height; // para que salga el contenido debajo del menu
-  padding        : v.$padding;
+  padding        : v.$padding v.$padding v.$px-100 v.$padding;
   &.hidden-top {
     margin-top   : 0; // No tinee menu arriba
   }
@@ -32,8 +32,8 @@ aon-home{
     height  : v.$pct-100;
   }
   .aonFlex{
-    display : flex;
-    gap     : v.$gap;
+    display      : flex;
+    gap          : v.$gap;
     &:has(.aonSidenav.sidenav-hidden) {
       // Valor de gap que desees cuando .aonSidenav esté oculto
       gap: 0;  

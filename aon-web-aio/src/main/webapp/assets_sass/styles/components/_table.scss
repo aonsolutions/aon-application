@@ -44,6 +44,11 @@ aon-table{
           &:last-child {
             border-top-right-radius   : v.$border-radius;
             border-bottom-right-radius: v.$border-radius;
+            span:has(aon-icon) {
+              // Si el último TD contiene iconos
+              display        : flex;
+              justify-content: flex-end;
+            }
           }
         }
       }
@@ -57,37 +62,43 @@ aon-table{
     }
   }
   // 
-  // Por mejorar
+  // Tabla se convierte en CARD
   // 
   @media (max-width: v.$menu-resolucion-mobile) {
     table {
-      display: block;
+      // display: block;
 
       thead {
         display: none;
       }
 
       tbody {
-        display: block;
+        display: grid;
+        gap: v.$gap;
 
         tr {
-          display: block;
-          margin-bottom: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: v.$gap-min;
+          border-radius: v.$border-radius;
+          padding: v.$padding;
         }
 
         td {
+          height: unset !important;
           display: flex;
+          position: relative;
           justify-content: space-between;
-          gap: 1rem;
-          border-top: none !important;
-          
-
+          gap: v.$gap;
+          border: none !important;
+          padding: 0;
+          word-wrap: break-word;
+          max-width: v.$pct-100 !important;
+          font-size: v.$px-14 !important;
           &::before {
             content: attr(data-label);
-            font-weight: bold;
+            font-family: v.$font-primary-semibold;
+            font-size: v.$px-14 !important;
           }
         }
       }
