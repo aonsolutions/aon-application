@@ -331,10 +331,9 @@ export class AonCustomer extends AonReg {
 		}
 		
 		if(this.isSig()){
-			let headers = {domain_name: SIG_DOMAIN_NAME, domain_id: SIG_DOMAIN_ID};
 			getCustomerDomainAddInfo({
 				registry: this.registry.getId()
-			}, headers)
+			})
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
 			})
