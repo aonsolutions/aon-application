@@ -216,6 +216,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private void paintRow(DomainCompany domainCompany) {
 		HTMLPanel row = tab.createRow();
+		row.setTitle("Vincular dominio");
 		row.addDomHandler(e -> onDomainClick(domainCompany), ClickEvent.getType());
 
 		if (getCurrentIsSig()) {
