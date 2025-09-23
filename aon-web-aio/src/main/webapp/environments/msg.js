@@ -256,6 +256,7 @@ export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOCUMENTS_IN_PROCESS = MSG.DOCUMENTS_IN_PROCESS;
 export const DOCUMENTS_UNDER_REVIEW = MSG.DOCUMENTS_UNDER_REVIEW;
+export const DOCUMENT_CLIENT = "Datos Cliente";
 export const DOCUMENT_DATA = "Datos Documento";
 export const DOCUMENTAL_FILE = MSG.DOCUMENTAL_FILE;
 export const DOMAIN = "Dominio"; //TODO

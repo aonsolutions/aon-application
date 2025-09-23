@@ -1053,7 +1053,7 @@ export class AonInvoice extends AonElement {
 		if (!this.isInvofoxInvoice() && !this.invoice.isRawdoc() ) {
 			dn = MSG.INVOICE_DATA + " (" + getDocumentNumber(this.invoice) + ")";
 		} else {
-			dn = MSG.DOCUMENT_DATA;
+			dn = MSG.DOCUMENT_CLIENT;
 		}
 		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, dn);
 //		card.style.width = '50%';

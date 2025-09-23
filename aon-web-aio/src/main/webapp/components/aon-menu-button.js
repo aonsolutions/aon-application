@@ -85,73 +85,88 @@ export class AonMenuButton extends AonElement {
     }
 
     setOptions(options = []) {
-        this.options = options;
+      this.options = options;
 
-        const ul = this.getElement(this.LIST);
-        if (!ul)
-          return;
-        ul.innerHTML = '';
+      const ul = this.getElement(this.LIST);
+      if (!ul)
+      return;
+      ul.innerHTML = '';
 
-        options.forEach((option) => {
-            const li     = this.createElement(TAG.LI);
-            li.className = 'aonAppLi';
-            li.title     = option.name;
-            
-            const span = this.createElement(TAG.SPAN);
-            span.textContent = option.name;
-            if (option.icon) {
-              const icon  = new AonIcon();
-              icon.id     = this.AON_ICON;
-              icon.icon   = option.icon;
-              span.appendChild(icon);
-            }
-            li.appendChild(span);
+      options.forEach((option) => {
+        const li     = this.createElement(TAG.LI);
+        li.className = 'aonAppLi';
+        li.title     = option.name;
+        
+        const span = this.createElement(TAG.SPAN);
+        span.textContent = option.name;
+        if (option.icon) {
+          const icon  = new AonIcon();
+          icon.id     = this.AON_ICON;
+          icon.icon   = option.icon;
+          span.appendChild(icon);
+        }
+        li.appendChild(span);
 
-            if (option.subOptions) {
-                // crear sublista oculta inicialmente
-                const subUl     = this.createElement(TAG.UL);
-                subUl.className = 'aonSubUl hidden';
+        if (option.subOptions) {
+            // crear sublista oculta inicialmente
+            const subUl     = this.createElement(TAG.UL);
+            subUl.className = 'aonSubUl hidden';
 
-                option.subOptions.forEach(sub => {
-                    const subLi     = this.createElement(TAG.LI);
-                    subLi.className = 'aonAppLi sub-option';
+            option.subOptions.forEach(sub => {
+                const subLi     = this.createElement(TAG.LI);
+                subLi.className = 'aonAppLi sub-option';
 
-                    const subSpan       = this.createElement(TAG.SPAN);
-                    subSpan.title       = sub.name;
-                    subSpan.textContent = sub.name;
-                    if (sub.icon) {
-                      const subIcon = new AonIcon();
-                      subIcon.id    = this.AON_ICON;
-                      subIcon.icon  = sub.icon;
-                      subSpan.appendChild(subIcon);
-                    }
-                    subSpan.addEventListener('click', () => {
-                      sub.fn();
-                      this.hide();
-                    });
-
-                    subLi.appendChild(subSpan);
-                    subUl.appendChild(subLi);
+                const subSpan       = this.createElement(TAG.SPAN);
+                subSpan.title       = sub.name;
+                subSpan.textContent = sub.name;
+                if (sub.icon) {
+                  const subIcon = new AonIcon();
+                  subIcon.id    = this.AON_ICON;
+                  subIcon.icon  = sub.icon;
+                  subSpan.appendChild(subIcon);
+                }
+                subSpan.addEventListener('click', () => {
+                  sub.fn();
+                  this.hide();
                 });
 
-                li.appendChild(subUl);
+                subLi.appendChild(subSpan);
+                subUl.appendChild(subLi);
+            });
 
-                span.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // alternar la visibilidad de la sublista
-                    span.classList.toggle('submenu-open');
-                    subUl.classList.toggle('hidden');
-                });
+            li.appendChild(subUl);
 
-            } else {
-                span.addEventListener('click', () => {
-                    if (option.fn) option.fn();
-                    this.hide();
-                });
-            }
+            span.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // alternar la visibilidad de la sublista
+                span.classList.toggle('submenu-open');
+                subUl.classList.toggle('hidden');
+            });
 
-            ul.appendChild(li);
+        } else {
+            span.addEventListener('click', () => {
+                if (option.fn) option.fn();
+                this.hide();
+            });
+        }
+
+        ul.appendChild(li);
+      });
+      document.addEventListener('click', (event) => {
+        const liElements = ul.querySelectorAll('li');
+        let clickedInsideLi = false;
+
+        liElements.forEach(li => {
+          if (li.contains(event.target)) {
+            clickedInsideLi = true;
+          }
         });
+
+        // Si el clic fue fuera de los `li`, se oculta el menú
+        if (!clickedInsideLi) {
+          this.hide();
+        }
+      });
     }
     
     loadDefaultOptions() {
@@ -240,17 +255,17 @@ export class AonMenuButton extends AonElement {
         ];
 
         optionsMenu.push({
-          name      : 'Nueva Factura',
+          name      : 'Crear Factura',
           icon      : 'file-plus-2',
           subOptions: invoiceSubOptions // aqui anidamos las 4 opciones
         });
 
         const gastosSubOptions = [
           {
-            name: 'Nuevo ingreso',
+            name: 'Crear ingreso',
             fn: () => this.newIncome()
           }, {
-            name: "Nuevo gasto",
+            name: "Crear gasto",
             fn: () => this.newExpense()
           }
         ];

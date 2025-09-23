@@ -154,7 +154,7 @@ export class AonInvoiceHome extends AonElement {
 		let newIssuedInvoice = new AonDashboardButton();
 		newIssuedInvoice.setId(this.NEW_ISSUED_INVOICE);
 		newIssuedInvoice.setIcon("file-up");
-		newIssuedInvoice.setMessage(MSG.NEW_ISSUED_INVOICE);
+		newIssuedInvoice.setMessage(MSG.CREATE_INVOICE_ISSUED);
 		newIssuedInvoice.addEventListener(EVENT.CLICK, () => {
 			this.aonInvoice('emitida');
 		});
@@ -163,7 +163,7 @@ export class AonInvoiceHome extends AonElement {
 		let newReceivedInvoice = new AonDashboardButton();
 		newReceivedInvoice.setId(this.NEW_RECEIVED_INVOICE);
 		newReceivedInvoice.setIcon("file-down");
-		newReceivedInvoice.setMessage(MSG.NEW_RECEIVED_INVOICE);
+		newReceivedInvoice.setMessage(MSG.CREATE_INVOICE_RECEIVED);
 		newReceivedInvoice.addEventListener(EVENT.CLICK, () => {
 			this.aonInvoice('recibida');
 		});
@@ -172,7 +172,7 @@ export class AonInvoiceHome extends AonElement {
 		let newTicket = new AonDashboardButton();
 		newTicket.setId(this.NEW_TICKET_INVOICE);
 		newTicket.setIcon("sticker");
-		newTicket.setMessage(MSG.NEW_TICKET);
+		newTicket.setMessage(MSG.CREATE_INVOICE_TICKET);
 		newTicket.addEventListener(EVENT.CLICK, () => {
 			this.aonInvoice('ticket');
 		});
@@ -181,7 +181,7 @@ export class AonInvoiceHome extends AonElement {
 		// let newIncome = new AonDashboardButton();
 		// newIncome.setId(this.NEW_INCOME);
 		// newIncome.setIcon('file-plus');
-		// newIncome.setMessage("Nuevo Ingreso");
+		// newIncome.setMessage("Crear Ingreso");
 		// newIncome.addEventListener(EVENT.CLICK, () => {
 		// 	this.getApplication().setContent(new AonIncome(new Income()));
 		// });
@@ -190,7 +190,7 @@ export class AonInvoiceHome extends AonElement {
 		// let newExpense = new AonDashboardButton();
 		// newExpense.setId(this.NEW_EXPENSE);
 		// newExpense.setIcon("file-minus");
-		// newExpense.setMessage("Nuevo Gasto");
+		// newExpense.setMessage("Crear Gasto");
 		// newExpense.addEventListener(EVENT.CLICK, () => {
 		// 	this.getApplication().setContent(new AonExpense(new Expense()));
 		// });

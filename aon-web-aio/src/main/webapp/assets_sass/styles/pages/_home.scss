@@ -34,7 +34,10 @@ aon-home{
   .aonFlex{
     display : flex;
     gap     : v.$gap;
-
+    &:has(.aonSidenav.sidenav-hidden) {
+      // Valor de gap que desees cuando .aonSidenav esté oculto
+      gap: 0;  
+    }
     .aonSidenav:empty{
       display: none;
     }
