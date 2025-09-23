@@ -77,7 +77,7 @@ public class CustomerSyncDomainModule  implements EntryPoint {
 		dialog.showCloseButton(true);
 		dialog.setCaption(customer.getName());
 		dialog.setHeight("25rem");
-		dialog.setWidth("65rem");
+		dialog.setWidth("55rem");
 
 		DomainSyncPanel domainSyncPanel = new DomainSyncPanel(customer, paramsDomains) {
 			@Override protected void onEndSuccessSync() { 
