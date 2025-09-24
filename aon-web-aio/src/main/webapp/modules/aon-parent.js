@@ -59,8 +59,15 @@ export class AonParent extends AonElement {
 		aonApplication.setAttribute("sidenav_width", "300px");
 		this.createApplication(this.PARENT, "", aonApplication);
 
-		this.build();
-		this.buildSidenav();
+		
+		if(LS.isOnlyOne()) {			
+			this.build();
+			this.buildSidenav();
+		} else {
+			let loader = this.getElement("aonParentLoader");
+			loader.start();
+		}
+		
 		this.select(filter, companies => {
 			// Filtrar empresas excluyendo la actual (la que coincide con isLocationCompany)
 			let finalCompanies = companies.filter(company => !this.isLocationCompany(company));
