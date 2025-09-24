@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.report;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -13,7 +17,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -21,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
@@ -38,8 +42,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
-public class OperationReportNew extends MainEntryPoint {
+public class OperationReportNew implements EntryPoint {
 	
 	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
 	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 

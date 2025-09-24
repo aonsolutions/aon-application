@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -61,10 +62,13 @@ public class AccountingOperationNewDAO {
 	
 	private static final byte TRUE_BYTE = 1;
 	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF
+
+	// Códigos de concepto donde es obligatorio identificar al destinatario/expedidor, se usa en los asientos sin factura para poner el NIF y Nombre de la empresa
+	private static final String[] REQUIRED_CONCEPTS = {"I07","G01","G03","G04","G05","G45","G46","G07","G08","G09","G10","G11","G12","G13","GY4","G14","G15","G16","G17","G18","G19","G40","G41","G42","G20","G22","G44","G23","G24","G25","G26","G34","G35","G36","G43","G37"};
 	
 	// Código de la cuenta contable, asociada a la línea de la factura. 
-	// Se hace así con una subquery porque en algunas ocasiones esa tabla contiene más de un registro por cada línea de factura, 
-	// aunque sea con la misma cuenta y cuando debería de contener un único registro por línea de factura
+	// Se hace así con una subquery porque en algunas ocasiones la tabla INVOICE_DETAIL_ACCOUNT contiene más de un registro 
+	// por cada línea de factura, aunque sea con la misma cuenta y debería contener un único registro por línea de factura
 	private static Field<String> accountCode = DSL.field(DSL.select(ACCOUNT.CODE)
 					     									.from(INVOICE_DETAIL_ACCOUNT)
 					     									.join(ACCOUNT).on(ACCOUNT.ID.equal(INVOICE_DETAIL_ACCOUNT.ACCOUNT))
@@ -155,6 +159,8 @@ public class AccountingOperationNewDAO {
 		,ACCOUNT_ENTRY_DETAIL.CREDIT
 		,ACCOUNT_ENTRY_DETAIL.CONCEPT
 		,ACCOUNT.CODE
+		,REGISTRY.DOCUMENT
+		,REGISTRY.NAME
 	};
 	
 	private AccountingOperationNewDAO() {
@@ -255,6 +261,7 @@ public class AccountingOperationNewDAO {
 			.leftAntiJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID)) // Apuntes que no son facturas
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE_ACTIVITY.ENTERPRISE))
 			;
 	}
 
@@ -760,6 +767,7 @@ public class AccountingOperationNewDAO {
 			
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
+			String conceptCode = getConceptCode(rec.getValue(ACCOUNT.CODE));
 			
 			double debit = AonNumberUtils.todouble(rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT));
 			double credit = AonNumberUtils.todouble(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT));
@@ -771,8 +779,13 @@ public class AccountingOperationNewDAO {
 			// CALIFICADOR DE LA OPERACION Y OPERACION EXENTA NO PUEDEN ESTAR VACIOS LOS DOS (LE PONGO EXENTA E6)
 			String exemptOperation = isIncomes ? "E6" : "";
 			
-			// FALTA - LE PONGO EL CONCEPTO EN EL NOMBRE, PERO LA VALIDACION ME PIDE IDENTIFICAR AL EXPEDIDOR EN LOS GASTOS, QUIERE DECIR QUE LE TENGO QUE PONER EL NIF?, PERO QUE NIF LE PONGO SI SON APUNTES?
-			String name = rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT); 
+			// Para determinados conceptos es obligatorio poner el identificador del destinatario/expedidor, en tal caso se pone el NIF y Nombre de la empresa
+			String document = "";
+			String name = "";
+			if (Arrays.asList(REQUIRED_CONCEPTS).contains(conceptCode)) {
+				document = rec.getValue(REGISTRY.DOCUMENT);
+				name = rec.getValue(REGISTRY.NAME);
+			}
 			
 			// LA FECHA DE RECEPCION EN LOS GASTOS ES OBLIGATORIA AUNQUE SEA EXCLUSIVA DEL LIBRO DE IVA (LE PONGO LA FECHA DEL ASIENTO)
 			Date receptionDate = isIncomes ? null : rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE);
@@ -785,7 +798,7 @@ public class AccountingOperationNewDAO {
 				.setActivityType(activityType) 								// Actividad: Tipo
 				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 				// Actividad: Grupo o Epígrafe del IAE
 				.setInvoiceType(invoiceType) 								// Tipo de Factura (Asientos sin factura)	
-				.setConceptCode(getConceptCode(rec.getValue(ACCOUNT.CODE)))	// Codigo Concepto de Ingreso o Gasto
+				.setConceptCode(conceptCode)								// Codigo Concepto de Ingreso o Gasto
 				.setConceptAmount(amount) 									// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE)) 		// Fecha Expedición
 				.setTaxDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))        	// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
@@ -795,7 +808,7 @@ public class AccountingOperationNewDAO {
 				.setReceptionDate(receptionDate)							// Fecha Recepción (Recibidas) (Fecha Asiento)
 //				.setDocumentType() 											// NIF Destinatario/Expedidor: Tipo
 //				.setDocumentCountry()  				                        // NIF Destinatario/Expedidor: Código País
-//				.setDocument() 								                // NIF Destinatario/Expedidor: Identificación
+				.setDocument(document) 								        // NIF Destinatario/Expedidor: Identificación
 				.setName(name) 												// Nombre Destinatario/Expedidor (Concepto del apunte)	
 				.setOperationKey(operationKey) 								// Clave de Operación 	
 //				.setOperationQualification()								// Calificación de la Operación (Emitidas)	
