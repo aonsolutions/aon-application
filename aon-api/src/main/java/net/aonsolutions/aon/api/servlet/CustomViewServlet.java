@@ -85,7 +85,8 @@ public class CustomViewServlet extends HttpServlet {
 	             .or(f.getNameProperty().eq(AppParam.AON_CUSTOMIZE_TITLE.toString()))
 	             .or(f.getNameProperty().eq(AppParam.AON_HIDE_VERSION.toString())))
 				).forEach(p -> params.put(p.getName(), p.getValue()));
-		AON.getAttachList(domain.getName(), domainId, "", 
+		if(params.has(AppParam.AON_CUSTOMIZE_ID.toString()) && params.has(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString())) {
+			AON.getAttachList(domain.getName(), domainId, "", 
 				f -> f.getDomainProperty().eq(domainId)
 						.and(
 								f.getAttachModuleProperty().eq(params.getInt(AppParam.AON_CUSTOMIZE_ID.toString()))
@@ -106,8 +107,9 @@ public class CustomViewServlet extends HttpServlet {
 				.forEach(r -> {
 					images.put(r.getDescription().replace(".", ""), "customview/" + r.getId());
 				});
-		json.put("params", params);
-		json.put("images", images);
+			json.put("params", params);
+			json.put("images", images);	
+		}
 		return json;
 	}
 	
