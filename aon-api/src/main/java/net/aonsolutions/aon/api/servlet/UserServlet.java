@@ -795,21 +795,21 @@ public class UserServlet extends AonApiHttpServlet {
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
 		
-		String url = "";
-		if(user != null && user.isPortal()) {
-//			url = "https://aon.solutions";
-			url = "https://" + api.getDomain().getName() + "/";
-			
-			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
-				url = "https://leevy.aon.solutions";
-			else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
-				url = "https://infoautonomos.aon.solutions";
-		} else {
-			url = "https://" + api.getDomain().getName() + "/";
-			
-			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
-				url = "https://infoautonomos.aon.solutions";
-		}
+		String url = "https://" + api.getDomain().getName() + "/";
+		
+//		if(user != null && user.isPortal()) {
+//			url = "https://" + api.getDomain().getName() + "/";
+//			
+//			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+//				url = "https://leevy.aon.solutions";
+//			else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+//				url = "https://infoautonomos.aon.solutions";
+//		} else {
+//			url = "https://" + api.getDomain().getName() + "/";
+//			
+//			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+//				url = "https://infoautonomos.aon.solutions";
+//		}
 		
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logo);
