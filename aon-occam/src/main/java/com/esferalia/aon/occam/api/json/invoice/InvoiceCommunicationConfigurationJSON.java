@@ -15,7 +15,7 @@ public class InvoiceCommunicationConfigurationJSON {
 	private InvoiceCommunicationConfigurationJSON() {
 	}
 	
-	public static Optional<InvoiceCommunicationConfiguration> fromJSON(JSONObject json) {
+	public static Optional<InvoiceCommunicationConfiguration> from(JSONObject json) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();  
 		return Optional.of( 
 			new InvoiceCommunicationConfiguration()
@@ -31,7 +31,7 @@ public class InvoiceCommunicationConfigurationJSON {
 		);
 	}
 	
-	public static Optional<JSONObject> toJSON(InvoiceCommunicationConfiguration config) {
+	public static Optional<JSONObject> to(InvoiceCommunicationConfiguration config) {
 		if (config == null) return Optional.empty();
 		return Optional.of(		
 			new JSONObject()

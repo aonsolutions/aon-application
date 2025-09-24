@@ -633,14 +633,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 						.orElse(Administration.UNKNOWN) )
 				.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
 				.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
-				.setTaxes( TaxDAO.getTaxes(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
+				.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
 				.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, domainId) )
 				.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
 				.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
 				.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )
 			;
 			JSONObject json = ApiConfigurationJSON.to(conf);
-			System.out.println( "NEW Configuration secs: "  + ( ((double) (end1.getTime() - start1.getTime())) / 1000) );
+			System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
+			System.out.println( "[START] NEW Configuration *****" );
+			System.out.println( json.toString(1) );
+			System.out.println( "[END] NEW Configuration *****" );
 			return json;
 		}
 	}
@@ -652,9 +655,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Date start = new Date();
 		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
-		Tax withholdingPercent = AON.getTax(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), withholdingPercentId);
-		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
-
+		WithholdingType withholdingType = AON.getTax(api.getOccam(), api.getDomain().getId(), withholdingPercentId)
+			.filter( t -> t.getWithholdingType() != null)
+			.map(Tax::getWithholdingType)
+			.orElse(WithholdingType.PROFESSIONAL);
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		List<RegistryAdditionalInfo> rais = new LinkedList<>();
 		rais.add(RegistryAdditionalInfo.BANKS);
@@ -666,7 +670,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put(IJsonNames.COMMUNICATION_CONFIGURATION, getInvoiceCommunicationConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
-		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
+		json.put("withholdingPercent", withholdingType.name());
 		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
 		json.put(IJsonNames.VATS, getVats(api));
 		
@@ -676,7 +680,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(workplaces));
 		}
 		Date end = new Date();
-		System.out.println( "Configuration secs: "  + ( ((double) (end.getTime() - start.getTime())) / 1000) );
+		System.out.println( "Configuration secs: "  + (end.getTime() - start.getTime()) );
+		System.out.println( "[START] OLD Configuration *****" );
+		System.out.println( json.toString(1) );
+		System.out.println( "[END] OLD Configuration *****" );
 		return json;
 	}
 
@@ -718,9 +725,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getVats(AonApiData api) {
-		return TaxJSON.toJSON(
-			AON.getTaxStream(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-		);
+		return TaxJSON.toJSON(AON.getTaxStream(api.getOccam(), api.getDomain().getId()));
 	}
 	
 	private JSONObject getPrintConfiguration(AonApiData api) {
@@ -758,13 +763,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONObject getInvoiceCommunicationConfiguration(AonApiData api) {
 		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-		return InvoiceCommunicationConfigurationJSON.toJSON(config).orElse(null);
+		return InvoiceCommunicationConfigurationJSON.to(config).orElse(null);
 	}
 	
 	private JSONObject saveInvoiceCommunicationConfiguration(AonApiData api, JSONObject json) {
-		return InvoiceCommunicationConfigurationJSON.fromJSON(json)
+		return InvoiceCommunicationConfigurationJSON.from(json)
 			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
-			.flatMap(InvoiceCommunicationConfigurationJSON::toJSON)
+			.flatMap(InvoiceCommunicationConfigurationJSON::to)
 			.orElse(null);
 	}
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -363,21 +364,33 @@ public class CommonImpl implements ICommon {
 	// ------------------ TAX
 	
 	@Override
-	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter){
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getStream(ctx, filter));
+			configuration -> TaxDAO.stream(ctx, domainId ));
 	}
 	
 	@Override
-	public Stream<Tax> getVatStream(AONContext ctx){
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId, TaxFilter filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getVatTaxes(ctx));
+			configuration -> TaxDAO.stream(ctx, domainId, filter));
+	}
+
+	@Override
+	public Stream<Tax> getVatStream(AONContext ctx, Integer domainId){
+		return ctx.getDslContext().transactionResult(
+			configuration -> TaxDAO.getVatTaxes(ctx, domainId));
 	}
 	
 	@Override
-	public Stream<Tax> getWithholdingStream(AONContext ctx){
+	public Stream<Tax> getWithholdingStream(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getWithholdingTaxes(ctx));
+			configuration -> TaxDAO.getWithholdingTaxes(ctx, domainId));
+	}
+	
+	@Override
+	public Optional<Tax> getTax(AONContext ctx, Integer domainId, Integer taxId) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> TaxDAO.get(ctx, domainId, taxId));
 	}
 
 	// ------------------ DATA REQUEST

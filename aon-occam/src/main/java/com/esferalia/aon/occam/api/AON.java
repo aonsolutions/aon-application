@@ -6329,41 +6329,34 @@ public class AON {
 	// ************************************* TAX **
 	// ********************************************
 
-	public static Stream<Tax> getVatStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getVatStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getVatStream(ctx);
+			return getCommon().getVatStream(ctx,domainId);
 		}
 	}
 	
-	public static Stream<Tax> getWithholdingStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getWithholdingStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getWithholdingStream(ctx);
+			return getCommon().getWithholdingStream(ctx,domainId);
 		}
 	}
 	
-	public static Stream<Tax> getTaxStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getTaxStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getTaxStream(ctx, filter);
+			return getCommon().getTaxStream(ctx, domainId);
+		}
+	}
+
+	public static Stream<Tax> getTaxStream(Occam occam, Integer domainId, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTaxStream(ctx, domainId, filter);
 		}
 	}
 	
-	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getCommon().getTaxStream(ctx, filter);
+	public static Optional<Tax> getTax(Occam occam, Integer domainId, Integer id){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTax(ctx, domainId, id);
 		}
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
-		return getTax(domainName, domainId, login, f -> f.getIdProperty().eq(id));
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, String name){
-		return getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
-				.and(f.getNameProperty().eq(name)));
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, TaxFilter filter){
-		return getTaxStream(domainName, domainId, login, filter).findFirst().orElse(new Tax());
 	}
 	
 	// ********************************************

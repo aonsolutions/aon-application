@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -159,14 +160,15 @@ public interface ICommon {
 	public Tag saveTag(CloseableAONContext ctx, Tag tag);
 	
 	//TAX
-
-	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
-	public Stream<Tax> getVatStream(AONContext ctx);
-	public Stream<Tax> getWithholdingStream(AONContext ctx);
+	public Optional<Tax> getTax(AONContext ctx, Integer domainId, Integer taxId);
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId);
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId, TaxFilter filter);
+	public Stream<Tax> getVatStream(AONContext ctx, Integer domainId);
+	public Stream<Tax> getWithholdingStream(AONContext ctx, Integer domainId);
 
 	// DATA RESPONSE
 	
-	public DataRequest getDataRequest(AONContext ctx, DataRequestFilter filter);
+	public DataRequest getDataRequest(AONContext ctx,DataRequestFilter filter);
 	public Stream<DataRequest> getDataRequestStream(AONContext ctx, DataRequestFilter filter);
 	public DataRequest saveDataRequest(AONContext ctx, DataRequest dataRequest);
 	

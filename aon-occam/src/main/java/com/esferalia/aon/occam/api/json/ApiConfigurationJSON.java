@@ -54,9 +54,9 @@ public class ApiConfigurationJSON {
 			.put(IJsonNames.DEFAULT_VAT_TAX, conf.getDefaultVat())
 			.put(IJsonNames.TAXES, TaxJSON.toJSON(conf.getTaxes()))
 			.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(conf.getWorkplaces()))
-			.put(IJsonNames.PRINT, PrintInvoiceConfigurationJSON.toJSON(conf.getPrintConfiguration()))
-			.put(IJsonNames.COMMUNICATION_CONFIGURATION, InvoiceCommunicationConfigurationJSON.toJSON(conf.getCommunicationConfiguration()))
-			.put(IJsonNames.INVOFOX, InvofoxConfigurationJSON.toJSON(conf.getInvofoxConfiguration()))		
+			.put(IJsonNames.PRINT, PrintInvoiceConfigurationJSON.to(conf.getPrintConfiguration()).orElse(null))
+			.put(IJsonNames.COMMUNICATION_CONFIGURATION, InvoiceCommunicationConfigurationJSON.to(conf.getCommunicationConfiguration()).orElse(null))
+			.put(IJsonNames.INVOFOX, InvofoxConfigurationJSON.to(conf.getInvofoxConfiguration()).orElse(null))		
 		;
 	}
 

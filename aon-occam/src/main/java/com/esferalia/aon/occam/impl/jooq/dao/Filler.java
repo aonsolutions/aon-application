@@ -14,6 +14,9 @@ public class Filler {
 		}
 		return bool;
 	}
+	protected static <T> boolean isNull(Record r, Field<T> field) {
+		return getValue(r, field) == null;
+	}
 	
 	protected static <T> T getValue(Record r, Field<T> field) {
 		return checkField(r, field)

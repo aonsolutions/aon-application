@@ -58,10 +58,12 @@ public class ProductAutoComplete {
 	
 	public static final BiConsumer<AONContext, Product> COMPLETE_VAT = (ctx, product) -> {
 		if (product.getVat() != null && product.getVat().getId() == null) {
-			Tax t = TaxDAO.getTax(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId())
-					.and(f.getPercentageProperty().eq(product.getVat().getPercentage()))
-					.and(f.getSurchargeProperty().eq(product.getVat().getSurcharge())
-					.and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))));
+			Tax t = TaxDAO.stream(ctx, product.getDomain().getId(), f -> 
+				f.getPercentageProperty().eq(product.getVat().getPercentage())
+				.and(f.getSurchargeProperty().eq(product.getVat().getSurcharge())
+				.and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))))
+				.findFirst()
+				.orElse(new Tax());
 			if(t.getId() == null) {
 				t = TaxDAO.save(ctx, product.getVat());
 			}
@@ -73,11 +75,12 @@ public class ProductAutoComplete {
 	public static final BiConsumer<AONContext, Product> COMPLETE_RETENTION = (ctx, product) -> {
 		if (product.getRetention() != null && product.getRetention().getId() == null
 				&& product.getRetention().getPercentage() > 0) {
-			Tax t = TaxDAO.getTax(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId())
-					.and(f.getPercentageProperty().eq(product.getRetention().getPercentage()))
-					.and(f.getSurchargeProperty().eq(product.getRetention().getSurcharge())
-					.and(f.getTaxTypeProperty().eq(TaxType.RETENTION.value()))));
-				
+			Tax t = TaxDAO.stream(ctx, product.getDomain().getId(), f ->
+				f.getPercentageProperty().eq(product.getRetention().getPercentage())
+				.and(f.getSurchargeProperty().eq(product.getRetention().getSurcharge())
+				.and(f.getTaxTypeProperty().eq(TaxType.RETENTION.value()))))
+				.findFirst()
+				.orElse(new Tax());
 			if(t.getId() == null) {
 				t = TaxDAO.save(ctx, product.getRetention());
 			}

@@ -22,7 +22,10 @@ class VerifactuTestsUtils {
 	}
 
 	static String series() {
-		return series( "B" );
+		return series( "C" );
+	}
+	static String rectSeries() {
+		return series( "S" );
 	}
 	static String series(String prefix) {
 		Date issueDate = new Date();

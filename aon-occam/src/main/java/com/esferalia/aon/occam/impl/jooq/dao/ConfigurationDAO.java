@@ -88,19 +88,15 @@ public class ConfigurationDAO {
 							.and(p.getScopeProperty().in( userScopes ))
 					
 					))
-			.setVatTaxes( TaxDAO.getVatTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setVatTaxes( TaxDAO.getVatTaxes(ctx,ctx.getDomainId(),params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
 			.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 			.setPayMethods(PayMethodDAO.getOrderByNames(ctx))
 			.setPayMethodTypeDetails(PayMethodDAO.getPayMethodTypeDetails(ctx))
-			.setDefaultVatPercent(defaultVatPercent == 0
-				?null
-				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
-			.setWithholdingTaxes( TaxDAO.getWithholdingTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setDefaultVatPercent(TaxDAO.get(ctx, ctx.getDomainId(), defaultVatPercent).orElse(null))
+			.setWithholdingTaxes( TaxDAO.getWithholdingTaxes(ctx,ctx.getDomainId(),params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setSegments( RegistrySegmentDAO.getSegments(ctx, p-> p.getDomainProperty().eq( ctx.getDomainId())).collect(Collectors.toCollection(LinkedList::new)))
-			.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
-				?null
-				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
+			.setDefaultWithholdingPercent(TaxDAO.get(ctx,ctx.getDomainId(), defaultWithholdingPercent).orElse(null))
 			.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
 			.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
 			.setChildDomains(DomainDAO.getActiveChildDomains(ctx))

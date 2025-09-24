@@ -39,7 +39,7 @@ public class SiiServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject getConfiguration(AonApiData api) {
-		return InvoiceCommunicationConfigurationJSON.toJSON(
+		return InvoiceCommunicationConfigurationJSON.to(
 			AON.getInvoiceCommunicationConfiguration(api.getOccam())).orElse(new JSONObject());
 	}
 }
