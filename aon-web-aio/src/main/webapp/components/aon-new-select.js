@@ -309,23 +309,21 @@ export class AonNewSelect extends AonNewInput {
     //
 
     li.addEventListener(EVENT.CLICK, () => {
-		if(event.target.tagName == "DIV"){			
-	      div.classList.remove('is-visible');
-	      this.value = option[this.valueAlias];
-	      input.value = option[this.nameAlias];
-	      this._selected = option;
-	      this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
-		}
-    });
+      div.classList.remove('is-visible');
+      this.value = option[this.valueAlias];
+      input.value = option[this.nameAlias];
+      this._selected = option;
+      this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
+		});
 	
 	li.addEventListener(EVENT.MOUSEOVER, () => {
 		const options = this.getElement(this.OPTIONS);
 		let items = options.querySelectorAll('li');
-        for(let i = 0; i < items.length; i++){
-		  if(items[i].classList.contains('hoverInputSelectKeyboard')){
-		  	items[i].classList.remove("hoverInputSelectKeyboard");
-		  }
+      for(let i = 0; i < items.length; i++){
+        if(items[i].classList.contains('hoverInputSelectKeyboard')){
+          items[i].classList.remove("hoverInputSelectKeyboard");
         }
+      }
     });
 
     return li;
