@@ -479,8 +479,8 @@
           }
         }
         .aon-spinner-input-loading{
-          border : v.$px-4 solid #ccc;
-          border-top : v.$px-4 solid #000;
+          border     : v.$px-4 solid $color-200;
+          border-top : v.$px-4 solid $color-900;
         }
       }
       input{
@@ -556,9 +556,11 @@
           background-color: $color-input;
           box-shadow      : $box-shadow-dialog;
           ul{
-            li:hover{
-              background-color: $color-100;
-              color           : $color-text;
+            li{
+              &:hover, &.hoverInputSelectKeyboard{
+                background-color: $color-100;
+                color           : $color-text;
+              }
             }
           }
         }
