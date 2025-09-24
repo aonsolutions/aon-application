@@ -146,16 +146,6 @@ public class ProductDAO {
 		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
 		.where(condition);
 		
-		System.out.println(ctx.getDslContext().select()
-		.from(PRODUCT)
-		.join(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-		.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
-		.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
-		.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
-		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
-		.where(condition).getSQL(ParamType.INLINED));
-		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
 				select.orderBy(PRODUCT.CODE);
@@ -185,9 +175,6 @@ public class ProductDAO {
 				.stream()
 				.map(new ProductFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
-		
-		System.out.println("Products size : " + products.size() + ", offset : " + params.getOffset() + ", limit : " +  params.getLimit());
-			
 		return products;
 	}
 	

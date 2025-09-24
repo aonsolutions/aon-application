@@ -826,8 +826,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<Tax> getTaxTypes(String domainName, Integer domain, String user, TaxType taxType) throws AonCoreException {
-		TaxFilter filter = f -> f.getDomainProperty().eq(domain).and(f.getTaxTypeProperty().eq(taxType.value()));
-		return AON.getTaxStream(domainName, domain, user, filter).collect(Collectors.toList());
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domain).setUser(user);
+		TaxFilter filter = f -> f.getTaxTypeProperty().eq(taxType.value());
+		return AON.getTaxStream(occam,domain,filter).collect(Collectors.toList());
 	}
 	
 	@Override
