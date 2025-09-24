@@ -1721,7 +1721,18 @@ export class AonInvoice extends AonElement {
 			table.id = this.DETAIL_TABLE;
 			card.setContent(table);
 		}
+		
 		table.removeRows();
+		
+		if(this.invoice.details.length == 0){
+			this.invoice.addDetail();
+			if(this.fileOpened){
+				const i = this.invoice.details.length -1;
+				const detail = this.invoice.details[i];
+				this.printDetailDialog(detail, i);
+			}
+		}
+		
 		for(let i = 0; i < this.invoice.details.length; i++) {
 			let detail = this.invoice.details[i];
 			if(this.fileOpened) this.printMinimizeDetail(table, detail, i)
@@ -1810,17 +1821,19 @@ export class AonInvoice extends AonElement {
 		// ----- DETAIL DELETE
 
 		if(!this.invoice.isReadonly()) {
-			let detailDelete = new AonIconButton();
-			detailDelete.id = this.DETAIL_DELETE + i;
-			detailDelete.title = MSG.DELETE_DETAIL;
-			detailDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
-			detailDelete.addEventListener(EVENT.CLICK, () => {
-				this.setFocus(undefined);
-				this.invoice.deleteDetail(detail, i);
-				this.reload();
-				if(this.autosave) this.save();
-			});
-			table.addCell(detailDelete);
+			if(!(i == 0)){				
+				let detailDelete = new AonIconButton();
+				detailDelete.id = this.DETAIL_DELETE + i;
+				detailDelete.title = MSG.DELETE_DETAIL;
+				detailDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
+				detailDelete.addEventListener(EVENT.CLICK, () => {
+					this.setFocus(undefined);
+					this.invoice.deleteDetail(detail, i);
+					this.reload();
+					if(this.autosave) this.save();
+				});
+				table.addCell(detailDelete);
+			}
 		}
 	}
 
@@ -1982,18 +1995,21 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL DELETE
 		if(!this.invoice.isReadonly()) {
-			let detailDelete = new AonIconButton();
-			detailDelete.id = this.DETAIL_DELETE + i;
-			detailDelete.title = MSG.DELETE_DETAIL;
-			detailDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
-			detailDelete.addEventListener(EVENT.CLICK, () => {
-				this.setFocus(undefined);
-				this.invoice.deleteDetail(detail, i);
-				this.reload();
-				if(this.autosave) this.save();
-			});
-			table.addCell(detailDelete);
+			if(!(i == 0)) { 
+				let detailDelete = new AonIconButton();
+				detailDelete.id = this.DETAIL_DELETE + i;
+				detailDelete.title = MSG.DELETE_DETAIL;
+				detailDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
+				detailDelete.addEventListener(EVENT.CLICK, () => {
+					this.setFocus(undefined);
+					this.invoice.deleteDetail(detail, i);
+					this.reload();
+					if(this.autosave) this.save();
+				});
+				table.addCell(detailDelete);
+			}
 		}
+		
 	}
 
 	printDetailDialog(detail, i) {
@@ -2408,16 +2424,18 @@ export class AonInvoice extends AonElement {
 		// ----- FINANCE DELETE
 
 		if(!this.invoice.isReadonly()) {
-			let financeDelete = new AonIconButton();
-			financeDelete.id = this.FINANCE_DELETE + i;
-			financeDelete.title = MSG.DELETE_FINANCE;
-			financeDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
-			financeDelete.addEventListener(EVENT.CLICK, () => {
-				this.invoice.deleteFinance(finance, i);
-				this.reload();
-				if(this.autosave) this.save();
-			});
-			table.addCell(financeDelete);
+			if(!(i == 0)){				
+				let financeDelete = new AonIconButton();
+				financeDelete.id = this.FINANCE_DELETE + i;
+				financeDelete.title = MSG.DELETE_FINANCE;
+				financeDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
+				financeDelete.addEventListener(EVENT.CLICK, () => {
+					this.invoice.deleteFinance(finance, i);
+					this.reload();
+					if(this.autosave) this.save();
+				});
+				table.addCell(financeDelete);
+			}
 		}
 	}
 
