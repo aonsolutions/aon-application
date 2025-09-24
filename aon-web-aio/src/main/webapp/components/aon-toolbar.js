@@ -180,7 +180,7 @@ export class AonToolbar extends AonElement {
 
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			// toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
@@ -268,8 +268,8 @@ export class AonToolbar extends AonElement {
 
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.style.marginBottom = '2px';
+			// toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			// toolSection.style.marginBottom = '2px';
 			toolSection.appendChild(span);
 		}
 		return aib;
@@ -290,10 +290,10 @@ export class AonToolbar extends AonElement {
 			
 			span.appendChild(aib);
 	
-			let aonMenu = this.getElement('aonMenu');
+			// let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.style.marginBottom = '2px';
+			// toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			// toolSection.style.marginBottom = '2px';
 			if(after && this.getElement(this.TOOL_SECTION + after + 'Button')) {
 				let btn = this.getElement(this.TOOL_SECTION + after + 'Button');
 				toolSection.insertBefore(span, btn.parentNode);
@@ -321,7 +321,12 @@ export class AonToolbar extends AonElement {
 	showButton(id, show = false) {
 		const aib = this.getElement(this.TOOL_SECTION + id + 'Button');
 		if(aib!=null && aib.parentNode!=null) {
-			aib.parentNode.style.display = show ? 'block' : 'none';
+			if (show) {
+				// Que coja el estilo del css
+				aib.parentNode.style.removeProperty('display');
+			} else {
+				aib.parentNode.style.display = 'none';
+			}
 		}
 	}
 
@@ -331,7 +336,7 @@ export class AonToolbar extends AonElement {
 			this.addSeparator();
 			let span = this.createElement(TAG.SPAN);
 			span.id = id;
-			span.style.marginRight = "10px";
+			// span.style.marginRight = "10px";
 			if(title) span.innerHTML = uppercase ? title.toString().toUpperCase() : title;
 			let titleSection = this.getElement(this.TOOL_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
@@ -356,18 +361,18 @@ export class AonToolbar extends AonElement {
 	}
 
 	toogleNav() {
-		this.dispatchEvent(new CustomEvent('toogle'));
-		const sidenav = this.id + 'Sidenav';
-		const content = this.id + 'Content';
-		const sidenavEl = this.getElement(sidenav);
-		const contentEl = this.getElement(content);
-		if(sidenavEl.style.width === "250px"){
-			sidenavEl.style.width = "0px";
-			contentEl.style.marginLeft = "0px";
-		} else {
-			sidenavEl.style.width = "250px";
-			contentEl.style.marginLeft = "250px";
-		}
+		// this.dispatchEvent(new CustomEvent('toogle'));
+		// const sidenav = this.id + 'Sidenav';
+		// const content = this.id + 'Content';
+		// const sidenavEl = this.getElement(sidenav);
+		// const contentEl = this.getElement(content);
+		// if(sidenavEl.style.width === "250px"){
+		// 	sidenavEl.style.width = "0px";
+		// 	contentEl.style.marginLeft = "0px";
+		// } else {
+		// 	sidenavEl.style.width = "250px";
+		// 	contentEl.style.marginLeft = "250px";
+		// }
 	}
 
 	getTitle() {
