@@ -183,11 +183,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 			},{
 		        description: "Modelos de contrato",
 		        title: "Modelos de contrato",
-		        action: () => alert("description")
+		        action: () => this.rootPanel(new JSF.AonJsfContractOption)
 		    },{
 		        description: "Centros acreditados de formación",
 		        title: "Centros acreditados de formación",
-		        action: () => alert("description")
+		        action: () => this.rootPanel(new JSF.AonJsfTrainningCenter)
 		    },{
 		        description: "Festivos",
 		        title: "Festivos",

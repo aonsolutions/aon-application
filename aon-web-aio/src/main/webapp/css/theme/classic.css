@@ -39,26 +39,18 @@
   background-color: var(--aonBlue);
 }
 
-.aonHeaderComercialMenu,
-.aonMenuLeftopComercialMenu {
-  background-color: var(--aonBlue);
-}
-
-.aonHeaderManagementMenu,
-.aonMenuLeftopManagementMenu {
-  background-color: var(--aonBlue);
-}
-
-.aonHeaderTreasuryMenu,
-.aonMenuLeftopTreasuryMenu {
-  background-color: var(--aonBlue);
-}
-
-.aonHeaderWarehouseMenu,
-.aonMenuLeftopWarehouseMenu ,.aonHeaderGroupwareMenu,
-.aonMenuLeftopGroupwareMenu ,.aonHeaderAccountingMenu,
-.aonMenuLeftopAccountingMenu ,.aonHeaderFiscalMenu,
-.aonMenuLeftopFiscalMenu {
+.aonHeaderComercialMenu,.aonMenuLeftopComercialMenu,
+.aonHeaderManagementMenu,.aonMenuLeftopManagementMenu,
+.aonHeaderConfigurationMenu,.aonMenuLeftTopConfigurationMenu,
+.aonHeaderEnterpriseMenu,.aonMenuLeftopEnterpriseMenu,
+.aonHeaderConsoleMenu,.aonMenuLeftTopConsoleMenu ,
+.aonHeaderMarketingMenu,.aonMenuLeftopMarketingMenu,
+.aonHeaderTreasuryMenu, .aonMenuLeftopTreasuryMenu,
+.aonHeaderWarehouseMenu, .aonMenuLeftopWarehouseMenu,
+.aonHeaderGroupwareMenu,.aonMenuLeftopGroupwareMenu ,
+.aonHeaderAccountingMenu,.aonMenuLeftopAccountingMenu ,
+.aonHeaderPayrollMenu,.aonMenuLeftopPayrollMenu ,
+.aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu {
   background-color: var(--aonBlue);
 }
 
@@ -69,11 +61,7 @@
 
 
 .aonHeaderNewConfigurationMenu,
-.aonHeaderMarketingMenu,.aonMenuLeftopMarketingMenu,
 .aonHeaderNotification,.aonMenuLeftopNotification,
-.aonHeaderConfigurationMenu,.aonMenuLeftTopConfigurationMenu,
-.aonHeaderEnterpriseMenu,.aonMenuLeftopEnterpriseMenu,
-.aonHeaderConsoleMenu,.aonMenuLeftTopConsoleMenu ,
 .aonHeaderWarehouse,.aonMenuLeftopWarehoues,
 .aonHeaderStart, .aonMenuLeftopStart,
 .aonHeaderHome, .aonMenuLeftopHome,
