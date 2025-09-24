@@ -202,6 +202,13 @@ export class AonFiscalBeta extends AonElement {
 	getApplication() {
 		return this.getElement(this.AON_FISCAL_BETA);
 	}
+
+	getOptions(){
+		let aonFiscalMenu = new AonFiscalMenu();
+		aonFiscalMenu.setDur(this.getDur());
+		return aonFiscalMenu.getOptions();
+	}
+
 }
 
 window.customElements.define("aon-fiscal-beta", AonFiscalBeta);
