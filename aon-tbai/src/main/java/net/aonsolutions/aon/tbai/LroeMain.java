@@ -22,8 +22,8 @@ public class LroeMain {
 				response = lroe.alta(ic);
 			} else if(FiscalModelType.M240.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE240_2 lroe = new LROE240_2();
-				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));
-				response = lroe.alta(ic.getTbaiConfiguration(), ic.getCompany(), ic.getInvoice());
+				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getConfiguration(), ic.getInvoice()));
+				response = lroe.alta(ic.getConfiguration(), ic.getCompany(), ic.getInvoice());
 			}
 		}
 		if(response != null) {

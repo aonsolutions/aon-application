@@ -21,9 +21,8 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -31,9 +30,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.AonError;
@@ -292,10 +290,10 @@ public class InvoiceValidation {
 	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
-		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ivc.ctx);
-		if(tbai.isActive()) {
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
+		if (config.isTbai()) {
 			boolean accepted = true;
-			if(tbai.isBizkaia()) {
+			if(config.isBizkaia()) {
 				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
 					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
 					.filter( Objects::nonNull )
@@ -316,8 +314,8 @@ public class InvoiceValidation {
 	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
-		VerifactuConfiguration verifactu = VerifactuConfigurationDAO.get(ivc.ctx);
-		if(verifactu.isActive()) {
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
+		if(config.isVerifactu()) {
 			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
 				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
 				.filter( Objects::nonNull )

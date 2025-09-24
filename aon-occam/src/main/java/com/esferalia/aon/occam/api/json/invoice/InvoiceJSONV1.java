@@ -1,11 +1,10 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collector;
 
@@ -36,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 class InvoiceJSONV1 {
 	
@@ -237,14 +237,12 @@ class InvoiceJSONV1 {
 	// ---------------------------- [FROM INVOICE INFO] ----------------------------
 	private static Optional<Map<InvoiceCommunicationType, InvoiceInfo>> getCommunicationInfo(JSONObject json) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
-		HashMap<InvoiceCommunicationType, InvoiceInfo> map = new HashMap<>();
-		for(Entry<String, Object> e : json.toMap().entrySet()) {
-			InvoiceCommunicationType type = InvoiceCommunicationType.safeValueOf(e.getKey());
-			if (type != null) {
-				JSONObject j = (JSONObject)e.getValue();
-				getInvoiceInfo(j).ifPresent( info -> map.put(type, info) );
-			}
-		}
+		Map<InvoiceCommunicationType, InvoiceInfo> map = new EnumMap<>(InvoiceCommunicationType.class);
+		AonCollectionUtils.stream(json.keySet())
+			.map( InvoiceCommunicationType::safeValueOf)
+			.filter(t -> t != null)
+			.map( t -> new Pair<InvoiceCommunicationType,JSONObject>(t, json.getJSONObject(t.name())))
+			.forEach( p -> getInvoiceInfo(p.getRight()).ifPresent( info -> map.put(p.getLeft(), info) ));
 		return map.isEmpty() ? Optional.empty() : Optional.of(map);
 	}
 	

@@ -33,6 +33,7 @@ public final class IJsonNames {
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
 	public static final String ADDRESS3 = "address3";
+	public static final String ADDRESSES = "addresses";
 	public static final String ADJ_ACCOUNT = "adjAccount";
 	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
@@ -85,6 +86,7 @@ public final class IJsonNames {
 	public static final String BANK = "bank";
 	public static final String BANK_ACCOUNT = "bank_account";
 	public static final String BANK_ALIAS = "bankAlias";
+	public static final String BANKS = "banks";
 	public static final String BARCODE = "barcode";
 	public static final String BASE = "base";
 	public static final String BATCHED = "batched";
@@ -128,6 +130,7 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
+	public static final String COMMUNICATION_CONFIGURATION = "communicationConfiguration";
 	public static final String COMMUNICATION_HISTORY = "communicationHistory";
 	public static final String COMMUNICATION_INFO = "communicationInfo";
 	public static final String COMMUNICATION_STATUS = "communicationStatus";
@@ -179,6 +182,8 @@ public final class IJsonNames {
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
+	public static final String DEFAULT_RETENTION_TAX = "defaultRetentionTax";
+	public static final String DEFAULT_VAT_TAX = "defaultVatTax";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELETE = "delete";
 	public static final String DELETED = "deleted";
@@ -402,6 +407,7 @@ public final class IJsonNames {
 	public static final String MANUFACTURED = "manufactured";
 	public static final String MAX_DEFINED_USERS = "maxDefinedUsers";
 	public static final String MEDIA = "media";
+	public static final String MEDIAS = "medias";
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
 	public static final String MIME_TYPE = "mimeType";
@@ -559,6 +565,7 @@ public final class IJsonNames {
 	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
+	public static final String RECORD_DATAS = "recordDatas";
 	public static final String RECORD_DATE = "recordDate";
 	public static final String RECORDABLE = "recordable";
 	public static final String RECORDED = "recorded";

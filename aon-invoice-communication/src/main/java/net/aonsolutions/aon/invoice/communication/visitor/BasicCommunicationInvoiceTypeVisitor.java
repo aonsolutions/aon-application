@@ -12,9 +12,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -39,10 +36,6 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	private Person person;
 	
 	private InvoiceCommunicationConfiguration configuration;
-	
-	private TbaiConfiguration tbaiConfiguration;
-	private SiiConfiguration siiConfiguration;
-	private VerifactuConfiguration verifactuConfiguration;
 	
 	public BasicCommunicationInvoiceTypeVisitor(Occam occam, Invoice invoice) {
 		this.occam = occam;
@@ -150,25 +143,6 @@ public class BasicCommunicationInvoiceTypeVisitor {
 		return this;
 	}
 	
-	protected SiiConfiguration getSiiConfiguration() {
-		return siiConfiguration != null
-			? siiConfiguration
-			: AON.getSiiConfiguration(getOccam())
-				.setCertificate(getCertificate());
-	}
-	
-	protected TbaiConfiguration getTbaiConfiguration() {
-		return tbaiConfiguration != null
-			? tbaiConfiguration
-			: AON.getTbaiConfiguration(getOccam())
-					.setCertificate(getCertificate());
-	}
-	
-	public BasicCommunicationInvoiceTypeVisitor setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
-		return this;
-	}
-	
 	public InvoiceCommunicationConfiguration getConfiguration() {
 		return configuration != null
 			? configuration 
@@ -181,20 +155,8 @@ public class BasicCommunicationInvoiceTypeVisitor {
 		return this;
 	}
 	
-	protected VerifactuConfiguration getVerifactuConfiguration() {
-		return verifactuConfiguration != null
-			? verifactuConfiguration
-			: AON.getVerifactuConfiguration(getOccam())
-					.setCertificate(getCertificate());
-	}
-	
-	public BasicCommunicationInvoiceTypeVisitor setVerifactuConfiguration(VerifactuConfiguration verifactuConfiguration) {
-		this.verifactuConfiguration = verifactuConfiguration;
-		return this;
-	}
-	
 	protected TbaiBlockchain getBlockchain(Integer actualInvoice) {
-		DataResponseSource source = getTbaiConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponseSource source = getConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(getDomain().getId())
 			.and(f.getSourceProperty().eq(source.value()))

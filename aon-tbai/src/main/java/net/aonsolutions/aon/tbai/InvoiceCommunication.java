@@ -6,9 +6,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 
@@ -22,8 +21,7 @@ public class InvoiceCommunication {
 	private Company company;
 	private Person person;
 	
-	private TbaiConfiguration tbaiConfiguration;
-	private SiiConfiguration siiConfiguration;
+	private InvoiceCommunicationConfiguration icc;
 	private Invoice invoice;
 	private List<Invoice> invoices;
 	
@@ -72,18 +70,11 @@ public class InvoiceCommunication {
 		this.person = person;
 		return this;
 	}
-	public TbaiConfiguration getTbaiConfiguration() {
-		return tbaiConfiguration;
+	public InvoiceCommunicationConfiguration getConfiguration() {
+		return icc;
 	}
-	public InvoiceCommunication setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
-		return this;
-	}
-	public SiiConfiguration getSiiConfiguration() {
-		return siiConfiguration;
-	}
-	public InvoiceCommunication setSiiConfiguration(SiiConfiguration siiConfiguration) {
-		this.siiConfiguration = siiConfiguration;
+	public InvoiceCommunication setConfiguration(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
 		return this;
 	}
 	

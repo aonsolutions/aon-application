@@ -386,19 +386,19 @@ export const SEND_INVOICE = {
     icon: MATERIAL_ICONS.MAIL
 };
 
-export const TICKETBAI = {
-    id: 'Ticketbai',
-    name: MSG.TICKETBAI,
-    title: MSG.TICKETBAI,
-    icon: MATERIAL_ICONS.QR_CODE_2
-};
+// export const TICKETBAI = {
+//     id: 'Ticketbai',
+//     name: MSG.TICKETBAI,
+//     title: MSG.TICKETBAI,
+//     icon: MATERIAL_ICONS.QR_CODE_2
+// };
 
-export const VERIFACTU = {
-    id: 'Verifactu',
-    name: MSG.VERIFACTU,
-    title: MSG.VERIFACTU,
-    icon: MATERIAL_ICONS.QR_CODE_2
-};
+// export const VERIFACTU = {
+//     id: 'Verifactu',
+//     name: MSG.VERIFACTU,
+//     title: MSG.VERIFACTU,
+//     icon: MATERIAL_ICONS.QR_CODE_2
+// };
 
 export const SEND_EMAIL = {
     id: CONSTANT.SEND.initCap(),

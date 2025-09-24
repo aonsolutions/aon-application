@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.Record2;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -38,12 +39,8 @@ public class InvoiceApiDAO {
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		if (page == null) page = 1;
-		
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		if (perPage == null) perPage = Integer.MAX_VALUE;
-		
-		System.out.println( "getInvoices page=" + page + " perPage=" + perPage );
-		
 		return ctx.getDslContext().select()
 			.from(INVOICE)
 			.where(INVOICE_PROPERTIES.getConditions(filter))
@@ -59,9 +56,6 @@ public class InvoiceApiDAO {
 	}
 	
 	public static Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter) {
-		
-		System.out.println( "getChartInvoices!" );
-
 		return ctx.getDslContext()
 			.select(
 				INVOICE.ID,

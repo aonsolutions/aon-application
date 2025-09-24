@@ -20,15 +20,9 @@ class VerifactuTestsUtils {
 	private VerifactuTestsUtils() {
 		
 	}
-	// ********************************* [INVOICE NUMBER]
-//	static String referenceCode() {
-//		return referenceCode("A");
-//	}
-//	static String rectifierReferenceCode() {
-//		return referenceCode("R");
-//	}
+
 	static String series() {
-		return series( "A" );
+		return series( "B" );
 	}
 	static String series(String prefix) {
 		Date issueDate = new Date();

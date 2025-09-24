@@ -96,7 +96,6 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryPackagingDAO;
@@ -737,21 +736,14 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public boolean isTbai() {
-		return getTbaiConfiguration().isActive();
-	}
-	
-	public TbaiConfiguration getTbaiConfiguration() {
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return AON.getTbaiConfiguration(domainName, domainId, login);
+		return getInvoiceCommunicationConfiguration().isTbai();
 	}
 	
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
 		Occam occam = new Occam()
-				.setDomainName(AonUtil.getDomainName())
-				.setDomain(DomainManager.getCurrentDomain())
-				.setUser("");
+			.setDomainName(AonUtil.getDomainName())
+			.setDomain(DomainManager.getCurrentDomain())
+			.setUser("");
 		return AON.getInvoiceCommunicationConfiguration(occam);
 	}
 

@@ -15,10 +15,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoEnvioType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 
 public class VerifactuContext  {
@@ -129,16 +126,13 @@ public class VerifactuContext  {
 	}
 	
 	public boolean isResponseIncorrecto(){
-		System.out.println( "isResponseIncorrecto() ..> " + (getResponse() == null || getResponse().isIncorrecto()));
 		return getResponse() == null || getResponse().isIncorrecto(); 
 	}
 	public boolean isResponseIncorrecta( Integer invoiceId ){
 		if (isResponseIncorrecto()) return true;
-		System.out.println( "isResponseIncorrecta("+invoiceId+") --> " + (getResponse().isIncorrecta(invoiceId)));
 		return getResponse().isIncorrecta(invoiceId);
 	}
 	public boolean isResponseCorrecta( Integer invoiceId ){
-		System.out.println( "isResponseCorrecta("+invoiceId+") --> " + (!isResponseIncorrecta(invoiceId)));
 		return !isResponseIncorrecta(invoiceId);
 	}
 	

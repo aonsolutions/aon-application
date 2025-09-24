@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceErrorJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.HasMessagesException;
@@ -29,12 +28,10 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -176,7 +173,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		return user;
 	}
 	
-	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
+	protected void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
 		e.printStackTrace();
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
@@ -202,20 +199,20 @@ public class AonApiHttpServlet extends HttpServlet{
 		giveBack(req, resp, json, new JSONObject());
 	}
 	
-	public void response(HttpServletRequest req, HttpServletResponse resp) {
+	protected void response(HttpServletRequest req, HttpServletResponse resp) {
 		response(req, resp, new JSONObject());
 	}
 	
-	public void response(HttpServletRequest req, HttpServletResponse resp, Object object) {
+	protected void response(HttpServletRequest req, HttpServletResponse resp, Object object) {
 		response(req, resp, object, new JSONObject());
 	}
 	
-	public void response(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
+	protected void response(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
 		addCorsHeader(resp);
 		giveBack(req, resp, object, meta);
 	}
 	
-	public void responseHtml(HttpServletRequest req, HttpServletResponse resp, Object object) {
+	protected void responseHtml(HttpServletRequest req, HttpServletResponse resp, Object object) {
 		try {
 			String js = req.getParameter(IConstants.CALLBACK);
 			if(js != null){
@@ -234,36 +231,36 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	
-	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
+	protected void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
 		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
 	}
 	
-	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype, String contentDisposition) throws IOException {
+	protected void responseFile(HttpServletResponse resp, File file, MimeType mimetype, String contentDisposition) throws IOException {
 		FileInputStream is =  new FileInputStream(file);
 		responseFile(resp, file.getName(), is, mimetype, contentDisposition);
 	}
 	
-	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
+	protected void responseFile(HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
 		FileInputStream is =  new FileInputStream(file);
 		responseFile(resp, file.getName(), is, mimetype);
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
+	protected void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(file);
 		responseFile(resp, filename, is, mimetype);
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype, String contentDisposition) throws IOException {
+	protected void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype, String contentDisposition) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(file);
 		responseFile(resp, filename, is, mimetype, contentDisposition);
 	}
 
-	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype) throws IOException {
+	protected void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype) throws IOException {
 		responseFile(resp, filename, is, mimetype, "inline");
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype, String contentDisposition) throws IOException {
+	protected void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype, String contentDisposition) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, contentDisposition + "; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
@@ -272,7 +269,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		is.close();
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype) throws IOException {
+	protected void responseFile(HttpServletResponse resp, String filename, MimeType mimetype) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
@@ -307,7 +304,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 
-	public JSONObject getRequestJSON(HttpServletRequest req){
+	protected JSONObject getRequestJSON(HttpServletRequest req){
 		StringBuilder bld = new StringBuilder();
 		try {
 			String line = "";
@@ -326,9 +323,8 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 
 
-	public static JSONObject getParamsJSON(ServletRequest req) {
+	protected static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();
-	    @SuppressWarnings("unchecked")
 		Map<String,String[]> params = req.getParameterMap();
 	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
 	      String[] v = entry.getValue();
@@ -338,7 +334,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	    return jsonObj;
 	}
 	
-	private void checkAuthorization(AonApiData api) {
+	protected void checkAuthorization(AonApiData api) {
 		if(AonStringUtils.isBlank(api.getToken())) {
 			throw new AonApiException(AonApiError.UNAUTHORIZED.getMessage());
 		}
@@ -352,7 +348,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 	}
 	
-	public String decode(byte[] value){
+	protected String decode(byte[] value){
 		String decode = "";
 		try{
 			decode = new String(Base64.getDecoder().decode(value), "UTF-8");
@@ -362,7 +358,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		return decode;
 	}
 	
-	public static Certificate checkCertificate(AonApiData api) {
+	protected static Certificate checkCertificate(AonApiData api) {
 		Certificate cert = new Certificate();
 		try {
 			if(api.getData().opt("cert") != null) {
@@ -388,7 +384,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		return cert;	
 	}
 	
-	public static boolean checkCert(byte[] cert, String password) {
+	protected static boolean checkCert(byte[] cert, String password) {
 		try {
 			ByteArrayInputStream is = new ByteArrayInputStream(cert);
 			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -399,11 +395,32 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 	}
 	
-	public static Options options(AonApiData api) {
+	protected static Options options(AonApiData api) {
 		Options options = new Options();
 		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
 		options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
 		return options;
 	}
+	
+	protected static void checkApiData(AonApiData api) {
+		if (api == null) {
+			throw new AonApiException("Invalid API data provided.");
+		}
+		if (api.getDomain() == null 
+			|| api.getDomain().getId() == null 
+			|| AonStringUtils.isBlank(api.getDomain().getName())) {
+			throw new AonApiException("Invalid domain information provided.");
+		}
+		if(api.getUser() == null 
+			|| api.getUser().getId() == null 
+			|| AonStringUtils.isBlank(api.getUser().getLogin())) {
+			throw new AonApiException("Invalid user login provided.");
+		}
+		if(api.getData() == null 
+				|| api.getData().isEmpty()) {
+			throw new AonApiException("No data provided for the operation.");
+		}
+	}
+	
 }

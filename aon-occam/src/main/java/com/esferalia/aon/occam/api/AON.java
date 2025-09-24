@@ -131,9 +131,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
@@ -8075,57 +8072,27 @@ public class AON {
 		}
 	}
 	
-	// VERIFACTU CONFIGURATION
-
-	public static VerifactuConfiguration getVerifactuConfiguration(Occam occam) {
-		return getVerifactuConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
-	}
-	
-	public static VerifactuConfiguration getVerifactuConfiguration(Domain domain, User user) {
-		return getVerifactuConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	}
-		
-	public static VerifactuConfiguration getVerifactuConfiguration(Domain domain, String login) {
-		return getVerifactuConfiguration(domain.getName(), domain.getId(), login);
-	}
-		
-	public static VerifactuConfiguration getVerifactuConfiguration(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getVerifactuConfiguration(ctx);
-		}
-	}
-		
-	public static VerifactuConfiguration saveVerifactuConfiguration(Domain domain, User user, VerifactuConfiguration config) {
-		return saveVerifactuConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
-	}
-		
-	public static VerifactuConfiguration saveVerifactuConfiguration(Domain domain, String login, VerifactuConfiguration config) {
-		return saveVerifactuConfiguration(domain.getName(), domain.getId(), login, config);
-	}
-		
-	public static VerifactuConfiguration saveVerifactuConfiguration(String domainName, Integer domainId, String login, VerifactuConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().saveVerifactuConfiguration(ctx, config);
-		}
-	}
-	
-	// INVOICE COMMUNICATION HISTORY
-	
-//	public static List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory(Occam occam, Integer invoice) {
-//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-//			return getFinance().getInvoiceCommunicationHistory(ctx, invoice);
-//		}
-//	}
-	
 	// INVOICE COMMUNICATION CONFIGURATION
-	
 	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain());
 		}
 	}
 	
-	// INVOICE COMMUNICATION CONFIGURATION
+	public static InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(Occam occam, int domainId, InvoiceCommunicationConfiguration config) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().saveInvoiceCommunicationConfiguration(ctx, domainId, config);
+		}
+	}
+	
+	// SII 
+	public static void prepareNewSii(Occam occam) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().prepareNewSii(ctx);
+		}
+	}
+
+	// COMMUNICATION INVOICES 
 	public static List<Invoice> getCommunicationInvoices(Occam occam, InvoiceCommunicationParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getCommunicationInvoices(ctx,params)
@@ -8134,82 +8101,6 @@ public class AON {
 		
 	}
 	
-	
-	// TICKET BAI CONFIGURATION
-	
-	public static TbaiConfiguration getTbaiConfiguration(Occam occam) {
-		return getTbaiConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
-	}
-	
-	public static TbaiConfiguration getTbaiConfiguration(Domain domain, User user) {
-		return getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	}
-		
-	public static TbaiConfiguration getTbaiConfiguration(Domain domain, String login) {
-		return getTbaiConfiguration(domain.getName(), domain.getId(), login);
-	}
-		
-	public static TbaiConfiguration getTbaiConfiguration(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getTbaiConfiguration(ctx);
-		}
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, User user, TbaiConfiguration config) {
-		return saveTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, String login, TbaiConfiguration config) {
-		return saveTbaiConfiguration(domain.getName(), domain.getId(), login, config);
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(String domainName, Integer domainId, String login, TbaiConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().saveTbaiConfiguration(ctx, config);
-		}
-	}
-	
-	// SII CONFIGURATION
-	
-	public static SiiConfiguration getSiiConfiguration(Occam occam) {
-		return getSiiConfiguration(occam.getDomainName(), occam.getDomain(), occam.getUser());
-	}
-	
-	public static SiiConfiguration getSiiConfiguration(Domain domain, User user) {
-		return getSiiConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	}
-		
-	public static SiiConfiguration getSiiConfiguration(Domain domain, String login) {
-		return getSiiConfiguration(domain.getName(), domain.getId(), login);
-	}
-		
-	public static SiiConfiguration getSiiConfiguration(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getSiiConfiguration(ctx);
-		}
-	}
-		
-	public static SiiConfiguration saveSiiConfiguration(Domain domain, User user, SiiConfiguration config) {
-		return saveSiiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
-	}
-		
-	public static SiiConfiguration saveSiiConfiguration(Domain domain, String login, SiiConfiguration config) {
-		return saveSiiConfiguration(domain.getName(), domain.getId(), login, config);
-	}
-		
-	public static SiiConfiguration saveSiiConfiguration(String domainName, Integer domainId, String login, SiiConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().saveSiiConfiguration(ctx, config);
-		}
-	}
-	
-	// SII 
-	
-	public static void prepareNewSii(Domain domain, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
-			getFinance().prepareNewSii(ctx);
-		}
-	}
 	
 	// GEOZONE
 	

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,10 @@ public class WorkplaceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 
+	public static List<Workplace> getWorkplaceList(AONContext ctx, Integer domainId){
+		return getWorkplaceList(ctx, f -> f.getDomainProperty().eq(domainId));	
+	}
+	
 	public static Workplace save(AONContext ctx, Workplace workplace) {
 		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
 		return workplace.getId() != null 

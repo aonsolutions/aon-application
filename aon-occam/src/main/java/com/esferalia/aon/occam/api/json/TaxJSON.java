@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class TaxJSON {
 	
@@ -38,7 +39,7 @@ public class TaxJSON {
 	}
 	
 	public static JSONArray toJSON(List<Tax> list) {
-		return toJSON(list.stream());
+		return toJSON(AonCollectionUtils.stream(list));
 	}
 	
 	public static JSONArray toJSON(Stream<Tax> stream) {

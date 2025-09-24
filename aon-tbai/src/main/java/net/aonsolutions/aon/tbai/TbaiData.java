@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -15,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -31,11 +33,15 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
@@ -43,32 +49,33 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiData {
 
-	TbaiConfiguration tbaiConfiguration;
+	private static final String TBAIURL = "tbaiUrl";
 	
-	public TbaiData(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
+	private final InvoiceCommunicationConfiguration icc;
+	
+	private TbaiData(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
 	}
 	
-	public TbaiConfiguration getTbaiConfiguration() {
-		return tbaiConfiguration;
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		return icc;
 	}
 	
-	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
-	}
-	
-	public static TbaiData getInstance(TbaiConfiguration tbaiConfiguration ) {
-		return new TbaiData(tbaiConfiguration);
+	public static TbaiData getInstance(InvoiceCommunicationConfiguration icc) {
+		return new TbaiData(icc);
 	}
 	
 	public boolean isTest() {
-		return getTbaiConfiguration().isTest();
+		return getInvoiceCommunicationConfiguration().isTest();
+	}
+	private DataResponseSource getDataResponseSource() {
+		return isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 	}
 	
-	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, TbaiConfiguration tbaiConfiguration, boolean subsanar) throws Exception {
-		DataResponseSource source = tbaiConfiguration.isTest()
-				? DataResponseSource.TBAI_TEST
-				: DataResponseSource.TBAI;
+	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
+		DataResponseSource source = icc.isTest()
+			? DataResponseSource.TBAI_TEST
+			: DataResponseSource.TBAI;
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
@@ -291,6 +298,14 @@ public class TbaiData {
 		return attach.getData();
 	}
 	
+	public Optional<String> getTbaiUrl(AONContext ctx, Integer domainId, Integer invoiceId) {
+		return InvoiceDataDAO.get(ctx, domainId, invoiceId, "TBAI_URL")
+			.map(InvoiceData::getValue)
+			.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, getDataResponseSource(), TBAIURL))
+		;
+				
+		
+	}
 	public String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
 		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
 			f.getDomainProperty().eq(domainId)
@@ -308,7 +323,7 @@ public class TbaiData {
 			DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 				f.getDomainProperty().eq(domainId)
 				.and(f.getDataResponseProperty().eq(dr.getId()))
-				.and(f.getDataVariableProperty().eq("tbaiUrl"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+				.and(f.getDataVariableProperty().eq(TBAIURL))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
 			return drd.getDataValue();
 		}
@@ -406,7 +421,7 @@ public class TbaiData {
 		DataResponseDetail drd3 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
-				.setDataVariable("tbaiUrl")
+				.setDataVariable(TBAIURL)
 				.setDataValue(tbaiUrl);
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
@@ -460,7 +475,7 @@ public class TbaiData {
 		DataResponseDetail drd3 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
-				.setDataVariable("tbaiUrl")
+				.setDataVariable(TBAIURL)
 				.setDataValue(tbaiUrl);
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
@@ -523,13 +538,69 @@ public class TbaiData {
         return sb.toString();
 	}
 	
-	public static void main(String[] args) {
-		JSONObject requestData = new JSONObject();
-		requestData.put("domain_name", "mac.aonsolutions.net");
-		requestData.put("domain_id", 400);//24708); //24649); // 24427) ;// 22287);
-		requestData.put("id", 796969); //791139); //781651); // 780287); //780014); // 780002);
-		requestData.put("attach_type", AttachType.DATA.getName());
-		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
-		System.out.println("ms/api/file/" +  result);
+//	public static void main(String[] args) {
+//		JSONObject requestData = new JSONObject();
+//		requestData.put("domain_name", "mac.aonsolutions.net");
+//		requestData.put("domain_id", 400);//24708); //24649); // 24427) ;// 22287);
+//		requestData.put("id", 796969); //791139); //781651); // 780287); //780014); // 780002);
+//		requestData.put("attach_type", AttachType.DATA.getName());
+//		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+//		System.out.println("ms/api/file/" +  result);
+//	}
+	
+	// 	*****************************************************************
+	// 	*****************************************************************
+	// 	*****************************************************************
+	public Optional<TBAIInformation> get(AONContext ctx, Integer domainId, Integer invoiceId) {
+		return DataResponseDAO.getLastDataResponse(ctx, domainId, getDataResponseSource(), invoiceId) 
+			.filter( r -> r.getDataRequest() != null)
+			.map(r -> new TBAIRequest()
+				.setDataRequest(DataRequestDAO.get(ctx, r.getDataRequest()).orElse(null))
+				.setDataResponse(r)
+				.setResponse(DataResponseDAO.getDetail(ctx, domainId, invoiceId, getDataResponseSource(), "response")
+					.map(resp -> new TbaiResponse(new JSONObject(resp.getDataValue())).setOk("ok".equalsIgnoreCase(r.getCode())))
+					.orElse(null)
+				)
+				.setRequestUrl ( getRequestUrl(ctx, domainId, r.getDataRequest()).orElse(null))
+				.setResponseUrl( getResponseUrl(ctx, domainId, r.getDataRequest()).orElse(null))
+			)
+			.map(info -> new TBAIInformation().addRequest(info) )
+		;
 	}
+
+	private Optional<String> getRequestUrl(AONContext ctx, Integer domainId, Integer dataRequestId) {
+		return AttachmentDAO.getDataAttachStream(ctx, f 
+				-> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+				.and(f.getSourceBatchProperty().eq(dataRequestId)), false)
+		.findFirst()
+		.map( attach -> {
+			JSONObject requestData = new JSONObject()
+				.put("domain_name", ctx.getDomainName())
+				.put("domain_id", domainId)
+				.put("id", attach.getId())
+				.put("attach_type", AttachType.DATA.getName())
+			;
+			String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+			return ("ms/api/file/" +  result);
+		});
+	}
+	
+	private Optional<String> getResponseUrl(AONContext ctx, Integer domainId, Integer dataResponseId) {
+	return AttachmentDAO.getDataAttachStream(ctx, f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()).or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
+			.and(f.getSourceBatchProperty().eq(dataResponseId)), false)
+		.findFirst()
+		.map( attach -> {
+			JSONObject responseData = new JSONObject()
+				.put("domain_name", ctx.getDomainName())
+				.put("domain_id", domainId)
+				.put("id", attach.getId())
+				.put("attach_type", AttachType.DATA.getName());
+			String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
+			return ("ms/api/file/" +  responseResult);
+			
+		});
+	}
+	
 }

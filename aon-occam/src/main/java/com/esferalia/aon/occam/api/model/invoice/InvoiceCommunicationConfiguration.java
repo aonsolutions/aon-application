@@ -19,6 +19,12 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private Certificate certificate;
 	private Date includeDate;
 	private String registryDate;
+	private boolean autosend;
+	private boolean prepareNewSii;
+
+	
+	// TO FIX || DELETE
+	private boolean skipTracking;
 
 	public Administration getAdministration() {
 		return administration;
@@ -92,11 +98,34 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		this.registryDate = registryDate;
 		return this;
 	}
-	
 	public boolean isRegistryTaxDate() {
 		return "tax".equalsIgnoreCase(getRegistryDate());
 	}
 	
+	public boolean isSkipTracking() {
+		return skipTracking;
+	}
+	public InvoiceCommunicationConfiguration setSkipTracking(boolean skipTracking) {
+		this.skipTracking = skipTracking;
+		return this;
+	}
+	
+	public boolean isAutosend() {
+		return autosend;
+	}
+	public InvoiceCommunicationConfiguration setAutosend(boolean autosend) {
+		this.autosend = autosend;
+		return this;
+	}
+	
+	public boolean isPrepareNewSii() {
+		return prepareNewSii;
+	}
+	public InvoiceCommunicationConfiguration setPrepareNewSii(boolean prepareNewSii) {
+		this.prepareNewSii = prepareNewSii;
+		return this;
+	}
+
 	public InvoiceCommunicationType getType() {
 		if(isTbai() && (getAdministration().isAraba() || getAdministration().isGipuzkoa())) {
 			return InvoiceCommunicationType.TBAI;

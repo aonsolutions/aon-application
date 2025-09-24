@@ -7,8 +7,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -91,30 +91,30 @@ public class Invoice2tbai {
 //	private final static String TEST_NIF_240 = "A99802019";
 //	private final static String TEST_NAME_240 = "4wbLGzaHUvHzMkJm9Z5knRPBKpLKr7"; 
 	
-	public static TicketBai build(Company company, Invoice invoice, TbaiConfiguration config, TbaiBlockchain blockchain) {
+	public static TicketBai build(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc, TbaiBlockchain blockchain) {
 		TicketBai tbai = new TicketBai();
 		tbai.setCabecera(getCabecera());
-		tbai.setSujetos(getSujetos(company, invoice, config));
+		tbai.setSujetos(getSujetos(company, invoice));
 		tbai.setFactura(getFactura(invoice, false));
-		tbai.setHuellaTBAI(getHuella(config, blockchain));
+		tbai.setHuellaTBAI(getHuella(icc, blockchain));
 		return tbai;
 	}
 	
-	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain, boolean subsanar) {
+	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc, TicketBai ticketBai, TbaiBlockchain blockchain, boolean subsanar) {
 		SubsanacionModificacionTicketBAI tbai = new SubsanacionModificacionTicketBAI();
 		tbai.setCabecera(buildCabeceraZuzendu(subsanar ? AccionType.SUBSANAR : AccionType.MODIFICAR));
-		tbai.setSujetos(getSujetos(company, invoice, config));
+		tbai.setSujetos(getSujetos(company, invoice));
 		tbai.setFactura(getFactura(invoice, true));
 		tbai.setHuellaTBAI(ticketBai.getHuellaTBAI());
 		tbai.setSignatureValueFirmaFactura(blockchain.getSignature());
 		return tbai;
 	}
 	
-	public static AnulaTicketBai buildBaja(Company company, Invoice invoice, TbaiConfiguration config) {
+	public static AnulaTicketBai buildBaja(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) {
 		AnulaTicketBai tbai = new AnulaTicketBai();
 		tbai.setCabecera(getCabeceraAnulacion());
 		tbai.setIDFactura(getFacturaAnulacion(company, invoice));
-		tbai.setHuellaTBAI(getHuellaAnulacion(config));
+		tbai.setHuellaTBAI(getHuellaAnulacion(icc));
 		return tbai;
 	}
 	
@@ -161,7 +161,7 @@ public class Invoice2tbai {
 		return emisor;
 	}
 
-	private static ticketbai.anulacion.HuellaTBAI getHuellaAnulacion(TbaiConfiguration tbai) {
+	private static ticketbai.anulacion.HuellaTBAI getHuellaAnulacion(InvoiceCommunicationConfiguration icc) {
 		ticketbai.anulacion.HuellaTBAI huella = new ticketbai.anulacion.HuellaTBAI();
 
 		ticketbai.anulacion.SoftwareFacturacionType software = new ticketbai.anulacion.SoftwareFacturacionType();
@@ -171,11 +171,11 @@ public class Invoice2tbai {
 		software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
-		if(tbai.isAraba() && tbai.isTest()) {
+		if(icc.isAraba() && icc.isTest()) {
 			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
-		} else if(tbai.isGipuzkoa() && tbai.isTest()) {
+		} else if(icc.isGipuzkoa() && icc.isTest()) {
 			software.setLicenciaTBAI(DEVICE_NUMBER_GIPUZKOA_TEST);
-		} else if(tbai.isBizkaia() && tbai.isTest()) {
+		} else if(icc.isBizkaia() && icc.isTest()) {
 			entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);
@@ -187,7 +187,7 @@ public class Invoice2tbai {
 		return huella;
 	}
 	
-	private static HuellaTBAI getHuella(TbaiConfiguration tbai, TbaiBlockchain blockchain) {
+	private static HuellaTBAI getHuella(InvoiceCommunicationConfiguration icc, TbaiBlockchain blockchain) {
 		HuellaTBAI huella = new HuellaTBAI();
 		
 		if(!blockchain.isEmpty()) {
@@ -203,13 +203,13 @@ public class Invoice2tbai {
 		EntidadDesarrolladoraType entidad = new EntidadDesarrolladoraType();
 		entidad.setNIF("B01487271");
 		software.setEntidadDesarrolladora(entidad);
-		if(tbai.isAraba() && tbai.isTest())
+		if(icc.isAraba() && icc.isTest())
 			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
 		else software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
 	
-		if(tbai.isBizkaia() && tbai.isTest()) {
+		if(icc.isBizkaia() && icc.isTest()) {
 			entidad = new EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);
@@ -221,7 +221,7 @@ public class Invoice2tbai {
 		return huella;
 	}
 	
-	private static Sujetos getSujetos(Company company, Invoice invoice, TbaiConfiguration config) {
+	private static Sujetos getSujetos(Company company, Invoice invoice) {
 		Sujetos entities = new Sujetos();
 		company.isLegalPerson();
 		String document = company.getDocument().replace(" ", "");

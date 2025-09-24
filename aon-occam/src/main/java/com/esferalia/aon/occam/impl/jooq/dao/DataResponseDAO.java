@@ -12,6 +12,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -453,4 +454,32 @@ public class DataResponseDAO {
 		;
 	}
 	
+	public static Optional<DataResponse> getLastDataResponse(AONContext ctx, Integer domainId, DataResponseSource source, Integer sourceId){
+		return ctx.getDslContext()
+			.select().from(DATA_RESPONSE)
+			.where(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.and(DATA_RESPONSE.SOURCE_ID.eq(sourceId))
+			.orderBy(DATA_RESPONSE.ID.desc()).limit(1)
+			.fetch()
+			.stream()
+			.map(new DataResponseFiller())
+			.findFirst();
+	}
+	
+	private static class DataResponseDetailFiller implements Function<Record, DataResponseDetail> {
+		@Override
+		public DataResponseDetail apply(Record r) {
+			return new DataResponseDetail()
+				.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
+				.setDomain(r.getValue(DATA_RESPONSE_DETAIL.DOMAIN))
+				.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+				.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
+				.setDataValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE))
+				.setCreationDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE))
+				.setCreationUser(r.getValue(DATA_RESPONSE_DETAIL.CREATION_USER))
+				.setModificationDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_USER))
+			;
+		}
+	}
 }

@@ -2,8 +2,8 @@ package net.aonsolutions.aon.gwt.sii.server;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.gwt.sii.client.ISii;
@@ -12,8 +12,8 @@ import net.aonsolutions.aon.gwt.sii.client.ISii;
 @WebServlet(name = "SiiGwtServlet", urlPatterns = { "/aon_gwt_aio/ms/gwt_sii" })
 public class SiiImpl extends AonStatelessRemoteServiceServlet implements ISii{
 
-	public SiiConfiguration getSiiConfiguration(Domain domain, String login) {
-		return AON.getSiiConfiguration(domain, login);
+	public InvoiceCommunicationConfiguration getConfiguration(Occam occam) {
+		return AON.getInvoiceCommunicationConfiguration(occam);
 	}
 
 	

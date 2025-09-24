@@ -14,7 +14,8 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -44,7 +45,7 @@ public class SiiMain extends AonTemplate2{
 	HashMap<String, LinkedList<String>> filterMap;
 	private AonData aonData;
 	private Administration administration;
-	private SiiConfiguration siiConfiguration;
+	private InvoiceCommunicationConfiguration icc;
 
 	public API getAPI() {
 		return API;
@@ -76,12 +77,16 @@ public class SiiMain extends AonTemplate2{
 	}
 	
 	private void startApplication() {
-		impl.getSiiConfiguration(aonData.getDomain(), aonData.getUser().getLogin(), new AsyncCallback<SiiConfiguration>() {
+		Occam occam = new Occam()
+			.setDomainName(aonData.getDomain().getName())
+			.setDomain(aonData.getDomain().getId())
+			.setUser(aonData.getUser().getLogin());
+		impl.getConfiguration(occam, new AsyncCallback<InvoiceCommunicationConfiguration>() {
 			
 			@Override
-			public void onSuccess(SiiConfiguration result) {
+			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				administration = result.getAdministration();
-				siiConfiguration = result;
+				icc = result;
 				initializeFilterMap();
 				toolbar();
 				westContent();
@@ -97,13 +102,13 @@ public class SiiMain extends AonTemplate2{
 		LinkedList<String> list = new LinkedList<>();
 		list.add("fe_emitidas");
 		filterMap.put("sii",list);
-		Date date = siiConfiguration.getIncludeDate() != null
-				? siiConfiguration.getIncludeDate()
+		Date date = icc.getIncludeDate() != null
+				? icc.getIncludeDate()
 				: new Date(2017-1900, 6, 1);
 		if(administration.equals(Administration.ALAVA) || administration.equals(Administration.BIZKAIA)
 				|| administration.equals(Administration.GIPUZKOA) || administration.equals(Administration.NAVARRA)) {
-			date = siiConfiguration.getIncludeDate() != null
-					? siiConfiguration.getIncludeDate()
+			date = icc.getIncludeDate() != null
+					? icc.getIncludeDate()
 					: new Date(2018-1900, 0, 1);
 		}
 		

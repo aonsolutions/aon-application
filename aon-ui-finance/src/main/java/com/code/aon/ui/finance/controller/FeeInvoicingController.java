@@ -38,7 +38,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 
 public class FeeInvoicingController implements IFinanceConstants, Serializable {
@@ -51,7 +52,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	
 	private ProgressionState progressionState;
 	
-	private TbaiConfiguration tbaiConfiguration;
+	private InvoiceCommunicationConfiguration icc;
 
 
 	public InvoicingParameters getParams() {
@@ -137,7 +138,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		Series series = getParams().getInvoiceSeries();
 		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
 		getProgressionState().start();
-		if(getTbaiConfiguration().isActive()) {
+		if(getInvoiceCommunicationConfiguration().isTbai()) {
 			try {
 				checkCertificate();
 			} catch (Exception e) {
@@ -250,33 +251,37 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	}	
 	
 	public boolean isTbai() {
-		return getTbaiConfiguration().isActive();
+		return getInvoiceCommunicationConfiguration().isTbai();
 	}
 	
 	public boolean isAraba() {
-		return getTbaiConfiguration().isAraba();
+		return getInvoiceCommunicationConfiguration().isAraba();
 	}
 	
 	public boolean isBizkaia() {
-		return getTbaiConfiguration().isBizkaia();
+		return getInvoiceCommunicationConfiguration().isBizkaia();
 	}
 	
 	public boolean isGipuzkoa() {
-		return getTbaiConfiguration().isGipuzkoa();
+		return getInvoiceCommunicationConfiguration().isGipuzkoa();
 	}
 	
-	public TbaiConfiguration getTbaiConfiguration() {
-		if(tbaiConfiguration == null) {
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		if(icc == null) {
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			tbaiConfiguration = AON.getTbaiConfiguration(domainName, domainId, login);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(login);
+			icc = AON.getInvoiceCommunicationConfiguration(occam);
 		}
-		return tbaiConfiguration;
+		return icc;
 	}
 	
-	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
+	public void setInvoiceCommunicationConfiguration(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
 	}
 
 	public void onAddSegment(ActionEvent event) {

@@ -584,7 +584,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	public static JSONObject getConfiguration(AonApiData api) {
-		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+			return getConfiguration(ctx);
+		}
+	}
+	
+	public static JSONObject getConfiguration(AONContext ctx) {
+		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(ctx);
 		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
 
 		JSONArray environments = new JSONArray();

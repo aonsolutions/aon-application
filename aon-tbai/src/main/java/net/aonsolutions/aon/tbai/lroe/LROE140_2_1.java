@@ -23,7 +23,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -82,15 +82,15 @@ public class LROE140_2_1 extends LROE140 {
 		lroe.setCabecera(buildCabecera(ic, info));
 
 		GastosConFacturaType gastos = new GastosConFacturaType();
-		invoices.stream().forEach(invoice -> gastos.getGasto().add(buildGasto(ic.getTbaiConfiguration(), invoice)));
+		invoices.stream().forEach(invoice -> gastos.getGasto().add(buildGasto(ic.getConfiguration(), invoice)));
 		lroe.setGastos(gastos);
 		return lroe;
 	}
 		
-	private GastoConFacturaType buildGasto(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
+	private GastoConFacturaType buildGasto(InvoiceCommunicationConfiguration icc, Invoice invoice) {
 		GastoConFacturaType gasto = new GastoConFacturaType();
 		gasto.setEmisorFacturaRecibida(buildEmisor(invoice));
-		gasto.setCabeceraFactura(buildInvoiceCabecera(tbaiConfiguration, invoice));
+		gasto.setCabeceraFactura(buildInvoiceCabecera(icc, invoice));
 		gasto.setDatosFactura(buildFactura(invoice));
 		gasto.setRentaIVA(buildRenta(invoice));
 		return gasto;
@@ -126,14 +126,14 @@ public class LROE140_2_1 extends LROE140 {
 		return emisor;
 	}
 	
-	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
+	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(InvoiceCommunicationConfiguration icc, Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
 		cabecera.setNumFactura(reference);
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 
-		Date receptionDate = tbaiConfiguration.isRegistryTaxDate()
+		Date receptionDate = icc.isRegistryTaxDate()
 				? invoice.getTaxDate() : invoice.getCreationDate();
 		if(receptionDate.before(invoice.getIssueDate()))
 			receptionDate = invoice.getIssueDate();
@@ -285,7 +285,7 @@ public class LROE140_2_1 extends LROE140 {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, 
 					mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
-			info.setEjercicio(getEjercicio(ic.getTbaiConfiguration(), invoices.get(0)));
+			info.setEjercicio(getEjercicio(ic.getConfiguration(), invoices.get(0)));
 			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(ic, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -299,7 +299,7 @@ public class LROE140_2_1 extends LROE140 {
 			Document doc = getDocument(xml);
 			System.out.println(toString(doc));
 			byte[] data = toGzip(xml);
-			return send(ic.getTbaiConfiguration(), buildJSON(ic, info), data).setDataRequest(dataRequest);
+			return send(ic.getConfiguration(), buildJSON(ic, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -362,10 +362,10 @@ public class LROE140_2_1 extends LROE140 {
 		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
 	}
 	
-	public LROEResponse anulacion(Person person, TbaiConfiguration tbaiConfiguration, Invoice invoice) throws StatusCodeException {
+	public LROEResponse anulacion(Person person, InvoiceCommunicationConfiguration icc, Invoice invoice) throws StatusCodeException {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.AN_0);
-			info.setEjercicio(getEjercicio(tbaiConfiguration, invoice));
+			info.setEjercicio(getEjercicio(icc, invoice));
 
 			final LROEPF140GastosConFacturaAnulacionPeticion p240 = buildBaja(person, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAnulacionPeticion.class );
@@ -378,7 +378,7 @@ public class LROE140_2_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -426,7 +426,7 @@ public class LROE140_2_1 extends LROE140 {
 	}
 	
 	
-	public boolean consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+	public boolean consulta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.C_00);
 			LROEPF140GastosConFacturaConsultaPeticion lroe = buildConsulta(person, invoice, info);
@@ -439,7 +439,7 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(icc, buildJSON(person, info), data);
 			
 			LROEPF140GastosConFacturaConsultaRespuesta resp = (LROEPF140GastosConFacturaConsultaRespuesta) 
                     unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());

@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.tbai;
 
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 public class TbaiUri {
 		
@@ -47,69 +46,69 @@ public class TbaiUri {
 	private static final String URL_GIPUZKOA_QR_TEST = "https://tbai.prep.gipuzkoa.eus/qr/";
 	
 	
-	public static String getUrlEmision(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_EMISION_TEST : URL_ARABA_EMISION;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_EMISION_TEST : URL_GIPUZKOA_EMISION;
+	public static String getUrlEmision(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_EMISION_TEST : URL_ARABA_EMISION;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_EMISION_TEST : URL_GIPUZKOA_EMISION;
 		return "";
 	}
 	
-	public static String getUrlAnulacion(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_ANULACION_TEST : URL_ARABA_ANULACION;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
+	public static String getUrlAnulacion(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_ANULACION_TEST : URL_ARABA_ANULACION;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
 		return "";
 	}
 	
-	public static String getUrlZuzendu(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_ZUZENDU_TEST : URL_ARABA_ZUZENDU;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_ZUZENDU_TEST : URL_GIPUZKOA_ZUZENDU;
+	public static String getUrlZuzendu(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_ZUZENDU_TEST : URL_ARABA_ZUZENDU;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_ZUZENDU_TEST : URL_GIPUZKOA_ZUZENDU;
 		return "";
 	}
 	
-	public static String getUrlZuzenduBaja(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_ZUZENDU_BAJA_TEST : URL_ARABA_ZUZENDU_BAJA;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_ZUZENDU_BAJA_TEST : URL_GIPUZKOA_ZUZENDU_BAJA;
+	public static String getUrlZuzenduBaja(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_ZUZENDU_BAJA_TEST : URL_ARABA_ZUZENDU_BAJA;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_ZUZENDU_BAJA_TEST : URL_GIPUZKOA_ZUZENDU_BAJA;
 		return "";
 	}
 	
-	public static String getUrlOsatu(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_OSATU_TEST : URL_ARABA_OSATU;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_OSATU_TEST : URL_GIPUZKOA_OSATU;
+	public static String getUrlOsatu(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_OSATU_TEST : URL_ARABA_OSATU;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_OSATU_TEST : URL_GIPUZKOA_OSATU;
 		return "";
 	}
 	
-	public static String getUrlConsulta(TbaiConfiguration  tbai) {
-		if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_CONSULTA_TEST : URL_BIZKAIA_CONSULTA;
+	public static String getUrlConsulta(InvoiceCommunicationConfiguration icc) {
+		if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_CONSULTA_TEST : URL_BIZKAIA_CONSULTA;
 		return "";
 	}
 	
-	public static String getUrlQr(TbaiConfiguration  tbai) {
-		if(Administration.ALAVA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_ARABA_QR_TEST : URL_ARABA_QR;
-		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_QR_TEST : URL_BIZKAIA_QR;
-		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_GIPUZKOA_QR_TEST : URL_GIPUZKOA_QR;
+	public static String getUrlQr(InvoiceCommunicationConfiguration icc) {
+		if (icc.isAraba())
+			return icc.isTest() ? URL_ARABA_QR_TEST : URL_ARABA_QR;
+		else if(icc.isBizkaia())
+			return icc.isTest() ? URL_BIZKAIA_QR_TEST : URL_BIZKAIA_QR;
+		else if(icc.isGipuzkoa())
+			return icc.isTest() ? URL_GIPUZKOA_QR_TEST : URL_GIPUZKOA_QR;
 		return "";
 	}
 	

@@ -26,7 +26,6 @@ export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
 export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
-export const nullInvoice = (data) => remove(`${API_URL}/invoice/cancel`, data);
 
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 

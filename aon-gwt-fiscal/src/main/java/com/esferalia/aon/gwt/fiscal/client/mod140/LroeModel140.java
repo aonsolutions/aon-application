@@ -27,10 +27,10 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
@@ -147,10 +147,10 @@ public class LroeModel140 extends DockLayoutPanel {
 		super(Unit.PX);
 		this.model140 = parent;
 		
-		SII_SERVICE.getTbaiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<TbaiConfiguration>() {
+		SII_SERVICE.getConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<InvoiceCommunicationConfiguration>() {
 			
 			@Override
-			public void onSuccess(TbaiConfiguration result) {
+			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				FiscalModel mod140 = new FiscalModel();
 				mod140.setAdministration(Administration.BIZKAIA);
 				mod140.setModel(FiscalModelType.M140);

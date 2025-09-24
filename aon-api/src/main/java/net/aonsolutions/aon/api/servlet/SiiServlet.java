@@ -2,15 +2,14 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.invoice.SiiConfigurationJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceCommunicationConfigurationJSON;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -29,7 +28,7 @@ public class SiiServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/configuration":
-					response(req, resp, getSiiConfiguration(api));
+					response(req, resp, getConfiguration(api));
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -39,7 +38,8 @@ public class SiiServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private JSONObject getSiiConfiguration(AonApiData api) {
-		return SiiConfigurationJSON.toJSON(AON.getSiiConfiguration(api.getDomain(), api.getUser()));
+	private JSONObject getConfiguration(AonApiData api) {
+		return InvoiceCommunicationConfigurationJSON.toJSON(
+			AON.getInvoiceCommunicationConfiguration(api.getOccam())).orElse(new JSONObject());
 	}
 }

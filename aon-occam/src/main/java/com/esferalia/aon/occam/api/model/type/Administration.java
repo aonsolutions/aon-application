@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -35,37 +36,20 @@ public enum Administration implements Serializable {
 		return (byte) ordinal();
 	}
 	
-	public boolean isAraba() {
-		return (this == Administration.ALAVA);
-	}
-	
-	public boolean isBizkaia() {
-		return (this == Administration.BIZKAIA);
-	}
-	
-	public boolean isGipuzkoa() {
-		return (this == Administration.GIPUZKOA);
-	}
-	
-	public boolean isNavarra() {
-		return (this == Administration.NAVARRA);
-	}
-
-	public boolean isAEAT() {
-		return (this == Administration.COMMON_TERRITORY);
-	}
-	
-	public boolean isCanarias() {
-		return (this == Administration.CANARIAS);
-	}
-	
-	public boolean isUnknown() {
-		return (this == Administration.UNKNOWN);
-	}
+	public boolean isAraba() 	{return (this == Administration.ALAVA);}
+	public boolean isBizkaia() 	{return (this == Administration.BIZKAIA);}
+	public boolean isGipuzkoa() {return (this == Administration.GIPUZKOA);}
+	public boolean isNavarra() 	{return (this == Administration.NAVARRA);}
+	public boolean isAEAT() 	{return (this == Administration.COMMON_TERRITORY);}
+	public boolean isCanarias() {return (this == Administration.CANARIAS);}
+	public boolean isUnknown() 	{return (this == Administration.UNKNOWN);}
 
 	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
-	
 
+	public static Optional<String> name( Administration adm ) {
+		return Optional.ofNullable(adm).map(a -> a.name()); 
+	}
+	
 	public static Administration safeValueOf( String i ) {
 		if(AonStringUtils.isBlank(i)) return null;
 		for (Administration rs : values()) {

@@ -131,8 +131,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -214,8 +213,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private FinanceEmailUtil emailController;
 	private AonFile invoiceAttachFile;
 	private RegistryAddressFilter addressesFilter;
-	private TbaiConfiguration tbaiConfiguration;
-	private VerifactuConfiguration verifactuConfiguration;
+	private InvoiceCommunicationConfiguration icc;
 	
 	private Boolean hasInvoiceDoc;
 	private InvoiceDoc invoiceDoc;
@@ -1685,10 +1683,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 						.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
-			TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
 			String tbaiId = "";
-			if(tbai.isActive()) {
-				TbaiData tbaiData = TbaiData.getInstance(tbai);
+			if(isTbai()) {
+				TbaiData tbaiData = TbaiData.getInstance(getInvoiceCommunicationConfiguration());
 				String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 				tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), login, invoice.getId());
@@ -2151,7 +2148,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			Integer domainId = DomainManager.getCurrentDomain();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			tbaiUrl = TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+			tbaiUrl = TbaiData.getInstance(getInvoiceCommunicationConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
 			if(tbaiUrl == null) tbaiUrl = ""; 
 		} 
 		return tbaiUrl;
@@ -2193,51 +2190,41 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isTbai() {
-		return getTbaiConfiguration().isActive();
+		return getInvoiceCommunicationConfiguration().isTbai();
 	}
 	
 	public boolean isVerifactu() {
-		return getVerifactuConfiguration().isActive();
+		return getInvoiceCommunicationConfiguration().isVerifactu();
 	}
 	
 	public boolean isAraba() {
-		return getTbaiConfiguration().isAraba();
+		return getInvoiceCommunicationConfiguration().isAraba();
 	}
 	
 	public boolean isBizkaia() {
-		return getTbaiConfiguration().isBizkaia();
+		return getInvoiceCommunicationConfiguration().isBizkaia();
 	}
 	
 	public boolean isGipuzkoa() {
-		return getTbaiConfiguration().isGipuzkoa();
+		return getInvoiceCommunicationConfiguration().isGipuzkoa();
 	}
 	
-	public TbaiConfiguration getTbaiConfiguration() {
-		if(tbaiConfiguration == null) {
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		if(icc == null) {
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			tbaiConfiguration = AON.getTbaiConfiguration(domainName, domainId, login);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(login);
+			icc = AON.getInvoiceCommunicationConfiguration(occam);
 		}
-		return tbaiConfiguration;
+		return icc;
 	}
 	
-	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-		this.tbaiConfiguration = tbaiConfiguration;
-	}
-	
-	public VerifactuConfiguration getVerifactuConfiguration() {
-		if(verifactuConfiguration == null) {
-			String domainName = AonUtil.getDomainName();
-			Integer domainId = DomainManager.getCurrentDomain();
-			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			verifactuConfiguration = AON.getVerifactuConfiguration(domainName, domainId, login);
-		}
-		return verifactuConfiguration;
-	}
-	
-	public void setVerifactuConfiguration(VerifactuConfiguration verifactuConfiguration) {
-		this.verifactuConfiguration = verifactuConfiguration;
+	public void setInvoiceCommunicationConfiguration(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
 	}
 	
 	public LROEInformation getLroe() {
@@ -2255,7 +2242,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
-		return TbaiData.getInstance(getTbaiConfiguration()).get(domain, user, getInvoice().getId());		
+		return TbaiData.getInstance(getInvoiceCommunicationConfiguration()).get(domain, user, getInvoice().getId());		
 	}
 	
 	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory() {

@@ -109,7 +109,7 @@ public class ConfigurationDAO {
 			.setOcrDefaultItem( getOcrDefaultItem(ctx) )
 			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
 			.setAlphaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_ALPHA_ENABLED)))
-			.setCommunicationConfig( InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId()))
+			.setCommunicationConfig( InvoiceCommunicationDAO.get(ctx, ctx.getDomainId()))
 		;
 		if (params.hasAccounting() ) {
 			fillAccountingParameters(ctx, conf);

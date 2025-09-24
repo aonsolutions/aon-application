@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -53,11 +53,11 @@ public class InvoiceCommunicationTest {
 		getConfigurations().stream().forEach(config -> {
 			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
 					new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
-					.setTbaiConfiguration(config.getTbaiConfiguration())
+					.setConfiguration(config.getConfiguration())
 					.setCompany(config.getCompany())
 					.setPerson(config.getPerson());
 			try {
-				if (config.getTbaiConfiguration().isBizkaia())
+				if (config.getConfiguration().isBizkaia())
 					InvoiceCommunicationType.LROE.visit(visitor);
 				else InvoiceCommunicationType.TBAI.visit(visitor);
 			} catch (Exception e) {
@@ -66,11 +66,11 @@ public class InvoiceCommunicationTest {
 			
 			ModifyInvoiceCommunicationTypeVisitor visitor2 = (ModifyInvoiceCommunicationTypeVisitor) 
 				new ModifyInvoiceCommunicationTypeVisitor(domain, user, invoice)
-					.setTbaiConfiguration(config.getTbaiConfiguration())
+					.setConfiguration(config.getConfiguration())
 					.setCompany(config.getCompany())
 					.setPerson(config.getPerson());
 			try {
-				if (config.getTbaiConfiguration().isBizkaia())
+				if (config.getConfiguration().isBizkaia())
 					InvoiceCommunicationType.LROE.visit(visitor2);
 				else InvoiceCommunicationType.TBAI.visit(visitor2);
 			} catch (Exception e) {
@@ -78,11 +78,11 @@ public class InvoiceCommunicationTest {
 			}
 			CancelInvoiceCommunicationTypeVisitor visitor3 = (CancelInvoiceCommunicationTypeVisitor) 
 				new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice)
-					.setTbaiConfiguration(config.getTbaiConfiguration())
+					.setConfiguration(config.getConfiguration())
 					.setCompany(config.getCompany())
 					.setPerson(config.getPerson());
 			try {
-				if (config.getTbaiConfiguration().isBizkaia())
+				if (config.getConfiguration().isBizkaia())
 					InvoiceCommunicationType.LROE.visit(visitor3);
 				else InvoiceCommunicationType.TBAI.visit(visitor3);
 			} catch (Exception e) {
@@ -132,40 +132,47 @@ public class InvoiceCommunicationTest {
 		return person;
 	}
 	
-	private List<InvoiceCommunicationConfiguration> getConfigurations() throws IOException {
-		List<InvoiceCommunicationConfiguration> list = new  LinkedList<>();
-		TbaiConfiguration tbaiConfiguration =  new TbaiConfiguration()
-			.setActive(true)
+	private List<InvoiceCommunication> getConfigurations() throws IOException {
+		List<InvoiceCommunication> list = new  LinkedList<>();
+		InvoiceCommunicationConfiguration icc =  new InvoiceCommunicationConfiguration()
+			.setTbai(true)
 			.setTest(true);
 
 		// CERT 1
-		tbaiConfiguration.setCertificate(getCertificate1());			
-		InvoiceCommunicationConfiguration ic = new InvoiceCommunicationConfiguration()
+		icc.setCertificate(getCertificate1());			
+		InvoiceCommunication ic = new InvoiceCommunication()
 				.setCompany(getCompany1())
 				.setPerson(getPerson1());
 				
-		list.add(ic.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.ALAVA)));			
-		list.add(ic.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.GIPUZKOA)));
-		list.add(ic.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.BIZKAIA)));
+		list.add(ic.setConfiguration(icc.setAdministration(Administration.ALAVA)));			
+		list.add(ic.setConfiguration(icc.setAdministration(Administration.GIPUZKOA)));
+		list.add(ic.setConfiguration(icc.setAdministration(Administration.BIZKAIA)));
 		
 		// CERT 2
-		tbaiConfiguration.setCertificate(getCertificate2());			
-		InvoiceCommunicationConfiguration ic2 = new InvoiceCommunicationConfiguration()
+		InvoiceCommunicationConfiguration icc2 =  new InvoiceCommunicationConfiguration()
+			.setTbai(true)
+			.setTest(true);
+		icc2.setCertificate(getCertificate2());			
+		InvoiceCommunication ic2 = new InvoiceCommunication()
 				.setCompany(getCompany2());
 				
-		list.add(ic2.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.ALAVA)));			
-		list.add(ic2.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.GIPUZKOA)));
-		list.add(ic2.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.BIZKAIA)));
+		list.add(ic2.setConfiguration(icc2.setAdministration(Administration.ALAVA)));			
+		list.add(ic2.setConfiguration(icc2.setAdministration(Administration.GIPUZKOA)));
+		list.add(ic2.setConfiguration(icc2.setAdministration(Administration.BIZKAIA)));
 		
 		// CERT 3
-		tbaiConfiguration.setCertificate(getCertificate3());			
-		InvoiceCommunicationConfiguration ic3 = new InvoiceCommunicationConfiguration()
+		InvoiceCommunicationConfiguration icc3 =  new InvoiceCommunicationConfiguration()
+			.setTbai(true)
+			.setTest(true);
+		icc3.setCertificate(getCertificate3());			
+					
+		InvoiceCommunication ic3 = new InvoiceCommunication()
 				.setCompany(getCompany3())
 				.setPerson(getPerson3());
 				
-		list.add(ic3.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.ALAVA)));			
-		list.add(ic3.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.GIPUZKOA)));
-		list.add(ic3.setTbaiConfiguration(tbaiConfiguration.setAdministration(Administration.BIZKAIA)));
+		list.add(ic3.setConfiguration(icc3.setAdministration(Administration.ALAVA)));			
+		list.add(ic3.setConfiguration(icc3.setAdministration(Administration.GIPUZKOA)));
+		list.add(ic3.setConfiguration(icc3.setAdministration(Administration.BIZKAIA)));
 
 		return list;
 	}
@@ -200,34 +207,32 @@ public class InvoiceCommunicationTest {
 				.setType(CertificateType.AEAT.name());
 	}
 	
-	public class InvoiceCommunicationConfiguration {
-		Company company;
-		Person person;
-		TbaiConfiguration tbaiConfiguration;
+	private class InvoiceCommunication {
+		private Company company;
+		private Person person;
+		private InvoiceCommunicationConfiguration icc;
 		
 		public Company getCompany() {
 			return company;
 		}
 		
-		public 	InvoiceCommunicationConfiguration setCompany(Company company) {
+		public 	InvoiceCommunication setCompany(Company company) {
 			this.company = company;
 			return this;
 		}
 		
-		public TbaiConfiguration getTbaiConfiguration() {
-			return tbaiConfiguration;
+		public InvoiceCommunicationConfiguration getConfiguration() {
+			return icc;
 		}
-		
-		public InvoiceCommunicationConfiguration setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
-			this.tbaiConfiguration = tbaiConfiguration;
+		public InvoiceCommunication setConfiguration(InvoiceCommunicationConfiguration icc) {
+			this.icc = icc;
 			return this;
 		}
 		
 		public Person getPerson() {
 			return person;
 		}
-		
-		public InvoiceCommunicationConfiguration setPerson(Person person) {
+		public InvoiceCommunication  setPerson(Person person) {
 			this.person = person;
 			return this;
 		}

@@ -811,7 +811,10 @@ public class Invoice implements Serializable, HasAudit {
 		if (map != null) this.communicationInfo.putAll(map);
 		return this;
 	}
-	
+	public boolean hasInvoiceInfo( InvoiceCommunicationType type ) {
+		if (this.communicationInfo == null) return false;
+		return this.communicationInfo.containsKey(type);
+	}
 	public Optional<InvoiceInfo> getInvoiceInfo( InvoiceCommunicationType type ) {
 		InvoiceInfo info = communicationInfo.get(type);
 		return Optional.ofNullable( info );

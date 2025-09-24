@@ -26,17 +26,15 @@ import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecor
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
-import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -96,7 +94,7 @@ public class SiiMain extends DockLayoutPanel {
 	private API api;
 	private FiscalModel model;
 	private FiscalModelModuleOptions<FiscalModel> options;
-	private SiiConfiguration siiConfiguration;
+	private InvoiceCommunicationConfiguration configuration;
 	InvoiceGrid invoiceGrid;
 	
 	List<Invoice> selectedInvoices;
@@ -107,11 +105,11 @@ public class SiiMain extends DockLayoutPanel {
 		this.api = api;
 		this.sii = sii;
 		
-		SII_SERVICE.getSiiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<SiiConfiguration>() {
+		SII_SERVICE.getConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<InvoiceCommunicationConfiguration>() {
 			
 			@Override
-			public void onSuccess(SiiConfiguration result) {
-				setSiiConfiguration(result);
+			public void onSuccess(InvoiceCommunicationConfiguration result) {
+				setConfiguration(result);
 				FiscalModel sii = new FiscalModel();
 				sii.setAdministration(result.getAdministration());
 				sii.setModel(FiscalModelType.SII);
@@ -125,7 +123,7 @@ public class SiiMain extends DockLayoutPanel {
 				addWest(getMenu(), 250);
 				initializeFilter();
 				
-				invoiceGrid = new InvoiceGrid(options, getFilterParams(), result.isTaxDate()) {
+				invoiceGrid = new InvoiceGrid(options, getFilterParams(), result.isRegistryTaxDate()) {
 					
 					@Override
 					public void info(Integer invoice, String reference) {
@@ -205,12 +203,12 @@ public class SiiMain extends DockLayoutPanel {
 		return api;
 	}
 	
-	public SiiConfiguration getSiiConfiguration() {
-		return siiConfiguration;
+	public InvoiceCommunicationConfiguration getConfiguration() {
+		return configuration;
 	}
 	
-	public void setSiiConfiguration(SiiConfiguration siiConfiguration) {
-		this.siiConfiguration = siiConfiguration;
+	public void setConfiguration(InvoiceCommunicationConfiguration configuration) {
+		this.configuration = configuration;
 	}
 	
 	public FiscalModel getModel() {

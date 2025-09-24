@@ -485,12 +485,32 @@ export class AonInvoice extends AonElement {
 		} else {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
-		
-		if(this.getInvoice().isTbai()) {
-			invoiceToolbar.addButtonTitle(ACTION.TICKETBAI, () => open(this.getInvoice().getTbaiUrl()));
-		}
-		if(this.getInvoice().isVerifactu()) {
-			invoiceToolbar.addButtonTitle(ACTION.VERIFACTU, () => open(this.getInvoice().getVerifactuUrl()));
+		this.buildCommunicationToolbar(invoiceToolbar);
+	}
+
+	buildCommunicationToolbar(invoiceToolbar) {
+		if (this.hasCommunicationInfo()) {
+			let ci = this.getInvoice().communicationInfo;
+			let keys = Object.keys(ci ?? {});
+			for (let i = 0; i < keys.length; i++) {
+				let key = keys[i];
+				let checkURL = ci[key].checkUrl;
+				if ( checkURL ) {
+					let action  = {
+						id: 'Communication_' + key,
+						name: key,
+						title: key,
+						icon: MATERIAL_ICONS.QR_CODE_2
+					};
+					let aib = invoiceToolbar.addButtonTitle(action, () => open(checkURL));
+					if (aib) {
+						let communicationStatus = ci[key].communicationStatus;
+						if (communicationStatus) {
+							aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -518,10 +538,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	hasCommunicationInfo() {
-		return (this.invoice.communicationInfo && Object.keys(this.invoice.communicationInfo).length > 0);
+		return (this.getInvoice()
+			&& this.getInvoice().communicationInfo 
+			&& Object.keys(this.getInvoice().communicationInfo).length > 0);
 	}
+
 	buildTabs(data) {
-		if(!this.invoice.isRawdoc()) { //} && (this.invoice.isTbai() || this.invoice.isVerifactu())) {
+		if(!this.invoice.isRawdoc()) { 
 			let tab = new AonTab();
 			tab.id = this.TABS;
 			tab.setOptions(this.options);
@@ -585,7 +608,11 @@ export class AonInvoice extends AonElement {
 		getCommunicationHistory(this.invoice.id).then(hist => {
 			let keys = Object.keys(hist ?? {});
 			if (keys.length === 0) {
-				// MOSTRAR MENSAJE DE NO COMUNICACIONES
+				table.addRow();
+				
+				let span1 = this.createElement(TAG.SPAN);
+				span1.innerHTML = MSG.NO_DATA;
+				table.addCell(span1);
 			} else {
 				for(let i = 0; i < keys.length; i++) {
 					let key = keys[i];
@@ -758,7 +785,7 @@ export class AonInvoice extends AonElement {
 			let administration = this.configuration ? this.configuration.administration : '';
 			if ("ALAVA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
 			else if ("BIZKAIA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
-			else if ("GIPUZKOA" === administration) typeIcondmonIcon.aonIcon = AON_ICONS.AON_GIPUZKOA;
+			else if ("GIPUZKOA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
 			else if ("NAVARRA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
 			else if ("COMMON_TERRITORY" === administration) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
 			else if ("CANARIAS" === administration) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
@@ -1515,7 +1542,7 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
 			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				let accs = accounts.map(acc => {return {name: acc.description, value: acc.code};});
 				category.options = JSON.stringify(accs);
 				category.value = this.invoice.getCategory();
 			});
@@ -1933,6 +1960,7 @@ export class AonInvoice extends AonElement {
 
 	buildDetailCard(parent) {
 		let card = this.getElement(this.DETAIL);
+		if(!card && !parent) return;
 		if(!card) {
 			card = new AonCard();
 			card.id = this.DETAIL;
@@ -2354,7 +2382,7 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(category, '2');
 			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				let accs = accounts.map(acc => {return {name: acc.description, value: acc.code};});
 				category.options = JSON.stringify(accs);
 				category.value = detail.category || this.invoice.getCategory();
 			});	
@@ -2799,8 +2827,12 @@ export class AonInvoice extends AonElement {
 			viewer.addEventListener(EVENT.PRINT_PDF_PAGE, (e) => { if ( !e.detail.text ) getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printPdfTextLayer(e.detail.page, t)); } );
 			fileDiv.appendChild(viewer);
 		}
-		this.buildDetailCard();
-		if(reload) this.buildFinanceCard();
+		
+		let general = this.getElement(this.GENERAL);
+		if(general) {
+			this.buildDetailCard();
+			if(reload) this.buildFinanceCard();
+		}
 	}
 
 	previousInvoice() {
@@ -2825,9 +2857,16 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	mustBeCommunicated() {
+		return this.configuration
+			&& this.configuration.communicationConfiguration
+			&& (this.configuration.communicationConfiguration.tbai
+			 || this.configuration.communicationConfiguration.verifactu
+		);
+	}
 	acceptInvoice() {
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if(this.invoice.isEmitida() && (this.configuration.tbai.active || this.configuration.verifactu.active)) {
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
@@ -3255,7 +3294,8 @@ export class AonInvoice extends AonElement {
 
 	trashPendingInvoice() {
 		let data = {id: this.getInvoice().id};
-		if(this.getInvoice().isTbai() || this.getInvoice().isVerifactu()) {
+		if (this.getInvoice().canBeAnnulled()) {
+			window.alert( "canBeAnnulled!! TRUE");
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
@@ -3286,6 +3326,7 @@ export class AonInvoice extends AonElement {
 			});			
 			d.open();
 		} else {
+			window.alert( "canBeAnnulled!! FALSE");
 			this.getApplication().startLoader();
 			deleteInvoice(data).then(() => {
 				this.getApplication().stopLoader(); 

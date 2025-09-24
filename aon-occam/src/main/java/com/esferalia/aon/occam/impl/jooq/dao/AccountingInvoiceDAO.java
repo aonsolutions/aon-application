@@ -434,7 +434,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	private static void checkCommunicationForSales( final AONContext ctx, int domainId, final InvoiceType type ) {
-		InvoiceCommunicationConfiguration c = InvoiceCommunicationConfigurationDAO.get(ctx, domainId);
+		InvoiceCommunicationConfiguration c = InvoiceCommunicationDAO.get(ctx, domainId);
 		if (type == InvoiceType.SALES) {
 			if (c.isTbai()) {
 				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");

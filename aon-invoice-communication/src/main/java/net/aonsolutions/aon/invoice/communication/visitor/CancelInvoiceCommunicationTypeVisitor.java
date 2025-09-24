@@ -33,13 +33,13 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitSII() throws InvoiceCommunicationException {
 		try {
-			SIIManager manager = SIIManager.getInstance(getSiiConfiguration());
+			SIIManager manager = SIIManager.getInstance(getConfiguration());
 			
 			AccountingReportParams params = new AccountingReportParams();
 			params.setDomain(getDomain().getId());
 			params.setInvoices(new Integer[] {getInvoice().getId()});
 			
-			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getDomain().getName(), getDomain().getId(), getUser().getLogin(), params, "")
+			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getOccam(), params, "")
 					.collect(Collectors.toCollection(LinkedList::new));
 			
 			manager.bajaFacturas(getDomain(), getUser().getLogin(), getCompany(), getInvoice(), contextList, null);
@@ -51,7 +51,7 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitTBAI() {
 		try {
-			TBAI.cancel(getTbaiConfiguration(), getCompany(), getInvoice());
+			TBAI.cancel(getConfiguration(), getCompany(), getInvoice());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -60,7 +60,7 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitLROE() {
 		try {
-			TBAI.cancel(getTbaiConfiguration(), getCompany(), getInvoice());
+			TBAI.cancel(getConfiguration(), getCompany(), getInvoice());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		

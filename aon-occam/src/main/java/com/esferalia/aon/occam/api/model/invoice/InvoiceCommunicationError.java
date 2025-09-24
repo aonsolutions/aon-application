@@ -51,6 +51,7 @@ public enum InvoiceCommunicationError {
 	AON_9005("9005", "No se ha encontrado un valor para ClaveTipoFacturaType v\u00E1lido."),
 	AON_9006("9006", "Se han encontrado m\u00E1s de un valor para ClaveTipoFacturaType. Resolver caso."),
 	AON_9007("9007", "Si se acepta una factura, en la lista de faturas solo puede haber un elemento"),
+	AON_9008("9008", "No se ha encontrado información previa del envio."),
 	
 	// ---------------------------------------------- [VERIFACTU]
 

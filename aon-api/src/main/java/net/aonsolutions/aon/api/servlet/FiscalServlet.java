@@ -71,7 +71,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -95,6 +94,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -316,9 +316,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			invoices.forEach(invoice -> {
 				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 				
-				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
-				if(tbai.isActive()) {	
-					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+				if(icc.isTbai()) {	
+					String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 					if(!AonStringUtils.isBlank(tbaiUrl)) {
 						invoiceJson.put("tbai", true);
 						invoiceJson.put("tbaiUrl", tbaiUrl);
@@ -997,9 +997,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 		invoices.forEach(invoice -> {
 			JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 			
-			TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
-			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+			if(icc.isTbai()) {	
+				String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 				if(!AonStringUtils.isBlank(tbaiUrl)) {
 					invoiceJson.put("tbai", true);
 					invoiceJson.put("tbaiUrl", tbaiUrl);
@@ -1200,9 +1200,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			invoices.forEach(invoice -> {
 				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 				
-				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
-				if(tbai.isActive()) {	
-					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+				if(icc.isTbai()) {	
+					String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 					if(!AonStringUtils.isBlank(tbaiUrl)) {
 						invoiceJson.put("tbai", true);
 						invoiceJson.put("tbaiUrl", tbaiUrl);

@@ -26,8 +26,10 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
@@ -43,6 +45,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.TBAIInformation;
+import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 import net.aonsolutions.aon.verifactu.VerifactuContext;
 
@@ -68,8 +72,8 @@ public class InvoiceCommunicator {
 					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ /*Nothing*/ }
 					@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ /*Nothing*/ }
 					@Override public void visitSII() throws InvoiceCommunicationException 		{ /*Nothing*/ }
-					@Override public void visitTBAI() throws InvoiceCommunicationException 		{ /*Nothing*/ }
 					@Override public void visitLROE() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitTBAI() throws InvoiceCommunicationException 		{ /*Nothing*/ }
 					
 					@Override
 					public void visitVERIFACTU() throws InvoiceCommunicationException  {
@@ -103,7 +107,13 @@ public class InvoiceCommunicator {
 					}
 				);
 				v.add(t);
-			});
+			})
+		;
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, domainId);
+		if (config.isTbai() && !config.isBizkaia()) {	
+			TbaiData.getInstance(config).get(ctx, domainId, invoiceId)
+				.ifPresent(tbaiInfo -> addTBAI(ctx, map, tbaiInfo, domainId, invoiceId));
+		}  
 		return map;
 	}
 	
@@ -277,7 +287,12 @@ public class InvoiceCommunicator {
 
 					@Override
 					public void visitVERIFACTU() throws InvoiceCommunicationException  {
-						VERIFACTU.cancel(ctx,cc);
+						InvoiceInfo info = invoice.getVerifactuInfo()
+							.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), InvoiceCommunicationType.VERIFACTU))
+							.orElse(null);
+						if (info != null && info.isPartialAccepted()) {
+							VERIFACTU.cancel(ctx,cc);
+						} 
 					}
 				});
 			}
@@ -411,5 +426,35 @@ public class InvoiceCommunicator {
 	}
 
 
+	private static void addTBAI(AONContext ctx, Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> h, TBAIInformation tbaiInfo, Integer domainId, Integer invoiceId) {
+		if ( tbaiInfo == null ) return;
+		AonCollectionUtils.stream(tbaiInfo.getRequests())
+			.forEach(r -> {
+				InvoiceCommunicationStatus status = r.getResponse().isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG;
+				InvoiceCommunicationHistoryMapValue lroe = h.computeIfAbsent(InvoiceCommunicationType.TBAI, 
+					k -> {
+						InvoiceInfo info = new InvoiceInfo()
+							.setDomain(domainId)	
+							.setInvoice(invoiceId)
+							.setType(k)
+							.setStatus(status)
+							.setCreationUser(r.getDataResponse().getCreationUser())
+							.setCreationDate(r.getDataResponse().getResponseDate());
+						InvoiceInfoDAO.InvoiceInfoURLFiller.build(ctx, info);
+						return new InvoiceCommunicationHistoryMapValue().setInfo( info);
+					}
+				);
+				lroe.add(new InvoiceCommunicationHistory()
+					.setInvoiceId(invoiceId)
+					.setDate(r.getDataResponse().getResponseDate())
+					.setCreationUser(r.getDataResponse().getCreationUser())
+					.setType( InvoiceCommunicationType.TBAI )
+					.setOperation( InvoiceCommunicationOperation.REGISTER)
+					.setStatus(status)
+					.setRequestUrl(r.getRequestUrl())
+					.setResponseUrl(r.getResponseUrl())
+				);
+		});		
+	}
 }
 

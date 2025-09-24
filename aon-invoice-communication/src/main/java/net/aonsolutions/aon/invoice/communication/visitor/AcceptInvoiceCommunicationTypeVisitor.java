@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.sii.SIIManager;
@@ -51,12 +51,12 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitSII() throws InvoiceCommunicationException {
 		try {
-			SIIManager manager = SIIManager.getInstance(getSiiConfiguration());
+			SIIManager manager = SIIManager.getInstance(getConfiguration());
 			
 			AccountingReportParams params = new AccountingReportParams();
 			params.setDomain(getOccam().getDomain());
 			params.setInvoices(AonCollectionUtils.stream(getInvoices()).map(Invoice::getId).toArray(Integer[]::new));
-			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getOccam().getDomainName(), getOccam().getDomain(), getOccam().getUser(), params, "")
+			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getOccam(), params, "")
 					.collect(Collectors.toCollection(LinkedList::new));		
 			manager.suministroFacturas(getDomain(), getOccam().getUser(), getCompany(), getInvoice(), contextList, null);
 		} catch (Exception e) {
@@ -72,7 +72,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	public void visitTBAI() throws InvoiceCommunicationException {
 		if(InvoiceType.SALES.equals(getInvoice().getType())) {
 			try {
-				TBAI.accept(getTbaiConfiguration(), getCompany(), getInvoice(), 
+				TBAI.accept(getConfiguration(), getCompany(), getInvoice(), 
 						getBlockchain(getCertificateId()));
 				
 			} catch (Exception e) {
@@ -87,16 +87,16 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		else {
 			Company company = getCompany();
 			InvoiceCommunication ic = new InvoiceCommunication()
-					.setDomain(company.getDomain())
-					.setCompany(company)
-					.setInvoice(getInvoice())
-					.setOperation(InvoiceCommunicationOperation.REGISTER)
-					.setTbaiConfiguration(getTbaiConfiguration())
-					.setType(InvoiceCommunicationType.LROE)
-					.setPerson(isPersonaFisica(company.getDocument()) 
-							? getPerson(company.getId()) : null)
-					.setModel(isPersonaFisica(company.getDocument()) 
-							? FiscalModelType.M140 : FiscalModelType.M240);
+				.setDomain(company.getDomain())
+				.setCompany(company)
+				.setInvoice(getInvoice())
+				.setOperation(InvoiceCommunicationOperation.REGISTER)
+				.setConfiguration(getConfiguration())
+				.setType(InvoiceCommunicationType.LROE)
+				.setPerson(isPersonaFisica(company.getDocument()) 
+						? getPerson(company.getId()) : null)
+				.setModel(isPersonaFisica(company.getDocument()) 
+						? FiscalModelType.M140 : FiscalModelType.M240);
 			
 			LroeMain lroe = new LroeMain();
 			LROEResponse resp = lroe.alta(ic);
@@ -124,8 +124,8 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitVERIFACTU() {
 		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
-			InvoiceCommunicationConfiguration config = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId());
-			config.setCertificate(getVerifactuConfiguration().getCertificate());
+			InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx,ctx.getDomainId());
+			config.setCertificate(getConfiguration().getCertificate());
 			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext( getDomain(), getUser(), null, getInvoices() );
 			cc.setConfig(config);
 			Company company = CompanyDAO.getByDomain(ctx, getOccam().getDomain());

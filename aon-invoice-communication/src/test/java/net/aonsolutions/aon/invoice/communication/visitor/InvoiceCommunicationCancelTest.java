@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -294,6 +295,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(cc.getDataResponse());
 		Integer dataResponseId = cc.getDataResponse().getId();
 		assertNotNull(dataResponseId);
+		System.out.println( "dataResponseId ..: " + dataResponseId); 
 		assertTrue(dataResponseId > 0);
 		
 		Optional<DataResponse> optDataResponse = DataResponseDAO.get(ctx, dataResponseId );
@@ -309,16 +311,17 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
+			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true)
+		.findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(response.getData());
-//		try {
-//			System.out.println( "** Verifactu Response **" );
-//			AonIOUtils.write(response.getData(), System.out);
-//			System.out.println( );
-//		} catch (IOException e) {
-//			System.out.println( "WRITE ERROR!" );
-//		}
+		try {
+			System.out.println( "** Verifactu Response **" );
+			AonIOUtils.write(response.getData(), System.out);
+			System.out.println( );
+		} catch (IOException e) {
+			System.out.println( "WRITE ERROR!" );
+		}
 		assertCanceledVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}

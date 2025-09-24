@@ -135,7 +135,7 @@ public class VERIFACTU {
 		AonCollectionUtils.stream(respuesta.getRespuestaLinea())
 			.forEach(r -> doInAON( ctx, vc, invoiceBatch, r) )
 		;
-		return  vc.setDataResponse(dataResponse);
+		return vc.setDataResponse(dataResponse);
 	}
 	
 	private static void doInAON(AONContext ctx, VerifactuContext vc, InvoiceBatch invoiceBatch, RespuestaExpedidaType r) {
@@ -242,7 +242,8 @@ public class VERIFACTU {
 			.setDomain(dataRequest.getDomain())
 			.setDataRequest(dataRequest.getId())
 			.setCode("")
-			.setSource(DataResponseSource.VERIFACTU);
+			.setSource(DataResponseSource.VERIFACTU)
+			;
 		DataResponseDAO.insertDataResponse(ctx, dataResponse);
 		
 		Attach attach = new Attach()

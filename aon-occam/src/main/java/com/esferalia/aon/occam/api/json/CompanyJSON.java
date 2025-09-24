@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 
 public class CompanyJSON {
 	
@@ -48,4 +49,9 @@ public class CompanyJSON {
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, company.isVatAccrualPayment())
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
+	
+	public static JSONObject toJSON(CompanyFull cf) {
+		return RegistryJSON.toJSON(cf);
+	}
+	
 }

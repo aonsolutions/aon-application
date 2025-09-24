@@ -314,7 +314,9 @@ export class AonToolbar extends AonElement {
 			span.appendChild(aib);
 			let titleSection = this.getElement(this.TITLE_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
+			return aib;
 		}
+		return null;
 	}
 
 	showButton(id, show = false) {

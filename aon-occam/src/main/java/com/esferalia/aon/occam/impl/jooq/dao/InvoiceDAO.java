@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
@@ -50,7 +50,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -65,8 +64,8 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceNotice;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
-import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -82,8 +81,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
@@ -539,9 +536,8 @@ public class InvoiceDAO {
 	}
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
-		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		VerifactuConfiguration verifactuConfiguration = VerifactuConfigurationDAO.get(ctx);
-		if((verifactuConfiguration.isActive() || ( tbaiConfiguration.isActive() && !tbaiConfiguration.isSkipTracking() ) ) 
+		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
+		if((comConfig.isVerifactu() || ( comConfig.isTbai() && !comConfig.isSkipTracking() ) ) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
@@ -1006,7 +1002,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS TICKET BAI.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationConfigurationDAO.get(ctx, ctx.getDomainId());
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
 			if((icc.isVerifactu() || icc.isTbai())) {
 				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}

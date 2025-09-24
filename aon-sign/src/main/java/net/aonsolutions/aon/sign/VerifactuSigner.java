@@ -2,7 +2,7 @@ package net.aonsolutions.aon.sign;
 
 import java.util.Properties;
 
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
+import com.esferalia.aon.occam.api.model.Certificate;
 
 import es.gob.afirma.core.signers.AOSignConstants;
 import es.gob.afirma.core.signers.AdESPolicy;
@@ -25,8 +25,8 @@ public class VerifactuSigner extends XadesSigner {
 		return new VerifactuSigner();
 	}
 	
-	public byte[] sign(VerifactuConfiguration configuration, byte[] data) throws AonSignerException {
-		return sign(configuration.getCertificate(), data, getTbaiExtraParams());
+	public byte[] sign(Certificate certificate, byte[] data) throws AonSignerException {
+		return sign(certificate, data, getTbaiExtraParams());
 	}
 	
 	public Properties getTbaiExtraParams() {

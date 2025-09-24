@@ -31,15 +31,13 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -53,7 +51,6 @@ public abstract class AbstractVerifactuTest {
 	protected static Integer DOMAIN_ID;
 	private InvoiceCommunicationConfiguration communicationConfiguration;
 	private InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
-	private VerifactuConfiguration verifactuConfiguration;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "verifactutest.aonsolutions.test");	
 	protected static String USER 		= System.getProperty("domainUser", "admin");
@@ -186,23 +183,9 @@ public abstract class AbstractVerifactuTest {
 		;
 	}
 
-	
-	protected VerifactuConfiguration verifactuConfig() {
-		if (verifactuConfiguration == null) {
-			verifactuConfiguration = VerifactuConfigurationDAO.get(ctx); 
-		}
-		assertNotNull(verifactuConfiguration,"VerifactuConfiguration NULL" );
-		assertTrue(verifactuConfiguration.isActive(),"VerifactuConfiguration NO ACTIVO" );
-		assertTrue(verifactuConfiguration.isTest() ,"VerifactuConfiguration NO ENTORNO TEST" );
-		Certificate c = AonSecret.getSigCert();
-		assertNotNull(c,"Verifactu Certificate NULL");
-		verifactuConfiguration.setCertificate(AonSecret.getSigCert()); 
-		return verifactuConfiguration;
-	}
-
 	protected InvoiceCommunicationConfiguration config() {
 		if (communicationConfiguration == null) {
-			communicationConfiguration = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId()); 
+			communicationConfiguration = InvoiceCommunicationDAO.get(ctx,ctx.getDomainId()); 
 		}
 		assertNotNull(communicationConfiguration,"communicationConfiguration NULL" );
 		assertTrue(communicationConfiguration.isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
@@ -212,7 +195,7 @@ public abstract class AbstractVerifactuTest {
 
 	protected InvoiceCommunicationConfiguration configWithCertificate() {
 		if (communicationConfigurationWithCertificate == null) {
-			communicationConfigurationWithCertificate = InvoiceCommunicationConfigurationDAO.get(ctx,ctx.getDomainId()); 
+			communicationConfigurationWithCertificate = InvoiceCommunicationDAO.get(ctx,ctx.getDomainId()); 
 		}
 		assertNotNull(communicationConfigurationWithCertificate,"communicationConfigurationWithCertificate NULL" );
 		assertTrue(communicationConfigurationWithCertificate.isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");

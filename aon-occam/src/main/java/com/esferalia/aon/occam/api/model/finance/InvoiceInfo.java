@@ -66,6 +66,7 @@ public class InvoiceInfo implements Serializable {
 	public boolean isAcceptedWithErrors() 	{ return getStatus() != null && getStatus().isAcceptedWithErrors();}
 	public boolean isWrong() 				{ return getStatus() != null && getStatus().isWrong();}
 	public boolean isAnnulled() 			{ return getStatus() != null && getStatus().isAnnulled();}
+	public boolean isPartialAccepted() 		{ return isAccepted() || isAcceptedWithErrors();}
 	
 	public String getCheckUrl() {
 		return checkUrl;

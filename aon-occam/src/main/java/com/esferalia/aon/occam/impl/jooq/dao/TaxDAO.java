@@ -5,12 +5,14 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -57,6 +59,14 @@ public class TaxDAO {
 		
 	}
 	
+	public static SelectOnConditionStep<Record> select(AONContext ctx){	
+		return ctx.getDslContext()
+				.select()
+				.from(TAX)
+				.leftOuterJoin(SALES_ACCOUNT).on(SALES_ACCOUNT.ID.eq(TAX.SALES_ACCOUNT))
+				.leftOuterJoin(PURCHASE_ACCOUNT).on(PURCHASE_ACCOUNT.ID.eq(TAX.PURCHASE_ACCOUNT));
+	}
+	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaxFilter filter){	
 		return ctx.getDslContext()
 				.select()
@@ -65,7 +75,7 @@ public class TaxDAO {
 				.leftOuterJoin(PURCHASE_ACCOUNT).on(PURCHASE_ACCOUNT.ID.eq(TAX.PURCHASE_ACCOUNT))
 				.where(TAX_PROPERTIES.getConditions(filter));
 	}
-	
+
 	public static Stream<Tax> getStream(AONContext ctx, TaxFilter filter){
 		return select(ctx, filter)
 			.fetch()
@@ -73,6 +83,24 @@ public class TaxDAO {
 			.map(new FullTaxFiller());
 	}
 
+	public static Stream<Tax> getTaxes(AONContext ctx, Integer domainId){
+		return select(ctx)
+			.where(TAX.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx, domainId)))
+			.fetch()
+			.stream()
+			.map(new FullTaxFiller());
+	}
+
+	public static Optional<Tax> getTax(AONContext ctx, Integer domainId, Integer taxId){
+		return select(ctx)
+			.where(TAX.ID.eq(taxId))
+			.and(TAX.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx, domainId)))
+			.fetch()
+			.stream()
+			.map(new FullTaxFiller())
+			.findFirst();
+	}
+	
 	public static Tax getTax(AONContext ctx, TaxFilter filter){
 		return select(ctx, filter)
 			.limit(1).fetch().stream().map(new FullTaxFiller())

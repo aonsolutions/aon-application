@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -205,6 +206,11 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(ctx, icc);
+			System.out.println("*****");
+			AonIOUtils.write(vc.getResponse().getBytes(), System.out );
+			System.out.println();
+			System.out.println("*****");
+			System.out.println( vc.getResponse().getBytes() );
 			vc.invoiceStream()			
 				.forEach( i -> {
 					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
