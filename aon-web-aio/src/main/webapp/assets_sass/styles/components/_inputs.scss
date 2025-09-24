@@ -78,18 +78,18 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
           width  : $button-height;
           height : $button-width;
         }
-		.aon-spinner-input-loading{
-			width : v.$px-16;
-			height : v.$px-16;
-			border : v.$px-4 solid #ccc;
-			border-top : v.$px-4 solid #000;
-			border-radius : v.$pct-100;
-			animation : loaderSpinInput 1s linear infinite;
-		}
-		@keyframes loaderSpinInput {
-			0% { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
-		}
+        .aon-spinner-input-loading{
+          width : v.$px-16;
+          height : v.$px-16;
+          border : v.$px-4 solid #ccc;
+          border-top : v.$px-4 solid #000;
+          border-radius : v.$pct-100;
+          animation : loaderSpinInput 1s linear infinite;
+        }
+        @keyframes loaderSpinInput {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
       }
     }
   }
@@ -98,7 +98,7 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
     padding-left : $padding-left;
   }
   // Este input tiene un icono, por lo que tiene un padding distinto
-  &[type="password"]{
+  &[data-icon="true"]{
     .aonInputBox .aonInputBoxLabel input{
       padding-right : $icon-padding-right;
     }

@@ -324,6 +324,7 @@ export class AonInput extends AonElement {
   }
 
   addIconWithRemove(icon, color, removeFn) {
+    this.setAttribute("data-icon", "true");
     let div = this.getElement(this.DIV);
     let iconLabel = this.getElement(this.ICON);
     if (!iconLabel) {
@@ -357,6 +358,7 @@ export class AonInput extends AonElement {
   }
 
   addIcon(icon, color) {
+    this.setAttribute("data-icon", "true");
     let div = this.getElement(this.DIV);
     let iconLabel = this.getElement(this.ICON);
     if (!iconLabel) {
@@ -394,6 +396,7 @@ export class AonInput extends AonElement {
   }
 
   addAonIcon(aonIcon){
+    this.setAttribute("data-icon", "true");
     let div = this.getElement(this.DIV);
     let iconLabel = this.getElement(this.ICON);
     if (!iconLabel) {

@@ -249,6 +249,7 @@ export class AonNewTextarea extends AonElement {
 
 
     addIcon(icon, color, fn) {
+        this.setAttribute("data-icon", "true");
         let div = this.getElement(this.BOX);
         let iconLabel = this.getElement(this.ICON);
         if (!iconLabel) {

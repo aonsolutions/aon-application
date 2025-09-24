@@ -222,6 +222,7 @@ export class AonNewInput extends AonElement {
 	}
 
 	addIcon(icon, color, fn) {
+		this.setAttribute("data-icon", "true");
 		let div = this.getElement(this.BOX);
 		let iconLabel = this.getElement(this.ICON);
 		if (!iconLabel) {
@@ -283,6 +284,7 @@ export class AonNewInput extends AonElement {
     }
 
 	addIconWithRemove(icon, color, removeFn) {
+		this.setAttribute("data-icon", "true");
 		let div = this.getElement(this.BOX);
 		let iconLabel = this.getElement(this.ICON);
 		if (!iconLabel) {
@@ -312,6 +314,7 @@ export class AonNewInput extends AonElement {
 	}
 
 	addEndWidget(widget) {
+		this.setAttribute("data-icon", "true");
 		let div = this.getElement(this.BOX);
 		let iconLabel = this.getElement(this.ICON);
 		if (!iconLabel) {
