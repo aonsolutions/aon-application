@@ -173,7 +173,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		return user;
 	}
 	
-	protected void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
+	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
 		e.printStackTrace();
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
@@ -246,7 +246,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		responseFile(resp, file.getName(), is, mimetype);
 	}
 	
-	protected void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(file);
 		responseFile(resp, filename, is, mimetype);
 	}
