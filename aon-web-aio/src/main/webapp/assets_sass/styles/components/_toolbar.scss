@@ -6,6 +6,9 @@ aon-toolbar{
   padding-bottom : v.$padding;
   &[type="secondary"]{
     padding-bottom : v.$px-0;
+    header{
+      padding: v.$px-0;
+    }
   }
   header{
     display        : flex;

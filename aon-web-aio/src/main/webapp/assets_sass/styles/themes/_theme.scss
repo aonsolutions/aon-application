@@ -197,7 +197,7 @@
     }
     // cabecera arriba del cuerpo
     aon-toolbar{
-      background-color : $color-100;
+      background-color : transparent;
       header{
         background-color: $color-box;
       }
@@ -228,7 +228,13 @@
     }
   // 
   // Componentes
-  // 
+  //
+    // Color de iconos de base
+    aon-icon {
+      &::after {
+        background-color: $color-text;
+      }
+    }
     // separador
     .aonSeparator{
       border: none;
