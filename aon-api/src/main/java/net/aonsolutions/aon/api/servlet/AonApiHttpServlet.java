@@ -125,12 +125,12 @@ public class AonApiHttpServlet extends HttpServlet{
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
 				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, domainAux) 
 				: req.getHeader(IConstants.DOMAIN_NAME);
-		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
-				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
+		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && !IConstants.UNDEFINED.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
+				? AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_ID)) || IConstants.UNDEFINED.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) ? null : AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
 				: JsonUtils.getInt(api.getData(), IConstants.DOMAIN_ID);
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		try {
-			domain = AonStringUtils.isBlank(domainName)
+			domain = AonStringUtils.isBlank(domainName) || null == domainId
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		} catch (Exception e) {

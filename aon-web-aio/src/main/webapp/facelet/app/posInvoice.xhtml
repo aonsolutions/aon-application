@@ -5,22 +5,17 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/app/appForm.xhtml">
 	
-	<aon:form id="appForm" > 
+	<ui:define name="formContent"> 
 		<aon:commandButton 
 			id="appButton" 
-			style="display: none; " 
-			action="itemTagPrint_list"
-			actionListener="#{itemTagPrint.onSearch}"
+			style="display: none;" 
+			action="posInvoice_form"
+			actionListener="#{posInvoice.onLoad}"
 		>
 		</aon:commandButton>
-	</aon:form>
-	
-	<script type="text/javascript">
-	//<![CDATA[
-		#{rich:element('appButton')}.click();	
-	//]]>
-	</script>
-				
+	</ui:define>
+
 </ui:composition>

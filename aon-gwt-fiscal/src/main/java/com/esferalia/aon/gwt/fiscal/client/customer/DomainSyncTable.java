@@ -60,7 +60,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private static enum COLS {
 
-		SCH("Esquema", "15rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		SCH("Esquema", "13em", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DOC(AON.MSG.description(), "20rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DES(AON.MSG.name(), "-moz-available",
 				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),;
@@ -216,6 +216,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private void paintRow(DomainCompany domainCompany) {
 		HTMLPanel row = tab.createRow();
+		row.setTitle("Vincular dominio");
 		row.addDomHandler(e -> onDomainClick(domainCompany), ClickEvent.getType());
 
 		if (getCurrentIsSig()) {

@@ -105,6 +105,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -1565,16 +1566,23 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		if(isSig) {
 			List<RegistryAddInfo> raddInfoList = AON.getRegistryAddInfoStream(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME"))).collect(Collectors.toList());
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
-					new RegistryAddInfo()
-						.setDomain(domainId)
-						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_NAME")
-						.setValue(domainCompany.getDomain().getName())
-						.setDate(new Date())
-				);
+			Optional<RegistryAddInfo> raddInfoSchema = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA")).and(f.getValueProperty().eq(domainCompany.getSchema())));
+			Optional<RegistryAddInfo> raddInfoName = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME")).and(f.getValueProperty().eq(domainCompany.getDomain().getName())));
+			Optional<RegistryAddInfo> raddInfoId = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")).and(f.getValueProperty().eq(domainCompany.getDomain().getId().toString())));
+			Optional<RegistryAddInfo> raddInfoType = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_TYPE")).and(f.getValueProperty().eq(domainCompany.getDomain().getDomainType().getName())));
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			if(raddInfoName.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
+						new RegistryAddInfo()
+							.setDomain(domainId)
+							.setRegistry(customerId)
+							.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_NAME")
+							.setValue(domainCompany.getDomain().getName())
+							.setDate(new Date())
+					);
+			
+			if(raddInfoId.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
@@ -1583,7 +1591,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 						.setDate(new Date())
 				);
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			if(raddInfoSchema.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
@@ -1592,7 +1601,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 						.setDate(new Date())
 				);
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			if(raddInfoType.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
@@ -1616,6 +1626,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					);
 		}
 		
+	}
+	@Override
+	public List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException {
+		return AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
 	}
 
 }

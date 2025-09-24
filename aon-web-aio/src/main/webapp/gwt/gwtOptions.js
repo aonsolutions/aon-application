@@ -647,6 +647,11 @@ export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
   entryPoint: 'CustomerLinkedActivity'
 };
 
+export const SYNC_SIG_CUSTOMER_DOMAIN = {
+  module: GWT_FISCAL,
+  entryPoint: 'SyncSigCustomerDomainModule'
+};
+
 export const CUSTOMER_SYNC_DOMAIN_MODULE = {
   module: GWT_FISCAL,
   entryPoint: 'CustomerSyncDomainModule'

@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonCommerceMenu extends AonSuiteMenu {
 
@@ -49,46 +50,46 @@ export class AonCommerceMenu extends AonSuiteMenu {
 			options: [ {
 				description:"Apertura de Caja",
 				title:"Apertura de Caja",
-				action: () => alert("Apertura de Caja")
+				action: () => this.rootPanel(new JSF.AonJsfPosOpening )
 			},{
 				description: "Arqueo de Caja",
 				title: "Arqueo de Caja",
-				action: () => alert("Arqueo de Caja")
+				action: () => this.rootPanel(new JSF.AonJsfPosClosing )
 			},{
 				description: "Ventas TPV",
 				title: "Ventas TPV",
-				action: () => alert("Ventas TPV")
+				action: () => this.rootPanel(new JSF.AonJsfPosInvoice )
 			},{
 				description: "Remesar Cobros de Cajas",
 				title: "Remesar Cobros de Cajas",
-				action: () => alert("Remesar Cobros de Cajas")
+				action: () => this.rootPanel(new JSF.AonJsfPosFinance )
 			},{
 				description: "Productos",
 				title: "Productos",
-				action: () => alert("Productos")
+				action: () => this.rootPanel(new JSF.AonJsfProduct )
 			}]
 		},{
 			title: 'Auxiliares',
 			options: [{
 				description: "Etiquetas de Productos",
 				title: "Etiquetas de Productos",
-				action: () => alert("Etiquetas de Productos")
+				action: () => this.rootPanel(new JSF.AonJsfProductTag )
 			},{
 				description: "Categorías",
 				title: "Categorías",
-				action: () => alert("Categorías")
+				action: () => this.rootPanel(new JSF.AonJsfProductCategory )
 			},{
 				description: "Definición de Caja",
 				title: "Definición de Caja",
-				action: () => alert("Definición de Caja")
+				action: () => this.rootPanel(new JSF.AonJsfPos )
 			},{
 				description: "Turnos de Caja",
 				title: "Turnos de Caja",
-				action: () => alert("Turnos de Caja")
+				action: () => this.rootPanel(new JSF.AonJsfPosShift )
 			},{
 				description: "Impresión de etiquetas de productos",
 				title: "Impresión de etiquetas de productos",
-				action: () => alert("Impresión de etiquetas de productos")
+				action: () => this.rootPanel(new JSF.AonJsfItemTagPrint )
 			}]
 		}];
 	}
