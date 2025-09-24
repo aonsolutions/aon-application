@@ -67,9 +67,9 @@ export class AonPlans extends AonElement {
     const tittleDiv = this.createElement(TAG.DIV);
     tittleDiv.className = "title-plans";
 
-    const titleH1 = this.createElement(TAG.H2);
-    titleH1.innerHTML = "Mejora tu plan. Impulsa tu negocio.";
-    tittleDiv.appendChild(titleH1);
+    const titleH2 = this.createElement(TAG.H2);
+    titleH2.innerHTML = "Mejora tu plan. Impulsa tu negocio.";
+    tittleDiv.appendChild(titleH2);
 
     //Subtitulo
     const subtitleP = this.createElement(TAG.DIV);

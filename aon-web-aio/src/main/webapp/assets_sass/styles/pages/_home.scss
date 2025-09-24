@@ -50,4 +50,35 @@ aon-home{
       }
     }
   }
+  // Solo contiene card - Creado desde aon-suite-menu
+  .suiteMenuContent{
+    .content-card-title{
+      h2{
+        margin-top: 0;
+      }
+    }
+    .content-card-body{
+      display         : flex;
+      gap             : v.$gap;
+      flex-wrap       : wrap;
+      justify-content : center;
+      width           : v.$pct-100;
+
+      aon-card{
+        width     : calc(33.33% - v.$gap); 
+        min-width : v.$px-464; 
+        box-sizing: border-box;
+        .aonCardContent{
+          padding: v.$padding 0;
+          &>div{
+            display : grid;
+            .suiteMenuCardDataSpan{
+              padding : v.$padding-min v.$padding v.$padding-min v.$padding;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
 }

@@ -6,7 +6,6 @@ import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, 
 import { AonCard } from '../components/aon-card.js';
 import * as LS from '../services/localStorageService.js';
 export class AonSuiteMenu extends AonElement {
-
 	SIDE_MENU;
     CONTENT;
     TITLE;
@@ -52,92 +51,92 @@ export class AonSuiteMenu extends AonElement {
         this.appendChild(divFlex);
 		// this.getApplication().setContent(divFlex);
 
-        let sideMenu = this.createDiv();
-        sideMenu.id = this.SIDE_MENU;
-        sideMenu.className = "aonSuiteMenuSideMenu";
-        divFlex.appendChild(sideMenu);
+        // let sideMenu = this.createDiv();
+        // sideMenu.id = this.SIDE_MENU;
+        // sideMenu.className = "aonSuiteMenuSideMenu";
+        // divFlex.appendChild(sideMenu);
 
-        let divNewButton = this.createDiv();
-        divNewButton.style.display = "flex";
-        sideMenu.appendChild(divNewButton);
+        // let divNewButton = this.createDiv();
+        // divNewButton.style.display = "flex";
+        // sideMenu.appendChild(divNewButton);
 
-        let newButton = new AonButton();
-        newButton.id = this.NEW_BUTTON;
-        newButton.icon = "add";
-        newButton.title = this.new;
-        newButton.className = "suiteMenuNewButton";
-        newButton.color = "transparent";
-        divNewButton.appendChild(newButton);  
-        let newBtText = this.getElement(newButton.TEXT);
-        let newBtIcon = this.getElement(newButton.ICON);
-        let newBtBt = this.getElement(newButton.BUTTON);
-        newBtText.classList.add("suiteMenuNewButtonText");
-        newBtIcon.classList.add("suiteMenuNewButtonIcon");
-        newBtText.innerHTML = MSG.ADD_NEW;
-        newBtBt.classList.add("suiteMenuNewButtonButton");
-        this.setButtonHover(newButton);
+        // let newButton = new AonButton();
+        // newButton.id = this.NEW_BUTTON;
+        // newButton.icon = "add";
+        // newButton.title = this.new;
+        // newButton.className = "suiteMenuNewButton";
+        // newButton.color = "transparent";
+        // divNewButton.appendChild(newButton);  
+        // let newBtText = this.getElement(newButton.TEXT);
+        // let newBtIcon = this.getElement(newButton.ICON);
+        // let newBtBt = this.getElement(newButton.BUTTON);
+        // newBtText.classList.add("suiteMenuNewButtonText");
+        // newBtIcon.classList.add("suiteMenuNewButtonIcon");
+        // newBtText.innerHTML = MSG.ADD_NEW;
+        // newBtBt.classList.add("suiteMenuNewButtonButton");
+        // this.setButtonHover(newButton);
 
-        let dropdownButton = new AonButton();
-        dropdownButton.id = this.DROPDOWN_BUTTON;
-        dropdownButton.icon = "keyboard_arrow_down";
-        dropdownButton.title = "Ver opciones";
-        dropdownButton.color = "transparent";
-        dropdownButton.classList.add("aonSuiteMenuDropdownButton");
-        divNewButton.appendChild(dropdownButton);
-        let dropBtIcon = this.getElement(dropdownButton.ICON);
-        let dropBtBT = this.getElement(dropdownButton.BUTTON);
-        let dropBtText = this.getElement(dropdownButton.TEXT);
-        dropBtIcon.classList.add("suiteMenuDropdownButtonIcon");
-        dropBtText.innerHTML = "";
-        dropBtBT.classList.add("suiteMenuDropdownButtonButton");
-        this.setButtonHover(dropdownButton);
+        // let dropdownButton = new AonButton();
+        // dropdownButton.id = this.DROPDOWN_BUTTON;
+        // dropdownButton.icon = "keyboard_arrow_down";
+        // dropdownButton.title = "Ver opciones";
+        // dropdownButton.color = "transparent";
+        // dropdownButton.classList.add("aonSuiteMenuDropdownButton");
+        // divNewButton.appendChild(dropdownButton);
+        // let dropBtIcon = this.getElement(dropdownButton.ICON);
+        // let dropBtBT = this.getElement(dropdownButton.BUTTON);
+        // let dropBtText = this.getElement(dropdownButton.TEXT);
+        // dropBtIcon.classList.add("suiteMenuDropdownButtonIcon");
+        // dropBtText.innerHTML = "";
+        // dropBtBT.classList.add("suiteMenuDropdownButtonButton");
+        // this.setButtonHover(dropdownButton);
 
-        let options = this.createElement(TAG.DIV);
-        options.id = this.OPTIONS;
-        options.className = 'aonInputListo';
-        sideMenu.appendChild(options);
-        dropdownButton.addEventListener(EVENT.CLICK, () => {
-           this.buildOptions(this.selectOptions);
-        });
+        // let options = this.createElement(TAG.DIV);
+        // options.id = this.OPTIONS;
+        // options.className = 'aonInputListo';
+        // sideMenu.appendChild(options);
+        // dropdownButton.addEventListener(EVENT.CLICK, () => {
+        //    this.buildOptions(this.selectOptions);
+        // });
 
-        let sideNavTitle = this.createDiv();
-        sideNavTitle.className = "aonSidenavTitle suiteMenuSidenavTitle";
-        sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
-        sideMenu.appendChild(sideNavTitle);
+        // let sideNavTitle = this.createDiv();
+        // sideNavTitle.className = "aonSidenavTitle suiteMenuSidenavTitle";
+        // sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
+        // sideMenu.appendChild(sideNavTitle);
 
-        sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1));
-        sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED));
-        sideMenu.appendChild(this.buildSideNavRow(this.last));
+        // sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1));
+        // sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED));
+        // sideMenu.appendChild(this.buildSideNavRow(this.last));
 
-        if(this.cardData)
-            this.buildSideNavCard(sideMenu,"1");
+        // if(this.cardData)
+            // this.buildSideNavCard(sideMenu,"1");
 
-        let utilidades = this.createDiv();
-        utilidades.className = "aonSidenavTitle suiteMenuSide";
-        utilidades.innerHTML = MSG.UTILITIES;
+        // let utilidades = this.createDiv();
+        // utilidades.className = "aonSidenavTitle suiteMenuSide";
+        // utilidades.innerHTML = MSG.UTILITIES;
         
             
-        sideMenu.appendChild(utilidades);
+        // sideMenu.appendChild(utilidades);
 
-        sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, ));
+        // sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, ));
 
-        if(!this.uploadButton){
-            let uploadButton = new AonButton();
-            uploadButton.id = this.UPLOAD_BUTTON;
-            uploadButton.icon = "publish";
-            uploadButton.title = "Cargar archivo";
-            uploadButton.color = "transparent";
-            uploadButton.classList.add("aonSuiteMenuUploadButton");
-            sideMenu.appendChild(uploadButton);
-            let text = this.getElement(uploadButton.TEXT);
-            let icon = this.getElement(uploadButton.ICON);
-            let button = this.getElement(uploadButton.BUTTON);
-            text.className= CSS.AON_CARD_TEXT;
-            text.classList.add("suiteMenuUploadButtonText");
-            icon.classList.add("suiteMenuUploadButtonIcon");
-            button.classList.add("suiteMenuUploadButtonButton");
-            this.setButtonHover(uploadButton);
-        }
+        // if(!this.uploadButton){
+            // let uploadButton = new AonButton();
+            // uploadButton.id = this.UPLOAD_BUTTON;
+            // uploadButton.icon = "publish";
+            // uploadButton.title = "Cargar archivo";
+            // uploadButton.color = "transparent";
+            // uploadButton.classList.add("aonSuiteMenuUploadButton");
+            // sideMenu.appendChild(uploadButton);
+            // let text = this.getElement(uploadButton.TEXT);
+            // let icon = this.getElement(uploadButton.ICON);
+            // let button = this.getElement(uploadButton.BUTTON);
+            // text.className= CSS.AON_CARD_TEXT;
+            // text.classList.add("suiteMenuUploadButtonText");
+            // icon.classList.add("suiteMenuUploadButtonIcon");
+            // button.classList.add("suiteMenuUploadButtonButton");
+            // this.setButtonHover(uploadButton);
+        // }
       
         let content = this.createDiv();
         content.id = this.CONTENT;
@@ -150,16 +149,14 @@ export class AonSuiteMenu extends AonElement {
 
         let title = this.createDiv();
         title.id = this.TITLE;
-        title.className = "aonSidenavTitle";
+        title.classList.add("aonSidenavTitle", "content-card-title");
         div.appendChild(title);
 
         let div2 = this.createDiv();
-        div2.classList.add("suiteMenuDiv2");
+        div2.classList.add("suiteMenuDiv2", "content-card-body");
         content.appendChild(div2);
 
-        this.options
-		.filter( opt => !opt.filter || opt.filter() )
-		.forEach((opt, i) => {
+        this.options.filter( opt => !opt.filter || opt.filter() ).forEach((opt, i) => {
             this.buildCard(opt, i,div2);
         });
 	}
@@ -168,36 +165,39 @@ export class AonSuiteMenu extends AonElement {
         this.title = title;
         let titleElement = this.getElement(this.TITLE);
         if(titleElement) {
-            titleElement.innerHTML = this.title;
+            titleElement.innerHTML = '';
+            const titleH2     = this.createElement(TAG.H2);
+            titleH2.innerHTML = this.title;
+            titleElement.appendChild(titleH2);
         }
     }
 
     buildSideNavCard(sideMenu,id){
-        let card = new AonCard();
-        card.id = id;
-		card.title = this.cardData.title;
-		card.classList.add("suiteMenuSideNavCardCard");
-        sideMenu.appendChild(card);
+        // let card = new AonCard();
+        // card.id = id;
+		// card.title = this.cardData.title;
+		// card.classList.add("suiteMenuSideNavCardCard");
+        // sideMenu.appendChild(card);
 
-        let cardTitle = this.getElement(card.TITLE_SECTION1);
-        cardTitle.classList.add("suiteMenuSideNavCardTitle");
+        // let cardTitle = this.getElement(card.TITLE_SECTION1);
+        // cardTitle.classList.add("suiteMenuSideNavCardTitle");
 
-        let icon = new AonIconButton();
-        icon.icon = "info";
-        icon.color = "var(--aonSuiteMenuNewButtonText)";
-        icon.classList.add("suiteMenuSideNavCardIcon");
-        card.appendChild(icon);
+        // let icon = new AonIconButton();
+        // icon.icon = "info";
+        // icon.color = "var(--aonSuiteMenuNewButtonText)";
+        // icon.classList.add("suiteMenuSideNavCardIcon");
+        // card.appendChild(icon);
 
   
-        let cardDiv = this.getElement(card.CARD);
-		cardDiv.classList.add("suiteMenuSideNavCardDiv");
+        // let cardDiv = this.getElement(card.CARD);
+		// cardDiv.classList.add("suiteMenuSideNavCardDiv");
         
-        let divGeneral = this.createDiv();
-        this.cardData.info.forEach((info)=>{
-            divGeneral.appendChild(this.buildSideNavCardData(info,"999"));
-        });
+        // let divGeneral = this.createDiv();
+        // this.cardData.info.forEach((info)=>{
+        //     divGeneral.appendChild(this.buildSideNavCardData(info,"999"));
+        // });
         
-		card.setContent(divGeneral);
+		// card.setContent(divGeneral);
     }
 
     buildCard(opt, i,div){
@@ -288,11 +288,11 @@ export class AonSuiteMenu extends AonElement {
 
         let rootPanel = this.getElement("rootPanel");
         span.addEventListener(EVENT.CLICK, value.action);
-        if(!this.isNewStyle()){
-          span.addEventListener(EVENT.CLICK, function(){
-              rootPanel.style.backgroundColor = "rgb(250, 249, 248)"; 
-          });
-        }
+        // if(!this.isNewStyle()){
+        //   span.addEventListener(EVENT.CLICK, function(){
+        //       rootPanel.style.backgroundColor = "rgb(250, 249, 248)"; 
+        //   });
+        // }
 		return div;
 	}
 

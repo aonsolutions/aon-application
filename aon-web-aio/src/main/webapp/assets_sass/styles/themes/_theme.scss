@@ -460,7 +460,7 @@
       &.dialog-button-delete{
         background-color : $color-red-900;
         &:hover{
-        background-color : $color-red-500;
+          background-color : $color-red-500;
         }
       }
     }
@@ -659,6 +659,22 @@
   // 
   // Pages
   // 
+    // Solo contiene card - Creado desde aon-suite-menu
+    .suiteMenuContent{
+      .content-card-body{
+        aon-card{
+          .aonCardContent{
+            &>div{
+              .suiteMenuCardDataSpan{
+                &:hover{
+                  background-color: $color-100;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     // login
     aon-new-login{
       #logoContent{

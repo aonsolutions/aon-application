@@ -203,7 +203,7 @@ aon-search{
   display    : flex;
   align-items: center;
   gap        : v.$gap-min;
-  span{
+  >span{
     aon-icon-button{
       position: absolute;
       top     : $padding-top;
@@ -220,7 +220,7 @@ aon-search{
       }    
     }
   }
-  .aonInputListOptions{
+  >.aonInputListOptions{
     display      : none;
     position     : absolute;
     top          : $input-height;
