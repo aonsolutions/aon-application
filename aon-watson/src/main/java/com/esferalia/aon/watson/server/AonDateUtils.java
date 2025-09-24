@@ -1417,12 +1417,24 @@ public class AonDateUtils {
 	}
 	
     /**
-     * Verifica si target está entre start y end (inclusive).
-     * Si target es null -> false.
-     * Si start o end son null -> se ignora ese límite.
+     * Verifica si value está entre start y end (inclusive).
+     * Si value, start o end son null -> false.
      */
     public static boolean isBetween(Date value, Date start, Date end) {
         if (value == null || start == null || end == null) return false;
         return !value.before(start) && !value.after(end);
-    }	
+    }
+
+    /**
+     * Verifica si target está entre start y end (inclusive).
+     * Si target es null -> false.
+     * Si start o end son null -> se ignora ese límite.
+     */
+    public static boolean isInRange(Date value, Date start, Date end) {
+        if (value == null) return false;
+        boolean afterStart = (start == null) || !value.before(start);
+        boolean beforeEnd  = (end == null)   || !value.after(end);
+        return afterStart && beforeEnd;
+    }
+        
 }

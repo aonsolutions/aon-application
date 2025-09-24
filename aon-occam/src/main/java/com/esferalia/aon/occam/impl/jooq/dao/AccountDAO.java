@@ -95,16 +95,22 @@ public class AccountDAO {
 
 		public static Account build(Record r, com.esferalia.aon.jooq.tables.Account alias) {
 			return new Account()
-				.setId(r.getValue(alias.ID))
-				.setDomain(r.getValue(alias.DOMAIN))
-				.setCode(r.getValue(alias.CODE))
-				.setDescription(r.getValue(alias.DESCRIPTION))
-				.setAlias(r.getValue(alias.ALIAS))
-				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(alias.ENTRYENABLED)))
+				.setId(getValue(r, alias.ID))
+				.setDomain(getValue(r, alias.DOMAIN))
+				.setCode(getValue(r, alias.CODE))
+				.setDescription(getValue(r, alias.DESCRIPTION))
+				.setAlias(getValue(r, alias.ALIAS))
+				.setEntryEnabled( AonEnumUtils.getBoolean(getValue(r, alias.ENTRYENABLED)))
 				.setLevel(getByte(r, alias.LEVEL))
-				.setActive(AonEnumUtils.getBoolean(r.getValue(alias.ACTIVE)))
-				.setCostCenter(r.getValue(alias.COST_CENTER))
-				.setHasRegistry((checkField(r, CUSTOMER.REGISTRY) || checkField(r, SUPPLIER.REGISTRY) || checkField(r, CREDITOR.REGISTRY)) && (null != r.getValue(CUSTOMER.REGISTRY) || null != r.getValue(SUPPLIER.REGISTRY) || null != r.getValue(CREDITOR.REGISTRY)));
+				.setActive(AonEnumUtils.getBoolean(getValue(r, alias.ACTIVE)))
+				.setCostCenter(getValue(r, alias.COST_CENTER))
+				.setHasRegistry((
+					checkField(r, CUSTOMER.REGISTRY) 
+					|| checkField(r, SUPPLIER.REGISTRY) 
+					|| checkField(r, CREDITOR.REGISTRY)) 
+					&& (null != r.getValue(CUSTOMER.REGISTRY) 
+					|| null != r.getValue(SUPPLIER.REGISTRY) 
+					|| null != r.getValue(CREDITOR.REGISTRY)));
 		}
 	}
 	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {
