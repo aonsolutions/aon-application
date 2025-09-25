@@ -66,7 +66,7 @@ public class AonDialog extends AonCustomDialog {
  	}
 	
  	public void removeMaxWidth() {
- 		toolbar.getElement().getStyle().setProperty("max-width", "max-content");
+ 		toolbar.getElement().getStyle().setProperty("max-width", "none");
  	}
  	
 	private void showDialog() {
