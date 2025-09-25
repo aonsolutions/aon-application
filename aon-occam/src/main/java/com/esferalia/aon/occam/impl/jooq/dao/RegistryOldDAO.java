@@ -113,6 +113,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @Deprecated
 public class RegistryOldDAO {
@@ -1185,7 +1186,11 @@ public class RegistryOldDAO {
 		
 		List<DomainSigAddInfo> sigCustomerDomains = new ArrayList<DomainSigAddInfo>();
 		
-		result.forEach(r -> 
+		result.forEach(r -> {
+			if((AonStringUtils.isBlank(r.get("domain_id", String.class)) || AonStringUtils.equals("null", r.get("domain_id", String.class)))
+			   && (AonStringUtils.isBlank(r.get("domain_name", String.class)) || AonStringUtils.equals("null", r.get("domain_name", String.class))))
+				return;
+			
 			sigCustomerDomains.add(
 				new DomainSigAddInfo()
 					.setRegistry(r.getValue(RADDINFO.REGISTRY))
@@ -1194,8 +1199,8 @@ public class RegistryOldDAO {
 					.setDomainName(r.get("domain_name", String.class))
 					.setDomainSchema(r.get("domain_schema", String.class))
 					.setDomainType(r.get("domain_type", String.class))
-			)
-		);
+			);
+		});
 		
 		return sigCustomerDomains;
 	}
