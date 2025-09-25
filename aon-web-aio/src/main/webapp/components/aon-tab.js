@@ -3,9 +3,9 @@ import { setDataset } from "../services/utilsComponents.js";
 import { AonElement } from "./AonElement.js";
 
 export class AonTab extends AonElement {
-
-    DIV;
-    SPAN;
+    tabsComponent;  // Donde metemos todo los tab
+    TAB;            // Cada tab  
+    tabSelected;
     selected;
     options;
 
@@ -23,22 +23,21 @@ export class AonTab extends AonElement {
     }
 
     initialize() {
-        this.id = this.id || 'aonTab';
-        this.DIV = this.id + "Div";
-        this.SPAN = this.id + "Span";
+        this.id       = this.id || 'aonTab';
+        this.TAB      = this.id + "Div";
         this.selected = 0;
     }
 
     build() {
-        let div = this.createElement(TAG.DIV);
-        div.id = this.DIV;
-        div.style.height = '40px';
-        div.style.marginLeft = '20px';
-        div.style.marginRight = '20px'
-        div.style.paddingTop = '15px';
-        this.appendChild(div);
-        if(!this.options) 
-            this.options = [];
+        if (!this.options || this.options.length === 0) {
+            console.log("No hay opciones disponibles, en Tab.");
+            return;
+        }
+
+        const tabs = this.createElement(TAG.DIV);
+        tabs.classList.add('tabs');
+        this.tabsComponent = tabs;
+        this.appendChild(tabs);
 
         this.options.forEach((option, i) => {
             this.printOption(option, i);
@@ -46,28 +45,42 @@ export class AonTab extends AonElement {
     }
 
     printOption(option, i) {
-        let span = this.createElement(TAG.SPAN);
-        span.id = option.id || this.SPAN + i;
-        span.innerHTML = option.title;
-        span.style.padding = '10px';
-        span.style.paddingBottom = '5px';
-        span.style.cursor = 'pointer';
+        let tab       = this.createElement(TAG.DIV);
+        tab.id        = option.id || this.TAB + i;
+        tab.classList.add('tab');
+        tab.innerHTML = option.title;
         if(option.dataset){
-            setDataset(span, option.dataset);
+            setDataset(tab, option.dataset);
         }
-        span.addEventListener(EVENT.CLICK, () => {
-            this.querySelectorAll(TAG.SPAN).forEach(sp => {
-                sp.style.borderBottom = 'none';
+        tab.addEventListener(EVENT.CLICK, () => {
+            this.querySelectorAll(TAG.DIV).forEach(sp => {
+                sp.classList.remove('tab-selected');
             });
             this.selected = i;
-            span.style.borderBottom = '2px solid #002469';
+            tab.classList.add('tab-selected');
+            this.tabSelected = tab;
         });
-        span.addEventListener(EVENT.CLICK, option.fn);
+        tab.addEventListener(EVENT.CLICK, option.fn);
         if(this.selected === i) {
-            span.style.borderBottom = '2px solid #002469';
+            tab.classList.add('tab-selected');
+            this.tabSelected = tab;
         }
-        this.getElement(this.DIV).appendChild(span);
-        return span;
+
+        // Animación de hover
+            tab.addEventListener("mouseenter", () => {
+                if (this.selected !== i) {
+                    // Quitar del seleccionado
+                    this.tabSelected.classList.remove("tab-selected");
+                }
+            });
+            this.tabsComponent.addEventListener("mouseleave", () => {
+                // Poner en el seleccionado
+                this.tabSelected.classList.add("tab-selected");
+            });
+        // FIN Animación de hover
+
+        this.tabsComponent.appendChild(tab);
+        // return tab;
     }
 
     setOptions(options) {
@@ -87,7 +100,7 @@ export class AonTab extends AonElement {
     }
 
     getTabByDatasetId(id){
-        return document.querySelector(`[id*='${this.SPAN}'][data-id='${id}']`);
+        return document.querySelector(`[id*='${this.TAB}'][data-id='${id}']`);
     }
 
 }

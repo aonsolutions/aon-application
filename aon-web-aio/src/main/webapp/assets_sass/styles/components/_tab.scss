@@ -1,0 +1,23 @@
+@use '../variables' as v;
+
+aon-tab {
+  padding: v.$padding-min v.$px-0;
+  width  : fit-content;
+  display: block;
+  .tabs{
+    padding      : v.$padding-min;
+    display      : flex;
+    align-content: center;
+    box-sizing   : border-box;
+    gap          : v.$gap-min;
+    border-radius: v.$border-radius;
+    .tab{
+      padding      : v.$padding-min;
+      cursor       : pointer;
+      display      : flex;
+      align-items  : center;
+      box-sizing   : border-box;
+      border-radius: v.$border-radius;
+    }
+  }
+}
