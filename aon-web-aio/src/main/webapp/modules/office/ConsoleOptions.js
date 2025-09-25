@@ -8,7 +8,7 @@ export const LINK_DOMAINS = {
 
 export const SYNC_DOMAINS = {
   id: "syncCustomerDomain",
-  name: "Sync Clientes/Dominios",
+  name: "Vinc. Clientes/Dominios",
   icon: MATERIAL_ICONS.DATASET_LINKED
 }
 

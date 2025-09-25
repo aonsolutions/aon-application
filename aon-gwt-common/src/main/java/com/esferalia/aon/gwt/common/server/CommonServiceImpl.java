@@ -1629,7 +1629,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	@Override
 	public List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException {
-		return AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
+		List<DomainSigAddInfo> result = AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
+		return result;
 	}
 
 }

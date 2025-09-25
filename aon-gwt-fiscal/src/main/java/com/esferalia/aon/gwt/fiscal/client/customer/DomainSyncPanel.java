@@ -128,10 +128,4 @@ public abstract class DomainSyncPanel extends AonCustomDockLayout {
 	
 	protected abstract void onEndSuccessSync();
 
-	public static native boolean getCurrentIsSig()
-	/*-{
-		var value = $wnd.localStorage.getItem("isSig");
-		return value === "true" || value === true;
-	}-*/;
-
 }
