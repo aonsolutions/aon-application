@@ -7195,6 +7195,83 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcChina74() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcChina74.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
+			
+			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("02-12-2024");
+			Collection<Data> datas = new ArrayList<>();
+			
+			ssData.forEach( (var, value) -> {
+				datas.add( new Data() {
+					{
+						startDate = date;
+						name = var.getName();
+						expression = String.valueOf(value.data());
+						startDate = value.startDate();
+						endDate = value.endDate();
+					}
+				});
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "3.35";
+					startDate = date;
+					name = "PORCENTAJE_IT";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "3.35";
+					startDate = date;
+					name = "PORCENTAJE_IMS";
+				}
+			});
+//			datas.add(new Data() {
+//				{
+//					expression = "0.80";
+//					startDate = date;
+//					name = "PORCENTAJE_FP_E";
+//				}
+//			});
+			
+			Salary salary = calculate(ssPECs, datas, new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2025"));
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				//System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+			//System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+			assertEquals(cgcBase * (( 0.28 + 0.10 ) / 100.00 ), salary.getSocialSecurityContributions(), DELTA);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println(cost.getName() + ": " + cost.getAmount());
+			}
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			assertEquals(cgpBase  * ( 1.42 + 0.60 + 0.20 + 6.70 ) / 100.00 , salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
