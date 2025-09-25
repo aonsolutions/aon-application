@@ -301,7 +301,7 @@ export class AonReg extends AonElement {
 		let td1 = table.addCell(aliasInput);
 		td1.style.width = '55%';
 
-		this.buildAddresses(div);
+		//this.buildAddresses(div);
 
 		if(this.showLogo && this.registry.getId()) {
 			let uploadLogo = new AonUpload();
@@ -443,6 +443,7 @@ export class AonReg extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
+		this.buildAddresses(div);
 		this.buildEmails(div);
 		this.buildPhones(div);
 		this.buildWebs(div);

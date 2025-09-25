@@ -54,7 +54,7 @@ export class AonCustomer extends AonReg {
 					this.hideSaveButton();
 				this.buildBankData();
 			}},
-			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
+			//{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
 		if (this.office) {
@@ -150,6 +150,47 @@ export class AonCustomer extends AonReg {
 		this.buildMediaCard(parent);
 		this.buildGeneralInformation(parent);
 		this.buildSellerCard(parent);
+		
+		this.buildFiscalGeneralData();
+	}
+
+	buildFiscalGeneralData() {
+		let generalDataTable = this.getElement(this.GENERAL_TABLE);
+		
+		generalDataTable.addRow();
+
+		let transaction = new AonSelect();
+		transaction.id = this.FISCAL_TRANSACTION;
+		transaction.title = MSG.TRANSACTION_TYPE;
+		transaction.options = JSON.stringify(Transactions);
+		transaction.value = this.registry.getTransaction();
+		transaction.addEventListener(EVENT.SELECT, () => {
+			this.registry.setTransaction(transaction.value);
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(transaction, 3);
+
+		generalDataTable.addRow();
+
+		let surcharge = new AonSwitch();
+		surcharge.id = this.FISCAL_SURCHARGE;
+		surcharge.title = MSG.SURCHARGE_RE;
+		surcharge.checked = this.registry.isSurcharge();
+		surcharge.addEventListener(EVENT.CHANGE, () => {
+			this.registry.setSurcharge(surcharge.isChecked());
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(surcharge, 1);
+
+		let withholding = new AonSwitch();
+		withholding.id = this.FISCAL_WITHHOLDING;
+		withholding.title = MSG.IRPF;
+		withholding.checked = this.registry.isWithholding();
+		withholding.addEventListener(EVENT.CHANGE, () => {
+			this.registry.setWithholding(withholding.isChecked());
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(withholding, 1);
 	}
 
 	buildSellerCard(parent) {
