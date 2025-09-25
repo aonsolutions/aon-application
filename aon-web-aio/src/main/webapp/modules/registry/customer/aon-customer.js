@@ -33,6 +33,9 @@ export class AonCustomer extends AonReg {
 	office;
 	clientFile;
 	aonCustomerList;
+	
+	sigCustomerDomainName;
+	sigCustomerDomainId;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -40,7 +43,7 @@ export class AonCustomer extends AonReg {
 		this.build();
 	}
 
-	customerInitialize() {
+	async customerInitialize() {
 		this.registry = this.registry || new Customer();
 		this.saveBool = true;
 		this.type = "customer";
@@ -64,6 +67,8 @@ export class AonCustomer extends AonReg {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
+			
+			console.log("Registry Company", this.registry.registryCompany);
 			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
@@ -377,6 +382,14 @@ export class AonCustomer extends AonReg {
 			})
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
+				
+				if(resp && resp.length == 1){
+					this.sigCustomerDomainName = resp[0].domainName;
+					this.sigCustomerDomainId = resp[0].domainId;
+					
+					this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+				}
 			})
 			/*
 			.catch((err) => {
@@ -629,8 +642,8 @@ export class AonCustomer extends AonReg {
 	getSessionData() {
 		return {
 			session_id: LS.getToken(),
-			domain_name: this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName(),
-			domain_id: this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId(),
+			domain_name: this.sigCustomerDomainName || (this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName()),
+			domain_id: this.sigCustomerDomainId || (this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId()),
 			domain_login: LS.getDomainLogin()
  		};
 	}

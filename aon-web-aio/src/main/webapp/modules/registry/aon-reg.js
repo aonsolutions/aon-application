@@ -166,6 +166,11 @@ export class AonReg extends AonElement {
 		this.appendChild(tab);
 	}
 	
+	addTabOption(option){
+		let tabs = this.getElement(this.TABS);
+		tabs.addOption(option);
+	}
+	
 	buildGeneralData() {
 		let div = this.getElement(this.DIV);
 		this.clearElement(div);
