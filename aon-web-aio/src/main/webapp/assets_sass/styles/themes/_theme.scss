@@ -260,6 +260,23 @@
         background-color: $color-text;
       }
     }
+    // tab
+    aon-tab {
+      .tabs{
+        background-color: $color-100;
+        .tab{
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+          &.tab-selected{
+            background-color: $color-box;
+            box-shadow: $box-shadow;
+          }
+          &:hover {
+            background-color: $color-box;
+            box-shadow: $box-shadow;
+          }
+        }
+      }
+    }
     // toast
     aon-toast {
       > div {
