@@ -163,8 +163,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
-								?0.0
-								:(irpfBase * totalIrpf / totalIrpfBase);
+								? 0.0
+								: (irpfBase * totalIrpf / totalIrpfBase);
 						
 						Mod190Detail detail = null;
 						
@@ -219,8 +219,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) ||  AonMathUtils.isZero( totalIrpfBase) )
-								?0.0
-								:(irpfBase * totalIrpf / totalIrpfBase);
+								? 0.0
+								: (irpfBase * totalIrpf / totalIrpfBase);
 						if ( AonMathUtils.isGreatherThanZero(irpfBase )) {
 							visitAKey();		
 						} else if(AonMathUtils.isGreatherThanZero(amount )) {
@@ -245,8 +245,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 							double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
-									?0.0
-									:(irpfBase * totalIrpf / totalIrpfBase);
+									? 0.0
+									: (irpfBase * totalIrpf / totalIrpfBase);
 							
 							Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 							
@@ -277,8 +277,9 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
-								?0.0
-								:(irpfBase * totalIrpf / totalIrpfBase);
+								? 0.0
+								: (irpfBase * totalIrpf / totalIrpfBase);
+						
 						Mod190Detail detail = getDetail(document,person,Mod1902023Key.A,null,accrualYear);
 						Integer salary = rec.getValue(SALARY.ID);
 						if (!salaries.contains(salary)) {
@@ -301,11 +302,13 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
-								?0.0
-								:(irpfBase * totalIrpf / totalIrpfBase);
+								? 0.0
+								: (irpfBase * totalIrpf / totalIrpfBase);
+						
 						Mod190Detail detail = getDetail(document,person,Mod1902023Key.A,null,accrualYear);
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
 						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
+						
 						// Si esta exento deberia ir al L.24
 						if(irpfQuota == 0.00) {
 							visitInsurance();
@@ -318,7 +321,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 							} else {
 								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
 								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
-								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
 									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
 							}
 						}
@@ -331,8 +334,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
-								?0.0
-								:(irpfBase * totalIrpf / totalIrpfBase);
+								? 0.0
+								: (irpfBase * totalIrpf / totalIrpfBase);
 						
 						// Esto es el total de aportacion? Si es así estaría bien saber cuanto aporta por devengo de tipo En Especie
 						// Puede existir mas de una entrada en la tabla salaryData
@@ -694,6 +697,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				- detail.getInKindPerception() 
 				- detail.getInKindPerceptionIL());
 	}
+	
 	private double getRetentionDiff(Mod190Detail detail) {
 		return AonMathUtils.round(detail.getSalaryRetention() 
 				- detail.getRetention()
@@ -785,7 +789,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 	
 	private static class Mod190WithholdingTypeVisitor implements IWithholdingTypeVisitor<Mod190DetailKey> {
 
-		@Override public Mod190DetailKey  visitRenting(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitRenting(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitMovableCapital(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C1(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C2(Mod190DetailKey detailKey) {return detailKey;}
