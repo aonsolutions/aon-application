@@ -40,7 +40,7 @@ export class AonDocumental extends AonElement {
 	constructor() {
       super();
       // Coger la category seleccionada del filtro
-        // Enlazamos el m�todo al contexto de la clase
+        // Enlazamos el metodo al contexto de la clase
         this.categoryEvento = this.categoryEvento.bind(this);
         // Nos aseguramos de escuchar el evento
         window.addEventListener('category_filter', this.categoryEvento);
@@ -117,7 +117,7 @@ export class AonDocumental extends AonElement {
 
 		input.addEventListener(EVENT.CHANGE, () => this.upload(input.files));
 
-        aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
+		aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
 
 		if (this.isMobile()) {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
@@ -126,11 +126,11 @@ export class AonDocumental extends AonElement {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()) {
 				aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
 			}
-            if(!this.isBetaDoc()){
-              // como se carga el boton de buscar aqui
-              const btnSearch = aonDocumental.addSearchOption();
-              btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
-            }
+			if(!this.isBetaDoc()){
+				// como se carga el boton de buscar aqui
+				const btnSearch = aonDocumental.addSearchOption();
+				btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+			}
 		}
 
 		if (this.isMobile()) {
@@ -149,7 +149,7 @@ export class AonDocumental extends AonElement {
 			this.addDocumentOptions();
 		}
 
-        let bool = await this.hasBidoq();
+		let bool = await this.hasBidoq();
 		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
 			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 		}
@@ -168,28 +168,28 @@ export class AonDocumental extends AonElement {
 	addDocumentOptions() {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
 
-        if (this.isBetaDoc()) {
+		if (this.isBetaDoc()) {
 			let data2 = DocumentalSidenav.OFFICE_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data2);
 			let data3 = DocumentalSidenav.USER_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data3);
-        }else{
-          let documentOptions = [
-              {
-                  id  : MSG.ALL_FILES,
-                  name: MSG.ALL_FILES,
-//                  icon: 'insert_drive_file',
-                  fn: () => {
-                      this._filter.category = undefined;
-                      this._filter.tag = undefined;
-                      this._filter.type = 'all';
-                      this.aonDocumentalList();
-                  }
-              }
-          ];
-          let data = DocumentalSidenav.DOCUMENTS;
-          data.options = documentOptions;
-          aonDocumental.addSidenavOptions3(data);
+		}else{
+			let documentOptions = [
+					{
+							id  : MSG.ALL_FILES,
+							name: MSG.ALL_FILES,
+						//  icon: 'insert_drive_file',
+							fn: () => {
+									this._filter.category = undefined;
+									this._filter.tag = undefined;
+									this._filter.type = 'all';
+									this.aonDocumentalList();
+							}
+					}
+			];
+			let data = DocumentalSidenav.DOCUMENTS;
+			data.options = documentOptions;
+			aonDocumental.addSidenavOptions3(data);
 		}
 	}
 
@@ -289,7 +289,7 @@ export class AonDocumental extends AonElement {
                 // Limpiamos
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.OFFICE_CATEGORIES.id + 'List');
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
-                // Metemos el todo los documentos
+                // Metemos el todo los ficheros
                 let documentOptions = {
                   id  : MSG.ALL_FILES,
                   name: MSG.ALL_FILES,
@@ -338,7 +338,7 @@ export class AonDocumental extends AonElement {
 						}
 						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
 					}
-					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
+					// Si estamos en modo beta, agregamos las categorías al nivel del apartado ficheros
 				});
                 // Mostrar tus categorias
                 if (yourCategoriesVisibility)
@@ -693,7 +693,7 @@ export class AonDocumental extends AonElement {
 	
 		// Texto
 		let text = document.createElement('div');
-		text.textContent = 'Importando documentos desde Bidoq...';
+		text.textContent = 'Importando ficheros desde Bidoq...';
 //		text.style.marginTop = '12px';
 //		text.style.fontSize = '16px';
 //		text.style.color = '#333';
@@ -734,7 +734,7 @@ export class AonDocumental extends AonElement {
 				this.loadCategories();
 			}
 		} catch (error) {
-			console.error("Error al importar documentos:", error);
+			console.error("Error al importar ficheros:", error);
 		} finally {
 			// Quitar el spinner
 			loadingOverlay.remove();

@@ -71,7 +71,7 @@ export class AonDocumentalCard extends AonElement {
 
     if(documents && documents.length === 0){
       let emptyMessage = this.createElement(TAG.DIV);
-      emptyMessage.innerHTML = "No existen documentos";
+      emptyMessage.innerHTML = "No existen ficheros";
       emptyMessage.style.fontWeight = "bold";
 
       content.style.height = "100%";

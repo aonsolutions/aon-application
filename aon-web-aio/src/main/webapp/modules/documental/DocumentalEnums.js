@@ -4,7 +4,7 @@ import Apps from '../../services/app.js';
 export const DocumentalSidenav = {
   DOCUMENTS: {
     id: 'Documents',
-    name: MSG.DOCUMENTS.toUpperCase(),
+    name: MSG.FILES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
   TYPES: {
@@ -107,7 +107,7 @@ export const DOCUMENTAL_FILTER = [
       id   : "start_date",
 //      date: new Date(2025, 0, 1), // pasar fecha
       date: '',
-      title: "Fecha del documento - desde"
+      title: "Fecha del fichero - desde"
     },
     {
       type : "newDate",
@@ -115,7 +115,7 @@ export const DOCUMENTAL_FILTER = [
       id   : "end_date",
 //      date: new Date(2025, 0, 1), // pasar fecha
       date: '',
-      title: "Fecha del documento - hasta"
+      title: "Fecha del fichero - hasta"
     }
 ];
 export const DOCUMENTAL_FILTER_ENTERPRISE = [

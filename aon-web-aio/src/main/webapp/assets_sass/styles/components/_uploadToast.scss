@@ -1,0 +1,22 @@
+@use '../variables' as v;
+
+aon-upload-toast{
+  position     : fixed;
+  right        : v.$padding-min;
+  bottom       : v.$num-0;
+  z-index      : v.$num-2;
+  margin-bottom: v.$px-16;
+  aon-card .aonCardContent .aonUlUploadToast{
+    list-style: none;
+    margin    : 0;
+    padding   : 0;
+    .aonLi{
+      display: flex;
+      gap    : v.$gap;
+      .name{
+        display: flex;
+        gap    : v.$gap-min;
+      }
+    }
+  }
+}

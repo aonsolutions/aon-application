@@ -386,7 +386,7 @@ function S3DocumentalSelects(dur) {
     tdDatePicker.setAttribute('colspan', '1');
     let datePicker = new AonNewDate();
     datePicker.id = "aonDocumentalUploadDatePicker";
-    datePicker.title = "Fecha del documento";
+    datePicker.title = "Fecha del fichero";
     tdDatePicker.appendChild(datePicker);
     trDatePicker.appendChild(tdDatePicker);
   

@@ -321,6 +321,7 @@ export const FACTURAE = "Facturae";
 export const FAILED = "Fallido"; // TODO
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
+export const FILES = MSG.FILES;
 export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";//TODO
 export const FILTERS = "Filtros";//TODO

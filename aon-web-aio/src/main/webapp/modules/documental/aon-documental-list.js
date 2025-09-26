@@ -195,7 +195,7 @@ export class AonDocumentalList extends AonElement {
 			}, 300);
 		  });
 		  
-        // Rango por encima de empresa, ve el permiso de asesor (documentos que solo ve el asesor)
+        // Rango por encima de empresa, ve el permiso de asesor (ficheros que solo ve el asesor)
         if (this._roles.isDocumentalManager()) {
           this.btnSearch.buildOptionsFilter([
             ...DOCUMENTAL_FILTER_ASESOR
@@ -435,27 +435,27 @@ export class AonDocumentalList extends AonElement {
     loadDocumentsIntoTable(table, filter, isInit = false) {
         // Barra loader de AonApplication - Iniciar
         this.getApplication().startLoader();
-        // Traer los documentos
+        // Traer los ficheros
         const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
         fetchDocuments(filter).then(documents => {
             if (isInit) {
                 table.removeRows();               // Limpiar la tabla si es la inicializaci�n
-                table.selected = [];              // Limpiar la selecci�n
-                this.removeDocumentalActions();   // Eliminar acciones de documentos
+                table.selected = [];              // Limpiar la seleccion
+                this.removeDocumentalActions();   // Eliminar acciones de ficheros
             } 
               // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
                 filter.page = filter.page + 1;
 				this.setFilter(filter);
             if (isInit && documents.length === 0 ) {
-                this.more = false;  // Si no hay documentos, no se puede cargar mas
-                // Mostrar mensaje si no hay documentos
-                table.addRowNoData("No existen documentos disponibles");
+                this.more = false;  // Si no hay ficheros, no se puede cargar mas
+                // Mostrar mensaje si no hay ficheros
+                table.addRowNoData("No existen ficheros disponibles");
             }
 			
 			const ids = documents.map(document => document.id)
 			const types = documents.map(document => document.type)
 			
-            // Insertar los documentos en la tabla
+            // Insertar los ficheros en la tabla
             documents.forEach((doc, i) => { 
 				if(this.isBetaDoc() && documents[i].size){
 					documents[i].size = formatBytes(documents[i].size);
@@ -468,7 +468,7 @@ export class AonDocumentalList extends AonElement {
             this.getApplication().stopLoader();
         }).catch((error) => {
           // En caso de error, detener el loader y mostrar mensaje
-//          console.error("Error al cargar documentos:", error);
+//          console.error("Error al cargar ficheros:", error);
           // Barra loader de AonApplication - Finalizar
           this.getApplication().stopLoader();
         });
@@ -508,7 +508,7 @@ export class AonDocumentalList extends AonElement {
 		const url = URL.createObjectURL(i);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'documentos.zip';
+		a.download = 'ficheros.zip';
 		a.click();
 		URL.revokeObjectURL(url);
 	}
