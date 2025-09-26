@@ -1,4 +1,5 @@
 @use '../variables' as v;
+@use "sass:map";
 
 $iconbutton-font-size        : v.$px-16;
 $position                    : relative;
@@ -187,7 +188,7 @@ $icons: (
     width       : $icon-size;
     height      : $icon-size;
     display     : block;
-    mask        : url(map-get($icons, "loader")) center / contain no-repeat;
-    -webkit-mask: url(map-get($icons, "loader")) center / contain no-repeat;
+    mask        : url(map.get($icons, "loader")) center / contain no-repeat;
+    -webkit-mask: url(map.get($icons, "loader")) center / contain no-repeat;
   }
 }

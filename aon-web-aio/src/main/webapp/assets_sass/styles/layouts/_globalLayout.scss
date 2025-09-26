@@ -55,14 +55,21 @@ aon-toolbar {
 }
 
 /* --- 4. Contenido --- */
+$height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$menu-top-height) * 3));
 .aonContentBeta {
   position      : relative;
   flex-grow     : 1;
-  min-width     : v.$px-0; 
+  min-width     : v.$px-0;
   display       : flex;
   flex-direction: column;
   box-sizing    : border-box;
   padding       : v.$padding;
   border-radius : v.$border-radius;
-  overflow: auto;
+  overflow      : auto;
+  min-height    : $height-min-body;
+  &:has(iframe){
+    width     : v.$pct-100;
+    height    : $height-min-body;
+    box-sizing: border-box;
+  }
 }
