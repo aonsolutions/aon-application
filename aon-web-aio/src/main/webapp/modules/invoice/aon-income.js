@@ -62,7 +62,7 @@ export class AonIncome extends AonElement {
     }
 
     build() {
-        let toolbar = new AonToolbar();
+		let toolbar = new AonToolbar();
         toolbar.id = this.INCOME_TOOLBAR;
         toolbar.type = ToolbarType.SECONDARY;
         toolbar.title = MSG.INCOMES; 
@@ -80,6 +80,9 @@ export class AonIncome extends AonElement {
             div.style.width = "50%";
         this.appendChild(div);
         this.buildCard(div);
+		
+		let toolbarParent = this.getElement("aonInvoiceToolbar");
+		if(toolbarParent) toolbarParent.removeButtons();
     }
 
     buildCard(parent) {

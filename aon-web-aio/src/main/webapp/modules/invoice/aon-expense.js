@@ -61,7 +61,7 @@ export class AonExpense extends AonElement {
         this.DIV_GENERAL = this.id + 'Div';
     }
 
-    build() {
+    build() {		
         let toolbar = new AonToolbar();
         toolbar.id = this.EXPENSE_TOOLBAR;
         toolbar.type = ToolbarType.SECONDARY;   
@@ -81,6 +81,8 @@ export class AonExpense extends AonElement {
         
         this.appendChild(div);
         this.buildCard(div);
+		let toolbarParent = this.getElement("aonInvoiceToolbar");
+		if(toolbarParent) toolbarParent.removeButtons();
     }
 
     buildCard(parent) {

@@ -327,6 +327,7 @@ export class AonMenuButton extends AonElement {
     //funcion de aon-menu
     newInvoice(invoice) {
       let invoicePanel = new AonInvoicePanel();
+	  invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
       this.rootPanel(invoicePanel);
@@ -337,6 +338,7 @@ export class AonMenuButton extends AonElement {
 
     newIncome() {
       let invoicePanel = new AonInvoicePanel();
+	  invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonIncome(new Income())) );
       this.rootPanel(invoicePanel);
@@ -347,6 +349,7 @@ export class AonMenuButton extends AonElement {
 
     newExpense() {
       let invoicePanel = new AonInvoicePanel();
+	  invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonExpense(new Expense())) );
       this.rootPanel(invoicePanel);

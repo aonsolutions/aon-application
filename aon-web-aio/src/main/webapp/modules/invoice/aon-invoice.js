@@ -256,6 +256,8 @@ export class AonInvoice extends AonElement {
 		window.addEventListener(EVENT.RESIZE, () => {
 			this.resize();
 		});
+		let toolbar = this.getElement("aonInvoiceToolbar");
+		if(toolbar) toolbar.removeButtons();
 	}
 
 	resize() {

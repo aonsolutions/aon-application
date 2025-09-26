@@ -58,6 +58,7 @@ export class AonInvoicePanel extends AonElement {
 	filter;
 	invofoxFilter;
 	counterActive;
+	toolbar;
 
 	INVOICE;
 	INPUT_FILE;
@@ -84,9 +85,18 @@ export class AonInvoicePanel extends AonElement {
 	set status(status) {
 		this.setAttribute(CONSTANT.STATUS, status);
 	}
+	
+	get toolbar() {
+		return this.toolbar;
+	}
+
+	set toolbar(toolbar) {
+		this.toolbar = toolbar;
+	}
 
 	constructor() {
 		super();
+		this.toolbar = true;
 	}
 
 	connectedCallback() {
@@ -120,7 +130,6 @@ export class AonInvoicePanel extends AonElement {
 			per_page: 50
 		};
 		this.counterActive = true;
-
 		this.option = this.option || (CONSTANT.REJECTED === this.status ? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX);
 	}
 
@@ -144,7 +153,7 @@ export class AonInvoicePanel extends AonElement {
 		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
 			this.upload(e.detail)
 		);
-		this.buildInvoiceHomeToolbarOptions();
+		if(this.toolbar) this.buildInvoiceHomeToolbarOptions();
 		this.buildSidenavOptions();
 		if (this.invoice && this.invoice.type) {
 			this.aonInvoice(this.invoice.type, this.invoice);
