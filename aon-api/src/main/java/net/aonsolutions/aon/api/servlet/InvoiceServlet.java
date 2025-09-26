@@ -3,17 +3,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +53,6 @@ import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -69,13 +65,11 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
@@ -86,6 +80,8 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
@@ -352,6 +348,41 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return getInvoice(api, invoiceId, null);
 	}
 	
+	private static JSONObject giveBackInvoice(AONContext ctx, Invoice invoice) {
+		JSONObject json = InvoiceJSON.toJSON(invoice);
+
+		Integer invoiceId = invoice.getId();
+		if (invoiceId != null) {
+			Integer domainId = invoice.getDomain();
+			// [START]
+			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
+			if (!icc.isBizkaia() && icc.isTbai()) {
+				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, domainId, invoiceId);
+				AonCollectionUtils.stream(history)
+				.filter(e -> !invoice.hasInvoiceInfo(e.getKey()))
+				.forEach(e -> invoice.putInvoiceInfo(e.getKey(), e.getValue().getInfo()) )
+				;
+			}
+			// [END]
+			
+			// [START]
+			// Este atributo debe modificarse a lo existente en InvoiceDOC
+			json.put(IJsonNames.FILE, InvoiceJSONUtils.buildInvoiceFileJSON(ctx, invoice));
+			// [END]
+		}
+		
+		
+		// [START]
+		// Borrar
+		System.out.println( " ****** REQUESTED INVOICE ("+ invoiceId+")");
+		System.out.println( json.toString(1));
+		System.out.println( " ****** ");
+		// [END]
+		
+		return json;
+		
+	}
 	private static JSONObject getInvoice(AonApiData api, Integer invoiceId, List<InvoiceError> previousErrors) {
 		checkApiData(api);
 		Domain domain = api.getDomain();
@@ -363,87 +394,62 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.setUser(login);
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			Invoice invoice = InvoiceDAO.getFullInvoice(ctx, invoiceId);
-			AonCollectionUtils.stream(previousErrors).forEach(invoice::addMessage);
-			
-			// [START]
-			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
-			if (!icc.isBizkaia() && icc.isTbai()) {
-				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, domainId, invoiceId);
-				AonCollectionUtils.stream(history)
-					.filter(e -> !invoice.hasInvoiceInfo(e.getKey()))
-					.forEach(e -> invoice.putInvoiceInfo(e.getKey(), e.getValue().getInfo()) )
-				;
+			if (invoice == null || invoice.getId() == null) {
+				throw new AonApiException("Factura no encontrada");
 			}
-			// [END]
-			
-			JSONObject json = InvoiceJSON.toJSON(invoice);
-			
-			// [START]
-			// Este atributo debe modificarse a lo existente en InvoiceDOC
-			json.put(IJsonNames.FILE, InvoiceJSONUtils.buildInvoiceFileJSON(ctx, invoice));
-			// [END]
-			
-			// [START]
-			// Borrar
-//			System.out.println( " ****** REQUESTED INVOICE ("+ invoiceId+")");
-//			System.out.println( json.toString(1));
-//			System.out.println( " ****** ");
-			// [END]
-			
-			return json;
+			AonCollectionUtils.stream(previousErrors).forEach(invoice::addMessage);
+			return giveBackInvoice(ctx, invoice);
 		}
 	}
 	
 	private static JSONArray getInvoices(AonApiData api, InvoiceFilter filter) {
 		if(!isRawdoc(filter.getStatus())) {
-			JSONArray jsArray = new JSONArray();
-			String domainName = api.getDomain().getName();
 			Integer domainId = api.getDomain().getId();
-			String login = api.getUser().getLogin();
-			AON_SOLUTIONS.getInvoices(domainName, domainId, login, f -> AonApiServletUtils.invoiceFilter(f, domainId, filter))
-				.forEach(invoice -> jsArray.put(invoiceList2JSON(api.getDomain(), api.getUser(), invoice)));
-			return jsArray;
+			try(CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+				return InvoiceApiDAO.getInvoices(ctx, f -> AonApiServletUtils.invoiceFilter(f, domainId, filter))
+					.map( i ->  invoiceList2JSON(ctx, i))
+					.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED));
+			}
 		} else {
 			return RawdocServlet.getRawdocs(api);
 		}
 	}
 	
-	private static JSONObject invoiceList2JSON(Domain domain, User user, Invoice invoice) {
+	private static JSONObject invoiceList2JSON(AONContext ctx, Invoice invoice) {
+		
 		String referenceAux = "";
 		if(!AonStringUtils.isBlank(invoice.getSeries())) {
 			referenceAux = referenceAux + invoice.getSeries() + "/";
 		}
-
 		referenceAux = referenceAux + "PROFORMA";
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.ID, invoice.getId());
-		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 
-				? invoice.getReferenceCode() : referenceAux);
-		json.put(IJsonNames.NAME, invoice.getRegistryName());
-		json.put(IJsonNames.TOTAL, invoice.getTotal());
-		json.put(IJsonNames.STATUS, invoice.isRecorded() 
-				? InvoiceStatus.SCORED.name().toLowerCase() 
-				: InvoiceStatus.PENDING.name().toLowerCase());
-		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
-		json.put(IJsonNames.SERIES, invoice.getSeries());
-		json.put(IJsonNames.SERIE, invoice.getSeries());
-		json.put(IJsonNames.NUMBER, invoice.getNumber());
-		json.put(IJsonNames.SIGNED, invoice.isSigned());
-
-		InvoiceData invoiceData = AON.getInvoiceData(domain, user, f -> f.getInvoiceProperty().eq(invoice.getId())
-				.and(f.getNameProperty().eq("MD5")));
-		if(invoiceData != null && !AonStringUtils.isBlank(invoiceData.getValue())) {
-			String md5 = AonDigestUtils.md5Hex(invoice.flat());
-			json.put("altered", !md5.equalsIgnoreCase(invoiceData.getValue()));
-		}
-
+		JSONObject json = new JSONObject()
+			.put(IJsonNames.ID, invoice.getId())
+			.put(IJsonNames.DATE, invoice.getIssueDate())
+			.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 ? invoice.getReferenceCode() : referenceAux)
+			.put(IJsonNames.NAME, invoice.getRegistryName())
+			.put(IJsonNames.TOTAL, invoice.getTotal())
+			.put(IJsonNames.STATUS, invoice.isRecorded() ? InvoiceStatus.SCORED.name().toLowerCase() : InvoiceStatus.PENDING.name().toLowerCase())
+			.put(IJsonNames.TYPE, invoice.getType().getTediName())
+			.put(IJsonNames.SERIES, invoice.getSeries())
+			.put(IJsonNames.SERIE, invoice.getSeries())
+			.put(IJsonNames.NUMBER, invoice.getNumber())
+			.put(IJsonNames.SIGNED, invoice.isSigned())
+			.put(IJsonNames.COMMUNICATION_INFO, InvoiceJSON.getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null));
+		InvoiceDataDAO.get(ctx, invoice.getId(), "MD5")
+			.filter(id -> AonStringUtils.isNotBlank(id.getValue()))
+			.ifPresent(id -> {
+				String md5 = AonDigestUtils.md5Hex(invoice.flat());
+				json.put("altered", !md5.equalsIgnoreCase(id.getValue()));
+			});
 		return json;
 	}
+
+	// [END REMOVE]
+	// -----------------------------------
+	// -----------------------------------
+	// -----------------------------------
 	
 	public static JSONObject rectifyInvoice(AonApiData api) throws Exception {
-		System.out.println(api.getData().toString(1));
 		JSONObject invoiceJSON = JsonUtils.getJSONObject( api.getData(), "invoice");
 		String series = JsonUtils.getString( api.getData(), "series");
 		Date date = JsonUtils.getDate( api.getData(), "date");
@@ -459,8 +465,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.setSettleFinances(false)
 		;
 		try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-			Invoice rectified = InvoiceDAO.rectifyInvoice(ctx, invoice.getId(), ird);
-			return getInvoice(api, rectified.getId());
+			
+			Invoice rectified = InvoiceDAO.rectifyInvoice(ctx, invoice.getId(), ird
+				, false		// No se graba la factura rectificativa. Se devuelve para grabar en rawdoc.
+			);
+			
+			return giveBackInvoice(ctx, rectified);
 		}
 	}
 	
@@ -649,22 +659,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getApiConfiguration(AonApiData api) {
-		Date start1 = new Date();
-		Date end1 = new Date();
+//		Date start1 = new Date();
+//		Date end1 = new Date();
 		Integer domainId = api.getDomain().getId();
 		ApiConfiguration conf = AON.getApiConfiguration(api.getOccam(), domainId );
-		JSONObject json = ApiConfigurationJSON.to(conf);
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
-		System.out.println( "[START] NEW Configuration *****" );
-		System.out.println( json.toString(1) );
-		System.out.println( "[END] NEW Configuration *****" );
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		return json;
+		return ApiConfigurationJSON.to(conf);
+//		JSONObject json = ApiConfigurationJSON.to(conf);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
+//		System.out.println( "[START] NEW Configuration *****" );
+//		System.out.println( json.toString(1) );
+//		System.out.println( "[END] NEW Configuration *****" );
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
 	}
 	
 	private JSONObject getConfiguration(AonApiData api) {
@@ -913,36 +923,29 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		try {
 			InvoiceCommunicator.cancelInvoice(icc);
 		} catch (Exception e) {
-			if (invoice.hasMessages()) {
-				List<InvoiceError> errors = invoice.messageStream()
-					.collect(Collectors.toCollection(LinkedList::new));
-				e.printStackTrace();
-				throw new InvoiceErrorException(errors);
-			}
-
-			// Para evitar recursividad --- 
-			Set<Throwable> visited = new HashSet<>();
-			Throwable current = e;
-			while (current != null && !visited.contains(current)) {
-				visited.add(current);
-				current = current.getCause();
-			}
-			// ------------------------------			
-			throw AonCollectionUtils.stream(visited)
-				.filter( InvoiceCommunicationException.class::isInstance )
-				.map(ex -> (InvoiceCommunicationException) ex)
-				.findFirst()
-				.orElse( new InvoiceCommunicationException(e.getMessage()))
-			;
+			InvoiceCommunicator.throwRightException( e, invoice  );
+//			if (invoice.hasMessages()) {
+//				List<InvoiceError> errors = invoice.messageStream()
+//					.collect(Collectors.toCollection(LinkedList::new));
+//				e.printStackTrace();
+//				throw new InvoiceErrorException(errors);
+//			}
+//
+//			// Para evitar recursividad --- 
+//			Set<Throwable> visited = new HashSet<>();
+//			Throwable current = e;
+//			while (current != null && !visited.contains(current)) {
+//				visited.add(current);
+//				current = current.getCause();
+//			}
+//			// ------------------------------			
+//			throw AonCollectionUtils.stream(visited)
+//				.filter( InvoiceCommunicationException.class::isInstance )
+//				.map(ex -> (InvoiceCommunicationException) ex)
+//				.findFirst()
+//				.orElse( new InvoiceCommunicationException(e.getMessage()))
+//			;
 		}
 	}
 	
 }
-
-
-
-
-
-
-
-

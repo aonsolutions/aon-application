@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json.invoice;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -11,6 +12,8 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON.InvoiceJSONVersion.JsonVersionVisitor;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -118,6 +121,11 @@ public class InvoiceJSON {
 	
 	public static JSONObject toJSON(Invoice invoice) {
 		return InvoiceJSONV1.toJSON(invoice);
+	}
+
+	
+	public static Optional<JSONObject> getCommunicationInfoJSON( Map<InvoiceCommunicationType, InvoiceInfo> communicationInfo) {
+		return InvoiceJSONV1.getCommunicationInfoJSON( communicationInfo);
 	}
 	
 }

@@ -429,7 +429,10 @@ export class AonInvoice extends AonElement {
 					moreActions.push(send);
 				}
 	
-				if(!this.getInvoice().isRawdoc() && !this.getInvoice().isRectified()){
+				if(!this.getInvoice().isRawdoc() 
+					&& !this.getInvoice().isRectified() 
+					&& !this.getInvoice().isRectifier()){
+						
 					let rectify = ACTION.RECTIFY_INVOICE;
 					rectify.permission = true;
 					rectify.backgroundColor = INVOICE.color;
@@ -3205,9 +3208,10 @@ export class AonInvoice extends AonElement {
 					invoice: this.invoice
 				};
 				rectifyInvoice(data).then(r => {
-					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+					r.status = 'inbox';
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
+					this.fileOpened = false;
 					this.reload();
 				}).catch(e => {
 					this.getApplication().stopLoader(); 
@@ -3404,7 +3408,6 @@ export class AonInvoice extends AonElement {
 			  MSG.DELETE
 			, MSG.DELETE_CONFIRM + " la factura?"
 		,()=>{
-			window.alert("yes!");
 			let data = {id: this.getInvoice().id};
 			if (this.getInvoice().canBeAnnulled()) {
 				let d = this.getApplication().getDialog();

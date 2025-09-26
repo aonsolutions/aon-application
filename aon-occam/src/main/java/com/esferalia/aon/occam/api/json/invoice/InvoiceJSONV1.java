@@ -92,6 +92,7 @@ class InvoiceJSONV1 {
 			.setRectificationInvoiceSeries(rectificationInvoice.getSeries())
 			.setRectificationInvoiceNumber(rectificationInvoice.getNumber())
 			.setRectificationInvoiceDate(rectificationInvoice.getIssueDate())
+			.setRectificationInvoiceReference(rectificationInvoice.getReferenceCode())			
 			.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
 			.setRegistryData(registry)
 			.setRegistry(registry.getId())
@@ -124,10 +125,12 @@ class InvoiceJSONV1 {
 	
 	private static Invoice getRectificationInvoice(JSONObject json) {
 		return new Invoice()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
-				.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
-				.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE));
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
+			.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
+			.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE))
+			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
+		;
 	}
 	
 	static JSONArray toJSON(List<Invoice> invoices) {
@@ -193,10 +196,11 @@ class InvoiceJSONV1 {
 			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
 
 			JSONObject rectificationInvoice = new JSONObject()
-					.put(IJsonNames.ID, invoice.getRectificationInvoice())
-					.put(IJsonNames.SERIES, invoice.getRectificationInvoiceSeries())
-					.put(IJsonNames.NUMBER, invoice.getRectificationInvoiceNumber())
-					.put(IJsonNames.DATE, rectificationInvoiceDate);
+				.put(IJsonNames.ID, invoice.getRectificationInvoice())
+				.put(IJsonNames.SERIES, invoice.getRectificationInvoiceSeries())
+				.put(IJsonNames.NUMBER, invoice.getRectificationInvoiceNumber())
+				.put(IJsonNames.REFERENCE_CODE, invoice.getRectificationInvoiceReference())
+				.put(IJsonNames.DATE, rectificationInvoiceDate);
 			
 			json.put(IJsonNames.RECTIFICATION_INVOICE, rectificationInvoice);
 		}
@@ -260,7 +264,7 @@ class InvoiceJSONV1 {
 	}
 	
 	// ---------------------------- [TO INVOICE INFO] ----------------------------
-	private static Optional<JSONObject> getCommunicationInfoJSON(Map<InvoiceCommunicationType, InvoiceInfo> enumMap) {
+	static Optional<JSONObject> getCommunicationInfoJSON(Map<InvoiceCommunicationType, InvoiceInfo> enumMap) {
 		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
 		JSONObject map = 
 			AonCollectionUtils.stream(enumMap)

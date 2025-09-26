@@ -1069,45 +1069,6 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	public static void mergeRecitificationData(Invoice inv, InvoiceRectificationData data) {
-		Integer invoiceId = inv.getId();
-		inv.setId(null);
-		if (inv.isSales()) {
-			inv.setSeries(data.getSeries());
-			inv.setNumber(data.getNumber());
-			inv.setReferenceCode(null);
-		} else {
-			inv.setSeries(null);
-			inv.setNumber(0);
-			inv.setReferenceCode(data.getReferenceCode());
-		}
-		inv.setRemarks((AonStringUtils.isBlank(inv.getRemarks())
-			?""
-			:(inv.getRemarks() + " "))
-			+ data.getCause());
-		inv.setIssueDate(data.getIssueDate());
-		inv.setTaxDate(data.getIssueDate());
-		inv.setRectificationType(data.getRectificationtype());
-		inv.setRectificationInvoice(invoiceId);
-		inv.setRecorded(false);
-		inv.setTaxableBase( AonMathUtils.round(inv.getTaxableBase() * (-1)));
-		inv.setVatQuota(AonMathUtils.round(inv.getVatQuota() * (-1)));
-		inv.setRetentionQuota(AonMathUtils.round(inv.getRetentionQuota() * (-1)));
-		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
-	}
-
-	public static void rectifyInvoiceUpdate(AONContext ctx, Integer invoiceId, Integer rectifierInvoice, RectificationType oldRectificationType) {
-		ctx.getDslContext().update(INVOICE)
-			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
-			.set(INVOICE.RECTIFICATION_INVOICE, (oldRectificationType == null || oldRectificationType == RectificationType.NONE)
-				?rectifierInvoice
-				:null)
-			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			.where(INVOICE.ID.equal( invoiceId))
-			.execute();
-	}
-	
 	public static Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
 		return 	ctx.getDslContext().select(
 				 INVOICE.TYPE
@@ -1877,8 +1838,14 @@ public class InvoiceDAO {
 		ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
 		return invoice;
 	}
-	
+
+	// ******************************************************************
+	// **************************************** [ RECTIFY ] *************
+	// ******************************************************************
 	public static Invoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
+		return rectifyInvoice(ctx, invoiceId, data, true);
+	}
+	public static Invoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data, boolean save) {
 		if ( invoiceId == null ) throw new AonCoreException("ID es un dato requerido");
 		if ( data == null ) throw new AonCoreException("La información para la rectificación es un dato requerido");
 		Invoice source = getFullInvoice(ctx, invoiceId);
@@ -1889,7 +1856,9 @@ public class InvoiceDAO {
 		
 		mergeRecitificationData(source, data);
 		
-		source.setDoc(null)
+		source
+			.setId(null)
+			.setDoc(null)
 			.setCreationDate(null)
 			.setCreationUser(null)
 			.setModificationUser(null)
@@ -1913,9 +1882,9 @@ public class InvoiceDAO {
 		
 		source.financeStream()
 			.forEach(f -> {
-				Integer oldId = f.getId();
+				Integer oldFinanceId = f.getId();
 				if (data.isSettleFinances() && f.getFinanceStatus() == FinanceStatus.PENDING) {
-					FinanceTrackingDAO.settle(ctx, oldId);
+					FinanceTrackingDAO.settle(ctx, oldFinanceId);
 				} 
 				f.setAmount(AonMathUtils.round(f.getAmount() * (-1)))
 					.setInvoice(null)
@@ -1924,18 +1893,63 @@ public class InvoiceDAO {
 					.setDirty(true);
 			});
 		
-		Invoice target = save(ctx, source);
-		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, target.getId(), oldRectificationType);
-		if (data.isSettleFinances()) {
-			target.financeStream()
-				.filter(f -> f.getFinanceStatus() == FinanceStatus.PENDING)
-				.forEach(f -> {
-					FinanceTrackingDAO.settle(ctx, f.getId());
-					f.setFinanceStatus(FinanceStatus.SETTLED);
-				});
+		Invoice target = source; 
+		if (save) {
+			target = save(ctx, source);
+			InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, target.getId(), oldRectificationType);
+			if (data.isSettleFinances()) {
+				target.financeStream()
+					.filter(f -> f.getFinanceStatus() == FinanceStatus.PENDING)
+					.forEach(f -> {
+						FinanceTrackingDAO.settle(ctx, f.getId());
+						f.setFinanceStatus(FinanceStatus.SETTLED);
+					});
+			}
 		}
 		return target;
 	}
 	
+	public static void mergeRecitificationData(Invoice inv, InvoiceRectificationData data) {
+		
+		inv.setRectificationInvoice(inv.getId());
+		inv.setRectificationInvoiceDate(inv.getIssueDate());
+		inv.setRectificationInvoiceSeries(inv.getSeries());
+		inv.setRectificationInvoiceNumber(inv.getNumber());
+		inv.setRectificationInvoiceReference(inv.getReferenceCode());
+
+		inv.setId(null);
+		if (inv.isSales()) {
+			inv.setSeries(data.getSeries());
+			inv.setNumber(data.getNumber());
+			inv.setReferenceCode(null);
+		} else {
+			inv.setSeries(null);
+			inv.setNumber(0);
+			inv.setReferenceCode(data.getReferenceCode());
+		}
+		inv.setComments((AonStringUtils.isBlank(inv.getRemarks())
+			? data.getCause()
+			:(inv.getComments() + " ")) + data.getCause());
+		inv.setIssueDate(data.getIssueDate());
+		inv.setTaxDate(data.getIssueDate());
+		inv.setRectificationType(data.getRectificationtype());
+		inv.setRecorded(false);
+		inv.setTaxableBase( AonMathUtils.round(inv.getTaxableBase() * (-1)));
+		inv.setVatQuota(AonMathUtils.round(inv.getVatQuota() * (-1)));
+		inv.setRetentionQuota(AonMathUtils.round(inv.getRetentionQuota() * (-1)));
+		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
+	}
+
+	public static void rectifyInvoiceUpdate(AONContext ctx, Integer invoiceId, Integer rectifierInvoice, RectificationType oldRectificationType) {
+		ctx.getDslContext().update(INVOICE)
+			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+			.set(INVOICE.RECTIFICATION_INVOICE, (oldRectificationType == null || oldRectificationType == RectificationType.NONE)
+				?rectifierInvoice
+				:null)
+			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoiceId))
+			.execute();
+	}
 }
 

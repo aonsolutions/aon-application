@@ -340,7 +340,7 @@ public class ConfigurationDAO {
 			.setCompany( CompanyDAO.getFull(ctx, domainId) )
 			.setAdministration(
 				AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
-					.map( a -> Administration.safeValueOf(Integer.parseInt(a.getValue())))
+					.map( a -> Administration.safeValueOf(AonNumberUtils.toInteger(a.getValue())))
 					.orElse(Administration.UNKNOWN) )
 			.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
 			.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))

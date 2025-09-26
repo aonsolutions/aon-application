@@ -44,6 +44,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CuponType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.GeneradoPorType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
@@ -178,6 +179,7 @@ public class VerifactuValidation {
 			.andThen(ALTA_FRA_RECHAZO_PREVIO)
 			.andThen(ALTA_FRA_TIPO_RECTIFICATIVA)
 			.andThen(ALTA_FRA_AGRUPACION_RECTIFICADAS)
+			.andThen(ALTA_FRA_AGRUPACION_RECTIFICADAS_IDS)
 			.andThen(ALTA_FRA_AGRUPACION_SUSTITUIDAS)
 			.andThen(ALTA_FRA_AGRUPACION_RECTIFICACION)
 			.andThen(ALTA_FRA_FECHA_OPERACION)
@@ -300,6 +302,22 @@ public class VerifactuValidation {
 		// - Sólo podrá incluirse esta agrupación (no es obligatoria) si TipoFactura es igual a "R1", "R2","R3", "R4" o "R5". 
 		if (a.fra.getFacturasRectificadas() != null && !AonEnumUtils.in(a.fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
 			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1117);
+		}
+	};
+	private static final Consumer<AltaContext> ALTA_FRA_AGRUPACION_RECTIFICADAS_IDS = a -> {
+		if (AonEnumUtils.in(a.fra.getTipoFactura(), R_1, R_2, R_3, R_4, R_5)) {
+			RegistroFacturacionAltaType.FacturasRectificadas fras = a.fra.getFacturasRectificadas();
+			if (fras == null || AonCollectionUtils.isEmpty(fras.getIDFacturaRectificada())) {
+				a.vc.addError(InvoiceCommunicationError.VERIFACTU_4102);
+			} else {
+				for ( IDFacturaARType id : fras.getIDFacturaRectificada()) {
+					if (id.getIDEmisorFactura() == null
+					 || id.getFechaExpedicionFactura() == null
+					 || id.getNumSerieFactura() == null) {
+						a.vc.addError(InvoiceCommunicationError.VERIFACTU_4102);
+					}
+				}
+			}
 		}
 	};
 	
@@ -985,7 +1003,6 @@ public class VerifactuValidation {
 			double q2 = VerifactuUtils.todouble(det.getCuotaRecargoEquivalencia());
 			sum = AonMathUtils.round(sum + q1 + q2);
 		}
-		sum = AonMathUtils.absRounded(sum);
 		double gap = AonMathUtils.absRounded(qTotal - sum);
 		if (gap > 10.0) {
 			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1216);
@@ -1013,7 +1030,6 @@ public class VerifactuValidation {
 				double q2 = VerifactuUtils.todouble(det.getCuotaRecargoEquivalencia());
 				sum = AonMathUtils.round(sum + b + q1 + q2);
 			}
-			sum = AonMathUtils.absRounded(sum);
 			double gap = AonMathUtils.absRounded(total - sum);
 			if (gap > 10.0) {
 				a.vc.addError(InvoiceCommunicationError.VERIFACTU_1210);

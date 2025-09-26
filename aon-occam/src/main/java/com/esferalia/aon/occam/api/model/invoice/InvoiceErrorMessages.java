@@ -14,6 +14,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	
+	C000("Error: \"{0}\" "),
 	C001("No se ha indicado el dato \"{0}\" y es obligatorio"),
 	C002("La longitud de el dato \"{0}\" supera los {1} caracteres m\u00E1ximos permitidos"),
 	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),

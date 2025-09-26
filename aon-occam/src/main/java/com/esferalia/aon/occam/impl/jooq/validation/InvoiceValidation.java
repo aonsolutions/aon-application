@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -275,6 +276,27 @@ public class InvoiceValidation {
 			}
 		}
 	};
+	
+	private static final Consumer<InvoiceValidationContext> RECTIFICATION_DATA = ivc -> {
+		if (ivc.inv.getId() == null 
+			&& ivc.inv.isRectifier() 
+			&& ivc.inv.getRectificationInvoice() != null) {
+			com.esferalia.aon.jooq.tables.Invoice invRect = INVOICE.as("INV_RECT");
+			ivc.ctx.getDslContext().select( invRect.REFERENCE_CODE, invRect.ISSUE_DATE )
+				.from(INVOICE)
+				.join(invRect).on(invRect.ID.eq(INVOICE.RECTIFICATION_INVOICE))
+				.where(INVOICE.ID.eq(ivc.inv.getRectificationInvoice()))
+				.and(INVOICE.RECTIFICATION_TYPE.eq(RectificationType.RECTIFIED.value()))
+				.fetch()
+				.stream()
+				.findFirst()
+				.ifPresent( r -> {
+					throw new AonCoreException(AonError.INVOICE_RECTIFIED_ALREADY_RECTIFIED.format(
+						r.getValue(invRect.REFERENCE_CODE),r.getValue(invRect.ISSUE_DATE) ));
+				});
+		}
+	};
+	
 
 	/**
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
@@ -346,6 +368,7 @@ public class InvoiceValidation {
 			.andThen(CHECK_TEN_YEARS)
 			.andThen(CHECK_FINANCES)
 			.andThen(ALCATRAZ)
+			.andThen(RECTIFICATION_DATA)
 			.accept(new InvoiceValidationContext(ctx,config,inv));
 
 	}

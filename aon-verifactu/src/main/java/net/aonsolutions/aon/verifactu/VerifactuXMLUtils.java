@@ -132,6 +132,12 @@ class VerifactuXMLUtils {
 			if (cert == null || cert.getData() == null || cert.getData().length == 0) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
 			}
+			
+			// ++++++++++++++++++ BORRAR
+			soapMessage.writeTo(System.out);
+			System.out.println();
+			// ++++++++++++++++++ 
+			
 			secure(cert, uri);
 	        // Create SOAP Connection
 	        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();

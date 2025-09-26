@@ -211,6 +211,7 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_TRANSACTION("No se ha indicado un tipo de transacci\u00F3n de factura (Nacional, Intracom., Extracom, ...")
 	,INVOICE_NOT_FOUND("Factura no encontrada.")
 	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
+	,INVOICE_RECTIFIED_ALREADY_RECTIFIED("La factura a rectificar ya ha sido rectificada por la factura {0} del día {1,date,dd/MM/yyyy}")
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
 	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")
 	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")

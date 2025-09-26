@@ -44,8 +44,6 @@ public class InvoiceCommunicationException extends Exception implements Serializ
 		} else {
 			this.errors.addAll(errors);
 		}
-		
-		
 	}
 	
    	@Override

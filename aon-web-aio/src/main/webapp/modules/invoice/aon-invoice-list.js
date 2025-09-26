@@ -6,7 +6,7 @@ import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { formatNumber, isBase64 } from '../../services/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
-import { createList, createSelect } from '../../components/CreateComponent.js';
+import { createList } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
@@ -265,7 +265,46 @@ export class AonInvoiceList extends AonElement {
 			icons.push(icon);
 		}
 		
+		if (this.hasCommunicationInfo(invoice)) {
+			if(!inv.isRawdoc()) {
+				let ci = invoice.communicationInfo;
+				let keys = Object.keys(ci ?? {});
+				for (let i = 0; i < keys.length; i++) {
+					let key = keys[i];
+					let communicationStatus = ci[key].communicationStatus;
+					let icon = {
+						icon: MATERIAL_ICONS.QR_CODE_2,
+						title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+						color: this.getCommunicationStatusColor(communicationStatus)
+					};
+					icons.push(icon);
+				}
+			}
+		}
+
 		return icons;
+	}
+
+	hasCommunicationInfo(invoice) {
+		return (invoice
+			&& invoice.communicationInfo 
+			&& Object.keys(invoice.communicationInfo).length > 0);
+	}
+
+	getCommunicationStatusLabel(status) {
+		if("PENDING" === status) return "Pendiente";
+		else if("ACCEPTED" === status) return "Aceptada";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("WRONG" === status) return "Incorrecta";
+		else return "Sin Estado";
+	}
+
+	getCommunicationStatusColor(status) {
+		if("PENDING" === status) return "orange";
+		else if("ACCEPTED" === status) return "green";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("WRONG" === status) return "red"
+		else return "gray";
 	}
 
 	getInvoiceTypeIcon(invoice) {

@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jooq.exception.DataAccessException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -420,7 +421,6 @@ public class InvoiceCommunicator {
 			current = current.getCause();
 		}
 		// ------------------------------
-		
 		System.out.println("******* [ InvoiceCommunicator.throwRightException ] ********");
 		e.printStackTrace();
 		InvoiceErrorException ti = AonCollectionUtils.stream(visited)
@@ -428,12 +428,26 @@ public class InvoiceCommunicator {
 			.map(ex -> (InvoiceCommunicationException) ex)
 			.map(ice -> 
 				AonCollectionUtils.stream(ice.getMessages())
-					.map(icm -> InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,icm.getCode(),icm.getMessage()) )
+					.map(icm -> {
+						String message = icm.getMessage(); 
+						if ( icm == InvoiceCommunicationError.AON_9000
+							&& ice.getCause() != null
+							&& AonStringUtils.isNotEmpty(ice.getCause().getMessage())) {
+							message = message + " ["+ ice.getCause().getMessage() +"]";
+						}
+						return InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,icm.getCode(),message);
+					})
 					.collect(Collectors.toCollection(LinkedList::new))
 				)
 			.map( es -> new InvoiceErrorException(es) )
 			.findFirst()
-			.orElse( new InvoiceErrorException(InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,"",e.getMessage())))
+			.orElseGet( () -> {
+				InvoiceError invoiceError = InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,"",e.getMessage());
+				if (e instanceof DataAccessException && e.getCause() != null) {
+					invoiceError = InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,"",e.getCause().getMessage());
+				}
+				return new InvoiceErrorException(invoiceError);	
+			})
 		;
 		System.out.println("***************");
 		ti.printStackTrace();
@@ -446,7 +460,7 @@ public class InvoiceCommunicator {
 		AonCollectionUtils.stream(tbaiInfo.getRequests())
 			.forEach(r -> {
 				InvoiceCommunicationStatus status = r.getResponse().isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG;
-				InvoiceCommunicationHistoryMapValue lroe = h.computeIfAbsent(InvoiceCommunicationType.TBAI, 
+				InvoiceCommunicationHistoryMapValue map = h.computeIfAbsent(InvoiceCommunicationType.TBAI, 
 					k -> {
 						InvoiceInfo info = new InvoiceInfo()
 							.setDomain(domainId)	
@@ -459,7 +473,7 @@ public class InvoiceCommunicator {
 						return new InvoiceCommunicationHistoryMapValue().setInfo( info);
 					}
 				);
-				lroe.add(new InvoiceCommunicationHistory()
+				map.add(new InvoiceCommunicationHistory()
 					.setInvoiceId(invoiceId)
 					.setDate(r.getDataResponse().getResponseDate())
 					.setCreationUser(r.getDataResponse().getCreationUser())
