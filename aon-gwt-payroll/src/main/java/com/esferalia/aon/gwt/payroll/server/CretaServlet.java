@@ -66,6 +66,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -77,6 +78,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.payroll.Employee.ExpressionData;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
@@ -1954,23 +1956,35 @@ public class CretaServlet extends HttpServlet
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findNotStarted(HttpServletRequest req) throws SQLException{
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());				
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
-		//String login = req.getParameter(CretaService.Parameter.USER.name());  
+		String login = req.getParameter(CretaService.Parameter.USER.name());  
 		
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));
 		cccs = filter(cccs);
 		
-		
+		String authorized = getAuthorized(domainName, domainId, login);
 		
 		return cccs.stream()
-		.map(ccc -> getNotStartedRespuesta(ccc, from))
+		.map(ccc -> getNotStartedRespuesta(ccc, from, authorized))
 //		.map(ccc -> getNotStartedAttachData(ccc, from))
 //		.map(data-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class,data) )
 //		.filter(optional -> optional.isPresent())
 //		.map(optional -> optional.get())
 //		.peek(r -> System.out.println(r.getAutorizado()))
 		;
+	}
+	
+	private static String getAuthorized(String domainName, int domainId, String login) {
+			String authorized = AON.getApplicationParameter(domainName, domainId, login, AppParam.PAY_authorization_key_PAY.toString()).getValue();
+			if( ( AonStringUtils.isNotBlank(authorized) ))
+				return authorized;
+			Domain domain = AON.getDomain(domainName, domainId, login);
+			
+			if ( domain != null &&  domain.getParentId() != null )
+				authorized = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.PAY_authorization_key_PAY.toString()).getValue();
+
+			return AonStringUtils.isNotBlank(authorized) ? authorized : AonStringUtils.repeat('6', 8);
 	}
 
 	private static Date getFromDate() {
@@ -2637,7 +2651,7 @@ public class CretaServlet extends HttpServlet
 		;
 	}
 	
-	private static Respuesta getNotStartedRespuesta(String ccc, Date from) {
+	private static Respuesta getNotStartedRespuesta(String ccc, Date from, String authorized) {
 		// 012345XXXXXX
 		String regimen = AonStringUtils.substring(ccc,0,2);
 		String provincia = AonStringUtils.substring(ccc,2,6);
@@ -2647,7 +2661,7 @@ public class CretaServlet extends HttpServlet
 		String anho =  String.format("%02d", AonDateUtils.get(from, Calendar.YEAR));
 		
 		Respuesta respuesta = new Respuesta();
-		respuesta.setAutorizado( AonStringUtils.repeat('6', 8));
+		respuesta.setAutorizado( authorized );
 		respuesta.setReferenciaExterna(CretaService.AON_REFERENCIA_EXTERNA);
 		
 		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion liquidacion = 
@@ -2696,6 +2710,7 @@ public class CretaServlet extends HttpServlet
 		
 		
 	}
+	
 
 	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, Collection<String> cccs) {
 		Settings settings = new Settings();
