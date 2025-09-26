@@ -286,9 +286,9 @@ export class AonInvoice extends AonElement {
 				if(commentCard) commentCard.style.width = '100%';
 			}
 
-			if(window.innerWidth && window.innerWidth < 900){
-				this.getApplication().closeSidenav();
-			}
+			// if(window.innerWidth && window.innerWidth < 900){
+			// 	this.getApplication().closeSidenav();
+			// }
 		}
 	}
 

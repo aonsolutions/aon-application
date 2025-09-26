@@ -34,6 +34,7 @@ export class AonUploadToast extends AonElement {
 	}
 
 	build() {
+		this.classList.add('hidden');
 		let card = new AonCard();
 		card.id = this.id + 'Card';
 		card.title = MSG.UPLOAD_FILE;		
@@ -58,49 +59,49 @@ export class AonUploadToast extends AonElement {
 	}
 
 	addFile(type, file, data, fn) {
+		this.classList.remove('hidden');
 		let ul = this.getElement(this.id + 'List');
 
 		let li = this.createElement(TAG.LI)
 		li.className = 'aonLi';
-		li.style.borderBottom = '0px';
-		li.style.height = '0px';
-		li.style.display = 'flex';
-		li.style.justifyContent = 'space-between';
+		// li.style.borderBottom = '0px';
+		// li.style.height = '0px';
+		// li.style.display = 'flex';
+		// li.style.justifyContent = 'space-between';
 		ul.appendChild(li);
 
 		let div = this.createDiv();
+		div.className = 'name';
 		li.appendChild(div);
 
 		let icon = new AonIcon();
 		icon.className = "aonAvatar";
 		icon.icon = this.getTypeIcon(file.type);
-		icon.size = "20";
+		// icon.size = "20";
 		div.appendChild(icon);
 		
 		let span = this.createSpan()
 		span.innerHTML = file.name;
 		span.classList.add(CSS.AON_TEXT_OVERFLOW);
 
-		span.style.maxHeight = '30px';
-		span.style.width = this.isMobile() ? '180px' : '220px';
-		span.style.display = 'block';	
-		span.style.paddingTop = '5px';
+		// span.style.maxHeight = '30px';
+		// span.style.width = this.isMobile() ? '180px' : '220px';
+		// span.style.display = 'block';	
+		// span.style.paddingTop = '5px';
 		
 		div.appendChild(span);
 		
 
-		let loadDiv = this.createDiv();
-		loadDiv.id = this.id + "LoadDiv";
-		loadDiv.className = 'lds-ring';
-		loadDiv.innerHTML = '<div></div><div></div><div></div><div></div>';
+		let loadDiv  = new AonIcon();
+		loadDiv.id 	 = this.id + "LoadDiv";
+		loadDiv.icon = 'loader';
 		li.appendChild(loadDiv);
 
-		let okDiv = this.createElement(TAG.I);
+		let okDiv = new AonIcon();
 		okDiv.id = this.id + "OkDiv";
-		okDiv.className = CSS.MATERIAL_ICONS;
-		okDiv.innerHTML = MATERIAL_ICONS.CHECK_CIRCLE;
+		okDiv.icon = MATERIAL_ICONS.CHECK_CIRCLE;
 		okDiv.style.display = 'none';
-		okDiv.style.color = '#5cb85c';
+		// okDiv.style.color = '#5cb85c';
 		li.appendChild(okDiv);
 
 		this.upload(type, file, data, () => {
@@ -109,12 +110,11 @@ export class AonUploadToast extends AonElement {
 			if(fn) fn();
 		}, (msg) => {
 			okDiv.style.display = 'block';
-			okDiv.innerHTML = MATERIAL_ICONS.CANCEL;
-			okDiv.style.color = 'red';
+			okDiv.icon = MATERIAL_ICONS.CANCEL;
+			// okDiv.style.color = 'red';
 			okDiv.title = msg;
 			loadDiv.style.display = 'none';
 		});
-
 	}	
 
 	upload(type, file, data, success, error) {
@@ -135,17 +135,17 @@ export class AonUploadToast extends AonElement {
 
 	getTypeIcon(type) {
 		if(type.includes('pdf')) {
-		  return 'aon_pdf';
+		  return 'file-pdf';
 		} else if(type.includes('powerpoint') || type.includes('presentation')){
-		  return 'aon_powerpoint'
+		  return 'file-pie-chart';
 		} else if(type.includes('excel') || type.includes('spreadsheet')){
-		  return 'aon_excel'
+		  return 'file-x';
 		} else if(type.includes('word') || type.includes('text')){
-		  return 'aon_word'
+		  return 'file-text';
 		} else if(type.includes('image')) {
-		  return 'aon_image'
+		  return 'file-image';
 		} else {
-		  return 'aon_file'
+		  return 'file';
 		}
 	}
 }

@@ -75,7 +75,7 @@ export class AonUserPanel extends AonElement {
 		aonUserPanel.addSidenavOptions('Usuarios', filterOptions);
 
 		aonUserPanel.setContent(new AonUserList());
-		aonUserPanel.closeSidenav();
+		// aonUserPanel.closeSidenav();
 	}
 
 	init(type){

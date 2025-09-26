@@ -22,7 +22,7 @@ export const ASESOR = {
 
 export const DOCUMENTS = {
     id: 'Documents',
-    name: MSG.DOCUMENTS.toUpperCase(),
+    name: MSG.FILES.toUpperCase(),
     options: [ALL_FILES]
 };
 

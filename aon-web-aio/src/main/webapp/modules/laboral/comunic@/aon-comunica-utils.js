@@ -222,18 +222,18 @@ export class AonComunicaUtils extends AonElement {
             aonView = new AonContractList();
           else 
             this.goContractDesk();
-            this.getApplication().closeSidenav();
+            // this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CERT:
           this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
-          this.getApplication().closeSidenav();
+          // this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CTA_LIST:
           if (this.isMobile()) 
             aonView = new AonCtaList();
           else 
             this.loadGwt(GWT.MAIN_CCC);
-            this.getApplication().closeSidenav();
+            // this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
           aonView = new AonMovementsList();

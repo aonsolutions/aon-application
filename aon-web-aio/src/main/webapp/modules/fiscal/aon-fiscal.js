@@ -81,12 +81,12 @@ export class AonFiscal extends AonElement {
 		} else {
 			if (!LS.isNewTheme()) {
 				application.addToolbarOption2(VAT_PANEL, () => {
-					application.closeSidenav();
+					// application.closeSidenav();
 					this.showView(FISCAL_VIEWS.VAT_PANEL);
 				});
 
 				application.addToolbarOption2(RETENTION_PANEL, () => {
-					application.closeSidenav();
+					// application.closeSidenav();
 					this.showView(FISCAL_VIEWS.IRPF_REPORT);
 				});
 			}

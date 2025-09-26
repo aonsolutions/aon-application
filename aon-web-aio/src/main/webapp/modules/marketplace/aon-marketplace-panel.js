@@ -24,7 +24,7 @@ export class AonMarketplacePanel extends AonElement {
   build() {
     let application = this.getApplication();
     if(application) {
-      application.closeSidenav();
+      // application.closeSidenav();
       application.setContentHTML(
         `<aon-booking id="aonMarketplace"></aon-booking>`
       );
