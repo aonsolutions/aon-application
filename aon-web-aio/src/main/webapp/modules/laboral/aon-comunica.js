@@ -49,7 +49,7 @@ export class AonComunica extends AonComunicaUtils {
         let aon_cert = PayrollOptions.AON_CERT;
         aon_cert.fn = () => {
           this.getApplication().removeToolbarOptions();
-          if(window.innerWidth && window.innerWidth < 900){ this.getApplication().closeSidenav(); }
+          // if(window.innerWidth && window.innerWidth < 900){ this.getApplication().closeSidenav(); }
           this.showView(PAYROLL_VIEWS.AON_CERT);
         }
         options.push(aon_cert);
