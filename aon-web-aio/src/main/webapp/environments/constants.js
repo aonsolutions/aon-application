@@ -313,6 +313,9 @@ export const RECTIFIED = 'rectified';
 export const RECTIFIER = 'rectifier';
 export const RECTIFY = 'rectify';
 export const RECTIFY_INVOICE = 'rectifyInvoice';
+export const RECTIFY_SERIES = 'rectifySeries';
+export const RECTIFY_DATE = 'rectifyDate';
+export const RECTIFY_CAUSE = 'rectifyCause';
 export const REFERENCE = 'reference';
 export const REFRESH = 'refresh';
 export const REFUSED = 'refused';
@@ -338,6 +341,7 @@ export const RETENTION_PERCENT = 'retentionPercent';
 export const ROOT = 'root';
 export const ROOT_PANEL = 'rootPanel';
 export const ROW = 'row';
+export const ROWS = 'rows';
 
 // ----- S
 export const SALTRA = 'saltra';

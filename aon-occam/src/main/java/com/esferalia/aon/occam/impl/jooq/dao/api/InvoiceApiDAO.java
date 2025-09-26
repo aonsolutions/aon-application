@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.Record2;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -51,7 +50,7 @@ public class InvoiceApiDAO {
 			.fetch()
 			.stream()
 			.map(new InvoiceApiFiller() )
-			.map(i -> i.addCommunicationInfo( InvoiceInfoDAO.getMap(ctx, i.getId()).orElse(null) ))
+			.map(i -> i.addCommunicationInfo( InvoiceInfoDAO.getMap(ctx, i.getDomain(), i.getId()).orElse(null) ))
 		;
 	}
 	

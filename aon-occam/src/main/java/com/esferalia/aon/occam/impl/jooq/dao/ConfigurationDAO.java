@@ -20,10 +20,12 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -331,5 +333,23 @@ public class ConfigurationDAO {
 	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 	    }       
         return sb.toString();
+	}
+	
+	public static ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId) {
+		return new ApiConfiguration()
+			.setCompany( CompanyDAO.getFull(ctx, domainId) )
+			.setAdministration(
+				AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
+					.map( a -> Administration.safeValueOf(Integer.parseInt(a.getValue())))
+					.orElse(Administration.UNKNOWN) )
+			.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
+			.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
+			.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
+			.setSeries( SeriesDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
+			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, domainId) )
+			.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
+			.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
+			.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )
+		;
 	}
 }

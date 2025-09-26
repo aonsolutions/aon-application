@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
+import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, rectifyInvoice, deleteInvoice, deleteRawdocInvoices,
 	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getCommunicationHistory, downloadFacturae, getCustomerEmails,
+	signInvoice, getApiConfiguration, getAeatCertificates, getCommunicationHistory, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
 	getPaymethod} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
@@ -91,7 +91,7 @@ export class AonInvoice extends AonElement {
 	async connectedCallback () {
 		this.initialize();
 		this.initializeFunctions();
-		this.configuration = await getInvoiceConfiguration();
+		this.configuration = await getApiConfiguration();
 
 		this.getInvoice().surcharge = this.getInvoice().surcharge || this.getCompany().surcharge;
 		this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || this.getCompany().vatAccrualPayment;
@@ -117,6 +117,11 @@ export class AonInvoice extends AonElement {
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
 		this.COMMENTS = this.DATA + 'Comments';
 		this.COMMENT_CARD = this.DATA + 'CommentsCard';
+		this.RECTIFY_CONTENT = this.DATA + "RectifyContent"
+		this.RECTIFY_CONTENT_TABLE = this.RECTIFY_CONTENT + CONSTANT.TABLE.initCap();
+		this.RECTIFY_CONTENT_SERIES = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_SERIES.initCap();
+		this.RECTIFY_CONTENT_DATE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_DATE.initCap();
+		this.RECTIFY_CONTENT_CAUSE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_CAUSE.initCap();
 		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
@@ -239,6 +244,26 @@ export class AonInvoice extends AonElement {
 		return this.configuration.company.banks
 			? this.configuration.company.banks.filter(f => f.active)
 			: [];
+	}
+
+	getTax( id ) {
+		if (id && this.configuration && this.configuration.taxes && this.configuration.taxes.length > 0) {
+			return this.configuration.taxes.find(t => t.id === id);
+		}
+		return undefined;
+	}
+
+	getDefaultWithholdingType() {
+		if (this.configuration && this.configuration.defaultRetentionTax) {
+			if (this.configuration.taxes && this.configuration.taxes.length > 0) {
+				let tax = this.getTax(this.configuration.defaultRetentionTax);
+				if (tax) {
+					return tax.withholding_type;
+				} 
+				
+			}
+		}
+		return undefined;
 	}
 
 	getInvoice() {
@@ -494,21 +519,20 @@ export class AonInvoice extends AonElement {
 			let keys = Object.keys(ci ?? {});
 			for (let i = 0; i < keys.length; i++) {
 				let key = keys[i];
+				let communicationStatus = ci[key].communicationStatus;
 				let checkURL = ci[key].checkUrl;
-				if ( checkURL ) {
-					let action  = {
-						id: 'Communication_' + key,
-						name: key,
-						title: key,
-						icon: MATERIAL_ICONS.QR_CODE_2
-					};
-					let aib = invoiceToolbar.addButtonTitle(action, () => open(checkURL));
-					if (aib) {
-						let communicationStatus = ci[key].communicationStatus;
-						if (communicationStatus) {
-							aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
-						}
-					}
+				let fn = ( checkURL ) 
+					? () => open(checkURL)
+					: undefined;
+				let action  = {
+					id: 'Communication_' + key,
+					name: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					icon: MATERIAL_ICONS.QR_CODE_2
+				};
+				let aib = invoiceToolbar.addButtonTitle(action, fn);
+				if (aib && communicationStatus) {
+					aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
 				}
 			}
 		}
@@ -810,10 +834,11 @@ export class AonInvoice extends AonElement {
 	}
 
 	getCommunicationStatusColor(status) {
-		if("PENDING" === status) return "gray";
+		if("PENDING" === status) return "orange";
 		else if("ACCEPTED" === status) return "green";
-		else if("ACCEPTED_WITH_ERRORS" === status) return "orange";
-		else return "red";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("WRONG" === status) return "red"
+		else return "gray";
 	}
 	
 	buildCommentCard(parent) {
@@ -1793,7 +1818,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked, this.configuration ? this.configuration.withholdingPercent : undefined);
+			this.invoice.setWithholding(irpf.checked, this.getDefaultWithholdingType());
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1822,7 +1847,7 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val || (this.configuration ? this.configuration.withholdingPercent : undefined);
+			irpfType.value = val || this.getDefaultWithholdingType();
 		} 
 	}
 
@@ -3116,8 +3141,90 @@ export class AonInvoice extends AonElement {
 		});
 		d.open();
 	}
-	
+
+	checkRectifySeries() {
+		if (this.configuration
+			&& this.configuration.series
+			&& this.configuration.series.length > 0) {
+			return this.configuration.series.some( ser => ser.rectification === true);	
+		}
+		return false;
+	}
+
+	newRectifyInvoice() {
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+			if (!this.checkRectifySeries()) {
+				this.showMessageError("En entornos con VERIFACTU/TicketBAI activo,"
+					+" debe existir al menos una serie para facturas rectificativas.");
+				return;
+			}
+
+			let aonInvoice = this.getElement('aonInvoice');
+			let d = document.getElementById(aonInvoice.DIALOG);
+			d.clear();
+			d.setTitle(MSG.RECTIFY_INVOICE);
+			if(!this.isMobile()) d.width = '400px';
+
+			let rectifyContent  = this.createElement(TAG.DIV);
+			rectifyContent.id = this.RECTIFY_CONTENT;
+			d.setContent(rectifyContent);
+
+			let table = new AonBasicTable();
+			table.id = this.RECTIFY_CONTENT_TABLE;
+			rectifyContent.appendChild(table);
+
+			table.addRow();
+			let rectSeries  = createSelect(this.RECTIFY_CONTENT_SERIES, MSG.SERIE);
+			let rectOptions = this.configuration.series
+				.filter( ser => ser.rectification === true)
+				.map(ser  => { return {value: ser.code,name: ser.code};}
+			);
+			rectSeries.options = JSON.stringify(rectOptions);
+			if (rectOptions.length == 1) {
+				rectSeries.value = rectOptions[0].value;
+			}
+			table.addCell(rectSeries);
+
+			table.addRow();
+			let rectDate = createDate(this.RECTIFY_CONTENT_DATE, MSG.DATE);
+			rectDate.setDate(new Date());
+			table.addCell(rectDate);
+
+			table.addRow();
+			let rectCause = createTextarea(this.RECTIFY_CONTENT_CAUSE, MSG.CAUSE);
+			rectCause.maxlength = "256";
+			rectCause.rows = "4";
+			table.addCell(rectCause);
+			
+			d.addAcceptAction(() => { 
+				this.getApplication().startLoader();
+				let data = {
+					series: rectSeries.getValue(),
+					date: rectDate.getValue(),
+					cause: rectCause.getValue(),
+					invoice: this.invoice
+				};
+				rectifyInvoice(data).then(r => {
+					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader(); 
+					this.reload();
+				}).catch(e => {
+					this.getApplication().stopLoader(); 
+					this.showError(e)
+				});
+			});
+			d.open();
+		}
+	}
+
 	rectifyInvoice() {
+		// [START] TEMP SOLUTION!!
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+			return this.newRectifyInvoice();
+		}
+		// [END]
+
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
@@ -3293,27 +3400,44 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
-		let data = {id: this.getInvoice().id};
-		if (this.getInvoice().canBeAnnulled()) {
-			window.alert( "canBeAnnulled!! TRUE");
-			let d = this.getApplication().getDialog();
-			d.clear();
-			if(!this.isMobile()) d.width = '400px';
-			d.setTitle("Anular");
-			let certSelect = createSelect("cert", "Certificado");
-			getAeatCertificates().then(certs => {
-				certSelect.setOptions(certs.map(s => {
-					return {
-					  value: s.id,
-					  name: s.name
-					}
-				  }));
-			}); 
-			d.setContent(certSelect);
-			d.addAcceptAction(() => {
+		this.getApplication().confirmDialog(
+			  MSG.DELETE
+			, MSG.DELETE_CONFIRM + " la factura?"
+		,()=>{
+			window.alert("yes!");
+			let data = {id: this.getInvoice().id};
+			if (this.getInvoice().canBeAnnulled()) {
+				let d = this.getApplication().getDialog();
+				d.clear();
+				if(!this.isMobile()) d.width = '400px';
+				d.setTitle("Anular");
+				let certSelect = createSelect("cert", "Certificado");
+				getAeatCertificates().then(certs => {
+					certSelect.setOptions(certs.map(s => {
+						return {
+						value: s.id,
+						name: s.name
+						}
+					}));
+				}); 
+				d.setContent(certSelect);
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					let data = this.getInvoice();
+					data.cert = certSelect.value;
+					deleteInvoice(data).then(() => {
+						this.getApplication().stopLoader(); 
+						this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
+						this.showMessage(MSG.DELETED_DATA);
+						this.back();
+					}).catch(e => {
+						this.getApplication().stopLoader(); 
+						this.showError(e);
+					});
+				});			
+				d.open();
+			} else {
 				this.getApplication().startLoader();
-				let data = this.getInvoice();
-				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
 					this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
@@ -3323,21 +3447,8 @@ export class AonInvoice extends AonElement {
 					this.getApplication().stopLoader(); 
 					this.showError(e);
 				});
-			});			
-			d.open();
-		} else {
-			window.alert( "canBeAnnulled!! FALSE");
-			this.getApplication().startLoader();
-			deleteInvoice(data).then(() => {
-				this.getApplication().stopLoader(); 
-				this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
-				this.showMessage(MSG.DELETED_DATA);
-				this.back();
-			}).catch(e => {
-				this.getApplication().stopLoader(); 
-				this.showError(e);
-			});
-		}
+			}
+		});
 	}
 	
 	restoreInvoice() {

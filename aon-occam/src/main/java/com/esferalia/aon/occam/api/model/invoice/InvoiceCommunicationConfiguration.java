@@ -2,9 +2,12 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceCommunicationConfiguration implements Serializable{
 
@@ -126,21 +129,22 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 
-	public InvoiceCommunicationType getType() {
+	public List<InvoiceCommunicationType> getTypes() {
+		LinkedList<InvoiceCommunicationType> types = new LinkedList<>(); 
 		if(isTbai() && (getAdministration().isAraba() || getAdministration().isGipuzkoa())) {
-			return InvoiceCommunicationType.TBAI;
+			types.add(InvoiceCommunicationType.TBAI);
 		} else if(isTbai() && getAdministration().isBizkaia()) {
-			return InvoiceCommunicationType.LROE;
+			types.add(InvoiceCommunicationType.LROE);
 		} else if(isVerifactu() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
-			return InvoiceCommunicationType.VERIFACTU;
+			types.add(InvoiceCommunicationType.VERIFACTU);
 		} else if(isSii() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
-			return InvoiceCommunicationType.SII;
+			types.add(InvoiceCommunicationType.SII);
 		}
-		return null;
+		return types;
 	}
 	
 	public boolean hasCommunication() {
-		return getType() != null;
+		return AonCollectionUtils.isNotEmpty(getTypes());
 	}
 
 	public boolean isBizkaia() 	{return administration == Administration.BIZKAIA;}

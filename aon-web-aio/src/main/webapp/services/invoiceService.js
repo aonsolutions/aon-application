@@ -4,6 +4,7 @@ import { API_URL, SIG_URL } from "../environments/environments.js";
 import { generateTokenSig } from "./userService.js";
 
 // PRINT CONFIGURATION
+export const getApiConfiguration = (data) =>  get(`${API_URL}/invoice/api_configuration`, data);
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
 export const saveInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/configuration`, data);
 
@@ -26,6 +27,7 @@ export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
 export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
+export const rectifyInvoice = (data) => put(`${API_URL}/invoice/rectify`, data);
 
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 

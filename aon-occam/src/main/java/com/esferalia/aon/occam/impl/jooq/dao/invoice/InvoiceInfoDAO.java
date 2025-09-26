@@ -14,12 +14,14 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -47,10 +49,16 @@ public class InvoiceInfoDAO {
 			.findFirst();	
 	}
 	
-	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, Integer invoiceId) {
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, Integer domainId, Integer invoiceId) {
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
+		return getMap(ctx, icc, domainId, invoiceId); 
+	}
+	
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, InvoiceCommunicationConfiguration icc, Integer domainId, Integer invoiceId) {
 		ctx.checkRead();
 		EnumMap<InvoiceCommunicationType,InvoiceInfo> enumMap = select(ctx)
-			.where(INVOICE_INFO.INVOICE.eq(invoiceId))
+			.where(INVOICE_INFO.DOMAIN.eq(domainId))
+			.and(INVOICE_INFO.INVOICE.eq(invoiceId))
 			.orderBy(INVOICE_INFO.CREATION_DATE)
 			.fetch()
 			.stream()
@@ -61,9 +69,19 @@ public class InvoiceInfoDAO {
 				,Map::putAll
 			)
 		;
+		if (icc != null) {
+			AonCollectionUtils.stream(icc.getTypes())
+				.forEach( t -> enumMap.computeIfAbsent(t, 
+					k -> new InvoiceInfo()
+						.setType(t)
+						.setInvoice(invoiceId)
+						.setDomain(domainId)
+						.setStatus(InvoiceCommunicationStatus.PENDING)));
+		}
 		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
 		return Optional.of(enumMap);
 	}
+	
 	
 	// ************************************************************
 	// ********************** [WRITE] *****************************

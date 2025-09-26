@@ -53,6 +53,7 @@ public class ApiConfigurationJSON {
 			.put(IJsonNames.DEFAULT_RETENTION_TAX, conf.getDefaultRetention())
 			.put(IJsonNames.DEFAULT_VAT_TAX, conf.getDefaultVat())
 			.put(IJsonNames.TAXES, TaxJSON.toJSON(conf.getTaxes()))
+			.put(IJsonNames.SERIES, SeriesJSON.to(conf.getSeries()))
 			.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(conf.getWorkplaces()))
 			.put(IJsonNames.PRINT, PrintInvoiceConfigurationJSON.to(conf.getPrintConfiguration()).orElse(null))
 			.put(IJsonNames.COMMUNICATION_CONFIGURATION, InvoiceCommunicationConfigurationJSON.to(conf.getCommunicationConfiguration()).orElse(null))

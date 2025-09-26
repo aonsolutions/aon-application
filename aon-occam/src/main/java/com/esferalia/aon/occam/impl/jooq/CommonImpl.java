@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -651,4 +652,11 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ActivitySummaryDAO.getActivitySummary(ctx, domainId, parentDomainId, userId, params));
 	}
+	
+	// API CONFIGURATION
+	@Override
+	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId) {
+		return ConfigurationDAO.getApiConfiguration(ctx, domainId);
+	}
+	
 }

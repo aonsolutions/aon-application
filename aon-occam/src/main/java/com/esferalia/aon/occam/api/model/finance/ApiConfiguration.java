@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -18,6 +19,7 @@ public class ApiConfiguration implements Serializable {
 	private Integer defaultVat;
 	private Integer defaultRetention;
 	private List<Tax> taxes;
+	private List<Series> series;
 	private List<Workplace> workplaces;
 	private PrintInvoiceConfiguration printConfiguration;
 	private InvoiceCommunicationConfiguration communicationConfiguration;
@@ -60,6 +62,14 @@ public class ApiConfiguration implements Serializable {
 	}
 	public ApiConfiguration setTaxes(List<Tax> taxes) {
 		this.taxes = taxes;
+		return this;
+	}
+	
+	public List<Series> getSeries() {
+		return series;
+	}
+	public ApiConfiguration setSeries(List<Series> series) {
+		this.series = series;
 		return this;
 	}
 	

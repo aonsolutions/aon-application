@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -144,7 +145,11 @@ public class FeeInvoicingProcess implements ILongProcess {
 				new AcceptInvoiceCommunicationTypeVisitor(occam, invoices)
 				.setCompany(AON.getCompanyForDomain(occam));
 			try {
-				if(config.getType() != null) config.getType().visit(visitor);
+				if (config.hasCommunication()) {
+					for (InvoiceCommunicationType type : config.getTypes()) {
+						type.visit(visitor);
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}			

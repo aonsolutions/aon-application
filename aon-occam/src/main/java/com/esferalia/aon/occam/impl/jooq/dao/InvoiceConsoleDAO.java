@@ -104,7 +104,7 @@ public class InvoiceConsoleDAO {
 	}
 	
 	private static InvoiceConsole fillCommunicationInfo(AONContext ctx, InvoiceConsole ic) {
-		ic.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, ic.getInvoice().getId()).orElse(null));
+		ic.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, ic.getInvoice().getDomain(), ic.getInvoice().getId()).orElse(null));
 		return ic;
 	}
 

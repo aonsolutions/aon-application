@@ -294,7 +294,7 @@ public class InvoiceValidation {
 		if (config.isTbai()) {
 			boolean accepted = true;
 			if(config.isBizkaia()) {
-				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
+				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
 					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
 					.filter( Objects::nonNull )
 					.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
@@ -316,7 +316,7 @@ public class InvoiceValidation {
 	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
 		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
 		if(config.isVerifactu()) {
-			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getId())
+			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
 				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
 				.filter( Objects::nonNull )
 				.map(info -> info.isAccepted() || info.isAcceptedWithErrors())

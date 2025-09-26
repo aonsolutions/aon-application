@@ -89,7 +89,7 @@ public class InvoiceCommunicator {
 		});
 		
 		EnumMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new EnumMap<>(InvoiceCommunicationType.class);
-		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, invoiceId).orElse(null) )
+		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, domainId, invoiceId).orElse(null) )
 			.forEach( e -> map.put(e.getKey(), new InvoiceCommunicationHistoryMapValue().setInfo(e.getValue())));
 		AonCollectionUtils.stream(history)
 			.forEach(t -> {
@@ -181,23 +181,25 @@ public class InvoiceCommunicator {
 			if(invoice.isSales()) {
 				InvoiceDAO.preIssue(ctx, invoice );
 				if (cc.getConfig().hasCommunication() ) {
-					cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
-						
-						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
-						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
-						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
-						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
-						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
-						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
-						
-						@Override
-						public void visitVERIFACTU() throws InvoiceCommunicationException  {
-							VerifactuContext vc = VERIFACTU.accept(ctx,cc);
-							if (vc.isResponseCorrecta(invoice.getId())) {
-								InvoiceDAO.postIssue(ctx, invoice );								
+					for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+						type.visit( new InvoiceCommunicationTypeVisitor() {
+							
+							@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
+							@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
+							@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
+							@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
+							@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
+							@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+							
+							@Override
+							public void visitVERIFACTU() throws InvoiceCommunicationException  {
+								VerifactuContext vc = VERIFACTU.accept(ctx,cc);
+								if (vc.isResponseCorrecta(invoice.getId())) {
+									InvoiceDAO.postIssue(ctx, invoice );								
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 			return cc;
@@ -233,20 +235,22 @@ public class InvoiceCommunicator {
 			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
 					
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
-				cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
-
-					@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
-					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
-					@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
-					@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
-					@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
-					@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
-
-					@Override
-					public void visitVERIFACTU() throws InvoiceCommunicationException  {
-						VERIFACTU.accept(ctx,cc);
-					}
-				});
+				for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+					type.visit( new InvoiceCommunicationTypeVisitor() {
+						
+						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
+						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
+						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
+						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
+						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
+						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+						
+						@Override
+						public void visitVERIFACTU() throws InvoiceCommunicationException  {
+							VERIFACTU.accept(ctx,cc);
+						}
+					});
+				}
 			}
 			return cc;
 		} catch (Exception e) {
@@ -260,6 +264,18 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [CANCEL] ********
 	// *************************************************************
+	public static boolean mustBeAnnulled(Occam occam, Invoice invoice, InvoiceCommunicationType type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return mustBeAnnulled( ctx, invoice, type );
+		}
+	}
+	public static boolean mustBeAnnulled(AONContext ctx, Invoice invoice, InvoiceCommunicationType type) {
+		return invoice.getInvoiceInfo( type )
+			.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), type))
+			.map(info -> info.isPartialAccepted())
+			.orElse(false);
+	}
+	
 	public static InvoiceCommunicatorContext cancelInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
 		checkAONContextValues(communicator);
 		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
@@ -276,25 +292,24 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 			if (invoice.isSales() && cc.getConfig().hasCommunication() ) {
-				cc.getConfig().getType().visit( new InvoiceCommunicationTypeVisitor() {
-	
-					@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
-					@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
-					@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
-					@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
-					@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
-					@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
-
-					@Override
-					public void visitVERIFACTU() throws InvoiceCommunicationException  {
-						InvoiceInfo info = invoice.getVerifactuInfo()
-							.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), InvoiceCommunicationType.VERIFACTU))
-							.orElse(null);
-						if (info != null && info.isPartialAccepted()) {
-							VERIFACTU.cancel(ctx,cc);
-						} 
-					}
-				});
+				for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+					type.visit( new InvoiceCommunicationTypeVisitor() {
+						
+						@Override public void visitSERES() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0012); }
+						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0013); }
+						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0014); }
+						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
+						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
+						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+						
+						@Override
+						public void visitVERIFACTU() throws InvoiceCommunicationException  {
+							if (mustBeAnnulled(ctx, invoice, InvoiceCommunicationType.VERIFACTU)) {
+								VERIFACTU.cancel(ctx,cc);
+							} 
+						}
+					});
+				}
 			}
 			return cc;
 		} catch (Exception e) {

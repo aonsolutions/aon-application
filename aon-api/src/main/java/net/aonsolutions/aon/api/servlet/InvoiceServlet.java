@@ -56,6 +56,8 @@ import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -73,21 +75,17 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils;
-import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
@@ -145,6 +143,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/configuration":
 				response(req, resp, getConfiguration(api));
 				break;
+			case "/api_configuration":
+				response(req, resp, getApiConfiguration(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -196,6 +197,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/accept":
 				response(req, resp, acceptInvoice(api));
+				break;
+			case "/rectify":
+				response(req, resp, rectifyInvoice(api));
 				break;
 			case "/sign":
 				response(req, resp, signInvoice(api));
@@ -278,14 +282,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if (invoice.isSales()) {
 			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
 			if (config.isVerifactu()) {
-				cancelAndCommunicateInvoice(api, config, company, invoice);
-				return new JSONObject();
+				if (InvoiceCommunicator.mustBeAnnulled(api.getOccam(), invoice, InvoiceCommunicationType.VERIFACTU)) {
+					cancelAndCommunicateInvoice(api, config, company, invoice);
+					return new JSONObject();
+				}
 			}
 			if (config.isTbai()) {
 				boolean accepted = true;
 				if(config.isBizkaia()) {
 					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-						accepted = InvoiceInfoDAO.getMap(ctx, invoiceId)
+						accepted = InvoiceInfoDAO.getMap(ctx, config, api.getDomain().getId(), invoiceId)
 								.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
 								.filter( Objects::nonNull )
 								.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
@@ -380,9 +386,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			
 			// [START]
 			// Borrar
-			System.out.println( " ****** REQUESTED INVOICE ("+ invoiceId+")");
-			System.out.println( json.toString(1));
-			System.out.println( " ****** ");
+//			System.out.println( " ****** REQUESTED INVOICE ("+ invoiceId+")");
+//			System.out.println( json.toString(1));
+//			System.out.println( " ****** ");
 			// [END]
 			
 			return json;
@@ -434,6 +440,28 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 
 		return json;
+	}
+	
+	public static JSONObject rectifyInvoice(AonApiData api) throws Exception {
+		System.out.println(api.getData().toString(1));
+		JSONObject invoiceJSON = JsonUtils.getJSONObject( api.getData(), "invoice");
+		String series = JsonUtils.getString( api.getData(), "series");
+		Date date = JsonUtils.getDate( api.getData(), "date");
+		String cause = JsonUtils.getString( api.getData(), "cause");
+		
+		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);
+		InvoiceRectificationData ird = new InvoiceRectificationData()
+			.setType( invoice.getType())
+			.setSeries(series)
+			.setIssueDate(date)
+			.setCause(cause)
+			.setRectificationtype(RectificationType.NORMAL_RECTIFIER )
+			.setSettleFinances(false)
+		;
+		try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+			Invoice rectified = InvoiceDAO.rectifyInvoice(ctx, invoice.getId(), ird);
+			return getInvoice(api, rectified.getId());
+		}
 	}
 	
 	public static JSONObject acceptInvoice(AonApiData api) throws Exception {
@@ -620,38 +648,26 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return file;
 	}
 	
-	private JSONObject _getConfiguration(AonApiData api) {
+	private JSONObject getApiConfiguration(AonApiData api) {
 		Date start1 = new Date();
 		Date end1 = new Date();
-		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-			Integer domainId = api.getDomain().getId();
-			ApiConfiguration conf = new ApiConfiguration()
-				.setCompany( CompanyDAO.getFull(ctx, domainId) )
-				.setAdministration(
-					AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
-						.map( a -> Administration.safeValueOf(Integer.parseInt(a.getValue())))
-						.orElse(Administration.UNKNOWN) )
-				.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
-				.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
-				.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
-				.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, domainId) )
-				.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
-				.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
-				.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )
-			;
-			JSONObject json = ApiConfigurationJSON.to(conf);
-			System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
-			System.out.println( "[START] NEW Configuration *****" );
-			System.out.println( json.toString(1) );
-			System.out.println( "[END] NEW Configuration *****" );
-			return json;
-		}
+		Integer domainId = api.getDomain().getId();
+		ApiConfiguration conf = AON.getApiConfiguration(api.getOccam(), domainId );
+		JSONObject json = ApiConfigurationJSON.to(conf);
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
+		System.out.println( "[START] NEW Configuration *****" );
+		System.out.println( json.toString(1) );
+		System.out.println( "[END] NEW Configuration *****" );
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		return json;
 	}
 	
 	private JSONObject getConfiguration(AonApiData api) {
-		// Testing
-		_getConfiguration(api);
-		// -------
 		Date start = new Date();
 		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
@@ -680,10 +696,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(workplaces));
 		}
 		Date end = new Date();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		System.out.println( "Configuration secs: "  + (end.getTime() - start.getTime()) );
 		System.out.println( "[START] OLD Configuration *****" );
 		System.out.println( json.toString(1) );
 		System.out.println( "[END] OLD Configuration *****" );
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		return json;
 	}
 
@@ -879,6 +901,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	// ************************************************************
 	// ******************************* [CANCEL AND COMMUNICATE] ***
 	// ************************************************************
+	
 	private static void cancelAndCommunicateInvoice(AonApiData api, InvoiceCommunicationConfiguration config,Company company, Invoice invoice) throws InvoiceCommunicationException, InvoiceErrorException {
 		checkApiData(api);
 		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
@@ -915,3 +938,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 }
+
+
+
+
+
+
+
+

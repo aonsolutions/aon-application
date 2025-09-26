@@ -20,7 +20,7 @@
 .aonTextareaBoxLabel > textarea {
 	border: none;
 	width: 100%;
-	height: 50px;
+	min-height: 50px;
 	font-size: 17px;
 	padding-left: 15px;
 	border: 1px solid #d2d2d6;

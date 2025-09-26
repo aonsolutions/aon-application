@@ -135,6 +135,7 @@ export const CARRIER = "Agencia de Transporte"; // TODO
 export const CARRIERS = "Agencias de Transporte"; // TODO
 export const CATALAN = MSG.CATALAN;
 export const CATEGORIES = MSG.CATEGORIES;
+export const CAUSE = MSG.CAUSE;
 export const CERTIFICATE = MSG.CERTIFICATE;
 export const CERTIFICATES = MSG.CERTIFICATES;
 export const CERTIFICATIONS = MSG.CERTIFICATIONS;

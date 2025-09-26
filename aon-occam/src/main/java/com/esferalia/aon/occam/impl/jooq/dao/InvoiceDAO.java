@@ -91,6 +91,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -331,7 +332,7 @@ public class InvoiceDAO {
 			}
 			
 			invoice.setDoc(InvoiceDocDAO.get(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
-			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice.getId()).orElse(null));
+			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
 		}
 		return invoice;
 	}
@@ -1080,9 +1081,9 @@ public class InvoiceDAO {
 			inv.setNumber(0);
 			inv.setReferenceCode(data.getReferenceCode());
 		}
-		inv.setComments((AonStringUtils.isBlank(inv.getComments())
+		inv.setRemarks((AonStringUtils.isBlank(inv.getRemarks())
 			?""
-			:(inv.getComments() + " "))
+			:(inv.getRemarks() + " "))
 			+ data.getCause());
 		inv.setIssueDate(data.getIssueDate());
 		inv.setTaxDate(data.getIssueDate());
@@ -1877,7 +1878,64 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
+	public static Invoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
+		if ( invoiceId == null ) throw new AonCoreException("ID es un dato requerido");
+		if ( data == null ) throw new AonCoreException("La información para la rectificación es un dato requerido");
+		Invoice source = getFullInvoice(ctx, invoiceId);
+		if ( source == null ) throw new AonCoreException("Factura no encontrada");
+		if ( source.getNumber() < 0) throw new AonCoreException("No se puede rectificar una fatura proforma");
 
+		RectificationType oldRectificationType = source.getRectificationType();
+		
+		mergeRecitificationData(source, data);
+		
+		source.setDoc(null)
+			.setCreationDate(null)
+			.setCreationUser(null)
+			.setModificationUser(null)
+			.setModificationDate(null);
+		if (source.getCommunicationInfo() != null) source.getCommunicationInfo().clear();
+		
+		source.detailStream()
+			.map(d -> d
+				.setId(null)
+				.setInvoice(null)
+				.setQuantity(AonMathUtils.changeSign( d.getQuantity()) )
+				.setTaxableBase(AonMathUtils.changeSign( d.getTaxableBase())))
+			.flatMap( d -> d.taxStream() )
+			.forEach(t -> t
+				.setId(null)
+				.setBase( AonMathUtils.changeSign( t.getBase()) )
+				.setQuota( AonMathUtils.changeSign( t.getQuota()) )
+				.setSurchargeQuota(AonMathUtils.changeSign( t.getSurchargeQuota()) )
+				.setDeductibleQuota(AonMathUtils.changeSign( t.getDeductibleQuota()) )
+			);
+		
+		source.financeStream()
+			.forEach(f -> {
+				Integer oldId = f.getId();
+				if (data.isSettleFinances() && f.getFinanceStatus() == FinanceStatus.PENDING) {
+					FinanceTrackingDAO.settle(ctx, oldId);
+				} 
+				f.setAmount(AonMathUtils.round(f.getAmount() * (-1)))
+					.setInvoice(null)
+					.setId( null )
+					.setFinanceStatus(FinanceStatus.PENDING)
+					.setDirty(true);
+			});
+		
+		Invoice target = save(ctx, source);
+		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, target.getId(), oldRectificationType);
+		if (data.isSettleFinances()) {
+			target.financeStream()
+				.filter(f -> f.getFinanceStatus() == FinanceStatus.PENDING)
+				.forEach(f -> {
+					FinanceTrackingDAO.settle(ctx, f.getId());
+					f.setFinanceStatus(FinanceStatus.SETTLED);
+				});
+		}
+		return target;
+	}
 	
 }
 
