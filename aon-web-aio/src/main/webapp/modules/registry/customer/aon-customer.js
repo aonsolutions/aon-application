@@ -36,6 +36,9 @@ export class AonCustomer extends AonReg {
 	
 	sigCustomerDomainName;
 	sigCustomerDomainId;
+	
+	// Method to call GWT sync module
+	linkSigDomain;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -383,7 +386,7 @@ export class AonCustomer extends AonReg {
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
 				
-				if(resp && resp.length == 1){
+				if(resp && resp.length > 0){
 					this.sigCustomerDomainName = resp[0].domainName;
 					this.sigCustomerDomainId = resp[0].domainId;
 					
@@ -521,20 +524,11 @@ export class AonCustomer extends AonReg {
 		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
 		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
-		if (link || !companies.length) {
-			main.appendChild(iconArrowDown);
-		}
-
-		if (link) {
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown, resp);
-			});
-		} else {
-			statusText.style.marginRight = "5px";
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown);
-			});
-		}
+		main.appendChild(iconArrowDown);
+		
+		main.addEventListener(EVENT.CLICK, () => {
+			this.getSigOptionsLinked(iconArrowDown, resp);
+		});
 	}
 	
 	hideSaveButton(){
@@ -840,7 +834,18 @@ export class AonCustomer extends AonReg {
 				}
 			);
 			
-		} 
+		} else {
+			options.push(
+				{
+					name: "Vincular",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.linkSigDomain(this.registry.alias);
+					},
+				}
+			);
+		}
 		/*
 		else {
 			options.push(
