@@ -71,13 +71,12 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 	private BookingApi bookingApi;
 	private CustomerApi customerApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = false;
+	private boolean isLocalDev = true;
 
 	private static enum COLS {
 
 		DOC(AON.MSG.document(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DES(AON.MSG.name(), "-moz-available",
-				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DES(AON.MSG.name(), "-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		STA(AON.MSG.status(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		RAD("RaddInfo", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
 		ACU("Aon Customer", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
@@ -328,7 +327,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		List<DomainSigAddInfo> customerRaddInfo = customersRaddInfo.get(customer.getId());
 		List<DomainCompany> customerDomain = customersDomain.get(customer.getId());
 		
-		SyncSigMultipleDomainsTable table = new SyncSigMultipleDomainsTable(customer.getId(), customerRaddInfo, customerDomain) {
+		SyncSigMultipleDomainsTable table = new SyncSigMultipleDomainsTable(customer, customerRaddInfo, customerDomain) {
 			
 			@Override
 			protected void onClickRow(DomainCustomerSync domainCustomerSync) {

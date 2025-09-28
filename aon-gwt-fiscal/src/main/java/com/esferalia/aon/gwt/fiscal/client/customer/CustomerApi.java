@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.json.ActivitySummaryJSON;
+import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -182,6 +184,39 @@ public class CustomerApi {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
 		            	callback.onSuccess(null);
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					callback.onFailure(exception);
+		        }
+		    });
+		} catch (RequestException exception) {
+			callback.onFailure(exception);
+		}
+	}
+	
+	public void getAonCustomerDomain(String host, String endPoint, AsyncCallback<Domain> callback) {
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", sessionId);
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	
+		            	String responseBody = response.getText();
+		                JSONValue json = JSONParser.parseStrict(responseBody);
+		                
+		                callback.onSuccess(DomainCompanyJSON.parseDomainJSON(json));
 		            }
 		        }
 
