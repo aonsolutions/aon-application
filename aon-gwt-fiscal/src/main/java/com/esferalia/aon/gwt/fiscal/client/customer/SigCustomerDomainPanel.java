@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 	private BookingApi bookingApi;
 	private CustomerApi customerApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = true;
+	private boolean isLocalDev = false;
 
 	private static enum COLS {
 
@@ -305,7 +306,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 	
 	private void onCustomerClick(Customer customer, String domainName) {
 		AonDialog dialog = new AonDialog("Vinculaci\u00f3n Cliente / Dominio", new Label(
-				"Desea sincronizar la vinculaci\u00f3n del cliente " + customer.getName() + " ?"));
+				"Desea sincronizar la vinculaci\u00f3n del cliente " + domainName + " ?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 
 			@Override
@@ -487,23 +488,38 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		List<DomainCompany> customerDomainList = customersDomain.get(customer.getId());
 		List<DomainSigAddInfo> customerRaddInfoList = customersRaddInfo.get(customer.getId());
 		
-		DomainCompany domainCompanyTmp = new DomainCompany();
+		Optional<DomainCompany> domainCompanyTmp = Optional.empty();
 		if(!customerDomainList.isEmpty())
-			domainCompanyTmp = AonStringUtils.isBlank(domainName) ? customerDomainList.get(0) : customerDomainList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomain().getName(), domainName)).findFirst().orElse(customerDomainList.get(0));
-		else {
-			 DomainSigAddInfo domainSigAddInfo = AonStringUtils.isBlank(domainName) ? customerRaddInfoList.get(0) : customerRaddInfoList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomainName(), domainName)).findFirst().orElse(customerRaddInfoList.get(0));
-			 domainCompanyTmp = new DomainCompany()
-						.setSchema(domainSigAddInfo.getDomainSchema())
-						.setDomain(
-							new Domain()
-								.setId(Integer.parseInt(domainSigAddInfo.getDomainId()))
-								.setName(domainSigAddInfo.getDomainName())
-								.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), domainSigAddInfo.getDomainType())).findFirst().orElse(null))
-						)
-						;
+			domainCompanyTmp = customerDomainList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomain().getName(), domainName)).findFirst();
+		
+		if(domainCompanyTmp.isEmpty()) {
+			Optional<DomainSigAddInfo> domainSigAddInfo = customerRaddInfoList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomainName(), domainName)).findFirst();
+			if(!domainSigAddInfo.isEmpty()) 
+				domainCompanyTmp = Optional.of(
+						new DomainCompany()
+							.setSchema(domainSigAddInfo.get().getDomainSchema())
+							.setDomain(
+								new Domain()
+									.setId(Integer.parseInt(domainSigAddInfo.get().getDomainId()))
+									.setName(domainSigAddInfo.get().getDomainName())
+									.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), domainSigAddInfo.get().getDomainType())).findFirst().orElse(null))
+							)
+							);
 		}
 		
-		DomainCompany domainCompany = domainCompanyTmp;
+		if(domainCompanyTmp.isEmpty() && !customerDomainList.isEmpty()) domainCompanyTmp = Optional.of(customerDomainList.get(0));
+		if(domainCompanyTmp.isEmpty() && !customerRaddInfoList.isEmpty()) domainCompanyTmp = Optional.of(
+				new DomainCompany()
+				.setSchema(customerRaddInfoList.get(0).getDomainSchema())
+				.setDomain(
+					new Domain()
+						.setId(Integer.parseInt(customerRaddInfoList.get(0).getDomainId()))
+						.setName(customerRaddInfoList.get(0).getDomainName())
+						.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), customerRaddInfoList.get(0).getDomainType())).findFirst().orElse(null))
+				)
+				);
+		
+		DomainCompany domainCompany = domainCompanyTmp.get();
 		
 		COMMON_SERVICE.syncCustomer(params.getDomainName(), params.getDomainId(), params.getUser(), customer.getId(), domainCompany, true, new AsyncCallback<Void>() {
 

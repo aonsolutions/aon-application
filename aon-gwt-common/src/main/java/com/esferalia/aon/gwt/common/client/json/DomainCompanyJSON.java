@@ -67,6 +67,8 @@ public class DomainCompanyJSON {
 		
 		JSONObject jsonObj = json.isObject();
 		
+		if(!jsonObj.containsKey(IJsonNames.ID)) return new Domain();
+		
 		return new Domain()
 			.setId(JsonGWTUtils.getInteger(jsonObj,IJsonNames.ID))
 			.setName(JsonGWTUtils.getString(jsonObj, IJsonNames.NAME))

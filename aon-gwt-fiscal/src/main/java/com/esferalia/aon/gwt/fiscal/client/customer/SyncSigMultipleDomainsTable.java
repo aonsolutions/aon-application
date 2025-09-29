@@ -33,7 +33,7 @@ public abstract class SyncSigMultipleDomainsTable extends ScrollPanel {
 	
 	private CustomerApi customerApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = true;
+	private boolean isLocalDev = false;
 
 	private static enum COLS {
 
