@@ -239,7 +239,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private void onDomainClick(DomainCompany domainCompany) {
 		AonDialog dialog = new AonDialog("Vinculaci\u00f3n Cliente / Dominio", new Label(
-				"Desea vincular el cliente con el dominio " + domainCompany.getDomain().getDescription() + " ?"));
+				"Desea vincular el cliente con el dominio " + domainCompany.getDomain().getName() + " ?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 
 			@Override
@@ -314,7 +314,6 @@ public abstract class DomainSyncTable extends ScrollPanel {
 					String host = isLocalDev ? "localhost:8080" : "aon.solutions";
 					String endPoint = "/ms/api/domain/sync-aon-customer";
 					
-
 					JSONObject body = new JSONObject();
 					body.put("customer", new JSONString(customer.getId().toString()));
 					body.put("domain_name", new JSONString(domainCompany.getDomain().getName()));

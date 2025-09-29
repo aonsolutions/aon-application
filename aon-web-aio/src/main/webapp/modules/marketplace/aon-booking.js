@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getBookingDomainUserRoles, getDomainUserRoles, setDomainApp} from  '../../services/service.js';
+import {getBookingDomainUserRoles, getDomainUserRoles, getSigBookingDomainUserRoles, setDomainApp, setSigDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -56,6 +56,26 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
+		/* if(this.isSig()){
+			let headers = {
+				domain_name: this.sessionData.domain_name,
+				domain_id: this.sessionData.domain_id
+			}
+			
+			getSigBookingDomainUserRoles({}, headers).then(r => {
+				this.dur = new DomainUserRoles(r);
+				this.initialize();
+				this.domainPayer = this.dur.isDomainPayer();
+				this.apps = this.dur.getDomainApps();
+				if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
+					this.completeDomainApps(this.dur);
+				this.users = this.dur.maxDefinedUsers;
+				this.definedUsers = this.dur.definedUsers;
+				this.trial = this.dur.isTrial();
+				this.trialValue = this.dur.getTrialValue();
+				this.build();			
+			});
+		} else { */
 		getBookingDomainUserRoles({}, this.sessionData).then(r => {
 			this.dur = new DomainUserRoles(r);
 			this.initialize();
@@ -69,6 +89,8 @@ export class AonBooking extends AonElement {
 			this.trialValue = this.dur.getTrialValue();
 			this.build();			
 		});
+		//}
+		
 	}
 
 	completeDomainApps(dur) {
@@ -689,6 +711,29 @@ export class AonBooking extends AonElement {
 				message: 'El número de usuarios no puede ser mayor que el número de usuarios contratados'
 			});
 		} else {
+			/* if(this.isSig()){
+				let headers = {
+					domain_name: this.sessionData.domain_name,
+					domain_id: this.sessionData.domain_id
+				}
+				
+				setSigDomainApp({
+					type: this.dur.domain.type,
+					apps: this.apps,
+					users: this.users,
+					domainPayer: this.domainPayer,
+					trial: this.trial,
+					trialValue: this.trialValue
+				}, headers).then(() => {
+					toast.start({
+						type: 'success',
+						message: 'Datos Guardados Correctamente'
+					});
+					getDomainUserRoles({reload:true}).then(r => {
+						//this.build(new DomainUserRoles(r));
+					});
+				});
+			} else { */
 			setDomainApp({
 				type: this.dur.domain.type,
 				apps: this.apps,
@@ -705,7 +750,7 @@ export class AonBooking extends AonElement {
 					//this.build(new DomainUserRoles(r));
 				});
 			});
-	
+			//}
 		}
 	}
 
