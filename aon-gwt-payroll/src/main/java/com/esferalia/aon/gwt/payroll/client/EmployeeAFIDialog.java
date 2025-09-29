@@ -619,7 +619,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	private void checkPartialityVisibility(ContractTypeRecord contractTypeRecord) {
 		if(null != contractTypeRecord) {
-			if(AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P")) {
+			if(AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P") || AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "A")) {
 				partialityCoefL.getElement().getStyle().clearDisplay();
 				partialityCoef.getElement().getStyle().clearDisplay();
 			} else {
