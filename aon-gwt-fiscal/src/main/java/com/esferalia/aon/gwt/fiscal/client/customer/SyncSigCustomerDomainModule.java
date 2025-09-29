@@ -111,12 +111,6 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 		Set<String> selectedOptions = new LinkedHashSet<String>();
 		selectedOptions.add("Activo");
 		customerStatus.setSelectedOptions(selectedOptions);
-		
-		// Set default search if exists
-		if(AonStringUtils.isNotBlank(getSearchQuery())) {
-			docklayoutPanel.getSearchTextBox().setValue(getSearchQuery());
-			removeSearchQuery();
-		}
 
 		docklayoutPanel.addFilterWidget(customerStatus);
 
@@ -195,17 +189,6 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 
 		return result.toArray(new Byte[0]);
 	}
-	
-	public static native String getSearchQuery()
-	/*-{
-		var value = $wnd.localStorage.getItem("searchQuery");
-		return value;
-	}-*/;
-	
-	public static native void removeSearchQuery()
-	/*-{
-		$wnd.localStorage.removeItem("searchQuery");
-	}-*/;
 
 }
 

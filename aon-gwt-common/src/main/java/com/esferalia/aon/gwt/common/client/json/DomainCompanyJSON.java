@@ -23,6 +23,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Window;
 
 public class DomainCompanyJSON {
 	
@@ -62,7 +63,7 @@ public class DomainCompanyJSON {
 		return jsonObject;
 	}
 
-	public static Domain parseDomainJSON(JSONValue json) {
+	private static Domain parseDomainJSON(JSONValue json) {
 		if(json == null) return new Domain();
 		
 		JSONObject jsonObj = json.isObject();
