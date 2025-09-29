@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -112,6 +113,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			mod131 = new Mod131();
 			mod131.setDomain(ctx.getDomainId());
 		}
+		mod131.setAdministration(Administration.COMMON_TERRITORY); // Solo AEAT
 		initializeFiscalModel(ctx, mod131);
 		Mod131Declaration dec = Mod131Declaration.getInstance(mod131);
 		dec.initialize( ctx, mod131 );

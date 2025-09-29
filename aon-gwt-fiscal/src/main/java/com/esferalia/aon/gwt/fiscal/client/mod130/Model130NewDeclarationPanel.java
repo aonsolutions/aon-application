@@ -74,6 +74,7 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 	
 	private void registerHandlers(Mod130 model, Model130Callback callback) {
 		admonList = new AdministrationListBox(false, false, true);
+		admonList.setEnabled(false);
 		yearBox = new AonIntegerBox();	
 		periodList = new PeriodListBox(false);
 		replacement = new CheckBox(AON.MSG.replacement());
