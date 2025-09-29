@@ -3,7 +3,6 @@ package net.aonsolutions.aon.api.servlet.registry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -311,12 +310,10 @@ public class CustomersServlet extends AonApiHttpServlet {
 						f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")
 								.or(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA"))));
 
-				List<RegistryAddInfo> registryAddInfoList = registryAddInfoStream.collect(Collectors.toList());
-				
-				if(registryAddInfoList.size() > 0) {
+				if(registryAddInfoStream.count() > 0) {
 					Map<Integer, String> domainMap = new HashMap<>();
 
-					Map<String, Map<String, String>> grouped = registryAddInfoList.stream().collect(
+					Map<String, Map<String, String>> grouped = registryAddInfoStream.collect(
 							Collectors.groupingBy(rec -> rec.getAttribute().replaceAll("AON_DOMAIN(\\d+)_.*", "$1"),
 									Collectors.toMap(rec -> rec.getAttribute().endsWith("_ID") ? "ID" : "SCHEMA",
 											RegistryAddInfo::getValue)));
