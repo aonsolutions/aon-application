@@ -390,6 +390,7 @@ public class FillerDAO {
 					.setName(r.getValue(domain.NAME))
 					.setActive(r.getValue(domain.ACTIVE) == 1)
 					.setParentId(r.getValue(domain.PARENT))
+					.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
 					.setMaxDefinedUsers(r.getValue(domain.MAXDEFINEDUSERS));
 			Company company = new Company();
 			company.setDomain(d);
@@ -420,11 +421,15 @@ public class FillerDAO {
 					.setDescription(r.getValue(domain.DESCRIPTION))
 					.setDomainType(DomainType.values()[r.getValue(domain.TYPE)])
 					.setScope(r.getValue(domain.SCOPE))
+					.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
 					.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
 					.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT))))
 				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
 					.setId(r.getValue(parent.ID))
-					.setName(r.getValue(parent.NAME)))
+					.setName(r.getValue(parent.NAME))
+					.setActive(r.getValue(parent.ACTIVE) == 1)
+					.setExpirationDate(r.getValue(parent.EXPIRATIONDATE))
+					)
 				.setShared(AonEnumUtils.enumValue(UserType.class, r.getValue(USER.TYPE)) == UserType.SHARED)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))))

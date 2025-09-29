@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class AonCompany implements Serializable {
 
@@ -88,13 +89,14 @@ public class AonCompany implements Serializable {
 	}
 
 	public JSONObject toJSON() {
-		return new JSONObject()
+		JSONObject jsonObject =  new JSONObject()
 			.put("registry", getCompany().getId())
 			.put("id", getDomain().getId())
 			.put("domain", getDomain().getName())
 			.put("name", getCompany().getName())
 			.put("document", getCompany().getDocument())
-			.put("active", getCompany().getDomain().isActive())
+			.put("active", getDomain().isActive()  )
+			.put("expired", getCompany().getDomain().isExpired())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("type", getDomain().getDomainType().name())
 			.put("domainManagement", getDomain().isDomainManagement())
@@ -108,5 +110,11 @@ public class AonCompany implements Serializable {
 			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge())
 			.put(IJsonNames.SCHEMA, getSchema())
 			;
+		
+			if (getCompany().getDomain().getExpirationDate() != null) {
+				jsonObject.put("expirationDate", AonDateUtils.format(getDomain().getExpirationDate(), AonDateUtils.SIMPLE_DATE_FORMAT4));
+			}
+		
+		return jsonObject;
 	}
 }
