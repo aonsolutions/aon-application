@@ -664,7 +664,7 @@ export class AonApplication extends AonElement {
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
         newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
-//        newLi.style.transition = "opacity 1s ease-out";
+        // newLi.style.transition = "opacity 1s ease-out";
         this.hiddenElement(newLi, !option.opened);
         ul.appendChild(newLi);
         if(option.clickable) {
@@ -689,7 +689,7 @@ export class AonApplication extends AonElement {
       span.title =  option.title || option.name;
       if (option.count) {
         span.innerHTML = option.name + " (" + option.count + ")";
-//        span.style.fontWeight = "bold";
+        // span.style.fontWeight = "bold";
       } else span.innerHTML = option.name;
 
       if (option.icon) {
@@ -698,24 +698,24 @@ export class AonApplication extends AonElement {
         icon.icon  = option.icon;
         li.appendChild(icon);
         
-//        let i = this.createElement(TAG.I);
-//        i.id = id + 'icon';
-//        let iconClass = "material-icons";
-//        if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
-//        if(option.icon_color) {
-//          i.title = option.id;
-//          i.color = option.icon_color;
-//          i.style.color = option.icon_color;
-//        }
-//        if(option.icon_class) iconClass = option.icon_class;
-//        i.className = `${iconClass} aonVerticalMiddle`;
-//        i.innerHTML = option.icon;
-//        li.appendChild(i);
+        // let i = this.createElement(TAG.I);
+        // i.id = id + 'icon';
+        // let iconClass = "material-icons";
+        // if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+        // if(option.icon_color) {
+        //   i.title = option.id;
+        //   i.color = option.icon_color;
+        //   i.style.color = option.icon_color;
+        // }
+        // if(option.icon_class) iconClass = option.icon_class;
+        // i.className = `${iconClass} aonVerticalMiddle`;
+        // i.innerHTML = option.icon;
+        // li.appendChild(i);
       } else if (option.aonIcon) {
         let ai = new AonIcon();
         ai.id    = id + "AonIcon";
         ai.icon  = option.aonIcon.icon;
-//        ai.size  = "18px";
+        // ai.size  = "18px";
         li.appendChild(ai);
         if(LS.isNewTheme() && data.app) ai.color = data.app.color;
         if(option.icon_color) {
@@ -735,49 +735,48 @@ export class AonApplication extends AonElement {
         let img = this.createElement(TAG.IMG);
         if(option.style) {
           img.className = option.style;
-//          span.style.paddingLeft = '20px'
-        } else 
-//          img.style.width = '18px';
+          // span.style.paddingLeft = '20px'
+        } 
+        // else 
+          // img.style.width = '18px';
         img.src = option.img;
         li.appendChild(img);
       } else if (option.html) {
         let divHtml = this.createElement(TAG.DIV);
         divHtml.innerHTML = option.html;
         li.appendChild(divHtml.firstChild);
-
-//        li.style.display = "flex";
-//        li.style.alignItems = "center";
+        // li.style.display = "flex";
+        // li.style.alignItems = "center";
       }
-//      else {
-//        span.style.marginLeft = '28px';
-//      }
+      // else {
+      //   span.style.marginLeft = '28px';
+      // }
 
       li.appendChild(span);
 
       if (option.actions) {
         let actionDiv = this.createElement(TAG.SPAN);
-//        actionDiv.style.display = "none";
+        // actionDiv.style.display = "none";
         li.appendChild(actionDiv);
-//        li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
-
-//        li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
+        // li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
+        // li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
-//          button.style.right = i * 30 + "px";
-//          button.style.position = "absolute";
+          // button.style.right = i * 30 + "px";
+          // button.style.position = "absolute";
           let aonIconButton     = new AonIconButton();
           aonIconButton.id      = li.id + item.id;
           aonIconButton.icon    = item.icon;
           aonIconButton.noHover = true;
           button.appendChild(aonIconButton);
           actionDiv.appendChild(button);
-//          let b = aonIconButton.getButton();
-//          b.style.height = "30px";
-//          b.style.minWidth = "30px";
-//          b.style.width = "30px";
-//          let ic = aonIconButton.getIcon();
-//          ic.style.fontSize = "1.3rem";
+          // let b = aonIconButton.getButton();
+          // b.style.height = "30px";
+          // b.style.minWidth = "30px";
+          // b.style.width = "30px";
+          // let ic = aonIconButton.getIcon();
+          // ic.style.fontSize = "1.3rem";
           aonIconButton.addEventListener(EVENT.CLICK, (ev)=>{
             ev.stopPropagation();
             item.action(ev)
@@ -791,14 +790,14 @@ export class AonApplication extends AonElement {
           this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId){
               el.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
-//              el.style.removeProperty("border-left");
+              // el.style.removeProperty("border-left");
               let icon = this.getElement(el.id + 'icon');
               if(icon) icon.classList.remove('material-icons-selected');
             }
           });
 
           li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
-//          li.style.borderLeft = '2px solid ' + (data.app ? data.app.color : 'black');
+          // li.style.borderLeft = '2px solid ' + (data.app ? data.app.color : 'black');
           let icon = this.getElement(li.id + 'icon');
           if(icon) icon.classList.add('material-icons-selected');
 

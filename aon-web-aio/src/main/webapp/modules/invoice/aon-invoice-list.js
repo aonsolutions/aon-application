@@ -652,7 +652,7 @@ export class AonInvoiceList extends AonElement {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-	    		// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+				// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 				actions = [download, addComment, deleteInvoice, reject, rectify, duplicate];
 	  		} else {
 	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];

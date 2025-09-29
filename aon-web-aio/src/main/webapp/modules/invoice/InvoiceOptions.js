@@ -318,6 +318,7 @@ import { Expense } from './Expense.js';
     id: CONSTANT.CREATION.initCap(),
     title: MSG.CREATION,
     name : MSG.CREATION,
+    opened: true,
     options: [CREATION_INVOICE_ISSUED, CREATE_INCOME]
   };
 
@@ -326,7 +327,7 @@ import { Expense } from './Expense.js';
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INCOME_LIST, INCOME_CREATION],
+    options: [INCOME_CREATION, INCOME_LIST],
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
       title: MSG.INFO_INCOMES,
@@ -340,7 +341,6 @@ import { Expense } from './Expense.js';
       )
     }
   };
-
   
   export const MAIN_INCOMES_BETA = {
     id: CONSTANT.INCOMES.initCap(),
@@ -393,6 +393,7 @@ import { Expense } from './Expense.js';
     id: CONSTANT.CREATION.initCap(),
     title: MSG.CREATION,
     name : MSG.CREATION,
+    opened: true,
     options: [CREATION_INVOICE_RECEIVED, CREATION_TICKET, CREATE_EXPENSE]
   };
 
@@ -400,7 +401,7 @@ import { Expense } from './Expense.js';
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [EXPENSE_LIST, EXPENSE_CREATION],
+    options: [EXPENSE_CREATION, EXPENSE_LIST],
     button: {
       id: CONSTANT.EXPENSES.initCap() + 'Info',
       title: MSG.INFO_EXPENSES,
