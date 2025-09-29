@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -322,42 +320,5 @@ public enum InvoiceCommunicationError {
 			.filter(e -> AonStringUtils.equals(e.getCode(), code))
 			.findFirst();
 	}
-
-
-	// Codifica el segundo del día en 4 caracteres alfanuméricos
-    public static String codificarSegundoDelDia(Date fecha) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(fecha);
-        int segundoDelDia = 
-        	  cal.get(Calendar.HOUR_OF_DAY) * 3600
-    		+ cal.get(Calendar.MINUTE) * 60
-    		+ cal.get(Calendar.SECOND);
-
-        String codificado = Integer.toString(segundoDelDia, 36).toUpperCase();
-        return String.format("%4s", codificado).replace(' ', '0');
-    }
-
-    // Decodifica el código al objeto Date con la misma fecha y hora del segundo
-    public static Date decodificarSegundoDelDia(Date fechaBase, String codigo) {
-        int segundoDelDia = Integer.parseInt(codigo, 36);
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(fechaBase);   // Mantiene año, mes y día
-        cal.set(Calendar.HOUR_OF_DAY, segundoDelDia / 3600);
-        cal.set(Calendar.MINUTE, (segundoDelDia % 3600) / 60);
-        cal.set(Calendar.SECOND, segundoDelDia % 60);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        return cal.getTime();
-    }
-
-    public static void main(String[] args) {
-        Date ahora = new Date();
-        String codigo = codificarSegundoDelDia(ahora);
-        System.out.println("Código: " + codigo);
-
-        Date reconstruido = decodificarSegundoDelDia(ahora, codigo);
-        System.out.println("Hora reconstruida: " + reconstruido);
-    }
     
 }
