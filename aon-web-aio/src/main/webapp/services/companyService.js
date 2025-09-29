@@ -88,7 +88,7 @@ export const setDomainApp = (data, sessionData) => put(API.COMPANY_BOOKING, data
 
 export const setSigDomainApp = (data, headers) => putPro(`${PRO_URL}/${API.COMPANY_BOOKING}`, data, headers);
 // LOCAL
-// export const setSigDomainApp = (data, headers) => putPro(`${API.COMPANY_BOOKING}`, data, headers);
+//export const setSigDomainApp = (data, headers) => putPro(`${API.COMPANY_BOOKING}`, data, headers);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 

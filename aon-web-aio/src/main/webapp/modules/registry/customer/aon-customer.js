@@ -387,11 +387,11 @@ export class AonCustomer extends AonReg {
 				this.buildSigEnterpriseLinkedView(resp);
 				
 				if(resp && resp.length > 0){
-					this.sigCustomerDomainName = resp[0].domainName;
-					this.sigCustomerDomainId = resp[0].domainId;
+					//this.sigCustomerDomainName = resp[0].domainName;
+					//this.sigCustomerDomainId = resp[0].domainId;
 					
-					this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
-					this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+					//this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					//this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
 				}
 			})
 			/*
