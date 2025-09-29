@@ -128,14 +128,10 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Plan General Contable",
 				title: "Plan General Contable",
 				action: () => GWT.iLoad(GWT.ACCOUNT_MODULE)
-			},/*{
+			},{
 				description: "Conceptos Automáticos",
 				title: "Conceptos Automáticos",
-				action: () => alert("description")
-			},*/{
-				description: "Centros de Costo",
-				title: "Centros de Costo",
-				action: () => GWT.iLoad(GWT.COST_CENTER)
+				action: () => this.rootPanel(new JSF.AonJsfAutConcept())
 			},{
 				description: "Ejercicios Contables",
 				title: "Ejercicios Contables",
@@ -193,6 +189,10 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		},{
 			title: 'Utilidades',
 			options: [{
+				description: "Centros de Costo",
+				title: "Centros de Costo",
+				action: () => GWT.iLoad(GWT.COST_CENTER)
+			},{
 				description: "Utilidades y chequeos contables",
 				title: "Utilidades y chequeos contables",
 				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES)

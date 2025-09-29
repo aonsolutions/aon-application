@@ -695,6 +695,7 @@ public abstract class AgreementPreview extends Composite {
 	// ------------------------------------------ salaryTable
 
 	private void createSalaryTable() {
+		salaryScrollPanel.getElement().getStyle().setProperty("scrollbar-width", "auto");
 		createLevelSalaryTabs();
 		getSalaryTableHeader();
 		fillSalaryTable();

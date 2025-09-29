@@ -381,7 +381,10 @@ export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 export const AON_JSF_IRPF_DATA = 'aon-jsf-irpf-data' ;
 export const AON_JSF_CONTRACT_BATCH = 'aon-jsf-contract-batch' ;
+export const AON_JSF_CONTRACT_OPTION = 'aon-jsf-contract-option';
+export const AON_JSF_TRAINNING_CENTER = 'aon-jsf-trainning-center';
 export const AON_JSF_HOLIDAYS = 'aon-jsf-holidays' ;
+
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
 export const AON_JSF_MESSAGES = 'aon-jsf-messages' ;
@@ -399,6 +402,14 @@ export const AON_JSF_SURVEY_RESPONSE = 'aon-jsf-survey-response' ;
 export const AON_ACADEMY_MENU = 'aon-academy-menu';
 
 export const AON_COMMERCE_MENU = 'aon-commerce-menu';
+
+export const AON_JSF_POS = 'aon-jsf-pos';
+export const AON_JSF_POS_SHIFT = 'aon-jsf-pos-shift';
+export const AON_JSF_POS_OPENING = 'aon-jsf-pos-opening';
+export const AON_JSF_POS_CLOSING = 'aon-jsf-pos-closing';
+export const AON_JSF_POS_INVOICE = 'aon-jsf-pos-invoice';
+export const AON_JSF_POS_FINANCE = 'aon-jsf-pos-finance';
+export const AON_JSF_ITEM_TAG_PRINT = 'aon-jsf-item-tag-print';
 
 export const AON_GARAGE_MENU = 'aon-garage-menu';
 

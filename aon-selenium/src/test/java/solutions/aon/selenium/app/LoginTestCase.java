@@ -139,5 +139,32 @@ public class LoginTestCase extends AppBaseTestCase {
 		}
 	}
 
+	@Test
+	@Order(5)
+	public void testLoginEnterpriseWithShared() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://general-payroll-test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "admin");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
 
 }

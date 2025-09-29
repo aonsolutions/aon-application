@@ -211,6 +211,12 @@ export class AonPayrollBeta extends AonElement {
 	getApplication() {
 		return this.getElement(this.AON_PAYROLL_BETA);
 	}
+	
+	getOptions(){
+		let aonPayrollMenu = new AonPayrollMenu();
+		aonPayrollMenu.setDur(this.getDur());
+		return aonPayrollMenu.getOptions();
+	}
 }
 
 window.customElements.define("aon-payroll-beta", AonPayrollBeta);

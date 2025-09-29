@@ -52,7 +52,6 @@ public abstract class CustomerPanel extends ScrollPanel {
 
 	private CustomersLinkedParams params;
 
-
 	private BookingApi bookingApi;
 	private CustomerApi customerApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
@@ -186,12 +185,18 @@ public abstract class CustomerPanel extends ScrollPanel {
 				paintRow(customer);
 			}
 
-			if (customers.size() < limit) {
-				disableMoreData();
+			if(!getCurrentIsSig()) {
+				if (customers.size() < limit) {
+					disableMoreData();
+				} else {
+					offset.setValue(offset.intValue() + customers.size() - 1);
+					enableMoreData();
+				}
 			} else {
 				offset.setValue(offset.intValue() + customers.size() - 1);
 				enableMoreData();
 			}
+
 
 			if (!something) {
 				paintEmptyRow();
@@ -271,21 +276,46 @@ public abstract class CustomerPanel extends ScrollPanel {
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		COMMON_SERVICE.getCustomersLinked(params, new AsyncCallback<List<Customer>>() {
+		if(getCurrentIsSig()) {
+			COMMON_SERVICE.getCustomers(params, new AsyncCallback<List<Customer>>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
-					}
+				@Override
+				public void onFailure(Throwable caught) {
+					onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
+				}
 
-					@Override
-					public void onSuccess(List<Customer> customers) {
-						getCustomersDomain(customers.stream().map(customer -> customer.getId()).collect(Collectors.toCollection(ArrayList::new)), 
-								end -> {
-									success.accept(customers);
-								});
-					}
-				});
+				@Override
+				public void onSuccess(List<Customer> customers) {
+					getCustomersDomain(customers, 
+							parsedCustomers -> {
+								success.accept(parsedCustomers);
+							});
+				}
+			});
+		} else {
+			COMMON_SERVICE.getCustomersLinked(params, new AsyncCallback<List<Customer>>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
+						}
+	
+						@Override
+						public void onSuccess(List<Customer> customers) {
+							getCustomersDomain(customers.stream().map(customer -> customer.getId()).collect(Collectors.toCollection(ArrayList::new)), 
+									end -> {
+										success.accept(customers);
+									});
+						}
+					});
+		}
+	}
+	
+	private void getCustomersDomain(List<Customer> customers, Consumer<List<Customer>> success) {
+		checkCustomerDomains(customers.stream().map(customer -> customer.getId()).collect(Collectors.toCollection(ArrayList::new)), customerDomains -> {
+			customersDomain.putAll(customerDomains);
+			success.accept(customers.stream().filter(c -> customerDomains.keySet().contains(c.getId())).collect(Collectors.toList()));
+		});
 	}
 
 	private void getCustomersDomain(ArrayList<Integer> customerIds, Consumer<HashMap<Integer, Domain>> success) {

@@ -1551,5 +1551,14 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_slide_down_disappear")
 	String aonSlideDownDisappear();
 	
+	@ClassName("aon_icon_enterprise_off")
+	String aonIconEnterpriseOff();
+	
+	@ClassName("aon_icon_person_check")
+	String aonIconPersonCheck();
+	
+	@ClassName("aon_icon_person_alert")
+	String aonIconPersonAlert();
+	
 }
 

@@ -64,7 +64,7 @@ export class AonConfig extends AonElement {
         let configContentIndexSpan = this.createDiv();
         configContentIndexSpan.className = CSS.AON_CARD_TEXT;
         configContentIndexSpan.classList.add("aonHelpSpan2");
-        configContentIndexSpan.innerHTML = "Cofiguraci�n Datos de Empresa";
+        configContentIndexSpan.innerHTML = "Cofiguración Datos de Empresa";
         configDiv.appendChild(configContentIndexSpan);
         this.appendChild(configDiv);
 

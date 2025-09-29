@@ -105,6 +105,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -1441,6 +1442,21 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 	
 	@Override
+	public List<Customer> getCustomers(CustomersLinkedParams params) throws AonCoreException {
+		return AON.getCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
+					f -> f.getDomainProperty().eq(params.getDomainId())
+					.and(AonStringUtils.isBlank(params.getQuery())
+							? f.getIdProperty().isNotNull()
+							: f.getDocumentProperty().like("%" + params.getQuery() + "%")
+								.or(f.getNameProperty().like("%" + params.getQuery() + "%"))
+								.or(f.getAliasProperty().like("%" + params.getQuery() + "%"))
+					)
+					.and(f.getStatusProperty().in(params.getCustomerStatus())), 
+					params.getOffset(), params.getLimit())
+				.collect(Collectors.toList());
+	}
+	
+	@Override
 	public List<Customer> getCustomersLinked(CustomersLinkedParams params) throws AonCoreException {
 		if(params.isSig())
 			return AON.getSigCustomerStream(params.getDomainName(), params.getDomainId(), params.getUser(), 
@@ -1544,44 +1560,53 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
 				).collect(Collectors.toList());
 	}
+	
 	@Override
 	public void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException {
 		if(isSig) {
 			List<RegistryAddInfo> raddInfoList = AON.getRegistryAddInfoStream(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME"))).collect(Collectors.toList());
-			if(!raddInfoList.isEmpty()) throw new IllegalArgumentException("Este cliente ya está vinculado al dominio " + raddInfoList.get(0).getValue());
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			Optional<RegistryAddInfo> raddInfoSchema = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA")).and(f.getValueProperty().eq(domainCompany.getSchema())));
+			Optional<RegistryAddInfo> raddInfoName = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_NAME")).and(f.getValueProperty().eq(domainCompany.getDomain().getName())));
+			Optional<RegistryAddInfo> raddInfoId = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")).and(f.getValueProperty().eq(domainCompany.getDomain().getId().toString())));
+			Optional<RegistryAddInfo> raddInfoType = AON.getRegistryAddInfo(domainName, domainId, user, f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_TYPE")).and(f.getValueProperty().eq(domainCompany.getDomain().getDomainType().getName())));
+			
+			if(raddInfoName.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
+						new RegistryAddInfo()
+							.setDomain(domainId)
+							.setRegistry(customerId)
+							.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_NAME")
+							.setValue(domainCompany.getDomain().getName())
+							.setDate(new Date())
+					);
+			
+			if(raddInfoId.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_NAME")
-						.setValue(domainCompany.getDomain().getName())
-						.setDate(new Date())
-				);
-			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
-					new RegistryAddInfo()
-						.setDomain(domainId)
-						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_ID")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_ID")
 						.setValue(domainCompany.getDomain().getId().toString())
 						.setDate(new Date())
 				);
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			if(raddInfoSchema.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_SCHEMA")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_SCHEMA")
 						.setValue(domainCompany.getSchema())
 						.setDate(new Date())
 				);
 			
-			AON.insertRegistryAddInfo(domainName, domainId, user, 
+			if(raddInfoType.isEmpty())
+				AON.insertRegistryAddInfo(domainName, domainId, user, 
 					new RegistryAddInfo()
 						.setDomain(domainId)
 						.setRegistry(customerId)
-						.setAttribute("AON_DOMAIN0_TYPE")
+						.setAttribute("AON_DOMAIN" + (raddInfoList.size() + 1) + "_TYPE")
 						.setValue(domainCompany.getDomain().getDomainType().getName())
 						.setDate(new Date())
 				);
@@ -1601,6 +1626,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					);
 		}
 		
+	}
+	@Override
+	public List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException {
+		List<DomainSigAddInfo> result = AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
+		return result;
 	}
 
 }

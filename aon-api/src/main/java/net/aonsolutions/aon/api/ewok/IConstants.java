@@ -4,6 +4,7 @@ public interface IConstants {
 	String EMPTY = "";
 	String ROOT_BAR = "/";
 	String NULL = "null";
+	String UNDEFINED = "undefined";
 	String ATTACH_TYPE = "attach_type";
 	String AMOUNT = "amount";
 	String ACTIVE = "active";

@@ -60,7 +60,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private static enum COLS {
 
-		SCH("Esquema", "15rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		SCH("Esquema", "13em", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DOC(AON.MSG.description(), "20rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DES(AON.MSG.name(), "-moz-available",
 				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),;
@@ -165,7 +165,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for (COLS col : COLS.values()) {
-			if (!getCurrentIsSig() && col.equals(COLS.SCH))
+			if (!paramsDomains.isSig() && col.equals(COLS.SCH))
 				continue;
 
 			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
@@ -216,9 +216,10 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 	private void paintRow(DomainCompany domainCompany) {
 		HTMLPanel row = tab.createRow();
+		row.setTitle("Vincular dominio");
 		row.addDomHandler(e -> onDomainClick(domainCompany), ClickEvent.getType());
 
-		if (getCurrentIsSig()) {
+		if (paramsDomains.isSig()) {
 			Label schema = new Label(domainCompany.getSchema());
 			tab.addInlineStyle(schema, COLS.SCH.getStyles());
 			tab.addRow(row, schema, COLS.SCH.getColWidth());
@@ -258,7 +259,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 	}
 
 	private void getList(Consumer<List<DomainCompany>> success) {
-		if (getCurrentIsSig())
+		if (paramsDomains.isSig())
 			getSigDomains(success);
 		else {
 			COMMON_SERVICE.getAviableSyncDomains(paramsDomains, new AsyncCallback<List<DomainCompany>>() {
@@ -300,7 +301,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 	private void onSyncDomain(DomainCompany domainCompany) {
 		onShowELoadingMessage("Vinculando cliente con dominio...");
 		
-		COMMON_SERVICE.syncCustomer(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), this.customer.getId(), domainCompany, getCurrentIsSig(), new AsyncCallback<Void>() {
+		COMMON_SERVICE.syncCustomer(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), this.customer.getId(), domainCompany, paramsDomains.isSig(), new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -309,7 +310,7 @@ public abstract class DomainSyncTable extends ScrollPanel {
 
 			@Override
 			public void onSuccess(Void result) {
-				if(getCurrentIsSig()) {
+				if(paramsDomains.isSig()) {
 					String host = isLocalDev ? "localhost:8080" : "aon.solutions";
 					String endPoint = "/ms/api/domain/sync-aon-customer";
 					
@@ -346,11 +347,5 @@ public abstract class DomainSyncTable extends ScrollPanel {
 	protected abstract void onHideMessage();
 
 	protected abstract void onEndSync();
-
-	public static native boolean getCurrentIsSig()
-	/*-{
-		var value = $wnd.localStorage.getItem("isSig");
-		return value === "true" || value === true;
-	}-*/;
 
 }
