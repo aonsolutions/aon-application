@@ -256,7 +256,11 @@ public class VerifactuValidation {
 			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1104);
 		} else if (!AonStringUtils.isAsciiPrintable(numSerie)) {
 			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1130);
+		} else if (AonStringUtils.containsAny(numSerie, '"','\'','<','>','=')) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1130);
 		}
+		
+		
 	};
 	
 	/*

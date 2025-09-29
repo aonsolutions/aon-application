@@ -163,7 +163,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	}
 
 	private void communicateValid(Invoice invoice) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(invoice.isRectifier()?"S":"T"));
+		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		RespuestaExpedidaType ret = communicateCommon(invoice);
@@ -196,7 +196,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	}
 	
 	private RespuestaExpedidaType communicateInvalid(Invoice invoice) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(invoice.isRectifier()?"S":"T"));
+		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		RespuestaExpedidaType ret = communicateCommon(invoice);

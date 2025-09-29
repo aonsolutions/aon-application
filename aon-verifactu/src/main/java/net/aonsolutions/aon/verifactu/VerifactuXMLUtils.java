@@ -133,10 +133,12 @@ class VerifactuXMLUtils {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
 			}
 			
-			// ++++++++++++++++++ BORRAR
-			soapMessage.writeTo(System.out);
-			System.out.println();
-			// ++++++++++++++++++ 
+//			// ++++++++++++++++++ BORRAR
+//			System.out.println("** REQUEST");
+//			soapMessage.writeTo(System.out);
+//			System.out.println("");
+//			System.out.println("**");
+//			// ++++++++++++++++++ 
 			
 			secure(cert, uri);
 	        // Create SOAP Connection
@@ -144,6 +146,14 @@ class VerifactuXMLUtils {
 	        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 	        // Send SOAP Message to SOAP Server
 	        SOAPMessage soapResponse = soapConnection.call(soapMessage, uri);
+	        
+//			// ++++++++++++++++++ BORRAR
+//			System.out.println("** RESPONSE");
+//	        soapResponse.writeTo(System.out);
+//			System.out.println();
+//			System.out.println("**");
+//			// ++++++++++++++++++ 
+	        
 	        soapConnection.close();
         	// SOAP Response to String
 	        ByteArrayOutputStream baos = new ByteArrayOutputStream();

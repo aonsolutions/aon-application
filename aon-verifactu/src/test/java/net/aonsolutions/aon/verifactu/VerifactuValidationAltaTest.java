@@ -55,7 +55,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertInvoice(Invoice invoice, CompleteInvoiceCommunicatorContext completeIcc, CompleteRegistroFacturaType complete) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(invoice.isRectifier()?"Y":"X"));
+		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
@@ -198,10 +198,50 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 
 	@Test
-	void verifactu_1130_Test() throws InvoiceCommunicationException {
+	void verifactu_1130_Test_1() throws InvoiceCommunicationException {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola\tMundo") // Un tabulador
+			, InvoiceCommunicationError.VERIFACTU_1130
+		);
+	}
+	@Test
+	void verifactu_1130_Test_2() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		assertInvoiceMessage( invoice, null
+			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola\"Mundo") // Comillas
+			, InvoiceCommunicationError.VERIFACTU_1130
+		);
+	}
+	@Test
+	void verifactu_1130_Test_3() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		assertInvoiceMessage( invoice, null
+			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola ' Mundo") // Comilla simple
+			, InvoiceCommunicationError.VERIFACTU_1130
+		);
+	}
+	@Test
+	void verifactu_1130_Test_4() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		assertInvoiceMessage( invoice, null
+			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola < Mundo") // Menor
+			, InvoiceCommunicationError.VERIFACTU_1130
+		);
+	}
+	@Test
+	void verifactu_1130_Test_5() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		assertInvoiceMessage( invoice, null
+			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola > Mundo") // Mayor
+			, InvoiceCommunicationError.VERIFACTU_1130
+		);
+	}
+	@Test
+	void verifactu_1130_Test_6() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		assertInvoiceMessage( invoice, null
+			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola = Mundo") // Igual
 			, InvoiceCommunicationError.VERIFACTU_1130
 		);
 	}
@@ -247,7 +287,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.fra.setTipoFactura(ClaveTipoFacturaType.R_1);
 				c.fra.setTipoRectificativa(null);
 			}
-			, InvoiceCommunicationError.VERIFACTU_1114
+			, InvoiceCommunicationError.VERIFACTU_1114, InvoiceCommunicationError.VERIFACTU_4102
 		);
 	}
 	
@@ -771,7 +811,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.fra.setTipoRectificativa( ClaveTipoRectificativaType.I );
 				c.fra.setCupon(CuponType.S);
 			}
-			, InvoiceCommunicationError.VERIFACTU_1157
+			, InvoiceCommunicationError.VERIFACTU_1157, InvoiceCommunicationError.VERIFACTU_4102
 		);
 	}
 	

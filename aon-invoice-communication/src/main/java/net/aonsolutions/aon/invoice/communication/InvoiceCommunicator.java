@@ -1,7 +1,14 @@
 package net.aonsolutions.aon.invoice.communication;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,6 +50,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -380,6 +389,28 @@ public class InvoiceCommunicator {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
 			}
 		}
+		if (cc.getConfig().getCertificate().getData() == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
+		}
+		
+		try {
+			ByteArrayInputStream key = new ByteArrayInputStream(cc.getConfig().getCertificate().getData());
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(key, cc.getConfig().getCertificate().getPassword().toCharArray());
+			String alias = keyStore.aliases().nextElement();
+			X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+			Date now = new Date();
+			if (certificate.getNotBefore() != null && now.before(certificate.getNotBefore())) {
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0026);
+			} 
+			if (certificate.getNotAfter() != null && now.after(certificate.getNotAfter())) {
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0027);
+			} 			
+		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0025);
+		}
+
+		
 	}
 
 	private static boolean checkCert(Certificate certificate) {

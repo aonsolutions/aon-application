@@ -105,14 +105,30 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	
 	@Test
 	void venta_nacional_rectificativa_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
-		save(invoice);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		invoice1 = save(invoice1);
+
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
+		invoice2.setRectificationInvoice(invoice1.getId());
+		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
+		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
+		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
+		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
+		save(invoice2);
 	}
 	
 	@Test
 	void venta_nacional_rectificativa_simplificadaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
-		save(invoice);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		invoice1 = save(invoice1);
+
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		invoice2.setRectificationInvoice(invoice1.getId());
+		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
+		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
+		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
+		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
+		save(invoice2);
 	}
 	
 	@Test
@@ -187,7 +203,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		save(invoice);
 	}
 
-	private void save(Invoice invoice) throws InvoiceCommunicationException {
+	private Invoice save(Invoice invoice) throws InvoiceCommunicationException {
 		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
 		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
 			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
@@ -201,7 +217,8 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		assertInvoiceData(invoice);
 		assertInvoiceInfo(invoice);
 		assertInvoiceCommunication(invoice);
-		assertCommunicationHistory(invoice);		
+		assertCommunicationHistory(invoice);
+		return invoice;
 	}
 
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {

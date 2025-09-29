@@ -191,7 +191,7 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID);
 		saveAndCancel(invoice);
 	}
-
+	
 	private Invoice saveAndCancel(Invoice invoice) {
 		invoice = save(invoice);
 		cancel(invoice);
@@ -206,11 +206,11 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(ctx, icc);
-			System.out.println("*****");
-			AonIOUtils.write(vc.getResponse().getBytes(), System.out );
-			System.out.println();
-			System.out.println("*****");
-			System.out.println( vc.getResponse().getBytes() );
+//			System.out.println("*****");
+//			AonIOUtils.write(vc.getResponse().getBytes(), System.out );
+//			System.out.println();
+//			System.out.println("*****");
+//			System.out.println( vc.getResponse().getBytes() );
 			vc.invoiceStream()			
 				.forEach( i -> {
 					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);

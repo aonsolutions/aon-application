@@ -44,7 +44,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx, domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -92,7 +92,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -140,7 +140,7 @@ public class InvoiceTypes {
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
 				customer.getAddresses().clear();
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -187,7 +187,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -242,7 +242,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.rectSeries();
+				String series = VerifactuTestsUtils.rectSeries( ctx );
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -295,7 +295,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getContadoCustomer(ctx, domain);
-				String series = VerifactuTestsUtils.rectSeries();
+				String series = VerifactuTestsUtils.rectSeries(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -347,7 +347,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -395,7 +395,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -444,7 +444,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -501,7 +501,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -549,7 +549,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getIntrCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -597,7 +597,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain); 
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -646,7 +646,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -695,7 +695,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -743,7 +743,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerNoCensado(ctx, domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -791,7 +791,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCustomerCedilla(ctx, domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -839,7 +839,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -879,7 +879,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getExtrCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -919,7 +919,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
@@ -959,7 +959,7 @@ public class InvoiceTypes {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {
 				CustomerFull customer = VerifactuTestsUtils.getCanCeuMelCustomer(ctx,domain);
-				String series = VerifactuTestsUtils.series();
+				String series = VerifactuTestsUtils.series(ctx);
 				int number = 0;
 				return new Invoice()
 					.setDomain(domain)
