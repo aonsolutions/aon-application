@@ -797,6 +797,10 @@ public class UserServlet extends AonApiHttpServlet {
 		
 		String url = "https://" + api.getDomain().getName() + "/";
 		
+		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
+			url = null != parentDomain && AonStringUtils.isNotBlank(parentDomain.getName()) ? "https://" + parentDomain.getName() + "/" : "https://" + api.getDomain().getName() + "/";;
+		}
+		
 //		if(user != null && user.isPortal()) {
 //			url = "https://" + api.getDomain().getName() + "/";
 //			
