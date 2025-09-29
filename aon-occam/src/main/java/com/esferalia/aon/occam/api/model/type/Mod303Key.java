@@ -1199,10 +1199,123 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CA_C049("303-CAC049",true ,"49","Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles aplicado el r\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota") // Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota                                                                                                                                                           
 	,CA_C050("303-CAC050",true ,"50","Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el r\u00E9gimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base")       									// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
 	,CA_C051("303-CAC051",true ,"51","Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el r\u00E9gimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota")  										// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota                                        
-
-//	,CA_C000("303-CAC000",true ,"00","")  //
 	
+	,CA_U1D("303-CAU1D",false,null,"A - Ep\u00EDgrafe IAE - Descripci\u00F3n")  // Datos estadísticos - Principal - Epígrafe IAE Descripción	
+	,CA_U1C("303-CAU1C",false,null,"B - Clave - Principal") 				    // Datos estadísticos - Principal - Clave
+	,CA_U1E("303-CAU1E",false,null,"C - Ep\u00EDgrafe IAE - C\u00F3digo")       // Datos estadísticos - Principal - Epígrafe IAE Código 
+	,CA_U1R("303-CAU1R",false,null,"D - Régimen aplicable C\u00F3digo")         // Datos estadísticos - Principal - Régimen aplicable Código 
+
+	,CA_U2D("303-CAU2D",false,null,CA_U1D.getDescription()) // Datos estadísticos - Otras 1 - Epígrafe IAE Descripción
+	,CA_U2C("303-CAU2C",false,null,"B - Clave - Otras")     // Datos estadísticos - Otras 1 - Clave                   
+	,CA_U2E("303-CAU2E",false,null,CA_U1E.getDescription()) // Datos estadísticos - Otras 1 - Epígrafe IAE Código     
+	,CA_U2R("303-CAU2R",false,null,CA_U1R.getDescription()) // Datos estadísticos - Otras 1 - Régimen aplicable Código
+
+	,CA_U3D("303-CAU3D",false,null,CA_U1D.getDescription()) // Datos estadísticos - Otras 2 - Epígrafe IAE Descripción
+	,CA_U3C("303-CAU3C",false,null,CA_U2C.getDescription()) // Datos estadísticos - Otras 2 - Clave                   
+	,CA_U3E("303-CAU3E",false,null,CA_U1E.getDescription()) // Datos estadísticos - Otras 2 - Epígrafe IAE Código     
+	,CA_U3R("303-CAU3R",false,null,CA_U1R.getDescription()) // Datos estadísticos - Otras 2 - Régimen aplicable Código
+
+	,CA_U4D("303-CAU4D",false,null,CA_U1D.getDescription()) // Datos estadísticos - Otras 3 - Epígrafe IAE Descripción
+	,CA_U4C("303-CAU4C",false,null,CA_U2C.getDescription()) // Datos estadísticos - Otras 3 - Clave                   
+	,CA_U4E("303-CAU4E",false,null,CA_U1E.getDescription()) // Datos estadísticos - Otras 3 - Epígrafe IAE Código     
+	,CA_U4R("303-CAU4R",false,null,CA_U1R.getDescription()) // Datos estadísticos - Otras 3 - Régimen aplicable Código
+
+	,CA_U5D("303-CAU5D",false,null,CA_U1D.getDescription()) // Datos estadísticos - Otras 4 - Epígrafe IAE Descripción
+	,CA_U5C("303-CAU5C",false,null,CA_U2C.getDescription()) // Datos estadísticos - Otras 4 - Clave                   
+	,CA_U5E("303-CAU5E",false,null,CA_U1E.getDescription()) // Datos estadísticos - Otras 4 - Epígrafe IAE Código     
+	,CA_U5R("303-CAU5R",false,null,CA_U1R.getDescription()) // Datos estadísticos - Otras 4 - Régimen aplicable Código
+
+	,CA_C052("303-CAC052",false,"52","Operaciones en r\u00E9gimen general")
+	,CA_C053("303-CAC053",false,"53","Operaciones a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art\u00EDculo 18 de la Ley 20/1991")
+	,CA_C054("303-CAC054",false,"54","Exportaciones definitivas y operaciones asimiladas a la exportaci\u00F3n")
+	,CA_C055("303-CAC055",false,"55","Operaciones relativas a \u00E1reas exentas")
+	,CA_C056("303-CAC056",false,"56","Operaciones interiores exentas por el art\u00EDculo 25 de la Ley 19/1994 realizadas por el sujeto pasivo")
+	,CA_C057("303-CAC057",false,"57","Otras operaciones exentas con derecho a deducci\u00F3n")
+	,CA_C058("303-CAC058",false,"58","Operaciones exentas sin derecho a deducci\u00F3n")
+	,CA_C059("303-CAC059",false,"59","Operaciones no sujetas por reglas de localizaci\u00F3n o con inversi\u00F3n del sujeto pasivo")
+	,CA_C060("303-CAC060",false,"60","Operaciones en r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca")
+	,CA_C061("303-CAC061",false,"61","Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig\u00FCedades o colecci\u00F3n")
+	,CA_C062("303-CAC062",false,"62","Operaciones en r\u00E9gimen especial de Agencias de viajes")
+	,CA_C063("303-CAC063",false,"63","Entregas de bienes inmuebles y operaciones financieras no habituales")
+	,CA_C064("303-CAC064",false,"64","Entregas de bienes de inversi\u00F3n para el transmitente")
+	,CA_C065("303-CAC065",false,"65","Total volumen de operaciones")
+	
+	,CA_P1C("303-CAP1C",false,null,"CNAE")                           // Prorrata 1 - CNAE
+	,CA_P1I("303-CAP1I",false,null,"Imp. tot. Operaciones ")       	 // Prorrata 1 - Importe total de las operaciones
+	,CA_P1D("303-CAP1D",false,null,"Imp. tot. Oper. con der. ded.")  // Prorrata 1 - Importe operaciones con derecho a deducción
+	,CA_P1T("303-CAP1T",false,null,"Tipo")                           // Prorrata 1 - Tipo
+	,CA_P1P("303-CAP1P",false,null,"% prorrata")                     // Prorrata 1 - Porcentaje de prorrata
+
+	,CA_P2C("303-CAP2C",false,null,CA_P1C.getDescription())          // Prorrata 2 - CNAE                                       
+	,CA_P2I("303-CAP2I",false,null,CA_P1I.getDescription())          // Prorrata 2 - Importe total de las operaciones           
+	,CA_P2D("303-CAP2D",false,null,CA_P1D.getDescription())          // Prorrata 2 - Importe operaciones con derecho a deducción
+	,CA_P2T("303-CAP2T",false,null,CA_P1T.getDescription())          // Prorrata 2 - Tipo                                       
+	,CA_P2P("303-CAP2P",false,null,CA_P1P.getDescription())          // Prorrata 2 - Porcentaje de prorrata                     
+	                                                                 
+	,CA_P3C("303-CAP3C",false,null,CA_P1C.getDescription())          // Prorrata 3 - CNAE                                       
+	,CA_P3I("303-CAP3I",false,null,CA_P1I.getDescription())          // Prorrata 3 - Importe total de las operaciones           
+	,CA_P3D("303-CAP3D",false,null,CA_P1D.getDescription())          // Prorrata 3 - Importe operaciones con derecho a deducción
+	,CA_P3T("303-CAP3T",false,null,CA_P1T.getDescription())          // Prorrata 3 - Tipo                                       
+	,CA_P3P("303-CAP3P",false,null,CA_P1P.getDescription())          // Prorrata 3 - Porcentaje de prorrata                     
+	                                                                 
+	,CA_P4C("303-CAP4C",false,null,CA_P1C.getDescription())          // Prorrata 4 - CNAE                                       
+	,CA_P4I("303-CAP4I",false,null,CA_P1I.getDescription())          // Prorrata 4 - Importe total de las operaciones           
+	,CA_P4D("303-CAP4D",false,null,CA_P1D.getDescription())          // Prorrata 4 - Importe operaciones con derecho a deducción
+	,CA_P4T("303-CAP4T",false,null,CA_P1T.getDescription())          // Prorrata 4 - Tipo                                       
+	,CA_P4P("303-CAP4P",false,null,CA_P1P.getDescription())          // Prorrata 4 - Porcentaje de prorrata                     
+                                                                     
+	,CA_P5C("303-CAP5C",false,null,CA_P1C.getDescription())          // Prorrata 5 - CNAE                                       
+	,CA_P5I("303-CAP5I",false,null,CA_P1I.getDescription())          // Prorrata 5 - Importe total de las operaciones           
+	,CA_P5D("303-CAP5D",false,null,CA_P1D.getDescription())          // Prorrata 5 - Importe operaciones con derecho a deducción
+	,CA_P5T("303-CAP5T",false,null,CA_P1T.getDescription())          // Prorrata 5 - Tipo                                       
+	,CA_P5P("303-CAP5P",false,null,CA_P1P.getDescription())          // Prorrata 5 - Porcentaje de prorrata
+	        
+	,CA_C200("303-CAC200",false,"200","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes		      
+	,CA_C201("303-CAC201",false,"201","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes			         
+	,CA_C202("303-CAC202",false,"202","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible en operaciones interiores bienes de inversión				           
+	,CA_C203("303-CAC203",false,"203","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible en operaciones interiores bienes de inversión					               
+	,CA_C204("303-CAC204",false,"204","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible por importaciones bienes y servicios corrientes
+	,CA_C205("303-CAC205",false,"205","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible por importaciones bienes y servicios corrientes												                                    
+	,CA_C206("303-CAC206",false,"206","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible por importaciones bienes de inversión									                         
+	,CA_C207("303-CAC207",false,"207","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - I.G.I.C. deducible por importaciones bienes de inversión																                                              
+	,CA_C208("303-CAC208",false,"208","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C209("303-CAC209",false,"209","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C210("303-CAC210",false,"210","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Rectificación de deducciones
+	,CA_C211("303-CAC211",false,"211","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Rectificación de deducciones
+	,CA_C212("303-CAC212",false,"212","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Regularización de bienes de inversión
+	,CA_C213("303-CAC213",false,"213","") // Actividades con regímenes de deducción diferenciados - Grupo 1 - Suma de deducciones
+	
+	,CA_C214("303-CAC214",false,"214","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes		      
+	,CA_C215("303-CAC215",false,"215","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes			         
+	,CA_C216("303-CAC216",false,"216","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible en operaciones interiores bienes de inversión				           
+	,CA_C217("303-CAC217",false,"217","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible en operaciones interiores bienes de inversión					               
+	,CA_C218("303-CAC218",false,"218","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible por importaciones bienes y servicios corrientes
+	,CA_C219("303-CAC219",false,"219","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible por importaciones bienes y servicios corrientes												                                    
+	,CA_C220("303-CAC220",false,"220","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible por importaciones bienes de inversión									                         
+	,CA_C221("303-CAC221",false,"221","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - I.G.I.C. deducible por importaciones bienes de inversión																                                              
+	,CA_C222("303-CAC222",false,"222","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C223("303-CAC223",false,"223","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C224("303-CAC224",false,"224","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Rectificación de deducciones
+	,CA_C225("303-CAC225",false,"225","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Rectificación de deducciones
+	,CA_C226("303-CAC226",false,"226","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Regularización de bienes de inversión
+	,CA_C227("303-CAC227",false,"227","") // Actividades con regímenes de deducción diferenciados - Grupo 2 - Suma de deducciones
+                                    
+	,CA_C228("303-CAC228",false,"228","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes		      
+	,CA_C229("303-CAC229",false,"229","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible en operaciones interiores bienes y servicios corrientes			         
+	,CA_C230("303-CAC230",false,"230","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible en operaciones interiores bienes de inversión				           
+	,CA_C231("303-CAC231",false,"231","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible en operaciones interiores bienes de inversión					               
+	,CA_C232("303-CAC232",false,"232","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible por importaciones bienes y servicios corrientes
+	,CA_C233("303-CAC233",false,"233","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible por importaciones bienes y servicios corrientes												                                    
+	,CA_C234("303-CAC234",false,"234","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible por importaciones bienes de inversión									                         
+	,CA_C235("303-CAC235",false,"235","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - I.G.I.C. deducible por importaciones bienes de inversión																                                              
+	,CA_C236("303-CAC236",false,"236","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C237("303-CAC237",false,"237","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Compensaciones en régimen especial de la agricultura, ganadería y pesca
+	,CA_C238("303-CAC238",false,"238","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Rectificación de deducciones
+	,CA_C239("303-CAC239",false,"239","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Rectificación de deducciones
+	,CA_C240("303-CAC240",false,"240","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Regularización de bienes de inversión
+	,CA_C241("303-CAC241",false,"241","") // Actividades con regímenes de deducción diferenciados - Grupo 3 - Suma de deducciones
 	;
+	
 	private String value;
 	private boolean diffEnabled;
 	private String box;
