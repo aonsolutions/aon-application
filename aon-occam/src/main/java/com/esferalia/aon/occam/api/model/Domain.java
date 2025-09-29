@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class Domain implements Serializable {
 
@@ -235,7 +235,7 @@ public class Domain implements Serializable {
 	}
 	
 	public boolean isExpired() {
-		return expirationDate != null && AonDateUtils.getDateWithoutTime(new Date()).after(expirationDate);
+		return expirationDate != null && AonDateUtils.resetTime(new Date()).after(expirationDate);
 	}
 
 	public String getCreationUser() {
