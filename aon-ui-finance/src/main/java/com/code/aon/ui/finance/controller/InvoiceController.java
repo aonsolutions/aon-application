@@ -2257,6 +2257,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				.map(Entry::getValue)
 				.filter( v -> v != null)
 				.map(InvoiceCommunicationHistoryMapValue::getHistory)
+				.filter( h -> h != null)
 				.findFirst()
 				.orElse(new LinkedList<>())
 			;
