@@ -56,7 +56,7 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
-		/* if(this.isSig()){
+		if(this.isSig()){
 			let headers = {
 				domain_name: this.sessionData.domain_name,
 				domain_id: this.sessionData.domain_id
@@ -75,21 +75,21 @@ export class AonBooking extends AonElement {
 				this.trialValue = this.dur.getTrialValue();
 				this.build();			
 			});
-		} else { */
-		getBookingDomainUserRoles({}, this.sessionData).then(r => {
-			this.dur = new DomainUserRoles(r);
-			this.initialize();
-			this.domainPayer = this.dur.isDomainPayer();
-			this.apps = this.dur.getDomainApps();
-			if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
-				this.completeDomainApps(this.dur);
-			this.users = this.dur.maxDefinedUsers;
-			this.definedUsers = this.dur.definedUsers;
-			this.trial = this.dur.isTrial();
-			this.trialValue = this.dur.getTrialValue();
-			this.build();			
-		});
-		//}
+		} else {
+			getBookingDomainUserRoles({}, this.sessionData).then(r => {
+				this.dur = new DomainUserRoles(r);
+				this.initialize();
+				this.domainPayer = this.dur.isDomainPayer();
+				this.apps = this.dur.getDomainApps();
+				if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
+					this.completeDomainApps(this.dur);
+				this.users = this.dur.maxDefinedUsers;
+				this.definedUsers = this.dur.definedUsers;
+				this.trial = this.dur.isTrial();
+				this.trialValue = this.dur.getTrialValue();
+				this.build();			
+			});
+		}
 		
 	}
 
@@ -711,7 +711,7 @@ export class AonBooking extends AonElement {
 				message: 'El número de usuarios no puede ser mayor que el número de usuarios contratados'
 			});
 		} else {
-			/* if(this.isSig()){
+			if(this.isSig()){
 				let headers = {
 					domain_name: this.sessionData.domain_name,
 					domain_id: this.sessionData.domain_id
@@ -733,24 +733,24 @@ export class AonBooking extends AonElement {
 						//this.build(new DomainUserRoles(r));
 					});
 				});
-			} else { */
-			setDomainApp({
-				type: this.dur.domain.type,
-				apps: this.apps,
-				users: this.users,
-				domainPayer: this.domainPayer,
-				trial: this.trial,
-				trialValue: this.trialValue
-			}, this.sessionData).then(() => {
-				toast.start({
-					type: 'success',
-					message: 'Datos Guardados Correctamente'
+			} else {
+				setDomainApp({
+					type: this.dur.domain.type,
+					apps: this.apps,
+					users: this.users,
+					domainPayer: this.domainPayer,
+					trial: this.trial,
+					trialValue: this.trialValue
+				}, this.sessionData).then(() => {
+					toast.start({
+						type: 'success',
+						message: 'Datos Guardados Correctamente'
+					});
+					getDomainUserRoles({reload:true}).then(r => {
+						//this.build(new DomainUserRoles(r));
+					});
 				});
-				getDomainUserRoles({reload:true}).then(r => {
-					//this.build(new DomainUserRoles(r));
-				});
-			});
-			//}
+			}
 		}
 	}
 
