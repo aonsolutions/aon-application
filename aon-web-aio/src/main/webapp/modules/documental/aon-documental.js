@@ -93,21 +93,20 @@ export class AonDocumental extends AonElement {
 
 	async build() {
 		let aonDocumental = this.getApplication();
-		if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
-			let titleSection = aonDocumental.getToolbar().getTitleSection();
+		// if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
+		// 	let titleSection = aonDocumental.getToolbar().getTitleSection();
 
-			let newView = new AonSwitch();
-			newView.id = this.id + "NewView";
-			newView.title = " | Nueva Vista";
-			newView.checked = isNewView();
-			LS.setBetaDoc(newView.checked);
-			newView.addEventListener(EVENT.CHANGE, () => {
-				setNewView(newView.checked);
-				this.rootPanel(new AonDocumental());
-			});
-			titleSection.appendChild(newView);
-		}
-
+		// 	let newView = new AonSwitch();
+		// 	newView.id = this.id + "NewView";
+		// 	newView.title = " | Nueva Vista";
+		// 	newView.checked = isNewView();
+		// 	LS.setBetaDoc(newView.checked);
+		// 	newView.addEventListener(EVENT.CHANGE, () => {
+		// 		setNewView(newView.checked);
+		// 		this.rootPanel(new AonDocumental());
+		// 	});
+		// 	titleSection.appendChild(newView);
+		// }
 
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 			aonDocumental.drag_and_drop = true;
@@ -198,7 +197,7 @@ export class AonDocumental extends AonElement {
 			if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 				let typeOptions = [{
 					name: MSG.ENTERPRISE,
-//					icon: MATERIAL_ICONS.BUSINESS,
+					// icon: MATERIAL_ICONS.BUSINESS,
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
@@ -207,7 +206,7 @@ export class AonDocumental extends AonElement {
 					}
 				}, {
 					name: MSG.EMPLOYEE,
-//					icon: MATERIAL_ICONS.PERSON,
+					// icon: MATERIAL_ICONS.PERSON,
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
@@ -218,7 +217,7 @@ export class AonDocumental extends AonElement {
 				if (this.getDur().isDocumentalManager()) {
 					typeOptions.push({
 						name: MSG.ASESOR,
-//						icon: 'work',
+						// icon: 'work',
 						fn: () => {
 							this._filter.category = undefined;
 							this._filter.tag = undefined;
@@ -286,25 +285,25 @@ export class AonDocumental extends AonElement {
 					};
 				});
 				
-                // Limpiamos
-                this.clearElementById(application.SIDENAV + DocumentalSidenav.OFFICE_CATEGORIES.id + 'List');
-                this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
-                // Metemos el todo los ficheros
-                let documentOptions = {
-                  id  : MSG.ALL_FILES,
-                  name: MSG.ALL_FILES,
-                  fn: () => {
-                    this._filter.category = undefined;
-                    this._filter.tag = undefined;
-                    this._filter.type = 'all';
-                    this.aonDocumentalList();
-                  }
-                };
-                application.addSidenavOptionsListValue(DocumentalSidenav.OFFICE_CATEGORIES, documentOptions);
-                // Marcamos la primera opcion
-                application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', MSG.ALL_FILES);
-                application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
-                // Relenamos
+				// Limpiamos
+				this.clearElementById(application.SIDENAV + DocumentalSidenav.OFFICE_CATEGORIES.id + 'List');
+				this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
+				// Metemos el todo los ficheros
+				let documentOptions = {
+					id  : MSG.ALL_FILES,
+					name: MSG.ALL_FILES,
+					fn: () => {
+						this._filter.category = undefined;
+						this._filter.tag = undefined;
+						this._filter.type = 'all';
+						this.aonDocumentalList();
+					}
+				};
+				application.addSidenavOptionsListValue(DocumentalSidenav.OFFICE_CATEGORIES, documentOptions);
+				// Marcamos la primera opcion
+				application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', MSG.ALL_FILES);
+				application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
+				// Relenamos
 				categories.forEach(item => {
 					if(item.is_deletable === 0){
 						let optionDefaultCategory = {
@@ -340,9 +339,9 @@ export class AonDocumental extends AonElement {
 					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado ficheros
 				});
-                // Mostrar tus categorias
-                if (yourCategoriesVisibility)
-                  this.showElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
+				// Mostrar tus categorias
+				if (yourCategoriesVisibility)
+					this.showElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
 			});
 		} else {
 			getCategories(data).then(categories => {
@@ -358,7 +357,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-//						icon: 'label',
+						// icon: 'label',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -694,10 +693,10 @@ export class AonDocumental extends AonElement {
 		// Texto
 		let text = document.createElement('div');
 		text.textContent = 'Importando ficheros desde Bidoq...';
-//		text.style.marginTop = '12px';
-//		text.style.fontSize = '16px';
-//		text.style.color = '#333';
-//		text.style.fontFamily = 'Arial, sans-serif';
+		// text.style.marginTop = '12px';
+		// text.style.fontSize = '16px';
+		// text.style.color = '#333';
+		// text.style.fontFamily = 'Arial, sans-serif';
 	
 		// Estilo para la animación del spinner
 		if (!document.getElementById('spinner-style')) {
@@ -749,10 +748,10 @@ export class AonDocumental extends AonElement {
 		return response;
 	}
 
-    aonDocumentalListRestFilter(){
-      let documentalList = this.getElement('aonDocumentalList');
-      documentalList.buildToolbarSearch();
-    }
+	aonDocumentalListRestFilter(){
+		let documentalList = this.getElement('aonDocumentalList');
+		documentalList.buildToolbarSearch();
+	}
 
 	aonDocumentalList(filter) {
 		filter = filter || this._filter;
@@ -777,9 +776,9 @@ export class AonDocumental extends AonElement {
 
 	aonDocumentById(id) {
       if(this.isBetaDoc()){
-          getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+				getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
       }else{
-          getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+				getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
       }
 	}
 
@@ -891,28 +890,28 @@ export class AonDocumental extends AonElement {
 
 			if (this.isBetaDoc()) {
 				const categoryElement       = document.getElementById("aonDocumentalUploadCategory");
-                const subcategoryElement    = document.getElementById("aonDocumentalUploadSubCategory");
-                const administrationElement = document.getElementById("aonDocumentalAdministration");
-                const modelsElement         = document.getElementById("aonDocumentalModels");
-                const tagElement            = document.getElementById("aonDocumentalUploadTag");
-                const dateElement           = document.getElementById("aonDocumentalUploadDatePicker");
+				const subcategoryElement    = document.getElementById("aonDocumentalUploadSubCategory");
+				const administrationElement = document.getElementById("aonDocumentalAdministration");
+				const modelsElement         = document.getElementById("aonDocumentalModels");
+				const tagElement            = document.getElementById("aonDocumentalUploadTag");
+				const dateElement           = document.getElementById("aonDocumentalUploadDatePicker");
 
-                // Verificar si los elementos tienen valores v�lidos y asignarlos a la propiedad 'category' del objeto 'data'
-                if (categoryElement && categoryElement.value !== null && categoryElement.value.trim() !== "") {
-                    data.category = categoryElement.value;
+				// Verificar si los elementos tienen valores v�lidos y asignarlos a la propiedad 'category' del objeto 'data'
+				if (categoryElement && categoryElement.value !== null && categoryElement.value.trim() !== "") {
+					data.category = categoryElement.value;
 
-                    if (subcategoryElement && subcategoryElement.value !== null && subcategoryElement.value.trim() !== "") {
-                        data.category = subcategoryElement.value;
+					if (subcategoryElement && subcategoryElement.value !== null && subcategoryElement.value.trim() !== "") {
+						data.category = subcategoryElement.value;
+						
+						if (administrationElement && administrationElement.value !== null && administrationElement.value.trim() !== "") {
+							data.category = administrationElement.value;
 
-                        if (administrationElement && administrationElement.value !== null && administrationElement.value.trim() !== "") {
-                            data.category = administrationElement.value;
-
-                            if (modelsElement && modelsElement.value !== null && modelsElement.value.trim() !== "") {
-                                data.category = modelsElement.value;
-                            }
-                        }
-                    }
-                }
+							if (modelsElement && modelsElement.value !== null && modelsElement.value.trim() !== "") {
+								data.category = modelsElement.value;
+							}
+						}
+					}
+				}
 
 				if (tagElement && tagElement.value !== null &&  tagElement.value.trim() !== "") {
 					data.tag = tagElement.getSelectable();

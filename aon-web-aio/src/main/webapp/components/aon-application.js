@@ -659,7 +659,10 @@ export class AonApplication extends AonElement {
       if(option.options) {
         let arrow  = new AonIcon();
         arrow.icon = MATERIAL_ICONS.CHEVRON_RIGHT;
-        li.classList.add('sidenav-submenu-hidden');
+        if (!option.opened) {
+          // Marcar como cerrado, si no se quiere abierto
+          li.classList.add('sidenav-submenu-hidden');
+        }
         li.appendChild(arrow);
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';

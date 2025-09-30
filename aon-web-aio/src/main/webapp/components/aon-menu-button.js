@@ -13,7 +13,9 @@ import { AonIncome } from '../modules/invoice/aon-income.js';
 import { AonExpense } from '../modules/invoice/aon-expense.js';
 import { Income } from '../modules/invoice/Income.js';
 import { Expense } from '../modules/invoice/Expense.js';
+import { generateJobId } from "../modules/invoice/InvoiceUtils.js";
 import * as OPTION from '../modules/invoice/InvoiceOptions';
+import { getCompanyActivities } from "../services/companyService.js";
 
 export class AonMenuButton extends AonElement {
     dur;
@@ -196,7 +198,6 @@ export class AonMenuButton extends AonElement {
 						input.multiple = 'multiple';
 						
 						input.addEventListener(EVENT.CHANGE, ({target}) => {
-
 							getCompanyActivities({}).then(activities => {
 								let data = { uploaded: 0}
 								if(activities.length > 1) {
