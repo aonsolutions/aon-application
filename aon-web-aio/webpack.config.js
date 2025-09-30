@@ -48,6 +48,10 @@ module.exports = {
         {
           from: path.resolve(__dirname, 'src/main/webapp/assets_sass/favicons'),
           to: 'favicons'
+        },
+        {
+          from: path.resolve(__dirname, 'src/main/webapp/assets_sass/images/logos'),
+          to: 'logos'
         }
       ]
     })

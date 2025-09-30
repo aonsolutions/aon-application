@@ -91,8 +91,8 @@
     .aonToolbar2, aon-header{
       background-color  : $color-900;
       color             : $color-text-head;
-      .aonLoginLogo{
-        background-image : url($logoHead);
+      .aonLoginLogo, #aon-logo{
+        // background-image : url($logoHead);
         width            : $logoHead-width;
         height           : $logoHead-height; 
       }
@@ -708,7 +708,7 @@
       #logoContent{
         background-color: $color-login;
         #logoSVG{
-          background-image: url($logo);
+          // background-image: url($logo);
           width           : $logo-width;
           height          : $logo-height;
         }
