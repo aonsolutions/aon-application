@@ -193,6 +193,7 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 	
 	private Invoice saveAndCancel(Invoice invoice) {
+		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
 		invoice = save(invoice);
 		cancel(invoice);
 		return invoice;

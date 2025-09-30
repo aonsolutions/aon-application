@@ -37,7 +37,7 @@ class VerifactuTestsUtils {
 	static String series(AONContext ctx, boolean rectifier) {
 		char prefix = (onGitHubActions()) 
 			? (rectifier ? 'r' : 'a')
-			: (rectifier ? 'X' : 'B')
+			: (rectifier ? 'R' : 'A')
 		;
 		return series( ctx, rectifier, prefix);
 	}

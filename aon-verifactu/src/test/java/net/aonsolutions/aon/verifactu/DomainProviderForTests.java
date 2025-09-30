@@ -461,73 +461,73 @@ class DomainProviderForTests {
 		CustomerFull C_B98351984 = new CustomerFull();
 		C_B98351984
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B98351984").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("PEDROSA MARCO CONSULTORES SL.P")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Teruel").setNumber("15").setAddress3("Esc. B pta 6").setZip("46008").setCity("Valencia").setGeozone(getGeozoneId(ctx,"46")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Teruel").setNumber("15").setAddress3("Esc. B pta 6").setZip("46008").setCity("Valencia").setGeozone(getGeozoneId(ctx,"46")));
 		CustomerDAO.save(ctx, C_B98351984);
 		
 		CustomerFull C_B95717484 = new CustomerFull();
 		C_B95717484
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B95717484").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("IBAIGANE CONSULTING, S.L.")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("LAS MERCEDES").setNumber("38").setAddress2("BAJOS").setAddress3("").setZip("48930").setCity("GETXO").setGeozone(getGeozoneId(ctx,"48")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("LAS MERCEDES").setNumber("38").setAddress2("BAJOS").setAddress3("").setZip("48930").setCity("GETXO").setGeozone(getGeozoneId(ctx,"48")));
 		CustomerDAO.save(ctx, C_B95717484);
 		
 		CustomerFull C_15247056B = new CustomerFull();
 		C_15247056B
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("15247056B").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JAVIER BILBAO LEIZA")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.PLAZA)).setAddress("GUIPUZKOA").setNumber("6").setAddress2("BAJOS").setAddress3("").setZip("20280").setCity("HONDARRIBIA").setGeozone(getGeozoneId(ctx,"20")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.PLAZA)).setAddress("GUIPUZKOA").setNumber("6").setAddress2("BAJOS").setAddress3("").setZip("20280").setCity("HONDARRIBIA").setGeozone(getGeozoneId(ctx,"20")));
 		CustomerDAO.save(ctx, C_15247056B);
 		
 		CustomerFull C_07485941Q = new CustomerFull();
 		C_07485941Q
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("07485941Q").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JORGE RUIZ ESCAGEDO")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("ARCA DEL AGUA").setNumber("1 2C").setZip("28300").setCity("Aranjuez").setGeozone(getGeozoneId(ctx,"28")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("ARCA DEL AGUA").setNumber("1 2C").setZip("28300").setCity("Aranjuez").setGeozone(getGeozoneId(ctx,"28")));
 		CustomerDAO.save(ctx, C_07485941Q);
 
 		CustomerFull C_52717592M = new CustomerFull();
 		C_52717592M
 		.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("52717592M").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("MIGUEL ANGEL SILVESTRE CALABUIG")))
-		.addAddress(new RegistryAddress().setStreetType((StreetType.AV)).setAddress("Francisco Cerdá").setNumber("47").setAddress2("Bajo").setAddress3("").setZip("46870").setCity("Ontinyent").setGeozone(getGeozoneId(ctx,"46")));
+		.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.AV)).setAddress("Francisco Cerdá").setNumber("47").setAddress2("Bajo").setAddress3("").setZip("46870").setCity("Ontinyent").setGeozone(getGeozoneId(ctx,"46")));
 		CustomerDAO.save(ctx, C_52717592M);
 
 		CustomerFull C_B66068065 = new CustomerFull();
 		C_B66068065
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B66068065").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("RUCS DEL CORREDOR, S.L.")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CSRIO)).setAddress("Rimblas").setNumber("S/N").setZip("08318").setCity("Dosrius").setGeozone(getGeozoneId(ctx,"08")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CSRIO)).setAddress("Rimblas").setNumber("S/N").setZip("08318").setCity("Dosrius").setGeozone(getGeozoneId(ctx,"08")));
 		CustomerDAO.save(ctx, C_B66068065);
 
 		CustomerFull C_E07170327 = new CustomerFull();
 		C_E07170327
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("E07170327").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("SEBASTIAN MAS C.B.")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("ANSELM CLAVE").setNumber("2").setAddress2("1º").setZip("07002").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("ANSELM CLAVE").setNumber("2").setAddress2("1º").setZip("07002").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_E07170327);
 
 		CustomerFull C_B98465644 = new CustomerFull();
 		C_B98465644
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B98465644").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("BUSINESS GROUP CANDEL SL")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.AV)).setAddress("Cortes Valencianas").setNumber("28").setAddress2("13-A").setZip("46015").setCity("VALENCIA").setGeozone(getGeozoneId(ctx,"46")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.AV)).setAddress("Cortes Valencianas").setNumber("28").setAddress2("13-A").setZip("46015").setCity("VALENCIA").setGeozone(getGeozoneId(ctx,"46")));
 		CustomerDAO.save(ctx, C_B98465644);
 
 		CustomerFull C_75407353J = new CustomerFull();
 		C_75407353J
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("75407353J").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JOSE FRANCISCO ROJAS RODRIGUEZ")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("VIRGEN DE CONSOLACION").setNumber("23").setAddress2("1º").setAddress3("CENTRO").setZip("41710").setCity("UTRERA").setGeozone(getGeozoneId(ctx,"41")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("VIRGEN DE CONSOLACION").setNumber("23").setAddress2("1º").setAddress3("CENTRO").setZip("41710").setCity("UTRERA").setGeozone(getGeozoneId(ctx,"41")));
 		CustomerDAO.save(ctx, C_75407353J);
 		
 		CustomerFull C_43162588Y = new CustomerFull();
 		C_43162588Y
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("43162588Y").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("MONTIS FORTEZA, FERNANDO")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.PLAZA)).setAddress("SAN JAIME").setNumber("7 BJS").setZip("07012").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.PLAZA)).setAddress("SAN JAIME").setNumber("7 BJS").setZip("07012").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_43162588Y);
 		
 		CustomerFull C_B57551251 = new CustomerFull();
 		C_B57551251
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B57551251").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("COBEL CONSULTING, S.L.U.")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("GASPÀR SABATER").setNumber("8").setAddress2("BJS.").setZip("07010").setCity("PALMA MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("GASPÀR SABATER").setNumber("8").setAddress2("BJS.").setZip("07010").setCity("PALMA MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_B57551251);
 		
 		CustomerFull C_43102210A = new CustomerFull();
 		C_43102210A
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("43102210A").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("POU VIVES, MIGUEL")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("MAYOR").setNumber("74").setZip("07520").setCity("PETRA").setGeozone(getGeozoneId(ctx,"07")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("MAYOR").setNumber("74").setZip("07520").setCity("PETRA").setGeozone(getGeozoneId(ctx,"07")));
 		CustomerDAO.save(ctx, C_43102210A);
 		
 		// CLIENTE INTRACOMUNITARIO
@@ -541,7 +541,7 @@ class DomainProviderForTests {
 					.setDocumentCountry(Country.FR)
 					.setName("STE AMAZON EU SARL"))
 				.setTransaction(InvoiceTransactionType.INTRACOMMUNITY))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
 		CustomerDAO.save(ctx, I_393356000000);
 		
 		// CLIENTE EXTRACOMUNITARIO
@@ -555,7 +555,7 @@ class DomainProviderForTests {
 					.setDocumentCountry(Country.TW)
 					.setName("REIFY TECHNOLOGY LTD"))
 				.setTransaction(InvoiceTransactionType.INTRACOMMUNITY))
-			.addAddress(new RegistryAddress()
+			.addAddress(new RegistryAddress().setMain(true)
 				.setStreetType((StreetType.CALLE))
 				.setAddress("Bei Xin St")
 				.setZip("30044")
@@ -573,7 +573,7 @@ class DomainProviderForTests {
 					.setDocumentCountry(Country.ES)
 					.setName("NÁUTICA Y DEPORTES TENERIFE S.A."))
 				.setTransaction(InvoiceTransactionType.CAN_CEU_MEL))
-			.addAddress(new RegistryAddress()
+			.addAddress(new RegistryAddress().setMain(true)
 				.setStreetType((StreetType.CALLE))
 				.setAddress("Dársena Pesquera Via SE 18")
 				.setZip("38180")
@@ -598,14 +598,14 @@ class DomainProviderForTests {
 		CustomerFull C_X3654266A = new CustomerFull();
 		C_X3654266A
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X3654266A").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("JEAN FRANÇOIS VICENT COURTINAT")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
 		CustomerDAO.save(ctx, C_X3654266A);
 
 		// NO CENSADO EN AEAT
 		CustomerFull C_X1485566L = new CustomerFull();
 		C_X1485566L
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X1485566L").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("GOLDEN GATE INSTITUTE")))
-			.addAddress(new RegistryAddress().setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
 		CustomerDAO.save(ctx, C_X1485566L);
 	}
 
