@@ -41,7 +41,7 @@ export class AonNewLogin extends AonElement {
     this.appendChild(toolbar);
 
     let divLogoToolbar = this.createElement(TAG.DIV);
-    divLogoToolbar.id = "aonLoginLogoDiv";
+    divLogoToolbar.id = "aon-logo";
     divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
@@ -433,24 +433,24 @@ export class AonNewLogin extends AonElement {
   }
 
   buildLogo() {
-    let logoToolbar = this.getElement("aonLoginLogoDiv");
+    let logoToolbar = this.getElement("aon-logo");
     const hrefToolbar = window.location.href;
     //let srcToolbar = "assets/aon-logo.svg";
     //logoToolbar.src = srcToolbar;
-    logoToolbar.addEventListener(EVENT.CLICK, () => {
-      this.tag = this.tag + 1;
-      if (this.tag >= 5) {
-        const url = hrefToolbar.includes("aonsolutions.org")
-          ? "https://aon.solutions/"
-          : "https://aonsolutions.org";
-        let ionicData = {
-          action: MOBILE_ACTION.SET_BASE_URL,
-          BASE_URL_MOBILE: url,
-        };
-        changeUrl(ionicData, url);
-        this.tag = 0;
-      }
-    });
+    // logoToolbar.addEventListener(EVENT.CLICK, () => {
+    //   this.tag = this.tag + 1;
+    //   if (this.tag >= 5) {
+    //     const url = hrefToolbar.includes("aonsolutions.org")
+    //       ? "https://aon.solutions/"
+    //       : "https://aonsolutions.org";
+    //     let ionicData = {
+    //       action: MOBILE_ACTION.SET_BASE_URL,
+    //       BASE_URL_MOBILE: url,
+    //     };
+    //     changeUrl(ionicData, url);
+    //     this.tag = 0;
+    //   }
+    // });
   }
 
   signin() {

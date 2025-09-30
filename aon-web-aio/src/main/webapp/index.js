@@ -1,4 +1,4 @@
-import { consoleLog } from './modules/utils/functionGlobal'; // Se usa de manera golbal aunque no se vea su uso aqui
+import { consoleLog, waitForElement} from './modules/utils/functionGlobal'; // Se usa de manera golbal aunque no se vea su uso aqui
 import * as LS from './services/localStorageService.js';
 import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';

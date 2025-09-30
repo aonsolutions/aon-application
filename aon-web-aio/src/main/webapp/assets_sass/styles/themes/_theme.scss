@@ -76,8 +76,8 @@
 
   --favicon-#{$theme}: #{$favicon};
   --title-#{$theme}: #{$title};
-  // --logoHeader-#{$theme}: url(#{$logoHeader});
-  // --logo-#{$theme}: url(#{$logo});
+  --logoHeader-#{$theme}: #{$logoHead};
+  --logo-#{$theme}: #{$logo};
   body{
     color            : $color-text;
     margin           : $body-margin;
@@ -91,10 +91,11 @@
     .aonToolbar2, aon-header{
       background-color  : $color-900;
       color             : $color-text-head;
-      .aonLoginLogo, #aon-logo{
-        // background-image : url($logoHead);
+      #aon-logo{
         width            : $logoHead-width;
         height           : $logoHead-height; 
+        background-repeat: no-repeat;
+        background-position: center;
       }
       aon-icon-button {
         aon-icon {

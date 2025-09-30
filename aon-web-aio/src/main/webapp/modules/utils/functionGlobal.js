@@ -52,3 +52,35 @@ export function isNewView() {
 export function setNewView(value) {
   window.new_view = value;
 }
+
+/**
+ * Espera a que un elemento del DOM exista y lo devuelve.
+ * Si el elemento ya existe en el momento de la llamada, resuelve inmediatamente.
+ * 
+ * @param {string} selector - Selector CSS del elemento a esperar.
+ * @returns {Promise<Element>} Promesa que se resuelve con el elemento encontrado.
+ */
+window.waitForElement = function (selector) {
+  return new Promise((resolve) => {
+    // ¿Ya existe el elemento?
+    const element = document.querySelector(selector);
+    if (element) {
+      resolve(element);
+      return;
+    }
+
+    // Si no, escuchamos hasta que aparezca
+    const observer = new MutationObserver(() => {
+      const el = document.querySelector(selector);
+      if (el) {
+        resolve(el);
+        observer.disconnect(); // dejamos de observar
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  });
+}

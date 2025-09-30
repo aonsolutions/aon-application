@@ -1,3 +1,5 @@
+import { getCustomViewConfiguration, getCustomViewImage } from '../../services/customViewService';
+
 let manualOverride  = localStorage.getItem('theme-mode'); // 'light' | 'dark' | 'auto' | null
 const darkQuery     = window.matchMedia('(prefers-color-scheme: dark)');
 const root          = document.documentElement;
@@ -48,10 +50,14 @@ const clearThemeClasses = () => {
   [...root.classList].filter(cls => cls.startsWith('theme-')).forEach(cls => root.classList.remove(cls));
 };
 
-const applyFavicon = (themeClass) => {
-  const raw = getComputedStyle(document.body).getPropertyValue(`--favicon-${themeClass}`).trim();
-  if (!raw) return;
-  const url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+const applyFavicon = (themeClass, favicon = "") => {
+  let url = ""; 
+
+  if (!url) {
+    const raw = getComputedStyle(document.body).getPropertyValue(`--favicon-${themeClass}`).trim();
+    if (raw) url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+  }
+
   if (!url) return;
 
   let link = document.querySelector("link[rel~='icon']");
@@ -63,42 +69,34 @@ const applyFavicon = (themeClass) => {
   link.href = `${url}?v=${Date.now()}`;
 };
 
-export const applyTitle = (themeClass) => {
-  let title = getComputedStyle(document.body).getPropertyValue(`--title-${themeClass}`).trim();
+export const applyTitle = (themeClass, title = "") => {
+  if (!title) {
+    title = getComputedStyle(document.body).getPropertyValue(`--title-${themeClass}`).trim();
+  }
+
   if (title) {
     document.title = title;
   }
 };
 
-export const applyLogoHeader = (themeClass) => {
-  const raw = getComputedStyle(document.body)
-                .getPropertyValue(`--logo-header-${themeClass}`)
-                .trim();
-  if (!raw) return;
-
-  const url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
-  if (!url) return;
-
-  if (el.tagName.toLowerCase() === 'img') {
-    el.src = `${url}?v=${Date.now()}`; // evita cache
-  } else {
-    el.style.backgroundImage = `url('${url}?v=${Date.now()}')`;
-  }
+export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
+  waitForElement('#aon-logo').then((divLogo) => {  
+    if (imageLogoHeader === "") {
+      const raw = getComputedStyle(document.body).getPropertyValue(`--logoHeader-${themeClass}`).trim();
+      if (raw) imageLogoHeader = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+      if (imageLogoHeader && divLogo) { 
+        divLogo.style.backgroundImage = 'url(' + imageLogoHeader + ')';
+      }
+    } else {
+      divLogo.style.backgroundImage = getCustomViewImage(imageLogoHeader);
+    }
+  });
 };
 
-export const applyLogo = (themeClass) => {
-  const raw = getComputedStyle(document.body)
-                .getPropertyValue(`--logo-${themeClass}`)
-                .trim();
-  if (!raw) return;
-
-  const url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
-  if (!url) return;
-
-  if (el.tagName.toLowerCase() === 'img') {
-    el.src = `${url}?v=${Date.now()}`; // evita cache
-  } else {
-    el.style.backgroundImage = `url('${url}?v=${Date.now()}')`;
+export const applyLogo = (themeClass, imageLogo = "") => {
+  if (!imageLogo) {
+    const raw = getComputedStyle(document.body).getPropertyValue(`--logo-${themeClass}`).trim();
+    if (raw) imageLogo = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
   }
 };
 
@@ -109,13 +107,36 @@ const getEffectiveMode = () => {
 };
 
 const applyTheme = () => {
-  const isDark = getEffectiveMode();
-  const themeClass = getThemeClass(isDark);
+  let favicon       = "";
+  let title         = "";
+  let logoHeader    = "";
+  let logo          = "";
+  const isDark      = getEffectiveMode();
+  const themeClass  = getThemeClass(isDark);
+  
   clearThemeClasses();
   root.classList.add(themeClass);
   applyFavicon(themeClass);
   applyTitle(themeClass);
+  applyLogoHeader(themeClass);
+  applyLogo(themeClass);
+
+  getCustomViewConfiguration()
+    .then(res => {
+      favicon    = isDark ? res.images["favicon-darksvg"] : res.images["faviconsvg"];
+      title      = res.params["AON_CUSTOMIZE_TITLE"];
+      logoHeader = res.images["header-logo-dark"];
+      logo        = isDark ? res.images["login-logo-dark"] : res.images["aon-login-logo"];
+
+      applyFavicon(themeClass, favicon);
+      applyTitle(themeClass, title);
+      applyLogoHeader(themeClass, logoHeader);
+      applyLogo(themeClass, logo);
+
+    })
+    .catch(err => console.error("Error getCustomViewImage:", err));  
 };
+
 
 // Permite actualizar botones activos visualmente
 const highlightActiveTheme = () => {
