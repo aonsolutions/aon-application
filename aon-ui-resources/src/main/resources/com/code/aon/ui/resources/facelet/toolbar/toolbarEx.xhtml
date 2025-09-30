@@ -33,8 +33,15 @@
 			
 			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
 				<ui:insert name="beforeToolbarContent"/>
-				<ui:insert name="toolbarContent"/>
+				
+				<aon:if test="#{!app.standAlone}">
+					<ui:insert name="toolbarContent"/>
+				</aon:if>
+				<aon:if test="#{app.standAlone}">
+					<aon:insertToolbarItems name="toolbarContent" /> 
+				</aon:if>
 
+				<!-- additionalToolbarContent -->
 				<aon:if test="#{!app.standAlone}">
 					<ui:insert name="additionalToolbarContent"/>
 				</aon:if>
