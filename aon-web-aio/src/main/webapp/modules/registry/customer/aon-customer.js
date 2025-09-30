@@ -33,6 +33,12 @@ export class AonCustomer extends AonReg {
 	office;
 	clientFile;
 	aonCustomerList;
+	
+	sigCustomerDomainName;
+	sigCustomerDomainId;
+	
+	// Method to call GWT sync module
+	linkSigDomain;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -40,7 +46,7 @@ export class AonCustomer extends AonReg {
 		this.build();
 	}
 
-	customerInitialize() {
+	async customerInitialize() {
 		this.registry = this.registry || new Customer();
 		this.saveBool = true;
 		this.type = "customer";
@@ -54,7 +60,7 @@ export class AonCustomer extends AonReg {
 					this.hideSaveButton();
 				this.buildBankData();
 			}},
-			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
+			//{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
 		if (this.office) {
@@ -64,6 +70,8 @@ export class AonCustomer extends AonReg {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
+			
+			console.log("Registry Company", this.registry.registryCompany);
 			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
@@ -150,6 +158,47 @@ export class AonCustomer extends AonReg {
 		this.buildMediaCard(parent);
 		this.buildGeneralInformation(parent);
 		this.buildSellerCard(parent);
+		
+		this.buildFiscalGeneralData();
+	}
+
+	buildFiscalGeneralData() {
+		let generalDataTable = this.getElement(this.GENERAL_TABLE);
+		
+		generalDataTable.addRow();
+
+		let transaction = new AonSelect();
+		transaction.id = this.FISCAL_TRANSACTION;
+		transaction.title = MSG.TRANSACTION_TYPE;
+		transaction.options = JSON.stringify(Transactions);
+		transaction.value = this.registry.getTransaction();
+		transaction.addEventListener(EVENT.SELECT, () => {
+			this.registry.setTransaction(transaction.value);
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(transaction, 3);
+
+		generalDataTable.addRow();
+
+		let surcharge = new AonSwitch();
+		surcharge.id = this.FISCAL_SURCHARGE;
+		surcharge.title = MSG.SURCHARGE_RE;
+		surcharge.checked = this.registry.isSurcharge();
+		surcharge.addEventListener(EVENT.CHANGE, () => {
+			this.registry.setSurcharge(surcharge.isChecked());
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(surcharge, 1);
+
+		let withholding = new AonSwitch();
+		withholding.id = this.FISCAL_WITHHOLDING;
+		withholding.title = MSG.IRPF;
+		withholding.checked = this.registry.isWithholding();
+		withholding.addEventListener(EVENT.CHANGE, () => {
+			this.registry.setWithholding(withholding.isChecked());
+			if (this.autosave) this.save();
+		});
+		generalDataTable.addCell(withholding, 1);
 	}
 
 	buildSellerCard(parent) {
@@ -336,6 +385,14 @@ export class AonCustomer extends AonReg {
 			})
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
+				
+				if(resp && resp.length > 0){
+					//this.sigCustomerDomainName = resp[0].domainName;
+					//this.sigCustomerDomainId = resp[0].domainId;
+					
+					//this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					//this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+				}
 			})
 			/*
 			.catch((err) => {
@@ -467,20 +524,11 @@ export class AonCustomer extends AonReg {
 		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
 		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
-		if (link || !companies.length) {
-			main.appendChild(iconArrowDown);
-		}
-
-		if (link) {
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown, resp);
-			});
-		} else {
-			statusText.style.marginRight = "5px";
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown);
-			});
-		}
+		main.appendChild(iconArrowDown);
+		
+		main.addEventListener(EVENT.CLICK, () => {
+			this.getSigOptionsLinked(iconArrowDown, resp);
+		});
 	}
 	
 	hideSaveButton(){
@@ -588,8 +636,8 @@ export class AonCustomer extends AonReg {
 	getSessionData() {
 		return {
 			session_id: LS.getToken(),
-			domain_name: this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName(),
-			domain_id: this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId(),
+			domain_name: this.sigCustomerDomainName || (this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName()),
+			domain_id: this.sigCustomerDomainId || (this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId()),
 			domain_login: LS.getDomainLogin()
  		};
 	}
@@ -786,7 +834,18 @@ export class AonCustomer extends AonReg {
 				}
 			);
 			
-		} 
+		} else {
+			options.push(
+				{
+					name: "Vincular",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.linkSigDomain(this.registry.alias);
+					},
+				}
+			);
+		}
 		/*
 		else {
 			options.push(

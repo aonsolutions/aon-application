@@ -1,22 +1,17 @@
 package com.esferalia.aon.gwt.fiscal.client.customer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
@@ -47,14 +42,8 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	private int lastScrollPos = 0;
 
 	private Map<Integer, Customer> rowCustomers = new HashMap<>();
-	private Map<Integer, Domain> customersDomain = new HashMap<>();
 
 	private CustomersLinkedParams params;
-	
-	private BookingApi bookingApi;
-	private CustomerApi customerApi;
-	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = false;
 
 	private static enum COLS {
 
@@ -93,9 +82,6 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
-		this.customerApi = new CustomerApi(SESSION_API);
-		this.bookingApi = new BookingApi(SESSION_API);
-
 		this.rowCustomers.clear();
 
 		addScrollHandler(new ScrollHandler() {
@@ -180,13 +166,8 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 				paintRow(customer);
 			}
 			
-			if(!getCurrentIsSig()) {
-				if (customers.size() < limit) {
-					disableMoreData();
-				} else {
-					offset.setValue(offset.intValue() + customers.size() - 1);
-					enableMoreData();
-				}
+			if (customers.size() < limit) {
+				disableMoreData();
 			} else {
 				offset.setValue(offset.intValue() + customers.size() - 1);
 				enableMoreData();
@@ -240,87 +221,23 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 	private void getList(Consumer<List<Customer>> success) {
 
-		params.setSig(getCurrentIsSig());
-		
+		params.setSig(false);
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		if(getCurrentIsSig()) {
-			COMMON_SERVICE.getCustomers(params, new AsyncCallback<List<Customer>>() {
+		COMMON_SERVICE.getCustomersNotLinked(params, new AsyncCallback<List<Customer>>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
-				}
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
+			}
 
-				@Override
-				public void onSuccess(List<Customer> customers) {
-					getCustomersDomain(customers, 
-							parsedCustomers -> {
-								success.accept(parsedCustomers);
-							});
-				}
-			});
-		} else {
-			COMMON_SERVICE.getCustomersNotLinked(params, new AsyncCallback<List<Customer>>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
-				}
-
-				@Override
-				public void onSuccess(List<Customer> customers) {
-					success.accept(customers);
-				}
-			});
-		}
-	}
-	
-	private void getCustomersDomain(List<Customer> customers, Consumer<List<Customer>> success) {
-		checkCustomerDomains(customers.stream().map(customer -> customer.getId()).collect(Collectors.toCollection(ArrayList::new)), customerDomains -> {
-			customersDomain.putAll(customerDomains);
-			success.accept(customers.stream().filter(c -> customerDomains.keySet().contains(c.getId())).collect(Collectors.toList()));
+			@Override
+			public void onSuccess(List<Customer> customers) {
+				success.accept(customers);
+			}
 		});
-	}
-	
-	private void checkCustomerDomains(ArrayList<Integer> customerIds, Consumer<HashMap<Integer, Domain>> success) {
-	    HashMap<Integer, Domain> result = new HashMap<>();
-	    
-	    int total = customerIds.size();
-	    int[] pending = { total }; 
-
-	    customerIds.forEach(customerId -> {
-	        String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-	        String endPoint = "/ms/api/domain/" + customerId;
-
-	        this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
-	            @Override
-	            public void onSuccess(List<DomainCompany> domainCompanies) {
-	                if (null == domainCompanies || domainCompanies.isEmpty()) {
-	                    result.put(customerId, null);
-	                }
-	                checkFinish();
-	            }
-
-	            @Override
-	            public void onFailure(Throwable exception) {
-	                onShowErrorMessage(exception.getMessage());
-	                checkFinish();
-	            }
-
-	            private void checkFinish() {
-	                pending[0]--;
-	                if (pending[0] == 0) {
-	                	 success.accept(result);
-	                }
-	            }
-	        });
-	    });
-
-	    if (total == 0) {
-	    	 success.accept(result);
-	    }
+		
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
@@ -328,11 +245,5 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	protected abstract void onHideMessage();
 
 	protected abstract void onCusotmerOpen(Customer customer);
-
-	public static native boolean getCurrentIsSig()
-	/*-{
-		var value = $wnd.localStorage.getItem("isSig");
-		return value === "true" || value === true;
-	}-*/;
 
 }

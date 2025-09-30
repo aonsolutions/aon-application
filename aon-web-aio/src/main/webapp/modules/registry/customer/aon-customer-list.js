@@ -28,7 +28,6 @@ export class AonCustomerList extends AonRegistryList {
 
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
-		console.log("Customers", customers);
 		return customers;
 	}
 

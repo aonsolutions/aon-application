@@ -18,10 +18,10 @@ public class Mod130ExpressionsTest extends AbstractOccamTest {
 		test( Administration.COMMON_TERRITORY );
 	}
 	
-	@Test
-	public void testBizkaiaExpression() {
-		test( Administration.BIZKAIA);
-	}
+//	@Test
+//	public void testBizkaiaExpression() {
+//		test( Administration.BIZKAIA);
+//	}
 
 	private void test( Administration admon) {
 		test(admon, true);

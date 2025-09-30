@@ -227,7 +227,7 @@ export class AonOfficePanel extends AonElement {
 			options: [sellerWorkload, customerPayrollActivity]
 		}
 		
-		if (this.isSig()) {
+		if (!this.isSig()) {
 			let linkCustomerDomain = LINK_CUSTOMER_DOMAINS;
 			linkCustomerDomain.fn = () => this.showView(LINK_CUSTOMER_DOMAINS.id);
 			process.options.push(linkCustomerDomain);
@@ -721,7 +721,7 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case SYNC_DOMAINS.id:
 					this.clearToolbar();
-					localStorage.setItem("isSig", this.isSig());
+					//localStorage.setItem("isSig", this.isSig());
 					GWT.iLoad(GWT.SYNC_SIG_CUSTOMER_DOMAIN, this.getApplication().CONTENT);
 					break;
 				case OfficeOptions.AON_SELLER_LIST.id:
@@ -779,6 +779,11 @@ export class AonOfficePanel extends AonElement {
 								...this.getFilterCustomers(),
 								page: 1,
 							}); // overwrite function
+						};
+						aonView.linkSigDomain = (registryAlias) => {
+							this.clearToolbar();
+							localStorage.setItem("searchQuery", registryAlias);
+							GWT.iLoad(GWT.SYNC_SIG_CUSTOMER_DOMAIN, this.getApplication().CONTENT);
 						};
 					}
 					break;
