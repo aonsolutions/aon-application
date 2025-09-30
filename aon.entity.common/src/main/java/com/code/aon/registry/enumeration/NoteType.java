@@ -30,7 +30,21 @@ public enum NoteType implements IResourceable {
     FACTURAE,
     
     /** EDI. */
-    EDI;
+    EDI,
+    
+    /** CUSTOMER_STATUS. */
+    CUSTOMER_STATUS,
+    
+    /** PAYROLL. */
+    PAYROLL,
+    
+    /** FISCAL. */
+    FISCAL,
+    
+    /** ACCOUNTING. */
+    ACCOUNTING,
+    
+    ;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_notetype_";
