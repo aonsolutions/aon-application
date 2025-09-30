@@ -29,7 +29,7 @@ public class Mod130InsertTest extends AbstractOccamTest {
 	public void mod130Insert(Date date) {
 		System.out.println( "\t ---------------------");
 		insertModel( Administration.COMMON_TERRITORY, date);
-		insertModel( Administration.BIZKAIA, date);
+//		insertModel( Administration.BIZKAIA, date);
 	}
 
 	public Mod130 insertModel( Administration admon, Date date) {

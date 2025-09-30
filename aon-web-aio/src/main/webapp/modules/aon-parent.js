@@ -81,8 +81,11 @@ export class AonParent extends AonElement {
 		return new Promise((resolve, reject) => { 
 			
 			getCompanies({limit}).then( companies => {
+				let loc = companies.filter(r => this.isLocationCompany(r));
 				let cps = companies.filter(r => r.id == LS.getDomainId());
-				if(cps.length > 0 && !cps[0].parent) {
+				if(loc.length > 0 && !loc[0].parent) {
+					this.companySelection(loc[0], true );
+				}else if(cps.length > 0 && !cps[0].parent) {
 					this.companySelection(cps[0], companies.length == 1 );
 				} else if ( LS.getCompany() && !LS.getCompany().domainManagement ) {
 					this.companySelection(LS.getCompany(), companies.length == 1 );

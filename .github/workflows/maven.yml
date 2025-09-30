@@ -86,7 +86,7 @@ jobs:
         ports:
           - 4444:4444
           - 7900:7900
-        options: --add-host=payroll-test.aonsolutions.org:host-gateway --add-host=test.aonsolutions.org:host-gateway --shm-size=2gb
+        options: --add-host=test.aonsolutions.org:host-gateway --add-host=payroll-test.aonsolutions.org:host-gateway --add-host=general-payroll-test.aonsolutions.org:host-gateway --add-host=inactiva-payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
       contents: read
@@ -200,7 +200,7 @@ jobs:
       run: |
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
-        -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
+        -Dtest='app/*TestCase.java' -f aon-selenium/pom.xml integration-test
 
     - name: Running HtmlUnit integration tests
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}

@@ -1370,12 +1370,84 @@ export class AonJsfContractGraph extends AonJsfGraph {
 
 	constructor() {
 		super();
-		this.id = 'aonJsfContractGraph';
+		this.id = 'aonJsfContractOption';
 		this.IFRAME = this.id + 'Frame';
 		this.setRedirectUrl('/facelet/app/contractGraph.jsf');
 
 	}
 
+}
+
+export class AonJsfContractOption extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/contractOption.xhtml');
+	}
+}
+
+export class AonJsfTrainningCenter extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/trainningCenter.xhtml');
+	}
+}
+
+export class AonJsfPosOpening extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/posOpening.xhtml');
+	}
+}
+
+export class AonJsfPosClosing extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/posClosing.xhtml');
+	}
+}
+
+export class AonJsfPosInvoice extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/posInvoice.xhtml');
+	}
+}
+
+export class AonJsfPosFinance extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/posFinance.xhtml');
+	}
+}
+
+export class AonJsfPos extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/pos.xhtml');
+	}
+}
+
+export class AonJsfPosShift extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/posShift.xhtml');
+	}
+}
+
+export class AonJsfItemTagPrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/itemTagPrint.xhtml');
+	}
 }
 
 if (!window.customElements.get(TAG.AON_JSF_APP)) {
@@ -1957,3 +2029,40 @@ if (!window.customElements.get(TAG.AON_JSF_TAS_ITEM)) {
 if (!window.customElements.get(TAG.AON_JSF_TAS_STAT)) {
 	window.customElements.define(TAG.AON_JSF_TAS_STAT, AonJsfTasStat);
 }
+
+if (!window.customElements.get(TAG.AON_JSF_CONTRACT_OPTION)) {
+	window.customElements.define(TAG.AON_JSF_CONTRACT_OPTION, AonJsfContractOption);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_TRAINNING_CENTER)) {
+	window.customElements.define(TAG.AON_JSF_TRAINNING_CENTER, AonJsfTrainningCenter);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS_OPENING)) {
+	window.customElements.define(TAG.AON_JSF_POS_OPENING, AonJsfPosOpening);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS_CLOSING)) {
+	window.customElements.define(TAG.AON_JSF_POS_CLOSING, AonJsfPosClosing);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS_INVOICE)) {
+	window.customElements.define(TAG.AON_JSF_POS_INVOICE, AonJsfPosInvoice);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS_FINANCE)) {
+	window.customElements.define(TAG.AON_JSF_POS_FINANCE, AonJsfPosFinance);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS)) {
+	window.customElements.define(TAG.AON_JSF_POS, AonJsfPos);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_POS_SHIFT)) {
+	window.customElements.define(TAG.AON_JSF_POS_SHIFT, AonJsfPosShift);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_ITEM_TAG_PRINT)) {
+	window.customElements.define(TAG.AON_JSF_ITEM_TAG_PRINT, AonJsfItemTagPrint);
+}
+

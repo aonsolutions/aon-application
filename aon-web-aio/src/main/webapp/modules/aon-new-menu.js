@@ -1413,7 +1413,7 @@ export class AonNewMenu extends AonElement {
 		for (let topMenuApp of topMenuApps) {
 			let aonSuiteMenu = this.getAonSuiteMenu(topMenuApp);
 			aonSuiteMenu.setDur(this.getDur());
-			aonSuiteMenu.getOptions()
+			aonSuiteMenu.getOptions?.()
 			.filter(subMenu => !subMenu.filter || subMenu.filter() )
 			.forEach(subMenu => {
 				subMenu.options

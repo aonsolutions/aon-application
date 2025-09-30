@@ -68,9 +68,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String CHECK_ITEMS = "/check-items/";
 	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
 	public static final String SYNC_AON_CUSTOMER = "/sync-aon-customer/";
-	
-	// TODO: implementar obtener dominios disponibles con limit y offset
-	public static final String AVIABLE_SYNC_DOMAINS = "/aviable-sync-domain/";
+	public static final String AON_CUSTOMER_DOMAIN = "/aon-customer-domain/:domainName";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -97,6 +95,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
+					.addRoute(AON_CUSTOMER_DOMAIN, DomainCompanyServlet::getAonCustomerDomain)
 					.addRoute(CHECK_ITEMS, DomainCompanyServlet::getCheckedItems)
 					.addRoute(SYNC_AON_CUSTOMER, DomainCompanyServlet::getAviableSyncDomains)
 					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
@@ -212,6 +211,13 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
   		Integer customerId = vars.getInt(IJsonNames.CUSTOMER);
   		CONSOLE.getCustomerDomains(customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
 		return domains;
+	}
+	
+	private static JSONObject getAonCustomerDomain(AonApiData api) {
+		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
+		String domainName = vars.getString("domainName");
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		return DomainJSON.toJSON(domain);
 	}
 	
 	private static JSONArray getActivitySummary(AonApiData api) {

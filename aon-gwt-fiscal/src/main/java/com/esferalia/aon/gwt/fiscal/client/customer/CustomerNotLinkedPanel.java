@@ -81,7 +81,7 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
+		
 		this.rowCustomers.clear();
 
 		addScrollHandler(new ScrollHandler() {
@@ -156,7 +156,7 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 		if (!isMoreData())
 			return;
 		
-		onShowELoadingMessage("Cargando informaci\u00f3n clientes...");
+		onShowELoadingMessage("Cargando informaci\u00f3n clientes/dominios. Este proceso puede llevar unos segundos...");
 
 		getList(customers -> {
 			boolean something = false;
@@ -165,7 +165,7 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 				something = true;
 				paintRow(customer);
 			}
-
+			
 			if (customers.size() < limit) {
 				disableMoreData();
 			} else {
@@ -188,8 +188,8 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	private void paintEmptyRow() {
 		HTMLPanel row = tab.createRow();
 
-		Label name = new Label("No existen clientes viculados");
-		name.setTitle("No existen clientes viculados");
+		Label name = new Label("No existen clientes sin viculaci\u00f3n");
+		name.setTitle("No existen clientes sin viculaci\u00f3n");
 		tab.addInlineStyle(name, COLS.DES.getStyles());
 		tab.addRow(row, name, COLS.DES.getColWidth());
 	}
@@ -221,23 +221,23 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 
 	private void getList(Consumer<List<Customer>> success) {
 
-		params.setSig(getCurrentIsSig());
-		
+		params.setSig(false);
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
 		COMMON_SERVICE.getCustomersNotLinked(params, new AsyncCallback<List<Customer>>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error obteniendo clientes : " + caught.getMessage());
+			}
 
-					@Override
-					public void onSuccess(List<Customer> customers) {
-						success.accept(customers);
-					}
-				});
+			@Override
+			public void onSuccess(List<Customer> customers) {
+				success.accept(customers);
+			}
+		});
+		
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
@@ -245,11 +245,5 @@ public abstract class CustomerNotLinkedPanel extends ScrollPanel {
 	protected abstract void onHideMessage();
 
 	protected abstract void onCusotmerOpen(Customer customer);
-
-	public static native boolean getCurrentIsSig()
-	/*-{
-		var value = $wnd.localStorage.getItem("isSig");
-		return value === "true" || value === true;
-	}-*/;
 
 }

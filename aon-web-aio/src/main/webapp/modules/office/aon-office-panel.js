@@ -18,7 +18,7 @@ import { getTastHolders } from "../../services/taskHolderService.js";
 import { getWorkgroups } from "../../services/workgroupService.js";
 import { ProjectUtils } from "../project/ProjectUtils.js";
 import { getCustomer, saveRelationShip } from "../../services/registryService.js";
-import { BOOKING_PANEL, LINK_CUSTOMER_DOMAINS, LINK_DOMAINS } from "./ConsoleOptions.js";
+import { BOOKING_PANEL, LINK_CUSTOMER_DOMAINS, LINK_DOMAINS, SYNC_DOMAINS } from "./ConsoleOptions.js";
 import { AonLinkDomains } from "../domains/aon-link-domains.js";
 
 import * as GWT from "../../gwt/gwt.js";
@@ -157,9 +157,14 @@ export class AonOfficePanel extends AonElement {
 		// CONSOLE
 		if (this.isSig()) {
 			let consoleOptions = [];
-			let linkDomain = LINK_DOMAINS;
-			linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
-			consoleOptions.push(linkDomain);
+			
+			//let linkDomain = LINK_DOMAINS;
+			//linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
+			//consoleOptions.push(linkDomain);
+			
+			let syncDomains = SYNC_DOMAINS;
+			syncDomains.fn = () => this.showView(SYNC_DOMAINS.id);
+			consoleOptions.push(syncDomains);
 
 			let bookingPanel = BOOKING_PANEL;
 			bookingPanel.fn = () => this.showView(BOOKING_PANEL.id);
@@ -222,7 +227,7 @@ export class AonOfficePanel extends AonElement {
 			options: [sellerWorkload, customerPayrollActivity]
 		}
 		
-		if (this.isSig()) {
+		if (!this.isSig()) {
 			let linkCustomerDomain = LINK_CUSTOMER_DOMAINS;
 			linkCustomerDomain.fn = () => this.showView(LINK_CUSTOMER_DOMAINS.id);
 			process.options.push(linkCustomerDomain);
@@ -714,6 +719,11 @@ export class AonOfficePanel extends AonElement {
 				case LINK_DOMAINS.id:
 					aonView = new AonLinkDomains();
 					break;
+				case SYNC_DOMAINS.id:
+					this.clearToolbar();
+					//localStorage.setItem("isSig", this.isSig());
+					GWT.iLoad(GWT.SYNC_SIG_CUSTOMER_DOMAIN, this.getApplication().CONTENT);
+					break;
 				case OfficeOptions.AON_SELLER_LIST.id:
 					this.clearToolbar();
 					GWT.iLoad(GWT.SELLER_MODULE, this.getApplication().CONTENT);
@@ -769,6 +779,11 @@ export class AonOfficePanel extends AonElement {
 								...this.getFilterCustomers(),
 								page: 1,
 							}); // overwrite function
+						};
+						aonView.linkSigDomain = (registryAlias) => {
+							this.clearToolbar();
+							localStorage.setItem("searchQuery", registryAlias);
+							GWT.iLoad(GWT.SYNC_SIG_CUSTOMER_DOMAIN, this.getApplication().CONTENT);
 						};
 					}
 					break;

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,16 +33,16 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 		test( mod130, Model130ScriptProvider.obtainScript(mod130));
 	}
 
-	@Test
-	public void testBizkaia() {
-		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
-				.setMonthly(true)
-				.setAdministration(Administration.BIZKAIA);
-		Mod130 mod130 = FiscalFaker.getMod130(params);
-		MODEL130.calculate(getOccam(), mod130);
-		test( mod130, Model130ScriptProvider.obtainScript(mod130));
-	}
+//	@Test
+//	public void testBizkaia() {
+//		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
+//				.setIssueDate(new Date())
+//				.setMonthly(true)
+//				.setAdministration(Administration.BIZKAIA);
+//		Mod130 mod130 = FiscalFaker.getMod130(params);
+//		MODEL130.calculate(getOccam(), mod130);
+//		test( mod130, Model130ScriptProvider.obtainScript(mod130));
+//	}
 
 	private void test( Mod130 mod130, IModelScript<Mod130Key>[] scripts) {
 		for (IModelScript<Mod130Key> script : scripts) {
