@@ -106,7 +106,7 @@ export const getBookingDomainUserRoles = (data, sessionData) => get(API.COMPANY_
 
 export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${PRO_URL}/${API.COMPANY_APPROLES}`, data, headers);
 // LOCAL
-// export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${API.COMPANY_APPROLES}`, data, headers);
+//export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${API.COMPANY_APPROLES}`, data, headers);
 
 export const getDomainUserRoles = (data) => {
   const domain = LS.getDomainId();
