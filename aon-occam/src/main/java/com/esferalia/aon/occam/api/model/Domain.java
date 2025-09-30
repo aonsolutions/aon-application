@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -39,10 +40,13 @@ public class Domain implements Serializable {
 	private Integer aonCustomer;
 	private AonStatus aonStatus;
 	private String subDomainSuffix;
+	private Integer payer;
 	
 	private List<User> users;
 	private List<DomainApp> apps;
 	
+	private Domain parent;
+
 	public List<User> getUsers() {
 		return users;
 	}
@@ -297,4 +301,30 @@ public class Domain implements Serializable {
 		return this;
 	}
 	
+	public Domain setPayer(Integer payer) {
+		this.payer = payer;
+		return this;
+	}
+	
+	public Integer getPayer() {
+		return payer;
+	}
+	
+	public boolean isPayer() {
+		return Objects.equals(payer, id);
+	}
+	
+	public Domain setParent(Domain parent) {
+		this.parent = parent;
+		return this;
+	}
+	
+	public Domain getParent() {
+		return parent;
+	}
+
+	public boolean isActuallyActive() {
+		return active && (parent == null || parent.isActive() || isPayer());
+	}
+
 }

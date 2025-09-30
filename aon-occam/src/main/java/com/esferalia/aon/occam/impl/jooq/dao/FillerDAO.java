@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
@@ -125,12 +125,21 @@ public class FillerDAO {
 		}
 		
 		public static Domain build(Record r) {
-			return buildDomain(r, DOMAIN);
+			return buildDomain(r, Domain::new, DOMAIN, DomainDAO.PARENT);
 		}
 		
-		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domainTable) {
-			return fillDomain(r, new Domain(), domainTable);
+		public static Domain buildDomain(Record r, java.util.function.Supplier<Domain> supplier, com.esferalia.aon.jooq.tables.Domain domainTable, com.esferalia.aon.jooq.tables.Domain parentTable) {
+			Domain domain = fillDomain(r, supplier.get(), domainTable);
+			Domain parent = fillDomain(r, supplier.get(), parentTable);
+			if ( parent.getId() != null ) {
+				domain.setParent(parent);
+			}
+			return domain;
 		}
+
+//		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domainTable) {
+//			return fillDomain(r, new Domain(), domainTable);
+//		}
 		
 		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.Domain domainTable) {
 			return domain
@@ -158,8 +167,10 @@ public class FillerDAO {
 				.setAonCustomer(r.getValue(domainTable.AONCUSTOMER))
 				.setAonStatus(AonStatus.safeValueOf(r.getValue(domainTable.AONSTATUS)))
 				.setSubDomainSuffix(r.getValue(domainTable.SUBDOMAINSUFFIX))
+				
 				;	
 		}
+
 	}
 
 	public static class ApplicationParameterFiller implements Function<Record, ApplicationParameter> {
@@ -384,14 +395,27 @@ public class FillerDAO {
 		public AonCompany apply(Record r) {
 			com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 			com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+			com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
 
 			Domain d = new Domain()
-					.setId(r.getValue(domain.ID))
-					.setName(r.getValue(domain.NAME))
-					.setActive(r.getValue(domain.ACTIVE) == 1)
-					.setParentId(r.getValue(domain.PARENT))
-					.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
-					.setMaxDefinedUsers(r.getValue(domain.MAXDEFINEDUSERS));
+			.setId(r.getValue(domain.ID))
+			.setName(r.getValue(domain.NAME))
+			.setParentId(r.getValue(domain.PARENT))
+			.setActive(AonEnumUtils.getBoolean(r.getValue(domain.ACTIVE)))
+			.setDescription(r.getValue(domain.DESCRIPTION))
+			.setDomainType(DomainType.values()[r.getValue(domain.TYPE)])
+			.setScope(r.getValue(domain.SCOPE))
+			.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
+			.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
+			.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT)))
+			.setPayer(AonNumberUtils.toInteger(r.getValue(payer.VALUE)))
+			.setParent(new Domain()
+				.setId(r.getValue(parent.ID))
+				.setName(r.getValue(parent.NAME))
+				.setExpirationDate(r.getValue(parent.EXPIRATIONDATE))
+				.setActive(AonEnumUtils.getBoolean(r.getValue(parent.ACTIVE)))
+				);
+
 			Company company = new Company();
 			company.setDomain(d);
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
@@ -413,23 +437,7 @@ public class FillerDAO {
 				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
 
 			return new AonCompany()
-				.setDomain(new com.esferalia.aon.occam.api.model.Domain()
-					.setId(r.getValue(domain.ID))
-					.setName(r.getValue(domain.NAME))
-					.setParentId(r.getValue(domain.PARENT))
-					.setActive(AonEnumUtils.getBoolean(r.getValue(domain.ACTIVE)))
-					.setDescription(r.getValue(domain.DESCRIPTION))
-					.setDomainType(DomainType.values()[r.getValue(domain.TYPE)])
-					.setScope(r.getValue(domain.SCOPE))
-					.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
-					.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
-					.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT))))
-				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
-					.setId(r.getValue(parent.ID))
-					.setName(r.getValue(parent.NAME))
-					.setActive(r.getValue(parent.ACTIVE) == 1)
-					.setExpirationDate(r.getValue(parent.EXPIRATIONDATE))
-					)
+				.setDomain(d)
 				.setShared(AonEnumUtils.enumValue(UserType.class, r.getValue(USER.TYPE)) == UserType.SHARED)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))))

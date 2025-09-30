@@ -11,13 +11,13 @@ public class AonCompany implements Serializable {
 
 	private static final long serialVersionUID = -4970548127101817530L;
 
+	private String login;
+	private String schema;
+	private boolean shared;
+
 	private Domain domain;
-	private Domain parentDomain;
     private Company company;
     Administration administration;
-	private boolean shared;
-	private String schema;
-	private String login;
 	
 	
 	public AonCompany() {
@@ -30,15 +30,6 @@ public class AonCompany implements Serializable {
 
 	public AonCompany setDomain(Domain domain) {
 		this.domain = domain;
-		return this;
-	}
-
-	public Domain getParentDomain() {
-		return parentDomain;
-	}
-
-	public AonCompany setParentDomain(Domain parentDomain) {
-		this.parentDomain = parentDomain;
 		return this;
 	}
 
@@ -87,7 +78,8 @@ public class AonCompany implements Serializable {
 		this.login = login;
 		return this;
 	}
-
+	
+	
 	public JSONObject toJSON() {
 		JSONObject jsonObject =  new JSONObject()
 			.put("registry", getCompany().getId())
@@ -95,7 +87,7 @@ public class AonCompany implements Serializable {
 			.put("domain", getDomain().getName())
 			.put("name", getCompany().getName())
 			.put("document", getCompany().getDocument())
-			.put("active", getDomain().isActive()  )
+			.put("active", getDomain().isActuallyActive()   )
 			.put("expired", getCompany().getDomain().isExpired())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("type", getDomain().getDomainType().name())

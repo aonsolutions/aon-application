@@ -20,21 +20,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class LoginTestCase extends AppBaseTestCase {
 
 	
-//	String url = System.getProperty("integration.test.env.app.url",
-//			"http://inactiva-payroll-test.aonsolutions.org:8080/app");
-//	String email = System.getProperty("integration.test.env.app.auth", "inactivo");
-//	String password = System.getProperty("integration.test.env.app.password", "org");
-
-	//"http://payroll-test.aonsolutions.org:8080/app,inactivo@payroll-test.aonsolutions.org,org", 
-	//"http://general-payroll-test.aonsolutions.org:8080/app,inactivo@payroll-test.aonsolutions.org,org", 
 	@ParameterizedTest
 	@CsvSource({
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo,org", 
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,admin,org", 
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo@payroll-test.aonsolutions.org,org", 
+		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo,org,El dominio INACTIVA se encuentra actualmente inactivo",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/app,admin,org,El dominio INACTIVA se encuentra actualmente inactivo",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo@payroll-test.aonsolutions.org,org,El dominio INACTIVA se encuentra actualmente inactivo",
+		
+		"http://inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio INACTIVA \\(PARENT\\) se encuentra actualmente inactivo",
+		"http://default-inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio DEFAULT se encuentra actualmente inactivo",
+
+		"http://expired-multi-test.aonsolutions.org:8080/app,86359314,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
+		"http://expired-multi-test.aonsolutions.org:8080/app,asesor@multi-test.aonsolutions.org,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
+
 	})
 	@Order(1)
-	public void testDomainInactive(String url, String email, String password) throws AssertionError {
+	public void testDomainInactive(String url, String email, String password, String message) throws AssertionError {
 		WebDriver webDriver = null;
 		try {
 			webDriver = newWebDriver();
@@ -42,7 +42,7 @@ public class LoginTestCase extends AppBaseTestCase {
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
-			wait.until(ExpectedConditions.textMatches(By.id("aonLoginToast"), Pattern.compile("El dominio INACTIVA se encuentra actualmente inactivo")));
+			wait.until(ExpectedConditions.textMatches(By.id("aonLoginToast"), Pattern.compile(message)));
 			
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
@@ -53,7 +53,6 @@ public class LoginTestCase extends AppBaseTestCase {
 			}
 		}
 	}
-
 	
 	@Test
 	@Order(2)

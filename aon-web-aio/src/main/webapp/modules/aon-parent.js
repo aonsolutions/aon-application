@@ -649,7 +649,8 @@ export class AonParent extends AonElement {
 		
 		let expirationSpan = this.createElement(TAG.SPAN);
 		expirationSpan.className = CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING;
-		expirationSpan.innerHTML = company.expirationDate ? ` El periodo de pruebas/contratación expira el ${AonDateUtils.formatDate(AonDateUtils.parse(company.expirationDate))}  ` : '' ;
+		let expired = company.expired ? 'he expirado' : 'expira';
+		expirationSpan.innerHTML = company.expirationDate ? ` El periodo de contratación ${expired} el ${AonDateUtils.formatDate(AonDateUtils.parse(company.expirationDate))}  ` : '' ;
 
 		detailSpan.appendChild(docSpan);
 		detailSpan.appendChild(expirationSpan);
