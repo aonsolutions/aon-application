@@ -2592,3 +2592,26 @@
 	opacity: 0;
   	transform: translateY(-10px);
 }
+
+
+/* Forzar scroll visible SOLO en este panel */
+.salary-scroll {
+  overflow-x: auto !important;
+  -ms-overflow-style: auto !important;
+  scrollbar-width: auto !important;
+}
+
+.salary-scroll::-webkit-scrollbar {
+  display: block !important;
+  height: 8px; /* barra horizontal */
+}
+
+.salary-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.salary-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
