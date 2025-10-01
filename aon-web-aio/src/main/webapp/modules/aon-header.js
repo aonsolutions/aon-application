@@ -291,7 +291,7 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
+				this.goHome();
 				// this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 				// let aonDesktop = this.getElement('aonDesktop');
 				// aonDesktop.setAttribute('company', this.getAttribute('company'));
@@ -1212,7 +1212,7 @@ export class AonHeader extends AonElement {
 		logo.id 		= this.AON_LOGO;
 		contenedor.appendChild(logo);
 		logo.addEventListener('click', () => {
-			this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
+			this.goHome();
 		});
 
 		// Observamos esperando que exista menu, para la logica del toggleMenu
@@ -1260,6 +1260,11 @@ export class AonHeader extends AonElement {
 			subtree: true
 		});
 	}
+
+	goHome(){
+		this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
+	}
+
 	// buildMenuLeftop() {
 		// let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);=
 		// let app = {
