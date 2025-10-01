@@ -156,7 +156,7 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	}
 	
 	protected TbaiBlockchain getBlockchain(Integer actualInvoice) {
-		DataResponseSource source = getConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponseSource source = getConfiguration().isTbaiTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(getDomain().getId())
 			.and(f.getSourceProperty().eq(source.value()))

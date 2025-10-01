@@ -77,12 +77,12 @@ public class InvoiceCommunicationDAO {
 		TBAI_TEST {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTest(param.trueValue());
+				return config.setTbaiTest(param.trueValue());
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.TBAI_TEST, Boolean.toString(config.isTest()));
+				AppParamDAO.save(ctx, domainId, AppParam.TBAI_TEST, Boolean.toString(config.isTbaiTest()));
 			}
 		},
 		TBAI_INCLUDE_DATE {
@@ -141,12 +141,12 @@ public class InvoiceCommunicationDAO {
 		VERIFACTU_TEST {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTest(param.trueValue());
+				return config.setVerifactuTest(param.trueValue());
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.VERIFACTU_TEST, Boolean.toString(config.isTest()));
+				AppParamDAO.save(ctx, domainId, AppParam.VERIFACTU_TEST, Boolean.toString(config.isVerifactuTest()));
 			}
 		},
 		VERIFACTU_INCLUDE_DATE {
@@ -195,12 +195,12 @@ public class InvoiceCommunicationDAO {
 		SII_TEST {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTest(param.trueValue());
+				return config.setSiiTest(param.trueValue());
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.SII_TEST, Boolean.toString(config.isTest()));
+				AppParamDAO.save(ctx, domainId, AppParam.SII_TEST, Boolean.toString(config.isSiiTest()));
 			}
 		},
 		SII_INCLUDE_DATE {

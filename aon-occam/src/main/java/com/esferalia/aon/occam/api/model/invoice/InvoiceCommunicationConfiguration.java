@@ -15,9 +15,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 
 	private Administration administration;
 	private boolean tbai;
+	private boolean tbaiTest;
 	private boolean sii;
+	private boolean siiTest;
 	private boolean verifactu;
-	private boolean test;
+	private boolean verifactuTest;
 	private Integer defaultCertificate;
 	private Certificate certificate;
 	private Date includeDate;
@@ -46,11 +48,27 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 	
+	public boolean isTbaiTest() {
+		return tbaiTest;
+	}
+	public InvoiceCommunicationConfiguration setTbaiTest(boolean tbaiTest) {
+		this.tbaiTest = tbaiTest;
+		return this;
+	}
+	
 	public boolean isVerifactu() {
 		return verifactu;
 	}
 	public InvoiceCommunicationConfiguration setVerifactu(boolean verifactu) {
 		this.verifactu = verifactu;
+		return this;
+	}
+	
+	public boolean isVerifactuTest() {
+		return verifactuTest;
+	}
+	public InvoiceCommunicationConfiguration setVerifactuTest(boolean verifactuTest) {
+		this.verifactuTest = verifactuTest;
 		return this;
 	}
 	
@@ -61,12 +79,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		this.sii = sii;
 		return this;
 	}
-	
-	public boolean isTest() {
-		return test;
+	public boolean isSiiTest() {
+		return siiTest;
 	}
-	public InvoiceCommunicationConfiguration setTest(boolean test) {
-		this.test = test;
+	public InvoiceCommunicationConfiguration setSiiTest(boolean siiTest) {
+		this.siiTest = siiTest;
 		return this;
 	}
 	

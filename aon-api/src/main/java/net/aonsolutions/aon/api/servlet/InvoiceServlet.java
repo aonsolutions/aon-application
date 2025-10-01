@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -435,7 +436,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.put(IJsonNames.NUMBER, invoice.getNumber())
 			.put(IJsonNames.SIGNED, invoice.isSigned())
 			.put(IJsonNames.COMMUNICATION_INFO, InvoiceJSON.getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null));
-		InvoiceDataDAO.get(ctx, invoice.getId(), "MD5")
+		InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.MD5)
 			.filter(id -> AonStringUtils.isNotBlank(id.getValue()))
 			.ifPresent(id -> {
 				String md5 = AonDigestUtils.md5Hex(invoice.flat());
@@ -552,13 +553,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			InvoiceData dataTbaiId = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("TBAI_ID")
+					.setName(InvoiceDataName.TBAI_ID)
 					.setValue(tbaiId);
 			
 			InvoiceData dataTbaiUrl = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("TBAI_URL")
+					.setName(InvoiceDataName.TBAI_URL)
 					.setValue(qrUrl);
 			
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiId);
@@ -568,7 +569,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			InvoiceData dataThirdPart = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("THIRD_PART")
+					.setName(InvoiceDataName.THIRD_PART)
 					.setValue("true");
 			
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataThirdPart);

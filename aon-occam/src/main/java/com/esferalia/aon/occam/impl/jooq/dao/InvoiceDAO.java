@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
@@ -679,10 +680,12 @@ public class InvoiceDAO {
 	
 	private static void generateMD5(AONContext ctx, Invoice invoice) {
 		String md5 = AonDigestUtils.md5Hex(invoice.flat());
-		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, invoice.getId(), "MD5").orElse(new InvoiceData())
+		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.MD5)
+			.orElse(new InvoiceData())
+			
 			.setDomain(invoice.getDomain())
 			.setInvoice(invoice.getId())
-			.setName("MD5")
+			.setName(InvoiceDataName.MD5)
 			.setValue(md5)
 			.setStartDate(new Date());
 		InvoiceDataDAO.save(ctx, invoiceData);

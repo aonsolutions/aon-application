@@ -176,7 +176,7 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 			.setUser(login);
 		InvoiceCommunicationConfiguration icc =  AON.getInvoiceCommunicationConfiguration(occam);
 		if(icc.isTbai()) {
-			DataResponseSource source = icc.isTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
+			DataResponseSource source = icc.isTbaiTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
 			DataResponse dr = AON.getDataResponse(domainName, domainId, "", f ->
 					f.getDomainProperty().eq(domainId)
 					.and(f.getSourceProperty().eq(source.value()))

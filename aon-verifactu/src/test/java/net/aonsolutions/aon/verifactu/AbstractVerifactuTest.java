@@ -189,7 +189,7 @@ public abstract class AbstractVerifactuTest {
 		}
 		assertNotNull(communicationConfiguration,"communicationConfiguration NULL" );
 		assertTrue(communicationConfiguration.isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
-		assertTrue(communicationConfiguration.isTest(),"communicationConfiguration NO ENTORNO TEST" );
+		assertTrue(communicationConfiguration.isVerifactuTest(),"communicationConfiguration NO ENTORNO TEST" );
 		return communicationConfiguration;
 	}
 
@@ -199,7 +199,7 @@ public abstract class AbstractVerifactuTest {
 		}
 		assertNotNull(communicationConfigurationWithCertificate,"communicationConfigurationWithCertificate NULL" );
 		assertTrue(communicationConfigurationWithCertificate.isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
-		assertTrue(communicationConfigurationWithCertificate.isTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
+		assertTrue(communicationConfigurationWithCertificate.isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
 		Certificate c = AonSecret.getSigCert();
 		assertNotNull(c, "Verifactu Certificate NULL");
 		communicationConfigurationWithCertificate.setCertificate(AonSecret.getSigCert()); 

@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
@@ -66,14 +67,14 @@ public class TbaiData {
 	}
 	
 	public boolean isTest() {
-		return getInvoiceCommunicationConfiguration().isTest();
+		return getInvoiceCommunicationConfiguration().isTbaiTest();
 	}
 	private DataResponseSource getDataResponseSource() {
 		return isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 	}
 	
 	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
-		DataResponseSource source = icc.isTest()
+		DataResponseSource source = icc.isTbaiTest()
 			? DataResponseSource.TBAI_TEST
 			: DataResponseSource.TBAI;
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
@@ -299,7 +300,7 @@ public class TbaiData {
 	}
 	
 	public Optional<String> getTbaiUrl(AONContext ctx, Integer domainId, Integer invoiceId) {
-		return InvoiceDataDAO.get(ctx, domainId, invoiceId, "TBAI_URL")
+		return InvoiceDataDAO.get(ctx, domainId, invoiceId, InvoiceDataName.TBAI_URL)
 			.map(InvoiceData::getValue)
 			.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, getDataResponseSource(), TBAIURL))
 		;

@@ -7,13 +7,10 @@ public class InvoiceData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static final String VERIFACTU_QR = "VERIFACTU_QR";
-	public static final String VERIFACTU_HUELLA = "VERIFACTU_HUELLA";
-	
 	private Integer id;
 	private Integer domain;
 	private Integer invoice;
-	private String name;
+	private InvoiceDataName name;
 	private String value;
 	private Date startDate;
 	private Date endDate;
@@ -42,10 +39,10 @@ public class InvoiceData implements Serializable {
 		return this;
 	}
 	
-	public String getName() {
+	public InvoiceDataName getName() {
 		return name;
 	}
-	public InvoiceData setName(String name) {
+	public InvoiceData setName(InvoiceDataName name) {
 		this.name = name;
 		return this;
 	}

@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -207,11 +208,11 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(ctx, icc);
-//			System.out.println("*****");
-//			AonIOUtils.write(vc.getResponse().getBytes(), System.out );
-//			System.out.println();
-//			System.out.println("*****");
-//			System.out.println( vc.getResponse().getBytes() );
+			System.out.println("*****");
+			AonIOUtils.write(vc.getResponse().getBytes(), System.out );
+			System.out.println();
+			System.out.println("*****");
+			System.out.println( vc.getResponse().getBytes() );
 			vc.invoiceStream()			
 				.forEach( i -> {
 					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
@@ -231,7 +232,7 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 			icc.setConfig(configWithCertificate());
-			VerifactuContext vc = VERIFACTU.cancel(ctx, icc);
+			VERIFACTU.cancel(ctx, icc);
 			assertCanceledDataResponse( icc, invoice );
 			return invoice;
 		});
@@ -320,22 +321,22 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 
 	private void assertInvoiceData(Invoice invoice) {
-		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_QR);
+		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
 		InvoiceData qRUrl =  oQRUrl.get();
 		assertEquals(invoice.getId(), qRUrl.getInvoice() );
 		assertEquals(invoice.getDomain(), qRUrl.getDomain() );
-		assertEquals(InvoiceData.VERIFACTU_QR, qRUrl.getName());
+		assertEquals(InvoiceDataName.VERIFACTU_QR, qRUrl.getName());
 		assertNotNull(qRUrl.getValue());
 
-		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_HUELLA);
+		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
 		assertNotNull(oHuella);
 		assertTrue(oHuella.isPresent());
 		InvoiceData huella =  oHuella.get();
 		assertEquals(invoice.getId(), huella.getInvoice() );
 		assertEquals(invoice.getDomain(), huella.getDomain() );
-		assertEquals(InvoiceData.VERIFACTU_HUELLA, huella.getName());
+		assertEquals(InvoiceDataName.VERIFACTU_HUELLA, huella.getName());
 		assertNotNull(huella.getValue());
 	}
 	

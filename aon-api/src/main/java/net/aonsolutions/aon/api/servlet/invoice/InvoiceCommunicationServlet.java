@@ -4,14 +4,12 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -59,7 +57,6 @@ public class InvoiceCommunicationServlet extends AonApiHttpServlet{
 	private JSONObject getInvoiceCommunicationHistory(AonApiData api) {
 		try {
 			Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.INVOICE);
-			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
 			Occam occam = api.getOccam();
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> h = InvoiceCommunicator.history(ctx, occam.getDomain(), invoiceId);

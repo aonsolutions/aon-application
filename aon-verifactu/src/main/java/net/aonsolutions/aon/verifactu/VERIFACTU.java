@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -83,7 +84,7 @@ public class VERIFACTU {
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isTest()),requestMessage);
+		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
 		vc.setResponse( dataResponse );
 		return saveAccept( ctx, vc );
 	}
@@ -93,7 +94,7 @@ public class VERIFACTU {
 		DataRequest dataRequest = saveRequest(ctx, vc.getDomain(), vc.getRequestBytes());	// save DATA REQUEST
 		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, vc.getResponse().getBytes());	// save DATA RESPONSE
 		for ( RegistroFacturaType req : vc.getRequest().getRegistroFactura()) {		
-			saveInvoiceData(ctx, vc.getDomain(), req.getRegistroAlta());	// save INVOICE DATA
+			saveInvoiceData(ctx, vc, req.getRegistroAlta());	// save INVOICE DATA
 		}
 		saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());	// save BLOCKCHAIN DATA		
 		InvoiceBatch invoiceBatch = saveInvoiceBatch(ctx, vc.getDomain()	// save INVOICE BATCH
@@ -123,7 +124,7 @@ public class VERIFACTU {
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isTest()),requestMessage));
+		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage));
 		return saveCancel( ctx, vc );
 	}
 	
@@ -259,24 +260,27 @@ public class VERIFACTU {
 		return dataResponse;		
 	}
 
-	private static void saveInvoiceData(AONContext ctx, Domain domain, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
+	private static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
+		Domain domain = vc.getDomain();
 		Integer invoiceId = AonNumberUtils.toInteger(registroAlta.getRefExterna());
 		InvoiceDataDAO.save(ctx, new InvoiceData()
 			.setDomain(domain.getId())
 			.setInvoice(invoiceId)
-			.setName(InvoiceData.VERIFACTU_HUELLA)
+			.setName(InvoiceDataName.VERIFACTU_HUELLA)
 			.setValue(registroAlta.getHuella())
 		);
-		String qrUrl = getQrUrl(registroAlta);
+		
+		String qrUrl = getQrUrl(vc, registroAlta);
 		InvoiceDataDAO.save(ctx, new InvoiceData()
 			.setDomain(domain.getId())
 			.setInvoice(invoiceId)
-			.setName(InvoiceData.VERIFACTU_QR)
+			.setName(InvoiceDataName.VERIFACTU_QR)
 			.setValue(qrUrl));
 	}
 	
-	private static String getQrUrl(RegistroFacturacionAltaType alta) throws InvoiceCommunicationException {
-		return new StringBuilder(VerifactuUri.getUrlQr())
+	private static String getQrUrl(VerifactuContext vc, RegistroFacturacionAltaType alta) throws InvoiceCommunicationException {
+//		return new StringBuilder(VerifactuUri.getUrlQr(vc.getConfig().isVerifactuTest()))
+		return new StringBuilder()
 			.append("?")
 			.append("nif=").append(encodeParam(alta.getIDFactura().getIDEmisorFactura())).append("&")
 			.append("numserie=").append(encodeParam(alta.getIDFactura().getNumSerieFactura())).append("&")

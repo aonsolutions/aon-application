@@ -222,7 +222,7 @@ public class SIIUri {
 	}
 	
 	public String getURI(InvoiceCommunicationConfiguration icc, SIIType type) {
-		return icc.isTest() 
+		return icc.isSiiTest() 
 			? getURIPruebas(type, icc.getAdministration())
 			: getURI(type, icc.getAdministration());
 	}

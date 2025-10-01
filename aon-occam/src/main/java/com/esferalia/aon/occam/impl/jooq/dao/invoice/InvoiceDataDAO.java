@@ -19,13 +19,13 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDataProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDataDAO {
 	
@@ -68,18 +68,18 @@ public class InvoiceDataDAO {
 			.map(new InvoiceDataFiller());
 	}
 	
-	public static Optional<String> getValue(AONContext ctx, Integer domain, Integer invoiceId, String name ) {
-		return get(ctx, invoiceId, name)
+	public static Optional<String> getValue(AONContext ctx, Integer domain, Integer invoiceId, InvoiceDataName name ) {
+		return get(ctx, domain, invoiceId, name)
 			.map(id -> id.getValue());
 	}
-	public static Optional<InvoiceData> get(AONContext ctx, Integer domain, Integer invoiceId, String name ) {
+	public static Optional<InvoiceData> get(AONContext ctx, Integer domain, Integer invoiceId, InvoiceDataName name ) {
 		if (domain == null) return Optional.empty();
 		if (invoiceId == null || AonNumberUtils.equals(0, invoiceId)) return Optional.empty();
-		if (AonStringUtils.isBlank(name)) return Optional.empty();
+		if (name == null) return Optional.empty();
 		return select(ctx)
 			.where(INVOICE_DATA.INVOICE.eq(invoiceId))
 			.and(INVOICE_DATA.DOMAIN.eq(domain))
-			.and(INVOICE_DATA.NAME.eq(name))
+			.and(INVOICE_DATA.NAME.eq(name.getValue()))
 			.fetch()
 			.stream()
 			.map(new InvoiceDataFiller())
@@ -98,7 +98,7 @@ public class InvoiceDataDAO {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DATA)
 			.set(INVOICE_DATA.DOMAIN, invoiceData.getDomain())
 			.set(INVOICE_DATA.INVOICE, invoiceData.getInvoice())
-			.set(INVOICE_DATA.NAME, invoiceData.getName())
+			.set(INVOICE_DATA.NAME, invoiceData.getName().name())
 			.set(INVOICE_DATA.VALUE, invoiceData.getValue())
 			.set(INVOICE_DATA.START_DATE, AonDateUtils.toSql(invoiceData.getStartDate()))
 			.set(INVOICE_DATA.END_DATE,AonDateUtils.toSql(invoiceData.getEndDate()))
@@ -110,7 +110,7 @@ public class InvoiceDataDAO {
 		ctx.getDslContext().update(INVOICE_DATA)
 			.set(INVOICE_DATA.DOMAIN, invoiceData.getDomain())
 			.set(INVOICE_DATA.INVOICE, invoiceData.getInvoice())
-			.set(INVOICE_DATA.NAME, invoiceData.getName())
+			.set(INVOICE_DATA.NAME, invoiceData.getName().name())
 			.set(INVOICE_DATA.VALUE, invoiceData.getValue())
 			.set(INVOICE_DATA.START_DATE, AonDateUtils.toSql(new java.util.Date()))
 			.set(INVOICE_DATA.END_DATE,AonDateUtils.toSql(invoiceData.getEndDate()))
@@ -145,7 +145,7 @@ public class InvoiceDataDAO {
 				.setId(getValue(r, INVOICE_DATA.ID))
 				.setDomain(getValue(r, INVOICE_DATA.DOMAIN))
 				.setInvoice(getValue(r, INVOICE_DATA.INVOICE))
-				.setName(getValue(r, INVOICE_DATA.NAME))
+				.setName(InvoiceDataName.safeValueOf(getValue(r, INVOICE_DATA.NAME)).orElse(null))
 				.setValue(getValue(r, INVOICE_DATA.VALUE))
 				.setStartDate(getValue(r, INVOICE_DATA.START_DATE))
 				.setEndDate(getValue(r, INVOICE_DATA.END_DATE))
@@ -197,15 +197,6 @@ public class InvoiceDataDAO {
 	// **********************************************
 	// **********************************************
 	// **********************************************
-	public static Optional<InvoiceData> get(AONContext ctx, Integer invoice, String name) {
-		return select(ctx)
-			.where(INVOICE_DATA.INVOICE.eq(invoice))
-			.and(INVOICE_DATA.NAME.eq(name))
-			.fetch()
-			.stream()
-			.map(new InvoiceDataFiller())
-			.findFirst();
-	}
 	
 	/**
 	 * @deprecated ¿Si el filtro da mas de una fila?. Si no hay nada no devuelve null ... Devuelve new InvoiceData()
@@ -219,10 +210,6 @@ public class InvoiceDataDAO {
 			.fetch().stream().map(new InvoiceDataFiller())
 			.findFirst().orElse(new InvoiceData());
 	}
-	
-//	public static void delete(AONContext ctx, Integer id){
-//		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
-//	}
 	
 	/**
 	 * @deprecated Too RISK!!

@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvofoxEnvironment;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDataNames;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
@@ -348,7 +348,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						InvoiceData invoiceData = new InvoiceData()
 								.setDomain(api.getDomain().getId())
 								.setInvoice(inv.getId())
-								.setName(InvoiceDataNames.INVOFOX_ID.name())
+								.setName(InvoiceDataName.INVOFOX_ID)
 								.setValue(documentId)
 								.setStartDate(new Date());
 						AON.saveInvoiceData(api.getDomain(), api.getUser(), invoiceData);

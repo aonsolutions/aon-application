@@ -13,6 +13,7 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceInfoDAO {
 	
@@ -78,6 +80,21 @@ public class InvoiceInfoDAO {
 						.setDomain(domainId)
 						.setStatus(InvoiceCommunicationStatus.PENDING)));
 		}
+
+		// Esto es debido a que la dirección del QR no cabe en los 128 caracteres de invoice_data
+		// TODO --> aumentar tamaño en BD o grabar la información en sucesivas filas .....
+		// Es una buena ñapa puesto que debería guardarse la URL completa :(
+		if (enumMap.containsKey(InvoiceCommunicationType.VERIFACTU)) {
+			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.VERIFACTU);
+			if (v != null
+			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
+				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
+				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
+			}
+		}
+		// ---------------------------------------------------------------------------------------
+		
 		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
 		return Optional.of(enumMap);
 	}
@@ -191,12 +208,12 @@ public class InvoiceInfoDAO {
 					
 					@Override
 					public void visitVERIFACTU() {
-						InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), "VERIFACTU_QR").ifPresent( info::setCheckUrl );
+						InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), InvoiceDataName.VERIFACTU_QR).ifPresent( info::setCheckUrl );
 					}
 					
 					@Override
 					public void visitTBAI() {
-						 InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), "TBAI_URL")
+						 InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), InvoiceDataName.TBAI_URL)
 							.or( () -> DataResponseDAO.getDetailValue(ctx, info.getDomain(), info.getInvoice(), DataResponseSource.TBAI, "tbaiUrl") )
 							.ifPresent( info::setCheckUrl )
 						;

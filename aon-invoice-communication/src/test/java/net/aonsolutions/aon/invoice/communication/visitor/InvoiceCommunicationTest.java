@@ -136,7 +136,7 @@ public class InvoiceCommunicationTest {
 		List<InvoiceCommunication> list = new  LinkedList<>();
 		InvoiceCommunicationConfiguration icc =  new InvoiceCommunicationConfiguration()
 			.setTbai(true)
-			.setTest(true);
+			.setTbaiTest(true);
 
 		// CERT 1
 		icc.setCertificate(getCertificate1());			
@@ -151,7 +151,7 @@ public class InvoiceCommunicationTest {
 		// CERT 2
 		InvoiceCommunicationConfiguration icc2 =  new InvoiceCommunicationConfiguration()
 			.setTbai(true)
-			.setTest(true);
+			.setTbaiTest(true);
 		icc2.setCertificate(getCertificate2());			
 		InvoiceCommunication ic2 = new InvoiceCommunication()
 				.setCompany(getCompany2());
@@ -163,7 +163,7 @@ public class InvoiceCommunicationTest {
 		// CERT 3
 		InvoiceCommunicationConfiguration icc3 =  new InvoiceCommunicationConfiguration()
 			.setTbai(true)
-			.setTest(true);
+			.setTbaiTest(true);
 		icc3.setCertificate(getCertificate3());			
 					
 		InvoiceCommunication ic3 = new InvoiceCommunication()

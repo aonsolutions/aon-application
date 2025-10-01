@@ -66,8 +66,8 @@ public class VerifactuContext  {
 	public int invoiceCount() {
 		return getInvoiceCommunicatorContext().invoiceCount();
 	}
-	public boolean isTest() {
-		return getInvoiceCommunicatorContext().getConfig().isTest();
+	public boolean isVerifactuTest() {
+		return getInvoiceCommunicatorContext().getConfig().isVerifactuTest();
 
 	}
 	public List<EnterpriseActivity> getActivities() {

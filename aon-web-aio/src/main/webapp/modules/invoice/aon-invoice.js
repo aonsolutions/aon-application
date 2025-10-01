@@ -517,6 +517,17 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildCommunicationToolbar(invoiceToolbar) {
+		if (this.isVerifactuTest()) {
+			let vaction  = {
+				id: 'Communication_verifactu_test',
+				name: "VERIFACTUENTORNOTEST",
+				title: "VERIFACTU ENTORNO TEST",
+				icon: MATERIAL_ICONS.WARNING
+			};
+			let vtb =invoiceToolbar.addButtonTitle(vaction, () => window.alert("VERIFACTU ENTORNO TEST"));
+			vtb.getButton().style.color = "red";
+		}
+		
 		if (this.hasCommunicationInfo()) {
 			let ci = this.getInvoice().communicationInfo;
 			let keys = Object.keys(ci ?? {});
@@ -2891,6 +2902,20 @@ export class AonInvoice extends AonElement {
 			&& (this.configuration.communicationConfiguration.tbai
 			 || this.configuration.communicationConfiguration.verifactu
 		);
+	}
+	isVerifactuTest() {
+		return this.configuration
+			&& this.configuration.communicationConfiguration
+			&& this.configuration.communicationConfiguration.verifactu
+			&& this.configuration.communicationConfiguration.verifactuTest
+		;
+	}
+	isTbaiTest() {
+		return this.configuration
+			&& this.configuration.communicationConfiguration
+			&& this.configuration.communicationConfiguration.tbai
+			&& this.configuration.communicationConfiguration.tbaiTest
+		;
 	}
 	acceptInvoice() {
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);

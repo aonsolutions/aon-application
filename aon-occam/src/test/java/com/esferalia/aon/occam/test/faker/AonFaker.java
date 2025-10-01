@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -1278,7 +1279,7 @@ public class AonFaker {
 		return new InvoiceData()
 			.setDomain(domain)
 			.setInvoice(invoice)
-			.setName( AonStringUtils.abbreviate(faker.beer().name(), 32)) 
+			.setName( InvoiceDataName.values()[faker.random().nextInt(InvoiceDataName.values().length)]) 
 			.setValue(AonStringUtils.abbreviate(faker.beer().style(), 128))
 			.setStartDate(new Date())
 			.setEndDate(new Date());

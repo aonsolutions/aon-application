@@ -19,15 +19,15 @@ public class VerifactuUri {
 //	private static final String URL_3 = "https://www10.agenciatributaria.gob.es";
 //	private static final String URL_TEST_3 = "https://prewww10.aeat.es";
 	
-	private static final String URL_QR = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
-//	private static final String URL_QR_TEST = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+	private static final String URL_QR = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
+	private static final String URL_QR_TEST = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
 	
 	public static String getUrlEmision(boolean test) {
 		return test ? URL_TEST_1 : URL_1;
 	}
 	
-	public static String getUrlQr() {
-		return URL_QR;
+	public static String getUrlQr(boolean test) {
+		return test ? URL_QR_TEST : URL_QR;
 	}
 	
 }

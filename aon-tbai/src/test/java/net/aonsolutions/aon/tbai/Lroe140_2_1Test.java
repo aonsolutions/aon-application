@@ -135,7 +135,7 @@ public class Lroe140_2_1Test {
 				.setTbai(true)
 				.setAdministration(Administration.BIZKAIA)
 				.setCertificate(getCertificate())
-				.setTest(true);
+				.setTbaiTest(true);
 	}
 	
 	@Test

@@ -672,6 +672,7 @@ public final class IJsonNames {
 	public static final String SHOW_COVER = "showCover";
 	public static final String SII = "sii";
 	public static final String SII_STATUS = "siiStatus";
+	public static final String SII_TEST = "siiTest";
 	public static final String SIGNATURE = "signature";
 	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
@@ -719,6 +720,7 @@ public final class IJsonNames {
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TBAI = "tbai";
+	public static final String TBAI_TEST = "tbaiTest";
 	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
@@ -774,6 +776,7 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_TEST = "verifactuTest";
 	public static final String VERIFACTU_URL = "verifactuUrl";
 	public static final String VERSION = "version";
 	public static final String VOLUME = "volume";

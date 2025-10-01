@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
@@ -364,22 +365,22 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 
 	private void assertInvoiceData(Invoice invoice) {
-		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_QR);
+		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
 		InvoiceData qrUrl =  oQRUrl.get();
 		assertEquals(invoice.getId(), qrUrl.getInvoice() );
 		assertEquals(invoice.getDomain(), qrUrl.getDomain() );
-		assertEquals(InvoiceData.VERIFACTU_QR, qrUrl.getName());
+		assertEquals(InvoiceDataName.VERIFACTU_QR, qrUrl.getName());
 		assertNotNull(qrUrl.getValue());
 
-		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceData.VERIFACTU_HUELLA);
+		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
 		assertNotNull(oHuella);
 		assertTrue(oHuella.isPresent());
 		InvoiceData huella =  oHuella.get();
 		assertEquals(invoice.getId(), huella.getInvoice() );
 		assertEquals(invoice.getDomain(), huella.getDomain() );
-		assertEquals(InvoiceData.VERIFACTU_HUELLA, huella.getName());
+		assertEquals(InvoiceDataName.VERIFACTU_HUELLA, huella.getName());
 		assertNotNull(huella.getValue());
 	}
 	
