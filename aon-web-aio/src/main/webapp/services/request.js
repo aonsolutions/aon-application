@@ -174,8 +174,10 @@ export const  getFileBlob = (url, data, sessionData) => {
   });
 };
 
-export const getPro = (url, data) => {
-  return get(url, data, getProSessionData());
+export const getPro = (url, data, headers = {}) => {
+	let sessionData = getProSessionData();
+	sessionData = { ...sessionData, ...headers};
+  return get(url, data, sessionData);
 };
 
 export const post = (url, data, sessionData) => {
@@ -217,7 +219,9 @@ export const put = (url, data, sessionData) => {
   });
 };
 
-export const putPro = (url, data) => {
+export const putPro = (url, data, headers = {}) => {
+  let sessionData = getProSessionData();
+  sessionData = { ...sessionData, ...headers};	
   return put(url, data, getProSessionData());
 };
 
@@ -233,8 +237,10 @@ export const remove = (url, data, sessionData) => {
   });
 };
 
-export const removePro = (url, data) => {
-  return remove(url, data, getProSessionData());
+export const removePro = (url, data, headers = {}) => {
+  	let sessionData = getProSessionData();
+	sessionData = { ...sessionData, ...headers};
+  	return remove(url, data, sessionData);
 };
 
 const blobToBase64 = blob => new Promise((resolve, reject) => {

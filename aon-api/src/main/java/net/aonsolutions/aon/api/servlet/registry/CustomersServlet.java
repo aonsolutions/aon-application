@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet.registry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -123,9 +124,24 @@ public class CustomersServlet extends AonApiHttpServlet {
 		if (isTarget(api)) {
 			return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(),
 					api.getUser().getLogin(), f -> targetFilter(api, f), perPage * (page - 1), perPage));
-		} else
-			return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
-					api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+		} else {
+			
+			boolean isSig = api.getData().optBoolean("isSig");
+			
+			if(isSig && api.getData().opt(IJsonNames.RRELATIONSHIP) != null) {
+				
+				boolean rrelationship = api.getData().optBoolean(IJsonNames.RRELATIONSHIP);
+				
+				return rrelationship 
+						? CustomerJSON.toJSON(AON.getSigCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
+								api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage))
+						: CustomerJSON.toJSON(AON.getSigCustomerNotLinkedStream(api.getDomain().getName(), api.getDomain().getId(),
+									api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+			} else
+				return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
+						api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+		}
+			
 	}
 
 	private static boolean isTarget(AonApiData api) {
@@ -174,12 +190,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 			boolean rrelationship = api.getData().optBoolean(IJsonNames.RRELATIONSHIP);
 			boolean isSig = api.getData().optBoolean("isSig");
 			
-			if(isSig)
-				filter = filter.and(rrelationship ? f.getRaddInfoDomainProperty().isNotNull()
-						: f.getRaddInfoDomainProperty().isNull());
-			else
+			if(!isSig)
 				filter = filter.and(rrelationship ? f.getRegistryRelationProperty().isNotNull()
-					: f.getRegistryRelationProperty().isNull());
+						: f.getRegistryRelationProperty().isNull());
 		}
 
 		if (api.getData().opt(IJsonNames.VALUE) != null) {
@@ -298,10 +311,12 @@ public class CustomersServlet extends AonApiHttpServlet {
 						f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")
 								.or(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA"))));
 
-				if(registryAddInfoStream.count() > 0) {
+				List<RegistryAddInfo> registryAddInfoList = registryAddInfoStream.collect(Collectors.toList());
+				
+				if(registryAddInfoList.size() > 0) {
 					Map<Integer, String> domainMap = new HashMap<>();
 
-					Map<String, Map<String, String>> grouped = registryAddInfoStream.collect(
+					Map<String, Map<String, String>> grouped = registryAddInfoList.stream().collect(
 							Collectors.groupingBy(rec -> rec.getAttribute().replaceAll("AON_DOMAIN(\\d+)_.*", "$1"),
 									Collectors.toMap(rec -> rec.getAttribute().endsWith("_ID") ? "ID" : "SCHEMA",
 											RegistryAddInfo::getValue)));

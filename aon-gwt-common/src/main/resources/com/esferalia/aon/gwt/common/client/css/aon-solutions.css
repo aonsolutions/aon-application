@@ -286,6 +286,12 @@
 .aon_icon_person_off { background-image: iconPersonOff;}
 @url iconEnterprise aonIconEnterprise;
 .aon_icon_enterprise { background-image: iconEnterprise;}
+@url iconEnterpriseOff aonIconEnterpriseOff;
+.aon_icon_enterprise_off { background-image: iconEnterpriseOff;}
+@url iconPersonCheck aonIconPersonCheck;
+.aon_icon_person_check { background-image: iconPersonCheck;}
+@url iconPersonAlert aonIconPersonAlert;
+.aon_icon_person_alert { background-image: iconPersonAlert;}
 @url iconActivity aonIconActivity;
 .aon_icon_activity { background-image: iconActivity;}
 @url iconFormatIndentIncrease aonIconFormatIndentIncrease;
@@ -2586,3 +2592,26 @@
 	opacity: 0;
   	transform: translateY(-10px);
 }
+
+
+/* Forzar scroll visible SOLO en este panel */
+.salary-scroll {
+  overflow-x: auto !important;
+  -ms-overflow-style: auto !important;
+  scrollbar-width: auto !important;
+}
+
+.salary-scroll::-webkit-scrollbar {
+  display: block !important;
+  height: 8px; /* barra horizontal */
+}
+
+.salary-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.salary-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
