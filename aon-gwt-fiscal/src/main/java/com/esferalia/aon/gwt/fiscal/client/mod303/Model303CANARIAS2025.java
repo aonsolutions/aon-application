@@ -20,7 +20,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -35,7 +34,8 @@ class Model303CANARIAS2025 extends Model303Base {
 
 	protected AonTextBox receiptBox;
 
-	// FALTA - ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE
+	// FALTA - ULTIMO PERIODO (MODELO 417)
+	
 	private ScrollPanel lastPeriodPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -52,7 +52,6 @@ class Model303CANARIAS2025 extends Model303Base {
 	private ListBox x07;    // Tipo de autoliquidación si declaración de concurso (preconcursal, postconcursal)
 	
 	private static final int LIQUIDATION_TAB = 2;
-//	private static final int LAST_PERIOD_INFORMATION_TAB = 3;
 
 	protected Model303CANARIAS2025(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -68,12 +67,11 @@ class Model303CANARIAS2025 extends Model303Base {
 		paintLiquidationTab(tabPanel);
 		showPaymentInfo(getModel());
 		paintAdditionalDataTab(tabPanel);
-		// FALTA - ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE
 		if (getModel().isMonthPeriod() && getModel().isLastPeriod()) {
-			paintLastPeriodInformationTab(tabPanel);
+			paintLastPeriodInformationTab(tabPanel); // Ultimo periodo Modelo 417
 		}
 		paintAdministrationTab(tabPanel);
-		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
+//		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
 		Scheduler.get().scheduleDeferred(this::selectDefaultTab);
 	}
 	
@@ -81,7 +79,7 @@ class Model303CANARIAS2025 extends Model303Base {
 		tabPanel.selectTab(LIQUIDATION_TAB);
 	}
 	
-	private void beforeSelectTab(BeforeSelectionEvent<Integer> event) {
+//	private void beforeSelectTab(BeforeSelectionEvent<Integer> event) {
 //		double aa02 = getModel().getAmount(Mod303Key.CT_A02);
 //		if (event.getItem() == GENERAL_REGIME_TAB && aa02 == 0) {
 //			event.cancel();
@@ -99,7 +97,7 @@ class Model303CANARIAS2025 extends Model303Base {
 //				AonMessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
 //			}
 //		}
-	}
+//	}
 	
 	private void paintLiquidationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
@@ -246,8 +244,6 @@ class Model303CANARIAS2025 extends Model303Base {
 		return table;
 	}
 	
-// FALTA - METODOS PARA EL ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE	
-	
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
 		lastPeriodPanel = new ScrollPanel();
 		fillLastPeriodInformationScrollPanel();
@@ -256,11 +252,13 @@ class Model303CANARIAS2025 extends Model303Base {
 
 	private void fillLastPeriodInformationScrollPanel() {
 		
+		// Modelo 417:
 		// Exclusivamente a cumplimentar en el último período de liquidación por aquellos sujetos pasivos que 
 		// queden exonerados de la declaración-resumen anual de I.G.I.C.
 		
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
+		table.addStyleName(AON.CSS.aonMarginTop());
 		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
@@ -271,13 +269,19 @@ class Model303CANARIAS2025 extends Model303Base {
 		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(3, "50px");
 		
+		int row = 0;
+		
+		table.setWidget(row, 0, new Label("Exclusivamente a cumplimentar en el \u00FAltimo per\u00EDodo de liquidaci\u00F3n por aquellos sujetos pasivos que queden exonerados de la declaraci\u00F3n-resumen anual de I.G.I.C."));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.CSS.aonTextCenter());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonItalic());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonBorder());
+		table.getFlexCellFormatter().setColSpan(row, 0, 4);
+		
 		// 10.- Datos estadísticos - Actividades a las que se refiere la declaración
-		// Código Epígrafe
-		// Clave
-		// Descripción
-		// Régimen Aplicable Código - ESTE NO ESTA EN EL MODELO 303, HAY QUE AÑADIRLO
 
-		paintLabel(table, 0, AON.MSG.activities(),true);
+		paintLabel(table, ++row, AON.MSG.activities(),true);
+		table.getFlexCellFormatter().addStyleName(table.getRowCount()-1, 0, AON.CSS.aonPaddingTop());
 
 		FlowPanel actContainer = new FlowPanel();
 		actContainer.setStyleName(AON.CSS.aonBlockCenter());
@@ -323,8 +327,8 @@ class Model303CANARIAS2025 extends Model303Base {
 		paintActivityRow(tab, Mod303Key.CA_U5D, Mod303Key.CA_U5C, Mod303Key.CA_U5E, Mod303Key.CA_U5R); // Otras 
 		
 		actContainer.add(tab);
-		table.setWidget(1, 0, actContainer);
-		table.getFlexCellFormatter().setColSpan(1, 0, 4);
+		table.setWidget(++row, 0, actContainer);
+		table.getFlexCellFormatter().setColSpan(row, 0, 4);
 		
 		// 11.- Operaciones realizadas en el ejercicio
 		
@@ -381,7 +385,7 @@ class Model303CANARIAS2025 extends Model303Base {
 
 		actContainer2.add(tab2);
 		
-		int row = table.getRowCount();
+		row = table.getRowCount();
 		table.setWidget(row, 0, actContainer2);
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
 		
@@ -389,8 +393,6 @@ class Model303CANARIAS2025 extends Model303Base {
 		
 		row = table.getRowCount();
 		paintLabel(table, row, "Actividades con reg\u00EDmenes de deducci\u00F3n diferenciados", true);
-		
-//		table.setWidget(row, 0, new Label());
 		table.setWidget(row, 1, new Label());
 		table.setWidget(row, 2, new Label("Base"));
 		table.setWidget(row, 3, new Label());
@@ -409,7 +411,11 @@ class Model303CANARIAS2025 extends Model303Base {
 
 		// Principal/Otras
 		tab.setWidget(row, 0, new Label(row == 2 ? "Principal" : "Otras"));
-	
+
+		// FALTA - NO TENGO MUY CLARO COMO DEBE PONERSE EL EPIGRAFE, EN EL ESQUEMA NO ESPECIFICA EL TOTAL DE CARACTERES PERMITIDO Y EN EL PROGRAMA DE AYUDA, LLEVA
+		// HASTA 5 DIGITOS, PUES PARA LA CLAVE 1, EL PRIMER DIGITO ES LA CLAVE, PARA LA CLAVE 2, EL PRIMER DIGITO ES 2 O 3. PARA LA CLAVE 3 EL EPIGRAFE ES 5, 
+		// PARA LA CLAVE 5 EL EPIGRAFE ES 7 Y PARA LA CLAVE 4 EMPIEZA POR 0 HASTA 5 DIGITOS O 61, 62, O 63. DADO QUE ES TOTALMENTE MANUAL, SI DEBE INCLUIR LA CLAVE 
+		// SERA DE LONGITUD MAXIMA 5, SINO MAXIMO 4. COMPROBARLO AL GENERAR EL FICHERO
 		// Epígrafe (código)
 		AonTextBox epi = new AonTextBox();
 		epi.setVisibleLength(5);
@@ -493,8 +499,8 @@ class Model303CANARIAS2025 extends Model303Base {
 		// FALTA - EN EL PROGRAMA DE AYUDA EL CNAE ES DE 3 DIGITOS, SE GRABARA COMPLETO PARA APROVECHAR LA TABLA QUE HAY AHORA Y LUEGO AL CREAR EL ARCHIVO SE PONDRAN SOLO 3 
 		
 		AonTextBox cnae = new AonTextBox();
-		cnae.setVisibleLength(3);
-		cnae.setMaxLength(3);
+		cnae.setVisibleLength(4);
+		cnae.setMaxLength(4);
 		cnae.setValue(getModel().getDescription(cnaeKey));
 		cnae.addValueChangeHandler(event -> {
 			getModel().putDescription(cnaeKey, cnae.getValue());
@@ -539,10 +545,6 @@ class Model303CANARIAS2025 extends Model303Base {
 		typeBox.addItem(" - ", "");
 		typeBox.addItem("G - General", "G");
 		typeBox.addItem("E - Especial", "E");
-//		String type = getModel().getDescription(typeKey);
-//		if (AonStringUtils.equals(type, "G")) typeBox.setSelectedIndex(1);
-//		else if (AonStringUtils.equals(type, "E")) typeBox.setSelectedIndex(2);
-//		else typeBox.setSelectedIndex(0);
 		setSelectedIndex(typeBox, getModel().getDescription(typeKey));
 		typeBox.addChangeHandler(event ->  {
 			getModel().putDescription(typeKey,typeBox.getSelectedValue());
