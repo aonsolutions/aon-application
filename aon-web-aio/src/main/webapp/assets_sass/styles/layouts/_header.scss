@@ -26,8 +26,10 @@
     width           : v.$pct-100;
     justify-content : inherit;
     align-items     : center;
-    
     #header-container-lef{
+      display    : flex;
+      align-items: center;
+      gap        : v.$gap;
       #toggle-menu{
         display : flex;
         cursor  : pointer;
@@ -42,7 +44,7 @@
       }
       // LOGO - Cuando esta logueado
       #aon-logo{
-
+        cursor: pointer;
       }
     }
     #aonHeaderButtons{

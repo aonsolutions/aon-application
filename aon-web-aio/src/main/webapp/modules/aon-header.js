@@ -873,11 +873,11 @@ export class AonHeader extends AonElement {
 		}
 
 		if (app.title) {
-          let span = this.createElement(TAG.SPAN);
-          span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
-          span.classList.add("aonHeaderAppSpan");
-          span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
-          div.appendChild(span);
+			let span = this.createElement(TAG.SPAN);
+			span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+			span.classList.add("aonHeaderAppSpan");
+			span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
+			div.appendChild(span);
 		}
 
 		a.appendChild(div);
@@ -1201,17 +1201,21 @@ export class AonHeader extends AonElement {
 		toggleMenu.id  		= this.TOGGLE_MENU;
 		contenedor.appendChild(toggleMenu);
 		
-		const logo 	= this.createElement(TAG.DIV);
-		logo.id 		= this.AON_LOGO;
-		contenedor.appendChild(logo);
-
 		// Funcionalidad de mostrar o ocultar el menu
 		const icon = new AonIcon();
 		icon.icon  = this.isMobile() || this.isMobileResolution() ? "menu" : "arrow-left-circle";
 		icon.classList.add('rotate-icon');
 		toggleMenu.appendChild(icon);
-		
-		// Observamos esperando que exista menu
+
+		// Logo
+		const logo 	= this.createElement(TAG.DIV);
+		logo.id 		= this.AON_LOGO;
+		contenedor.appendChild(logo);
+		logo.addEventListener('click', () => {
+			this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
+		});
+
+		// Observamos esperando que exista menu, para la logica del toggleMenu
 		const observer = new MutationObserver(() => {
 			// Cogemos el menu
 			const menu = this.getElement(this.AON_MENU);

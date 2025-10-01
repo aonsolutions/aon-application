@@ -5,11 +5,11 @@ import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonEmail } from "../../components/aon-email.js";
-import { AonMobileParent } from "../company/aon-mobile-parent.js";
+// import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { createInput } from "../../components/CreateComponent.js";
-import { changeUrl } from '../../services/actionService.js';
+// import { changeUrl } from '../../services/actionService.js';
 
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";
@@ -19,6 +19,7 @@ import * as GWT from '../../gwt/gwt.js';
 
 import { AonRightPanel } from '../aon-right-panel.js';
 import { AonConfig } from '../aon-config.js';
+import { loadTheme } from '../utils/theme';
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -433,10 +434,10 @@ export class AonNewLogin extends AonElement {
   }
 
   buildLogo() {
-    let logoToolbar = this.getElement("aon-logo");
-    const hrefToolbar = window.location.href;
-    //let srcToolbar = "assets/aon-logo.svg";
-    //logoToolbar.src = srcToolbar;
+    // let logoToolbar = this.getElement("aon-logo");
+    // const hrefToolbar = window.location.href;
+    // let srcToolbar = "assets/aon-logo.svg";
+    // logoToolbar.src = srcToolbar;
     // logoToolbar.addEventListener(EVENT.CLICK, () => {
     //   this.tag = this.tag + 1;
     //   if (this.tag >= 5) {
@@ -453,7 +454,7 @@ export class AonNewLogin extends AonElement {
     // });
   }
 
-  signin() {
+  async signin() {
     const username = this.getElement("aonLoginUser").value;
     const password = this.getElement("aonLoginPassword").value;
     const data = {
@@ -466,50 +467,52 @@ export class AonNewLogin extends AonElement {
       loader.style.display = "";
     }
     loader.start();
-    login(data)
-      .then(() => {
-        loader.stop();
-        let actualCompanyName = window.location.hostname;
-        LS.removeDomain();
-        this.getModule().buildHome();
-        this.getModule().startLoading();
-        let limit = 100;
-        getCompanies({ limit }).then((companies) => {
-          this.getModule().stopLoading();
-		  if (companies.length === 1) {
-            this.companySelection(companies[0], true);
-          } else if(companies.length > 1 ) {
-            for (let company of companies) {
-              if (company.domain === actualCompanyName) {
-                localStorage.setItem("company", JSON.stringify(company));
-                localStorage.setItem("aon_domain_id", company.id);
-                localStorage.setItem("aon_domain_name", company.domain);
-                localStorage.setItem("aon_domain_document", company.document);
-                localStorage.setItem("onlyOne", true);
-                this.isMobile() ? new AonMobileParent() : new AonDesktop()
-              }
+    await login(data).then(() => {
+      loader.stop();
+      let actualCompanyName = window.location.hostname;
+      LS.removeDomain();
+      this.getModule().buildHome();
+      this.getModule().startLoading();
+      let limit = 100;
+      getCompanies({ limit }).then((companies) => {
+        this.getModule().stopLoading();
+        if (companies.length === 1) {
+          this.companySelection(companies[0], true);
+        } else if(companies.length > 1 ) {
+          for (let company of companies) {
+            if (company.domain === actualCompanyName) {
+              localStorage.setItem("company", JSON.stringify(company));
+              localStorage.setItem("aon_domain_id", company.id);
+              localStorage.setItem("aon_domain_name", company.domain);
+              localStorage.setItem("aon_domain_document", company.document);
+              localStorage.setItem("onlyOne", true);
+              // this.isMobile() ? new AonMobileParent() : new AonDesktop();
+              new AonDesktop();
             }
-			let cps = companies.filter(r => {
-				return r.id === parseInt(LS.getDomainId());
-			});
-			if(cps.length > 0 && !cps[0].parent){
-				this.companySelection(cps[0], true);
-			} else {				
-	            this.getElement("aonHome").showMenu(false);
-	            this.rootPanel(
-	              this.isMobile() ? new AonMobileParent() : new AonParent()
-	            );
-			}
           }
-        });
-      })
-      .catch((e) => {
-        //console.log(e);
-        loader.stop();
-        let error = JSON.parse(e);
-        let toast = this.getElement("aonLoginToast");
-        toast.start(error);
+          let cps = companies.filter(r => {
+            return r.id === parseInt(LS.getDomainId());
+          });
+          if(cps.length > 0 && !cps[0].parent){
+            this.companySelection(cps[0], true);
+          } else {				
+            this.getElement("aonHome").showMenu(false);
+            this.rootPanel(
+              // this.isMobile() ? new AonMobileParent() : new AonParent()
+              new AonParent()
+            );
+          }
+        }
       });
+    }).catch((e) => {
+      //console.log(e);
+      loader.stop();
+      let error = JSON.parse(e);
+      let toast = this.getElement("aonLoginToast");
+      toast.start(error);
+    });
+    // Miramos el tema que tiene al loguear
+    loadTheme();
   }
 
   companySelection(company, onlyOne) {
@@ -546,7 +549,7 @@ export class AonNewLogin extends AonElement {
   }
 
   isConsole(company) {
-	return company.type == 'ADMIN' && company.id === 0;
+    return company.type == 'ADMIN' && company.id === 0;
   }
 }
 
