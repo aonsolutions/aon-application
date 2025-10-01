@@ -4,6 +4,7 @@ import { AonHome } from './aon-home.js';
 import { CONSTANT, TAG } from '../environments/environments.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
+import { AonSingletonAccess } from './login/aon-singleton-access.js';
 import { AonNewInput } from "../components/aon-new-input.js";
 import { AonMobileParent } from './company/aon-mobile-parent.js';
 import { AonParent } from './aon-parent.js';
@@ -47,6 +48,9 @@ export class AonModule extends AonElement {
 		let loader = new AonLoader();
 		loader.id = this.AON_MODULE_LOADER;
 		this.appendChild(loader);
+		
+		let singletonAccess = new AonSingletonAccess();
+		this.appendChild(singletonAccess);
 	}
 
 	startLoading() {
