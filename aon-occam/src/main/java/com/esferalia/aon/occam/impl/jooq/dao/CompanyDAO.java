@@ -373,17 +373,10 @@ public class CompanyDAO {
 	}
 	
 	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
-		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
-
 		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
 				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-				.join(domain).on(domain.ID.eq(COMPANY.DOMAIN))
-				.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
-				.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
-				.leftOuterJoin(payer).on(domain.ID.eq(payer.DOMAIN).and(payer.NAME.eq(AppParam.AON_DOMAIN_PAYER.getValue())))
-				, filter)
+				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID)), filter)
 			.fetch().stream().map(new CompanyFiller());
 	}
 	
