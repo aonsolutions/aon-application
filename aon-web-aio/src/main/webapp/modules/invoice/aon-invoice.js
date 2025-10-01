@@ -1470,6 +1470,8 @@ export class AonInvoice extends AonElement {
 				if(!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
 				activity.setOptions(activities);
 				activity.value = this.invoice.getActivity().id;
+			} else {
+				activity.setOptions(activities);
 			}
 		});
 

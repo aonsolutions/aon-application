@@ -187,8 +187,9 @@ export class AonNewSelect extends AonNewInput {
 	if(this.getElement(this.OPTIONS).classList.contains("is-visible")) this.closeOptions();
 	else {		
 	    this.clearElementById(this.OPTIONS);
-	    if(options.length === 0) return null;
-	
+	    if(options.length === 0) {
+			return null;
+		}
 	    const iconButton = this.getIconButton();
 	    let input = this.getElement(this.INPUT);
 	    let div = this.getElement(this.OPTIONS);
@@ -481,7 +482,7 @@ export class AonNewSelect extends AonNewInput {
       const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       this.buildOptions(optios);
 	  const search = this.getElement(this.SEARCH)
-	  search.removeLabel();
+	  if(search) search.removeLabel();
     }
   }
 
