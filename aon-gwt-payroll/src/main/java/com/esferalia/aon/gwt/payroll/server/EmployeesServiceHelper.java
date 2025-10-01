@@ -1995,6 +1995,11 @@ public class EmployeesServiceHelper {
 							}
 						}
 
+						@Override
+						public Collection<IContractEmbargo> getContractEmbargos() throws AonException {
+							return Collections.emptyList();
+						}
+
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
