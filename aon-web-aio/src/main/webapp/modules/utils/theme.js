@@ -88,7 +88,9 @@ export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
         divLogo.style.backgroundImage = 'url(' + imageLogoHeader + ')';
       }
     } else {
-      divLogo.style.backgroundImage = getCustomViewImage(imageLogoHeader);
+      getCustomViewImage(imageLogoHeader).then(url => {
+        divLogo.style.backgroundImage = `url(${url})`;
+      });
     }
   });
 };
@@ -116,27 +118,20 @@ const applyTheme = () => {
   
   clearThemeClasses();
   root.classList.add(themeClass);
-  applyFavicon(themeClass);
-  applyTitle(themeClass);
-  applyLogoHeader(themeClass);
-  applyLogo(themeClass);
-
-  getCustomViewConfiguration()
-    .then(res => {
-      favicon    = isDark ? res.images["favicon-darksvg"] : res.images["faviconsvg"];
-      title      = res.params["AON_CUSTOMIZE_TITLE"];
-      logoHeader = res.images["header-logo-dark"];
-      logo        = isDark ? res.images["login-logo-dark"] : res.images["aon-login-logo"];
-
-      applyFavicon(themeClass, favicon);
-      applyTitle(themeClass, title);
-      applyLogoHeader(themeClass, logoHeader);
-      applyLogo(themeClass, logo);
-
-    })
-    .catch(err => console.error("Error getCustomViewImage:", err));  
+  getCustomViewConfiguration().then(res => {
+    if(Object.keys(res).length > 0){
+      favicon    = isDark ? res.images?.["favicon-darksvg"] : res.images?.["faviconsvg"];
+      title      = res.params?.["AON_CUSTOMIZE_TITLE"];
+      logoHeader = res.images?.["header-logo-dark"];
+      logo       = isDark ? res.images?.["login-logo-dark"] : res.images?.["aon-login-logo"];
+    }
+    // Aplicamos el estilo del Custom, si no tenemos el del sass 
+    applyFavicon(themeClass, favicon);
+    applyTitle(themeClass, title);
+    applyLogoHeader(themeClass, logoHeader);
+    applyLogo(themeClass, logo);
+  }).catch(err => console.error("Error getCustomViewImage:", err));  
 };
-
 
 // Permite actualizar botones activos visualmente
 const highlightActiveTheme = () => {

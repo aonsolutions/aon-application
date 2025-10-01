@@ -142,7 +142,6 @@ export const requestFile = (method, url, sendData, fn) => {
   } catch (error) {
     fn(undefined, error);
   }
-
 };
 
 export const get = (url, data, sessionData) => {
@@ -157,7 +156,7 @@ export const get = (url, data, sessionData) => {
   });
 };
 
-export const  getFile = (url, data, sessionData) => {
+export const getFile = (url, data, sessionData) => {
   return new Promise((resolve, reject) => {
     sessionData = sessionData || getDefaultSessionData();
     requestFile("GET", url, data, (result, error) => {
