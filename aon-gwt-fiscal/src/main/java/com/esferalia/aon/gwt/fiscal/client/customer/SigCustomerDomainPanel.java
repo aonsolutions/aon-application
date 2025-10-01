@@ -201,15 +201,17 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 				paintRow(customer);
 			}
 
-			offset.setValue(offset.intValue() + limit - 1);
-			enableMoreData();
+			if(!params.isNoRaddInfo() && !params.isNoAonCustomer()) {
+				offset.setValue(offset.intValue() + limit - 1);
+				enableMoreData();
 
-			if (!something) {
-				paintEmptyRow();
-				disableMoreData();
-			}
-			enableSearch();
-
+				if (!something) {
+					paintEmptyRow();
+					disableMoreData();
+				}
+				enableSearch();
+			} else disableSearch();
+				
 			onHideMessage();
 
 		});
@@ -374,7 +376,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 		params.setSig(true);
 		params.setOffset(offset.intValue());
-		params.setLimit(limit);
+		params.setLimit(params.isNoRaddInfo() || params.isNoAonCustomer() ? Integer.MAX_VALUE : limit);
 		
 		COMMON_SERVICE.getCustomers(params, new AsyncCallback<List<Customer>>() {
 

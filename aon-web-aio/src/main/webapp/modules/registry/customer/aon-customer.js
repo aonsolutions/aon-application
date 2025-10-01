@@ -385,8 +385,11 @@ export class AonCustomer extends AonReg {
 					this.sigCustomerDomainName = resp[0].domainName;
 					this.sigCustomerDomainId = resp[0].domainId;
 					
-					this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
-					this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+					if(!this.existTabOption(MSG.BOOKING))
+						this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					
+					if(!this.existTabOption(MSG.USERS))
+						this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
 				}
 			})
 			/*
@@ -402,6 +405,7 @@ export class AonCustomer extends AonReg {
 				document: this.registry.getDocument(),
 			})
 			.then((resp) => {
+				console.log("getRelationShip", resp);
 				this.buildEnterpriseLinkedView(resp);
 			})
 			/*

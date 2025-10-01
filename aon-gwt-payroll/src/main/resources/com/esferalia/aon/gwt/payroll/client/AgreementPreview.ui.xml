@@ -358,7 +358,7 @@
 									<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
 										<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
 									</g:ScrollPanel>
-									<g:ScrollPanel ui:field="salaryScrollPanel">
+									<g:ScrollPanel ui:field="salaryScrollPanel" styleName="salary-scroll">
 										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
 									</g:ScrollPanel>
 									<g:HTMLPanel styleName="{style.flexCenter}">

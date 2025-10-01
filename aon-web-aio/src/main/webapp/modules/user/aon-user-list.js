@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {generateTokenJson, getUserListSpeed, getUserRoles} from  '../../services/service.js';
+import {generateTokenJson, getSigUserListSpeed, getUserListSpeed, getUserRoles} from  '../../services/service.js';
 import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
 import { AonUser } from './aon-user.js';
@@ -85,14 +85,26 @@ export class AonUserList extends AonElement {
 				});
 			} else {
 				this.filter.page = 1;
-				getUserListSpeed(this.filter, this.sessionData).then(users => {
-					setUsers(users);
-					table.removeRows();
-					users.forEach((user, i) => {
-						user.option =  this.getOptions(user);
-						table.addRow(user, () => this.aonUser(user, i));
+				if(this.isSig()){
+					getSigUserListSpeed(this.filter, this.sessionData).then(users => {
+						setUsers(users);
+						table.removeRows();
+						users.forEach((user, i) => {
+							user.option =  this.getOptions(user);
+							table.addRow(user, () => this.aonUser(user, i));
+						});
 					});
-				});
+				} else {
+					getUserListSpeed(this.filter, this.sessionData).then(users => {
+						setUsers(users);
+						table.removeRows();
+						users.forEach((user, i) => {
+							user.option =  this.getOptions(user);
+							table.addRow(user, () => this.aonUser(user, i));
+						});
+					});
+				}
+				
 			}
 		}
 	}
@@ -102,14 +114,26 @@ export class AonUserList extends AonElement {
 		let table = this.getElement(this.TABLE);
 		if(table && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			getUserListSpeed(this.filter, this.sessionData).then(users => {
-				addUsers(users);
-				if(users.length > 0)
-					this.more = true;
-				users.forEach((user, i) => {
-					table.addRow(user, () => this.aonUser(user, i));
+			
+			if(this.isSig()){
+				getSigUserListSpeed(this.filter, this.sessionData).then(users => {
+					addUsers(users);
+					if(users.length > 0)
+						this.more = true;
+					users.forEach((user, i) => {
+						table.addRow(user, () => this.aonUser(user, i));
+					});
 				});
-			});
+			} else {
+				getUserListSpeed(this.filter, this.sessionData).then(users => {
+					addUsers(users);
+					if(users.length > 0)
+						this.more = true;
+					users.forEach((user, i) => {
+						table.addRow(user, () => this.aonUser(user, i));
+					});
+				});
+			}
 		}
 	}
 
