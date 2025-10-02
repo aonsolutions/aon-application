@@ -244,11 +244,15 @@ export class AonRightPanel extends AonElement {
       } else {
         this.getRightPanel().classList.remove("open");
         //this.getRightPanel().style.visibility = "hidden";
-        this.getEditButton().style.display = "none";
-        this.getConfigButton().style.display = "none";
-        this.getHelpButton().style.display = "none";
-        this.getNotificationButton().style.display = "none";
-        this.getNotificationOpenButton().style.display = "none";
+        [
+          this.getEditButton(),
+          this.getConfigButton(),
+          this.getHelpButton(),
+          this.getNotificationButton(),
+          this.getNotificationOpenButton()
+        ].forEach(btn => {
+          if (btn) btn.style.display = "none";
+        });
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
       }

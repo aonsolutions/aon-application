@@ -55,19 +55,19 @@ export const remove = (item) => {
 };
 
 export const closeSession = () => {
-    let theme = getTheme();
-    let language = getLanguage();
-    let topMenu = getTopMenu();
-    let leftMenu = getLeftMenu();
-    let portalChecked = getPortalChecked();
+    // let theme = getTheme();
+    // let language = getLanguage();
+    // let topMenu = getTopMenu();
+    // let leftMenu = getLeftMenu();
+    // let portalChecked = getPortalChecked();
     
     localStorage.clear();
     
-    setTheme(theme);
-    setLanguage(language);
-    setTopMenu(topMenu);
-    setLeftMenu(leftMenu);
-    setPortalChecked(portalChecked);
+    // setTheme(theme);
+    // setLanguage(language);
+    // setTopMenu(topMenu);
+    // setLeftMenu(leftMenu);
+    // setPortalChecked(portalChecked);
 };
 
 export const getLanguage = () => get(AON_LANGUAGE);

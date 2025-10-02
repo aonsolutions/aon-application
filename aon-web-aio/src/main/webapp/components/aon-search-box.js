@@ -1,11 +1,11 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../environments/environments.js';
-import './aon-icon-button.js';
-import { AonIconButton } from './aon-icon-button.js';
-import * as LS from '../services/localStorageService.js';
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT } from '../environments/environments.js';
+// import './aon-icon-button.js';
+import { AonIconButton } from './aon-icon-button';
+import { AonNewInput } from './aon-new-input';
+// import * as LS from '../services/localStorageService.js';
 
 export class AonSearchBox extends AonElement {
-
 	newTheme;
 
 	constructor () {
@@ -40,6 +40,10 @@ export class AonSearchBox extends AonElement {
 		this.setAttribute(CONSTANT.VALUE, value);
 	}
 
+	get input() {
+		return document.getElementById('search-input');
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
 			document.getElementById('search-input').value = newValue;
@@ -47,20 +51,20 @@ export class AonSearchBox extends AonElement {
 	}
 
 	connectedCallback () {
-		this.style.width = "100%";
+		// this.style.width = "100%";
 
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aon-search-div';
-		div.style.height = '40px';
-		div.style.borderRadius = '20px';
-		div.style.display = "flex";
-		if(!LS.isNewTheme() && !this.newTheme) {
-			div.style.backgroundColor = '#eaf1fb';
-			div.style.borderRadius = '10px';
-		} else {
-			div.style.borderRadius = '20px';
-			div.style.border = '1px solid #d2d2d6';
-		}
+		// div.style.height = '40px';
+		// div.style.borderRadius = '20px';
+		// div.style.display = "flex";
+		// if(!LS.isNewTheme() && !this.newTheme) {
+		// 	div.style.backgroundColor = '#eaf1fb';
+		// 	div.style.borderRadius = '10px';
+		// } else {
+		// 	div.style.borderRadius = '20px';
+		// 	div.style.border = '1px solid #d2d2d6';
+		// }
 		
 		this.appendChild(div);
 
@@ -69,32 +73,41 @@ export class AonSearchBox extends AonElement {
 		iconButton.icon = MATERIAL_ICONS.SEARCH;
 		div.appendChild(iconButton);
 
-		let input = this.createElement(TAG.INPUT);
+		// let input = this.createElement(TAG.INPUT);
+		let input = new AonNewInput;
 		input.id = 'search-input';
 		input.autocomplete = 'off';
-		input.placeholder = MSG.SEARCH;
 		input.title = MSG.SEARCH;
-		input.className = (LS.isNewTheme() || this.newTheme) ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
-		if(!LS.isNewTheme() && !this.newTheme) input.style.backgroundColor = '#eaf1fb';
-		input.style.width = '100%';
-		input.style.borderRadius = '20px';
+		// input.title = MSG.SEARCH;
+		// input.placeholder = MSG.SEARCH;
+		// input.className = (LS.isNewTheme() || this.newTheme) ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
+		// if(!LS.isNewTheme() && !this.newTheme) input.style.backgroundColor = '#eaf1fb';
+		// input.style.width = '100%';
+		// input.style.borderRadius = '20px';
 		div.appendChild(input);
 
 		this.setAttribute('opened', true);
 
-		input.addEventListener('keyup', () => {
+		input.addEventListener(EVENT.KEYUP, () => {
 			this.value = input.value;
-	    	this.dispatchEvent(new Event('keyup'));
+			this.dispatchEvent(new Event(EVENT.KEYUP));
 		});
 
-		input.addEventListener('focus', () => {
-			this.dispatchEvent(new Event('focus'));
+		input.addEventListener(EVENT.FOCUSIN, () => {
+			consoleLog('Cogemos el foco, desde el componente', 'green');
+			this.dispatchEvent(new Event(EVENT.FOCUSIN));
+		});
+
+		input.addEventListener(EVENT.BLUR, () => {
+			consoleLog('ha perdido el foco, desde el componente', 'green')
+			this.dispatchEvent(new Event(EVENT.BLUR));
 		});
 
 		let search = document.getElementById('aon-search-button');
 		search.addEventListener('click', () => {
-
+			this.classList.toggle('open')
 		});
+
 		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { el: this }));
 	}
 }

@@ -621,6 +621,12 @@
         }
       }
     }
+    // search - (solo esta en la cabecera)
+    aon-search-box{
+      &.open{
+        background-color: $color-900;
+      }
+    }
     // Switch
     aon-switch{
       .aonSwitch-slider{

@@ -3,9 +3,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
-
 export class AonNewDialog extends AonElement {
-
 	DIALOG;
 	MAIN;
 	TITLE;

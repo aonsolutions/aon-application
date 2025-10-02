@@ -107,7 +107,6 @@ export class AonHelp extends AonElement {
 	}
 
 	buildForAll() {
-				
 		let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
 		
 		let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
@@ -215,10 +214,9 @@ export class AonHelp extends AonElement {
 			let data = {value: rightPanelSwitchSupportButton.isChecked()}
 			setSupport(data).then(r => {})
 		});
-	    	
 		
-		let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
+		// let openButton = this.getElement("openNotificationButton");
+		// openButton.style.display = "none";
 	}
 
 	buildSupportData(value, title, icon, className) {
