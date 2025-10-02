@@ -11,7 +11,7 @@
   justify-content : space-between;
   align-items     : center;
   
-  #aonLoginLogoDiv{
+  #aon-logo{
     max-height        : v.$height-cabecera;
     background-size   : contain;
     background-repeat : no-repeat;
@@ -54,6 +54,11 @@
       position    : relative;
       span{
         height : v.$px-24; // Centrar iconos... ya que no se cargan todos igual
+      }
+      @media (max-width: v.$menu-resolucion-mobile) {
+        #aonHeaderCompanyName{
+          display: none;
+        }
       }
     }
   }

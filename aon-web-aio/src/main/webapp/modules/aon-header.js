@@ -204,8 +204,9 @@ export class AonHeader extends AonElement {
 			// aonHeaderSearch.id = this.AON_HEADER_SEARCH;
 			// aonHeaderSearch.classList.add("aonHeaderSearch");
 			// Muestra el listado de resultados de la busqueda
-			let aonHeaderSearchDialogMenu = new AonDialogSearch();
-			aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
+			let aonHeaderSearchDialogMenu 					= new AonDialogSearch();
+			aonHeaderSearchDialogMenu.id 						= this.AON_HEADER_SEARCH_DIALOG_MENU;
+			aonHeaderSearchDialogMenu.style.display = 'none';
 			this.appendChild(aonHeaderSearchDialogMenu);
 			// Lupa y el input
 			let aonHeaderSearchBox = new AonSearchBox();
@@ -213,18 +214,17 @@ export class AonHeader extends AonElement {
 			aonHeaderSearchBox.newTheme = this.newTheme;
 			aonHeaderSearchBox.addEventListener(EVENT.BUILD, () => {
 				const input = aonHeaderSearchBox.input;
-
 				input.addEventListener(EVENT.KEYUP, () => {
-					consoleLog("keyup en cabecera")
-					clearTimeout(this.searchTimeoutId);
-					consoleLog("search")
-					this.searchTimeoutId = setTimeout(() => this.search(this), 1000);
+					if(input.value.length > 0)
+						this.search(this);
+					else
+						aonHeaderSearchDialogMenu.close();
 				});
-				
 				input.addEventListener(EVENT.FOCUSIN, () => {
-					consoleLog("focus en cabecera")
-					clearTimeout(this.searchTimeoutId);
-					this.searchTimeoutId = setTimeout(() => this.showSearch(this), 300);
+					if(input.value.length > 0)
+						this.showSearch(this)
+					else
+						aonHeaderSearchDialogMenu.close();
 				});
 				input.addEventListener(EVENT.BLUR, () => {
 					// Cerramos si pierde el focus el input
@@ -934,30 +934,11 @@ export class AonHeader extends AonElement {
     }
 	
 	search(aonHeader) {
-	console.log("search");
-
-	try {
-		let aonHeaderSearchBox2 = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
-		console.log("search 1");
-	} catch (error) {
-		console.error('Error al obtener search box:', error);
-	}
-	console.log('aonHeader:', aonHeader);
-	console.log('typeof aonHeader.getElement:', typeof aonHeader?.getElement);1
-	console.log('AON_HEADER_SEARCH_BOX:', this.AON_HEADER_SEARCH_BOX);
-
 		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
-		console.log("search 1");
 		let aonHeaderSearchBoxValue = aonHeaderSearchBox.value;
-		console.log("search 2");
 		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
-		console.log("search 3");
-
-		console.log("search listado");
+		
 		getCompanies().then(companies => {
-			console.log("respuesta de companies");
-			
-
 			let searchCompanies = companies.filter( company =>  {
 				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
 				const document = AonStringUtils.containsMatching(company?.document,aonHeaderSearchBoxValue);
@@ -991,11 +972,11 @@ export class AonHeader extends AonElement {
 				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.EMPLOYEES}</span>`,
 			});
 
-			const top  = aonHeaderSearchBox.getBoundingClientRect().bottom;
-			const left = aonHeaderSearchBox.getBoundingClientRect().left;
+			const top  = aonHeaderSearchBox.getBoundingClientRect().bottom + 10;
+			const left = 0;
+			// const left = aonHeaderSearchBox.getBoundingClientRect().left;
 			// aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`;
 
-console.log(top);
 			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left, true);
 			aonHeaderSearchDialogMenu.open(true);
 			

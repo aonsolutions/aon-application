@@ -600,6 +600,19 @@
         }
       }
     }
+    aon-dialog-search{
+      box-shadow      : $box-shadow-dialog;
+      background-color: $color-box;
+      ul{
+        li{
+          color: $color-text-general;
+          &:hover, &.selected{
+            background-color: $color-500;
+            color           : $color-text-button;
+          }
+        }
+      }
+    }
     // Card
     aon-card{
       background-color: $color-box;

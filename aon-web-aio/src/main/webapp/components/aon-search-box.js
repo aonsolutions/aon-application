@@ -94,12 +94,10 @@ export class AonSearchBox extends AonElement {
 		});
 
 		input.addEventListener(EVENT.FOCUSIN, () => {
-			consoleLog('Cogemos el foco, desde el componente', 'green');
 			this.dispatchEvent(new Event(EVENT.FOCUSIN));
 		});
 
 		input.addEventListener(EVENT.BLUR, () => {
-			consoleLog('ha perdido el foco, desde el componente', 'green')
 			this.dispatchEvent(new Event(EVENT.BLUR));
 		});
 

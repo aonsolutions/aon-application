@@ -30,18 +30,27 @@ aon-search-box{
 }
 // donde se abre el resultado de busqueda
 aon-dialog-search{
-  position    : absolute;
-  width       : -webkit-fill-available;
-  width       : -moz-available;
-  width       : fill-available;
-  // margin-right: v.$padding;
+  position: absolute;
+  width   : -webkit-fill-available;
+  width   : -moz-available;
+  width   : fill-available;
+  margin  : v.$px-0 v.$padding;
+  max-height  : v.$vh-50;
+  border-radius: v.$border-radius;
+  overflow: auto;
   ul{
     list-style: none;
     margin: 0;
     padding: 0;
-    background-color: antiquewhite;
     z-index: 1;
-    padding: v.$padding;
+    padding: v.$padding v.$px-0;
     border-radius: v.$border-radius;
+    display: flex;
+    flex-direction: column;
+    li{
+      display: flex;
+      padding: v.$padding-min v.$padding;
+      gap    : v.$gap-min;
+    }
   }
 }
