@@ -59,16 +59,16 @@ export class AonParent extends AonElement {
 		aonApplication.setAttribute("sidenav_width", "300px");
 		this.createApplication(this.PARENT, "", aonApplication);
 
-		
-		if(LS.isOnlyOne()) {			
-			this.build();
-			this.buildSidenav();
-		} else {
-			let loader = this.getElement("aonParentLoader");
-			loader.start();
-		}
-		
+		this.hideCompanyView();
+		this.build();
+		this.buildSidenav();
+		const loader = this.getElement("aonParentLoader");
+		loader.start();
+
 		this.select(filter, companies => {
+			this.showCompanyView();
+			const loader = this.getElement("aonParentLoader");
+			loader.stop();
 			// Filtrar empresas excluyendo la actual (la que coincide con isLocationCompany)
 			let finalCompanies = companies.filter(company => !this.isLocationCompany(company));
 			// total de la lista filtrada
@@ -128,9 +128,8 @@ export class AonParent extends AonElement {
 						resolve(companies);
 						callback?.(companies);
 					}
-				}	
-			}, () => closeSession());
-	
+				}
+			}, () => closeSession());	
 			if(filter){
 				this.setFilter(filter);
 			}
@@ -427,7 +426,7 @@ export class AonParent extends AonElement {
 				});
 			}
 		}, 100);
-		if(!LS.isOnlyOne())
+		if(!LS.isOnlyOne())	
 			LS.setCompanySelected(false);
 		else 
 			LS.setCompanySelected(true);
@@ -704,6 +703,19 @@ export class AonParent extends AonElement {
 			return `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>`;
 		}
 	}
+	
+	hideCompanyView(){
+		this.getElement("aonParentContent").classList.add("hidden");
+		this.getElement("aonParentSidenav").classList.add("hidden");
+		this.getElement("aonParentSidenavRight").classList.add("hidden");
+	}
+	
+	showCompanyView(){
+		this.getElement("aonParentContent").classList.remove("hidden");
+		this.getElement("aonParentSidenav").classList.remove("hidden");
+		this.getElement("aonParentSidenavRight").classList.remove("hidden");
+	}
+	
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){
