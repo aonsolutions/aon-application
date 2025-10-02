@@ -282,6 +282,9 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
     if (!isEmptyObject(this.PERIODS)) {
       if (this.PERIODS && this.PERIODS.length > 0) {
+        if(!this.selectedPeriod) {
+          this.selectedPeriod = this.PERIODS[0];
+        }
         this.params.period = this.selectedPeriod.id;
 
         this.params.fromDate = this.selectedPeriod.initiationDate;

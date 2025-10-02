@@ -225,41 +225,49 @@ export class AonMessenger extends AonElement {
 		this.tagNavBar();
 	}
 
-	buildToolbarSearch(){
-		const opened = !this.isMobile();
+buildToolbarSearch() {
+	const opened = !this.isMobile();
+	let btnSearch = this.getApplication().addSearchOption(opened);
+	let timeOut = null;
 
-		let btnSearch = this.getApplication().addSearchOption(opened);
-		let timeOut = null;
-		
-		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
-			clearTimeout(timeOut);
-			
-			timeOut = setTimeout(() => {
-				this._filter.search = detail.search;
-				this.setListFilter({
-				...this.getListFilter(), 
-				page:0, 
-				perPage:30, 
+	btnSearch.addEventListener(EVENT.SEARCH_NEW, ({ detail }) => {
+		clearTimeout(timeOut);
+		timeOut = setTimeout(() => {
+			let period = detail.period;
+			let startDate = detail.startDate;
+			let endDate = detail.endDate;
+
+			// Usamos getPeriodMessenger para obtener fechas si no están
+			if (period !== 'personalized' && (!startDate || !endDate)) {
+				const periodData = TaskUtils.getPeriodMessenger(period);
+				startDate = periodData?.startDate || null;
+				endDate = periodData?.endDate || null;
+			}
+
+			this.setListFilter({
+				...this.getListFilter(),
+				page: 0,
+				perPage: 30,
 				search: detail.search,
 				registry: detail.registry,
-				searchtask_holder:detail.searchtask_holder, 
-				searchsender:detail.searchsender,
-				period: detail.period,
-				startDate: detail.startDate,
-				endDate: detail.endDate
-				});
-				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
-			}, 300);
-		});
-	
-		if(this.cau){
-			btnSearch.removeButtonAvanced();
-		} else {
-			btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
-			this.searchValueDefault();
-		}
-	}
+				searchtask_holder: detail.searchtask_holder,
+				searchsender: detail.searchsender,
+				period: period,
+				startDate: startDate,
+				endDate: endDate
+			});
 
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+		}, 300);
+	});
+
+	if (this.cau) {
+		btnSearch.removeButtonAvanced();
+	} else {
+		btnSearch.buildOptionsFilter(TASK_FILTER); // INPUTS
+		this.searchValueDefault();
+	}
+}
 
 	searchValueDefault(){
 
@@ -292,8 +300,7 @@ export class AonMessenger extends AonElement {
 		const startDateEl = this.getElement("startDate");
 		const endDateEl   = this.getElement("endDate");
 
-		if(periodEl && startDateEl && endDateEl){
-
+		if(periodEl){
 			//------------------PERIOD---------
 			periodEl.setOptions(TaskUtils.getPeriodMessenger());
 
@@ -324,7 +331,6 @@ export class AonMessenger extends AonElement {
 		
 		messengerOpts.push({
 			name: MSG.RECEIVED,
-			icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 			id: MATERIAL_ICONS.MOVE_TO_INBOX,
 			fn: () =>{
 
@@ -340,7 +346,6 @@ export class AonMessenger extends AonElement {
 		},
 		{
 			name: MSG.SENT,
-			icon: MATERIAL_ICONS.OUTBOX,
 			id: MATERIAL_ICONS.OUTBOX,
 			fn: () =>{
 
@@ -355,7 +360,6 @@ export class AonMessenger extends AonElement {
 			}
 		},{
 			name: MSG.ALL2,
-			icon: MATERIAL_ICONS.ALL_INBOX,
 			id: MATERIAL_ICONS.ALL_INBOX,
 			fn: () =>{
 				this._filter.task_holder = undefined;
@@ -381,7 +385,6 @@ export class AonMessenger extends AonElement {
 		let messengerOpts = [
 			{
 				name: 'Mi bandeja',
-				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				id: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () =>{
 					this._filter.document = undefined;
@@ -392,7 +395,6 @@ export class AonMessenger extends AonElement {
 			},
 			{
 				name: 'Todas',
-				icon: MATERIAL_ICONS.ALL_INBOX,
 				id: MATERIAL_ICONS.ALL_INBOX,
 				fn: () =>{
 					this._filter.document = this.getDocumentEnterprise();
@@ -498,7 +500,6 @@ export class AonMessenger extends AonElement {
 			options.push({
 				id:true,
 				name: "SIN ASIGNAR",
-				icon: MATERIAL_ICONS.GROUP_OFF,
 				fn: () => {
 					this._filter.workgroups = undefined;
 					this._filter.task_holder = undefined;
@@ -515,7 +516,6 @@ export class AonMessenger extends AonElement {
 				options.push({
 					id:item.id,
 					name: item.description,
-					icon: MATERIAL_ICONS.PEOPLE_ALT,
 					fn: () => {
 
 						if(this._filter.workgroup == item.id){
@@ -539,7 +539,6 @@ export class AonMessenger extends AonElement {
 				options.push({
 					id:MATERIAL_ICONS.GROUPS,
 					name: "Todos",
-					icon: MATERIAL_ICONS.GROUPS,
 					fn: () => {
 						this._filter.task_holder = undefined;
 						this._filter.sender = undefined;

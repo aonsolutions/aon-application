@@ -78,6 +78,9 @@ export class AonDeliveryList extends AonElement {
 		let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
         btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
+        btnSearch.querySelectorAll('input[type="date"]').forEach(input => {
+            input.type = 'text';
+        });
 
         this.getElement('status').setOptions([
             { name: "-", value: undefined },
@@ -95,13 +98,39 @@ export class AonDeliveryList extends AonElement {
 		this.init();
 	}
 
-	search(detail) {
-		if(detail.search) this.filter.value = detail.search;
-        if(detail.status) this.filter.status = detail.status;
-        if(detail.startDate) this.filter.from = detail.startDate;
-        if(detail.to) this.filter.to = detail.to;
-		this.init();
-	}
+    search(detail) {
+    const isClean = !detail || Object.keys(detail).length <= 2;
+
+    if (isClean) {
+        this.filter = {
+            page: 1,
+            perPage: 30,
+            status: 'IN_PREPARATION'
+        };
+    } else {
+        this.filter = {
+            page: 1,
+            perPage: 30
+        };
+
+        if (detail.search) this.filter.value = detail.search;
+        if (detail.status) this.filter.status = detail.status;
+        if (detail.startDate) this.filter.from = detail.startDate;
+        if (detail.to) this.filter.to = detail.to;
+
+        for (let key in this.filter) {
+            if (
+                this.filter[key] === '' ||
+                this.filter[key] === undefined ||
+                this.filter[key] === null
+            ) {
+                delete this.filter[key];
+            }
+        }
+    }
+
+    this.init();
+}
 
 	init() {
 		let table = document.getElementById(this.TABLE);

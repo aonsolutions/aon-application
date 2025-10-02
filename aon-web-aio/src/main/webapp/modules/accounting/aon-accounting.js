@@ -317,9 +317,12 @@ export class AonAccounting extends AonElement {
 
 		if(!this.filter){
 			let period = this.PERIODS.filter(period => period.name == new Date().getFullYear());
-
 			this.filter = {};
-			this.filter.year = period[0].name;
+			if(period.length > 0){
+				this.filter.year = period[0].name;
+			}else{
+				this.filter.year = this.PERIODS[0].name;
+			}
 			this.filter.show = "yearly";
 			this.filter.detail = "5";
 		}

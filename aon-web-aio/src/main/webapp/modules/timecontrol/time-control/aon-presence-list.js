@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel, getTimeControlPdf } from "../../../services/service.js";
-import { isEmptyObject, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { cleanDetailObject, isEmptyObject, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { iconAddLocation, PRESENCE_FILTER, ToolbarOptions, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, modalReport, StringTwoLetters, timeHour } from "./utils.js";
@@ -125,7 +125,6 @@ export class AonPresenceList extends AonElement {
         checked:true
       }
     ];
-
     btnSearch.buildOptionsFilter(inputsFilter);//INPUTS
 
     this.searchValueDefault();
@@ -244,7 +243,14 @@ export class AonPresenceList extends AonElement {
         data = this._list;
       } else {
         let filter = null;
-        try {filter = {...this.applicationParentEl._filter};} catch (error) {}
+        try {filter = {...this.applicationParentEl._filter};
+          filter = cleanDetailObject(filter);
+          if(filter.period == "personalized" && !filter.startDate && !filter.endDate){
+            this.resetFilter(filter);
+          }
+        } catch (error) {
+          console.log(error);
+        }
         const datos = await getTimeControlList(filter);
         if (datos) {
           sortBy(datos, 'last_date', 'desc').map(({
@@ -291,7 +297,9 @@ export class AonPresenceList extends AonElement {
           if(this.searchFilter) data = this.filterSearch(["name", "nameLocation"], data);
         }
       }
-    } catch (e) { console.log(e); }
+    } catch (e) { 
+      console.log(e); 
+    }
     return data;
   }
 
@@ -327,6 +335,15 @@ export class AonPresenceList extends AonElement {
       list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
     }
     return list;
+  }
+
+  resetFilter(filter){
+    filter.period = "today";
+    filter.startDate = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
+    filter.endDate = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
+    filter.active = "true";
+    delete filter.name;
+    delete filter.value;
   }
 
   aonEvent({ target }, data) {
