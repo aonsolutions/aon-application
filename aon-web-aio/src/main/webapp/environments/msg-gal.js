@@ -317,6 +317,16 @@ export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
+export const MENU_INVOICE_INFO = "Texto de prueba para la info";
+export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
+export const MENU_FISCAL_INFO = "Texto de prueba para la info";
+export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
+export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
+export const MENU_NOTES_INFO = "Texto de prueba para la info";
+export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
+export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
 
 // ----- N
 

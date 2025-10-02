@@ -92,6 +92,7 @@ export const AON_TEXTAREA ='aon-textarea';
 export const AON_ITEM_UPDATE ='aon-item-update';
 export const AON_HEADER ='aon-header';
 export const AON_MOBILE_HEADER ='aon-mobile-header';
+export const AON_INFO = 'aon-info'
 
 export const AON_LIST = 'aon-list';
 
