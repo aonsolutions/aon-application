@@ -48,11 +48,11 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
 	private static final String DOMAIN_ID = "domainId";
+	private static final String DOMAIN_NAME = "domainName";
 	private static final String LANGUAGE = "language";
 	private static final String REDIRECT_URL = "redirectUrl";
 	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
-	private static final String DOMAIN_NAME = "com.code.aon.jaas.domain";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -65,9 +65,9 @@ public class JsfAppServlet extends HttpServlet {
 			doLogin(req, resp);
 			
 			initFacesContext(req, resp);
+			initDomainSwitcher(req);
 			initDesktopController(req);
 			initConfigurationController(req);
-			initDomainSwitcher(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
