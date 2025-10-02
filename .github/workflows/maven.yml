@@ -92,6 +92,7 @@ jobs:
           --add-host=general-payroll-test.aonsolutions.org:host-gateway 
           --add-host=inactiva-payroll-test.aonsolutions.org:host-gateway 
           --add-host=inactive-test.aonsolutions.org:host-gateway 
+          --add-host=payer-inactive-test.aonsolutions.org:host-gateway 
           --add-host=default-inactive-test.aonsolutions.org:host-gateway 
           --add-host=multi-test.aonsolutions.org:host-gateway 
           --add-host=expired-multi-test.aonsolutions.org:host-gateway 

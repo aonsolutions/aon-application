@@ -125,15 +125,16 @@ public class FillerDAO {
 		}
 		
 		public static Domain build(Record r) {
-			return buildDomain(r, Domain::new, DOMAIN, DomainDAO.PARENT);
+			return buildDomain(r, Domain::new, DOMAIN, DomainDAO.PARENT, DomainDAO.PAYER);
 		}
 		
-		public static Domain buildDomain(Record r, java.util.function.Supplier<Domain> supplier, com.esferalia.aon.jooq.tables.Domain domainTable, com.esferalia.aon.jooq.tables.Domain parentTable) {
+		public static Domain buildDomain(Record r, java.util.function.Supplier<Domain> supplier, com.esferalia.aon.jooq.tables.Domain domainTable, com.esferalia.aon.jooq.tables.Domain parentTable, com.esferalia.aon.jooq.tables.AppParam payerTable) {
 			Domain domain = fillDomain(r, supplier.get(), domainTable);
 			Domain parent = fillDomain(r, supplier.get(), parentTable);
 			if ( parent.getId() != null ) {
 				domain.setParent(parent);
 			}
+			fillDomain(r, domain, payerTable);
 			return domain;
 		}
 
@@ -141,6 +142,15 @@ public class FillerDAO {
 //			return fillDomain(r, new Domain(), domainTable);
 //		}
 		
+		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.AppParam payerTable) {
+			try {
+				domain.setPayer(AonNumberUtils.toInteger(getValue(r, payerTable.VALUE)));
+			} catch (Exception e) {
+
+			}
+			return domain;
+		}
+
 		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.Domain domainTable) {
 			return domain
 				.setId(getValue(r, domainTable.ID))
@@ -167,7 +177,6 @@ public class FillerDAO {
 				.setAonCustomer(getValue(r, domainTable.AONCUSTOMER))
 				.setAonStatus(AonStatus.safeValueOf(getValue(r, domainTable.AONSTATUS)))
 				.setSubDomainSuffix(getValue(r, domainTable.SUBDOMAINSUFFIX))
-				
 				;	
 		}
 
