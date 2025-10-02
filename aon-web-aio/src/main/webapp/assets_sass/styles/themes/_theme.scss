@@ -18,6 +18,7 @@
 ) {
   
   $color-900-alpha   : #{$color-900}0D;
+  $color-info-alpha  : #{$color-900}E6;
   $color-dialog-alpha: #{$color-800}80;
   
   $body-margin       : unset;
@@ -235,6 +236,14 @@
     aon-icon {
       &::after {
         background-color: $color-text;
+      }
+    }
+    // Mensaje de info
+    aon-info{
+      .tooltip {
+        background: $color-info-alpha;
+        box-shadow: $box-shadow-dialog;
+        color     : $color-text-button;
       }
     }
     // separador

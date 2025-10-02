@@ -1,20 +1,16 @@
 @use '../variables' as v;
 
-.tooltip-container {
-	 position: relative;
-	 display: inline-block;
-	 cursor: pointer; 
-	 margin-left: auto;
-}
-
-.tooltip {
-	position: fixed !important;       
-	background: rgba(0, 0, 0, 0.85);
-	color: #fff;
-	border-radius: v.$border-radius;
-	padding: v.$px-16;
-	z-index: 999999;
-	pointer-events: none;
-	opacity: 0;
-	transition: opacity 0.2s ease;
+aon-info{
+	margin-left: auto;
+	.tooltip {
+		position: fixed;
+		background: rgba(0, 0, 0, 0.85);
+		color: #fff;
+		border-radius: v.$border-radius;
+		padding: v.$padding-min v.$padding;
+		z-index: v.$num-1;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
 }

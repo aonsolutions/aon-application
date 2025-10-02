@@ -13,6 +13,7 @@
   </div>
 */
 $menu-resolucion: v.$menu-resolucion-mobile + 1;
+$icon-min: v.$px-16;
 #aonMenu{
   &.min-hidden{
     /* Menu izquierda reducido */
@@ -20,7 +21,7 @@ $menu-resolucion: v.$menu-resolucion-mobile + 1;
       width     : v.$left-aonMenuLeft-min;
       min-width : v.$left-aonMenuLeft-min;
       max-width : v.$left-aonMenuLeft-min;
-      span.aonNewMenuAppSpan{
+      span.aonNewMenuAppSpan, aon-info{
         display       : none !important;
         opacity       : 0;
         pointer-events: none; 
@@ -104,6 +105,19 @@ $menu-resolucion: v.$menu-resolucion-mobile + 1;
               opacity     : v.$num-1;
               transition  : opacity v.$t-03 ease-in-out;
             }
+            aon-info{
+              opacity     : v.$num-1;
+              transition  : opacity v.$t-03 ease-in-out;
+              // El boton de info mas chico quitarle prioridad
+              aon-icon[icon="info"]{
+                width : $icon-min;
+                height: $icon-min;
+                &::after {
+                  width : $icon-min;
+                  height: $icon-min;
+                }
+              }
+            }
           }
         }
         &:empty {
@@ -120,7 +134,8 @@ $menu-resolucion: v.$menu-resolucion-mobile + 1;
     top        : v.$height-cabecera;
     left       : v.$menu-top-Left;   // lo que ocupa el menu de la izquierda
     overflow-x : hidden;
-    z-index    : 2;
+    transition: width v.$t-03 ease-in-out, left v.$t-03 ease-in-out;
+    z-index    : v.$num-2;
     #aonTopMenuDiv{
       display         : flex;
       justify-content : center;
