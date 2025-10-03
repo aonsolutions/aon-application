@@ -373,7 +373,7 @@ public class DomainDAO {
 				.set(DOMAIN.MODIFICATION_USER, ctx.getUser())
 				.set(DOMAIN.MODIFICATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
-				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.TYPE, (byte) domain.getDomainType().ordinal())
 				.set(DOMAIN.PARENT, domain.getParentId())
 				.set(DOMAIN.OWNER, domain.getOwner())
 				.set(DOMAIN.NAME, domain.getName())
@@ -504,6 +504,16 @@ public class DomainDAO {
 	
 	public static void updateDomainScopeValue(AONContext ctx, String domainName, Integer domainId, Integer scope) {
 		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.SCOPE, scope)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
+	}
+	
+	public static void updateDomainBooking(AONContext ctx, String domainName, Integer domainId, boolean active, Date expirationDate, Integer scope) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.ACTIVE, active ? (byte)1 : (byte)0)
+				.set(DOMAIN.EXPIRATIONDATE, expirationDate)
 				.set(DOMAIN.SCOPE, scope)
 				.where(DOMAIN.ID.eq(domainId))
 				.and(DOMAIN.NAME.eq(domainName))
