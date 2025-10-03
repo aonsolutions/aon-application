@@ -68,6 +68,7 @@ public class JsfAppServlet extends HttpServlet {
 			initDomainSwitcher(req);
 			initDesktopController(req);
 			initConfigurationController(req);
+			initLoggedUser(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -87,6 +88,7 @@ public class JsfAppServlet extends HttpServlet {
 		if ( AonStringUtils.notEquals(currentDomainName, domainName ) ) {
 			domainSwitcher.select(domainId, domainName);
 		}
+
 	}
 
 	private void initConfigurationController(HttpServletRequest req) {
@@ -102,6 +104,12 @@ public class JsfAppServlet extends HttpServlet {
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
+	}
+	
+	
+	private void initLoggedUser(HttpServletRequest req){
+		//This is the way to init logged user, AON way :-(  
+		UserUtils.getInstance().getLoggedUser();
 	}
 	
 	protected void doLogin(HttpServletRequest httpRequest,
@@ -189,8 +197,6 @@ public class JsfAppServlet extends HttpServlet {
 
 			facesContext.setViewRoot(view);
 			
-			//This is the way to init logged user, AON way :-(  
-			UserUtils.getInstance().getLoggedUser();
 			
 		} catch (Throwable throwable) {
 			// TODO: Do some usefull with this.
