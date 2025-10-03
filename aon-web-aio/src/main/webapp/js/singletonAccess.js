@@ -102,6 +102,7 @@ export function initSingletonAccess(userOptions = {}) {
 	  ch.postMessage({ type: 'takeover-request', from: myId });
 	  isLeader = true; // optimista
 	  favicon.href = window.__AON_SINGLETON_FAVICON__;
+	  window.location?.reload();
 	  document.querySelector('.aonSingletonOverlay')?.remove();
 	  overlayShown = false;
 	});
