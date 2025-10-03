@@ -24,6 +24,8 @@ export class AonUserList extends AonElement {
 	filter;
 	type;
 	back;
+	
+	fromCustomer;
 
 	parent;
 
@@ -85,7 +87,7 @@ export class AonUserList extends AonElement {
 				});
 			} else {
 				this.filter.page = 1;
-				if(this.isSig()){
+				if(this.isSig() && this.fromCustomer){
 					
 					// Set default values if not sessionData given
 					if(!this.sessionData){
