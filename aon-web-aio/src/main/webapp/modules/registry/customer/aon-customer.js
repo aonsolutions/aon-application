@@ -613,6 +613,7 @@ export class AonCustomer extends AonReg {
 
 		let booking = new AonBooking();
 		booking.sessionData = this.getSessionData();
+		booking.fromCustomer = true;
 		main.appendChild(booking);
 	}
 
@@ -629,6 +630,7 @@ export class AonCustomer extends AonReg {
 		let userList = new AonUserList();
 		userList.sessionData = this.getSessionData();
 		userList.parent = main;
+		userList.fromCustomer = true;
 		main.appendChild(userList);
 	}
 

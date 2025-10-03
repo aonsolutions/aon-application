@@ -45,6 +45,8 @@ export class AonBooking extends AonElement {
 	domainActive;
 	domainExpirationDate;
 	domainScope;
+	
+	fromCustomer;
 
 	options
 
@@ -61,7 +63,7 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
-		if(this.isSig()){
+		if(this.isSig() && this.fromCustomer){
 			// Set default values if not sessionData given
 			if(!this.sessionData){
 				this.sessionData = {
@@ -75,7 +77,7 @@ export class AonBooking extends AonElement {
 			let headers = {
 				domain_name: this.sessionData.domain_name,
 				domain_id: this.sessionData.domain_id
-			}
+			}		
 			
 			getSigBookingDomainUserRoles({}, headers).then(r => {
 				this.dur = new DomainUserRoles(r);
@@ -94,7 +96,7 @@ export class AonBooking extends AonElement {
 				
 				this.build();			
 			});
-		} else {
+		} else {		
 			getBookingDomainUserRoles({}, this.sessionData).then(r => {
 				this.dur = new DomainUserRoles(r);
 				this.initialize();
@@ -195,7 +197,7 @@ export class AonBooking extends AonElement {
 			this.buildTrial(trialContent);
 		}
 		
-		if(this.isSig()){
+		if(this.isSig() && this.fromCustomer){
 			let domainActiveContent = this.createElement(TAG.DIV); 
 			domainActiveContent.style.display = 'flex';
 			domainActiveContent.style.flexDirection = 'column';
@@ -825,7 +827,7 @@ export class AonBooking extends AonElement {
 				message: 'El número de usuarios no puede ser mayor que el número de usuarios contratados'
 			});
 		} else {
-			if(this.isSig()){
+			if(this.isSig() && this.fromCustomer){
 				// Set default values if not sessionData given
 				if(!this.sessionData){
 					this.sessionData = {
@@ -839,7 +841,7 @@ export class AonBooking extends AonElement {
 				let headers = {
 					domain_name: this.sessionData.domain_name,
 					domain_id: this.sessionData.domain_id
-				}
+				}			
 				
 				setSigDomainApp({
 					type: this.dur.domain.type,
