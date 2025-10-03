@@ -11,7 +11,6 @@ import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
 
 export class AonIncome extends AonElement {
-
     INCOME_TOOLBAR;
     INCOME_CARD;
     INCOME_DATE;
@@ -24,7 +23,6 @@ export class AonIncome extends AonElement {
     INCOME_CUSTOMER;
     INCOME_COMMENTS;
     DIV_GENERAL;
-
     income;
 
     get id() {
@@ -74,10 +72,10 @@ export class AonIncome extends AonElement {
         
         let div = this.createDiv();
         div.id = this.DIV_GENERAL; 
-        if(this.isMobile())
-            div.style.width = "100%";
-        else
-            div.style.width = "50%";
+        // if(this.isMobile())
+        //     div.style.width = "100%";
+        // else
+        //     div.style.width = "50%";
         this.appendChild(div);
         this.buildCard(div);
 		

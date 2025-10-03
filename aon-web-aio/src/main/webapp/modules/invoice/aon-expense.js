@@ -11,7 +11,6 @@ import { AonExpenseList } from './aon-expense-list.js';
 import { Expense } from './Expense.js';
 
 export class AonExpense extends AonElement {
-
     EXPENSE_TOOLBAR;
     EXPENSE_CARD;
     EXPENSE_DATE;
@@ -24,7 +23,6 @@ export class AonExpense extends AonElement {
     EXPENSE_PAYMENT;
     EXPENSE_COMMENTS;
     DIV_GENERAL;
-
     expense
 
     get id() {
@@ -74,10 +72,10 @@ export class AonExpense extends AonElement {
 
         let div = this.createDiv();
         div.id = this.DIV_GENERAL;
-        if(this.isMobile())
-            div.style.width = "100%";
-        else
-            div.style.width = "50%";
+        // if(this.isMobile())
+        //     div.style.width = "100%";
+        // else
+        //     div.style.width = "50%";
         
         this.appendChild(div);
         this.buildCard(div);
