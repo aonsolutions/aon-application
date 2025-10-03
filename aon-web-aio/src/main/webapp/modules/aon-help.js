@@ -1,6 +1,7 @@
 import { AonElement } from '../components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
-import { AonCard } from '../components/aon-card.js';
+import { AonCard } from '../components/aon-card';
+import { AonIcon } from '../components/aon-icon';
 import { getManifest, getDomainUserRoles} from "../services/service.js";
 import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
@@ -8,9 +9,9 @@ import { getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonCertification } from './certification/aon-certification.js';
 import * as JSF from './aon-jsf-app.js';
+import { getCustomViewConfiguration } from '../services/customViewService.js';
 
 export class AonHelp extends AonElement {
-
 	SUPPORT_SWITCH;
 	ABOUT_CONTACT_CARD;
 	SCHEDULE_CONTACT_CARD;
@@ -28,9 +29,21 @@ export class AonHelp extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.buildDur()
-			.then( dur => this.buildForCompanies() )
-			.catch( err => this.buildForAll());
+    Promise.all([
+    getCustomViewConfiguration().catch(err => {
+      console.warn("Custom view no disponible, usando por defecto:", err);
+      return { params: {} }; // fallback
+    }),
+    getManifest()
+    ])
+    .then(([config, manifest]) => {
+    this.customConfig = config;
+    this.manifest = manifest;
+    
+        this.buildDur()
+          .then(  dur => this.build(true) )
+          .catch( err => this.build());
+    });
 	}
 
 	initialize() {
@@ -42,203 +55,168 @@ export class AonHelp extends AonElement {
 		this.SUPPORT_CONTENT = 'supportContent';
 		this.cont = 1;
 	}
-	
-	buildForCompanies() {
-		this.buildForAll();
-		if ((this.dur.isDomainPayer()) || (this.dur.hasOffice())){
-			let rightPanelAboutContactCard = new AonCard();
-			rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
-			rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
-			rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
-			helpContent.appendChild(rightPanelAboutContactCard);
 
-			let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
-			cardDiv.className = "aonCard rightPanelcardDiv";
-			
-			let divGeneral = this.createDiv();
-			divGeneral.appendChild(this.buildSupportData("AON SOLUTIONS S.L.", MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
-			divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
-			divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
-			divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
-			divGeneral.appendChild(this.buildSupportData("administración@aonSolutions.es", "Facturación, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
-			rightPanelAboutContactCard.setContent(divGeneral);
+	build(loadCompanies = false) {
+      let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
 
-			let rightPanelAboutScheduleCard = new AonCard();
-			rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
-			rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
-			rightPanelAboutScheduleCard.className = "rightPanelAboutScheduleCard";
-			helpContent.appendChild(rightPanelAboutScheduleCard);
+      let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
+      supportContent.style.padding = ".5rem 1rem";
 
-			let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
-			cardDiv2.className = "aonCard rightPanelCardDiv";
+      this.appendChild(helpContent);
 
-			let divGeneral2 = this.createDiv();
-			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
-			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
-			rightPanelAboutScheduleCard.setContent(divGeneral2);
+      let span = this.createSpan();
+      span.innerHTML = MSG.SUPPORT;
+      supportContent.appendChild(span);
 
-		}else if(this.dur.getParentDomain() != null){
-			let parentDomain = this.dur.getParentDomain();
-			let parentId = parentDomain.id;
-			let parentName = parentDomain.name;
-			getParentCompany({parentId, parentName}).then(r =>{		
-				let name = r.name;
-				let phoneData = r.media.find(item => item.media === "fixed_phone");
-				let phone = phoneData ? phoneData.value : "Teléfono no encontrado";
-				let emailData = r.media.find(item => item.media === "email");
-				let email = emailData ? emailData.value : "Email no encontrado";
-				
-				let rightPanelAboutContactCard = new AonCard();
-				rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
-				rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
-				rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
-				helpContent.appendChild(rightPanelAboutContactCard);
+      let rightPanelSwitchSupportButton = new AonSwitch();
+      rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
+      supportContent.appendChild(rightPanelSwitchSupportButton);
 
-				let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
-				cardDiv.className = "aonCard rightPanelcardDiv";
-												
-				let divGeneral = this.createDiv();
-				divGeneral.appendChild(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS));
-				divGeneral.appendChild(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
-				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL));
-				rightPanelAboutContactCard.setContent(divGeneral);
-			});
-		}
+      helpContent.appendChild(supportContent);
+
+      // Indice de contenido
+      let buttonContent = this.createElement(TAG.BUTTON);
+      // Icono
+      let i   = new AonIcon();
+      i.icon  = "school";
+      buttonContent.appendChild(i);
+      buttonContent.innerHTML += MSG.CONTENT_INDEX;
+      helpContent.appendChild(buttonContent);
+      buttonContent.addEventListener(EVENT.CLICK, () => {
+        this.rootPanel(new JSF.AonJsfHelpContent());
+        this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+        let rightPanel = this.closest('aon-right-panel');
+        rightPanel?.close?.();
+      });
+      // Notificaciones
+      let buttonNotif = this.createElement(TAG.BUTTON);
+      // Icono
+      let iNot  = new AonIcon();
+      iNot.icon = "rss_feed";
+      buttonNotif.appendChild(iNot);
+      buttonNotif.innerHTML += MSG.NOTIFICATIONS;
+      helpContent.appendChild(buttonNotif);
+      buttonNotif.addEventListener(EVENT.CLICK, () => {
+        this.rootPanel(new JSF.AonJsfHelpNotification());
+        this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+        let rightPanel = this.closest('aon-right-panel');
+        rightPanel?.close?.();
+      });
+      // Certificaciones
+      let buttonCertificacions = this.createElement(TAG.BUTTON);
+      // Icono
+      let iCer  = new AonIcon();
+      iCer.icon = "award";
+      buttonCertificacions.appendChild(iCer);
+      buttonCertificacions.innerHTML += MSG.CERTIFICATIONS;
+      helpContent.appendChild(buttonCertificacions);
+      buttonCertificacions.addEventListener(EVENT.CLICK, () => {
+        this.rootPanel(new AonCertification());
+        this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+        let rightPanel = this.closest('aon-right-panel');
+        rightPanel?.close?.();
+      });
+
+      getSupport().then(r => {
+        rightPanelSwitchSupportButton.checked = r.value;
+      });
+      rightPanelSwitchSupportButton.addEventListener(EVENT.CHANGE, () => {
+        let data = {value: rightPanelSwitchSupportButton.isChecked()};
+        setSupport(data).then(r => {});
+      });
+
+      // Comapny
+      if(loadCompanies){
+        this.buildCompany(helpContent);
+      }
+
+      // Version
+      const hideVersion = this.customConfig?.params?.AON_HIDE_VERSION === "true";
+      if (!hideVersion) {
+        let version = MSG.VERSION + ": " + this.manifest.build_date;
+        let divInfo = this.createElement(TAG.DIV);
+        divInfo.className = "divInfo";
+        divInfo.innerHTML = `<small id="aonManifest">${version}</small>`;
+        helpContent.appendChild(divInfo);
+      }
 	}
 
-	buildForAll() {
-				
-		let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
-		
-		let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
-		supportContent.style.padding = ".5rem 1rem";
-		
-		this.appendChild(helpContent);
+	buildCompany(helpContent) {
+  
+    if (this.dur.getDomain() === null) return;
 
-		let span = this.createSpan();
-		span.innerHTML = MSG.SUPPORT;
-		supportContent.appendChild(span);
-		
-		let rightPanelSwitchSupportButton = new AonSwitch();
-		rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
-		supportContent.appendChild(rightPanelSwitchSupportButton);
-		
-		helpContent.appendChild(supportContent);
+    const params = this.customConfig?.params || {};
 
-		let helpContentIndexDiv = this.createSpan();
-		helpContentIndexDiv.className = "helpCardText";
+    const customTitle = params.AON_CUSTOMIZE_TITLE || "AON SOLUTIONS S.L.";
+    const customPhone = params.AON_CUSTOMIZE_SUPPORT_PHONE || "(+34) 900 831 205";
+    const customEmail = params.AON_CUSTOMIZE_SUPPORT_EMAIL || "soporte@aonSolutions.es";
 
-		let helpContentIndexI = this.createElement(TAG.I);
-		helpContentIndexI.className = CSS.MATERIAL_ICONS;
-		helpContentIndexI.classList.add("aonHelpI");
-		helpContentIndexI.innerHTML= "school";
-		helpContentIndexDiv.appendChild(helpContentIndexI);
+    let contactCard       = new AonCard();
+    contactCard.id        = this.ABOUT_CONTACT_CARD;
+    contactCard.title     = MSG.CONTACT_DATA2;
+    contactCard.className = "right-panel-contact-card";
 
-		let helpContentIndexSpan = this.createDiv();
-		helpContentIndexSpan.className = CSS.AON_CARD_TEXT;
-        helpContentIndexSpan.classList.add("aonHelpSpan2");
-		helpContentIndexSpan.innerHTML = MSG.CONTENT_INDEX;
-		helpContentIndexDiv.appendChild(helpContentIndexSpan);
-		helpContent.appendChild(helpContentIndexDiv);
-		
-		helpContentIndexDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new JSF.AonJsfHelpContent())
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
-		});
+    if ((this.dur.isDomainPayer()) || (this.dur.hasOffice())) {
+      helpContent.appendChild(contactCard);
 
-		let helpNotificationDiv = this.createSpan();
-		helpNotificationDiv.className = "helpCardText";
+      contactCard.setContent(this.buildSupportData(customTitle, MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
+      contactCard.addContent(this.buildSupportData(customPhone, MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
+      contactCard.addContent(this.buildSupportData(customEmail, "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
 
-		let helpNotificationI = this.createElement(TAG.I);
-		helpNotificationI.className = CSS.MATERIAL_ICONS;
-		helpNotificationI.classList.add("aonHelpI");
-		helpNotificationI.innerHTML= "rss_feed";
-		helpNotificationDiv.appendChild(helpNotificationI);
+    } else if (this.dur.getParentDomain() !== null) {
+      const parentDomain = this.dur.getParentDomain();
+      const parentId     = parentDomain.id;
+      const parentName   = parentDomain.name;
 
-		let helpNotificationSpan = this.createDiv();
-		helpNotificationSpan.className = CSS.AON_CARD_TEXT;
-		helpNotificationSpan.classList.add("aonHelpSpan2");
-		helpNotificationSpan.innerHTML = MSG.NOTIFICATIONS;
-		helpNotificationDiv.appendChild(helpNotificationSpan);
-		helpContent.appendChild(helpNotificationDiv);
+      getParentCompany({ parentId, parentName }).then(r => {
+        let name  = r.name;
+        let phone = r.media?.find(item => item.media === "fixed_phone")?.value || "Teléfono no encontrado";
+        let email = r.media?.find(item => item.media === "email")?.value || "Email no encontrado";
 
-		helpNotificationDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new JSF.AonJsfHelpNotification());
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
-		});
-		
-		let helpCertificationsDiv = this.createSpan();
-		helpCertificationsDiv.className = "helpCardText";
+        helpContent.appendChild(contactCard);
+        contactCard.setContent(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS));
+        contactCard.addContent(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
+        contactCard.addContent(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL));
+      });
+    }
 
-		let helpCertificationsI = this.createElement(TAG.I);
-		helpCertificationsI.className = CSS.MATERIAL_ICONS;
-		helpCertificationsI.classList.add("aonHelpI");
-		helpCertificationsI.innerHTML= "license";
-		helpCertificationsDiv.appendChild(helpCertificationsI);
+    // Schedule card siempre al final
+    let scheduleCard       = new AonCard();
+    scheduleCard.id        = this.SCHEDULE_CONTACT_CARD;
+    scheduleCard.title     = MSG.SCHEDULE;
+    scheduleCard.className = "right-panel-schedule-card";
+    helpContent.appendChild(scheduleCard);
 
-		let helpCertificationsSpan = this.createDiv();
-		helpCertificationsSpan.className = CSS.AON_CARD_TEXT;
-		helpCertificationsSpan.classList.add("aonHelpSpan2");
-		helpCertificationsSpan.innerHTML = MSG.CERTIFICATIONS;
-		helpCertificationsDiv.appendChild(helpCertificationsSpan);
-		helpContent.appendChild(helpCertificationsDiv);
-
-		helpCertificationsDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new AonCertification());
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
-		});
-		
-		let helpVersionDiv = this.createSpan();
-		helpVersionDiv.className = "helpversionCardText";
-
-		let helpVersionI = this.createElement(TAG.I);
-		helpVersionI.className = CSS.MATERIAL_ICONS;
-		helpVersionI.classList.add("aonHelpI");
-		helpVersionI.innerHTML= "info";
-		helpVersionDiv.appendChild(helpVersionI);
-
-		let helpVersionSpan = this.createDiv();
-		helpVersionSpan.className = CSS.AON_CARD_TEXT;
-		helpVersionSpan.classList.add("aonHelpSpan2")
-		getManifest().then((manifest) => {
-			let version = MSG.VERSION + ": " + manifest.build_date;
-			helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
-		});;
-		helpVersionDiv.appendChild(helpVersionSpan);
-		helpContent.appendChild(helpVersionDiv);
-
-		getSupport().then(r => {
-			rightPanelSwitchSupportButton.checked = r.value;
-
-		})
-		rightPanelSwitchSupportButton.addEventListener(EVENT.CHANGE, () => {
-			let data = {value: rightPanelSwitchSupportButton.isChecked()}
-			setSupport(data).then(r => {})
-		});
-	    	
-		
-		let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
-	}
+    scheduleCard.setContent(this.buildSupportData(MSG.WEEK_SCHEDULE, MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
+    scheduleCard.addContent(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
+  }
 
 	buildSupportData(value, title, icon, className) {
-		let div = this.createDiv();
-		div.style.marginTop = '10px';
+		let div 		= this.createDiv();
+		div.className	= "help-row";
 		div.style.title = title;
-		div.style.display = "flex";
+		if(!this.isNewStyle()){
+          div.style.marginTop = '10px';
+          div.style.display = "flex";
 
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS + " mailIcon";
-		i.id = "aonContactIcon" + this.cont;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
-		i.innerHTML= icon;
-		div.appendChild(i);
+          let i = this.createElement(TAG.I);
+          i.className = CSS.MATERIAL_ICONS + " mailIcon";
+          i.id = "aonContactIcon" + this.cont;
+          i.style.marginRight = '5px';
+          i.style.verticalAlign = "middle";
+          i.setAttribute("data-icon", icon);
+          i.innerHTML= icon;
+          div.appendChild(i);
+		} else {
+          let i  = new AonIcon();
+          i.icon = icon;
+          div.appendChild(i);
+        }
 
 		let span = this.createDiv();
 		span.className = `${CSS.AON_CARD_TEXT} ${className}`;
 		
-		if(className==null){
+		if(className==null || this.isNewStyle()){
 			span.innerHTML = value;
 		}
 		

@@ -7,26 +7,22 @@ const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // s�lo en local
 
 const themes = [
   {
-    hostnameIncludes: ['ayudat.aon.solutions', 'leevy.aon.solutions'],
-    nameIncludes    : ['-ayudat.', '/ayudat.', '-leevy', '/leevy'],
+    hostnameIncludes: ['-ayudat.', '/ayudat.', '-leevy', '/leevy', fakeHost],
     themeLight      : 'theme-ayudat',
     themeDark       : 'theme-ayudat-dark'
   },
   {
-    hostnameIncludes: ['infoautonomos.aon.solutions', fakeHost],
-    nameIncludes    : ['-infoautonomos.', '/infoautonomos.'],
+    hostnameIncludes: ['-infoautonomos.', '/infoautonomos.'],
     themeLight      : 'theme-infoautonomos',
     themeDark       : 'theme-infoautonomos-dark'
   },
   {
-    hostnameIncludes: ['openges.aon.solutions'],
-    nameIncludes    : ['-openges.', '/openges.'],
+    hostnameIncludes: ['-openges.', '/openges.'],
     themeLight      : 'theme-openges',
     themeDark       : 'theme-openges-dark'
   },
   {
-    hostnameIncludes: ['etl.aon.solutions'],
-    nameIncludes    : ['-etl.', '/etl.'],
+    hostnameIncludes: ['-etl.', '/etl.'],
     themeLight      : 'theme-etl',
     themeDark       : 'theme-etl-dark'
   }
@@ -35,10 +31,10 @@ const themes = [
 const getThemeClass = (isDark) => {
   const hostname = window.location.hostname;
   for (const t of themes) {
-    const matched = (t.hostnameIncludes?.some(h => hostname.includes(h)) || 
-                     t.nameIncludes?.some(n => hostname.includes(n)));
-
-    if (matched) {
+    const match = Array.isArray(t.hostnameIncludes)
+      ? t.hostnameIncludes.some(h => hostname.includes(h))
+      : hostname.includes(t.hostnameIncludes);
+    if (match) {
       return isDark ? t.themeDark : t.themeLight;
     }
   }
@@ -51,15 +47,23 @@ const clearThemeClasses = () => {
 };
 
 const applyFavicon = (themeClass, favicon = "") => {
-  let url = ""; 
-
-  if (!url) {
+  if (favicon === "") {
+    // Intentar cogerlo del CSS si no viene en config
     const raw = getComputedStyle(document.body).getPropertyValue(`--favicon-${themeClass}`).trim();
-    if (raw) url = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+    if (raw) favicon = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+    if (favicon) {
+      setFavicon(favicon);
+    }
+  } else {
+    // Si viene del CustomView => usar getCustomViewImage
+    getCustomViewImage(favicon).then(url => {
+      setFavicon(url);
+    });
   }
+};
 
+const setFavicon = (url) => {
   if (!url) return;
-
   let link = document.querySelector("link[rel~='icon']");
   if (!link) {
     link = document.createElement('link');
@@ -68,6 +72,7 @@ const applyFavicon = (themeClass, favicon = "") => {
   }
   link.href = `${url}?v=${Date.now()}`;
 };
+
 
 export const applyTitle = (themeClass, title = "") => {
   if (!title) {
@@ -96,10 +101,19 @@ export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
 };
 
 export const applyLogo = (themeClass, imageLogo = "") => {
-  if (!imageLogo) {
-    const raw = getComputedStyle(document.body).getPropertyValue(`--logo-${themeClass}`).trim();
-    if (raw) imageLogo = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
-  }
+  waitForElement('#logoSVG').then((divLogo) => {  
+    if (imageLogo === "") {
+      const raw = getComputedStyle(document.body).getPropertyValue(`--logo-${themeClass}`).trim();
+      if (raw) imageLogo = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
+      if (imageLogo && divLogo) { 
+        divLogo.style.backgroundImage = 'url(' + imageLogo + ')';
+      }
+    } else {
+      getCustomViewImage(imageLogo).then(url => {
+        divLogo.style.backgroundImage = `url(${url})`;
+      });
+    }
+  });
 };
 
 const getEffectiveMode = () => {
