@@ -4,429 +4,461 @@ import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 
 export class AonNewDate extends AonNewInput {
-  date;
-  day;
-  month;
-  year;
-  today = new Date();
-  INPUT;
-  SPAN;
-  DATEPICKER;
-  DATEPICKER_PREVIOUS;
-  DATEPICKER_NEXT;
-  DATEPICKER_MONTH;
-  DATEPICKER_YEAR;
-  DATEPICKER_DAYS;
+	date;
+	day;
+	month;
+	year;
+	today = new Date();
+	INPUT;
+	SPAN;
+	DATEPICKER;
+	DATEPICKER_PREVIOUS;
+	DATEPICKER_NEXT;
+	DATEPICKER_MONTH;
+	DATEPICKER_YEAR;
+	DATEPICKER_DAYS;
 
-  connectedCallback () {
-    this.initialize();
-    this.build();
-    this.buildDate();
-    this.buildDatepicker();
-  }
+	connectedCallback() {
+		this.initialize();
+		this.build();
+		this.buildDate();
+		this.buildDatepicker();
+	}
 
-  initialize() {
-    super.initialize();
-    this.id = this.id || 'aonDate';
-    this.DATEPICKER = this.id + 'Datepicker';
-    this.SPAN = this.DATEPICKER + 'Span';
-    this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';
-    this.DATEPICKER_NEXT = this.DATEPICKER + 'Next';
-    this.DATEPICKER_MONTH = this.DATEPICKER + 'Month';
-    this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
-    this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
-    this.getDate();
-    // Si no tiene date, cogemos la fecha de hoy para montar el calendario
-    this.day   = this.date ? this.date.getDate()    : this.today.getDate();
-    this.month = this.date ? this.date.getMonth()   : this.today.getMonth();
-    this.year  = this.date ? this.date.getFullYear(): this.today.getFullYear();
-    this.maxlength = 10;
-  }
+	initialize() {
+		super.initialize();
+		this.id = this.id || 'aonDate';
+		this.DATEPICKER = this.id + 'Datepicker';
+		this.SPAN = this.DATEPICKER + 'Span';
+		this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';
+		this.DATEPICKER_NEXT = this.DATEPICKER + 'Next';
+		this.DATEPICKER_MONTH = this.DATEPICKER + 'Month';
+		this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
+		this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
+		this.getDate();
 
-  getDate(){
-    // Si le pasamos un date
-    const dateAttr = this.getAttribute('date');
-    if (dateAttr && dateAttr.trim() !== ''){
-      // Si tiene fecha pasada
-      const parsedDate = new Date(dateAttr);
-      if (!isNaN(parsedDate.getTime())) {
-        this.date = parsedDate;
-      }
-    } else if (dateAttr === null || dateAttr.trim() !== ''){
-      // Si no se le pasa el valor date
-      this.date  = this.date || this.today;
-    }
-  }
+		// Para el calendario, usar date si existe, si no usar today
+		// Pero NO asignar this.today a this.date
+		const calendarDate = this.date || this.today;
+		this.day = calendarDate.getDate();
+		this.month = calendarDate.getMonth();
+		this.year = calendarDate.getFullYear();
+		this.maxlength = 10;
+	}
 
-  buildDate() {
-    let rootDiv = this.getElement(this.ROOT);
-    rootDiv.style.minWidth = '75px';
-    this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
-  }
+	getDate() {
+		const dateAttr = this.getAttribute('date');
+		if (dateAttr && dateAttr.trim() !== '') {
+			const parsedDate = new Date(dateAttr);
+			if (!isNaN(parsedDate.getTime())) {
+				this.date = parsedDate;
+			}
+		}
+		// Si no hay atributo date o está vacío, this.date quedará undefined
+		// No asignar this.today automáticamente
+	}
 
-  onBlur = ({target}) => {
-    this.checkRequired();
+	buildDate() {
+		let rootDiv = this.getElement(this.ROOT);
+		rootDiv.style.minWidth = '75px';
+		this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
+	}
 
-    const input = target.value || "";
-    if (input) {
-      const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
-      let output = '';
-      if (values.length === 3) {
-        let year = parseInt(values[2]);
-        if(values[2].length === 2) {
-          let now = new Date(Date.now());
-          let y = now.getFullYear() + '';
-          let a = parseInt(y.substring(2,4));
-          year = a >= year ? year + 2000 : year + 1900;
-        }
-        const month = parseInt(values[1]) - 1;
-        const day = parseInt(values[0]);
+	onBlur = ({ target }) => {
+		this.checkRequired();
 
-        const d = new Date(year, month, day);
+		const input = target.value || "";
+		if (input) {
+			const values = input ? input.split('/').map((v) => v.replace(/\D/g, '')) : [];
+			let output = '';
+			if (values.length === 3) {
+				let year = parseInt(values[2]);
+				if (values[2].length === 2) {
+					let now = new Date(Date.now());
+					let y = now.getFullYear() + '';
+					let a = parseInt(y.substring(2, 4));
+					year = a >= year ? year + 2000 : year + 1900;
+				}
+				const month = parseInt(values[1]) - 1;
+				const day = parseInt(values[0]);
 
-        if (!isNaN(d)) {          
-          this.setDate(d);
-          const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
-          output = dates.map((v) =>{
-            v = v.toString();
-            return v.length === 1 ? '0' + v : v;
-          }).join('/');
-        }
-      }
-      target.value = output.replaceAll(" ", "");
+				const d = new Date(year, month, day);
 
-      this.dispatchEvent(new Event(EVENT.BLUR));
-    } else {
-      target.value = "";
-    }
-  };
+				if (!isNaN(d)) {
+					this.setDate(d);
+					const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
+					output = dates.map((v) => {
+						v = v.toString();
+						return v.length === 1 ? '0' + v : v;
+					}).join('/');
+				}
+			}
+			target.value = output.replaceAll(" ", "");
 
-  onInput = ({target}) => {
-    let value = target.value || "";
-    if (value) {
-      if (/\D\/$/.test(value)) value = value.substr(0, value.length - 3);
-      const values = value.split('/').map((v) => v.replace(/\D/g, ''));
-      if (values[0]) values[0] = this.checkValue(values[0], 31);
-      if (values[1]) values[1] = this.checkValue(values[1], 12);
-      const output = values.map((v, i) => v.length === 2 && i < 2 ? v + '/' : v);
-      target.value = output.join('').substr(0, 14);
-      if (value.length >= 14) target.blur();
-    } else {
-      target.value = "";
-    }
-  };
+			this.dispatchEvent(new Event(EVENT.BLUR));
+		} else {
+			// Campo vacío - resetear fecha
+			target.value = "";
+			const previousDate = this.date;
+			this.date = null;
 
-  checkValue(str, max){
-    if (str.charAt(0) !== '0' || str == '00') {
-      let num = parseInt(str);
-      if (isNaN(num) || num <= 0 || num > max) num = 1;
-      str = num > parseInt(max.toString().charAt(0)) && num.toString().length == 1 ? '0' + num : num.toString();
-    }
-    return str;
-  }
-  
-  buildDatepicker() {
-    let rootDiv = this.getElement(this.ROOT);
+			// Actualizar el calendario para que use today como referencia
+			this.day = this.today.getDate();
+			this.month = this.today.getMonth();
+			this.year = this.today.getFullYear();
 
-    let span = this.createElement(TAG.SPAN);
-    span.id = this.SPAN;
-    rootDiv.appendChild(span);
+			let datepickerDays = this.getElement(this.DATEPICKER_DAYS);
+			if (datepickerDays) {
+				this.buildCalendar();
+			}
 
-    let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
-    datepicker.id = this.DATEPICKER;
-    datepicker.classList.add('aonDatepicker', CSS.AON_BOX_SHADOW);
-    datepicker.style.width = this.width || '250px';
-    span.appendChild(datepicker);
-    let datepickerHeaderId =this.DATEPICKER +"Header";
-    let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement(TAG.DIV);
-    datepickerHeader.style.height = '50px';
-    datepickerHeader.id = datepickerHeaderId;
+			// Disparar el evento change si la fecha cambió
+			if (previousDate !== null) {
+				this.dispatchEvent(new CustomEvent(EVENT.CHANGE, { detail: this.date }));
+			}
 
-    let aib1 = new AonIconButton();
-    aib1.id = this.DATEPICKER_PREVIOUS;
-    aib1.icon = "keyboard_arrow_left";
-    datepickerHeader.appendChild(aib1);
+			this.dispatchEvent(new Event(EVENT.BLUR));
+		}
+	};
 
-    let span1 = this.createElement(TAG.SPAN);
-    span1.id = this.DATEPICKER_MONTH;
-    span1.textContent = this.getMonthName();
-    datepickerHeader.appendChild(span1);
+	onInput = ({ target }) => {
+		let value = target.value || "";
+		if (value) {
+			if (/\D\/$/.test(value)) value = value.substr(0, value.length - 3);
+			const values = value.split('/').map((v) => v.replace(/\D/g, ''));
+			if (values[0]) values[0] = this.checkValue(values[0], 31);
+			if (values[1]) values[1] = this.checkValue(values[1], 12);
+			const output = values.map((v, i) => v.length === 2 && i < 2 ? v + '/' : v);
+			target.value = output.join('').substr(0, 14);
+			if (value.length >= 14) target.blur();
+		} else {
+			target.value = "";
+		}
+	};
 
-    let span2 = this.createElement(TAG.SPAN);
-    span2.id = this.DATEPICKER_YEAR;
-    span2.textContent = this.year;
-    datepickerHeader.appendChild(span2);
+	checkValue(str, max) {
+		if (str.charAt(0) !== '0' || str == '00') {
+			let num = parseInt(str);
+			if (isNaN(num) || num <= 0 || num > max) num = 1;
+			str = num > parseInt(max.toString().charAt(0)) && num.toString().length == 1 ? '0' + num : num.toString();
+		}
+		return str;
+	}
 
-    let aib2 = new AonIconButton();
-    aib2.id = this.DATEPICKER_NEXT;
-    aib2.icon = "keyboard_arrow_right";
-    datepickerHeader.appendChild(aib2);
+	buildDatepicker() {
+		let rootDiv = this.getElement(this.ROOT);
 
-    datepicker.appendChild(datepickerHeader);
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.SPAN;
+		rootDiv.appendChild(span);
 
-    let previous = this.getElement(this.DATEPICKER_PREVIOUS);
-    previous.style.position = 'absolute';
-    previous.style.left = '0px';
-    previous.style.top = '5px';
-    previous.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.previousMonth();
-    });
+		let datepicker = this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
+		datepicker.id = this.DATEPICKER;
+		datepicker.classList.add('aonDatepicker', CSS.AON_BOX_SHADOW);
+		datepicker.style.width = this.width || '250px';
+		span.appendChild(datepicker);
+		let datepickerHeaderId = this.DATEPICKER + "Header";
+		let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement(TAG.DIV);
+		datepickerHeader.style.height = '50px';
+		datepickerHeader.id = datepickerHeaderId;
 
-    let datepickerMonth = this.getElement(this.DATEPICKER_MONTH);
-    datepickerMonth.style.position = 'absolute';
-    datepickerMonth.style.left = '50px';
-    datepickerMonth.style.top = '15px';
+		let aib1 = new AonIconButton();
+		aib1.id = this.DATEPICKER_PREVIOUS;
+		aib1.icon = "keyboard_arrow_left";
+		datepickerHeader.appendChild(aib1);
 
-    let datepickerYear = this.getElement(this.DATEPICKER_YEAR);
-    datepickerYear.style.position = 'absolute';
-    datepickerYear.style.left = '150px';
-    datepickerYear.style.top = '15px';
+		let span1 = this.createElement(TAG.SPAN);
+		span1.id = this.DATEPICKER_MONTH;
+		span1.textContent = this.getMonthName();
+		datepickerHeader.appendChild(span1);
+
+		let span2 = this.createElement(TAG.SPAN);
+		span2.id = this.DATEPICKER_YEAR;
+		span2.textContent = this.year;
+		datepickerHeader.appendChild(span2);
+
+		let aib2 = new AonIconButton();
+		aib2.id = this.DATEPICKER_NEXT;
+		aib2.icon = "keyboard_arrow_right";
+		datepickerHeader.appendChild(aib2);
+
+		datepicker.appendChild(datepickerHeader);
+
+		let previous = this.getElement(this.DATEPICKER_PREVIOUS);
+		previous.style.position = 'absolute';
+		previous.style.left = '0px';
+		previous.style.top = '5px';
+		previous.addEventListener(EVENT.CLICK, (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			this.previousMonth();
+		});
+
+		let datepickerMonth = this.getElement(this.DATEPICKER_MONTH);
+		datepickerMonth.style.position = 'absolute';
+		datepickerMonth.style.left = '50px';
+		datepickerMonth.style.top = '15px';
+
+		let datepickerYear = this.getElement(this.DATEPICKER_YEAR);
+		datepickerYear.style.position = 'absolute';
+		datepickerYear.style.left = '150px';
+		datepickerYear.style.top = '15px';
 
 
-    let next = this.getElement(this.DATEPICKER_NEXT);
-    next.style.position = 'absolute';
-    next.style.right = '0px';
-    next.style.top = '5px';
-    next.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.nextMonth();
-    });
+		let next = this.getElement(this.DATEPICKER_NEXT);
+		next.style.position = 'absolute';
+		next.style.right = '0px';
+		next.style.top = '5px';
+		next.addEventListener(EVENT.CLICK, (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			this.nextMonth();
+		});
 
-    let datepickerDays = this.createElement(TAG.DIV);
-    let table = this.createElement(TAG.TABLE);
-    table.id = this.DATEPICKER_DAYS;
-    table.style.width = "100%";
-    datepickerDays.appendChild(table);
+		let datepickerDays = this.createElement(TAG.DIV);
+		let table = this.createElement(TAG.TABLE);
+		table.id = this.DATEPICKER_DAYS;
+		table.style.width = "100%";
+		datepickerDays.appendChild(table);
 
-    datepicker.appendChild(datepickerDays);
-    this.buildCalendar();
+		datepicker.appendChild(datepickerDays);
+		this.buildCalendar();
 
-    document.addEventListener(EVENT.CLICK, (event) => {      
-      let isClickInside = this.contains(event.target);
-      if(!isClickInside){
-        if(datepicker.classList.contains('is-visible')){
-          datepicker.classList.remove('is-visible');
-        }
-      }
-    });
-  }
+		document.addEventListener(EVENT.CLICK, (event) => {
+			let isClickInside = this.contains(event.target);
+			if (!isClickInside) {
+				if (datepicker.classList.contains('is-visible')) {
+					datepicker.classList.remove('is-visible');
+				}
+			}
+		});
+	}
 
-  buildCalendar() {
-    this.clearElementById(this.DATEPICKER_DAYS);
-    let datepickerDaysTable = this.getElement(this.DATEPICKER_DAYS);
-    let trDays = this.createElement(TAG.TR);
-    datepickerDaysTable.appendChild(trDays);
-    for(let d = 0; d < 7; d++) {
-      let td = this.createElement(TAG.TD);
-      td.className = 'aonDatepickerDays aonDatepickerDaysTitle';
-      td.innerHTML = this.getDayName(d);
-      trDays.appendChild(td);
-    }
+	buildCalendar() {
+		this.clearElementById(this.DATEPICKER_DAYS);
+		let datepickerDaysTable = this.getElement(this.DATEPICKER_DAYS);
+		let trDays = this.createElement(TAG.TR);
+		datepickerDaysTable.appendChild(trDays);
+		for (let d = 0; d < 7; d++) {
+			let td = this.createElement(TAG.TD);
+			td.className = 'aonDatepickerDays aonDatepickerDaysTitle';
+			td.innerHTML = this.getDayName(d);
+			trDays.appendChild(td);
+		}
 
-    for(let i = 0; i < 6; i++) {
-      let tr = this.createElement(TAG.TR);
-      datepickerDaysTable.appendChild(tr);
-      for(let j = 0; j < 7; j++) {
-        let td = this.createElement(TAG.TD);
-        td.className = 'aonDatepickerDays'
-        td.id = this.DATEPICKER_DAYS + i + j;
-        tr.appendChild(td);
-      }
-    }
+		for (let i = 0; i < 6; i++) {
+			let tr = this.createElement(TAG.TR);
+			datepickerDaysTable.appendChild(tr);
+			for (let j = 0; j < 7; j++) {
+				let td = this.createElement(TAG.TD);
+				td.className = 'aonDatepickerDays'
+				td.id = this.DATEPICKER_DAYS + i + j;
+				tr.appendChild(td);
+			}
+		}
 
-    let line = 0;
-    let day  = 1;
-    let date = new Date(this.year, this.month, day);
+		let line = 0;
+		let day = 1;
+		let date = new Date(this.year, this.month, day);
 
-    while(date.getMonth() === this.month) {
-      let actDate = date;
-      let pos = (date.getDay() - 1 < 0) ? 6 : date.getDay() - 1;
-      let td = this.getElement(this.DATEPICKER_DAYS + line + pos);
-      td.style.height = '34px';
-      td.style.borderRadius = '50%';
-      td.style.cursor = 'pointer';
-      if(this.isSameDate(date)){
-        td.style.backgroundColor = '#002469';
-        td.style.color = 'white';
-      }
-      td.innerHTML = date.getDate();
-      td.addEventListener('mouseover', () => {
-        if(!this.isSameDate(actDate))
-          td.style.backgroundColor = '#f1f1f1';
-      });
+		while (date.getMonth() === this.month) {
+			let actDate = date;
+			let pos = (date.getDay() - 1 < 0) ? 6 : date.getDay() - 1;
+			let td = this.getElement(this.DATEPICKER_DAYS + line + pos);
+			td.style.height = '34px';
+			td.style.borderRadius = '50%';
+			td.style.cursor = 'pointer';
+			if (this.isSameDate(date)) {
+				td.style.backgroundColor = '#002469';
+				td.style.color = 'white';
+			}
+			td.innerHTML = date.getDate();
+			td.addEventListener('mouseover', () => {
+				if (!this.isSameDate(actDate))
+					td.style.backgroundColor = '#f1f1f1';
+			});
 
-      td.addEventListener('mouseleave', () => {
-        if(!this.isSameDate(actDate))
-          td.style.backgroundColor = 'transparent';
-      });
+			td.addEventListener('mouseleave', () => {
+				if (!this.isSameDate(actDate))
+					td.style.backgroundColor = 'transparent';
+			});
 
-      td.addEventListener(EVENT.CLICK, () => {
-        this.setDate(actDate);
-        this.closeDatepicker();
-      });
+			td.addEventListener(EVENT.CLICK, () => {
+				this.setDate(actDate);
+				this.closeDatepicker();
+			});
 
-      if(pos === 6) {
-        line = line + 1;
-      }
-      day = day + 1;
-      date = new Date(this.year, this.month, day);
-    }
-  }
+			if (pos === 6) {
+				line = line + 1;
+			}
+			day = day + 1;
+			date = new Date(this.year, this.month, day);
+		}
+	}
 
-  getMonthName() {
-    switch (this.month) {
-      case 0: return MSG.JANUARY.toUpperCase();
-      case 1: return MSG.FEBRUARY.toUpperCase();
-      case 2: return MSG.MARCH.toUpperCase();
-      case 3: return MSG.APRIL.toUpperCase();
-      case 4: return MSG.MAY.toUpperCase();
-      case 5: return MSG.JUNE.toUpperCase();
-      case 6: return MSG.JULY.toUpperCase();
-      case 7: return MSG.AUGUST.toUpperCase();
-      case 8: return MSG.SEPTEMBER.toUpperCase();
-      case 9: return MSG.OCTOBER.toUpperCase();
-      case 10: return MSG.NOVEMBER.toUpperCase();
-      case 11: return MSG.DECEMBER.toUpperCase();
-      default: return MSG.JANUARY.toUpperCase();
-    }
-  }
+	getMonthName() {
+		switch (this.month) {
+			case 0: return MSG.JANUARY.toUpperCase();
+			case 1: return MSG.FEBRUARY.toUpperCase();
+			case 2: return MSG.MARCH.toUpperCase();
+			case 3: return MSG.APRIL.toUpperCase();
+			case 4: return MSG.MAY.toUpperCase();
+			case 5: return MSG.JUNE.toUpperCase();
+			case 6: return MSG.JULY.toUpperCase();
+			case 7: return MSG.AUGUST.toUpperCase();
+			case 8: return MSG.SEPTEMBER.toUpperCase();
+			case 9: return MSG.OCTOBER.toUpperCase();
+			case 10: return MSG.NOVEMBER.toUpperCase();
+			case 11: return MSG.DECEMBER.toUpperCase();
+			default: return MSG.JANUARY.toUpperCase();
+		}
+	}
 
-  getDayName(d) {
-    switch (d) {
-      case 0: return 'L';
-      case 1: return 'M';
-      case 2: return 'X';
-      case 3: return 'J';
-      case 4: return 'V';
-      case 5: return 'S';
-      case 6: return 'D';
-    }
-  }
+	getDayName(d) {
+		switch (d) {
+			case 0: return 'L';
+			case 1: return 'M';
+			case 2: return 'X';
+			case 3: return 'J';
+			case 4: return 'V';
+			case 5: return 'S';
+			case 6: return 'D';
+		}
+	}
 
-  previousMonth() {
-    if(this.month === 0) {
-      this.month = 11;
-      this.year = this.year- 1;
-    } else {
-      this.month = this.month- 1;
-    }
-    this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
-    this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
-    this.buildCalendar();
-  }
+	previousMonth() {
+		if (this.month === 0) {
+			this.month = 11;
+			this.year = this.year - 1;
+		} else {
+			this.month = this.month - 1;
+		}
+		this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+		this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
+		this.buildCalendar();
+	}
 
-  nextMonth() {
-    if(this.month === 11) {
-      this.month = 0;
-      this.year = this.year+ 1;
-    } else {
-      this.month = this.month + 1;
-    }
-    this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
-    this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
-    this.buildCalendar();
-  }
+	nextMonth() {
+		if (this.month === 11) {
+			this.month = 0;
+			this.year = this.year + 1;
+		} else {
+			this.month = this.month + 1;
+		}
+		this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+		this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
+		this.buildCalendar();
+	}
 
-  openDatepicker() {
-    const datePicker = this.getElement(this.DATEPICKER);
-    if(datePicker){
-      if(!this.isReadonly()) {
-        datePicker.classList.add('is-visible');
-      }
-      if(this.isMobile()){
-        datePicker.classList.add('is-mobile');
-      }
-    }
-  }
+	openDatepicker() {
+		const datePicker = this.getElement(this.DATEPICKER);
+		if (datePicker) {
+			if (!this.isReadonly()) {
+				datePicker.classList.add('is-visible');
+			}
+			if (this.isMobile()) {
+				datePicker.classList.add('is-mobile');
+			}
+		}
+	}
 
-  closeDatepicker() {
-    let div = this.getElement(this.DATEPICKER);
-    if(div && div.classList.contains('is-visible')){
-      div.classList.remove('is-visible');
-    }
-  }
+	closeDatepicker() {
+		let div = this.getElement(this.DATEPICKER);
+		if (div && div.classList.contains('is-visible')) {
+			div.classList.remove('is-visible');
+		}
+	}
 
-  isSameDate(date) {
-    // Tenga en cuenta la fecha de hoy si no se le pasa datos
-    const reference = this.date || this.today;
-    return date.getDate() === reference.getDate() &&
-           date.getMonth() === reference.getMonth() &&
-           date.getFullYear() === reference.getFullYear();
-  }
+	isSameDate(date) {
+		// Tenga en cuenta la fecha de hoy si no se le pasa datos
+		const reference = this.date || this.today;
+		return date.getDate() === reference.getDate() &&
+			date.getMonth() === reference.getMonth() &&
+			date.getFullYear() === reference.getFullYear();
+	}
 
-  setDate(date) {
-    let input = this.getElement(this.INPUT);
-    if ( date ) {
-      this.date = (date instanceof Date)
-        ? date : AonDateUtils.parse(date);
-      if (input)
-        input.value = AonDateUtils.formatDate(this.date, '/');
-    } else {
-      // Reseteamos el input
-      this.date   = '';
-      this.day   = this.today.getDate();
-      this.month = this.today.getMonth();
-      this.year  = this.today.getFullYear();
-      input.value = '';
-    }
+	setDate(date) {
+		let input = this.getElement(this.INPUT);
 
-    let datepickerDays = this.getElement(this.DATEPICKER_DAYS);
-    if(datepickerDays)
-      this.buildCalendar();
-    if(input && datepickerDays)
-      this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
-  }
+		if (date) {
+			this.date = (date instanceof Date)
+				? date
+				: AonDateUtils.parse(date);
 
-  setValue(value) { 
+			if (input)
+				input.value = AonDateUtils.formatDate(this.date, '/');
 
-  }
+			this.day = this.date.getDate();
+			this.month = this.date.getMonth();
+			this.year = this.date.getFullYear();
 
-  focus() {
-    this.getElement(this.INPUT).focus();
-  }
+		} else {
+			// Si no hay fecha -> reseteamos
+			this.date = null;
+			if (input) input.value = '';
 
-  isReadonly() {
-    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
-      && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
-  }
+			// El calendario seguirá usando today para montarse
+			this.day = this.today.getDate();
+			this.month = this.today.getMonth();
+			this.year = this.today.getFullYear();
+		}
 
-  disabledDate(b){
-    let input = this.getElement(this.INPUT);
-    if(input) {
-      input.readonly = b;
-      input.disabled = b;
-    }
-  }
+		let datepickerDays = this.getElement(this.DATEPICKER_DAYS);
+		if (datepickerDays)
+			this.buildCalendar();
 
-  setDisabled(b){
-    this.disabledDate(b);
-    this.readonly = "true";
-  }
+		if (input && datepickerDays)
+			this.dispatchEvent(new CustomEvent(EVENT.CHANGE, { detail: this.date }));
+	}
 
-  setVisible(visible){
-    if(visible){
-      this.setAttribute(CONSTANT.HIDDEN, visible);
-    } else {
-      this.removeAttribute(CONSTANT.HIDDEN);
-    }
-  }
 
-  clear(){
-    
-  }
+	setValue(value) {
 
-  getValue() {
-    return AonDateUtils.formatDate(this.date);
-  } 
-  
-  getDateValue() {
-    return AonDateUtils.formatDate(this.date, 'yyyy-MM-dd');
-  }
+	}
+
+	focus() {
+		this.getElement(this.INPUT).focus();
+	}
+
+	isReadonly() {
+		return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+			&& CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+	}
+
+	disabledDate(b) {
+		let input = this.getElement(this.INPUT);
+		if (input) {
+			input.readonly = b;
+			input.disabled = b;
+		}
+	}
+
+	setDisabled(b) {
+		this.disabledDate(b);
+		this.readonly = "true";
+	}
+
+	setVisible(visible) {
+		if (visible) {
+			this.setAttribute(CONSTANT.HIDDEN, visible);
+		} else {
+			this.removeAttribute(CONSTANT.HIDDEN);
+		}
+	}
+
+	clear() {
+
+	}
+
+	getValue() {
+		return this.date ? AonDateUtils.formatDate(this.date) : "";
+	}
+
+	getDateValue() {
+		return this.date ? AonDateUtils.formatDate(this.date, 'yyyy-MM-dd') : null;
+	}
 
 }
-if(!window.customElements.get(TAG.AON_NEW_DATE)){
-  window.customElements.define(TAG.AON_NEW_DATE,  AonNewDate);
+if (!window.customElements.get(TAG.AON_NEW_DATE)) {
+	window.customElements.define(TAG.AON_NEW_DATE, AonNewDate);
 }
