@@ -412,14 +412,10 @@ class Model303CANARIAS2025 extends Model303Base {
 		// Principal/Otras
 		tab.setWidget(row, 0, new Label(row == 2 ? "Principal" : "Otras"));
 
-		// FALTA - NO TENGO MUY CLARO COMO DEBE PONERSE EL EPIGRAFE, EN EL ESQUEMA NO ESPECIFICA EL TOTAL DE CARACTERES PERMITIDO Y EN EL PROGRAMA DE AYUDA, LLEVA
-		// HASTA 5 DIGITOS, PUES PARA LA CLAVE 1, EL PRIMER DIGITO ES LA CLAVE, PARA LA CLAVE 2, EL PRIMER DIGITO ES 2 O 3. PARA LA CLAVE 3 EL EPIGRAFE ES 5, 
-		// PARA LA CLAVE 5 EL EPIGRAFE ES 7 Y PARA LA CLAVE 4 EMPIEZA POR 0 HASTA 5 DIGITOS O 61, 62, O 63. DADO QUE ES TOTALMENTE MANUAL, SI DEBE INCLUIR LA CLAVE 
-		// SERA DE LONGITUD MAXIMA 5, SINO MAXIMO 4. COMPROBARLO AL GENERAR EL FICHERO
 		// Epígrafe (código)
 		AonTextBox epi = new AonTextBox();
 		epi.setVisibleLength(5);
-		epi.setMaxLength(4);
+		epi.setMaxLength(5);
 		epi.setValue(getModel().getDescription(epiKey));
 		epi.addValueChangeHandler(event -> {
 			getModel().putDescription(epiKey,epi.getValue());
