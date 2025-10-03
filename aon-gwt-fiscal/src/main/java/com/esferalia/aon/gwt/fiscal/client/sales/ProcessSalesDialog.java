@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -54,6 +55,9 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 	private HTMLPanel saleContainer = new HTMLPanel(AonStringUtils.EMPTY);
 	
 	private AonCustomListBox schema = new AonCustomListBox("Esquema dominio");
+	
+	private AonCustomTextBox url;
+	private AonCustomListBox domainType;
 	
 	private AonCustomListBox supportSeller;
 	private AonCustomListBox feePeriod;
@@ -144,7 +148,9 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		saleContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
 		
 		if(isSigDomain()) {
-			getSchemas(schemas -> schemas.forEach(s -> schema.addItem(s, s)));
+			schema.addItem("Pro", "pro-aonsolutions-net");
+			schema.addItem("AyudaT", "ayudat-aonsolutions-net");
+			schema.addItem("Grupo AyudaT", "grupo-ayudat-aonsolutions-net");
 			
 			saleContainer.add(createRow(schema, null));
 		}
@@ -219,8 +225,14 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		
 		if(null == parentDomain || AonStringUtils.isBlank(parentDomain.getSubDomainSuffix())) AonMessagePanel.showError(messagePanel, "El dominio padre no tiene definido el sufijo para los hijos");
 		
-		AonCustomTextBox url = new AonCustomTextBox("URL");
-		url.setEnable(false);
+		if(isSigDomain()){
+			domainType = new AonCustomListBox("Tipo Dominio");
+			DomainType.getValues().forEach(dt -> domainType.addItem(dt.getName(), dt.ordinal() + ""));
+			saleContainer.add(createRow(domainType, null));
+		}
+		
+		url = new AonCustomTextBox("URL");
+		url.setEnable(isSigDomain());
 		url.setValue(sale.getCustomer().getDocument().toLowerCase() + "-" + (null == parentDomain || AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix()) );
 		
 		saleContainer.add(createRow(url, null));
@@ -321,6 +333,7 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		else if(AonStringUtils.isBlank(parentDomain.getSubDomainSuffix())) AonMessagePanel.showError(messagePanel, "El dominio padre no tiene definido el sufijo para los hijos");
 		else if(AonStringUtils.isBlank(supportSeller.getValue())) AonMessagePanel.showError(messagePanel, "El agente de soporte es obligatorio");
 		else if(AonStringUtils.isBlank(feeWorkplace.getValue())) AonMessagePanel.showError(messagePanel, "El centro de trabajo para la creaci\u00f3n de cuotas es requerido");
+		else if(AonStringUtils.isBlank(url.getValue())) AonMessagePanel.showError(messagePanel, "La URL de la nueva empresa es requerida");
 		else {
 			
 			AonMessagePanel.showLoading(messagePanel, "Procesando pedido para generar una empresa..");
@@ -332,6 +345,7 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			headers.put("domain_name", params.getDomainName());
 			headers.put("domain_login", params.getUser());
 			headers.put("domain_id", String.valueOf(params.getDomain()));
+			headers.put("session_id", "AONd95770f269e711eb94390242ac130002");
 			
 			JSONObject body = new JSONObject();
 			
@@ -356,6 +370,8 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			body.put("saleId", new JSONString(sale.getId().toString()));
 			body.put("isSig", new JSONString(Boolean.toString(isSigDomain())));
 			body.put("schema", new JSONString(schema.getValue()));
+			body.put("url", new JSONString(url.getValue()));
+			body.put("domainType", new JSONString(domainType.getValue()));
 			
 			body.put("feePeriod", new JSONString(feePeriod.getValue()));
 			body.put("feeWorkplace", new JSONString(feeWorkplace.getValue()));
@@ -370,7 +386,6 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			
 			// Create the request builder with the complete URL
 			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
-//			requestBuilder.setHeader("session_id", AonStringUtils.isBlank(sessionId) ? "AONd95770f269e711eb94390242ac130002" : sessionId);
 			
 			headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 			
@@ -512,21 +527,6 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error direcciones del cliente: " + caught.getMessage());
-			}
-		});
-	}
-	
-	private void getSchemas(Consumer<List<String>> success) {
-		COMMON_SERVICE.getSchemas(new AsyncCallback<List<String>>() {
-			
-			@Override
-			public void onSuccess(List<String> schemas) {
-				success.accept(schemas);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error obtencias schemas: " + caught.getMessage());
 			}
 		});
 	}

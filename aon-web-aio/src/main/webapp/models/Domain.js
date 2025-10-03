@@ -16,6 +16,7 @@ export class Domain {
     definedUsers;
     aonStatus;
     aonCustomer;
+    expirationDate;
 
     constructor(domain) {
         if(domain) {
@@ -33,6 +34,7 @@ export class Domain {
            this.definedUsers = domain.definedUsers;
            this.aonStatus = domain.aonStatus;
            this.aonCustomer = domain.aonCustomer;
+           this.expirationDate = domain.expirationDate;
         } else {
             this.id = LS.getDomainId();
             this.name = LS.getDomainName();
@@ -161,6 +163,15 @@ export class Domain {
 
     setAonCustomer(aonCustomer) {
         this.aonCustomer = aonCustomer;
+    }
+    
+    getExpirationDate() {
+        return this.expirationDate; 
+    }
+
+    setExpirationDate(expirationDate) {
+        this.expirationDate = expirationDate;
+        return this;
     }
 
     isOffice(){

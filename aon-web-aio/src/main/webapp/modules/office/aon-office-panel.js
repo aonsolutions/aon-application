@@ -18,7 +18,7 @@ import { getTastHolders } from "../../services/taskHolderService.js";
 import { getWorkgroups } from "../../services/workgroupService.js";
 import { ProjectUtils } from "../project/ProjectUtils.js";
 import { getCustomer, saveRelationShip } from "../../services/registryService.js";
-import { BOOKING_PANEL, LINK_CUSTOMER_DOMAINS, LINK_DOMAINS, SYNC_DOMAINS } from "./ConsoleOptions.js";
+import { BOOKING_PANEL, LINK_CUSTOMER_DOMAINS, LINK_DOMAINS, SIG_CONSOLE, SYNC_DOMAINS } from "./ConsoleOptions.js";
 import { AonLinkDomains } from "../domains/aon-link-domains.js";
 
 import * as GWT from "../../gwt/gwt.js";
@@ -26,6 +26,8 @@ import { AonTarget } from "../registry/target/aon-target.js";
 import { AonWorkgroup } from "../configuration/groups/aon-workgroup.js";
 
 import { AonMobileCustomerList } from "../registry/customer/aon-mobile-customer-list.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
+import { getDomainUserRoles } from "../../services/companyService.js";
 
 export class AonOfficePanel extends AonElement {
 
@@ -44,6 +46,8 @@ export class AonOfficePanel extends AonElement {
 
 	_filterCustomers;
 	_filterTaskHolders;
+	
+	dur;
 
 	setCustomerSelected(customerSelected) {
 		this._customerSelected = customerSelected;
@@ -96,7 +100,10 @@ export class AonOfficePanel extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.build();
+		getDomainUserRoles({ reload: true }).then((r) => {
+	      this.dur = new DomainUserRoles(r);
+	      this.build();
+	    });
 	}
 
 	initialize() {
@@ -131,17 +138,18 @@ export class AonOfficePanel extends AonElement {
 	build() {
 		this.createApplication(this.id, MSG.OFFICE, new AonApplication());
 		this.buildSidenav();
-
-		const { OfficeOptions } = OfficeEnums;
+		
 		let customerSideNavOpt = this.getElement("aonOfficePanelSidenavsideNavcustomer");
-		customerSideNavOpt.click();
+		if(customerSideNavOpt) customerSideNavOpt.click();
 
 		let aonContentBeta = this.getElementsByClassName("aonContentBeta");
-		aonContentBeta.style.height = 'auto';
+		if(aonContentBeta) aonContentBeta.style.height = 'auto';
 
 		let rootPanel = this.getElement("rootPanel");
-		rootPanel.style.height = 'auto';
-		rootPanel.style.marginTop = '4rem';
+		if(rootPanel) {
+			rootPanel.style.height = 'auto';
+			rootPanel.style.marginTop = '4rem';
+		}
 
 	}
 
@@ -162,6 +170,12 @@ export class AonOfficePanel extends AonElement {
 			//linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
 			//consoleOptions.push(linkDomain);
 			
+			if(this.dur.isDev() || this.dur.isAdmin()){
+				let sigConsole = SIG_CONSOLE;
+				sigConsole.fn = () => this.showView(SIG_CONSOLE.id);
+				consoleOptions.push(sigConsole);
+			}
+			
 			let syncDomains = SYNC_DOMAINS;
 			syncDomains.fn = () => this.showView(SYNC_DOMAINS.id);
 			consoleOptions.push(syncDomains);
@@ -173,6 +187,10 @@ export class AonOfficePanel extends AonElement {
 			let service = ServiceOptions.AON_SERVICE;
 			service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
 			consoleOptions.push(service);
+			
+			let salesEnterprise = ServiceOptions.AON_SALES_ENTERPRISE;
+			salesEnterprise.fn = () => this.showView(ServiceOptions.AON_SALES_ENTERPRISE.id);
+			consoleOptions.push(salesEnterprise);
 
 			application.addSidenavOptions(MSG.CONSOLE, consoleOptions);
 		}
@@ -237,28 +255,30 @@ export class AonOfficePanel extends AonElement {
 		
 		application.addSidenavOptions(MSG.OFFICE, officeOptions);
 
-		let bookingOptions = [];
-
-		let targetEnterprise = ServiceOptions.AON_TARGET_ENTERPRISE;
-		targetEnterprise.fn = () => this.showView(ServiceOptions.AON_TARGET_ENTERPRISE.id);
-		bookingOptions.push(targetEnterprise);
-
-		window.addEventListener("message", (event) => {
-			if ((event.origin === "null" || event.origin === window.origin)
-				&& event.data?.type === "CUSTOMER_ENTERPRISE_DONE") {
-				const customerRegistry = event.data.payload;
-				this.getCustomerCustom(customerRegistry)
-					.then(customer => {
-						this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER, { customer });
-					});
-			}
-		});
-
-		let salesEnterprise = ServiceOptions.AON_SALES_ENTERPRISE;
-		salesEnterprise.fn = () => this.showView(ServiceOptions.AON_SALES_ENTERPRISE.id);
-		bookingOptions.push(salesEnterprise);
-
-		application.addSidenavOptions(MSG.BOOKING, bookingOptions);
+		if (!this.isSig()){
+			let bookingOptions = [];
+	
+			let targetEnterprise = ServiceOptions.AON_TARGET_ENTERPRISE;
+			targetEnterprise.fn = () => this.showView(ServiceOptions.AON_TARGET_ENTERPRISE.id);
+			bookingOptions.push(targetEnterprise);
+	
+			window.addEventListener("message", (event) => {
+				if ((event.origin === "null" || event.origin === window.origin)
+					&& event.data?.type === "CUSTOMER_ENTERPRISE_DONE") {
+					const customerRegistry = event.data.payload;
+					this.getCustomerCustom(customerRegistry)
+						.then(customer => {
+							this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER, { customer });
+						});
+				}
+			});
+	
+			let salesEnterprise = ServiceOptions.AON_SALES_ENTERPRISE;
+			salesEnterprise.fn = () => this.showView(ServiceOptions.AON_SALES_ENTERPRISE.id);
+			bookingOptions.push(salesEnterprise);
+			
+			application.addSidenavOptions(MSG.BOOKING, bookingOptions);
+		}
 
 		let types = {
 			id: "Types",
@@ -700,6 +720,10 @@ export class AonOfficePanel extends AonElement {
 		return new Promise(async (resolve) => {
 			let aonView = undefined;
 			switch (view) {
+				case SIG_CONSOLE.id:
+					this.clearToolbar();
+					GWT.iLoad(GWT.CONSOLE, this.getApplication().CONTENT);
+					break;
 				case BOOKING_PANEL.id:
 					GWT.iLoad(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
 					break;

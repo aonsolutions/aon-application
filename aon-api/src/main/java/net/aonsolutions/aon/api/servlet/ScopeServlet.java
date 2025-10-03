@@ -101,7 +101,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 				return array;
 			}
 		} else {
-			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
+			if(null != api.getUser().getDomain().getId() && api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
 				Integer domainSearch = JsonUtils.getInteger(api.getData(), "searchDomain");

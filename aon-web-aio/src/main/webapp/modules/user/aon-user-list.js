@@ -62,7 +62,7 @@ export class AonUserList extends AonElement {
 		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
 		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '20%');
 		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '5%');
-		table.addColumn('', "fn", "option", '5%');
+		table.addColumn('', "icons", "icons", '5%');
 		table.addEventListener('more', () => {
 			if(this.more) this.loadMore()
 		});
@@ -80,17 +80,28 @@ export class AonUserList extends AonElement {
 			if(this.back) {
 				this.back = false;
 				getUsers().forEach((user, i) => {
-					user.option =  this.getOptions(user);
+					user.icons =  this.getOptions(user);
 					table.addRow(user, () => this.aonUser(user, i));
 				});
 			} else {
 				this.filter.page = 1;
 				if(this.isSig()){
+					
+					// Set default values if not sessionData given
+					if(!this.sessionData){
+						this.sessionData = {
+							session_id: LS.getToken(),
+							domain_name: LS.getDomainName(),
+							domain_id: LS.getDomainId(),
+							domain_login: LS.getDomainLogin()
+				 		}
+					}
+					
 					getSigUserListSpeed(this.filter, this.sessionData).then(users => {
 						setUsers(users);
 						table.removeRows();
 						users.forEach((user, i) => {
-							user.option =  this.getOptions(user);
+							user.icons =  this.getOptions(user);
 							table.addRow(user, () => this.aonUser(user, i));
 						});
 					});
@@ -99,7 +110,7 @@ export class AonUserList extends AonElement {
 						setUsers(users);
 						table.removeRows();
 						users.forEach((user, i) => {
-							user.option =  this.getOptions(user);
+							user.icons =  this.getOptions(user);
 							table.addRow(user, () => this.aonUser(user, i));
 						});
 					});
@@ -140,12 +151,13 @@ export class AonUserList extends AonElement {
 	getOptions(user) {
 		return this.isBeta() || this.isAyudaT() ?
 			[{
-				name: "Suplantar",
-				icon: "token",
 				id:"supplant",
+				color: "#5f6368",
+				title: 'Suplantar',
+				icon: "social_distance",
 				fn: () => this.supplant(user)
-			}
-		] : [];
+			}]
+		 : [];
 	}
 
 	supplant(user) {

@@ -128,6 +128,7 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 		sync.addItem("No vinculados", "1");
 		sync.addItem("No sincronizados", "2");
 		sync.addItem("No vinculados ni sincronizados", "3");
+		sync.setValue("3");
 		sync.addChangeHandler(e -> onSearch());
 
 		docklayoutPanel.addFilterWidget(customerStatus);

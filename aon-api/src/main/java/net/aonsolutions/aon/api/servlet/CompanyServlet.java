@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -505,13 +506,22 @@ public class CompanyServlet extends AonApiHttpServlet{
 	private JSONObject saveBooking(AonApiData api){
 		Booking oldBooking = AON.getBooking(api.getDomain(), api.getUser());
 		boolean domainPayer = JsonUtils.getboolean(api.getData(), "domainPayer");
+		
+		boolean domainActive = JsonUtils.getboolean(api.getData(), "domainActive");
+		Date domainExpirationDate = JsonUtils.getDate(api.getData(), "domainExpirationDate");
+		Integer domainScope = JsonUtils.getInteger(api.getData(), "domainScope");
+		
 		Booking newBooking = new Booking()
 			.setDomain(api.getDomain())
 			.setCompany(oldBooking.getCompany())
 			.setType(DomainType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE)))
 			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS))
-			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
+			.setPayer(domainPayer ? api.getDomain().getId().toString() : "")
+			.setDomainActive(domainActive)
+			.setDomainExpirationDate(domainExpirationDate)
+			.setDomainScope(domainScope)
+			;
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
 		
