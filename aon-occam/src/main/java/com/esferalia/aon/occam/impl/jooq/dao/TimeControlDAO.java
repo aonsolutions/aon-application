@@ -121,16 +121,16 @@ public class TimeControlDAO {
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Timestamp startTimestamp = new Timestamp(startDate.getTime());
 		Timestamp endTimestamp = new Timestamp(endDate.getTime());
-		
+		Date startDateToUse = startDate;
+		Date endDateToUse = endDate;
 		LinkedList<TimeControl> tcList = new LinkedList<>();
 		LinkedList<TimeControlDetail> list = getTimeControlDetailList(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
-
 		TaskHolderDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()))
 		.forEach(th -> {
-				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
+				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), startDateToUse, endDateToUse, null);
 				tcList.add(tc);
 			});
 		return tcList.stream();
@@ -233,7 +233,7 @@ public class TimeControlDAO {
 			f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getDateProperty().ge(startTimestamp))
 				.and(f.getDateProperty().le(endTimestamp))
-				.and(f.getTaskHolderProperty().eq(taskHolderId))), null, null, null);
+				.and(f.getTaskHolderProperty().eq(taskHolderId))), startTimestamp, endTimestamp, null);
 	}
 	
 	public static TimeControlDetail save(AONContext ctx, TimeControlDetail tcd) {
@@ -355,12 +355,12 @@ public class TimeControlDAO {
 			}
 			tc.getDetail().add(r);
 		});
-		
+		Timestamp startTimestamp = new Timestamp(startDate.getTime());
+		Timestamp endTimestamp = new Timestamp(endDate.getTime());
 		TimeControlDetail tcd = getLastTimeControlDetail(ctx, 
 			f -> 
 			f.getTaskHolderProperty().eq(taskHolderId)
-			.and(f.getIdProperty().ge(0)));
-
+			.and(f.getIdProperty().ge(0).and(f.getDateProperty().between(startTimestamp, endTimestamp))));
 		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
 			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
 			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
@@ -390,7 +390,6 @@ public class TimeControlDAO {
 		tc.setStartDate(startDate);
 		tc.setEndDate(endDate);
 		tc.setGroup(group);
-		
 		return tc;
 	}
 

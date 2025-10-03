@@ -4,14 +4,14 @@
   height          : v.$height-cabecera;
   min-height      : v.$height-cabecera;
   position        : sticky;
-  z-index         : v.$num-1; 
+  z-index         : v.$num-3; 
   top             : v.$px-0;
   padding         : v.$px-0 v.$padding;
   display         : flex;
   justify-content : space-between;
   align-items     : center;
   
-  #aonLoginLogoDiv{
+  #aon-logo{
     max-height        : v.$height-cabecera;
     background-size   : contain;
     background-repeat : no-repeat;
@@ -51,8 +51,14 @@
       display     : flex;
       gap         : v.$gap;
       align-items : center;
+      position    : relative;
       span{
         height : v.$px-24; // Centrar iconos... ya que no se cargan todos igual
+      }
+      @media (max-width: v.$menu-resolucion-mobile) {
+        #aonHeaderCompanyName{
+          display: none;
+        }
       }
     }
   }

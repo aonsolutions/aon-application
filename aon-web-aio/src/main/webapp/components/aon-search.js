@@ -175,14 +175,14 @@ export class AonSearch extends AonElement {
 	dispatchCleanEventSearch(value, event=undefined){
       let eventType = EVENT.RESET_FILTER;
       let clear     = false;
+	  this.clearFormData();
       // Por ahora solo esta en el menu documental limpienado filtros, ya que veo que en otras vistas hace cosas raras
       if(this.isBetaDoc()){
         eventType = EVENT.SEARCH_NEW;
         clear     = true;
-        value     = '';
+		value	  =   '';
         this.clearFormData();
       }
-      
       this.dispatchEvent(new CustomEvent(eventType,{
           detail:{
               event,
@@ -478,8 +478,7 @@ export class AonSearch extends AonElement {
 			}
 		}
 	}
-
-    getValues() {
+	getValues() {
 		let divOpts = this.getElement(this.OPTIONS);
 		return divOpts ? serializeForm(divOpts) : {};
     }

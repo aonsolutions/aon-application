@@ -67,9 +67,4 @@ $height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$menu-top-height) * 
   border-radius : v.$border-radius;
   overflow      : auto;
   min-height    : $height-min-body;
-  &:has(iframe){
-    width     : v.$pct-100;
-    height    : $height-min-body;
-    box-sizing: border-box;
-  }
 }

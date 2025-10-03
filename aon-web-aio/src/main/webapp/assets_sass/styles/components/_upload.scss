@@ -1,0 +1,20 @@
+@use '../variables' as v;
+
+aon-new-upload{
+	display: flex;
+	.upload-component{
+		width					: v.$pct-100;
+		padding       : v.$padding-min v.$padding;
+		cursor				: pointer;
+		border-radius : v.$border-radius;
+		.upload-component-label{
+			cursor		 : pointer;
+			display		 : flex;
+			align-items: center;
+			gap				 : v.$gap-min;
+			.upload-component-text{
+				font-size: v.$px-16;
+			}
+		}
+	}
+}

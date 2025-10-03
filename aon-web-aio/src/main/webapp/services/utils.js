@@ -160,6 +160,14 @@ export const serializeForm = (form) => {
   return obj;
 }
 
+export const cleanDetailObject = (obj) => {
+  return Object.entries(obj)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+    .reduce((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+}
 export const setValueName = (name, value) => {
   let el = document.querySelector(`[name="${name}"]`);
   if (el && value) el.value = value;

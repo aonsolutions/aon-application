@@ -1,4 +1,4 @@
-import { CONSTANT, MSG, TAG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
 import { AonList } from '../../../components/aon-list.js';
 import { getElaboration, getElaborations } from '../../../services/warehouseService.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
@@ -10,6 +10,27 @@ export class AonElaborationList extends AonList {
         super();
     }
 
+    ELABORATION_SEARCH_OPTIONS = [
+    {
+      type: CONSTANT.DATE,
+      name: "startDate",
+      id: "startDate",
+      title: MSG.FROM,
+    },
+    {
+      type: CONSTANT.DATE,
+      name: "endDate",
+      id: "endDate",
+      title: MSG.TO,
+    },
+    // {
+    //   type: CONSTANT.SELECT,
+    //   name: "status",
+    //   id: "status",
+    //   title: MSG.STATUS
+    // },
+  ];
+
     initialize() {
         this.id = this.id || 'aonElaborationList';
 		this.TABLE = this.id + CONSTANT.TABLE.initCap();
@@ -17,6 +38,20 @@ export class AonElaborationList extends AonList {
             page:1,
             perPage:50
         }
+
+        const btnSearch = this.getApplication().addSearchOption();
+        btnSearch.addEventListener(EVENT.SEARCH_NEW, (event) => this.search(event.detail));
+        btnSearch.buildOptionsFilter(this.ELABORATION_SEARCH_OPTIONS);
+        btnSearch.querySelectorAll('input[type="date"]').forEach(input => {
+            input.type = 'text';
+        });
+        // this.getElement('status').setOptions([
+        //     { name: "-", value: undefined },
+        //     { name: MSG.PENDING, value: "PENDING" },
+        //     { name: MSG.INVOICED, value: "INVOICED" },
+        //     { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" },
+        // ]);
+        
         this.more = this.elaborations ? false : true;
         this.columns = [
             { name: MSG.DATE, type: 'date', id: 'dateTable', width: '120px' },

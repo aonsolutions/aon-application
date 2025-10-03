@@ -151,32 +151,14 @@ export class AonHeader extends AonElement {
 		// aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		// aonLeftTopMenu.appendChild(aonHeaderApp);
 		
-		let aonHeaderSearch = this.createElement(TAG.SPAN);
-		aonHeaderSearch.id = this.AON_HEADER_SEARCH;
-		aonHeaderSearch.classList.add("aonHeaderSearch");
-		
-		let aonHeaderSearchBox = new AonSearchBox();
-		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
-		aonHeaderSearchBox.newTheme = this.newTheme;
-		aonHeaderSearchBox.addEventListener(EVENT.KEYUP, () => {
-			clearTimeout(this.searchTimeoutId);
-			this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
-		});
-		aonHeaderSearchBox.addEventListener(EVENT.FOCUS, () => {
-			clearTimeout(this.searchTimeoutId);
-			this.searchTimeoutId = setTimeout( () => this.showSearch(this) , 300 );
-		});
-		aonHeaderSearch.appendChild(aonHeaderSearchBox);
-		div.appendChild(aonHeaderSearch);
-
 		let aonHeaderButtons = this.createElement(TAG.DIV);
 		aonHeaderButtons.id = 'aonHeaderButtons';
 		aonHeaderButtons.className = "aonHeaderButtons";
-		if (!LS.isNewTheme() && !this.newTheme){
-			aonHeaderButtons.style.display = "flex";
-			aonHeaderButtons.style.alignItems = "center";		
-		}
-		
+		// if (!LS.isNewTheme() && !this.newTheme){
+		// 	aonHeaderButtons.style.display = "flex";
+		// 	aonHeaderButtons.style.alignItems = "center";		
+		// }
+
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.classList.add("aonHeaderCompany");
@@ -192,9 +174,8 @@ export class AonHeader extends AonElement {
 			});
 		}
 		aonHeaderCompany.appendChild(aonHeaderCompanyName);
-
 		aonHeaderButtons.appendChild(aonHeaderCompany);
-		
+
 		let aonHeaderHome = this.createElement(TAG.SPAN);
 		aonHeaderHome.id = this.AON_HEADER_HOME;
 
@@ -217,7 +198,44 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
-				
+
+		// Buscar
+			// let aonHeaderSearch = this.createElement(TAG.SPAN);
+			// aonHeaderSearch.id = this.AON_HEADER_SEARCH;
+			// aonHeaderSearch.classList.add("aonHeaderSearch");
+			// Muestra el listado de resultados de la busqueda
+			let aonHeaderSearchDialogMenu 					= new AonDialogSearch();
+			aonHeaderSearchDialogMenu.id 						= this.AON_HEADER_SEARCH_DIALOG_MENU;
+			aonHeaderSearchDialogMenu.style.display = 'none';
+			this.appendChild(aonHeaderSearchDialogMenu);
+			// Lupa y el input
+			let aonHeaderSearchBox = new AonSearchBox();
+			aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
+			aonHeaderSearchBox.newTheme = this.newTheme;
+			aonHeaderSearchBox.addEventListener(EVENT.BUILD, () => {
+				const input = aonHeaderSearchBox.input;
+				input.addEventListener(EVENT.KEYUP, () => {
+					if(input.value.length > 0)
+						this.search(this);
+					else
+						aonHeaderSearchDialogMenu.close();
+				});
+				input.addEventListener(EVENT.FOCUSIN, () => {
+					if(input.value.length > 0)
+						this.showSearch(this)
+					else
+						aonHeaderSearchDialogMenu.close();
+				});
+				input.addEventListener(EVENT.BLUR, () => {
+					// Cerramos si pierde el focus el input
+					aonHeaderSearchDialogMenu.close();
+				});
+			});
+			// aonHeaderSearch.appendChild(aonHeaderSearchBox);
+			// div.appendChild(aonHeaderSearch);
+			aonHeaderButtons.appendChild(aonHeaderSearchBox);
+		// FIN Buscar
+
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
 		aonHeaderHelp.title = MSG.HELP;
@@ -279,15 +297,15 @@ export class AonHeader extends AonElement {
 		// this.buildLogo();
 
 		if(!this.isMobile()) {
-			if(!LS.isNewTheme() && !this.newTheme) {
-				let aonHeaderButtons = this.getElement('aonHeaderButtons');
-				aonHeaderButtons.style.position = 'absolute';
-				aonHeaderButtons.style.right = '20px';
- 		 		aonHeaderButtons.style.top = '10px';
+			// if(!LS.isNewTheme() && !this.newTheme) {
+			// 	let aonHeaderButtons = this.getElement('aonHeaderButtons');
+			// 	aonHeaderButtons.style.position = 'absolute';
+			// 	aonHeaderButtons.style.right = '20px';
+ 		 	// 	aonHeaderButtons.style.top = '10px';
 
-				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-				aonHeaderSearch2.style.marginLeft = '108px';
-			}
+			// 	let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
+			// 	aonHeaderSearch2.style.marginLeft = '108px';
+			// }
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
@@ -419,13 +437,13 @@ export class AonHeader extends AonElement {
 			});
 
 			if (!this.isMobile()) {
-				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+				// let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+				// let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+				// let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 
-				if (!LS.isNewTheme() && !this.newTheme) {
-					let aonShowMenu = this.getElement('aonShowMenu');
-				}
+				// if (!LS.isNewTheme() && !this.newTheme) {
+				// 	let aonShowMenu = this.getElement('aonShowMenu');
+				// }
 
 				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
@@ -500,6 +518,8 @@ export class AonHeader extends AonElement {
 			applications.className = 'aonMenuLeftopStart';
 
 			companySelectorOpenedManually = false;
+
+			aonHeaderCompanyList.style.display = LS.isCompanySelected() && !LS.isOnlyOne() ? 'block' : 'none';
 		});
 
 		if(this.activeTimecontrol) {
@@ -590,10 +610,6 @@ export class AonHeader extends AonElement {
 
 		// let header6 = this.getElement("aonHeaderUserButtonIconButton")
 		// header6.style.color = "var--(aonGrayHeaderButtonsColor)";
-		
-		let aonHeaderSearchDialogMenu = new AonDialogSearch();
-		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
-		this.appendChild(aonHeaderSearchDialogMenu);
 	}
 
 	timeControlStatus(signin) {
@@ -665,11 +681,11 @@ export class AonHeader extends AonElement {
 		let aonHeaderHelp = this.getElement(this.AON_HEADER_HELP);
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 
-		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
+		// let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
 		// aonHeaderSearch.style.display = company ? 'none' : 'flex';
-		aonHeaderSearch.style.display = 'flex';
-		if(!LS.isNewTheme() && !this.newTheme)
-			aonHeaderSearch.style.marginLeft = '33px';
+		// aonHeaderSearch.style.display = 'flex';
+		// if(!LS.isNewTheme() && !this.newTheme)
+		// 	aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
 		aonHeaderHome.style.display = company ? 'block' : 'none';
@@ -920,11 +936,9 @@ export class AonHeader extends AonElement {
     }
 	
 	search(aonHeader) {
-		
 		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
-		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
-		
 		let aonHeaderSearchBoxValue = aonHeaderSearchBox.value;
+		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
 		
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
@@ -960,12 +974,13 @@ export class AonHeader extends AonElement {
 				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.EMPLOYEES}</span>`,
 			});
 
-			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
-			
-			const top  = aonHeaderSearchBox.getBoundingClientRect().bottom ;
-			const left = aonHeaderSearchBox.getBoundingClientRect().left;
-			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left);
-			aonHeaderSearchDialogMenu.open();
+			const top  = aonHeaderSearchBox.getBoundingClientRect().bottom + 10;
+			const left = 0;
+			// const left = aonHeaderSearchBox.getBoundingClientRect().left;
+			// aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`;
+
+			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left, true);
+			aonHeaderSearchDialogMenu.open(true);
 			
 			// Copy & Paste of company domain URL.
 			this.setupDomainUrlCopy(searchOptions);
@@ -1024,15 +1039,13 @@ export class AonHeader extends AonElement {
 	}
 
 	showSearch(aonHeader) {
-		
-		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
+		// let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
 		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
 		
 		if ( aonHeaderSearchDialogMenu.hasContent() ) {
-			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
-			aonHeaderSearchDialogMenu.open();
+			// aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
+			aonHeaderSearchDialogMenu.open(true);
 		}
- 		
 	}
 
 	setupDomainUrlCopy(searchOptions) {
@@ -1159,8 +1172,8 @@ export class AonHeader extends AonElement {
 			let aonHeaderCompanyListButton = this.getElement(this.AON_HEADER_COMPANY_LIST_BUTTON);
 			aonHeaderCompanyListButton.style.display = 'block';
 		} else {
-			aonHeaderHome.style.right = '140px';
-			aonHeaderCompany.style.right = '180px';
+			// aonHeaderHome.style.right = '140px';
+			// aonHeaderCompany.style.right = '180px';
 		}
 /*		
 /		

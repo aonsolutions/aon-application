@@ -66,10 +66,35 @@ export class AonList extends AonElement {
 		this.init();
 	}
 
-	search(detail) {
-		if(detail.search) this.filter.value = detail.search;
-		this.init();
-	}
+    search(detail) {
+        const isClean = !detail || Object.keys(detail).length <= 2; // si el detalle solo tiene "search" y "event"
+
+        if (isClean) {
+            // resetar el filtro
+            this.filter = {
+                page: 1,
+                perPage: 50
+            };
+        } else {
+            // nuevo filtro desde cero
+            this.filter = {
+                page: 1,
+                perPage: 50,
+                ...detail
+            };
+            // eliminar claves vacías
+            for (let key in this.filter) {
+                if (
+                    this.filter[key] === '' ||
+                    this.filter[key] === undefined ||
+                    this.filter[key] === null
+                ) {
+                    delete this.filter[key];
+                }
+            }
+        }
+        this.init();
+    }
 
     init() {
         let table = this.getElement(this.TABLE);

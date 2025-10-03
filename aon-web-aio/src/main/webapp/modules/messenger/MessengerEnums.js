@@ -4,7 +4,6 @@ import { PRESENCE_FILTER } from "../timecontrol/signinEnums.js";
 const AON_MESSENGER_LIST_OPEN = {
     name: 'Abiertas',
     id:'Abiertas',
-    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: "#2e7d32",
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
@@ -12,7 +11,6 @@ const AON_MESSENGER_LIST_OPEN = {
 const AON_MESSENGER_LIST_IN_PROGRESS = {
     name: 'Derivadas',
     id:'Derivadas',
-    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: CSS.variable(COLORS.MATERIAL_BLUE),
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
@@ -20,7 +18,6 @@ const AON_MESSENGER_LIST_IN_PROGRESS = {
 const AON_MESSENGER_LIST_CLOSE = {
     name: 'Cerradas',
     id:'Cerradas',
-    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: CSS.variable(COLORS.AON_BLACK),
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
@@ -28,7 +25,6 @@ const AON_MESSENGER_LIST_CLOSE = {
 const AON_MESSENGER_LIST_ARCHIVE = {
     name: 'Archivadas',
     id: 'Archivadas',
-    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: COLORS.ORANGE,
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };

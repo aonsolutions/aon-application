@@ -44,7 +44,7 @@ import * as LS from "../../services/localStorageService.js";
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 import { generateJobId } from "./InvoiceUtils.js";
-import { getReader } from "../../services/utils.js";
+import { cleanDetailObject, getReader } from "../../services/utils.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
 import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
@@ -604,12 +604,12 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvestList({ value });
 		} else {
 			this.filter.description = value;
-			if (detail.recorded) this.filter.recorded = detail.recorded;
+			this.filter.recorded = detail.recorded;
 			this.filter.from = detail.startDate;
 			this.filter.to = detail.endDate;
 			this.filter.page = 1;
 			this.filter.perPage = 50;
-			this.aonInvoiceList(this.filter, this.invofoxFilter);
+			this.aonInvoiceList(cleanDetailObject(this.filter), this.invofoxFilter);
 		}
 	}
 

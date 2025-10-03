@@ -1,0 +1,56 @@
+@use '../variables' as v;
+
+aon-search-box{
+  width           : v.$px-24; // ancho del icono
+  background-color: transparent;
+  transition      : width 0.4s ease-in-out, background-color 0.3s ease;
+  #aon-search-div{
+    aon-new-input{
+      display: none;
+    }
+  }
+  &.open{
+    position: absolute;
+    z-index : v.$num-1;
+    right   : v.$num-0;
+    width   : v.$pct-100;
+    #aon-search-div{
+      display    : flex;
+      align-items: center;
+      gap        : v.$gap-min;
+      aon-new-input{
+        display: block;
+        width  : v.$pct-100;
+        #search-inputTitle{
+          display: none;
+        }
+      }
+    }
+  }
+}
+// donde se abre el resultado de busqueda
+aon-dialog-search{
+  position: absolute;
+  width   : -webkit-fill-available;
+  width   : -moz-available;
+  width   : fill-available;
+  margin  : v.$px-0 v.$padding;
+  max-height  : v.$vh-50;
+  border-radius: v.$border-radius;
+  overflow: auto;
+  ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    padding: v.$padding v.$px-0;
+    border-radius: v.$border-radius;
+    display: flex;
+    flex-direction: column;
+    li{
+      display: flex;
+      padding: v.$padding-min v.$padding;
+      gap    : v.$gap-min;
+    }
+  }
+}

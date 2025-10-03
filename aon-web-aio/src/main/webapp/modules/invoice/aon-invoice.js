@@ -261,7 +261,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	resize() {
-		if(!this.isMobile()){
+		// if(!this.isMobile()){
 			let general = this.getElement(this.GENERAL);
 			let generalCard = this.getElement(this.GENERAL_CARD);
 			let tax = this.getElement(this.TAX);
@@ -269,7 +269,8 @@ export class AonInvoice extends AonElement {
 			let commentCard = this.getElement(this.COMMENT_CARD);
 			
 			if(window.innerWidth && window.innerWidth > 1100 && !this.fileOpened){
-				if(general) general.style.display='flex';
+				if(general)
+					general.style.display='flex';
 //				if(generalCard) generalCard.style.width = '50%';
 //				if(tax) tax.style.width = '50%';
 				let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
@@ -280,7 +281,8 @@ export class AonInvoice extends AonElement {
 				}
 
 			} else if(window.innerWidth && window.innerWidth < 1050){
-				if(general) general.style.display='block';
+				if(general)
+					general.style.display='block';
 //				if(generalCard) generalCav
 				if(remarksCard) remarksCard.style.width = '100%';
 				if(commentCard) commentCard.style.width = '100%';
@@ -289,7 +291,7 @@ export class AonInvoice extends AonElement {
 			// if(window.innerWidth && window.innerWidth < 900){
 			// 	this.getApplication().closeSidenav();
 			// }
-		}
+		// }
 	}
 
 	reload(){
@@ -1470,6 +1472,8 @@ export class AonInvoice extends AonElement {
 				if(!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
 				activity.setOptions(activities);
 				activity.value = this.invoice.getActivity().id;
+			} else {
+				activity.setOptions(activities);
 			}
 		});
 

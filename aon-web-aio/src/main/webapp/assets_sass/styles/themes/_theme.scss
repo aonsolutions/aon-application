@@ -18,6 +18,7 @@
 ) {
   
   $color-900-alpha   : #{$color-900}0D;
+  $color-info-alpha  : #{$color-900}E6;
   $color-dialog-alpha: #{$color-800}80;
   
   $body-margin       : unset;
@@ -235,6 +236,14 @@
     aon-icon {
       &::after {
         background-color: $color-text;
+      }
+    }
+    // Mensaje de info
+    aon-info{
+      .tooltip {
+        background: $color-info-alpha;
+        box-shadow: $box-shadow-dialog;
+        color     : $color-text-button;
       }
     }
     // separador
@@ -600,6 +609,19 @@
         }
       }
     }
+    aon-dialog-search{
+      box-shadow      : $box-shadow-dialog;
+      background-color: $color-box;
+      ul{
+        li{
+          color: $color-text-general;
+          &:hover, &.selected{
+            background-color: $color-500;
+            color           : $color-text-button;
+          }
+        }
+      }
+    }
     // Card
     aon-card{
       background-color: $color-box;
@@ -619,6 +641,12 @@
             }
           }
         }
+      }
+    }
+    // search - (solo esta en la cabecera)
+    aon-search-box{
+      &.open{
+        background-color: $color-900;
       }
     }
     // Switch
@@ -678,6 +706,20 @@
               border: $border;
             }
           }
+        }
+      }
+    }
+    // Upload
+    aon-new-upload{
+      .upload-component{
+        color             : $color-text-button;
+        background            : $loginbutton-background;
+        background-size       : $loginbutton-background-size;
+        // background-position   : $loginbutton-backgorund-position;
+        background-position   : $loginbutton-hover-background-size;
+        transition            : $loginbutton-transition;
+        &:hover{
+          background: $color-corp-blue;
         }
       }
     }

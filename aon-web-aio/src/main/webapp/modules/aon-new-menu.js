@@ -20,6 +20,7 @@ import { AonTimecontrol } from '../modules/timecontrol/aon-timecontrol.js';
 import { AonLaboral } from '../modules/laboral/aon-laboral.js';
 import { AonComunica } from '../modules/laboral/aon-comunica.js';
 import { AonAccounting } from '../modules/accounting/aon-accounting.js';
+import { AonInfo } from '../components/aon-info.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonNote } from '../modules/note/aon-note.js';
 import { AonInvoicePanel } from '../modules/invoice/aon-invoice-panel.js';
@@ -390,7 +391,7 @@ export class AonNewMenu extends AonElement {
 				if(app.app === CONSTANT.NEW){
 					// El nuevo menu es un boton in dependiente
 					this.appendChild(new AonMenuButton());
-				} else 
+				} else
 					this.addMenuSidenavApp(ul, app);
 			}
 		}
@@ -706,13 +707,21 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(span);
 		}
 
+		if(app.info){
+			let info = new AonInfo();
+			info.icon = "info";
+			info.title = app.title;
+			info.text = app.info;
+			div.appendChild(info);
+		}
+
 		a.appendChild(div);
 
 		if(id == "aonMenuBar-home"){
 			div.id = "topMenuHome";
 		}
 
-      return a;
+      	return a;
 	}
 
 	// Si escoge opcion en el menu este se cierre

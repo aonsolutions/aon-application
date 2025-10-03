@@ -132,15 +132,6 @@ export class AonLoginPanel extends AonElement {
       buttonLogout.id         = this.LOGOUT;
       buttonLogout.className  = 'divLogout';
       this.buildbuttonLogout(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION, buttonLogout);
-      buttonLogout.addEventListener(EVENT.CLICK, () => {
-        closeSession();
-        if(!this.isNewStyle()){
-          LS.setNewTheme(true);
-        }
-      });
-      if(!this.isNewStyle()){
-        loginContent.appendChild(divGeneral);
-      }
       loginContent.appendChild(buttonLogout);
 
       if(!this.isNewStyle()){
@@ -206,29 +197,42 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	buildbuttonLogout(icon, value, button) {
-      if(!this.isNewStyle()){
-        let div = this.createDiv();
-        div.className = "userPanelInfoLinkDiv";
+    // if(!this.isNewStyle()){
+    //   let div = this.createDiv();
+    //   div.className = "userPanelInfoLinkDiv";
 
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS + " userPanelInfoLinkI";
-		i.innerHTML = icon;
-		div.appendChild(i);
+    //   let i = this.createElement(TAG.I);
+    //   i.className = CSS.MATERIAL_ICONS + " userPanelInfoLinkI";
+    //   i.innerHTML = icon;
+    //   div.appendChild(i);
         
-        let span = this.createDiv();
-        span.className = CSS.AON_CARD_TEXT + " userPanelInfoLinkSpan";
-        span.innerHTML = value;
-        div.appendChild(span);
+    //   let span = this.createDiv();
+    //   span.className = CSS.AON_CARD_TEXT + " userPanelInfoLinkSpan";
+    //   span.innerHTML = value;
+    //   div.appendChild(span);
         
-        button.appendChild(div);
-      } else {
-        // Icono
-        let i   = new AonIcon();
-		i.icon  = icon;
-		button.appendChild(i);
-        button.innerHTML += value;
-      }
-	}
+    //   button.appendChild(div);
+    //   button.addEventListener(EVENT.CLICK, () => {
+    //     closeSession();
+    //     if(!this.isNewStyle()){
+    //       LS.setNewTheme(true);
+    //     }
+    //   });
+    //   if(!this.isNewStyle()){
+    //     loginContent.appendChild(divGeneral);
+    //   }
+    // }
+    
+    // Icono
+    let i   = new AonIcon();
+    i.icon  = icon;
+    button.appendChild(i);
+    button.innerHTML += value;
+    // Cerramos session
+    button.addEventListener(EVENT.CLICK, () => {
+      closeSession();
+    });
+  }
 
 	buildImage(letters) {
 		let div = this.createDiv();

@@ -313,6 +313,16 @@ export const MY_DATA = 'Les Meves Dades';
 export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 export const MAGIC_LINK = 'Enviament d´enllaç d´accés per email';
+export const MENU_INVOICE_INFO = "Texto de prueba para la info";
+export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
+export const MENU_FISCAL_INFO = "Texto de prueba para la info";
+export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
+export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
+export const MENU_NOTES_INFO = "Texto de prueba para la info";
+export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
+export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
 
 // ----- N
 

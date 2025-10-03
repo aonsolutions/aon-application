@@ -53,7 +53,7 @@ export class AonDialogMenu extends AonElement {
   
 	build() {
       let dialog = this.getDialog();
-      if (  dialog == null ) { 
+      if (  dialog == null ) {
         dialog = this.createElement(TAG.DIV);
         dialog.id = this.DIALOG;
         dialog.className = `aonDialog`;
@@ -75,28 +75,31 @@ export class AonDialogMenu extends AonElement {
       };
 	}
 
-    open() {
-      this.style.visibility = 'visible';
-      // Agregamos el cerrar
-      if (this.isMobile()) {
-        // Esperamos un tick para evitar cerrar con el mismo clic que abre
-        setTimeout(() => {
-          const onClickOutside = (event) => {
-            if (!this.contains(event.target)) {
-              this.close();
-              document.removeEventListener('click', onClickOutside);
-            }
-          };
-          document.addEventListener('click', onClickOutside);
-        }, 0);
-      } else {
-        const onMouseLeave = () => {
-          this.close();
-          this.removeEventListener('mouseleave', onMouseLeave);
-        };
-        this.addEventListener('mouseleave', onMouseLeave);
-      }
-    }
+	open(searchBox = false) {
+		this.style.visibility = 'visible';
+		// Agregamos el cerrar
+		if (this.isMobile()) {
+			// Esperamos un tick para evitar cerrar con el mismo clic que abre
+			setTimeout(() => {
+				const onClickOutside = (event) => {
+					if (!this.contains(event.target)) {
+						this.close();
+						document.removeEventListener('click', onClickOutside);
+					}
+				};
+				document.addEventListener('click', onClickOutside);
+			}, 0);
+		} else if (searchBox){
+			// si se carga del buscar le ponemos otra logica...
+			this.style.display = 'block';
+		} else {
+			const onMouseLeave = () => {
+				this.close();
+				this.removeEventListener('mouseleave', onMouseLeave);
+			};
+			this.addEventListener('mouseleave', onMouseLeave);
+		}
+	}
 
 	clear() {
       this.innerHTML = '';
@@ -112,7 +115,7 @@ export class AonDialogMenu extends AonElement {
 	close() {
       this.hide().then(this.clear());
 	}
-	
+
 	setContentHTML(html) {
       this.innerHTML = html;
 	}
@@ -195,51 +198,62 @@ export class AonDialogMenu extends AonElement {
 		options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i )); });
 	}
 
-    setMenuOptions(options, top, left) {
-      this.innerHTML = '';
-      this.clear();
-      // Posicionar
-      this.positionDialogWithinViewport(top, left);
-      // Menu
-      let ul = document.createElement(TAG.UL);
-      ul.id = this.LIST;
-      ul.className = CSS.AON_UL;
-      this.appendChild(ul);
-      options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
-    }
+	setMenuOptions(options, top, left, positionSearch = false) {
+		this.innerHTML = '';
+		this.clear();
+		// Posicionar
+		if(positionSearch){
+			this.positionDialogSearch(top, left);
+		}else{
+			this.positionDialogWithinViewport(top, left);
+		}
+		// Menu
+		let ul = document.createElement(TAG.UL);
+		ul.id = this.LIST;
+		ul.className = CSS.AON_UL;
+		this.appendChild(ul);
+		options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
+	}
 
-    positionDialogWithinViewport(anchorY, anchorX){
-      this.style.display    = 'block';
-      this.style.visibility = 'hidden';
-      // Para poder coger la altura automatica
-      requestAnimationFrame(() => {
-        const remToPx = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
-        const margin = remToPx(1.25);
+	positionDialogSearch(anchorY, anchorX){
+		this.style.display    = 'block';
+		this.style.visibility = 'hidden';
+		this.style.left 			= Math.round(anchorX) + 'px';
+		this.style.top  			= Math.round(anchorY)  + 'px';
+	}
 
-        // medidas del dialogo (tal y como están en el layout actual)
-        const dialogWidthPx  = this.offsetWidth;
-        const dialogHeightPx = this.offsetHeight;
+	positionDialogWithinViewport(anchorY, anchorX){
+		this.style.display    = 'block';
+		this.style.visibility = 'hidden';
+		// Para poder coger la altura automatica
+		requestAnimationFrame(() => {
+			const remToPx = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
+			const margin = remToPx(1.25);
 
-        // rect relativo al viewport
-        const rect = this.getBoundingClientRect();
+			// medidas del dialogo (tal y como esta en el layout actual)
+			const dialogWidthPx  = this.offsetWidth;
+			const dialogHeightPx = this.offsetHeight;
 
-        // punto base para posicionar: o el punto ancla (cursor) o la posicion actual del rect
-        let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
-        let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
+			// rect relativo al viewport
+			const rect = this.getBoundingClientRect();
 
-        // clamp: evitar salirse por los 4 lados dejando 'margin' de separacion
-        const minLeft = margin;
-        const maxLeft = Math.max(margin, window.innerWidth  - dialogWidthPx - margin);
-        const minTop  = margin;
-        const maxTop  = Math.max(margin, window.innerHeight - dialogHeightPx - margin);
+			// punto base para posicionar: o el punto ancla (cursor) o la posicion actual del rect
+			let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
+			let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
 
-        const newLeft = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-        const newTop  = Math.min(Math.max(baseTop,  minTop),  maxTop);
+			// clamp: evitar salirse por los 4 lados dejando 'margin' de separacion
+			const minLeft = margin;
+			const maxLeft = Math.max(margin, window.innerWidth  - dialogWidthPx - margin);
+			const minTop  = margin;
+			const maxTop  = Math.max(margin, window.innerHeight - dialogHeightPx - margin);
 
-        this.style.left = Math.round(newLeft) + 'px';
-        this.style.top  = Math.round(newTop)  + 'px';
-      });
-    }
+			const newLeft = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+			const newTop  = Math.min(Math.max(baseTop,  minTop),  maxTop);
+
+			this.style.left = Math.round(newLeft) + 'px';
+			this.style.top  = Math.round(newTop)  + 'px';
+		});
+	}
 
 	addButtons(buttons) {
 		let divMain = this.createElement(TAG.DIV);

@@ -191,6 +191,7 @@ export class AonHelp extends AonElement {
     scheduleCard.addContent(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
   }
 
+
 	buildSupportData(value, title, icon, className) {
 		let div 		= this.createDiv();
 		div.className	= "help-row";

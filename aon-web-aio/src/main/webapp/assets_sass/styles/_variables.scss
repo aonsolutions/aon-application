@@ -193,6 +193,7 @@ $pct-300 : 300%;
 // VIEWPORT
 $vw-16  : 16vw;
 $vw-100 : 100vw;
+$vh-50  : 50vh;
 $vh-90  : 90vh;
 $vh-100 : 100vh;
 
@@ -300,7 +301,7 @@ $gap-min: calc($gap / 2);
 $height-cabecera : $px-64;
 
 // ANCHO MENU LATERAL IZQUIERDO
-$left-aonMenuLeft     : $px-200;
+$left-aonMenuLeft     : $px-220;
 $left-aonMenuLeft-min : $px-64;
 
 // ALTURA DEL MENU ADMIN DE ARRIBA

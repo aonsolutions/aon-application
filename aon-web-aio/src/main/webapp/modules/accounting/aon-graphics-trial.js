@@ -81,18 +81,17 @@ export class AonGraphicsTrial extends AonElement {
 
     this.buildToolbar();
     this.buildPyGToolbar();
-    //await this.buildFilter();
-
    if(this.cardFilter){
-      //Object { event: "click", search: "", year: "6215", show: "yearly", detail: "5" }
       let period = this.PERIODS.filter(period => period.name == this.cardFilter.year);
       this.filter = {};
       this.filter.event = "click";
       this.filter.search = "";
       this.filter.show = this.cardFilter.show;
       this.filter.detail = this.cardFilter.detail || "5";
-      this.filter.year = period[0].id;
-      this.selectedPeriod = period[0];
+      if(period.length > 0){
+        this.selectedPeriod = period[0];
+        this.filter.year = period[0].id;  
+      }
 
       this.cardFilter = undefined;
     }
@@ -206,6 +205,8 @@ export class AonGraphicsTrial extends AonElement {
     if(!aonIframe){
       aonIframe =  new AonIframe();
       aonIframe.id = iframeId;
+      aonIframe.style.height = "100%";
+      aonIframe.style.width = "100%";
       this.appendChild(aonIframe);
       await aonIframe.load();
     } else {
@@ -225,13 +226,15 @@ export class AonGraphicsTrial extends AonElement {
       div.style.display = "flex";
       div.style.justifyContent = "center";
       div.style.flexWrap = "wrap";
-      div.style.overflowY = "auto";
       div.style.height = "100%";
+      div.style.width = "100%";
       div.style.alignItems = "center";
+      div.style.position = "relative";
       div.className = CSS.MATERIAL_SCROLL;
-
       aonIframe.addContent(div);
-
+      if(!this.selectedPeriod){
+        this.selectedPeriod = this.PERIODS[0];
+      } 
       AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe, true);
 
       let sidenavBaseId = null;
@@ -286,12 +289,25 @@ export class AonGraphicsTrial extends AonElement {
     }
 
     if (!isEmptyObject(this.PERIODS)) {
-      if (this.PERIODS && this.PERIODS.length > 0) {
+      if (this.PERIODS && this.PERIODS.length > 0 && this.selectedPeriod !== undefined) {
         this.params.period = this.selectedPeriod.id;
 
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
       }
+
+      if(!this.params.period) {
+        this.params.period = this.PERIODS[0].id;
+      }
+
+      if(!this.params.fromDate) {
+        this.params.fromDate = this.PERIODS[0].initiationDate;
+      }
+
+      if(!this.params.toDate) {
+        this.params.toDate = this.PERIODS[0].deadline;
+      }
+
       this.ACCOUNTS = await getAccounting(this.params)
       .catch((err) => {
         this.showError(err)

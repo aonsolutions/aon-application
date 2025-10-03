@@ -500,7 +500,18 @@ export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
 export const MOVE_STOCK = "Mover Stock"; //TODO
-export const MINS = "Minutos"; //TODO
+export const MINS = "Minutos"; //TODOsss
+export const MENU_INVOICE_INFO = MSG.MENU_INVOICE_INFO;
+export const MENU_ACCOUNTING_INFO = MSG.MENU_ACCOUNTING_INFO;
+export const MENU_FISCAL_INFO = MSG.MENU_FISCAL_INFO;
+export const MENU_PAYROLL_INFO = MSG.MENU_PAYROLL_INFO;
+export const MENU_COMUNICA_INFO = MSG.MENU_COMUNICA_INFO;
+export const MENU_DOCUMENTAL_INFO = MSG.MENU_DOCUMENTAL_INFO;
+export const MENU_TIMECONTROL_INFO = MSG.MENU_TIMECONTROL_INFO;
+export const MENU_NOTES_INFO = MSG.MENU_NOTES_INFO;
+export const MENU_MESSENGER_INFO = MSG.MENU_MESSENGER_INFO;
+export const MENU_WAREHOUSE_INFO = MSG.MENU_WAREHOUSE_INFO;
+
 
 // ----- N
 
