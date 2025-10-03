@@ -518,6 +518,8 @@ export class AonHeader extends AonElement {
 			applications.className = 'aonMenuLeftopStart';
 
 			companySelectorOpenedManually = false;
+
+			aonHeaderCompanyList.style.display = LS.isCompanySelected() && !LS.isOnlyOne() ? 'block' : 'none';
 		});
 
 		if(this.activeTimecontrol) {
