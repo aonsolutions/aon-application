@@ -5,7 +5,7 @@ export const getUserList = (data, sessionData) => get(`${API.USER}`, data, sessi
 export const getUserListSpeed = (data, sessionData) => get(`${API.USER_LIST}`, data, sessionData);
 
 export const getSigUserListSpeed = (data, sessionData) => getPro(`${PRO_URL}/${API.USER_LIST}`, data, sessionData);
-//export const getSigUserListSpeed = (data, sessionData) => getPro(`${API.USER_LIST}`, data, sessionData);
+// LOCAL //export const getSigUserListSpeed = (data, sessionData) => getPro(`${API.USER_LIST}`, data, sessionData);
 
 export const saveUser = (data, sessionData) => post(`${API.USER}`, data, sessionData);
 export const saveServiceAccount = (data, sessionData) => put(`${API.USER_SERVICE}`, data, sessionData); 

@@ -62,12 +62,12 @@ export const getSiblingsOffice = (data) => get(SIBLINGS_OFFICE, data);
 
 // REGISTRY RADDINFO
 export const getCustomerDomainAddInfo = (data, headers) => getPro(`${PRO_URL}/${RELATIONSHIP}/raddinfo/${data.registry}`, data, headers);
-// LOCAL
-// export const getCustomerDomainAddInfo = (data) => getPro(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+// LOCAL //export const getCustomerDomainAddInfo = (data) => getPro(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+
 export const removeCustomerDomainAddInfo = (data) => remove(`${RELATIONSHIP}/raddinfo/${data.registry}`, data);
+
 export const removeAonCustomerDomain = (data, headers) => removePro(`${PRO_URL}/${RELATIONSHIP}/aonCustomer`, data, headers);
-// LOCAL
-// export const removeAonCustomerDomain = (data, headers) => removePro(`${RELATIONSHIP}/aonCustomer`, data, headers);
+// LOCAL //export const removeAonCustomerDomain = (data, headers) => removePro(`${RELATIONSHIP}/aonCustomer`, data, headers);
 
 // SUGGESTED ACCOUNT
 
