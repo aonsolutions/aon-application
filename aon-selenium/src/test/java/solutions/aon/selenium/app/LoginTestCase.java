@@ -28,6 +28,7 @@ public class LoginTestCase extends AppBaseTestCase {
 		
 		"http://inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio INACTIVA \\(PARENT\\) se encuentra actualmente inactivo",
 		"http://default-inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio DEFAULT se encuentra actualmente inactivo",
+		//"http://payer-inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio PAGADOR se encuentra actualmente inactivo",
 
 		"http://expired-multi-test.aonsolutions.org:8080/app,86359314,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
 		"http://expired-multi-test.aonsolutions.org:8080/app,asesor@multi-test.aonsolutions.org,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
@@ -166,4 +167,31 @@ public class LoginTestCase extends AppBaseTestCase {
 		}
 	}
 
+	@Test
+	@Order(6)
+	public void testLoginEnterprisePayer() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payer-inactive-test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "pagador@inactive-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
 }

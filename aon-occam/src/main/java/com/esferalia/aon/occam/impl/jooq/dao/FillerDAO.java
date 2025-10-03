@@ -125,15 +125,16 @@ public class FillerDAO {
 		}
 		
 		public static Domain build(Record r) {
-			return buildDomain(r, Domain::new, DOMAIN, DomainDAO.PARENT);
+			return buildDomain(r, Domain::new, DOMAIN, DomainDAO.PARENT, DomainDAO.PAYER);
 		}
 		
-		public static Domain buildDomain(Record r, java.util.function.Supplier<Domain> supplier, com.esferalia.aon.jooq.tables.Domain domainTable, com.esferalia.aon.jooq.tables.Domain parentTable) {
+		public static Domain buildDomain(Record r, java.util.function.Supplier<Domain> supplier, com.esferalia.aon.jooq.tables.Domain domainTable, com.esferalia.aon.jooq.tables.Domain parentTable, com.esferalia.aon.jooq.tables.AppParam payerTable) {
 			Domain domain = fillDomain(r, supplier.get(), domainTable);
 			Domain parent = fillDomain(r, supplier.get(), parentTable);
 			if ( parent.getId() != null ) {
 				domain.setParent(parent);
 			}
+			fillDomain(r, domain, payerTable);
 			return domain;
 		}
 
@@ -141,20 +142,29 @@ public class FillerDAO {
 //			return fillDomain(r, new Domain(), domainTable);
 //		}
 		
+		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.AppParam payerTable) {
+			try {
+				domain.setPayer(AonNumberUtils.toInteger(getValue(r, payerTable.VALUE)));
+			} catch (Exception e) {
+
+			}
+			return domain;
+		}
+
 		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.Domain domainTable) {
 			return domain
-				.setId(r.getValue(domainTable.ID))
-				.setName(r.getValue(domainTable.NAME))
-				.setDescription(r.getValue(domainTable.DESCRIPTION))
-				.setParentId(r.getValue(domainTable.PARENT))
-				.setDomainType(DomainType.safeValueOf(r.getValue(domainTable.TYPE)))
-				.setScope(r.getValue(domainTable.SCOPE))
+				.setId(getValue(r, domainTable.ID))
+				.setName(getValue(r, domainTable.NAME))
+				.setDescription(getValue(r, domainTable.DESCRIPTION))
+				.setParentId(getValue(r, domainTable.PARENT))
+				.setDomainType(DomainType.safeValueOf(getValue(r, domainTable.TYPE)))
+				.setScope(getValue(r, domainTable.SCOPE))
 				.setEnableHeredity(getBoolean(r, domainTable.ENABLEHEREDITY))
 				.setDomainManagement(getBoolean(r, domainTable.DOMAINMANAGEMENT))
 				.setDisableDomainManagement(getBoolean(r, domainTable.DISABLEDOMAINMANAGEMENT))
 				.setMaxDocumentSize(getValue(r, domainTable.MAXDOCUMENTSIZE))
 				.setMaxTotalDocumentSize(getValue(r, domainTable.MAXTOTALDOCUMENTSIZE))
-				.setMaxDefinedUsers(r.getValue(domainTable.MAXDEFINEDUSERS))
+				.setMaxDefinedUsers(getValue(r, domainTable.MAXDEFINEDUSERS))
 				.setActive(getBoolean(r, domainTable.ACTIVE))
 				.setOwner(getValue(r, domainTable.OWNER))
 				.setCreationUser(getValue(r, domainTable.CREATION_USER))
@@ -164,233 +174,232 @@ public class FillerDAO {
 				.setLastAccessUser(getValue(r, domainTable.LASTACCESS_USER))
 				.setLastAccessDate(getValue(r, domainTable.LASTACCESS_DATE))
 				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
-				.setAonCustomer(r.getValue(domainTable.AONCUSTOMER))
-				.setAonStatus(AonStatus.safeValueOf(r.getValue(domainTable.AONSTATUS)))
-				.setSubDomainSuffix(r.getValue(domainTable.SUBDOMAINSUFFIX))
-				
+				.setAonCustomer(getValue(r, domainTable.AONCUSTOMER))
+				.setAonStatus(AonStatus.safeValueOf(getValue(r, domainTable.AONSTATUS)))
+				.setSubDomainSuffix(getValue(r, domainTable.SUBDOMAINSUFFIX))
 				;	
 		}
 
 	}
 
-	public static class ApplicationParameterFiller implements Function<Record, ApplicationParameter> {
+	public static class ApplicationParameterFiller extends Filler implements Function<Record, ApplicationParameter> {
 		@Override
 		public ApplicationParameter apply(Record r) {
 			return new ApplicationParameter()
-					.setId(r.getValue(APP_PARAM.ID))
-					.setDomain(r.getValue(APP_PARAM.DOMAIN))
-					.setName(r.getValue(APP_PARAM.NAME))
-					.setValue(r.getValue(APP_PARAM.VALUE));
+					.setId(getValue(r, APP_PARAM.ID))
+					.setDomain(getValue(r, APP_PARAM.DOMAIN))
+					.setName(getValue(r, APP_PARAM.NAME))
+					.setValue(getValue(r, APP_PARAM.VALUE));
 		}
 	}
 	
 	
 
-	public static class RegistryFiller implements Function<Record, Registry> {
+	public static class RegistryFiller extends Filler implements Function<Record, Registry> {
 		@Override
 		public Registry apply(Record r) {
 			return new Registry()
-					.setAlias(r.getValue(REGISTRY.ALIAS))
-					.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setAlias(getValue(r, REGISTRY.ALIAS))
+					.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(getValue(r, REGISTRY.SECURITY_LEVEL)))
+					.setDocument(getValue(r, REGISTRY.DOCUMENT))
 					.setDocumentCountry(null) // TODO
-					.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-					.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
-					.setId(r.getValue(REGISTRY.ID))
-					.setName(r.getValue(REGISTRY.NAME))
+					.setDocumentType(DocumentType.safeValueOf(getValue(r, REGISTRY.DOCUMENT_TYPE)))
+					.setDomain(new Domain().setId(getValue(r, REGISTRY.DOMAIN)))
+					.setId(getValue(r, REGISTRY.ID))
+					.setName(getValue(r, REGISTRY.NAME))
 					.setNationality(null) // TODO
-					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setLegalPerson(AonEnumUtils.getBoolean( r.getValue(REGISTRY.TYPE)));			
+					.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, REGISTRY.SECURITY_LEVEL)))
+					.setLegalPerson(AonEnumUtils.getBoolean( getValue(r, REGISTRY.TYPE)));			
 		}
 	}
 	
-	public static class PersonFiller implements Function<Record, Person> {
+	public static class PersonFiller extends Filler implements Function<Record, Person> {
 		@Override
 		public Person apply(Record r) {
 			Person person = new Person();
-			person.setAlias(r.getValue(REGISTRY.ALIAS));
-			person.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			person.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			person.setAlias(getValue(r, REGISTRY.ALIAS));
+			person.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			person.setDocument(getValue(r, REGISTRY.DOCUMENT));
 			person.setDocumentCountry(null); // TODO
-			person.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			person.setId(r.getValue(REGISTRY.ID));
-			person.setName(r.getValue(REGISTRY.NAME));
+			person.setDocumentType(DocumentType.safeValueOf(getValue(r, REGISTRY.DOCUMENT_TYPE)));
+			person.setId(getValue(r, REGISTRY.ID));
+			person.setName(getValue(r, REGISTRY.NAME));
 			person.setNationality(null); // TODO
-			person.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			person.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
-			person.setDomain(new Domain().setId(r.getValue(PERSON.DOMAIN)));
-			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
-					.setFirstName(r.getValue(PERSON.NAME))
-					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
-					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME))
-					.setGender(Gender.safeValueOf(r.getValue(PERSON.GENDER)))
-					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))
-					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM));				
+			person.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			person.setLegalPerson(AonEnumUtils.getBoolean(getValue(r, REGISTRY.TYPE)));
+			person.setDomain(new Domain().setId(getValue(r, PERSON.DOMAIN)));
+			return person.setBirthDate(getValue(r, PERSON.BIRTH_DATE))
+					.setFirstName(getValue(r, PERSON.NAME))
+					.setFirstSurname(getValue(r, PERSON.FIRST_SURNAME))
+					.setSecondSurname(getValue(r, PERSON.SECOND_SURNAME))
+					.setGender(Gender.safeValueOf(getValue(r, PERSON.GENDER)))
+					.setMaritalStatus(MaritalStatus.safeValueOf(getValue(r, PERSON.MARITAL_STATUS)))
+					.setSocialSecurityNum(getValue(r, PERSON.SOCIAL_SECURITY_NUM));				
 		}
 	}
 	
-	public static class RItemFiller  implements Function<Record,RegistryItem> {
+	public static class RItemFiller  extends Filler implements Function<Record,RegistryItem> {
 
 		@Override
 		public RegistryItem apply(Record r) {
 			return new RegistryItem()
-					.setId(r.getValue(RITEM.ID))
-					.setDomain(r.getValue(RITEM.DOMAIN))
-					.setRegistry(r.getValue(RITEM.REGISTRY))
+					.setId(getValue(r, RITEM.ID))
+					.setDomain(getValue(r, RITEM.DOMAIN))
+					.setRegistry(getValue(r, RITEM.REGISTRY))
 					.setItem(ItemFiller.build(r))
-					.setType(RegistryMode.safeValueOf(r.getValue(RITEM.TYPE)))
-					.setCode(r.getValue(RITEM.CODE))
+					.setType(RegistryMode.safeValueOf(getValue(r, RITEM.TYPE)))
+					.setCode(getValue(r, RITEM.CODE))
 					.setEdiSalesCode(r.get(RITEM.EDI_SALES_CODE))
 					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
 //					.setSeller(SellerFiller.build(r))
-					.setPrice(r.getValue(RITEM.PRICE))
-					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
-					.setWorkplace(r.getValue(RITEM.WORKPLACE))
-					.setPriority(Priority.safeValueOf(r.getValue(RITEM.PRIORITY)))
-					.setStatus(RegistryItemStatus.safeValueOf(r.getValue(RITEM.STATUS)))
-					.setQuantity(r.getValue(RITEM.QUANTITY))
-					.setStartDate(r.getValue(RITEM.START_DATE))
-					.setEndDate(r.getValue(RITEM.END_DATE))
-					.setCreationDate(r.getValue(RITEM.CREATION_DATE))
-					.setCreationUser(r.getValue(RITEM.CREATION_USER))
-					.setModificationDate(r.getValue(RITEM.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(RITEM.MODIFICATION_USER));
+					.setPrice(getValue(r, RITEM.PRICE))
+					.setDiscountExpr(getValue(r, RITEM.DISCOUNT_EXPR))
+					.setWorkplace(getValue(r, RITEM.WORKPLACE))
+					.setPriority(Priority.safeValueOf(getValue(r, RITEM.PRIORITY)))
+					.setStatus(RegistryItemStatus.safeValueOf(getValue(r, RITEM.STATUS)))
+					.setQuantity(getValue(r, RITEM.QUANTITY))
+					.setStartDate(getValue(r, RITEM.START_DATE))
+					.setEndDate(getValue(r, RITEM.END_DATE))
+					.setCreationDate(getValue(r, RITEM.CREATION_DATE))
+					.setCreationUser(getValue(r, RITEM.CREATION_USER))
+					.setModificationDate(getValue(r, RITEM.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, RITEM.MODIFICATION_USER));
 		}
 	}
 	
-	public static class PurchaseDetailFiller implements Function<Record, PurchaseDetail> {
+	public static class PurchaseDetailFiller extends Filler implements Function<Record, PurchaseDetail> {
 		
 		@Override
 		public PurchaseDetail apply(Record r) {
 			PurchaseDetail detail = new PurchaseDetail();
-			detail.setId(r.getValue(PURCHASE_DETAIL.ID));
-			detail.setDomain(r.getValue(PURCHASE_DETAIL.DOMAIN));
-			detail.setPurchaseId(r.getValue(PURCHASE_DETAIL.PURCHASE));
-			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
-			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());
-			detail.setDescription(r.getValue(PURCHASE_DETAIL.DESCRIPTION));
-			detail.setQuantity(r.getValue(PURCHASE_DETAIL.QUANTITY));
-			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
-			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
-			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
-			detail.setStatus(PurchaseDetailStatus.safeValueOf(r.getValue(PURCHASE_DETAIL.STATUS)));
-			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
-			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
-				detail.setSource(PurchaseSourceType.safeValueOf(r.getValue(PURCHASE_DETAIL.SOURCE)));
-			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
-			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
-			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
-			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
+			detail.setId(getValue(r, PURCHASE_DETAIL.ID));
+			detail.setDomain(getValue(r, PURCHASE_DETAIL.DOMAIN));
+			detail.setPurchaseId(getValue(r, PURCHASE_DETAIL.PURCHASE));
+			detail.setItem(getValue(r, PURCHASE_DETAIL.ITEM));
+			detail.setLine(getValue(r, PURCHASE_DETAIL.LINE).intValue());
+			detail.setDescription(getValue(r, PURCHASE_DETAIL.DESCRIPTION));
+			detail.setQuantity(getValue(r, PURCHASE_DETAIL.QUANTITY));
+			detail.setPrice(getValue(r, PURCHASE_DETAIL.PRICE));
+			detail.setDiscountExpression(getValue(r, PURCHASE_DETAIL.DISCOUNT_EXPR));
+			detail.setTaxes(getValue(r, PURCHASE_DETAIL.TAXES));
+			detail.setStatus(PurchaseDetailStatus.safeValueOf(getValue(r, PURCHASE_DETAIL.STATUS)));
+			detail.setProposalDetail(getValue(r, PURCHASE_DETAIL.PROPOSAL_DETAIL));
+			if(getValue(r, PURCHASE_DETAIL.SOURCE) != null)
+				detail.setSource(PurchaseSourceType.safeValueOf(getValue(r, PURCHASE_DETAIL.SOURCE)));
+			detail.setSourceId(getValue(r, PURCHASE_DETAIL.SOURCE_ID));
+			detail.setDelivered(getValue(r, PURCHASE_DETAIL.DELIVERED));
+			detail.setCarrier(getValue(r, PURCHASE_DETAIL.CARRIER));
+			detail.setCarrierPacking(getValue(r, PURCHASE_DETAIL.CARRIER_PACKING));
 			
 
 			return detail;
 		}
 	}
 	
-	public static class PurchaseDetailItemFiller implements Function<Record, PurchaseDetail> {
+	public static class PurchaseDetailItemFiller extends Filler implements Function<Record, PurchaseDetail> {
 		
 		@Override
 		public PurchaseDetail apply(Record r) {
 			PurchaseDetail detail = new PurchaseDetail();
-			detail.setId(r.getValue(PURCHASE_DETAIL.ID));
-			detail.setDomain(r.getValue(PURCHASE_DETAIL.DOMAIN));
-			detail.setPurchaseId(r.getValue(PURCHASE_DETAIL.PURCHASE));
+			detail.setId(getValue(r, PURCHASE_DETAIL.ID));
+			detail.setDomain(getValue(r, PURCHASE_DETAIL.DOMAIN));
+			detail.setPurchaseId(getValue(r, PURCHASE_DETAIL.PURCHASE));
 			detail.setPurchase(new Purchase()
-					.setId(r.getValue(PURCHASE.ID))
-					.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE))
-					.setSupplier(r.getValue(REGISTRY.ID))
-					.setSupplierName(r.getValue(REGISTRY.NAME))
-					.setAddress(r.getValue(PURCHASE.ADDRESS))
+					.setId(getValue(r, PURCHASE.ID))
+					.setPurchaseReference(getValue(r, PURCHASE.PURCHASE_REFERENCE))
+					.setSupplier(getValue(r, REGISTRY.ID))
+					.setSupplierName(getValue(r, REGISTRY.NAME))
+					.setAddress(getValue(r, PURCHASE.ADDRESS))
 					);
-			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
-			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());
-			detail.setDescription(r.getValue(PURCHASE_DETAIL.DESCRIPTION));
-			detail.setQuantity(r.getValue(PURCHASE_DETAIL.QUANTITY));
-			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
-			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
-			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
-			detail.setStatus(PurchaseDetailStatus.safeValueOf(r.getValue(PURCHASE_DETAIL.STATUS)));
-			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
-			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
-				detail.setSource(PurchaseSourceType.safeValueOf(r.getValue(PURCHASE_DETAIL.SOURCE)));
-			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
-			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
-			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
-			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
-			detail.setProductId(r.getValue(PRODUCT.ID));
-			detail.setProductCode(r.getValue(PRODUCT.CODE));
-			detail.setProductName(r.getValue(PRODUCT.NAME));
-			detail.setItem2(new OldItem().setId(r.getValue(ITEM.ID))
-				.setBarcode(r.getValue(ITEM.BARCODE))
-				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
-				.setCreationUser(r.getValue(ITEM.CREATION_USER))
-				.setDescription(r.getValue(ITEM.DESCRIPTION))
-				.setDetail(r.getValue(ITEM.DETAIL))
-				.setDetail2(r.getValue(ITEM.DETAIL2))
-				.setDetail3(r.getValue(ITEM.DETAIL3))
-				.setDomain(r.getValue(ITEM.DOMAIN))
-				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
-				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
-				.setInternet(r.getValue(ITEM.INTERNET) == 1)
-				.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
-				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
-				.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
-				.setPrice(r.getValue(ITEM.PRICE))
-				.setProductId(r.getValue(ITEM.PRODUCT))
-				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
-				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
-				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
-				.setStatus(r.getValue(ITEM.STATUS))
-				.setProduct(new OldProduct().setId(r.getValue(PRODUCT.ID))
-					.setName(r.getValue(PRODUCT.NAME))
-					.setDomain(r.getValue(PRODUCT.DOMAIN))
-					.setCode(r.getValue(PRODUCT.CODE))
-					.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
-					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
-					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
-					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
-					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
-					.setKind(r.getValue(PRODUCT.KIND))
-					.setLotable(r.getValue(PRODUCT.LOTABLE) == 1)
-					.setManufactured(r.getValue(PRODUCT.MANUFACTURED))
-					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER))
-					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
-					.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT))
-					.setRetention(r.getValue(PRODUCT.RETENTION)) 
-					.setSalesAccount(r.getValue(PRODUCT.SALES_ACCOUNT))
-					.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) == 1)
-					.setStatus(r.getValue(PRODUCT.STATUS))
-					.setType(r.getValue(PRODUCT.TYPE))
-					.setVat(r.getValue(PRODUCT.VAT))));
+			detail.setItem(getValue(r, PURCHASE_DETAIL.ITEM));
+			detail.setLine(getValue(r, PURCHASE_DETAIL.LINE).intValue());
+			detail.setDescription(getValue(r, PURCHASE_DETAIL.DESCRIPTION));
+			detail.setQuantity(getValue(r, PURCHASE_DETAIL.QUANTITY));
+			detail.setPrice(getValue(r, PURCHASE_DETAIL.PRICE));
+			detail.setDiscountExpression(getValue(r, PURCHASE_DETAIL.DISCOUNT_EXPR));
+			detail.setTaxes(getValue(r, PURCHASE_DETAIL.TAXES));
+			detail.setStatus(PurchaseDetailStatus.safeValueOf(getValue(r, PURCHASE_DETAIL.STATUS)));
+			detail.setProposalDetail(getValue(r, PURCHASE_DETAIL.PROPOSAL_DETAIL));
+			if(getValue(r, PURCHASE_DETAIL.SOURCE) != null)
+				detail.setSource(PurchaseSourceType.safeValueOf(getValue(r, PURCHASE_DETAIL.SOURCE)));
+			detail.setSourceId(getValue(r, PURCHASE_DETAIL.SOURCE_ID));
+			detail.setDelivered(getValue(r, PURCHASE_DETAIL.DELIVERED));
+			detail.setCarrier(getValue(r, PURCHASE_DETAIL.CARRIER));
+			detail.setCarrierPacking(getValue(r, PURCHASE_DETAIL.CARRIER_PACKING));
+			detail.setProductId(getValue(r, PRODUCT.ID));
+			detail.setProductCode(getValue(r, PRODUCT.CODE));
+			detail.setProductName(getValue(r, PRODUCT.NAME));
+			detail.setItem2(new OldItem().setId(getValue(r, ITEM.ID))
+				.setBarcode(getValue(r, ITEM.BARCODE))
+				.setCreationDate(getValue(r, ITEM.CREATION_DATE))
+				.setCreationUser(getValue(r, ITEM.CREATION_USER))
+				.setDescription(getValue(r, ITEM.DESCRIPTION))
+				.setDetail(getValue(r, ITEM.DETAIL))
+				.setDetail2(getValue(r, ITEM.DETAIL2))
+				.setDetail3(getValue(r, ITEM.DETAIL3))
+				.setDomain(getValue(r, ITEM.DOMAIN))
+				.setExpensesFixed(getValue(r, ITEM.EXPENSES_FIXED))
+				.setExpensesPercent(getValue(r, ITEM.EXPENSES_PERCENT))
+				.setInternet(getValue(r, ITEM.INTERNET) == 1)
+				.setModificationDate(getValue(r, ITEM.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, ITEM.MODIFICATION_USER))
+				.setPackMeasurement(getValue(r, ITEM.PACK_MEASUREMENT))
+				.setPackUnits(getValue(r, ITEM.PACK_UNITS).doubleValue())
+				.setPrice(getValue(r, ITEM.PRICE))
+				.setProductId(getValue(r, ITEM.PRODUCT))
+				.setProfitPercent(getValue(r, ITEM.PROFIT_PERCENT))
+				.setPurchasePrice(getValue(r, ITEM.PURCHASE_PRICE))
+				.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
+				.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+				.setStatus(getValue(r, ITEM.STATUS))
+				.setProduct(new OldProduct().setId(getValue(r, PRODUCT.ID))
+					.setName(getValue(r, PRODUCT.NAME))
+					.setDomain(getValue(r, PRODUCT.DOMAIN))
+					.setCode(getValue(r, PRODUCT.CODE))
+					.setComposition(getValue(r, PRODUCT.COMPOSITION) == 1)
+					.setCompositionPrice(getValue(r, PRODUCT.COMPOSITION_PRICE) == 1)
+					.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
+					.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
+					.setInventoriable(getValue(r, PRODUCT.INVENTORIABLE) == 1)
+					.setKind(getValue(r, PRODUCT.KIND))
+					.setLotable(getValue(r, PRODUCT.LOTABLE) == 1)
+					.setManufactured(getValue(r, PRODUCT.MANUFACTURED))
+					.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER))
+					.setPackaged(getValue(r, PRODUCT.PACKAGED) == 1)
+					.setPurchaseAccount(getValue(r, PRODUCT.PURCHASE_ACCOUNT))
+					.setRetention(getValue(r, PRODUCT.RETENTION)) 
+					.setSalesAccount(getValue(r, PRODUCT.SALES_ACCOUNT))
+					.setSerializable(getValue(r, PRODUCT.SERIALIZABLE) == 1)
+					.setStatus(getValue(r, PRODUCT.STATUS))
+					.setType(getValue(r, PRODUCT.TYPE))
+					.setVat(getValue(r, PRODUCT.VAT))));
 			return detail;
 		}
 	}
 	
-	public static class RecordDataFiller implements Function<Record, RecordData> {
+	public static class RecordDataFiller extends Filler implements Function<Record, RecordData> {
 		@Override
 		public RecordData apply(Record r) {
 			return new RecordData()
-					.setAttach(r.getValue(RECORD_DATA.ATTACH))
-					.setCreationDate(r.getValue(RECORD_DATA.CREATION_DATE))
-					.setDescription(r.getValue(RECORD_DATA.DESCRIPTION))
-					.setDomain(r.getValue(RECORD_DATA.DOMAIN))
-					.setId(r.getValue(RECORD_DATA.ID))
-					.setNotary(r.getValue(RECORD_DATA.NOTARY))
-					.setNumber(r.getValue(RECORD_DATA.NUMBER))
-					.setPage(r.getValue(RECORD_DATA.PAGE))
-					.setRecordDate(r.getValue(RECORD_DATA.RECORD_DATE))
-					.setRegistration(r.getValue(RECORD_DATA.REGISTRATION))
-					.setRegistry(r.getValue(RECORD_DATA.REGISTRY))
-					.setSection(r.getValue(RECORD_DATA.SECTION))
-					.setSheet(r.getValue(RECORD_DATA.SHEET))
-					.setVolume(r.getValue(RECORD_DATA.VOLUME));
+					.setAttach(getValue(r, RECORD_DATA.ATTACH))
+					.setCreationDate(getValue(r, RECORD_DATA.CREATION_DATE))
+					.setDescription(getValue(r, RECORD_DATA.DESCRIPTION))
+					.setDomain(getValue(r, RECORD_DATA.DOMAIN))
+					.setId(getValue(r, RECORD_DATA.ID))
+					.setNotary(getValue(r, RECORD_DATA.NOTARY))
+					.setNumber(getValue(r, RECORD_DATA.NUMBER))
+					.setPage(getValue(r, RECORD_DATA.PAGE))
+					.setRecordDate(getValue(r, RECORD_DATA.RECORD_DATE))
+					.setRegistration(getValue(r, RECORD_DATA.REGISTRATION))
+					.setRegistry(getValue(r, RECORD_DATA.REGISTRY))
+					.setSection(getValue(r, RECORD_DATA.SECTION))
+					.setSheet(getValue(r, RECORD_DATA.SHEET))
+					.setVolume(getValue(r, RECORD_DATA.VOLUME));
 		}
 	}
 	
-	public static class AonCompanyFiller implements Function<Record, AonCompany> {
+	public static class AonCompanyFiller extends Filler implements Function<Record, AonCompany> {
 		@Override
 		public AonCompany apply(Record r) {
 			com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
@@ -398,349 +407,349 @@ public class FillerDAO {
 			com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
 
 			Domain d = new Domain()
-			.setId(r.getValue(domain.ID))
-			.setName(r.getValue(domain.NAME))
-			.setParentId(r.getValue(domain.PARENT))
-			.setActive(AonEnumUtils.getBoolean(r.getValue(domain.ACTIVE)))
-			.setDescription(r.getValue(domain.DESCRIPTION))
-			.setDomainType(DomainType.values()[r.getValue(domain.TYPE)])
-			.setScope(r.getValue(domain.SCOPE))
-			.setExpirationDate(r.getValue(domain.EXPIRATIONDATE))
-			.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
-			.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT)))
-			.setPayer(AonNumberUtils.toInteger(r.getValue(payer.VALUE)))
+			.setId(getValue(r, domain.ID))
+			.setName(getValue(r, domain.NAME))
+			.setParentId(getValue(r, domain.PARENT))
+			.setActive(AonEnumUtils.getBoolean(getValue(r, domain.ACTIVE)))
+			.setDescription(getValue(r, domain.DESCRIPTION))
+			.setDomainType(DomainType.values()[getValue(r, domain.TYPE)])
+			.setScope(getValue(r, domain.SCOPE))
+			.setExpirationDate(getValue(r, domain.EXPIRATIONDATE))
+			.setEnableHeredity(AonEnumUtils.getBoolean(getValue(r, domain.ENABLEHEREDITY)))
+			.setDomainManagement(AonEnumUtils.getBoolean(getValue(r, domain.DOMAINMANAGEMENT)))
+			.setPayer(AonNumberUtils.toInteger(getValue(r, payer.VALUE)))
 			.setParent(new Domain()
-				.setId(r.getValue(parent.ID))
-				.setName(r.getValue(parent.NAME))
-				.setExpirationDate(r.getValue(parent.EXPIRATIONDATE))
-				.setActive(AonEnumUtils.getBoolean(r.getValue(parent.ACTIVE)))
+				.setId(getValue(r, parent.ID))
+				.setName(getValue(r, parent.NAME))
+				.setExpirationDate(getValue(r, parent.EXPIRATIONDATE))
+				.setActive(AonEnumUtils.getBoolean(getValue(r, parent.ACTIVE)))
 				);
 
 			Company company = new Company();
 			company.setDomain(d);
-			company.setAlias(r.getValue(REGISTRY.ALIAS));
-			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)));
-			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null);
-			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
+			company.setAlias(getValue(r, REGISTRY.ALIAS));
+			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			company.setDocumentCountry(Country.valueOf(getValue(r, REGISTRY.DOCUMENT_COUNTRY)));
+			company.setDocumentType(DocumentType.safeValueOf(getValue(r, REGISTRY.DOCUMENT_TYPE)));
+			company.setNationality(getValue(r, REGISTRY.NATIONALITY) != null ? Country.valueOf(getValue(r, REGISTRY.NATIONALITY)): null);
+			company.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			company.setLegalPerson(AonEnumUtils.getBoolean(getValue(r, REGISTRY.TYPE)));	
 			company
-				.setDocument(r.getValue(REGISTRY.DOCUMENT))
-				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME));
+				.setDocument(getValue(r, REGISTRY.DOCUMENT))
+				.setId(getValue(r, REGISTRY.ID))
+				.setName(getValue(r, REGISTRY.NAME));
 			company
-				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
-				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
-				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
+				.setActive(getValue(r, COMPANY.ACTIVE) == 1)
+				.seteInvoice(getValue(r, COMPANY.E_INVOICE) == 1)
+				.setSurcharge(getValue(r, COMPANY.SURCHARGE) == 1)
+				.setVatAccrualPayment(getValue(r, COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
+				.setWithholding(getValue(r, COMPANY.WITHHOLDING) == 1);
 
 			return new AonCompany()
 				.setDomain(d)
-				.setShared(AonEnumUtils.enumValue(UserType.class, r.getValue(USER.TYPE)) == UserType.SHARED)
+				.setShared(AonEnumUtils.enumValue(UserType.class, getValue(r, USER.TYPE)) == UserType.SHARED)
 				.setCompany(company)
-				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))))
-				.setLogin(r.getValue(USER.LOGIN));
+				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(getValue(r, APP_PARAM.VALUE))))
+				.setLogin(getValue(r, USER.LOGIN));
 		}
 	}
 	
-	public static class IncomeFiller implements Function<Record, Income> {
+	public static class IncomeFiller extends Filler implements Function<Record, Income> {
 		@Override
 		public Income apply(Record r) {
 			Income income = new Income();
-			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
-			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
-			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
-			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
+			income.setCreationDate(getValue(r, INCOME.CREATION_DATE));
+			income.setCreationUser(getValue(r, INCOME.CREATION_USER));
+			income.setModificationDate(getValue(r, INCOME.MODIFICATION_DATE));
+			income.setModificationUser(getValue(r, INCOME.MODIFICATION_USER));
 			return income
-					.setAddress(r.getValue(INCOME.ADDRESS))
-					.setBankAccount(r.getValue(INCOME.BANK_ACCOUNT))
-					.setBankAlias(r.getValue(INCOME.BANK_ALIAS))
-					.setBic(r.getValue(INCOME.BIC))
-					.setCarrierPacking(r.getValue(INCOME.CARRIER_PACKING))
-					.setComments(r.getValue(INCOME.COMMENTS))
-					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS) != null ? r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
-					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
-					.setDomain(r.getValue(INCOME.DOMAIN))
-					.setId(r.getValue(INCOME.ID))
-					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
-					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
-					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
-					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
-					.setPymntDays(r.getValue(INCOME.PYMNT_DAYS))
-					.setReferenceCode(r.getValue(INCOME.REFERENCE_CODE))
-					.setRemarks(r.getValue(INCOME.REMARKS))
-					.setScope(r.getValue(INCOME.SCOPE))
-					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
-					.setStatus(IncomeStatus.safeValueOf(r.getValue(INCOME.STATUS)))
-					.setSupplier(r.getValue(INCOME.SUPPLIER))
-					.setWorkplace(r.getValue(INCOME.WORKPLACE));
+					.setAddress(getValue(r, INCOME.ADDRESS))
+					.setBankAccount(getValue(r, INCOME.BANK_ACCOUNT))
+					.setBankAlias(getValue(r, INCOME.BANK_ALIAS))
+					.setBic(getValue(r, INCOME.BIC))
+					.setCarrierPacking(getValue(r, INCOME.CARRIER_PACKING))
+					.setComments(getValue(r, INCOME.COMMENTS))
+					.setDaysBetweenPymnt(getValue(r, INCOME.DAYS_BETWEEN_PYMNTS) != null ? getValue(r, INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
+					.setDaysToFirstPymnt(getValue(r, INCOME.DAYS_TO_FIRST_PYMNT) != null ? getValue(r, INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
+					.setDomain(getValue(r, INCOME.DOMAIN))
+					.setId(getValue(r, INCOME.ID))
+					.setIssueDate(getValue(r, INCOME.ISSUE_TIME))
+					.setNumberOfPymnts(getValue(r, INCOME.NUMBER_OF_PYMNTS) != null ? getValue(r, INCOME.NUMBER_OF_PYMNTS).intValue() : null)
+					.setPayMethod(getValue(r, INCOME.PAY_METHOD))
+					.setProject(new Project().setId(getValue(r, INCOME.PROJECT)))
+					.setPymntDays(getValue(r, INCOME.PYMNT_DAYS))
+					.setReferenceCode(getValue(r, INCOME.REFERENCE_CODE))
+					.setRemarks(getValue(r, INCOME.REMARKS))
+					.setScope(getValue(r, INCOME.SCOPE))
+					.setSecurityLevel(getValue(r, INCOME.SECURITY_LEVEL) != null ? getValue(r, INCOME.SECURITY_LEVEL).intValue() : null)
+					.setStatus(IncomeStatus.safeValueOf(getValue(r, INCOME.STATUS)))
+					.setSupplier(getValue(r, INCOME.SUPPLIER))
+					.setWorkplace(getValue(r, INCOME.WORKPLACE));
 		}
 	}
 	
-	public static class IncomeRegistryFiller implements Function<Record, Income> {
+	public static class IncomeRegistryFiller extends Filler implements Function<Record, Income> {
 		@Override
 		public Income apply(Record r) {
 			Income income = new Income();
-			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
-			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
-			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
-			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
+			income.setCreationDate(getValue(r, INCOME.CREATION_DATE));
+			income.setCreationUser(getValue(r, INCOME.CREATION_USER));
+			income.setModificationDate(getValue(r, INCOME.MODIFICATION_DATE));
+			income.setModificationUser(getValue(r, INCOME.MODIFICATION_USER));
 			return income
-					.setAddress(r.getValue(INCOME.ADDRESS))
-					.setBankAccount(r.getValue(INCOME.BANK_ACCOUNT))
-					.setBankAlias(r.getValue(INCOME.BANK_ALIAS))
-					.setBic(r.getValue(INCOME.BIC))
-					.setCarrierPacking(r.getValue(INCOME.CARRIER_PACKING))
-					.setComments(r.getValue(INCOME.COMMENTS))
-					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS) != null ? r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
-					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
-					.setDomain(r.getValue(INCOME.DOMAIN))
-					.setId(r.getValue(INCOME.ID))
-					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
-					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
-					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
-					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
-					.setPymntDays(r.getValue(INCOME.PYMNT_DAYS))
-					.setReferenceCode(r.getValue(INCOME.REFERENCE_CODE))
-					.setRemarks(r.getValue(INCOME.REMARKS))
-					.setScope(r.getValue(INCOME.SCOPE))
-					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
-					.setStatus(IncomeStatus.safeValueOf(r.getValue(INCOME.STATUS)))
-					.setSupplier(r.getValue(INCOME.SUPPLIER))
-					.setWorkplace(r.getValue(INCOME.WORKPLACE))
-					.setSupplierName(r.getValue(REGISTRY.NAME));
+					.setAddress(getValue(r, INCOME.ADDRESS))
+					.setBankAccount(getValue(r, INCOME.BANK_ACCOUNT))
+					.setBankAlias(getValue(r, INCOME.BANK_ALIAS))
+					.setBic(getValue(r, INCOME.BIC))
+					.setCarrierPacking(getValue(r, INCOME.CARRIER_PACKING))
+					.setComments(getValue(r, INCOME.COMMENTS))
+					.setDaysBetweenPymnt(getValue(r, INCOME.DAYS_BETWEEN_PYMNTS) != null ? getValue(r, INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
+					.setDaysToFirstPymnt(getValue(r, INCOME.DAYS_TO_FIRST_PYMNT) != null ? getValue(r, INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
+					.setDomain(getValue(r, INCOME.DOMAIN))
+					.setId(getValue(r, INCOME.ID))
+					.setIssueDate(getValue(r, INCOME.ISSUE_TIME))
+					.setNumberOfPymnts(getValue(r, INCOME.NUMBER_OF_PYMNTS) != null ? getValue(r, INCOME.NUMBER_OF_PYMNTS).intValue() : null)
+					.setPayMethod(getValue(r, INCOME.PAY_METHOD))
+					.setProject(new Project().setId(getValue(r, INCOME.PROJECT)))
+					.setPymntDays(getValue(r, INCOME.PYMNT_DAYS))
+					.setReferenceCode(getValue(r, INCOME.REFERENCE_CODE))
+					.setRemarks(getValue(r, INCOME.REMARKS))
+					.setScope(getValue(r, INCOME.SCOPE))
+					.setSecurityLevel(getValue(r, INCOME.SECURITY_LEVEL) != null ? getValue(r, INCOME.SECURITY_LEVEL).intValue() : null)
+					.setStatus(IncomeStatus.safeValueOf(getValue(r, INCOME.STATUS)))
+					.setSupplier(getValue(r, INCOME.SUPPLIER))
+					.setWorkplace(getValue(r, INCOME.WORKPLACE))
+					.setSupplierName(getValue(r, REGISTRY.NAME));
 		}
 	}
 	
-	public static class IncomeDetailFiller implements Function<Record, IncomeDetail> {
+	public static class IncomeDetailFiller extends Filler implements Function<Record, IncomeDetail> {
 		
 		@Override
 		public IncomeDetail apply(Record r) {
 			IncomeDetail incomeDetail = new IncomeDetail();
-			incomeDetail.setCreationDate(r.getValue(INCOME_DETAIL.CREATION_DATE));
-			incomeDetail.setCreationUser(r.getValue(INCOME_DETAIL.CREATION_USER));
-			incomeDetail.setModificationDate(r.getValue(INCOME_DETAIL.MODIFICATION_DATE));
-			incomeDetail.setModificationUser(r.getValue(INCOME_DETAIL.MODIFICATION_USER));
+			incomeDetail.setCreationDate(getValue(r, INCOME_DETAIL.CREATION_DATE));
+			incomeDetail.setCreationUser(getValue(r, INCOME_DETAIL.CREATION_USER));
+			incomeDetail.setModificationDate(getValue(r, INCOME_DETAIL.MODIFICATION_DATE));
+			incomeDetail.setModificationUser(getValue(r, INCOME_DETAIL.MODIFICATION_USER));
 			return incomeDetail
-					.setDescription(r.getValue(INCOME_DETAIL.DESCRIPTION))
-					.setDiscountExpression(r.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
-					.setDomain(r.getValue(INCOME_DETAIL.DOMAIN))
-					.setId(r.getValue(INCOME_DETAIL.ID))
+					.setDescription(getValue(r, INCOME_DETAIL.DESCRIPTION))
+					.setDiscountExpression(getValue(r, INCOME_DETAIL.DISCOUNT_EXPR))
+					.setDomain(getValue(r, INCOME_DETAIL.DOMAIN))
+					.setId(getValue(r, INCOME_DETAIL.ID))
 					.setIncome(new Income()
-							.setId(r.getValue(INCOME_DETAIL.INCOME)))
+							.setId(getValue(r, INCOME_DETAIL.INCOME)))
 					.setItem(new OldItem()
-							.setId(r.getValue(INCOME_DETAIL.ITEM)))
-					.setLine(r.getValue(INCOME_DETAIL.LINE))
-					.setPrice(r.getValue(INCOME_DETAIL.PRICE))
+							.setId(getValue(r, INCOME_DETAIL.ITEM)))
+					.setLine(getValue(r, INCOME_DETAIL.LINE))
+					.setPrice(getValue(r, INCOME_DETAIL.PRICE))
 					.setProject(new Project()
-							.setId(r.getValue(INCOME_DETAIL.PROJECT)))
-					.setPurchaseDetail(r.getValue(INCOME_DETAIL.PURCHASE_DETAIL))
-					.setQuantity(r.getValue(INCOME_DETAIL.QUANTITY))
-					.setWarehouse(r.getValue(INCOME_DETAIL.WAREHOUSE));
+							.setId(getValue(r, INCOME_DETAIL.PROJECT)))
+					.setPurchaseDetail(getValue(r, INCOME_DETAIL.PURCHASE_DETAIL))
+					.setQuantity(getValue(r, INCOME_DETAIL.QUANTITY))
+					.setWarehouse(getValue(r, INCOME_DETAIL.WAREHOUSE));
 		}
 	}
 	
-	public static class DataResponseFiller implements Function<Record, DataResponse> {
+	public static class DataResponseFiller extends Filler implements Function<Record, DataResponse> {
 		
 		@Override
 		public DataResponse apply(Record r) {
-			return new DataResponse().setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
-					.setId(r.getValue(DATA_RESPONSE.ID))
-					.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
-					.setCode(r.getValue(DATA_RESPONSE.CODE))
-					.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
-					.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-					.setDataRequest(r.getValue(DATA_RESPONSE.DATA_REQUEST))
-					.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
-					.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-					.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
+			return new DataResponse().setDomain(getValue(r, DATA_RESPONSE.DOMAIN))
+					.setId(getValue(r, DATA_RESPONSE.ID))
+					.setResponseDate(getValue(r, DATA_RESPONSE.RESPONSE_DATE))
+					.setCode(getValue(r, DATA_RESPONSE.CODE))
+					.setSource(DataResponseSource.safeValueOf(getValue(r, DATA_RESPONSE.SOURCE)))
+					.setSourceId(getValue(r, DATA_RESPONSE.SOURCE_ID))
+					.setDataRequest(getValue(r, DATA_RESPONSE.DATA_REQUEST))
+					.setCreationDate(getValue(r, DATA_RESPONSE.CREATION_DATE))
+					.setCreationUser(getValue(r, DATA_RESPONSE.CREATION_USER))
+					.setModificationDate(getValue(r, DATA_RESPONSE.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, DATA_RESPONSE.MODIFICATION_USER));
 		}
 	}
 	
-	public static class DataResponseDetailFiller implements Function<Record, DataResponseDetail> {
+	public static class DataResponseDetailFiller extends Filler implements Function<Record, DataResponseDetail> {
 		
 		@Override
 		public DataResponseDetail apply(Record r) {
 			DataResponseDetail dataResponseDetail = new DataResponseDetail();
-			dataResponseDetail.setCreationDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE));
-			dataResponseDetail.setCreationUser(r.getValue(DATA_RESPONSE_DETAIL.CREATION_USER));
-			dataResponseDetail.setModificationDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE));
-			dataResponseDetail.setModificationUser(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_USER));
-			return dataResponseDetail.setDomain(r.getValue(DATA_RESPONSE_DETAIL.DOMAIN))
-					.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
-					.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
-					.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
-					.setDataValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
+			dataResponseDetail.setCreationDate(getValue(r, DATA_RESPONSE_DETAIL.CREATION_DATE));
+			dataResponseDetail.setCreationUser(getValue(r, DATA_RESPONSE_DETAIL.CREATION_USER));
+			dataResponseDetail.setModificationDate(getValue(r, DATA_RESPONSE_DETAIL.MODIFICATION_DATE));
+			dataResponseDetail.setModificationUser(getValue(r, DATA_RESPONSE_DETAIL.MODIFICATION_USER));
+			return dataResponseDetail.setDomain(getValue(r, DATA_RESPONSE_DETAIL.DOMAIN))
+					.setId(getValue(r, DATA_RESPONSE_DETAIL.ID))
+					.setDataResponse(getValue(r, DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+					.setDataVariable(getValue(r, DATA_RESPONSE_DETAIL.DATA_VARIABLE))
+					.setDataValue(getValue(r, DATA_RESPONSE_DETAIL.DATA_VALUE));
 		}
 	}
 	
-	public static class ContractFiller implements Function<Record, Contract> {
+	public static class ContractFiller extends Filler implements Function<Record, Contract> {
 		
 		@Override
 		public Contract apply(Record r) {
 			return new Contract()
-					.setId(r.getValue(CONTRACT.ID))
-					.setDomain(r.getValue(CONTRACT.DOMAIN))
-					.setPerson(r.getValue(CONTRACT.PERSON))
-					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
-					.setStartDate(r.getValue(CONTRACT.START_DATE))
-					.setEndDate(r.getValue(CONTRACT.END_DATE))
-					.setCalendar(r.getValue(CONTRACT.CALENDAR))
-					.setDescription(r.getValue(CONTRACT.DESCRIPTION))
-				//TODO	.setSepeStatus(ContractStatus.values()[r.getValue(CONTRACT.SEPE_STATUS)])
-					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
-					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
-					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
-					.setEnterpriseCCCRegime(CCCType.getSsRegimeType(r.getValue(ENTERPRISE_CCC.TYPE)))
-					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
+					.setId(getValue(r, CONTRACT.ID))
+					.setDomain(getValue(r, CONTRACT.DOMAIN))
+					.setPerson(getValue(r, CONTRACT.PERSON))
+					.setWorkplace(getValue(r, CONTRACT.WORKPLACE))
+					.setStartDate(getValue(r, CONTRACT.START_DATE))
+					.setEndDate(getValue(r, CONTRACT.END_DATE))
+					.setCalendar(getValue(r, CONTRACT.CALENDAR))
+					.setDescription(getValue(r, CONTRACT.DESCRIPTION))
+				//TODO	.setSepeStatus(ContractStatus.values()[getValue(r, CONTRACT.SEPE_STATUS)])
+					.setRegistration(getValue(r, CONTRACT.REGISTRATION))
+					.setSeniorityDate(getValue(r, CONTRACT.SENIORITY_DATE))
+					.setEnterpriseActivity(getValue(r, CONTRACT.ENTERPRISE_ACTIVITY))
+					.setEnterpriseCCCRegime(CCCType.getSsRegimeType(getValue(r, ENTERPRISE_CCC.TYPE)))
+					.setAgreementLevel(getValue(r, CONTRACT.AGREEMENT_LEVEL))
 					
-					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
-					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setPersonSsNumber(r.getValue(PERSON.SOCIAL_SECURITY_NUM))
-					.setPersonName(r.getValue(REGISTRY.NAME))
+					.setEnterpriseCCC(getValue(r, ENTERPRISE_CCC.CCC))
+					.setPersonDocument(getValue(r, REGISTRY.DOCUMENT))
+					.setPersonSsNumber(getValue(r, PERSON.SOCIAL_SECURITY_NUM))
+					.setPersonName(getValue(r, REGISTRY.NAME))
 
-				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
-					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
-				//TODO	.setSsStatus(ContractStatus.values()[r.getValue(CONTRACT.SS_STATUS)]);
+				//TODO	.setModel(ContractModel.values()[getValue(r, CONTRACT.MODEL)])
+					.setCategoryDescription(getValue(r, CONTRACT.CATEGORY_DESCRIPTION));
+				//TODO	.setSsStatus(ContractStatus.values()[getValue(r, CONTRACT.SS_STATUS)]);
 		}
 	}
 	
-	public static class ContractExtendedDataFiller implements Function<Record, ContractExtendedData> {
+	public static class ContractExtendedDataFiller extends Filler implements Function<Record, ContractExtendedData> {
 		@Override
 		public ContractExtendedData apply(Record r) {
 			return new ContractExtendedData()
-					.setGrossSalaryLastMonth(r.getValue(ContractDAO.SALARY_CGC_BASE))
-					.setTotalMarksLastMonth(r.getValue(ContractDAO.MARK_TOTAL_TIME))
-					.setId(r.getValue(CONTRACT.ID))
-					.setDomain(r.getValue(CONTRACT.DOMAIN))
-					.setPerson(r.getValue(CONTRACT.PERSON))
-					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
-					.setWorkplaceName(r.getValue(WORKPLACE.DESCRIPTION))
-					.setStartDate(r.getValue(CONTRACT.START_DATE))
-					.setEndDate(r.getValue(CONTRACT.END_DATE))
-					.setContractType(r.getValue(ContractDAO.CONTRACT_TYPE))
-					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME))
-					.setDomainName(r.getValue(DOMAIN.NAME))
-					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setGrossSalaryLastMonth(getValue(r, ContractDAO.SALARY_CGC_BASE))
+					.setTotalMarksLastMonth(getValue(r, ContractDAO.MARK_TOTAL_TIME))
+					.setId(getValue(r, CONTRACT.ID))
+					.setDomain(getValue(r, CONTRACT.DOMAIN))
+					.setPerson(getValue(r, CONTRACT.PERSON))
+					.setWorkplace(getValue(r, CONTRACT.WORKPLACE))
+					.setWorkplaceName(getValue(r, WORKPLACE.DESCRIPTION))
+					.setStartDate(getValue(r, CONTRACT.START_DATE))
+					.setEndDate(getValue(r, CONTRACT.END_DATE))
+					.setContractType(getValue(r, ContractDAO.CONTRACT_TYPE))
+					.setPersonName(getValue(r, ContractDAO.PERSON_FULL_NAME))
+					.setDomainName(getValue(r, DOMAIN.NAME))
+					.setPersonDocument(getValue(r, REGISTRY.DOCUMENT))
 					;
 		}
 	}
 	
-	public static class ContractDataFiller implements Function<Record, ContractData> {
+	public static class ContractDataFiller extends Filler implements Function<Record, ContractData> {
 		
 		@Override
 		public ContractData apply(Record r) {
 			return new ContractData()
-					.setId(r.getValue(CONTRACT_DATA.ID))
-					.setDomain(r.getValue(CONTRACT_DATA.DOMAIN))
-					.setName(r.getValue(CONTRACT_DATA.NAME))
-					.setContract(r.getValue(CONTRACT_DATA.CONTRACT))
-					.setExpression(r.getValue(CONTRACT_DATA.EXPRESSION))
-					.setStartDate(r.getValue(CONTRACT_DATA.START_DATE))
-					.setEndDate(r.getValue(CONTRACT_DATA.END_DATE));
+					.setId(getValue(r, CONTRACT_DATA.ID))
+					.setDomain(getValue(r, CONTRACT_DATA.DOMAIN))
+					.setName(getValue(r, CONTRACT_DATA.NAME))
+					.setContract(getValue(r, CONTRACT_DATA.CONTRACT))
+					.setExpression(getValue(r, CONTRACT_DATA.EXPRESSION))
+					.setStartDate(getValue(r, CONTRACT_DATA.START_DATE))
+					.setEndDate(getValue(r, CONTRACT_DATA.END_DATE));
 		}
 	}
 	
-	public static class IrpfDataFiller implements Function<Record, IrpfData> {
+	public static class IrpfDataFiller extends Filler implements Function<Record, IrpfData> {
 		
 		@Override
 		public IrpfData apply(Record r) {
 			return new IrpfData()
-					.setId(r.getValue(IRPF_DATA.ID))
-					.setDomain(r.getValue(IRPF_DATA.DOMAIN))
-					.setDisability(r.getValue(IRPF_DATA.DISABILITY_LEVEL));
+					.setId(getValue(r, IRPF_DATA.ID))
+					.setDomain(getValue(r, IRPF_DATA.DOMAIN))
+					.setDisability(getValue(r, IRPF_DATA.DISABILITY_LEVEL));
 			// TODO AÑADIR LOS PARÁMETROS QUE FALTAN.
 		}
 	}
 
-	public static class AgreementLevelCategoryFiller implements Function<Record, AgreementLevelCategory> {
+	public static class AgreementLevelCategoryFiller extends Filler implements Function<Record, AgreementLevelCategory> {
 		
 		@Override
 		public AgreementLevelCategory apply(Record r) {
 			return new AgreementLevelCategory()
-					.setId(r.getValue(AGREEMENT_LEVEL_CATEGORY.ID))
-					.setDomain(r.getValue(AGREEMENT_LEVEL_CATEGORY.DOMAIN))
-					.setAgreementLevel(r.getValue(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
-					.setDescription(r.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION))
-					.setLevel(null == r.getValue(AGREEMENT_LEVEL.ID) 
+					.setId(getValue(r, AGREEMENT_LEVEL_CATEGORY.ID))
+					.setDomain(getValue(r, AGREEMENT_LEVEL_CATEGORY.DOMAIN))
+					.setAgreementLevel(getValue(r, AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+					.setDescription(getValue(r, AGREEMENT_LEVEL_CATEGORY.DESCRIPTION))
+					.setLevel(null == getValue(r, AGREEMENT_LEVEL.ID) 
 						? null 
 						: new AgreementLevel()
-							.setId(r.getValue(AGREEMENT_LEVEL.ID))
-							.setDomain(r.getValue(AGREEMENT_LEVEL.DOMAIN))
-							.setAgreement(null == r.getValue(AGREEMENT_LEVEL.AGREEMENT) ? null : r.getValue(AGREEMENT_LEVEL.AGREEMENT))
-							.setDescription(null == r.getValue(AGREEMENT_LEVEL.DESCRIPTION) ? null : r.getValue(AGREEMENT_LEVEL.DESCRIPTION))
+							.setId(getValue(r, AGREEMENT_LEVEL.ID))
+							.setDomain(getValue(r, AGREEMENT_LEVEL.DOMAIN))
+							.setAgreement(null == getValue(r, AGREEMENT_LEVEL.AGREEMENT) ? null : getValue(r, AGREEMENT_LEVEL.AGREEMENT))
+							.setDescription(null == getValue(r, AGREEMENT_LEVEL.DESCRIPTION) ? null : getValue(r, AGREEMENT_LEVEL.DESCRIPTION))
 					);
 		}
 	}
 	
-	public static class InventoryDetailFiller implements Function<Record, InventoryDetail> {
+	public static class InventoryDetailFiller extends Filler implements Function<Record, InventoryDetail> {
 		
 		@Override
 		public InventoryDetail apply(Record r) {
 			return new InventoryDetail()
-					.setId(r.getValue(INVENTORY_DETAIL.ID))
-					.setInventory(new Inventory().setId(r.getValue(INVENTORY_DETAIL.INVENTORY)).setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN)))
-					.setCost(r.getValue(INVENTORY_DETAIL.COST))
-					.setActualQuantity(r.getValue(INVENTORY_DETAIL.ACTUAL_QUANTITY))
-					.setCreationDate(r.getValue(INVENTORY_DETAIL.CREATION_DATE))
-					.setCreationUser(r.getValue(INVENTORY_DETAIL.CREATION_USER))
-					.setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN))
+					.setId(getValue(r, INVENTORY_DETAIL.ID))
+					.setInventory(new Inventory().setId(getValue(r, INVENTORY_DETAIL.INVENTORY)).setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN)))
+					.setCost(getValue(r, INVENTORY_DETAIL.COST))
+					.setActualQuantity(getValue(r, INVENTORY_DETAIL.ACTUAL_QUANTITY))
+					.setCreationDate(getValue(r, INVENTORY_DETAIL.CREATION_DATE))
+					.setCreationUser(getValue(r, INVENTORY_DETAIL.CREATION_USER))
+					.setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN))
 					.setItem(
-						new OldItem().setId(r.getValue(ITEM.ID))
-							.setBarcode(r.getValue(ITEM.BARCODE))
-							.setCreationDate(r.getValue(ITEM.CREATION_DATE))
-							.setCreationUser(r.getValue(ITEM.CREATION_USER))
-							.setDescription(r.getValue(ITEM.DESCRIPTION))
-							.setDetail(r.getValue(ITEM.DETAIL))
-							.setDetail2(r.getValue(ITEM.DETAIL2))
-							.setDetail3(r.getValue(ITEM.DETAIL3))
-							.setDomain(r.getValue(ITEM.DOMAIN))
-							.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
-							.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
-							.setInternet(r.getValue(ITEM.INTERNET) == 1)
-							.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
-							.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
-							.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
-							.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
-							.setPrice(r.getValue(ITEM.PRICE))
+						new OldItem().setId(getValue(r, ITEM.ID))
+							.setBarcode(getValue(r, ITEM.BARCODE))
+							.setCreationDate(getValue(r, ITEM.CREATION_DATE))
+							.setCreationUser(getValue(r, ITEM.CREATION_USER))
+							.setDescription(getValue(r, ITEM.DESCRIPTION))
+							.setDetail(getValue(r, ITEM.DETAIL))
+							.setDetail2(getValue(r, ITEM.DETAIL2))
+							.setDetail3(getValue(r, ITEM.DETAIL3))
+							.setDomain(getValue(r, ITEM.DOMAIN))
+							.setExpensesFixed(getValue(r, ITEM.EXPENSES_FIXED))
+							.setExpensesPercent(getValue(r, ITEM.EXPENSES_PERCENT))
+							.setInternet(getValue(r, ITEM.INTERNET) == 1)
+							.setModificationDate(getValue(r, ITEM.MODIFICATION_DATE))
+							.setModificationUser(getValue(r, ITEM.MODIFICATION_USER))
+							.setPackMeasurement(getValue(r, ITEM.PACK_MEASUREMENT))
+							.setPackUnits(getValue(r, ITEM.PACK_UNITS).doubleValue())
+							.setPrice(getValue(r, ITEM.PRICE))
 							.setProduct( 
-									new OldProduct().setId(r.getValue(PRODUCT.ID))
-									.setName(r.getValue(PRODUCT.NAME))
-									.setDomain(r.getValue(PRODUCT.DOMAIN))
-									.setCode(r.getValue(PRODUCT.CODE))
-									.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
-									.setComposition(r.getValue(PRODUCT.COMPOSITION))
-									.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
-									.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE))
-									.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
-									.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) )
-									.setKind(r.getValue(PRODUCT.KIND) )
-									.setLotable(r.getValue(PRODUCT.LOTABLE)  == 1)
-									.setLotable(r.getValue(PRODUCT.LOTABLE) )
-									.setManufactured(r.getValue(PRODUCT.MANUFACTURED) )
-									.setPackaged(r.getValue(PRODUCT.PACKAGED)  == 1)
-									.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT) )
-									.setRetention(r.getValue(PRODUCT.RETENTION) )
-									.setSalesAccount(r.getValue(PRODUCT.SALES_ACCOUNT) )
-									.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) == 1)
-									.setSerializable(r.getValue(PRODUCT.SERIALIZABLE))
-									.setStatus(r.getValue(PRODUCT.STATUS))
-									.setType(r.getValue(PRODUCT.TYPE))
-									.setVat(r.getValue(PRODUCT.VAT))
+									new OldProduct().setId(getValue(r, PRODUCT.ID))
+									.setName(getValue(r, PRODUCT.NAME))
+									.setDomain(getValue(r, PRODUCT.DOMAIN))
+									.setCode(getValue(r, PRODUCT.CODE))
+									.setComposition(getValue(r, PRODUCT.COMPOSITION) == 1)
+									.setComposition(getValue(r, PRODUCT.COMPOSITION))
+									.setCompositionPrice(getValue(r, PRODUCT.COMPOSITION_PRICE) == 1)
+									.setCompositionPrice(getValue(r, PRODUCT.COMPOSITION_PRICE))
+									.setInventoriable(getValue(r, PRODUCT.INVENTORIABLE) == 1)
+									.setInventoriable(getValue(r, PRODUCT.INVENTORIABLE) )
+									.setKind(getValue(r, PRODUCT.KIND) )
+									.setLotable(getValue(r, PRODUCT.LOTABLE)  == 1)
+									.setLotable(getValue(r, PRODUCT.LOTABLE) )
+									.setManufactured(getValue(r, PRODUCT.MANUFACTURED) )
+									.setPackaged(getValue(r, PRODUCT.PACKAGED)  == 1)
+									.setPurchaseAccount(getValue(r, PRODUCT.PURCHASE_ACCOUNT) )
+									.setRetention(getValue(r, PRODUCT.RETENTION) )
+									.setSalesAccount(getValue(r, PRODUCT.SALES_ACCOUNT) )
+									.setSerializable(getValue(r, PRODUCT.SERIALIZABLE) == 1)
+									.setSerializable(getValue(r, PRODUCT.SERIALIZABLE))
+									.setStatus(getValue(r, PRODUCT.STATUS))
+									.setType(getValue(r, PRODUCT.TYPE))
+									.setVat(getValue(r, PRODUCT.VAT))
 							)
-							.setProductId(r.getValue(ITEM.PRODUCT))
-							.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
-							.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
-							.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-							.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
-							.setStatus(r.getValue(ITEM.STATUS))
+							.setProductId(getValue(r, ITEM.PRODUCT))
+							.setProfitPercent(getValue(r, ITEM.PROFIT_PERCENT))
+							.setPurchasePrice(getValue(r, ITEM.PURCHASE_PRICE))
+							.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
+							.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+							.setStatus(getValue(r, ITEM.STATUS))
 					)
-					.setModificationDate(r.getValue(INVENTORY_DETAIL.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(INVENTORY_DETAIL.MODIFICATION_USER))
-					.setRealQuantity(r.getValue(INVENTORY_DETAIL.REAL_QUANTITY));
+					.setModificationDate(getValue(r, INVENTORY_DETAIL.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, INVENTORY_DETAIL.MODIFICATION_USER))
+					.setRealQuantity(getValue(r, INVENTORY_DETAIL.REAL_QUANTITY));
 		}
 
 	}
@@ -752,236 +761,236 @@ public class FillerDAO {
 		@Override
 		public OfferDetailCommission apply(Record r) {
 			return new OfferDetailCommission()
-					.setId(r.getValue(OFFER_DETAIL_COMMISSION.ID))
-					.setDomain(r.getValue(OFFER_DETAIL_COMMISSION.DOMAIN))
+					.setId(getValue(r, OFFER_DETAIL_COMMISSION.ID))
+					.setDomain(getValue(r, OFFER_DETAIL_COMMISSION.DOMAIN))
 					.setOfferDetail(checkField(r, OFFER_DETAIL.ID)
 							? OfferDetailFiller.build(r)
-							: new OfferDetail().setId(r.getValue(OFFER_DETAIL_COMMISSION.OFFER_DETAIL)))
-					.setStatus(OfferDetailCommissionStatus.safeValueOf(r.getValue(OFFER_DETAIL_COMMISSION.STATUS)))
-					.setPayDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE))
-					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))
-					.setAmount(r.getValue(OFFER_DETAIL_COMMISSION.AMOUNT));
+							: new OfferDetail().setId(getValue(r, OFFER_DETAIL_COMMISSION.OFFER_DETAIL)))
+					.setStatus(OfferDetailCommissionStatus.safeValueOf(getValue(r, OFFER_DETAIL_COMMISSION.STATUS)))
+					.setPayDate(getValue(r, OFFER_DETAIL_COMMISSION.PAY_DATE))
+					.setCommission(getValue(r, OFFER_DETAIL_COMMISSION.COMMISSION))
+					.setAmount(getValue(r, OFFER_DETAIL_COMMISSION.AMOUNT));
 			
 		}
 	}
 	
-	public static class InvoiceDetailCommissionFiller implements Function<Record, InvoiceDetailCommission> {
+	public static class InvoiceDetailCommissionFiller extends Filler implements Function<Record, InvoiceDetailCommission> {
 		
 		@Override
 		public InvoiceDetailCommission apply(Record r) {
 			Invoice i = new Invoice()
-				.setId(r.getValue(INVOICE.ID))
-				.setDomain(r.getValue(INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
-				.setSeries(r.getValue(INVOICE.SERIES))
-				.setNumber(r.getValue(INVOICE.NUMBER))
-				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getValue(INVOICE.SECURITY_LEVEL)))
-				.setRegistry(r.getValue(INVOICE.REGISTRY))
-				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(r.getValue(INVOICE.RNAME))
-				.setScope(new Scope().setId(r.getValue(INVOICE.SCOPE)))
-				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
-				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
-				.setProject(r.getValue(INVOICE.PROJECT))
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(r.getValue(INVOICE.STATUS) == 1 )	
-				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
-				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
-				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
-				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
-				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
-				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
-				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
-				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
-				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
-				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(r.getValue(INVOICE.TOTAL))	
-				.setComments(r.getValue(INVOICE.COMMENTS))
-				.setSeller(r.getValue(REGISTRY.ID))
-				.setSellerName(r.getValue(REGISTRY.NAME));
+				.setId(getValue(r, INVOICE.ID))
+				.setDomain(getValue(r, INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,getValue(r, INVOICE.TYPE)))
+				.setSeries(getValue(r, INVOICE.SERIES))
+				.setNumber(getValue(r, INVOICE.NUMBER))
+				.setReferenceCode(getValue(r, INVOICE.REFERENCE_CODE))
+				.setIssueDate(getValue(r, INVOICE.ISSUE_DATE))
+				.setTaxDate(getValue(r, INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,getValue(r, INVOICE.SECURITY_LEVEL)))
+				.setRegistry(getValue(r, INVOICE.REGISTRY))
+				.setRegistryDocument(getValue(r, INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,getValue(r, INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(getValue(r, INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(getValue(r, INVOICE.RNAME))
+				.setScope(new Scope().setId(getValue(r, INVOICE.SCOPE)))
+				.setActivity(new EnterpriseActivity().setId(getValue(r, INVOICE.ACTIVITY)))	
+				.setInvestAsset(getValue(r, INVOICE.INVEST_ASSET))
+				.setProject(getValue(r, INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,getValue(r, INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(getValue(r, INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,getValue(r, INVOICE.TRANSACTION)))
+				.setRecorded(getValue(r, INVOICE.STATUS) == 1 )	
+				.setSurcharge(getValue(r, INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(getValue(r, INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(getValue(r, INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(getValue(r, INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(getValue(r, INVOICE.INVESTMENT) == 1 )	
+				.setService(getValue(r, INVOICE.SERVICE) == 1 )	
+				.setAdvance(getValue(r, INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(getValue(r, INVOICE.TAXABLE_BASE))	
+				.setVatQuota(getValue(r, INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(getValue(r, INVOICE.RETENTION_QUOTA))	
+				.setTotal(getValue(r, INVOICE.TOTAL))	
+				.setComments(getValue(r, INVOICE.COMMENTS))
+				.setSeller(getValue(r, REGISTRY.ID))
+				.setSellerName(getValue(r, REGISTRY.NAME));
 			
 			
 			InvoiceDetail id = new InvoiceDetail()
-					.setDescription(r.getValue(INVOICE_DETAIL.DESCRIPTION))
-					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
-					.setDomain(r.getValue(INVOICE_DETAIL.DOMAIN))
-					.setId(r.getValue(INVOICE_DETAIL.ID))
-					.setItem(new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+					.setDescription(getValue(r, INVOICE_DETAIL.DESCRIPTION))
+					.setDiscountExpression(getValue(r, INVOICE_DETAIL.DISCOUNT_EXPR))
+					.setDomain(getValue(r, INVOICE_DETAIL.DOMAIN))
+					.setId(getValue(r, INVOICE_DETAIL.ID))
+					.setItem(new Item().setId(getValue(r, INVOICE_DETAIL.ITEM)))
 					.setInvoice(i)
-					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
-					.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY));
+					.setPrice(getValue(r, INVOICE_DETAIL.PRICE))
+					.setQuantity(getValue(r, INVOICE_DETAIL.QUANTITY));
 			
 			return new InvoiceDetailCommission()
-					.setId(r.getValue(INVOICE_DETAIL_COMMISSION.ID))
-					.setDomain(r.getValue(INVOICE_DETAIL_COMMISSION.DOMAIN))
+					.setId(getValue(r, INVOICE_DETAIL_COMMISSION.ID))
+					.setDomain(getValue(r, INVOICE_DETAIL_COMMISSION.DOMAIN))
 					.setInvoiceDetail(id)
-					.setStatus(InvoiceDetailCommissionStatus.safeValueOf(r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)))
-					.setPayDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE))
-					.setCommission(r.getValue(INVOICE_DETAIL_COMMISSION.COMMISSION))
-					.setAmount(r.getValue(INVOICE_DETAIL_COMMISSION.AMOUNT));
+					.setStatus(InvoiceDetailCommissionStatus.safeValueOf(getValue(r, INVOICE_DETAIL_COMMISSION.STATUS)))
+					.setPayDate(getValue(r, INVOICE_DETAIL_COMMISSION.PAY_DATE))
+					.setCommission(getValue(r, INVOICE_DETAIL_COMMISSION.COMMISSION))
+					.setAmount(getValue(r, INVOICE_DETAIL_COMMISSION.AMOUNT));
 		}
 	}
 	
-	public static class CommissionItemFiller implements Function<Record, CommissionItem> {
+	public static class CommissionItemFiller extends Filler implements Function<Record, CommissionItem> {
 		
 		@Override
 		public CommissionItem apply(Record r) {
 			return new CommissionItem()
-					.setId(r.getValue(COMMISSION_ITEM.ID))
-					.setDomain(r.getValue(COMMISSION_ITEM.DOMAIN))
-					.setCommission(r.getValue(COMMISSION_ITEM.COMMISSION))
-					.setItem(r.getValue(COMMISSION_ITEM.ITEM))
-					.setAmount(r.getValue(COMMISSION_ITEM.AMOUNT))
-					.setQuantity(r.getValue(COMMISSION_ITEM.QUANTITY))
-					.setRate(r.getValue(COMMISSION_ITEM.RATE));
+					.setId(getValue(r, COMMISSION_ITEM.ID))
+					.setDomain(getValue(r, COMMISSION_ITEM.DOMAIN))
+					.setCommission(getValue(r, COMMISSION_ITEM.COMMISSION))
+					.setItem(getValue(r, COMMISSION_ITEM.ITEM))
+					.setAmount(getValue(r, COMMISSION_ITEM.AMOUNT))
+					.setQuantity(getValue(r, COMMISSION_ITEM.QUANTITY))
+					.setRate(getValue(r, COMMISSION_ITEM.RATE));
 		}
 	}
 	
-	public static class CommissionCategoryFiller implements Function<Record, CommissionCategory> {
+	public static class CommissionCategoryFiller extends Filler implements Function<Record, CommissionCategory> {
 		
 		@Override
 		public CommissionCategory apply(Record r) {
 			return new CommissionCategory()
-					.setId(r.getValue(COMMISSION_CATEGORY.ID))
-					.setDomain(r.getValue(COMMISSION_CATEGORY.DOMAIN))
-					.setCommission(r.getValue(COMMISSION_CATEGORY.COMMISSION))
-					.setCategory(r.getValue(COMMISSION_CATEGORY.CATEGORY))
+					.setId(getValue(r, COMMISSION_CATEGORY.ID))
+					.setDomain(getValue(r, COMMISSION_CATEGORY.DOMAIN))
+					.setCommission(getValue(r, COMMISSION_CATEGORY.COMMISSION))
+					.setCategory(getValue(r, COMMISSION_CATEGORY.CATEGORY))
 					.setQuantity(r .getValue(COMMISSION_CATEGORY.QUANTITY))
-					.setRate(r.getValue(COMMISSION_CATEGORY.RATE));
+					.setRate(getValue(r, COMMISSION_CATEGORY.RATE));
 		}
 	}
 	
-	public static class CommissionTypeCommissionFiller implements Function<Record, CommissionTypeCommission> {
+	public static class CommissionTypeCommissionFiller extends Filler implements Function<Record, CommissionTypeCommission> {
 		
 		@Override
 		public CommissionTypeCommission apply(Record r) {
 			return new CommissionTypeCommission()
-					.setId(r.getValue(COMMISSION_TYPE_COMMISSION.ID))
-					.setDomain(r.getValue(COMMISSION_TYPE_COMMISSION.DOMAIN))
-					.setCommission(r.getValue(COMMISSION_TYPE_COMMISSION.COMMISSION))
-					.setCommissionType(r.getValue(COMMISSION_TYPE_COMMISSION.COMMISSION_TYPE));
+					.setId(getValue(r, COMMISSION_TYPE_COMMISSION.ID))
+					.setDomain(getValue(r, COMMISSION_TYPE_COMMISSION.DOMAIN))
+					.setCommission(getValue(r, COMMISSION_TYPE_COMMISSION.COMMISSION))
+					.setCommissionType(getValue(r, COMMISSION_TYPE_COMMISSION.COMMISSION_TYPE));
 		}
 	}
 
-	public static class CommissionFiller implements Function<Record, Commission> {
+	public static class CommissionFiller extends Filler implements Function<Record, Commission> {
 		
 		@Override
 		public Commission apply(Record r) {
 			return new Commission()
-					.setId(r.getValue(COMMISSION.ID))
-					.setDomain(r.getValue(COMMISSION.DOMAIN))
-					.setName(r.getValue(COMMISSION.NAME))
-					.setStartDate(r.getValue(COMMISSION.START_DATE))
-					.setEndDate(r.getValue(COMMISSION.END_DATE));
+					.setId(getValue(r, COMMISSION.ID))
+					.setDomain(getValue(r, COMMISSION.DOMAIN))
+					.setName(getValue(r, COMMISSION.NAME))
+					.setStartDate(getValue(r, COMMISSION.START_DATE))
+					.setEndDate(getValue(r, COMMISSION.END_DATE));
 		}
 	}
 	
-	public static class CommissionTypeFiller implements Function<Record, CommissionType> {
+	public static class CommissionTypeFiller extends Filler implements Function<Record, CommissionType> {
 		
 		@Override
 		public CommissionType apply(Record r) {
 			return new CommissionType()
-					.setId(r.getValue(COMMISSION_TYPE.ID))
-					.setDomain(r.getValue(COMMISSION_TYPE.DOMAIN))
-					.setName(r.getValue(COMMISSION_TYPE.NAME))
-					.setRate(r.getValue(COMMISSION_TYPE.RATE));
+					.setId(getValue(r, COMMISSION_TYPE.ID))
+					.setDomain(getValue(r, COMMISSION_TYPE.DOMAIN))
+					.setName(getValue(r, COMMISSION_TYPE.NAME))
+					.setRate(getValue(r, COMMISSION_TYPE.RATE));
 		}
 	}
 	
-	public static class MailTemplateFiller implements Function<Record, MailTemplate> {
+	public static class MailTemplateFiller extends Filler implements Function<Record, MailTemplate> {
 		
 		@Override
 		public MailTemplate apply(Record r) {
 			return new MailTemplate()
-					.setId(r.getValue(MK_TEMPLATE.ID))
-					.setDomain(r.getValue(MK_TEMPLATE.DOMAIN))
-					.setName(r.getValue(MK_TEMPLATE.NAME))
-					.setActive(r.getValue(MK_TEMPLATE.ACTIVE) == 1)
-					.setBackgroundColor(r.getValue(MK_TEMPLATE.BACKGROUND_COLOR))
-					.setCreationDate(r.getValue(MK_TEMPLATE.CREATIONDATE))
-					.setFooterTemplate(r.getValue(MK_TEMPLATE.FOOTER_TEMPLATE))
-					.setHeaderTemplate(r.getValue(MK_TEMPLATE.HEADER_TEMPLATE))
-					.setScope(r.getValue(MK_TEMPLATE.SCOPE))
-					.setSubject(r.getValue(MK_TEMPLATE.SUBJECT))
-					.setTitleColor(r.getValue(MK_TEMPLATE.TITLE_COLOR))
-					.setWidth(r.getValue(MK_TEMPLATE.WIDTH));
+					.setId(getValue(r, MK_TEMPLATE.ID))
+					.setDomain(getValue(r, MK_TEMPLATE.DOMAIN))
+					.setName(getValue(r, MK_TEMPLATE.NAME))
+					.setActive(getValue(r, MK_TEMPLATE.ACTIVE) == 1)
+					.setBackgroundColor(getValue(r, MK_TEMPLATE.BACKGROUND_COLOR))
+					.setCreationDate(getValue(r, MK_TEMPLATE.CREATIONDATE))
+					.setFooterTemplate(getValue(r, MK_TEMPLATE.FOOTER_TEMPLATE))
+					.setHeaderTemplate(getValue(r, MK_TEMPLATE.HEADER_TEMPLATE))
+					.setScope(getValue(r, MK_TEMPLATE.SCOPE))
+					.setSubject(getValue(r, MK_TEMPLATE.SUBJECT))
+					.setTitleColor(getValue(r, MK_TEMPLATE.TITLE_COLOR))
+					.setWidth(getValue(r, MK_TEMPLATE.WIDTH));
 		}
 	}
 	
-	public static class UdapaQualityFiller implements Function<Record, UdapaQuality> {
+	public static class UdapaQualityFiller extends Filler implements Function<Record, UdapaQuality> {
 		
 		@Override
 		public UdapaQuality apply(Record r) {
 			Supplier supplier = new Supplier();
-			supplier.setAlias(r.getValue(REGISTRY.ALIAS));
-			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			supplier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
-			supplier.setId(r.getValue(REGISTRY.ID));
-			supplier.setName(r.getValue(REGISTRY.NAME));
-			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
+			supplier.setAlias(getValue(r, REGISTRY.ALIAS));
+			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			supplier.setDocument(getValue(r, REGISTRY.DOCUMENT));
+			supplier.setDocumentType(DocumentType.safeValueOf(getValue(r, REGISTRY.DOCUMENT_TYPE)));
+			supplier.setDomain(new Domain().setId(getValue(r, REGISTRY.DOMAIN)));
+			supplier.setId(getValue(r, REGISTRY.ID));
+			supplier.setName(getValue(r, REGISTRY.NAME));
+			supplier.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, REGISTRY.SECURITY_LEVEL)));
+			supplier.setLegalPerson(AonEnumUtils.getBoolean(getValue(r, REGISTRY.TYPE)));
 			return new UdapaQuality()
 					.setDataResponse(new DataResponse()
-							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
-							.setId(r.getValue(DATA_RESPONSE.ID))
-							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
-							.setCode(r.getValue(DATA_RESPONSE.CODE))
-							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
-							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
-							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
-							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
+							.setDomain(getValue(r, DATA_RESPONSE.DOMAIN))
+							.setId(getValue(r, DATA_RESPONSE.ID))
+							.setResponseDate(getValue(r, DATA_RESPONSE.RESPONSE_DATE))
+							.setCode(getValue(r, DATA_RESPONSE.CODE))
+							.setSource(DataResponseSource.safeValueOf(getValue(r, DATA_RESPONSE.SOURCE)))
+							.setSourceId(getValue(r, DATA_RESPONSE.SOURCE_ID))
+							.setCreationDate(getValue(r, DATA_RESPONSE.CREATION_DATE))
+							.setCreationUser(getValue(r, DATA_RESPONSE.CREATION_USER))
+							.setModificationDate(getValue(r, DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationUser(getValue(r, DATA_RESPONSE.MODIFICATION_USER)))
 					.setSupplier(supplier)
-					.setProduct(r.getValue(INCOME_DETAIL.DESCRIPTION));
+					.setProduct(getValue(r, INCOME_DETAIL.DESCRIPTION));
 			
 		}
 	}
 
-	public static class PaturpatQualityFiller implements Function<Record, PaturpatQuality> {
+	public static class PaturpatQualityFiller extends Filler implements Function<Record, PaturpatQuality> {
 		
 		@Override
 		public PaturpatQuality apply(Record r) {
 
 			return new PaturpatQuality()
 				.setDataResponse(new DataResponse()
-							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
-							.setId(r.getValue(DATA_RESPONSE.ID))
-							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
-							.setCode(r.getValue(DATA_RESPONSE.CODE))
-							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
-							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
-							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
-							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
-				.setProduct(r.getValue(PRODUCT.NAME) + " #" + r.getValue(ITEM.SERIAL_NUMBER));
+							.setDomain(getValue(r, DATA_RESPONSE.DOMAIN))
+							.setId(getValue(r, DATA_RESPONSE.ID))
+							.setResponseDate(getValue(r, DATA_RESPONSE.RESPONSE_DATE))
+							.setCode(getValue(r, DATA_RESPONSE.CODE))
+							.setSource(DataResponseSource.safeValueOf(getValue(r, DATA_RESPONSE.SOURCE)))
+							.setSourceId(getValue(r, DATA_RESPONSE.SOURCE_ID))
+							.setCreationDate(getValue(r, DATA_RESPONSE.CREATION_DATE))
+							.setCreationUser(getValue(r, DATA_RESPONSE.CREATION_USER))
+							.setModificationDate(getValue(r, DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationUser(getValue(r, DATA_RESPONSE.MODIFICATION_USER)))
+				.setProduct(getValue(r, PRODUCT.NAME) + " #" + getValue(r, ITEM.SERIAL_NUMBER));
 			
 		}
 	}
 	
-	public static class ItemAddInfoFiller implements Function<Record, ItemAddInfo> {
+	public static class ItemAddInfoFiller extends Filler implements Function<Record, ItemAddInfo> {
 		
 		@Override
 		public ItemAddInfo apply(Record r) {
 
 			return new ItemAddInfo()
-				.setDomain(r.getValue(ITEM_ADDINFO.DOMAIN))
-				.setId(r.getValue(ITEM_ADDINFO.ID))
-				.setProduct(r.getValue(ITEM_ADDINFO.PRODUCT))
-				.setItem(r.getValue(ITEM_ADDINFO.ITEM))
-				.setAttribute(r.getValue(ITEM_ADDINFO.ATTRIBUTE))
-				.setValue(r.getValue(ITEM_ADDINFO.VALUE))
-				.setDate(r.getValue(ITEM_ADDINFO.VALUE_DATE));
+				.setDomain(getValue(r, ITEM_ADDINFO.DOMAIN))
+				.setId(getValue(r, ITEM_ADDINFO.ID))
+				.setProduct(getValue(r, ITEM_ADDINFO.PRODUCT))
+				.setItem(getValue(r, ITEM_ADDINFO.ITEM))
+				.setAttribute(getValue(r, ITEM_ADDINFO.ATTRIBUTE))
+				.setValue(getValue(r, ITEM_ADDINFO.VALUE))
+				.setDate(getValue(r, ITEM_ADDINFO.VALUE_DATE));
 		}
 	}
 
