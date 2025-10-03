@@ -709,6 +709,20 @@
         }
       }
     }
+    // Upload
+    aon-new-upload{
+      .upload-component{
+        color             : $color-text-button;
+        background            : $loginbutton-background;
+        background-size       : $loginbutton-background-size;
+        // background-position   : $loginbutton-backgorund-position;
+        background-position   : $loginbutton-hover-background-size;
+        transition            : $loginbutton-transition;
+        &:hover{
+          background: $color-corp-blue;
+        }
+      }
+    }
     // Modal cuando se suben archivos
     aon-upload-toast{
       box-shadow: $box-shadow-dialog;

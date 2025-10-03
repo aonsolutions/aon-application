@@ -1,19 +1,17 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
-import { Attach } from '../models/Attach.js';
-import { AonDialog } from './aon-dialog.js';
-import { AonIconButton } from './aon-icon-button.js';
+// import { Attach } from '../models/Attach.js';
+// import { AonDialog } from './aon-dialog.js';
+// import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
 import * as LS from "../services/localStorageService.js";
+import { AonIcon } from './aon-icon.js';
 
 export class AonNewUpload extends AonElement {
-	
     DIV;
     INPUT;
     LABEL;
-    SPAN;
-
+    TEXT;
     type;
-
     accept;
 
     get id() {
@@ -54,20 +52,16 @@ export class AonNewUpload extends AonElement {
         this.DIV = this.id + 'Div';
         this.INPUT = this.id + 'Input';
         this.LABEL = this.id + 'Label';
-        this.SPAN = this.id + 'Span';
+        this.TEXT = this.id + 'Span';
         this.message = this.message || MSG.ATTACH_FILES_DRAGGING_DROPPING;
         this.accept = this.accept || 'image/jpeg, image/png, application/pdf';
-
         this.type = this.type || 'Documental';
-
-        this.style.flex = "1";
     }
 
     build() {
         let div = this.createElement(TAG.DIV);
         div.id = this.DIV;
-        div.className = CSS.AON_UPLOAD;
-        div.style.height = 'auto';
+        div.classList.add(CSS.AON_UPLOAD, "upload-component");
         this.appendChild(div);
         this.builDragAndDrop(div);
 
@@ -105,18 +99,18 @@ export class AonNewUpload extends AonElement {
 
         let label = this.createElement(TAG.LABEL);
         label.id = this.LABEL;
-        label.className = CSS.AON_NEW_UPLOAD_LABEL;
+        label.classList.add(CSS.AON_NEW_UPLOAD_LABEL, "upload-component-label");
         div.appendChild(label);
 
-        let span = this.createElement(TAG.SPAN);
-        span.id = this.SPAN;
-        span.innerHTML = this.message;
-        label.appendChild(span);
-
-        let uploadIcon = this.createElement(TAG.I);
-        uploadIcon.className = CSS.MATERIAL_ICONS;
-        uploadIcon.innerHTML = MATERIAL_ICONS.CLOUD_UPLOAD;
+        let uploadIcon  = new AonIcon;
+        uploadIcon.icon = MATERIAL_ICONS.FILE_UPLOAD;
         label.appendChild(uploadIcon);
+
+        let text       = this.createElement(TAG.DIV);
+        text.id        = this.TEXT;
+        text.innerHTML = this.message;
+        text.classList.add(CSS.AON_NEW_UPLOAD_LABEL, "upload-component-text");
+        label.appendChild(text);
     }
 
     builDragAndDrop(element) {
