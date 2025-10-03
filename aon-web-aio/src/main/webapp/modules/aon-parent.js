@@ -664,8 +664,8 @@ export class AonParent extends AonElement {
 	}
 
 	isLocationCompany( company ) {
-		return company?.domain?.toUpperCase() == window?.location?.hostname?.toUpperCase()
-			|| company?.domain?.toUpperCase() == LS.getCompany()?.domain?.toUpperCase();
+		return company?.domain?.toUpperCase() == window?.location?.hostname?.toUpperCase();
+//			|| company?.domain?.toUpperCase() == LS.getCompany()?.domain?.toUpperCase(); // Si es location company porque se comprueba lo que esta el localStorage?????
 	}
 	
 	getWelcomeImage() {

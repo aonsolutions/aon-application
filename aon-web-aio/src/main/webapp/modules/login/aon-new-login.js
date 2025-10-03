@@ -480,7 +480,7 @@ export class AonNewLogin extends AonElement {
           this.companySelection(companies[0], true);
         } else if(companies.length > 1 ) {
           for (let company of companies) {
-            if (company.domain === actualCompanyName) {
+            if (company.domain === actualCompanyName && company.parentId) {
               localStorage.setItem("company", JSON.stringify(company));
               localStorage.setItem("aon_domain_id", company.id);
               localStorage.setItem("aon_domain_name", company.domain);

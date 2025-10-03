@@ -515,10 +515,9 @@ export class AonHeader extends AonElement {
 			header2.className = 'aonHeader aonHeaderStart';
 
 			let applications = this.getElement('applications');
-			applications.className = 'aonMenuLeftopStart';
+			if(applications) applications.className = 'aonMenuLeftopStart';
 
 			companySelectorOpenedManually = false;
-
 			aonHeaderCompanyList.style.display = LS.isCompanySelected() && !LS.isOnlyOne() ? 'block' : 'none';
 		});
 
