@@ -145,7 +145,7 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		saleContainer.addStyleName(AON.CSS.aonItemFlex());
 		saleContainer.addStyleName(AON.CSS.aonFlexColumn());
 		saleContainer.setWidth("100%");
-		saleContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
+		saleContainer.getElement().getStyle().setProperty("max-height", "29rem");
 		
 		if(isSigDomain()) {
 			schema.addItem("Pro", "pro-aonsolutions-net");
