@@ -32,8 +32,8 @@ export const deleteCategory = (data) => {
 
 export const getScopes = (data) => get(`${API_URL}/scopes`, data);
 
-export const getSigScopes = (data, sessionData) => getPro(`${PRO_URL}/${API_URL}/scopes`, data, sessionData);
-// LOCAL //export const getSigScopes = (data, sessionData) => getPro(`${API_URL}/scopes`, data, sessionData);
+export const getSigParentScopes = (data, sessionData) => getPro(`${PRO_URL}/${API_URL}/scopes/parent`, data, sessionData);
+// LOCAL //export const getSigParentScopes = (data, sessionData) => getPro(`${API_URL}/scopes/parent`, data, sessionData);
 
 export const getAeatCertificates = () => {
   const data = {type: 'AEAT'}
