@@ -786,6 +786,16 @@
           }
         }
       }
+      aon-card{
+        // Bancos listado
+        aon-bank-card{
+          #bankCardTable{
+            .bank{
+              border-bottom: $border;
+            }
+          }
+        }
+      }
     }
     // Plans
     aon-plans .aonFlex #Content{
