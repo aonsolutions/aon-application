@@ -65,7 +65,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonObjectUtils;
 
 public class TaskDAO {
 
@@ -152,12 +151,10 @@ public class TaskDAO {
 	
 
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
-		System.out.println("getStream");
 		return getStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		System.out.println("getStream page perPage");
 		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
@@ -170,7 +167,6 @@ public class TaskDAO {
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
-		System.out.println("getTaskAndChilds");
 		ctx.checkRead();
 
 		Task task = getTaskAndChildsStream(ctx, filter).findFirst().orElse(new Task());
@@ -181,7 +177,6 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
-		System.out.println("getTaskAndChildsStream page perPage");
 		ctx.checkRead();
 		return getTaskAndChildsStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
@@ -362,8 +357,6 @@ public class TaskDAO {
 		)
 		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
 	
-		System.out.println("getStream "+page+" "+perPage);
-			
 	    Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
@@ -380,10 +373,6 @@ public class TaskDAO {
 		)
 		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
 	   
-		System.out.println("getParentOrChildStream "+page+" "+perPage);
-		
-		System.out.println(query.getSQL());
-		
 		Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
