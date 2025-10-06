@@ -671,8 +671,29 @@ export class AonParent extends AonElement {
 		i2.className = 'material-icons aonAvatar';
 		i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
 		sp.appendChild(i2);
+		sp.addEventListener(EVENT.CLICK, (event) => {
+			this.open(company);
+			event.stopPropagation();			
+		});
+
 		li.appendChild(sp);
+		
 		return li;
+	}
+	
+	open(company){
+		let companyForm = document.createElement(TAG.FORM);
+		companyForm.style.display = 'none';
+		companyForm.target = `${company.name}`;
+		companyForm.action = `${location.protocol}//${company.domain}:${location.port}`;
+		let tokenInput = this.createElement(TAG.INPUT);
+		tokenInput.type = 'hidden';
+		tokenInput.name = 'token';
+		tokenInput.value = LS.getToken();
+		companyForm.appendChild(tokenInput);
+		this.appendChild(companyForm);
+		companyForm.addEventListener(EVENT.SUBMIT, () =>  companyForm.remove() );
+		companyForm.submit();
 	}
 	
 	getAonHeader() {
