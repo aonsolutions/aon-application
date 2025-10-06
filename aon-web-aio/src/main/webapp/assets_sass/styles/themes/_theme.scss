@@ -544,15 +544,19 @@
                 background-color: $color-text;
               }
             }
-            .date-picker-title-icon:hover{
-              background-color: $color-100;
+            .date-picker-title-icon, .datepicker-month, .datepicker-year{
+              &:hover{
+                background-color: $color-100;
+              }
             }
           }
-          .day-content:hover{
-            background-color: $color-100;
-            color           : $color-text;
+          .day-content, .months-btn, .year-btn{
+            &:not(:empty):hover{
+              background-color: $color-100;
+              color           : $color-text;
+            }
           }
-          .day-selected{
+          .day-selected, .year-selected{
             color           : $color-text-button;
             background-color: $color-300;
           }
