@@ -185,12 +185,13 @@ public class AmortizationDetailController extends LinesController {
 	public void onUnrecord(ActionEvent event) {
 		try {
 			AmortizationDetail detail = (AmortizationDetail) getModel().getRowData();
-			detail.setStatus(AmortizationDetailStatus.PENDING);
 			Integer id = detail.getAccountEntry().getId(); 
-			detail.setAccountEntry(null);
-			onAccept(event);
 			AmortizationManager am = new AmortizationManager();
 			am.unrecordAllocation( id );
+			
+			detail.setStatus(AmortizationDetailStatus.PENDING);
+			detail.setAccountEntry(null);
+			onAccept(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(),e);
