@@ -10,7 +10,7 @@
 
 	<aon:div styleClass="aon-scroll-area">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-			<ui:param name="skipResetButton" value="#{controller.model.rowCount &gt; 6}" />
+			<ui:param name="skipResetButton" value="#{empty controller.images}" />
 			<ui:param name="showDataScroller" value="#{false}" />
 			<ui:define name="columns">
 			
