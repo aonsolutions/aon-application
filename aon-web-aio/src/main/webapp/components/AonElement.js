@@ -190,7 +190,8 @@ export class AonElement extends HTMLElement{
   }
 
   isBetaDoc(){
-    return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
+    return true;
+    // return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
   }
 
   isNewStyle(){

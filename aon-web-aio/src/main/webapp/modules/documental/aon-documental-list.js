@@ -1,9 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {
   getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
-  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories,
-  getTags,
-  sendS3DocumentMail
+  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category,
+  getTags, sendS3DocumentMail
 } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
@@ -59,7 +58,7 @@ export class AonDocumentalList extends AonElement {
 
  	build() {
 		if(this.isBetaDoc()){
-          this.buildToolbarSearch();
+			this.buildToolbarSearch();
 		}
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
