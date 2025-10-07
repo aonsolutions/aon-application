@@ -109,7 +109,7 @@ export class AonApplication extends AonElement {
     this.appendChild(loader);
 
     let div = this.createDiv(); 
-    div.className = this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex';
+    div.className = 'aonFlex'; // this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex';
     this.appendChild(div);
 
     let leftSidenav = this.createDiv(this.SIDENAV, this.getSidenavClassName());
@@ -169,11 +169,11 @@ export class AonApplication extends AonElement {
   }
 
   getSidenavClassName() {
-    return this.isMobile() ? 'aonMobileSidenav' : 'aonSidenav';
+    return 'aonSidenav'; // this.isMobile() ? 'aonMobileSidenav' : 'aonSidenav';
   }
 
   getRightSidenavClassName() {
-    return this.isMobile() ? 'aonMobileRightSidenav' : 'aonRightSidenav';
+    return 'aonRightSidenav'; // this.isMobile() ? 'aonMobileRightSidenav' : 'aonRightSidenav';
   }
 
   buildMobileSidenav() {
@@ -304,9 +304,10 @@ export class AonApplication extends AonElement {
 //    div.style.paddingLeft = '20px';
 //    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
 
-    let sidenav = this.isMobile()
-      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
-      : this.getElement(this.SIDENAV);
+    let sidenav = this.getElement(this.SIDENAV) 
+//	this.isMobile()
+//      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
+//      : this.getElement(this.SIDENAV);
     let span = this.createElement(TAG.SPAN);
 		span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="40px"></aon-icon>`;
 		let span2 = this.createElement(TAG.SPAN);
@@ -382,9 +383,10 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptionsTitle(data, newButton, first) {
-    let sidenav = this.isMobile()
-      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
-      : this.getElement(this.SIDENAV);
+    let sidenav = this.getElement(this.SIDENAV); 
+//	this.isMobile()
+//      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
+//      : this.getElement(this.SIDENAV);
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
 
@@ -411,7 +413,7 @@ export class AonApplication extends AonElement {
     divNanme.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(divNanme);
 
-    if(data.button && !this.isMobile()) {
+    if(data.button) { // && !this.isMobile()) {
       let buttonDiv       = this.createElement(TAG.DIV);
       buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
       let button             = new AonIconButton();
@@ -426,7 +428,7 @@ export class AonApplication extends AonElement {
       });
     }
 
-    if (newButton && !this.isMobile()) {
+    if (newButton) { // && !this.isMobile()) {
       let aonIconButton = new AonIconButton();
       aonIconButton.icon = "add";
       aonIconButton.id = sidenavTitle.id + "NewButton";
@@ -442,7 +444,7 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptionsList(data, options) {
-    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    let sidenav = this.getElement(this.SIDENAV); // this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
       let div = this.getElement(sidenav.id + data.id);
       if(div){
@@ -464,9 +466,10 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavSelectOptionsTitle(data, newButton) {
-    let sidenav = this.isMobile()
-      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
-      : this.getElement(this.SIDENAV);
+    let sidenav =this.getElement(this.SIDENAV); 
+//	this.isMobile()
+//      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
+//      : this.getElement(this.SIDENAV);
 
     let div = this.getElement(sidenav.id + data.id);
     if(!div){
@@ -478,7 +481,7 @@ export class AonApplication extends AonElement {
 //      div.style.gap = ".5rem";
       sidenav.appendChild(div);
 
-      if(data.button && !this.isMobile()) {
+      if(data.button) { // && !this.isMobile()) {
         let buttonDiv = this.createElement(TAG.DIV);
         buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
         let button = new AonIconButton();
@@ -488,7 +491,7 @@ export class AonApplication extends AonElement {
         div.appendChild(buttonDiv);
         button.addEventListener(EVENT.CLICK, data.button.fn);
       }
-      if (newButton && !this.isMobile()) {
+      if (newButton) { // && !this.isMobile()) {
         let addButton = this.createElement(TAG.DIV);
         addButton.className = CSS.AON_SIDENAV_TITLE_BUTTON;
         let aonIconButton = new AonIconButton();
@@ -543,7 +546,7 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavSelectOptions(data, options) {
-    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    let sidenav = this.getElement(this.SIDENAV); // this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
       let div = this.getElement(sidenav.id + data.id);
       
@@ -617,7 +620,7 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavSelectOptionsValue(data, option, select) {
-    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    let sidenavId = this.SIDENAV; //this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     select = select || this.getElement(sidenavId + data.id + "Select");
 
     let optYear = this.createElement('option');
@@ -627,7 +630,7 @@ export class AonApplication extends AonElement {
   }
 
   removeSidenavById(id){
-    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    let sidenav = this.getElement(this.SIDENAV) // this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(sidenav){
       let div = this.getElement(sidenav.id + id);
       if(div) div.remove();
@@ -645,7 +648,7 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptionsListValue(data, option, ul) {
-    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    let sidenavId = this.SIDENAV // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden && ul) {
       let id       = sidenavId + (option.id || Math.random().toString(36).substring(7));
@@ -848,20 +851,20 @@ export class AonApplication extends AonElement {
   }
   
   addSidenavOptions3(data, newButton) {
-    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    this.SIDENAV = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, data.options || []);
   }
 
   addSelectSidenav(data, newButton) {
-    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    this.SIDENAV = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavSelectOptionsTitle(data, newButton);
     this.addSidenavSelectOptions(data, data.options || []);
   }
 
   addSelectToPanel(data) {
-    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
-    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    this.SIDENAV = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    let sidenav = this.getElement(this.SIDENAV); // this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
       let div = this.getElement(sidenav.id + data.parent);
  
@@ -956,7 +959,7 @@ export class AonApplication extends AonElement {
   }
 
   removeBackgroundSidenavAll(color){
-    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const sidenavId = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
       li.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
 //      li.style.removeProperty("border-left");
@@ -967,7 +970,7 @@ export class AonApplication extends AonElement {
   }
 
   addBackgroundSidenav(id, color){
-    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const sidenavId = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
       li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
@@ -978,7 +981,7 @@ export class AonApplication extends AonElement {
   }
 
   removeBackgroundSidenav(id, color){
-    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const sidenavId = this.SIDENAV; // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
       li.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);

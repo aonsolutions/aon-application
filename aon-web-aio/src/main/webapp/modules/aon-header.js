@@ -296,130 +296,128 @@ export class AonHeader extends AonElement {
 		
 		// this.buildLogo();
 
-		if(!this.isMobile()) {
-			// if(!LS.isNewTheme() && !this.newTheme) {
-			// 	let aonHeaderButtons = this.getElement('aonHeaderButtons');
-			// 	aonHeaderButtons.style.position = 'absolute';
-			// 	aonHeaderButtons.style.right = '20px';
- 		 	// 	aonHeaderButtons.style.top = '10px';
+		// if(!LS.isNewTheme() && !this.newTheme) {
+		// 	let aonHeaderButtons = this.getElement('aonHeaderButtons');
+		// 	aonHeaderButtons.style.position = 'absolute';
+		// 	aonHeaderButtons.style.right = '20px';
+	 	// 	aonHeaderButtons.style.top = '10px';
 
-			// 	let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-			// 	aonHeaderSearch2.style.marginLeft = '108px';
-			// }
+		// 	let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
+		// 	aonHeaderSearch2.style.marginLeft = '108px';
+		// }
 
-			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
-			aonHeaderHomeButton.addEventListener('click', () => {
-				this.goHome();
-				// this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				// let aonDesktop = this.getElement('aonDesktop');
-				// aonDesktop.setAttribute('company', this.getAttribute('company'));
-				// let aonLogo = this.getElement('aonLogo');
-				// aonLogo.style.display =	"block";
-				// let aonHeaderApp = this.getElement('aonHeaderApp');
-				// aonHeaderApp.style.display = 'none';
-			});
-			if(!this.newTheme){
-				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
-				aonHeaderHelpButton.addEventListener('click', () => {
-					const top  = aonHeaderHelpButton.getBoundingClientRect().top;
-					const left = aonHeaderHelpButton.getBoundingClientRect().left;
-					getDomainUserRoles({}).then(r => {
-						this.dur = new DomainUserRoles(r);
-						let d = this.getElement('aonHeaderDialogHelpOption');
-						let options = []
-						// let support = {
-						// 	name: MSG.SUPPORT + ' / CAU',
-						// 	icon: MATERIAL_ICONS.SUPPORT_AGENT,
-						// 	fn: () =>{
-						// 		let aonMessenger = new AonMessenger();
-						// 		aonMessenger.cau = 1;
-						// 		aonMessenger._filter.source = TASK_SOURCE.CAU;
-						// 		this.rootPanel(aonMessenger);
-						// 	}
-						// };
-						
-						let language = {
-							id: CONSTANT.LANGUAGE,
-							name: MSG.LANGUAGE,
-							icon: 'language',
-							options: [{
-								name: MSG.SPANISH,
-								image: '../assets/img/aonIconCastellano.png',
-								fn: () => LS.setLanguage(Language.SPANISH)
-							}, {
-								name: MSG.ENGLISH,
-								image: '../assets/img/aonIconEnglish.png',
-								fn: () => LS.setLanguage(Language.ENGLISH)
-							}, {
-								name: MSG.DEUTSCH,
-								image: '../assets/img/aonIconDeutsch.png',
-								fn: () => LS.setLanguage(Language.DEUTSCH)
-							}, {
-								name: MSG.BASQUE,
-								image: '../assets/img/aonIconEuskera.png',
-								fn: () => LS.setLanguage(Language.BASQUE)
-							}, {
-								name: MSG.CATALAN,
-								image: '../assets/img/aonIconCatala.png',
-								fn: () => LS.setLanguage(Language.CATALAN)
-							}, {
-								name: MSG.GALICIAN,
-								image: '../assets/img/aonIconGalego.png',
-								fn: () => LS.setLanguage(Language.GALICIAN)
-							} ]
-						};
+		let aonHeaderHomeButton2 = this.getElement(this.BASE_ID + 'HomeButton');
+		aonHeaderHomeButton2.addEventListener('click', () => {
+			this.goHome();
+			// this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+			// let aonDesktop = this.getElement('aonDesktop');
+			// aonDesktop.setAttribute('company', this.getAttribute('company'));
+			// let aonLogo = this.getElement('aonLogo');
+			// aonLogo.style.display =	"block";
+			// let aonHeaderApp = this.getElement('aonHeaderApp');
+			// aonHeaderApp.style.display = 'none';
+		});
+		if(!this.newTheme){
+			let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
+			aonHeaderHelpButton.addEventListener('click', () => {
+				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
+				const left = aonHeaderHelpButton.getBoundingClientRect().left;
+				getDomainUserRoles({}).then(r => {
+					this.dur = new DomainUserRoles(r);
+					let d = this.getElement('aonHeaderDialogHelpOption');
+					let options = []
+					// let support = {
+					// 	name: MSG.SUPPORT + ' / CAU',
+					// 	icon: MATERIAL_ICONS.SUPPORT_AGENT,
+					// 	fn: () =>{
+					// 		let aonMessenger = new AonMessenger();
+					// 		aonMessenger.cau = 1;
+					// 		aonMessenger._filter.source = TASK_SOURCE.CAU;
+					// 		this.rootPanel(aonMessenger);
+					// 	}
+					// };
+					
+					let language = {
+						id: CONSTANT.LANGUAGE,
+						name: MSG.LANGUAGE,
+						icon: 'language',
+						options: [{
+							name: MSG.SPANISH,
+							image: '../assets/img/aonIconCastellano.png',
+							fn: () => LS.setLanguage(Language.SPANISH)
+						}, {
+							name: MSG.ENGLISH,
+							image: '../assets/img/aonIconEnglish.png',
+							fn: () => LS.setLanguage(Language.ENGLISH)
+						}, {
+							name: MSG.DEUTSCH,
+							image: '../assets/img/aonIconDeutsch.png',
+							fn: () => LS.setLanguage(Language.DEUTSCH)
+						}, {
+							name: MSG.BASQUE,
+							image: '../assets/img/aonIconEuskera.png',
+							fn: () => LS.setLanguage(Language.BASQUE)
+						}, {
+							name: MSG.CATALAN,
+							image: '../assets/img/aonIconCatala.png',
+							fn: () => LS.setLanguage(Language.CATALAN)
+						}, {
+							name: MSG.GALICIAN,
+							image: '../assets/img/aonIconGalego.png',
+							fn: () => LS.setLanguage(Language.GALICIAN)
+						} ]
+					};
 
-						// let help = {
-						// 	name: MSG.HELP,
-						// 	icon: 'help_outline',
-						// 	fn: () => {
-						// 		let iframe = document.createElement("iframe");
-						// 		iframe.height = "100%";
-						// 		iframe.width = "100%";
-						// 		iframe.src = "https://faqs.aonsolutions.es";
-						// 		this.rootPanel(iframe);
-						// 	} 
-						// };
+					// let help = {
+					// 	name: MSG.HELP,
+					// 	icon: 'help_outline',
+					// 	fn: () => {
+					// 		let iframe = document.createElement("iframe");
+					// 		iframe.height = "100%";
+					// 		iframe.width = "100%";
+					// 		iframe.src = "https://faqs.aonsolutions.es";
+					// 		this.rootPanel(iframe);
+					// 	} 
+					// };
 
-						// if(LS.getDomainId())
-						// 	options.push(support)
-						// if(this.isBeta())
-						options.push(language);
-						// options.push(help);
+					// if(LS.getDomainId())
+					// 	options.push(support)
+					// if(this.isBeta())
+					options.push(language);
+					// options.push(help);
 
-						if(this.dur.isDev()) {
-							options.push({
-								name: MSG.COMPONENTS,
-								icon: MATERIAL_ICONS.EXTENSION,
-								fn: () => this.rootPanel(new AonComponentsDoc())
-							});
-						}
+					if(this.dur.isDev()) {
+						options.push({
+							name: MSG.COMPONENTS,
+							icon: MATERIAL_ICONS.EXTENSION,
+							fn: () => this.rootPanel(new AonComponentsDoc())
+						});
+					}
 
-						if(this.dur.hasApiService()) {
-							let iframe = this.createElement(TAG.IFRAME);
-							iframe.src = 'https://aonsolutions.github.io/apidoc';
-							iframe.style.height = '100%';
-							iframe.style.width = '100%';
-							iframe.style.border = '0';
-							options.push({
-								name: MSG.API_DOCUMENTATION,
-								icon: MATERIAL_ICONS.API,
-								fn: () => this.rootPanel(iframe)
-							});
-						}
+					if(this.dur.hasApiService()) {
+						let iframe = this.createElement(TAG.IFRAME);
+						iframe.src = 'https://aonsolutions.github.io/apidoc';
+						iframe.style.height = '100%';
+						iframe.style.width = '100%';
+						iframe.style.border = '0';
+						options.push({
+							name: MSG.API_DOCUMENTATION,
+							icon: MATERIAL_ICONS.API,
+							fn: () => this.rootPanel(iframe)
+						});
+					}
 
-						let about = {
-							name: MSG.ABOUT,
-							icon: MATERIAL_ICONS.INFO,
-							fn: () => this.about()
-						}
-						options.push(about)
+					let about = {
+						name: MSG.ABOUT,
+						icon: MATERIAL_ICONS.INFO,
+						fn: () => this.about()
+					}
+					options.push(about)
 
-						d.setMenuOptions(options, top, left);
-						d.open();
-					});
+					d.setMenuOptions(options, top, left);
+					d.open();
 				});
-			}
+			});
 		}
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
@@ -436,20 +434,18 @@ export class AonHeader extends AonElement {
 				}
 			});
 
-			if (!this.isMobile()) {
-				// let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-				// let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-				// let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+			// let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+			// let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+			// let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 
-				// if (!LS.isNewTheme() && !this.newTheme) {
-				// 	let aonShowMenu = this.getElement('aonShowMenu');
-				// }
+			// if (!LS.isNewTheme() && !this.newTheme) {
+			// 	let aonShowMenu = this.getElement('aonShowMenu');
+			// }
 
-				let aonMenu = this.getElement('aonMenu');
-				aonMenu.removeAttribute('company');
-				aonMenu.removeAttribute('user');
-				aonMenu.close();
-			}
+			let aonMenu = this.getElement('aonMenu');
+			aonMenu.removeAttribute('company');
+			aonMenu.removeAttribute('user');
+			aonMenu.close();
 
 			let company = LS.getCompany();
 			let domainId = LS.getDomainId();

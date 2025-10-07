@@ -66,7 +66,7 @@ export class AonAppMenu extends AonElement {
         div.style.paddingBottom = "10px";
         this.appendChild(div);
     
-        if (newButton && !this.isMobile()) {
+        if (newButton ) { // && !this.isMobile()) {
           let addButton = this.createElement(TAG.DIV);
           addButton.style.marginTop = "-15px";
           addButton.style.right = "0px";
@@ -141,7 +141,7 @@ export class AonAppMenu extends AonElement {
       }
 
       addSidenavOptionsListValue(data, option, ul) {
-        let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+        let sidenavId = this.SIDENAV // this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
         ul = ul || this.getElement(sidenavId + data.id + "List");
         if (!option.hidden && ul) {
           let id = sidenavId + (option.id || Math.random().toString(36).substring(7));

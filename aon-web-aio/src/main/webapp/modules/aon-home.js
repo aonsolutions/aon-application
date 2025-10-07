@@ -39,12 +39,12 @@ export class AonHome extends AonElement {
 	connectedCallback () {
 		this.clear();
 		this.initialize();
-		if(this.isMobile()) {
-			this.buildMobile();
-		} else {
+//		if(this.isMobile()) {
+//			this.buildMobile();
+//		} else {
 			this.build();
 //			this.customize();
-		}
+//		}
 	}
 
 	initialize() {
