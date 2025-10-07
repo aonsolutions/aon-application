@@ -727,7 +727,10 @@ export class AonNewMenu extends AonElement {
 	// Si escoge opcion en el menu este se cierre
 	closeMenuIsMobile(){
 		const menu = this.getElement(this.AON_MENU);
-		menu.classList.toggle('hidden-mobile');
+		if(!menu.classList.contains('hidden-mobile')){
+			menu.classList.toggle('hidden-mobile');
+		}
+		
 	}
 
 	controlSideNav() {
