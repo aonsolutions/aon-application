@@ -1,12 +1,6 @@
 import { AonIcon } from "../../../components/aon-icon.js";
 import {
-  AON_ICONS,
-  COLORS,
-  CONSTANT,
-  CSS,
-  EVENT,
-  MATERIAL_ICONS,
-  TAG,
+  AON_ICONS, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG
 } from "../../../environments/environments.js";
 import { sortBy } from "../../../services/utils.js";
 import { setStyles } from "../../../services/utilsComponents.js";
@@ -16,7 +10,6 @@ import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "../Messenge
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskUtils } from "./TaskUtils.js";
 import * as LS from '../../../services/localStorageService.js';
-
 
 // ------------DESKTOP
 const getTitleHtmlDesktop = (res) => {
@@ -304,16 +297,19 @@ const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
 const getIcon = (task, size = undefined, isChild = undefined) => {
   const { source, status, parent, id } = task;
 
-  let div = document.createElement(TAG.DIV);
+  // let div = document.createElement(TAG.DIV);
 
   let iconJson = getIconList({ source, status, parent });
 
-  let span = setStyles(document.createElement(TAG.SPAN), {
-    color: iconJson.icon_color,
-    position: "relative",
-  });
+  // let span = setStyles(document.createElement(TAG.SPAN), {
+  //   color: iconJson.icon_color,
+  //   position: "relative",
+  // });
+  let span = setStyles(document.createElement(TAG.DIV));
+  // let span = setStyles(document.createElement(TAG.SPAN));
+  span.classList.add('task-icon')
   span.title = source;
-  div.appendChild(span);
+  // div.appendChild(span);
 
   span.dataset.taskId = id;
   if (isChild) {
@@ -333,26 +329,28 @@ const getIcon = (task, size = undefined, isChild = undefined) => {
     } catch (e) {}
   }
 
-  let icon = document.createElement(TAG.I);
-
-  if (iconJson.aonIcon) {
-    icon = new AonIcon();
-    icon.icon = iconJson.aonIcon;
-    icon.color = iconJson.icon_color;
-    if (size) {
-      icon.size = size;
-    }
-  } else {
-    icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
-    icon.textContent = iconJson.icon;
-    if (size) {
-      icon.style.fontSize = size;
-    }
-  }
-
+  let icon  = new AonIcon();
+  icon.icon = iconJson.aonIcon ? iconJson.aonIcon : iconJson.icon;
   span.appendChild(icon);
 
-  return div;
+  // let icon = document.createElement(TAG.I);
+  // if (iconJson.aonIcon) {
+  //   icon = new AonIcon();
+  //   icon.icon = iconJson.aonIcon;
+  //   icon.color = iconJson.icon_color;
+  //   if (size) {
+  //     icon.size = size;
+  //   }
+  // } else {
+  //   icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
+  //   icon.textContent = iconJson.icon;
+  //   if (size) {
+  //     icon.style.fontSize = size;
+  //   }
+  // }
+  // span.appendChild(icon);
+
+  return span;
 };
 
 const getAssignedHtml = (res, domainId) => {

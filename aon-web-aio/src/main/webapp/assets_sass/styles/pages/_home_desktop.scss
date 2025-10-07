@@ -88,10 +88,18 @@
               }
             }
             .aonCardTotal{
-              display: flex;
-              justify-content: flex-end;
-              padding-top: v.$padding;
-              font-family: v.$font-primary-bold;
+              display         : flex;
+              justify-content : flex-end;
+              padding-top     : v.$padding-min;
+              font-family     : v.$font-primary-bold;
+              transform-origin: right center;
+              transition      : transform v.$t-02 ease;
+              overflow        : hidden;
+            }
+            &:hover{
+              .aonCardTotal{
+                transform : scale(1.3);
+              }
             }
           }
         // Bancos listado
@@ -99,7 +107,51 @@
         //
         // Solicitudes listado
           aon-messenger-card{
-            
+            display       : flex;
+            flex-direction: column;
+            gap           : v.$gap-min;
+            .sender-receipt{
+              display: flex;
+              gap    : v.$gap-min;
+              .sender{
+                font-family: v.$font-primary-bold;
+              }
+            }
+            .aonMessengerCardRow{
+              display         : flex;
+              flex-direction  : column;
+              gap             : v.$gap-min;
+              cursor          : pointer;
+              transform-origin: center center;
+              transition      : transform v.$t-02 ease;
+              overflow        : hidden;
+              &:hover{
+                transform : scale(1.03);
+              }
+              .aonMessengerCardRowContent{
+                display: flex;
+                justify-content: space-between;
+                padding-bottom: v.$padding-min;
+                .left{
+                  display: flex;
+                  gap    : v.$gap-min;
+                  align-items: center;
+                  .task-icon{
+                    display: flex;
+                  }
+                  .content-titles{
+                    display       : flex;
+                    flex-direction: column;
+                    gap           : v.$gap-min;
+                  }
+                }
+                .right{
+                  display       : flex;
+                  flex-direction: column;
+                  gap           : v.$gap-min;
+                }
+              }
+            }
           }
         // Solicitudes listado
         //

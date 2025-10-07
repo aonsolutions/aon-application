@@ -806,6 +806,16 @@
             }
           }
         }
+        // Solicitudes listado
+        aon-messenger-card{
+          .aonMessengerCardRow{
+            border-bottom: $border;
+            
+            &:end{
+              border-bottom: unset;
+            }
+          }
+        }
       }
     }
     // Plans

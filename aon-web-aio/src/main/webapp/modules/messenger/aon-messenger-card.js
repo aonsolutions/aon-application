@@ -1,17 +1,19 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getDomainUserRoles } from "../../services/companyService.js";
-import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { TAG, EVENT, CSS } from "../../environments/environments.js";
-import { getTasks } from "../../services/taskService.js";
-import { TaskUtils } from "../messenger/utils/TaskUtils.js";
 import { sortBy } from "../../services/utils.js";
-import { TASK_STATUS } from "../messenger/MessengerEnums.js";
-import { getTaskHolder } from "../../services/taskHolderService.js";
-import { TaskListUtils } from "../messenger/utils/TaskListUtils.js";
 import * as LS from "../../services/localStorageService.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
-import {getWorkgroups} from '../../services/workgroupService.js';
 import { NotificationUtils } from "../notification/utils/NotificationUtils.js";
+
+import { getDomainUserRoles } from "../../services/companyService.js";
+import { getTasks } from "../../services/taskService.js";
+import { getTaskHolder } from "../../services/taskHolderService.js";
+import { getWorkgroups } from '../../services/workgroupService.js';
+
+import { TAG, EVENT, CSS } from "../../environments/environments.js";
+import { TASK_STATUS } from "../messenger/MessengerEnums.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
+import { TaskUtils } from "../messenger/utils/TaskUtils.js";
+import { TaskListUtils } from "../messenger/utils/TaskListUtils.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export class AonMessengerCard extends AonElement {
   AON_FISCAL;
@@ -44,29 +46,13 @@ export class AonMessengerCard extends AonElement {
   }
 
   build() {
-    this.paintView();
-    this.buildToolbar();
-  }
-
-  paintView() {
-    let cardContent = this.createElement(TAG.DIV);
-    cardContent.className = CSS.AON_FLEX_COLUMN;
-    cardContent.style.height = "100%";
-    cardContent.style.gap = "0";
-    cardContent.style.justifyContent = "flex-start";
-    cardContent.id = "messengerCardTable";
-
-    this.appendChild(cardContent);
-  }
-
-  buildToolbar() {
     this.getMeseggers().then(messengers => {
       this.getTable(this.getDataDesktop(messengers));
     });
   }
 
   async getMeseggers() {
-    let data = [];
+    let data   = [];
     let filter = { page: 1, perPage: 30, status: TASK_STATUS.PENDING };
 
     const taskholder = await getTaskHolder({ reload: false }).catch(() => null);
@@ -118,7 +104,7 @@ export class AonMessengerCard extends AonElement {
         senderRecipt : this.getSenderRecipt(dato),
         newTitle: this.getTitleDesktop(dato),
         assigned: TaskListUtils.getAssignedHtml(dato, documents.domainId),
-        lettersHtml: TaskListUtils.getIcon(dato, "24"),
+        lettersHtml: TaskListUtils.getIcon(dato),
         fn: () => this.goMessengerChat(dato, idx)
       }));
     } catch (e) {
@@ -136,11 +122,7 @@ export class AonMessengerCard extends AonElement {
   
   getDateParseNew(date) {
     let rightContent = this.createElement(TAG.DIV);
-    rightContent.style.display = "flex";
-    rightContent.style.flexDirection = "column";
-    rightContent.style.width = "4.5rem";
-    rightContent.style.textAlign = "right";
-    rightContent.style.flexShrink = "0";
+    rightContent.classList.add("right");
 
     if(!date) {
       console.log("Formating Err");
@@ -193,10 +175,9 @@ export class AonMessengerCard extends AonElement {
 
   getSenderRecipt(messenger) {
     let div = this.createElement(TAG.DIV);
-    div.classList = CSS.AON_ELLIPSIS;
-    div.style.fontSize = ".7rem";
+    div.classList = "sender-receipt";
 
-    let sender = this.getSender(messenger);
+    let sender  = this.getSender(messenger);
     let receipt = this.getReceipt(messenger);
 
     div.appendChild(sender);
@@ -207,18 +188,12 @@ export class AonMessengerCard extends AonElement {
 
   getTitleDesktop(messenger) {
     let div = this.createElement(TAG.DIV);
-    div.style.display = "flex";
-    div.style.flexDirection = "column";
-    div.style.flexGrow = "1";
-    div.style.minWidth = "0";
-    div.style.gap = ".2rem";
+    div.classList = "content-titles";
 
-    let content = this.createElement(TAG.SPAN);
-    content.classList = CSS.AON_ELLIPSIS;
-    content.style.fontSize = ".7rem";
-    content.style.fontWeight = "bold";
+    let content       = this.createElement(TAG.DIV);
+    content.classList = "content-title-one";
     content.innerHTML = messenger.title;
-    content.title = messenger.title;
+    content.title     = messenger.title;
     div.appendChild(content);
 
     let description = messenger.description;
@@ -228,9 +203,8 @@ export class AonMessengerCard extends AonElement {
 
     if (description) description = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
 
-    let descriptionContent = this.createElement(TAG.SPAN);
-    descriptionContent.classList = CSS.AON_ELLIPSIS;
-    descriptionContent.style.fontSize = ".7rem";
+    let descriptionContent = this.createElement(TAG.DIV);
+    descriptionContent.classList = "content-title-two";
     descriptionContent.innerHTML = `(${messenger.newNumber}) ${description}`;
     descriptionContent.title = description;
     div.appendChild(descriptionContent);
@@ -239,10 +213,8 @@ export class AonMessengerCard extends AonElement {
   }
 
   getSender(res) {
-    let sender = this.createElement(TAG.SPAN);
-    sender.style.fontSize = ".8rem";
-    sender.style.color = "var(--aonMessenger)";
-    sender.style.fontWeight = "bold";
+    let sender       = this.createElement(TAG.DIV);
+    sender.classList = "sender";
 
     let senderText = "";
     if (res.registry && res.registry.name) {
@@ -254,7 +226,7 @@ export class AonMessengerCard extends AonElement {
     }
 
     sender.innerHTML = senderText;
-    sender.title = senderText;
+    sender.title     = senderText;
   
     return sender;
   };
@@ -272,7 +244,11 @@ export class AonMessengerCard extends AonElement {
   };
 
   getTable(messengers) {
-    let content = this.getElement("messengerCardTable");
+    if(messengers.length == 0){
+      this.innerHTML = "No existen solicitudes";
+      return;
+    }
+
     let maxIndex = messengers.length > 5 ? 5 : messengers.length;
     
     for (let index = 0; index < maxIndex; index++) {
@@ -285,24 +261,18 @@ export class AonMessengerCard extends AonElement {
         // () => messenger.fn;
       });
       
+      // Titulo - de pada quien
       let senderRecipt = messenger.senderRecipt;
       row.appendChild(senderRecipt);
-
-      let rowContent = this.createElement(TAG.DIV);
+      // Contenido
+      let rowContent       = this.createElement(TAG.DIV);
       rowContent.classList = CSS.AON_MESSENGER_CARD_ROW_CONTENT;
       row.appendChild(rowContent);
 
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-
-      leftContent.style.alignItems = "center";
-      leftContent.style.flexGrow = "1";
-      leftContent.style.minWidth = "0";
-      leftContent.style.marginRight = ".5rem";
-      leftContent.style.gap = ".5rem";
+      let leftContent       = this.createElement(TAG.DIV);
+      leftContent.className = "left";
 
       let icon = messenger.lettersHtml;
-      icon.firstElementChild.style.color = "var(--aonMessenger)";
       leftContent.appendChild(icon);
 
       let title = messenger.newTitle;
@@ -311,12 +281,7 @@ export class AonMessengerCard extends AonElement {
       rowContent.appendChild(leftContent);
       rowContent.appendChild(messenger.rightContent);
 
-      content.appendChild(row);
-    }
-
-    if(messengers.length == 0){
-      let messengerCard = this.getElement("messengerCard");
-      messengerCard.style.display = "none";
+      this.appendChild(row);
     }
   }
 
