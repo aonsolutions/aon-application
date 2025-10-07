@@ -232,6 +232,17 @@
   // 
   // Componentes
   //
+    // Badge
+    aon-badge{
+      .badge {
+        color               : $color-text-button;
+        background          : $gradient-blue-background;
+        background-size     : $gradient-blue-size;
+        background-position : $gradient-blue-position;
+        transition          : $gradient-blue-transition;
+        box-shadow          : $box-shadow-dialog;
+      }
+    }
     // Color de iconos de base
     aon-icon {
       &::after {

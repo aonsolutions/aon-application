@@ -4,6 +4,7 @@
 @use './base/typography';
 
 // Importamos componentes
+@use './components/badge' as badge;
 @use './components/buttons' as button;
 @use './components/card' as card;
 @use './components/dashboard_button' as dashboardButton;

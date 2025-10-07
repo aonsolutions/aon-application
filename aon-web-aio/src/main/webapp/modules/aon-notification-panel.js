@@ -2,14 +2,11 @@ import { AonElement } from '../components/AonElement.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonNotification } from '../modules/notification/aon-notification.js';
-import { CreateComponent } from '../components/CreateComponent.js';
 import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS, CSS } from '../environments/environments.js';
 import { NOTIFICATION } from  "../services/app.js";
-import { getApp } from '../services/app.js';
-import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from '../services/service.js';
+import { getNotification, markReadNotification } from '../services/service.js';
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 import { NotificationUtils } from "../modules/notification/utils/NotificationUtils.js";
-import { AonApplication } from "../components/aon-application.js";
 import * as LS from '../services/localStorageService.js';
 
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
@@ -56,8 +53,6 @@ export class AonNotificationPanel extends AonElement {
         let header = this.getElement("aonHeaderWeb");
         // let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
-        let applications = this.getElement("applications");
-        applications.className = "";
 
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;

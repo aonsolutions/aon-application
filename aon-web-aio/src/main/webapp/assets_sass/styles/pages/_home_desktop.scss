@@ -18,6 +18,16 @@
           flex-shrink : 1;
           flex-basis  : v.$px-400;
           max-width   : v.$px-480;
+          .aonCardTitle .aonCardTitleSection{
+            cursor: pointer;
+          }
+          // Solicitudes badge
+          &#messengerCard{
+            aon-badge{
+              font-family: v.$font-primary-medium;
+              font-size  : v.$px-16;
+            }
+          }
           .aonCardContent{
             min-height: v.$px-320;
             display   : grid;
@@ -85,6 +95,13 @@
             }
           }
         // Bancos listado
+        //
+        //
+        // Solicitudes listado
+          aon-messenger-card{
+            
+          }
+        // Solicitudes listado
         //
         }
       }
