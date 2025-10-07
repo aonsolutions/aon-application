@@ -338,23 +338,24 @@ export class AonNewLogin extends AonElement {
 
   createMobileApps(parent) {
     if(!this.isNewStyle()){
-      if (!UA.isApp() && this.isMobile()){
-        let divMobiles = this.createElement(TAG.DIV);
-        divMobiles.id = "logosMobiles";
-        divMobiles.classList.add("aonNewLoginDivMobiles");
-        parent.appendChild(divMobiles);
-        this.buildAppLogo(divMobiles);
-      }
-    } else {
+//      if (!UA.isApp() && this.isMobile()){
+//        let divMobiles = this.createElement(TAG.DIV);
+//        divMobiles.id = "logosMobiles";
+//        divMobiles.classList.add("aonNewLoginDivMobiles");
+//        parent.appendChild(divMobiles);
+//        this.buildAppLogo(divMobiles);
+//      }
+//    } else {
       // No se carga si accedes desde la APP
-      if (!UA.isApp()){
+//      if (!UA.isApp()){
         let divMobiles = this.createElement(TAG.DIV);
         divMobiles.id = "logosMobiles";
         divMobiles.classList.add("aonNewLoginDivMobiles");
         parent.appendChild(divMobiles);
         this.buildAppLogo(divMobiles);
-      }
-    }
+//      }
+//    }
+	}
   }
 
   createToast(parent) {
@@ -480,7 +481,7 @@ export class AonNewLogin extends AonElement {
           this.companySelection(companies[0], true);
         } else if(companies.length > 1 ) {
           for (let company of companies) {
-            if (company.domain === actualCompanyName) {
+            if (company.domain === actualCompanyName && company.parentId) {
               localStorage.setItem("company", JSON.stringify(company));
               localStorage.setItem("aon_domain_id", company.id);
               localStorage.setItem("aon_domain_name", company.domain);
@@ -528,17 +529,18 @@ export class AonNewLogin extends AonElement {
     let aonHeader = this.getElement(home.AON_HEADER);
     aonHeader.showCompanyOption(company, onlyOne);
 
-    if (!this.isMobile()) {
+//    if (!this.isMobile()) {
       let aonMenu = this.getElement("aonMenu");
       aonMenu.clear();
       aonMenu.init().then(() => aonMenu.open());
-    } else aonHeader.companyIn(onlyOne);
+//    } else aonHeader.companyIn(onlyOne);
 
     getUser().then((user) => {
       localStorage.setItem("aon_domain_login", user.login);
-      if (UA.isMobile()) {
-        this.rootPanel(new AonMobileHome());
-      } else if(this.isConsole(company)){
+//      if (UA.isMobile()) {
+//        this.rootPanel(new AonMobileHome());
+//      } else 
+	  if(this.isConsole(company)){
 		GWT.iLoad(GWT.CONSOLE);
 	  } else {
         this.rootPanel(new AonDesktop());

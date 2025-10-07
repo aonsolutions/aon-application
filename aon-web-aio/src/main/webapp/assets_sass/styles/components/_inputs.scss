@@ -126,10 +126,20 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
           display        : flex;
           justify-content: center;
           align-items    : center;
-		  position		 : unset;
+          position		   : unset;
+        }
+        .datepicker-month, .datepicker-year{
+          cursor        : pointer;
+          border-radius : v.$border-radius;
+          padding       : calc(v.$padding-min / 2) v.$padding-min;
         }
       }
       table{
+        border-collapse: separate;
+        border-spacing : v.$gap-min;
+        tr{
+          display: table-row !important;
+        }
         .day-content-title{
           font-family: v.$font-primary-semibold;
         }
@@ -142,9 +152,11 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
           align-items    : center;
           cursor         : pointer;
           border-radius  : v.$pct-100;
-          &:empty {
-            display: none;
-          }
+        }
+        .months-btn, .year-btn{
+          cursor        : pointer;
+          border-radius : v.$border-radius;
+          padding       : calc(v.$padding-min / 2) v.$padding-min;
         }
       }
     }

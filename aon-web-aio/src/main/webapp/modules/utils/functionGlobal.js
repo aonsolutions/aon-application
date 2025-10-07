@@ -73,6 +73,15 @@ function waitForElement (selector) {
 window.waitForElement = waitForElement;
 
 /**
+ * Genera un UUID simple basado en Math.random().
+ * @returns {string} El UUID generado.
+ */
+export function generateSimpleUUID() {
+  return Math.random().toString(36).slice(2, 11) + Math.random().toString(36).slice(2, 11);
+}
+window.generateSimpleUUID = generateSimpleUUID;
+
+/**
  * 
  * @returns {boolean}
  * Funcion para hacer que al entrar en el documental cargue la nueva vista de primeras

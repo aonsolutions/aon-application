@@ -8,6 +8,7 @@ import { getWorkgroups } from "../../../services/workgroupService.js";
 import { getTasks } from "../../../services/taskService.js";
 import { sortBy } from "../../../services/utils.js";
 import { TaskUtils } from "./TaskUtils.js";
+import { AonBadge } from "../../../components/aon-badge";
 
 const getMeseggers = async () => {
   let data = [];
@@ -52,22 +53,12 @@ const getMeseggers = async () => {
   return data;
 };
 
-const getMessageBadge = (messageLenght) => {
-  let badgePanel = document.createElement(TAG.DIV);
-  badgePanel.className = CSS.AON_MESSENGER_OPEN_MESSAGES;
-
-  let badgeText = document.createElement(TAG.SPAN);
-  badgeText.innerHTML = "Pendientes";
-  badgeText.title = "Ver solicitudes pendientes";
-  badgePanel.appendChild(badgeText);
-
-  let badge = document.createElement(TAG.SPAN);
-  badge.className = CSS.AON_MESSENGER_BADGE;
-  badge.innerHTML = messageLenght;
-  badge.title = "Ver solicitudes pendientes";
-  badgePanel.appendChild(badge);
-
-  return badgePanel;
+const getMessageBadge = (messageLength) => {
+  const badge = new AonBadge();
+  badge.text  = 'pendientes';
+  badge.count = messageLength;
+  badge.title = 'Ver solicitudes pendientes';
+  return badge;
 };
 
 export const MessegerUtils = {

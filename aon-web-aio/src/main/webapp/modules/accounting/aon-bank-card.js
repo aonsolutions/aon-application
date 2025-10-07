@@ -2,14 +2,12 @@ import { AonElement } from "../../components/AonElement.js";
 import { getDomainUserRoles } from "../../services/companyService.js";
 import { formatNumber } from "../../services/utils.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { CSS } from "../../environments/environments.js";
+import { CSS, MSG, TAG } from "../../environments/environments.js";
 import { sortBy } from "../../services/utils.js";
-import { TAG } from "../../environments/environments.js";
 import { getBanks } from "../../services/accountingService.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
+// import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export class AonBankCard extends AonElement {
-  
   dur;
   companyRegistry;
   BANKS = [];
@@ -41,11 +39,6 @@ export class AonBankCard extends AonElement {
   }
 
   paintView() {
-    this.style.display = "flex";
-    this.style.flexDirection = "column";
-    this.style.justifyContent = "space-between";
-    this.style.height = "100%";
-
     let cardContent = this.createElement(TAG.DIV);
     cardContent.className = CSS.AON_FLEX_COLUMN;
     cardContent.id = "bankCardTable";
@@ -90,16 +83,9 @@ export class AonBankCard extends AonElement {
     if(banks && banks.length === 0){
       let emptyMessage = this.createElement(TAG.DIV);
       emptyMessage.innerHTML = "No existen bancos";
-      emptyMessage.style.fontWeight = "bold";
 
-      content.style.height = "100%";
       content.appendChild(emptyMessage);
-
-      let bankCard = this.getElement("bankCard");
-      bankCard.style.display = "none";
-      
     } else {
-
       let maxLength = banks.length > 5 ? 5 : banks.length;
       let accumulatedBanks = 0;
 
@@ -107,42 +93,25 @@ export class AonBankCard extends AonElement {
         const bank = banks[index];
         
         let row = this.createElement(TAG.DIV);
-        row.className = CSS.AON_FLEX;
-        row.style.justifyContent = "space-between";
-        row.style.width = "100%";
-        row.style.borderBottom = "1px solid #ddd";
-        row.style.padding = "0.5rem 0";
+        row.className = "bank";
 
         let leftContent = this.createElement(TAG.DIV);
-        leftContent.className = CSS.AON_FLEX;
-        leftContent.style.alignContent = "center";
-        leftContent.style.flexDirection = "column";
+        leftContent.className = 'bank-detail';
 
         let description = this.createElement(TAG.SPAN);
-        description.style.fontSize = "1rem";
-        description.style.color = "var(--aonAccounting)";
-        description.style.fontWeight = "500";
+        description.classList.add("bank-name");
         description.innerHTML = bank.alias;
         leftContent.appendChild(description);
 
-        let date = this.createElement(TAG.SPAN);
+        let date = this.createElement(TAG.SMALL);
         date.classList.add("aonBankCardDate");
-        date.style.fontSize = ".7rem";
         date.innerHTML = this.formatDateShort(bank.balanceDate);
         date.title = this.formatDate(bank.balanceDate);
         leftContent.appendChild(date);
 
         let rightContent = this.createElement(TAG.DIV);
-        rightContent.className = CSS.AON_FLEX;
-        rightContent.style.alignItems = "center";
-        rightContent.style.gap = "1rem";
-
-        let amount = this.createElement(TAG.SPAN);
-        amount.style.fontWeight = "bold";
-        amount.style.minWidth = "5rem";
-        amount.style.textAlign = "right";
-        amount.innerHTML = this.formatNumber(bank.balance);
-        rightContent.appendChild(amount);
+        rightContent.className = 'bank-amount';
+        rightContent.innerHTML = this.formatNumber(bank.balance);
 
         accumulatedBanks += bank.balance;
 
@@ -156,35 +125,19 @@ export class AonBankCard extends AonElement {
       let total = banks.reduce((t, bank) => t + bank.balance, 0);
       if(banks.length > 5){
         let row = this.createElement(TAG.DIV);
-        row.className = CSS.AON_FLEX;
-        row.style.justifyContent = "space-between";
-        row.style.width = "100%";
-        row.style.borderBottom = "1px solid #ddd";
-        row.style.padding = "0.4rem 0";
+        row.className = "bank";
 
         let leftContent = this.createElement(TAG.DIV);
-        leftContent.className = CSS.AON_FLEX;
-        leftContent.style.alignItems = "center";
-        leftContent.style.gap = "1rem";
+        leftContent.className = 'bank-detail'
 
         let description = this.createElement(TAG.SPAN);
-        description.style.fontSize = "1rem";
-        description.style.color = "var(--aonAccounting)";
-        description.style.fontWeight = "500";
+        description.classList.add("bank-name");
         description.innerHTML = "Otros";
         leftContent.appendChild(description);
 
         let rightContent = this.createElement(TAG.DIV);
-        rightContent.className = CSS.AON_FLEX;
-        rightContent.style.alignItems = "center";
-        rightContent.style.gap = "1rem";
-
-        let amount = this.createElement(TAG.SPAN);
-        amount.style.fontWeight = "bold";
-        amount.style.minWidth = "5rem";
-        amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(total - accumulatedBanks, 2, 2, "EUR");
-        rightContent.appendChild(amount);
+        rightContent.className = 'bank-amount';
+        rightContent.innerHTML = formatNumber(total - accumulatedBanks, 2, 2, "EUR");
 
         row.appendChild(leftContent);
         row.appendChild(rightContent);
@@ -285,35 +238,35 @@ export class AonBankCard extends AonElement {
   
   getDayName(date) {
     const dayNames = [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado",
+      MSG.SUNDAY,
+      MSG.MONDAY,
+      MSG.TUESDAY,
+      MSG.WEDNESDAY,
+      MSG.THURSDAY,
+      MSG.FRIDAY,
+      MSG.SATURDAY
     ];
     return dayNames[date.getDay()];
   }
   
-   getMonthName(date) {
-      const monthNames = [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre"
-      ];
-      return monthNames[date.getMonth()];
-    }
-  
+  getMonthName(date) {
+    const monthNames = [
+      MSG.JANUARY,
+      MSG.FEBRUARY,
+      MSG.MARCH,
+      MSG.APRIL,
+      MSG.MAY,
+      MSG.JUNE,
+      MSG.JULY,
+      MSG.AUGUST,
+      MSG.SEPTEMBER,
+      MSG.OCTOBER,
+      MSG.NOVEMBER,
+      MSG.DECEMBER
+    ];
+    return monthNames[date.getMonth()];
+  }
+
   padWithZero(num) {
     return num.toString().padStart(2, "0");
   }

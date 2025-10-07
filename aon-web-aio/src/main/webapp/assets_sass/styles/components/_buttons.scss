@@ -39,6 +39,18 @@ button {
   }
 }
 
+// Boton icon - si tiene disable
+aon-icon-button{
+  &[disabled]{
+    cursor: not-allowed;
+    opacity: 0.5;
+    button{
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
 // visualizador en facturas
 #aonViewerButtonsDiv{
   // por ahora -- seria crear una clase

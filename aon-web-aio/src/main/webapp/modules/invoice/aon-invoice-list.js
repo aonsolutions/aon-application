@@ -221,12 +221,12 @@ export class AonInvoiceList extends AonElement {
 		let inv = new Invoice(invoice);
 		let icons = [];
 
-		let icon = {
-			icon: this.getInvoiceTypeIcon(invoice),
-			title: this.getInvoiceTypeIconText(invoice),
-			color: this.getInvoiceTypeIconColor()
-		};
-		icons.push(icon);
+//		let icon = {
+//			icon: this.getInvoiceTypeIcon(invoice),
+//			title: this.getInvoiceTypeIconText(invoice),
+//			color: this.getInvoiceTypeIconColor()
+//		};
+//		icons.push(icon);
 
 		if(!inv.isRawdoc() && !invoice.invofox) {
 			let icon = {

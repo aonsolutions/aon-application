@@ -232,6 +232,17 @@
   // 
   // Componentes
   //
+    // Badge
+    aon-badge{
+      .badge {
+        color               : $color-text-button;
+        background          : $gradient-blue-background;
+        background-size     : $gradient-blue-size;
+        background-position : $gradient-blue-position;
+        transition          : $gradient-blue-transition;
+        box-shadow          : $box-shadow-dialog;
+      }
+    }
     // Color de iconos de base
     aon-icon {
       &::after {
@@ -544,15 +555,19 @@
                 background-color: $color-text;
               }
             }
-            .date-picker-title-icon:hover{
-              background-color: $color-100;
+            .date-picker-title-icon, .datepicker-month, .datepicker-year{
+              &:hover{
+                background-color: $color-100;
+              }
             }
           }
-          .day-content:hover{
-            background-color: $color-100;
-            color           : $color-text;
+          .day-content, .months-btn, .year-btn{
+            &:not(:empty):hover{
+              background-color: $color-100;
+              color           : $color-text;
+            }
           }
-          .day-selected{
+          .day-selected, .year-selected{
             color           : $color-text-button;
             background-color: $color-300;
           }
@@ -779,6 +794,16 @@
           }
           #totalHour{
             color: $color-text-general;
+          }
+        }
+      }
+      aon-card{
+        // Bancos listado
+        aon-bank-card{
+          #bankCardTable{
+            .bank{
+              border-bottom: $border;
+            }
           }
         }
       }

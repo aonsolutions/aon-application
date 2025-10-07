@@ -1,0 +1,27 @@
+@use '../variables' as v;
+
+// Personalizacion
+$badge-size     : v.$px-24;
+$badge-font-size: v.$px-10;
+
+aon-badge{
+  position   : relative;
+  display    : inline-flex;
+  align-items: center;
+
+  .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    border-radius: v.$pct-100;
+    width: $badge-size;
+    height: $badge-size;
+    font-size: $badge-font-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+  }
+}

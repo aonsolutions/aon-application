@@ -18,6 +18,16 @@
           flex-shrink : 1;
           flex-basis  : v.$px-400;
           max-width   : v.$px-480;
+          .aonCardTitle .aonCardTitleSection{
+            cursor: pointer;
+          }
+          // Solicitudes badge
+          &#messengerCard{
+            aon-badge{
+              font-family: v.$font-primary-medium;
+              font-size  : v.$px-16;
+            }
+          }
           .aonCardContent{
             min-height: v.$px-320;
             display   : grid;
@@ -53,7 +63,46 @@
             }
           // FIN Control horario
           //
+        }
+        //
+        // Bancos listado
+          aon-bank-card{
+            #bankCardTable{
+              display: grid;
+              gap    : v.$gap-min;
+              .bank{
+                display: flex;
+                justify-content: space-between;
+                padding-bottom: v.$padding-min;
+                .bank-detail{
+                  display: grid;
+                  .bank-name{
+                    font-family: v.$font-primary-medium;
+                  }
+                }
+                .bank-amount{
+                  display: flex;
+                  align-items: center;
+                  font-family: v.$font-primary-medium;
+                }
+              }
+            }
+            .aonCardTotal{
+              display: flex;
+              justify-content: flex-end;
+              padding-top: v.$padding;
+              font-family: v.$font-primary-bold;
+            }
           }
+        // Bancos listado
+        //
+        //
+        // Solicitudes listado
+          aon-messenger-card{
+            
+          }
+        // Solicitudes listado
+        //
         }
       }
     }

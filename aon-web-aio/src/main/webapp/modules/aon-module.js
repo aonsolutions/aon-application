@@ -96,13 +96,13 @@ export class AonModule extends AonElement {
 		if (data) {
 			login(data).then(() => {
 				this.buildHome();
-				if (this.isMobile()) {
-					let mobileParent = new AonMobileParent();
-					mobileParent.selection = true;
-					this.rootPanel(mobileParent);
-				} else {
+//				if (this.isMobile() && false) {
+//					let mobileParent = new AonMobileParent();
+//					mobileParent.selection = true;
+//					this.rootPanel(mobileParent);
+//				} else {
 					this.rootPanel(new AonParent());
-				}
+//				}
 			}).catch(e => {
 				this.buildLogin();
 				this.showLoginErrorToast(e);

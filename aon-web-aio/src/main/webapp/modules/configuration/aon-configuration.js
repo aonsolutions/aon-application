@@ -94,9 +94,9 @@ export class AonConfiguration extends AonElement {
 	build() {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 
-		if (this.isMobile()) {
-			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
-		}
+//		if (this.isMobile()) {
+//			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
+//		}
 
 		let officeOptions = [];
 
@@ -211,12 +211,12 @@ export class AonConfiguration extends AonElement {
 					});
 				}
 
-				if (!this.isMobile()) {
+//				if (!this.isMobile()) {
 					companyOptions.push({
 						name: MSG.HIRING,
 						fn: () => this.buildStore(),
 					});
-				}
+//				}
 			}
 			aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
 		}
@@ -321,20 +321,21 @@ export class AonConfiguration extends AonElement {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 		aonConfiguration.removeToolbarOptions();
 
-		if (this.isMobile()) {
-			aonConfiguration.addFloatOption(ACTION.ADD, () => this.buildCreateUser(false));
-		} else {
+//		if (this.isMobile()) {
+//			aonConfiguration.addFloatOption(ACTION.ADD, () => this.buildCreateUser(false));
+//		} else {
 			aonConfiguration.addToolbarOption("UserShare", "share", () =>
 				this.buildCreateUser(true)
 			);
 			aonConfiguration.addToolbarOption("UserAdd", "add", () =>
 				this.buildCreateUser(false)
 			);
-		}
+//		}
 
-		let userList = this.isMobile()
-			? new AonMobileUserList()
-			: new AonUserList();
+		let userList = new AonUserList(); 
+//		this.isMobile()
+//			? new AonMobileUserList()
+//			: new AonUserList();
 		aonConfiguration.setContent(userList);
 
 		// const btnSearch = aonConfiguration.addSearchOption();
@@ -347,17 +348,18 @@ export class AonConfiguration extends AonElement {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 		aonConfiguration.removeToolbarOptions();
 
-		if (this.isMobile()) {
-			aonConfiguration.addFloatOption(ACTION.ADD, () => this.createServiceAccount());
-		} else {
+//		if (this.isMobile()) {
+//			aonConfiguration.addFloatOption(ACTION.ADD, () => this.createServiceAccount());
+//		} else {
 			aonConfiguration.addToolbarOption("ServiceAccountAdd", "add", () =>
 				this.createServiceAccount()
 			);
-		}
+//		}
 
-		let serviceAccountList = this.isMobile()
-			? new AonMobileUserList()
-			: new AonServiceAccountList();
+		let serviceAccountList = new AonServiceAccountList(); 
+//		this.isMobile()
+//			? new AonMobileUserList()
+//			: new AonServiceAccountList();
 		aonConfiguration.setContent(serviceAccountList);
 	}
 

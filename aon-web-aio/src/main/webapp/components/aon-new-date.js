@@ -2,12 +2,15 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/
 import { AonNewInput } from './aon-new-input.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
+import { DIV } from '../environments/aonTag.js';
 
 export class AonNewDate extends AonNewInput {
+  activePicker;
   date;
   day;
   month;
   year;
+  yearTotal = 20;
   today = new Date();
   INPUT;
   SPAN;
@@ -38,15 +41,15 @@ export class AonNewDate extends AonNewInput {
     this.DATEPICKER_MONTH = this.DATEPICKER + 'Month';
     this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
     this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
-	this.YEARPICKER = this.DATEPICKER + 'YearPicker';
-	this.MONTHPICKER = this.MONTHPICKER + 'MonthPicker';
+    this.YEARPICKER = this.DATEPICKER + 'YearPicker';
+    this.MONTHPICKER = this.MONTHPICKER + 'MonthPicker';
     this.getDate();
     // Si no tiene date, cogemos la fecha de hoy para montar el calendario
     this.day   = this.date ? this.date.getDate()    : this.today.getDate();
     this.month = this.date ? this.date.getMonth()   : this.today.getMonth();
     this.year  = this.date ? this.date.getFullYear(): this.today.getFullYear();
-	this.startYear = this.date ? this.date.getFullYear(): this.today.getFullYear();
-	this.startYear = this.startYear - (this.startYear % 16);
+    this.startYear = this.date ? this.date.getFullYear(): this.today.getFullYear();
+    this.startYear = this.startYear - (this.startYear % this.yearTotal);
     this.maxlength = 10;
   }
 
@@ -157,34 +160,54 @@ export class AonNewDate extends AonNewInput {
     datepickerHeader.appendChild(aib1);
 
     aib1.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.previousMonth();
+      if (!aib1.disabled) {
+        if (this.activePicker === this.YEARPICKER) {
+          this.startYear -= this.yearTotal;;
+          this.renderYears();
+        } else {
+          ev.stopPropagation();
+          ev.preventDefault();
+          this.previousMonth();
+        }
+      }
     });
 
     let span1 = this.createElement(TAG.SPAN);
     span1.id = this.DATEPICKER_MONTH;
+    span1.classList.add('datepicker-month');
     span1.textContent = this.getMonthName();
     datepickerHeader.appendChild(span1);
-
+    
     let span2 = this.createElement(TAG.SPAN);
     span2.id = this.DATEPICKER_YEAR;
+    span2.classList.add('datepicker-year');
     span2.textContent = this.year;
     datepickerHeader.appendChild(span2);
 	
-	span1.addEventListener(EVENT.CLICK, () => {
-		this.showHidePicker(this.MONTHPICKER);
-	});
-	
-	span2.addEventListener(EVENT.CLICK, () => {
-		this.showHidePicker(this.YEARPICKER);
-	});
-	
-	let monthPicker = this.buildMonthPicker();
-	datepickerHeader.appendChild(monthPicker);
-	
-	let yearPicker = this.buildYearPicker();
-	datepickerHeader.appendChild(yearPicker);
+    span1.addEventListener(EVENT.CLICK, () => {
+      if (this.activePicker === this.MONTHPICKER) {
+        this.showHideButtonsMonthsYears();
+        this.showRenderPicker();
+        this.activePicker = null;
+      } else {
+        this.showHideButtonsMonthsYears(this.MONTHPICKER);
+        this.showRenderPicker(this.MONTHPICKER);
+        this.activePicker = this.MONTHPICKER;
+      }
+    });
+    
+    span2.addEventListener(EVENT.CLICK, () => {
+      if (this.activePicker === this.YEARPICKER) {
+        this.showHideButtonsMonthsYears();
+        this.showRenderPicker();
+        this.activePicker = null;
+      } else {
+        this.initYearSelection();
+        this.showHideButtonsMonthsYears(this.YEARPICKER);
+        this.showRenderPicker(this.YEARPICKER);
+        this.activePicker = this.YEARPICKER;
+      }
+    });
 
     let aib2 = new AonIconButton();
     aib2.id = this.DATEPICKER_NEXT;
@@ -193,9 +216,16 @@ export class AonNewDate extends AonNewInput {
     datepickerHeader.appendChild(aib2);
 
     aib2.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.nextMonth();
+      if (!aib2.disabled) {
+        if (this.activePicker === this.YEARPICKER) {
+          this.startYear += this.yearTotal;
+          this.renderYears();
+        }else{
+          ev.stopPropagation();
+          ev.preventDefault();
+          this.nextMonth();
+        }
+      }
     });
 
     datepicker.appendChild(datepickerHeader);
@@ -217,11 +247,11 @@ export class AonNewDate extends AonNewInput {
         }
       }
     });
-	this.renderYears();
-	this.renderMonths();
   }
 
   buildCalendar() {
+    this.showHideButtonsMonthsYears();
+    this.showButtonsPreviousNext();
     this.clearElementById(this.DATEPICKER_DAYS);
     let datepickerDaysTable = this.getElement(this.DATEPICKER_DAYS);
     let trDays = this.createElement(TAG.TR);
@@ -237,7 +267,7 @@ export class AonNewDate extends AonNewInput {
       trDays.appendChild(td);
     }
 
-    for(let i = 0; i < 6; i++) {
+    for(let i = 0; i < this.getWeeksInMonth(this.year, this.month); i++) {
       let tr = this.createElement(TAG.TR);
       datepickerDaysTable.appendChild(tr);
       for(let j = 0; j < 7; j++) {
@@ -268,15 +298,11 @@ export class AonNewDate extends AonNewInput {
       // Poner la fecha como texto dentro del div
       innerDiv.textContent = date.getDate();
 
-      // Limpiar contenido anterior y a�adir el div al td
+      // Limpiar contenido anterior y agregar el div al td
       td.innerHTML = '';
       td.appendChild(innerDiv);
-
-      if (this.isSameDate(date)) {
-        innerDiv.classList.add('day-selected');
-      } else {
-        innerDiv.classList.remove('day-selected');
-      }
+      // Marcar el dia seleccionado
+      innerDiv.classList.toggle('day-selected', this.isSameDate(date));
 
       td.addEventListener(EVENT.CLICK, () => {
         this.setDate(actDate);
@@ -307,6 +333,19 @@ export class AonNewDate extends AonNewInput {
       case 11: return MSG.DECEMBER.toUpperCase();
       default: return MSG.JANUARY.toUpperCase();
     }
+  }
+
+  getWeeksInMonth(year, month) {
+    // Día de la semana en que empieza el mes (0 = domingo, 1 = lunes, ...)
+    const firstDay = new Date(year, month, 1).getDay();
+    // Total de días en el mes
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Ajustar el offset porque muchos calendarios empiezan lunes
+    const offset = (firstDay === 0 ? 6 : firstDay - 1);
+    // Total de celdas necesarias en el calendario
+    const totalCells = offset + daysInMonth;
+    // Número de semanas (redondeando hacia arriba)
+    return Math.ceil(totalCells / 7);
   }
 
   getDayName(d) {
@@ -349,6 +388,7 @@ export class AonNewDate extends AonNewInput {
     const datePicker = this.getElement(this.DATEPICKER);
     if(datePicker){
       if(!this.isReadonly()) {
+        this.buildCalendar();
         datePicker.classList.add('is-visible');
       }
       if(this.isMobile()){
@@ -441,108 +481,119 @@ export class AonNewDate extends AonNewInput {
     return AonDateUtils.formatDate(this.date, 'yyyy-MM-dd');
   }
   
-  buildYearPicker(){
-	/*
-	<div class="year-picker">
-	    <div class="controls">
-	      <button id="prev">Anterior</button>
-	      <span id="range"></span>
-	      <button id="next">Siguiente</button>
-	    </div>
-	    <div class="grid" id="yearGrid"></div>
-  	</div>
-	*/
-	const div = this.createElement(TAG.DIV);
-	div.id = this.YEARPICKER;
-	div.classList.add("hidden");
-	const controls = this.createElement(TAG.DIV);
-	const prev = this.createElement(TAG.AON_ICON_BUTTON);
-	prev.className = "date-picker-title-icon";
-	prev.icon = "keyboard_arrow_left";
-	const next = this.createElement(TAG.AON_ICON_BUTTON);
-	next.className = "date-picker-title-icon";
-    next.icon = "keyboard_arrow_right";
-	const range = this.createElement(TAG.SPAN);
-	range.id = "rangeText"
-	controls.appendChild(prev);
-	controls.appendChild(range);
-	controls.appendChild(next);
-	const grid = this.createElement(TAG.DIV);
-	grid.id = "yearGrid";
-	div.appendChild(controls);
-	div.appendChild(grid);
-	prev.addEventListener(EVENT.CLICK, () => {
-      this.startYear -= 16;
-      this.renderYears();
-    });
-    next.addEventListener(EVENT.CLICK, () => {
-      this.startYear += 16;
-      this.renderYears();
-    });
-	return div;
+  initYearSelection(){
+    this.year = this.date ? this.date.getFullYear() : this.today.getFullYear();
+    this.startYear = this.year - (this.year % this.yearTotal);
   }
-  
+
   renderYears() {
-	let yearGrid = this.getElement("yearGrid");
+    let yearPicker     = this.getElement(this.DATEPICKER_YEAR);
+    let yearGrid       = this.getElement(this.DATEPICKER_DAYS);
     yearGrid.innerHTML = "";
-    for (let i = 0; i < 16; i++) {
+    let tr;
+    for (let i = 0; i < this.yearTotal; i++) {
+      if (i % 5 === 0) {
+        tr = this.createElement(TAG.TR);
+        tr.className = "year-tr";
+        yearGrid.appendChild(tr);
+      }
+
+      const td = this.createElement(TAG.TD);
+      td.className = "year-td";
+
       const year = this.startYear + i;
-      const btn = document.createElement("button");
+      const btn = document.createElement(TAG.DIV);
       btn.textContent = year;
       btn.className = "year-btn";
-      yearGrid.appendChild(btn);
-	  btn.addEventListener(EVENT.CLICK, (event) => {
-		this.year = +event.target.innerHTML;
-		this.startYear = +event.target.innerHTML - 8;
-		this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
-		this.showHidePicker(this.YEARPICKER);
-		this.buildCalendar();
-		const rangeText = this.getElement("rangeText");
-		rangeText.textContent = `${this.startYear} - ${this.startYear + 15}`;
-		this.renderYears();
-		event.stopPropagation();
+      btn.classList.toggle('year-selected', year === this.year);
+
+      td.appendChild(btn);
+      tr.appendChild(td);
+
+      btn.addEventListener(EVENT.CLICK, (event) => {
+        this.year = +event.target.innerHTML;
+        yearPicker.innerHTML = this.year;
+        this.buildCalendar();
+        event.stopPropagation();
       });
     }
-    const rangeText = this.getElement("rangeText");
-    rangeText.textContent = `${this.startYear} - ${this.startYear + 15}`;
-  }
-  
-  buildMonthPicker(){
-	const div = this.createElement(TAG.DIV);
-	div.id = this.MONTHPICKER;
-	div.classList.add("hidden");
-	const grid = this.createElement(TAG.DIV);
-	grid.id = "monthGrid";
-	div.appendChild(grid);
-	return div;
+    // Rango de fechas mostrado
+    yearPicker.innerHTML = `${this.startYear} - ${this.startYear + (this.yearTotal - 1)}`;
   }
   
   renderMonths(){
-	let monthGrid = this.getElement("monthGrid");
+    const monthGrid = this.getElement(this.DATEPICKER_DAYS);
     monthGrid.innerHTML = "";
+    this.hideButtonsPreviousNext();
+    let tr;
     for (let i = 0; i < 12; i++) {
-      const btn = document.createElement("button");
+      if (i % 3 === 0) {
+        tr = this.createElement(TAG.TR);
+        tr.className = "months-tr";
+        monthGrid.appendChild(tr);
+      }
+
+      const td = this.createElement(TAG.TD);
+      td.className = "months-td";
+
+      const btn = this.createElement(TAG.DIV);
       btn.textContent = this.getMonthName(i);
-	  btn.value = i;
-      btn.className = "year-btn";
-      monthGrid.appendChild(btn);
-	  btn.addEventListener(EVENT.CLICK, (event) => {
-		this.month = +event.target.value;
-		this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
-		this.showHidePicker(this.MONTHPICKER);
-		this.buildCalendar();
-		event.stopPropagation();
+      btn.value = i;
+      btn.className = "months-btn";
+
+      td.appendChild(btn);
+      tr.appendChild(td);
+
+      btn.addEventListener(EVENT.CLICK, (event) => {
+        this.month = +event.target.value;
+        this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+        this.buildCalendar();
+        event.stopPropagation();
       });
     }
   }
   
-  showHidePicker(elementPicker){
-  	const element = this.getElement(elementPicker);
-  	if(element.classList.contains("hidden")){
-  		element.classList.remove("hidden");
-  	}else{
-  		element.classList.add("hidden");
-  	}
+  showRenderPicker(elementPicker){
+    if(elementPicker === this.MONTHPICKER){
+      this.renderMonths();
+    } else if(elementPicker === this.YEARPICKER){
+      this.renderYears();
+    } else {
+      this.buildCalendar();
+    }
+  }
+
+  showButtonsPreviousNext(){
+    let buttonPrevious = this.getElement(this.DATEPICKER_PREVIOUS);
+    let buttonNext     = this.getElement(this.DATEPICKER_NEXT);
+    buttonPrevious.removeAttribute('disabled');
+    buttonNext.removeAttribute('disabled');
+  }
+  hideButtonsPreviousNext(){
+    let buttonPrevious = this.getElement(this.DATEPICKER_PREVIOUS);
+    let buttonNext     = this.getElement(this.DATEPICKER_NEXT);
+    buttonPrevious.setAttribute('disabled', 'true');
+    buttonNext.setAttribute('disabled', 'true');
+  }
+
+  showHideButtonsMonthsYears(elementPicker){
+    const monthPicker = this.getElement(this.DATEPICKER_MONTH);
+    const yearPicker  = this.getElement(this.DATEPICKER_YEAR);
+
+    if (elementPicker === this.MONTHPICKER) {
+      monthPicker.classList.remove('hidden');
+      yearPicker.classList.add('hidden');
+      this.activePicker = this.MONTHPICKER;
+    } else if (elementPicker === this.YEARPICKER) {
+      yearPicker.classList.remove('hidden');
+      monthPicker.classList.add('hidden');
+      this.activePicker = this.YEARPICKER;
+    } else {
+      monthPicker.classList.remove('hidden');
+      yearPicker.classList.remove('hidden');
+      yearPicker.innerHTML = this.year;
+      this.activePicker = '';
+    }
   }
 
 }
