@@ -665,18 +665,20 @@ export class AonParent extends AonElement {
 		countSpan.style.fontWeight = "bold";
 		countSpan.innerHTML = count || '';
 		li.appendChild(countSpan);
-
-		let sp = this.createElement(TAG.SPAN);
-		let i2 = this.createElement(TAG.I);
-		i2.className = 'material-icons aonAvatar';
-		i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
-		sp.appendChild(i2);
-		sp.addEventListener(EVENT.CLICK, (event) => {
-			this.open(company);
-			event.stopPropagation();			
-		});
-
-		li.appendChild(sp);
+		
+		if (company.active && !company.expired) {
+			let sp = this.createElement(TAG.SPAN);
+			let i2 = this.createElement(TAG.I);
+			i2.className = 'material-icons aonAvatar';
+			i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			sp.appendChild(i2);
+			sp.addEventListener(EVENT.CLICK, (event) => {
+				this.open(company);
+				event.stopPropagation();
+			});
+			sp.title = `Abrir ${company.name} en una pestaña nueva`;
+			li.appendChild(sp);
+		}
 		
 		return li;
 	}

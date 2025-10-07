@@ -1317,23 +1317,30 @@ public class FeeDAO {
 		}
 		
 		if(null != newSeller && null != newSeller.getId()) {
-			Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
+			Integer taskHolder = 
+					ctx.getDslContext()
+					.select(SELLER.TASK_HOLDER)
+					.from(SELLER)
 					.where(SELLER.REGISTRY.eq(newSeller.getId()))
 					.fetchOne(SELLER.TASK_HOLDER);
 			
 			if(null != taskHolder) {
-				Integer userId = ctx.getDslContext().select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
+				Integer userId = 
+					ctx.getDslContext()
+					.select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
 					.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
 					.fetchOne(TASK_HOLDER.USER_ID);
 				
 				if(null != userId) {
 					// Domain Customer Scope
-					Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
+					Result<RrelationshipRecord> rrelationships = 
+						ctx.getDslContext().selectFrom(RRELATIONSHIP)
 						.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
 						.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
 						.fetch();
 					
-					UserRecord user = ctx.getDslContext().selectFrom(USER)
+					UserRecord user = 
+							ctx.getDslContext().selectFrom(USER)
 							.where(USER.ID.eq(userId))
 							.fetchOne();
 					
@@ -1354,16 +1361,16 @@ public class FeeDAO {
 									.where(SCOPE.ID.eq(domainScope))
 									.fetchOne();
 							
-							if(null != domainScope || !AonStringUtils.equalsIgnoreCase(scope.get(SCOPE.DESCRIPTION), fee.getCustomer().getDocument())) {
-								// Get user scopes
+							if(null != scope ) {
+								// Customer's company already has a scope, so only left add this scope to seller's user.  
 								Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
 										.where(USER_SCOPE.USER_ID.eq(userId))
 										.and(USER_SCOPE.SCOPE.isNotNull())
 										.fetch();
 								
-								Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
+								Optional<UserScopeRecord> userScope = userScopes.stream()
+										.filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
 								
-								// Insert user scopes
 								if(userScope.isEmpty()) {
 									ctx.getDslContext().insertInto(USER_SCOPE)
 										.set(USER_SCOPE.DOMAIN, user.getDomain())
@@ -1371,24 +1378,12 @@ public class FeeDAO {
 										.set(USER_SCOPE.SCOPE, domainScope)
 										.execute();
 								}
+
 							} else {
-								Integer scopeId = ctx.getDslContext().insertInto(SCOPE)
-									.set(SCOPE.DOMAIN, null == company.get(DOMAIN.PARENT) ? company.get(DOMAIN.ID) : company.get(DOMAIN.PARENT))
-									.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
-									.returning(SCOPE.ID)
-									.fetchOne().value1();
-								
-								// Update domain scope with new document scope
-								ctx.getDslContext().update(DOMAIN)
-									.set(DOMAIN.SCOPE, scopeId)
-									.where(DOMAIN.ID.eq(company.field(DOMAIN.ID)))
-									.execute();
-								
-								ctx.getDslContext().insertInto(USER_SCOPE)
-									.set(USER_SCOPE.DOMAIN, user.getDomain())
-									.set(USER_SCOPE.USER_ID, userId)
-									.set(USER_SCOPE.SCOPE, scopeId)
-									.execute();
+								// Customer's company hasn't scope 
+								// ¿Do we need to create one and add to Customer's company & user?
+								// No by now no, seller's user already can login into seller's company 
+								;
 							}
 						}
 					}

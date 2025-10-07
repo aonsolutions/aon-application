@@ -112,6 +112,10 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }, {
+                description: "Modelo 369 ",
+                title: "Declaraciones de IVA del régimen One Stop Shop (OSS)",
+                action: () => GWT.iLoad(GWT.MODEL_369)
+			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
