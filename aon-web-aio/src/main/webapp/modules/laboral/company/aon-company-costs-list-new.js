@@ -64,11 +64,11 @@ export class AonCompanyCostsListNew extends AonElement {
 
   buildToolbar() {
     this.getApplication().removeToolbarOptions();
-    if (!this.isMobile()) {
+//    if (!this.isMobile()) {
       this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () =>
         this.getCompanyCostsExcel()
       );
-    }
+//    }
     this.buildToolbarSearch();
   }
 

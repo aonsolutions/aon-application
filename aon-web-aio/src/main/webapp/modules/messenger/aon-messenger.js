@@ -185,12 +185,12 @@ export class AonMessenger extends AonElement {
 
 	async buildToolbar(){
 		const application = this.getApplication();
-		if(this.isMobile()){
-			application.addMobileSidenavHeader(Apps.MESSENGER);
-			application.addFloatOption(SigninSidenav.ADD, () => 
-				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
-			);
-		} else {
+//		if(this.isMobile()){
+//			application.addMobileSidenavHeader(Apps.MESSENGER);
+//			application.addFloatOption(SigninSidenav.ADD, () => 
+//				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+//			);
+//		} else {
 			application.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
@@ -206,7 +206,7 @@ export class AonMessenger extends AonElement {
 					);
 				}
 			}
-		}
+//		}
 
 		this.buildToolbarSearch();
 			
@@ -1010,11 +1010,11 @@ buildToolbarSearch() {
 			this.TIMEOUT = setTimeout(() =>{
 				getNotificationByDomain({read:false, source: "MESSENGER"})
 				.then(notifications=>{
-					if(this.isMobile()){
-						this.createBadgeMobile(notifications);
-					} else {
+//					if(this.isMobile()){
+//						this.createBadgeMobile(notifications);
+//					} else {
 						this.createBadgeDesktop(notifications);
-					}
+//					}
 				});
 			}, 300);
 		} catch (err){

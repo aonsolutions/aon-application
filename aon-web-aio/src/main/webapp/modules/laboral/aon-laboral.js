@@ -41,9 +41,9 @@ export class AonLaboral extends AonComunicaUtils {
   }
 
   buildToolbar(){
-    if(this.isMobile()){
-			this.getApplication().addMobileSidenavHeader(Apps.PAYROLL);
-    }
+//    if(this.isMobile()){
+//			this.getApplication().addMobileSidenavHeader(Apps.PAYROLL);
+//    }
 
     let laboralOptions = [];
     let conf = [];
@@ -93,7 +93,7 @@ export class AonLaboral extends AonComunicaUtils {
         this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
       }
       conf.push(aon_cta_list);
-      if(!this.isMobile()){
+//      if(!this.isMobile()){
         let aon_cert = PayrollOptions.AON_CERT;
         aon_cert.fn = () => {
           this.getApplication().removeToolbarOptions();
@@ -101,7 +101,7 @@ export class AonLaboral extends AonComunicaUtils {
           this.showView(PAYROLL_VIEWS.AON_CERT);
         }
         conf.push(aon_cert);
-      }
+//      }
 
       let data2 = {
         id: MSG.CONFIGURATION,
