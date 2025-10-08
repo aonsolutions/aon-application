@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -815,9 +816,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put("invofox", InvofoxServlet.getConfiguration(api));
-		json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON( 
-			AON.getWorkplaces(api.getOccam(), api.getDomain().getId())
-				.collect(Collectors.toCollection(LinkedList::new))) );
+		LinkedList<Workplace> workplaces = AON.getWorkplaces(api.getOccam(), api.getDomain().getId())
+				.collect(Collectors.toCollection(LinkedList::new));
+		json.put(IJsonNames.WORKPLACES, workplaces);
 		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}
