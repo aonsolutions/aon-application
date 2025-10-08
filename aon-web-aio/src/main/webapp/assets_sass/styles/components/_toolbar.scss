@@ -14,6 +14,8 @@ aon-toolbar{
     display        : flex;
     gap            : v.$gap;
     width          : v.$pct-100;
+    height          : v.$height-toolbar;
+    min-height      : v.$height-toolbar;
     box-sizing     : border-box;
     padding        : v.$padding-min v.$padding;
     border-radius  : v.$border-radius;

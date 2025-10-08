@@ -1,14 +1,11 @@
 import { AonElement } from "../../components/AonElement.js";
 import { TAG } from "../../environments/environments.js";
-import { isEmptyObject } from "../../services/utils.js";
-import { getAccounting, getPeriods } from "../../services/accountingService.js";
-import * as UTILS from "./AccountingUtils.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
+// import { isEmptyObject } from "../../services/utils.js";
+// import { getAccounting, getPeriods } from "../../services/accountingService.js";
+// import * as UTILS from "./AccountingUtils.js";
+// import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as LS from "../../services/localStorageService.js";
-import {
-  getChartInvoices,
-  getChartInvoicesPeriod,
-} from "../../services/invoiceService.js";
+import { getChartInvoices, getChartInvoicesPeriod } from "../../services/invoiceService.js";
 import { Chart } from "chart.js/auto";
 
 export class AonDashboardSalesPurchases extends AonElement {

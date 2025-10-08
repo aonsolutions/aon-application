@@ -52,10 +52,11 @@ aon-toolbar {
   flex-shrink : 0;
   width       : auto;
   white-space : nowrap;
+  margin-bottom : v.$px-100;
 }
 
 /* --- 4. Contenido --- */
-$height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$menu-top-height) * 3));
+$height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$height-toolbar + v.$padding-min)*2));
 .aonContentBeta {
   position      : relative;
   flex-grow     : 1;
@@ -64,7 +65,7 @@ $height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$menu-top-height) * 
   flex-direction: column;
   box-sizing    : border-box;
   padding       : v.$padding;
+  margin-bottom : v.$px-100;
   border-radius : v.$border-radius;
-  overflow      : auto;
   min-height    : $height-min-body;
 }

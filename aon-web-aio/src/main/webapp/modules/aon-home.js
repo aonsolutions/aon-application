@@ -113,7 +113,7 @@ export class AonHome extends AonElement {
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
-		rootPanel.style.overflowY = "auto";
+		// rootPanel.style.overflowY = "auto";
 		content.appendChild(rootPanel);
 		this.appendChild(content);
 
