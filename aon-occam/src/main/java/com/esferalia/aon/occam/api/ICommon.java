@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -97,11 +98,12 @@ public interface ICommon {
 	// WORKPLACE
 	// --------------------------------------------
 	
-	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
-	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
-	@Deprecated
-	public void updateWorkplace(AONContext ctx, Workplace workplace);
+	public Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId);
+	public Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer workplaceId);	
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace);
+
+	@Deprecated	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
+	@Deprecated	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
 	
 	// --------------------------------------------
 	// PAYROLL WORKPLACE
@@ -226,7 +228,7 @@ public interface ICommon {
 	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
 	
 	// ACTIVITY SUMMARY
-	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params);	
+	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params);
 	
 
 }

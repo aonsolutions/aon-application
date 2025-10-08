@@ -7,39 +7,59 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div id="#{controller.beanName}Content">
-	
+	<aon:div id="PayrollWorkPlaceContent">
+		<!--  FORM -->	
 		<aon:if test="#{controller.to != null}" >
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="skipSearchButton" value="true" />
-		
-				<aon:methodParam name="saveAction" value="" />
-				<ui:param name="saveButtonReRender" value="#{controller.beanName}Content" />
-				<aon:methodParam name="cancelAction" value="" />
-				<ui:param name="cancelButtonReRender" value="#{controller.beanName}Content" />
-				<aon:methodParam name="removeAction" value="" />
-				<ui:param name="removeButtonReRender" value="#{controller.beanName}Content" />
-				<aon:methodParam name="resetAction" value="" />
-				<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />
-				<aon:methodParam name="backAction" value="" />
-				<ui:param name="backButtonReRender" value="#{controller.beanName}Content" />
-				
 				<ui:param name="controller" value="#{payrollWorkPlace}" />
-		
-			</ui:include>
-		</aon:if>
-	
-		<aon:if test="#{controller.to == null}" >
-			<aon:methodParam name="resetAction" value="" />
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
+				
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />		
+				
+				<aon:methodParam name="saveAction" value="" />
+				<aon:methodParam name="saveActionListener" default="#{controller.onAccept}" type="actionListener"/>
+				<ui:param name="saveButtonReRender" value="PayrollWorkPlaceContent" />
+				
+				<aon:methodParam name="cancelAction" value="" />
+				<ui:param name="cancelButtonReRender" value="PayrollWorkPlaceContent" />
+				
+				<aon:methodParam name="removeAction" value="" />
+				<ui:param name="removeButtonReRender" value="PayrollWorkPlaceContent" />
+				
+				<aon:methodParam name="resetAction" value="" />
+				<ui:param name="resetButtonReRender" value="PayrollWorkPlaceContent" />
+				
+				<aon:methodParam name="backAction" value="" />
+				<ui:param name="backButtonReRender" value="PayrollWorkPlaceContent" />
+				
 			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/form.xhtml">
+					<ui:param name="controller" value="#{payrollWorkPlace}" />
+				</ui:include>						
+			</aon:div>
+			
 		</aon:if>
 	
-		<aon:div styleClass="aon-scroll-area">
-			<ui:include src="#{((controller.to != null)?'form.xhtml':'list.xhtml')}" />
-		</aon:div>
+		<!-- LIST -->	
+		<aon:if test="#{controller.to == null}" >
+		
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
+				<ui:param name="controller" value="#{payrollWorkPlace}" />
+				
+				<ui:param name="skipSearchButton" value="true" />
+				
+				<ui:param name="resetButtonReRender" value="PayrollWorkPlaceContent" />		
+				<aon:methodParam name="resetAction" value="" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/list.xhtml" >
+					<ui:param name="controller" value="#{payrollWorkPlace}" />
+				</ui:include>						
+			</aon:div>
+		</aon:if>
 		
 	</aon:div>
 
