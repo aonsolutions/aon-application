@@ -448,7 +448,7 @@ export class AonDocumentalList extends AonElement {
             if (isInit && documents.length === 0 ) {
                 this.more = false;  // Si no hay ficheros, no se puede cargar mas
                 // Mostrar mensaje si no hay ficheros
-                table.addRowNoData("No existen ficheros disponibles");
+                table.empty("No existen ficheros disponibles");
             }
 			
 			const ids = documents.map(document => document.id)

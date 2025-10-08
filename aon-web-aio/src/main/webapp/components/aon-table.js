@@ -15,7 +15,8 @@ export class AonTable extends AonElement {
 
   checkFetch;
   isFetchingData;
-
+  
+  TABLE;
   THEADER;
   TBODY;
 
@@ -49,6 +50,7 @@ export class AonTable extends AonElement {
     
     let table = this.createElement(TAG.TABLE);
     table.className = "aonTable";
+    table.id = this.TABLE;
     this.appendChild(table);
 
     let thead = this.createElement("thead");
@@ -110,6 +112,7 @@ export class AonTable extends AonElement {
 
   initialize() {
     this.columns = [];
+    this.TABLE = this.id + "Table";
     this.THEADER = this.id + "TableHeader";
     this.TBODY = this.id + "TableBody";
     this.selected = [];
@@ -130,7 +133,7 @@ export class AonTable extends AonElement {
 
   paintCheckboxHeader(){
     const idCheckBox = this.getId()+"checkboxHeader";
-    let header = this.getElement(this.getId() + "TableHeader");
+    let header = this.getElement(this.THEADER);
     if( !this.getElement(idCheckBox)){
       let th = this.createElement(TAG.TH);
       th.id = idCheckBox;
@@ -162,7 +165,7 @@ export class AonTable extends AonElement {
     if (this.hasAttribute("selectable")) {
       this.paintCheckboxHeader();
     }
-    let header = this.getElement(this.getId() + "TableHeader");
+    let header = this.getElement(this.THEADER);
     let th = this.createElement(TAG.TH);
     th.innerHTML = name;
     this.columns.push({ name, type, id, width, textAlign });
@@ -171,7 +174,7 @@ export class AonTable extends AonElement {
   }
 
   addColumnIcon({name, title, type, id, width}, fn) {
-    let header = this.getElement(this.getId() + "TableHeader");
+    let header = this.getElement(this.THEADER);
     let th = this.createElement(TAG.TH);
     let aonIconB = new AonIconButton();
     aonIconB.id = this.getId()+"Back";
@@ -186,26 +189,9 @@ export class AonTable extends AonElement {
       iconBack.addEventListener(EVENT.CLICK, e => fn(e))
     }
   }
-  
-  addRowNoData(message) {
-      let body = this.getElement(this.getId() + "TableBody");
-      if (!body) return true;
-
-      let tr = this.createElement(TAG.TR);
-      tr.className    = "aonTableTr";
-      // Crear la celda para el mensaje
-      let tdMessage = this.createElement(TAG.TD);
-      tdMessage.setAttribute('colspan', '1000');
-      tdMessage.textContent = message;
-      tdMessage.title       = message;
-      // A�adir la celda a la fila
-      tr.appendChild(tdMessage);
-      // Agregar la fila con el mensaje al cuerpo de la tabla
-      body.appendChild(tr);
-  }
 
   addRow(value, fn, contextMenu) {
-    let body = this.getElement(this.getId() + "TableBody");
+    let body = this.getElement(this.TBODY);
     if (!body) return true;
     let tr = this.createElement(TAG.TR);
     // tr.id = Math.random().toString(36).substring(7);
@@ -387,14 +373,14 @@ export class AonTable extends AonElement {
   }
 
   removeRows() {
-    let body = this.getElement(this.getId() + "TableBody");
+    let body = this.getElement(this.TBODY);
     if (body) body.innerHTML = "";
   }
 
   removeColumns() {
     this.columns = [];
     this.clearSelected();
-    let body = this.getElement(this.getId() + "TableHeader");
+    let body = this.getElement(this.THEADER);
     if (body) body.innerHTML = "";
   }
 
@@ -423,19 +409,27 @@ export class AonTable extends AonElement {
     d.open();
   }
 
-  empty(message) {
-    message = message || 'No hay datos disponibles.';
+  empty(message = 'No hay datos disponibles.') {
+    let table = this.getElement(this.TABLE);
+    if (!table) return;
+    
+    let body = this.getElement(this.TBODY);
+    if (!body) {
+      body = document.createElement("tbody");
+      table.appendChild(body);
+    } else {
+      body.innerHTML = ""; 
+    }
 
-    let body = this.getElement(this.getId() + "TableBody");
-    if (!body) return true;
+    let columnsCount = table.querySelectorAll("th").length || 1;
+    let tr = document.createElement("tr");
+    let td = document.createElement("td");
 
-    let tr = this.createElement(TAG.TR);
-    body.appendChild(tr);
-
-    let td = this.createElement(TAG.TD);
-    td.innerHTML = message;
-    td.title     = message;
+    td.colSpan = columnsCount;
+    td.textContent = message;
+    
     tr.appendChild(td);
+    body.appendChild(tr);
   }
 
   addBackgroundTr(tr, color){
