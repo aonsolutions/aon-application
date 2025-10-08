@@ -793,7 +793,7 @@ public class Mod2002020DAO  {
 	}
 	
 	public static Mod2002020 initializeNewMod200(AONContext ctx, Mod2002020 mod200) {
-		//Mod2002019 old = Mod2002019DAO.getByYear(ctx, 2019);
+		
 		Mod2002019 old = Mod2002019DAO.getByYear(ctx, 2019, false);
 		if (old != null && old.getId() != null) { 
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2019");
@@ -816,8 +816,9 @@ public class Mod2002020DAO  {
 			mod200.setName(conf.getCompany().getName());
 			mod200.setEnterprisePhone1(conf.fiscal().getContactPhone());
 			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
-			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
-			mod200.setAdministration(adm);
+//			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
+//			mod200.setAdministration(adm);
+			mod200.setAdministration(Administration.COMMON_TERRITORY);
 			mod200.setInitializedFromLastYear(false);
 			
 			// CNAE - Se coge de la actividad principal (solo si está indicado a 4 dígitos)			

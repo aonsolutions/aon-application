@@ -318,7 +318,7 @@ public class MainEntryPoint implements EntryPoint {
 	//  ================================================================= CUSTOMER SYNC DOMAIN
 	//
 	private static final String CUSTOMER_SYNC_DOMAIN_ENTRY_POINT = "CustomerSyncDomainModule";
-//  ================================================================= CUSTOMER SYNC DOMAIN
+	//  ================================================================= CUSTOMER SYNC DOMAIN
 	//
 	private static final String SYNC_SIG_CUSTOMER_DOMAIN_MODULE_ENTRY_POINT = "SyncSigCustomerDomainModule";
 	

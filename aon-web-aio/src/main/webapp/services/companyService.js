@@ -87,8 +87,7 @@ export const getCompany = () => {
 export const setDomainApp = (data, sessionData) => put(API.COMPANY_BOOKING, data, sessionData);
 
 export const setSigDomainApp = (data, headers) => putPro(`${PRO_URL}/${API.COMPANY_BOOKING}`, data, headers);
-// LOCAL
-//export const setSigDomainApp = (data, headers) => putPro(`${API.COMPANY_BOOKING}`, data, headers);
+// LOCAL //export const setSigDomainApp = (data, headers) => putPro(`${API.COMPANY_BOOKING}`, data, headers);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 
@@ -105,8 +104,7 @@ export const saveCompany = (data) => put(API.COMPANY, data)
 export const getBookingDomainUserRoles = (data, sessionData) => get(API.COMPANY_APPROLES, data, sessionData);
 
 export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${PRO_URL}/${API.COMPANY_APPROLES}`, data, headers);
-// LOCAL
-// export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${API.COMPANY_APPROLES}`, data, headers);
+// LOCAL //export const getSigBookingDomainUserRoles = (data, headers) => getPro(`${API.COMPANY_APPROLES}`, data, headers);
 
 export const getDomainUserRoles = (data) => {
   const domain = LS.getDomainId();

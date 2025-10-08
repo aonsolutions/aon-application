@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
-import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+import Apps, {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getBookingDomainUserRoles, getDomainUserRoles, getSigBookingDomainUserRoles, setDomainApp, setSigDomainApp} from  '../../services/service.js';
+import {getBookingDomainUserRoles, getDomainUserRoles, getScopes, getSigBookingDomainUserRoles, getSigParentScopes, setDomainApp, setSigDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -19,7 +19,9 @@ import { AonTab } from '../../components/aon-tab.js';
 import { AonBookingInvoiceList } from './aon-booking-invoice-list.js';
 
 import * as GWT from '../../gwt/gwt.js';
-import { createInput, createSelect } from '../../components/CreateComponent.js';
+import * as LS from '../../services/localStorageService.js';
+import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
+import { AonCard } from '../../components/aon-card.js';
 
 export class AonBooking extends AonElement {
 
@@ -35,11 +37,17 @@ export class AonBooking extends AonElement {
 	users;
 	definedUsers;
 	dur;
-	domainPayer;
 	sessionData;
 	
 	trial;
 	trialValue;
+	
+	domainPayer;
+	domainActive;
+	domainExpirationDate;
+	domainScope;
+	
+	fromCustomer;
 
 	options
 
@@ -56,11 +64,21 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
-		/* if(this.isSig()){
+		if(this.isSig() && this.fromCustomer){
+			// Set default values if not sessionData given
+			if(!this.sessionData){
+				this.sessionData = {
+					session_id: LS.getToken(),
+					domain_name: LS.getDomainName(),
+					domain_id: LS.getDomainId(),
+					domain_login: LS.getDomainLogin()
+		 		}
+			}
+			
 			let headers = {
 				domain_name: this.sessionData.domain_name,
 				domain_id: this.sessionData.domain_id
-			}
+			}		
 			
 			getSigBookingDomainUserRoles({}, headers).then(r => {
 				this.dur = new DomainUserRoles(r);
@@ -72,24 +90,31 @@ export class AonBooking extends AonElement {
 				this.users = this.dur.maxDefinedUsers;
 				this.definedUsers = this.dur.definedUsers;
 				this.trial = this.dur.isTrial();
-				this.trialValue = this.dur.getTrialValue();
+				this.trialValue = this.dur.getTrialValue();		
+				this.domainActive = this.dur.getDomain().isActive();
+				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
+				this.domainScope = this.dur.getDomain().getScope();
+				
 				this.build();			
 			});
-		} else { */
-		getBookingDomainUserRoles({}, this.sessionData).then(r => {
-			this.dur = new DomainUserRoles(r);
-			this.initialize();
-			this.domainPayer = this.dur.isDomainPayer();
-			this.apps = this.dur.getDomainApps();
-			if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
-				this.completeDomainApps(this.dur);
-			this.users = this.dur.maxDefinedUsers;
-			this.definedUsers = this.dur.definedUsers;
-			this.trial = this.dur.isTrial();
-			this.trialValue = this.dur.getTrialValue();
-			this.build();			
-		});
-		//}
+		} else {		
+			getBookingDomainUserRoles({}, this.sessionData).then(r => {
+				this.dur = new DomainUserRoles(r);
+				this.initialize();
+				this.domainPayer = this.dur.isDomainPayer();
+				this.apps = this.dur.getDomainApps();
+				if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
+					this.completeDomainApps(this.dur);
+				this.users = this.dur.maxDefinedUsers;
+				this.definedUsers = this.dur.definedUsers;
+				this.trial = this.dur.isTrial();
+				this.trialValue = this.dur.getTrialValue();	
+				this.domainActive = this.dur.getDomain().isActive();
+				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
+				this.domainScope = this.dur.getDomain().getScope();
+				this.build();			
+			});
+		}
 		
 	}
 
@@ -155,6 +180,9 @@ export class AonBooking extends AonElement {
 		
 		let userTrialContent = this.createElement(TAG.DIV); 
 		userTrialContent.style.display = 'flex';
+		userTrialContent.style.marginTop = '1rem';
+		userTrialContent.style.marginLeft = '50px';
+		userTrialContent.style.flexWrap = 'wrap';
 		content.appendChild(userTrialContent);
 		
 		let userContent = this.createElement(TAG.DIV); 
@@ -171,6 +199,15 @@ export class AonBooking extends AonElement {
 			userTrialContent.appendChild(trialContent);
 			
 			this.buildTrial(trialContent);
+		}
+		
+		if(this.isSig() && this.fromCustomer){
+			let domainActiveContent = this.createElement(TAG.DIV); 
+			domainActiveContent.style.display = 'flex';
+			domainActiveContent.style.flexDirection = 'column';
+			userTrialContent.appendChild(domainActiveContent);
+			
+			this.buildDomainInfo(domainActiveContent);	
 		}
 
 		if(dur.getDomain().isConsultancy()){
@@ -272,16 +309,25 @@ export class AonBooking extends AonElement {
 	}
 
 	buildUser(content) {
-		this.buildTitle(content, this.dur.getDomain().isDomainManagement() && this.isBeta()
-			? 'USUARIOS Y EMPRESAS' : MSG.USERS);
+		// User Enterprise Card
+		let userEnterpriseCard = new AonCard();
+		userEnterpriseCard.classList.add(CSS.AON_DASHBOARD_CARD);
+		userEnterpriseCard.id = "userEnterpriseCard";
+		//userEnterpriseCard.message = this.dur.getDomain().isDomainManagement() && this.isBeta() ? 'USUARIOS Y EMPRESAS' : MSG.USERS;
+		userEnterpriseCard.message = MSG.USERS;
+		userEnterpriseCard.setApp(Apps.OFFICE);
+		content.appendChild(userEnterpriseCard);
+		userEnterpriseCard.getCardTitle1().style.cursor = 'pointer';
+
+		//this.buildTitle(content, this.dur.getDomain().isDomainManagement() && this.isBeta()	? 'USUARIOS Y EMPRESAS' : MSG.USERS);
 
 		let div = this.createElement(TAG.DIV); 
 		div.style.display = 'flex';
-		content.appendChild(div);
+		userEnterpriseCard.setContent(div);
+		//content.appendChild(div);
 
 		let div1 = this.createElement(TAG.DIV); 
-		div1.style.marginLeft = '60px';
-		div1.style.width = '250px';
+		div1.style.width = '180px';
 		div.appendChild(div1);
 
 		let users = createInput('users1', 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')');
@@ -290,10 +336,11 @@ export class AonBooking extends AonElement {
 		users.onChange(() => this.users = users.value);
 		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');
 
+		/*
 		if(this.dur.getDomain().isDomainManagement() && this.isBeta()){
 			let div2 = this.createElement(TAG.DIV); 
 			div2.style.marginLeft = '10px';
-			div2.style.width = '250px';
+			div2.style.width = '200px';
 			div.appendChild(div2);
 
 			let companies = createSelect('companies', 'Empresas');
@@ -305,17 +352,25 @@ export class AonBooking extends AonElement {
 			]);
 			div2.appendChild(companies);
 		}
+		*/
 	} 
 	
 	buildTrial(content) {
-		this.buildTitle(content, 'FREEMIUM');
+		// Freemiun Card
+		let freemiunCard = new AonCard();
+		freemiunCard.classList.add(CSS.AON_DASHBOARD_CARD);
+		freemiunCard.id = "freemiunCard";
+		freemiunCard.message = 'FREEMIUM';
+		freemiunCard.setApp(Apps.OFFICE);
+		content.appendChild(freemiunCard);
+		freemiunCard.getCardTitle1().style.cursor = 'pointer';
 
 		let div = this.createElement(TAG.DIV); 
 		div.style.display = 'flex';
-		content.appendChild(div);
+		div.style.gap = '0.5rem';
+		freemiunCard.setContent(div);
 
-		let div1 = this.createElement(TAG.DIV); 
-		div1.style.marginLeft = '60px';
+		let div1 = this.createElement(TAG.DIV);
 		div1.style.width = '250px';
 		div.appendChild(div1);
 
@@ -345,8 +400,97 @@ export class AonBooking extends AonElement {
 			}
 		});
 		trialInput.addEndWidget(trialSwitch);
-
 	} 
+	
+	buildDomainInfo(content) {
+		// Domain Info Card
+		let domainIfoCard = new AonCard();
+		domainIfoCard.classList.add(CSS.AON_DASHBOARD_CARD);
+		domainIfoCard.id = "domainIfoCard";
+		domainIfoCard.message = 'DOMINIO';
+		domainIfoCard.setApp(Apps.OFFICE);
+		content.appendChild(domainIfoCard);
+		domainIfoCard.getCardTitle1().style.cursor = 'pointer';
+		
+		let div = this.createElement(TAG.DIV); 
+		div.style.display = 'flex';
+		div.style.gap = '0.5rem';
+		domainIfoCard.setContent(div);
+		
+		// Domain Expiration Date
+		let div2 = this.createElement(TAG.DIV);
+		div2.style.width = '180px';
+		div2.style.display = 'flex';
+		div.appendChild(div2);
+		
+		let expDatePicker = createDate("expirationDatePicker", "F. Expiración");
+		expDatePicker.setDate(this.domainExpirationDate);
+	    
+		expDatePicker.addEventListener('change', (e) => {
+	       	e.preventDefault();
+			e.stopPropagation();
+			
+			this.domainExpirationDate = expDatePicker.getDateValue();
+	    });
+	    div2.appendChild(expDatePicker);
+	    
+	    // Domain Scope
+		let div3 = this.createElement(TAG.DIV);
+		div3.style.width = '180px';
+		div3.style.display = 'flex';
+		div.appendChild(div3);
+
+		let scopes = createSelect('domainScopes', 'Ámbitos');
+		scopes.default = true;
+		
+		let headers = {
+			domain_name: this.sessionData.domain_name,
+			domain_id: this.sessionData.domain_id
+		}
+		
+		getSigParentScopes({}, headers).then(scopesOpt => {
+			let parsedScopes =
+				scopesOpt.map(scop => ({
+				  ...scop,           
+				  value: scop.id
+				}));
+
+			scopes.setOptionsBuild(parsedScopes);
+			scopes.value = this.domainScope;
+			scopes.closeOptions();
+		});
+		
+		scopes.addEventListener(EVENT.SELECT, () => {
+	      this.domainScope = scopes.value;
+	    });
+		
+	    div3.appendChild(scopes);
+
+		// Domain Status
+		let div1 = this.createElement(TAG.DIV);
+		div1.style.width = '100px';
+		div1.style.display = 'flex';
+		div1.style.alignItems = 'center';
+		div1.style.paddingTop = '10px';
+		div.appendChild(div1);
+
+		let span = document.createElement('span');
+		span.className = 'domainActive';
+		span.innerHTML = 'Activo';
+		div1.appendChild(span);
+		
+		let activeSwitch = new AonSwitch();
+		activeSwitch.id = 'activeSwitch';
+		activeSwitch.checked = this.domainActive;
+		activeSwitch.addEventListener(EVENT.CHANGE, (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			this.domainActive = activeSwitch.checked;
+		});
+		div1.appendChild(activeSwitch);
+		
+	}
 
 	buildApps(content, apps, dur) {
 		let ul = document.createElement(TAG.UL);
@@ -461,7 +605,7 @@ export class AonBooking extends AonElement {
 
 			if(!app.domainType)
 				span.appendChild(buttons);
-			else if (this.isConsole() || this.dur.isConsoleUser()){
+			else if (this.isConsole() || this.dur.isConsoleUser() || this.isSig()){
 				let domainPayer = new AonSwitch();
 				domainPayer.id = this.APP + app.app + 'DomainPayment';
 				domainPayer.title = 'Dominio Pagador';
@@ -711,11 +855,21 @@ export class AonBooking extends AonElement {
 				message: 'El número de usuarios no puede ser mayor que el número de usuarios contratados'
 			});
 		} else {
-			/* if(this.isSig()){
+			if(this.isSig() && this.fromCustomer){
+				// Set default values if not sessionData given
+				if(!this.sessionData){
+					this.sessionData = {
+						session_id: LS.getToken(),
+						domain_name: LS.getDomainName(),
+						domain_id: LS.getDomainId(),
+						domain_login: LS.getDomainLogin()
+			 		}
+				}
+				
 				let headers = {
 					domain_name: this.sessionData.domain_name,
 					domain_id: this.sessionData.domain_id
-				}
+				}			
 				
 				setSigDomainApp({
 					type: this.dur.domain.type,
@@ -723,7 +877,10 @@ export class AonBooking extends AonElement {
 					users: this.users,
 					domainPayer: this.domainPayer,
 					trial: this.trial,
-					trialValue: this.trialValue
+					trialValue: this.trialValue,
+					domainActive: this.domainActive,
+					domainExpirationDate: this.domainExpirationDate,
+					domainScope: this.domainScope,
 				}, headers).then(() => {
 					toast.start({
 						type: 'success',
@@ -733,24 +890,24 @@ export class AonBooking extends AonElement {
 						//this.build(new DomainUserRoles(r));
 					});
 				});
-			} else { */
-			setDomainApp({
-				type: this.dur.domain.type,
-				apps: this.apps,
-				users: this.users,
-				domainPayer: this.domainPayer,
-				trial: this.trial,
-				trialValue: this.trialValue
-			}, this.sessionData).then(() => {
-				toast.start({
-					type: 'success',
-					message: 'Datos Guardados Correctamente'
+			} else {
+				setDomainApp({
+					type: this.dur.domain.type,
+					apps: this.apps,
+					users: this.users,
+					domainPayer: this.domainPayer,
+					trial: this.trial,
+					trialValue: this.trialValue
+				}, this.sessionData).then(() => {
+					toast.start({
+						type: 'success',
+						message: 'Datos Guardados Correctamente'
+					});
+					getDomainUserRoles({reload:true}).then(r => {
+						//this.build(new DomainUserRoles(r));
+					});
 				});
-				getDomainUserRoles({reload:true}).then(r => {
-					//this.build(new DomainUserRoles(r));
-				});
-			});
-			//}
+			}
 		}
 	}
 
@@ -964,6 +1121,7 @@ export class AonBooking extends AonElement {
 				|| App.WAREHOUSE === app || App.GROUPWARE === app));
 	}
 }
+
 if(!window.customElements.get('aon-booking')){
 	window.customElements.define('aon-booking', AonBooking);
 }

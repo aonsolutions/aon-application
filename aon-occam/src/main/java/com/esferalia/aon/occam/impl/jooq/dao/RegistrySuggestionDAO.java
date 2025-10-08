@@ -13,6 +13,7 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -59,7 +60,6 @@ public class RegistrySuggestionDAO {
 			}
 			
 			Table<Record1<Integer>> ar = s.asTable(AR);
-
 			return 	ctx.getDslContext().selectDistinct(REG_FIELD, REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE)
 					.from(ar)
 					.join(REGISTRY).on(REGISTRY.ID.eq(REG_FIELD))

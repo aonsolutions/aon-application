@@ -222,7 +222,7 @@ export const put = (url, data, sessionData) => {
 export const putPro = (url, data, headers = {}) => {
   let sessionData = getProSessionData();
   sessionData = { ...sessionData, ...headers};	
-  return put(url, data, getProSessionData());
+  return put(url, data, sessionData);
 };
 
 export const remove = (url, data, sessionData) => {

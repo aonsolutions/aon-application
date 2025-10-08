@@ -78,11 +78,6 @@ export class AonCustomer extends AonReg {
 				this.options.push({ title: MSG.USERS, fn: () => this.buildUsersData() });
 			}
 		}
-
-		// if(this.isSig()) {
-		// 	this.options.push({ title: MSG.BOOKING + '(SIG)', fn: () => this.buildBookingData()});		
-		// 	this.options.push({ title: MSG.PRODUCTS + '(SIG)', fn: () => this.buildItemData()});
-		// }
 	}
 
 	build = () => {
@@ -387,11 +382,14 @@ export class AonCustomer extends AonReg {
 				this.buildSigEnterpriseLinkedView(resp);
 				
 				if(resp && resp.length > 0){
-					//this.sigCustomerDomainName = resp[0].domainName;
-					//this.sigCustomerDomainId = resp[0].domainId;
+					this.sigCustomerDomainName = resp[0].domainName;
+					this.sigCustomerDomainId = resp[0].domainId;
 					
-					//this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
-					//this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+					if(!this.existTabOption(MSG.BOOKING))
+						this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					
+					if(!this.existTabOption(MSG.USERS))
+						this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
 				}
 			})
 			/*
@@ -407,6 +405,7 @@ export class AonCustomer extends AonReg {
 				document: this.registry.getDocument(),
 			})
 			.then((resp) => {
+				console.log("getRelationShip", resp);
 				this.buildEnterpriseLinkedView(resp);
 			})
 			/*
@@ -614,6 +613,7 @@ export class AonCustomer extends AonReg {
 
 		let booking = new AonBooking();
 		booking.sessionData = this.getSessionData();
+		booking.fromCustomer = true;
 		main.appendChild(booking);
 	}
 
@@ -630,6 +630,7 @@ export class AonCustomer extends AonReg {
 		let userList = new AonUserList();
 		userList.sessionData = this.getSessionData();
 		userList.parent = main;
+		userList.fromCustomer = true;
 		main.appendChild(userList);
 	}
 

@@ -109,7 +109,7 @@ public abstract class SyncSigMultipleDomainsTable extends ScrollPanel {
 							.setType(null == cd.getDomain().getDomainType() ? "" : cd.getDomain().getDomainType().getName())
 							.setAonCustomer(cd.getDomain().getAonCustomer())
 							.setHasAonCustomer(null != cd.getDomain().getAonCustomer())
-							.setHasRaddInfo(customerRaddInfo.stream().filter(cr -> AonStringUtils.equalsIgnoreCase(cr.getDomainId(), cd.getDomain().getId().toString())).findAny().isPresent())
+							.setHasRaddInfo(customerRaddInfo.stream().filter(cr -> AonStringUtils.equalsIgnoreCase(cr.getDomainName(), cd.getDomain().getName())).findAny().isPresent())
 							.setRegistry(customer.getId())
 							;
 					
@@ -128,7 +128,7 @@ public abstract class SyncSigMultipleDomainsTable extends ScrollPanel {
 							.setDomainId(AonStringUtils.isBlank(domainSigAddInfo.getDomainId()) ? null : Integer.parseInt(domainSigAddInfo.getDomainId()))
 							.setType(domainSigAddInfo.getDomainType())
 							.setAonCustomer(null)
-							.setHasAonCustomer(customerDomain.stream().filter(cd -> AonStringUtils.equalsIgnoreCase(domainSigAddInfo.getDomainId(), cd.getDomain().getId().toString())).findAny().isPresent())
+							.setHasAonCustomer(customerDomain.stream().filter(cd -> AonStringUtils.equalsIgnoreCase(domainSigAddInfo.getDomainName(), cd.getDomain().getName())).findAny().isPresent())
 							.setHasRaddInfo(true)
 							.setRegistry(customer.getId())
 							;
@@ -188,13 +188,13 @@ public abstract class SyncSigMultipleDomainsTable extends ScrollPanel {
 				HTMLPanel infoPanel = new HTMLPanel(AonStringUtils.EMPTY);
 				infoPanel.addStyleName(AON.CSS.aonItemFlex());
 				AonTableButton infoCustomer = new AonTableButton(
-						"RAddInfo",
+						domainCustomerSync.isHasRaddInfo() ? "RaddInfo (" + domainCustomerSync.getDomainId() + " -- " + domainCustomerSync.getDomainName() + ")" : "No existe RAddInfo",
 						domainCustomerSync.isHasRaddInfo() ? AON.CSS.aonIconPersonCheck() : AON.CSS.aonIconPersonAlert()
 				);
 				infoCustomer.getElement().getStyle().setProperty("background-size", "22px");
 				infoPanel.add(infoCustomer);
 				AonTableButton infoDomain = new AonTableButton(
-						"AonCustomer",
+						domainCustomerSync.isHasAonCustomer() ? "AonCustomer (" + domainCustomerSync.getAonCustomer() + ") -- " +  domainCustomerSync.getDomainName() + " [" + domainCustomerSync.getDomainId() + "]" : "No existe AonCustomer",
 						domainCustomerSync.isHasAonCustomer() ? AON.CSS.aonIconWork() : AON.CSS.aonIconEnterpriseOff()
 				);
 				infoDomain.getElement().getStyle().setProperty("background-size", "22px");
