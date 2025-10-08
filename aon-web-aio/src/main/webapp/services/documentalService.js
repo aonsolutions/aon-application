@@ -1,6 +1,6 @@
 
-import { post, get, put, remove, openFile, getFile, getFileBlob } from "./request.js";
-import { API_URL } from "../environments/environments.js";
+import { post, get, put, remove, openFile, getFile, getFileBlob, getPro } from "./request.js";
+import { API_URL, PRO_URL } from "../environments/environments.js";
 
 export const getDocument = (id) => get(`${API_URL}/documental`, { id });
 
@@ -31,6 +31,9 @@ export const deleteCategory = (data) => {
 };
 
 export const getScopes = (data) => get(`${API_URL}/scopes`, data);
+
+export const getSigParentScopes = (data, sessionData) => getPro(`${PRO_URL}/${API_URL}/scopes/parent`, data, sessionData);
+// LOCAL //export const getSigParentScopes = (data, sessionData) => getPro(`${API_URL}/scopes/parent`, data, sessionData);
 
 export const getAeatCertificates = () => {
   const data = {type: 'AEAT'}

@@ -2362,8 +2362,10 @@ export class AonInvoice extends AonElement {
 
 	updateBankAccount(finance, i, iban) {
 		let ba = new BankAccount(iban);
+		window.alert( JSON.stringify(ba) );
 		finance.bank_account = ba.iban;
-		finance.bankAlias = ba.bank;
+		finance.bankAlias = ba?.bank ? ba.bank.substring(0, 24) : null;
+		window.alert( finance.bankAlias );
 		finance.bic = ba.bic;
 		this.invoice.setFinance(finance, i);
 	}

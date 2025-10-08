@@ -18,6 +18,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
     isGipu;
     isNavarra;
     isAEAT;
+	isCanarias;
 
     constructor () {
         super();
@@ -41,6 +42,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         this.isGipu = false;
         this.isNavarra = false;
         this.isAEAT = false;
+		this.isCanarias = false;
         try {
             const params = await getApplicationParameters({
                 params: [APPPARAMS.FS_DEFAULT_ADMINISTRATION]
@@ -55,9 +57,10 @@ export class AonFiscalMenu extends AonSuiteMenu {
                     if (response == 2) this.isGipu = true;
                     if (response == 3) this.isNavarra = true;
                     if (response == 4) this.isAEAT = true;
+					if (response == 5) this.isCanarias = true;
                 });
 			
-			this.allFalse = (!this.isAlava && !this.isBizk && !this.isGipu && !this.isNavarra && !this.isAEAT); 
+			this.allFalse = (!this.isAlava && !this.isBizk && !this.isGipu && !this.isNavarra && !this.isAEAT && !this.isCanarias); 
 			
         } catch (e) {
             console.log("error getAppParams", e);
@@ -109,6 +112,10 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }, {
+                description: "Modelo 369 ",
+                title: "Declaraciones de IVA del régimen One Stop Shop (OSS)",
+                action: () => GWT.iLoad(GWT.MODEL_369)
+			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
@@ -300,6 +307,15 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_193)
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
+            title: 'IGIC Canarias',
+            visible: this.isCanarias,
+            options: [{
+                description: "Modelo 420/417 ",
+                title: "IGIC Autoliquidación",
+                action: () => GWT.iLoad(GWT.MODEL_303)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {

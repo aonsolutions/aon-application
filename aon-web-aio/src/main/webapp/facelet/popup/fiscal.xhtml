@@ -574,7 +574,7 @@
 										</aon:div>
 
 										<!-- *********************** [MODELO 202] -->
-										<aon:div rendered="#{fiscalParams.aeat}">
+										<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias}">
 											<aon:commandLink id="gwt_mod202-new" 
 												rendered="#{actionDenied.renderedOption('gwt_mod202-new')}"
 												action="gwt_mod202-new"
@@ -602,7 +602,7 @@
 										</aon:div>
 
 										<!-- *********************** [MODELO 200 - NEW ] -->
-										<aon:div rendered="#{fiscalParams.aeat}">
+										<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias}">
 											<aon:commandLink id="gwt_mod200-new" 
 												rendered="#{actionDenied.renderedOption('gwt_mod200')}"
 												action="gwt_mod200"

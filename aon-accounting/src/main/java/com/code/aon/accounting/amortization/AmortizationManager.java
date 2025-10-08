@@ -16,6 +16,7 @@ import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -340,7 +341,17 @@ public class AmortizationManager {
 
 	public void unrecordAllocation(Integer acccountEntryId) throws ManagerBeanException {
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-		accountEntryBean.remove(accountEntryBean.get(acccountEntryId));
+		AccountEntry ae = (AccountEntry) accountEntryBean.get(acccountEntryId);
+		if (ae.getAccountPeriod().getStatus() == AccountPeriodStatus.CLOSED) {
+			throw new ManagerBeanException("No se puede eliminar un asiento de un ejercicio cerrado.");
+		}
+		if (ae.getAccountPeriod().getStatus() == AccountPeriodStatus.OPERATING) {
+			throw new ManagerBeanException("No se puede eliminar un asiento de un ejercicio con el asiento de explotación realizado.");
+		}
+		if (ae.getAccountPeriod().getStatus() == AccountPeriodStatus.INACTIVE) {
+			throw new ManagerBeanException("No se puede eliminar un asiento de un ejercicio inactivo.");
+		}
+		accountEntryBean.remove(ae);
 	}
 	
 	

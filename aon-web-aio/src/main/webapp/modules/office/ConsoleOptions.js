@@ -12,6 +12,12 @@ export const SYNC_DOMAINS = {
   icon: MATERIAL_ICONS.DATASET_LINKED
 }
 
+export const SIG_CONSOLE = {
+  id: "sigConsole",
+  name: "Admin. Dominios",
+  icon: MATERIAL_ICONS.TERMINAL
+}
+
 export const BOOKING_PANEL = {
   id: CONSTANT.BOOKING_PANEL.initCap(),
   name: MSG.BOOKING_PANEL,

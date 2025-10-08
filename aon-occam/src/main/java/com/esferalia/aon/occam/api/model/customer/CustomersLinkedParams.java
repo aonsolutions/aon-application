@@ -13,6 +13,9 @@ public class CustomersLinkedParams implements Serializable {
 	private String query;
 	private Byte[] customerStatus;
 	
+	private boolean noRaddInfo = false;
+	private boolean noAonCustomer = false;
+	
 	private boolean isSig = false;
 	
 	private int offset;
@@ -85,6 +88,24 @@ public class CustomersLinkedParams implements Serializable {
 		return this;
 	}
 	
+	public boolean isNoRaddInfo() {
+		return noRaddInfo;
+	}
+
+	public CustomersLinkedParams setNoRaddInfo(boolean noRaddInfo) {
+		this.noRaddInfo = noRaddInfo;
+		return this;
+	}
+
+	public boolean isNoAonCustomer() {
+		return noAonCustomer;
+	}
+
+	public CustomersLinkedParams setNoAonCustomer(boolean noAonCustomer) {
+		this.noAonCustomer = noAonCustomer;
+		return this;
+	}
+
 	public boolean isSig() {
 		return isSig;
 	}

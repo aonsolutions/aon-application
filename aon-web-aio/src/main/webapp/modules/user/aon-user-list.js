@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {generateTokenJson, getUserListSpeed, getUserRoles} from  '../../services/service.js';
+import {generateTokenJson, getSigUserListSpeed, getUserListSpeed, getUserRoles} from  '../../services/service.js';
 import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
 import { AonUser } from './aon-user.js';
@@ -24,6 +24,8 @@ export class AonUserList extends AonElement {
 	filter;
 	type;
 	back;
+	
+	fromCustomer;
 
 	parent;
 
@@ -62,7 +64,7 @@ export class AonUserList extends AonElement {
 		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
 		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '20%');
 		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '5%');
-		table.addColumn('', "fn", "option", '5%');
+		table.addColumn('', "icons", "icons", '5%');
 		table.addEventListener('more', () => {
 			if(this.more) this.loadMore()
 		});
@@ -80,19 +82,42 @@ export class AonUserList extends AonElement {
 			if(this.back) {
 				this.back = false;
 				getUsers().forEach((user, i) => {
-					user.option =  this.getOptions(user);
+					user.icons =  this.getOptions(user);
 					table.addRow(user, () => this.aonUser(user, i));
 				});
 			} else {
 				this.filter.page = 1;
-				getUserListSpeed(this.filter, this.sessionData).then(users => {
-					setUsers(users);
-					table.removeRows();
-					users.forEach((user, i) => {
-						user.option =  this.getOptions(user);
-						table.addRow(user, () => this.aonUser(user, i));
+				if(this.isSig() && this.fromCustomer){
+					
+					// Set default values if not sessionData given
+					if(!this.sessionData){
+						this.sessionData = {
+							session_id: LS.getToken(),
+							domain_name: LS.getDomainName(),
+							domain_id: LS.getDomainId(),
+							domain_login: LS.getDomainLogin()
+				 		}
+					}
+					
+					getSigUserListSpeed(this.filter, this.sessionData).then(users => {
+						setUsers(users);
+						table.removeRows();
+						users.forEach((user, i) => {
+							user.icons =  this.getOptions(user);
+							table.addRow(user, () => this.aonUser(user, i));
+						});
 					});
-				});
+				} else {
+					getUserListSpeed(this.filter, this.sessionData).then(users => {
+						setUsers(users);
+						table.removeRows();
+						users.forEach((user, i) => {
+							user.icons =  this.getOptions(user);
+							table.addRow(user, () => this.aonUser(user, i));
+						});
+					});
+				}
+				
 			}
 		}
 	}
@@ -102,26 +127,39 @@ export class AonUserList extends AonElement {
 		let table = this.getElement(this.TABLE);
 		if(table && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			getUserListSpeed(this.filter, this.sessionData).then(users => {
-				addUsers(users);
-				if(users.length > 0)
-					this.more = true;
-				users.forEach((user, i) => {
-					table.addRow(user, () => this.aonUser(user, i));
+			
+			if(this.isSig()){
+				getSigUserListSpeed(this.filter, this.sessionData).then(users => {
+					addUsers(users);
+					if(users.length > 0)
+						this.more = true;
+					users.forEach((user, i) => {
+						table.addRow(user, () => this.aonUser(user, i));
+					});
 				});
-			});
+			} else {
+				getUserListSpeed(this.filter, this.sessionData).then(users => {
+					addUsers(users);
+					if(users.length > 0)
+						this.more = true;
+					users.forEach((user, i) => {
+						table.addRow(user, () => this.aonUser(user, i));
+					});
+				});
+			}
 		}
 	}
 
 	getOptions(user) {
 		return this.isBeta() || this.isAyudaT() ?
 			[{
-				name: "Suplantar",
-				icon: "token",
 				id:"supplant",
+				color: "#5f6368",
+				title: 'Suplantar',
+				icon: "social_distance",
 				fn: () => this.supplant(user)
-			}
-		] : [];
+			}]
+		 : [];
 	}
 
 	supplant(user) {

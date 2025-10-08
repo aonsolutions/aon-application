@@ -97,6 +97,7 @@ public class AyudatInvofoxCounters {
 	}
 
 	private static void readFile(String f) throws IOException {
+		System.out.println( "Reading file : " + f );
 		String s =AonStringUtils.substringAfter(f, "/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox_usage_"); 
 		String schema = AonStringUtils.substringBefore(s, ".");
 		try (FileInputStream fis = new FileInputStream(f)) {
@@ -310,7 +311,7 @@ public class AyudatInvofoxCounters {
 	}
 	
 	private static void readExcel() throws IOException {
-		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/June_2025.xlsx" );
+		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/Sep_2025.xlsx" );
 		ExcelAction action = new ExcelAction( );
 		action.initialize("USAGE");
 		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
