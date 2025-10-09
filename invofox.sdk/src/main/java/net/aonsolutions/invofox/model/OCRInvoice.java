@@ -15,25 +15,12 @@ public class OCRInvoice implements Serializable {
 	private OCRString invoiceRef;
 	private OCRString seriesCode;
 	private OCRString taxClass;
-	private OCRString issuerCountry;
-	private OCRString recipientCountry;
-	private OCRAddress issuerAddressDetails;
-	private OCRAddress recipientAddressDetails;
 	private OCRString documentNumber;
 	private OCRString issueDate;
-	private OCRString issuerName;
-	private OCRString issuerTaxId;
-	private OCRString issuerAddress;
-	private OCRString issuerEmail;
-	private OCRString issuerPhoneNumber;
-	private OCRString issuerWebsite;
-	private OCRString recipientName;
-	private OCRString recipientTaxId;
-	private OCRString recipientAddress;
-	private OCRString shippingAddress;
-	private OCRString recipientEmail;
-	private OCRString recipientWebsite;
-	private OCRString recipientPhoneNumber;
+	
+	private OCRRegistry supplier;
+	private OCRRegistry customer;
+
 	private OCRString paymentMethod;
 	private OCRString IBAN;
 	private OCRString SWIFT;
@@ -116,34 +103,25 @@ public class OCRInvoice implements Serializable {
 		this.taxClass = taxClass;
 		return this;
 	}
-	public Optional<OCRString> getIssuerCountry() {
-		return Optional.ofNullable(issuerCountry);
+
+	public Optional<OCRRegistry> getSupplier() {
+		return Optional.ofNullable(supplier);
 	}
-	public OCRInvoice setIssuerCountry(OCRString issuerCountry) {
-		this.issuerCountry = issuerCountry;
+	
+	public OCRInvoice setSupplier(OCRRegistry supplier) {
+		this.supplier = supplier;
 		return this;
 	}
-	public Optional<OCRString> getRecipientCountry() {
-		return Optional.ofNullable(recipientCountry);
+	
+	public Optional<OCRRegistry> getCustomer() {
+		return Optional.ofNullable(customer);
 	}
-	public OCRInvoice setRecipientCountry(OCRString recipientCountry) {
-		this.recipientCountry = recipientCountry;
+	
+	public OCRInvoice setCustomer(OCRRegistry customer) {
+		this.customer = customer;
 		return this;
 	}
-	public Optional<OCRAddress> getIssuerAddressDetails() {
-		return Optional.ofNullable(issuerAddressDetails);
-	}
-	public OCRInvoice setIssuerAddressDetails(OCRAddress issuerAddressDetails) {
-		this.issuerAddressDetails = issuerAddressDetails;
-		return this;
-	}
-	public Optional<OCRAddress> getRecipientAddressDetails() {
-		return Optional.ofNullable(recipientAddressDetails);
-	}
-	public OCRInvoice setRecipientAddressDetails(OCRAddress recipientAddressDetails) {
-		this.recipientAddressDetails = recipientAddressDetails;
-		return this;
-	}
+		
 	public Optional<String> getReferenceCode() {
 		StringBuilder reference = null;
 		Optional<String> optSeries = getSeriesCode().flatMap( o -> o.getValue() );
@@ -170,128 +148,47 @@ public class OCRInvoice implements Serializable {
 		this.documentNumber = documentNumber;
 		return this;
 	}
+	
 	public Optional<OCRString> getIssueDate() {
 		return Optional.ofNullable(issueDate);
 	}
+	
 	public OCRInvoice setIssueDate(OCRString issueDate) {
 		this.issueDate = issueDate;
 		return this;
 	}
-	public Optional<OCRString> getIssuerName() {
-		return Optional.ofNullable(issuerName);
-	}
-	public OCRInvoice setIssuerName(OCRString issuerName) {
-		this.issuerName = issuerName;
-		return this;
-	}
-	public Optional<OCRString> getIssuerTaxId() {
-		return Optional.ofNullable(issuerTaxId);
-	}
-	public OCRInvoice setIssuerTaxId(OCRString issuerTaxId) {
-		this.issuerTaxId = issuerTaxId;
-		return this;
-	}
-	public Optional<OCRString> getIssuerAddress() {
-		return Optional.ofNullable(issuerAddress);
-	}
-	public OCRInvoice setIssuerAddress(OCRString issuerAddress) {
-		this.issuerAddress = issuerAddress;
-		return this;
-	}
-	public Optional<OCRString> getIssuerEmail() {
-		return Optional.ofNullable(issuerEmail);
-	}
-	public OCRInvoice setIssuerEmail(OCRString issuerEmail) {
-		this.issuerEmail = issuerEmail;
-		return this;
-	}
-	public Optional<OCRString> getIssuerPhoneNumber() {
-		return Optional.ofNullable(issuerPhoneNumber);
-	}
-	public OCRInvoice setIssuerPhoneNumber(OCRString issuerPhoneNumber) {
-		this.issuerPhoneNumber = issuerPhoneNumber;
-		return this;
-	}
-	public Optional<OCRString> getIssuerWebsite() {
-		return Optional.ofNullable(issuerWebsite);
-	}
-	public OCRInvoice setIssuerWebsite(OCRString issuerWebsite) {
-		this.issuerWebsite = issuerWebsite;
-		return this;
-	}
-	public Optional<OCRString> getRecipientName() {
-		return Optional.ofNullable(recipientName);
-	}
-	public OCRInvoice setRecipientName(OCRString recipientName) {
-		this.recipientName = recipientName;
-		return this;
-	}
-	public Optional<OCRString> getRecipientTaxId() {
-		return Optional.ofNullable(recipientTaxId);
-	}
-	public OCRInvoice setRecipientTaxId(OCRString recipientTaxId) {
-		this.recipientTaxId = recipientTaxId;
-		return this;
-	}
-	public Optional<OCRString> getRecipientAddress() {
-		return Optional.ofNullable(recipientAddress);
-	}
-	public OCRInvoice setRecipientAddress(OCRString recipientAddress) {
-		this.recipientAddress = recipientAddress;
-		return this;
-	}
-	public Optional<OCRString> getShippingAddress() {
-		return Optional.ofNullable(shippingAddress);
-	}
-	public OCRInvoice setShippingAddress(OCRString shippingAddress) {
-		this.shippingAddress = shippingAddress;
-		return this;
-	}
-	public Optional<OCRString> getRecipientEmail() {
-		return Optional.ofNullable(recipientEmail);
-	}
-	public OCRInvoice setRecipientEmail(OCRString recipientEmail) {
-		this.recipientEmail = recipientEmail;
-		return this;
-	}
-	public Optional<OCRString> getRecipientWebsite() {
-		return Optional.ofNullable(recipientWebsite);
-	}
-	public OCRInvoice setRecipientWebsite(OCRString recipientWebsite) {
-		this.recipientWebsite = recipientWebsite;
-		return this;
-	}
-	public Optional<OCRString> getRecipientPhoneNumber() {
-		return Optional.ofNullable(recipientPhoneNumber);
-	}
-	public OCRInvoice setRecipientPhoneNumber(OCRString recipientPhoneNumber) {
-		this.recipientPhoneNumber = recipientPhoneNumber;
-		return this;
-	}
+
 	public Optional<OCRString> getPaymentMethod() {
 		return Optional.ofNullable(paymentMethod);
 	}
+	
 	public OCRInvoice setPaymentMethod(OCRString paymentMethod) {
 		this.paymentMethod = paymentMethod;
 		return this;
 	}
+	
 	public Optional<OCRString> getIBAN() {
 		return Optional.ofNullable(IBAN);
 	}
+	
 	public OCRInvoice setIBAN(OCRString iBAN) {
 		IBAN = iBAN;
 		return this;
 	}
+	
 	public Optional<OCRString> getSWIFT() {
 		return Optional.ofNullable(SWIFT);
 	}
+	
 	public OCRInvoice setSWIFT(OCRString sWIFT) {
 		SWIFT = sWIFT;
 		return this;
 	}
+	
 	public Optional<OCRString> getClientCode() {
 		return Optional.ofNullable(clientCode);
 	}
+	
 	public OCRInvoice setClientCode(OCRString clientCode) {
 		this.clientCode = clientCode;
 		return this;
@@ -500,12 +397,20 @@ public class OCRInvoice implements Serializable {
 		return this;
 	}
 	
-	public String getIssuerDocument() {
-		return getIssuerTaxId().flatMap( s -> s.getValue() ).orElse(null);
+	public String getSupplierDocument() {
+		return getSupplier().flatMap(c -> c.getTaxId()).flatMap(t -> t.getValue()).orElse(null);
 	}
-	public String getRecipientDocument() {
-		return getRecipientTaxId().flatMap( s -> s.getValue() ).orElse(null);
+
+	public String getSupplierCountry() {
+		return getSupplier().flatMap(c -> c.getCountry()).flatMap(t -> t.getValue()).orElse(null);
 	}
 	
+	public String getCustomerDocument() {
+		return getCustomer().flatMap(c -> c.getTaxId()).flatMap(t -> t.getValue()).orElse(null);
+	}
+	
+	public String getCustomerCountry() {
+		return getCustomer().flatMap(c -> c.getCountry()).flatMap(t -> t.getValue()).orElse(null);
+	}
 	
 }
