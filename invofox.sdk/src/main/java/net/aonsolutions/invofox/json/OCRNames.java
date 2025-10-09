@@ -5,12 +5,14 @@ public final class OCRNames {
 	private OCRNames() { }
 
 	// ---------------------------------------------------------------------------------------------	[A] 
+	
 	public static final String ACCOUNT = "account";
 	public static final String ACCOUNTING_PERIOD_LENGTH = "accountingPeriodLength";
 	public static final String ADDITIONAL_CHARGES_AMOUNT = "additionalChargesAmount";
 	public static final String ADDITIONAL_DISCOUNTS_AMOUNT = "additionalDiscountsAmount";
 	public static final String ADDITIONAL_INFO = "additionalInfo";
 	public static final String ADDITIONAL_NOTES = "additionalNotes";
+	public static final String ADDRESS = "address";
 	public static final String ADDRESS_NUMBER = "addressNumber";
 	public static final String ALGORITHM = "algorithm";
 	public static final String AMOUNT = "amount";
@@ -21,13 +23,16 @@ public final class OCRNames {
 	public static final String APPROVED = "approved";	
 	
 	// ---------------------------------------------------------------------------------------------	[B] 
+	
 	public static final String BEGINNING = "beginning";
 	public static final String BOX = "box";
 	public static final String BOXES = "boxes";
 	public static final String BREAKDOWNS = "breakdowns";
 	public static final String BUCKET = "bucket";
 	public static final String BOUNDING_BOX = "boundingBox";
+	
 	// ---------------------------------------------------------------------------------------------	[C] 
+	
 	public static final String CHANNEL = "channel";
 	public static final String CLIENT_CODE = "clientCode";
 	public static final String CLIENT_DATA = "clientData";
@@ -46,7 +51,10 @@ public final class OCRNames {
 	public static final String CREATOR = "creator";
 	public static final String CURRENCY = "currency";
 	public static final String CURRENT = "current";
+	public static final String CUSTOMER = "customer";
+	
 	// ---------------------------------------------------------------------------------------------	[D] 
+	
 	public static final String DATA = "data";
 	public static final String DATE = "date";
 	public static final String DELIVERY_NOTE_REF = "deliveryNoteRef";
@@ -59,7 +67,9 @@ public final class OCRNames {
 	public static final String DOCUMENT_TYPE = "documentType";
 	public static final String DUES = "dues";
 	public static final String DOMAIN = "domain";
+	
 	// ---------------------------------------------------------------------------------------------	[E] 
+	
 	public static final String EMAIL = "email";
 	public static final String ENDPOINT = "endpoint";
 	public static final String ENVIRONMENT = "environment";
@@ -71,25 +81,32 @@ public final class OCRNames {
 	public static final String EXPORTS = "exports";
 	public static final String EXPORTED = "exported";
 	
-	
 	// ---------------------------------------------------------------------------------------------	[F] 
+	
+	public static final String FAX = "fax";
 	public static final String FEES_AMOUNT = "feesAmount";
 	public static final String FEES_BASE_AMOUNT = "feesBaseAmount";
 	public static final String FEES_RATE = "feesRate";
 	public static final String FIELDS = "fields";
 	public static final String FILENAME = "filename";
 	public static final String FILTER = "filter";
+	
 	// ---------------------------------------------------------------------------------------------	[G]
+	
 	public static final String GEOMETRY = "geometry";
 	public static final String GROSS_AMOUNT = "grossAmount";
 	public static final String GROSS_UNIT_PRICE = "grossUnitPrice";
 	public static final String GROUP = "group";
 	public static final String GROUP_INDEX = "groupIndex";
+	
 	// ---------------------------------------------------------------------------------------------	[H]
+
 	public static final String HEADERS = "headers";
 	public static final String HEIGHT = "height";
 	public static final String HTTP_CODE = "httpCode";
+	
 	// ---------------------------------------------------------------------------------------------	[I] 
+	
 	public static final String IBAN  = "IBAN";
 	public static final String ID = "_id";
 	public static final String IDENTIFIER = "identifier";
@@ -110,43 +127,62 @@ public final class OCRNames {
 	public static final String ISSUER_TAX_ID = "issuerTaxId";
 	public static final String ISSUER_WEBSITE = "issuerWebsite";
 	public static final String ORIGINAL = "original";
+	
 	// ---------------------------------------------------------------------------------------------	[J] 
+	
 	// ---------------------------------------------------------------------------------------------	[K] 
+	
 	public static final String KEY = "key";
+	
 	// ---------------------------------------------------------------------------------------------	[L] 
+	
 	public static final String LANG = "lang";
 	public static final String LANGUAGE = "language";
 	public static final String LEGAL_NOTES = "legalNotes";
 	public static final String LIMIT = "limit";
 	public static final String LINES = "lines";
 	public static final String LOAD_S3 = "loadS3";
+	
 	// ---------------------------------------------------------------------------------------------	[M] 
+	
 	public static final String MESSAGE = "message";
 	public static final String METER_NUMBER = "meterNumber";
 	public static final String METHOD = "method";
 	public static final String MIME_TYPE = "mimetype";
 	public static final String MUNICIPALITY = "municipality";
+	
 	// ---------------------------------------------------------------------------------------------	[N] 
+	
 	public static final String NAME = "name";
 	public static final String NEIGHBORHOOD = "neighborhood";
 	public static final String NUMBER_FORMAT = "numberFormat";
+	
 	// ---------------------------------------------------------------------------------------------	[O] 
+	
 	public static final String ORDER_REF = "orderRef";
+	
 	// ---------------------------------------------------------------------------------------------	[P] 
+	
 	public static final String PAGE = "page";
 	public static final String PAGES = "pages";
 	public static final String PATH = "path";
 	public static final String PAYMENT_METHOD = "paymentMethod";
 	public static final String PENDINGCORRECTION = "pendingCorrection";
 	public static final String PENDINGDECISSION = "pendingDecission";
+	public static final String PHONE_NUMBER = "phoneNumber";
 	public static final String POSTAL_CODE = "postalCode";
 	public static final String PREFIX = "prefix";
 	public static final String PREVIOUS  = "previous";
 	public static final String PROCESSING = "processing";
 	public static final String PUBLIC_STATE = "publicState";
+	
 	// ---------------------------------------------------------------------------------------------	[Q] 
+	
 	public static final String QUANTITY = "quantity";
+	
 	// ---------------------------------------------------------------------------------------------	[R] 
+	
+	public static final String RAW = "raw";
 	public static final String RAWDOC = "rawdoc";
 	public static final String RE_AMOUNT = "reAmount";
 	public static final String RE_RATE = "reRate";
@@ -167,6 +203,7 @@ public final class OCRNames {
 	public static final String REJECTED = "rejected";
 	
 	// ---------------------------------------------------------------------------------------------	[S]
+	
 	public static final String SECRET = "secret";
 	public static final String SECURITY = "security";
 	public static final String SELECT = "select";
@@ -180,10 +217,13 @@ public final class OCRNames {
 	public static final String STEPS = "steps";
 	public static final String STREET = "street";
 	public static final String SUB_REGION = "subRegion";
+	public static final String SUPPLIER = "supplier";
 	public static final String SUPPLY_NUMBER = "supplyNumber";
 	public static final String SWIFT = "SWIFT";
 	public static final String SORT = "sort";
+	
 	// ---------------------------------------------------------------------------------------------	[T] 
+	
 	public static final String TAX_BASE_UNIT_PRICE = "taxBaseUnitPrice";
 	public static final String TAX_CLASS = "taxClass";
 	public static final String TAX_ID = "taxId";
@@ -204,7 +244,9 @@ public final class OCRNames {
 	public static final String TOTAL_USAGE = "totalUsage";
 	public static final String TRANSACTION_ID = "transactionId";
 	public static final String TYPE = "type";
+	
 	// ---------------------------------------------------------------------------------------------	[U] 
+	
 	public static final String UNIT = "unit";
 	public static final String UNIT_OF_MEASUREMENT = "unitOfMeasurement";
 	public static final String UPDATE_PASSWORD = "updatePassword";
@@ -212,22 +254,27 @@ public final class OCRNames {
 	public static final String USAGE = "usage";
 	public static final String USAGE_UNIT_OF_MEASUREMENT = "usageUnitOfMeasurement";
 	public static final String USER = "user";
+	
 	// ---------------------------------------------------------------------------------------------	[V]
+	
 	public static final String VALIDATION_INFO = "validationInfo";
 	public static final String VALIDATOR = "validator";
 	public static final String VALUE = "value";
+	
 	// ---------------------------------------------------------------------------------------------	[W] 
+	
 	public static final String WEBHOOK = "webhook";
 	public static final String WEBHOOKS = "webhooks";
+	public static final String WEBSITE = "website";
 	public static final String WIDTH = "width";
 	public static final String WITHHOLDING_TAX_RATE = "withholdingTaxRate";
 	public static final String WITHHOLDING_TAX_AMOUNT = "withholdingTaxAmount";
 	public static final String WORDS = "words";
+	
 	// ---------------------------------------------------------------------------------------------	[X]
+	
 	// ---------------------------------------------------------------------------------------------	[Y]
+	
 	// ---------------------------------------------------------------------------------------------	[Z]
-	
-	
-
 
 }

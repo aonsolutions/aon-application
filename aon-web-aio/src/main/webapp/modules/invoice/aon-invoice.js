@@ -92,7 +92,9 @@ export class AonInvoice extends AonElement {
 		this.initializeFunctions();
 		this.configuration = await getInvoiceConfiguration();
 
-		this.getInvoice().surcharge = this.getInvoice().surcharge || this.getCompany().surcharge;
+		this.getInvoice().surcharge = this.getInvoice().surcharge 
+			|| (!this.getInvoice().isEmitida() && this.getCompany().surcharge);
+			
 		this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || this.getCompany().vatAccrualPayment;
 
 		this.buildDur().then(r => {
