@@ -115,6 +115,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 		Label messageLabel = new Label(message);
 		messageLabel.setStyleName(AON.CSS.aonColorOrange());
 		messageLabel.addStyleName(AON.CSS.aonBold());
+		messageLabel.addStyleName(AON.CSS.aonMarginLeft());
 		topContainer.add(messageLabel);
 	}
 
@@ -150,7 +151,9 @@ class AonConsoleProgress extends DockLayoutPanel {
 		}
 		@Override
 		public void visitMessage() {
-			topContainer.add(new Label(message.getMessage()));
+			Label label = new Label(message.getMessage());
+			label.setStyleName(AON.CSS.aonMarginLeft());
+			topContainer.add(label);
 		}
 
 		@Override
@@ -168,6 +171,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 			Label messageLabel = new Label(message.getMessage());
 			messageLabel.setStyleName(AON.CSS.aonColorGreen());
 			messageLabel.addStyleName(AON.CSS.aonBold());
+			messageLabel.addStyleName(AON.CSS.aonMarginLeft());
 			topContainer.add(messageLabel);
 		}
 
@@ -181,6 +185,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 			Label messageLabel = new Label(message.getMessage());
 			messageLabel.setStyleName(AON.CSS.aonColorRed());
 			messageLabel.addStyleName(AON.CSS.aonBold());
+			messageLabel.addStyleName(AON.CSS.aonMarginLeft());
 			topContainer.add(messageLabel);
 		}
 
