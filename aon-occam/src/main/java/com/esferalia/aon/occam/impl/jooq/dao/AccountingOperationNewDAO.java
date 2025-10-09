@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
@@ -116,7 +117,8 @@ public class AccountingOperationNewDAO {
 		,retInvoiceTax.WITHHOLDING_TYPE
 		,INVEST_ASSET.TYPE
 		,INVEST_ASSET.REGIME		
-		,INVEST_ASSET.PROPERTIES
+		,INVEST_ASSET.PROPERTIES		
+		,INVEST_ASSET.RETENTION_PERCENT
 	};
 	
 	// Cobros/Pagos RECC
@@ -261,7 +263,9 @@ public class AccountingOperationNewDAO {
 			.leftAntiJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID)) // Apuntes que no son facturas
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE_ACTIVITY.ENTERPRISE))
+//			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE_ACTIVITY.ENTERPRISE))
+			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.equal(ACCOUNT_ENTRY_DETAIL.DOMAIN))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE.REGISTRY))
 			;
 	}
 
@@ -425,6 +429,14 @@ public class AccountingOperationNewDAO {
 			// LA BASE SE COGE DE INVOICE_DETAIL, PORQUE LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, NO CREAN REGISTRO EN INVOICE_TAX
 //			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
 			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
+			
+			// Compras y Gastos: Si lleva bien afecto, comprobar si grado de afectación IRPF es menor de 100%
+			if (!isSales && rec.getValue(INVEST_ASSET.TYPE) != null) {
+				Double retention_percent = AonNumberUtils.toDouble(rec.getValue(INVEST_ASSET.RETENTION_PERCENT)); 
+				if (retention_percent != null && retention_percent != 100.0) {
+					conceptAmount = AonMathUtils.round(conceptAmount * retention_percent / 100);
+				}
+			}
 			
 			// Libro Unificado de IVA e IRPF: Facturas cuya cuenta no es 7 o 6, el ingreso o gasto es cero y no lleva concepto
 			if (params.getBookType() == 2) {
