@@ -45,7 +45,7 @@ on:
           - 22
           - 21
         required: true
-        default: 21
+        default: 25
       javaDistribution:
         description: 'Java distribution'
         type: choice
