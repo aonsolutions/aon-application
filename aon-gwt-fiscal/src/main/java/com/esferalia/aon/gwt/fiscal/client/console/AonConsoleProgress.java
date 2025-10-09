@@ -140,7 +140,14 @@ class AonConsoleProgress extends DockLayoutPanel {
 		public void visitTitle() {
 			title.setText(message.getMessage());
 		}
-
+		
+		@Override
+		public void visitSubtitle() {
+			Label messageLabel = new Label(message.getMessage());
+			messageLabel.setStyleName(AON.CSS.aonMarginTop());
+			messageLabel.addStyleName(AON.CSS.aonBold());
+			topContainer.add(messageLabel);
+		}
 		@Override
 		public void visitMessage() {
 			topContainer.add(new Label(message.getMessage()));

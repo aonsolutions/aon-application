@@ -86,6 +86,9 @@ public class AonCollectionUtils {
 	public static <T> boolean isNotEmpty(T[] array) {
 		return !isEmpty(array);
 	}
+	public static <T> int size(final T[] array){
+		return  isEmpty(array) ? 0 : array.length;
+	}
 
 	public static IntStream stream( int times) {
 		return IntStream.range(0, times);
