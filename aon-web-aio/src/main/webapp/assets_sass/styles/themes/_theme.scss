@@ -78,6 +78,7 @@
   --favicon-#{$theme}: #{$favicon};
   --title-#{$theme}: #{$title};
   --logoHeader-#{$theme}: #{$logoHead};
+  --logoHeaderMobile-#{$theme}: #{$logo};
   --logo-#{$theme}: #{$logo};
   body{
     color            : $color-text;

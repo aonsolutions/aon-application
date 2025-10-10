@@ -88,7 +88,10 @@ export const applyTitle = (themeClass, title = "") => {
 export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
   waitForElement('#aon-logo').then((divLogo) => {  
     if (imageLogoHeader === "") {
-      const raw = getComputedStyle(document.body).getPropertyValue(`--logoHeader-${themeClass}`).trim();
+      const headerLogo = (AonElement.isMobile() || AonElement.isMobileResolution())
+        ? `--logoHeaderMobile-${themeClass}`
+        : `--logoHeader-${themeClass}`;
+      const raw = getComputedStyle(document.body).getPropertyValue(headerLogo).trim();
       if (raw) imageLogoHeader = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');
       if (imageLogoHeader && divLogo) { 
         divLogo.style.backgroundImage = 'url(' + imageLogoHeader + ')';
