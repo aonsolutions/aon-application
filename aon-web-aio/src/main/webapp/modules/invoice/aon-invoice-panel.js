@@ -170,7 +170,7 @@ export class AonInvoicePanel extends AonElement {
 
 	async buildInvoiceHomeToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			let hasBidoq = await this.hasBidoq();
 			this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
 			this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
@@ -179,10 +179,10 @@ export class AonInvoicePanel extends AonElement {
 			if(hasBidoq && this.getDur().isInvoiceManager()){
 				this.getApplication().addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 			}
-		} else {
-			this.getApplication().removeFloatOption();
-			this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
-		}
+//		} else {
+//			this.getApplication().removeFloatOption();
+//			this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
+//		}
 	}
 
 	async hasBidoq(){
@@ -285,25 +285,25 @@ export class AonInvoicePanel extends AonElement {
 
 	buildInvoiceToolbarOptions(acceptedInvoices, processing) {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
 			this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
 			if (this.getDur().isOcr() || this.getDur().isInvofox())
 				this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
 			if (acceptedInvoices) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL_INVOICE, () => this.downloadInvoiceExcel());
 			if (this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
-		} else {
-			this.getApplication().removeFloatOption();
-			this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
-		}
+//		} else {
+//			this.getApplication().removeFloatOption();
+//			this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
+//		}
 		this.buildToolbarSearchOption(acceptedInvoices);
 	}
 
 	buildProductToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_PRODUCT, () => this.addProduct());
-		}
+//		}
 		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR PRODUCTO EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
@@ -315,9 +315,9 @@ export class AonInvoicePanel extends AonElement {
 
 	buildExpenseToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_EXPENSE, () => this.addExpense());
-		}
+//		}
 		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR GASTO EN EL MOVIL
 		// else {
 		//   this.getApplication().removeFloatOption();
@@ -346,9 +346,9 @@ export class AonInvoicePanel extends AonElement {
 
 	buildCustomerToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_CUSTOMER, () => this.addCustomer());
-		}
+//		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('customer'));
 
@@ -362,9 +362,9 @@ export class AonInvoicePanel extends AonElement {
 
 	buildSupplierToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_SUPPLIER, () => this.addSupplier());
-		}
+//		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('supplier'));
 		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR PROVEEDOR EN EL MOVIL
@@ -377,9 +377,9 @@ export class AonInvoicePanel extends AonElement {
 
 	buildCreditorToolbarOptions() {
 		this.clearToolbar();
-		if (!this.isMobile()) {
+//		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_CREDITOR, () => this.addCreditor());
-		}
+//		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('creditor'));
 		// TODO ACTIVAR CUANDO ESTE LA OPCION DE AGREGAR ACREEDOR EN EL MOVIL
@@ -438,9 +438,9 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildSidenavOptions() {
-		if (this.isMobile()) {
+//		if (this.isMobile()) {
 			this.getApplication().addMobileSidenavHeader(Apps.INVOICE);
-		}
+//		}
 
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
@@ -622,9 +622,10 @@ export class AonInvoicePanel extends AonElement {
 	aonInvoiceList(filter, invofoxFilter) {
 		this.filter = filter;
 		this.invofoxFilter = invofoxFilter;
-		let table = this.isMobile()
-			? new AonMobileInvoiceList()
-			: new AonInvoiceList();
+		let table = new AonInvoiceList(); 
+//		this.isMobile()
+//			? new AonMobileInvoiceList()
+//			: new AonInvoiceList();
 		table.id = "aonInvoiceList";
 		table.setFilter(this.filter);
 		table.invofoxFilter = this.invofoxFilter;
@@ -647,9 +648,10 @@ export class AonInvoicePanel extends AonElement {
 		if (customerList) {
 			customerList.setFilter(filter);
 		} else {
-			customerList = this.isMobile()
-				? new AonMobileCustomerList()
-				: new AonCustomerList();
+			customerList = new AonCustomerList(); 
+//			this.isMobile()
+//				? new AonMobileCustomerList()
+//				: new AonCustomerList();
 			customerList.id = this.CUSTOMER_LIST;
 			customerList.filter = filter;
 			this.getApplication().setContent(customerList);
@@ -661,9 +663,10 @@ export class AonInvoicePanel extends AonElement {
 		if (supplierList) {
 			supplierList.setFilter(filter);
 		} else {
-			supplierList = this.isMobile()
-				? new AonMobileSupplierList()
-				: new AonSupplierList();
+			supplierList = new AonSupplierList();
+//			this.isMobile()
+//				? new AonMobileSupplierList()
+//				: new AonSupplierList();
 			supplierList.id = this.SUPPLIER_LIST;
 			supplierList.filter = filter;
 			this.getApplication().setContent(supplierList);
@@ -675,9 +678,10 @@ export class AonInvoicePanel extends AonElement {
 		if (creditorList) {
 			creditorList.setFilter(filter);
 		} else {
-			creditorList = this.isMobile()
-				? new AonMobileCreditorList()
-				: new AonCreditorList();
+			creditorList = new AonCreditorList();
+//			this.isMobile()
+//				? new AonMobileCreditorList()
+//				: new AonCreditorList();
 			creditorList.id = this.CREDITOR_LIST;
 			creditorList.filter = filter;
 			this.getApplication().setContent(creditorList);
@@ -689,9 +693,10 @@ export class AonInvoicePanel extends AonElement {
 		if (productList) {
 			productList.setFilter(filter);
 		} else {
-			productList = this.isMobile()
-				? new AonMobileProductList()
-				: new AonProductList();
+			productList = new AonProductList();
+//			this.isMobile()
+//				? new AonMobileProductList()
+//				: new AonProductList();
 			productList.id = this.PRODUCT_LIST;
 			productList.filter = filter;
 			this.getApplication().setContent(productList);
@@ -776,9 +781,10 @@ export class AonInvoicePanel extends AonElement {
 		let ayudat = this.getDur().isSelfconta();
 		let aonInvoice = this.getApplication();
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
-		let button = this.isMobile()
-			? this.getElement("aonInvoiceAddInvoiceButton")
-			: this.getElement(aonInvoiceToolbar.TOOL_SECTION + ACTION.ADD_INVOICE.id + "Button");
+		let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + ACTION.ADD_INVOICE.id + "Button"); 
+//		this.isMobile()
+//			? this.getElement("aonInvoiceAddInvoiceButton")
+//			: this.getElement(aonInvoiceToolbar.TOOL_SECTION + ACTION.ADD_INVOICE.id + "Button");
 
 		let height = window.innerHeight;
 		let top = button.getBoundingClientRect().top;
@@ -803,35 +809,35 @@ export class AonInvoicePanel extends AonElement {
 			options.push(importSelfconta);
 		}
 
-		if (this.isMobile()) {
-			let uploadFile = {
-				name: MSG.UPLOAD_FILE,
-				title: MSG.UPLOAD_FILE,
-				icon: MATERIAL_ICONS.FILE_UPLOAD,
-				permission: true,
-//				backgroundColor: "#4472C4",
-				fn: () => this.addInvoiceFile(),
-			};
-
-			options.push(uploadFile);
-
-			let openCamera = {
-				name: "Camara",
-				title: "Camara",
-				icon: "camera_alt",
-				permission: true,
-//				backgroundColor: "#4472C4",
-				fn: () => {
-					if (UA.isApp()) {
-						let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' };
-						openCamera(ionicData, (result) => {
-							this.buildInvoiceImageEditor(result);
-						});
-					} else this.openCamera();
-				}
-			};
-			options.push(openCamera);
-		}
+//		if (this.isMobile()) {
+//			let uploadFile = {
+//				name: MSG.UPLOAD_FILE,
+//				title: MSG.UPLOAD_FILE,
+//				icon: MATERIAL_ICONS.FILE_UPLOAD,
+//				permission: true,
+////				backgroundColor: "#4472C4",
+//				fn: () => this.addInvoiceFile(),
+//			};
+//
+//			options.push(uploadFile);
+//
+//			let openCamera = {
+//				name: "Camara",
+//				title: "Camara",
+//				icon: "camera_alt",
+//				permission: true,
+////				backgroundColor: "#4472C4",
+//				fn: () => {
+//					if (UA.isApp()) {
+//						let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' };
+//						openCamera(ionicData, (result) => {
+//							this.buildInvoiceImageEditor(result);
+//						});
+//					} else this.openCamera();
+//				}
+//			};
+//			options.push(openCamera);
+//		}
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
@@ -1086,11 +1092,11 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoice(type, invoice) {
 		let aonInvoice = this.getApplication();
-		if (this.isMobile() && aonInvoice.TOOLBAR) {
-			let toolbar = this.getElement(aonInvoice.TOOLBAR);
-			toolbar.removeButtons();
-		}
-		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
+//		if (this.isMobile() && aonInvoice.TOOLBAR) {
+//			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+//			toolbar.removeButtons();
+//		}
+		let component = new AonInvoice(); // this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
 		if (invoice && invoice.file) {

@@ -44,9 +44,9 @@ export class AonSign extends AonElement {
     this.applicationEl = this.getApplication();
     this.parent = this.parent || false;
     getTaskHolder({reload:true});
-    if(this.isMobile()){
-      getPosition().catch(console.error);  // GET POSITION
-    }
+//    if(this.isMobile()){
+//      getPosition().catch(console.error);  // GET POSITION
+//    }
     if(this.parent) {
       getTaskHoldersUser().then(r => {
         if(r.length > 0) {
@@ -137,10 +137,10 @@ export class AonSign extends AonElement {
       button.classList.add('aonTimeControlButton');
 //      button.style.backgroundColor = '#86D364';
       button.innerHTML = MSG.ENTRY.toUpperCase();
-      if(this.isMobile()){
+//      if(this.isMobile()){
 //        button.style.width = "60%";
 //        button.style.borderRadius = "12px";
-      }
+//      }
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
@@ -156,10 +156,10 @@ export class AonSign extends AonElement {
       button.classList.add('aonTimeControlButton');
 //      button.style.backgroundColor = '#86D364';
       button.innerHTML = 'VUELTA';
-      if(this.isMobile()){
+//      if(this.isMobile()){
 //        button.style.width = "60%";
 //        button.style.borderRadius = "12px";
-      }
+//      }
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
@@ -209,16 +209,16 @@ export class AonSign extends AonElement {
       this.getApplication().stopLoading();
 	});
 
-    if(timeOutPosition && this.isMobile() && resp && resp.id){
-      getPosition().then(position=>{
-        if(position){
-          r.coordinates = position.latitude + ',' + position.longitude;
-          saveTimeControl({...resp, ...signin})
-          .then(console.log)
-          .catch(console.error);
-        }
-      }).catch(console.error);
-    }
+//    if(timeOutPosition && this.isMobile() && resp && resp.id){
+//      getPosition().then(position=>{
+//        if(position){
+//          r.coordinates = position.latitude + ',' + position.longitude;
+//          saveTimeControl({...resp, ...signin})
+//          .then(console.log)
+//          .catch(console.error);
+//        }
+//      }).catch(console.error);
+//    }
 
     this.buildSignin(resp);
 

@@ -57,9 +57,9 @@ export class AonTimecontrol extends AonElement {
     this.filterInit();
     this.paintView();
     this.buildSidenav();
-    if(this.isMobile())
-      this.showView(SIGNIN_VIEWS.AON_STATISTICS);
-    else
+//    if(this.isMobile())
+//      this.showView(SIGNIN_VIEWS.AON_STATISTICS);
+//    else
       this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
@@ -80,9 +80,9 @@ export class AonTimecontrol extends AonElement {
   }
   
   buildSidenav() { // En el fondo es el Sidenav
-    if(this.isMobile()){
-      this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
-    }
+//    if(this.isMobile()){
+//      this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
+//    }
 
     // Control horario
     let data = OPTIONS.TIMECONTROL_SIDENAV;
@@ -105,7 +105,8 @@ export class AonTimecontrol extends AonElement {
     };
     this.applicationEl.addSidenavOptions3(data2);
 
-    if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
+//    if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
+	if(this.getDur().isTimecontrol() && LS.isNewTheme()) {
       getTimeControl().then(r => {
         let aonSign = new AonSign();
         this.applicationEl.addSidenavWidgetComponet(aonSign);
@@ -123,8 +124,8 @@ export class AonTimecontrol extends AonElement {
 
   async setDataFilter(data){
     try {
-      if(this.isMobile())
-        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+//      if(this.isMobile())
+//        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       this.DATE_TMP =  null;
       if(data && data.period){
         data = {...data, ...getPeriod(data.period)};
@@ -247,11 +248,11 @@ export class AonTimecontrol extends AonElement {
 
       let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
       div3.id = this.TIMECONTROL_SIGN;
-      if(this.isMobile()){
-        div3.style.borderTop = '1px solid #ddd';
-        this.clearElement(div3);
-        div3.appendChild(this.createTitleTime());
-      }
+//      if(this.isMobile()){
+//        div3.style.borderTop = '1px solid #ddd';
+//        this.clearElement(div3);
+//        div3.appendChild(this.createTitleTime());
+//      }
 
       let staticsDiv = this.createElement(TAG.DIV);
       staticsDiv.style.height = "15rem";
@@ -266,17 +267,17 @@ export class AonTimecontrol extends AonElement {
       aonSign.setTimeControl(r);
       div3.appendChild(aonSign);
       this.applicationEl.setContent(div3);
-      if(this.isMobile()){
-        const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
-        let div = this.getElement("aonSigninContent");
-        const apps = [
-          {title: "Hoy", fn: () => this.setDataFilter({period:TODAY.id})},
-          {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
-          {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
-          {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
-        ]
-        div.appendChild(this.createApps(apps));
-      }
+//      if(this.isMobile()){
+//        const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
+//        let div = this.getElement("aonSigninContent");
+//        const apps = [
+//          {title: "Hoy", fn: () => this.setDataFilter({period:TODAY.id})},
+//          {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
+//          {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
+//          {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
+//        ]
+//        div.appendChild(this.createApps(apps));
+//      }
   }
 
   createApps(apps) {

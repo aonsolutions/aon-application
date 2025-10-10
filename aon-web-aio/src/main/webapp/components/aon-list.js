@@ -4,6 +4,11 @@ import { createList } from './CreateComponent.js';
 import { addObjects, initializeObjects } from './ObjectCache.js';
 
 export class AonList extends AonElement {
+    columns;
+    TABLE;
+	more;
+    filter;
+    _isEmptyRendered
 
     get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -12,11 +17,6 @@ export class AonList extends AonElement {
 	set id(id) {
 		this.setAttribute(CONSTANT.ID, id);
 	}
-
-    columns;
-    TABLE;
-	more;
-    filter;
 
     constructor () {
         super();
@@ -45,6 +45,7 @@ export class AonList extends AonElement {
             perPage:30
         }
         this.more = true;
+        this._isEmptyRendered = false;
     }
 
     aonObject(object, i) {
@@ -101,6 +102,7 @@ export class AonList extends AonElement {
         if (table) {
             initializeObjects();
             this.getObjects().then(objects => {
+                this._isEmptyRendered = false;
                 if (Array.isArray(objects) && objects.length === 0) {
                     this.empty();
                 }else{
@@ -123,20 +125,27 @@ export class AonList extends AonElement {
             this.getObjects(this.getFilter()).then(objects => {
                 addObjects(objects);
                 this.more = objects.length > 0;
-                objects.forEach((object, i) => {
-                    table.addRow(object, () => this.aonObject(object, i));
-                });
+                if (objects.length > 0) {
+                    objects.forEach((object, i) => {
+                        table.addRow(object, () => this.aonObject(object, i));
+                    });
+                } else {
+                    this.empty();
+                }
             });
         }
 	}
 
-    empty() {
-        let tableWrapper = this.getTable();
-        if (!tableWrapper) return;
-    
-        let table = tableWrapper.querySelector("table");
+    empty(message = 'No hay datos disponibles.') {
+        if (this._isEmptyRendered){
+            return;
+        }
+        // Marcamos como pintado
+        this._isEmptyRendered = true;
+
+        let table = this.getTable();
         if (!table) return;
-    
+
         let tbody = table.querySelector("tbody");
         if (!tbody) {
             tbody = document.createElement("tbody");
@@ -144,19 +153,20 @@ export class AonList extends AonElement {
         } else {
             tbody.innerHTML = ""; 
         }
-        let columnsCount = (this.columns && this.columns.length) ? this.columns.length : 1;
+        
+        let columnsCount = table.querySelectorAll("th").length || 1;
         let tr = document.createElement("tr");
         let td = document.createElement("td");
     
         td.colSpan = columnsCount;
-        td.textContent = "No hay datos disponibles";
+        td.textContent = message;
 
-        tr.style.border = "0px";
-        tr.classList.add("no-hover");
+        // tr.style.border = "0px";
+        // tr.classList.add("no-hover");
         
-        td.style.textAlign = "center";
-        td.style.padding = "10px";
-        td.style.border = "0px";
+        // td.style.textAlign = "center";
+        // td.style.padding = "10px";
+        // td.style.border = "0px";
         
         tr.appendChild(td);
         tbody.appendChild(tr);

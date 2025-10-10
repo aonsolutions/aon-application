@@ -99,38 +99,38 @@ export class AonDeliveryList extends AonElement {
 	}
 
     search(detail) {
-    const isClean = !detail || Object.keys(detail).length <= 2;
+        const isClean = !detail || Object.keys(detail).length <= 2;
 
-    if (isClean) {
-        this.filter = {
-            page: 1,
-            perPage: 30,
-            status: 'IN_PREPARATION'
-        };
-    } else {
-        this.filter = {
-            page: 1,
-            perPage: 30
-        };
+        if (isClean) {
+            this.filter = {
+                page: 1,
+                perPage: 30,
+                status: 'IN_PREPARATION'
+            };
+        } else {
+            this.filter = {
+                page: 1,
+                perPage: 30
+            };
 
-        if (detail.search) this.filter.value = detail.search;
-        if (detail.status) this.filter.status = detail.status;
-        if (detail.startDate) this.filter.from = detail.startDate;
-        if (detail.to) this.filter.to = detail.to;
+            if (detail.search) this.filter.value = detail.search;
+            if (detail.status) this.filter.status = detail.status;
+            if (detail.startDate) this.filter.from = detail.startDate;
+            if (detail.to) this.filter.to = detail.to;
 
-        for (let key in this.filter) {
-            if (
-                this.filter[key] === '' ||
-                this.filter[key] === undefined ||
-                this.filter[key] === null
-            ) {
-                delete this.filter[key];
+            for (let key in this.filter) {
+                if (
+                    this.filter[key] === '' ||
+                    this.filter[key] === undefined ||
+                    this.filter[key] === null
+                ) {
+                    delete this.filter[key];
+                }
             }
         }
-    }
 
-    this.init();
-}
+        this.init();
+    }
 
 	init() {
 		let table = document.getElementById(this.TABLE);
@@ -176,13 +176,10 @@ export class AonDeliveryList extends AonElement {
         else return MSG.PENDING;
     }
 
-    empty() {
-        let tableWrapper = this.getElement(this.TABLE);
-        if (!tableWrapper) return;
-    
-        let table = tableWrapper.querySelector("table");
+    empty(message = 'No hay datos disponibles.') {
+        let table = this.getElement(this.TABLE);
         if (!table) return;
-    
+
         let tbody = table.querySelector("tbody");
         if (!tbody) {
             tbody = document.createElement("tbody");
@@ -190,19 +187,20 @@ export class AonDeliveryList extends AonElement {
         } else {
             tbody.innerHTML = ""; 
         }
-        let columnsCount = (this.columns && this.columns.length) ? this.columns.length : 1;
+
+        let columnsCount = table.querySelectorAll("th").length || 1;
         let tr = document.createElement("tr");
         let td = document.createElement("td");
     
         td.colSpan = columnsCount;
-        td.textContent = "No hay datos disponibles";
+        td.textContent = message;
 
-        tr.style.border = "0px";
-        tr.classList.add("no-hover");
+        // tr.style.border = "0px";
+        // tr.classList.add("no-hover");
         
-        td.style.textAlign = "center";
-        td.style.padding = "10px";
-        td.style.border = "0px";
+        // td.style.textAlign = "center";
+        // td.style.padding = "10px";
+        // td.style.border = "0px";
         
         tr.appendChild(td);
         tbody.appendChild(tr);

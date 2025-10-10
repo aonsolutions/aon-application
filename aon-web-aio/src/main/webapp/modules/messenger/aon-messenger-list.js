@@ -58,17 +58,17 @@ export class AonMessengerList extends AonElement {
 
   async build() {
     this.paintTable();
-    if (this.isMobile()) {
-      this.getApplication().addFloatOption(SigninSidenav.ADD, () =>
-        this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {
-          source: TASK_SOURCE.QUERY,
-        })
-      );
-    }
+//    if (this.isMobile()) {
+//      this.getApplication().addFloatOption(SigninSidenav.ADD, () =>
+//        this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {
+//          source: TASK_SOURCE.QUERY,
+//        })
+//      );
+//    }
   }
 
   async paintTable(divNotification) {
-    this.AON_TABLE = this.isMobile() ? new AonMobileList() : new AonTable();
+    this.AON_TABLE = new AonTable(); // this.isMobile() ? new AonMobileList() : new AonTable();
     this.AON_TABLE.id = this.id + "Table";
     if (divNotification) {
       await this.isFromNotification(this.AON_TABLE, divNotification);
@@ -76,15 +76,15 @@ export class AonMessengerList extends AonElement {
       this.appendChild(this.AON_TABLE);
     }
 
-    if (this.isMobile()) {
-      this.AON_TABLE.removeAllLi();
-    } else {
+//    if (this.isMobile()) {
+//      this.AON_TABLE.removeAllLi();
+//    } else {
       this.AON_TABLE.removeColumns();
       this.AON_TABLE.addColumn("", "html", "lettersHtml", "2%");
       this.AON_TABLE.addColumn(MSG.ISSUE, "html", "newTitle", "73%");
       this.AON_TABLE.addColumn("Asignado", "html", "assigned", "5%");
       this.AON_TABLE.addColumn(MSG.DATE, "html", "dateParse", "20%");
-    }
+//    }
     
     this.AON_TABLE.addEventListener(EVENT.MORE,() =>{
       if(this.MORE){
@@ -120,13 +120,13 @@ export class AonMessengerList extends AonElement {
       addTasks(datos);
     }
 
-    if (this.isMobile()) {
-      if (reload) this.AON_TABLE.removeAllLi();
-      this.getDataMobile(datos);
-    } else {
+//    if (this.isMobile()) {
+//      if (reload) this.AON_TABLE.removeAllLi();
+//      this.getDataMobile(datos);
+//    } else {
       if (reload) this.AON_TABLE.removeRows();
       this.getDataDesktop(datos);
-    }
+//    }
 
     if (reload && datos.length <= 0) {
       this.AON_TABLE.empty();

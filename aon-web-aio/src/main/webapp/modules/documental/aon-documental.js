@@ -118,10 +118,10 @@ export class AonDocumental extends AonElement {
 
 		aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
 
-		if (this.isMobile()) {
-			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
-				aonDocumental.addFloatOption(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
-		} else {
+//		if (this.isMobile()) {
+//			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
+//				aonDocumental.addFloatOption(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
+//		} else {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()) {
 				aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
 			}
@@ -130,11 +130,11 @@ export class AonDocumental extends AonElement {
 				const btnSearch = aonDocumental.addSearchOption();
 				btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
 			}
-		}
+//		}
 
-		if (this.isMobile()) {
-			this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
-		}
+//		if (this.isMobile()) {
+//			this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
+//		}
 
 		if(!this.getDur().isDocumentalPortal() && !this.getDur().isDocumentalManager()){
 			this.addDocumentOptions();
@@ -762,15 +762,15 @@ export class AonDocumental extends AonElement {
 			documentalList.init();
 		} else {
 			let application = this.getApplication();
-			if (this.isMobile()) {
-				application.setContentHTML(filter
-					? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
-					: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
-			} else {
+//			if (this.isMobile()) {
+//				application.setContentHTML(filter
+//					? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
+//					: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
+//			} else {
 				application.setContentHTML(filter
 					? `<aon-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-documental-list>`
 					: `<aon-documental-list id="aonDocumentalList"></aon-documental-list>`);
-			}
+//			}
 		}
 	}
 
@@ -784,11 +784,11 @@ export class AonDocumental extends AonElement {
 
 	aonDocument(doc) {
 		let application = this.getApplication();
-		if (this.isMobile()) {
-			application.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-document>`);
-		} else {
+//		if (this.isMobile()) {
+//			application.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-document>`);
+//		} else {
 			application.setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
-		}
+//		}
 	}
 
 	addDocumentalFile() {

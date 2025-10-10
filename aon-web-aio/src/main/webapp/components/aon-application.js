@@ -109,7 +109,9 @@ export class AonApplication extends AonElement {
     this.appendChild(loader);
 
     let div = this.createDiv(); 
-    div.className = 'aonFlex'; // this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex';
+    // div.className = this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex';
+    div.id = 'sidenav-content';
+    div.classList.add('aonFlex');
     this.appendChild(div);
 
     let leftSidenav = this.createDiv(this.SIDENAV, this.getSidenavClassName());
@@ -194,7 +196,7 @@ export class AonApplication extends AonElement {
 
     div.onclick = (event) => {
       if (event.target === div) {
-        this.closeMobileSidenav();
+//        this.closeMobileSidenav();
       }
     }
   }
@@ -817,7 +819,7 @@ export class AonApplication extends AonElement {
           } 
           this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
           if (this.isMobile()) {
-            this.closeMobileSidenav();
+//            this.closeMobileSidenav();
           }
         });
       }
