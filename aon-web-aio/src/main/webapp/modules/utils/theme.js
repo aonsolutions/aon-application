@@ -1,4 +1,5 @@
 import { getCustomViewConfiguration, getCustomViewImage } from '../../services/customViewService';
+import { AonElement } from '../../components/AonElement';
 
 let manualOverride  = localStorage.getItem('theme-mode'); // 'light' | 'dark' | 'auto' | null
 const darkQuery     = window.matchMedia('(prefers-color-scheme: dark)');
@@ -129,14 +130,18 @@ const applyTheme = () => {
   let logo          = "";
   const isDark      = getEffectiveMode();
   const themeClass  = getThemeClass(isDark);
-  
+
   clearThemeClasses();
   root.classList.add(themeClass);
   getCustomViewConfiguration().then(res => {
     if(Object.keys(res).length > 0){
       favicon    = isDark ? res.images?.["favicon-darksvg"] : res.images?.["faviconsvg"];
       title      = res.params?.["AON_CUSTOMIZE_TITLE"];
-      logoHeader = res.images?.["header-logo-dark"];
+      if (AonElement.isMobile() || AonElement.isMobileResolution()) {
+        logoHeader = res.images?.["login-logo-dark"]
+      } else {
+        logoHeader = res.images?.["header-logo-dark"];
+      }
       logo       = isDark ? res.images?.["login-logo-dark"] : res.images?.["aon-login-logo"];
     }
     // Aplicamos el estilo del Custom, si no tenemos el del sass 
@@ -174,6 +179,16 @@ const loadTheme = async () => {
 
   darkQuery.addEventListener('change', () => {
     if (manualOverride === 'auto' || !manualOverride) {
+      applyTheme();
+    }
+  });
+
+  let lastIsMobile = AonElement.isMobile() || AonElement.isMobileResolution();
+
+  window.addEventListener('resize', () => {
+    const isMobileNow = AonElement.isMobile() || AonElement.isMobileResolution();
+    if (isMobileNow !== lastIsMobile) {
+      lastIsMobile = isMobileNow;
       applyTheme();
     }
   });
