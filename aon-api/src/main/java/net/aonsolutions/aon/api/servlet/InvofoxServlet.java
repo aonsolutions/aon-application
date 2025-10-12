@@ -32,7 +32,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvofoxEnvironment;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -77,7 +76,6 @@ import net.aonsolutions.invofox.OCRDocumentsParams;
 import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRNames;
-import net.aonsolutions.invofox.model.OCRAddress;
 import net.aonsolutions.invofox.model.OCRApiKey;
 import net.aonsolutions.invofox.model.OCRApiKeyResponse;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
@@ -97,6 +95,7 @@ import net.aonsolutions.invofox.model.OCRLine;
 import net.aonsolutions.invofox.model.OCRLogin;
 import net.aonsolutions.invofox.model.OCRLoginToken;
 import net.aonsolutions.invofox.model.OCRPage;
+import net.aonsolutions.invofox.model.OCRRegistry;
 import net.aonsolutions.invofox.model.OCRSecurity;
 import net.aonsolutions.invofox.model.OCRSeverity;
 import net.aonsolutions.invofox.model.OCRType;
@@ -758,69 +757,30 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			Registry registry = new Registry().setDocument(invoice.getRegistryDocument())
 					.setDocumentType(invoice.getRegistryDocumentType())
 					.setDocumentCountry(invoice.getRegistryDocumentCountry());
-			invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
 
-				@Override
-				public Void visitUndeductible(Invoice invoice) {
-					return visitPurchase(invoice);
-				}
+			Optional<OCRRegistry> ocrRegistry = invoice.isSales() 
+					? ocrInvoice.getCustomer() 
+					: ocrInvoice.getSupplier();
 
-				@Override
-				public Void visitSales(Invoice invoice) {
-					ocrInvoice.getRecipientName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
-					ocrInvoice.getRecipientCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf)
-							.ifPresent(registry::setNationality));
-					ocrInvoice.getRecipientAddressDetails().ifPresentOrElse(details -> {
-						RegistryAddress registryAddress = toRegistryAddress(details);
-						if(registryAddress.getDomain() == null) registryAddress.setDomain(invoice.getDomain());
-						invoice.setAddress(registryAddress);
-					}, () -> {
-
-					});
-					return null;
-				}
-
-				@Override
-				public Void visitPurchase(Invoice invoice) {
-					ocrInvoice.getIssuerName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
-					ocrInvoice.getIssuerCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf)
-							.ifPresent(registry::setNationality));
-					ocrInvoice.getIssuerAddressDetails().ifPresentOrElse(details -> {
-						RegistryAddress registryAddress = toRegistryAddress(details);
-						invoice.setAddress(registryAddress);
-					}, () -> {
-
-					});
-					return null;
-				}
-
-				@Override
-				public Void visitExpenses(Invoice invoice) {
-					return visitPurchase(invoice);
-				}
-
-				private RegistryAddress toRegistryAddress(OCRAddress details) {
-					RegistryAddress registryAddress = new RegistryAddress();
-
-					details.getPostalCode().ifPresent(registryAddress::setZip);
-					details.getMunicipality().ifPresent(registryAddress::setCity);
-					details.getCountry().map(Country::safeValueOf).ifPresent(registryAddress::setCountry);
-					details.getStreet().ifPresent(registryAddress::setAddress);
-					details.getAddressNumber().ifPresent(registryAddress::setAddress2);
-					details.getNeighborhood().ifPresent(registryAddress::setAddress3);
-					details.getRegion().ifPresent(registryAddress::setProvince);
-
-					return registryAddress;
-				}
+			ocrRegistry.ifPresent(c -> {
+				c.getName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
+				c.getTaxId().ifPresent(taxId -> taxId.getValue().ifPresent(registry::setDocument));
+				c.getCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf).ifPresent(registry::setNationality));
+				c.getAddress().ifPresent(address -> {
+					RegistryAddress	registryAddress = new RegistryAddress();
+					address.getPostalCode().ifPresent(postalCode -> postalCode.getValue().ifPresent(registryAddress::setZip));
+					address.getMunicipality().ifPresent(municipality -> municipality.getValue().ifPresent(registryAddress::setCity));
+					address.getRegion().ifPresent(region -> region.getValue().ifPresent(registryAddress::setProvince));
+					address.getStreet().ifPresent(street -> street.getValue().ifPresent(registryAddress::setAddress));
+					invoice.setAddress(registryAddress);
+				});
 			});
-			invoice
-					// .setRegistry(ar.getId())
-					// .setTransaction(ar.getTransaction())
-					.setRegistryData(registry);
+			
+			invoice.setRegistryData(registry);
 		}
 		return invoice;
 	}
-
+	
 	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
 		if (invoice.getRegistry() == null)
 			return invoice;
@@ -870,25 +830,19 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 
 	private static final Collection<InvoiceError> getMessages(OCRInvoice ocrInvoice, Company company) {
-
-		if (AonStringUtils.isBlank(ocrInvoice.getIssuerDocument()))
+		if (AonStringUtils.isBlank(ocrInvoice.getSupplierDocument()))
 			return Collections.emptyList();
-		if (AonStringUtils.equals(normalize(ocrInvoice.getIssuerDocument()), company.getDocument()))
+		if (AonStringUtils.equals(normalize(ocrInvoice.getSupplierDocument()), company.getDocument()))
 			return Collections.emptyList();
-		if (AonStringUtils.equals(normalize(ocrInvoice.getRecipientDocument()), company.getDocument()))
+		if (AonStringUtils.equals(normalize(ocrInvoice.getCustomerDocument()), company.getDocument()))
 			return Collections.emptyList();
-
-		System.out.println(company.getDocument() + " = " + ocrInvoice.getIssuerDocument() + " = "
-				+ ocrInvoice.getRecipientDocument());
-
+		
 		return Collections
 				.singleton(new InvoiceError().setLevel(InvoiceErrorLevel.ERR).setCode("ERROR_ISSUER_RECIPIENT_MISMATCHED")
 						.setMessage("Ni el emisor ni el receptor coinciden con la empresa."));
-
 	}
 
 	private static final Collection<InvoiceError> getMessages(OCRError ocrError) {
-
 		Collection<InvoiceError> messages = ocrError.getFields().orElse(Collections.emptyList()).stream().map(ocrField -> {
 			InvoiceError invoiceError = new InvoiceError();
 			invoiceError.setLevel(getInvoiceErrorLevel(ocrError));
@@ -907,7 +861,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		ocrError.getCode().ifPresent(invoiceError::setCode);
 		ocrError.getDescription().ifPresent(invoiceError::setMessage);
 		return Collections.singletonList(invoiceError);
-
 	}
 
 	private static final InvoiceErrorLevel getInvoiceErrorLevel(OCRError ocrError) {
@@ -1071,5 +1024,20 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			return textItem;
 		}).toList();
 		return items;
+	}
+	
+	public static void main(String[] args) {
+		
+		InvofoxConfiguration invofoxConfiguration = new InvofoxConfiguration()
+				.setApiKey("$2b$10$31wq.rieRasaDXjsuMP.6OZMF2KZnQ8fNahNMot3WdLRqx86lrVEq")
+				.setApiUrl("https://api.invofox.com")
+				.setEnvironment("64804a43d883e2000ac0423a");
+		
+		String documentId = "68e75613eef3d0d34a3969e1";
+		
+		OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(),
+				invofoxConfiguration.getApiUrl(), documentId);
+		
+		System.out.println(response.getDocument().get().getData().get());
 	}
 }

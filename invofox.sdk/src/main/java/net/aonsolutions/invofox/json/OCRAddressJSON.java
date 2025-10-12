@@ -43,30 +43,22 @@ public class OCRAddressJSON {
 	public static JSONObject to(OCRAddress address) {
 		if (address == null) return null;
 		return new JSONObject()
-			.putOpt(OCRNames.TEXT, address.getText().orElse(null))
-			.putOpt(OCRNames.ADDRESS_NUMBER, address.getAddressNumber().orElse(null))
-			.putOpt(OCRNames.COUNTRY, address.getCountry().orElse(null))
+			.putOpt(OCRNames.RAW, address.getRaw().orElse(null))
 			.putOpt(OCRNames.MUNICIPALITY, address.getMunicipality().orElse(null))
-			.putOpt(OCRNames.NEIGHBORHOOD, address.getNeighborhood().orElse(null))
 			.putOpt(OCRNames.POSTAL_CODE, address.getPostalCode().orElse(null))
 			.putOpt(OCRNames.REGION, address.getRegion().orElse(null))
 			.putOpt(OCRNames.STREET, address.getStreet().orElse(null))
-			.putOpt(OCRNames.SUB_REGION, address.getSubRegion().orElse(null))
 		;
 	}
 	
 	private static OCRAddress fromImpl(JSONObject json) {
 		if (json == null) return null; 
 		return new OCRAddress()
-			.setText(OCRJSONUtils.getString(json, OCRNames.TEXT))
-			.setAddressNumber(OCRJSONUtils.getString(json, OCRNames.ADDRESS_NUMBER))
-			.setCountry(OCRJSONUtils.getString(json, OCRNames.COUNTRY))
-			.setMunicipality(OCRJSONUtils.getString(json, OCRNames.MUNICIPALITY))
-			.setNeighborhood(OCRJSONUtils.getString(json, OCRNames.NEIGHBORHOOD))
-			.setPostalCode(OCRJSONUtils.getString(json, OCRNames.POSTAL_CODE))
-			.setRegion(OCRJSONUtils.getString(json, OCRNames.REGION))
-			.setStreet(OCRJSONUtils.getString(json, OCRNames.STREET))
-			.setSubRegion(OCRJSONUtils.getString(json, OCRNames.SUB_REGION))
+			.setRaw(OCRStringJSON.from(OCRJSONUtils.getObject(json, OCRNames.RAW)))
+			.setMunicipality(OCRStringJSON.from(OCRJSONUtils.getObject(json, OCRNames.MUNICIPALITY)))
+			.setPostalCode(OCRStringJSON.from(OCRJSONUtils.getObject(json, OCRNames.POSTAL_CODE)))
+			.setRegion(OCRStringJSON.from(OCRJSONUtils.getObject(json, OCRNames.REGION)))
+			.setStreet(OCRStringJSON.from(OCRJSONUtils.getObject(json, OCRNames.STREET)))
 		;
 	}
 	
