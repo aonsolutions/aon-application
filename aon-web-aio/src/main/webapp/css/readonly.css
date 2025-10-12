@@ -1,0 +1,46 @@
+:root{
+	--aonDisabled: #f5f5f5;
+    --favicon: ../images/aon-icon-lock.svg;
+}
+
+
+.aon-form select,
+.aon-form textarea,
+.aon-form input[type="radio"],
+.aon-form input[type="checkbox"],
+.aon-form input[type="text"]:not(.aon-finding-filter-input)
+ {
+	pointer-events: none;
+	background-color: var(--aonDisabled);
+}
+
+
+.aon-lookupButton-clear,
+.aon-editDataTable-footer > .aon-editDataTable-button.aon-icon-reset,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-reset,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-accept,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-delete {
+	display: none;
+}
+
+.aon-editDataTable > tfoot,
+.aon-editDataTable .aon-table-row-link {
+  	display:none;
+}
+
+.aon-editDataTable tr {
+	pointer-events: none;
+}
+
+.aon_toolbar_button.aon_button.aon_icon_add,
+.aon_toolbar_button.aon_button.aon_icon_no_comments,
+.aon_toolbar_button.aon_button.aon_icon_model_reopen {
+	display: none;
+}
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+    --aon-theme: 'READONLY';
+}
