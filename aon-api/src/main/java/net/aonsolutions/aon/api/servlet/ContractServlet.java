@@ -120,9 +120,11 @@ public class ContractServlet extends AonApiHttpServlet {
 				Filter wordFilter = properties.getPersonFullNameProperty().like("%"+word+"%");
 				nameFilter = nameFilter == null ? wordFilter : nameFilter.and(wordFilter);
 			}
+			Filter nafFilter = properties.getPersonNafProperty().like("%"+pattern+"%");
+
 			Filter documentFilter = properties.getPersonDocumentProperty().like("%"+pattern+"%");
 			
-			filter = filter.and(nameFilter.or(documentFilter));
+			filter = filter.and(nameFilter.or(nafFilter).or(documentFilter));
 			
 		}
 

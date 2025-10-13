@@ -123,7 +123,6 @@ public class InvoiceJSON {
 		return InvoiceJSONV1.toJSON(invoice);
 	}
 
-	
 	public static Optional<JSONObject> getCommunicationInfoJSON( Map<InvoiceCommunicationType, InvoiceInfo> communicationInfo) {
 		return InvoiceJSONV1.getCommunicationInfoJSON( communicationInfo);
 	}

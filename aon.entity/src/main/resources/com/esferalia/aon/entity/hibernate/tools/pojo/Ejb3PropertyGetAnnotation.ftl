@@ -17,6 +17,10 @@ ${pojo.generateAnnIdGenerator()}
 </#if>
 <#if property.getName()=="system" && pojo.getDeclarationName()=="GeoZoneDB">
     @Column(name="`system`", nullable=false)
+<#elseif property.getName()=="workPlace" && pojo.getDeclarationName()=="PayrollWorkPlaceDB">	@${pojo.importType("jakarta.persistence.ManyToOne")}(fetch=${pojo.importType("jakarta.persistence.FetchType")}.EAGER)
+    @jakarta.persistence.JoinColumn(name="workPlace", nullable=false)
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
 <#elseif property.getName()=="product" && pojo.getDeclarationName()=="ItemDB">	@${pojo.importType("jakarta.persistence.ManyToOne")}
     @jakarta.persistence.JoinColumn(name="product", nullable=false)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)

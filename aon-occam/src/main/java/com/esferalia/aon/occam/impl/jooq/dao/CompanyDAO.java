@@ -386,6 +386,8 @@ public class CompanyDAO {
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
+		
 		return ctx.getDslContext().select()
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
@@ -394,6 +396,7 @@ public class CompanyDAO {
 			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
 			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			.leftOuterJoin(payer).on(domain.ID.eq(payer.DOMAIN).and(payer.NAME.eq(AppParam.AON_DOMAIN_PAYER.getValue())))
 			.where(
 				USER.AUTH.eq(auth)
 				.and(
@@ -416,6 +419,7 @@ public class CompanyDAO {
 	
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
 		
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
@@ -435,6 +439,7 @@ public class CompanyDAO {
 		.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 		.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 		.leftOuterJoin(parent).on(DOMAIN.PARENT.eq(parent.ID))
+		.leftOuterJoin(payer).on(DOMAIN.ID.eq(payer.DOMAIN).and(payer.NAME.eq(AppParam.AON_DOMAIN_PAYER.getValue())))
 		.where(COMPANY_PROPERTIES.getConditions(filter))
 		.and(
 			USER.AUTH.eq(auth)

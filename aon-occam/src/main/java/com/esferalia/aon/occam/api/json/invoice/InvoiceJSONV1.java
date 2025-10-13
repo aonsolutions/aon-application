@@ -216,7 +216,23 @@ class InvoiceJSONV1 {
 					: json.optJSONObject(IJsonNames.SENDER);
 			registry.put(IJsonNames.ADDRESS, address);
 		}
+		extractUniqueWorkplaceFromDetails(json, invoice);
 		return json;
+	}
+	
+	private static void extractUniqueWorkplaceFromDetails(JSONObject json, Invoice invoice) {
+		if (invoice.hasDetails() ) {
+			Integer workplace = invoice.detailStream()
+				.map(d -> d.getWorkplace())
+				.filter(w -> w != null)
+				.map(w -> w.getId())
+				.filter(i -> i != null)
+				.distinct()
+				.limit(2)
+			    .reduce((a, b) -> null) 
+			    .orElse(null);
+			json.put(IJsonNames.WORKPLACE, workplace);
+		}
 	}
 	
 	private static JSONObject toInvoiceErrorContextJSON(InvoiceErrorContext iec) {

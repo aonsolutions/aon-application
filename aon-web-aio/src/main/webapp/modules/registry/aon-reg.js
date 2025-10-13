@@ -171,6 +171,11 @@ export class AonReg extends AonElement {
 		tabs.addOption(option);
 	}
 	
+	existTabOption(optionTitle){
+		let tabs = this.getElement(this.TABS);
+		return tabs.options.some(opt => opt.title == optionTitle);
+	}
+	
 	buildGeneralData() {
 		let div = this.getElement(this.DIV);
 		this.clearElement(div);

@@ -5,9 +5,10 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.validation.WorkplaceAutoComplete;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class WorkplaceDAO {
 	
@@ -27,9 +29,100 @@ public class WorkplaceDAO {
 	
 	}
 	
+	public static Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer worplaceId){
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+			.from(WORKPLACE)
+			.where(WORKPLACE.DOMAIN.eq(domainId))
+			.and(WORKPLACE.ID.eq(worplaceId))
+			.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
+			.fetch()
+			.stream()
+			.map(new WorkplaceFiller())
+			.findFirst();
+		
+	}
+	
+	public static Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId){
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+			.from(WORKPLACE)
+			.where(WORKPLACE.DOMAIN.eq(domainId))
+			.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
+			.fetch()
+			.stream()
+			.map(new WorkplaceFiller());
+	}
+	
+	public static Workplace save(AONContext ctx, Workplace workplace) {
+		ctx.checkWrite();
+		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
+		return workplace.getId() != null 
+			? update(ctx, workplace)
+			: insert(ctx, workplace);
+	}
+	
+	private static Workplace insert(AONContext ctx, Workplace workplace) {
+		Integer id = ctx.getDslContext().insertInto(WORKPLACE)
+			.set(WORKPLACE.DOMAIN, workplace.getDomain())
+			.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
+			.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
+			.set(WORKPLACE.ADDRESS, workplace.getAddress())
+			.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
+			.set(WORKPLACE.SCOPE, workplace.getScope())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
+			.set(WORKPLACE.ACTIVE, AonEnumUtils.getByte( workplace.isActive() ) )
+			.returning(WORKPLACE.ID)
+			.fetchOne()
+			.getValue(WORKPLACE.ID);
+		workplace.setId(id);
+		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+		return workplace;
+	}
+	
+	private static Workplace update(AONContext ctx, Workplace workplace) {
+		ctx.getDslContext().update(WORKPLACE)
+		.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
+		.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
+		.set(WORKPLACE.ADDRESS, workplace.getAddress())
+		.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
+		.set(WORKPLACE.SCOPE, workplace.getScope())
+		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
+		.set(WORKPLACE.ACTIVE, AonEnumUtils.getByte( workplace.isActive() ) )
+		.where(WORKPLACE.ID.eq(workplace.getId()))
+		.execute();
+		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+		return workplace;
+	}
+	
+	static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {
+		
+		@Override
+		public Workplace apply(Record r) {
+			return build(r);
+		}
+		
+		public static Workplace build(Record r) {
+			return new Workplace()
+				.setId(getValue(r, WORKPLACE.ID))
+				.setDomain(getValue(r, WORKPLACE.DOMAIN))
+				.setActive(getBoolean(r, WORKPLACE.ACTIVE))
+				.setAddress(getValue(r, WORKPLACE.ADDRESS))
+				.setCustomer(getValue(r, WORKPLACE.CUSTOMER))
+				.setDescription(getValue(r, WORKPLACE.DESCRIPTION))
+				.setEconomicAgreement(Administration.safeValueOf(getValue(r, WORKPLACE.ECONOMICAGREEMENT)))
+				.setEnterprise(getValue(r, WORKPLACE.ENTERPRISE))
+				.setScope(getValue(r, WORKPLACE.SCOPE));
+		}
+	}
+	// ******************************************************************
+	// ***************************************************** [OLD] ******
+	// ******************************************************************
+	// ******************************************************************
+	@Deprecated
 	private static final WorkplacePropertiesDAO WORKPLACE_PROPERTIES = new WorkplacePropertiesDAO();
-
-	protected static class WorkplacePropertiesDAO implements WorkplaceProperties {
+	@Deprecated
+	private static class WorkplacePropertiesDAO implements WorkplaceProperties {
 		protected Condition[] getConditions(WorkplaceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -48,6 +141,13 @@ public class WorkplaceDAO {
 		@Override public Property<String> getGeozoneNameProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.NAME);}
 	}
 	
+	/**
+	 * @deprecated Use of domain is mandatory and 
+	 * 			Filter can return multiple results. 
+	 * 			If nothing is found, null must be returned.
+	 * 		 	Use Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer id) instead.
+	 */
+	@Deprecated
 	public static Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter){
 		return ctx.getDslContext().select().from(WORKPLACE)
 				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(WORKPLACE.ADDRESS))
@@ -56,6 +156,11 @@ public class WorkplaceDAO {
 				.limit(1).fetchInto(WORKPLACE).stream().map(new WorkplaceFiller()).findFirst().orElse(null);	
 	}
 	
+	/**
+	 * @deprecated Use of domain is mandatory
+	 * @user Stream<Workplace> getWorkplaceList(AONContext ctx, Integer domainId) instead.
+	 */
+	@Deprecated
 	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
 		return ctx.getDslContext().select().from(WORKPLACE)
 				.where(WORKPLACE_PROPERTIES.getConditions(filter))
@@ -67,67 +172,4 @@ public class WorkplaceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 
-	public static List<Workplace> getWorkplaceList(AONContext ctx, Integer domainId){
-		return getWorkplaceList(ctx, f -> f.getDomainProperty().eq(domainId));	
-	}
-	
-	public static Workplace save(AONContext ctx, Workplace workplace) {
-		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
-		return workplace.getId() != null 
-			? update(ctx, workplace)
-			: insert(ctx, workplace);
-	}
-
-	public static Workplace insert(AONContext ctx, Workplace workplace) {
-		Integer id = ctx.getDslContext().insertInto(WORKPLACE)
-			.set(WORKPLACE.DOMAIN, workplace.getDomain())
-			.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
-			.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
-			.set(WORKPLACE.ADDRESS, workplace.getAddress())
-			.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
-			.set(WORKPLACE.SCOPE, workplace.getScope())
-			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
-			.set(WORKPLACE.ACTIVE, workplace.isActive() ? (byte) 1 : 0)
-			.returning(WORKPLACE.ID).fetchOne().getValue(WORKPLACE.ID);
-		workplace.setId(id);
-		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
-		return workplace;
-	}
-	
-	public static Workplace update(AONContext ctx, Workplace workplace) {
-		ctx.getDslContext().update(WORKPLACE)
-		.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
-		.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
-		.set(WORKPLACE.ADDRESS, workplace.getAddress())
-		.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
-		.set(WORKPLACE.SCOPE, workplace.getScope())
-		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
-		.set(WORKPLACE.ACTIVE, workplace.isActive() ? (byte) 1 : 0)
-		.where(WORKPLACE.ID.eq(workplace.getId()))
-		.execute();
-		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
-		return workplace;
-	}
-	
-	protected static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {
-		
-		@Override
-		public Workplace apply(Record r) {
-			return build(r);
-		}
-		
-		public static Workplace build(Record r) {
-			return new Workplace()
-					.setId(getValue(r, WORKPLACE.ID))
-					.setDomain(getValue(r, WORKPLACE.DOMAIN))
-					.setActive(getBoolean(r, WORKPLACE.ACTIVE))
-					.setAddress(getValue(r, WORKPLACE.ADDRESS))
-					.setCustomer(getValue(r, WORKPLACE.CUSTOMER))
-					.setDescription(getValue(r, WORKPLACE.DESCRIPTION))
-					.setEconomicAgreement(Administration.safeValueOf(getValue(r, WORKPLACE.ECONOMICAGREEMENT)))
-					.setEnterprise(getValue(r, WORKPLACE.ENTERPRISE))
-					.setScope(getValue(r, WORKPLACE.SCOPE));
-		}
-	}
-	
 }

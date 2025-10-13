@@ -7,87 +7,55 @@ public class OCRAddress implements Serializable {
 	
 	private static final long serialVersionUID = 9148275724492999748L;
 	
-	private String text;
-	private String addressNumber;
-	private String country;
-	private String municipality;
-	private String neighborhood;
-	private String postalCode;
-	private String region;
-	private String street;
-	private String subRegion;
-	
-	public Optional<String> getText() {
-		return Optional.ofNullable(text);
+	private OCRString raw;
+	private OCRString postalCode;
+	private OCRString municipality;
+	private OCRString region;
+	private OCRString street;
+
+	public Optional<OCRString> getRaw() {
+		return Optional.ofNullable(raw);
 	}
-	public OCRAddress setText(String text) {
-		this.text = text;
+	
+	public OCRAddress setRaw(OCRString raw) {
+		this.raw = raw;
 		return this;
 	}
 	
-	public Optional<String> getAddressNumber() {
-		return Optional.ofNullable(addressNumber);
-	}
-	public OCRAddress setAddressNumber(String addressNumber) {
-		this.addressNumber = addressNumber;
-		return this;
+	public Optional<OCRString> getPostalCode() {
+		return Optional.ofNullable(postalCode);
 	}
 	
-	public Optional<String> getCountry() {
-		return Optional.ofNullable(country);
-	}
-	public OCRAddress setCountry(String country) {
-		this.country = country;
+	public OCRAddress setPostalCode(OCRString postalCode) {
+		this.postalCode = postalCode;
 		return this;
 	}
-	
-	public Optional<String> getMunicipality() {
+
+	public Optional<OCRString> getMunicipality() {
 		return Optional.ofNullable(municipality);
 	}
-	public OCRAddress setMunicipality(String municipality) {
+	
+	public OCRAddress setMunicipality(OCRString municipality) {
 		this.municipality = municipality;
 		return this;
 	}
 	
-	public Optional<String> getNeighborhood() {
-		return Optional.ofNullable(neighborhood);
-	}
-	public OCRAddress setNeighborhood(String neighborhood) {
-		this.neighborhood = neighborhood;
-		return this;
-	}
-	
-	public Optional<String> getPostalCode() {
-		return Optional.ofNullable(postalCode);
-	}
-	public OCRAddress setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-		return this;
-	}
-	
-	public Optional<String> getRegion() {
+	public Optional<OCRString> getRegion() {
 		return Optional.ofNullable(region);
 	}
-	public OCRAddress setRegion(String region) {
+	
+	public OCRAddress setRegion(OCRString region) {
 		this.region = region;
 		return this;
 	}
 	
-	public Optional<String> getStreet() {
+	public Optional<OCRString> getStreet() {
 		return Optional.ofNullable(street);
 	}
-	public OCRAddress setStreet(String street) {
+	
+	public OCRAddress setStreet(OCRString street) {
 		this.street = street;
 		return this;
 	}
-	
-	public Optional<String> getSubRegion() {
-		return Optional.ofNullable(subRegion);
-	}
-	public OCRAddress setSubRegion(String subRegion) {
-		this.subRegion = subRegion;
-		return this;
-	}
-	
 	
 }

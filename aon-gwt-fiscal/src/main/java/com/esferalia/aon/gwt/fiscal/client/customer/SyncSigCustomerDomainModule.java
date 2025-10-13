@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
@@ -38,6 +39,7 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 	private HTMLPanel messagePanel = new HTMLPanel("");
 
 	private AonCustomMultiSelectBox customerStatus = new AonCustomMultiSelectBox("Estado Cliente");
+	private AonCustomListBox sync = new AonCustomListBox("Vinculaci\u00f3n");
 
 	private SimplePanel centerPanel;
 
@@ -72,6 +74,8 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 				Set<String> selectedOptions = new LinkedHashSet<String>();
 				selectedOptions.add("Activo");
 				customerStatus.setSelectedOptions(selectedOptions);
+				
+				sync.setValue("");
 
 				onSearch();
 			}
@@ -111,8 +115,24 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 		Set<String> selectedOptions = new LinkedHashSet<String>();
 		selectedOptions.add("Activo");
 		customerStatus.setSelectedOptions(selectedOptions);
+		
+		// Set default search if exists
+		if(AonStringUtils.isNotBlank(getSearchQuery())) {
+			docklayoutPanel.getSearchTextBox().setValue(getSearchQuery());
+			removeSearchQuery();
+		}
+		
+
+		sync.clearItems();
+		sync.addItem("Todos", "");
+		sync.addItem("No vinculados", "1");
+		sync.addItem("No sincronizados", "2");
+		sync.addItem("No vinculados ni sincronizados", "3");
+		sync.setValue("3");
+		sync.addChangeHandler(e -> onSearch());
 
 		docklayoutPanel.addFilterWidget(customerStatus);
+		docklayoutPanel.addFilterWidget(sync);
 
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -140,7 +160,12 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 		
 		this.params.setQuery(searchQuery);
 		this.params.setCustomerStatus(customerStatusSearch);
-
+		
+		if(AonStringUtils.isNotBlank(sync.getValue())) {
+			this.params.setNoRaddInfo(AonStringUtils.equalsIgnoreCase(sync.getValue(), "1") || AonStringUtils.equalsIgnoreCase(sync.getValue(), "3"));
+			this.params.setNoAonCustomer(AonStringUtils.equalsIgnoreCase(sync.getValue(), "2") || AonStringUtils.equalsIgnoreCase(sync.getValue(), "3"));
+		}
+		
 		sigCustomerDomainPanel = new SigCustomerDomainPanel(params) {
 
 			@Override
@@ -189,6 +214,17 @@ public class SyncSigCustomerDomainModule  implements EntryPoint {
 
 		return result.toArray(new Byte[0]);
 	}
+	
+	public static native String getSearchQuery()
+	/*-{
+		var value = $wnd.localStorage.getItem("searchQuery");
+		return value;
+	}-*/;
+	
+	public static native void removeSearchQuery()
+	/*-{
+		$wnd.localStorage.removeItem("searchQuery");
+	}-*/;
 
 }
 

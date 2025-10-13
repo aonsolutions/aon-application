@@ -36,6 +36,9 @@ export class AonCustomer extends AonReg {
 	
 	sigCustomerDomainName;
 	sigCustomerDomainId;
+	
+	// Method to call GWT sync module
+	linkSigDomain;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -75,11 +78,6 @@ export class AonCustomer extends AonReg {
 				this.options.push({ title: MSG.USERS, fn: () => this.buildUsersData() });
 			}
 		}
-
-		// if(this.isSig()) {
-		// 	this.options.push({ title: MSG.BOOKING + '(SIG)', fn: () => this.buildBookingData()});		
-		// 	this.options.push({ title: MSG.PRODUCTS + '(SIG)', fn: () => this.buildItemData()});
-		// }
 	}
 
 	build = () => {
@@ -383,12 +381,15 @@ export class AonCustomer extends AonReg {
 			.then((resp) => {
 				this.buildSigEnterpriseLinkedView(resp);
 				
-				if(resp && resp.length == 1){
+				if(resp && resp.length > 0){
 					this.sigCustomerDomainName = resp[0].domainName;
 					this.sigCustomerDomainId = resp[0].domainId;
 					
-					this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
-					this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+					if(!this.existTabOption(MSG.BOOKING))
+						this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+					
+					if(!this.existTabOption(MSG.USERS))
+						this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
 				}
 			})
 			/*
@@ -404,6 +405,7 @@ export class AonCustomer extends AonReg {
 				document: this.registry.getDocument(),
 			})
 			.then((resp) => {
+				console.log("getRelationShip", resp);
 				this.buildEnterpriseLinkedView(resp);
 			})
 			/*
@@ -521,20 +523,11 @@ export class AonCustomer extends AonReg {
 		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
 		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
-		if (link || !companies.length) {
-			main.appendChild(iconArrowDown);
-		}
-
-		if (link) {
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown, resp);
-			});
-		} else {
-			statusText.style.marginRight = "5px";
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getSigOptionsLinked(iconArrowDown);
-			});
-		}
+		main.appendChild(iconArrowDown);
+		
+		main.addEventListener(EVENT.CLICK, () => {
+			this.getSigOptionsLinked(iconArrowDown, resp);
+		});
 	}
 	
 	hideSaveButton(){
@@ -620,6 +613,7 @@ export class AonCustomer extends AonReg {
 
 		let booking = new AonBooking();
 		booking.sessionData = this.getSessionData();
+		booking.fromCustomer = true;
 		main.appendChild(booking);
 	}
 
@@ -636,6 +630,7 @@ export class AonCustomer extends AonReg {
 		let userList = new AonUserList();
 		userList.sessionData = this.getSessionData();
 		userList.parent = main;
+		userList.fromCustomer = true;
 		main.appendChild(userList);
 	}
 
@@ -840,7 +835,18 @@ export class AonCustomer extends AonReg {
 				}
 			);
 			
-		} 
+		} else {
+			options.push(
+				{
+					name: "Vincular",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.linkSigDomain(this.registry.alias);
+					},
+				}
+			);
+		}
 		/*
 		else {
 			options.push(

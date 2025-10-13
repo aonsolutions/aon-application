@@ -346,7 +346,7 @@ public class ConfigurationDAO {
 			.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
 			.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
 			.setSeries( SeriesDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
-			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, domainId) )
+			.setWorkplaces( WorkplaceDAO.getWorkplaces(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)))
 			.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
 			.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
 			.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )

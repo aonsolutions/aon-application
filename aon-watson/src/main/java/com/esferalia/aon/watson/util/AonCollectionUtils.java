@@ -90,8 +90,7 @@ public class AonCollectionUtils {
 		return !isEmpty(array);
 	}
 	public static <T> int size(T[] array) {
-		if (array == null) return 0;
-		return array.length;
+		return  isEmpty(array) ? 0 : array.length;
 	}
 
 	public static IntStream stream( int times) {

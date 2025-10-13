@@ -509,7 +509,7 @@ public class AonFaker {
 	
 	public static Warehouse getWarehouse(AONContext ctx) {
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		return new Warehouse()
 			.setDomain(ctx.getDomainId())	
 			.setWorkplace(workplace.getId())
@@ -640,7 +640,7 @@ public class AonFaker {
 		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
 		
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		
 		String series = "TEST";
 		int number = SalesDAO.getNextNumber(ctx, series);
@@ -689,7 +689,7 @@ public class AonFaker {
 		if(supplier.isEmpty()) supplier = SupplierDAO.save(ctx, getSupplier(ctx));
 		
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		
 		String series = "TEST";
 		int number = OfferDAO.getNextNumber(ctx, series);

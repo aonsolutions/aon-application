@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.occam.api.model.registry.DomainCustomerSync;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -53,8 +55,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		LOGGER.addHandler(new ConsoleLogHandler());
 	}
 
-	private final int limit = 30;
-//	private final int limit = 3;
+	private final int limit = 40;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt(0);
@@ -75,9 +76,9 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 	private static enum COLS {
 
+		IDC("Cliente", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DOC(AON.MSG.document(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DES(AON.MSG.name(), "-moz-available",
-				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DES(AON.MSG.name(), "-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		STA(AON.MSG.status(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		RAD("RaddInfo", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
 		ACU("Aon Customer", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
@@ -200,15 +201,17 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 				paintRow(customer);
 			}
 
-			offset.setValue(offset.intValue() + customers.size() - 1);
-			enableMoreData();
+			if(!params.isNoRaddInfo() && !params.isNoAonCustomer()) {
+				offset.setValue(offset.intValue() + limit - 1);
+				enableMoreData();
 
-			if (!something) {
-				paintEmptyRow();
-				disableMoreData();
-			}
-			enableSearch();
-
+				if (!something) {
+					paintEmptyRow();
+					disableMoreData();
+				}
+				enableSearch();
+			} else disableSearch();
+				
 			onHideMessage();
 
 		});
@@ -228,6 +231,10 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onCusotmerOpen(customer), ClickEvent.getType());
 
+		Label id = new Label(customer.getId().toString());
+		tab.addInlineStyle(id, COLS.IDC.getStyles());
+		tab.addRow(row, id, COLS.IDC.getColWidth());
+		
 		Label document = new Label(customer.getDocument());
 		tab.addInlineStyle(document, COLS.DOC.getStyles());
 		tab.addRow(row, document, COLS.DOC.getColWidth());
@@ -248,12 +255,13 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		if(customerRaddInfo.size() > 1) {
 			
 			customerRaddInfo.forEach(ds -> {
-				AonTableButton raddInfoBtn = new AonTableButton("Vinculado", AON.CSS.aonIconCheckCircle());
+				AonTableButton raddInfoBtn = new AonTableButton("RaddInfo (" + ds.getDomainId() + " -- " + ds.getDomainName() + ")", AON.CSS.aonIconCheckCircle());
 				customerRaddInfoPanel.add(raddInfoBtn);
 			});
 			
 		} else {
-			AonTableButton raddInfoBtn = new AonTableButton(customerRaddInfo.isEmpty() ? "No vinculado" : "Vinculado",
+			AonTableButton raddInfoBtn = new AonTableButton(
+					customerRaddInfo.isEmpty() ? "No existe RaddInfo" : "RaddInfo (" + customerRaddInfo.get(0).getDomainId() + " -- " + customerRaddInfo.get(0).getDomainName() + ")",
 					customerRaddInfo.isEmpty() ? AON.CSS.aonIconBlock() : AON.CSS.aonIconCheckCircle());
 
 			customerRaddInfoPanel.add(raddInfoBtn);
@@ -266,22 +274,24 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		List<DomainCompany> customerDomain = customersDomain.get(customer.getId());
 		if(customerDomain.size() > 1) {
 			
-			customerRaddInfo.forEach(ds -> {
-				AonTableButton raddInfoBtn = new AonTableButton("Vinculado", AON.CSS.aonIconCheckCircle());
+			customerDomain.forEach(ds -> {
+				AonTableButton raddInfoBtn = new AonTableButton("AonCustomer (" + ds.getDomain().getAonCustomer() + ") -- " +  ds.getDomain().getName() + " [" + ds.getDomain().getId() + "]", AON.CSS.aonIconCheckCircle());
 				customerDomainPanel.add(raddInfoBtn);
 			});
 			
 		} else {
 			AonTableButton customerDomainBtn = new AonTableButton(
-					customerDomain.isEmpty() ? "No vinculado" : "Vinculado",
+					customerDomain.isEmpty() ? "No existe AonCustomer" : "AonCustomer (" + customerDomain.get(0).getDomain().getAonCustomer() + ") -- " +  customerDomain.get(0).getDomain().getName() + " [" + customerDomain.get(0).getDomain().getId() + "]",
 					customerDomain.isEmpty() ? AON.CSS.aonIconBlock() : AON.CSS.aonIconCheckCircle());
 			
-
 			customerDomainPanel.add(customerDomainBtn);
 		}
 		tab.addInlineStyle(customerDomainPanel, COLS.ACU.getStyles());
 		tab.addRow(row, customerDomainPanel, COLS.ACU.getColWidth());
 
+		HTMLPanel optionsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		optionsPanel.addStyleName(AON.CSS.aonItemFlex());
+		
 		Widget optionBtn;
 		if (!customerDomain.isEmpty() && !customerRaddInfo.isEmpty())
 			optionBtn = new Label();
@@ -295,18 +305,29 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			optionBtn = new AonTableButton("Sincronizar", AON.CSS.aonIconSync());
 			((AonTableButton) optionBtn).addClickHandler(e -> {
 				e.stopPropagation();
-				onCustomerClick(customer, null);
+				onCustomerClick(customer, !customerRaddInfo.isEmpty() ? customerRaddInfo.get(0).getDomainName() : (!customerDomain.isEmpty() ? customerDomain.get(0).getDomain().getName() : null));
 			});
 		}
-		tab.addInlineStyle(optionBtn, COLS.BTN.getStyles());
-		tab.addRow(row, optionBtn, COLS.BTN.getColWidth());
+		optionsPanel.add(optionBtn);
+		
+		if(!customerDomain.isEmpty() && needInfoShow(customer, customerDomain.get(0))) {
+			AonTableButton messages = new AonTableButton(
+					getInfoMessage(customer, customerDomain.get(0)),
+					AON.CSS.aonIconInfo()
+			);
+			messages.getElement().getStyle().setProperty("background-size", "22px");
+			optionsPanel.add(messages);
+		}
+		
+		tab.addInlineStyle(optionsPanel, COLS.BTN.getStyles());
+		tab.addRow(row, optionsPanel, COLS.BTN.getColWidth());
 
 		rowCustomers.put(customer.getId(), customer);
 	}
 	
 	private void onCustomerClick(Customer customer, String domainName) {
 		AonDialog dialog = new AonDialog("Vinculaci\u00f3n Cliente / Dominio", new Label(
-				"Desea sincronizar la vinculaci\u00f3n del cliente " + customer.getName() + " ?"));
+				"Desea sincronizar la vinculaci\u00f3n del cliente " + domainName + " ?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 
 			@Override
@@ -315,6 +336,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			@Override
 			public void onAccept() {
 				onSyncCustomerDomain(customer, domainName);
+				dialog.hide();
 			}
 
 		});
@@ -328,7 +350,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		List<DomainSigAddInfo> customerRaddInfo = customersRaddInfo.get(customer.getId());
 		List<DomainCompany> customerDomain = customersDomain.get(customer.getId());
 		
-		SyncSigMultipleDomainsTable table = new SyncSigMultipleDomainsTable(customer.getId(), customerRaddInfo, customerDomain) {
+		SyncSigMultipleDomainsTable table = new SyncSigMultipleDomainsTable(customer, customerRaddInfo, customerDomain) {
 			
 			@Override
 			protected void onClickRow(DomainCustomerSync domainCustomerSync) {
@@ -339,7 +361,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		
 		centerPanel.setWidget(table);
 		
-		AonDialog dialog = new AonDialog(customer.getName() + " (" + customer.getId() + ")", centerPanel);
+		AonDialog dialog = new AonDialog(customer.getName() + " (" + customer.getId() + ") " + customerRaddInfo.size() + "/" + customerDomain.size(), centerPanel);
 		dialog.removeMaxWidth();
 		dialog.showCloseButton(true);
 		dialog.setWidth("55rem");
@@ -354,7 +376,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 		params.setSig(true);
 		params.setOffset(offset.intValue());
-		params.setLimit(limit);
+		params.setLimit(params.isNoRaddInfo() || params.isNoAonCustomer() ? Integer.MAX_VALUE : limit);
 		
 		COMMON_SERVICE.getCustomers(params, new AsyncCallback<List<Customer>>() {
 
@@ -370,7 +392,14 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 					end -> {
 						checkCustomerDomains(customerIds, 
 							parsedCustomers -> {
-								success.accept(customers);
+								if(params.isNoRaddInfo() && !params.isNoAonCustomer())
+									success.accept(customers.stream().filter(c -> customersRaddInfo.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+								else if(!params.isNoRaddInfo() && params.isNoAonCustomer())
+									success.accept(customers.stream().filter(c -> customersDomain.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+								else if(params.isNoRaddInfo() && params.isNoAonCustomer())
+									success.accept(customers.stream().filter(c -> customersDomain.get(c.getId()).isEmpty() && customersRaddInfo.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+								else
+									success.accept(customers);
 							});
 							
 				});
@@ -472,7 +501,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		DomainSyncPanel domainSyncPanel = new DomainSyncPanel(customer, paramsDomains) {
 			@Override protected void onEndSuccessSync() { 
 				dialog.hide(); 
-				onSearch();
+				onEndSync();
 			}
 		};
 		
@@ -488,23 +517,38 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		List<DomainCompany> customerDomainList = customersDomain.get(customer.getId());
 		List<DomainSigAddInfo> customerRaddInfoList = customersRaddInfo.get(customer.getId());
 		
-		DomainCompany domainCompanyTmp = new DomainCompany();
+		Optional<DomainCompany> domainCompanyTmp = Optional.empty();
 		if(!customerDomainList.isEmpty())
-			domainCompanyTmp = AonStringUtils.isBlank(domainName) ? customerDomainList.get(0) : customerDomainList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomain().getName(), domainName)).findFirst().orElse(customerDomainList.get(0));
-		else {
-			 DomainSigAddInfo domainSigAddInfo = AonStringUtils.isBlank(domainName) ? customerRaddInfoList.get(0) : customerRaddInfoList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomainName(), domainName)).findFirst().orElse(customerRaddInfoList.get(0));
-			 domainCompanyTmp = new DomainCompany()
-						.setSchema(domainSigAddInfo.getDomainSchema())
-						.setDomain(
-							new Domain()
-								.setId(Integer.parseInt(domainSigAddInfo.getDomainId()))
-								.setName(domainSigAddInfo.getDomainName())
-								.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), domainSigAddInfo.getDomainType())).findFirst().orElse(null))
-						)
-						;
+			domainCompanyTmp = customerDomainList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomain().getName(), domainName)).findFirst();
+		
+		if(domainCompanyTmp.isEmpty()) {
+			Optional<DomainSigAddInfo> domainSigAddInfo = customerRaddInfoList.stream().filter(d -> AonStringUtils.equalsIgnoreCase(d.getDomainName(), domainName)).findFirst();
+			if(!domainSigAddInfo.isEmpty()) 
+				domainCompanyTmp = Optional.of(
+						new DomainCompany()
+							.setSchema(domainSigAddInfo.get().getDomainSchema())
+							.setDomain(
+								new Domain()
+									.setId(Integer.parseInt(domainSigAddInfo.get().getDomainId()))
+									.setName(domainSigAddInfo.get().getDomainName())
+									.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), domainSigAddInfo.get().getDomainType())).findFirst().orElse(null))
+							)
+							);
 		}
 		
-		DomainCompany domainCompany = domainCompanyTmp;
+		if(domainCompanyTmp.isEmpty() && !customerDomainList.isEmpty()) domainCompanyTmp = Optional.of(customerDomainList.get(0));
+		if(domainCompanyTmp.isEmpty() && !customerRaddInfoList.isEmpty()) domainCompanyTmp = Optional.of(
+				new DomainCompany()
+				.setSchema(customerRaddInfoList.get(0).getDomainSchema())
+				.setDomain(
+					new Domain()
+						.setId(Integer.parseInt(customerRaddInfoList.get(0).getDomainId()))
+						.setName(customerRaddInfoList.get(0).getDomainName())
+						.setDomainType(DomainType.getValues().stream().filter(dt -> AonStringUtils.equalsIgnoreCase(dt.getName(), customerRaddInfoList.get(0).getDomainType())).findFirst().orElse(null))
+				)
+				);
+		
+		DomainCompany domainCompany = domainCompanyTmp.get();
 		
 		COMMON_SERVICE.syncCustomer(params.getDomainName(), params.getDomainId(), params.getUser(), customer.getId(), domainCompany, true, new AsyncCallback<Void>() {
 
@@ -518,7 +562,6 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 				String host = isLocalDev ? "localhost:8080" : "aon.solutions";
 				String endPoint = "/ms/api/domain/sync-aon-customer";
 				
-
 				JSONObject body = new JSONObject();
 				body.put("customer", new JSONString(customer.getId().toString()));
 				body.put("domain_name", new JSONString(domainCompany.getDomain().getName()));
@@ -540,6 +583,25 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 				});
 			}
 		});
+	}
+	
+	private boolean needInfoShow(Customer customer, DomainCompany domainCompany) {
+		return (null == domainCompany || !domainCompany.getDomain().getAonCustomer().equals(customer.getId()))
+			|| (customer.getStatus().equals(RegistryStatus.BLOCKED) && null == domainCompany.getDomain().getExpirationDate())
+			|| (customer.getStatus().equals(RegistryStatus.INACTIVE) && (null == domainCompany.getDomain().getExpirationDate() || domainCompany.getDomain().isActive()))
+			
+			;
+	}
+	
+	private String getInfoMessage(Customer customer, DomainCompany domainCompany) {
+		if(null == domainCompany || !domainCompany.getDomain().getAonCustomer().equals(customer.getId()))
+			return "El cliente del dominio no coincide con el seleccionado";
+		else if(customer.getStatus().equals(RegistryStatus.BLOCKED) && null == domainCompany.getDomain().getExpirationDate())
+			return "El cliente esta bloqueado pero el dominio no tiene fecha de expiraci\u00f3n";
+		else if(customer.getStatus().equals(RegistryStatus.INACTIVE) && (null == domainCompany.getDomain().getExpirationDate() || domainCompany.getDomain().isActive()))
+			return "El cliente esta inactivo pero el dominio esta activo o no tiene fecha de expiraci\u00f3n";
+		
+		return null;
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

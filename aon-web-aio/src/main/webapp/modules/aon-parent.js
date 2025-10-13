@@ -7,7 +7,9 @@ import * as LS from '../services/localStorageService.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { MenuApps, ClassicApps, Apps } from '../services/app.js';
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
+import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 import * as JSF from './aon-jsf-app.js';
+
 
 
 export class AonParent extends AonElement {
@@ -215,11 +217,11 @@ export class AonParent extends AonElement {
 	
 			if(filter.active) {
 				value &&= company.active ;
-				//value &&= (company.parentId || company.type !== 'CONSULTANCY') ;
+				value &&= !company.expired ;
 			}
-	
-			if(filter.inactive) {
-				value &&= !company.active;
+
+			if (filter.inactive) {
+				value &&= !company.active || company.expired;
 			} 
 	
 			if(filter.shared) {
@@ -640,13 +642,22 @@ export class AonParent extends AonElement {
 		let nameSpan = this.createElement(TAG.SPAN);
 		nameSpan.innerHTML = company.name;
 
+		let detailSpan = this.createElement(TAG.SPAN);
+		detailSpan.className = 'aonLiSpanSubtitle'  ;
 		let docSpan = this.createElement(TAG.SPAN);
-		docSpan.className = 'aonLiSpanSubtitle'  ;
 		docSpan.innerHTML = company.document || `<span class='${CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING}' >Por favor, introduzca un CIF/NIF/Documento válido.</span>`;
+		
+		let expirationSpan = this.createElement(TAG.SPAN);
+		expirationSpan.className = CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING;
+		let expired = company.expired ? 'he expirado' : 'expira';
+		expirationSpan.innerHTML = company.expirationDate ? ` El periodo de contratación ${expired} el ${AonDateUtils.formatDate(AonDateUtils.parse(company.expirationDate))}  ` : '' ;
 
+		detailSpan.appendChild(docSpan);
+		detailSpan.appendChild(expirationSpan);
+		
 		companySpan.appendChild(iconI);
 		companySpan.appendChild(nameSpan);
-		companySpan.appendChild(docSpan);
+		companySpan.appendChild(detailSpan);
 		li.appendChild(companySpan);
 
 		let countSpan = this.createElement(TAG.SPAN);
@@ -654,14 +665,37 @@ export class AonParent extends AonElement {
 		countSpan.style.fontWeight = "bold";
 		countSpan.innerHTML = count || '';
 		li.appendChild(countSpan);
-
-		let sp = this.createElement(TAG.SPAN);
-		let i2 = this.createElement(TAG.I);
-		i2.className = 'material-icons aonAvatar';
-		i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
-		sp.appendChild(i2);
-		li.appendChild(sp);
+		
+		if (company.active && !company.expired) {
+			let sp = this.createElement(TAG.SPAN);
+			let i2 = this.createElement(TAG.I);
+			i2.className = 'material-icons aonAvatar';
+			i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			sp.appendChild(i2);
+			sp.addEventListener(EVENT.CLICK, (event) => {
+				this.open(company);
+				event.stopPropagation();
+			});
+			sp.title = `Abrir ${company.name} en una pestaña nueva`;
+			li.appendChild(sp);
+		}
+		
 		return li;
+	}
+	
+	open(company){
+		let companyForm = document.createElement(TAG.FORM);
+		companyForm.style.display = 'none';
+		companyForm.target = `${company.name}`;
+		companyForm.action = `${location.protocol}//${company.domain}:${location.port}`;
+		let tokenInput = this.createElement(TAG.INPUT);
+		tokenInput.type = 'hidden';
+		tokenInput.name = 'token';
+		tokenInput.value = LS.getToken();
+		companyForm.appendChild(tokenInput);
+		this.appendChild(companyForm);
+		companyForm.addEventListener(EVENT.SUBMIT, () =>  companyForm.remove() );
+		companyForm.submit();
 	}
 	
 	getAonHeader() {

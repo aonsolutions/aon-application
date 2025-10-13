@@ -272,7 +272,7 @@ public class OCRInvoiceBuilder {
 			if (ocrType == OCRType.ticket) {
 				invoice.setType( InvoiceType.UNDEDUCTIBLE );	
 			} else if (ocrType == OCRType.invoice) {
-				String issuerTaxId = ocrInvoice.getIssuerDocument();
+				String issuerTaxId = ocrInvoice.getSupplierDocument();
 				String issuerDocument = toAonDocument( issuerTaxId );
 				boolean outputInvoice = AonStringUtils.equals( companyDocument, issuerDocument); 
 				if (outputInvoice) {
@@ -302,9 +302,8 @@ public class OCRInvoiceBuilder {
 			invoiceType.visit(invoice, new IInvoiceTypeVisitor<Void>() {
 				@Override
 				public Void visitSales(Invoice invoice) {
-					String recipientDocument = toAonDocument( ocrInvoice.getRecipientDocument() );
-					String recipientCountry = ocrInvoice.getRecipientCountry().flatMap( s -> s.getValue() ).orElse(null);
-					Country country = Country.safeValueOf( recipientCountry );
+					String recipientDocument = toAonDocument(ocrInvoice.getCustomerDocument());
+					Country country = Country.safeValueOf(ocrInvoice.getCustomerCountry());
 					invoice
 						.setRegistryDocument( recipientDocument )
 						.setRegistryDocumentCountry( country );
@@ -313,9 +312,8 @@ public class OCRInvoiceBuilder {
 				
 				@Override
 				public Void visitPurchase(Invoice invoice) {
-					String issuerDocument = toAonDocument( ocrInvoice.getIssuerDocument() );
-					String issuerCountry = ocrInvoice.getIssuerCountry().flatMap( s -> s.getValue() ).orElse(null);
-					Country country = Country.safeValueOf( issuerCountry );
+					String issuerDocument = toAonDocument(ocrInvoice.getSupplierDocument());
+					Country country = Country.safeValueOf(ocrInvoice.getSupplierCountry());
 					invoice
 						.setRegistryDocument( issuerDocument )
 						.setRegistryDocumentCountry( country );

@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -23,13 +25,16 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -464,6 +469,126 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				3333.00 - 1000.00, 
+				salary.getTotalLiquid() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testLiquidAndEmbargoI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}, new String[] { 
+						"NETO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						"( P_1 + P_2 )* 0.10 ",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 2.00/100" 
+				}, category);
+		//@formatter:on
+		
+		addSystemData(aonContext, contract.getStartDate(), contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put("SMI", "1184.00");
+		
+						put("EMBARGAR", 
+								"def (EMBARGO, EMBARGABLE) { "
+								+ "EMBARGABLE=MAX(EMBARGABLE, 0.00); "
+								+ "PENDIENTE = ( EMBARGO + EMBARGADO ); "
+								+ "E=((PENDIENTE > 0) ? MIN(EMBARGABLE, PENDIENTE ) : 0.00); "
+								+ "SELF.addVariable('PENDIENTE',PENDIENTE - E); "
+								+ "SELF.addVariable('EMBARGADO',-1*(EMBARGADO - E)); "
+								+ "E; "
+								+ "}");
+						
+						put("MAX_EMBARGABLE_MES", 
+								"def(total_liquido){ "
+								+ "_smi = ( PAGAS_PRORRATEADAS ? SMI * 14 /12 : SMI); "
+								+ "MAX(((total_liquido - _smi) * 0.30),0) + "
+								+ "MAX(((total_liquido - 2 * _smi ) * 0.20),0) + "
+								+ "MAX((( total_liquido - 3 * _smi ) * 0.10),0) + "
+								+ "MAX((( total_liquido - 4 * _smi ) * 0.15),0) + "
+								+ "MAX((( total_liquido - 5 * _smi ) * 0.15),0)"
+								+ "}");
+						put("MAX_EMBARGABLE_DIA", 
+								"def(liquido_diario){ "
+								+ "_smi_diario = (SMI * 14 /12) / 30; "
+								+ "MAX(((liquido_diario - _smi_diario) * 0.30),0) + "
+								+ "MAX(((liquido_diario - 2 * _smi_diario ) * 0.20),0) + "
+								+ "MAX(((liquido_diario - 3 * _smi_diario ) * 0.10),0) + "
+								+ "MAX(((liquido_diario - 4 * _smi_diario ) * 0.15),0) + "
+								+ "MAX(((liquido_diario - 5 * _smi_diario ) * 0.15),0)"
+								+ "}");
+						put("MAX_EMBARGABLE", 
+								"def(total_liquido){ "
+								+ "_dias_trabajados = DIAS_TRABAJADOS / COEFICIENTE_PARCIALIDAD; "
+								+ "(MODALIDAD_MENSUAL || !PAGAS_PRORRATEADAS)?  MAX_EMBARGABLE_MES(total_liquido) :  MAX_EMBARGABLE_DIA(total_liquido / _dias_trabajados) * _dias_trabajados "
+								+ "}");
+						
+					}
+				}
+		);
+		
+		
+		addEmbargo(aonContext, contract, "EMBARGO", "EMBARGAR(/*user*/93.72/**/, MAX_EMBARGABLE(TOTAL_LIQUIDO))");
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		salary.getEmbargoS().forEach(e -> System.out.println(e.getDescription() + " = " + e.getAmount() ));
+		
+		double embargo = salary.getEmbargoS().stream().collect(Collectors.summingDouble(SalaryEmbargo::getAmount));
+		
+		Assert.assertEquals(
+				93.72, 
+				embargo 
+				, DELTA);
+
+		//@formatter:off
+		Assert.assertEquals(
+				3333.00 - embargo, 
 				salary.getTotalLiquid() 
 				, DELTA);
 		//@formatter:on

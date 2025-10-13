@@ -188,11 +188,16 @@ public class MultipleDownloadServlet extends HttpServlet{
     		AON.getRawdocFullStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().in(idsArray)).forEach(r -> {
     			JSONObject data = new JSONObject(r.getJson());
     			String name = data.opt("reference") != null && !AonStringUtils.isBlank(data.optString("reference")) && data.optString("reference").length() > 2 
-    					? data.optString("reference") : "invoice" + AonRandomStringUtils.random(5);
+    					? "Factura " + data.optString("reference") : "Factura " + r.getId();
 				try {
 					if(r.getData() != null) {
 						File file = File.createTempFile(name, "." + r.getMimeType().getExtension());
 						AonFileUtils.writeByteArrayToFile(file, r.getData());
+						list.add(file);
+					} else if(AonStringUtils.isNotBlank(r.getS3Bucket()) && AonStringUtils.isNotBlank(r.getS3Key())) {
+						byte[] f = S3.getInstance().download(r.getS3Bucket(), r.getS3Key());
+						File file = File.createTempFile(name, ".pdf");
+						AonFileUtils.writeByteArrayToFile(file, f);
 						list.add(file);
 					} else {
 						CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
@@ -203,6 +208,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 							logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(id)
 								.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 						}
+						
 						Invoice invoice = InvoiceJSON.fromJSON(new JSONObject(r.getJson()));
 						File file = File.createTempFile(name, ".pdf");
 						FileOutputStream out = new FileOutputStream(file);

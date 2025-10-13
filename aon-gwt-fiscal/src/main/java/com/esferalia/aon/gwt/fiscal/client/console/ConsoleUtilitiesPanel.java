@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -56,9 +57,15 @@ public class ConsoleUtilitiesPanel extends DockLayoutPanel implements HasValueCh
 	}
 
 	private void run(ConsoleDomainTableCallback callback, ConsoleUtilities u) {
-		AonConsoleProgress aonConsole = new AonConsoleProgress( true );
-		container.clear();
-		container.add(aonConsole);
-		callback.runUtility( u, aonConsole);
+		AonConfirmDialog.showConfirm( "Ejecutar utilidad"
+			, "\u00BFEst\u00E1 seguro de que desea ejecutar la utilidad '" + u.getDescription() + "'?", () -> {
+				
+			AonConsoleProgress aonConsole = new AonConsoleProgress( true );
+			container.clear();
+			container.add(aonConsole);
+			callback.runUtility( u, aonConsole);
+			
+		});
+		
 	}
 }

@@ -99,11 +99,12 @@ public interface ICommon {
 	// WORKPLACE
 	// --------------------------------------------
 	
-	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
-	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
-	@Deprecated
-	public void updateWorkplace(AONContext ctx, Workplace workplace);
+	public Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId);
+	public Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer workplaceId);	
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace);
+
+	@Deprecated	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
+	@Deprecated	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
 	
 	// --------------------------------------------
 	// PAYROLL WORKPLACE

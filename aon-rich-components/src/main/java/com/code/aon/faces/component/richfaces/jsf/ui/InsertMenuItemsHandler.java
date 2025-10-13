@@ -42,30 +42,15 @@ import jakarta.el.ValueExpression;
 
 /**
  */
-public final class InsertMenuItemsHandler extends TagHandler implements TemplateClient {
+public final class InsertMenuItemsHandler extends AbstractInsertHandler implements TemplateClient {
 	
 	
-	private final String name;
-	private final String elVar;
-    private final TagAttribute filter ;
 
     /**
      * @param config
      */
     public InsertMenuItemsHandler(TagConfig config) {
         super(config);
-        this.elVar = "el";
-        TagAttribute nameAttr = this.getAttribute("name");
-        if (nameAttr != null) {
-            if (!nameAttr.isLiteral()) {
-                throw new TagAttributeException(this.tag, nameAttr, "Must be Literal");
-            }
-            this.name = nameAttr.getValue();
-        } else {
-            this.name = null;
-        }
-        this.filter = this.getAttribute("filter");
-        
     }
 
     public void apply(FaceletContext ctx, UIComponent parent)
@@ -125,16 +110,6 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
         }
     }
 
-    @Override
-    public boolean apply(FaceletContext ctx, UIComponent parent, String name)
-    		throws IOException, FacesException, FaceletException, ELException {
-        if (Objects.equals(this.name, name)) {
-            this.nextHandler.apply(ctx, parent);
-            return true;
-        }
-        return false;
-    }
-    
     private static HtmlMenuItem  createHtmlMenuItem( UICommand uiCommand) {
     	
 

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server.console.utilities;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +20,7 @@ abstract class AbstractConsoleUtility {
 
 	private static final Logger LOGGER = Logger.getLogger(AbstractConsoleUtility.class.getName());
 
-	void run(DomainParams domainParams, ConsoleParams consoleParams) throws IOException {
+	void run(DomainParams domainParams, ConsoleParams consoleParams) {
 		try {
 			String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
 			ConsoleMessageUtils.start(consoleParams.getPrinter());
@@ -37,8 +36,8 @@ abstract class AbstractConsoleUtility {
 		}
 	}
 	
-	private void run(String processId, DomainParams domainParams, ConsoleParams consoleParams, String sch) throws IOException {
-		ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.title(processId, "Generando para schema : " + sch));
+	private void run(String processId, DomainParams domainParams, ConsoleParams consoleParams, String sch) {
+		ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.title(processId, getTitle() ));
 		try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(sch)) {
 			Schema schema = ctx.getDslContext().meta()
 				.getSchemas(sch)
@@ -52,10 +51,8 @@ abstract class AbstractConsoleUtility {
 				.setDomain(new Domain().setId(domainParams.getId()));
 			consoleParams.setFromConnection(conParams);
 			// Ver donde hemos conectado
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "------------------------------------------------------------"));
 			String schemaName = (schema != null) ? schema.getName() : "Esquema no encontrado";
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "Conectado al Esquema: " + schemaName));
-			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.message(processId, "------------------------------------------------------------"));
+			ConsoleMessageUtils.print(consoleParams.getPrinter(), ConsoleMessageUtils.subtitle(processId, "Conectado al Esquema: " + schemaName));
 			// seguimos
 			doUtility(processId, consoleParams, domainParams);
 			consoleParams.getPrinter().flush();
@@ -80,5 +77,6 @@ abstract class AbstractConsoleUtility {
 	}
 	
 	protected abstract void doUtility(String processId, ConsoleParams params, DomainParams domainParams);
+	protected abstract String getTitle();
 	
 }

@@ -5,18 +5,19 @@ import java.io.Serializable;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class AonCompany implements Serializable {
 
 	private static final long serialVersionUID = -4970548127101817530L;
 
+	private String login;
+	private String schema;
+	private boolean shared;
+
 	private Domain domain;
-	private Domain parentDomain;
     private Company company;
     Administration administration;
-	private boolean shared;
-	private String schema;
-	private String login;
 	
 	
 	public AonCompany() {
@@ -29,15 +30,6 @@ public class AonCompany implements Serializable {
 
 	public AonCompany setDomain(Domain domain) {
 		this.domain = domain;
-		return this;
-	}
-
-	public Domain getParentDomain() {
-		return parentDomain;
-	}
-
-	public AonCompany setParentDomain(Domain parentDomain) {
-		this.parentDomain = parentDomain;
 		return this;
 	}
 
@@ -86,15 +78,17 @@ public class AonCompany implements Serializable {
 		this.login = login;
 		return this;
 	}
-
+	
+	
 	public JSONObject toJSON() {
-		return new JSONObject()
+		JSONObject jsonObject =  new JSONObject()
 			.put("registry", getCompany().getId())
 			.put("id", getDomain().getId())
 			.put("domain", getDomain().getName())
 			.put("name", getCompany().getName())
 			.put("document", getCompany().getDocument())
-			.put("active", getCompany().getDomain().isActive())
+			.put("active", getDomain().isActuallyActive()   )
+			.put("expired", getCompany().getDomain().isExpired())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("type", getDomain().getDomainType().name())
 			.put("domainManagement", getDomain().isDomainManagement())
@@ -108,5 +102,11 @@ public class AonCompany implements Serializable {
 			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge())
 			.put(IJsonNames.SCHEMA, getSchema())
 			;
+		
+			if (getCompany().getDomain().getExpirationDate() != null) {
+				jsonObject.put("expirationDate", AonDateUtils.format(getDomain().getExpirationDate(), AonDateUtils.SIMPLE_DATE_FORMAT4));
+			}
+		
+		return jsonObject;
 	}
 }

@@ -129,7 +129,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			
 			assertNotTopMenu(webDriver, wait);
 			assertNotSideMenu(webDriver, wait );
-			assertCompaniesTabs(webDriver, wait	, "Activas",  "Entorno");
+			assertCompaniesTabs(webDriver, wait	, "Activas", "Inactivas", "Entorno");
 			
 			
 

@@ -30,5 +30,11 @@
 	        <vetoListener>com.esferalia.aon.payroll.event.EnterpriseCCCVetoableBeanListener</vetoListener>
 		</vetoListeners>
 	</bean>
+	<bean description="">
+		<pojo>com.esferalia.aon.payroll.PayrollWorkPlace</pojo>
+		<listeners>
+			<listener>com.esferalia.aon.payroll.event.PayrollWorkPlaceBeanListener</listener>
+		</listeners>
+	</bean>
 
 </bean-config>

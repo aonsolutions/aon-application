@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -365,8 +366,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.forEach(e -> invoice.putInvoiceInfo(e.getKey(), e.getValue().getInfo()) )
 				;
 			}
-			// [END]
-			
 			// [START]
 			// Este atributo debe modificarse a lo existente en InvoiceDOC
 			json.put(IJsonNames.FILE, InvoiceJSONUtils.buildInvoiceFileJSON(ctx, invoice));
@@ -699,13 +698,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingType.name());
 		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
+		LinkedList<Workplace> workplaces = AON.getWorkplaces(api.getOccam(), api.getDomain().getId())
+			.collect(Collectors.toCollection(LinkedList::new));
+		json.put(IJsonNames.WORKPLACES, workplaces);
 		json.put(IJsonNames.VATS, getVats(api));
-		
-		if(api.getUser().getDomain().getId() != 0) {
-			List<Workplace> workplaces = AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainProperty().eq(api.getDomain().getId()));
-			json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(workplaces));
-		}
 		Date end = new Date();
 		System.out.println();
 		System.out.println();

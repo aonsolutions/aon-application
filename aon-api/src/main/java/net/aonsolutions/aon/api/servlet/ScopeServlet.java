@@ -20,6 +20,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 	
 	public static final String SCOPES = "/";
 	public static final String SCOPE = "/:id";
+	public static final String SCOPES_PARENT = "/parent/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -48,6 +49,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(SCOPES, ScopeServlet::getScopes)
+				.addRoute(SCOPES_PARENT, ScopeServlet::getParentScopes)
 //				.addRoute(SCOPE, ScopeServlet::getScope)
 				.apply();
 			
@@ -101,12 +103,22 @@ public class ScopeServlet extends AonApiHttpServlet {
 				return array;
 			}
 		} else {
-			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
+			if(null != api.getUser().getDomain().getId() && api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
 				Integer domainSearch = JsonUtils.getInteger(api.getData(), "searchDomain");
 				return ScopeJSON.toJSON(AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(null == domainSearch ? api.getDomain().getId() : domainSearch)));
 			}
 		}
+	}
+	
+	private static JSONArray getParentScopes(AonApiData api) {
+		Integer searchDomain = null == api.getDomain().getParentId() ? api.getDomain().getId() : api.getDomain().getParentId();
+		
+		return ScopeJSON.toJSON(AON.getUserScopeStream(
+				api.getDomain().getName(), api.getDomain().getId(), 
+				api.getUser().getLogin(), 
+				api.getUser().getId(), 
+				f -> f.getDomainProperty().eq(searchDomain)));
 	}
 }

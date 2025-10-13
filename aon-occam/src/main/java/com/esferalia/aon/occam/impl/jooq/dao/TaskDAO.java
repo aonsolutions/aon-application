@@ -373,7 +373,6 @@ public class TaskDAO {
 		)
 		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
 	   
-		
 		Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );

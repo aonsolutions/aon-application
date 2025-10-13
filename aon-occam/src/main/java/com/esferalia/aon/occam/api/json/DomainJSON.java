@@ -116,7 +116,7 @@ public class DomainJSON {
 	}
 	
 	public static JSONObject toJSON(Domain domain) {
-		if(domain == null) return new JSONObject();
+		if(domain == null || null == domain.getId()) return new JSONObject();
 		return new JSONObject()
 			.putOpt(IJsonNames.ID, domain.getId())
 			.putOpt(IJsonNames.NAME, domain.getName())
