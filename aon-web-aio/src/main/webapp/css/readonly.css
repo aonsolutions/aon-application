@@ -1,0 +1,87 @@
+:root{
+	--aonDisabled: #f7f7f7;
+    --favicon: ../images/aon-icon-lock.svg;
+}
+
+#aonLogo{
+	margin-left : 22px;	
+}
+
+#aonLogo:before {
+	top: -2px;
+	left: -90px;
+}
+
+#aonLogo:before,
+.aonHeaderAppDiv:before {
+	content: "lock";
+	font-size: 36px;
+	position: relative;
+	color: var(--aonBlack);
+	font-family: Material Symbols Outlined;
+}
+
+
+.aon-form select,
+.aon-form textarea,
+.aon-form input[type="radio"],
+.aon-form input[type="checkbox"],
+.aon-form input[type="text"]:not(.aon-finding-filter-input)
+ {
+	pointer-events: none;
+	background-color: var(--aonDisabled);
+}
+
+.aon_custom_text_box_input {
+	pointer-events: none;
+	background-color: var(--aonDisabled);
+}
+.aon-lookupButton-clear,
+.aon-editDataTable-footer > .aon-editDataTable-button.aon-icon-reset,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon_icon_save,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon_icon_emit,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-reset,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-accept,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon_icon_accept,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon-icon-delete,
+.aon-finding-toolbar-item-group > .aon-finding-toolbar-item.aon_icon_tgss {
+	display: none !important;
+}
+
+.aon-editDataTable > tfoot,
+.aon-editDataTable .aon-table-row-link {
+  	display:none !important;
+}
+
+.aon-editDataTable tr {
+	pointer-events: none !important;
+}
+
+.aon_toolbar_button.aon_button.aon_icon_add,
+.aon_toolbar_button.aon_button.aon_icon_save,
+.aon_toolbar_button.aon_button.aon_icon_delete,
+.aon_toolbar_button.aon_button.aon_icon_redo,
+.aon_toolbar_button.aon_button.aon_icon_undo,
+.aon_toolbar_button.aon_button.aon_icon_undo_all,
+.aon_toolbar_button.aon_button.aon_icon_no_comments,
+.aon_toolbar_button.aon_button.aon_icon_model_reopen {
+	display: none !important;
+}
+
+.aon_table_button.aon_icon_delete,
+.aon_table_button.aon_icon_visibility,
+.aon-editDataTable-button.aon-icon-enable {
+	  display:none !important;
+}
+
+.aon_toolbar_button.aon_icon_add_block,
+.aon_toolbar_button.aon_icon_add_block + .aon_icon_drop_down {
+	  display:none !important;
+}
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+    --aon-theme: 'READONLY';
+}
