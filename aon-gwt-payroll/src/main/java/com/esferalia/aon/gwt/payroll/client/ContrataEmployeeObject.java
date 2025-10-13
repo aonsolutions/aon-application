@@ -573,11 +573,12 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void getComunicationInfo() {
+		String enterpriseCif = employeeContractData.getContractInfo().getEnterpriseCIF();
 		String document = employeeContractData.getEmployeeInfo().getDocument();
 		Date fini = employeeContractData.getContractInfo().getStartDate();
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		
-		employeesService.getSepeComunicationData(document, fini, contractId, new AsyncCallback<Map<String,String>>() {
+		employeesService.getSepeComunicationData(enterpriseCif, document, fini, contractId, new AsyncCallback<Map<String,String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {

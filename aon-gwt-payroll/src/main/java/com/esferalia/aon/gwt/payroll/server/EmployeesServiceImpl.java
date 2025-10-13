@@ -7285,7 +7285,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public Map<String, String> getSepeComunicationData(String domainName, String userLogin, String ipf, Date date,
+	public Map<String, String> getSepeComunicationData(String domainName, String userLogin, String enterpriseCif, String ipf, Date date,
 			Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -7297,7 +7297,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 
 			aon.sepe.objects.Contract sepeContract = Sepe.getContractData(certificateIS, certificate.getPassword(),
-					certificate.getType(), ipf, date, date);
+					certificate.getType(), enterpriseCif, ipf, date, date);
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 			Map<String, String> result = new HashMap<>();
