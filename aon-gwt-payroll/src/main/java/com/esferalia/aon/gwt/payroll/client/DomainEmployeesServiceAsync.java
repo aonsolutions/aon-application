@@ -655,8 +655,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, contractId, callback);
 	}
 
-	public void getSepeComunicationData(String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getSepeComunicationData(getCurrentDomainName(), getCurrentUser(), document, fini, contractId, callback);
+	public void getSepeComunicationData(String enterpriseCif, String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeComunicationData(getCurrentDomainName(), getCurrentUser(), enterpriseCif, document, fini, contractId, callback);
 	}
 	
 	public void getSepeTransformComunicationData(String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {

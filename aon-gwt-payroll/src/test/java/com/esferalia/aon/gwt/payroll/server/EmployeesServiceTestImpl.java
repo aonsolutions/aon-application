@@ -1053,7 +1053,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
+	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String enterpriseCif, String document,
 			Date date, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
