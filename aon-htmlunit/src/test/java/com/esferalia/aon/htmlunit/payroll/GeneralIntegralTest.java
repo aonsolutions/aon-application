@@ -3115,7 +3115,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 0.00 );
 		assertValue("totalLiquidLabel", 0.00 );
 		assertValue("totalPaymentLabel", 0.00 );
-		assertValue("description-box-3", "SUSPENSIÓN DE EMPLEO Y SUELDO");
+		assertValue("description-box-3", "SUSPENSIÓN DE EMPLEO Y SUELDO 01/09 - 30/09");
 
 		calculate(Calendar.AUGUST,2023);
 		assertValue("description-box-10", "SUSPENSIÓN DE EMPLEO Y SUELDO 10/08 - 20/08");
