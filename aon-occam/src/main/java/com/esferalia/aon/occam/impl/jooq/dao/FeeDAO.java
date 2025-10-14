@@ -1353,38 +1353,145 @@ public class FeeDAO {
 							.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
 							.fetchOne();
 						
-						if(null != company) {
+						// NOTE: If not domain parent or user is not from domain parent do not do anything
+						if(null != company && null != company.get(DOMAIN.PARENT) && user.get(USER.DOMAIN).equals(company.get(DOMAIN.PARENT))) {
 						
 							Integer domainScope = company.get(DOMAIN.SCOPE);
 							
-							Record scope = ctx.getDslContext().select().from(SCOPE)
-									.where(SCOPE.ID.eq(domainScope))
-									.fetchOne();
-							
-							if(null != scope ) {
-								// Customer's company already has a scope, so only left add this scope to seller's user.  
-								Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-										.where(USER_SCOPE.USER_ID.eq(userId))
-										.and(USER_SCOPE.SCOPE.isNotNull())
-										.fetch();
+							// 1. Domain has not scope
+							if(null == domainScope) {
 								
-								Optional<UserScopeRecord> userScope = userScopes.stream()
-										.filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
+								// Check if exist scope in domain or parentDomain with CIF scope description
+								Record customerDocuemntScope = ctx.getDslContext().select().from(SCOPE)
+										.where(SCOPE.DESCRIPTION.eq(fee.getCustomer().getDocument()))
+										.and(SCOPE.DOMAIN.eq(company.get(DOMAIN.PARENT)))
+										.fetchOne();
 								
-								if(userScope.isEmpty()) {
-									ctx.getDslContext().insertInto(USER_SCOPE)
-										.set(USER_SCOPE.DOMAIN, user.getDomain())
-										.set(USER_SCOPE.USER_ID, userId)
-										.set(USER_SCOPE.SCOPE, domainScope)
+								// Create new scope whith customer document
+								if(null == customerDocuemntScope) {
+									Integer scopeId = ctx.getDslContext()
+											.insertInto(SCOPE)
+											.set(SCOPE.DOMAIN, company.get(DOMAIN.PARENT))
+											.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
+											.returning(SCOPE.ID)
+											.fetchOne().value1();
+
+										// Update domain scope with new document scope
+										ctx.getDslContext().update(DOMAIN)
+											.set(DOMAIN.SCOPE, scopeId)
+											.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
+											.execute();
+
+										ctx.getDslContext().insertInto(USER_SCOPE)
+											.set(USER_SCOPE.DOMAIN, user.getDomain())
+											.set(USER_SCOPE.USER_ID, userId)
+											.set(USER_SCOPE.SCOPE, scopeId)
+											.execute();
+								} else {
+									
+									// Check if user scopes contains customer document scope
+									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+											.where(USER_SCOPE.USER_ID.eq(userId))
+											.and(USER_SCOPE.SCOPE.isNotNull())
+											.fetch();
+									
+									Optional<UserScopeRecord> userScope = userScopes.stream()
+											.filter(userScopeIt -> customerDocuemntScope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
+									
+									if(userScope.isEmpty()) {
+										ctx.getDslContext().insertInto(USER_SCOPE)
+											.set(USER_SCOPE.DOMAIN, user.getDomain())
+											.set(USER_SCOPE.USER_ID, userId)
+											.set(USER_SCOPE.SCOPE, customerDocuemntScope.get(SCOPE.ID))
+											.execute();
+									}
+									
+									// Set domain whith his own CIF scope
+									ctx.getDslContext().update(DOMAIN)
+										.set(DOMAIN.SCOPE, customerDocuemntScope.get(SCOPE.ID))
+										.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
 										.execute();
 								}
-
+							
+							// 2. Domain has scope (check if it is customer document scope. If not create & assign)
 							} else {
-								// Customer's company hasn't scope 
-								// ¿Do we need to create one and add to Customer's company & user?
-								// No by now no, seller's user already can login into seller's company 
-								;
+								Record scope = ctx.getDslContext().select().from(SCOPE)
+										.where(SCOPE.ID.eq(domainScope))
+										.fetchOne();
+								
+								if(!AonStringUtils.equalsIgnoreCase(scope.get(SCOPE.DESCRIPTION), fee.getCustomer().getDocument())) {
+									
+									// Check if exist scope in domain or parentDomain with CIF scope description
+									Record customerDocuemntScope = ctx.getDslContext().select().from(SCOPE)
+											.where(SCOPE.DESCRIPTION.eq(fee.getCustomer().getDocument()))
+											.and(SCOPE.DOMAIN.eq(company.get(DOMAIN.PARENT)))
+											.fetchOne();
+
+									if(null == customerDocuemntScope) {
+										Integer scopeId = ctx.getDslContext()
+												.insertInto(SCOPE)
+												.set(SCOPE.DOMAIN, company.get(DOMAIN.PARENT))
+												.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
+												.returning(SCOPE.ID)
+												.fetchOne().value1();
+
+											// Update domain scope with new document scope
+											ctx.getDslContext().update(DOMAIN)
+												.set(DOMAIN.SCOPE, scopeId)
+												.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
+												.execute();
+
+											ctx.getDslContext().insertInto(USER_SCOPE)
+												.set(USER_SCOPE.DOMAIN, user.getDomain())
+												.set(USER_SCOPE.USER_ID, userId)
+												.set(USER_SCOPE.SCOPE, scopeId)
+												.execute();
+									} else {
+										// Check if user scopes contains customer document scope
+										Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+												.where(USER_SCOPE.USER_ID.eq(userId))
+												.and(USER_SCOPE.SCOPE.isNotNull())
+												.fetch();
+										
+										Optional<UserScopeRecord> userScope = userScopes.stream()
+												.filter(userScopeIt -> customerDocuemntScope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
+										
+										if(userScope.isEmpty()) {
+											ctx.getDslContext().insertInto(USER_SCOPE)
+												.set(USER_SCOPE.DOMAIN, user.getDomain())
+												.set(USER_SCOPE.USER_ID, userId)
+												.set(USER_SCOPE.SCOPE, customerDocuemntScope.get(SCOPE.ID))
+												.execute();
+										}
+										
+										// Set domain whith his own CIF scope
+										ctx.getDslContext().update(DOMAIN)
+											.set(DOMAIN.SCOPE, customerDocuemntScope.get(SCOPE.ID))
+											.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
+											.execute();
+									}
+									
+									
+								} else {
+									// Check if user scopes contains customer document scope
+									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+											.where(USER_SCOPE.USER_ID.eq(userId))
+											.and(USER_SCOPE.SCOPE.isNotNull())
+											.fetch();
+									
+									Optional<UserScopeRecord> userScope = userScopes.stream()
+											.filter(userScopeIt -> scope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
+									
+									if(userScope.isEmpty()) {
+										ctx.getDslContext().insertInto(USER_SCOPE)
+											.set(USER_SCOPE.DOMAIN, user.getDomain())
+											.set(USER_SCOPE.USER_ID, userId)
+											.set(USER_SCOPE.SCOPE, scope.get(SCOPE.ID))
+											.execute();
+									}
+								}
 							}
+							
 						}
 					}
 				}
