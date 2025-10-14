@@ -359,6 +359,7 @@ public abstract class Mod111Declaration {
 		final Set<Alcatraz> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
 		if (mustApplyReplacementSearch(mod111)) {
+			mod111.setGenerateFromYearStart(false); // Solo facturas del periodo
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
 		} else {
 			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);	
