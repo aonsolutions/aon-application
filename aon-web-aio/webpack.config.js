@@ -11,8 +11,8 @@ module.exports = {
 //    errorDetails: true
 //  },
   entry: {
-    app       : './src/main/webapp/index.js',                       // Para usar en el BETA
-    aio       : './src/main/webapp/aio.js',
+    // app       : './src/main/webapp/index.js',                       // Para usar en el BETA
+    // aio       : './src/main/webapp/aio.js',
     appSass   : './src/main/webapp/index.js',                       // Para usar en el NEW
     sass      : './src/main/webapp/assets_sass/styles/main.scss',   // Para usar en el NEW
     sassIframe: './src/main/webapp/assets_sass/styles/iframe.scss'  // Para usar en el NEW - IFRAME
@@ -38,8 +38,8 @@ module.exports = {
       publicPath: ''
     }),
     new HtmlWebpackPlugin({
-      template: './src/main/webapp/templates/new',
-      filename: '../new',
+      template: './src/main/webapp/templates/app',
+      filename: '../app',
       chunks  : ['appSass', 'sass'],  // Solo incluye estos
       inject  : false
     }),
@@ -90,7 +90,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
+      // aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
       //aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
       aonparent: path.resolve(__dirname, 'src/main/webapp/modules/aon-parent.js'),
       aio: path.resolve(__dirname, 'src/main/webapp/')

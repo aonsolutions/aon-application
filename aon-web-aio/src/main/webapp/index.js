@@ -163,12 +163,6 @@ const getCookie = (cookieName) => {
 // Cargado el DOM iniciamos la aplicacion
 document.addEventListener('DOMContentLoaded', function () {
   // Estamos cargando el estilo nuevo
-  const isNew = window.location.pathname.includes('/new');
-  localStorage.setItem('sass', isNew ? 'true' : 'false');
-
-  if(isNew){
-    loadNew();
-  }else{
-    load();
-  }
+  localStorage.setItem('sass', 'true');
+  loadNew();
 });
