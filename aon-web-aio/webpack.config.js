@@ -12,7 +12,7 @@ module.exports = {
 //  },
   entry: {
     // app       : './src/main/webapp/index.js',                       // Para usar en el BETA
-    // aio       : './src/main/webapp/aio.js',
+    aio       : './src/main/webapp/aio.js',
     appSass   : './src/main/webapp/index.js',                       // Para usar en el NEW
     sass      : './src/main/webapp/assets_sass/styles/main.scss',   // Para usar en el NEW
     sassIframe: './src/main/webapp/assets_sass/styles/iframe.scss'  // Para usar en el NEW - IFRAME
