@@ -652,6 +652,16 @@ public class AON {
 			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
 		}
 	}
+	public static void reassignScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+	public static void reassignAndDeleteScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignAndDeleteScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
 	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
 		CloseableAONContext ctx = null;

@@ -16,7 +16,15 @@
 				<ui:param name="controller" value="#{scope}" />
 				
 				<ui:define name="additionalToolbarContent">
-		
+					<aon:commandButton id="#{toolbarID}-reassign"
+						title="#Reasignar"
+						rendered="#{!formNew}"
+						styleClass="aon-finding-toolbar-item aon-icon-transfer"
+						actionListener="#{scope.onReassignShow}"
+						reRender="showReassignWindow">
+						<f:setPropertyActionListener target="#{scope.showReassignWindow}"
+							value="#{true}" />
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
 		</aon:div>				
@@ -26,5 +34,84 @@
 			</ui:include>
 		</aon:div>
 	</aon:form>
+	<aon:panelGroup id="showReassignWindow">
+		<aon:if test="#{scope.showReassignWindow}">
+			<rich:modalPanel id="reassignModalPanel"
+				minHeight="260" minWidth="680" zindex="90"
+				showWhenRendered="#{scope.showReassignWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Reasginar" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showReassignWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{scope.showReassignWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="rectificationForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="rectification-accept"
+										value="Reasignar"
+										actionListener="#{scope.onReassign}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="rectificationModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{scope.showReassignWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="rectification-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showReassignWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{scope.showReassignWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:div>
+										<aon:outputText  value="Sustituir el #{bundle.aon_scope} " style="margin-right: 1em;"/>
+										<aon:selectOneMenu id="scope_old" value="#{scope.oldScope}">
+											<f:selectItem item="-" value="#{null}" />
+											<f:selectItems value="#{configCollections.currentUserScopes}" />
+										</aon:selectOneMenu>
+
+										<aon:outputText value="por el #{bundle.aon_scope}" style="margin-right: 1em;margin-left: 1em;"/>
+										<aon:selectOneMenu id="scope_new" value="#{scope.newScope}">
+											<f:selectItem item="-" value="#{null}" />
+											<f:selectItems value="#{configCollections.scopes}" />
+										</aon:selectOneMenu>
+										
+										<aon:div>
+										<aon:selectBooleanCheckbox 
+											id="scope_old_delete" 
+											value="#{scope.removeOldScope}" />
+											<aon:outputText styleClass="aon-italic"
+												value="Borrar #{bundle.aon_scope} original" />
+										</aon:div>
+									</aon:div>	
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
 
 </ui:composition>

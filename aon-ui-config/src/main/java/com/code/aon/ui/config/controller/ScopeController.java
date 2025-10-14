@@ -4,6 +4,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.Serializable;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
@@ -25,6 +26,36 @@ public class ScopeController extends BasicController implements Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ScopeController.class);
 	
+	private boolean showReassignWindow;
+	private Scope oldScope; 
+	private Scope newScope;
+	private boolean removeOldScope;
+	
+	public boolean isShowReassignWindow() {
+		return showReassignWindow;
+	}
+	public void setShowReassignWindow(boolean showReassignWindow) {
+		this.showReassignWindow = showReassignWindow;
+	}
+	public Scope getOldScope() {
+		return oldScope;
+	}
+	public void setOldScope(Scope oldScope) {
+		this.oldScope = oldScope;
+	}
+	public Scope getNewScope() {
+		return newScope;
+	}
+	public void setNewScope(Scope newScope) {
+		this.newScope = newScope;
+	}
+	public boolean isRemoveOldScope() {
+		return removeOldScope;
+	}
+	public void setRemoveOldScope(boolean removeOldScope) {
+		this.removeOldScope = removeOldScope;
+	}
+	
 	@Override
 	public void initializeModel() {
 		try {
@@ -39,17 +70,53 @@ public class ScopeController extends BasicController implements Serializable {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		return ds.getDomainNameURL().contains("ayudat");
 	}
+
+	public void onReassignShow(ActionEvent event) {
+		setOldScope( null );
+		setNewScope( null );
+		setRemoveOldScope( true );
+	}
+	
+	private Occam getOccam() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		return new Occam()
+			.setDomainName(ds.getCurrentDomainName())
+			.setDomain(ds.getDomainId())
+			.setUser(ds.getCurrentUser());
+		
+	}
+	
+	public void onReassign(ActionEvent event) {
+		try {
+			if (getOldScope() == null || getNewScope() == null) {
+				String message = "Debe seleccionar los \u00E1mbitos origen y destino.";
+				AonUtil.addErrorMessage(message);
+			} else if (getOldScope().getId().equals(getNewScope().getId())) {
+				String message = "El \u00E1mbito origen y destino no pueden ser iguales.";
+				AonUtil.addErrorMessage(message);
+			} else {
+				Occam occam = getOccam();
+				if (isRemoveOldScope()) {
+					AON.reassignAndDeleteScope( occam, occam.getDomain(), getOldScope().getId(), getNewScope().getId() );
+					onSearch(event);
+				} else {
+					AON.reassignScope( occam, occam.getDomain(), getOldScope().getId(), getNewScope().getId() );
+				}
+			}
+		} catch (Exception e) {
+			String msg = "No se han podido reasignar los registros del \u00E1mbito. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
 	
 	@Override
 	public void onRemove(ActionEvent event) {
 		Scope scope = (Scope) getTo();
 		Integer scopeId = scope.getId();
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Occam occam = new Occam()
-			.setDomainName(ds.getCurrentDomainName())
-			.setDomain(ds.getDomainId())
-			.setUser(ds.getCurrentUser());
-		if (AON.canScopeBeDeleted( occam, ds.getDomainId(), scopeId)) {
+		Occam occam = getOccam();
+		if (AON.canScopeBeDeleted( occam, occam.getDomain(), scopeId)) {
 			super.onRemove(event);
 		} else {
 			String message = "El \u00E1mbito no puede ser borrado, tiene dependencias en otras entidades.";
