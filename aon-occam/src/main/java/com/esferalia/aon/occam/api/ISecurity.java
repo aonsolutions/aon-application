@@ -69,6 +69,7 @@ public interface ISecurity {
 	public String getUserPassword(AONContext ctx, Integer userId);
 	public void updateUserPassword(AONContext ctx, Integer userId, String password);
 	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope);
+	public void addUserScope(AONContext ctx, Integer userId, List<Integer> scopes);
 	public void deleteUserScope(AONContext ctx, UserScopeFilter filter);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);

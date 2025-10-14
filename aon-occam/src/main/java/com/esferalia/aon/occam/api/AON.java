@@ -576,6 +576,13 @@ public class AON {
 		}
 	}
 
+	
+	public static void addUserScope(Occam occam, Integer userId, List<Integer> scopes) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().addUserScope(ctx, userId, scopes);
+		} 
+	}
+	
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
 		deleteUserScope(domainName, domainId, login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().eq(userId)));
 	}
