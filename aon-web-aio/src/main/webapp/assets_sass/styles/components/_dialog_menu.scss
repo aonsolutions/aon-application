@@ -5,7 +5,7 @@ aon-dialog-menu{
   height        : auto;
   /*position      : absolute;*/
   position      : fixed;
-  z-index       : v.$num-2;
+  z-index       : v.$num-3;
   border-radius : v.$border-radius;
   ul{
     list-style-type : none;
@@ -22,6 +22,9 @@ aon-dialog-menu{
       }
       &:last-child{
         border-radius : v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
+      }
+      &:only-child {
+        border-radius: v.$border-radius;
       }
     }
   }
