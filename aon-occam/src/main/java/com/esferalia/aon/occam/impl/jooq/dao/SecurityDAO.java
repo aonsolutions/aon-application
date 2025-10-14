@@ -810,7 +810,7 @@ public class SecurityDAO {
 			.where(USER_SCOPE.USER_ID.equal(userId))
 			.fetch()
 			.stream()
-			.map(new ScopeFiller()).toList();
+			.map(new ScopeFiller()).collect(Collectors.toList());
 	}
 	
 	public static LinkedList<Scope> getAvailableScopes (AONContext ctx) {
