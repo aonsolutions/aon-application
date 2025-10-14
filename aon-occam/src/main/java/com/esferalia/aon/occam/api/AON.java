@@ -269,6 +269,7 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -643,6 +644,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static boolean canScopeBeDeleted(Occam occam, Integer domainId, Integer scopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
 		}
 	}
 	

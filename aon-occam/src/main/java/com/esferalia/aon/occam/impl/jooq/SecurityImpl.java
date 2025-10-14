@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
@@ -217,6 +218,11 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public Scope saveScope(AONContext ctx, Scope scope) {
 		return SecurityDAO.saveScope(ctx, scope);
+	}
+
+	@Override
+	public boolean canScopeBeDeleted(AONContext ctx, Integer domainId, Integer scopeId) {
+		return ScopeDAO.canBeDeleted(ctx, domainId, scopeId);
 	}
 	
 	@Override

@@ -1,7 +1,8 @@
 package com.code.aon.ui.config.controller;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.io.Serializable;
-import java.util.stream.Stream;
 
 import javax.faces.event.ActionEvent;
 
@@ -10,17 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.security.UserScope;
-
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import com.esferalia.aon.occam.api.model.Occam;
 
 public class ScopeController extends BasicController implements Serializable {
 	
@@ -43,28 +40,21 @@ public class ScopeController extends BasicController implements Serializable {
 		return ds.getDomainNameURL().contains("ayudat");
 	}
 	
-	public void generateCompanyScopes(ActionEvent event) {
+	@Override
+	public void onRemove(ActionEvent event) {
+		Scope scope = (Scope) getTo();
+		Integer scopeId = scope.getId();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		User user = AON.getUser(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser());
-		AON.getDomainList(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), f-> f.getParentProperty().eq(ds.getDomainId()))
-		.stream().forEach(d -> {
-			Company cp = AON.getCompany(d.getName(), d.getId(), ds.getCurrentUser(), f-> f.getDomainProperty().eq(d.getId()));
-			Stream<Scope> a = AON.getScopeStream(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), 
-					f -> f.getDomainProperty().eq(ds.getDomainId()).and(f.getDescriptionProperty().eq(cp.getDocument())));
-			if(a.count() <= 0 && cp.getDocument() != null) {
-				Scope scope = new Scope()
-						.setDomain(ds.getDomainId())
-						.setDescription(cp.getDocument());
-				scope = AON.insertScope(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), scope);
-				UserScope us = new UserScope()
-						.setDomain(ds.getDomainId())
-						.setScope(scope.getId())
-						.setUserId(user.getId());
-				AON.insertUserScope(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), us);
-				d.setScope(scope.getId());
-				AON.updateDomainScope(d.getName(), d.getId(), ds.getCurrentUser(), d);
-			}
-		});
+		Occam occam = new Occam()
+			.setDomainName(ds.getCurrentDomainName())
+			.setDomain(ds.getDomainId())
+			.setUser(ds.getCurrentUser());
+		if (AON.canScopeBeDeleted( occam, ds.getDomainId(), scopeId)) {
+			super.onRemove(event);
+		} else {
+			String message = "El \u00E1mbito no puede ser borrado, tiene dependencias en otras entidades.";
+			AonUtil.addErrorMessage(message);
+		};
 	}
 	
 }
