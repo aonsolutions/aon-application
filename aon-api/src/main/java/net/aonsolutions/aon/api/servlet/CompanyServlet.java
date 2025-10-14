@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
+import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -38,7 +39,9 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -129,6 +132,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 				break;	
 			case "/tags":
 				response(req, resp, getCustomerStatusTags(api));
+				break;	
+			case "/scopes":
+				response(req, resp, getCompanyScopes(api));
 				break;	
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -221,6 +227,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 	}
 
+	private JSONArray getCompanyScopes(AonApiData api) {
+		List<Scope> scopeList = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+			f -> f.getDomainProperty().eq(api.getDomain().getId())).toList();
+		return ScopeJSON.toJSON(scopeList);
+	}
+	
 	public static JSONArray getCompanies(AonApiData api) {
 		if((JsonUtils.has(api.getData(), IJsonNames.PARENT) && JsonUtils.getboolean(api.getData(), IJsonNames.PARENT))
 				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT) || JsonUtils.has(api.getData(), IJsonNames.PARENT_ID)) {

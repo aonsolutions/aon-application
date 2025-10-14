@@ -157,3 +157,4 @@ export const getDomainApps = (domain) => {
   export const getContratado = (data) => get(`${API_URL}/contracted_plans_servlet/apps`, data);
   export const sendFormData = (data) => post(`${API_URL}/contracted_plans_servlet/callForm`, data);
 
+export const getCompanyScopes = (data) => get(API.COMPANY_SCOPES, data);

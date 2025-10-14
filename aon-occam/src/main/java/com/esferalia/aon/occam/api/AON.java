@@ -576,6 +576,13 @@ public class AON {
 		}
 	}
 
+	
+	public static void addUserScope(Occam occam, Integer userId, List<Integer> scopes) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().addUserScope(ctx, userId, scopes);
+		} 
+	}
+	
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
 		deleteUserScope(domainName, domainId, login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().eq(userId)));
 	}
@@ -1189,6 +1196,16 @@ public class AON {
 	
 	// ------------------------------------ WORKPLACE
 
+	public static Optional<Workplace> getWorkplace(Occam occam, Integer domainId, Integer workplaceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplace(ctx, domainId, workplaceId);
+		}
+	}
+	
+	/**
+	 * @deprecated use getWorkplace(Occam occam, Integer domainId, Integer workplaceId)
+	 */
+	@Deprecated
 	public static Workplace getWorkplace(String domainName, Integer domainId,
 			String login, WorkplaceFilter filter) {
 		CloseableAONContext ctx = null;
@@ -1201,6 +1218,16 @@ public class AON {
 		}
 	}
 
+	public static Stream<Workplace> getWorkplaces(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplaces(ctx, domainId);
+		}
+	}
+	
+	/**
+	 * @deprecated use getWorkplaces(Occam occam, Integer domainId)
+	 */
+	@Deprecated
 	public static LinkedList<Workplace> getWorkplaceList(String domainName,
 			Integer domainId, String login, WorkplaceFilter filter) {
 		CloseableAONContext ctx = null;
@@ -1224,13 +1251,6 @@ public class AON {
 	public static Workplace saveWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().saveWorkplace(ctx, workplace);
-		} 
-	}
-	
-	@Deprecated
-	public static void updateWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getCommon().updateWorkplace(ctx, workplace);
 		} 
 	}
 	

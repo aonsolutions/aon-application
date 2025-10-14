@@ -22,7 +22,6 @@ import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.json.OCRCompanyJSON;
 import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
-import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
@@ -133,12 +132,14 @@ class InvofoxRESTTestCase {
 					+ " " 
 					+ " [Issuer: " +
 					d.getData()
-						.flatMap( i -> i.getIssuerTaxId() )
+						.flatMap( i -> i.getSupplier())
+						.flatMap( j -> j.getTaxId() )
 						.flatMap( n -> n.getValue() )
 					.orElse("<NO NAME>")
 					+ ", "
 					+ d.getData()
-						.flatMap( i -> i.getIssuerName() )
+						.flatMap( i -> i.getSupplier())
+						.flatMap( i -> i.getName() )
 						.flatMap( n -> n.getValue() )
 					.orElse("<NO NAME>")
 					+ "]"

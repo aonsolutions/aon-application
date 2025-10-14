@@ -1364,6 +1364,7 @@ public interface Properties {
 	}
 	
 	public interface ContractExtendedDataProperties extends ContractProperties{
+		Property<String> getPersonNafProperty();
 		Property<String> getPersonDocumentProperty();
 		Property<String> getPersonFullNameProperty();
 	}

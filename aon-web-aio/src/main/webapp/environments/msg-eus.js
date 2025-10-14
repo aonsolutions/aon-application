@@ -434,6 +434,7 @@ export const REVIEW = 'Berrikusi';
 export const SAVE = 'Gorde';
 export const SAVED_DATA = 'Datuak zuzen gorde dira';
 export const SCOPE = 'Esparrua';
+export const SCOPES = 'Esparruak';
 export const SCHEDULE = "Ordutegia";
 export const SEARCH = 'Bilatu';
 export const SEE_ALL = 'Guztiak Ikusi';

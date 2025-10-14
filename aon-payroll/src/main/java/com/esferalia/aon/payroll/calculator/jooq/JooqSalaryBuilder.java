@@ -11,8 +11,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,6 +45,7 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -395,7 +398,9 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 		putContext(context);
 
-		if (isSiblingOfPrevious(payment)) {
+		if (!isUnpaid(payment) &&
+			!isPrestIT(payment) &&
+			isSiblingOfPrevious(payment) ) {
 			if (prevPaymentRecord.getIrpf() != null) {
 				tax += prevPaymentRecord.getIrpf();
 			}
@@ -644,6 +649,14 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 				&& ((IContractDeduction) deduction).getId().equals(prevDeductionRecord.getId());
 	}
 
+	private boolean isPrestIT(IPayment payment) {		
+		return AonStringUtils.equals(payment.getName(),PREST_IT);
+	}
+
+	private boolean isUnpaid(IPayment payment) {
+		return AonStringUtils.equals(payment.getName(),UNPAID.getName());
+	}
+	
 	// ------------------------------------------------------------------------
 
 	private boolean filter(String name, ITimedVariable<?> var) {

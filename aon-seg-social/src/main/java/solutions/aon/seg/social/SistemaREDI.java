@@ -68,6 +68,8 @@ import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilde
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
+// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
+
 class SistemaREDI {
 
 	public static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream,
@@ -581,19 +583,7 @@ class SistemaREDI {
 			
 			// Mirar si necesita autorizacion (Por ejemplo certificados como los de AyudaT)
 			DomElement selectAuth = htmlPage.getElementById("TITULO_SECCION_forSelAutori");
-			if(selectAuth != null) {
-				// Seleccione un Número de Autorización
-				String auth = removeLeftZeros(authCode);
-				if(auth.length() == 5) {
-					auth = '0' + auth;
-				} 
-				HtmlAnchor authAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + auth);
-				if(null == authAnchor)
-					throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
-				
-				XmlPage authXmlPage = htmlPage.getElementById("enlace_" + auth).click();
-				htmlPage = HtmlUnitToolkit.transformXmlPage(authXmlPage);
-			}
+			if(selectAuth != null) htmlPage = selectAuthCode(htmlPage, authCode);
 			
 			htmlPage.getElementById("radio_Opcion3").click();
 			HtmlInput criBusCccNaf = (HtmlInput) htmlPage.getElementById("criBusCccNaf") ;
@@ -629,6 +619,28 @@ class SistemaREDI {
 		return null;
 	}
 	
+	private static HtmlPage selectAuthCode(HtmlPage htmlPage, String authCode) throws IOException, TransformerException {
+		// Seleccione un Número de Autorización
+		String auth = removeLeftZeros(authCode);
+		
+		Pattern pattern = Pattern.compile("enlace_0*" + auth + "$");
+
+		HtmlAnchor authAnchor = null;
+		for (DomElement element : htmlPage.getElementsByTagName("a")) {
+		    String id = element.getId();
+		    if (id != null && pattern.matcher(id).matches()) {
+		        authAnchor = (HtmlAnchor) element;
+		        break;
+		    }
+		}
+		
+		if(null == authAnchor)
+			throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
+		
+		XmlPage authXmlPage = authAnchor.click();
+		return HtmlUnitToolkit.transformXmlPage(authXmlPage);
+	}
+
 	private static String removeLeftZeros(String input) {
 		if (input == null || input.isEmpty()) {
             return input;

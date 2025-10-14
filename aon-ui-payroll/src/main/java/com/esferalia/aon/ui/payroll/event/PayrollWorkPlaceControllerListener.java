@@ -24,29 +24,39 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		updateCurrentToWorkPlace();
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		super.afterBeanReset(event);
+		PayrollWorkPlace pw = (PayrollWorkPlace) event.getController().getTo();
+		WorkPlace w = new WorkPlace();
+		PayrollUtils utils = PayrollUtils.getInstance();
+		w.setEnterprise( utils.getCurrentDomainEnterprise() );
+		pw.setWorkPlace(w);
+		
 	}
 	
 	@Override
-	public void beforeModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			if(this.getController().getRowCount()==0){
-				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-				Criteria criteria = new Criteria();
-				PayrollUtils utils = PayrollUtils.getInstance();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), utils.getCurrentDomainEnterprise().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
-				IManagerBean pwBean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-				for(ITransferObject to: bean.getList(criteria)){
-					WorkPlace wp = (WorkPlace) to;
+			PayrollUtils utils = PayrollUtils.getInstance();
+			Integer currentEnterprise = utils.getCurrentDomainEnterprise().getId();
+			
+			IManagerBean wBean = BeanManager.getManagerBean(WorkPlace.class);
+			IManagerBean pwBean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+			
+			Criteria wCriteria = new Criteria();
+			wCriteria.addEqualExpression(wBean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), currentEnterprise);
+			for (ITransferObject to: wBean.getList(wCriteria)){
+				WorkPlace w = (WorkPlace) to;
+				Criteria pwCriteria = new Criteria();
+				pwCriteria.addEqualExpression(pwBean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), w.getId());
+				if (pwBean.getList(pwCriteria).isEmpty()){
 					PayrollWorkPlace pw = new PayrollWorkPlace();
-					pw.setWorkPlace(wp);
+					pw.setWorkPlace(w);
 					pwBean.insert(pw);
+					System.out.println( "Inserted PayrollWorkPlace: " + pw.getId() + " for WorkPlace ---> ID:" +  pw.getWorkPlace().getId() + " Description: " + pw.getWorkPlace().getDescription() );
 				}
 			}
+				
 		} catch (ManagerBeanException e) {
 			String message = "Error al iniciar los centros de trabajo";
 			AonUtil.addErrorMessage(message);
@@ -54,34 +64,5 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		removeCurrentToWorkPlace();
-	}
-	
-	private void updateCurrentToWorkPlace() throws ControllerListenerException {
-		PayrollWorkPlace pw = (PayrollWorkPlace) this.getController().getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-			pw.setWorkPlace((WorkPlace) bean.update(pw.getWorkPlace()));
-		} catch (ManagerBeanException e) {
-			String message = "Error al actualizar el centro de trabajo";
-			AonUtil.addErrorMessage(message);
-			throw new ControllerListenerException(message, e);
-		}
-	}
-	
-	private void removeCurrentToWorkPlace() throws ControllerListenerException {
-		PayrollWorkPlace pw = (PayrollWorkPlace) this.getController().getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-			bean.remove(pw.getWorkPlace());
-		} catch (ManagerBeanException e) {
-			String message = "Error al borrar el centro de trabajo";
-			AonUtil.addErrorMessage(message);
-			throw new ControllerListenerException(message, e);
-		}
-	}
 	
 }
