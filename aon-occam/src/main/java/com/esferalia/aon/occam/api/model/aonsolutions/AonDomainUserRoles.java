@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.DomainJSON;
+import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.UserJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 
@@ -30,7 +31,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		setOldParentDomainModules(dur.getOldParentDomainModules());
 		setTrial(dur.isTrial());
 		setTrialValue(dur.getTrialValue());
-
+		setScopes(dur.getScopes());
 	}
 	
 	public JSONObject toJSON() {
@@ -74,6 +75,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		json.put("trialValue", getTrialValue());
 
 		json.put("oldUserRoles", oldUserRoles);
+		json.put(IJsonNames.SCOPES, ScopeJSON.toJSON(getScopes()));
 		return json;
 	}
 }

@@ -256,6 +256,12 @@ public class SecurityImpl implements ISecurity {
 	public void assignAuthToUser(AONContext ctx, User user, byte[] auth) {
 		SecurityDAO.assignAuthToUser(ctx, user, auth);
 	}
+
+	@Override
+	public void addUserScope(AONContext ctx, Integer userId, List<Integer> scopes) {
+		ctx.getDslContext().transaction(
+			Configuration -> SecurityDAO.addUserScope(ctx, userId, scopes));
+	}
 	
 	// ------------------ SIGNATURE
 	
