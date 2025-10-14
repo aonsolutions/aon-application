@@ -52,7 +52,7 @@ export class AonLocationList extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable(); // this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
@@ -66,20 +66,20 @@ export class AonLocationList extends AonElement {
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
 
-    if (this.isMobile()) 
-      this.applicationEl.addFloatOption(ToolbarOptions.ADD,() => this.add());
-    else 
+//    if (this.isMobile()) 
+//      this.applicationEl.addFloatOption(ToolbarOptions.ADD,() => this.add());
+//    else 
       this.applicationEl.addToolbarOption2(ToolbarOptions.ADD, () => this.add());
   }
 
   async getTable() {
     this.aonSigninToolbar.setAttribute("option", "Ubicaciones");
     this.applicationEl.startLoader();
-    if (this.isMobile()) {
-      await this.getTableMobile();
-    } else {
+//    if (this.isMobile()) {
+//      await this.getTableMobile();
+//    } else {
       await this.getTableDesk();
-    }
+//    }
     this.applicationEl.stopLoader();
   }
 

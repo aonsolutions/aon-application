@@ -71,7 +71,7 @@ export class AonPresenceList extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable(); // this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
@@ -80,16 +80,16 @@ export class AonPresenceList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     
     if(!this.applicationParentEl.isEmployee()){
-      if(this.isMobile()){
-        this.applicationEl.addFloatOption(ToolbarOptions.ADD, () => this.aonEventAdd() );
-      } else {
+//      if(this.isMobile()){
+//        this.applicationEl.addFloatOption(ToolbarOptions.ADD, () => this.aonEventAdd() );
+//      } else {
         this.applicationEl.addToolbarOption2(ToolbarOptions.ADD, () => this.aonEventAdd());
-      }
+//      }
     }
 
-    if(!this.isMobile()) {
+//    if(!this.isMobile()) {
       this.applicationEl.addToolbarOption2(ToolbarOptions.MORE, ({target}) => this.dialogReport(target));
-    }
+//    }
 
     this.buildToolbarSearch();
   }
@@ -150,8 +150,9 @@ export class AonPresenceList extends AonElement {
   async getTable() {
     this.applicationEl = await waitEl("#aonSignin");
     this.applicationEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
+//    if (this.isMobile()) await this.getTableMobile();
+//    else 
+	await this.getTableDesk();
     this.applicationEl.stopLoader();
     this.applicationParentEl.changeFilter();
   }
@@ -215,7 +216,7 @@ export class AonPresenceList extends AonElement {
   dialogReport(button){
     const left = button.getBoundingClientRect().left;
     let top  = button.getBoundingClientRect().top;
-    if(this.isMobile()) top = top - 50;
+//    if(this.isMobile()) top = top - 50;
 
     let options = [{
       name: "Registro de jornada",

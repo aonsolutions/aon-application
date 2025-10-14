@@ -544,12 +544,12 @@ export class AonInvoiceHome extends AonElement {
 
     aonInvoice(type, invoice) {
 		let aonInvoice = this.getApplication();
-		if(this.isMobile() && aonInvoice.TOOLBAR) {
-			let toolbar = this.getElement(aonInvoice.TOOLBAR);
-			toolbar.removeButtons();
-		}
+//		if(this.isMobile() && aonInvoice.TOOLBAR) {
+//			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+//			toolbar.removeButtons();
+//		}
 
-		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
+		let component = new AonInvoice(); // this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
 		if(invoice && invoice.file) {

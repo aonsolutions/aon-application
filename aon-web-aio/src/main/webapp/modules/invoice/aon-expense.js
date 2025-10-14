@@ -97,7 +97,9 @@ export class AonExpense extends AonElement {
                 activity.setOptions(activities);
                 const principalActivity = activities.find(act => act.principal === true);
                 if (principalActivity) activity.value = principalActivity.id;
-            }
+            } else {
+				activity.setOptions(activities);
+			}
         });
         activity.addEventListener(EVENT.CHANGE, () => {
             this.getExpense().setActivity(this.getActivity());

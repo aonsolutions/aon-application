@@ -196,7 +196,7 @@ export class AonApplication extends AonElement {
 
     div.onclick = (event) => {
       if (event.target === div) {
-        this.closeMobileSidenav();
+//        this.closeMobileSidenav();
       }
     }
   }
@@ -819,7 +819,7 @@ export class AonApplication extends AonElement {
           } 
           this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
           if (this.isMobile()) {
-            this.closeMobileSidenav();
+//            this.closeMobileSidenav();
           }
         });
       }

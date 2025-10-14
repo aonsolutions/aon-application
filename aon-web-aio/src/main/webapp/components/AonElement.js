@@ -15,12 +15,19 @@ export class AonElement extends HTMLElement{
     super();
   }
 
-  isMobileResolution() {
+  static isMobileResolution() {
     return UA.isMobileResolution();
   }
 
-  isMobile() {
+  static isMobile() {
     return UA.isMobile();
+  }
+
+  isMobileResolution() {
+    return AonElement.isMobileResolution();
+  }
+  isMobile() {
+    return AonElement.isMobile();
   }
 
   iOS() {
