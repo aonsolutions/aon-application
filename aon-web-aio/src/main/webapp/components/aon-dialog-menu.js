@@ -238,8 +238,10 @@ export class AonDialogMenu extends AonElement {
 			const rect = this.getBoundingClientRect();
 
 			// punto base para posicionar: o el punto ancla (cursor) o la posicion actual del rect
+//			let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
+//			let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
 			let baseLeft = (typeof anchorX === 'number') ? anchorX - dialogWidthPx / 2 : rect.left;
-			let baseTop  = (typeof anchorY === 'number') ? anchorY - dialogHeightPx / 2 : rect.top;
+			let baseTop  = (typeof anchorY === 'number') ? anchorY : rect.top;
 
 			// clamp: evitar salirse por los 4 lados dejando 'margin' de separacion
 			const minLeft = margin;
