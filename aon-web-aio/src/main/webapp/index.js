@@ -171,6 +171,7 @@ const isReadOnly =  () => {
     const host = window.location.host;
     return host.startsWith('readonly') || host.startsWith('sololectura') ;
 }
+window.isReadOnly = () => isReadOnly();
 
 const getParam = (paramName) => {
 	const queryString = window.location.search;
