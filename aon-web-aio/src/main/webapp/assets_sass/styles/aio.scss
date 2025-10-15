@@ -1,0 +1,13 @@
+// Modificar las fuente que se usa
+
+// pisamos la fuente que teniamos antes
+// @use './variables' with (
+//   $font-primary-regular   : ("Arial", "Lucida Grande", "Trebuchet MS", sans-serif),
+//   $font-primary-medium    : ("Arial", "Lucida Grande", "Trebuchet MS", sans-serif),
+//   $font-primary-semibold  : ("Arial", "Lucida Grande", "Trebuchet MS", sans-serif),
+//   $font-primary-bold      : ("Arial", "Lucida Grande", "Trebuchet MS", sans-serif),
+//   $font-primary-extrabold : ("Arial", "Lucida Grande", "Trebuchet MS", sans-serif)
+// );
+
+// Confi Global
+@use './main' as main;

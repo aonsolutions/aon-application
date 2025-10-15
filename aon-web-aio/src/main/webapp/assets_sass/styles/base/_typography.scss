@@ -1,38 +1,40 @@
 @use '../variables' as v;
 
-@font-face {
-  font-family : v.$font-primary-regular;
-  src         : url(v.$font-url-regular) format(v.$font-url-format);
-  font-weight : v.$font-weight-regular;
-  font-style  : v.$font-style-normal;
-}
+@if v.$font-primary-regular == "Inter-regular" {
+  @font-face {
+    font-family : v.$font-primary-regular;
+    src         : url(v.$font-url-regular) format(v.$font-url-format);
+    font-weight : v.$font-weight-regular;
+    font-style  : v.$font-style-normal;
+  }
 
-@font-face {
-  font-family : v.$font-primary-medium;
-  src         : url(v.$font-url-medium) format(v.$font-url-format);
-  font-weight : v.$font-weight-medium;
-  font-style  : v.$font-style-normal;
-}
+  @font-face {
+    font-family : v.$font-primary-medium;
+    src         : url(v.$font-url-medium) format(v.$font-url-format);
+    font-weight : v.$font-weight-medium;
+    font-style  : v.$font-style-normal;
+  }
 
-@font-face {
-  font-family : v.$font-primary-semibold;
-  src         : url(v.$font-url-semibold) format(v.$font-url-format);
-  font-weight : v.$font-weight-semibold;
-  font-style  : v.$font-style-normal;
-}
+  @font-face {
+    font-family : v.$font-primary-semibold;
+    src         : url(v.$font-url-semibold) format(v.$font-url-format);
+    font-weight : v.$font-weight-semibold;
+    font-style  : v.$font-style-normal;
+  }
 
-@font-face {
-  font-family : v.$font-primary-bold;
-  src         : url(v.$font-url-bold) format(v.$font-url-format);
-  font-weight : v.$font-weight-bold;
-  font-style  : v.$font-style-normal;
-}
+  @font-face {
+    font-family : v.$font-primary-bold;
+    src         : url(v.$font-url-bold) format(v.$font-url-format);
+    font-weight : v.$font-weight-bold;
+    font-style  : v.$font-style-normal;
+  }
 
-@font-face {
-  font-family : v.$font-primary-extrabold;
-  src         : url(v.$font-url-extrabold) format(v.$font-url-format);
-  font-weight : v.$font-weight-extrabold;
-  font-style  : v.$font-style-normal;
+  @font-face {
+    font-family : v.$font-primary-extrabold;
+    src         : url(v.$font-url-extrabold) format(v.$font-url-format);
+    font-weight : v.$font-weight-extrabold;
+    font-style  : v.$font-style-normal;
+  }
 }
 
 h1 {

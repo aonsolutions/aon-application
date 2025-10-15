@@ -1,4 +1,4 @@
-import './assets_sass/styles/main.scss';
+import './assets_sass/styles/aio.scss';
 
 import './modules/documental/aon-documental.js';
 import './modules/laboral/aon-comunica.js';
