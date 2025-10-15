@@ -6,6 +6,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DATES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXCESS_BASE;
@@ -211,11 +212,11 @@ public class SalaryDraftBuilder
 	}
 	
 	private static boolean hasDates(String descriptionTemplate) {
-		return AonStringUtils.contains(descriptionTemplate, "/*fechas*/");
+		return AonStringUtils.contains(descriptionTemplate, DATES.getName());
 	}
 
 	private static String removeDates(String descriptionTemplate) {
-		return hasDates(descriptionTemplate) ?  descriptionTemplate.replaceAll("@\\{/\\*fechas\\*/.*\\}", "") : descriptionTemplate ;
+		return hasDates(descriptionTemplate) ?  descriptionTemplate.replaceAll(String.format("@\\{%s.*\\}", DATES.getName()), "") : descriptionTemplate ;
 	}
 
 	private String formatItemDescription(Item<?> item, String calcDescription, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd, boolean child) {
