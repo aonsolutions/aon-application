@@ -6,6 +6,7 @@ export const getDelivery = (data) => get(API.DELIVERIES + '/' + data.id, data);
 export const getDeliveries = (data) => get(API.DELIVERIES, data);
 
 export const getWarehouses = (data) => get(API.WAREHOUSES, data);
+export const getWarehouse = (id) => get(API.WAREHOUSES + '/' + id, {id});
 export const saveWarehouse = (data) => put(API.WAREHOUSES, data);
 export const deleteWarehouse = (id)  => remove(`${API.WAREHOUSES}/${id}`, {id});
 

@@ -5,6 +5,7 @@ import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentTyp
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
@@ -170,7 +171,10 @@ public class UserServlet extends AonApiHttpServlet {
 				break;
 			case "/service":
 				response(req, resp, saveServiceAccount(api));
-				break;		
+				break;
+			case "/scope":
+				response(req, resp, addUserScope(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -191,6 +195,9 @@ public class UserServlet extends AonApiHttpServlet {
 				break;
 			case "/workgroup":
 				response(req, resp, removeUserWorkgroup(api));
+				break;
+			case "/scope":
+				response(req, resp, removeUserScope(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -233,6 +240,29 @@ public class UserServlet extends AonApiHttpServlet {
 		AON.deleteUserWorkgroup(api.getDomain(), api.getUser().getLogin(), user, new Workgroup().setId(wId).setDomain(api.getDomain().getId()));
 		return new JSONObject();
 	}
+	
+	private JSONObject addUserScope(AonApiData api) {
+		JSONArray scopes = JsonUtils.getJSONArray(api.getData(), IJsonNames.SCOPES);
+		List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < scopes.length(); i++) {
+            list.add(scopes.getInt(i));
+        }
+
+		Integer userId = JsonUtils.getInteger(api.getData(), IJsonNames.USER);
+		AON.addUserScope(api.getOccam(), userId, list);
+
+		return new JSONObject();
+	}
+	
+	private JSONObject removeUserScope(AonApiData api) {
+		Integer scopeId = JsonUtils.getInteger(api.getData(), IJsonNames.SCOPE);
+		Integer userId = JsonUtils.getInteger(api.getData(), IJsonNames.USER);
+		AON.deleteUserScope(api.getDomain().getName(), api.getDomain().getId(),
+				api.getUser().getLogin(), userId, scopeId);
+
+		return new JSONObject();
+	}
+	
 	
 	private JSONArray getUsers(AonApiData api) {
 		Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);

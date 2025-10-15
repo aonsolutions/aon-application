@@ -437,6 +437,7 @@ export const REVIEW = 'Review';
 export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
+export const SCOPES = 'Scopes';
 export const SCHEDULE = "Schedule";
 export const SEARCH = 'Search';
 export const SEE_ALL = 'See All';

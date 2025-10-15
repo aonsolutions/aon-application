@@ -800,6 +800,19 @@ public class SecurityDAO {
 		// Si ha llegado aqui es un error.
 		throw new IllegalAccessError("Usuario sin permisos.");
 	}
+	
+	public static List<Scope> getUserScopeList(AONContext ctx, Integer userId) {
+		ctx.checkRead();
+		return 	ctx.getDslContext()
+			.select()
+			.from(USER_SCOPE)
+			.join(SCOPE).on(SCOPE.ID.eq(USER_SCOPE.SCOPE))
+			.where(USER_SCOPE.USER_ID.equal(userId))
+			.fetch()
+			.stream()
+			.map(new ScopeFiller()).collect(Collectors.toList());
+	}
+	
 	public static LinkedList<Scope> getAvailableScopes (AONContext ctx) {
 		return ctx.getDslContext()
 			.select()
@@ -891,6 +904,12 @@ public class SecurityDAO {
 	public static void insertUserScope(AONContext ctx, UserScope userScope){
 		ctx.getDslContext().insertInto(USER_SCOPE, USER_SCOPE.DOMAIN, USER_SCOPE.SCOPE, USER_SCOPE.USER_ID)
 			.values(userScope.getDomain(), userScope.getScope(), userScope.getUserId()).execute();
+	}
+	
+	public static void addUserScope(AONContext ctx, Integer userId, List<Integer> scopes) {
+		scopes.stream().forEach(s -> {
+			insertUserScope(ctx, new UserScope().setUserId(userId).setScope(s).setDomain(ctx.getDomainId()));
+		});
 	}
 	
 	public static void deleteUserScope(AONContext ctx, UserScopeFilter filter){
@@ -1548,7 +1567,6 @@ public class SecurityDAO {
 		Domain parentDomain = DomainDAO.getDomain(ctx, domain.getParentId());
 		ApplicationParameter domainPayer = AppParamDAO.fetchOne(ctx, AppParam.AON_DOMAIN_PAYER);
 		
-		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
 		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
@@ -1574,6 +1592,7 @@ public class SecurityDAO {
 		
 		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getNameProperty().eq(AppParam.TRIAL.name()).and(f.getDomainProperty().eq(ctx.getDomainId()))).findFirst();
 
+		List<Scope> scopes = getUserScopeList(ctx, user.getId());
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
 				.setOldParentDomainModules(domain.getParentId() != null
@@ -1588,7 +1607,8 @@ public class SecurityDAO {
 				.setParentDomainUserRoles(parentDomainUserRoles)
 				.setDomainPayer(domainPayer != null)
 				.setTrial(trialAppParam.isPresent() && !AonStringUtils.equalsIgnoreCase(trialAppParam.get().getValue(), "0"))
-				.setTrialValue(trialAppParam.isPresent() ? trialAppParam.get().getValue() : null);
+				.setTrialValue(trialAppParam.isPresent() ? trialAppParam.get().getValue() : null)
+				.setScopes(scopes);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {

@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -121,7 +122,12 @@ public class AonFunctions {
 	    return  TemplateRuntime.eval(template, ctx).toString();
 	}
 
-//	public static final <T,U> String join( String prefix, String suffix, Map<T,U> map, BiFunction<T, U, String> f) {
+	@Variable(ContextVariable.FORMAT)
+	public static final String format(String pattern, Date date) {
+		return new SimpleDateFormat(pattern).format(date);
+	}
+
+	//	public static final <T,U> String join( String prefix, String suffix, Map<T,U> map, BiFunction<T, U, String> f) {
 //	    return  map.entrySet().stream().map(entry -> f.apply(entry.getKey(), entry.getValue()) ).collect(Collectors.joining("", prefix, suffix));
 //	}
 

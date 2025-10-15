@@ -346,7 +346,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void removeContractTransform(String currentDomainName, String currentUser, String ide, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
-	void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date, Integer contractId,
+	void getSepeComunicationData(String currentDomainName, String currentUser, String enterpriseCif, String document, Date date, Integer contractId,
 			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
 	
 	void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 

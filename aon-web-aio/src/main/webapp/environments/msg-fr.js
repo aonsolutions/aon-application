@@ -439,6 +439,7 @@ export const REVIEW = 'Revisar';
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE =  'Ámbito';
+export const SCOPES =  'Ámbitos';
 export const SCHEDULE = "Horarie";
 export const SEARCH = 'Chercher';
 export const SEE_ALL = 'Ver Todas';
