@@ -359,6 +359,8 @@ public interface CommonServiceAsync {
 	
 	void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> asyncCallback) throws AonCoreException;
 	
+	void getOfficeSibling(String domainName, int domain, String user, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
+	
 	// **************************************************
 	// ****************************************** [SALES]
 	// **************************************************

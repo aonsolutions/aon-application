@@ -986,6 +986,20 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<Catalogue> getCatalogueList(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getCatalogueList(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain));
 	}
+
+	@Override
+	public Domain getOfficeSibling(String domainName, int domain, String user) throws AonCoreException {
+		Domain currentDomain = AON.getDomain(domainName, domain, user);
+		Optional<RegistryRelationship> rrletationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getCommentsProperty().eq(currentDomain.getName()));
+		
+		Domain officeSiblingDomain = null;
+		if(rrletationShip.isPresent())
+			officeSiblingDomain = AON.getDomain(domainName, domain, user, f -> f.getIdProperty().eq(rrletationShip.get().getDomain().getId()));
+		else 
+			officeSiblingDomain = AON.getDomain(domainName, domain, user, f -> f.getTypeProperty().eq(DomainType.OFFICE.value()).and(f.getActiveProperty().eq((byte)1)));
+		
+		return officeSiblingDomain;
+	}
 	
 	// **************************************************
 	// ****************************************** [SALES]

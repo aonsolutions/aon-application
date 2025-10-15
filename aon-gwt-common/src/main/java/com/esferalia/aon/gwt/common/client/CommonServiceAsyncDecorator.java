@@ -996,6 +996,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getCatalogueList(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getOfficeSibling(String domainName, int domain, String user, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getOfficeSibling(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// **************************************************
 	// ****************************************** [SALES]
 	// **************************************************
