@@ -2,6 +2,8 @@ import { AonElement } from "../../components/AonElement.js";
 import { EVENT, TAG } from "../../environments/environments.js";
 import { getTrailData } from "../../services/invoiceService.js";
 
+import * as GWT from '../../gwt/gwt.js';
+
 export class AonTrial extends AonElement {
 
   trialData;
@@ -177,18 +179,7 @@ export class AonTrial extends AonElement {
     bookingDiv.style.color = "white";
     bookingDiv.classList.add("aonHoverGray");
     bookingDiv.addEventListener(EVENT.CLICK, () => {
-      this.getApplication().confirmDialog(
-        "Contratación",
-        "Se va a proceder a navegar a la configuración para modificar la contratación. ¿Está seguro de que desea continuar?",
-        async () => {
-          //this.getApplication().startLoading();
-  
-          let aonHeader = this.getElement('aonHeader');
-          aonHeader.aonConfiguration();
-  
-          //this.getApplication().stopLoading();
-        }
-      );
+       GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
     });
 
     let bookingButton = this.createElement(TAG.I);

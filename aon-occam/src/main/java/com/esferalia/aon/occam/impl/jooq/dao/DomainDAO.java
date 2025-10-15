@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,7 +23,6 @@ import java.util.stream.Stream;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Result;
@@ -32,7 +30,6 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
-import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
@@ -350,6 +347,77 @@ public class DomainDAO {
 				.set(ENTERPRISE.DOMAIN, newDomainId)
 				.set(ENTERPRISE.SCOPE, scope.getId())
 				.execute();
+		
+		return domain;
+	}
+	
+
+	
+	public static Domain insertDomainWithoutEnterprise(AONContext ctx, Domain domain, Registry registry) throws Exception {
+		Domain d = getDomain(ctx, f -> f.getNameProperty().eq(domain.getName()));
+		if (d.getId() != null) {
+			throw new Exception("Ya existe el dominio");
+		}
+
+		int newDomainId = ctx
+				.getDslContext()
+				.insertInto(DOMAIN)
+				.set(DOMAIN.CREATION_USER, ctx.getUser())
+				.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.MODIFICATION_USER, ctx.getUser())
+				.set(DOMAIN.MODIFICATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
+				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.PARENT, domain.getParentId())
+				.set(DOMAIN.OWNER, domain.getOwner())
+				.set(DOMAIN.NAME, domain.getName())
+				.set(DOMAIN.DESCRIPTION, domain.getDescription())
+				.set(DOMAIN.ENABLEHEREDITY, domain.isEnableHeredity()? (byte) 1 : (byte) 0)
+				.set(DOMAIN.MAXDEFINEDUSERS, 0)
+				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
+				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16)
+				.set(DOMAIN.SCOPE, domain.getScope())
+				.returning(DOMAIN.ID)
+				.fetchOne().getId();
+		domain.setId(newDomainId);
+		
+		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
+				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
+				.set(DOMAIN_APPLICATION.APPLICATION, 28)
+				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
+				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
+
+
+		try {
+			if (!domain.isEnableHeredity()) {
+				insertScript(domain.getId(), domain.getName(), IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
+			}
+			if (DomainType.GARAGE.equals(domain.getDomainType())) {
+				insertScript(domain.getId(), domain.getName(), IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, newDomainId)
+				.set(REGISTRY.DOCUMENT, registry.getDocument())
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) 0)
+				.set(REGISTRY.NAME, registry.getName())
+				.set(REGISTRY.TYPE, (byte) 1)
+				.returning(REGISTRY.ID).fetchOne()
+				.getId();
+		
+		ctx.getDslContext().insertInto(COMPANY)
+				.set(COMPANY.REGISTRY, newRegistryId)
+				.set(COMPANY.DOMAIN, newDomainId).execute();
+
+//		ctx.getDslContext()
+//				.insertInto(ENTERPRISE)
+//				.set(ENTERPRISE.REGISTRY, newRegistryId)
+//				.set(ENTERPRISE.DOMAIN, newDomainId)
+//				.set(ENTERPRISE.SCOPE, scope.getId())
+//				.execute();
 		
 		return domain;
 	}

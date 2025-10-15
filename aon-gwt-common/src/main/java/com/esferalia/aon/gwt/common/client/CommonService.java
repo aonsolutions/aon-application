@@ -364,6 +364,8 @@ public interface CommonService extends RemoteService {
 	
 	List<Catalogue> getCatalogueList(String domainName, int domain, String user) throws AonCoreException;
 
+	Domain getOfficeSibling(String domainName, int domain, String user) throws AonCoreException;
+	
 	// **************************************************
 	// ****************************************** [SALES]
 	// **************************************************
