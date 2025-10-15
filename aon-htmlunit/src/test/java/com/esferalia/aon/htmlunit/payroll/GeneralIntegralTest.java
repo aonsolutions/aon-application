@@ -3131,7 +3131,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.OCTOBER,2025);
 		assertValue("description-box-13", "SUSPENSIÓN DE EMPLEO Y SUELDO");
-		assertValue("description-box-14", "SUSPENSIÓN DE EMPLEO Y SUELDO 07/10 - 07/10 ");
+		assertValue("description-box-14", "SUSPENSIÓN DE EMPLEO Y SUELDO 07/10 ");
 		assertValue("description-box-15", "SUSPENSIÓN DE EMPLEO Y SUELDO 15/10 - 16/10 ");
 	}
 
