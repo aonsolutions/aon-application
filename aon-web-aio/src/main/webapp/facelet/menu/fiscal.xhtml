@@ -269,12 +269,12 @@
 									</aon:div>
 
 									<!-- *********************** [MODELO 130]  --> 
-									<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias or fiscalParams.bizkaia}">									
+									<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias}">									
 										<aon:commandLink id="gwt_mod130" action="gwt_mod130" 
 											title="#{bundle.fiscal_model_130_module}" styleClass="aon-menu-fiscal">
 											<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="130"/>
 											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="130"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="&#160;"/>
 											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
 											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
 											<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
@@ -353,7 +353,7 @@
 									</aon:div>
 
 									<!-- *********************** [MODELO 202] -->
-									<aon:div rendered="#{fiscalParams.aeat}">									
+									<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias}">									
 										<aon:commandLink id="gwt_mod202-new" action="gwt_mod202-new" 
 											title="#{bundle.fiscal_model_202_module}" styleClass="aon-menu-fiscal">
 											<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="202"/>
@@ -367,7 +367,7 @@
 									</aon:div>
 
 									<!-- *********************** [MODELO 200 - NEW ] -->
-									<aon:div rendered="#{fiscalParams.aeat}">									
+									<aon:div rendered="#{fiscalParams.aeat or fiscalParams.canarias}">									
 										<aon:commandLink id="gwt_mod200-new" action="gwt_mod200" 
 											title="#{bundle.fiscal_model_200_module}" styleClass="aon-menu-fiscal">
 											<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="200"/>

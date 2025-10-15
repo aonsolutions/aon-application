@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.util.function.BiConsumer;
@@ -24,7 +25,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Si no hay registry, se rellena con el de invoice (si hay). 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_IF_EMPTY = (finance,ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_IF_EMPTY = (finance,ctx) -> {
 		if (!finance.isEmptyInvoice() && (finance.getRegistry() == null || finance.getRegistry().getId() == null)) {
 			finance.setRegistry(new Registry().setId(finance.getInvoice().getRegistry()));
 		}
@@ -33,7 +34,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Se rellenan los datos de registry, bien de la factura o del registry. 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY = (finance,ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY = (finance,ctx) -> {
 		if (AonStringUtils.isEmpty(finance.getRegistryDocument())) {
 			finance.setRegistryDocument( !finance.isEmptyInvoice() 
 					? finance.getInvoice().getRegistryDocument() 
@@ -50,7 +51,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Se rellena el concepto si no existe. 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_CONCEPT_IF_EMPTY = (finance,ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_CONCEPT_IF_EMPTY = (finance,ctx) -> {
 		if (!finance.isEmptyInvoice() && AonStringUtils.isBlank( finance.getConcept() )) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
@@ -59,7 +60,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Se rellena el nivel de seguridad. 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> {
 		if (finance.getSecurityLevel() == null) {
 			if (!finance.isEmptyInvoice()) {
 				finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
@@ -89,7 +90,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Se rellena payment. 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_PAYMENT = (finance,ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_PAYMENT = (finance,ctx) -> {
 		if(finance.getInvoice() != null && finance.getInvoice().getType() != null) {
 			finance.setPayment(!finance.getInvoice().isSales());
 		} else if(finance.getInvoice() != null && finance.getInvoice().getType() == null) {
@@ -112,7 +113,7 @@ public class FinanceAutoComplete {
 	/**
 	 * Se rellena paymethod. 
 	 */
-	public static final BiConsumer<Finance,AONContext> COMPLETE_PAYMETHOD = (finance, ctx) -> {
+	private static final BiConsumer<Finance,AONContext> COMPLETE_PAYMETHOD = (finance, ctx) -> {
 		if(finance.getPayMethod() == null) {
 			PayMethod pm = null;
 			if(finance.getPayMethodName() != null) {
@@ -135,6 +136,22 @@ public class FinanceAutoComplete {
 		}
 	};
 	
+	/**
+	 * Se trunco alias si excede la longitud 
+	 */
+	private static final BiConsumer<Finance,AONContext> ENSURE_ALIAS_LENGTH = (finance, ctx) -> { 
+		if (AonStringUtils.length(finance.getBankAlias()) > FINANCE.BANK_ALIAS.getDataType().length() )
+			finance.setBankAlias( AonStringUtils.substring(finance.getBankAlias(), 0, FINANCE.BANK_ALIAS.getDataType().length())); 
+	};
+
+	/**
+	 * Se trunco alias si excede la longitud 
+	 */
+	private static final BiConsumer<Finance,AONContext> ENSURE_BIC_LENGTH = (finance, ctx) -> { 
+		if (AonStringUtils.length(finance.getBic()) > FINANCE.BIC.getDataType().length() )
+			finance.setBankAlias( AonStringUtils.substring(finance.getBankAlias(), 0, FINANCE.BIC.getDataType().length())); 
+	};
+	
 	public static void completeFinance(AONContext ctx, Finance finance) throws AonCoreException {
 			COMPLETE_REGISTRY_IF_EMPTY
 			.andThen(COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY)
@@ -143,6 +160,8 @@ public class FinanceAutoComplete {
 			.andThen(COMPLETE_SCOPE_IF_EMPTY)
 			.andThen(COMPLETE_PAYMENT)
 			.andThen(COMPLETE_PAYMETHOD)
+			.andThen(ENSURE_ALIAS_LENGTH)
+			.andThen(ENSURE_BIC_LENGTH)
 			.accept(finance, ctx);
 	}
 

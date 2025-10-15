@@ -998,10 +998,14 @@ export class AonHeader extends AonElement {
 				.forEach(contract => {
 					const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
 					const contractDocument = this.decorateMatching(contract.document, aonHeaderSearchBoxValue);
+					const contractSSNumber = this.decorateMatching(contract.ssNumber, aonHeaderSearchBoxValue);
 					const contractEndDate  = contract.end_date ? `(${new Date(contract.end_date).toLocaleDateString()})` : '';
+
+					const contractIdentifier = ( this.isDecorated(contractSSNumber) && !this.isDecorated(contractDocument) ) ? contractSSNumber : contractDocument;
+					
 					searchOptions.push({
 						icon : MATERIAL_ICONS.PERSON,
-						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractDocument}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
+						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractIdentifier}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name});} );
 						}
@@ -1019,6 +1023,10 @@ export class AonHeader extends AonElement {
 
 	}
 	
+	isDecorated(text) {
+		return text?.includes('<b>');
+	}
+		
 	decorateMatching (text, searcher) {
 		if ( !text )
 			return '';

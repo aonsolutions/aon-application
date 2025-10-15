@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.occam.api.model.type.AppParam.AON_DOMAIN_PAYER;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Result;
@@ -30,6 +32,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
+import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
@@ -57,6 +60,12 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 
 public class DomainDAO {
+
+	protected static final com.esferalia.aon.jooq.tables.Domain DOMAIN = com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+	protected static final com.esferalia.aon.jooq.tables.Domain PARENT = com.esferalia.aon.jooq.tables.Domain.DOMAIN.as("parent") ;
+	protected static final com.esferalia.aon.jooq.tables.AppParam PAYER = com.esferalia.aon.jooq.tables.AppParam.APP_PARAM.as("payer") ;
+	
+	
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
 
 	public static class DomainPropertiesDAO implements DomainProperties {
@@ -90,8 +99,11 @@ public class DomainDAO {
 		@Override public Property<Byte> getAonStatusProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.AONSTATUS);}
 	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
-		return ctx.getDslContext().select()
+		return ctx.getDslContext()
+				.select()
 				.from(DOMAIN)
+				.leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
+				.leftOuterJoin(PAYER).on(DOMAIN.ID.eq(PAYER.DOMAIN).and(PAYER.NAME.eq(AON_DOMAIN_PAYER.getValue())))
 				.where(DOMAIN.ID.eq(domainId))
 				.fetch()
 				.stream()
@@ -102,18 +114,26 @@ public class DomainDAO {
 	}
 	
 	public static Domain getCompanyDomain(AONContext ctx, String document){
-		return ctx.getDslContext().select()
+		return ctx.getDslContext()
+				.select()
 				.from(DOMAIN)
 				.join(REGISTRY).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
 				.join(COMPANY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+				.leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
+				.leftOuterJoin(PAYER).on(DOMAIN.ID.eq(PAYER.DOMAIN).and(PAYER.NAME.eq(AON_DOMAIN_PAYER.getValue())))
 				.where(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId())))
 				.and(REGISTRY.DOCUMENT.eq(document))
-			.fetchInto(DOMAIN).stream().map(new DomainFiller()).findFirst().orElse(new Domain());
+			.fetch().stream().map(new DomainFiller()).findFirst().orElse(new Domain());
 	}
 	
 	public static Domain getDomain(AONContext ctx, DomainFilter filter){
-		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
-			.fetchInto(DOMAIN).stream().map(new DomainFiller()).findFirst().orElse(new Domain());
+		return ctx.getDslContext()
+			.select()
+			.from(DOMAIN)
+			.leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
+			.leftOuterJoin(PAYER).on(DOMAIN.ID.eq(PAYER.DOMAIN).and(PAYER.NAME.eq(AON_DOMAIN_PAYER.getValue())))
+			.where(DOMAIN_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new DomainFiller()).findFirst().orElse(new Domain());
 	}
 	
 	public static LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter){
@@ -365,7 +385,7 @@ public class DomainDAO {
 				.set(DOMAIN.MODIFICATION_USER, ctx.getUser())
 				.set(DOMAIN.MODIFICATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
-				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.TYPE, (byte) domain.getDomainType().ordinal())
 				.set(DOMAIN.PARENT, domain.getParentId())
 				.set(DOMAIN.OWNER, domain.getOwner())
 				.set(DOMAIN.NAME, domain.getName())
@@ -496,6 +516,16 @@ public class DomainDAO {
 	
 	public static void updateDomainScopeValue(AONContext ctx, String domainName, Integer domainId, Integer scope) {
 		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.SCOPE, scope)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
+	}
+	
+	public static void updateDomainBooking(AONContext ctx, String domainName, Integer domainId, boolean active, Date expirationDate, Integer scope) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.ACTIVE, active ? (byte)1 : (byte)0)
+				.set(DOMAIN.EXPIRATIONDATE, expirationDate)
 				.set(DOMAIN.SCOPE, scope)
 				.where(DOMAIN.ID.eq(domainId))
 				.and(DOMAIN.NAME.eq(domainName))

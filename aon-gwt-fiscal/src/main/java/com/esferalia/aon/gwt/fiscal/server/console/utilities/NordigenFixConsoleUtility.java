@@ -25,6 +25,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 class NordigenFixConsoleUtility extends AbstractConsoleUtility {
 
+	@Override
+	protected String getTitle() {
+		return "Arreglo NORDIGEN";
+	}
+	
+	@Override
 	protected void doUtility(String processId, ConsoleParams params, DomainParams domainParams) {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "Inicio del proceso."));
 		AONContext ctx = params.getFromConnection().getAONContext();

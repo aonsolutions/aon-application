@@ -77,9 +77,15 @@ export class AonJsfApp extends AonElement {
 
 		let domainNameInput = this.createElement(TAG.INPUT);
 		domainNameInput.type = 'hidden';
-		domainNameInput.name = 'com.code.aon.jaas.domain';
+		domainNameInput.name = 'domainName';
 		domainNameInput.value = LS.getDomainName();
 		form.appendChild(domainNameInput);
+
+		let jaasDomainInput = this.createElement(TAG.INPUT);
+		jaasDomainInput.type = 'hidden';
+		jaasDomainInput.name = 'com.code.aon.jaas.domain';
+		jaasDomainInput.value = this.getJaasDomain();
+		form.appendChild(jaasDomainInput);
 
 		let languageInput = this.createElement(TAG.INPUT);
 		languageInput.type = 'hidden';
@@ -98,6 +104,13 @@ export class AonJsfApp extends AonElement {
 		expireSessionInput.name = 'expireSession';
 		expireSessionInput.value = this.expireSession;
 		form.appendChild(expireSessionInput);
+		
+		let readonlyInput = this.createElement(TAG.INPUT);
+		readonlyInput.type = 'hidden';
+		readonlyInput.name = 'readOnly';
+		readonlyInput.value = isReadOnly();
+		form.appendChild(readonlyInput);
+		
 
 		this.appendChild(form);
 
@@ -150,6 +163,11 @@ export class AonJsfApp extends AonElement {
 
 	}
 
+	getJaasDomain() {
+		let domainName = LS.getDomainName();
+		let hostName = window?.location?.hostname;
+		return domainName?.includes(hostName) ? hostName : domainName;
+	}
 
 
 }

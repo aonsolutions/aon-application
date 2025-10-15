@@ -968,7 +968,7 @@ public class ContractFill {
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
 			
 			// Add Copy Basic info if exists
-	        addCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
+	        addTemporalCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
 	        
 	        // Remove unsed pages
 	        removeTemporalPages(contractType, pdfDocument);
@@ -1183,6 +1183,78 @@ public class ContractFill {
 			contentStream.setNonStrokingColor(Color.BLACK);
 			contentStream.setFont( fontLight, 10 );
 			contentStream.newLineAtOffset( 150, 735 );
+			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
+			contentStream.endText();
+			
+			// Make sure that the content stream is closed:
+			contentStream.close();
+		} catch (IOException e) {
+			System.err.println("ERROR SEPE COPY BASIC PDF");
+			e.printStackTrace();
+		}
+		
+		// Create a document and add a page to it
+		PDPage lastPage = document.getPage(document.getPages().getCount() - 1);
+
+		// Start a new content stream which will "hold" the to be created content
+		try {
+			PDPageContentStream contentStream = new PDPageContentStream(document, lastPage, PDPageContentStream.AppendMode.APPEND, true, true);
+			
+			// Se imprime en orden inverso, ¿por que?, no lo se, creo que por el APPEND
+			
+			// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( fontLight, 10 );
+			contentStream.newLineAtOffset( 150, 120 );
+			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 220, 80 );
+			contentStream.showText(null == legalRepresentative ? "" : legalRepresentative);
+			contentStream.endText();
+			
+			// Make sure that the content stream is closed:
+			contentStream.close();
+		} catch (IOException e) {
+			System.err.println("ERROR SEPE COPY BASIC PDF");
+			e.printStackTrace();
+		}
+	}
+	
+	private static void addTemporalCopyBasicInfo(PDDocument document, String legalRepresentative) {
+		// Create a document and add a page to it
+		PDPage firstPage = document.getPage(0);
+
+		// Create a new font object selecting one of the PDF base fonts
+		PDFont font = new PDType1Font(FontName.HELVETICA_BOLD);
+		PDFont fontLight = new PDType1Font(FontName.HELVETICA);
+
+		// Start a new content stream which will "hold" the to be created content
+		try {
+			PDPageContentStream contentStream = new PDPageContentStream(document, firstPage, PDPageContentStream.AppendMode.APPEND, true, true);
+			
+			// Se imprime en orden inverso, ¿por que?, no lo se, creo que por el APPEND
+			
+			// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 130, 715 );
+			contentStream.showText("En cumplimiento del art. 8, punto 4 del Real Decreto Legislativo 2/2015");
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( fontLight, 10 );
+			contentStream.newLineAtOffset( 150, 700 );
 			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
 			contentStream.endText();
 			

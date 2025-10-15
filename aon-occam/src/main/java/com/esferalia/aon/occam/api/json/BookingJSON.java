@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.security.BookingResume;
 import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class BookingJSON {
 	
@@ -34,7 +35,7 @@ public class BookingJSON {
 		JsonUtils.getJSONArray(json, IJsonNames.APPS).forEach(r -> apps.add(AonApp.safeValueOf(r.toString())));
 		JsonUtils.getJSONArray(json, IJsonNames.PARENT_APPS).forEach(r -> parentApps.add(AonApp.safeValueOf(r.toString())));
 		
-		return new Booking()
+		Booking booking = new Booking()
 			.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
 			.setCompany(CompanyJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.COMPANY)))
 			.setType(DomainType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
@@ -42,7 +43,13 @@ public class BookingJSON {
 			.setParentApps(parentApps)
 			.setNumberOfUsers(JsonUtils.getInt(json, IJsonNames.NUMBER_OF_USERS))
 			.setPayer(JsonUtils.getString(json, IJsonNames.PAYER))
-			.setResume(bookingResume(JsonUtils.getJSONObject(json, IJsonNames.RESUME)));
+			.setResume(bookingResume(JsonUtils.getJSONObject(json, IJsonNames.RESUME)))
+			.setDomainActive(JsonUtils.getboolean(json, "domainActive"))
+			.setDomainExpirationDate(JsonUtils.getDate(json, "domainExpirationDate"))
+			.setDomainScope(JsonUtils.getInteger(json, "domainScope"))
+			;
+		
+		return booking;
 	}
 	
 	public static JSONArray toJSON(List<Booking> list) {
@@ -69,7 +76,11 @@ public class BookingJSON {
 			.put(IJsonNames.PARENT_APPS, parentApps) 
 			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
 			.put(IJsonNames.PAYER, object.getPayer())
-			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResumeConsole(object.getResume()): null);
+			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResumeConsole(object.getResume()): null)
+			.put("domainActive", object.isDomainActive())
+			.put("domainExpirationDate", AonDateUtils.format(object.getDomainExpirationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.put("domainScope", object.getDomainScope())
+			;
 	}
 	
 	public static JSONObject toJSON(Booking object, Boolean bookingCheck) {

@@ -451,6 +451,7 @@ export const REVIEW = "Revisar";
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE = 'Àmbit';
+export const SCOPES = 'Àmbits';
 export const SCHEDULE = "Horari";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Veure Totes';

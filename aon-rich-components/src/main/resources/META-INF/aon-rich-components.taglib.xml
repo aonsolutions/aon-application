@@ -735,6 +735,12 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>insertToolbarItems</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jsf.ui.InsertToolbarItemsHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>insert</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.jsf.ui.InsertHandler

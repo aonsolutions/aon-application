@@ -257,7 +257,7 @@ public class TestContrato {
 			Date fini = new Date("2019/12/23");
 			String ipf = "45336785J";
 			Contract contract = Sepe.getContractData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
-					ipf, fini, fini);
+					null, ipf, fini, fini);
 			System.out.println(contract);
 		} catch (Exception e) {
 			e.printStackTrace();

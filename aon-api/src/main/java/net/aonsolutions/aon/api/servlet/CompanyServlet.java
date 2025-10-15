@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
+import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -37,7 +39,9 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -128,6 +132,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 				break;	
 			case "/tags":
 				response(req, resp, getCustomerStatusTags(api));
+				break;	
+			case "/scopes":
+				response(req, resp, getCompanyScopes(api));
 				break;	
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -220,6 +227,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 	}
 
+	private JSONArray getCompanyScopes(AonApiData api) {
+		List<Scope> scopeList = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+			f -> f.getDomainProperty().eq(api.getDomain().getId())).toList();
+		return ScopeJSON.toJSON(scopeList);
+	}
+	
 	public static JSONArray getCompanies(AonApiData api) {
 		if((JsonUtils.has(api.getData(), IJsonNames.PARENT) && JsonUtils.getboolean(api.getData(), IJsonNames.PARENT))
 				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT) || JsonUtils.has(api.getData(), IJsonNames.PARENT_ID)) {
@@ -505,13 +518,22 @@ public class CompanyServlet extends AonApiHttpServlet{
 	private JSONObject saveBooking(AonApiData api){
 		Booking oldBooking = AON.getBooking(api.getDomain(), api.getUser());
 		boolean domainPayer = JsonUtils.getboolean(api.getData(), "domainPayer");
+		
+		boolean domainActive = JsonUtils.getboolean(api.getData(), "domainActive");
+		Date domainExpirationDate = JsonUtils.getDate(api.getData(), "domainExpirationDate");
+		Integer domainScope = JsonUtils.getInteger(api.getData(), "domainScope");
+		
 		Booking newBooking = new Booking()
 			.setDomain(api.getDomain())
 			.setCompany(oldBooking.getCompany())
 			.setType(DomainType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE)))
 			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS))
-			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
+			.setPayer(domainPayer ? api.getDomain().getId().toString() : "")
+			.setDomainActive(domainActive)
+			.setDomainExpirationDate(domainExpirationDate)
+			.setDomainScope(domainScope)
+			;
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
 		

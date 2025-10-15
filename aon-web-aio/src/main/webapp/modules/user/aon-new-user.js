@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { saveUser, deleteUser, changePassword, getAuth, sendUserInfoEmail, updateDurDefinedUsers, getUserRoles, getBookingDomainUserRoles, getUserDomainUserRoles } from  '../../services/service.js';
+import { saveUser, deleteUser, changePassword, getAuth, sendUserInfoEmail, updateDurDefinedUsers, getUserRoles, getBookingDomainUserRoles, getUserDomainUserRoles, deleteUserScope, getScopes, getCompanyScopes, addUserScopes } from  '../../services/service.js';
 import { AllAonApps, EnterpriseAonApps, EmployeeAonApps } from  '../../services/app.js';
 import { Role, Roles, ToolbarType } from '../../models/enums.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -11,6 +11,10 @@ import { AonToolbar } from '../../components/aon-toolbar.js';
 import { createCard, createIcon, createInput, createSelect, createSwitch, createTable } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
+import { AonScopeSimpleList } from '../scope/aon-scope-simple-list.js';
+import { AonTab } from '../../components/aon-tab.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { AonSelect } from '../../components/aon-select.js';
 
 export class AonNewUser extends AonElement {
 
@@ -27,11 +31,15 @@ export class AonNewUser extends AonElement {
 	AUTH_TABLE_DOCUMENT;
 	AUTH_TABLE_PHONE;
 
+	SECURITY_DIV;
+	SECURITY_TABS;
 	SECURITY_CARD;
 	SECURITY_TABLE;
 	SECURITY_TABLE_ICON;
 	SECURITY_TABLE_DESCRIPTION;
 	SECURITY_TABLE_ACTIVE;
+	
+	SCOPE_CARD;
 
 	ADMIN_APP;
 	DEV_APP;
@@ -103,6 +111,9 @@ export class AonNewUser extends AonElement {
 		this.id = this.id || 'aonUser';
 		
 		this.USER_CARD = this.id + CONSTANT.USER.initCap() + CONSTANT.CARD.initCap();
+		this.SECURITY_DIV = this.id + CONSTANT.SECURITY.initCap() + 'Div';
+		this.SECURITY_TABS = this.id + CONSTANT.SECURITY.initCap() + CONSTANT.TABS.initCap();
+		this.SCOPE_CARD = this.id + CONSTANT.SCOPE.initCap() + CONSTANT.CARD.initCap();
 		this.SECURITY_CARD = this.id + CONSTANT.SECURITY.initCap() + CONSTANT.CARD.initCap();
 
 		this.AUTH_TABLE = this.USER_CARD + CONSTANT.AUTH.initCap() + CONSTANT.TABLE.initCap();
@@ -159,6 +170,7 @@ export class AonNewUser extends AonElement {
 
 			this.user.roles = Roles.filter(f => f.is(this.userDur)).map(r => r.value);
 			this.buildToolbar();
+
 			if(this.isMobile()) 
 				this.buildMobileContent();
 			else this.buildContent();
@@ -178,7 +190,6 @@ export class AonNewUser extends AonElement {
 		toolbar.title = MSG.USER;
 
 		this.appendChild(toolbar);
-
 
 		if(!this.hasAttribute('showToolbar')) toolbar.style.display = 'none';
 		toolbar.removeButtons();
@@ -210,7 +221,7 @@ export class AonNewUser extends AonElement {
 		this.buildUserCard(div)
 
 		if(this.hasSecurity()) {
-			this.buildSecurityCard(content);
+			this.buildSecurity(content);
 		}
 	}
 
@@ -317,9 +328,33 @@ export class AonNewUser extends AonElement {
 		}
 	}
 
+	buildSecurity(parent) {
+		let securityDiv = this.createDiv(this.SECURITY_DIV);
+		if(!this.isMobile()) securityDiv.style.width = '50%';
+		parent.appendChild(securityDiv);
+		this.buildSecurityTabs(securityDiv);
+	}
+
+	buildSecurityTabs(div) {
+		if(!this.isMobile()){
+			let tabDiv = this.createDiv();
+			const options = [
+				{ title: MSG.PERMISSIONS, fn: () => this.buildSecurityCard(tabDiv)},
+				{ title: MSG.SCOPES, fn: () => this.buildScopeCard(tabDiv)}
+			];
+
+			let tab = new AonTab();
+			tab.id = this.SECURITY_TABS;
+			tab.setOptions(options);
+			div.appendChild(tab);		
+			div.appendChild(tabDiv);
+			options[0].fn();
+		} else this.buildSecurityCard(div);
+	}
+
 	buildSecurityCard(parent) {
+		parent.innerHTML = '';
 		let card = createCard(this.SECURITY_CARD, MSG.PERMISSIONS, parent);
-		if(!this.isMobile()) card.style.width = '50%';
 	
 		let div = this.createDiv();
 		card.setContent(div);
@@ -331,6 +366,72 @@ export class AonNewUser extends AonElement {
 		this.apps.forEach((app, i) => {
 			this.buildSecurityOption(table, app, i)
 		});
+	}
+
+	buildScopeCard(parent) {
+		parent.innerHTML = '';
+		let card = createCard(this.SCOPE_CARD, MSG.SCOPES, parent);
+		card.addTitleButton(MSG.ADD_SCOPE, MATERIAL_ICONS.ADD, false, () => this.addUserScope(parent));
+		let div = this.createDiv();
+		card.setContent(div);
+	
+		let scopeList = new AonScopeSimpleList();
+		scopeList.id = "aonScopeSimpleList";
+		scopeList.scopes = this.userDur.scopes || [];
+		scopeList.option = {
+      		icon: MATERIAL_ICONS.DELETE,
+      		fn: (scope) => this.deleteUserScope(parent,scope)
+		};
+		div.appendChild(scopeList);
+	}
+
+	addUserScope(parent) {
+		getCompanyScopes().then( scopes => {
+			let scopeSelect = new AonSelect();
+	    	scopeSelect.title = MSG.SCOPES;
+	    	scopeSelect.id = "userScopesSelect";
+	   	 	scopeSelect.autocomplete = true;
+	    	scopeSelect.default = true;
+	    	scopeSelect.multiple = true;
+		
+			let d = this.getApplication().getDialog();
+			d.clear();
+			d.setTitle(MSG.ADD_SCOPE);
+			d.setContent(scopeSelect);
+			d.addAcceptAction(() => {
+				let scps = scopeSelect.getSelectable().map(r => r.value);
+				addUserScopes({user: this.user.id, scopes: scps}).then(() => {
+					this.showMessage("Ámbito añadido al usuario");
+					this.userDur.scopes = (this.userDur.scopes || []).concat(scopes.filter(s => scps.includes(s.id)));
+					this.buildScopeCard(parent);
+				}).catch(e => this.showError(e));
+			});
+			d.open();
+			scopeSelect.setOptions(scopes
+				.filter(s => !(this.userDur.scopes || []).map(us => us.id).includes(s.id))	
+				.map(s => {
+				  return {
+					value: s.id,
+					name: s.name
+				  }
+			}));
+		});
+	}
+
+	deleteUserScope(parent, scope) {
+	    let d = this.getApplication().getDialog();
+		d.clear();
+		d.setTitle(MSG.DELETE_SCOPE);
+		d.width = '400px';
+		d.setContentHTML("¿Estás seguro de eliminar el ámbito " + scope.name + " del usuario?");
+		d.addAcceptAction(() => {
+			deleteUserScope({user: this.user.id, scope: scope.id}).then(() => {
+				this.showMessage("Ámbito eliminado del usuario");
+				this.userDur.scopes = (this.userDur.scopes || []).filter(s => s.id != scope.id);
+				this.buildScopeCard(parent);
+			}).catch(e => this.showError(e));
+		});
+		d.open();
 	}
 
 	initApps() {

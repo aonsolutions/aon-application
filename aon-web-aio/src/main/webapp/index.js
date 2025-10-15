@@ -15,7 +15,9 @@ import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon-figma.css';
+import './css/aon-singleton-access.css';
 */
+
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM = (token) => {
     window.tokenFCM = token;
@@ -45,20 +47,14 @@ const load = () => {
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
 	
-	loadScripts();
-	loadThemeOld().then(
-      () => {
-          favicon();
-          title();
-          document.body.appendChild(new AonModule());
-      },
-      (err) => {
-        console.log(document.body);
-        console.log(new AonModule());
-        console.log(err);
-        document.body.appendChild(new AonModule());
-      }
-	);
+	loadScripts(); 
+	loadTheme()
+	.finally(loadIsReadOnly)
+	.finally( () =>  {
+		title();
+		favicon(); 
+		document.body.appendChild(new AonModule()) 
+	} ) ;  
 
 	// TODO: loadScriptFirebase();
     window.loadScripts = () => loadScripts();
@@ -66,7 +62,7 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).");
 };
 
-export const loadThemeOld = async  () => {
+export const loadThemeOld = async () => {
 	// LS.AON_THEME 
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
@@ -78,19 +74,46 @@ export const loadThemeOld = async  () => {
 			aonThemeSpan.className = 'aonTheme';
 			aonThemeSpan.style.display = 'none';
 			document.body.appendChild(aonThemeSpan);
-			
+
 			loadLink(themeUrl, 'stylesheet', 'text/css').then(() => {
 				resolve();
-				aonThemeSpan.remove();
 			}).catch((err) => {
-                reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
-                aonThemeSpan.remove();
-            });
-		} catch ( err ) {
+				reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
+			}).finally(() => aonThemeSpan.remove());
+
+		} catch (err) {
 			reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
 		}
 	});
 };
+
+export const loadIsReadOnly = async () => {
+	
+	return new Promise((resolve, reject) => {
+		
+		if ( isReadOnly() ) { 
+			try {
+				const readonlyUrl = 'css/readonly.css';
+				
+				const readonlySpan = document.createElement(TAG.SPAN);
+				readonlySpan.className = 'aonTheme';
+				readonlySpan.style.display = 'none';
+				document.body.appendChild(readonlySpan);
+	
+				loadLink(readonlyUrl, 'stylesheet', 'text/css').then(() => {
+					resolve();
+				}).catch((err) => {
+		            reject(new Error(`Something was wrong with readonly stylesheet ${err}`));
+		        }).finally( () => readonlySpan.remove() );
+			} catch ( err ) {
+				reject(new Error(`Something was wrong with readonly stylesheet ${err}`));
+			}
+			
+		} else {
+			reject(new Error(`Read only it's not activate at this moment.`));
+		}
+	});
+}
 
 const loadScript = (url, module=false) => new Promise((resolve, reject) => {
     let script = document.querySelector(`script[src="${url}"]`);
@@ -144,9 +167,14 @@ const isLocal =  () => {
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
 };
 
+const isReadOnly =  () => {
+    const host = window.location.host;
+    return host.startsWith('readonly') || host.startsWith('sololectura') ;
+}
+
 const getParam = (paramName) => {
 	const queryString = window.location.search;
-	const searchParams = new URLSearchParams(queryString);
+	const searchParams = new getParamURLSearchParams(queryString);
 	return searchParams.get(paramName);
 };
 

@@ -2104,6 +2104,72 @@
 	    display: none;
 	}
 	</style>
+	
+	<style>
+	:root{
+		--aonBlue: #002469;
+		--aonWarning: #e6970a;
+	}
+	.aonDialog {
+	  display: none;
+	  position: fixed;
+	  z-index: 4;
+	  padding-top: 100px;
+	  left: 0;
+	  top: 0;
+	  width: 100%;
+	  height: 100%;
+	  overflow: auto;
+	  background-color: rgba(0, 0, 0, 0.2);
+	  user-select: none;
+	}
+	
+	.aonDialogContent {
+	  background-color: #fefefe;
+	  margin: auto;
+	  padding: 20px;
+	  border: 1px solid #ddd;
+	  width: 80%;
+	}
+	.aonButton {
+	  display: inline-block;
+	  border: none;
+	  padding: 1rem 2rem;
+	  margin: 0;
+	  text-decoration: none;
+	  background: var(--aonBlue);
+	  color: #ffffff;
+	  font-family: var(--aonFontFamily);
+	  font-size: 1rem;
+	  cursor: pointer;
+	  text-align: center;
+	  transition: background 250ms ease-in-out, transform 150ms ease;
+	  -webkit-appearance: none;
+	  -moz-appearance: none;
+	  outline: none !important;
+	  box-shadow: 0px 2px 4px rgb(0, 0, 0, .15);
+	  border-radius: 6px;
+	  font-weight: bold;
+	}
+	
+	.aonButton:active {
+	  transform: scale(0.99);
+	}
+	
+	.aonButton[disabled], .aonButton:disabled {
+	  cursor: not-allowed;
+	  background-color: #cccccc !important;
+	}
+	</style>
+	
+	<link rel="stylesheet" type="text/css" href="/css/aon-singleton-access.css" />
+	
+	<script type="module">
+	//<![CDATA[ 
+	import { initSingletonAccess } from '/js/singletonAccess.js';
+	initSingletonAccess(); // opcional: puedes pasar textos/ajustes personalizados
+	//]]>
+	</script>
 
 	<script type="text/javascript">
 			selected = -1;

@@ -120,4 +120,14 @@ public class AonDateUtils {
 		return calendar.getActualMaximum(field);
 	}
 
+	public static Date resetTime(Date date) {
+        long millisInDay = 24 * 60 * 60 * 1000;
+        long time = date.getTime();
+        
+        // Adjust for timezone offset
+        long localMidnight = time - (time % millisInDay);
+
+        return  new Date(localMidnight);
+	}
+
 }

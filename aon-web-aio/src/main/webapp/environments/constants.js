@@ -347,6 +347,7 @@ export const SALTRA = 'saltra';
 export const SALES_PREPARATION = 'salesPreparation';
 export const SAVE = 'save';
 export const SCROLLING = 'scrolling';
+export const SCOPE = 'scope';
 export const SECURITY = 'security';
 export const SELECT = 'select';
 export const SELECTED = 'selected';

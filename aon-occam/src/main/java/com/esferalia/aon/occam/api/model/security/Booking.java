@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,11 @@ public class Booking implements Serializable {
 	private List<AonApp> apps;
 	private List<AonApp> parentApps;
 	private Integer numberOfUsers;
+	
 	private String payer;
+	private boolean domainActive;
+	private Date domainExpirationDate;
+	private Integer domainScope;
 
 	private BookingResume resume;
 	
@@ -111,4 +116,33 @@ public class Booking implements Serializable {
 		this.type = type;
 		return this;
 	}
+
+	public boolean isDomainActive() {
+		return domainActive;
+	}
+
+	public Booking setDomainActive(boolean domainActive) {
+		this.domainActive = domainActive;
+		return this;
+	}
+
+	public Date getDomainExpirationDate() {
+		return domainExpirationDate;
+	}
+
+	public Booking setDomainExpirationDate(Date expirationDate) {
+		this.domainExpirationDate = expirationDate;
+		return this;
+	}
+
+	public Integer getDomainScope() {
+		return domainScope;
+	}
+
+	public Booking setDomainScope(Integer domainScope) {
+		this.domainScope = domainScope;
+		return this;
+	}
+	
+	
 }

@@ -164,8 +164,8 @@ public class TediParser {
 	}
 	
 	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {
-		Integer activity = null;
-		if (aonCtx != null) {
+		Integer activity = ai.getInvoice().getActivity() != null ? ai.getInvoice().getActivity().getId() : null;
+		if (aonCtx != null && activity == null) {
 			EnterpriseActivity ea = aonCtx.getMainActivity();
 			activity = (ea==null?null:ea.getId());
 		}
@@ -389,6 +389,13 @@ public class TediParser {
 	private static Consumer<TediParserContext> INVOICE_DOMAIN = (ctx) -> {
 		if (ctx.getAONContext() != null) {
 			ctx.getTediResult().getInvoice().setDomain( ctx.getAONContext().getDomainId() );
+		}
+	};
+
+	private static Consumer<TediParserContext> INVOICE_ACTIVITY = (ctx) -> {
+		EnterpriseActivity activity = ctx.getTediResult().getInv().getActivity();
+		if (activity != null && activity.getId() != null) {
+			ctx.getTediResult().getInvoice().setActivity(activity);
 		}
 	};
 
@@ -865,6 +872,7 @@ public class TediParser {
 		
 		ACCOUNTING_INVOICE_WORKPLACE
 		.andThen(INVOICE_DOMAIN)
+		.andThen(INVOICE_ACTIVITY)
 		.andThen(INVOICE_TYPE)
 		.andThen(INVOICE_ISSUE_DATE)
 		.andThen(INVOICE_TAX_DATE)

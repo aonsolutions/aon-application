@@ -435,13 +435,14 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	downloadInvoices() {
-		let data = {
-			domainId: localStorage.getItem('aon_domain_id'),
-			domainName: localStorage.getItem('aon_domain_name'),
-			domainLogin: localStorage.getItem('aon_domain_login'),
-			ids: this.getTable().selected.map(r => r.id),
-			status: this.getFilter().status
-		};
+		let data = this.getFilter();
+		data.domainId = LS.getDomainId();
+		data.domainName = LS.getDomainName();
+		data.domainLogin = LS.getDomainLogin();
+		if(!this.getTable().selectedAll) {
+			data.ids = this.getTable().selected.map(r => r.id);
+		}
+
 		let json = btoa(JSON.stringify(data));
 		downloadInvoices(json);
 	}

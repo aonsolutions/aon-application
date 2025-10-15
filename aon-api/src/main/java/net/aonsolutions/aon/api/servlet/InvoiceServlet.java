@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -455,6 +457,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 		}
 		json.put(IJsonNames.FILE, buildInvoiceFileJSON(domain, login, invoice));
+		System.out.println( json.toString(1) );
 		return json;
 	}
 	
@@ -813,9 +816,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put("invofox", InvofoxServlet.getConfiguration(api));
-		json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON( 
-			AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainProperty().eq(api.getDomain().getId()))));
+		LinkedList<Workplace> workplaces = AON.getWorkplaces(api.getOccam(), api.getDomain().getId())
+				.collect(Collectors.toCollection(LinkedList::new));
+		json.put(IJsonNames.WORKPLACES, workplaces);
 		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}

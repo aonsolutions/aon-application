@@ -2,7 +2,6 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/
 import { AonNewInput } from './aon-new-input.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
-import { DIV } from '../environments/aonTag.js';
 
 export class AonNewDate extends AonNewInput {
   activePicker;

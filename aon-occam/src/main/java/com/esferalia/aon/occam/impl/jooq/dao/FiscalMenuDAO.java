@@ -266,42 +266,67 @@ public class FiscalMenuDAO {
 			.stream()
 			.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
 			
-			// Modelos 200, 202, 131 y 390 solo para AEAT
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M200) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M200) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M202) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M202) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M131) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M131) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY ))
+			// Modelo 390 solo para AEAT
 			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M390) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M390) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY ))
 			
-			// Modelo 130, solo para AEAT y BIZKAIA
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.BIZKAIA) ))
+			// Modelos 130, 131, 200 y 202 solo para AEAT y CANARIAS
+			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.CANARIAS) ))
+			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M131) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M131) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.CANARIAS) ))
+			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M200) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M200) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.CANARIAS) ))
+			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M202) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M202) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.CANARIAS) ))
+			
+			// Modelo 130, solo para AEAT, CANARIAS y BIZKAIA
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M130) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.COMMON_TERRITORY || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.BIZKAIA || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.CANARIAS) ))
 			
 			// Modelo 390HF, solo para ALAVA, BIZKAIA y GIPUZKOA, exclusivamente
 			.filter(rec -> AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M390_HF) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M390_HF) && (AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.ALAVA || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.BIZKAIA || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == Administration.GIPUZKOA) ))
 			
-			// Modelos 347, 349, 111, 115, 123, 180, 184, 190, 193, para todas las administraciones, excepto para Canarias
+			// Modelos 347, 349, para todas las administraciones, excepto para Canarias
 			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M347) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M347) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
 			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M349) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M349) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M111) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M111) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M115) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M115) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M123) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M123) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M180) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M180) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M184) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M184) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M190) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M190) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
-			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M193) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M193) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+			
+			// Resto de Modelos 303, 111, 115, 123, 180, 184, 190, 193, para todas las administraciones
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M111) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M111) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M115) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M115) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M123) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M123) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M180) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M180) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M184) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M184) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M190) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M190) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
+//			.filter(rec -> AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == null || AonStringUtils.notEquals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M193) || (AonStringUtils.equals(rec.getValue(APP_PARAM.NAME), PARAM_PREFIX + FiscalModelType.M193) && AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) != Administration.CANARIAS ))
 			
 			// Comprobar si se está filtrando por administracion
 			.filter(rec -> params.getAdministration() == null || AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)) == params.getAdministration())
 			
-			.map( rec -> new FiscalModel()
-					.setDomain(rec.getValue(DOMAIN.ID))
-					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setAdministration( AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)))
-					.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
-					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-					.setName(rec.getValue(REGISTRY.NAME))
-					.setStatus( FiscalStatus.MISSING)
-					.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)
-			)
+			.map( rec -> {
+					Administration administration = AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE));
+					FiscalModelType model = fromAppParamName(rec.getValue(APP_PARAM.NAME));
+					// Si administración por defecto es CANARIAS, los modelos de IRPF y Sociedades, se hacen en AEAT
+					if ((administration == Administration.CANARIAS) &&  
+					    (model == FiscalModelType.M111 || 
+					 	 model == FiscalModelType.M115 || 
+						 model == FiscalModelType.M123 || 
+						 model == FiscalModelType.M180 || 
+						 model == FiscalModelType.M184 || 
+						 model == FiscalModelType.M190 || 
+						 model == FiscalModelType.M193 || 
+						 model == FiscalModelType.M130 || 
+						 model == FiscalModelType.M131 || 
+						 model == FiscalModelType.M200 || 
+						 model == FiscalModelType.M202)) {
+						administration = Administration.COMMON_TERRITORY;						
+					}
+					return new FiscalModel()
+						.setDomain(rec.getValue(DOMAIN.ID))
+						.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+	//					.setAdministration( AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)))
+	//					.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
+						.setAdministration(administration)
+						.setModel(model)
+						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+						.setName(rec.getValue(REGISTRY.NAME))
+						.setStatus( FiscalStatus.MISSING)
+						.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01);
+			})
 			.filter( fm -> checkScope(ctx, fm))
 			.map( FiscalMenuItemJSON::toJSON )
 			.forEach( allModels::put )

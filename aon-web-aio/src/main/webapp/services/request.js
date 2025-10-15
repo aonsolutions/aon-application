@@ -225,8 +225,10 @@ export const put = (url, data, sessionData) => {
   });
 };
 
-export const putPro = (url, data) => {
-  return put(url, data, getProSessionData());
+export const putPro = (url, data, headers = {}) => {
+  let sessionData = getProSessionData();
+  sessionData = { ...sessionData, ...headers};	
+  return put(url, data, sessionData);
 };
 
 export const remove = (url, data, sessionData) => {
@@ -242,7 +244,7 @@ export const remove = (url, data, sessionData) => {
 };
 
 export const removePro = (url, data, headers = {}) => {
-  let sessionData = getProSessionData();
+  	let sessionData = getProSessionData();
 	sessionData = { ...sessionData, ...headers};
   	return remove(url, data, sessionData);
 };

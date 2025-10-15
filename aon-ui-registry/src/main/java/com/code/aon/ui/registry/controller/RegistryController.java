@@ -519,8 +519,8 @@ public class RegistryController extends BasicController {
 				Criteria criteria = getCriteria();
 				OrderByList order = criteria.getOrderByList();
 				OrderByList newOrder = new OrderByList();
-				Order o1 = new Order(new IdentExpressionImpl("Customer.modificationDate") , false);
-				Order o2 = new Order(new IdentExpressionImpl("Customer.creationDate") , false);
+				Order o1 = new Order(new IdentExpressionImpl(mappingPrefix + ".modificationDate") , false);
+				Order o2 = new Order(new IdentExpressionImpl(mappingPrefix + ".creationDate") , false);
 				newOrder.add( o1 );
 				newOrder.add( o2 );
 				criteria.setOrderByList( newOrder );

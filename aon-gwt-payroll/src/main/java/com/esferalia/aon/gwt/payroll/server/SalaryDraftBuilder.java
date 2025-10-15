@@ -13,6 +13,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_FIRST;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_SECOND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_THIRD;
@@ -106,6 +107,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.google.gwt.view.client.HasData;
 
 public class SalaryDraftBuilder
 		implements ISalaryBuilder<ISalary>, 
@@ -156,6 +158,10 @@ public class SalaryDraftBuilder
 		StringBuffer description = new StringBuffer(); 
 		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
 		
+		if (hasDates(item.getDescriptionTemplate())) {
+			return description.toString();
+		}			
+
 		if ( itemStart == null  || itemEnd == null ) {
 			return description.toString();
 		}
@@ -164,6 +170,7 @@ public class SalaryDraftBuilder
 				&&  itemEnd.equals(draftEnd) ) {
 			return description.toString();
 		}
+		
 		
 		if (itemStart.equals(itemEnd)) {
 			String format = "dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
@@ -189,6 +196,10 @@ public class SalaryDraftBuilder
 		StringBuffer description = new StringBuffer(); 
 		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
 		
+		if (hasDates(item.getDescriptionTemplate())) {
+			return description.toString();
+		}			
+		
 		String format = "dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
 		String formatted = 	description.append(" ")
 							.append(formatDate(itemStart, format).orElse(""))
@@ -197,6 +208,14 @@ public class SalaryDraftBuilder
 							.toString();
 		
 		return formatted;
+	}
+	
+	private static boolean hasDates(String descriptionTemplate) {
+		return AonStringUtils.contains(descriptionTemplate, "/*fechas*/");
+	}
+
+	private static String removeDates(String descriptionTemplate) {
+		return hasDates(descriptionTemplate) ?  descriptionTemplate.replaceAll("@\\{/\\*fechas\\*/.*\\}", "") : descriptionTemplate ;
 	}
 
 	private String formatItemDescription(Item<?> item, String calcDescription, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd, boolean child) {
@@ -868,6 +887,7 @@ public class SalaryDraftBuilder
 			if (isDelay(payment)
 				|| isExtra(payment)
 				|| isUnpaid(payment)
+				|| isPrestIT(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax)) {
@@ -881,6 +901,7 @@ public class SalaryDraftBuilder
 			if ( isDelay(payment)
 				|| isExtra(payment)
 				|| isUnpaid(payment)
+				|| isPrestIT(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax)) {
@@ -1489,7 +1510,11 @@ public class SalaryDraftBuilder
 			composite = (CompositePayment) payment;
 			composite.addChild(childPayment);
 			composite.setDescription(getCompositeDescription(payment, childPayment));
-		} else if (isDelay(payment) || isNotZero(payment)){
+		} else if (isDelay(payment)
+				|| isUnpaid(payment)
+				|| isPrestIT(payment)
+				|| isNotZero(payment
+				)){
 			composite = newCompositePayment(payment);
 			composite.addChild(childPayment);
 			composite.setDescription(getCompositeDescription(payment, childPayment));
@@ -1773,12 +1798,15 @@ public class SalaryDraftBuilder
 	}
 	
 	private String getCompositeDescription(Payment payment1, Payment payment2) {
+		
 		if ( AonStringUtils.equals(payment2.getDescriptionTemplate(), payment2.getDescription()) )
 				return payment2.getDescription();
 		
 		
+		
 		try {
-			return ExpressionContext.evalTemplate(payment1.getDescriptionTemplate(), variables );
+			String descriptionTemplate = removeDates( payment1.getDescriptionTemplate());
+			return ExpressionContext.evalTemplate(descriptionTemplate, variables );
 		} catch ( Exception e) {
 			return AonStringUtils.defaultIfBlank(payment1.getDescription(), payment2.getDescription() );
 		}
@@ -2006,8 +2034,20 @@ public class SalaryDraftBuilder
 		return payment.getSalaryType() == Salary.Type.DELAY;
 	}
 
+	private static  boolean isPrestIT(IPayment payment) {
+		return AonStringUtils.equals(payment.getName(),PREST_IT);
+	}
+
 	private static  boolean isUnpaid(IPayment payment) {
 		return AonStringUtils.equals(payment.getName(),UNPAID.getName());
+	}
+
+	private static  boolean isUnpaid(Payment payment) {
+		return AonStringUtils.equals(payment.getName(),UNPAID.getName());
+	}
+
+	private static  boolean isPrestIT(Payment payment) {
+		return AonStringUtils.equals(payment.getName(),PREST_IT);
 	}
 
 	private static boolean isNotZero(Double amount) {

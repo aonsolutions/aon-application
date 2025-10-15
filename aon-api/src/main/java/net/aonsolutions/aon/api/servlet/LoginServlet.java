@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -196,16 +197,16 @@ public class LoginServlet extends AonApiHttpServlet{
 		}
     	
 	    JSONObject object = new JSONObject();
-	    if( domain != null && !domain.isActive() ) {
+	    if( domain != null && !domain.isActuallyActive() ) {
 	    	resp.setStatus(401);
 			object.put("type", "error");
 			object.put("message",
 					String.format("El dominio %s se encuentra actualmente inactivo.", domain.getDescription()));
-	    } else if( domain != null && (domain.getExpirationDate() != null) && new Date().after(domain.getExpirationDate()) ) {
+	    } else if( domain != null && domain.isExpired() ) {
 			resp.setStatus(401);
 			object.put("type", "error");
 			object.put("message", String.format(
-					"El periodo de pruebas/contratación del dominio %s ha expirado. Contacte con soporte o su comercial asignado para más información.",
+					"El periodo de contratación del dominio %s ha expirado. Contacte con soporte o su comercial asignado para más información.",
 					domain.getDescription()));
 	    } else if(auth.getUuid() == null && AonStringUtils.isBlank(token)) {
 	    	resp.setStatus(401);

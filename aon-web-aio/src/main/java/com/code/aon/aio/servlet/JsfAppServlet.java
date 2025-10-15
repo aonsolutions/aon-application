@@ -47,12 +47,13 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String TOKEN = "token";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
+	private static final String READ_ONLY = "readOnly";
 	private static final String DOMAIN_ID = "domainId";
+	private static final String DOMAIN_NAME = "domainName";
 	private static final String LANGUAGE = "language";
 	private static final String REDIRECT_URL = "redirectUrl";
 	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
-	private static final String DOMAIN_NAME = "com.code.aon.jaas.domain";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -65,9 +66,10 @@ public class JsfAppServlet extends HttpServlet {
 			doLogin(req, resp);
 			
 			initFacesContext(req, resp);
+			initDomainSwitcher(req);
 			initDesktopController(req);
 			initConfigurationController(req);
-			initDomainSwitcher(req);
+			initLoggedUser(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -87,6 +89,7 @@ public class JsfAppServlet extends HttpServlet {
 		if ( AonStringUtils.notEquals(currentDomainName, domainName ) ) {
 			domainSwitcher.select(domainId, domainName);
 		}
+
 	}
 
 	private void initConfigurationController(HttpServletRequest req) {
@@ -102,6 +105,13 @@ public class JsfAppServlet extends HttpServlet {
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
+		appController.setReadOnly(Boolean.parseBoolean(req.getParameter(READ_ONLY)));
+	}
+	
+	
+	private void initLoggedUser(HttpServletRequest req){
+		//This is the way to init logged user, AON way :-(  
+		UserUtils.getInstance().getLoggedUser();
 	}
 	
 	protected void doLogin(HttpServletRequest httpRequest,
@@ -189,8 +199,6 @@ public class JsfAppServlet extends HttpServlet {
 
 			facesContext.setViewRoot(view);
 			
-			//This is the way to init logged user, AON way :-(  
-			UserUtils.getInstance().getLoggedUser();
 			
 		} catch (Throwable throwable) {
 			// TODO: Do some usefull with this.

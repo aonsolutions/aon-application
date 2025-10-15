@@ -1,5 +1,5 @@
 import { AonCheckbox } from "../../components/aon-checkbox.js";
-import { AON_WORKGROUP } from "../../environments/aonTag.js";
+// import { AON_WORKGROUP } from "../../environments/aonTag.js";
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 const AON_CUSTOMER = {
@@ -46,7 +46,7 @@ const AON_CUSTOMER_PAYROLL_ACTIVITY = {
 
 const AON_SERVICE = {
     id: 'sideNavService',
-    name: MSG.AON_SERVICES,
+    name: 'Servicios Despacho',
     // icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 

@@ -227,6 +227,16 @@
 						style.textContent = text;
 						idocument.body.appendChild(style)
 					});
+					
+					if ( isReadOnly() ) {
+						fetch('css/readonly.css')
+						.then(response => response.text())
+						.then((text) => {
+							let style = idocument.createElement('style');
+							style.textContent = text;
+							idocument.body.appendChild(style)
+						});
+					}
 
 					resolve(iframe);
 

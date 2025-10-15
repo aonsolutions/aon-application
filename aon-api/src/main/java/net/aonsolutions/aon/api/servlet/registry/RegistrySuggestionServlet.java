@@ -1,10 +1,7 @@
 package net.aonsolutions.aon.api.servlet.registry;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +16,9 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -93,13 +93,16 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		return registryJSON;
 	}
 
-	private static String toBooleanMode(String str) {
-	    StringBuilder buffer = new StringBuilder();
-	    for ( String word : str.split("\\W+") ) {
-		buffer.append("+");
-		buffer.append(word);
-	    }
-	    buffer.append("*");
-	    return buffer.toString();
-	}
+	public static String toBooleanMode(String str) {
+        StringBuilder buffer = new StringBuilder();
+        // Separa en lo que no sea letra o número
+        for (String word : str.split("[^\\p{L}\\p{N}]+")) {
+            if (!word.isEmpty()) {
+                // Normalizar solo a minúsculas, sin quitar acentos ni ñ
+                String clean = word.toLowerCase(Locale.ROOT);
+                buffer.append("+").append(clean).append("* ");
+            }
+        }
+        return buffer.toString().trim();
+    }	
 }

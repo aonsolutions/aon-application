@@ -142,7 +142,7 @@ public class BookingDAO {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());
 		}
 		
-		// TODO DOMAIN PAYER 
+		// DOMAIN PAYER 
 		ApplicationParameter domainPayer = AppParamDAO.fetchOne(ctx, AppParam.AON_DOMAIN_PAYER);
 		if (!AonStringUtils.isBlank(booking.getPayer())) {
 			if (domainPayer == null) {
@@ -153,6 +153,12 @@ public class BookingDAO {
 		} else if (domainPayer != null) {
 			AppParamDAO.deleteApplicationParameter(ctx, f -> f.getIdProperty().eq(domainPayer.getId()));
 		}
+		
+		// BOOKING DOMAIN INFO 
+		DomainDAO.updateDomainBooking(ctx, booking.getDomain().getName(), booking.getDomain().getId(), 
+				booking.isDomainActive(), 
+				booking.getDomainExpirationDate() == null ? null : AonDateUtils.toSql(booking.getDomainExpirationDate()), 
+				booking.getDomainScope());
 
 		saveBookingHistory(ctx, booking);
 

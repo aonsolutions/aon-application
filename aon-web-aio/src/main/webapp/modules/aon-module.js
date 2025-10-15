@@ -10,6 +10,9 @@ import { AonParent } from './aon-parent.js';
 
 import * as LS from '../services/localStorageService.js';
 
+import { initSingletonAccess } from '../js/singletonAccess.js';
+ 
+
 export class AonModule extends AonElement {
 
 	AON_LOGIN;
@@ -26,6 +29,7 @@ export class AonModule extends AonElement {
 	}
 
 	initialize() {
+		initSingletonAccess();
 		this.AON_LOGIN = 'aonLogin';
 		this.AON_HOME = 'aonHome';
 		this.AON_MODULE_LOADER = 'aonModuleLoader';
@@ -47,6 +51,7 @@ export class AonModule extends AonElement {
 		let loader = new AonLoader();
 		loader.id = this.AON_MODULE_LOADER;
 		this.appendChild(loader);
+		
 	}
 
 	startLoading() {

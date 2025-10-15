@@ -30,35 +30,19 @@ import com.sun.facelets.TemplateClient;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagAttributeException;
 import com.sun.facelets.tag.TagConfig;
-import com.sun.facelets.tag.TagHandler;
 
 import jakarta.el.ELException;
 
 /**
  */
-public final class InsertHandler extends TagHandler implements TemplateClient {
+public final class InsertHandler extends AbstractInsertHandler implements TemplateClient {
 	
 	
-	private final String name;
-	private final String elVar;
-    private final TagAttribute filter ;
-
-    /**
+	/**
      * @param config
      */
     public InsertHandler(TagConfig config) {
         super(config);
-        this.elVar = "el";
-        TagAttribute attr = this.getAttribute("name");
-        if (attr != null) {
-            if (!attr.isLiteral()) {
-                throw new TagAttributeException(this.tag, attr, "Must be Literal");
-            }
-            this.name = attr.getValue();
-        } else {
-            this.name = null;
-        }
-        this.filter = this.getAttribute("filter");
     }
 
     public void apply(FaceletContext ctx, UIComponent parent)
@@ -99,28 +83,4 @@ public final class InsertHandler extends TagHandler implements TemplateClient {
         }
     }
 
-    @Override
-    public boolean apply(FaceletContext ctx, UIComponent parent, String name)
-    		throws IOException, FacesException, FaceletException, ELException {
-        if (Objects.equals(this.name, name)) {
-            this.nextHandler.apply(ctx, parent);
-            return true;
-        }
-        return false;
-    }
-    
-	private static boolean exists(UIComponent parent, UIComponent e) {
-		if ( Objects.equals(parent.getId(), e.getId())) {
-			return true;
-		} else {
-			for ( UIComponent child: parent.getChildren() ) {
-				if ( exists(child, e)) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-   
-    
 }
