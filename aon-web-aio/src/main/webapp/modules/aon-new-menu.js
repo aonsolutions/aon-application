@@ -67,6 +67,7 @@ import { createSelect } from '../components/CreateComponent.js';
 import { getCompanyActivities } from '../services/companyService.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
+import { getInvoiceCount } from '../services/invoiceService.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -1206,7 +1207,11 @@ export class AonNewMenu extends AonElement {
 				optionsMenu.push({
 					name: MSG.UPLOAD_INVOICE,
 					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-					fn: () => {
+					fn: async () => {
+						// Check trial limit
+						let exceedTrail = await this.exceedTrailInvoinces();
+						if (exceedTrail) return;
+						
 						let input = this.createElement(TAG.INPUT);
 						input.type = CONSTANT.FILE;
 						input.accept = this.accept;
@@ -1374,7 +1379,11 @@ export class AonNewMenu extends AonElement {
 		//appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
 	}	
 	
-	newInvoice(invoice) {
+	async newInvoice(invoice) {
+		// Check trial limit
+		let exceedTrail = await this.exceedTrailInvoinces();
+		if (exceedTrail) return;
+		
 		let invoicePanel = new AonInvoicePanel();
 		invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
@@ -1382,6 +1391,28 @@ export class AonNewMenu extends AonElement {
 		this.setAppClassName(Apps.INVOICE);
 		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+	}
+	
+	async exceedTrailInvoinces(){
+		// Check trial limit
+		if (this.getDur().isTrial()) {
+			const result = await getInvoiceCount();
+			
+			if (result.invoiceCount >= this.getDur().getTrialValue()) {
+				this.getApplication().confirmDialog(
+					"Límite alcanzado",
+					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+					async () => {
+						let planApps = this.getElement("planApps");
+						if(planApps) planApps.click();
+						
+						//GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+					}
+				);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	setSelectedMenuSidenav(app) {

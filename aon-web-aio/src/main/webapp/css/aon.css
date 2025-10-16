@@ -2884,6 +2884,11 @@ background-image: url("../favicon.png");
   background-color: var(--aonHeaderBackgroundColor);
 }
 
+#aonMenuList-planApps.aonMenuSidenavLiSeleted {
+  margin-left: 2px;
+  border-left: 2px solid var(--aonBlue);
+}
+
 #aonMenuList-apps.aonMenuSidenavLiSeleted {
   margin-left: 2px;
   border-left: 2px solid var(--aonBlue);
@@ -3293,7 +3298,8 @@ color: var(--aonWhite);
 #enterpriseMenu:hover,
 #consoleMenu:hover,
 #aonApplication:hover,
-#Superset:hover{
+#Superset:hover,
+#planApps:hover{
   background-color: rgba(0,0,0,.1);
   /*transition: background-color 0.2s;*/
 }
