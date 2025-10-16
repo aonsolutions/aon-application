@@ -455,7 +455,7 @@ public class Contrata {
 			
 			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
 			String[] now = Toolkit.dateString(new Date());
-
+			
 			try {
 				HtmlSelect codContract = ((HtmlSelect) htmlPage.querySelector("select[name=codcontrato]"));
 				codContract.getOptionByValue(contract).setSelected(true);
@@ -837,6 +837,8 @@ public class Contrata {
 			}
 			
 			webClient.waitForBackgroundJavaScript(5000);
+
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			
@@ -2392,9 +2394,9 @@ public class Contrata {
 		if(Arrays.asList("421", "450").contains(codCto)) { // FormaciÃ³n en alternancia tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
 		} else if(codCto.equals("420")) { //Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo completo
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
+			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=9";
 		} else {
 			String oneCodCto = codCto.substring(0, 1);
 			switch (oneCodCto) {
