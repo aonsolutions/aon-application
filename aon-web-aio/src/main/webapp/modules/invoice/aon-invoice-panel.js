@@ -761,10 +761,7 @@ export class AonInvoicePanel extends AonElement {
 					"Límite alcanzado",
 					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
 					async () => {
-						let planApps = this.getElement("planApps");
-						if(planApps) planApps.click();
-						
-						//GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					}
 				);
 				return;

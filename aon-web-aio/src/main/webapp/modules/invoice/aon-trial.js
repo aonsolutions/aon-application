@@ -179,10 +179,7 @@ export class AonTrial extends AonElement {
     bookingDiv.style.color = "white";
     bookingDiv.classList.add("aonHoverGray");
     bookingDiv.addEventListener(EVENT.CLICK, () => {
-       	let planApps = this.getElement("planApps");
-		if(planApps) planApps.click();
-		
-		//GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+       	GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
     });
 
     let bookingButton = this.createElement(TAG.I);

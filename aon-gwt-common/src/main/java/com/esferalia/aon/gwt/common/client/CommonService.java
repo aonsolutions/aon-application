@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -106,7 +107,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -479,4 +479,9 @@ public interface CommonService extends RemoteService {
 	List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException;
 	List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException;
+	
+	LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry) throws AonCoreException;
+	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException;
+	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee) throws AonCoreException;
+	
 }
