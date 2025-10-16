@@ -531,6 +531,7 @@ public class SLDSalaries {
 		case "DESEMPLEO COTIZACI\u00D3N EMPRESARIAL":
 			return Optional.of(ContextVariable.UNEMPLOY_ENTERPRISE);
 		case "CONTINGENCIAS COMUNES":
+		case "CONTING.COM.COTIZ.EMPRESARIAL":
 			return Optional.of(ContextVariable.CGC_ENTERPRISE);
 		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
