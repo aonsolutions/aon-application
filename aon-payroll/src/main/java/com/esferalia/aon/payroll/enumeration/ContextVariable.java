@@ -284,6 +284,7 @@ public enum ContextVariable implements IResourceable {
 	YEAR_END("FIN_AÑO", VariableType.DATE),
 	TODAY("TODAY", VariableType.DATE),
 	FORMAT("FORMAT", VariableType.INTEGER), 
+	DATES("FECHAS", VariableType.INTEGER), 
 	EVAL_TEMPLATE("EVAL_TEMPLATE", VariableType.UNKNOWN),
 	CGPJ_COMPENSATIONS("CGPJ_INDEMNIZACIONES", VariableType.UNKNOWN),
 	CALC_COMPENSATIONS("CALCULO_INDEMNIZACIONES", VariableType.UNKNOWN),

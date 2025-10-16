@@ -154,7 +154,6 @@ public class CustomerFee  implements EntryPoint {
 		, STS("Estado"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, CON("Concepto"							,"12rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -162,6 +161,7 @@ public class CustomerFee  implements EntryPoint {
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
 		;
 
@@ -189,7 +189,6 @@ public class CustomerFee  implements EntryPoint {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
 		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, CON("Concepto"							,"-moz-available" 	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -197,6 +196,7 @@ public class CustomerFee  implements EntryPoint {
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRO("Expediente"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, SEL("Agente"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
@@ -1292,12 +1292,6 @@ public class CustomerFee  implements EntryPoint {
 		tab.addInlineStyle(concept, isCustomer() ?  CUSTOMER_COLS.CON.getStyles() : COLS.CON.getStyles());
 		tab.addRow(row, concept, isCustomer() ?  CUSTOMER_COLS.CON.getColWidth() : COLS.CON.getColWidth());
 		
-		String periodValue = null == fee.getPeriod() ? "" : BillingPeriod.toString(fee.getPeriod());
-		Label period = new Label(periodValue);
-		period.setTitle(periodValue);
-		tab.addInlineStyle(period, COLS.PER.getStyles());
-		tab.addRow(row, period, COLS.PER.getColWidth());
-		
 		String quantityValue = null == fee.getQuantity() ? "" : fee.getQuantity().toString();
 		Label quantity = new Label(quantityValue);
 		quantity.setTitle(quantityValue);
@@ -1322,7 +1316,6 @@ public class CustomerFee  implements EntryPoint {
 		tab.addInlineStyle(total, COLS.IMP.getStyles());
 		tab.addRow(row, total, COLS.IMP.getColWidth());
 		
-		
 		String startValue = null == fee.getStartDate() ? "" : formatDate.format(fee.getStartDate()) ;
 		Label start = new Label(startValue);
 		start.setTitle(startValue);
@@ -1340,6 +1333,12 @@ public class CustomerFee  implements EntryPoint {
 		end.setTitle(endValue);
 		tab.addInlineStyle(end, COLS.END.getStyles());
 		tab.addRow(row, end, COLS.END.getColWidth());
+		
+		String periodValue = null == fee.getPeriod() ? "" : BillingPeriod.toString(fee.getPeriod());
+		Label period = new Label(periodValue);
+		period.setTitle(periodValue);
+		tab.addInlineStyle(period, COLS.PER.getStyles());
+		tab.addRow(row, period, COLS.PER.getColWidth());
 		
 		if(isCustomer()) {
 			String projectValue = null == fee.getProject() ? "" : fee.getProject().getName();

@@ -269,6 +269,7 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -646,14 +647,25 @@ public class AON {
 		}
 	}
 	
+	public static boolean canScopeBeDeleted(Occam occam, Integer domainId, Integer scopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
+		}
+	}
+	public static void reassignScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+	public static void reassignAndDeleteScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignAndDeleteScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().deleteScope(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 

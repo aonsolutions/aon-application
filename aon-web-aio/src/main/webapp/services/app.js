@@ -1756,6 +1756,13 @@ export const NEW_APPS = {
 	symbol: MATERIAL_ICONS.APPS
 };
 
+export const PLAN_APPS = {
+	app: 'planApps',
+	title: MSG.PLAN,
+	description: MSG.PLAN,
+	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY
+};
+
 export const AON_APPS = [ 
 	AON_SOLUTIONS, 
 	BIDOQ, 

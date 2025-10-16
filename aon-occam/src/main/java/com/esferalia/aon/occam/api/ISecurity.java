@@ -77,6 +77,9 @@ public interface ISecurity {
 	public Scope insertScope(AONContext ctx, Scope scope);
 	public Scope saveScope(AONContext ctx, Scope scope);
 	public Integer deleteScope(AONContext ctx, Integer scopeId);
+	public boolean canScopeBeDeleted(AONContext ctx, Integer domainId, Integer scopeId);
+	public void reassignScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId);
+	public void reassignAndDeleteScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId);
 	
 	public List<Scope> getScopeList(CloseableAONContext ctx, ScopeParams params);
 	public Integer getScopesCount(CloseableAONContext ctx, ScopeParams params);

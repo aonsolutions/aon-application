@@ -112,6 +112,7 @@ export class AonBooking extends AonElement {
 				this.domainActive = this.dur.getDomain().isActive();
 				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
 				this.domainScope = this.dur.getDomain().getScope();
+				
 				this.build();			
 			});
 		}
@@ -897,7 +898,10 @@ export class AonBooking extends AonElement {
 					users: this.users,
 					domainPayer: this.domainPayer,
 					trial: this.trial,
-					trialValue: this.trialValue
+					trialValue: this.trialValue,
+					domainActive: this.domainActive,
+					domainExpirationDate: this.domainExpirationDate,
+					domainScope: this.domainScope,
 				}, this.sessionData).then(() => {
 					toast.start({
 						type: 'success',
