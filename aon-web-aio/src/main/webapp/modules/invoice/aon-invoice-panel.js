@@ -36,6 +36,7 @@ import { FiscalUtils } from "../fiscal/FiscalUtils.js";
 import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
 import * as LS from "../../services/localStorageService.js";
+import * as GWT from '../../gwt/gwt.js';
 
 import "./aon-invoice-print.js";
 import "../../components/aon-application.js";
@@ -760,8 +761,10 @@ export class AonInvoicePanel extends AonElement {
 					"Límite alcanzado",
 					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
 					async () => {
-						let apps = this.getElement('apps');
-						apps.click();
+						let planApps = this.getElement("planApps");
+						if(planApps) planApps.click();
+						
+						//GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					}
 				);
 				return;
