@@ -8,22 +8,22 @@ const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // s�lo en local
 
 const themes = [
   {
-    hostnameIncludes: ['-ayudat.', '/ayudat.', '-leevy', '/leevy', fakeHost],
+    hostnameIncludes: ['ayudat', 'leevy', fakeHost],
     themeLight      : 'theme-ayudat',
     themeDark       : 'theme-ayudat-dark'
   },
   {
-    hostnameIncludes: ['-infoautonomos.', '/infoautonomos.'],
+    hostnameIncludes: ['infoautonomos'],
     themeLight      : 'theme-infoautonomos',
     themeDark       : 'theme-infoautonomos-dark'
   },
   {
-    hostnameIncludes: ['-openges.', '/openges.'],
+    hostnameIncludes: ['openges'],
     themeLight      : 'theme-openges',
     themeDark       : 'theme-openges-dark'
   },
   {
-    hostnameIncludes: ['-etl.', '/etl.'],
+    hostnameIncludes: ['etl'],
     themeLight      : 'theme-etl',
     themeDark       : 'theme-etl-dark'
   }
