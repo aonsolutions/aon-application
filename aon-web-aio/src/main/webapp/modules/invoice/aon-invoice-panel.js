@@ -438,9 +438,9 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildSidenavOptions() {
-//		if (this.isMobile()) {
-			this.getApplication().addMobileSidenavHeader(Apps.INVOICE);
-//		}
+		// if (this.isMobile()) {
+		// 	this.getApplication().addMobileSidenavHeader(Apps.INVOICE);
+		// }
 
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
