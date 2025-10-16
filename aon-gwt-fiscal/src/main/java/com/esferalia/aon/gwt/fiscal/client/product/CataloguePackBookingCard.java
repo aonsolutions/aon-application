@@ -1,19 +1,29 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class CataloguePackCard extends HTMLPanel {
+public abstract class CataloguePackBookingCard extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
 	
@@ -24,16 +34,17 @@ public class CataloguePackCard extends HTMLPanel {
 	private Tariff tariff;
 	private ItemTariff itemTariff;
 	private List<ItemComposition> itemCompositions;
+	private LinkedList<Fee> customerFees;
 	
-	public CataloguePackCard(Product packProduct, Tariff tariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackBookingCard(Product packProduct, Tariff tariff, List<ItemComposition> itemCompositions, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("min-width", "18rem");
 		getElement().getStyle().setProperty("min-height", "18rem");
-		
 		this.packProduct = packProduct;
 		this.tariff = tariff;
 		this.itemCompositions = itemCompositions;
+		this.customerFees = customerFees;
 		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonItemFlex());
@@ -57,15 +68,15 @@ public class CataloguePackCard extends HTMLPanel {
 		add(content);
 	}
 	
-	public CataloguePackCard(Product packProduct, ItemTariff itemTariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackBookingCard(Product packProduct, ItemTariff itemTariff, List<ItemComposition> itemCompositions, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("min-width", "18rem");
 		getElement().getStyle().setProperty("min-height", "18rem");
-		
 		this.packProduct = packProduct;
 		this.itemTariff = itemTariff;
 		this.itemCompositions = itemCompositions;
+		this.customerFees = customerFees;
 		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonItemFlex());
@@ -174,19 +185,39 @@ public class CataloguePackCard extends HTMLPanel {
 
 	private void createButton(Product packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText("Contratar");
+		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Contratado" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
-		bookBtn.getElement().getStyle().setProperty("background-color", "#3d76d6");
+		bookBtn.getElement().getStyle().setProperty("background-color", isFeeProduct(packProduct.getItem().getId()) ? "green" : "#3d76d6");
 		bookBtn.getElement().getStyle().setProperty("width", "90%");
 		bookBtn.getElement().getStyle().setProperty("height", "3rem");
 		bookBtn.getElement().getStyle().setProperty("border-radius", "2rem");
 		bookBtn.getElement().getStyle().setProperty("color", "white");
 		bookBtn.getElement().getStyle().setProperty("border", "none");
 		
+		bookBtn.addClickHandler(e -> {
+			AonDialog dialog = new AonDialog(packProduct.getName(), new HTMLPanel("Se va a proceder con la creaci\u00f3n de la cuota del producto <b>" + packProduct.getName() + "</b><br> Al proceder acepta los terminos y condiciones de la contrataci\u00f3n"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					onCreateCustomerFeeByItem(packProduct);
+				}
+			});
+		});
+		
 		content.add(bookBtn);
 	}
 	
+	private boolean isFeeProduct(Integer itemId) {
+		return customerFees.stream().filter(fee -> fee.getItem().getId().equals(itemId) && (fee.getEndDate() == null || (fee.getEndDate().equals(new Date()) || fee.getEndDate().after(new Date()) ))).findAny().isPresent();
+	}
+	
+	protected abstract void onCreateCustomerFeeByItem(Product product);
+
 	private double getTariffPrice(double price, double discount) {
 		return price - (price * discount / 100);
 	}
