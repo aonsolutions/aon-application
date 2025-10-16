@@ -29,9 +29,33 @@
 			</ui:decorate>
 		</aon:div>				
 		<aon:div styleClass="aon-scroll-area">
-			<ui:include src="/com/code/aon/ui/config/facelet/scope/gridContent.xhtml" >
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 				<ui:param name="controller" value="#{scope}" />
-			</ui:include>
+				<ui:define name="columns">
+					<aon:column styleClass="aon-editDataTable-textColumn"
+						alias="Scope.description" >
+						<f:facet name="header">
+							<aon:outputLabel for="Scope_description" value="#{bundle.aon_scope}" />
+						</f:facet>
+						
+						<aon:outputText value="#{to.description}"
+							style="color: #{scope.used?'default':'orange'};" 
+							rendered="#{formList}" />
+						
+						<aon:inputText id="Scope_description"
+							rendered="#{formEdit}" size="20" maxlength="16"
+							value="#{controller.to.description}" required="true" />
+						<f:facet name="footer">
+							<aon:inputText id="Scope_description-New" 
+								rendered="#{formNew}" size="20" maxlength="16"
+								value="#{controller.to.description}" required="true" />
+						</f:facet>
+					</aon:column>
+		
+				</ui:define>
+			</ui:decorate>
+		
 		</aon:div>
 	</aon:form>
 	<aon:panelGroup id="showReassignWindow">

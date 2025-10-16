@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class ScopeController extends BasicController implements Serializable {
@@ -39,12 +39,21 @@ public class ScopeController extends BasicController implements Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ScopeController.class);
 	
+	private boolean skipParentScopes;
 	private List<SelectItem> scopes;
+	private List<com.esferalia.aon.occam.api.model.security.Scope> usedScopesInDomain;
 	private List<SelectItem> usedScopes;
 	private boolean showReassignWindow;
 	private Scope oldScope; 
 	private Scope newScope;
 	private boolean removeOldScope;
+	
+	public boolean isSkipParentScopes() {
+		return skipParentScopes;
+	}
+	public void setSkipParentScopes(boolean skipParentScopes) {
+		this.skipParentScopes = skipParentScopes;
+	}
 	
 	public boolean isShowReassignWindow() {
 		return showReassignWindow;
@@ -138,6 +147,7 @@ public class ScopeController extends BasicController implements Serializable {
 				} else {
 					AON.reassignScope( occam, occam.getDomain(), getOldScope().getId(), getNewScope().getId() );
 				}
+				this.usedScopesInDomain = null;
 			}
 		} catch (Exception e) {
 			String msg = "No se han podido reasignar los registros del \u00E1mbito. " + e.getMessage();
@@ -145,6 +155,20 @@ public class ScopeController extends BasicController implements Serializable {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
+	}
+	
+	public boolean isUsed() {
+		try {
+			if (getModel() != null && getModel().getRowData() != null) {
+				Scope scope = (Scope) getModel().getRowData();
+				return AonCollectionUtils.stream(getUsedScopesInDomain())
+					.anyMatch( s -> AonNumberUtils.equals( scope.getId(), s.getId()));
+			}
+		} catch (ManagerBeanException e) {
+			// Nothing.
+		}
+		return true; /// Se desconoce. Se devuelve lo menos malo.
+		
 	}
 	
 	@Override
@@ -184,26 +208,34 @@ public class ScopeController extends BasicController implements Serializable {
 		}
 	}
 	
+	public List<com.esferalia.aon.occam.api.model.security.Scope> getUsedScopesInDomain() {
+		if ( usedScopesInDomain == null) {
+			Occam occam = getOccam();
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+				usedScopesInDomain = ScopeDAO.getUsedScopesInDomain(ctx, ctx.getDomainId())
+					.collect( Collectors.toCollection(LinkedList::new));
+			}		
+		}
+		return usedScopesInDomain;
+	}
 	public List<SelectItem> getUsedScopes() {
 		return usedScopes;		
 	}
 	private void fillUsedScopes() {
 		Occam occam = getOccam();
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			usedScopes = ScopeDAO.getUsedScopesInDomain(ctx, ctx.getDomainId())
-				.map( scope -> {
-					Scope s = new Scope();
-					s.setId( scope.getId() );
-					s.setDomain( scope.getDomain() );
-					s.setDescription( scope.getDescription() );
-					if ( AonNumberUtils.notEquals( s.getDomain(), ctx.getDomainId())) {
-						s.setDescription( "(*) " + scope.getDescription() );	
-					}
-					return s;
-				})
-				.map( scope -> new SelectItem(scope,scope.getDescription()))
-				.collect( Collectors.toCollection(LinkedList::new));
-		}
+		usedScopes = AonCollectionUtils.stream(getUsedScopesInDomain())
+			.map( scope -> {
+				Scope s = new Scope();
+				s.setId( scope.getId() );
+				s.setDomain( scope.getDomain() );
+				s.setDescription( scope.getDescription() );
+				if ( AonNumberUtils.notEquals( s.getDomain(), occam.getDomain())) {
+					s.setDescription( "(*) " + scope.getDescription() );	
+				}
+				return s;
+			})
+			.map( scope -> new SelectItem(scope,scope.getDescription()))
+			.collect( Collectors.toCollection(LinkedList::new));
 	}
 	
 }
