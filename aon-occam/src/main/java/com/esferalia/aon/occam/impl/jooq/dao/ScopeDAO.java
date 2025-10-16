@@ -33,8 +33,11 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
@@ -44,8 +47,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class ScopeDAO {
 	
@@ -193,4 +198,85 @@ public class ScopeDAO {
 	private static <T extends Record> Field<Integer> getScopeField(Table<T> table) {
 		return (TableField<T, Integer>) table.field("scope");
 	}
+	
+	
+	
+	
+	// *********************************************************************
+	// ****************************** [SCOPES FIX] ************ [START] ****
+	// *********************************************************************
+	/**
+	 * 
+	 * Método utilizado en faces. en ScopeController, para ayudar a la gestión del desbarajuste de ámbitos.
+	 * 
+	 * 
+	 * 					**********************************
+	 * 					¡¡¡NO SE DEBE USAR EN OTRO CASO!!!
+	 * 					**********************************
+	 * 
+	 *  
+	 */
+	public static Stream<Scope> getUsedScopesInDomain(AONContext ctx, Integer domainId) {
+		Map<Integer,Scope> scopesMap = getAvailableScopes( ctx, domainId )
+			.collect( Collectors.toMap(Scope::getId,Function.identity()));
+		if (AonCollectionUtils.isNotEmpty(scopesMap)) {
+			return AonCollectionUtils.valuesStream( 
+				AonCollectionUtils.stream( SCOPE_TABLES )
+					.flatMap( t -> {
+						Field<Integer> domainField = getDomainField(t);
+						Field<Integer> scopeField = getScopeField(t);
+						return ctx.getDslContext().select(scopeField)
+								.from(t)
+								.where( domainField.eq(domainId) )
+								.groupBy( scopeField )
+								.fetch()
+								.stream();
+					})
+					.map( r -> r.getValue(0, Integer.class) )
+					.filter( i -> i != null)
+					.filter( scopesMap::containsKey )		//	Solo se ven los scopes a los que el usuario puede acceder.
+					.map( scopesMap::get )
+					.collect( Collectors.toMap(
+						Scope::getId
+						,Function.identity()
+						,(a, b) -> a))
+			);
+		}
+		return Stream.empty();
+	}
+	
+	private static Stream<Scope> getAvailableScopes (AONContext ctx, Integer domainId) {
+		User user = SecurityDAO.getUser( ctx );
+		if (user == null 
+			|| user.getId() == null 
+			|| user.getDomain() == null 
+			|| user.getDomain().getId() == null) return Stream.empty();
+		boolean parentDomainUser = AonNumberUtils.notEquals(user.getDomain().getId(), domainId); 
+		Integer[] domains =   parentDomainUser
+			? new Integer[] { user.getDomain().getId(),domainId}
+			:new Integer[] { domainId}
+		;
+		return ctx.getDslContext()
+			.select()
+			.from(SCOPE)
+			.where(SCOPE.DOMAIN.in(domains))
+			.fetch()
+			.stream()
+			.map(new ScopeFiller())
+			.filter( s -> parentDomainUser 
+				|| ctx.getDslContext()
+					.select(USER_SCOPE.SCOPE)
+					.from(USER_SCOPE)
+					.where( USER_SCOPE.USER_ID.eq(user.getId()))
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent()
+			)
+		;
+	}
+
+	// *********************************************************************
+	// ****************************** [SCOPES FIX] ************ [END] ******
+	// *********************************************************************
 }

@@ -664,13 +664,8 @@ public class AON {
 	}
 	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().deleteScope(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 

@@ -56,59 +56,65 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="rectificationForm">
-				<aon:div styleClass="aon-popupWindow-content">
-					<aon:div style="width:100%">
-						<aon:div styleClass="aon-popupWindow-content-internal">
-							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="rectification-accept"
-										value="Reasignar"
-										actionListener="#{scope.onReassign}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="rectificationModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{scope.showReassignWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-									<aon:commandButton id="rectification-cancel"
-										value="#{bundle.aon_cancel}"
-										reRender="showReassignWindow"
-										immediate="true"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel">
-										<f:setPropertyActionListener
-											target="#{scope.showReassignWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:div>
-										<aon:outputText  value="Sustituir el #{bundle.aon_scope} " style="margin-right: 1em;"/>
-										<aon:selectOneMenu id="scope_old" value="#{scope.oldScope}">
-											<f:selectItem item="-" value="#{null}" />
-											<f:selectItems value="#{configCollections.currentUserScopes}" />
-										</aon:selectOneMenu>
-
-										<aon:outputText value="por el #{bundle.aon_scope}" style="margin-right: 1em;margin-left: 1em;"/>
-										<aon:selectOneMenu id="scope_new" value="#{scope.newScope}">
-											<f:selectItem item="-" value="#{null}" />
-											<f:selectItems value="#{configCollections.scopes}" />
-										</aon:selectOneMenu>
-										
+				<aon:form id="reassignForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="reassign-accept"
+											value="Reasignar"
+											actionListener="#{scope.onReassign}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<rich:componentControl for="reassignModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{scope.showReassignWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="reassign-cancel"
+											value="#{bundle.aon_cancel}"
+											reRender="showReassignWindow"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{scope.showReassignWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:div>
-										<aon:selectBooleanCheckbox 
-											id="scope_old_delete" 
-											value="#{scope.removeOldScope}" />
-											<aon:outputText styleClass="aon-italic"
-												value="Borrar #{bundle.aon_scope} original" />
-										</aon:div>
-									</aon:div>	
+											<aon:outputText  value="Sustituir el #{bundle.aon_scope} " style="margin-right: 1em;"/>
+											<aon:selectOneMenu id="scope_old" value="#{scope.oldScope}">
+												<f:selectItem item="-" value="#{null}" />
+												<f:selectItems value="#{scope.usedScopes}" />
+												<a4j:support event="onchange"  
+													actionListener="#{scope.onScopeOldChanged}" 
+													reRender="scope_old_delete_div" 
+													ajaxSingle="true" />
+											</aon:selectOneMenu>
+	
+											<aon:outputText value="por el #{bundle.aon_scope}" style="margin-right: 1em;margin-left: 1em;"/>
+											<aon:selectOneMenu id="scope_new" value="#{scope.newScope}">
+												<f:selectItem item="-" value="#{null}" />
+												<f:selectItems value="#{scope.scopes}" />
+											</aon:selectOneMenu>
+											
+											<aon:div id="scope_old_delete_div" style="margin-top: 10px;">
+												<aon:selectBooleanCheckbox 
+													id="scope_old_delete"
+													rendered="#{scope.removableOldScope}"
+													value="#{scope.removeOldScope}" />
+												<aon:outputText styleClass="aon-italic"
+													rendered="#{scope.removableOldScope}"
+													value="#{scope.deleteLabel}" />
+											</aon:div>
+										</aon:div>	
+									</aon:div>
 								</aon:div>
 							</aon:div>
 						</aon:div>
 					</aon:div>
-				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
 		</aon:if>
