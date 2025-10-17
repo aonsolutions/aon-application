@@ -1,25 +1,26 @@
 package com.esferalia.aon.payroll.calculator;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
-import org.mvel2.MVEL;
+import org.mvel2.CompileException;
 import org.mvel2.templates.TemplateRuntime;
 import org.mvel2.util.MethodStub;
 
 import com.esferalia.aon.payroll.cgpj.CGPJ;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.DismissalType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -127,9 +128,51 @@ public class AonFunctions {
 		return new SimpleDateFormat(pattern).format(date);
 	}
 
-	//	public static final <T,U> String join( String prefix, String suffix, Map<T,U> map, BiFunction<T, U, String> f) {
-//	    return  map.entrySet().stream().map(entry -> f.apply(entry.getKey(), entry.getValue()) ).collect(Collectors.joining("", prefix, suffix));
-//	}
+	@Variable(ContextVariable.DATES)
+	public static final String dates(String pattern, Date startDate, Date endDate) {
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		String regex = "\'[^']*\'";
+		String[] patterns = pattern.splitWithDelimiters(regex,0);
+		
+		patterns = Arrays.stream(patterns).filter(AonStringUtils::isNotEmpty).toArray(String[]::new);
+		
+		int i ; 
+		for ( i = 0; i < patterns.length && patterns[i].matches(regex) ; i++ )
+			stringBuilder.append(patterns[i].replace("'", ""));
+		if ( i < patterns.length ) 
+			stringBuilder.append(format(patterns[i++], startDate));
+		
+		if ( endDate.compareTo(startDate) > 0 ) {
+			for ( ; i < patterns.length && patterns[i].matches(regex) ; i++ )
+				stringBuilder.append(patterns[i].replace("'", ""));
+			if ( i < patterns.length ) 
+				stringBuilder.append(format(patterns[i], endDate));
+		}
+
+
+		return  stringBuilder.toString();
+	}
+
+	public static final String dates(String pattern, Date startDate, Date endDate, Date start, Date end) {
+		
+		if ( AonDateUtils.compare(startDate, start) == 0 
+				&& AonDateUtils.compare(endDate, end) == 0 ) {
+			return AonStringUtils.EMPTY;
+		}
+		
+		return  dates(pattern, startDate, endDate );
+	}
+
+	public static final String dates(String pattern) throws MacroException {
+		throw new MacroException() {
+			
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(\\s*[\"']%s[\"']", ContextVariable.DATES, pattern), "$0, INICIO, FIN, INICIO_NOMINA, FIN_NOMINA");
+			}
+		};
+	}
 
 	// ------------------------------------------------------------------------
 	// 
@@ -149,6 +192,7 @@ public class AonFunctions {
 			}
 		}
 	}
+	
 	
 	
 }

@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.jooq.tables.CustomerFee;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -76,6 +77,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -90,6 +92,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -104,6 +107,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -136,6 +140,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -986,6 +991,20 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<Catalogue> getCatalogueList(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getCatalogueList(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain));
 	}
+
+	@Override
+	public Domain getOfficeSibling(String domainName, int domain, String user) throws AonCoreException {
+		Domain currentDomain = AON.getDomain(domainName, domain, user);
+		Optional<RegistryRelationship> rrletationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getCommentsProperty().eq(currentDomain.getName()));
+		
+		Domain officeSiblingDomain = null;
+		if(rrletationShip.isPresent())
+			officeSiblingDomain = AON.getDomain(domainName, domain, user, f -> f.getIdProperty().eq(rrletationShip.get().getDomain().getId()));
+		else 
+			officeSiblingDomain = AON.getDomain(domainName, domain, user, f -> f.getTypeProperty().eq(DomainType.OFFICE.value()).and(f.getActiveProperty().eq((byte)1)));
+		
+		return officeSiblingDomain;
+	}
 	
 	// **************************************************
 	// ****************************************** [SALES]
@@ -1631,6 +1650,36 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException {
 		List<DomainSigAddInfo> result = AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
 		return result;
+	}
+	
+	@Override
+	public LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry) throws AonCoreException {
+		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));
+		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
+		
+		LinkedList<Fee> fees = AON.getFeeList(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getCustomerProperty().eq(existRelationShip.get().getRegistry())));
+		return fees;
+	}
+	
+	@Override
+	public void createFeeRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException {
+		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));
+		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
+		
+		fee.setCustomer(new Customer().setId(existRelationShip.get().getRegistry()));
+		
+		AON.save(domainName, domainId, user, fee);
+	}
+	@Override
+	public void updateEndDatePackFee(String domainName, int domainId, String user, Fee fee) throws AonCoreException {
+		Date currentDate = new Date();
+		Date yesterday = AonDateUtils.addDays(currentDate, -1);
+		if(fee.getStartDate().after(yesterday)) {
+			AON.deleteFee(domainName, domainId, user, Stream.of(fee));
+		} else {
+			fee.setEndDate(yesterday);
+			AON.save(domainName, domainId, user, fee);
+		}
 	}
 
 }

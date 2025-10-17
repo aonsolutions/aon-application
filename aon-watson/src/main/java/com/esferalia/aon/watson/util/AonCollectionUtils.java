@@ -128,5 +128,14 @@ public class AonCollectionUtils {
 		}
 		return false;
 	}
+	public static boolean contains(int[] types, int type) {
+		if (types == null) return false;
+		for (int t : types) {
+			if (t == type) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

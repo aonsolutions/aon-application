@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps} from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, PLAN_APPS} from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
@@ -67,6 +67,7 @@ import { createSelect } from '../components/CreateComponent.js';
 import { getCompanyActivities } from '../services/companyService.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
+import { getInvoiceCount } from '../services/invoiceService.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -404,7 +405,7 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.id = 'aonMenuList';
 		ul.classList.add("aonNewMenuSideNavUl");
-
+		
 		const newApps = getConstNewApps(this.getDur(), this.isAyudaT());
 		const index = MENU_APPS.findIndex(app => app.app === CONSTANT.APPS);
 		if (index !== -1) {
@@ -1195,7 +1196,11 @@ export class AonNewMenu extends AonElement {
 				optionsMenu.push({
 					name: MSG.UPLOAD_INVOICE,
 					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-					fn: () => {
+					fn: async () => {
+						// Check trial limit
+						let exceedTrail = await this.exceedTrailInvoinces();
+						if (exceedTrail) return;
+						
 						let input = this.createElement(TAG.INPUT);
 						input.type = CONSTANT.FILE;
 						input.accept = this.accept;
@@ -1363,7 +1368,11 @@ export class AonNewMenu extends AonElement {
 		//appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
 	}	
 	
-	newInvoice(invoice) {
+	async newInvoice(invoice) {
+		// Check trial limit
+		let exceedTrail = await this.exceedTrailInvoinces();
+		if (exceedTrail) return;
+		
 		let invoicePanel = new AonInvoicePanel();
 		invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
@@ -1371,6 +1380,25 @@ export class AonNewMenu extends AonElement {
 		this.setAppClassName(Apps.INVOICE);
 		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+	}
+	
+	async exceedTrailInvoinces(){
+		// Check trial limit
+		if (this.getDur().isTrial()) {
+			const result = await getInvoiceCount();
+			
+			if (result.invoiceCount >= this.getDur().getTrialValue()) {
+				this.getApplication().confirmDialog(
+					"Límite alcanzado",
+					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+					async () => {
+						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+					}
+				);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	setSelectedMenuSidenav(app) {

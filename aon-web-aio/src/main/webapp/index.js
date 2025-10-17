@@ -42,14 +42,13 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-	
+
 	loadScripts(); 
+
 	loadTheme()
 	.finally(loadIsReadOnly)
 	.finally( () =>  {
-		title();
-		favicon(); 
-		document.body.appendChild(new AonModule()) 
+		loadModule(); 
 	} ) ;  
 
 	// TODO: loadScriptFirebase();
@@ -58,17 +57,17 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
 
-export const loadTheme = async  () => {
-		
-	
+export const loadModule = () => {
+	title();
+	favicon(); 
+	document.body.appendChild(new AonModule()) ;
+}
+
+export const loadTheme = async () => {	
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
-
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-
 	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || "/customview" || LS.AON_THEME);
-
 	return new Promise((resolve, reject) => {
-
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
 			aonThemeSpan.className = 'aonTheme';
@@ -170,7 +169,7 @@ const isReadOnly =  () => {
 
 const getParam = (paramName) => {
 	const queryString = window.location.search;
-	const searchParams = new getParamURLSearchParams(queryString);
+	const searchParams = new URLSearchParams(queryString);
 	return searchParams.get(paramName);
 }
 
