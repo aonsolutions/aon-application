@@ -7,6 +7,7 @@ import * as LS from '../services/localStorageService.js';
 import { getContratado, getDomainUserRoles, sendFormData } from '../services/companyService.js';
 import { getAuth } from '../services/authService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import * as GWT from '../gwt/gwt.js';
 
 export class AonNewDesktop extends AonElement {
 	
@@ -145,7 +146,6 @@ export class AonNewDesktop extends AonElement {
 		headerDiv.classList.add("aonNewDesktopHeaderDiv");
 		div.appendChild(headerDiv);		
 
-
 		let desktopDiv = this.createElement(TAG.DIV);
 		desktopDiv.classList.add("aonNewDesktopDesktopDiv");
 		
@@ -163,9 +163,51 @@ export class AonNewDesktop extends AonElement {
 			desktopAppsDiv.appendChild(this.buildApp(this.portalApps[app]));
 		}
 		
+		if(this.dur.isTrial())
+			desktopAppsDiv.appendChild(this.buildPlanApps());
+		
 		desktopDiv.appendChild(desktopAppsDiv);
 		div.appendChild(desktopDiv);
 		return div;
+	}
+	
+	buildPlanApps() {
+		
+		let cardDiv  = this.createElement(TAG.DIV);
+		cardDiv.id = `aonDesktop-planApp`;
+		cardDiv.classList.add(CSS.AON_CARD);
+		cardDiv.classList.add("aonNewDesktopCardDiv");
+		cardDiv.title = "Ejecutar";
+		cardDiv.style.width = "12rem";
+	    cardDiv.style.backgroundColor = "rgb(144, 207, 144)";
+	    cardDiv.style.color = "white";
+		
+		let appA = this.createElement(TAG.A);
+		appA.addEventListener(EVENT.CLICK, () => {
+			GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+		});
+
+		let appDiv = this.createElement(TAG.DIV);
+		appDiv.classList.add("aonNewDesktopAppDiv");
+		
+		let icon = this.createElement(TAG.SPAN);
+		icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		icon.id = `aonDesktopAppImg-planApp`;
+		icon.innerHTML = 'store';
+		icon.style.fontSize = "24px";
+		appDiv.appendChild(icon);
+		
+		let titleSpan = this.createElement(TAG.SPAN);
+		titleSpan.id = `aonDesktopAppTitle-planApp`;
+		titleSpan.classList.add("aonNewDesktopAppDiv");
+		titleSpan.innerHTML = "Ampliar Contratación";
+		appDiv.appendChild(titleSpan);
+
+		appA.appendChild(appDiv);
+
+		cardDiv.appendChild(appA);
+
+		return cardDiv;		
 	}
 	
 	buildApp(app) {

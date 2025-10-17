@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -1391,6 +1392,24 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomerFeesRelatedRegistry(domainName, domainId, user, customerRelatedRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createFeeRelatedRegistry(domainName, domain, user, customerRelatedRegistry, fee, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void updateEndDatePackFee(String domainName, int domain, String user, Fee fee,AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.updateEndDatePackFee(domainName, domain, user, fee, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

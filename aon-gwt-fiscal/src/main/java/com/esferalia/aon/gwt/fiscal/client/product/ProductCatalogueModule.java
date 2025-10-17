@@ -18,7 +18,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.tariff.TariffCatalogueList;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
@@ -28,12 +28,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class ProductCatalogueModule  implements EntryPoint {
 	
@@ -51,7 +48,8 @@ public class ProductCatalogueModule  implements EntryPoint {
 		}
 	}
 	
-	private RegistryModuleOptions options;
+	private RegistryModuleOptions currentDomainOptions;
+	private RegistryModuleOptions officeDomainOptions;
 	
 	private AonCustomDockLayout aonCustomDockLayout;
 
@@ -64,10 +62,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
-	private TabLayoutPanel tablayoutPanel;
-	
-	private TariffCatalogueList tariffCatalogueList;
-	private ProductCatalogue productCatalogue;
+	private ProductCatalogueBooking productCatalogue;
 	
 	private List<Tariff> tariffs;
 	
@@ -75,11 +70,13 @@ public class ProductCatalogueModule  implements EntryPoint {
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
-		options = new RegistryModuleOptions();
-		options.setParentWidget(root);
-		options.setDomainName(getCurrentDomainName());
-		options.setDomain(getCurrentDomain());
-		options.setUser(getCurrentUser());
+		currentDomainOptions = new RegistryModuleOptions();
+		currentDomainOptions.setParentWidget(root);
+		currentDomainOptions.setDomainName(getCurrentDomainName());
+		currentDomainOptions.setDomain(getCurrentDomain());
+		currentDomainOptions.setUser(getCurrentUser());
+		
+		officeDomainOptions = new RegistryModuleOptions();
 		
 		moduleLoad();
 	}
@@ -105,40 +102,20 @@ public class ProductCatalogueModule  implements EntryPoint {
 			aonCustomDockLayout.hideSearchWidget();
 			createToolbar();
 			
-			tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
-			tablayoutPanel.setHeight((Window.getClientHeight() - 130) + "px");
-			tablayoutPanel.getElement().getStyle().setProperty("margin", "0 1rem");
-		
 			container = new HTMLPanel(EMPTY_STRING);
 			container.addStyleName(AON.CSS.aonFlexColumn());
 			container.addStyleName(AON.CSS.aonSelector());
+			container.getElement().getStyle().setProperty("padding", "0 1rem");
 			container.add(messagePanel);
 			
-			HTMLPanel rootPanel = new HTMLPanel(EMPTY_STRING);
-			rootPanel.addStyleName(AON.CSS.aonFlexColumn());
-			
-			tariffCatalogueList = new TariffCatalogueList(options, this.tariffs);
-			tablayoutPanel.add(tariffCatalogueList, "Tarifas");
-			tablayoutPanel.selectTab(0);
-			
-			productCatalogue = new ProductCatalogue(options);
-			tablayoutPanel.add(productCatalogue, "Cat\u00e1logo");
-			
-			tablayoutPanel.addSelectionHandler(e -> {
-				//tariff.setVisible(tablayoutPanel.getSelectedIndex() != 0);
-				onSearch();
-			});
-			
-			container.add(tablayoutPanel);
+			container.add(productCatalogue);
 			
 			aonCustomDockLayout.add(container);
 			
 			onSearch();
 		});
 		
-		aonCustomDockLayout.getElement().getStyle().setProperty("margin-top", "1rem");
-		
-		options.getParentWidget().add(aonCustomDockLayout);
+		currentDomainOptions.getParentWidget().add(aonCustomDockLayout);
 	}
 	
 	private void createToolbar() {
@@ -156,49 +133,60 @@ public class ProductCatalogueModule  implements EntryPoint {
 	}
 	
 	public void onSearch() {
-		if(tablayoutPanel.getSelectedIndex() == 0) {
-			tariffCatalogueList.onSearch(DomainType.safeValueOf(Byte.parseByte(domainType.getValue())));
-		} else if(tablayoutPanel.getSelectedIndex() == 1) {
-			productCatalogue.onSearch(DomainType.safeValueOf(Byte.parseByte(domainType.getValue())), tariffs.stream().filter(tariffIt -> tariffIt.getId().equals(Integer.parseInt(tariff.getValue()))).findFirst().get());
-		} 
+		productCatalogue.onSearch(
+				DomainType.safeValueOf(Byte.parseByte(domainType.getValue())), 
+				tariffs.stream().filter(tariffIt -> tariffIt.getId().equals(Integer.parseInt(tariff.getValue()))).findFirst().get());
 	}
 	
 	private void getTariffs(Consumer<List<Tariff>> success) {
-		commonService.getOfficeSibling(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Domain>() {
-
+		commonService.getAonConfiguration(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<AonConfiguration>() {
+			
 			@Override
-			public void onFailure(Throwable error) {
-				AonMessagePanel.showError(messagePanel, "Error obteniendo despacho: " + error.getMessage());
+			public void onSuccess(AonConfiguration config) {
+				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany().getId(), config.getWorkplaces());
+				productCatalogue.setHeight("100%");
+				
+				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
+
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, "Error obteniendo despacho: " + error.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Domain officeDomain) {
+						officeDomainOptions.setDomainName(officeDomain.getName());
+						officeDomainOptions.setDomain(officeDomain.getId());
+						
+						TariffParams params = new TariffParams()
+								.setDomainName(officeDomainOptions.getDomainName())
+								.setDomain(officeDomainOptions.getDomain())
+								.setUser(officeDomainOptions.getUser())
+								.setOffset(0)
+								.setLimit(Integer.MAX_VALUE)
+								;
+						
+						commonService.getTariffs(params, new AsyncCallback<List<Tariff>>() {
+							
+							@Override
+							public void onSuccess(List<Tariff> products) {
+								success.accept(products);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error tarifas: " + caught.getMessage());
+							}
+						});
+						
+					}});
 			}
-
+			
 			@Override
-			public void onSuccess(Domain officeDomain) {
-				options.setDomainName(officeDomain.getName());
-				options.setDomain(officeDomain.getId());
-				
-				TariffParams params = new TariffParams()
-						.setDomainName(options.getDomainName())
-						.setDomain(options.getDomain())
-						.setUser(options.getUser())
-						.setOffset(0)
-						.setLimit(Integer.MAX_VALUE)
-						;
-				
-				commonService.getTariffs(params, new AsyncCallback<List<Tariff>>() {
-					
-					@Override
-					public void onSuccess(List<Tariff> products) {
-						success.accept(products);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error tarifas: " + caught.getMessage());
-					}
-				});
-				
-			}});
-		
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error config: " + caught.getMessage());
+			}
+		});
 	}
 	
 	private void ensureGwtSelector() {

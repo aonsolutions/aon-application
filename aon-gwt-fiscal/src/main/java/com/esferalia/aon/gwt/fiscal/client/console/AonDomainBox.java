@@ -300,5 +300,8 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 	public void setEnabled(boolean enabled) {
 		domainTextBox.setEnabled(enabled);
 	}
+	public boolean isEnabled() {
+		return domainTextBox.isEnabled();
+	}
 
 }

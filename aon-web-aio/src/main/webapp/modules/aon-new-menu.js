@@ -195,9 +195,6 @@ export class AonNewMenu extends AonElement {
 			applications.className = 'aonMenuLeftopStart';
 		} else {
 			switch (app.app) {
-				case PLAN_APPS.app:
-					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
-					break;
 				case NEW_APPS:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
@@ -409,12 +406,6 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.classList.add("aonNewMenuSideNavUl");
 		
-		// Planes (only for trial)
-		if (this.getDur().isTrial()) {
-			let app = PLAN_APPS;
-			this.addMenuSidenavApp(ul, app);
-		}
-
 		const newApps = getConstNewApps(this.getDur(), this.isAyudaT());
 		const index = MENU_APPS.findIndex(app => app.app === CONSTANT.APPS);
 		if (index !== -1) {
@@ -1129,8 +1120,6 @@ export class AonNewMenu extends AonElement {
 		} 
 		if (MenuApps.CONSOLE.app === app.app)
 			return this.getDur().isConsole();
-		if (PLAN_APPS.app === app.app)
-			return this.getDur().isTrial();
 		else 
 			return false;
 	}
@@ -1403,10 +1392,7 @@ export class AonNewMenu extends AonElement {
 					"Límite alcanzado",
 					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
 					async () => {
-						let planApps = this.getElement("planApps");
-						if(planApps) planApps.click();
-						
-						//GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					}
 				);
 				return true;

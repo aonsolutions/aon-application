@@ -225,15 +225,17 @@ public class ScopeDAO {
 					.flatMap( t -> {
 						Field<Integer> domainField = getDomainField(t);
 						Field<Integer> scopeField = getScopeField(t);
-						return ctx.getDslContext().select(scopeField)
-								.from(t)
-								.where( domainField.eq(domainId) )
-								.groupBy( scopeField )
-								.fetch()
-								.stream();
+						return ctx.getDslContext()
+							.select(scopeField)
+							.from(t)
+							.where( domainField.eq(domainId) )
+							.groupBy( scopeField )
+							.fetch()
+							.stream()
+							.map( r -> r.getValue(scopeField))
+							.filter( i -> i != null)
+						;
 					})
-					.map( r -> r.getValue(0, Integer.class) )
-					.filter( i -> i != null)
 					.filter( scopesMap::containsKey )		//	Solo se ven los scopes a los que el usuario puede acceder.
 					.map( scopesMap::get )
 					.collect( Collectors.toMap(
