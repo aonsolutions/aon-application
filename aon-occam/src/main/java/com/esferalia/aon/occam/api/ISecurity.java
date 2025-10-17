@@ -47,6 +47,8 @@ public interface ISecurity {
 	public Auth insertAuth(AONContext ctx, Auth auth);
 	public Auth updateAuth(AONContext ctx, Auth auth);
 	public Auth updateAuthPassword(AONContext ctx, Auth auth);
+	public Auth updateUserPassword(AONContext ctx, Auth auth);
+
 	
 	public DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId);
 	
