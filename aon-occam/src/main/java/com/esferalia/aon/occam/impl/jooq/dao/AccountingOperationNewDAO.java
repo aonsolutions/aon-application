@@ -9,10 +9,13 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -49,6 +52,8 @@ import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -70,12 +75,26 @@ public class AccountingOperationNewDAO {
 	// Código de la cuenta contable, asociada a la línea de la factura. 
 	// Se hace así con una subquery porque en algunas ocasiones la tabla INVOICE_DETAIL_ACCOUNT contiene más de un registro 
 	// por cada línea de factura, aunque sea con la misma cuenta y debería contener un único registro por línea de factura
-	private static Field<String> accountCode = DSL.field(DSL.select(ACCOUNT.CODE)
+	private static Field<String> accountCodeField = DSL.field(DSL.select(ACCOUNT.CODE)
 					     									.from(INVOICE_DETAIL_ACCOUNT)
 					     									.join(ACCOUNT).on(ACCOUNT.ID.equal(INVOICE_DETAIL_ACCOUNT.ACCOUNT))
 					     									.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
 					     									.orderBy(INVOICE_DETAIL_ACCOUNT.ID.desc())
 					     									.limit(1));
+	
+	// Prorrata de IVA
+	private static Field<Double> proratePercentageField = DSL.field(DSL.select(FS_MODEL_DETAIL.AMOUNT)
+				.from(FS_MODEL_DETAIL)
+				.join(ALCATRAZ).on(ALCATRAZ.FS_MODEL.equal(FS_MODEL_DETAIL.FS_MODEL))
+				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_003.getValue()))
+				.orderBy(FS_MODEL_DETAIL.ID.desc())
+				.limit(1));
+	private static Field<String> prorateTypeField = DSL.field(DSL.select(FS_MODEL_DETAIL.DESCRIPTION)
+				.from(FS_MODEL_DETAIL)
+				.join(ALCATRAZ).on(ALCATRAZ.FS_MODEL.equal(FS_MODEL_DETAIL.FS_MODEL))
+				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_006.getValue()))
+				.orderBy(FS_MODEL_DETAIL.ID.desc())
+				.limit(1));
 		
 	// Facturas
 	private static final Field<?>[] SELECT_FIELDS_FAC = new Field[] {
@@ -96,6 +115,7 @@ public class AccountingOperationNewDAO {
 	 	,INVOICE.WITHHOLDING_FARMER	
 	 	,INVOICE.VAT_ACCRUAL_PAYMENT
 	 	,INVOICE.RECTIFICATION_TYPE
+	 	,INVOICE.ACTIVITY
 	 	,INVOICE_DETAIL.TAXABLE_BASE
 	 	,INVOICE_TAX.BASE				
 	 	,INVOICE_TAX.PERCENTAGE		
@@ -111,7 +131,7 @@ public class AccountingOperationNewDAO {
 		,ACCOUNT_ENTRY.ID
 		,ACCOUNT_ENTRY.JOURNAL
 		,ACCOUNT_ENTRY.ENTRY_DATE
-		,accountCode
+		,accountCodeField
 		,retInvoiceTax.PERCENTAGE
 		,retInvoiceTax.QUOTA
 		,retInvoiceTax.WITHHOLDING_TYPE
@@ -119,6 +139,8 @@ public class AccountingOperationNewDAO {
 		,INVEST_ASSET.REGIME		
 		,INVEST_ASSET.PROPERTIES		
 		,INVEST_ASSET.RETENTION_PERCENT
+		,proratePercentageField
+		,prorateTypeField
 	};
 	
 	// Cobros/Pagos RECC
@@ -190,13 +212,135 @@ public class AccountingOperationNewDAO {
 
 	// Facturas
 	private static Stream<OperationBreakdownNew> getOperationBreakdownFac(AONContext ctx, OperationParamsNew params) {
-		return getSelectFac(ctx)
-			.where(getWhereFac(ctx, params))
-			.fetch()
-			.stream()
-			.map(rec -> new OperationBreakdownFacFiller().apply(rec, params));
+		
+		// Obtener porcentaje y tipo de prorrata del último modelo 303
+		getLastProrate(ctx, params); 
+		
+//		return getSelectFac(ctx)
+//			.where(getWhereFac(ctx, params))
+//			.fetch()
+//			.stream()
+//			.map(rec -> new OperationBreakdownFacFiller().apply(rec, params));
+		
+		// Obtener facturas
+		Stream<OperationBreakdownNew> invoices = getSelectFac(ctx)
+				.where(getWhereFac(ctx, params))
+				.fetch()
+				.stream()
+				.map(rec -> new OperationBreakdownFacFiller().apply(rec, params));
+		
+		// Obtener ajuste de la prorrata (del modelo 303), si procede
+		Stream<OperationBreakdownNew> prorate = getProrateAdjustment(ctx, params);
+		
+		// Devolver resultado (facturas + ajuste de la prorrata)
+		return Stream.concat(invoices, prorate);
+		
 	}
 	
+	// Obtener ajuste de la prorrata del modelo 303 del ultimo periodo, si estamos obteniendo los datos hasta final del ejercicio, solo libro de IVA y Libro Unificado
+	private static Stream<OperationBreakdownNew> getProrateAdjustment(AONContext ctx, OperationParamsNew params) {
+		
+		if (params.getBookType() != 1 && params.getToDate().equals(AonDateUtils.getYearLastDay(params.getToDate()))) {
+
+			Record rec = ctx.getDslContext()
+					   .select(FS_MODEL_DETAIL.AMOUNT, IAE.EPIGRAPH, IAE.SECTION)
+					   .from(FS_MODEL_DETAIL)
+					   .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+					   .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.DOMAIN.eq(ctx.getDomainId()).and(ENTERPRISE_ACTIVITY.PRINCIPAL.eq((byte) 1)))
+					   .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+					   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL.YEAR.eq(AonDateUtils.getYear(params.getToDate()))).and(FS_MODEL.PERIOD.eq(Period.M12.value()).or(FS_MODEL.PERIOD.eq(Period.T4.value()))).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CT_C44.getValue()))
+					   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
+					   .fetchAny();
+			
+			Double prorateAmount = rec.getValue(FS_MODEL_DETAIL.AMOUNT);
+			
+			// Se ponen los datos de la actividad principal en esta línea del ajuste de la prorrata
+			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
+			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
+			
+			if (prorateAmount == null) {
+				return Stream.empty();
+			} else {
+				OperationBreakdownNew prorateAdjustment = new OperationBreakdownNew()
+						.setActivityCode(activityCode) 					// Actividad: Código
+						.setActivityType(activityType) 					// Actividad: Tipo
+						.setActivityIAE(rec.getValue(IAE.EPIGRAPH))     // Actividad: Grupo o Epígrafe del IAE
+						.setInvoiceType("SF") 							// Tipo de Factura (Ajuste de la prorrata de IVA)	
+//						.setConceptCode()								// Codigo Concepto de Ingreso o Gasto
+//						.setConceptAmount() 							// Ingreso computable o Gasto deducible 	
+						.setEntryDate(params.getToDate()) 		        // Fecha Expedición
+						.setTaxDate(params.getToDate())        	        // Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
+						.setInvoiceSeries("") 	                        // Identificación de la Factura: Serie (Emitidas)
+						.setInvoiceNumber("")                           // Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas) 
+//						.setReceptionNumber()                           // Número recepción (Recibidas)
+						.setReceptionDate(params.getToDate())			// Fecha Recepción (Recibidas) (Fecha Asiento)
+//						.setDocumentType() 								// NIF Destinatario/Expedidor: Tipo
+//						.setDocumentCountry()  				            // NIF Destinatario/Expedidor: Código País
+//						.setDocument() 								    // NIF Destinatario/Expedidor: Identificación
+						.setName("AJUSTE PRORRATA DEFINITIVA") 			// Nombre Destinatario/Expedidor	
+						.setOperationKey("01") 							// Clave de Operación 	
+//						.setOperationQualification()					// Calificación de la Operación (Emitidas)	
+//						.setExemptOperation()  							// Operación Exenta (Emitidas)
+//						.setInvestment() 								// Bien de Inversión (Recibidas)
+//						.setIsp() 										// Inversión del Sujeto Pasivo (Recibidas)
+//						.setTotal()	                                    // Total Factura (Base + IVA + REQ)	
+//						.setBase()                                      // Base Imponible	
+//						.setPercent()                                   // Tipo de IVA	
+//						.setQuota()	                                    // Cuota IVA Repercutido/Soportado
+						.setDeductibleQuota(prorateAmount)              // Cuota Deducible (Recibidas)
+//						.setSurchargePercent()	   	                    // Tipo de Recargo Eq.	
+//						.setSurchargeQuota()     	                    // Cuota Recargo Eq.	
+//						.setPayDate() 				                    // Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
+//						.setPayAmount() 			                    // Importe Cobro/Pago
+//						.setPayMethod() 			                    // Medio Utilizado Cobro/Pago
+//						.setPayMethodName() 		                    // Identificación Medio Utilizado Cobro/Pago
+//						.setRetentionPercent()  	                    // Tipo Retención del IRPF	
+//						.setRetentionQuota()    	                    // Importe Retenido del IRPF	
+//						.setBuildingLocation() 		                    // Situación del Inmueble;	
+//						.setCadasdralReference() 	                    // Referencia Catastral del Inmueble
+//						.setEntryId()				    				// ID del asiento
+//						.setEntryJournal()	    						// Número de diario del asiento
+				;
+				return Stream.of(prorateAdjustment);
+			}
+		} else {
+			return Stream.empty();	
+		}
+		
+	}
+
+	// Obtener porcentaje y tipo de prorrata del último modelo 303
+	private static void getLastProrate(AONContext ctx, OperationParamsNew params) {
+		
+		params.setLastProratePercentage(0.0);
+		params.setLastProrateType("");
+		
+		Double percentage = ctx.getDslContext()
+							   .select(FS_MODEL_DETAIL.AMOUNT)
+							   .from(FS_MODEL_DETAIL)
+							   .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+							   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_003.getValue()))
+							   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
+							   .fetchAny(FS_MODEL_DETAIL.AMOUNT);
+		
+		if (percentage != null) {
+			params.setLastProratePercentage(percentage);
+		}
+		
+		String type = ctx.getDslContext()
+						 .select(FS_MODEL_DETAIL.DESCRIPTION)
+						 .from(FS_MODEL_DETAIL)
+						 .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+						 .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_006.getValue()))
+						 .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
+						 .fetchAny(FS_MODEL_DETAIL.DESCRIPTION);
+		
+		if (type != null) {
+			params.setLastProrateType(AonStringUtils.trimToEmpty(type));
+		}
+		
+	}
+
 	// Cobros y Pagos de Facturas RECC
 	private static Stream<OperationBreakdownNew> getOperationBreakdownRecc(AONContext ctx, OperationParamsNew params) {
 		return getSelectRecc(ctx)
@@ -306,7 +450,7 @@ public class AccountingOperationNewDAO {
 		
 		// Condicion completa
 		Condition condition = INVOICE_DETAIL.DOMAIN.equal(ctx.getDomainId())
-							.and(INVOICE_DETAIL.PREPAYMENT.equal((byte) 0)) // Lineas que no son suplidos (SI SE HACE LEFT JOIN CON INVOICE_TAX)
+							.and(INVOICE_DETAIL.PREPAYMENT.equal((byte) 0)) // Lineas que no son suplidos
 							.and(condition1.or(condition2));
 		
 		if (params.getActivity() != null) {
@@ -318,7 +462,6 @@ public class AccountingOperationNewDAO {
 		else 
 			condition = condition.and(INVOICE.TYPE.ne(InvoiceType.SALES.value())); // Resto (Compras, Gastos, No deducibles)
 		
-		// SI SE HACE LEFT JOIN CON INVOICE_TAX EN EL LIBRO DE IVA NO SALDRAN LOS GASTOS NO DEDUCIBLES EN IVA (AUNQUE ESTO IGUAL DEPENDE DE QUE SE INTRODUZCA EN ESA GESTION)
 		// Libro de IVA (RECIBIDAS): No salen las facturas que son Gastos No Deducibles
 		if (params.getBookType() == 0 && params.getTabType() == 1) {
 			condition = condition.and(INVOICE.TYPE.ne(InvoiceType.UNDEDUCTIBLE.value()));
@@ -327,9 +470,9 @@ public class AccountingOperationNewDAO {
 		// Libro de IRPF: No salen las facturas que no son de cuentas del grupo 6 o 7
 		if (params.getBookType() == 1) {
 			if (params.getTabType() == 0)
-				condition = condition.and(accountCode.startsWith("7"));
+				condition = condition.and(accountCodeField.startsWith("7"));
 			else
-				condition = condition.and(accountCode.startsWith("6"));
+				condition = condition.and(accountCodeField.startsWith("6"));
 		}
 		
 		return condition;
@@ -392,7 +535,6 @@ public class AccountingOperationNewDAO {
 	private static class OperationBreakdownFacFiller implements BiFunction<Record,OperationParamsNew,OperationBreakdownNew> {
 
 		private boolean isSales;
-		private InvoiceTransactionType invoiceTransactionType;
 		private boolean isIntracommunity;
 		private boolean isExtracommunity;
 		private boolean isCanCeuMel;
@@ -403,9 +545,9 @@ public class AccountingOperationNewDAO {
 
 		@Override
 		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
-			
+   
 			isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
-			invoiceTransactionType = InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION));
+			InvoiceTransactionType invoiceTransactionType = InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION));
 			isIntracommunity = (invoiceTransactionType == InvoiceTransactionType.INTRACOMMUNITY);
 			isExtracommunity = (invoiceTransactionType == InvoiceTransactionType.EXTRACOMMUNITY);
 			isCanCeuMel = (invoiceTransactionType == InvoiceTransactionType.CAN_CEU_MEL);
@@ -419,34 +561,31 @@ public class AccountingOperationNewDAO {
 			String documentType = getDocumentType(rec);
 			String invoiceType = getInvoiceType(rec, isVatUnion);			
 			String operationKey = getOperationKey(rec);
-			String operationQualification = getOperationQualification(rec);
-			String exemptOperation = getExemptOperation(rec);
+			String operationQualification = getOperationQualification();
+			String exemptOperation = getExemptOperation();
 			
 			boolean investment = !isSales && AonEnumUtils.getBoolean(rec.getValue(INVOICE.INVESTMENT)); // Recibidas Bienes de Inversión
 			boolean isp = !isSales && isIsp; // ISP Recibidas
 			
-			String conceptCode = getConceptCode(rec.getValue(accountCode));
+			String conceptCode = getConceptCode(rec.getValue(accountCodeField));
 			// LA BASE SE COGE DE INVOICE_DETAIL, PORQUE LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, NO CREAN REGISTRO EN INVOICE_TAX
 //			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
 			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
 			
 			// Compras y Gastos: Si lleva bien afecto, comprobar si grado de afectación IRPF es menor de 100%
 			if (!isSales && rec.getValue(INVEST_ASSET.TYPE) != null) {
-				Double retention_percent = AonNumberUtils.toDouble(rec.getValue(INVEST_ASSET.RETENTION_PERCENT)); 
-				if (retention_percent != null && retention_percent != 100.0) {
-					conceptAmount = AonMathUtils.round(conceptAmount * retention_percent / 100);
+				Double retentionPercent = AonNumberUtils.toDouble(rec.getValue(INVEST_ASSET.RETENTION_PERCENT)); 
+				if (retentionPercent != null && retentionPercent != 100.0) {
+					conceptAmount = AonMathUtils.round(conceptAmount * retentionPercent / 100);
 				}
 			}
 			
 			// Libro Unificado de IVA e IRPF: Facturas cuya cuenta no es 7 o 6, el ingreso o gasto es cero y no lleva concepto
-			if (params.getBookType() == 2) {
-				if (params.getTabType() == 0 && !rec.getValue(accountCode).startsWith("7")) {
-					conceptAmount = 0.0;
-					conceptCode = ""; 
-				} else if (params.getTabType() == 1 && !rec.getValue(accountCode).startsWith("6")) {
-					conceptAmount = 0.0;
-					conceptCode = "";
-				}
+			if (params.getBookType() == 2 && 
+				((params.getTabType() == 0 && !rec.getValue(accountCodeField).startsWith("7")) ||   // Ventas o Ingresos
+				 (params.getTabType() == 1 && !rec.getValue(accountCodeField).startsWith("6")))) {  // Compras o Gastos
+				conceptAmount = 0.0;
+				conceptCode = ""; 
 			}
 			
 			// Total factura = base + IVA + REQ (excepto recibidas ISP o intracomunitarias o UOSS)
@@ -467,7 +606,7 @@ public class AccountingOperationNewDAO {
 			//  D - Arrendadores de inmuebles no incluidos en los códigos anteriores
 			String buildingLocation = "";
 			String cadasdralReference = "";
-			boolean isRenting = (isSales && (Arrays.asList(new String[]{"11", "12", "13"}).contains(operationKey))) || 
+			boolean isRenting = (isSales && (Arrays.asList("11", "12", "13").contains(operationKey))) ||
 								(!isSales && ("12".equals(operationKey))) ||					
 								("A01".equals(activityCode+activityType)) ||
 								("D".equals(activityCode));   
@@ -533,8 +672,8 @@ public class AccountingOperationNewDAO {
 				.setBase(base)               												// Base Imponible	
 				.setPercent(isVatUnion ? 0.0 : AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.PERCENTAGE))) // Tipo de IVA (porcentaje)	
 				.setQuota(isVatUnion ? 0.0 : getQuota(rec))	           						// Cuota IVA Repercutido/Soportado
-				.setDeductibleQuota(isSales ? 0.0 : getDeductibleQuota(rec))    			// Cuota Deducible (Recibidas)
-				.setSurchargePercent(AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE))) // Tipo de Recargo Eq. (porcentaje)	
+				.setDeductibleQuota(isSales ? 0.0 : getDeductibleQuota(rec, params))  // Cuota Deducible (Recibidas)
+				.setSurchargePercent(AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE)))  // Tipo de Recargo Eq. (porcentaje)	
 				.setSurchargeQuota(getSurchargeQuota(rec))     								// Cuota Recargo Eq.	
 				.setPayDate(null) 															// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
 				.setPayAmount(0.0) 															// Importe Cobro/Pago
@@ -570,7 +709,7 @@ public class AccountingOperationNewDAO {
 			return quota;
 		}
 		
-		private double getDeductibleQuota(Record rec) {
+		private double getDeductibleQuota(Record rec, OperationParamsNew params) {
 			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			if (AonMathUtils.isZero(dedQuota)) {
 				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT));
@@ -580,10 +719,28 @@ public class AccountingOperationNewDAO {
 				} else {
 					dedQuota = AonMathUtils.round(quota * percent / 100);
 				}
+			}			
+			// Comprobar si la factura lleva porcentaje de prorrata y debe aplicarse:
+			// Prorrata General: Se aplica a todas las facturas
+			// Prorrata Especial: Se aplica solo a las facturas que no tienen actividad (es decir que se imputan a todas las actividades)
+			double proratePer;
+			String prorateTyp; 
+			if (rec.getValue(proratePercentageField) == null) {
+				// Si la factura aún no está declarada en el modelo 303, entonces se coge el porcentaje de prorrata del último modelo 303 creado
+				proratePer = params.getLastProratePercentage();
+				prorateTyp = params.getLastProrateType(); 
+			} else {
+				// Si la factura ya está declarada en el modelo 303, se cogen los datos de dicho modelo
+				proratePer = AonNumberUtils.todouble(rec.getValue(proratePercentageField));
+				prorateTyp = rec.getValue(prorateTypeField);
 			}
+			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
+			if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+				dedQuota = AonMathUtils.round(dedQuota * proratePer / 100);
+			}			
 			return dedQuota;
 		}
-		
+	
 		private double getRetentionQuota(Record rec) {
 			double quota = AonNumberUtils.todouble(rec.getValue(retInvoiceTax.QUOTA));
 			if (AonMathUtils.isZero(quota)) {
@@ -644,13 +801,13 @@ public class AccountingOperationNewDAO {
 		}
 
 		// Calificador de la Operación (solo Emitidas): Se hace igual que el SII
-		private String getOperationQualification(Record rec) {
+		private String getOperationQualification() {
 			if (isSales && !isSalesExempt) {
 				if (isVatUnion)
 					return "N2"; // Operación No Sujeta por Reglas de localización.
 				else if (isNonTaxable) 
 					return "N1"; // Operación No Sujeta artículo 7, 14, otros.
-				 else if (isIsp) 
+				else if (isIsp) 
 					return "S2"; // ISP				
 				else 
 					return "S1"; // Resto				
@@ -660,7 +817,7 @@ public class AccountingOperationNewDAO {
 		}
 		
 		// Operación Exenta (solo Emitidas): Se hace igual que el SII
-		private String getExemptOperation(Record rec) {
+		private String getExemptOperation() {
 			if (isSalesExempt) {
 				if (isIntracommunity) {
 					return "E5";  // Exenta por el artículo 25 
@@ -679,12 +836,10 @@ public class AccountingOperationNewDAO {
 	// Cobros y Pagos de Facturas RECC
 	private static class OperationBreakdownReccFiller implements BiFunction<Record,OperationParamsNew,OperationBreakdownNew> {
 
-		private boolean isSales;
-
 		@Override
 		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
 			
-			isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
+			boolean isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
 			
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
@@ -770,12 +925,10 @@ public class AccountingOperationNewDAO {
 	// Asientos
 	private static class OperationBreakdownAstFiller implements Function<Record,OperationBreakdownNew> {
 
-		private boolean isIncomes;
-
 		@Override
 		public OperationBreakdownNew apply(Record rec) {
-		
-			isIncomes = rec.getValue(ACCOUNT.CODE).startsWith("7");
+			
+			boolean isIncomes = rec.getValue(ACCOUNT.CODE).startsWith("7");
 			
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));

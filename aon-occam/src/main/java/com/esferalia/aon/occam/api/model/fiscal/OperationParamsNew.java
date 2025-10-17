@@ -8,12 +8,13 @@ public class OperationParamsNew implements Serializable {
 	private static final long serialVersionUID = 4708586223785270098L;
 
 	private int domain;
-	
 	private Date fromDate;      // Desde Fecha
 	private Date toDate;        // Hasta Fecha
 	private Integer activity;   // Actividad (ID)
 	private int bookType;       // 0-Libros de IVA, 1-Libros de IRPF, 2-Libros Unificados de IVA e IRPF
 	private int tabType;        // 0-Expedidas/Ventas e Ingresos, 1-Recibidas/Compras y Gastos
+	private double lastProratePercentage; // Porcentaje de prorrata del último modelo 303
+	private String lastProrateType;       // Tipo de prorrata del último modelo 303
 
 	public int getDomain() {
 		return domain;
@@ -62,6 +63,20 @@ public class OperationParamsNew implements Serializable {
 	}
 	public OperationParamsNew setTabType(int tabType) {
 		this.tabType = tabType;
+		return this;
+	}
+	public double getLastProratePercentage() {
+		return lastProratePercentage;
+	}
+	public OperationParamsNew setLastProratePercentage(double lastProratePercentage) {
+		this.lastProratePercentage = lastProratePercentage;
+		return this;
+	}
+	public String getLastProrateType() {
+		return lastProrateType;
+	}
+	public OperationParamsNew setLastProrateType(String lastProrateType) {
+		this.lastProrateType = lastProrateType;
 		return this;
 	}
 	
