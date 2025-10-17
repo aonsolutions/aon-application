@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet.marketing;
 
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
@@ -140,6 +141,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String passwordMail;
 
 	private static boolean isLocal = false;
+	
+	private static Domain createdDomain = null;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -455,22 +458,25 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
  				checkCustomer(api, ctx);
  				
-				System.out.println("----------------------- Create Scope");
+ 				// System.out.println("----------------------- Create Scope");
 				
-				Scope newScope = createScope(api, ctx);
+				// Scope newScope = createScope(api, ctx);
 				
 				System.out.println("----------------------- Create Domain");
 				
- 				Domain newDomain = createDomain(api, ctx, newScope);
+ 				// Domain newDomain = createDomain(api, ctx, newScope);
+ 				Domain newDomain = createDomain(api, ctx, new Scope());
  				urlMail = newDomain.getName();
 				
 				System.out.println("----------------------- Create Auth / User");
 				
-				createDefaultUser(api, ctx, newDomain, newScope);
+				createDefaultUser(api, ctx, newDomain);
 				
-				System.out.println("----------------------- Create User Scope (supportSeller / api.getUser)");
+				// TODO: esto hay que hacerlo cuando nos aseguremos que los sellers que se muestran en la accion comercial tenga un usuario del padre asociado
 				
-				createUserScope(api, ctx, newDomain, newScope);
+				// System.out.println("----------------------- Create User Scope (supportSeller / api.getUser)");
+				
+				// createUserScope(api, ctx, newDomain, newScope);
 				
 				System.out.println("----------------------- Domain Apps / Config");
 				
@@ -485,7 +491,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				updateProjectCommercial(api, ctx);
 
 				// Send mail
-				sendEnterpriseCreatedMail(api, ctx);
+				sendEnterpriseCreatedMail(api, ctx, newDomain);
+				
+				createdDomain = newDomain;
 				
 				System.out.println("----------------------- [End] Create Enterprise -----------------------");
 				
@@ -499,7 +507,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 //
 //		sendTrailEnterpriseCreatedMail(api, email, logoUrl, parent);
 
-		return getFinishCreationHtml(api, parent);
+		return getFinishCreationHtml(api, parent, createdDomain);
 	}
 	
 	// ---------------------------------------------------------------------------------------------
@@ -632,7 +640,20 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setDomainManagement(false)
 				.setScope(newScope.getId());
 		
-		newDomain = DomainDAO.insertDomain(ctx, newDomain, company);
+		newDomain = DomainDAO.insertDomainWithoutEnterprise(ctx, newDomain, company);
+		
+		Domain createdDomain = newDomain;
+		
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(createdDomain.getId())).findFirst().get();
+		
+		Scope enterpriseScope = SecurityDAO.insertScope(ctx, new Scope().setDomain(newDomain.getId()).setDescription("GENERAL"));
+		
+		ctx.getDslContext()
+			.insertInto(ENTERPRISE)
+			.set(ENTERPRISE.REGISTRY, newCompany.getId())
+			.set(ENTERPRISE.DOMAIN, newDomain.getId())
+			.set(ENTERPRISE.SCOPE, enterpriseScope.getId())
+			.execute();
 		
 		createCompanyMedia(api, ctx, newDomain);
 		
@@ -876,7 +897,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		RegistryRelationshipDAO.save(ctx, rrelationship);
 	}
 	
-	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx,  Domain newDomain, Scope newScope) {
+	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx,  Domain newDomain) {
 		JSONObject data = api.getData();
 		
 		Integer registry = JsonUtils.getInteger(data, "target"); // target.id
@@ -912,7 +933,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 			User user = null;
 			if (auth.getAuth() != null) {
-				user = createUser(api, ctx, newDomain, newScope, auth, login, targetOpt.get().getName());
+				user = createUser(api, ctx, newDomain, auth, login, targetOpt.get().getName());
 				setUserAppRole(ctx, newDomain, user);
 
 				if (newDomain.isChild() || newDomain.isStandalone()) {
@@ -936,7 +957,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return i.toString();
 	}
 
-	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope, Auth auth, String login, String name) {
+	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Auth auth, String login, String name) {
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
 
 		User newUser = new User()
@@ -1089,7 +1110,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		// Actualizar "user_scope": Asignar el scope al agente asignado
 		Seller seller = SellerDAO.get(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
 		TaskHolder taskHolder = TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(seller.getTaskHolder().getId()), new Options().setFull(true));
-		if(null != taskHolder && null != taskHolder.getUserId()) {
+		if(null != taskHolder && null != taskHolder.getUserId() && null != newScope.getId()) {
 			
 			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUserId()), new Options().setFull(true));
 			
@@ -1104,7 +1125,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 		
 		// Insertar el ambito al usuario que ha creado la empresa
-		if(null != api.getUser() && null != api.getUser().getId())
+		if(null != api.getUser() && null != api.getUser().getId() && null != newScope.getId())
 			SecurityDAO.insertUserScope(
 					ctx, 
 					new UserScope()
@@ -1191,14 +1212,18 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 					api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					f -> f.getProjectCommercialProperty().eq(projectCommercial.getId())
 							.and(f.getActivityProperty().eq(commercialActivityAutoRegisterId)));
+			
 			verificationCommercialTrackingList.forEach(verificationCommercialTracking -> {
 				verificationCommercialTracking.setStatus((byte) 1);
+				verificationCommercialTracking.setDate(new Date());
 				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 						verificationCommercialTracking);
 
 			});
 
 			projectCommercial.setStatus((byte) 3);
+			projectCommercial.setStatusDate(new Date());
+			
 			AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					projectCommercial);
 		}
@@ -1214,7 +1239,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	// SEND CREATED ENTERPRISE EMAIL
 	// ---------------------------------------------------------------------------------------------
 	
-	private static void sendEnterpriseCreatedMail(AonApiData api, CloseableAONContext ctx) {
+	private static void sendEnterpriseCreatedMail(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
 		JSONObject data = api.getData();
 		Integer sellerSupport = JsonUtils.getInteger(data, "seller");
 		String name = JsonUtils.getString(data, "name");
@@ -1255,7 +1280,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setReplyTo(from)
 //				.setAlias(name)
 				.setSubject("Empresa " + name)
-				.setBody(createEnterpriseCreatedBody(logoUrl, parent, from, name));
+				.setBody(createEnterpriseCreatedBody(logoUrl, newDomain, from, name, parent.getDescription()));
 
 		SES.sendEmail(msg);
 	}
@@ -1314,6 +1339,35 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return from;
 	}
 
+	private static String createEnterpriseCreatedBody(String logoUrl, Domain newDomain, String from, String name, String parentDescription) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		String url = (isLocal ? "http" : "https") + "://" + newDomain.getName() + (isLocal ? ":8080" : "")
+				+ "/";
+		
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", parentDescription);
+		context.put("name", name);
+		context.put("url", url);
+		context.put("domainName", urlMail);
+		context.put("user", userMail);
+		context.put("password", passwordMail);
+		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	// TODO: deberia entrar desde el entorno, pero por el momento el usuario no lo reconoce desde el entorno solo desde el hijo
+	/*
 	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from, String name) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -1321,7 +1375,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		engine.init();
 		
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-				+ "/app";
+				+ "/";
 		
 		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
 			url = "https://leevy.aon.solutions";
@@ -1345,6 +1399,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		return writer.toString();
 	}
+	*/
 	
 	// ---------------------------------------------------------------------------------------------
 	// AUXILIAR METHODS
@@ -1685,6 +1740,39 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return from;
 	}
 
+	private static String getFinishCreationHtml(AonApiData api, Domain parentDomain, Domain newDomain) {
+		JSONObject data = api.getData();
+
+		// Enterprise Data
+		String name = JsonUtils.getString(data, "name");
+		
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		String url = (isLocal ? "http" : "https") + "://" + newDomain.getName() + (isLocal ? ":8080" : "") + "/";
+		
+		String logoUrl = getLogoUrl(parentDomain, api.getUser());
+
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", parentDomain.getDescription());
+		context.put("name", name);
+		context.put("url", url);
+		context.put("domainName", urlMail);
+		context.put("mail", userMail);
+
+		Template template = engine
+				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_created_response.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	/*
 	private static String getFinishCreationHtml(AonApiData api, Domain parentDomain) {
 		JSONObject data = api.getData();
 
@@ -1722,8 +1810,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		return writer.toString();
 	}
-	
-
+	*/
 
 	private static String createEnterpriseDuplicateBody(AonApiData api, Domain domain, Domain parentDomain) {
 		VelocityEngine engine = new VelocityEngine();

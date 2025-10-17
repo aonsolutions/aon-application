@@ -1120,6 +1120,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.MAY,2018);
 		assertValue("cgcBaseLabel", cgcBase );
+		
+		draft("MULTIPLES, I.T");
+		calculate(Calendar.OCTOBER,2025);
+		assertValue("description-box-1", "[1001]4 DÍAS DE IT POR EC DEL 1º AL 3º DÍA");
+		assertValue("description-box-2", "[1001]1 DÍAS DE IT POR EC DEL 1º AL 3º DÍA 15/10 ");
+		assertValue("description-box-3", "[1001]3 DÍAS DE IT POR EC DEL 1º AL 3º DÍA 20/10 - 22/10 ");
+		assertValue("description-box-4", "[1004]2 DÍAS DE IT POR EC DEL 4º AL 15º DÍA 23/10 - 24/10");
+		
+	
 	}
 
 	@Test
@@ -3120,6 +3129,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.AUGUST,2023);
 		assertValue("description-box-10", "SUSPENSIÓN DE EMPLEO Y SUELDO 10/08 - 20/08");
 
+		calculate(Calendar.OCTOBER,2025);
+		assertValue("description-box-13", "SUSPENSIÓN DE EMPLEO Y SUELDO");
+		assertValue("description-box-14", "SUSPENSIÓN DE EMPLEO Y SUELDO 07/10 ");
+		assertValue("description-box-15", "SUSPENSIÓN DE EMPLEO Y SUELDO 15/10 - 16/10 ");
 	}
 
 	@Test

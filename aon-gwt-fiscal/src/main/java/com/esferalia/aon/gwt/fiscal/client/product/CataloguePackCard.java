@@ -52,7 +52,7 @@ public class CataloguePackCard extends HTMLPanel {
 		if(!itemCompositions.isEmpty())
 			createPackContent();
 		
-		createButton();
+		createButton(packProduct);
 		
 		add(content);
 	}
@@ -84,7 +84,7 @@ public class CataloguePackCard extends HTMLPanel {
 		if(!itemCompositions.isEmpty())
 			createPackContent();
 		
-		createButton();
+		createButton(packProduct);
 		
 		add(content);
 	}
@@ -172,7 +172,7 @@ public class CataloguePackCard extends HTMLPanel {
 		
 	}
 
-	private void createButton() {
+	private void createButton(Product packProduct) {
 		Button bookBtn = new Button();
 		bookBtn.setText("Contratar");
 		

@@ -3499,7 +3499,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
-			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate);
+			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), null, ipf, startDate, endDate);
 			
 			return null == contract ? null : contract.getSepeId();
 			

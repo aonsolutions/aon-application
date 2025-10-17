@@ -47,6 +47,7 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String TOKEN = "token";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
+	private static final String READ_ONLY = "readOnly";
 	private static final String DOMAIN_ID = "domainId";
 	private static final String DOMAIN_NAME = "domainName";
 	private static final String LANGUAGE = "language";
@@ -104,6 +105,7 @@ public class JsfAppServlet extends HttpServlet {
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
+		appController.setReadOnly(Boolean.parseBoolean(req.getParameter(READ_ONLY)));
 	}
 	
 	

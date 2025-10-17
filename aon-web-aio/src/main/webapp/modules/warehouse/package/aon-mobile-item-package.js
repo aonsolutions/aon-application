@@ -14,7 +14,7 @@ import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { ToolbarType } from '../../../models/enums.js';
 import { createCard, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
 import { round } from '../../../services/utils.js';
-import { addPackageStock, adjustComposition, deletePackage, getWarehouses, movePackageStock, saveStock } from '../../../services/warehouseService.js';
+import { addPackageStock, adjustComposition, deletePackage, getWarehouse, getWarehouses, movePackageStock, saveStock } from '../../../services/warehouseService.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 
 
@@ -32,6 +32,8 @@ export class AonMobileItemPackage extends AonElement {
 	PACKAGE_SERIAL_DATE;
 	PACKAGE_COMPOSITION_TABLE;
 	PACKAGE_WAREHOUSE;
+	PACKAGE_ITEM_WAREHOUSE;
+
 
 	COMPOSITION;
 	COMPOSITION_CARD;
@@ -85,6 +87,7 @@ export class AonMobileItemPackage extends AonElement {
 		this.PACKAGE_SERIAL_DATE = this.id + 'SerialDate';
 		this.PACKAGE_COMPOSITION_TABLE = this.id + 'CompositionTable';
 		this.PACKAGE_WAREHOUSE = this.id + 'Warehouse';
+		this.PACKAGE_ITEM_WAREHOUSE = this.id + 'ItemWarehouse';
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
@@ -170,6 +173,17 @@ export class AonMobileItemPackage extends AonElement {
 		serialNumber.value = this.itemPackage.serialNumber;
 		serialNumber.disabled = true;
 		table.addCell(serialNumber);
+
+		if(this.itemPackage.stock && this.itemPackage.stock.quantity > 0) {
+			getWarehouse(this.itemPackage.stock.warehouse).then(w => {
+				table.addRow();
+
+				let warehouse = createInput(this.PACKAGE_ITEM_WAREHOUSE, MSG.WAREHOUSE);
+				warehouse.value = w.name;
+				warehouse.disabled = true;
+				table.addCell(warehouse);
+			}).catch(e => this.showError(e));
+		}	
 	}
 
 	buildPackageComposition(parent){
@@ -290,6 +304,8 @@ export class AonMobileItemPackage extends AonElement {
 			d.setTitle(MSG.MOVE_STOCK);
 			d.setContent(warehouse);
 			d.addAcceptAction(() => {
+				let warehouseItem = this.getElement(this.PACKAGE_ITEM_WAREHOUSE);			
+				warehouseItem.setValue(warehouse.getValueObject().name);
 				let data = {
 					item: this.itemPackage.id,
 					sourceWarehouse: this.itemPackage.stock.warehouse,

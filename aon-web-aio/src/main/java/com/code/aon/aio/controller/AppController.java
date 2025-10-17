@@ -19,6 +19,7 @@ public class AppController implements Serializable {
 	
 	private String viewId  = null;
 	private String action  = null;
+	private boolean readOnly  = false;
 	private String actionListener  = null;
 
 	
@@ -42,6 +43,10 @@ public class AppController implements Serializable {
 		}
 	}
 	
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+	
 	public String getSuiteAppId(){
 		return SUITE_APP_ID;
 	}
@@ -56,6 +61,10 @@ public class AppController implements Serializable {
 	
 	public void setAction(String action) {
 		this.action = action;
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 	
 	public void setActionListener(String actionListener) {

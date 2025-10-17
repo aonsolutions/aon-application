@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -359,6 +360,8 @@ public interface CommonServiceAsync {
 	
 	void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> asyncCallback) throws AonCoreException;
 	
+	void getOfficeSibling(String domainName, int domain, String user, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
+	
 	// **************************************************
 	// ****************************************** [SALES]
 	// **************************************************
@@ -472,5 +475,9 @@ public interface CommonServiceAsync {
 	void getAviableSyncDomains(CustomersDomainSyncParams paramsDomains, AsyncCallback<List<DomainCompany>> asyncCallback) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> asyncCallback) throws AonCoreException;
+	
+	void getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> asyncCallback) throws AonCoreException;
+	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 }

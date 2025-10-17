@@ -12,6 +12,7 @@ export const COMPANY_ACTIVITIES = `${COMPANY}/activities`;
 export const COMPANY_APPROLES = `${COMPANY}/approles`;
 export const COMPANY_HEADER = `${COMPANY}/header`;
 export const COMPANY_CUSTOMER_TAGS = `${COMPANY}/tags`;
+export const COMPANY_SCOPES = `${COMPANY}/scopes`;
 export const DELIVERIES = `${API}/deliveries`;
 export const ELABORATION = `${API}/elaboration`;
 export const ELABORATION_SERIAL = `${API}/elaboration/serial`;

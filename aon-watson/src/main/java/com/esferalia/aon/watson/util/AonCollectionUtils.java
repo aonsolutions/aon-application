@@ -131,10 +131,21 @@ public class AonCollectionUtils {
 		}
 		return false;
 	}
+	
+	public static boolean contains(int[] types, int type) {
+		if (types == null) return false;
+		for (int t : types) {
+			if (t == type) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static <T> List<T> toList(T t) {
 		LinkedList<T> l = new LinkedList<>();
 		if (t != null) l.add(t);
 		return l;
 	}
+
 }

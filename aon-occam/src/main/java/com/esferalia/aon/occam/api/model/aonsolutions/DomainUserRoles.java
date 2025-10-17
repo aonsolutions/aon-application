@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.OldAonRole;
 
@@ -17,6 +18,8 @@ public class DomainUserRoles implements Serializable {
 	Domain domain;
 	Domain parentDomain;
 	User user;
+	
+	private List<Scope> scopes;
 	
 	private List<AonApp> domainApps;
 	private List<AonApp> parentDomainApps;
@@ -61,6 +64,18 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setUser(User user) {
 		this.user = user;
+		return this;
+	}
+	
+	public List<Scope> getScopes() {
+		if(scopes == null) {
+			this.scopes = new LinkedList<>();
+		}
+		return scopes;
+	}
+	
+	public DomainUserRoles setScopes(List<Scope> scopes) {
+		this.scopes = scopes;
 		return this;
 	}
 	

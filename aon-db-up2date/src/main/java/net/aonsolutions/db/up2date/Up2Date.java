@@ -19,10 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresInsert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.PPEUpdate2CostFix;
-import net.aonsolutions.db.up2date.security.AddAonClassic;
+import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDescriptionFixII;
+import net.aonsolutions.db.up2date.tgss.PrestITDescriptionFix;
 
 public class Up2Date {
 
@@ -390,7 +389,7 @@ public class Up2Date {
 			// UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 			// UdpateAonSmb.UPDATE_AON_SMB,
 			// UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
-			// InsertIAE575576.INSERT_IAE_755756,
+			// InsertIAE575576.INSERT_IAE_755756,PERMISO NO RETRIBUIDO 26/09
 			// ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
 			// DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
 			// SalesInfoCreation.SALES_INFO_CREATION,
@@ -557,7 +556,10 @@ public class Up2Date {
 			// RealDecreeLaw1782025Art28300Fix510.REALDECREELAW1782025ART28300FIX,
 			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
 			// BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
-			AddAonClassic.ADD_AON_CLASSIC,
+			// AddAonClassic.ADD_AON_CLASSIC,
+			// PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
+			 PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
+			 PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

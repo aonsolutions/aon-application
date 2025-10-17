@@ -253,9 +253,9 @@ public class Contrata {
 	}
 
 	public static Contract getContractData(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date startDate, Date endDate) throws SepeException {
+			final String certificateType, String enterpriseCif, String ipf, Date startDate, Date endDate) throws SepeException {
 		try {
-			return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, startDate,
+			return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, enterpriseCif, ipf, startDate,
 					endDate);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
@@ -455,7 +455,7 @@ public class Contrata {
 			
 			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
 			String[] now = Toolkit.dateString(new Date());
-
+			
 			try {
 				HtmlSelect codContract = ((HtmlSelect) htmlPage.querySelector("select[name=codcontrato]"));
 				codContract.getOptionByValue(contract).setSelected(true);
@@ -837,6 +837,8 @@ public class Contrata {
 			}
 			
 			webClient.waitForBackgroundJavaScript(5000);
+
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			
@@ -929,7 +931,7 @@ public class Contrata {
 	}
 
 	private static Contract getContractDataImpl(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate)
+			final String certificatePassword, final String certificateType, String enterpriseCif, String ipf, Date startDate, Date endDate)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException,
 			SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -940,7 +942,10 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();
 			handleSepeExceptions(htmlPage);
-
+			
+			htmlPage = checkEnterpriseCif(htmlPage, enterpriseCif);
+			handleSepeExceptions(htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=").click();
 			handleSepeExceptions(htmlPage);
 
@@ -2389,9 +2394,9 @@ public class Contrata {
 		if(Arrays.asList("421", "450").contains(codCto)) { // FormaciÃ³n en alternancia tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
 		} else if(codCto.equals("420")) { //Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo completo
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
+			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=9";
 		} else {
 			String oneCodCto = codCto.substring(0, 1);
 			switch (oneCodCto) {
@@ -2617,6 +2622,18 @@ public class Contrata {
 			return "E"; //NIE
 		}
 		return " "; //CIF
+	}
+	
+	public static HtmlPage checkEnterpriseCif(HtmlPage htmlPage, String enterpriseCif) throws IOException {
+		HtmlInput enterpriseCifInput = (HtmlInput) htmlPage.getElementById("selCif5");
+		if(null != enterpriseCifInput) {
+			((HtmlSelect) htmlPage.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(enterpriseCif), true);
+			((HtmlInput) htmlPage.getElementById("selCif5")).setValue(enterpriseCif);
+			
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[name=enviar]")).click();
+		}
+		
+		return htmlPage;
 	}
 	
 	// BUILD A FILE FROM ARRAY OF BYTES
