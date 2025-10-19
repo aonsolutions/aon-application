@@ -111,6 +111,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if (! user.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_user_inactive", principal.getShortName() );	
 			}
+			principal.setUuid(user.getUuid());
 			principal.setUserId(user.getId());
 			principal.setUserDomainId(user.getDomain());						
 			if ( (domain.getScope() != null) && (domain.getParent() == user.getDomain()) ) {

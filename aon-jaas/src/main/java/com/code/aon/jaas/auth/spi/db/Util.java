@@ -161,7 +161,7 @@ public class Util {
 			LOGGER.debug( "Get user {} in domain {}", userName, domainId );
 			ResultSetHandler<User> h = new BeanHandler<User>(User.class);
 			User user = run.query( connection,
-				    "SELECT id, login, password, domain, active FROM user WHERE domain =? AND login =?", h, domainId, userName); 
+				    "SELECT id, login, password, domain, active, hex(auth) as uuid FROM user WHERE domain =? AND login =?", h, domainId, userName); 
 			return user;
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);

@@ -37,6 +37,9 @@ public class AuthPrincipal implements Principal, Serializable {
     private Integer applicationId;
     private Integer userDomainId;    
     private String initAction;
+    
+    
+    private String uuid;
 
     /**
      * Constructs an <code>AuthPrincipal</code>
@@ -166,6 +169,14 @@ public class AuthPrincipal implements Principal, Serializable {
 	
 	public void setInitAction(String initAction) {
 		this.initAction = initAction;
+	}
+	
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 }
