@@ -24,3 +24,5 @@ export const adjustComposition = (data) => post(`${API.PRODUCT}/package/adjustCo
 
 export const addPackageStock = (data) => put(`${API.PACKAGE}/stock/add`, data);
 export const movePackageStock = (data) => put(`${API.PACKAGE}/stock/move`, data);
+
+export const getItemStock = (itemId) => get(`${API.STOCK}/item/${itemId}`, {itemId});
