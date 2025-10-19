@@ -199,7 +199,7 @@ public class InvoiceJSON {
 				.filter(i -> i != null)
 				.distinct()
 				.limit(2)
-			    .reduce((a, b) -> null) 
+				.findFirst()
 			    .orElse(null);
 			json.put(IJsonNames.WORKPLACE, workplace);
 		}
@@ -216,7 +216,6 @@ public class InvoiceJSON {
 			return InvoiceType.PURCHASE;
 		} else return InvoiceType.EXPENSES;
 	}
-	
 	
 	public static JSONObject toMinimalJSON(Invoice inv) {
 		return new JSONObject()

@@ -98,6 +98,11 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.updateAuthPassword(ctx, auth));
 	}
 	
+	@Override
+	public Auth updateUserPassword(AONContext ctx, Auth auth) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateUserPassword(ctx, auth));
+	}
 	
 
 	@Override
