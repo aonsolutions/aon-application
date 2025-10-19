@@ -28,3 +28,5 @@ export const USER_SERVICE = `${USER}/service`;
 
 export const PROJECTS = `${API}/projects`;
 export const WAREHOUSES = `${API}/warehouses`;
+
+export const STOCK = `${API}/stock`;
