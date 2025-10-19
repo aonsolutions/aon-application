@@ -267,6 +267,15 @@ public class SecurityDAO {
 		return auth;
 	}
 	
+	public static Auth updateUserPassword(AONContext ctx, Auth auth) {
+		ctx.getDslContext().update(USER)
+			.set(USER.PASSWORD, auth.getPassword())
+			.where(USER.AUTH.eq(auth.getAuth()))
+			.execute();
+		return auth;
+	}
+	
+	
 	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
 		return saveDomainApp(ctx, domainApp, true);
 	}
