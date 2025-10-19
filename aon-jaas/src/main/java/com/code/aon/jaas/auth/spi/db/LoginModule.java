@@ -4,7 +4,6 @@ import static com.code.aon.jaas.auth.IConstants.DEFAULT_CONTEXT_PATH;
 
 import java.net.IDN;
 import java.security.Principal;
-import com.code.aon.jaas.security.acl.Group;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -17,7 +16,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -26,7 +24,10 @@ import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.SimpleGroup;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.spi.UsernamePasswordLoginModule;
+import com.code.aon.jaas.security.acl.Group;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+
+import jakarta.servlet.http.HttpServletRequest;
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.ConnectionInfo;
 
@@ -159,6 +160,11 @@ public class LoginModule extends UsernamePasswordLoginModule {
     */
 	protected Group[] getRoleSets() throws LoginException {
 		boolean trace = log.isTraceEnabled();
+		
+		if ( this.dataBaseName == null ) {
+			return new Group[0];
+		}
+		
 		Connection connection = null;
 
 		try {

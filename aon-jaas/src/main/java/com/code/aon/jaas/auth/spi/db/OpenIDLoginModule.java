@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 
@@ -131,17 +132,17 @@ public class OpenIDLoginModule extends LoginModule {
 			} else if(isEmail(info[0])) {
 				Integer domainId = null;
 				String password = null;
+				String domainName = null;
 				try {
 					domainId = getDomainId(domain);
 					password=  getAuthPassword(domain, domainId, info[0]);
 				} catch (Exception e) {
-					return null;
 				}
 				if(password == null || password.isBlank()) {
 					ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 					Integer index = 0;
 					while(password == null && index < connectionInfo.getSchemas().size()) {
-						String domainName = connectionInfo.getSchemaFirstDomain(connectionInfo.getSchemas().get(index));
+						domainName = connectionInfo.getSchemaFirstDomain(connectionInfo.getSchemas().get(index));
 						try {
 							if(domainName != null && !domainName.isBlank())
 								password = getAuthPassword(domainName, 0, info[0]);
@@ -149,8 +150,12 @@ public class OpenIDLoginModule extends LoginModule {
 						index++;
 					}
 				}
-				if ( domainId != null )
+				if ( domainId != null ) {
 					super.getUsersPassword(); // TODO: No comments, only remove it.
+				} else if ( password != null){
+					String uuid = getAuth(domainName, 0, info[0]);
+					((AuthPrincipal) getIdentity()).setUuid(uuid);
+				}
 				
 				return password;
 			}
