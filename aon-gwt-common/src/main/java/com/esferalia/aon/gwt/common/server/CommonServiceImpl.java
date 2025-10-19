@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
-import com.esferalia.aon.jooq.tables.CustomerFee;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -92,7 +91,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -107,7 +105,6 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
-import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -140,7 +137,6 @@ import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -887,7 +883,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getItemStream(
 				new Domain().setName(domainName).setId(domain), 
 				user, 
-				f -> f.getDomainProperty().eq(domain).and(f.getProductTypeProperty().eq((byte)productType.ordinal()))				
+				f -> f.getDomainProperty().eq(domain).and(null == productType ? f.getProductTypeProperty().isNotNull() : f.getProductTypeProperty().eq((byte)productType.ordinal()))				
 		).collect(Collectors.toList());
 	}
 	
@@ -1670,6 +1666,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		AON.save(domainName, domainId, user, fee);
 	}
+	
 	@Override
 	public void updateEndDatePackFee(String domainName, int domainId, String user, Fee fee) throws AonCoreException {
 		Date currentDate = new Date();
