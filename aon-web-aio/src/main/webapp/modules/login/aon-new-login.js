@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
+import { login, signin, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -129,14 +129,14 @@ export class AonNewLogin extends AonElement {
     		const password = this.getElement("aonLoginPassword").value;
    
    			if(username.length == 0 || password.length == 0) return;
-	        this.signin();
+	        this.login();
     	}
     });
     
     passwordInput.addEventListener('keyup', (event) => {
 	    if (event.key === 'Enter') {
 	        if(userInput.value.length == 0 || passwordInput.value.length == 0) return;
-	        this.signin();
+	        this.login();
     	}
     });
 
@@ -146,7 +146,8 @@ export class AonNewLogin extends AonElement {
     signIn.id = "aonLoginSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
-    signIn.addEventListener(EVENT.CLICK, () => this.signin());
+    signIn.addEventListener(EVENT.CLICK, () => this.login());
+	signIn.addEventListener(EVENT.CONTEXTMENU, () => this.signin());
     divFormContent.appendChild(signIn);
 
     getManifest().then((manifest) => {
@@ -499,7 +500,7 @@ export class AonNewLogin extends AonElement {
     });
   }
 
-  signin() {
+  login() {
     const username = this.getElement("aonLoginUser").value;
     const password = this.getElement("aonLoginPassword").value;
     const data = {
@@ -540,6 +541,47 @@ export class AonNewLogin extends AonElement {
       });
   }
   
+  signin() {
+    const username = this.getElement("aonLoginUser").value;
+    const password = this.getElement("aonLoginPassword").value;
+    const data = {
+      username: username,
+      password: password,
+    };
+
+    let loader = this.getElement("aonLoginLoader");
+    loader.style.display = "";
+    loader.start();
+    signin(data)
+      .then(() => {
+        // document.body.style.background = 'transparent';
+        loader.stop();
+
+        LS.removeDomain();
+        this.getModule().buildHome();
+        this.getModule().startLoading();
+        let limit = 100;
+        getCompanies({ limit }).then((companies) => {
+          this.getModule().stopLoading();
+  	  if (companies.length === 1) {
+            this.companySelection(companies[0], true);
+          } else {
+            this.getElement("aonHome").showMenu(false);
+            this.rootPanel(
+              this.isMobile() ? new AonMobileParent() : new AonParent()
+            );
+          }
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        loader.stop();
+        let error = JSON.parse(e);
+        let toast = this.getElement("aonLoginToast");
+        toast.start(error);
+      });
+  }
+
   companySelection(company, onlyOne) {
     localStorage.setItem("company", JSON.stringify(company));
     localStorage.setItem("aon_domain_id", company.id);

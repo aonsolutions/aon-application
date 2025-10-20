@@ -12,7 +12,7 @@ import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { AonMobilePackageList } from '../package/aon-mobile-package-list.js';
 import { createCard, createDate, createInput } from '../../../components/CreateComponent.js';
-import { saveElaborationSerial } from '../../../services/warehouseService.js';
+import { getItemStock, getWarehouse, saveElaborationSerial } from '../../../services/warehouseService.js';
 
 export class AonMobileElaboration extends AonElement {
 
@@ -27,6 +27,12 @@ export class AonMobileElaboration extends AonElement {
 	ELABORATION_QUANTITY;
 	ELABORATION_SERIAL_NUMBER;
 	ELABORATION_SERIAL_DATE;
+
+	STOCK;
+	STOCK_CARD;
+	STOCK_TABLE;
+	STOCK_WAREHOUSE;
+	STOCK_QUANTITY;
 
 	COMPOSITION;
 	COMPOSITION_CARD;
@@ -62,7 +68,13 @@ export class AonMobileElaboration extends AonElement {
 		this.ELABORATION_QUANTITY = this.id + CONSTANT.QUANTITY.initCap();
 		this.ELABORATION_SERIAL_NUMBER = this.id + 'SerialNumber';
 		this.ELABORATION_SERIAL_DATE = this.id + 'SerialDate';
-		
+
+		this.STOCK = this.id + CONSTANT.STOCK.initCap();
+		this.STOCK_CARD = this.STOCK + CONSTANT.CARD.initCap();
+		this.STOCK_TABLE = this.STOCK + CONSTANT.TABLE.initCap();
+		this.STOCK_WAREHOUSE = this.STOCK + CONSTANT.WAREHOUSE.initCap();
+		this.STOCK_QUANTITY = this.STOCK + CONSTANT.QUANTITY.initCap();
+
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
 		this.COMPOSITION_ITEM = this.COMPOSITION + CONSTANT.ITEM.initCap();
@@ -127,6 +139,7 @@ export class AonMobileElaboration extends AonElement {
   	buildElaboration(parent){
 		this.getApplication().removeToolbarOptions();
 		this.buildElaborationGeneral(parent);
+		this.buildStock(parent);
 		this.buildElaborationComposition(parent);
 	}
 	buildElaborationGeneral(parent){
@@ -163,6 +176,37 @@ export class AonMobileElaboration extends AonElement {
 			this.elaboration.detail.item.serialDate = serialDate.getDateValue();
 		});
 		table.addCell(serialDate);
+	}
+
+	buildStock(parent){
+		let card = createCard(this.STOCK_CARD, MSG.STOCK, parent);
+		getItemStock(this.elaboration.detail.item.id).then(stock => {
+			let table = new AonBasicTable();
+			table.id = this.STOCK_TABLE;
+			card.setContent(table);
+		
+			if(stock.length === 0){
+				table.addRow();
+				let span = this.createSpan();
+				span.innerText = MSG.NO_STOCK_AVAILABLE;
+				table.addCell(span, 2);
+				return;
+			} else {
+				stock.forEach(s => {
+					getWarehouse(s.warehouse).then(warehouse => {
+						table.addRow();
+					
+						let warehouseSpan = this.createSpan(this.STOCK_WAREHOUSE + s.id);
+						warehouseSpan.innerText = warehouse.name;
+						table.addCell(warehouseSpan);
+
+						let quantitySpan = this.createSpan(this.STOCK_QUANTITY + s.id);
+						quantitySpan.innerText = s.quantity;
+						table.addCell(quantitySpan);
+					});
+				});
+			}
+		});
 	}
 
 	buildElaborationComposition(parent){
