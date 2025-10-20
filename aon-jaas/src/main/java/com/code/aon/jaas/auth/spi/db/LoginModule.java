@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -92,6 +93,18 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if ( (domain.getExpirationDate() != null) && new Date().after(domain.getExpirationDate()) ) {
 				throw new AuthenticationLoginException( "aon_login_domain_expirate", domain.getName() );
 			}
+			
+			boolean payer = Objects.equals(domain.getPayer(), domain.getId());
+			
+			Domain parentDomain = dbUtil.getParentDomain(domain);
+			if ( !payer && parentDomain != null && !parentDomain.isActive() ) {
+				throw new AuthenticationLoginException( "aon_login_domain_inactive", parentDomain.getName() );	
+			}
+			if ( !payer && parentDomain != null && (parentDomain.getExpirationDate() != null) && new Date().after(parentDomain.getExpirationDate()) ) {
+				throw new AuthenticationLoginException( "aon_login_domain_inactive", parentDomain.getName() );	
+			}
+
+			
 			principal.setDomain(domainName);
 			principal.setDomainId(domain.getId());
 			this.dataBaseName = domain.getDataBaseName();

@@ -65,13 +65,26 @@ public class Util {
 		return false;	
 	}
 
+
 	private Domain getDomainInfo( String dbName, String domainName ) {
 		System.out.println("10*******************************" + dbName +"," +domainName + "********************************");
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
 			Domain domain = run.query( connection,
-				    "SELECT id, name, parent, active, expirationDate, scope FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
+				    "SELECT"
+				    + " " + DB_SEP + dbName + DB_SEP + ".domain.id"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.name"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.parent"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.active"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.expirationDate"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.scope"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".app_param.value as payer"
+				    + " FROM " + DB_SEP + dbName + DB_SEP + ".domain "
+				    + " LEFT JOIN " + DB_SEP + dbName + DB_SEP + ".app_param  "
+		    			+ " ON ( " + DB_SEP + dbName + DB_SEP + ".domain.id = " + DB_SEP + dbName + DB_SEP + ".app_param.domain" + 
+		    				" AND "+ DB_SEP + dbName + DB_SEP + ".app_param.name = 'AON_DOMAIN_PAYER' )" 
+				    + " WHERE " + DB_SEP + dbName + DB_SEP + ".domain.name =?", h, domainName); 
 			LOGGER.debug( "Get domain {} id from {}", domainName, dbName );
 			if ( domain != null ) {
 				domain.setDataBaseName(dbName);
@@ -84,6 +97,37 @@ public class Util {
 		return null;			
 	}
 	
+	private Domain getDomainInfo( String dbName, Integer domainId ) {
+		System.out.println("11*******************************" + dbName +"," +domainId + "********************************");
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
+			Domain domain = run.query( connection,
+				    "SELECT"
+				    + " " + DB_SEP + dbName + DB_SEP + ".domain.id"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.name"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.parent"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.active"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.expirationDate"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".domain.scope"
+				    + ", " + DB_SEP + dbName + DB_SEP + ".app_param.value as payer"
+				    + " FROM " + DB_SEP + dbName + DB_SEP + ".domain "
+				    + " LEFT JOIN " + DB_SEP + dbName + DB_SEP + ".app_param  "
+				    		+ " ON ( " + DB_SEP + dbName + DB_SEP + ".domain.id = " + DB_SEP + dbName + DB_SEP + ".app_param.domain" + 
+				    				" AND "+ DB_SEP + dbName + DB_SEP + ".app_param.name = 'AON_DOMAIN_PAYER' )" 
+				    + " WHERE " + DB_SEP + dbName + DB_SEP + ".domain.id =?", h, domainId); 
+			LOGGER.debug( "Get domain {} id from {}", domainId, dbName );
+			if ( domain != null ) {
+				domain.setDataBaseName(dbName);
+				return domain;
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}
+
 	public Domain getDomain( String domainName ) {
 		System.out.println("1*******************************" + domainName + "********************************");
 		String dbName = StringUtils.replace(domainName, ".", "-");
@@ -118,6 +162,10 @@ public class Util {
 		return null;
 	}
 	
+	public Domain getParentDomain( Domain domain) {
+		return getDomainInfo(domain.getDataBaseName(), domain.getParent());
+	}
+
 	private Integer getAdminDomain() {
 		QueryRunner run = new QueryRunner();
 		try {

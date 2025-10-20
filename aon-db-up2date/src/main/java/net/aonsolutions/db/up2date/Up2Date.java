@@ -558,8 +558,8 @@ public class Up2Date {
 			// BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
 			// AddAonClassic.ADD_AON_CLASSIC,
 			// PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
-			 PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
-			 PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
+			// PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
+			// PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
