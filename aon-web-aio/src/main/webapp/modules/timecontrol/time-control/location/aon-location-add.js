@@ -8,7 +8,6 @@ import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environ
 import { AonMap } from "../../../../components/aon-map.js";
 import { CreateComponent } from "../../../../components/CreateComponent.js";
 
-
 export class AonLocationAdd extends AonElement {
   NAME;
   static get observedAttributes() {
@@ -39,7 +38,6 @@ export class AonLocationAdd extends AonElement {
     this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
   }
 
-
   constructor() {
     super();
     this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
@@ -59,11 +57,23 @@ export class AonLocationAdd extends AonElement {
       this.paintViewMap(undefined);
   }
 
-
   build() {
     this.applicationEl.removeToolbarOptions();
     this.paintView();
     this.buildToolbar();
+  }
+
+  buildToolbar(){
+    const toolbarEl = this.getElement(this.TOOLBAR);
+    toolbarEl.removeButtons();
+    if(this.data && this.data.id){
+      toolbarEl.addButton2(ACTION.DELETE, () =>this.delete());
+      toolbarEl.title = MSG.EDIT;
+    } else {
+      toolbarEl.title = MSG.REGISTER;
+    }
+    toolbarEl.addButton2(ACTION.SAVE, () => this.save());
+    toolbarEl.addButton2(ACTION.BACK, () => this.back());
   }
 
   paintView() {
@@ -80,39 +90,40 @@ export class AonLocationAdd extends AonElement {
     form.appendChild(div);
 
     let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_COL_XS_12);
+    // div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = CreateComponent.createAonCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
+    // divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
 
     CreateComponent.createAonInput({
       attributes:{
         name:"description",
         id:"description" ,
-        description:MSG.NAME,
-        type:"text"
+        title:MSG.NAME,
+        // type:"text"
       }
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
+    // divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
 
-    CreateComponent.createAonInput({
+    // CreateComponent.createAonInput({
+    CreateComponent.createAonNumber({
       attributes:{
         name:"radio",
         id:"radio" ,
-        description:MSG.RADIO,
-        type:"number"
+        title:MSG.RADIO,
+        // type:"number"
       }
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    // divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
     aonCard.appendChild(divG);
 
      CreateComponent.createAonInput({
@@ -120,7 +131,7 @@ export class AonLocationAdd extends AonElement {
         name:"direction",
         id:"direction" ,
         type:"text",
-        description:"Dirección",
+        title:"Dirección",
         disabled:true
       }
     }, divG);
@@ -154,22 +165,9 @@ export class AonLocationAdd extends AonElement {
     }, aonCard);
 
     const divMap = this.createElement(TAG.DIV);
-    divMap.classList.add(CSS.AON_COL_XS_12);
+    // divMap.classList.add(CSS.AON_COL_XS_12);
     divMap.id = "divMap";
     div.appendChild(divMap);
-  }
-
-  buildToolbar(){
-    const toolbarEl = this.getElement(this.TOOLBAR);
-    toolbarEl.removeButtons();
-    if(this.data && this.data.id){
-      toolbarEl.addButton2(ACTION.DELETE, () =>this.delete());
-      toolbarEl.title = MSG.EDIT;
-    } else {
-      toolbarEl.title = MSG.REGISTER;
-    }
-    toolbarEl.addButton2(ACTION.SAVE, () => this.save());
-    toolbarEl.addButton2(ACTION.BACK, () => this.back());
   }
 
   async paintViewMap(data) {

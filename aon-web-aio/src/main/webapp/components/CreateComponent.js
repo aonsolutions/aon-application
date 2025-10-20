@@ -1,13 +1,9 @@
 import { AonCard } from "./aon-card.js";
-import { AonDate } from "./aon-date.js";
 import { AonIconButton } from "./aon-icon-button.js";
-// import { AonInput } from "./aon-input.js";
-import { AonSelect } from "./aon-select.js";
 import { AonSwitch } from "./aon-switch.js";
 import { AonToolbar } from "./aon-toolbar.js";
 import { CONSTANT, CSS, TAG } from "../environments/environments.js";
 import { setAttributes, setClasses, setEvents } from "../services/utilsComponents.js";
-import { AonNumber } from "./aon-number.js";
 import { AonNewInput } from "./aon-new-input.js";
 import { AonNewDate } from "./aon-new-date.js";
 import { AonBasicTable } from "./aon-basic-table.js";
@@ -194,7 +190,7 @@ export const createSwitch = (id, title, parent) => {
     attributes.options = JSON.stringify(attributes.options);
   }
 
-  let element = setAttributes(new AonSelect(), attributes);
+  let element = setAttributes(new AonNewSelect(), attributes);
 
   setClasses(element,[CSS.TRANSITION_CASCADE]);
 
@@ -217,7 +213,7 @@ const createAonSelectAutocomplete = ({attributes, events}, parent, autocomplete)
     attributes.options = JSON.stringify(attributes.options);
   }
 
-  let aonSelect = new AonSelect();
+  let aonSelect = new AonNewSelect();
   aonSelect.autocomplete = autocomplete;
 
   let element = setAttributes(aonSelect, attributes);
@@ -264,7 +260,7 @@ const createAonInput = ({attributes, events}, parent) => {
  * @returns 
  */
 const createAonDate = ({attributes, events}, parent) => {
-  let date = setAttributes( new AonDate(), attributes);
+  let date = setAttributes( new AonNewDate(), attributes);
   if(events) setEvents(date, events);
   if(parent) parent.appendChild(date);
   return date;
@@ -277,7 +273,7 @@ const createAonDate = ({attributes, events}, parent) => {
  * @returns 
  */
  const createAonNumber = ({attributes, events}, parent) => {
-  let input = setAttributes(new AonNumber(), attributes);
+  let input = setAttributes(new AonNewNumber(), attributes);
   if(events) setEvents(input, events);
   if(parent) parent.appendChild(input);
   return input;

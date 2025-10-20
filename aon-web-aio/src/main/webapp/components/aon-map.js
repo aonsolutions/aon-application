@@ -57,10 +57,18 @@ export class AonMap extends AonElement {
         await waitEl("link[href*='leaflet.css']", this.DOC);
         await waitEl("script[src*='leaflet.js']", this.DOC);
 
-        if(!this.POSITION)
+        if(!this.POSITION){
           this.POSITION = await getPosition().then(({ latitude, longitude }) => ({ lat:latitude, lng:longitude })).catch((e) => null);
-        
-        this.POSITION = { lat: this.POSITION.latitude || this.POSITION.lat, lng: this.POSITION.longitude || this.POSITION.lng };
+        }
+        // Si no hay posición, se usa el centro de Madrid (aproximado)
+        if (!this.POSITION) {
+          this.POSITION = { lat: 40.4168, lng: -3.7038 }; // Centro de Madrid
+        } else {
+          this.POSITION = {
+            lat: this.POSITION.latitude || this.POSITION.lat,
+            lng: this.POSITION.longitude || this.POSITION.lng,
+          };
+        }
 
         this.initMap();
     }; //onload
@@ -68,7 +76,6 @@ export class AonMap extends AonElement {
   }
 
   initMap() {
-  
     let mapContainer = this.DOC.createElement(TAG.DIV);
     mapContainer.style.width = "100%";
     mapContainer.style.height = "100%";
@@ -99,7 +106,6 @@ export class AonMap extends AonElement {
             });
         });   
     }
-
   }
 
   addMarker({lat, lng}){

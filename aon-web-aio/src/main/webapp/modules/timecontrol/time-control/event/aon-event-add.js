@@ -14,7 +14,7 @@ import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
 import { setStyles } from "../../../../services/utilsComponents.js";
 import { AonBasicTable } from "../../../../components/aon-basic-table.js";
-import { aonSelect } from "../../../../components/aon-new-select.js";
+import { AonNewSelect } from "../../../../components/aon-new-select.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -60,6 +60,10 @@ export class AonEventAdd extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {}
 
   async build() {
+
+consoleLog("agui - 2", "green")
+
+
     this.paintView();
     await this.initLists();
     this.buildToolbar();
@@ -67,7 +71,6 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
-
     CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
   
     createFormEvent(this.id, this);
@@ -81,7 +84,6 @@ export class AonEventAdd extends AonElement {
     if (!isEmptyObject(this.data) && !isEmptyObject(this.data.coordinates)) {
       this.paintViewMap();
     }
- 
   }
 
   async paintViewMap() {
@@ -90,10 +92,8 @@ export class AonEventAdd extends AonElement {
     let aonMap = new AonMap();
     aonMap.POSITION = coordinates;
     cardCoordinate.setContent(aonMap);
-    
     cardCoordinate.setAttribute("visible", true);
   }
-
 
   async initLists() {
     this.listStatus();
@@ -102,12 +102,13 @@ export class AonEventAdd extends AonElement {
   }
 
   eventListener() {
-    let location = this.getElement("location");
-    location.addEventListener(EVENT.CHANGE, ({ detail }) => {
-      if (detail && detail.coordinates) {
-        const coordinates = detail.coordinates;
-        setValueName("coordinates", `${coordinates.latitude},${coordinates.longitude}`);
-      }
+    waitForElement('#location').then((location) => {
+      location.addEventListener(EVENT.CHANGE, ({ detail }) => {
+        if (detail && detail.coordinates) {
+          const coordinates = detail.coordinates;
+          setValueName("coordinates", `${coordinates.latitude},${coordinates.longitude}`);
+        }
+      });
     });
 
     let aonSubmit = this.getElement(`${this.id}Submit`);
@@ -192,7 +193,9 @@ export class AonEventAdd extends AonElement {
       data.time = AonDateUtils.setTime(date);
       if(this.TASK_HOLDER){
         data.name = this.TASK_HOLDER.name;
-        this.getElement("name").disabled = "disabled";
+        waitForElement('#name').then((name) => {
+          name.setDisabled("disabled");
+        });
       }
  
       for (const property in data) {
@@ -381,8 +384,7 @@ export class AonEventAdd extends AonElement {
           this.TASK_HOLDER = aonSelect.getDetail();
         });
 
-        this.applicationParentEl.getTaskHoldersEnterprise()
-        .then(ths => {
+        this.applicationParentEl.getTaskHoldersEnterprise().then(ths => {
           aonSelect.setOptions(ths);
         });
       }
@@ -391,7 +393,6 @@ export class AonEventAdd extends AonElement {
 
   goMessenger(){
     const form = this.getFormValues();
-
     const description = JSON.stringify({timeId: form.id, date:form.date, time:form.time, task_holder: form.task_holder});
     let data = { source: TASK_SOURCE.REQUEST, source_id: 3, description };
     let aonMessenger = new AonMessenger();
