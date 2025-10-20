@@ -825,7 +825,11 @@ export class DomainUserRoles {
 	}
 
 	isTrial() {
-		return this.trial;
+		return this.trial && this.trialValue >= 0;
+	}
+	
+	hasBeenTrial(){
+		return this.trialValue == -1;
 	}
 	
 	getTrialValue() {

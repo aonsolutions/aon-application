@@ -43,22 +43,19 @@ export class AonNewDesktop extends AonElement {
       	let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
 		app.main = "true";
 		
-		//this.applicationEl = this.getApplication();
--       //this.applicationEl.removeToolbar(); // Sin Toolbar
--       //this.applicationEl.removeSidenav(); // Sin Menu
-		
 		app.removeToolbar();
 		app.removeSidenav();
 	
 		let div = this.createDiv();	
 		div.style.padding = "2rem";
 		
-		if(this.dur.isTrial())
+		if(this.getDur().isTrial() || this.getDur().hasBeenTrial())
 			div.appendChild(this.buildPlanApps());
+			
 		div.appendChild(this.buildPortalApps());
 		
-		//if(!this.dur.isTrial())
-		div.appendChild(this.buildSuiteApps());
+		if(this.suiteApps.length != 0)
+			div.appendChild(this.buildSuiteApps());
 		
 		app.setContent(div);
 	}
@@ -85,9 +82,9 @@ export class AonNewDesktop extends AonElement {
 			desktopAppsDiv.appendChild(this.buildApp(this.portalApps[app]));
 		}
 		
-		for ( const app in this.portalNoApps ) {
-			desktopAppsDiv.appendChild(this.buildApp(this.portalNoApps[app], false));
-		}
+		//for ( const app in this.portalNoApps ) {
+		//	desktopAppsDiv.appendChild(this.buildApp(this.portalNoApps[app], false));
+		//}
 		
 		div.appendChild(desktopAppsDiv);
 		return div;
@@ -111,9 +108,9 @@ export class AonNewDesktop extends AonElement {
 			appsActivas.appendChild(this.buildApp(this.suiteApps[app]));
 		}
 		
-		for ( const app in this.suiteNoApps ) {
-			appsActivas.appendChild(this.buildApp(this.suiteNoApps[app], false));
-		}	
+		//for ( const app in this.suiteNoApps ) {
+		//	appsActivas.appendChild(this.buildApp(this.suiteNoApps[app], false));
+		//}	
 
 		div.appendChild(appsActivas);
 		return div;
@@ -121,13 +118,6 @@ export class AonNewDesktop extends AonElement {
 	
 	buildPlanApps() {
 		let div = this.createDiv();	
-
-		let bannerAppsDiv = this.createElement(TAG.DIV);
-		let titleActivas = this.createElement(TAG.H1);
-		titleActivas.innerHTML = "Auto Contratación";
-		titleActivas.classList.add("aonNewDesktopTitleH1");
-		bannerAppsDiv.appendChild(titleActivas);
-		div.appendChild(bannerAppsDiv);
 
 		let appsActivas =  this.createElement(TAG.DIV);
 		appsActivas.style.display = "flex";

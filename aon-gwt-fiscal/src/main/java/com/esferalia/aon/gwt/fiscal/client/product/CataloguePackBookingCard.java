@@ -125,7 +125,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
 		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
-		HTMLPanel titleLabel = new HTMLPanel(packProduct.getName());
+		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
 		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
 		titleLabel.getElement().getStyle().setProperty("color", "#5f6368");
@@ -141,8 +141,8 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		pricePanel.getElement().getStyle().setProperty("flexDirection", "column-reverse");
 		
 		String priceValue = formaDouble(packProduct.getItem().getPrice());
-		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
-		price.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "black" : "blue");
+		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "</small><b> \u20ac </b>" + " al mes *");
+		price.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "black" : "#002469");
 		
 		if(null != tariff) {
 			if(tariff.getDiscount() != 0.00) {
@@ -188,7 +188,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		packContent.getElement().getStyle().setProperty("align-items", "start");
 		
 		HTMLPanel include = new HTMLPanel(packProduct.getItem().getDescription());
-		include.getElement().getStyle().setProperty("padding", "1rem");
+		include.getElement().getStyle().setProperty("padding", ".5rem");
 		packContent.add(include);
 		
 		contentData.add(packContent);
@@ -209,7 +209,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		
 		itemCompositions.forEach(itemComposition -> {
 			Label itemCompositionLabel = new Label(itemComposition.getComposition().getProduct().getName());
-			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", "1rem");
+			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", ".5rem");
 			packContent.add(itemCompositionLabel);
 		});
 		

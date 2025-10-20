@@ -110,7 +110,7 @@ public class CataloguePackCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
 		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
-		HTMLPanel titleLabel = new HTMLPanel(packProduct.getName());
+		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
 		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
 		titleLabel.getElement().getStyle().setProperty("color", "#5f6368");
@@ -173,7 +173,7 @@ public class CataloguePackCard extends HTMLPanel {
 		packContent.getElement().getStyle().setProperty("align-items", "start");
 		
 		HTMLPanel include = new HTMLPanel(packProduct.getItem().getDescription());
-		include.getElement().getStyle().setProperty("padding", "1rem");
+		include.getElement().getStyle().setProperty("padding", ".5rem");
 		packContent.add(include);
 		
 		contentData.add(packContent);
@@ -194,7 +194,7 @@ public class CataloguePackCard extends HTMLPanel {
 		
 		itemCompositions.forEach(itemComposition -> {
 			Label itemCompositionLabel = new Label(itemComposition.getComposition().getProduct().getName());
-			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", "1rem");
+			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", ".5rem");
 			packContent.add(itemCompositionLabel);
 		});
 		

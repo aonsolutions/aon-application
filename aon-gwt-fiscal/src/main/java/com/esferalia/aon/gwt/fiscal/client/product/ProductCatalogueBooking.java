@@ -132,14 +132,16 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			createPacks(cataloguePanel, packsProducts);
 		}
 		
-		Label aditional = new Label("Adicional");
-		aditional.getElement().getStyle().setProperty("font-size", "1.5rem");
-		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-		cataloguePanel.add(aditional);
-		
-		List<Product> aonServices = products.stream().filter(product -> !product.isManufactured()).collect(Collectors.toList());
-		if(!aonServices.isEmpty() && !customerFees.isEmpty()) {
-			createServices(cataloguePanel, aonServices);
+		if(!customerFees.isEmpty()) {
+			Label aditional = new Label("Adicional");
+			aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
+			aditional.getElement().getStyle().setProperty("margin", "1rem 0");
+			cataloguePanel.add(aditional);
+			
+			List<Product> aonServices = products.stream().filter(product -> !product.isManufactured()).collect(Collectors.toList());
+			if(!aonServices.isEmpty()) {
+				createServices(cataloguePanel, aonServices);
+			}
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);
@@ -216,9 +218,20 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 					@Override
 					public void onSuccess(Void arg0) {
-						onSearch(domainType, tariff);
+						COMMON_SERVICE.updateBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), feeItem.get(), product, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void arg0) {
+								onSearch(domainType, tariff);
+							}
+							
+						});
 					}
-					
 				});
 			}
 		}
@@ -236,7 +249,19 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 					@Override
 					public void onSuccess(Void arg0) {
-						onSearch(domainType, tariff);
+						COMMON_SERVICE.updateBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), fee.get(), product, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void arg0) {
+								onSearch(domainType, tariff);
+							}
+							
+						});
 					}
 					
 				});
@@ -244,7 +269,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			Fee fee = new Fee()
 					.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
 					.setProject(new Project())
-					.setItem(new OldItem().setId(product.getItem().getId()))
+					.setItem(new OldItem().setId(product.getItem().getId()).setBarcode(product.getItem().getBarcode()))
 					.setDescription(product.getName())
 					.setQuantity(1.00)
 					.setPrice(product.getItem().getPrice())
@@ -263,7 +288,19 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 					@Override
 					public void onSuccess(Void arg0) {
-						onSearch(domainType, tariff);
+						COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), product, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void arg0) {
+								onSearch(domainType, tariff);
+							}
+							
+						});
 					}
 					
 				});
@@ -274,7 +311,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		HTMLPanel servicesPanel = new HTMLPanel("");
 		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
 		servicesPanel.setWidth("100%");
-		servicesPanel.getElement().getStyle().setProperty("max-width", "73rem");
+		servicesPanel.getElement().getStyle().setProperty("max-width", "70rem");
 		
 		aonServices.forEach(aonService -> {
 			getItemTariff(aonService.getItem().getId(), itemTariff -> {
@@ -300,7 +337,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				codeNamePanel.add(code);
 				
 				Label name = new Label(aonService.getItem().getDescription());
-				name.getElement().getStyle().setProperty("padding", "1rem 6rem 1rem 0");
+				name.getElement().getStyle().setProperty("padding", "1rem 2rem 1rem 0");
 				codeNamePanel.add(name);
 				
 				servicePanel.add(codeNamePanel);
@@ -311,10 +348,10 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				pricePanel.getElement().getStyle().setProperty("align-items", "center");
 				
 				String priceValue = formaDouble(aonService.getItem().getPrice());
-				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "<small><b> \u20ac </b>" + " al mes *");
 				price.getElement().getStyle().setProperty("text-align", "center");
 				price.getElement().getStyle().setProperty("width", "8rem");
-				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "blue");
+				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "#002469");
 							
 				if(itemTariff.isEmpty()) {
 					if(tariff.getDiscount() != 0.00) {

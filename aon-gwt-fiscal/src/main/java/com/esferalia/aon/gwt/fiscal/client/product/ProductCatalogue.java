@@ -116,7 +116,7 @@ public class ProductCatalogue extends HTMLPanel {
 		}
 		
 		Label aditional = new Label("Adicional");
-		aditional.getElement().getStyle().setProperty("font-size", "1.5rem");
+		aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
 		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
 		cataloguePanel.add(aditional);
 		
@@ -177,7 +177,7 @@ public class ProductCatalogue extends HTMLPanel {
 		HTMLPanel servicesPanel = new HTMLPanel("");
 		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
 		servicesPanel.setWidth("100%");
-		servicesPanel.getElement().getStyle().setProperty("max-width", "73rem");
+		servicesPanel.getElement().getStyle().setProperty("max-width", "70rem");
 		
 		aonServices.forEach(aonService -> {
 			getItemTariff(aonService.getItem().getId(), itemTariff -> {
@@ -199,7 +199,7 @@ public class ProductCatalogue extends HTMLPanel {
 				codeNamePanel.add(code);
 				
 				Label name = new Label(aonService.getItem().getDescription());
-				name.getElement().getStyle().setProperty("padding", "1rem 6rem 1rem 0");
+				name.getElement().getStyle().setProperty("padding", "1rem 2rem 1rem 0");
 				codeNamePanel.add(name);
 				
 				servicePanel.add(codeNamePanel);

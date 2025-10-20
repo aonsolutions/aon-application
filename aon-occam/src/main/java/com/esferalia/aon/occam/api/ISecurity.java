@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -148,5 +149,8 @@ public interface ISecurity {
 
 	public Booking getBooking(AONContext ctx, Domain domain);
 	public Booking saveBooking(AONContext ctx, Booking booking);
+	
+	public void saveBookingApp(CloseableAONContext ctx, DomainApp aonApp, boolean active);
+	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp);
 
 }
