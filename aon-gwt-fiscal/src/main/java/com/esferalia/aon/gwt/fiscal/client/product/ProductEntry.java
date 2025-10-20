@@ -674,6 +674,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		product.setStatus(status.getValue());
 		item.setStatus(status.getValue());
 		
+		if(AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--0000000000") || AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--/0000000000") )
+			item.setBarcode(null);
+		
 		AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
 		
 		commonService.saveItem(options.getDomainName(), options.getDomain(), options.getUser(), item, new AsyncCallback<Item>() {

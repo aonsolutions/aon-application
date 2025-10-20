@@ -10,11 +10,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
-import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -107,7 +104,7 @@ public class ProductCatalogue extends HTMLPanel {
 		
 		Label subtitle = new Label("Olv\u00eddate de invertir en recursos externos para aumentar tu productividad. Nuestro software tiene todo lo que necesitas en un \u00fanico lugar. \u00a1Desc\u00fabrelo!.");
 		subtitle.getElement().getStyle().setProperty("font-size", ".8rem");
-		subtitle.getElement().getStyle().setProperty("margin-bottom", "3rem");
+		subtitle.getElement().getStyle().setProperty("margin-bottom", "1.5rem");
 		cataloguePanel.add(subtitle);
 		
 		List<Product> packsProducts = products.stream().filter(Product::isManufactured).collect(Collectors.toList());
@@ -156,21 +153,22 @@ public class ProductCatalogue extends HTMLPanel {
 	    }
 
 	    Product packProduct = packsProducts.get(index);
-	    getItemCompositions(packProduct.getItem().getId(), itemCompositions -> {
+//	    getItemCompositions(packProduct.getItem().getId(), itemCompositions -> {
 	        // Crear la carta después de obtener itemCompositions
 	    	
-	    	getItemTariff(packProduct.getItem().getId(), itemTariff -> {
-	    		CataloguePackCard card;
-	    		if(itemTariff.isEmpty())
-	    			card = new CataloguePackCard(packProduct, tariff, itemCompositions);
-	    		else
-	    			card = new CataloguePackCard(packProduct, itemTariff.get(), itemCompositions);
-		        packsCataloguePanel.add(card);
+    	getItemTariff(packProduct.getItem().getId(), itemTariff -> {
+    		CataloguePackCard card;
+    		if(itemTariff.isEmpty())
+    			card = new CataloguePackCard(packProduct, tariff);
+    		else
+    			card = new CataloguePackCard(packProduct, itemTariff.get());
+	        packsCataloguePanel.add(card);
 
-		        // Procesar el siguiente pack
-		        createProductCard(packsCataloguePanel, packsProducts, index + 1);
-			});	
-	    });
+	        // Procesar el siguiente pack
+	        createProductCard(packsCataloguePanel, packsProducts, index + 1);
+		});	
+    	
+//	    });
 	}
 
 	private void createServices(HTMLPanel cataloguePanel, List<Product> aonServices) {
@@ -188,7 +186,7 @@ public class ProductCatalogue extends HTMLPanel {
 				servicePanel.getElement().getStyle().setProperty("padding", "1rem");
 				servicePanel.getElement().getStyle().setProperty("border", "1px solid #ebebeb");
 				servicePanel.getElement().getStyle().setProperty("border-radius", "0.5rem");
-				servicePanel.getElement().getStyle().setProperty("margin-bottom", "2rem");
+				servicePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
 				
 				HTMLPanel codeNamePanel = new HTMLPanel("");
 				codeNamePanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -310,20 +308,20 @@ public class ProductCatalogue extends HTMLPanel {
 		});
 	}
 	
-	private void getItemCompositions(Integer itemId, Consumer<List<ItemComposition>> success) {
-		COMMON_SERVICE.getItemCompositions(options.getDomainName(), options.getDomain(), options.getUser(), itemId, new AsyncCallback<List<ItemComposition>>() {
-			
-			@Override
-			public void onSuccess(List<ItemComposition> itemCompositionsDb) {
-				success.accept(itemCompositionsDb);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error obteniendo item compuesto : " + caught.getMessage());
-			}
-		});
-	}
+//	private void getItemCompositions(Integer itemId, Consumer<List<ItemComposition>> success) {
+//		COMMON_SERVICE.getItemCompositions(options.getDomainName(), options.getDomain(), options.getUser(), itemId, new AsyncCallback<List<ItemComposition>>() {
+//			
+//			@Override
+//			public void onSuccess(List<ItemComposition> itemCompositionsDb) {
+//				success.accept(itemCompositionsDb);
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				AonMessagePanel.showError(messagePanel, "Error obteniendo item compuesto : " + caught.getMessage());
+//			}
+//		});
+//	}
 	
 	private void getItemTariff(Integer itemId, Consumer<Optional<ItemTariff>> success) {
 		COMMON_SERVICE.getItemTariffs(options.getDomainName(), options.getDomain(), options.getUser(), itemId, new AsyncCallback<List<ItemTariff>>() {

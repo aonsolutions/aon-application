@@ -1696,10 +1696,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		if(product.isComposition()) {
 			Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
 			
-			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(product.getItem().getId()))).collect(Collectors.toList());
+			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(fee.getItem().getId()))).collect(Collectors.toList());
 			
 			if(itemCompositions.isEmpty())
-				updateDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+				updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
 			else {
 				itemCompositions.forEach(itemComposition -> {
 					Integer compositionItemId = itemComposition.getCompositionItemId();
@@ -1710,7 +1710,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			}
 			
 		} else
-			updateDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+			updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
 		
 	}
 	
