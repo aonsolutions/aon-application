@@ -171,8 +171,10 @@ aon-new-select{
     display   : grid;
     gap       : v.$gap-min;
     visibility: hidden;
+    display   : none;
     &.is-visible{
       visibility    : visible;
+      display       : block;
       border-radius : v.$border-radius;
       z-index       : v.$num-1;
       padding       : $padding;

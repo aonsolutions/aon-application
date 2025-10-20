@@ -34,8 +34,8 @@ export class AonNewSelect extends AonNewInput {
 
   set options(options) {
     this.setAttribute(CONSTANT.OPTIONS, options);
-	this.removeLoader();
-	this.showIcon();
+    this.removeLoader();
+    this.showIcon();
   }
 
   get autocomplete() {
@@ -101,8 +101,8 @@ export class AonNewSelect extends AonNewInput {
     this.valueAlias = this.valueAlias || 'value';
     this.nameAlias = this.nameAlias || 'name';
     this.selectable = this.selectable || [];
-	this.SEARCH = this.id + CONSTANT.SEARCH_INPUT;
-	this.valueSearch = this.valueSearch || '';
+    this.SEARCH = this.id + CONSTANT.SEARCH_INPUT;
+    this.valueSearch = this.valueSearch || '';
   }
 
   buildSelect() {
@@ -112,7 +112,7 @@ export class AonNewSelect extends AonNewInput {
       if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
         input.setAttribute(CONSTANT.READONLY, true);
       }
-	  input.setAttribute(CONSTANT.READONLY, true);
+      input.setAttribute(CONSTANT.READONLY, true);
       const emptyclear = this.hasAttribute("emptyclear");
       input.addEventListener(EVENT.BLUR, ()=>{
         const value = input.value;
@@ -176,20 +176,21 @@ export class AonNewSelect extends AonNewInput {
       }
       this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN, undefined, () => this.showOptions());
       input.addEventListener(EVENT.CLICK, () => this.showOptions());
-	  if(!this.hasAttribute(CONSTANT.OPTIONS)){
-		this.addLoader();
-		this.hideIcon();
-	  }
+      if(!this.hasAttribute(CONSTANT.OPTIONS)){
+        this.addLoader();
+        this.hideIcon();
+      }
     }
   }
 
   buildOptions(options) {
-	if(this.getElement(this.OPTIONS).classList.contains("is-visible")) this.closeOptions();
-	else {		
+    if(this.getElement(this.OPTIONS).classList.contains("is-visible")){
+      this.closeOptions();
+    } else {
 	    this.clearElementById(this.OPTIONS);
 	    if(options.length === 0) {
-			return null;
-		}
+        return null;
+      }
 	    const iconButton = this.getIconButton();
 	    let input = this.getElement(this.INPUT);
 	    let div = this.getElement(this.OPTIONS);
@@ -206,14 +207,14 @@ export class AonNewSelect extends AonNewInput {
 	    ul.classList.add(CSS.AON_UL);
 	    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
 	    ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
-		this.UL = this.getAttribute(CONSTANT.ID) + 'Icon' + 'Id';
-		ul.id = this.UL;
-	
-		let search = new AonNewInput();
-		search.id = this.SEARCH;
-		search.title = "Buscar";
-		div.appendChild(search);
-		
+      this.UL = this.getAttribute(CONSTANT.ID) + 'Icon' + 'Id';
+      ul.id = this.UL;
+    
+      let search = new AonNewInput();
+      search.id = this.SEARCH;
+      search.title = "Buscar";
+      div.appendChild(search);
+      
 	    div.appendChild(ul);
 	
 	    const isMultiple = this.multiple;
@@ -221,40 +222,40 @@ export class AonNewSelect extends AonNewInput {
 	      isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
 	    }
 		
-		search.addEventListener(EVENT.INPUT, ({target}) => {
-	        if(this.disableKeyUp) {
-	          let val = target.value.toUpperCase();
-			  this.valueSearch = target.value;
-	          let optios = this.getOptions();
-	          if (val) {
-	            optios = this.getOptions().filter(opt => {
-	              return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
-	            })
-	          }
-			  const isMultiple = this.multiple;
-			  const div = this.getElement(this.OPTIONS);
-			  const ul = this.getElement(this.UL);
-			  ul.replaceChildren(); 
-		      for (const option of optios) {
-		        isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
-		      }
-			  search.removeLabel();
-			  search.focus();
-	        }
-	      });
+      search.addEventListener(EVENT.INPUT, ({target}) => {
+        if(this.disableKeyUp) {
+          let val = target.value.toUpperCase();
+          this.valueSearch = target.value;
+          let optios = this.getOptions();
+          if (val) {
+            optios = this.getOptions().filter(opt => {
+              return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
+            })
+          }
+          const isMultiple = this.multiple;
+          const div = this.getElement(this.OPTIONS);
+          const ul = this.getElement(this.UL);
+          ul.replaceChildren(); 
+          for (const option of optios) {
+            isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
+          }
+          search.removeLabel();
+          search.focus();
+        }
+      });
 		  
 		  let keys = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Enter"];
 		  search.addEventListener(EVENT.KEYDOWN, (ev) => {
-		      let key = ev.key;
-		      if(keys.includes(key)){
-		        ev.preventDefault();
-		        ev.stopPropagation();
-		        this.keyboardSelected(ev);
-		      } 
+        let key = ev.key;
+        if(keys.includes(key)){
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.keyboardSelected(ev);
+        } 
 		  });
 	
 	    document.addEventListener(EVENT.CLICK, function(event) {
-			if (!div.contains(event.target)) {			
+        if (!div.contains(event.target)) {			
 			    this.value = this._selected ? this._selected[this.nameAlias] : '';
 			    const isClickInside = input.contains(event.target);
 			    const isClickOnIcon = iconButton && iconButton.contains(event.target);
@@ -263,9 +264,9 @@ export class AonNewSelect extends AonNewInput {
 			        	div.classList.remove('is-visible');
 			    	}
 			    }
-			}
+        }
 	    });
-	}
+    }
   }
 
   buildLi(option, ul, div){
@@ -466,7 +467,7 @@ export class AonNewSelect extends AonNewInput {
       const isVisible = options.classList.contains('is-visible');
       if(isVisible){
         this.closeOptions();
-		this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: options}));
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: options}));
       } else {
         this.showOptions();
       }
@@ -481,8 +482,9 @@ export class AonNewSelect extends AonNewInput {
     if(!this.isReadonly() && !this.isDisabled()) {
       const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       this.buildOptions(optios);
-	  const search = this.getElement(this.SEARCH)
-	  if(search) search.removeLabel();
+      const search = this.getElement(this.SEARCH)
+      if(search)
+        search.removeLabel();
     }
   }
 
@@ -496,8 +498,8 @@ export class AonNewSelect extends AonNewInput {
 
   setOptions(options) {
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(options));
-	this.removeLoader();
-	this.showIcon();
+    this.removeLoader();
+    this.showIcon();
   }
 
   setOptionsBuild(options) {
@@ -560,8 +562,8 @@ export class AonNewSelect extends AonNewInput {
       });
     }
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(opts));
-	this.removeLoader();
-	this.showIcon();
+    this.removeLoader();
+    this.showIcon();
   }
 
   getValueObject() {

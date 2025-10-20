@@ -9,7 +9,6 @@ import { getPeriods } from "../../services/accountingService.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 // CONSTANTS
-
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
 import {ACCOUNTING } from '../../services/app.js';
@@ -19,7 +18,6 @@ import { waitEl } from '../../services/utils.js';
 import { AonApplication } from '../../components/aon-application.js';
 
 export class AonAccounting extends AonElement {
-
 	dur;
 	AON_ACCOUNTING;
 	filter;
@@ -54,9 +52,9 @@ export class AonAccounting extends AonElement {
  	async build() {
 		let application = this.getApplication();
 
-		if(this.isMobile()){
-			application.addMobileSidenavHeader(ACCOUNTING);
-		}
+		// if(this.isMobile()){
+		// 	application.addMobileSidenavHeader(ACCOUNTING);
+		// }
 
 		if (!this.params.domain || !this.params.domainName) {
 			try {
@@ -90,7 +88,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'VistaAnual',
 				name: MSG.ANNUAL_VIEW,
-				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.show = "yearly";
@@ -100,7 +98,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'VistaTrimestral',
 				name: MSG.QUARTERLY_VIEW,
-				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.show = "quarterly";
@@ -110,7 +108,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'VistaMensual',
 				name: MSG.MONTHLY_VIEW,
-				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.show = "monthly";
@@ -123,7 +121,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'Estándar',
 				name: MSG.STANDARD,
-				icon: MATERIAL_ICONS.LIST,
+				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.detail = "5";
@@ -133,7 +131,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'Resumido',
 				name: MSG.SUMMARIZED,
-				icon: MATERIAL_ICONS.LIST,
+				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.detail = "3";
@@ -143,7 +141,7 @@ export class AonAccounting extends AonElement {
 			{
 				id: 'Detallado',
 				name: MSG.DETAILED,
-				icon: MATERIAL_ICONS.LIST,
+				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
 					this.filter.detail = "9";
@@ -162,6 +160,7 @@ export class AonAccounting extends AonElement {
 				let periodOpt = {
 					id: CONSTANT.OPTIONS,
 					name: MSG.OPTIONS + " Gráfico",
+					title: MSG.YEAR,
 					app: ACCOUNTING,
 					options: periodOptions
 				}
@@ -172,6 +171,7 @@ export class AonAccounting extends AonElement {
 					parent: CONSTANT.OPTIONS,
 					id: CONSTANT.OPTIONS + "View",
 					name: MSG.OPTIONS,
+					title: MSG.VIEW,
 					app: ACCOUNTING,
 					options: viewOptions
 				}
@@ -182,6 +182,7 @@ export class AonAccounting extends AonElement {
 					parent: CONSTANT.OPTIONS,
 					id: CONSTANT.OPTIONS + "Detail",
 					name: MSG.OPTIONS,
+					title: MSG.TYPE,
 					app: ACCOUNTING,
 					options: detailOptions
 				}
@@ -287,6 +288,7 @@ export class AonAccounting extends AonElement {
 		let periodOpt = {
 			id: CONSTANT.OPTIONS,
 			name: MSG.OPTIONS + " Gráfico",
+			title: MSG.YEAR,
 			app: ACCOUNTING,
 			options: periodOptions
 		}
@@ -297,6 +299,7 @@ export class AonAccounting extends AonElement {
 			parent: CONSTANT.OPTIONS,
 			id: CONSTANT.OPTIONS + "View",
 			name: MSG.OPTIONS,
+			title: MSG.VIEW,
 			app: ACCOUNTING,
 			options: viewOptions
 		}
@@ -307,6 +310,7 @@ export class AonAccounting extends AonElement {
 			parent: CONSTANT.OPTIONS,
 			id: CONSTANT.OPTIONS + "Detail",
 			name: MSG.OPTIONS,
+			title: MSG.TYPE,
 			app: ACCOUNTING,
 			options: detailOptions
 		}
@@ -316,15 +320,15 @@ export class AonAccounting extends AonElement {
 		application.addBackgroundSidenav("PyG", ACCOUNTING.color);
 
 		if(!this.filter){
-			let period = this.PERIODS.filter(period => period.name == new Date().getFullYear());
-			this.filter = {};
-			if(period.length > 0){
-				this.filter.year = period[0].name;
-			}else{
-				this.filter.year = this.PERIODS[0].name;
+			this.filter = {
+				year	: new Date().getFullYear(),
+				show	: "yearly",
+				detail: "5"
+			};
+			if (this.PERIODS && this.PERIODS.length > 0) {
+				let period = this.PERIODS.filter(period => period.name == new Date().getFullYear());
+				this.filter.year = period.length > 0 ? period[0].name : this.PERIODS[0].name;
 			}
-			this.filter.show = "yearly";
-			this.filter.detail = "5";
 		}
 
 		this.aonGraphicsTrialView();
