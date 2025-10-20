@@ -48,7 +48,7 @@ export const TIMECONTROL = {
 export const ACCOUNTING = {
   app: CONSTANT.ACCOUNTING,
   title: MSG.ACCOUNTING,
-  description: MSG.ACCOUNTING,
+  description: MSG.ACCOUNTING_DESCRIPTION,
   info: MSG.MENU_ACCOUNTING_INFO,
   tag: MSG_ES.ACCOUNTING,
   headerIcon: 'registradores', 

@@ -392,10 +392,12 @@ export class AonInvoicePanel extends AonElement {
 
 	buildIncomeToolbarOptions() {
 		this.clearToolbar();
+		this.buildToolbarSearchOption();
 	}
 
 	buildExpenseToolbarOptions() {
 		this.clearToolbar();
+		this.buildToolbarSearchOption();
 	}
 
 	clearToolbar() {
@@ -408,16 +410,28 @@ export class AonInvoicePanel extends AonElement {
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+
+		// Acceder al botón de filtro por ID
+		const filterButton = this.querySelector('#aonInvoiceToolbarHeaderToolSectionSearchAdvancedButton');
+
 		if (acceptedInvoices) {
 			btnSearch.buildOptionsFilter(OPTION.INVOICE_SEARCH_OPTIONS);
-
 			this.getElement('recorded').setOptions([
 				{ name: "-", value: undefined },
 				{ name: MSG.PENDING, value: "PENDING" },
 				{ name: MSG.ACCOUNTED, value: "SCORED" }
 			]);
+
+			if (filterButton) filterButton.style.display = '';
+		} 
+		else {
+			// Si no hay valores para el filtro, eliminamos el boton
+			if (filterButton && !acceptedInvoices) {
+				filterButton.remove();
+			}
 		}
 	}
+
 
 	downloadInvoiceExcel() {
 		let aonInvoiceTable = document.getElementById("aonInvoiceTable");

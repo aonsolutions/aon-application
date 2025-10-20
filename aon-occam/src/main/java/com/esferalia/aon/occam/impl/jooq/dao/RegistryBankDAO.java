@@ -270,6 +270,7 @@ public class RegistryBankDAO {
 				.set(RBANK.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
 				.set(RBANK.ACTIVE, rbank.getActive())
 				.set(RBANK.ACCOUNT, rbank.getAccount().getId())
+				.set(RBANK.AGREEMENT, rbank.getAgreement())
 			.where(RBANK.ID.eq(rbank.getId()))
 			.execute();
 		ctx.log().debug("UPDATE REGISTRY BANK ( registry: {0}) id: {1}. ({2} rows)", rbank.getRegistry(), rbank.getId(),count);

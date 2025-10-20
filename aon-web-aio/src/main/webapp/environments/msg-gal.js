@@ -10,6 +10,7 @@ export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Contabilizada'; 
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidade';
+export const ACCOUNTING_DESCRIPTION = 'Inf. de Cont.';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas';
