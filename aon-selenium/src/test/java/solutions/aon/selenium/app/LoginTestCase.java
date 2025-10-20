@@ -3,6 +3,7 @@ package solutions.aon.selenium.app;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -98,7 +100,10 @@ public class LoginTestCase extends AppBaseTestCase {
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderHelpButton"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHelpSwitchSupport"))).click();
+			
+			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHelpSwitchSupport")));
+			if ( Objects.equals(aonHelpSwitchSupport.getAttribute("value"), "false" ))
+				aonHelpSwitchSupport.click();
 			
 			wait.until(ExpectedConditions.attributeToBe(By.id("aonHelpSwitchSupportInput"), "value", "true"));
 			
