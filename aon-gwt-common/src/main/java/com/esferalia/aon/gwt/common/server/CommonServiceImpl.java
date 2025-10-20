@@ -68,6 +68,10 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -91,6 +95,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -130,6 +135,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -137,6 +143,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -1677,6 +1684,143 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			fee.setEndDate(yesterday);
 			AON.save(domainName, domainId, user, fee);
 		}
+	}
+	
+	@Override
+	public void updateBookingFee(String domainName, int domainId, String user, Fee fee, Product product) {
+		Date currentDate = new Date();
+		Date yesterday = AonDateUtils.addDays(currentDate, -1);
+		
+		User userDb = AON.getUser(domainName, domainId, user);
+		
+		if(product.isComposition()) {
+			Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
+			
+			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(fee.getItem().getId()))).collect(Collectors.toList());
+			
+			if(itemCompositions.isEmpty())
+				updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+			else {
+				itemCompositions.forEach(itemComposition -> {
+					Integer compositionItemId = itemComposition.getCompositionItemId();
+					OldItem composition = AON.getItem(siblingOffice.getName(), siblingOffice.getId(), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(compositionItemId)));
+					
+					updateDomainApp(domainName, domainId, user, composition.getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+				});
+			}
+			
+		} else
+			updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+		
+	}
+	
+	private void updateDomainApp(String domainName, int domainId, String user, String barcode, Integer userId, boolean delete) {
+		try {
+			Integer itemCode = Integer.parseInt(barcode.substring(0, 2));
+			
+			Stream<DomainApp> domainApps = AON_SOLUTIONS.getDomainApp(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId));
+			Optional<DomainApp> domainApp = domainApps.filter(da -> da.getApp().equals(AonApp.values()[itemCode])).findFirst();
+			
+			if(delete) {
+				if(domainApp.isPresent())
+					AON.deleteBookingApp(domainName, domainId, user, domainApp.get());
+			} else {
+				if(domainApp.isPresent()) {
+					domainApp.get().setActive(false);
+					AON.saveBookingApp(domainName, domainId, user, domainApp.get(), delete);
+				}
+			}
+			
+			updateUserAppRole(domainName, domainId, user, userId, itemCode);
+			
+		} catch (Exception e) {}
+	}
+	
+	private void updateUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+		Byte[] arrayAonRoles = aonRoles.stream()
+			    .map(ar -> ar.value())
+			    .toArray(Byte[]::new);
+		
+		List<UserAppRole> userAppRoles = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+		
+		if(!userAppRoles.isEmpty()) {
+			userAppRoles.forEach(userAppRole -> AON_SOLUTIONS.deleteUserAppRole(domainName, domainId, user, f -> f.getIdProperty().eq(userAppRole.getId()).and(f.getDomainProperty().eq(domainId))));
+		}
+	}
+	
+	@Override
+	public void createBookingFee(String domainName, int domainId, String user, Product product) throws AonCoreException {
+
+		User userDb = AON.getUser(domainName, domainId, user);
+		
+		// Set Trial false
+		ApplicationParameter trialAppParam = AON.getApplicationParameter(domainName, domainId, user, AppParam.TRIAL);
+		if(null != trialAppParam.getId()) {
+			trialAppParam.setValue("-1");
+			AON.updateApplicationParameter(domainName, domainId, user, trialAppParam, f -> f.getIdProperty().eq(trialAppParam.getId()).and(f.getDomainProperty().eq(domainId)));
+		}
+		
+		// Set User normal
+		if(!userDb.getType().equals(UserType.NORMAL) || null != userDb.getEnterprise()) {
+			userDb.setType(UserType.NORMAL);
+			userDb.setEnterprise(null);
+			AON.saveUser(new Domain().setName(domainName).setId(domainId), user, userDb);
+		}
+		
+		if(product.isComposition()) {
+			Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
+			
+			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(product.getItem().getId()))).collect(Collectors.toList());
+			
+			if(itemCompositions.isEmpty()) {
+				insertDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId());
+			} else {
+				itemCompositions.forEach(itemComposition -> {
+					Integer compositionItemId = itemComposition.getCompositionItemId();
+					OldItem composition = AON.getItem(domainName, domainId, user, f -> f.getIdProperty().eq(compositionItemId));
+					
+					insertDomainApp(domainName, domainId, user, composition.getBarcode(), userDb.getId());
+				});
+			}
+			
+		} else
+			insertDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId());
+		
+	}
+	
+	private void insertDomainApp(String domainName, int domainId, String user, String barcode, Integer userId) {
+		try {
+			Integer itemCode = Integer.parseInt(barcode.substring(0, 2));
+			
+			DomainApp domainApp = new DomainApp()
+					.setDomain(domainId)
+					.setActive(true)
+					.setApp(AonApp.values()[itemCode])
+					;
+			AON.createBookingApp(domainName, domainId, user, domainApp);
+			
+			insertUserAppRole(domainName, domainId, user,userId, itemCode);
+			
+		} catch (Exception e) {}
+	}
+	
+	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
+		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getAppProperty().eq(itemCode.byteValue()))).collect(Collectors.toList());
+		if(userAppRole.isEmpty()) {
+			List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+			
+			aonRoles.forEach(aonRole -> {
+				UserAppRole newUserAppRole = new UserAppRole()
+						.setDomain(domainId)
+						.setApp(null)
+						.setUser(userId)
+						.setRole(aonRole);
+				
+				AON_SOLUTIONS.insertUserAppRole(domainName, domainId, user, newUserAppRole);
+			});
+			
+		} 
 	}
 
 }

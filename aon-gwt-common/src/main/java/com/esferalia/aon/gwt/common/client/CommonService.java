@@ -483,4 +483,7 @@ public interface CommonService extends RemoteService {
 	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException;
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee) throws AonCoreException;
 	
+	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, Product product) throws AonCoreException;
+	
 }

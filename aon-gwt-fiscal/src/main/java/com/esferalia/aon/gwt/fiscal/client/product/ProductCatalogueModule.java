@@ -99,8 +99,10 @@ public class ProductCatalogueModule  implements EntryPoint {
 		getTariffs(tariffsDb -> {
 			this.tariffs = tariffsDb;
 			
-			aonCustomDockLayout.hideSearchWidget();
 			createToolbar();
+			
+			aonCustomDockLayout.hideToolbar();
+			aonCustomDockLayout.hideSearchWidget();
 			
 			container = new HTMLPanel(EMPTY_STRING);
 			container.addStyleName(AON.CSS.aonFlexColumn());

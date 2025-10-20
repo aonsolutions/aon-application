@@ -1,13 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
-import java.util.List;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -24,9 +20,8 @@ public class CataloguePackCard extends HTMLPanel {
 	private Product packProduct;
 	private Tariff tariff;
 	private ItemTariff itemTariff;
-	private List<ItemComposition> itemCompositions;
 	
-	public CataloguePackCard(Product packProduct, Tariff tariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackCard(Product packProduct, Tariff tariff) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("flex", "1");
@@ -35,7 +30,6 @@ public class CataloguePackCard extends HTMLPanel {
 		
 		this.packProduct = packProduct;
 		this.tariff = tariff;
-		this.itemCompositions = itemCompositions;
 		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonFlexColumn());
@@ -66,7 +60,7 @@ public class CataloguePackCard extends HTMLPanel {
 		add(content);
 	}
 	
-	public CataloguePackCard(Product packProduct, ItemTariff itemTariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackCard(Product packProduct, ItemTariff itemTariff) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("flex", "1");
@@ -75,7 +69,6 @@ public class CataloguePackCard extends HTMLPanel {
 		
 		this.packProduct = packProduct;
 		this.itemTariff = itemTariff;
-		this.itemCompositions = itemCompositions;
 		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonFlexColumn());
@@ -110,7 +103,7 @@ public class CataloguePackCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
 		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
-		HTMLPanel titleLabel = new HTMLPanel(packProduct.getName());
+		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
 		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
 		titleLabel.getElement().getStyle().setProperty("color", "#5f6368");
@@ -122,7 +115,6 @@ public class CataloguePackCard extends HTMLPanel {
 	private void createPrice() {
 		HTMLPanel pricePanel = new HTMLPanel(EMPTY_STRING);
 		pricePanel.addStyleName(AON.CSS.aonFlexBetween());
-		pricePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
 		pricePanel.getElement().getStyle().setProperty("flexDirection", "column-reverse");
 		
 		String priceValue = formaDouble(packProduct.getItem().getPrice());
@@ -169,34 +161,11 @@ public class CataloguePackCard extends HTMLPanel {
 		HTMLPanel packContent = new HTMLPanel(EMPTY_STRING);
 		packContent.addStyleName(AON.CSS.aonFlexColumn());
 		packContent.setWidth("100%");
-		packContent.getElement().getStyle().setProperty("margin-bottom", "2rem");
 		packContent.getElement().getStyle().setProperty("align-items", "start");
 		
 		HTMLPanel include = new HTMLPanel(packProduct.getItem().getDescription());
-		include.getElement().getStyle().setProperty("padding", "1rem");
+		include.getElement().getStyle().setProperty("padding", ".5rem");
 		packContent.add(include);
-		
-		contentData.add(packContent);
-		
-	}
-
-	private void createPackCompositionContent() {
-		HTMLPanel packContent = new HTMLPanel(EMPTY_STRING);
-		packContent.addStyleName(AON.CSS.aonItemFlex());
-		packContent.addStyleName(AON.CSS.aonFlexColumn());
-		packContent.setWidth("100%");
-		packContent.getElement().getStyle().setProperty("margin-bottom", "2rem");
-		packContent.getElement().getStyle().setProperty("align-items", "start");
-		
-		Label include = new Label("Pack incluye");
-		include.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		packContent.add(include);
-		
-		itemCompositions.forEach(itemComposition -> {
-			Label itemCompositionLabel = new Label(itemComposition.getComposition().getProduct().getName());
-			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", "1rem");
-			packContent.add(itemCompositionLabel);
-		});
 		
 		contentData.add(packContent);
 		

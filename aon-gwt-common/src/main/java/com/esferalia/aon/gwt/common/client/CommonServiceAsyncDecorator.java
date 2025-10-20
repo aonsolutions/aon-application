@@ -1412,4 +1412,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.updateEndDatePackFee(domainName, domain, user, fee, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.updateBookingFee(domainName, domain, user, fee, product, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createBookingFee(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+	}
+
 }

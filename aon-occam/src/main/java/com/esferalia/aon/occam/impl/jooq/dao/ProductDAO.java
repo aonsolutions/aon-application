@@ -217,9 +217,10 @@ public class ProductDAO {
 			condition = condition.and(PRODUCT.COMPOSITION.eq(params.getProductComposition() ? (byte) 1 : 0));
 		
 		if(null != params.getDomainType())
-			condition = condition.and(ITEM.BARCODE.isNotNull())
-					   .and(DSL.length(ITEM.BARCODE).eq(12))
-					   .and(getDomainTypeChar(params.getDomainType()));
+			condition = condition.and(ITEM.BARCODE.isNull()
+					.or(
+							DSL.length(ITEM.BARCODE).eq(12).and(getDomainTypeChar(params.getDomainType()))
+					));
 		
 		return condition;
 	}

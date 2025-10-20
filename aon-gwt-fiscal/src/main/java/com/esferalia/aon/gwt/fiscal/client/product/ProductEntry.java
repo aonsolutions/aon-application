@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -341,8 +340,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
 		app.addChangeHandler(e -> createBarCode());
 		
-		barcode.setEnable(false);
+		barcode.setEnable(product.isComposition());
 		barcode.setValue(formatBarCode(item.getBarcode()));
+		barcode.addValueChangeHandler(e -> createBarCode());
 		
 		pack = new AonCustomCheckBox("Pack");
 		pack.setWidth("3rem");
@@ -356,6 +356,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		composite.setWidth("5rem");
 		composite.setValue(product.isComposition());
 		composite.addValueChangeHandler(e -> {
+			barcode.setEnable(pack.getValue());
+			
 			product.setComposition(composite.getValue());
 			
 			if(!composite.getValue()) {
@@ -671,6 +673,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		// Update Status (should use handler for this)
 		product.setStatus(status.getValue());
 		item.setStatus(status.getValue());
+		
+		if(AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--0000000000") || AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--/0000000000") )
+			item.setBarcode(null);
 		
 		AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
 		
