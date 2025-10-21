@@ -100,7 +100,7 @@ public class CataloguePackCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
-		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
+		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0 .5rem 0");
 		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
 		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
