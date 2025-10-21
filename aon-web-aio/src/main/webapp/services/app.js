@@ -1761,7 +1761,7 @@ export const MENU_APPS = [
   MESSENGER,
   WAREHOUSE,
   AON_CLASSIC,
-  PLANS
+  // PLANS
 ];
 
 export const DESKTOP_APPS = [

@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, TAG } from '../environments/environments.js';
-
+import { AonIcon } from "./aon-icon.js";
 export class AonButton extends AonElement {
   BUTTON;
   ICON;
@@ -76,12 +76,9 @@ export class AonButton extends AonElement {
     }
 
     if(this.icon) {
-      // button.style.display = 'flex';
-      // button.style.fontSize = '13px';
-      let icon = this.createElement(TAG.I);
+      let icon = new AonIcon(); 
       icon.id = this.ICON;
-      icon.className = CSS.MATERIAL_ICONS;
-      icon.innerHTML = this.getIcon();
+      icon.icon = this.getIcon();
       button.appendChild(icon);
     }
 
