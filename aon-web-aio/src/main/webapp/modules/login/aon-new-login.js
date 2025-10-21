@@ -147,7 +147,6 @@ export class AonNewLogin extends AonElement {
     signIn.className = CSS.AON_LOGIN_BUTTON;
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
     signIn.addEventListener(EVENT.CLICK, () => this.login());
-	signIn.addEventListener(EVENT.CONTEXTMENU, () => this.signin());
     divFormContent.appendChild(signIn);
 
     getManifest().then((manifest) => {
@@ -511,7 +510,7 @@ export class AonNewLogin extends AonElement {
     let loader = this.getElement("aonLoginLoader");
     loader.style.display = "";
     loader.start();
-    login(data)
+    (this.useJaas()?signin:login)(data)
       .then(() => {
         // document.body.style.background = 'transparent';
         loader.stop();
@@ -615,9 +614,17 @@ export class AonNewLogin extends AonElement {
     });
   }
   
-  isConsole(company) {
-	return company.type == 'ADMIN' && company.id === 0;
-  }
+	useJaas() {
+		const queryString = window.location.search;
+		const searchParams = new URLSearchParams(queryString);
+		return searchParams.get('jaas') != null;
+	
+	}
+	
+	isConsole(company) {
+		return company.type == 'ADMIN' && company.id === 0;
+	}
+  
 
 }
 if(!window.customElements.get(TAG.AON_NEW_LOGIN)){

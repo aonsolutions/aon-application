@@ -24,17 +24,19 @@ public class LoginTestCase extends AppBaseTestCase {
 	
 	@ParameterizedTest
 	@CsvSource({
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo,org,El dominio INACTIVA se encuentra actualmente inactivo",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,admin,org,El dominio INACTIVA se encuentra actualmente inactivo",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/app,inactivo@payroll-test.aonsolutions.org,org,El dominio INACTIVA se encuentra actualmente inactivo",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,admin,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo@payroll-test.aonsolutions.org,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
 		
-		"http://inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio INACTIVA \\(PARENT\\) se encuentra actualmente inactivo",
-		"http://default-inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio DEFAULT se encuentra actualmente inactivo",
-		//"http://payer-inactive-test.aonsolutions.org:8080/app,inactive@test-aonsolutions.org,org,El dominio PAGADOR se encuentra actualmente inactivo",
+		"http://inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
+		"http://default-inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
 
-		"http://expired-multi-test.aonsolutions.org:8080/app,86359314,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
-		"http://expired-multi-test.aonsolutions.org:8080/app,asesor@multi-test.aonsolutions.org,org,El periodo de contratación del dominio EXPIRADA ha expirado. Contacte con soporte o su comercial asignado para más información.",
-
+		"http://expired-multi-test.aonsolutions.org:8080/?jaas,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		"http://expired-multi-test.aonsolutions.org:8080/?jaas,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		
+		"http://multi-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive.",
+		//"http://factory-inactive-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive."
+		
 	})
 	@Order(1)
 	public void testDomainInactive(String url, String email, String password, String message) throws AssertionError {
@@ -61,7 +63,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(2)
 	public void testLoginIllegalMixOfCollations() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/app");
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "ñacurutú");
 		String password = System.getProperty("integration.test.env.app.password", "ñacurutú");
 
@@ -88,7 +90,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(3)
 	public void testEnableSupport() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/app");
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "admin");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -121,7 +123,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(4)
 	public void testLoginSupport() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/app");
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "admin=ñacurutú");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -148,7 +150,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(5)
 	public void testLoginEnterpriseWithShared() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://general-payroll-test.aonsolutions.org:8080/app");
+				"http://general-payroll-test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "admin");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -176,7 +178,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(6)
 	public void testLoginEnterprisePayer() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payer-inactive-test.aonsolutions.org:8080/app");
+				"http://payer-inactive-test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "pagador@inactive-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
