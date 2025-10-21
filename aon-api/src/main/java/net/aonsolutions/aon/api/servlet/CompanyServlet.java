@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -560,7 +559,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		
 		ApplicationParameter trialAppParam = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.TRIAL);
 		
-		if(!trial || AonStringUtils.equalsIgnoreCase(trialValue, "0")) {
+		if((!trial || AonStringUtils.equalsIgnoreCase(trialValue, "0")) && !AonStringUtils.equalsIgnoreCase(trialValue, "-1")) {
 			// Delete trial appParam
 			if(null != trialAppParam && null != trialAppParam.getId())
 				AON.deleteApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(trialAppParam.getId()));

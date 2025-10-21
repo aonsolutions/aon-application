@@ -5,9 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -110,7 +108,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
-		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
+		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0 .5rem 0");
 		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
 		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
@@ -128,7 +126,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		pricePanel.getElement().getStyle().setProperty("flexDirection", "column-reverse");
 		
 		String priceValue = formaDouble(packProduct.getItem().getPrice());
-		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "</small><b> \u20ac </b>" + " al mes *");
+		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "</small> \u20ac" + " al mes *");
 		price.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "black" : "#002469");
 		
 		if(null != tariff) {
@@ -195,6 +193,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		bookBtn.getElement().getStyle().setProperty("border", "none");
 		
 		bookBtn.addClickHandler(e -> {
+			
 			AonCustomDialog dialog = new AonCustomDialog();
 			
 			HTMLPanel dialogContent = new HTMLPanel("");
@@ -207,18 +206,20 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 			HTMLPanel buttonsPanel = new HTMLPanel("");
 			buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
 			buttonsPanel.getElement().getStyle().setProperty("justify-content", "center");
+			buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
 			buttonsPanel.setWidth("100%");
 			
 			Button closeBtnDialog = new Button();
-			closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+			closeBtnDialog.setStyleName(AON.CSS.aonCancelButton());
 			closeBtnDialog.setText(AON.MSG.cancelAction());
 			closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
 			closeBtnDialog.addClickHandler(ev -> dialog.hide());
 			buttonsPanel.add(closeBtnDialog);
 			
 			Button acceptBtnDialog = new Button();
-			acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-			acceptBtnDialog.setText(AON.MSG.accept());
+			acceptBtnDialog.setStyleName(AON.CSS.aonOkButton());
+			acceptBtnDialog.setText("Contratar");
+			acceptBtnDialog.getElement().getStyle().setProperty("background-color", "#eee");
 			acceptBtnDialog.setEnabled(false);
 			buttonsPanel.add(acceptBtnDialog);
 			
@@ -232,7 +233,10 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 			terms.addStyleName(AON.CSS.aonItemFlex());
 			
 			CheckBox acceptTerms = new CheckBox();
-			acceptTerms.addValueChangeHandler(ev -> acceptBtnDialog.setEnabled(acceptTerms.getValue()));
+			acceptTerms.addValueChangeHandler(ev -> {
+				acceptBtnDialog.setEnabled(acceptTerms.getValue());
+				acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
+			});
 			Label temrsMessage = new Label("He leido y acepto los ");
 			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf", "_blank");
 			termsAnchor.getElement().getStyle().setProperty("color", "#002469");
