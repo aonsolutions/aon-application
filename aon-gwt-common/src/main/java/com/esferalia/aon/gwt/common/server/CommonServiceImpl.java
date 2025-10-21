@@ -1766,6 +1766,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			userDb.setType(UserType.NORMAL);
 			userDb.setEnterprise(null);
 			AON.saveUser(new Domain().setName(domainName).setId(domainId), user, userDb);
+			
+			List<AonRole> aonUserAppRoles = List.of(AonRole.ENTERPRISE, AonRole.EMPLOYEE);
+			Byte[] arrayAonRoles = aonUserAppRoles.stream()
+				    .map(ar -> ar.value())
+				    .toArray(Byte[]::new);
+			
+			List<UserAppRole> userAppRoles = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userDb.getId()).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+			userAppRoles.forEach(userAppRole -> AON_SOLUTIONS.deleteUserAppRole(domainName, domainId, user, f -> f.getIdProperty().eq(userAppRole.getId()).and(f.getDomainProperty().eq(domainId))));
+			
 		}
 		
 		if(product.isComposition()) {
@@ -1806,10 +1815,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
-		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getAppProperty().eq(itemCode.byteValue()))).collect(Collectors.toList());
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+		Byte[] arrayAonRoles = aonRoles.stream()
+			    .map(ar -> ar.value())
+			    .toArray(Byte[]::new);
+		
+		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+		
 		if(userAppRole.isEmpty()) {
-			List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
-			
 			aonRoles.forEach(aonRole -> {
 				UserAppRole newUserAppRole = new UserAppRole()
 						.setDomain(domainId)
