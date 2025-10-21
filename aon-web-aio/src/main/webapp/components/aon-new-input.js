@@ -299,10 +299,10 @@ export class AonNewInput extends AonElement {
 		aonIconButton.id = this.ICON_BUTTON;
 		aonIconButton.icon = icon;
 		aonIconButton.noHover = "true";
-		aonIconButton.addEventListener(EVENT.MOUSEOVER, () =>
+		aonIconButton.addEventListener(EVENT.POINTEROVER, () =>
 			aonIconButton.icon = MATERIAL_ICONS.CLOSE);
 
-		aonIconButton.addEventListener(EVENT.MOUSELEAVE, () =>
+		aonIconButton.addEventListener(EVENT.POINTERLEAVE, () =>
 			aonIconButton.icon = icon);
 
 		aonIconButton.addEventListener(EVENT.CLICK, removeFn);
@@ -408,9 +408,21 @@ export class AonNewInput extends AonElement {
 
 	setValue(value) {
 		this.value = value;
-		if (value === undefined) value = CONSTANT.EMPTY;
+		if (value === undefined) 
+			value = CONSTANT.EMPTY;
 		let input = this.getElement(this.INPUT);
-		if (input) input.value = value;
+		if (input) {
+			if (this.type === 'time') {
+				// Forzar formato "HH:mm"
+				if (typeof value === 'string' && /^\d{1,2}:\d{2}$/.test(value)) {
+					input.value = value.padStart(5, '0'); // e.g. "9:30" → "09:30"
+				} else {
+					input.value = value;
+				}
+			} else {
+				input.value = value;
+			}
+		}
 	}
 
 	isRequired() {
@@ -441,7 +453,7 @@ export class AonNewInput extends AonElement {
 
 	setDisabled(disabled) {
 		this.disabled = disabled;
-		let input = this.getElement(this.INPUT);
+		const input = this.getElement(this.INPUT);
 		if (input) {
 			if (disabled) input.setAttribute("disabled", disabled);
 			else input.removeAttribute("disabled");

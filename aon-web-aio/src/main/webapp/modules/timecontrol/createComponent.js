@@ -14,11 +14,11 @@ export const createFormEvent = (id, parent) => {
     form.appendChild(div.element)
 
     let divC;
-    divC = createDiv({classes:[CSS.AON_COL_SM_12]})
+    divC = createDiv();
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"CardEvent", title:"Datos del evento"}, divC.element);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12]});
+    divC = createDiv();
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
   
@@ -26,63 +26,47 @@ export const createFormEvent = (id, parent) => {
 }
 
 export const createCardEvent = (parent) => {
-    
-    let divC;
-    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
-    divC.appendTo(parent);
+
     CreateComponent.createAonInput({
         attributes:{
             name:"name",
             id:"name",
-            description:"Nombre",
-            type:"text"
+            title:"Nombre"
         }
-    }, divC.element);
+    }, parent);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
-    divC.appendTo(parent);
     CreateComponent.createAonSelect({
         attributes:{
             name:"status",
             id:"status",
             title:"Estado"
         }
-    }, divC.element);
- 
+    }, parent);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
-    divC.appendTo(parent);
     CreateComponent.createAonSelect({
         attributes:{
             name:"location",
             id:"location",
             title:"Ubicación"
         }
-    }, divC.element);
+    }, parent);
 
-
-    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
-    divC.appendTo(parent);
     CreateComponent.createAonDate({
         attributes:{
             name:"date", 
             id:"date", 
             title:"Fecha"
         }
-    }, divC.element);
+    }, parent);
 
-
-    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
-    divC.appendTo(parent);
     CreateComponent.createAonInput({
         attributes:{
             name:"time",
             id:"time",
-            description:"Hora",
+            title:"Hora",
             type:"time"
         }
-    }, divC.element);
-
+    }, parent);
 
     CreateComponent.createAonInput({
         attributes:{

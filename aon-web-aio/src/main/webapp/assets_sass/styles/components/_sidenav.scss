@@ -26,7 +26,6 @@ $icon-gap : v.$gap-min;
     padding        : v.$num-0 v.$padding;
     display        : flex;
     gap            : $icon-gap;
-    justify-content: space-between;
     align-items    : center;
     cursor         : pointer;
     & * {
@@ -133,6 +132,19 @@ $icon-gap : v.$gap-min;
         }
       }
     // FIN subapartado  
+    }
+  }
+  // Cuando contiene select
+  .select-div{
+    display       : flex;
+    flex-direction: column;
+    gap           : v.$gap-min;
+    :has(.aonSidenavTitle){
+      // padding: v.$px-0;
+    }
+    // Hijos que no sea el titulo
+    > div:not(.aonSidenavTitle){
+      padding: v.$px-0 v.$padding v.$px-0 v.$padding*2;
     }
   }
   // Ocultar un apartado

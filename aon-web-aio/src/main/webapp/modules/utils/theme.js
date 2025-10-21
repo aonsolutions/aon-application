@@ -86,7 +86,7 @@ export const applyTitle = (themeClass, title = "") => {
 };
 
 export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
-  waitForElement('#aon-logo').then((divLogo) => {  
+  waitForElement('#aon-logo').then((divLogo) => {
     if (imageLogoHeader === "") {
       const headerLogo = (AonElement.isMobile() || AonElement.isMobileResolution())
         ? `--logoHeaderMobile-${themeClass}`
@@ -105,7 +105,7 @@ export const applyLogoHeader = (themeClass, imageLogoHeader = "") => {
 };
 
 export const applyLogo = (themeClass, imageLogo = "") => {
-  waitForElement('#logoSVG').then((divLogo) => {  
+  waitForElement('#logoSVG').then((divLogo) => {
     if (imageLogo === "") {
       const raw = getComputedStyle(document.body).getPropertyValue(`--logo-${themeClass}`).trim();
       if (raw) imageLogo = raw.replace(/^url\((['"]?)(.*?)\1\)$/, '$2');

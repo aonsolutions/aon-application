@@ -64,6 +64,7 @@ import { AonExpense } from './invoice/aon-expense.js';
 import { Income } from './invoice/Income.js';
 import { Expense } from './invoice/Expense.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
+import { AonButton } from '../components/aon-button.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -79,6 +80,7 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SEARCH_DIALOG;
 	CLOSE;
 	AON_MENU = 'aonMenu';
+	AON_MENU_BOTTOM_ID = 'aonMenuBottom';
 
 	supersetDashboard;
 
@@ -378,6 +380,25 @@ export class AonNewMenu extends AonElement {
 		app.symbol = this.getCssVariable(`${app.app}SideNavSymbol`) || app.symbol;
 	}
 
+	createPlansButton() {
+		// crear el boton usando AonButton
+		const button = new AonButton();
+		button.setIcon(MATERIAL_ICONS.APPS);
+		button.setTitle(MSG.PLAN);
+		// agregar clase para css
+		button.classList.add('color-orange');
+		// evento abrir planes
+		button.addEventListener('click', () => {
+			this.openPlans(); 
+		});
+
+		return button;
+	}
+	 openPlans() {
+        const plansPanel = new AonPlans();
+        this.rootPanel(plansPanel);
+    }
+
 	buildMenuSidenav() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let ul = this.createElement(TAG.UL);
@@ -391,6 +412,7 @@ export class AonNewMenu extends AonElement {
 				if(app.app === CONSTANT.NEW){
 					// El nuevo menu es un boton in dependiente
 					this.appendChild(new AonMenuButton());
+					this.addMenuOptionsBottom(this.createPlansButton());
 				} else
 					this.addMenuSidenavApp(ul, app);
 			}
@@ -421,6 +443,19 @@ export class AonNewMenu extends AonElement {
 			li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
 			ul.appendChild(li);
 		}
+	}
+
+	addMenuOptionsBottom(content) {
+		waitForElement('#' + this.AON_MENU_SIDENAV).then((aonMenuSidenav) => {
+			let div = this.getElement(this.AON_MENU_BOTTOM_ID);
+			if (!div){
+				div = document.createElement('div');
+				div.id = this.AON_MENU_BOTTOM_ID;
+			}			 
+			div.appendChild(content);
+
+			aonMenuSidenav.appendChild(div);
+	    });
 	}
 
 	buildMenuTopnav() {
@@ -627,7 +662,7 @@ export class AonNewMenu extends AonElement {
             icon.innerHTML = app.symbol;
             icon.setAttribute("data-icon", app.symbol);
             if(app.app == CONSTANT.PLANS && this.isAyudaT()){
-              a.classList.add('color-blue');
+            //   a.classList.add('color-blue');
             }
             icon.classList.add("aonNewMenuAppIcon");
             div.appendChild(icon);

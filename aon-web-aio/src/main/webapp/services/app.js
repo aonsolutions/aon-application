@@ -48,7 +48,7 @@ export const TIMECONTROL = {
 export const ACCOUNTING = {
   app: CONSTANT.ACCOUNTING,
   title: MSG.ACCOUNTING,
-  description: MSG.ACCOUNTING,
+  description: MSG.ACCOUNTING_DESCRIPTION,
   info: MSG.MENU_ACCOUNTING_INFO,
   tag: MSG_ES.ACCOUNTING,
   headerIcon: 'registradores', 
@@ -1748,7 +1748,8 @@ export const AON_APPS = [
 
 export const MENU_APPS = [
   NEW,
-  PLANS,
+  //comentado por si hay que volver al orden que ya existia
+  // PLANS,
   INVOICE,
   ACCOUNTING,
   FISCAL,
@@ -1759,7 +1760,8 @@ export const MENU_APPS = [
   NOTES,
   MESSENGER,
   WAREHOUSE,
-  AON_CLASSIC
+  AON_CLASSIC,
+  // PLANS
 ];
 
 export const DESKTOP_APPS = [

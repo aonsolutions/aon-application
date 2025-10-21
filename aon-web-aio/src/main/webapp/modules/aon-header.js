@@ -1053,10 +1053,10 @@ export class AonHeader extends AonElement {
 
 	setupDomainUrlCopy(searchOptions) {
 		searchOptions.filter(option => option.id).forEach(option => {
-			this.getElement(option.id).addEventListener(EVENT.MOUSEOVER, () => {
+			this.getElement(option.id).addEventListener(EVENT.POINTEROVER, () => {
 				this.getElement(`${option.id}Copy`).style.removeProperty('display');
 			});
-			this.getElement(option.id).addEventListener(EVENT.MOUSEOUT, () => {
+			this.getElement(option.id).addEventListener(EVENT.POINTEROUT, () => {
 				this.getElement(`${option.id}Copy`).style.display = 'none';
 			});
 			this.getElement(`${option.id}Copy`).addEventListener(EVENT.CLICK, (event) => {

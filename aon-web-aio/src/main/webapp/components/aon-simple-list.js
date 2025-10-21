@@ -106,8 +106,8 @@ export class AonSimpleList extends AonElement {
       remove.addEventListener(EVENT.CLICK, iconFn);
       span.appendChild(remove);
       
-      li.addEventListener(EVENT.MOUSEOVER, () => remove.style.display  = 'block');
-      li.addEventListener(EVENT.MOUSELEAVE, () => remove.style.display = 'none');
+      li.addEventListener(EVENT.POINTEROVER, () => remove.style.display  = 'block');
+      li.addEventListener(EVENT.POINTERLEAVE, () => remove.style.display = 'none');
   
     }
 

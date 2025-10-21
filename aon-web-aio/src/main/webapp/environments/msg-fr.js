@@ -11,6 +11,7 @@ export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Comptabilité';
 export const ACCOUNTING_PANEL = 'Panneau Comptable';
+export const ACCOUNTING_DESCRIPTION = 'Info. compta.';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas'

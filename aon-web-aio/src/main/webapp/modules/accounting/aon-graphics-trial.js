@@ -98,8 +98,8 @@ export class AonGraphicsTrial extends AonElement {
 
     this.draw();
 
-    this.getElement("aonAccountingSidenavoptionsSelect").value = '"Ejercicio ' + this.selectedPeriod.name + '"';
-    this.getElement("aonAccountingSidenavoptionsViewSelect").value = this.getViewSelectedOpt(this.filter.show);
+    this.getElement("aonAccountingSidenavoptionsSelect").value       =  this.selectedPeriod && this.selectedPeriod.name ? '"Ejercicio ' + this.selectedPeriod.name + '"' : "Sin registro";
+    this.getElement("aonAccountingSidenavoptionsViewSelect").value   = this.getViewSelectedOpt(this.filter.show);
     this.getElement("aonAccountingSidenavoptionsDetailSelect").value = this.getDetailSelectedOpt(this.filter.detail);
   }
 
@@ -294,22 +294,21 @@ export class AonGraphicsTrial extends AonElement {
 
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
+        
+        if(!this.params.period) {
+          this.params.period = this.PERIODS[0].id;
+        }
+  
+        if(!this.params.fromDate) {
+          this.params.fromDate = this.PERIODS[0].initiationDate;
+        }
+  
+        if(!this.params.toDate) {
+          this.params.toDate = this.PERIODS[0].deadline;
+        }
       }
 
-      if(!this.params.period) {
-        this.params.period = this.PERIODS[0].id;
-      }
-
-      if(!this.params.fromDate) {
-        this.params.fromDate = this.PERIODS[0].initiationDate;
-      }
-
-      if(!this.params.toDate) {
-        this.params.toDate = this.PERIODS[0].deadline;
-      }
-
-      this.ACCOUNTS = await getAccounting(this.params)
-      .catch((err) => {
+      this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
         this.showError(err)
         return null;
       });

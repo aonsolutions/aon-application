@@ -183,7 +183,7 @@ export class AonMenu extends AonElement {
 		aonMenuSidenav.className = LS.isNewTheme() ? CSS.AON_MENU_SIDENAV : CSS.AON_MENU_SIDENAV_BETA;
 		this.appendChild(aonMenuSidenav);
 
-		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
+		aonMenuSidenav.addEventListener(EVENT.POINTERLEAVE, () => {
 			if(this.CLOSE){
 				aonMenuSidenav.style.transitionDuration = '500ms';
 				if(this.getAttribute('opened')) {
@@ -231,7 +231,7 @@ export class AonMenu extends AonElement {
 		aib.id    = "aonMenuShowButton";
 		aib.title = `Ocultar Menu`;
 		aib.icon = icon;
-		li.addEventListener(EVENT.MOUSEMOVE, (ev)=> {
+		li.addEventListener(EVENT.pointermove, (ev)=> {
 			ev.preventDefault();
 			aonMenuSidenav.style.transitionDuration = '300ms';
 			aonMenuSidenav.style.width = '60px';
@@ -300,7 +300,7 @@ export class AonMenu extends AonElement {
 		div.style.marginRight = '15px';
 		div.style.borderTopRightRadius = '50px 50px';
 		div.style.borderBottomRightRadius = '50px 50px';
-		li.addEventListener(EVENT.MOUSEOVER, () => {
+		li.addEventListener(EVENT.POINTEROVER, () => {
 			let img = this.getElement('aonMenuListAppImg-' + app.app);
 			img.size = '40px';
 			div.style.backgroundColor = '#f1f1f1';
@@ -319,7 +319,7 @@ export class AonMenu extends AonElement {
 			}
 		});
 
-	    li.addEventListener(EVENT.MOUSELEAVE, () => {
+	    li.addEventListener(EVENT.POINTERLEAVE, () => {
 	      let img = this.getElement('aonMenuListAppImg-' + app.app);
 	      img.size = '30px';
 		  div.style.backgroundColor = 'transparent';
@@ -508,10 +508,10 @@ export class AonMenu extends AonElement {
 		let li = this.createElement(TAG.LI);
 		li.className = CSS.AON_MENU_SIDENAV_SUBAPP_LIST_ITEM;;
 		li.title = subapp.title;
-		li.addEventListener(EVENT.MOUSEOVER, () => {
+		li.addEventListener(EVENT.POINTEROVER, () => {
  			li.style.backgroundColor = '#f1f1f1';
 		});
-		li.addEventListener(EVENT.MOUSELEAVE, () => {
+		li.addEventListener(EVENT.POINTERLEAVE, () => {
 			li.style.backgroundColor = 'transparent';
 		});
 

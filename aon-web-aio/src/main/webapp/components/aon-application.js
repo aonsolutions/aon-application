@@ -8,6 +8,7 @@ import { AonLoader } from "./aon-loader.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonDialog } from "./aon-dialog.js";
 import { AonToast } from "./aon-toast.js";
+import { createSelect } from './CreateComponent.js';
 
 export class AonApplication extends AonElement {
   SIDENAV;
@@ -477,6 +478,7 @@ export class AonApplication extends AonElement {
     if(!div){
       div = this.createElement(TAG.DIV);
       div.id = sidenav.id + data.id;
+      div.classList.add('select-div');
 //      div.style.paddingBottom = "10px";
 //      div.style.display = "flex";
 //      div.style.flexDirection = "column";
@@ -522,7 +524,6 @@ export class AonApplication extends AonElement {
       sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
 
       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
-
         const elements = div.children;
         for (let i = 1; i < elements.length; i++) {
             elements[i].classList.toggle(CSS.ELEMENT_HIDDEN);
@@ -568,46 +569,38 @@ export class AonApplication extends AonElement {
           div.appendChild(selectDiv);
 
           // Add icon to select
-          if(options){
-            let option = options[0];
-            if(option.icon){
-              let i = this.createElement(TAG.I);
-              i.id = data.id + 'icon';
-              let iconClass = "material-icons";
-//              if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
-              if(option.icon_color) {
-                i.title = option.id;
-                i.color = option.icon_color;
-//                i.style.color = option.icon_color;
-              }
-              if(option.icon_class) iconClass = option.icon_class;
-              i.className = `${iconClass} aonVerticalMiddle`;
-              i.innerHTML = option.icon;
-    
-              selectDiv.appendChild(i);
-            }
-          }
+          // if(options && options.length > 0){
+          //   let option = options[0];
+          //   if(option.icon){
+          //     let i = this.createElement(TAG.I);
+          //     i.id = data.id + 'icon';
+          //     let iconClass = "material-icons";
+          //   //  if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+          //     if(option.icon_color) {
+          //       i.title = option.id;
+          //       i.color = option.icon_color;
+          //     //  i.style.color = option.icon_color;
+          //     }
+          //     if(option.icon_class) iconClass = option.icon_class;
+          //     i.className = `${iconClass} aonVerticalMiddle`;
+          //     i.innerHTML = option.icon;
+
+          //     selectDiv.appendChild(i);
+          //   }
+          // }
         }
 
         const idSelect = div.id + "Select";
         let select =  this.getElement(idSelect); 
         if(!select){
-          select = this.createElement('select');
-          select.id = idSelect;
-//          select.style.background = "none";
-//          select.style.border = "none";
-//          select.style.cursor = "pointer";
-//          select.style.width = "100%";
+          select = createSelect(idSelect, data.title);
           select.classList.add(CSS.OUTLINE_HIDDEN);
-
           selectDiv.appendChild(select);
         } else {
-          select.innerHTML = null;
+          select.clearSelectable();
         }
-        options.forEach((option, i) => {
-          this.addSidenavSelectOptionsValue(data, option, select);
-        });
-        select.addEventListener('change', () => {
+        select.setOptions(options);
+        select.addEventListener(EVENT.SELECT, () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
           let filteredYears = options.filter(option => option.name == yearSelected);
@@ -619,16 +612,6 @@ export class AonApplication extends AonElement {
       }
     }
     return null;
-  }
-
-  addSidenavSelectOptionsValue(data, option, select) {
-    let sidenavId = this.SIDENAV; //this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
-    select = select || this.getElement(sidenavId + data.id + "Select");
-
-    let optYear = this.createElement('option');
-    optYear.value = JSON.stringify(option.value ? option.value : option.name);
-    optYear.innerHTML = option.name;
-    select.appendChild(optYear);
   }
 
   removeSidenavById(id){
@@ -730,12 +713,12 @@ export class AonApplication extends AonElement {
           ai.title = option.id;
           ai.color = option.icon_color;
         }
-        li.addEventListener(EVENT.MOUSEOVER, () => {
+        li.addEventListener(EVENT.POINTEROVER, () => {
           if(!LS.isNewTheme()) 
             this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
 
-        li.addEventListener(EVENT.MOUSELEAVE, () => {
+        li.addEventListener(EVENT.POINTERLEAVE, () => {
           if(!LS.isNewTheme()) 
             this.getElement(id + "AonIcon").color = "#5f6368";
         });
@@ -766,8 +749,8 @@ export class AonApplication extends AonElement {
         let actionDiv = this.createElement(TAG.SPAN);
         // actionDiv.style.display = "none";
         li.appendChild(actionDiv);
-        // li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
-        // li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
+        // li.addEventListener(EVENT.POINTEROVER, () =>  actionDiv.style.display = "contents");
+        // li.addEventListener(EVENT.POINTERLEAVE, () =>  actionDiv.style.display = "none");
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
@@ -871,72 +854,60 @@ export class AonApplication extends AonElement {
       let div = this.getElement(sidenav.id + data.parent);
  
       if(div) {
-
         let options = data.options || [];
-
         let selectDiv = this.getElement(sidenav.id + data.id + "SelectDiv");
 
         if(!selectDiv){
           selectDiv = this.createElement(TAG.DIV);
           selectDiv.id = sidenav.id + data.id + "SelectDiv";
           selectDiv.classList.add("aonAppMenuSidenavListBeta");
-//          selectDiv.style.display = "flex";
-//          selectDiv.style.gap = ".5rem";
-//          selectDiv.style.alignItems = "center";
-//          selectDiv.style.border = "1px solid rgb(221, 221, 221)";
-//          selectDiv.style.borderRadius = "5px";
-//          selectDiv.style.padding = "5px";
-//          selectDiv.style.margin = "0 20px";
+        //  selectDiv.style.display = "flex";
+        //  selectDiv.style.gap = ".5rem";
+        //  selectDiv.style.alignItems = "center";
+        //  selectDiv.style.border = "1px solid rgb(221, 221, 221)";
+        //  selectDiv.style.borderRadius = "5px";
+        //  selectDiv.style.padding = "5px";
+        //  selectDiv.style.margin = "0 20px";
           div.appendChild(selectDiv);
 
           // Add icon to select
-          if(options){
-            let option = options[0];
-            if(option.icon){
-              let i = this.createElement(TAG.I);
-              i.id = data.id + 'icon';
-              let iconClass = "material-icons";
-//              if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
-              if(option.icon_color) {
-                i.title = option.id;
-//                i.color = option.icon_color;
-//                i.style.color = option.icon_color;
-              }
-              if(option.icon_class) iconClass = option.icon_class;
-              i.className = `${iconClass} aonVerticalMiddle`;
-              i.innerHTML = option.icon;
+          // if(options){
+          //   let option = options[0];
+          //   if(option.icon){
+          //     let i = this.createElement(TAG.I);
+          //     i.id = data.id + 'icon';
+          //     let iconClass = "material-icons";
+          //   //  if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+          //     if(option.icon_color) {
+          //       i.title = option.id;
+          //     //  i.color = option.icon_color;
+          //     //  i.style.color = option.icon_color;
+          //     }
+          //     if(option.icon_class) iconClass = option.icon_class;
+          //     i.className = `${iconClass} aonVerticalMiddle`;
+          //     i.innerHTML = option.icon;
     
-              selectDiv.appendChild(i);
-            }
-          }
+          //     selectDiv.appendChild(i);
+          //   }
+          // }
         }
 
         const idSelect = sidenav.id + data.id + "Select";
         let select =  this.getElement(idSelect); 
         if(!select){
-          select = this.createElement('select');
-          select.id = idSelect;
-//          select.style.background = "none";
-//          select.style.border = "none";
-//          select.style.cursor = "pointer";
-//          select.style.width = "100%";
+          select = createSelect(idSelect, data.title);
           select.classList.add(CSS.OUTLINE_HIDDEN);
-
           selectDiv.appendChild(select);
         } else {
-          select.innerHTML = null;
+          select.clearSelectable();
         }
-        
-        options.forEach((option, i) => {
-          this.addSidenavSelectOptionsValue(data, option, select);
-        });
-        select.addEventListener('change', () => {
+        select.setOptions(options);
+        select.addEventListener(EVENT.SELECT, () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
           let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
           let optionFiltered = filteredYears[0];
           optionFiltered.fn();
-         
         });
       }
     }
@@ -1280,15 +1251,15 @@ export class AonApplication extends AonElement {
     if (bool) {
       this.content.addEventListener(EVENT.DRAGOVER, this.dragoverFn);
       this.content.addEventListener(EVENT.DRAGENTER, this.dragenterFn);
-      this.content.addEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
-      this.content.addEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      this.content.addEventListener(EVENT.POINTERLEAVE, this.mouseleaveFn);
+      this.content.addEventListener(EVENT.POINTEROVER, this.mouseoverFn);
       document.addEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
       this.content.addEventListener(EVENT.DROP, this.dropFn);
     } else {
       this.content.removeEventListener(EVENT.DRAGOVER, this.dragoverFn);
       this.content.removeEventListener(EVENT.DRAGENTER, this.dragenterFn);
-      this.content.removeEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
-      this.content.removeEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      this.content.removeEventListener(EVENT.POINTERLEAVE, this.mouseleaveFn);
+      this.content.removeEventListener(EVENT.POINTEROVER, this.mouseoverFn);
       document.removeEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
       this.content.removeEventListener(EVENT.DROP, this.dropFn);
     }

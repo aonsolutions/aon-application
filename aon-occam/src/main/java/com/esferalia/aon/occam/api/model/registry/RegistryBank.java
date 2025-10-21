@@ -26,7 +26,8 @@ public class RegistryBank implements Serializable {
 	private Double balance;
 	private Double availableBalance;
 	private Date balanceDate;
-	
+	private String agreement;
+
 	private Boolean active;
 	private boolean dirty;
 	private boolean removed;
@@ -182,6 +183,15 @@ public class RegistryBank implements Serializable {
 	public RegistryBank setBalanceDate(Date balanceDate) {
 		this.setDirty(isDirty() || AonUtils.notEquals(this.balanceDate, balanceDate));
 		this.balanceDate = balanceDate;
+		return this;
+	}
+	
+	public String getAgreement() {
+		return agreement;
+	}
+
+	public RegistryBank setAgreement(String agreement) {
+		this.agreement = agreement;
 		return this;
 	}
 	

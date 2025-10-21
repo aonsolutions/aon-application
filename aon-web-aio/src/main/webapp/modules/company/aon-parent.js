@@ -383,11 +383,11 @@ export class AonParent extends AonElement {
 			LS.setPortalChecked(LS.isLeftMenu());
 		});
 
-		li.addEventListener(EVENT.MOUSEOVER, () => {
+		li.addEventListener(EVENT.POINTEROVER, () => {
 			li.style.backgroundColor = '#ddd';
 		});
 
-		li.addEventListener(EVENT.MOUSELEAVE, () => {
+		li.addEventListener(EVENT.POINTERLEAVE, () => {
 			li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		});
 

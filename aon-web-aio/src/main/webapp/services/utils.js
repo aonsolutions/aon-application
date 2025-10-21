@@ -170,7 +170,13 @@ export const cleanDetailObject = (obj) => {
 }
 export const setValueName = (name, value) => {
   let el = document.querySelector(`[name="${name}"]`);
-  if (el && value) el.value = value;
+  if (el && value) {
+    if (typeof el.setValue === "function") {
+      el.setValue(value);
+    } else {
+      el.value = value;
+    }
+  }
   return el;
 }
 

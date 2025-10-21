@@ -159,8 +159,10 @@ export class AonInvoiceList extends AonElement {
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
 			getInvoices(filter).then(invoices => {
-				if(invoices.length == 0)
+				if(invoices.length == 0){
 					this.more = false;
+					aonInvoiceTable.empty();
+				}
 				addInvoices(invoices);
 				invoices.forEach((invoice, i) => {
 					this.paintAccountingRow(i, invoice);
@@ -191,6 +193,9 @@ export class AonInvoiceList extends AonElement {
 					if(this.isProcessing()) this.paintProcessingRow(i, invoice);
 					else this.paintAccountingRow(i, invoice);
 				});
+				if(invoices.length == 0){
+					aonInvoiceTable.empty();
+				}
 			});
 		}
 	}
@@ -655,9 +660,9 @@ export class AonInvoiceList extends AonElement {
 			if(this.getDur().isInvoiceManager()){
 				// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 				actions = [download, addComment, deleteInvoice, reject, rectify, duplicate];
-	  		} else {
-	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];
-	    	}
+			} else {
+				actions = [download, addComment, deleteInvoice, rectify, duplicate];
+			}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
 	    		actions = [download, deleteInvoice, reject]; //, record];

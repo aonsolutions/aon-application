@@ -169,7 +169,7 @@ export class AonNewLogin extends AonElement {
     );
     if (!LS.isDarkBetaTheme())
       magicLinkButton.addEventListener(
-        EVENT.MOUSEOVER,
+        EVENT.POINTEROVER,
         () => (signIn.className = "aonMagicButtonHover")
       );
     magicLinkButton.addEventListener(
@@ -270,7 +270,7 @@ export class AonNewLogin extends AonElement {
     backButton.addEventListener(EVENT.CLICK, () => this.createLoginPanel());
     if (!LS.isDarkBetaTheme())
       backButton.addEventListener(
-        EVENT.MOUSEOVER,
+        EVENT.POINTEROVER,
         () => (signIn.className = "aonMagicButtonHover")
       );
     backButton.addEventListener(

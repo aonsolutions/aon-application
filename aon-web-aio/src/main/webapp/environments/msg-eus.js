@@ -11,6 +11,7 @@ export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
 export const ACCOUNTING = 'Kontabilitatea';
 export const ACCOUNTING_PANEL = 'Kontabilitate Panela';
+export const ACCOUNTING_DESCRIPTION = 'Kont. inf.';
 export const ACTIVATE = 'Aktibatu';
 export const ACTIVE = 'Aktibo';
 export const ACTIVES = 'Aktibo';

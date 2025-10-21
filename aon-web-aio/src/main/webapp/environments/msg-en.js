@@ -11,6 +11,7 @@ export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
 export const ACCOUNTING = 'Accounting';
 export const ACCOUNTING_PANEL = 'Accounting Panel';
+export const ACCOUNTING_DESCRIPTION = 'Inf. of Acc.';
 export const ACTIVATE = 'Activate';
 export const ACTIVE = 'Active';
 export const ACTIVES = 'Active';

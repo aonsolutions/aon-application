@@ -328,10 +328,10 @@ export class AonDialogMenu extends AonElement {
 			this.appendChild(d);
 			d.clear();
 
-			li.addEventListener(EVENT.MOUSEOVER, () => {
+			li.addEventListener(EVENT.POINTEROVER, () => {
 				const rect = li.getBoundingClientRect();
 				d.setMenuOptions(item.options, rect.top, rect.right);
-				d.getContent().addEventListener(EVENT.MOUSELEAVE, (e) => {
+				d.getContent().addEventListener(EVENT.POINTERLEAVE, (e) => {
 					// out of submenu but inside option
 					if ( !this.isElementAt(e, li) ){
 						d.clear();
@@ -340,7 +340,7 @@ export class AonDialogMenu extends AonElement {
 				d.open();
 			});
 
-			li.addEventListener(EVENT.MOUSELEAVE, (e) => {
+			li.addEventListener(EVENT.POINTERLEAVE, (e) => {
 				// out of option but inside submenu 
 				if ( !this.isElementAt(e, d.getContent() ) ){
 					d.clear();

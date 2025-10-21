@@ -11,6 +11,7 @@ export const ACCOUNTED = 'Comptabilitzada';
 export const ACCOUNTEDS = 'Comptabilitzades';
 export const ACCOUNTING = 'Comptabilitat';
 export const ACCOUNTING_PANEL = 'Panell Comptabilitat';
+export const ACCOUNTING_DESCRIPTION = 'Inf. de Compt.';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Actives';

@@ -265,7 +265,18 @@ public class RegistryServlet extends AonApiHttpServlet {
 			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.BANKS.name().toLowerCase());
 			RegistryBankJSON.fromJSON(arr).stream().forEach( bank -> {
 				bank.setDomain(registryDomain);
+				RegistryBank storedBank = bank.getId() != null ? AON.getRegistryBank(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(bank.getId())) : new RegistryBank();
 				if(bank.getRegistry() == null) bank.setRegistry(registryId);
+				if(storedBank != null && storedBank.getRequisition() != null)
+					bank.setRequisition(storedBank.getRequisition());
+				if(storedBank.getBalance() != null)
+					bank.setBalance(null);
+				if(storedBank.getBalanceDate() != null)
+					bank.setBalanceDate(null);
+				if(storedBank.getAvailableBalance() != null)
+					bank.setAvailableBalance(null);
+				if(storedBank.getAgreement() != null)
+					bank.setAgreement(storedBank.getAgreement());
 				AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
 			});
 		}
