@@ -1,7 +1,8 @@
 @use '../variables' as v;
 
 aon-loader{
-  // Barra de progreso
+  //
+  // Barra de progreso ///////////////////////////////////////////////////////////////////////////////
   .aonProgress {
     display : none;
     height  : v.$px-3;
@@ -20,15 +21,37 @@ aon-loader{
       }
     }
   }
-
-
-  // spinner
+  //
+  // spinner ///////////////////////////////////////////////////////////////////////////////
   .aonLoader {
     position  : relative;
     height    : v.$px-20;
     width     : v.$px-20;
     display   : inline-block;
     animation : around v.$t-5-4 infinite;
+
+    &::after, &::before {
+      content       : "";
+      background    : transparent;
+      position      : absolute;
+      display       : inline-block;
+      width         : v.$pct-100;
+      height        : v.$pct-100;
+      border-width  : v.$px-2;
+      border-color  : #333 #333 transparent transparent;
+      border-style  : solid;
+      border-radius : v.$px-20;
+      box-sizing    : border-box;
+      top           : v.$px-0;
+      left          : v.$px-0;
+      animation     : around v.$t-07 ease-in-out infinite;
+    }
+
+    &::after {
+      animation  : around v.$t-07 ease-in-out v.$t-01 infinite;
+      background : transparent;
+    }
+
   }
 
   @keyframes around {
@@ -39,26 +62,73 @@ aon-loader{
       transform: rotate(360deg)
     }
   }
+//
+// Bounce  ///////////////////////////////////////////////////////////////////////////////
+  .aonLoading {
+    position: fixed;
+    z-index: 99999;
+    height: 3em;
+    overflow: show;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+    text-align: center;
 
-  .aonLoader::after, .aonLoader::before {
-    content       : "";
-    background    : transparent;
-    position      : absolute;
-    display       : inline-block;
-    width         : v.$pct-100;
-    height        : v.$pct-100;
-    border-width  : v.$px-2;
-    border-color  : #333 #333 transparent transparent;
-    border-style  : solid;
-    border-radius : v.$px-20;
-    box-sizing    : border-box;
-    top           : v.$px-0;
-    left          : v.$px-0;
-    animation     : around v.$t-07 ease-in-out infinite;
+    &:before {
+      content: "";
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+      background: -webkit-radial-gradient(rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+      background: -webkit-radial-gradient(rgba(250, 250, 250, 0.8), rgba(240, 240, 240, 0.8));
+    }
+
+    > div {
+      width: 18px;
+      height: 18px;
+      background-color: rgb(0, 36, 105);
+      border-radius: 100%;
+      display: inline-block;
+      -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+
+    .bounce1 {
+      -webkit-animation-delay: -0.32s;
+      animation-delay: -0.32s;
+    }
+
+    .bounce2 {
+      -webkit-animation-delay: -0.16s;
+      animation-delay: -0.16s;
+    }
   }
 
-  .aonLoader::after {
-    animation  : around v.$t-07 ease-in-out v.$t-01 infinite;
-    background : transparent;
-  }   
+  @-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+      -webkit-transform: scale(0);
+    }
+    40% {
+      -webkit-transform: scale(1.0);
+    }
+  }
+
+  @keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    }
+    40% {
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+  }
+
 }

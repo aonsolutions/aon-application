@@ -57,8 +57,6 @@ export class AonEventAdd extends AonElement {
     this.build();
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {}
-
   async build() {
 
 consoleLog("agui - 2", "green")
@@ -208,29 +206,34 @@ consoleLog("agui - 2", "green")
       this.formRead();
   }
 
-  async save() {
+  save() {
     this.applicationEl.startLoading();
-    try {
-      let formValues = this.getFormValues();
-      const { id, date:start_date } = await saveTimeControlDetail(formValues);
-
-      if (id) {
+    let formValues = this.getFormValues();
+    
+    saveTimeControlDetail(formValues).then((res) => {
+      if (!res || !res.id || !res.date) {
+        this.showToast({
+          message: MSG.ERROR,
+          type: CONSTANT.ERROR
+        });
+        return;
+      }
+      const { id, date: start_date } = res;
+      if(id){
         setValueName("id", id);
       }
- 
-      if(start_date){
-        this.START_DATE =  AonDateUtils.formatDateOrigin(new Date(start_date));
+      if (start_date) {
+        this.START_DATE = AonDateUtils.formatDateOrigin(new Date(start_date));
       }
-
       this.showToast({
         message: MSG.SAVED_DATA,
-        type: CONSTANT.SUCCESS,
-        delay: 3000,
+        type: CONSTANT.SUCCESS
       });
-    } catch (error) {
+    }).catch((error) => {
       this.showToast(error);
-    }
-    this.applicationEl.stopLoading();
+    }).finally(() => {
+      this.applicationEl.stopLoading();
+    });
   }
 
   delete() {
@@ -264,53 +267,49 @@ consoleLog("agui - 2", "green")
   async paintHistoric(){
     try {
       const historics = await this.getHistoric();
-      let d = this.getApplication().getDialog();
-      if(this.isMobile()){
-        d.type = "fullscreen";
-      }
+      let d  = this.getApplication().getDialog();
+
+consoleLog(" ** paintHistoric() ** ", "red")
+consoleLog(historics)
 
       if(d){
-          const div = this.createElement("div");
-          const countHistoric = historics.length;
+        const div = this.createElement("div");
+        const countHistoric = historics.length;
 
-          d.clear();
-          if (!this.isMobile()) {
-            d.width = '70%';
-          }
-          
-          d.setTitle(MSG.HISTORIC);
-          d.setContent(div);
-          d.addAcceptAction(() => {});
-          d.open();
+        d.clear();
+        d.setTitle(MSG.HISTORIC);
+        d.setContent(div);
+        d.addAcceptAction(() => {});
+        d.open();
 
-          if(countHistoric>0){
-            let table = new AonBasicTable();
-            div.appendChild(table);
+        if(countHistoric>0){
+          let table = new AonBasicTable();
+          div.appendChild(table);
 
-            if(historics[0] && historics[0].last_modification_date){
-              table.addRow();
-              table.addCell(this.lastModification(historics[0]), 5);
-            }
-
+          if(historics[0] && historics[0].last_modification_date){
             table.addRow();
-            table.addCell(this.creationHeader(MSG.USER));
-            table.addCell(this.creationHeader(MSG.LAST_MODIFICATION));
-            table.addCell(this.creationHeader("F. Registro anterior"));
-            table.addCell(this.creationHeader(MSG.LOCATION));
-            table.addCell(this.creationHeader(MSG.STATUS));
+            table.addCell(this.lastModification(historics[0]), 5);
+          }
 
-            for(let i = countHistoric>1 ? 1 : 0; i < countHistoric; i++){
-              const historic = historics[i];
-              if(historic.registration_date){
-                table.addRow();
-                table.addCell(this.creationTd(historic.creation_user));
-                table.addCell(this.creationTd(historic.creation_date));
-                table.addCell(this.creationTd(historic.registration_date));
-                table.addCell(this.creationTd(historic.location));
-                table.addCell(this.creationTd(historic.status));
-              }
+          table.addRow();
+          table.addCell(this.creationHeader(MSG.USER));
+          table.addCell(this.creationHeader(MSG.LAST_MODIFICATION));
+          table.addCell(this.creationHeader("F. Registro anterior"));
+          table.addCell(this.creationHeader(MSG.LOCATION));
+          table.addCell(this.creationHeader(MSG.STATUS));
+
+          for(let i = countHistoric>1 ? 1 : 0; i < countHistoric; i++){
+            const historic = historics[i];
+            if(historic.registration_date){
+              table.addRow();
+              table.addCell(this.creationTd(historic.creation_user));
+              table.addCell(this.creationTd(historic.creation_date));
+              table.addCell(this.creationTd(historic.registration_date));
+              table.addCell(this.creationTd(historic.location));
+              table.addCell(this.creationTd(historic.status));
             }
           }
+        }
       }
     } catch (error) {
       console.log(error);
@@ -345,6 +344,9 @@ consoleLog("agui - 2", "green")
 
   async getHistoric(){
     const resp = await getTimeControlHistoric({id:this.data.id});
+
+consoleLog(resp);
+
     return resp.map((tm,idx)=> {
       let obj = {};
       if(idx===0){
