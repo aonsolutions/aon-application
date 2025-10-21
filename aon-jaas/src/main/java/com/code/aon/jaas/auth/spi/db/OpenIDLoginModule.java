@@ -13,16 +13,17 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.pool.ConnectionInfo;
@@ -79,8 +80,13 @@ public class OpenIDLoginModule extends LoginModule {
 			Integer domainId = getDomainId(domain);
 			username = getUserName(domain, domainId, null, token, null);			
 		} else if(isEmail(username)) {
-			Integer domainId = getDomainId(domain);
-			String uuid = getAuth(domain, domainId, username);
+			String uuid = null;
+			Integer domainId = null;
+			try {
+				domainId = getDomainId(domain);
+				uuid = getAuth(domain, domainId, username);
+			} catch (Exception e) {
+			}
 			if(uuid == null || uuid.isBlank()) {
 				ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 				Integer index = 0;
@@ -92,8 +98,11 @@ public class OpenIDLoginModule extends LoginModule {
 					} catch (Exception e) { }
 					index++;
 				}
+				if ( uuid == null )
+					throw new AuthenticationLoginException( "aon_login_err_6", username);
 			}
-			username = getUserName(domain, domainId, null, token, uuid);
+			if ( domainId != null )
+				username = getUserName(domain, domainId, null, token, uuid);
 		}
 		return super.createIdentity(username);
 	}
@@ -121,13 +130,19 @@ public class OpenIDLoginModule extends LoginModule {
 				super.getUsersPassword(); // TODO: No comments, only remove it.
 				return createPasswordHash(user, password, "storeDigestCallback");
 			} else if(isEmail(info[0])) {
-				Integer domainId = getDomainId(domain);
-				String password = getAuthPassword(domain, domainId, info[0]);
+				Integer domainId = null;
+				String password = null;
+				String domainName = null;
+				try {
+					domainId = getDomainId(domain);
+					password=  getAuthPassword(domain, domainId, info[0]);
+				} catch (Exception e) {
+				}
 				if(password == null || password.isBlank()) {
 					ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 					Integer index = 0;
 					while(password == null && index < connectionInfo.getSchemas().size()) {
-						String domainName = connectionInfo.getSchemaFirstDomain(connectionInfo.getSchemas().get(index));
+						domainName = connectionInfo.getSchemaFirstDomain(connectionInfo.getSchemas().get(index));
 						try {
 							if(domainName != null && !domainName.isBlank())
 								password = getAuthPassword(domainName, 0, info[0]);
@@ -135,7 +150,13 @@ public class OpenIDLoginModule extends LoginModule {
 						index++;
 					}
 				}
-				super.getUsersPassword(); // TODO: No comments, only remove it.
+				if ( domainId != null ) {
+					super.getUsersPassword(); // TODO: No comments, only remove it.
+				} else if ( password != null){
+					String uuid = getAuth(domainName, 0, info[0]);
+					((AuthPrincipal) getIdentity()).setUuid(uuid);
+				}
+				
 				return password;
 			}
 		} catch (AonConnectionException e) {
@@ -146,6 +167,7 @@ public class OpenIDLoginModule extends LoginModule {
 
 		return super.getUsersPassword();
 	}
+
 
 	public static boolean isEmail(String email) {
 		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
@@ -159,6 +181,7 @@ public class OpenIDLoginModule extends LoginModule {
 	}
 	
 	// -------------------------------------
+
 
 	private String getUserName(String domainName, Integer domainId, String email, String token, String uuid) throws AonConnectionException, SQLException{
 		ResultSet rs = null;

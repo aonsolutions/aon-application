@@ -177,7 +177,7 @@ public class BookingDAO {
 		return booking;
 	}
 
-	private static void saveBookingApp(AONContext ctx, AonApp app, boolean active) {
+	public static void saveBookingApp(AONContext ctx, AonApp app, boolean active) {
 		DomainApp domainApp = SecurityDAO
 				.getDomainAppStream(ctx,
 						f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getAppProperty().eq(app.value())))
@@ -197,7 +197,6 @@ public class BookingDAO {
 			}
 		}
 	}
-	
 	
 	private static void saveChildInvofoxApp(AONContext ctx, AonApp app, boolean active) {
 		List<Domain> domainList = DomainDAO.getDomainList(ctx, f -> f.getParentProperty().eq(ctx.getDomainId()));

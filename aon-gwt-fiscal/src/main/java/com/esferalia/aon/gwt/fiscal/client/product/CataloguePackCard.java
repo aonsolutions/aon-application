@@ -1,13 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
-import java.util.List;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -19,58 +15,65 @@ public class CataloguePackCard extends HTMLPanel {
 	
 	private HTMLPanel content;
 	private HTMLPanel contentData;
+	private HTMLPanel buttonData;
 	
 	private Product packProduct;
 	private Tariff tariff;
 	private ItemTariff itemTariff;
-	private List<ItemComposition> itemCompositions;
 	
-	public CataloguePackCard(Product packProduct, Tariff tariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackCard(Product packProduct, Tariff tariff) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
-		getElement().getStyle().setProperty("min-width", "18rem");
+		getElement().getStyle().setProperty("flex", "1");
 		getElement().getStyle().setProperty("min-height", "18rem");
+		setHeight("100%");
 		
 		this.packProduct = packProduct;
 		this.tariff = tariff;
-		this.itemCompositions = itemCompositions;
 		
 		content = new HTMLPanel(EMPTY_STRING);
-		content.addStyleName(AON.CSS.aonItemFlex());
 		content.addStyleName(AON.CSS.aonFlexColumn());
 		content.getElement().getStyle().setProperty("justify-content", "space-between");
+		content.setHeight("100%");
 		
 		contentData = new HTMLPanel(EMPTY_STRING);
-		contentData.addStyleName(AON.CSS.aonItemFlex());
 		contentData.addStyleName(AON.CSS.aonFlexColumn());
 		
+		buttonData = new HTMLPanel(EMPTY_STRING);
+		buttonData.addStyleName(AON.CSS.aonFlexColumn());
+		buttonData.getElement().getStyle().setProperty("align-items", "center");
+		
 		content.add(contentData);
+		content.add(buttonData);
 		
 		createTitle();
-		createPrice();
 		
-		if(!itemCompositions.isEmpty())
-			createPackContent();
+//		if(!itemCompositions.isEmpty())
+//			createPackCompositionContent();
+		
+		createPackContent();
+		
+		createPrice();
 		
 		createButton(packProduct);
 		
 		add(content);
 	}
 	
-	public CataloguePackCard(Product packProduct, ItemTariff itemTariff, List<ItemComposition> itemCompositions) {
+	public CataloguePackCard(Product packProduct, ItemTariff itemTariff) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
-		getElement().getStyle().setProperty("min-width", "18rem");
+		getElement().getStyle().setProperty("flex", "1");
 		getElement().getStyle().setProperty("min-height", "18rem");
+		setHeight("100%");
 		
 		this.packProduct = packProduct;
 		this.itemTariff = itemTariff;
-		this.itemCompositions = itemCompositions;
 		
 		content = new HTMLPanel(EMPTY_STRING);
-		content.addStyleName(AON.CSS.aonItemFlex());
 		content.addStyleName(AON.CSS.aonFlexColumn());
 		content.getElement().getStyle().setProperty("justify-content", "space-between");
+		content.setHeight("100%");
 		
 		contentData = new HTMLPanel(EMPTY_STRING);
 		contentData.addStyleName(AON.CSS.aonItemFlex());
@@ -79,10 +82,13 @@ public class CataloguePackCard extends HTMLPanel {
 		content.add(contentData);
 		
 		createTitle();
-		createPrice();
 		
-		if(!itemCompositions.isEmpty())
-			createPackContent();
+//		if(!itemCompositions.isEmpty())
+//			createPackCompositionContent();
+		
+		createPackContent();
+		
+		createPrice();
 		
 		createButton(packProduct);
 		
@@ -94,9 +100,10 @@ public class CataloguePackCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
-		titlePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
+		titlePanel.getElement().getStyle().setProperty("margin", "1rem 0");
+		titlePanel.getElement().getStyle().setProperty("width", "100%");
 		
-		HTMLPanel titleLabel = new HTMLPanel(packProduct.getName());
+		HTMLPanel titleLabel = new HTMLPanel(packProduct.getCode());
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
 		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
 		titleLabel.getElement().getStyle().setProperty("color", "#5f6368");
@@ -107,66 +114,58 @@ public class CataloguePackCard extends HTMLPanel {
 	
 	private void createPrice() {
 		HTMLPanel pricePanel = new HTMLPanel(EMPTY_STRING);
-		pricePanel.addStyleName(AON.CSS.aonItemFlex());
 		pricePanel.addStyleName(AON.CSS.aonFlexBetween());
-		pricePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
 		pricePanel.getElement().getStyle().setProperty("flexDirection", "column-reverse");
 		
-		Label price = new Label(formaDouble(packProduct.getItem().getPrice()) + " \u20ac");
+		String priceValue = formaDouble(packProduct.getItem().getPrice());
+		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+		price.getElement().getStyle().setProperty("color", "black");
 		
 		if(null != tariff) {
 			if(tariff.getDiscount() != 0.00) {
 				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount());
 				Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : formaDouble(tariffPrice) + " \u20ac");
-				newPrice.getElement().getStyle().setProperty("font-size", "2rem");
+				newPrice.getElement().getStyle().setProperty("font-size", "1.2rem");
 				newPrice.getElement().getStyle().setColor("#0ea90e");
 				pricePanel.add(newPrice);
 				
-				price.getElement().getStyle().setProperty("font-size", "1.3rem");
+				price.getElement().getStyle().setProperty("font-size", "1rem");
 				price.getElement().getStyle().setColor("#848484");
 				price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
 			} else {
-				price.getElement().getStyle().setProperty("font-size", "2rem");
+				price.getElement().getStyle().setProperty("font-size", "1rem");
 			}
 		} else {
 			if(itemTariff.getProfitPercent() != 0.00) {
 				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), itemTariff.getProfitPercent());
 				Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : formaDouble(tariffPrice) + " \u20ac");
-				newPrice.getElement().getStyle().setProperty("font-size", "2rem");
+				newPrice.getElement().getStyle().setProperty("font-size", "1.2rem");
 				newPrice.getElement().getStyle().setColor("#0ea90e");
 				pricePanel.add(newPrice);
 				
-				price.getElement().getStyle().setProperty("font-size", "1.3rem");
+				price.getElement().getStyle().setProperty("font-size", "1rem");
 				price.getElement().getStyle().setColor("#848484");
 				price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
 			} else {
-				price.getElement().getStyle().setProperty("font-size", "2rem");
+				price.getElement().getStyle().setProperty("font-size", "1rem");
 			}
 		}
 		
 		
 		pricePanel.add(price);
 		
-		contentData.add(pricePanel);
+		buttonData.add(pricePanel);
 	}
 
 	private void createPackContent() {
 		HTMLPanel packContent = new HTMLPanel(EMPTY_STRING);
-		packContent.addStyleName(AON.CSS.aonItemFlex());
 		packContent.addStyleName(AON.CSS.aonFlexColumn());
 		packContent.setWidth("100%");
-		packContent.getElement().getStyle().setProperty("margin-bottom", "2rem");
 		packContent.getElement().getStyle().setProperty("align-items", "start");
 		
-		Label include = new Label("Pack incluye");
-		include.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		HTMLPanel include = new HTMLPanel(packProduct.getItem().getDescription());
+		include.getElement().getStyle().setProperty("padding", ".5rem");
 		packContent.add(include);
-		
-		itemCompositions.forEach(itemComposition -> {
-			Label itemCompositionLabel = new Label(itemComposition.getComposition().getProduct().getName());
-			itemCompositionLabel.getElement().getStyle().setProperty("padding-left", "1rem");
-			packContent.add(itemCompositionLabel);
-		});
 		
 		contentData.add(packContent);
 		
@@ -177,14 +176,14 @@ public class CataloguePackCard extends HTMLPanel {
 		bookBtn.setText("Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
-		bookBtn.getElement().getStyle().setProperty("background-color", "#3d76d6");
-		bookBtn.getElement().getStyle().setProperty("width", "90%");
-		bookBtn.getElement().getStyle().setProperty("height", "3rem");
-		bookBtn.getElement().getStyle().setProperty("border-radius", "2rem");
 		bookBtn.getElement().getStyle().setProperty("color", "white");
+		bookBtn.getElement().getStyle().setProperty("background-color", "#ff8f00");
+		bookBtn.getElement().getStyle().setProperty("width", "15rem");
+		bookBtn.getElement().getStyle().setProperty("height", "2.5rem");
+		bookBtn.getElement().getStyle().setProperty("border-radius", "5px");
 		bookBtn.getElement().getStyle().setProperty("border", "none");
 		
-		content.add(bookBtn);
+		buttonData.add(bookBtn);
 	}
 	
 	private double getTariffPrice(double price, double discount) {

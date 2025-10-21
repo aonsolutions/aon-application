@@ -17,6 +17,8 @@ public class ErrorDescription {
 		T visitWarning(WarningDescription error);
 
 		T visitSuccess(SuccessDescription error);
+		
+		default T visitL13Pending(L13PendingDescription error) { return visitError(error); }
 	}
 
 	private String cause;
@@ -75,6 +77,14 @@ public class ErrorDescription {
 		}
 	}
 	
+	public static class L13PendingDescription extends ErrorDescription {
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitL13Pending(this);
+		}
+		
+		
+	}
 	
 	//@formatter:off
 	@SuppressWarnings("serial")
@@ -87,7 +97,7 @@ public class ErrorDescription {
 	
 	// ------------------------------------------------------------------------
 	// 				ERRORES QUE IMPIDEN EL TRATAMIENTO DE LA LIQUIDACIóN
-	// 				(En todos estos supuestos la liquidación no se trata) 
+	// 				(En todos estos supuestos la liquidaci\u00F3n no se trata) 
 	//
 		put(/*R*/"2470", new ErrorDescription()
 					.setMessage("C.C.C. inexistente")
@@ -95,7 +105,18 @@ public class ErrorDescription {
 					+"existe en Afiliaci\u00F3n")
 					.setSolution("Comprobar los datos del CCC"));
 		
-	
+		put(/*R*/"9544", new L13PendingDescription()
+				.setMessage("Existe obligaci\u00F3n de presentar en este periodo Liquidaci\u00F3n L13")
+				.setCause("Se produce cuando se act\u00FAa sobre la "
+						+ "liquidaci\u00F3n L00 y se detecta la obligaci\u00F3n "
+						+ "de presentar una liquidaci\u00F3n L13 en "
+						+ "plazo del mes indicado y no se ha "
+						+ "presentado")
+				.setSolution("Deber\u00E1 presentar en ese mes la liquidaci\u00F3n L13 "
+						+ "correspondiente. "
+						+ "Nota: Si la liquidaci\u00F3n L13 se ha presentado en el "
+						+ "mismo fichero de bases que la L00, el Sistema no "
+						+ "detecta que est\u00E1 presentada y genera este aviso"));
 	// ------------------------------------------------------------------------
 	// 				RESULTADO DEL TRATAMIENTO DE LA LIQUIDACIóN
 	// (La liquidación se ha tratado, el resultado puede ser: correcta, con errores, 
@@ -143,6 +164,7 @@ public class ErrorDescription {
 				+"parcial) "
 				)
 				.setSolution("La liquidaci\u00F3n ha quedado confirmada"));
+		
 	
 		put(/*R*/"9566", new SuccessDescription() 
 				.setMessage("Documento ya confirmado")

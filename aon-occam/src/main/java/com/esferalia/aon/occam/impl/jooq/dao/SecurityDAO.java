@@ -303,6 +303,16 @@ public class SecurityDAO {
 			return updateDomainApp(ctx, domainApp);
 		}
 	}
+	
+	public static DomainApp deleteDomainApp(AONContext ctx, DomainApp domainApp) {
+		Integer id = ctx.getDslContext().delete(DOMAIN_APP)
+				.where(DOMAIN_APP.ID.eq(domainApp.getId()))
+				.and(DOMAIN_APP.DOMAIN.eq(ctx.getDomainId()))
+				.execute();
+		ctx.log().info("\tDELETE DOMAIN APP id: " + id);
+		return domainApp.setId(id);
+	}
+	
 	private static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
 		Integer id = ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, domainApp.getDomain())
@@ -620,14 +630,15 @@ public class SecurityDAO {
 	@Deprecated
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
-		Record7<Integer, Integer, String, String, Byte, Integer, byte[]> record = ctx.getDslContext()
+		Record8<Integer, Integer, String, String, Byte, Integer, byte[], Integer> record = ctx.getDslContext()
 				.select(USER.ID, 
 						USER.DOMAIN, 
 						USER.NAME, 
 						USER.LOGIN,
 						USER.ACTIVE,
 						USER.REGISTRY,
-						USER.AUTH)
+						USER.AUTH,
+						USER.ENTERPRISE)
 				.from(USER)
 				.where(USER.DOMAIN.equal(ctx.getDomainId()))
 				.and(USER.LOGIN.equal(login))
@@ -641,7 +652,8 @@ public class SecurityDAO {
 								USER.LOGIN,
 								USER.ACTIVE,
 								USER.REGISTRY,
-								USER.AUTH)
+								USER.AUTH,
+								USER.ENTERPRISE)
 						.from(DOMAIN)
 						.join(PARENT_DOMAIN).on(DOMAIN.PARENT.equal(PARENT_DOMAIN.ID))
 						.join(USER).on(USER.DOMAIN.equal(PARENT_DOMAIN.ID))
@@ -655,6 +667,7 @@ public class SecurityDAO {
 			user.setDomain(record.getValue(USER.DOMAIN));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
+			user.setEnterprise(record.getValue(USER.ENTERPRISE));
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));

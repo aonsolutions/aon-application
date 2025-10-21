@@ -444,8 +444,8 @@ export class AonInvoicePanel extends AonElement {
 
 		OPTION.getOptions(this.isBeta()).forEach((option) => {
 			option.app = INVOICE;
-			if ((this.getDur().isTrial())) {
-				const itemsToRemove = [OPTION.RAWDOC_PROCESSING, OPTION.RAWDOC_REJECT];
+			if (this.getDur().isTrial()) {
+				const itemsToRemove = [OPTION.RAWDOC_PROCESSING, OPTION.RAWDOC_REJECT, OPTION.CHARGES_PAYMENTS, OPTION.FISCAL_DRAFT, OPTION.OFFERS];
 				option.options = option.options.filter(option => !itemsToRemove.includes(option));
 			}
 			this.getApplication().addSidenavOptions3(option);
