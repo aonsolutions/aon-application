@@ -167,8 +167,10 @@ export class AonMap extends AonElement {
     });
 
     if (data){
-        this.DOC.querySelector(".leaflet-control-geocoder-form > input").value = data;
-        this.dispatchEvent(new CustomEvent(EVENT.GEOCODE, { detail: {lat, lng, name:data} }));
+      this.DOC.querySelector(".leaflet-control-geocoder-form > input").value = data;
+      this.dispatchEvent(new CustomEvent(EVENT.GEOCODE, { detail: {lat, lng, name:data} }));
+    } else {
+      consoleLog('No se obtuvo data para el evento GEOCODE');
     }
 
     this.geocodeLoading(false);

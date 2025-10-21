@@ -67,14 +67,14 @@ export class AonInfo extends AonElement {
 		div.classList.add("tooltip");
 		div.innerHTML = this.TEXT;
 		this.appendChild(div);
-		this.addEventListener(EVENT.MOUSEOVER, (event) => {
+		this.addEventListener(EVENT.POINTEROVER, (event) => {
 			event.stopPropagation();
 			if(!(this.isMobile() || this.isMobileResolution())){				
 				div.style.opacity = 1;
 				div.style.visibility = "visible";
 			}
 		});
-		this.addEventListener(EVENT.MOUSELEAVE, (event) => {
+		this.addEventListener(EVENT.POINTERLEAVE, (event) => {
 			event.stopPropagation();
 			if(!(this.isMobile() || this.isMobileResolution())){				
 				div.style.opacity = 0;

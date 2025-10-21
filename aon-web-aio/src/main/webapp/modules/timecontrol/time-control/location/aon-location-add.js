@@ -90,26 +90,21 @@ export class AonLocationAdd extends AonElement {
     form.appendChild(div);
 
     let div2 = this.createElement(TAG.DIV);
-    // div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = CreateComponent.createAonCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
-
     let divG = this.createElement(TAG.DIV);
-    // divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
 
     CreateComponent.createAonInput({
       attributes:{
         name:"description",
-        id:"description" ,
-        title:MSG.NAME,
-        // type:"text"
+        id:"description",
+        title:MSG.NAME
       }
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    // divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
 
     // CreateComponent.createAonInput({
@@ -118,7 +113,7 @@ export class AonLocationAdd extends AonElement {
         name:"radio",
         id:"radio" ,
         title:MSG.RADIO,
-        // type:"number"
+        type:"number"
       }
     }, divG);
 
@@ -129,18 +124,16 @@ export class AonLocationAdd extends AonElement {
      CreateComponent.createAonInput({
       attributes:{
         name:"direction",
-        id:"direction" ,
-        type:"text",
+        id:"direction",
         title:"Dirección",
         disabled:true
       }
     }, divG);
     
-  
     CreateComponent.createAonInput({
       attributes:{
         name:"latitude",
-        id:"latitude" ,
+        id:"latitude",
         type:"text",
         visible:"false",
       }
@@ -149,7 +142,7 @@ export class AonLocationAdd extends AonElement {
     CreateComponent.createAonInput({
       attributes:{
         name:"longitude",
-        id:"longitude" ,
+        id:"longitude",
         type:"text",
         visible:"false",
       }
@@ -165,7 +158,6 @@ export class AonLocationAdd extends AonElement {
     }, aonCard);
 
     const divMap = this.createElement(TAG.DIV);
-    // divMap.classList.add(CSS.AON_COL_XS_12);
     divMap.id = "divMap";
     div.appendChild(divMap);
   }
@@ -186,8 +178,9 @@ export class AonLocationAdd extends AonElement {
     });
 
     aonMap.addEventListener(EVENT.GEOCODE, ({detail})=>{
-      if(detail && detail.name)
-        this.getElement("direction").value = detail.name
+      if(detail && detail.name){
+        this.getElement("direction").setValue(detail.name);
+      }
     });
 
     const cardContentMap = CreateComponent.createAonCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
@@ -210,9 +203,10 @@ export class AonLocationAdd extends AonElement {
     }
   }
 
-  async save() {
-    const data = this.getFormValues();
+  async save(){
+    const data  = this.getFormValues();
     const count = Object.keys(data).length;
+    // Esto se tendría que mejorar... no comprueba si tiene valores rellenos correctamente
     if (count > 3) {
       this.applicationEl.startLoading();
       try {
@@ -226,6 +220,8 @@ export class AonLocationAdd extends AonElement {
         this.showToast(error);
       }
       this.applicationEl.stopLoading();
+    } else {
+      this.showToast({ message: MSG.INCLUDE_NAME, type: CONSTANT.ERROR });
     }
   }
 

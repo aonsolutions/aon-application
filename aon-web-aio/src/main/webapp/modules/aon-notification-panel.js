@@ -185,11 +185,11 @@ export class AonNotificationPanel extends AonElement {
 
         divPrincipal.appendChild(divGeneral);
 
-        divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
+        divPrincipal.addEventListener(EVENT.POINTEROVER, () => {
             iconVisibility.style.visibility = "visible";
         });
 
-        divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
+        divPrincipal.addEventListener(EVENT.POINTERLEAVE, () => {
             iconVisibility.style.visibility = "hidden";
         });
 

@@ -713,12 +713,12 @@ export class AonApplication extends AonElement {
           ai.title = option.id;
           ai.color = option.icon_color;
         }
-        li.addEventListener(EVENT.MOUSEOVER, () => {
+        li.addEventListener(EVENT.POINTEROVER, () => {
           if(!LS.isNewTheme()) 
             this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
 
-        li.addEventListener(EVENT.MOUSELEAVE, () => {
+        li.addEventListener(EVENT.POINTERLEAVE, () => {
           if(!LS.isNewTheme()) 
             this.getElement(id + "AonIcon").color = "#5f6368";
         });
@@ -749,8 +749,8 @@ export class AonApplication extends AonElement {
         let actionDiv = this.createElement(TAG.SPAN);
         // actionDiv.style.display = "none";
         li.appendChild(actionDiv);
-        // li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
-        // li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
+        // li.addEventListener(EVENT.POINTEROVER, () =>  actionDiv.style.display = "contents");
+        // li.addEventListener(EVENT.POINTERLEAVE, () =>  actionDiv.style.display = "none");
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
@@ -1251,15 +1251,15 @@ export class AonApplication extends AonElement {
     if (bool) {
       this.content.addEventListener(EVENT.DRAGOVER, this.dragoverFn);
       this.content.addEventListener(EVENT.DRAGENTER, this.dragenterFn);
-      this.content.addEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
-      this.content.addEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      this.content.addEventListener(EVENT.POINTERLEAVE, this.mouseleaveFn);
+      this.content.addEventListener(EVENT.POINTEROVER, this.mouseoverFn);
       document.addEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
       this.content.addEventListener(EVENT.DROP, this.dropFn);
     } else {
       this.content.removeEventListener(EVENT.DRAGOVER, this.dragoverFn);
       this.content.removeEventListener(EVENT.DRAGENTER, this.dragenterFn);
-      this.content.removeEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
-      this.content.removeEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      this.content.removeEventListener(EVENT.POINTERLEAVE, this.mouseleaveFn);
+      this.content.removeEventListener(EVENT.POINTEROVER, this.mouseoverFn);
       document.removeEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
       this.content.removeEventListener(EVENT.DROP, this.dropFn);
     }

@@ -318,14 +318,14 @@ export class AonNewSelect extends AonNewInput {
       this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
 		});
 	
-	li.addEventListener(EVENT.MOUSEOVER, () => {
-		const options = this.getElement(this.OPTIONS);
-		let items = options.querySelectorAll('li');
-      for(let i = 0; i < items.length; i++){
-        if(items[i].classList.contains('hoverInputSelectKeyboard')){
-          items[i].classList.remove("hoverInputSelectKeyboard");
+    li.addEventListener(EVENT.POINTEROVER, () => {
+      const options = this.getElement(this.OPTIONS);
+      let items = options.querySelectorAll('li');
+        for(let i = 0; i < items.length; i++){
+          if(items[i].classList.contains('hoverInputSelectKeyboard')){
+            items[i].classList.remove("hoverInputSelectKeyboard");
+          }
         }
-      }
     });
 
     return li;

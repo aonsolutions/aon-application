@@ -179,8 +179,8 @@ export class AonUpload extends AonElement {
 
         element.addEventListener(EVENT.DRAGOVER, dragoverFn);
         element.addEventListener(EVENT.DRAGENTER, dragenterFn);
-        // element.addEventListener(EVENT.MOUSELEAVE, mouseleaveFn);
-        // element.addEventListener(EVENT.MOUSEOVER, mouseoverFn);
+        // element.addEventListener(EVENT.POINTERLEAVE, mouseleaveFn);
+        // element.addEventListener(EVENT.POINTEROVER, mouseoverFn);
         document.addEventListener(EVENT.DRAGLEAVE, dragleaveFn);
         element.addEventListener(EVENT.DROP, dropFn);
     }

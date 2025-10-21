@@ -313,7 +313,7 @@ export class AonTextArea extends AonElement {
 	
 	addToolbarLeft(element, fn){
 		if(fn) {
-			element.addEventListener(EVENT.MOUSEDOWN, (ev)=>{
+			element.addEventListener(EVENT.POINTERDOWN, (ev)=>{
 				ev.preventDefault();
 				ev.stopPropagation();
 			});
@@ -330,7 +330,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	addToolbarRight(element, fn){
-		element.addEventListener(EVENT.MOUSEDOWN, (ev)=>{
+		element.addEventListener(EVENT.POINTERDOWN, (ev)=>{
 			ev.preventDefault();
 			ev.stopPropagation();
 		});

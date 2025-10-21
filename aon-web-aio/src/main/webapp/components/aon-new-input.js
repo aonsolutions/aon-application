@@ -299,10 +299,10 @@ export class AonNewInput extends AonElement {
 		aonIconButton.id = this.ICON_BUTTON;
 		aonIconButton.icon = icon;
 		aonIconButton.noHover = "true";
-		aonIconButton.addEventListener(EVENT.MOUSEOVER, () =>
+		aonIconButton.addEventListener(EVENT.POINTEROVER, () =>
 			aonIconButton.icon = MATERIAL_ICONS.CLOSE);
 
-		aonIconButton.addEventListener(EVENT.MOUSELEAVE, () =>
+		aonIconButton.addEventListener(EVENT.POINTERLEAVE, () =>
 			aonIconButton.icon = icon);
 
 		aonIconButton.addEventListener(EVENT.CLICK, removeFn);

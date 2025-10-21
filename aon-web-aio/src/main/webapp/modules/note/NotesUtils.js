@@ -194,8 +194,8 @@ const addDate = (note, dialog, textAreaId)=>{
         });
         div.appendChild(iconX);
 
-        div.addEventListener(EVENT.MOUSELEAVE,()=> iconX.style.display = "none" )
-        div.addEventListener(EVENT.MOUSEOVER,()=> iconX.style.display = "contents" );
+        div.addEventListener(EVENT.POINTERLEAVE,()=> iconX.style.display = "none" )
+        div.addEventListener(EVENT.POINTEROVER,()=> iconX.style.display = "contents" );
     }
 };
 

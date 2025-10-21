@@ -74,7 +74,7 @@ export class AonLogin extends AonElement {
     if(this.isMobile()) {
       spanLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
     } else {
-      spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
+      spanLanguage.addEventListener(EVENT.POINTEROVER, () => this.languageDialog());
     }
 
     divLanguage.appendChild(spanLanguage);
@@ -208,7 +208,7 @@ export class AonLogin extends AonElement {
       this.appendChild(d);
     }  
     if(!this.isMobile())
-      d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
+      d.getContent().addEventListener(EVENT.POINTERLEAVE, () => d.close());
 
     let options = [{
       name: MSG.SPANISH,

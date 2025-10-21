@@ -98,11 +98,11 @@ export class AonViewer extends AonElement {
 		div.style.display = 'none';
 		this.appendChild(div);
 
-		this.addEventListener(EVENT.MOUSEOVER, () => {
+		this.addEventListener(EVENT.POINTEROVER, () => {
 			div.style.visibility = 'visible';
 		});
 
-		this.addEventListener(EVENT.MOUSELEAVE, () => {
+		this.addEventListener(EVENT.POINTERLEAVE, () => {
 			div.style.visibility = 'hidden';
 		});
 

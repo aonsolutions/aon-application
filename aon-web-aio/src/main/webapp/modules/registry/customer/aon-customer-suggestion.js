@@ -278,7 +278,7 @@ export class AonCustomerSuggestion extends AonElement {
     let options = this.createElement(TAG.DIV);
       options.id = this.OPTIONS;
       options.classList.add(CSS.AON_INPUT_LIST_OPTIONS, 'suggestion-list');
-      options.addEventListener(EVENT.MOUSEOVER, (e) => this.onMouseOver(e, name.value));
+      options.addEventListener(EVENT.POINTEROVER, (e) => this.onMouseOver(e, name.value));
       this.appendChild(options);
   }
 

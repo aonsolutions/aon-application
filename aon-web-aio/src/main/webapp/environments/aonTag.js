@@ -236,7 +236,13 @@ export const AON_DELIVERY = 'aon-delivery';
 export const AON_MENU = 'aon-menu';
 export const AON_MOBILE_MENU = 'aon-mobile-menu';
 
-export const AON_TAGS = [AON_INPUT, AON_DATE, AON_NEW_DATE, AON_SELECT, AON_NEW_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
+export const AON_TAGS = [
+  AON_INPUT, AON_NEW_INPUT,
+  AON_DATE, AON_NEW_DATE, 
+  AON_SELECT, AON_NEW_SELECT, 
+  AON_NUMBER, AON_NEW_NUMBER,
+  AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX
+].join(", ");
 
 export const AON_QUANTITY = 'aon-quantity';
 

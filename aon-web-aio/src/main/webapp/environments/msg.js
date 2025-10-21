@@ -379,6 +379,7 @@ export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
+export const INCLUDE_NAME = 'Incluir Dato Nombre';
 export const INCLUDE_COMPANY_DATA = MSG.INCLUDE_COMPANY_DATA;
 export const INCLUDE_LOGO = MSG.INCLUDE_LOGO;
 export const INCLUDE_REGISTRATION_DATA = 'Incluir Datos Registrales';

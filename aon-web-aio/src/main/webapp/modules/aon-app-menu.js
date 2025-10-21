@@ -154,11 +154,11 @@ export class AonAppMenu extends AonElement {
               : "aonAppMenuSidenavList aonOpacity sidenavHover";  
 
 //          if(LS.isNewTheme() ) {
-//            li.addEventListener(EVENT.MOUSEOVER, () => {
+//            li.addEventListener(EVENT.POINTEROVER, () => {
 //              li.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb';
 //            });
 //
-//            li.addEventListener(EVENT.MOUSELEAVE, () => {
+//            li.addEventListener(EVENT.POINTERLEAVE, () => {
 //              li.style.backgroundColor = 'transparent';
 //            });
 //          }
@@ -218,11 +218,11 @@ export class AonAppMenu extends AonElement {
 //            ai.size  = "18px";
             li.appendChild(ai);
             ai.color = this.getApp().color;
-            li.addEventListener(EVENT.MOUSEOVER, () => {
+            li.addEventListener(EVENT.POINTEROVER, () => {
               this.getElement(id + "AonIcon").color =  this.getApp().color || option.aonIcon.color;
             });
     
-            li.addEventListener(EVENT.MOUSELEAVE, () => {
+            li.addEventListener(EVENT.POINTERLEAVE, () => {
               this.getElement(id + "AonIcon").color =  this.getApp().color || "#5f6368";
             });
           } else if (option.img) {
@@ -240,12 +240,12 @@ export class AonAppMenu extends AonElement {
 //          }
           li.appendChild(span);
     
-          // li.addEventListener(EVENT.MOUSEOVER, () => {
+          // li.addEventListener(EVENT.POINTEROVER, () => {
           //   if (!this.selected || this.selected !== id)
           //     li.style.backgroundColor = "#f1f1f1";
           // });
     
-          // li.addEventListener(EVENT.MOUSELEAVE, () => {
+          // li.addEventListener(EVENT.POINTERLEAVE, () => {
           //   if (!this.selected || this.selected !== id)
           //     li.style.backgroundColor = "white";
           // });
@@ -254,9 +254,9 @@ export class AonAppMenu extends AonElement {
             let actionDiv = this.createElement(TAG.SPAN);
             actionDiv.style.display = "none";
             li.appendChild(actionDiv);
-            li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
+            li.addEventListener(EVENT.POINTEROVER, () =>  actionDiv.style.display = "contents");
     
-            li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
+            li.addEventListener(EVENT.POINTERLEAVE, () =>  actionDiv.style.display = "none");
     
             option.actions.forEach((item, i) => {
               let button = this.createElement(TAG.SPAN);
