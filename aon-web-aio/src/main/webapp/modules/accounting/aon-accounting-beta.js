@@ -81,7 +81,7 @@ export class AonAccountingBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				name: "Panel Contabilidad",
+				name: MSG.ACCOUNTING_PANEL,
 				fn: () => this.buildAccountingMenu(),
 			});
 

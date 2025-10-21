@@ -177,11 +177,11 @@ export class AonMenuButton extends AonElement {
       if(this.getDur().isInvoice()){
         const invoiceSubOptions = [
           {
-            name: MSG.ISSUEDS,
+            name: MSG.INCOMES,
             fn: () => this.newInvoice('emitida')
           },
           {
-            name: MSG.RECEIVEDS,
+            name: MSG.EXPENSES,
             fn: () => this.newInvoice('recibida')
           },
           {
@@ -328,7 +328,7 @@ export class AonMenuButton extends AonElement {
     //funcion de aon-menu
     newInvoice(invoice) {
       let invoicePanel = new AonInvoicePanel();
-	  invoicePanel.toolbar = false;
+	    invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
       this.rootPanel(invoicePanel);
@@ -339,7 +339,7 @@ export class AonMenuButton extends AonElement {
 
     newIncome() {
       let invoicePanel = new AonInvoicePanel();
-	  invoicePanel.toolbar = false;
+	    invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonIncome(new Income())) );
       this.rootPanel(invoicePanel);
@@ -350,7 +350,7 @@ export class AonMenuButton extends AonElement {
 
     newExpense() {
       let invoicePanel = new AonInvoicePanel();
-	  invoicePanel.toolbar = false;
+	    invoicePanel.toolbar = false;
       invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
       invoicePanel.addEventListener(EVENT.BUILD, () => this.getApplication().setContent(new AonExpense(new Expense())) );
       this.rootPanel(invoicePanel);

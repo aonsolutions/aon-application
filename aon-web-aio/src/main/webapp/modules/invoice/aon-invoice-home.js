@@ -154,7 +154,7 @@ export class AonInvoiceHome extends AonElement {
 		let newIssuedInvoice = new AonDashboardButton();
 		newIssuedInvoice.setId(this.NEW_ISSUED_INVOICE);
 		newIssuedInvoice.setIcon("file-up");
-		newIssuedInvoice.setMessage(MSG.CREATE_INVOICE_ISSUED);
+		newIssuedInvoice.setMessage(MSG.CREATE_INVOICE_INCOME);
 		newIssuedInvoice.addEventListener(EVENT.CLICK, () => {
 			this.aonInvoice('emitida');
 		});
@@ -163,7 +163,7 @@ export class AonInvoiceHome extends AonElement {
 		let newReceivedInvoice = new AonDashboardButton();
 		newReceivedInvoice.setId(this.NEW_RECEIVED_INVOICE);
 		newReceivedInvoice.setIcon("file-down");
-		newReceivedInvoice.setMessage(MSG.CREATE_INVOICE_RECEIVED);
+		newReceivedInvoice.setMessage(MSG.CREATE_INVOICE_EXPENSE);
 		newReceivedInvoice.addEventListener(EVENT.CLICK, () => {
 			this.aonInvoice('recibida');
 		});

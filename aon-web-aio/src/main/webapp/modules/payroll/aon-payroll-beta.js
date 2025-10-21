@@ -82,7 +82,7 @@ export class AonPayrollBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				name: "Panel Contabilidad",
+				name: MSG.PAYROLL_PANEL,
 				fn: () => this.buildPayrollMenu(),
 			});
 

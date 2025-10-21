@@ -149,7 +149,7 @@ import { Expense } from './Expense.js';
 
   export const INVOICE_ISSUED_BETA = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
-    name: MSG.ISSUED_INVOICES,
+    name: MSG.INCOMES,
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
@@ -171,7 +171,7 @@ import { Expense } from './Expense.js';
 
   export const INVOICE_RECEIVED_BETA = {
     id: CONSTANT.INVOICE_RECEIVED.initCap(),
-    name: MSG.RECEIVED_INVOICES,
+    name: MSG.EXPENSES,
     fn: () => invoiceList({
       status: "accounting",
       type: "purchase,expenses",
@@ -302,22 +302,22 @@ import { Expense } from './Expense.js';
 
   export const CREATION_INVOICE_ISSUED = {
     id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
-    title: MSG.CREATE_INVOICE_ISSUED,
-    name: MSG.CREATE_INVOICE_ISSUED,
+    title: MSG.INVOICE_INCOME,
+    name: MSG.INVOICE_INCOME,
     fn: () => newInvoice('emitida')
   };
 
   export const CREATE_INCOME = {
     id: CONSTANT.CREATE_INCOME.initCap(),
-    title: MSG.CREATE_INCOME,
-    name: MSG.CREATE_INCOME,
+    title: MSG.OTHER_INCOME,
+    name: MSG.OTHER_INCOME,
     fn: () => newIncome()
   };
 
   export const INCOME_CREATION = {
     id: CONSTANT.CREATION.initCap(),
-    title: MSG.CREATION,
-    name : MSG.CREATION,
+    title: MSG.CREATE,
+    name : MSG.CREATE,
     opened: true,
     options: [CREATION_INVOICE_ISSUED, CREATE_INCOME]
   };
@@ -370,29 +370,29 @@ import { Expense } from './Expense.js';
 
   export const CREATION_INVOICE_RECEIVED = {
     id: CONSTANT.CREATE_INVOICE_RECEIVED.initCap(),
-    title: MSG.CREATE_INVOICE_RECEIVED,
-    name: MSG.CREATE_INVOICE_RECEIVED,
+    title: MSG.INVOICE_EXPENSE,
+    name: MSG.INVOICE_EXPENSE,
     fn: () => newInvoice('recibida')
   };
 
   export const CREATION_TICKET = {
     id: CONSTANT.CREATE_INVOICE_TICKET.initCap(),
-    title: MSG.CREATE_INVOICE_TICKET,
-    name: MSG.CREATE_INVOICE_TICKET,
+    title: MSG.TICKET,
+    name: MSG.TICKET,
     fn: () => newInvoice('ticket')
   };
 
   export const CREATE_EXPENSE = {
     id: CONSTANT.CREATE_EXPENSE.initCap(),
-    title: MSG.CREATE_EXPENSE,
-    name: MSG.CREATE_EXPENSE,
+    title: MSG.OTHER_EXPENSE,
+    name: MSG.OTHER_EXPENSE,
     fn: () => newExpense()
   };
 
   export const EXPENSE_CREATION = {
     id: CONSTANT.CREATION.initCap(),
-    title: MSG.CREATION,
-    name : MSG.CREATION,
+    title: MSG.CREATE,
+    name : MSG.CREATE,
     opened: true,
     options: [CREATION_INVOICE_RECEIVED, CREATION_TICKET, CREATE_EXPENSE]
   };
@@ -556,8 +556,8 @@ import { Expense } from './Expense.js';
   ];
 
   export const NEW_ISSUED_INVOICE = {
-    name: MSG.ISSUEDS,
-    title: MSG.ISSUEDS,
+    name: MSG.INCOMES,
+    title: MSG.INCOMES,
 //    icon: MATERIAL_ICONS.UNARCHIVE,
     permission: true,
 //    backgroundColor: "#4472C4",
@@ -565,8 +565,8 @@ import { Expense } from './Expense.js';
   };
 
   export const NEW_RECEIVED_INVOICE = {
-    name: MSG.RECEIVEDS,
-    title: MSG.RECEIVEDS,
+    name: MSG.EXPENSES,
+    title: MSG.EXPENSES,
 //    icon: MATERIAL_ICONS.ARCHIVE,
     permission: true,
 //    backgroundColor: "#4472C4",

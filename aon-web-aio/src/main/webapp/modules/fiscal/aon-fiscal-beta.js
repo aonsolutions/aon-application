@@ -9,6 +9,7 @@ import * as JSF from '../aon-jsf-app.js';
 import { AonFiscalMenu } from './aon-fiscal-menu.js';
 import * as LS from '../../services/localStorageService.js';
 import * as ACTION from '../actions.js';
+import { FISCAL_PANEL } from "../../environments/msg.js";
 
 export class AonFiscalBeta extends AonElement {
 	AON_FISCAL_BETA;
@@ -75,7 +76,7 @@ export class AonFiscalBeta extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				name: "Panel Contabilidad",
+				name: MSG.FISCAL_PANEL,
 				fn: () => this.buildFiscalMenu(),
 			});
 
