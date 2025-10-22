@@ -2,6 +2,7 @@ import {AonElement} from '../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getCompaniesBySchemas, getTimeControl} from  '../services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
 import { AonApplication } from '../components/aon-application.js';
+import { AonTab } from '../components/aon-tab.js';
 import * as LS from '../services/localStorageService.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { ClassicApps, Apps } from '../services/app.js';
@@ -322,65 +323,106 @@ export class AonParent extends AonElement {
 		companyTitleSpan.classList.add("aonCompanyTitleSpan");
 		companyTitleSpan.classList.add(CSS.AON_COMPANY_FILTER_LOADING);
 		companyTitleDiv.appendChild(companyTitleSpan);
-	
-		let companyFilterTabDiv = this.createDiv();
-		companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
+
+		let companyFilterTabDiv 			= new AonTab();
+		companyFilterTabDiv.id 				= this.COMPANY_FILTER_TAB;
 		companyFilterTabDiv.className = CSS.AON_TAB;
-	
+
 		let defaultFilter = { 
-			type: undefined, 
-			active: undefined, 
-			inactive: undefined, 
-			shared: undefined, 
-			entorno: undefined, 
-			despacho: undefined, 
+			type: undefined,
+			active: undefined,
+			inactive: undefined,
+			shared: undefined,
+			entorno: undefined,
+			despacho: undefined,
 			domainActive: undefined
 		};
-		
+
 		let filterOptions = [
 			{
-				id: 'active',
-				name: MSG.ACTIVES,
-				icon: 'domain',
+				id: `${this.COMPANY_FILTER_TAB}-active`,
+				title: MSG.ACTIVES,
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'active', active: true, domainActive:true, name: MSG.ACTIVES}})
 			}, {
-				id: 'inactive',
-				name: MSG.INACTIVES,
-				icon: 'domain_disabled',
+				id: `${this.COMPANY_FILTER_TAB}-inactive`,
+				title: MSG.INACTIVES,
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'inactive', inactive: true, domainActive:false, name: MSG.INACTIVES}})
 			}, {
-				id: 'shared',
-				name: MSG.SHARED,
-				icon: MATERIAL_ICONS.SHARE,
+				id: `${this.COMPANY_FILTER_TAB}-shared`,
+				title: MSG.SHARED,
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'shared', shared: true, name: MSG.SHARED}})
 			}, {
-				id: 'consultancy',
-				name: MSG.ENVIRONMENT,
-				icon: MATERIAL_ICONS.APARTMENT,
+				id: `${this.COMPANY_FILTER_TAB}-consultancy`,
+				title: MSG.ENVIRONMENT,
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'consultancy', entorno:true, type:"CONSULTANCY", name: MSG.ENVIRONMENT}})
 			},{
-				id: 'office',
-				name: MSG.OFFICE,
-				icon: 'work',
+				id: `${this.COMPANY_FILTER_TAB}-office`,
+				title: MSG.OFFICE,
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE}})
 			}
-		];	
+		];
+
+		companyFilterTabDiv.setOptions(filterOptions);
+
+		// let companyFilterTabDiv = this.createDiv();
+		// companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
+		// companyFilterTabDiv.className = CSS.AON_TAB;
+
+	///
 	
-		for( let filterOption of filterOptions ){
-			let companyFilterTabA = this.createElement(TAG.A);
-			companyFilterTabA.className = CSS.AON_TAB_ITEM;
-			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => {
-				filterOption.fn(ev)
-			});
+		// let defaultFilter = { 
+		// 	type: undefined, 
+		// 	active: undefined, 
+		// 	inactive: undefined, 
+		// 	shared: undefined, 
+		// 	entorno: undefined, 
+		// 	despacho: undefined, 
+		// 	domainActive: undefined
+		// };
+		
+		// let filterOptions = [
+		// 	{
+		// 		id: 'active',
+		// 		name: MSG.ACTIVES,
+		// 		icon: 'domain',
+		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'active', active: true, domainActive:true, name: MSG.ACTIVES}})
+		// 	}, {
+		// 		id: 'inactive',
+		// 		name: MSG.INACTIVES,
+		// 		icon: 'domain_disabled',
+		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'inactive', inactive: true, domainActive:false, name: MSG.INACTIVES}})
+		// 	}, {
+		// 		id: 'shared',
+		// 		name: MSG.SHARED,
+		// 		icon: MATERIAL_ICONS.SHARE,
+		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'shared', shared: true, name: MSG.SHARED}})
+		// 	}, {
+		// 		id: 'consultancy',
+		// 		name: MSG.ENVIRONMENT,
+		// 		icon: MATERIAL_ICONS.APARTMENT,
+		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'consultancy', entorno:true, type:"CONSULTANCY", name: MSG.ENVIRONMENT}})
+		// 	},{
+		// 		id: 'office',
+		// 		name: MSG.OFFICE,
+		// 		icon: 'work',
+		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE}})
+		// 	}
+		// ];
+
+		// for( let filterOption of filterOptions ){
+			// let companyFilterTabA = this.createElement(TAG.A);
+			// companyFilterTabA.className = CSS.AON_TAB_ITEM;
+			// companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => {
+			// 	filterOption.fn(ev)
+			// });
 	
-			let companyFilterTabSpan = this.createElement(TAG.SPAN);
-			companyFilterTabSpan.innerHTML = filterOption.name; 
-			companyFilterTabSpan.className = CSS.AON_TAB_ITEM_TEXT;
-			companyFilterTabSpan.id = `${this.COMPANY_FILTER_TAB}-${filterOption.id}`;
-			companyFilterTabA.appendChild(companyFilterTabSpan);
-	
-			companyFilterTabDiv.appendChild(companyFilterTabA);
-		}
+			// let companyFilterTabSpan = this.createElement(TAG.SPAN);
+			// companyFilterTabSpan.innerHTML = filterOption.name; 
+			// companyFilterTabSpan.className = CSS.AON_TAB_ITEM_TEXT;
+			// companyFilterTabSpan.id = `${this.COMPANY_FILTER_TAB}-${filterOption.id}`;
+			// companyFilterTabA.appendChild(companyFilterTabSpan);
+			// companyFilterTabDiv.appendChild(companyFilterTabA);
+		// }
 	
 		companyDiv.appendChild(companyTitleDiv);
 		companyDiv.appendChild(companyFilterTabDiv);
@@ -389,19 +431,19 @@ export class AonParent extends AonElement {
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
-		ul.style.overflowY = 'auto';
-		ul.style.width = "100%";
+		// ul.style.overflowY = 'auto';
+		// ul.style.width = "100%";
 	
 		companyDiv.appendChild(ul);
-		ul.addEventListener("scroll", () => {
-			let scrollTop = ul.scrollTop;
-			let offsetHeight = ul.offsetHeight;
-			let scrollHeight = ul.scrollHeight;
+		// ul.addEventListener("scroll", () => {
+		// 	let scrollTop = ul.scrollTop;
+		// 	let offsetHeight = ul.offsetHeight;
+		// 	let scrollHeight = ul.scrollHeight;
 			
-			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
-				this.loadMore();
-			}
-		});
+		// 	if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
+		// 		this.loadMore();
+		// 	}
+		// });
 
 		let contentDiv = this.createDiv();
 		contentDiv.appendChild(companyDiv);
@@ -761,7 +803,5 @@ export class AonParent extends AonElement {
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){
-    if(!localStorage.getItem('sass') === 'true')
-      console.log( 'Define <aon-new-parent> ^-^' );
 	window.customElements.define(TAG.AON_PARENT, AonParent);
 }

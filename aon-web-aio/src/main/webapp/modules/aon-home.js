@@ -1,7 +1,7 @@
 import { AonElement } from '../components/AonElement.js';
 import { AonHeader } from '../modules/aon-header.js';
 import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
-import * as LS from '../services/localStorageService.js';
+// import * as LS from '../services/localStorageService.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -30,9 +30,9 @@ export class AonHome extends AonElement {
 	notificationButton;
 
 	closeRightPanelHandler;
-    currentRightPanelSection = null;
-	
-    constructor () {
+  currentRightPanelSection = null;
+
+  constructor () {
       super();
 	}
 

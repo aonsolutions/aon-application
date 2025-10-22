@@ -128,6 +128,7 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
+    rightSidenav.classList.add(CSS.AON_NONE);
     div.appendChild(rightSidenav);
 
     let dialogMenu = new AonDialogMenu();
@@ -270,17 +271,17 @@ export class AonApplication extends AonElement {
 
   toogleRightSidenav() {
     let rightSidenav = this.getRightSidenav();
-    rightSidenav.classList.toggle('hidden');
+    rightSidenav.classList.toggle(CSS.AON_NONE);
   }
 
   openRightSidenav() {
     let rightSidenav = this.getRightSidenav();
-    rightSidenav.classList.remove('hidden');
+    rightSidenav.classList.remove(CSS.AON_NONE);
   }
 
   closeRightSidenav() {
     let rightSidenav = this.getRightSidenav();
-    rightSidenav.classList.add('hidden');
+    rightSidenav.classList.add(CSS.AON_NONE);
   }
 
   addMobileSidenavHeader(app) {

@@ -217,14 +217,14 @@ export class AonDialogMenu extends AonElement {
 
 	positionDialogSearch(anchorY, anchorX){
 		this.style.display    = 'block';
-		this.style.visibility = 'hidden';
+		this.style.visibility = CSS.AON_NONE;
 		this.style.left 			= Math.round(anchorX) + 'px';
 		this.style.top  			= Math.round(anchorY)  + 'px';
 	}
 
 	positionDialogWithinViewport(anchorY, anchorX){
 		this.style.display    = 'block';
-		this.style.visibility = 'hidden';
+		this.style.visibility = CSS.AON_NONE;
 		// Para poder coger la altura automatica
 		requestAnimationFrame(() => {
 			const remToPx = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');

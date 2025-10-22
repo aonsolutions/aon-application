@@ -142,7 +142,7 @@ export class AonMenuButton extends AonElement {
                 e.stopPropagation();
                 // alternar la visibilidad de la sublista
                 span.classList.toggle('submenu-open');
-                subUl.classList.toggle('hidden');
+                subUl.classList.toggle(CSS.AON_NONE);
             });
 
         } else {
@@ -202,9 +202,9 @@ export class AonMenuButton extends AonElement {
 								let data = { uploaded: 0}
 								if(activities.length > 1) {
 									activities.push({
-          								id: "all",
+                    id: "all",
 										description: "TODAS"
-        							});
+                  });
 									let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
 									activity.setAlias("id", "description");
 									if(activities.length > 0) {
@@ -397,7 +397,7 @@ export class AonMenuButton extends AonElement {
             span.classList.remove('submenu-open');
             const subMenu = li.querySelector(TAG.UL);
             if (subMenu) {
-              subMenu.classList.add('hidden');
+              subMenu.classList.add(CSS.AON_NONE);
             }
           }
         });
