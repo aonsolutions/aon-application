@@ -1153,10 +1153,10 @@ export class AonCustomer extends AonReg {
 		
 		let notesIcon;
 		
-		if(this.clientFile){
-			notesIcon = this.getElement("aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon");
-		} else 
-			notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
+		// if(this.clientFile){
+		// 	notesIcon = this.getElement("aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon");
+		// } else 
+		// 	notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
 		
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -1204,10 +1204,10 @@ export class AonCustomer extends AonReg {
 				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 				
 		}
-		
-		notesIcon.classList.toggle("material-icons-selected");
-		
+				
 		this.getApplication().toogleRightSidenav();	
+
+		// notesIcon.classList.toggle("material-icons-selected");
 		
 	}
 	
