@@ -269,35 +269,18 @@ export class AonApplication extends AonElement {
   // }
 
   toogleRightSidenav() {
-   /*
-    if (this.isSidenavBlock()) {
-      this.closeRightSidenav();
-    } else {
-      let rightSidenav = this.getRightSidenav();
-      if (rightSidenav.style.flexBasis === "0px") {
-        rightSidenav.style.flexBasis = "350px";
-      } else {
-        rightSidenav.style.flexBasis = "0px";
-      }
-    }
-    */
-    
-//    let rightSidenav = this.getRightSidenav();
-//	  if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
-//	    rightSidenav.style.flexBasis = "350px";
-//	  } else {
-//	    rightSidenav.style.flexBasis = "0px";
-//	  }
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.toggle('hidden');
   }
 
   openRightSidenav() {
-    // let rightSidenav = this.getRightSidenav();
-//    rightSidenav.style.flexBasis = "350px";
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.remove('hidden');
   }
 
-   closeRightSidenav() {
-    // let rightSidenav = this.getRightSidenav();
-//    rightSidenav.style.flexBasis = "0px";
+  closeRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.add('hidden');
   }
 
   addMobileSidenavHeader(app) {
