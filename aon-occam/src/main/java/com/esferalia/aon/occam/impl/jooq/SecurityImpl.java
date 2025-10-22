@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -98,6 +99,11 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.updateAuthPassword(ctx, auth));
 	}
 	
+	@Override
+	public Auth updateUserPassword(AONContext ctx, Auth auth) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateUserPassword(ctx, auth));
+	}
 	
 
 	@Override
@@ -483,6 +489,16 @@ public class SecurityImpl implements ISecurity {
 	public Booking saveBooking(AONContext ctx, Booking booking) {
 	    return  ctx.getDslContext().transactionResult(
 	            configuration -> BookingDAO.save(ctx, booking));
+	}
+
+	@Override
+	public void saveBookingApp(CloseableAONContext ctx, DomainApp aonApp, boolean active) {
+		ctx.getDslContext().transaction(configuration -> SecurityDAO.saveDomainApp(ctx, aonApp, active));
+	}
+
+	@Override
+	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp) {
+		ctx.getDslContext().transaction(configuration -> SecurityDAO.deleteDomainApp(ctx, aonApp));
 	}
 	
 }

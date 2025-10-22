@@ -100,6 +100,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
@@ -272,7 +273,6 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
-import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -8990,6 +8990,23 @@ public class AON {
 	public static ApiConfiguration getApiConfiguration(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getCommon().getApiConfiguration(ctx, domainId);
+	}
+
+	public static void saveBookingApp(String domainName, int domainId, String login, DomainApp aonApp, boolean active) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, active);
+		}
+	}
+
+	public static void deleteBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().deleteBookingApp(ctx, aonApp);
+		}
+	}
+
+	public static void createBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, true);
 		}
 	}
 	

@@ -480,4 +480,7 @@ public interface CommonServiceAsync {
 	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
+	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
 }

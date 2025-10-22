@@ -78,7 +78,7 @@ export class AonInvoiceHome extends AonElement {
 		dashboard.style.margin = '10px 10px 0px 10px';
         this.appendChild(dashboard);
 
-		if (!this.getDur().isTrial())
+		if (!this.getDur().isTrial() || this.getDur().hasBeenTrial())
         	this.buildUploadPanel(dashboard);
 
 		this.buildFastPanel(dashboard);
@@ -206,7 +206,7 @@ export class AonInvoiceHome extends AonElement {
 		cardPanel.style.flexWrap = 'wrap';
 		dashboard.appendChild(cardPanel);
 
-		if(!this.getDur().isTrial()) {
+		if(!this.getDur().isTrial() || this.getDur().hasBeenTrial()) {
 			let invoiceResumeCard = new AonCard();
 			invoiceResumeCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			invoiceResumeCard.id = this.INVOICE_RESUME;

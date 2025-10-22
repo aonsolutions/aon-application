@@ -307,10 +307,17 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Auth updateAuthPassword(Auth auth) {
-		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){		
-			return getSecurity().updateAuthPassword(ctx, auth);
-		}
+		for(String schema: AONContext.getSchemas()) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+					if(schema.equalsIgnoreCase(auth.getSchema()))
+						getSecurity().updateAuthPassword(ctx, auth);
+					getSecurity().updateUserPassword(ctx, auth);
+				}
+			} 
+		}		
+		return auth;
 	}
 	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 

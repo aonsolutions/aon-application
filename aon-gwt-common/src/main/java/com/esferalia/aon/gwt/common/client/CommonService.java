@@ -107,7 +107,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -483,5 +482,8 @@ public interface CommonService extends RemoteService {
 	LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry) throws AonCoreException;
 	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException;
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee) throws AonCoreException;
+	
+	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, Product product) throws AonCoreException;
 	
 }

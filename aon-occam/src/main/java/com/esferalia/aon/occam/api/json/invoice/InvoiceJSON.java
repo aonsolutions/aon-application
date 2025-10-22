@@ -126,5 +126,4 @@ public class InvoiceJSON {
 	public static Optional<JSONObject> getCommunicationInfoJSON( Map<InvoiceCommunicationType, InvoiceInfo> communicationInfo) {
 		return InvoiceJSONV1.getCommunicationInfoJSON( communicationInfo);
 	}
-	
 }
