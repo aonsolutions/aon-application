@@ -8990,6 +8990,7 @@ public class AON {
 	public static ApiConfiguration getApiConfiguration(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getCommon().getApiConfiguration(ctx, domainId);
+		}
 	}
 
 	public static void saveBookingApp(String domainName, int domainId, String login, DomainApp aonApp, boolean active) {
