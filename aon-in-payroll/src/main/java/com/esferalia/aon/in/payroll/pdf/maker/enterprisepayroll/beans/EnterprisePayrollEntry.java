@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.salary.expression.Period;
+
 public class EnterprisePayrollEntry {
 	
 	public static enum EnterpriseEntryType {
@@ -445,6 +447,10 @@ public class EnterprisePayrollEntry {
 		return empleado.isPresent() || tipo.isPresent() || devengado.isPresent() || ssTrab.isPresent()
 				|| irpf.isPresent() || deducciones.isPresent() || liquido.isPresent() || ssEmpr.isPresent()
 				|| ssTotal.isPresent() || bonificaciones.isPresent() || fundae.isPresent();
+	}
+	
+	public boolean intersects(EnterprisePayrollEntry entry) {
+		return new Period(this.getStartDate(), this.getEndDate()).intersects(new Period(entry.getStartDate(), entry.getEndDate()));		
 	}
 
 	@Override
