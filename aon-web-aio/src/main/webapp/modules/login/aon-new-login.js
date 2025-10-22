@@ -510,7 +510,7 @@ export class AonNewLogin extends AonElement {
     let loader = this.getElement("aonLoginLoader");
     loader.style.display = "";
     loader.start();
-    signin(data)
+    (this.useJaas()?signin:login)(data)
       .then(() => {
         // document.body.style.background = 'transparent';
         loader.stop();
@@ -614,6 +614,13 @@ export class AonNewLogin extends AonElement {
     });
   }
   
+	useJaas() {
+		const queryString = window.location.search;
+		const searchParams = new URLSearchParams(queryString);
+		return searchParams.get('jaas') != null;
+	
+	}
+	
 	isConsole(company) {
 		return company.type == 'ADMIN' && company.id === 0;
 	}
