@@ -14,18 +14,32 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private Administration administration;
+
+	// TBAI
 	private boolean tbai;
 	private boolean tbaiTest;
+	private Date tbaiIncludeDate;
+	private String tbaiRegistryDate;
+	
+	// SII
 	private boolean sii;
 	private boolean siiTest;
+	private Date siiIncludeDate;
+	private String siiRegistryDate;
+	private boolean prepareNewSii;
+	private boolean siiAutosend;
+	
+	// VERIFACTU
 	private boolean verifactu;
 	private boolean verifactuTest;
+	private Date verifactuIncludeDate;
+	private String verifactuRegistryDate;
+	
 	private Integer defaultCertificate;
 	private Certificate certificate;
-	private Date includeDate;
-	private String registryDate;
-	private boolean autosend;
-	private boolean prepareNewSii;
+
+	
+
 
 	
 	// TO FIX || DELETE
@@ -102,24 +116,59 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		this.certificate = certificate;
 		return this;
 	}
-	
-	public Date getIncludeDate() {
-		return includeDate;
+
+	public Date getTbaiIncludeDate() {
+		return tbaiIncludeDate;
 	}
-	public InvoiceCommunicationConfiguration setIncludeDate(Date includeDate) {
-		this.includeDate = includeDate;
+	public InvoiceCommunicationConfiguration setTbaiIncludeDate(Date tbaiIncludeDate) {
+		this.tbaiIncludeDate = tbaiIncludeDate;
 		return this;
 	}
 	
-	public String getRegistryDate() {
-		return registryDate;
+	public String getTbaiRegistryDate() {
+		return tbaiRegistryDate;
 	}
-	public InvoiceCommunicationConfiguration setRegistryDate(String registryDate) {
-		this.registryDate = registryDate;
+	public InvoiceCommunicationConfiguration setTbaiRegistryDate(String tbaiRegistryDate) {
+		this.tbaiRegistryDate = tbaiRegistryDate;
 		return this;
 	}
+	
+	public Date getSiiIncludeDate() {
+		return siiIncludeDate;
+	}
+	public InvoiceCommunicationConfiguration setSiiIncludeDate(Date siiIncludeDate) {
+		this.siiIncludeDate = siiIncludeDate;
+		return this;
+	}
+	
+	public String getSiiRegistryDate() {
+		return siiRegistryDate;
+	}
+	public InvoiceCommunicationConfiguration setSiiRegistryDate(String siiRegistryDate) {
+		this.siiRegistryDate = siiRegistryDate;
+		return this;
+	}
+	
+	public Date getVerifactuIncludeDate() {
+		return verifactuIncludeDate;
+	}
+	
+	public InvoiceCommunicationConfiguration setVerifactuIncludeDate(Date verifactuIncludeDate) {
+		this.verifactuIncludeDate = verifactuIncludeDate;
+		return this;
+	}
+	
+	public String getVerifactuRegistryDate() {
+		return verifactuRegistryDate;
+	}
+	
+	public InvoiceCommunicationConfiguration setVerifactuRegistryDate(String verifactuRegistryDate) {
+		this.verifactuRegistryDate = verifactuRegistryDate;
+		return this;
+	}
+	
 	public boolean isRegistryTaxDate() {
-		return "tax".equalsIgnoreCase(getRegistryDate());
+		return "tax".equalsIgnoreCase(getSiiRegistryDate());
 	}
 	
 	public boolean isSkipTracking() {
@@ -130,11 +179,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 	
-	public boolean isAutosend() {
-		return autosend;
+	public boolean isSiiAutosend() {
+		return siiAutosend;
 	}
-	public InvoiceCommunicationConfiguration setAutosend(boolean autosend) {
-		this.autosend = autosend;
+	public InvoiceCommunicationConfiguration setSiiAutosend(boolean siiAutosend) {
+		this.siiAutosend = siiAutosend;
 		return this;
 	}
 	

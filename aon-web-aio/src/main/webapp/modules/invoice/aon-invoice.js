@@ -2932,23 +2932,23 @@ export class AonInvoice extends AonElement {
 
 	mustBeCommunicated() {
 		return this.configuration
-			&& this.configuration.communicationConfiguration
-			&& (this.configuration.communicationConfiguration.tbai
-			 || this.configuration.communicationConfiguration.verifactu
+			&& this.configuration.communication
+			&& (this.configuration.communication.tbai
+			 || this.configuration.communication.verifactu
 		);
 	}
 	isVerifactuTest() {
 		return this.configuration
-			&& this.configuration.communicationConfiguration
-			&& this.configuration.communicationConfiguration.verifactu
-			&& this.configuration.communicationConfiguration.verifactuTest
+			&& this.configuration.communication
+			&& this.configuration.communication.verifactu
+			&& this.configuration.communication.verifactuTest
 		;
 	}
 	isTbaiTest() {
 		return this.configuration
-			&& this.configuration.communicationConfiguration
-			&& this.configuration.communicationConfiguration.tbai
-			&& this.configuration.communicationConfiguration.tbaiTest
+			&& this.configuration.communication
+			&& this.configuration.communication.tbai
+			&& this.configuration.communication.tbaiTest
 		;
 	}
 	acceptInvoice() {

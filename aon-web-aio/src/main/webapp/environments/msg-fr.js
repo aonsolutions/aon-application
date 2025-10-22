@@ -93,6 +93,7 @@ export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
 export const COMMERCE = 'Commerce';
 export const COMMUNICATION = 'Comunicación';
+export const COMMUNICATIONS = 'Comunicaciones';
 export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';

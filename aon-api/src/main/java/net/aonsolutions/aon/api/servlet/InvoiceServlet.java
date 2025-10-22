@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.json.ApiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TaxJSON;
-import com.esferalia.aon.occam.api.json.WorkplaceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceCommunicationConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
@@ -694,7 +693,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.PRINT, getPrintConfiguration(api));
 		json.put(IJsonNames.COMPANY, companyJSON);
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
-		json.put(IJsonNames.COMMUNICATION_CONFIGURATION, getInvoiceCommunicationConfiguration(api));
+		json.put(IJsonNames.COMMUNICATION, getInvoiceCommunicationConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingType.name());
 		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
@@ -702,17 +701,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.collect(Collectors.toCollection(LinkedList::new));
 		json.put(IJsonNames.WORKPLACES, workplaces);
 		json.put(IJsonNames.VATS, getVats(api));
-		Date end = new Date();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println( "Configuration secs: "  + (end.getTime() - start.getTime()) );
-		System.out.println( "[START] OLD Configuration *****" );
-		System.out.println( json.toString(1) );
-		System.out.println( "[END] OLD Configuration *****" );
-		System.out.println();
-		System.out.println();
-		System.out.println();
 		return json;
 	}
 
@@ -748,7 +736,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return new JSONObject()
 			.put(IJsonNames.ADMINISTRATION, administration.name())	
 			.put(IJsonNames.PRINT, print)
-			.put(IJsonNames.COMMUNICATION_CONFIGURATION, icc)
+			.put(IJsonNames.COMMUNICATION, icc)
 			.put(IJsonNames.INVOFOX, invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}

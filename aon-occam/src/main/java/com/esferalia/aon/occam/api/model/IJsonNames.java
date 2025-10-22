@@ -67,7 +67,6 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTO_ACCEPT = "autoAccept";
 	public static final String AUTO_RECORD = "autoRecord";
-	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	public static final String AVAILABLE_BALANCE = "availableBalance";
 	public static final String ADVERTISING = "advertising";
@@ -130,7 +129,7 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
-	public static final String COMMUNICATION_CONFIGURATION = "communicationConfiguration";
+	public static final String COMMUNICATION = "communication";
 	public static final String COMMUNICATION_HISTORY = "communicationHistory";
 	public static final String COMMUNICATION_INFO = "communicationInfo";
 	public static final String COMMUNICATION_STATUS = "communicationStatus";
@@ -323,7 +322,6 @@ public final class IJsonNames {
 	public static final String IN_PERIOD_OPENING_DEBIT = "inPeriodOpeningDebit";
 	public static final String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	public static final String INACTIVE = "inactive";
-	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
 	public static final String INDEX = "index";
 	public static final String INGENET = "ingenet";
@@ -587,7 +585,6 @@ public final class IJsonNames {
 	public static final String REGISTRY_ACCOUNT = "registryAccount";
 	public static final String REGISTRY_ADDRESS = "registryAddress";
 	public static final String REGISTRY_COMPANY = "registryCompany";
-	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
 	public static final String REGISTRY_DOCUMENT_COUNTRY = "registryDocumentCountry";
@@ -618,6 +615,7 @@ public final class IJsonNames {
 	public static final String RSS = "rss";
 	public static final String RRELATIONSHIP = "rrelationship";
 	public static final String RELATED_REGISTRY = "relatedRegistry";
+	
 	// ---------------------------------------------------------------------------------------------	[S] 
 
 	public static final String S3_BUCKET = "s3Bucket";
@@ -672,6 +670,9 @@ public final class IJsonNames {
 	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
 	public static final String SII = "sii";
+	public static final String SII_AUTOSEND = "siiAutosend";
+	public static final String SII_INCLUDE_DATE = "siiIncludeDate";
+	public static final String SII_REGISTRY_DATE = "siiRegistryDate";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SII_TEST = "siiTest";
 	public static final String SIGNATURE = "signature";
@@ -721,6 +722,8 @@ public final class IJsonNames {
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TBAI = "tbai";
+	public static final String TBAI_INCLUDE_DATE = "tbaiIncludeDate";
+	public static final String TBAI_REGISTRY_DATE = "tbaiRegistryDate";
 	public static final String TBAI_TEST = "tbaiTest";
 	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
@@ -777,6 +780,8 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_INCLUDE_DATE = "verifactuIncludeDate";
+	public static final String VERIFACTU_REGISTRY_DATE = "verifactuRegistryDate";
 	public static final String VERIFACTU_TEST = "verifactuTest";
 	public static final String VERIFACTU_URL = "verifactuUrl";
 	public static final String VERSION = "version";

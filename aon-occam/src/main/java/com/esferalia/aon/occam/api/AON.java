@@ -8987,6 +8987,7 @@ public class AON {
 	}
 
 	// API CONFIGURATION
+	
 	public static ApiConfiguration getApiConfiguration(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getCommon().getApiConfiguration(ctx, domainId);

@@ -93,6 +93,7 @@ export const COMMENTS = 'Iruzkinak';
 export const COMMERCE = 'Merkataritza';
 export const COMMERCIAL = 'Komertziala';
 export const COMMUNICATION = 'Komunikazioa';
+export const COMMUNICATIONS = 'Komunikazioak';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
 export const COMPANY_COSTS = 'Enpresaren kostuak';

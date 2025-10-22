@@ -88,13 +88,13 @@ public class InvoiceCommunicationDAO {
 		TBAI_INCLUDE_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
+				return config.setTbaiIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getIncludeDate() != null
-					? AonDateUtils.format(config.getIncludeDate(), YYYY_MM_DD)
+				String date = config.getTbaiIncludeDate() != null
+					? AonDateUtils.format(config.getTbaiIncludeDate(), YYYY_MM_DD)
 					: null;
 				AppParamDAO.save(ctx, domainId,  AppParam.TBAI_INCLUDE_DATE, date);
 			}
@@ -102,12 +102,12 @@ public class InvoiceCommunicationDAO {
 		TBAI_REGISTRY_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setRegistryDate(param.getValue());
+				return config.setTbaiRegistryDate(param.getValue());
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.TBAI_REGISTRY_DATE, config.getRegistryDate());
+				AppParamDAO.save(ctx, domainId, AppParam.TBAI_REGISTRY_DATE, config.getTbaiRegistryDate());
 			}
 		},
 		TBAI_SKIP_TRACKING {
@@ -152,13 +152,13 @@ public class InvoiceCommunicationDAO {
 		VERIFACTU_INCLUDE_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
+				return config.setVerifactuIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getIncludeDate() != null
-					? AonDateUtils.format(config.getIncludeDate(), YYYY_MM_DD)
+				String date = config.getVerifactuIncludeDate() != null
+					? AonDateUtils.format(config.getVerifactuIncludeDate(), YYYY_MM_DD)
 					: null;
 				AppParamDAO.save(ctx, domainId,  AppParam.VERIFACTU_INCLUDE_DATE, date);
 			}
@@ -166,13 +166,13 @@ public class InvoiceCommunicationDAO {
 		VERIFACTU_REGISTRY_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setRegistryDate(param.getValue());
+				return config.setVerifactuRegistryDate(param.getValue());
 				
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.VERIFACTU_REGISTRY_DATE, config.getRegistryDate());
+				AppParamDAO.save(ctx, domainId, AppParam.VERIFACTU_REGISTRY_DATE, config.getVerifactuRegistryDate());
 			}
 		},
 		
@@ -206,18 +206,18 @@ public class InvoiceCommunicationDAO {
 		SII_INCLUDE_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				config.setIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
-				if(config.getIncludeDate() == null) {
+				config.setSiiIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
+				if(config.getSiiIncludeDate() == null) {
 					String defaultDate = Administration.COMMON_TERRITORY== config.getAdministration() ? "2017-07-01" : "2018-01-01";
-					config.setIncludeDate(AonDateUtils.parse(defaultDate, YYYY_MM_DD));
+					config.setSiiIncludeDate(AonDateUtils.parse(defaultDate, YYYY_MM_DD));
 				}
 				return config;
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getIncludeDate() != null
-					? AonDateUtils.format(config.getIncludeDate(), YYYY_MM_DD)
+				String date = config.getSiiIncludeDate() != null
+					? AonDateUtils.format(config.getSiiIncludeDate(), YYYY_MM_DD)
 					: null;
 				AppParamDAO.save(ctx, domainId,  AppParam.SII_INCLUDE_DATE, date);
 			}
@@ -225,13 +225,13 @@ public class InvoiceCommunicationDAO {
 		SII_REGISTRY_DATE {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setRegistryDate(param.getValue());
+				return config.setSiiRegistryDate(param.getValue());
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.SII_REGISTRY_DATE, config.getRegistryDate());
-				if("audit".equalsIgnoreCase(config.getRegistryDate()) ) {
+				AppParamDAO.save(ctx, domainId, AppParam.SII_REGISTRY_DATE, config.getSiiRegistryDate());
+				if("audit".equalsIgnoreCase(config.getSiiRegistryDate()) ) {
 					AppParamDAO.save(ctx, domainId, AppParam.FS_MODEL_CFG_SII, "R");
 				}
 			}
@@ -239,13 +239,13 @@ public class InvoiceCommunicationDAO {
 		SII_AUTOSEND {
 			@Override
 			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setAutosend(param.trueValue());
+				return config.setSiiAutosend(param.trueValue());
 				
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.SII_AUTOSEND, Boolean.toString(config.isAutosend()));
+				AppParamDAO.save(ctx, domainId, AppParam.SII_AUTOSEND, Boolean.toString(config.isSiiAutosend()));
 			}
 		},
 		SII_PREPARE_NEW_SII {
@@ -314,7 +314,7 @@ public class InvoiceCommunicationDAO {
 		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 		AppParamDAO.get(ctx, domainId, AppParam.FS_MODEL_CFG_SII)
-			.ifPresent( p -> config.setRegistryDate("R".equalsIgnoreCase(p.getValue()) ? "audit" : "tax"));
+			.ifPresent( p -> config.setSiiRegistryDate("R".equalsIgnoreCase(p.getValue()) ? "audit" : "tax"));
 		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 		

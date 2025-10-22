@@ -56,7 +56,7 @@ public class ApiConfigurationJSON {
 			.put(IJsonNames.SERIES, SeriesJSON.to(conf.getSeries()))
 			.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(conf.getWorkplaces()))
 			.put(IJsonNames.PRINT, PrintInvoiceConfigurationJSON.to(conf.getPrintConfiguration()).orElse(null))
-			.put(IJsonNames.COMMUNICATION_CONFIGURATION, InvoiceCommunicationConfigurationJSON.to(conf.getCommunicationConfiguration()).orElse(null))
+			.put(IJsonNames.COMMUNICATION, InvoiceCommunicationConfigurationJSON.to(conf.getCommunicationConfiguration()).orElse(null))
 			.put(IJsonNames.INVOFOX, InvofoxConfigurationJSON.to(conf.getInvofoxConfiguration()).orElse(null))		
 		;
 	}

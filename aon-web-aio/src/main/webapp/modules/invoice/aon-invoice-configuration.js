@@ -4,11 +4,12 @@ import { MSG, TAG } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { getInvoiceConfiguration, saveInvoiceConfiguration } from "../../services/invoiceService.js";
 import { AonInvoicePrint } from "./aon-invoice-print.js";
-import * as ACTION from '../actions.js';
 import { AonTab } from "../../components/aon-tab.js";
 import { AonInvoiceCommunication } from "./aon-invoice-communication.js";
-import * as LS from '../../services/localStorageService.js';
 import { AonOcrConfiguration } from "./aon-ocr-configuration.js";
+
+import * as ACTION from '../actions.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonInvoiceConfiguration extends AonElement {
     
@@ -82,11 +83,7 @@ export class AonInvoiceConfiguration extends AonElement {
         let communication =  new AonInvoiceCommunication();
         communication.setConfiguration(this.configuration);
         communication.onChange(() => {
-            this.configuration.administration = communication.getAdministrationConfiguration();
-            this.configuration.eInvoice = communication.getFacturaeConfiguration();
-            this.configuration.tbai = communication.getTbaiConfiguration();
-            this.configuration.sii = communication.getSiiConfiguration();
-            this.configuration.verifactu = communication.getVerifactuConfiguration();
+            this.configuration = communication.getConfiguration();
         });
         content.appendChild(communication);
     }
