@@ -244,14 +244,7 @@ export class AonPresenceList extends AonElement {
         data = this._list;
       } else {
         let filter = null;
-        try {filter = {...this.applicationParentEl._filter};
-          filter = cleanDetailObject(filter);
-          if(filter.period == "personalized" && !filter.startDate && !filter.endDate){
-            this.resetFilter(filter);
-          }
-        } catch (error) {
-          console.log(error);
-        }
+        try {filter = {...this.applicationParentEl._filter};} catch (error) {}
         const datos = await getTimeControlList(filter);
         if (datos) {
           sortBy(datos, 'last_date', 'desc').map(({
@@ -336,15 +329,6 @@ export class AonPresenceList extends AonElement {
       list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
     }
     return list;
-  }
-
-  resetFilter(filter){
-    filter.period = "today";
-    filter.startDate = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
-    filter.endDate = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
-    filter.active = "true";
-    delete filter.name;
-    delete filter.value;
   }
 
   aonEvent({ target }, data) {

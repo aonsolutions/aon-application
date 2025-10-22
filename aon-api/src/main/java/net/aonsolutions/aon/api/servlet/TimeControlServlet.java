@@ -224,7 +224,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
-		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active)  && !f.getDetail().isEmpty())
+		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
 		.forEach(tc -> 	array.put(tc.toJSON()));
 		return array;
 	}
