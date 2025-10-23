@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CostCenterDAO {
@@ -24,7 +26,11 @@ public class CostCenterDAO {
 	}
 
 	public static void save(CloseableAONContext ctx, ApplicationParameter costCenter) {
-		if(null == costCenter.getId()) insert(ctx, costCenter);
+		int size = ACCOUNT.COST_CENTER.getDataType().length();
+		if (costCenter != null && AonStringUtils.length(costCenter.getValue()) > size ) {
+			throw new AonCoreException( "La longitud del centro de costo no puede exceder los " + size + "caracteres." );
+		}
+		if (null == costCenter.getId()) insert(ctx, costCenter);
 		else update(ctx, costCenter);
 	}
 
