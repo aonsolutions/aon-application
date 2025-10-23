@@ -78,9 +78,6 @@ export class AonDeliveryList extends AonElement {
 		let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
         btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
-        btnSearch.querySelectorAll('input[type="date"]').forEach(input => {
-            input.type = 'text';
-        });
 
         this.getElement('status').setOptions([
             { name: "-", value: undefined },

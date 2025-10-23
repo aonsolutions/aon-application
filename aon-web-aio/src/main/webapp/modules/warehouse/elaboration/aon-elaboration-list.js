@@ -42,9 +42,6 @@ export class AonElaborationList extends AonList {
         const btnSearch = this.getApplication().addSearchOption();
         btnSearch.addEventListener(EVENT.SEARCH_NEW, (event) => this.search(event.detail));
         btnSearch.buildOptionsFilter(this.ELABORATION_SEARCH_OPTIONS);
-        btnSearch.querySelectorAll('input[type="date"]').forEach(input => {
-            input.type = 'text';
-        });
         // this.getElement('status').setOptions([
         //     { name: "-", value: undefined },
         //     { name: MSG.PENDING, value: "PENDING" },

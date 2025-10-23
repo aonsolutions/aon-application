@@ -65,6 +65,8 @@ export class AonNewDate extends AonNewInput {
       // Si no se le pasa el valor date
       this.date  = this.date || this.today;
     }
+    // 
+    this.setType('text');
   }
 
   buildDate() {
