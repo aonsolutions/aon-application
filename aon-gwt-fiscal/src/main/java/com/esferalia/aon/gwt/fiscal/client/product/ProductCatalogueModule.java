@@ -53,9 +53,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 	private AonCustomDockLayout aonCustomDockLayout;
 
 	private final String EMPTY_STRING = "";
-
-//	private AonCustomListBox domainType = new AonCustomListBox("Tipo Dominio");
-//	private AonCustomListBox tariff = new AonCustomListBox("Tarifa");
 	
 	private HTMLPanel container;
 	
@@ -98,10 +95,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 		getTariffs(tariffsDb -> {
 			this.tariffs = tariffsDb;
 			
-//			createToolbar();
-			
-//			aonCustomDockLayout.hideSearchWidget();
-			
 			container = new HTMLPanel(EMPTY_STRING);
 			container.addStyleName(AON.CSS.aonFlexColumn());
 			container.addStyleName(AON.CSS.aonSelector());
@@ -118,26 +111,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 		currentDomainOptions.getParentWidget().add(aonCustomDockLayout);
 	}
 	
-//	private void createToolbar() {
-//		domainType.clearItems();
-//		DomainType.getValues().forEach(domainTypeIt -> domainType.addItem(domainTypeIt.getName(), domainTypeIt.ordinal() + ""));
-//		domainType.addChangeHandler(e -> onSearch());
-//		domainType.setVisible(false);
-//		aonCustomDockLayout.addToolbarButton(domainType);
-//		
-//		tariff.clearItems();
-//		tariffs.forEach(tariffIt -> tariff.addItem(tariffIt.getName(), tariffIt.getId().toString()));
-//		tariff.addChangeHandler(e -> onSearch());
-//		tariff.setVisible(false);
-//		aonCustomDockLayout.addToolbarButton(tariff);
-//	}
-	
-//	public void onSearch() {
-//		productCatalogue.onSearch(
-//				DomainType.safeValueOf(Byte.parseByte(domainType.getValue())), 
-//				tariffs.stream().filter(tariffIt -> tariffIt.getId().equals(Integer.parseInt(tariff.getValue()))).findFirst().get());
-//	}
-	
 	public void onSearch() {
 		productCatalogue.onSearch(
 				DomainType.ENTERPRISE, 
@@ -149,7 +122,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 			
 			@Override
 			public void onSuccess(AonConfiguration config) {
-				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany().getId(), config.getWorkplaces());
+				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany(), config.getWorkplaces());
 				productCatalogue.setHeight("100%");
 				
 				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
