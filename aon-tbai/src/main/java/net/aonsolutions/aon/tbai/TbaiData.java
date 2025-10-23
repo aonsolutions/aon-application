@@ -3,8 +3,6 @@ package net.aonsolutions.aon.tbai;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,7 +16,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -35,6 +32,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -42,6 +41,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -73,19 +74,19 @@ public class TbaiData {
 		return isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 	}
 	
-	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
+	public TicketBai getTicketBai(AONContext ctx, Domain domain, Integer invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
 		DataResponseSource source = icc.isTbaiTest()
 			? DataResponseSource.TBAI_TEST
 			: DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
+		DataResponse dr = DataResponseDAO.get(ctx, f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoice))
 			.and(f.getCodeProperty().eq(subsanar ? "error" : "ok")));
 		
-		Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+		Attach requestAttach = AttachmentDAO.getDataAttach(ctx, f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-				.and(f.getSourceBatchProperty().eq(dr.getDataRequest())), AttachType.DATA, true);
+				.and(f.getSourceBatchProperty().eq(dr.getDataRequest())), true);
 		
 		final JAXBContext jaxbContext = JAXBContext.newInstance(TicketBai.class);
 		final Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
@@ -151,59 +152,8 @@ public class TbaiData {
 		return info;
 	}
 	
-	
-	public DataRequest saveRequest(Domain domain, User user, Invoice invoice, byte[] data) {
-		JSONObject json = new JSONObject();
-		json.put("tbai", "emision");
-		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
-		DataRequest request = new DataRequest()
-				.setDomain(domain.getId())
-				.setDate(new Date())
-				.setBlackBox("")
-				.setType(DataRequestType.TBAI);
-		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
-		request.setMd5(md5);
-		
-		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
-		
-		Attach attach = new Attach()
-				.setDomain(domain)
-				.setAttachType(AttachType.DATA)
-				.setType(DataAttachType.REQUEST.value())
-				.setSource(DataAttachSource.TBAI.value())
-				.setSourceId(request.getId())
-				.setMimeType(MimeType.XML)
-				.setData(data);
-		
-		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
-		return request;
-	}
-	
-	public DataRequest saveRequestAnulacion(Domain domain, User user, Invoice invoice, byte[] data) {
-		JSONObject json = new JSONObject();
-		json.put("tbai", "baja");
-		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
-		DataRequest request = new DataRequest()
-				.setDomain(domain.getId())
-				.setDate(new Date())
-				.setBlackBox("")
-				.setType(DataRequestType.TBAI);
-		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
-		request.setMd5(md5);
-		
-		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
-		
-		Attach attach = new Attach()
-				.setDomain(domain)
-				.setAttachType(AttachType.DATA)
-				.setType(DataAttachType.REQUEST.value())
-				.setSource(DataAttachSource.TBAI.value())
-				.setSourceId(request.getId())
-				.setMimeType(MimeType.XML)
-				.setData(data);
-		
-		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
-		return request;
+	public DataRequest saveRequest(AONContext ctx, Domain domain, byte[] data) {
+		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.TBAI, data);
 	}
 	
 	public TbaiBlockchain getBlockchain(Domain domain, User user, Integer actualInvoice) {
@@ -303,9 +253,7 @@ public class TbaiData {
 		return InvoiceDataDAO.get(ctx, domainId, invoiceId, InvoiceDataName.TBAI_URL)
 			.map(InvoiceData::getValue)
 			.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, getDataResponseSource(), TBAIURL))
-		;
-				
-		
+		;	
 	}
 	public String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
 		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
@@ -330,14 +278,18 @@ public class TbaiData {
 		}
 	}
 	
-	
 	public String getTbaiId(Domain domain, User user, Integer invoiceId) {
 		return getTbaiId(domain.getName(),  domain.getId(), user.getLogin(), invoiceId);
 	}
 	
-	public DataResponse saveResponse(Domain domain, User user, TbaiResponse response, DataResponse dr) {
+	public DataResponse saveResponse(AONContext ctx, Domain domain, Integer invoiceId, TbaiResponse response, DataResponse dr) {
+		InvoiceCommunicationStatus status = response.isOk() 
+				? InvoiceCommunicationStatus.ACCEPTED 
+				: InvoiceCommunicationStatus.WRONG;
+		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.TBAI, status);
+		
 		dr.setCode(response.getResponseStatus());
-		AON.updateDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr, f -> f.getIdProperty().eq(dr.getId()));
+		DataResponseDAO.updateDataResponse(ctx, dr, f -> f.getIdProperty().eq(dr.getId()));
 		
 		DataResponseDetail drd = new DataResponseDetail()
 				.setDomain(domain.getId())
@@ -345,7 +297,7 @@ public class TbaiData {
 				.setDataVariable("response")
 				.setDataValue(response.toJSON().toString());
 		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd);
 		
 		if(response.getData() != null) {
 			Attach attach = new Attach()
@@ -359,36 +311,18 @@ public class TbaiData {
 					.setMimeType(MimeType.XML)
 					.setData(response.getData());
 			
-			AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			AttachmentDAO.insertDataAttach(ctx, attach);
 		}
 		return dr;
 	}
 	
-	public DataResponse saveResponseZuzendu(Domain domain, User user, Invoice invoice, byte[] request, TbaiResponse response, String tbaiUrl) {
+	public DataResponse saveResponseZuzendu(AONContext ctx, Domain domain, Invoice invoice, byte[] request, TbaiResponse response, String tbaiUrl) {
+		InvoiceCommunicationStatus status = response.isOk() 
+				? InvoiceCommunicationStatus.ACCEPTED 
+				: InvoiceCommunicationStatus.WRONG;
+		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoice.getId(), InvoiceCommunicationType.TBAI, status);
 		
-		JSONObject json = new JSONObject();
-		json.put("tbai", "emision");
-		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
-		DataRequest dataRequest = new DataRequest()
-				.setDomain(domain.getId())
-				.setDate(new Date())
-				.setBlackBox("")
-				.setType(DataRequestType.TBAI);
-		String md5 = getMd5(dataRequest.getDomain() + dataRequest.getDate().toString() + dataRequest.getBlackBox() + dataRequest.getType().value());
-		dataRequest.setMd5(md5);
-		
-		dataRequest = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), dataRequest);
-		
-		Attach attach = new Attach()
-				.setDomain(domain)
-				.setAttachType(AttachType.DATA)
-				.setType(DataAttachType.REQUEST.value())
-				.setSource(DataAttachSource.TBAI.value())
-				.setSourceId(dataRequest.getId())
-				.setMimeType(MimeType.XML)
-				.setData(request);
-		
-		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		DataRequest dataRequest = InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.TBAI, request);
 		
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = new DataResponse()
@@ -399,7 +333,7 @@ public class TbaiData {
 				.setSourceId(invoice.getId())
 				.setDataRequest(dataRequest.getId());
 		
-		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+		dr = DataResponseDAO.insertDataResponse(ctx, dr);
 		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())
@@ -407,9 +341,7 @@ public class TbaiData {
 				.setDataVariable("tbaiId")
 				.setDataValue(response.getTbaiId());
 		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd1);
-		
-		
+		DataResponseDAO.insertDataResponseDetail(ctx, drd1);
 		
 		DataResponseDetail drd = new DataResponseDetail()
 				.setDomain(domain.getId())
@@ -417,7 +349,7 @@ public class TbaiData {
 				.setDataVariable("response")
 				.setDataValue(response.toJSON().toString());
 		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd);
 		
 		DataResponseDetail drd3 = new DataResponseDetail()
 				.setDomain(domain.getId())
@@ -425,7 +357,7 @@ public class TbaiData {
 				.setDataVariable(TBAIURL)
 				.setDataValue(tbaiUrl);
 		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd3);
 		
 		if(response.getData() != null) {
 			Attach responseAttach = new Attach()
@@ -438,14 +370,13 @@ public class TbaiData {
 					.setSourceId(dr.getId())
 					.setMimeType(MimeType.XML)
 					.setData(response.getData());
-			
-			AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), responseAttach);
+			AttachmentDAO.insertDataAttach(ctx, responseAttach);
 		}
 		
 		return dr;
 	}
 	
-	public DataResponse saveResponsePending(Domain domain, User user, Invoice invoice, TbaiResponse response, TbaiBlockchain blockchain, DataRequest dataRequest, String tbaiUrl) {
+	public DataResponse saveResponsePending(AONContext ctx, Domain domain, Invoice invoice, TbaiResponse response, TbaiBlockchain blockchain, DataRequest dataRequest, String tbaiUrl) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = new DataResponse()
 				.setDomain(domain.getId())
@@ -455,42 +386,41 @@ public class TbaiData {
 				.setSourceId(invoice.getId())
 				.setDataRequest(dataRequest.getId());
 		
-		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+		dr = DataResponseDAO.insertDataResponse(ctx, dr);
 		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
 				.setDataVariable("tbaiId")
 				.setDataValue(response.getTbaiId());
-		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd1);
-	
+		DataResponseDAO.insertDataResponseDetail(ctx, drd1);
+		InvoiceDataDAO.save(ctx, domain.getId(), invoice.getId(), InvoiceDataName.TBAI_ID, response.getTbaiId());	
+
 		DataResponseDetail drd2 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
 				.setDataVariable("blockchain")
 				.setDataValue(blockchain.toJSON().toString());
+		DataResponseDAO.insertDataResponseDetail(ctx, drd2);
 		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd2);
-
 		DataResponseDetail drd3 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
 				.setDataVariable(TBAIURL)
 				.setDataValue(tbaiUrl);
-		
-		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd3);
+		InvoiceDataDAO.save(ctx, domain.getId(), invoice.getId(), InvoiceDataName.TBAI_URL, tbaiUrl);
 
+		
 		invoice.ensureFiscal().setExpDate(new Date());
 		LinkedList<EnterpriseActivity> list = new LinkedList<>();
 		list.add(invoice.getActivity());
 		AonConfiguration config = new AonConfiguration().setEnterpriseActivities(list);
-		AON.saveInvoiceFiscal(domain.getName(), domain.getId(), user.getLogin(), config, invoice);
-		
+		InvoiceFiscalDAO.save(ctx, config, invoice);
 		return dr;
 	}
 	
-	public DataResponse saveResponseAnulacion(Domain domain, User user, Invoice invoice, TbaiResponse response, DataRequest dataRequest) {
+	public DataResponse saveResponseAnulacion(AONContext ctx, Domain domain, Invoice invoice, TbaiResponse response, DataRequest dataRequest) {
 		DataResponse dr = null;
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		if(response.isOk()) {
@@ -502,7 +432,7 @@ public class TbaiData {
 				.setSourceId(invoice.getId())
 				.setDataRequest(dataRequest.getId());
 		
-			dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+			dr = DataResponseDAO.insertDataResponse(ctx, dr);
 		
 			if(response.getData() != null) {
 				Attach attach = new Attach()
@@ -515,40 +445,12 @@ public class TbaiData {
 					.setSourceId(dr.getId())
 					.setMimeType(MimeType.XML)
 					.setData(response.getData());
-			
-				AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+				AttachmentDAO.insertDataAttach(ctx, attach);
 			}
 		}
 		return dr;
 	}
-	
-	public String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-	    md.update(str.getBytes());
-	    byte byteData[] = md.digest();
-	    //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-	    for (int i = 0; i < byteData.length; i++) {
-	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-	    }       
-        return sb.toString();
-	}
-	
-//	public static void main(String[] args) {
-//		JSONObject requestData = new JSONObject();
-//		requestData.put("domain_name", "mac.aonsolutions.net");
-//		requestData.put("domain_id", 400);//24708); //24649); // 24427) ;// 22287);
-//		requestData.put("id", 796969); //791139); //781651); // 780287); //780014); // 780002);
-//		requestData.put("attach_type", AttachType.DATA.getName());
-//		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
-//		System.out.println("ms/api/file/" +  result);
-//	}
-	
+
 	// 	*****************************************************************
 	// 	*****************************************************************
 	// 	*****************************************************************

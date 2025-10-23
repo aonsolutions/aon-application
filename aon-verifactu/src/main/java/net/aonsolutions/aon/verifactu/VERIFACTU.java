@@ -14,10 +14,6 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -32,18 +28,12 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.DataRequestType;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -219,45 +209,11 @@ public class VERIFACTU {
 	// **************************************************************
 
 	private static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
-		DataRequest dataRequest = new DataRequest()
-			.setDomain(domain.getId())
-			.setDate(new Date())
-			.setBlackBox("")
-			.setType(DataRequestType.VERIFACTU);
-		dataRequest = DataRequestDAO.save(ctx, dataRequest);
-		
-		Attach attach = new Attach()
-			.setDomain(domain)
-			.setAttachType(AttachType.DATA)
-			.setType(DataAttachType.REQUEST.value())
-			.setSource(DataAttachSource.VERIFACTU.value())
-			.setSourceId(dataRequest.getId())
-			.setMimeType(MimeType.XML)
-			.setData(request);
-		AttachmentDAO.insertDataAttach(ctx, attach);
-		return dataRequest;		
+		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.VERIFACTU, request);
 	}
 
 	private static DataResponse saveResponse(AONContext ctx, Domain domain, DataRequest dataRequest, byte[] response) {
-		DataResponse dataResponse = new DataResponse()
-			.setDomain(dataRequest.getDomain())
-			.setDataRequest(dataRequest.getId())
-			.setCode("")
-			.setSource(DataResponseSource.VERIFACTU)
-			;
-		DataResponseDAO.insertDataResponse(ctx, dataResponse);
-		
-		Attach attach = new Attach()
-			.setDomain(domain)
-			.setAttachType(AttachType.DATA)
-			.setType(DataAttachType.RESPONSE_OK.value())
-			.setSource(DataAttachSource.VERIFACTU.value())
-			.setSourceId(dataResponse.getId())
-			.setMimeType(MimeType.XML)
-			.setData(response);
-		AttachmentDAO.insertDataAttach(ctx, attach);
-		
-		return dataResponse;		
+		return InvoiceCommunicationDAO.saveResponse(ctx, domain, InvoiceCommunicationType.VERIFACTU, dataRequest, response);		
 	}
 
 	private static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
@@ -336,16 +292,7 @@ public class VERIFACTU {
 	}
 	
 	private static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
-		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, InvoiceCommunicationType.VERIFACTU)
-			.orElse( 
-				new InvoiceInfo()
-					.setDomain(domain.getId())
-					.setInvoice(invoiceId)
-					.setType(InvoiceCommunicationType.VERIFACTU)
-			)
-		;
-		info.setStatus(status);
-		return InvoiceInfoDAO.save(ctx, info);
+		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.VERIFACTU, status);
 	}
 	
 	private static InvoiceCommunicationStatus getInvoiceCommunicationStatus(EstadoRegistroType status) {
@@ -362,7 +309,6 @@ public class VERIFACTU {
 			.setDate(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DATE))
 			.setHuella(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA));
 	}
-
 
 	public static List<String> history(byte[] responseData, Integer invoiceId) {
 		try {

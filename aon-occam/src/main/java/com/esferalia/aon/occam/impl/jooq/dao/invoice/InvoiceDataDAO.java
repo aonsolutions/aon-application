@@ -85,6 +85,15 @@ public class InvoiceDataDAO {
 			.map(new InvoiceDataFiller())
 			.findFirst();
 	}
+
+	public static InvoiceData save(AONContext ctx, Integer domain, Integer invoiceId, InvoiceDataName name, String value) {
+		InvoiceData invoiceData = new InvoiceData()
+			.setDomain(domain)
+			.setInvoice(invoiceId)
+			.setName(name)
+			.setValue(value);
+		return save(ctx, invoiceData);
+	}
 	
 	public static InvoiceData save(AONContext ctx, InvoiceData invoiceData) {
 		InvoiceDataValidation.validate(ctx, invoiceData);

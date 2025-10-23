@@ -2,12 +2,15 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+
 public enum DataRequestType implements Serializable{
 
 	SII,
 	TBAI,
 	LROE,
-	VERIFACTU;
+	VERIFACTU,
+	SERES;
 
 	public byte value() {
 		return (byte) this.ordinal();
@@ -29,5 +32,20 @@ public enum DataRequestType implements Serializable{
 		if (i < 0 || i >= DataRequestType.values().length)
 			return null;
 		return DataRequestType.values()[i];
+	}
+	
+	public static DataRequestType safeValueOf(InvoiceCommunicationType ict) {
+		if(InvoiceCommunicationType.SII.equals(ict)) {
+			return DataRequestType.SII;
+		} else if(InvoiceCommunicationType.TBAI.equals(ict)) {
+			return DataRequestType.TBAI;
+		} else if(InvoiceCommunicationType.LROE.equals(ict)) {
+			return DataRequestType.LROE;
+		} else if(InvoiceCommunicationType.VERIFACTU.equals(ict)) {
+			return DataRequestType.VERIFACTU;
+		} else if(InvoiceCommunicationType.SERES.equals(ict)) {
+			return DataRequestType.SERES;
+		}
+		return null;
 	}
 }

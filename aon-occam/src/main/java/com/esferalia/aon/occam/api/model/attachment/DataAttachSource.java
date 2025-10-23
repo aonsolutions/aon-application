@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.attachment;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+
 
 public enum DataAttachSource implements Serializable {
 	
@@ -53,6 +55,21 @@ public enum DataAttachSource implements Serializable {
 		if (i == null) return null;
 		if (i < 0 || i >= DataAttachSource.values().length) return null;
 		return DataAttachSource.values()[i];
+	}
+	
+	public static DataAttachSource safeValueOf(InvoiceCommunicationType ict) {
+		if(InvoiceCommunicationType.SII.equals(ict)) {
+			return DataAttachSource.SII;
+		} else if(InvoiceCommunicationType.TBAI.equals(ict)) {
+			return DataAttachSource.TBAI;
+		} else if(InvoiceCommunicationType.LROE.equals(ict)) {
+			return DataAttachSource.LROE;
+		} else if(InvoiceCommunicationType.VERIFACTU.equals(ict)) {
+			return DataAttachSource.VERIFACTU;
+		} else if(InvoiceCommunicationType.SERES.equals(ict)) {
+			return DataAttachSource.SERES;
+		}
+		return null;
 	}
 	
 }

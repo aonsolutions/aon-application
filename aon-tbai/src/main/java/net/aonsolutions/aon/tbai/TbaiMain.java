@@ -44,6 +44,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -119,8 +121,14 @@ public class TbaiMain {
 	}
 
 	public void zuzenduTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
+			zuzenduTBAI(ctx, company, invoice, icc, subsanar);
+		}
+	}
+
+	public void zuzenduTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(icc); 
-		TicketBai ticketBai = tbaiData.getTicketBai(company.getDomain(), new User().setLogin(""), invoice.getId(), icc, subsanar);
+		TicketBai ticketBai = tbaiData.getTicketBai(ctx, company.getDomain(), invoice.getId(), icc, subsanar);
 		TbaiBlockchain blockchain = tbaiData.getInvoiceBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId(), subsanar);
 		final SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, icc, ticketBai, blockchain, subsanar);
 		
@@ -142,12 +150,16 @@ public class TbaiMain {
 			String crc = CRC8.calculate(qrUrl);
 			qrUrl = qrUrl + "&cr=" + crc;
 		
-		tbaiData.saveResponseZuzendu(company.getDomain(), new User().setLogin(""), invoice, xml, response, qrUrl);
-
+		tbaiData.saveResponseZuzendu(ctx, company.getDomain(), invoice, xml, response, qrUrl);
 	}
 	
-	public void createEmisionTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc)
-			throws Exception {
+	public void createEmisionTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
+			createEmisionTBAI(ctx, company, invoice, icc);
+		}
+	}
+	
+	public void createEmisionTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(icc); 
 		boolean send = true;
 		if(!icc.isBizkaia()) {
@@ -169,29 +181,27 @@ public class TbaiMain {
 			String sign = TbaiSign.getSign(xml);
 			TbaiResponse response = new TbaiResponse().setResponseStatus("pending").setSign(sign)
 				.setTbaiId(TbaiSign.buildTbaiId(tbai, sign));
-
 			TbaiBlockchain bc = new TbaiBlockchain().setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
 				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
 				.setSignature(response.getSign().substring(0, 100));
 
-			DataRequest request = tbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
-		
+			DataRequest request = tbaiData.saveRequest(ctx, company.getDomain(), xml);
+			
 			String tbaiId = icc.isBizkaia() ? URLEncoder.encode(response.getTbaiId()) : response.getTbaiId();
-		
+			
 			String qrUrl = TbaiUri.getUrlQr(icc) + "?id=" + tbaiId + "&s="
 				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
-			
+				
 			String crc = CRC8.calculate(qrUrl);
 			qrUrl = qrUrl + "&cr=" + crc;
 
-			DataResponse dr = tbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response,
-				bc, request, qrUrl);
+			DataResponse dr = tbaiData.saveResponsePending(ctx, company.getDomain(), invoice, response,	bc, request, qrUrl);
 
 			if (!icc.isBizkaia()) {
 				String uri = TbaiUri.getUrlEmision(icc);
 				response = sendXML(uri, icc, xml, true);
-				tbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
+				tbaiData.saveResponse(ctx, company.getDomain(), invoice.getId(), response, dr);
 				HandleTbaiResponse(response);
 			} else if (icc.isBizkaia()) { 
 				LROEResponse lroeResponse = null;
@@ -205,8 +215,7 @@ public class TbaiMain {
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 				    if(person.getId() == null) person = new Person().copy(company);
-
-				    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+					    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
                         company.getDomain().getId(), "", invoice.getActivity().getId());
                     if(ea == null || ea.getId() == null) {
                         ea = AON.getEnterpriseActivities(company.getDomain().getName(),
@@ -228,14 +237,19 @@ public class TbaiMain {
 			}
 		}
 	}
-	
+
 	public boolean isPersonaFisica(String document) {
 		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document)
 			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
-	public void createAnulacionTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc)
-			throws Exception {
+	public void createAnulacionTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
+			createAnulacionTBAI(ctx, company, invoice, icc);
+		}
+	}
+
+	public void createAnulacionTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(icc); 
 		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, icc);
 
@@ -249,11 +263,11 @@ public class TbaiMain {
 		byte[] data = bos.toByteArray();
 
 		byte[] xml = TbaiSigner.getInstance().sign(icc, data);
-		DataRequest request = tbaiData.saveRequestAnulacion(company.getDomain(), new User().setLogin(""), invoice, xml);
+		DataRequest request = tbaiData.saveRequest(ctx, company.getDomain(), xml);
 		if (!icc.isBizkaia()) {
 			String uri = TbaiUri.getUrlAnulacion(icc);
 			TbaiResponse response = sendXML(uri, icc, xml, true);
-			tbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
+			tbaiData.saveResponseAnulacion(ctx, company.getDomain(), invoice, response, request);
 			HandleTbaiResponse(response);
 		} else if (icc.isBizkaia()) { 
 			LROEResponse lroeResponse = null;

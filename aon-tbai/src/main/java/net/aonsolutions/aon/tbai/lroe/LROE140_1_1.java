@@ -8,6 +8,8 @@ import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -205,9 +207,11 @@ public class LROE140_1_1 extends LROE140 {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		TbaiData.getInstance(icc)
-			.saveResponsePending(person.getDomain(), new User().setLogin(""), invoice, tresp,
-			bc, new DataRequest(), qrUrl);
+		try(CloseableAONContext ctx = AONContext.getAONContext(person.getDomain(), "")){
+			TbaiData.getInstance(icc)
+				.saveResponsePending(ctx, person.getDomain(), invoice, tresp, bc, new DataRequest(), qrUrl);			
+		}
+
 	}
 
 	private LROEPF140IngresosConFacturaConSGConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {

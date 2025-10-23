@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.jooq.tables.DataAttach;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
@@ -36,7 +41,9 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
@@ -351,6 +358,7 @@ public class InvoiceCommunicationDAO {
 	// *************************************************************
 	// ************************** [INVOICES] ***********************
 	// *************************************************************
+	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceCommunicationParams params) {
 		if (params == null) throw new AonCoreException("No params");
 		if (params.getDomain() == null) throw new AonCoreException("No domain");
@@ -460,6 +468,72 @@ public class InvoiceCommunicationDAO {
 		return "ms/api/file/" +  result;
 	}
 
+	
+	// *************************************************************
+	// *********** INVOICE COMMUNICATION COMMON ********************
+	// *************************************************************
+
+	public static DataRequest saveRequest(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request) {
+		if(communicationType == null) {
+			throw new AonCoreException("No communication type");
+		}
+		
+		DataRequest dataRequest = new DataRequest()
+			.setDomain(domain.getId())
+			.setDate(new Date())
+			.setBlackBox("")
+			.setType(DataRequestType.safeValueOf(communicationType));
+		dataRequest = DataRequestDAO.save(ctx, dataRequest);
+			
+		Attach attach = new Attach()
+			.setDomain(domain)
+			.setAttachType(AttachType.DATA)
+			.setType(DataAttachType.REQUEST.value())
+			.setSource(DataAttachSource.safeValueOf(communicationType).value())
+			.setSourceId(dataRequest.getId())
+			.setMimeType(MimeType.XML)
+			.setData(request);
+		AttachmentDAO.insertDataAttach(ctx, attach);
+		return dataRequest;		
+	}
+	
+	public static DataResponse saveResponse(AONContext ctx, Domain domain,  InvoiceCommunicationType communicationType, DataRequest dataRequest, byte[] response) {
+		if(communicationType == null) {
+			throw new AonCoreException("No communication type");
+		}
+		
+		DataResponse dataResponse = new DataResponse()
+			.setDomain(dataRequest.getDomain())
+			.setDataRequest(dataRequest.getId())
+			.setCode("")
+			.setSource(DataResponseSource.safeValueOf(communicationType));
+		DataResponseDAO.insertDataResponse(ctx, dataResponse);
+		System.out.println("Saved DataResponse: " + dataResponse.getId());
+		Attach attach = new Attach()
+			.setDomain(domain)
+			.setAttachType(AttachType.DATA)
+			.setType(DataAttachType.RESPONSE_OK.value())
+			.setSource(DataAttachSource.safeValueOf(communicationType).value())
+			.setSourceId(dataResponse.getId())
+			.setMimeType(MimeType.XML)
+			.setData(response);
+		AttachmentDAO.insertDataAttach(ctx, attach);
+		
+		return dataResponse;		
+	}
+	
+	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
+		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, communicationType)
+			.orElse( 
+				new InvoiceInfo()
+					.setDomain(domain.getId())
+					.setInvoice(invoiceId)
+					.setType(communicationType)
+			)
+		;
+		info.setStatus(status);
+		return InvoiceInfoDAO.save(ctx, info);
+	}
 	
 	// *************************************************************
 	// ********************** [PREPARE NEW SII] ********************
