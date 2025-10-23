@@ -149,8 +149,8 @@ public class Sepe {
 	}
 
 	public static Contract getContractData(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrata.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			final String certificateType, String enterpriseCif, String ipf, Date fini, Date fend) throws SepeException {
+		return Contrata.getContractData(certificateInputStream, certificatePassword, certificateType, enterpriseCif, ipf, fini, fend);
 	}
 
 	public static Contract getTransformationData(final InputStream certificateInputStream,

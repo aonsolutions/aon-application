@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
@@ -97,6 +99,11 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.updateAuthPassword(ctx, auth));
 	}
 	
+	@Override
+	public Auth updateUserPassword(AONContext ctx, Auth auth) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateUserPassword(ctx, auth));
+	}
 	
 
 	@Override
@@ -218,7 +225,22 @@ public class SecurityImpl implements ISecurity {
 	public Scope saveScope(AONContext ctx, Scope scope) {
 		return SecurityDAO.saveScope(ctx, scope);
 	}
+
+	@Override
+	public boolean canScopeBeDeleted(AONContext ctx, Integer domainId, Integer scopeId) {
+		return ScopeDAO.canBeDeleted(ctx, domainId, scopeId);
+	}
+	@Override
+	public void reassignScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		ctx.getDslContext().transaction( 
+			configuration -> ScopeDAO.reassign(ctx, domainId, fromScopeId, toScopeId));
+	}
 	
+	@Override
+	public void reassignAndDeleteScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		ctx.getDslContext().transaction( 
+			configuration -> ScopeDAO.reassignAndDelete(ctx, domainId, fromScopeId, toScopeId));
+	}
 	@Override
 	public Integer deleteScope(AONContext ctx, Integer scopeId) {
 		return SecurityDAO.deleteScope(ctx, scopeId);
@@ -255,6 +277,12 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void assignAuthToUser(AONContext ctx, User user, byte[] auth) {
 		SecurityDAO.assignAuthToUser(ctx, user, auth);
+	}
+
+	@Override
+	public void addUserScope(AONContext ctx, Integer userId, List<Integer> scopes) {
+		ctx.getDslContext().transaction(
+			Configuration -> SecurityDAO.addUserScope(ctx, userId, scopes));
 	}
 	
 	// ------------------ SIGNATURE
@@ -461,6 +489,16 @@ public class SecurityImpl implements ISecurity {
 	public Booking saveBooking(AONContext ctx, Booking booking) {
 	    return  ctx.getDslContext().transactionResult(
 	            configuration -> BookingDAO.save(ctx, booking));
+	}
+
+	@Override
+	public void saveBookingApp(CloseableAONContext ctx, DomainApp aonApp, boolean active) {
+		ctx.getDslContext().transaction(configuration -> SecurityDAO.saveDomainApp(ctx, aonApp, active));
+	}
+
+	@Override
+	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp) {
+		ctx.getDslContext().transaction(configuration -> SecurityDAO.deleteDomainApp(ctx, aonApp));
 	}
 	
 }

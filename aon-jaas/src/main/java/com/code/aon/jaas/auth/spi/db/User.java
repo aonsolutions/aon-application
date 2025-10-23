@@ -1,13 +1,23 @@
 package com.code.aon.jaas.auth.spi.db;
 
 public class User extends BasicInfo {
+	
+	private String uuid;
 
 	private String login;
 	
 	private String password;
 	
 	private Integer domain;
-
+	
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	
 	public String getLogin() {
 		return login;
 	}

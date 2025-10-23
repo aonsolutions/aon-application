@@ -634,6 +634,7 @@ public class FillerDAO {
 					.setPersonName(getValue(r, ContractDAO.PERSON_FULL_NAME))
 					.setDomainName(getValue(r, DOMAIN.NAME))
 					.setPersonDocument(getValue(r, REGISTRY.DOCUMENT))
+					.setPersonSsNumber(getValue(r, PERSON.SOCIAL_SECURITY_NUM))
 					;
 		}
 	}

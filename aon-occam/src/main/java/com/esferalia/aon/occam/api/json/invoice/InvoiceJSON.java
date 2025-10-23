@@ -186,9 +186,25 @@ public class InvoiceJSON {
 					: json.optJSONObject(IJsonNames.SENDER);
 			registry.put(IJsonNames.ADDRESS, address);
 		}
+		extractUniqueWorkplaceFromDetails(json, invoice);
 		return json;
 	}
 	
+	private static void extractUniqueWorkplaceFromDetails(JSONObject json, Invoice invoice) {
+		if (invoice.hasDetails() ) {
+			Integer workplace = invoice.detailStream()
+				.map(d -> d.getWorkplace())
+				.filter(w -> w != null)
+				.map(w -> w.getId())
+				.filter(i -> i != null)
+				.distinct()
+				.limit(2)
+				.findFirst()
+			    .orElse(null);
+			json.put(IJsonNames.WORKPLACE, workplace);
+		}
+	}
+
 	private static InvoiceType getType(String t, String account) {
 		if("emitida".equalsIgnoreCase(t)) {
 			return InvoiceType.SALES;
@@ -200,7 +216,6 @@ public class InvoiceJSON {
 			return InvoiceType.PURCHASE;
 		} else return InvoiceType.EXPENSES;
 	}
-	
 	
 	public static JSONObject toMinimalJSON(Invoice inv) {
 		return new JSONObject()

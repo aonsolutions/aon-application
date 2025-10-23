@@ -10,6 +10,9 @@
 	>
 	
 	<ui:define name="head">
+		<aon:if test="#{app.readOnly}" >
+			<link rel="stylesheet" type="text/css" href="css/readonly.css" />
+		</aon:if>
 		<link rel="stylesheet" type="text/css" href="css/material-symbols-outlined.css" />
 	</ui:define>
 

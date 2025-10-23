@@ -86,6 +86,9 @@ public class AonCollectionUtils {
 	public static <T> boolean isNotEmpty(T[] array) {
 		return !isEmpty(array);
 	}
+	public static <T> int size(final T[] array){
+		return  isEmpty(array) ? 0 : array.length;
+	}
 
 	public static IntStream stream( int times) {
 		return IntStream.range(0, times);
@@ -119,6 +122,15 @@ public class AonCollectionUtils {
 	public static boolean contains(Byte[] types, byte type) {
 		if (types == null) return false;
 		for (byte t : types) {
+			if (t == type) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean contains(int[] types, int type) {
+		if (types == null) return false;
+		for (int t : types) {
 			if (t == type) {
 				return true;
 			}

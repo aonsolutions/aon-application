@@ -104,6 +104,13 @@ export class AonJsfApp extends AonElement {
 		expireSessionInput.name = 'expireSession';
 		expireSessionInput.value = this.expireSession;
 		form.appendChild(expireSessionInput);
+		
+		let readonlyInput = this.createElement(TAG.INPUT);
+		readonlyInput.type = 'hidden';
+		readonlyInput.name = 'readOnly';
+		readonlyInput.value = isReadOnly();
+		form.appendChild(readonlyInput);
+		
 
 		this.appendChild(form);
 

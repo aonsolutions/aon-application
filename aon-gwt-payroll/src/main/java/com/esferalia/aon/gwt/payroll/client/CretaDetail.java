@@ -1293,7 +1293,7 @@ public abstract class CretaDetail extends Composite {
 	}
 
 	private String getIconStyle(JsTrabajadoresYTramos t) {
-		return MainCreta.getIconStyle(t, respuestasMap.get(t.getId()));
+		return MainCreta.getIconStyle(t, respuestasMap);
 	}
 
 	private Collection<String> getNafs() {

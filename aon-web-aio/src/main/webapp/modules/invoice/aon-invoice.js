@@ -92,7 +92,9 @@ export class AonInvoice extends AonElement {
 		this.initializeFunctions();
 		this.configuration = await getInvoiceConfiguration();
 
-		this.getInvoice().surcharge = this.getInvoice().surcharge || this.getCompany().surcharge;
+		this.getInvoice().surcharge = this.getInvoice().surcharge 
+			|| (!this.getInvoice().isEmitida() && this.getCompany().surcharge);
+			
 		this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || this.getCompany().vatAccrualPayment;
 
 		this.buildDur().then(r => {
@@ -1348,24 +1350,56 @@ export class AonInvoice extends AonElement {
 			});
 		}
 
-		if(!this.invoice.workplace && this.configuration.workplaces.length > 0) {
-			this.invoice.setWorkplace(this.configuration.workplaces[0].id);
-		} 
+		// if(!this.invoice.workplace && this.configuration.workplaces.length > 0) {
+		// 	this.invoice.setWorkplace(this.configuration.workplaces[0].id);
+		// } 
+		if (!this.invoice.workplace) {
+    		const activeWorkplace = this.configuration.workplaces.find(w => w.active);
+    		if (activeWorkplace) {
+        		this.invoice.setWorkplace(activeWorkplace.id);
+    		}
+		}
 
-		if(this.configuration.workplaces.length > 1) {
-			table.addRow();
-			let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
-			workplace.setAlias("id", "description");
-			workplace.autocomplete = true;
-			workplace.readonly = this.invoice.isReadonly();
-			workplace.setOptions(this.configuration.workplaces);
-			workplace.value = this.invoice.getWorkplace();
-			workplace.addEventListener(EVENT.SELECT, () => {
-				this.invoice.setWorkplace(workplace.value);
-				if(this.autosave) this.save();
-			});
-			table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-		} else if(this.configuration.workplaces.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
+		if (this.configuration.workplaces) {
+			if (this.invoice.isReadonly()) {
+				table.addRow();
+				let workplace = createInput(this.WORKPLACE, MSG.WORKPLACE);
+				workplace.readonly = this.invoice.isReadonly();
+				const selectedWorkplace = this.configuration.workplaces.find(w => w.id == this.invoice.getWorkplace())
+				workplace.value = selectedWorkplace?.description;
+				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+			} else {
+				let wps = this.configuration.workplaces.filter(w => w.active);
+				if(wps) {
+					if(wps.length === 1) {
+						this.invoice.setWorkplace( wps[0].id );
+					}
+					if(wps.length > 1) {
+						table.addRow();
+						let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
+						workplace.setAlias("id", "description");
+						workplace.autocomplete = true;
+						workplace.readonly = this.invoice.isReadonly();
+						if (this.invoice.getWorkplace()) {
+							let tempwp = wps.filter(w => w.id == this.invoice.getWorkplace());
+							if ( tempwp && tempwp.length === 1 ) {
+								workplace.value =  tempwp[0].id;
+							}
+						}
+						if (!workplace.value) {
+							workplace.value = wps[0].id;
+						}
+						workplace.setOptions(wps);
+						workplace.addEventListener(EVENT.SELECT, () => {
+							this.invoice.setWorkplace(workplace.value);
+							if(this.autosave) this.save();
+						});
+						table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+					}
+				}
+			}
+
+		}
 	}
 
 	onChangeSerie(value) {	
@@ -2362,10 +2396,8 @@ export class AonInvoice extends AonElement {
 
 	updateBankAccount(finance, i, iban) {
 		let ba = new BankAccount(iban);
-		window.alert( JSON.stringify(ba) );
 		finance.bank_account = ba.iban;
 		finance.bankAlias = ba?.bank ? ba.bank.substring(0, 24) : null;
-		window.alert( finance.bankAlias );
 		finance.bic = ba.bic;
 		this.invoice.setFinance(finance, i);
 	}

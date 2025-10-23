@@ -53,7 +53,7 @@ const AON_CUSTOMER_PAYROLL_ACTIVITY = {
 
 const AON_SERVICE = {
     id: 'sideNavService',
-    name: MSG.AON_SERVICES,
+    name: 'Servicios Despacho',
     icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 

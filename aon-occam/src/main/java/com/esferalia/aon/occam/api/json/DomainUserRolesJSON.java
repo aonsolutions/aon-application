@@ -24,8 +24,8 @@ public class DomainUserRolesJSON {
 			.setOldParentDomainModules(ModuleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.OLD_PARENT_DOMAIN_MODULES)))
 			.setDomainUserRoles(AonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DOMAIN_USER_ROLES)))
 			.setParentDomainUserRoles(AonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.PARENT_DOMAIN_USER_ROLES)))
-			.setDomainPayer(JsonUtils.getboolean(json, IJsonNames.DOMAIN_PAYER));
-		
+			.setDomainPayer(JsonUtils.getboolean(json, IJsonNames.DOMAIN_PAYER))
+			.setScopes(ScopeJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.SCOPES)));	
 	}
 	
 	
@@ -41,6 +41,7 @@ public class DomainUserRolesJSON {
 			.put(IJsonNames.OLD_PARENT_DOMAIN_MODULES, ModuleJSON.toJSON(object.getOldParentDomainModules()))
 			.put(IJsonNames.DOMAIN_USER_ROLES, AonRoleJSON.toJSON(object.getDomainUserRoles()))
 			.put(IJsonNames.PARENT_DOMAIN_USER_ROLES, AonRoleJSON.toJSON(object.getParentDomainUserRoles()))
-			.put(IJsonNames.DOMAIN_PAYER, object.isDomainPayer());
+			.put(IJsonNames.DOMAIN_PAYER, object.isDomainPayer())
+			.put(IJsonNames.SCOPES, ScopeJSON.toJSON(object.getScopes()));
 	}
 }

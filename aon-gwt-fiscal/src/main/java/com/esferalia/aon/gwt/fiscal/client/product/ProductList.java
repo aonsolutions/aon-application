@@ -83,6 +83,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 		, CAT(AON.MSG.category()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("Estado"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PCK("Tipo"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
+		, COM("Compuesto"							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 		
@@ -151,12 +152,15 @@ public abstract class ProductList extends AonCustomDockLayout {
 		sort.addItem("C\u00f3digo", "code");
 		sort.addItem("Nombre", "name");
 		sort.addItem("Categor\u00eda", "category");
-		sort.addItem("Tipo", "type");
+		sort.addItem("Compuesto", "composite");
 		sort.addItem("Estado", "status");
+		sort.addItem("Pack", "pack");
+		sort.setValue("pack");
 		sort.getListBox().addChangeHandler(event -> onSearch());
 		
 		asc.addItem("Ascendente", "true");
 		asc.addItem("Descendete", "false");
+		asc.setValue("false");
 		asc.getListBox().addChangeHandler(event -> onSearch());
 		
 		addSortWidget(sort);
@@ -387,7 +391,9 @@ public abstract class ProductList extends AonCustomDockLayout {
 		
 		tab.addRow(row, new Label(null == product.getStatus() ? "" : product.getStatus().getDescription()), COLS.STA.getColWidth());
 		
-		tab.addRow(row, new Label(product.isComposition() ? "Pack" : "Servicio"), COLS.PCK.getColWidth());
+		tab.addRow(row, new Label(product.isManufactured() ? "Pack" : "Servicio"), COLS.PCK.getColWidth());
+		
+		tab.addRow(row, new Label(product.isComposition() ? "Si" : "No"), COLS.COM.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}

@@ -599,6 +599,7 @@ public final class IJsonNames {
 	public static final String SCHEMA = "schema";
 	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
+	public static final String SCOPES = "scopes";
 	public static final String SECOND_SURNAME = "second_surname";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";

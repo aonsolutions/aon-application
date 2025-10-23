@@ -114,6 +114,7 @@ public class TariffCatalogueList extends HTMLPanel {
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "15rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.description(), "-moz-available" , "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Tipo" , "5rem" , ""));
+		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Compuesto" , "6rem" , ""));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Precio" , "5rem" , ""));
 		tariffs.sort(Comparator.comparing(Tariff::getCode));
 		tariffs.forEach(tariff -> initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(tariff.getCode(), "5rem" , "")));
@@ -158,7 +159,9 @@ public class TariffCatalogueList extends HTMLPanel {
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
 						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-						tab.addRow(row, new Label(product.isComposition() ? "Pack" : "Servicio"), col.getWidth());
+						tab.addRow(row, new Label(product.isManufactured() ? "Pack" : "Servicio"), col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Compuesto")){
+						tab.addRow(row, new Label(product.isComposition() ? "Si" : "No"), col.getWidth());
 					}else {
 						Optional<ItemTariff> itemTariffOpt = itemTariffs.stream().filter(itemTariff -> itemTariff.getItem().equals(product.getItem().getId()) && AonStringUtils.equalsIgnoreCase(itemTariff.getTariff().getCode(), col.getDescription())).findFirst();
 						Tariff tariffObj = tariffs.stream().filter(tariffIt -> AonStringUtils.equalsIgnoreCase(tariffIt.getCode(), col.getDescription())).findFirst().get();

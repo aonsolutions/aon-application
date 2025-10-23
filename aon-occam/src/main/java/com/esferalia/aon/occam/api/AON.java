@@ -100,6 +100,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
@@ -576,6 +577,13 @@ public class AON {
 		}
 	}
 
+	
+	public static void addUserScope(Occam occam, Integer userId, List<Integer> scopes) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().addUserScope(ctx, userId, scopes);
+		} 
+	}
+	
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
 		deleteUserScope(domainName, domainId, login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().eq(userId)));
 	}
@@ -639,14 +647,25 @@ public class AON {
 		}
 	}
 	
+	public static boolean canScopeBeDeleted(Occam occam, Integer domainId, Integer scopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
+		}
+	}
+	public static void reassignScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+	public static void reassignAndDeleteScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getSecurity().reassignAndDeleteScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().deleteScope(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -1189,6 +1208,16 @@ public class AON {
 	
 	// ------------------------------------ WORKPLACE
 
+	public static Optional<Workplace> getWorkplace(Occam occam, Integer domainId, Integer workplaceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplace(ctx, domainId, workplaceId);
+		}
+	}
+	
+	/**
+	 * @deprecated use getWorkplace(Occam occam, Integer domainId, Integer workplaceId)
+	 */
+	@Deprecated
 	public static Workplace getWorkplace(String domainName, Integer domainId,
 			String login, WorkplaceFilter filter) {
 		CloseableAONContext ctx = null;
@@ -1201,6 +1230,16 @@ public class AON {
 		}
 	}
 
+	public static Stream<Workplace> getWorkplaces(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplaces(ctx, domainId);
+		}
+	}
+	
+	/**
+	 * @deprecated use getWorkplaces(Occam occam, Integer domainId)
+	 */
+	@Deprecated
 	public static LinkedList<Workplace> getWorkplaceList(String domainName,
 			Integer domainId, String login, WorkplaceFilter filter) {
 		CloseableAONContext ctx = null;
@@ -1224,13 +1263,6 @@ public class AON {
 	public static Workplace saveWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().saveWorkplace(ctx, workplace);
-		} 
-	}
-	
-	@Deprecated
-	public static void updateWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getCommon().updateWorkplace(ctx, workplace);
 		} 
 	}
 	
@@ -8932,6 +8964,24 @@ public class AON {
 	public static List<ActivitySummaryObject> getActivitySummary(String domainName, Integer domainId, String login, Integer parentDomainId,  Integer userId, ActivitySummaryParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getActivitySummary(ctx, domainId, parentDomainId, userId, params);
+		}
+	}
+
+	public static void saveBookingApp(String domainName, int domainId, String login, DomainApp aonApp, boolean active) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, active);
+		}
+	}
+
+	public static void deleteBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().deleteBookingApp(ctx, aonApp);
+		}
+	}
+
+	public static void createBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, true);
 		}
 	}
 	

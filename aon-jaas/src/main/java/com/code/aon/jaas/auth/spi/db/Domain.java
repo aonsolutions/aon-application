@@ -14,6 +14,8 @@ public class Domain extends BasicInfo {
 	
 	private Integer scope;
 
+	private Integer payer;
+
 	public String getDataBaseName() {
 		return dataBaseName;
 	}
@@ -52,6 +54,14 @@ public class Domain extends BasicInfo {
 
 	public void setScope(Integer scope) {
 		this.scope = scope;
+	}
+	
+	public Integer getPayer() {
+		return payer;
+	}
+	
+	public void setPayer(Integer payer) {
+		this.payer = payer;
 	}
 	
 }

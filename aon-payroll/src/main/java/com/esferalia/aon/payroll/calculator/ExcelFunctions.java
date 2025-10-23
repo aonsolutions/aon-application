@@ -57,6 +57,11 @@ public class ExcelFunctions {
 
 	}
 
+	public static final String If(Object test, String trueValue ) throws MacroException {
+		return truthValueTesting(test) ? trueValue : "";
+
+	}
+
 	private static boolean truthValueTesting(Object object) {
 		if (object instanceof Boolean)
 			return (Boolean) object;

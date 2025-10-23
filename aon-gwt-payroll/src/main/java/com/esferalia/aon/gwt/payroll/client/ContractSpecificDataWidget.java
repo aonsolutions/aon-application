@@ -438,6 +438,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 		journeyDurationHoursTB.getTextBox().setMaxLength(4);
 		journeyDurationMinutesTB.getTextBox().setMaxLength(2);
+		
+		formativeLevelLB.getElement().getStyle().setProperty("max-width", "32rem");
+		academicTitulationLB.getElement().getStyle().setProperty("max-width", "32rem");
 
 		table.add(createRow(calendarFormativeStartDate, calendarFormativeEndDate));
 		table.add(createRow(formativeLevelLB, academicTitulationLB));
@@ -2484,7 +2487,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	public void syncComunicationsData() {
 		showLoadingMessage("Sincronizando comunicaciones del Sepe...");
-		implEmployee.getSepeComunicationData(contractEmployeeInfo.getEmployeeInfo().getDocument(),
+		implEmployee.getSepeComunicationData(
+				contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
+				contractEmployeeInfo.getEmployeeInfo().getDocument(),
 				contractEmployeeInfo.getContractInfo().getStartDate(),
 				contractEmployeeInfo.getContractInfo().getContractId(), new AsyncCallback<Map<String, String>>() {
 

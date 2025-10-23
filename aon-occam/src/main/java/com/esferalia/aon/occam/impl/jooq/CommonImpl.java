@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -163,17 +164,15 @@ public class CommonImpl implements ICommon {
 	}
 
 	// ------------------ WORKPLACE
-	
-	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			WorkplaceDAO.getWorkplace(ctx, filter));
+	@Override
+	public Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer workplaceId) {
+		return WorkplaceDAO.getWorkplace(ctx, domainId, workplaceId);
 	}
+	@Override
+	public Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId) {
+		return WorkplaceDAO.getWorkplaces(ctx, domainId);
+	}		
 	
-	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			WorkplaceDAO.getWorkplaceList(ctx, filter));
-	}
-
 	@Override
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace) {
 		return ctx.getDslContext().transactionResult(
@@ -182,10 +181,18 @@ public class CommonImpl implements ICommon {
 	
 	@Override
 	@Deprecated
-	public void updateWorkplace(AONContext ctx, Workplace workplace) {
-		ctx.getDslContext().transaction(
-			configuration -> WorkplaceDAO.update(ctx, workplace));
+	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WorkplaceDAO.getWorkplace(ctx, filter));
 	}
+	
+	@Override
+	@Deprecated
+	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WorkplaceDAO.getWorkplaceList(ctx, filter));
+	}
+
 	
 	// ---------- PAYROLL WORKPLACE
 	

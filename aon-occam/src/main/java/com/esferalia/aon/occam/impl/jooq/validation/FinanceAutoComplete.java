@@ -148,7 +148,7 @@ public class FinanceAutoComplete {
 	 * Se trunco alias si excede la longitud 
 	 */
 	private static final BiConsumer<Finance,AONContext> ENSURE_BIC_LENGTH = (finance, ctx) -> { 
-		if (AonStringUtils.length(finance.getBankAlias()) > FINANCE.BIC.getDataType().length() )
+		if (AonStringUtils.length(finance.getBic()) > FINANCE.BIC.getDataType().length() )
 			finance.setBankAlias( AonStringUtils.substring(finance.getBankAlias(), 0, FINANCE.BIC.getDataType().length())); 
 	};
 	

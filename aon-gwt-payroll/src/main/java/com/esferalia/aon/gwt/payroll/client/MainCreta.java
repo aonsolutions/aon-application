@@ -59,6 +59,8 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.InfoDescription;
+import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.L13PendingDescription;
+import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.PEC;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -66,6 +68,7 @@ import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -138,6 +141,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	interface ProgressCallback {
 		public void onProgress( JsProgress progress);
+	}
+	
+	private static class L13PendingException extends RuntimeException {
+		 
 	}
 	
 	private static class MyEnterprises extends Enterprises {
@@ -731,34 +738,66 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return jsFile.getExternalReference().equals("66666666");
 	}
 
-	public static String getIconStyle(JsTrabajadoresYTramos trabajadoresYTramos, JsRespuesta respuesta) {
+	public static String getIconStyle(JsTrabajadoresYTramos trabajadoresYTramos, Map<String, JsRespuesta> respuestasMap) {
+		
+		JsRespuesta respuesta = respuestasMap.get(trabajadoresYTramos.getId());
+		try {
+			return getIconStyle(trabajadoresYTramos, respuesta);
+		} catch ( L13PendingException e) {
+			return getL13IconStyle(trabajadoresYTramos, respuestasMap);
+		}
+	}
+
+	protected static String getL13IconStyle(JsTrabajadoresYTramos trabajadoresYTramos,
+			Map<String, JsRespuesta> respuestasMap) {
+		JsRespuesta l13Respuesta = respuestasMap
+				.get(trabajadoresYTramos.getCCC() + trabajadoresYTramos.getFrom() + "L13");
+		if (l13Respuesta == null) {
+			return AON.AON_ICON_ERROR;
+		}
+		try {
+			return getIconStyle(trabajadoresYTramos, l13Respuesta);
+		} catch (Exception e) {
+			return AON.AON_ICON_ERROR;
+		}
+	}
+
+	protected static String getIconStyle(JsTrabajadoresYTramos trabajadoresYTramos, JsRespuesta respuesta) throws L13PendingException{
 		if (respuesta == null)
 			return AON.AON_ICON_ERRORWARNING;
 
-		JsError jsErros[] = respuesta.getErrors();
 
 		short icon = 0x0; // 00000000
-		for (JsError jsError : jsErros) {
+		for (JsError jsError : respuesta.getErrors()) {
 			ErrorDescription error = ErrorDescription.getErrorDescription(jsError.getCode());
+			
 			if (error == null)
 				icon |= 0x03b;
 			else
 				icon |= error.accept(new ErrorDescription.Visitor<Short>() {
-					@Override
-					public Short visitInfo(InfoDescription error) {
-						return 0x08b;
-					}
 
 					public Short visitError(ErrorDescription error) {
 						return 0x01b;
 					}
 
+					@Override
+					public Short visitInfo(ErrorDescription.InfoDescription error) {
+						return 0x08b;
+					}
+
+					@Override
 					public Short visitWarning(ErrorDescription.WarningDescription error) {
 						return 0x02b;
 					}
 
+					@Override
 					public Short visitSuccess(ErrorDescription.SuccessDescription error) {
 						return 0x04b;
+					}
+					
+					@Override
+					public Short visitL13Pending(L13PendingDescription error) {
+						throw new L13PendingException();
 					}
 
 				});
@@ -772,9 +811,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			return AON.AON_ICON_OKWARNING;
 		if ((icon & 0x08b) == 0x08b)			// Info 
 			return  isTrabajadoressYTramos(trabajadoresYTramos) ? AON.AON_ICON_ERRORWARNING : AON.AON_ICON_WARN ;
+			
 
 		return AON.AON_ICON_WARN;
 	}
+	
+
 
 	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta, final int x, final int y) {
 		
@@ -3211,9 +3253,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		if ( compare == 0 )
 			compare = f1.getTime().compareTo(f2.getTime());
 		
-		return compare < 0;
+		return compare <= 0;
 	}
 	
+	private static boolean is(JsFile f1, JsFile f2) {
+		if (f2 == null)
+			return false;
+		
+		int compare = f1.getDate().compareTo(f2.getDate());
+		if ( compare == 0 )
+			compare = f1.getTime().compareTo(f2.getTime());
+		
+		return compare < 0;
+	}
+
 	private static int lineOf(String string, String str) {
 		String lines [] = string.split("\\r?\\n");
 		for ( int i = 0; i < lines.length; i++ )

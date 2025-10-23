@@ -440,7 +440,6 @@ export class AonInvoiceList extends AonElement {
 		data.domainId = LS.getDomainId();
 		data.domainName = LS.getDomainName();
 		data.domainLogin = LS.getDomainLogin();
-		alert(this.getTable().selectedAll);
 		if(!this.getTable().selectedAll) {
 			data.ids = this.getTable().selected.map(r => r.id);
 		}
