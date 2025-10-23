@@ -19,6 +19,7 @@ import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
 import * as LS from '../../services/localStorageService.js';
+import * as GWT from '../../gwt/gwt.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonConfigurationMenu } from './aon-configuration-menu.js';
@@ -102,7 +103,8 @@ export class AonConfiguration extends AonElement {
 
 		// Ficha Cliente
 		let company = LS.getCompany();
-		if (company && company.registry && company.type !== "OFFICE") {
+		
+		if (this.dur.isAdmin() && company && company.registry && company.type !== "OFFICE") {
 			getRelationShipCompany({
 				url: company.domain,
 				relatedRegistry: company.registry
@@ -224,6 +226,15 @@ export class AonConfiguration extends AonElement {
 					});
 				}
 			}
+			
+			if(this.dur.isTrial() || this.dur.hasBeenTrial()){
+				companyOptions.push({
+					name: MSG.HIRING + ' (Planes)',
+					icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+					fn: () => this.buildPlans(),
+				});
+			}
+			
 			aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
 		}
 
@@ -490,6 +501,26 @@ export class AonConfiguration extends AonElement {
 		let marketplace = new AonBooking();
 		marketplace.id = 'aonMarketplace';
 		aonConfiguration.setContent(marketplace);
+	}
+	
+	buildPlans() {
+		GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+		
+		/*
+		TODO: pintar en el content de aonConfigurations
+		
+		console.log("buildPlans start");
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+		aonConfiguration.removeToolbarOptions();
+		
+		let aonConfigurationContent = this.getElement("aonConfigurationContent");
+		if(aonConfigurationContent){
+			console.log("Load Catalogue");
+			
+		}
+		
+		console.log("buildPlans end");
+		*/
 	}
 
 	buildGroups() {

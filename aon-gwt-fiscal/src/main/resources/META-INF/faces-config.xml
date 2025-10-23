@@ -370,5 +370,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Product Catalogue Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_product_catalogue_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/product/productCatalogueModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

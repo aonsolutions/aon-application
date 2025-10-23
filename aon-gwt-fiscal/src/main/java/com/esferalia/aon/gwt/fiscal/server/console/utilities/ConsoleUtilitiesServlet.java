@@ -31,16 +31,33 @@ public class ConsoleUtilitiesServlet extends ConsoleAbstractServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "ConsoleUtilitiesAbsServlet start!");
-		String consoleUtility = req.getParameter(IRequestParamsNames.CONSOLE_UTILITY);
-		if (AonStringUtils.isBlank(consoleUtility))
-			throw new IllegalArgumentException("No se ha indicado utilidad");
-		ConsoleUtilities cu = ConsoleUtilities.valueOf( consoleUtility );
-		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
-		resp.setContentType(MimeType.JSON.getName());
-		ConsoleParams consoleParams = new ConsoleParams().setPrinter(new PrintStream(resp.getOutputStream()));
-		DomainParams domainParams = null;
 		try {
-			domainParams = JsonParser.parseDomainParams(domainParamsParam);
+			String consoleUtility = req.getParameter(IRequestParamsNames.CONSOLE_UTILITY);
+			if (AonStringUtils.isBlank(consoleUtility))
+				throw new IllegalArgumentException("No se ha indicado utilidad");
+			ConsoleUtilities cu = ConsoleUtilities.valueOf( consoleUtility );
+			resp.setContentType(MimeType.JSON.getName());
+			ConsoleParams consoleParams = new ConsoleParams().setPrinter(new PrintStream(resp.getOutputStream()));
+			parserDomainParamsAndRun(req, consoleParams, cu);
+			resp.flushBuffer();
+		} catch (Exception e) {
+			try {
+				resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			} catch (IOException ioException) {
+				LOGGER.severe( "START --> CAUSA ORIGINAL" );
+				e.printStackTrace();
+				LOGGER.severe( "END --> CAUSA ORIGINAL" );
+				LOGGER.severe( "START --> EXCEPCION AL ENVIAR EL ERROR A RESPONSE" );
+				ioException.printStackTrace();
+				LOGGER.severe( "END --> EXCEPCION AL ENVIAR EL ERROR A RESPONSE" );
+			}
+		}
+	}
+	
+	private void parserDomainParamsAndRun(HttpServletRequest req, ConsoleParams consoleParams, ConsoleUtilities cu) {
+		try {
+			String domainParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
+			DomainParams domainParams = JsonParser.parseDomainParams(domainParam);
 			run(cu, domainParams, consoleParams);
 		} catch (ParseException | java.text.ParseException e1) {
 			consoleParams.getPrinter().println("Params parse Problem.");
@@ -49,20 +66,25 @@ public class ConsoleUtilitiesServlet extends ConsoleAbstractServlet {
 			consoleParams.getPrinter().flush();
 			LOGGER.log(Level.INFO, "ConsoleUtilitiesAbsServlet finished!");
 		}
-		resp.flushBuffer();
 	}
-	
-	private void run(ConsoleUtilities cu, DomainParams domainParams, ConsoleParams consoleParams) throws IOException {
+
+	private void run(ConsoleUtilities cu, DomainParams domainParams, ConsoleParams consoleParams) {
 		cu.visit( new ConsoleUtilitiesVisitor<Void>() {
 
 			@Override
-			public Void visitListDomains() throws IOException {
+			public Void visitListDomains() {
 				new DomainListConsoleUtility().run( domainParams, consoleParams);
+				return null;
+			}
+			
+			@Override
+			public Void visitScopeIntegrityFix() {
+				new ScopeIntegrityConsoleUtility().run( domainParams, consoleParams);
 				return null;
 			}
 
 			@Override
-			public Void visitNordigenFix() throws IOException {
+			public Void visitNordigenFix() {
 				new NordigenFixConsoleUtility().run( domainParams, consoleParams);
 				return null;
 			}

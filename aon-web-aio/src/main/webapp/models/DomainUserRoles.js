@@ -27,6 +27,8 @@ export class DomainUserRoles {
 	trial;
 	trialValue;
 
+	scopes;
+
 	constructor(data) {
 		this.domain = new Domain(data.domain);
 		this.parentDomain = new Domain(data.parentDomain);
@@ -47,6 +49,7 @@ export class DomainUserRoles {
 
 		this.trial = data.trial;
 		this.trialValue = data.trialValue;
+		this.scopes = data.scopes || [];
 	}
 
 	checkUsers() {
@@ -822,7 +825,11 @@ export class DomainUserRoles {
 	}
 
 	isTrial() {
-		return this.trial;
+		return this.trial && this.trialValue >= 0;
+	}
+	
+	hasBeenTrial(){
+		return this.trialValue == -1;
 	}
 	
 	getTrialValue() {

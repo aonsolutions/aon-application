@@ -19,6 +19,9 @@ export const getUserNotice = (data, sessionData) => get(`${API_URL}/user/notice`
 
 export const deleteUser = (data, sessionData) => remove(`${API_URL}/user`, data, sessionData);
 
+export const addUserScopes = (data, sessionData) => put(`${API_URL}/user/scope`, data, sessionData);
+export const deleteUserScope = (data, sessionData) => remove(`${API_URL}/user/scope`, data, sessionData);
+
 export const sendUserInfoEmail = (data, sessionData) => post(`${API_URL}/user/email`, data, sessionData);
 
 export const assignUserWorkgroup = (data, sessionData) => put(`${API_URL}/user/workgroup`, data, sessionData);

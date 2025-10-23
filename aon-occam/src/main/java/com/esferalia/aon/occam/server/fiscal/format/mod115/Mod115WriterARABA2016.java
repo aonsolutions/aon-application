@@ -74,7 +74,7 @@ public class Mod115WriterARABA2016 implements IMod115Writer{
 		private static final String DECLARACION = "DECLARACION";
 		private static final String EMPTY = "";
 		private static final String TRUE = "true";
-		private static final String FALSE = "true";
+		private static final String FALSE = "false";
 
 		private static final DecimalFormatSymbols SYMBOLS = new DecimalFormatSymbols();
 		static {

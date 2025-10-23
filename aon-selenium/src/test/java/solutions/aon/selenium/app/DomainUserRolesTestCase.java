@@ -24,7 +24,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	@Test
 	public void testConsultancyManagerUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://test.aonsolutions.org:8080/app");
+				"http://test.aonsolutions.org:8080/?jass");
 		String email = System.getProperty("integration.test.env.app.auth", "asesor@payroll-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -67,7 +67,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	@Disabled
 	public void testConsultancyManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/app");
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
 		String user = System.getProperty("integration.test.env.app.user", "asesor");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -113,7 +113,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	@Test
 	public void testMultiManagerUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://test.aonsolutions.org:8080/app");
+				"http://test.aonsolutions.org:8080/?jaas");
 		String email = System.getProperty("integration.test.env.app.auth", "asesor@multi-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
