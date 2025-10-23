@@ -13,6 +13,7 @@ export class AonDialog extends AonElement {
   ACCEPT;
   BUTTON_LEFT;
   BUTTON_RIGHT;
+  OUTSIDE_CLICK_CANCEL;
 
   static get observedAttributes() {
     return ['width', 'autoclose', 'type'];
@@ -109,6 +110,12 @@ export class AonDialog extends AonElement {
     this.BUTTON_LEFT  = this.DIALOG + 'DivButtonsLeft';
     this.BUTTON_RIGHT = this.DIALOG + 'DivButtonsRight';
     this.autoclose    = this.autoclose || true;
+	this.OUTSIDE_CLICK_CANCEL = (e) => {
+      const dialog = this.getDialog();
+      if (dialog && !dialog.contains(e.target)) {
+        this.close();
+      }
+    };
   }
 
   clear() {
@@ -235,12 +242,17 @@ export class AonDialog extends AonElement {
     head.appendChild(title);
     // Boton de cerrar
     const closeDesktop     = new AonIconButton(); 
-    closeDesktop.id        = "dialog-head-close";
+    closeDesktop.id        = this.id + "dialog-head-close";
     closeDesktop.className = "dialog-head-close";
     closeDesktop.title     = MSG.CLOSE;
     closeDesktop.icon      = 'close';
     closeDesktop.onclick   = () => this.close();
     head.appendChild(closeDesktop);
+  }
+  
+  deleteHeadClose(){
+	const close = this.getElement(this.id + "dialog-head-close");
+	close.remove();
   }
 
   setTitle(title) {
@@ -322,13 +334,18 @@ export class AonDialog extends AonElement {
   }
 
   clickOutsideDialogClose(){
-    // Se hace click en la zona gris cerrar
-    this.addEventListener('click', (e) => {
-      const dialog = this.getDialog();
-      if (dialog && !dialog.contains(e.target)) {
-        this.close();
-      }
-    });
+    // Se hace click en la zona gris cerrar OUTSIDE_CLICK_CANCEL
+	this.addEventListener('click', this.OUTSIDE_CLICK_CANCEL);
+//    this.addEventListener('click', (e) => {
+//      const dialog = this.getDialog();
+//      if (dialog && !dialog.contains(e.target)) {
+//        this.close();
+//      }
+//    });
+  }
+  
+  removeCliclOutsideDialogClose(){
+	this.removeEventListener('click', this.OUTSIDE_CLICK_CANCEL);
   }
 
   setContent(widget, top = null, left = null, width = null) {
@@ -436,7 +453,7 @@ export class AonDialog extends AonElement {
     }
   }
 
-  addCancelAction(fn = undefined, close = true) {
+  addCancelAction(fn = undefined, close = true, title = MSG.CANCEL) {
     let btn = undefined;
 //    if (this.isTypeFullScreen()) {
 //      btn = this.addAction({
@@ -452,7 +469,7 @@ export class AonDialog extends AonElement {
       btn = this.createElement(TAG.BUTTON);
       btn.id = this.CANCEL;
       btn.className = 'aonButton button-transparent';
-      btn.innerHTML = MSG.CANCEL;
+      btn.innerHTML = title;
       this.getElement(this.ACTION).appendChild(btn);
 //    }
 
@@ -478,7 +495,7 @@ export class AonDialog extends AonElement {
     }
   }
 
-  createButtonAccept(title = undefined) {
+  createButtonAccept(title = undefined, fn = undefined) {
     let btn = undefined;
 //    if (this.isTypeFullScreen()) {
 //      btn = this.addAction({
@@ -497,6 +514,11 @@ export class AonDialog extends AonElement {
       btn.innerHTML = title || MSG.ACCEPT;
       btn.title = title || MSG.ACCEPT;
       let divAction = this.getElement(this.ACTION);
+	  if(fn != undefined)
+		  btn.addEventListener(EVENT.CLICK, (ev) => {
+		      this.close();
+		      fn(ev);
+		  });
       divAction.appendChild(btn);
 //    }
 
@@ -509,7 +531,7 @@ export class AonDialog extends AonElement {
       delete: MSG.DELETE
     };
 
-    // Si no hay title y existe un default para ese type, úsalo
+    // Si no hay title y existe un default para ese type, ï¿½salo
     const title = defaults[titleOrType] || titleOrType;
 
     let button = this.createButtonAccept(title);

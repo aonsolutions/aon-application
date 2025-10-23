@@ -14,6 +14,8 @@ import { ClassicApps, Apps } from '../services/app.js';
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 import * as JSF from './aon-jsf-app.js';
+import { initSingletonAccess } from '../js/singletonAccess.js';
+
 
 // Entornos y configuraciones
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
@@ -61,6 +63,7 @@ export class AonParent extends AonElement {
 
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
+		initSingletonAccess();
 	}
 
 	init(filter) {
