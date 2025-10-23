@@ -308,7 +308,11 @@ public class PackagingDAO {
 		
 		for (ItemComposition ic : container.getItemComposition()) {
 			Integer productId = ic.getComposition().getProduct().getId();
-			SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getDeliveryProperty().eq(deliveryId).and(f.getProductProperty().eq(productId)));
+			SalesDetail sd = SalesDetailDAO.getStream(ctx, f -> 
+				f.getDeliveryProperty().eq(deliveryId)
+				.and(f.getProductProperty().eq(productId)))
+				.filter(s -> AonMathUtils.isLessThan(s.getDelivered(), s.getQuantity()))
+				.findFirst().orElse(null);
 			
 			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
 					.and(f.getItem().eq(ic.getCompositionItemId()))

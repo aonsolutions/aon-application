@@ -365,6 +365,7 @@ export const SPIN = 'spin';
 export const SRC = 'src';
 export const STAFF_EXPENSES = 'staffExpenses';
 export const STATUS = 'status';
+export const STOCK = 'stock';
 export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';

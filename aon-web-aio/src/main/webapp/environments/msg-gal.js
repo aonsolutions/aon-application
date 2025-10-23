@@ -327,6 +327,7 @@ export const NEXT = 'Seguinte';
 export const NIF = 'NIF';
 export const NO_DATA = 'Non hai datos';
 export const NO_LINK_CLIENT = 'Cliente desvinculado';
+export const NO_STOCK_AVAILABLE = 'Sen stock dispoñible';
 export const NOT_LINKED = 'Non vinculado';
 export const NOT_LINKED1 = 'Non vinculados';
 export const NOTIFICATION = 'Notificación';

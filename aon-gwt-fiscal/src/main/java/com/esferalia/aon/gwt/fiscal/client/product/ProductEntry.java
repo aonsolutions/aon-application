@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -98,7 +97,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomMultiSelectBox domainType = new AonCustomMultiSelectBox("Tipo Dominio");
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
-	private AonCustomCheckBox composite = new AonCustomCheckBox("Pack");
+	private AonCustomCheckBox pack = new AonCustomCheckBox("Pack");
+	private AonCustomCheckBox composite = new AonCustomCheckBox("Compuesto");
 	private AonCustomIntegerBox trial = new AonCustomIntegerBox("D\u00edas Prueba"); // TRIAL_LIMIT_DAYS
 	private AonCustomDateBox trialLimit = new AonCustomDateBox("Fecha L\u00edmite Prueba"); // TRIAL_LIMIT_DATE
 	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloqueo Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
@@ -340,13 +340,24 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
 		app.addChangeHandler(e -> createBarCode());
 		
-		barcode.setEnable(false);
+		barcode.setEnable(product.isComposition());
 		barcode.setValue(formatBarCode(item.getBarcode()));
+		barcode.addValueChangeHandler(e -> createBarCode());
 		
-		composite = new AonCustomCheckBox("Pack");
-		composite.setWidth("3rem");
+		pack = new AonCustomCheckBox("Pack");
+		pack.setWidth("3rem");
+		pack.setValue(product.isManufactured());
+		pack.addValueChangeHandler(e -> {
+			product.setManufactured(pack.getValue());
+			saveProduct();
+		});
+		
+		composite = new AonCustomCheckBox("Compuesto");
+		composite.setWidth("5rem");
 		composite.setValue(product.isComposition());
 		composite.addValueChangeHandler(e -> {
+			barcode.setEnable(pack.getValue());
+			
 			product.setComposition(composite.getValue());
 			
 			if(!composite.getValue()) {
@@ -376,7 +387,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 				saveProduct();
 		});
 		
-		table.add(createRow(app, barcode, composite));
+		table.add(createRow(app, barcode, pack, composite));
 		
 		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
 		domainType.setSelectedOptions(getSelectedDomainTypes());
@@ -609,20 +620,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
         return panel;
     }
 	
-	private FlowPanel createRow(Widget widget1, Widget widget2) {
+	private FlowPanel createRow(Widget ...widgets) {
         FlowPanel row = createFlexPanel();
-        row.add(widget1);
-        if (widget2 != null) {
-            row.add(widget2);
+        for(int i = 0; i < widgets.length; i++) {
+        	if(null != widgets[i]) row.add(widgets[i]);
         }
-        return row;
-    }
-	
-	private FlowPanel createRow(Widget widget1, Widget widget2, Widget widget3) {
-        FlowPanel row = createFlexPanel();
-        row.add(widget1);
-        if (widget2 != null) row.add(widget2);
-        if (widget3 != null) row.add(widget3);
         return row;
     }
 	
@@ -671,6 +673,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		// Update Status (should use handler for this)
 		product.setStatus(status.getValue());
 		item.setStatus(status.getValue());
+		
+		if(AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--0000000000") || AonStringUtils.equalsIgnoreCase(item.getBarcode(), "--/0000000000") )
+			item.setBarcode(null);
 		
 		AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
 		
@@ -859,7 +864,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	}
 
 	private void getItems(Consumer<List<Item>> success) {
-		commonService.getItems(options.getDomainName(), options.getDomain(), options.getUser(), ProductType.AUXILIARY, new AsyncCallback<List<Item>>() {
+		// Allow al item for compisition /*ProductType.AUXILIARY*/
+		commonService.getItems(options.getDomainName(), options.getDomain(), options.getUser(), null, new AsyncCallback<List<Item>>() {
 			
 			@Override
 			public void onSuccess(List<Item> itemsDb) {
