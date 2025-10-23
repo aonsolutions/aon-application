@@ -206,9 +206,9 @@ export class AonAccountingBeta extends AonElement {
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 		}
 		
-		// notesIcon.classList.toggle("material-icons-selected");
-
 		this.getApplication().toogleRightSidenav();
+
+		// notesIcon.classList.toggle("material-icons-selected");
 	}
 
 	buildAccountingMenu() {

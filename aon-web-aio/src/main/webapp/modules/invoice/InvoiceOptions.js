@@ -556,8 +556,8 @@ import { Expense } from './Expense.js';
   ];
 
   export const NEW_ISSUED_INVOICE = {
-    name: MSG.INCOMES,
-    title: MSG.INCOMES,
+    name: MSG.CREATE_INVOICE_INCOME,
+    title: MSG.CREATE_INVOICE_INCOME,
 //    icon: MATERIAL_ICONS.UNARCHIVE,
     permission: true,
 //    backgroundColor: "#4472C4",
@@ -565,8 +565,8 @@ import { Expense } from './Expense.js';
   };
 
   export const NEW_RECEIVED_INVOICE = {
-    name: MSG.EXPENSES,
-    title: MSG.EXPENSES,
+    name: MSG.CREATE_INVOICE_EXPENSE,
+    title: MSG.CREATE_INVOICE_EXPENSE,
 //    icon: MATERIAL_ICONS.ARCHIVE,
     permission: true,
 //    backgroundColor: "#4472C4",
@@ -574,8 +574,8 @@ import { Expense } from './Expense.js';
   };
 
   export const NEW_TICKET = {
-    name: MSG.TICKET,
-    title: MSG.TICKET,
+    name: MSG.CREATE_INVOICE_TICKET,
+    title: MSG.CREATE_INVOICE_TICKET,
 //    icon: MATERIAL_ICONS.RECEIPT,
     permission: true,
 //    backgroundColor: "#4472C4",

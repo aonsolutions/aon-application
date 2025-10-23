@@ -69,3 +69,11 @@ $height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$height-toolbar + v.
   border-radius : v.$border-radius;
   min-height    : $height-min-body;
 }
+
+/* --- 5. Submenu de observaciones --- */
+.aonRightSidenav {
+  flex-shrink : 0;
+  width       : auto;
+  white-space : nowrap;
+  margin-bottom : v.$px-100;
+}
