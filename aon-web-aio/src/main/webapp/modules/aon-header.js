@@ -204,6 +204,7 @@ export class AonHeader extends AonElement {
 			// aonHeaderSearch.id = this.AON_HEADER_SEARCH;
 			// aonHeaderSearch.classList.add("aonHeaderSearch");
 			// Muestra el listado de resultados de la busqueda
+			let clickEnMenu = false; // Saber si estamos en AonDialogSearch
 			let aonHeaderSearchDialogMenu 					= new AonDialogSearch();
 			aonHeaderSearchDialogMenu.id 						= this.AON_HEADER_SEARCH_DIALOG_MENU;
 			aonHeaderSearchDialogMenu.style.display = 'none';
@@ -226,7 +227,14 @@ export class AonHeader extends AonElement {
 					else
 						aonHeaderSearchDialogMenu.close();
 				});
-				input.addEventListener(EVENT.BLUR, () => {
+				aonHeaderSearchDialogMenu.addEventListener('mousedown', () => {
+					clickEnMenu = true;
+				});
+				input.addEventListener(EVENT.BLUR, (ev) => {
+					 if (clickEnMenu) {
+						clickEnMenu = false;
+						return; // No cerramos, el clic fue dentro del menú
+					}
 					// Cerramos si pierde el focus el input
 					aonHeaderSearchDialogMenu.close();
 				});
@@ -691,7 +699,6 @@ export class AonHeader extends AonElement {
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
 		aonHeaderCompanyName.innerHTML = company ? company.name : '';
 
-
 		if(onlyOne) {
 			// aonHeaderHome.style.right = '140px';
 			// aonHeaderCompany.style.right = '180px';
@@ -927,8 +934,8 @@ export class AonHeader extends AonElement {
 	}
 
 	getData() {
-        return getNotification({page:1, perPage:1, status:"unread"});
-    }
+		return getNotification({page:1, perPage:1, status:"unread"});
+	}
 	
 	search(aonHeader) {
 		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
@@ -951,14 +958,13 @@ export class AonHeader extends AonElement {
 			});
 			
 			searchCompanies.slice(0, 10).forEach(company => {
-
 				const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
 				const companyDocument = this.decorateMatching(company.document, aonHeaderSearchBoxValue);
 				
 				searchOptions.push({
 					id: `Company${company.id}`,
 					icon: aonHeader.getIcon(company),
-					name: `<span>${companyName}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+					name: `<span>${companyName}</span><span class="company-document">${companyDocument}<aon-icon id="Company${company.id}Copy" style="display: none;" icon="${MATERIAL_ICONS.CONTENT_COPY}">${MATERIAL_ICONS.CONTENT_COPY}</aon-icon></span>`,
 					title: `${company.domain}`,
 					fn: () => { aonHeader.companySelection(company); }
 				});
@@ -1020,7 +1026,6 @@ export class AonHeader extends AonElement {
 			}).catch(error => console.log(error));
 
 		});
-
 	}
 	
 	isDecorated(text) {

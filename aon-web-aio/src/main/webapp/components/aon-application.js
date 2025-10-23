@@ -1265,10 +1265,6 @@ export class AonApplication extends AonElement {
 	}
 
 	stopLoading() {
-
-    console.log(this.AON_MODULE_LOADER)
-    console.log(this.getElement(this.AON_MODULE_LOADER))
-
 		this.getElement(this.AON_MODULE_LOADER).stopLoading();
 	}
 }

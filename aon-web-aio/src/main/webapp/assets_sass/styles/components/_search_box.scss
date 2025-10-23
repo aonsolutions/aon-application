@@ -51,6 +51,17 @@ aon-dialog-search{
       display: flex;
       padding: v.$padding-min v.$padding;
       gap    : v.$gap-min;
+      cursor : pointer;
+      >span{
+        width: v.$pct-100;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        .company-document{
+          display: flex;
+          gap: v.$gap-min;
+        }
+      }
     }
   }
 }
