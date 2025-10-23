@@ -1909,7 +1909,7 @@ export const CONFIGURATION_MENU = {
 
 export const ENTERPRISE_MENU = {
 	app: "enterpriseMenu",
-	symbol: "domain",
+	symbol: MATERIAL_ICONS.BUSINESS,
 	title: MSG.ENTERPRISES,
 	description: MSG.ENTERPRISES,
 	subtitle: "Empresas",

@@ -43,13 +43,11 @@ const badgeUpdate = ({notification, messenger}) => [
 const NOTIFICATION_ALL = {
     name: "Todas",
     id:'notification_all',
-    icon: MATERIAL_ICONS.ALL_INBOX
 };
 
 const NOTIFICATION_NOT_READ = {
     name: 'No leídas',
     id:'notification_not_read',
-    icon:MATERIAL_ICONS.MOVE_TO_INBOX
 };
 
 const NotificationOptions = {
