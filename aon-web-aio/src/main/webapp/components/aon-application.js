@@ -128,6 +128,7 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
+    rightSidenav.classList.add(CSS.AON_NONE);
     div.appendChild(rightSidenav);
 
     let dialogMenu = new AonDialogMenu();
@@ -269,35 +270,18 @@ export class AonApplication extends AonElement {
   // }
 
   toogleRightSidenav() {
-   /*
-    if (this.isSidenavBlock()) {
-      this.closeRightSidenav();
-    } else {
-      let rightSidenav = this.getRightSidenav();
-      if (rightSidenav.style.flexBasis === "0px") {
-        rightSidenav.style.flexBasis = "350px";
-      } else {
-        rightSidenav.style.flexBasis = "0px";
-      }
-    }
-    */
-    
-//    let rightSidenav = this.getRightSidenav();
-//	  if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
-//	    rightSidenav.style.flexBasis = "350px";
-//	  } else {
-//	    rightSidenav.style.flexBasis = "0px";
-//	  }
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.toggle(CSS.AON_NONE);
   }
 
   openRightSidenav() {
-    // let rightSidenav = this.getRightSidenav();
-//    rightSidenav.style.flexBasis = "350px";
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.remove(CSS.AON_NONE);
   }
 
-   closeRightSidenav() {
-    // let rightSidenav = this.getRightSidenav();
-//    rightSidenav.style.flexBasis = "0px";
+  closeRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.classList.add(CSS.AON_NONE);
   }
 
   addMobileSidenavHeader(app) {

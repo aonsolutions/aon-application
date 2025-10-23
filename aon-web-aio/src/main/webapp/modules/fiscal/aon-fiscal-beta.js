@@ -150,7 +150,7 @@ export class AonFiscalBeta extends AonElement {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
 
-		let notesIcon = this.getElement("aonFiscalBetaToolbarHeaderToolSectionNotesButtonIcon");
+		// let notesIcon = this.getElement("aonFiscalBetaToolbarHeaderToolSectionNotesButtonIcon");
 
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -188,9 +188,10 @@ export class AonFiscalBeta extends AonElement {
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 		}
 		
-		notesIcon.classList.toggle("material-icons-selected");
-
 		this.getApplication().toogleRightSidenav();
+
+		// notesIcon.classList.toggle("material-icons-selected");
+
 	}
 
 	buildFiscalMenu() {

@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl, getCompaniesBySchemas} from  '../../services/service.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import {AonSign} from '../timecontrol/aon-sign.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { AonDesktop } from './aon-desktop.js';
@@ -9,13 +9,11 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialogMenu } from '../../components/aon-dialog-menu.js';
 
 export class AonParent extends AonElement {
-
 	companies;
 	selected;
 	notice;
 	filter;
 	_filter; // NEW FILTER
-
 	more;
 
 	setFilter(filter){

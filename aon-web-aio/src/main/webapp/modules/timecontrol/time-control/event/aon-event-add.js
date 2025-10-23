@@ -20,8 +20,9 @@ export class AonEventAdd extends AonElement {
   ACTION;
   TITLE;
   TOOLBAR;
-  START_DATE
+  START_DATE;
   TASK_HOLDER;
+
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }

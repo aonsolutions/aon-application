@@ -113,27 +113,27 @@ export class AonTabs extends AonElement {
     this.INDICATOR.style.width = `${this.TABS_ITEM[0].clientWidth}px`;
   }
   
-    updateBadge(options){
-        options.map(option=>this.createBadge(option.id, option.badge));
-    }
+  updateBadge(options){
+    options.map(option=>this.createBadge(option.id, option.badge));
+  }
 
-    async createBadge(id, badge){
-        const div = await waitEl("#"+ this.DIV_ICON+id);
-        if(div){
-            const idBadge = id+"Badge";
-            const spanBadge = this.getElement(idBadge) || this.createElement(TAG.SPAN);
-            spanBadge.id = idBadge;
-            if(badge > 0){
-                spanBadge.classList.add("badge");
-                spanBadge.textContent = badge;
-                const spanExist = div.querySelector("span");
-                div.insertBefore(spanBadge, spanExist);
-                spanBadge.style.top = .7;
-            } else {
-                spanBadge.remove();
-            }
+  async createBadge(id, badge){
+    const div = await waitEl("#"+ this.DIV_ICON+id);
+    if(div){
+        const idBadge = id+"Badge";
+        const spanBadge = this.getElement(idBadge) || this.createElement(TAG.SPAN);
+        spanBadge.id = idBadge;
+        if(badge > 0){
+            spanBadge.classList.add("badge");
+            spanBadge.textContent = badge;
+            const spanExist = div.querySelector("span");
+            div.insertBefore(spanBadge, spanExist);
+            spanBadge.style.top = .7;
+        } else {
+            spanBadge.remove();
         }
     }
+  }
 
   handleTabSelection(ev) {
     this.toggleActiveClass(ev);
