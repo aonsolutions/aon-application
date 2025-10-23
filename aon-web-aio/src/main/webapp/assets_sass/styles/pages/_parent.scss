@@ -1,0 +1,48 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-parent{
+    #aonCompanySpanTitle{
+      font-family: v.$font-primary-bold;
+      font-size  : v.$px-16;
+    }
+    #UlCompanies{
+      list-style    : none;
+      padding       : v.$px-0;
+      margin        : v.$px-0;
+      display       : flex;
+      flex-direction: column;
+      gap           : v.$gap-min;
+      li{
+        display      : flex;
+        gap          : v.$gap-min;
+        align-items  : center;
+        border-radius: v.$border-radius;
+        padding      : v.$padding-min;
+        cursor       : pointer;
+        .first-icon{
+          display: flex;
+        }
+        .aonLiSpan{
+          display       : flex;
+          flex-direction: column;
+          gap           : calc(v.$gap-min / 2);
+          width         : v.$pct-100;
+          .aonLiSpanNameEnterprise{
+            font-family: v.$font-primary-semibold;
+          }
+          .aonLiSpanSubtitle{
+            display: flex;
+            gap: v.$gap-min;
+            .aonInputBoxLabelSpanWarning{
+              color: orange;
+            }
+          }
+        }
+        .last-icon{
+          display: flex;
+        }
+      }
+    }
+  }
+}

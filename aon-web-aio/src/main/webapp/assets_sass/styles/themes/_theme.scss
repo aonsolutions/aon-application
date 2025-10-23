@@ -784,6 +784,27 @@
         }
       }
     }
+    // Parent
+    aon-parent{
+      #UlCompanies{
+        li{
+          border: $border;
+          color : $color-text-general;
+          &:hover, &.selected{
+            box-shadow: $box-shadow;
+            background-color: $color-500;
+            color           : $color-text-button;
+          }
+          .aonLiSpan{
+            .aonLiSpanSubtitle{
+              .aonInputBoxLabelSpanWarning{
+                color: $color-corp-orange;
+              }
+            }
+          }
+        }
+      }
+    }
     // Desktop
     aon-desktop .aonFlex #aonDesktopMainContent{
       background-color: unset;

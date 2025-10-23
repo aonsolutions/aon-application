@@ -11,6 +11,7 @@ import { AonToast } from "./aon-toast.js";
 import { createSelect } from './CreateComponent.js';
 
 export class AonApplication extends AonElement {
+  AON_MODULE_LOADER = CONSTANT.ID_LOADER;
   SIDENAV;
   SIDENAV_RIGHT;
   TOOLBAR;
@@ -1008,15 +1009,15 @@ export class AonApplication extends AonElement {
     let toolbar = this.getElement(this.TOOLBAR);
     return toolbar.getSearchButton();
   }
-  
+
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
     if (toolbar) {
       toolbar.setAttribute("option", title);
       //----------ADD COLOR SIDENAV SELECTED---------
-      let li = this.getElement(this.SIDENAV+title);
-//      if(li) li.style.backgroundColor = "#d3e3fd";  
-    } 
+      // let li = this.getElement(this.SIDENAV+title);
+      // if(li) li.style.backgroundColor = "#d3e3fd";  
+    }
   }
 
   addTitleToolSection(title) {
@@ -1258,6 +1259,18 @@ export class AonApplication extends AonElement {
       this.buildDragAndDrop(false);
     }
   }
+
+  startLoading() {
+		this.getElement(this.AON_MODULE_LOADER).startLoading();
+	}
+
+	stopLoading() {
+
+    console.log(this.AON_MODULE_LOADER)
+    console.log(this.getElement(this.AON_MODULE_LOADER))
+
+		this.getElement(this.AON_MODULE_LOADER).stopLoading();
+	}
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

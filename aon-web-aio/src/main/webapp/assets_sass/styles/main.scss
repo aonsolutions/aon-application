@@ -13,6 +13,7 @@
 
 // Importamos vistas
 @use './pages/index' as index;                // login
+@use './pages/parent' as parent;              // listado de empresas
 @use './pages/home' as home;                  // home  - logueado
 @use './pages/home_desktop' as home_desktop;  // home  - en empresa
 @use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen

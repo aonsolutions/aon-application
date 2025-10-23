@@ -5,16 +5,13 @@ import { CONSTANT, TAG } from '../environments/environments.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
 import { AonNewInput } from "../components/aon-new-input.js";
-import { AonMobileParent } from './company/aon-mobile-parent.js';
+// import { AonMobileParent } from './company/aon-mobile-parent.js';
 import { AonParent } from './aon-parent.js';
 
 import * as LS from '../services/localStorageService.js';
-
 import { initSingletonAccess } from '../js/singletonAccess.js';
- 
 
 export class AonModule extends AonElement {
-
 	AON_LOGIN;
 	AON_HOME;
 	AON_MODULE_LOADER;
@@ -32,7 +29,7 @@ export class AonModule extends AonElement {
 		initSingletonAccess();
 		this.AON_LOGIN = 'aonLogin';
 		this.AON_HOME = 'aonHome';
-		this.AON_MODULE_LOADER = 'aonModuleLoader';
+		this.AON_MODULE_LOADER = CONSTANT.ID_LOADER;
 	}
 
 	buildLogin() {
