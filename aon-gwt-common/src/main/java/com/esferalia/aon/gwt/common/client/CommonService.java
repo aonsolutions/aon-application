@@ -81,6 +81,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -485,5 +487,11 @@ public interface CommonService extends RemoteService {
 	
 	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product) throws AonCoreException;
 	void createBookingFee(String domainName, int domain, String user, Product product) throws AonCoreException;
+	
+	List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException;
+	RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod) throws AonCoreException;
+	List<RegistryRelationship> getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry) throws AonCoreException;
+	Customer saveCustomer(String domainName, Integer domainId, String user, Customer customer) throws AonCoreException;
+	
 	
 }
