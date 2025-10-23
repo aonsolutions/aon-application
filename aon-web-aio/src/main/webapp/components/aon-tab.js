@@ -73,13 +73,18 @@ export class AonTab extends AonElement {
                     this.tabSelected.classList.remove("tab-selected");
                 }
             });
-            this.tabsComponent.addEventListener("mouseleave", () => {
+
+            if(this.tabsComponent){
+                this.tabsComponent.addEventListener("mouseleave", () => {
                 // Poner en el seleccionado
                 this.tabSelected.classList.add("tab-selected");
-            });
-        // FIN Animación de hover
+                });
+            // FIN Animación de hover
+            }
 
-        this.tabsComponent.appendChild(tab);
+        if(this.tabsComponent){
+            this.tabsComponent.appendChild(tab);
+        }
         // return tab;
     }
 
@@ -88,6 +93,9 @@ export class AonTab extends AonElement {
     }
 
     addOption(option) {
+        if(!this.options){
+            this.options = [];
+        } 
         this.options.push(option);
         return this.printOption(option, this.options.length - 1);
     }
