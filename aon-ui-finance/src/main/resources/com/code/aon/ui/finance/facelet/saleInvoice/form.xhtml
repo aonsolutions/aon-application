@@ -51,29 +51,30 @@
 						</aon:if>
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
 							<aon:outputLink 
-								id="tbaiUrl"	
+								id="saleInvoice-tbaiUrlAraba"	
 								target="_blank" 
 								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
 								styleClass="aon-finding-toolbar-item aon-icon-araba">
-								Ticket Bai
 							</aon:outputLink>
 						</aon:if>
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}"> 
 							<aon:outputLink 
-								id="tbaiUrl"	
+								id="saleInvoice-tbaiUrlGipuzkoa"	
 								target="_blank" 
 								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
 								styleClass="aon-finding-toolbar-item aon-icon-gipuzkoa">
-								Ticket Bai
 							</aon:outputLink>
 						</aon:if>
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
-							<aon:outputLink id="tbaiUrl"	
+							<aon:outputLink 
+								id="saleInvoice-tbaiUrlBizkaia"	
 								target="_blank" 
 								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
 								styleClass="aon-finding-toolbar-item aon-icon-bizkaia">
-								Ticket Bai
-								</aon:outputLink>
+							</aon:outputLink>
 						</aon:if>
 						
 						<!-- ****************** Verifactu ************************  --> 
