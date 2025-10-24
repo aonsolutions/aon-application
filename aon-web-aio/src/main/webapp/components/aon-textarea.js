@@ -3,13 +3,13 @@ import { openFileUrl } from '../services/fileService.js';
 import { getReader } from '../services/utils.js';
 import { newComponent, setAttributes, setStyles} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
+import { AonIcon } from './aon-icon';
 //import '../css/aon-textarea.css';
-//import '../css/aon-css-utils.css';
+// import '../css/aon-css-utils.css';
 import { WORKFLOW_TYPES } from '../modules/messenger/MessengerEnums.js';
 import { downscaleImage } from '../services/compressImg.js';
 
 export class AonTextArea extends AonElement {
-
 	TEXTAREA;
 	TOOLBAR;
 	RIGHT;
@@ -98,10 +98,9 @@ export class AonTextArea extends AonElement {
 
 	build() {
 		this.buildToolbar();
-
 		this.buildGenerateTextArea();
-		
-  	 	//ADD INPUT FILE
+
+		//ADD INPUT FILE
 		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
 			id:this.id+"Files",
 			type:'file',
@@ -224,12 +223,6 @@ export class AonTextArea extends AonElement {
 					this.interceptorPaste(ev);
 				}
 			},
-			styles : {
-				userSelect : 'text',
-				height: '100%',
-				padding: '10px',
-				// fontSize: "1.3em"
-			},
 			dataset:{
 				dragOver: MSG.DROP_FILE,
 			}
@@ -278,9 +271,11 @@ export class AonTextArea extends AonElement {
 		if(properties.aonIcon){}
 		else if(properties.icon){
 			const icon = newComponent({
+				type: 'aon-icon',
 				text: properties.icon,
-				id: properties.id,
-				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
+				id  : properties.id,
+				icon: properties.id,
+				// classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				attributes:{
 					title: properties.name ? properties.name : "",
 				}
@@ -299,9 +294,11 @@ export class AonTextArea extends AonElement {
 		if(properties.aonIcon){} 
 		else if(properties.icon){
 			const icon = newComponent({
+				type: 'aon-icon',
 				text: properties.icon,
-				id: properties.id,
-				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
+				id  : properties.id,
+				icon: properties.id,
+				// classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				attributes:{
 					title: properties.name ? properties.name : ""
 				},
@@ -342,85 +339,136 @@ export class AonTextArea extends AonElement {
 		this.getElement(this.id+"Files").click();
 	}
 
-	addColorPicker(beforeId= undefined){
-		if(beforeId){
+	addColorPicker(beforeId = undefined) {
+		if (beforeId) {
 			const defaultColor = "#002469";
 
+			// Contenedor principal del icono y la barra de color
 			let div = document.createElement(TAG.DIV);
 			div.id = MATERIAL_ICONS.FORMAT_COLOR_TEXT;
-			div.innerHTML =  MATERIAL_ICONS.FORMAT_COLOR_TEXT;		
-			div.setAttribute("title", `Color del texto (Ctrl + Click para cambiar el color)`);
+			div.setAttribute("title", "Color del texto (Ctrl + Click para cambiar el color)");
 			div.classList.add("icon", "material-icons", CSS.CENTER_FLEX);
 			div.style.position = "relative";
+			div.style.flexDirection = "column";
 
-			let input = setAttributes(document.createElement(TAG.INPUT),{
-				type : "color",
-				value: defaultColor,
-				id : this.id+ Math.random().toString(36).substring(7),
+			// Icono principal
+			let icon = new AonIcon();
+			icon.icon = MATERIAL_ICONS.FORMAT_COLOR_TEXT;
+			div.appendChild(icon);
+
+			// Indicador de color debajo del icono
+			let colorIndicator = document.createElement("div");
+			Object.assign(colorIndicator.style, {
+				width: "100%",
+				height: "4px",
+				borderRadius: "2px",
+				backgroundColor: defaultColor,
+				boxShadow: "0 0 2px rgba(0,0,0,0.2)"
 			});
-			setStyles(input,{
+			div.appendChild(colorIndicator);
+
+			// Input oculto de color
+			let input = setAttributes(document.createElement(TAG.INPUT), {
+				type: "color",
+				value: defaultColor,
+				id: this.id + Math.random().toString(36).substring(7),
+			});
+			setStyles(input, {
 				position: "absolute",
 				visibility: "hidden",
-				height:"0",
+				height: "0",
 				width: "0",
 				padding: "0",
 				margin: "0",
 				left: "0",
-				right:"0",
+				right: "0",
 				bottom: "0"
 			});
-			div.appendChild(input)
+			div.appendChild(input);
 
 			let lastColor = "";
-			div.addEventListener(EVENT.CLICK, ({ctrlKey})=>{
-				if(ctrlKey){
+
+			// Funcion segura para aplicar color al texto seleccionado
+			const applyColorToSelection = (color) => {
+				const selection = window.getSelection();
+				if (!selection.rangeCount) return;
+
+				const range = selection.getRangeAt(0);
+				if (range.collapsed) return;
+
+				// Extraer solo nodos de texto
+				const textNodes = [];
+				const walker = document.createTreeWalker(range.cloneContents(), NodeFilter.SHOW_TEXT);
+				while (walker.nextNode()) {
+					textNodes.push(walker.currentNode);
+				}
+
+				textNodes.forEach(node => {
+					const span = document.createElement("span");
+					span.style.color = color;
+					span.textContent = node.textContent;
+
+					// Reemplazar texto original con span
+					const nodeRange = document.createRange();
+					nodeRange.selectNodeContents(node);
+					range.deleteContents();
+					range.insertNode(span);
+				});
+
+				selection.removeAllRanges();
+			};
+
+			// Click o Ctrl + Click
+			div.addEventListener(EVENT.CLICK, ({ ctrlKey }) => {
+				if (ctrlKey) {
 					input.click();
 				} else {
-					let value  = input.value;
-					let text = this.getSelection().toString();	
-	
-					if(text){
+					let value = input.value;
+					let text = this.getSelection().toString();
+
+					if (text) {
 						lastColor = "";
 					}
-			
-					if(lastColor && lastColor === value ){
-						value = "#212529";
-					} 
-					// console.log("value", value);
-					// div.style.color = value;
-					document.execCommand("ForeColor", false, value);
-	
+
+					if (lastColor && lastColor === value) {
+						value = "#212529"; // reset color por defecto
+					}
+
+					applyColorToSelection(value);
+					colorIndicator.style.backgroundColor = value;
 					lastColor = value;
 				}
 			});
 
+			// Doble toque en moviles
 			let tapedTwice = false;
-			div.addEventListener(EVENT.TOUCHSTART, (ev)=>{
-				if(!tapedTwice) {
+			div.addEventListener(EVENT.TOUCHSTART, (ev) => {
+				if (!tapedTwice) {
 					tapedTwice = true;
-					setTimeout( () => { tapedTwice = false; }, 300 );
+					setTimeout(() => { tapedTwice = false; }, 300);
 				} else {
 					ev.preventDefault();
 					input.click();
 				}
 			});
 
-			const changeColor = (ev)=>{
+			// Cambio de color desde el input
+			const changeColor = (ev) => {
 				ev.preventDefault();
 				ev.stopPropagation();
-				const {value} = ev.target;
-				div.style.color = value;
-				document.execCommand("ForeColor", false, value);
-			}
+				const { value } = ev.target;
+				colorIndicator.style.backgroundColor = value;
+				applyColorToSelection(value);
+			};
 
 			input.addEventListener(EVENT.INPUT, changeColor);
 			input.addEventListener(EVENT.CHANGE, changeColor);
-			
 
+			// Insertar antes del elemento indicado
 			const el = this.getElement(beforeId);
-			if(el) el.parentNode.insertBefore(div, el);
-		} 
-    }
+			if (el) el.parentNode.insertBefore(div, el);
+		}
+	}
 
 	getValue() {
 		return this.value && this.value === CONSTANT.TRUE;
@@ -536,22 +584,12 @@ export class AonTextArea extends AonElement {
 		});
 	}
 
-	addLabelTextEnd(){
-		let label = setStyles(document.createElement(TAG.LABEL),{
-			color: "grey",
-			width: "100%",
-			cursor: "pointer",
-			borderTop: "1px dotted grey",
-			fontSize: "10px"
-		});
-
-		let span = document.createElement(TAG.SPAN);
-		span.style.margin = "0px 5px";
-		span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING+" "+"dentro del recuadro";
-		label.appendChild(span);
-		
-		this.appendChild(label);
-		return label;
+	addLabelTextEnd() {
+		let div = document.createElement(TAG.DIV);
+		div.classList.add("aon-textarea-label");
+		div.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING + " dentro del recuadro";
+		this.appendChild(div);
+		return div;
 	}
 
 	removeBackground(){

@@ -52,7 +52,14 @@ export const createSpan = (properties)=> newComponent({
   
     if(properties.text)   
         properties.element.innerHTML = properties.text;
-  
+    
+    // Add title as attribute if exists (para el div editable sea un aon-new-textarea)
+    if (properties.title)
+      properties.element.setAttribute('title', properties.title);
+    // Add icon as attribute if exists (para el div icono sea un aon-icon)
+    if (properties.icon)
+      properties.element.setAttribute('icon', properties.icon);
+      
     //Set data to element
     setAttributes(properties.element,properties.attributes);
     setDataset(properties.element,properties.dataset);

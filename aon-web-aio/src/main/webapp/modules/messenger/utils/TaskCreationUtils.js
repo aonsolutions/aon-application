@@ -59,23 +59,23 @@ const createBtnAccept = () => {
 const createMainView = (parent) =>{
   const div = document.createElement(TAG.DIV);
   div.className = CSS.AON_SUB_CONTENT;
-  div.style.width = "100%";
+  // div.style.width = "100%";
   parent.appendChild(div);
 
   const mainView = newComponent({
     type: TAG.DIV,
     id:MESSENGER_IDS.MAIN_VIEW,
-    classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
-    styles: {
-      transition: ".5s",
-      display: "flex",
-      flexDirection: "row",
-      marginTop: "0vh",
-      padding: "0px",
-      width: "100%",
-      height: "100%",
-      overflow: 'hidden'
-    },
+    // classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
+    // styles: {
+    //   transition: ".5s",
+    //   display: "flex",
+    //   flexDirection: "row",
+    //   marginTop: "0vh",
+    //   padding: "0px",
+    //   width: "100%",
+    //   height: "100%",
+    //   overflow: 'hidden'
+    // },
   }).element;
   div.appendChild(mainView);
 
@@ -84,44 +84,46 @@ const createMainView = (parent) =>{
 
 const createMobileMainView = () => newComponent({
   type: TAG.DIV,
-  classes: [CSS.FLEX_COLUMN], //  CSS.NO_COPY
-  styles: {
-    transition: ".5s",
-    opacity: 1,
-    marginTop: "0vh",
-    padding: "0px",
-    width: "100%",
-    height: "100%",
-    overflow: 'hidden'
-  },
+  // classes: [CSS.FLEX_COLUMN], //  CSS.NO_COPY
+  // styles: {
+  //   transition: ".5s",
+  //   opacity: 1,
+  //   marginTop: "0vh",
+  //   padding: "0px",
+  //   width: "100%",
+  //   height: "100%",
+  //   overflow: 'hidden'
+  // },
 }).element;
 
 
 const createDivEditable = (parent, title, value, id, placeholder) => {
   const div = createStartJustifiedColumn();
-  if(parent) parent.appendChild(div.element);
-  let span = setStyles(document.createElement(TAG.SPAN),{
-      fontSize: "0.9375rem",
-      width:"100%",
-      color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
-  });
-  span.textContent = title +` (${MSG.OPTIONAL})`;
-  div.appendChild(span);
-
+  if(parent) 
+    parent.appendChild(div.element);
+  // let span = setStyles(document.createElement(TAG.SPAN),{
+  //     fontSize: "0.9375rem",
+  //     width:"100%",
+  //     color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
+  // });
+  // span.textContent = title +` (${MSG.OPTIONAL})`;
+  // div.appendChild(span);
+  const textareaTitle = title + " (" + MSG.OPTIONAL + ")";
   const divTwo =  newComponent({
-    type: "text",
+    type: "aon-new-textarea",
+    title: textareaTitle,
     id,
     text: value ? value : null,
-    classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
-    styles: {
-      fontSize: "15px",
-      fontWeight: "400",
-      padding : "10px",
-      background: "transparent",
-      borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
-      width: "100%",
-      color: CSS.variable(COLORS.AON_BLUE),
-    },
+    // classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
+    // styles: {
+    //   fontSize: "15px",
+    //   fontWeight: "400",
+    //   padding : "10px",
+    //   background: "transparent",
+    //   borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
+    //   width: "100%",
+    //   color: CSS.variable(COLORS.AON_BLUE),
+    // },
     attributes: {
       contentEditable : "",
       placeholder: placeholder || "...",

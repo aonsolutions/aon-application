@@ -15,7 +15,6 @@ import { addHorizontalScroll, sortBy } from "../../../services/utils.js";
 import { AonIcon } from "../../../components/aon-icon.js";
 import { getTasks } from "../../../services/taskService.js";
 
-
 /**
  * 
  * @param {Task} task
@@ -25,15 +24,15 @@ const buildForm = (task)=> {
   buildToolbar(task);
 
   const mainView = TaskCreationUtils.createMainView(aonMessengerChat); //DIV MAIN
-  mainView.style.overflow = 'auto';
+  // mainView.style.overflow = 'auto';
   mainView.classList.add(CSS.NO_SCROLLBAR);
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
-  firstDiv.style.boxSizing = 'border-box';
+  // firstDiv.style.boxSizing = 'border-box';
 
   const secondDiv = setStyles(createSecondDiv(mainView),{ //-------------------------DIV RIGHT
-    boxSizing: 'border-box',
-    height: '96%'
+    // boxSizing: 'border-box',
+    // height: '96%'
   });
 
   TaskUtils.buildForm(task, firstDiv);
@@ -42,7 +41,6 @@ const buildForm = (task)=> {
     buildTabs(task, secondDiv);
   } 
 }
-
 
 /**
  * 
@@ -335,13 +333,13 @@ const createFirstDiv = (mainView) => {
     id: MESSENGER_IDS.FIRST_DIV,
     styles: {
       width: "40%",
-      minWidth: "400px",
-      paddingTop: "15px",// "20px",
-      paddingRight: "20px",
-      paddingLeft: "30px",
-      paddingBottom: "30px",
-      overflow:"auto",
-      top: 0
+      // minWidth: "400px",
+      // paddingTop: "15px",// "20px",
+      // paddingRight: "20px",
+      // paddingLeft: "30px",
+      // paddingBottom: "30px",
+      // overflow:"auto",
+      // top: 0
     },
   });
   div.appendTo(mainView);
@@ -355,8 +353,8 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
       width: "60%",
-      paddingBottom: "30px",
-      paddingRight: "10px"
+      // paddingBottom: "30px",
+      // paddingRight: "10px"
     },
   });
   secondDiv.appendTo(mainView);
@@ -392,7 +390,6 @@ const addChatButtonsUpDown = (secondDiv) => {
   downIcon.addEventListener(EVENT.CLICK, ()=> TaskUtils.downChat() )
   leftButtonBar.appendChild(downIcon);
 }
-
 
 const getTitleHtml = (task, isParent = false) => {
 
@@ -437,8 +434,6 @@ const getTitleHtml = (task, isParent = false) => {
 
   return span.outerHTML;
 };
-
-
 
 // --------------------------------ADD TAB GROUP TASK
 
@@ -523,7 +518,6 @@ const updateListTask = (task) => {
   simpleListTask.tasks = tasksTmp;
   simpleListTask.init();
 }
-
 
 export const MessengerChat = {
   buildForm,

@@ -5,7 +5,7 @@ import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { MessengerChat } from "./utils/MessengerChat.js";
-import { MessengerChatMobile } from "./utils/MessengerChatMobile.js";
+// import { MessengerChatMyobile } from "./utils/MessengerChatMobile.js";
 import { TaskUtils } from "./utils/TaskUtils.js";
 import { TaskFill } from "./utils/TaskFill.js";
 import { TaskCreationUtils } from "./utils/TaskCreationUtils.js";
@@ -103,21 +103,22 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintView() {
-    this.style.fontSize = "12px";
-    if (this.isMobile()) {
-      this.paintMobile();
-    } else {
-      this.paintDesktop();
-    }
+    this.paintDesktop();
+    // this.style.fontSize = "12px";
+    // if (this.isMobile()) {
+      // this.paintMobile();
+    // } else {
+      // this.paintDesktop();
+    // }
   }
 
   paintDesktop() {
     MessengerChat.buildForm(this.task);
   }
 
-  paintMobile() {
-    MessengerChatMobile.buildForm(this.task);
-  }
+  // paintMobile() {
+  //   MessengerChatMobile.buildForm(this.task);
+  // }
 
   /**
    * 
