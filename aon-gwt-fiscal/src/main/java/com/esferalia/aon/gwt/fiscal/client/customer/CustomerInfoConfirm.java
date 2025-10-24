@@ -46,9 +46,9 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 	
 	private HTMLPanel generalInfoContent = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
-	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pais");
-	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo Documento");
+	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pa\u00eds Emisi\u00f3n");
+	private AonCustomTextBox document = new AonCustomTextBox("N\u00famero Documento");
 	private AonCustomTextBox name = new AonCustomTextBox("Nombre/Raz\u00f3n Social");
 	
 	private HTMLPanel addressContent = new HTMLPanel(AonStringUtils.EMPTY);
@@ -132,7 +132,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		HTMLPanel row = new HTMLPanel(AonStringUtils.EMPTY);
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		documentType.setWidth("6rem");
+		documentType.setWidth("7rem");
 		documentCountry.setWidth("10rem");
 		
 		row.add(documentType);
