@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -336,11 +338,7 @@ public enum Country implements Serializable {
 			|| this == RO 	//RUMANIA
 			|| this == SE	//SUECIA 
 			|| this == XI	//IRLANDA DEL NORTE
-		;
-		
-		
-		
-		
+		;	
 		
 	}
 
@@ -383,7 +381,15 @@ public enum Country implements Serializable {
 		} catch (IllegalArgumentException e) {
 			return null;
 		}
-	}	
+	}
+	
+	public static List<String> getCountriesIso2() {
+		List<String> countriesIso2 = new ArrayList<String>();
+		for(int i=0; i<Country.values().length; i++)
+			countriesIso2.add(Country.values()[i].getIso2());
+		
+		return countriesIso2;
+	}
 	
 	public static String safeIso2(Country country) {
 		if (country == null) {
