@@ -199,6 +199,9 @@ public class ProductCatalogueBooking extends HTMLPanel {
 									createFee(packProduct);
 								}
 								
+								@Override
+								protected void onCancel() {}
+								
 							};
 						} else
 							createFee(packProduct);
@@ -216,6 +219,9 @@ public class ProductCatalogueBooking extends HTMLPanel {
 								protected void onEnd() {
 									createFee(packProduct);
 								}
+								
+								@Override
+								protected void onCancel() {}
 								
 							};
 						} else
@@ -621,6 +627,11 @@ public class ProductCatalogueBooking extends HTMLPanel {
 							@Override
 							protected void onEnd() {
 								createFee(packProduct);
+								dialog.hide();
+							}
+							
+							@Override
+							protected void onCancel() {
 								dialog.hide();
 							}
 							
