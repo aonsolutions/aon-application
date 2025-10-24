@@ -305,7 +305,8 @@ export class AonNewDate extends AonNewInput {
       // Marcar el dia seleccionado
       innerDiv.classList.toggle('day-selected', this.isSameDate(date));
 
-      td.addEventListener(EVENT.CLICK, () => {
+      td.addEventListener(EVENT.CLICK, (event) => {
+        event.stopPropagation();
         this.setDate(actDate);
         this.closeDatepicker();
       });
