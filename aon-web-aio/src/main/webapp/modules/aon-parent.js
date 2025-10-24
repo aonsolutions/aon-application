@@ -3,6 +3,7 @@ import { AonElement } from '../components/AonElement.js';
 import { AonApplication } from '../components/aon-application.js';
 import { AonTab } from '../components/aon-tab.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonNewInput } from '../components/aon-new-input';
 import { AonIcon } from '../components/aon-icon.js';
 
 // Servicios (lógica de negocio y peticiones)
@@ -385,9 +386,29 @@ export class AonParent extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
 		ul.style.overflowY = 'auto';
+		// Crear el input de filtro
+		const filterInput 		= new AonNewInput();
+		filterInput.title 		= 'Filtrar';
+		filterInput.className = 'aonCompanyFilterInput';
 
+		companyDiv.appendChild(filterInput);
 		companyDiv.appendChild(ul);
-		ul.addEventListener("scroll", () => {
+		
+		// Evento de filtrado
+		filterInput.addEventListener(EVENT.KEYUP, () => {
+			const filterValue = this.normalizeText(filterInput.value.trim());
+			const items = ul.querySelectorAll('li');
+			if (filterValue === '') {
+				items.forEach(li => li.style.display = '');
+			} else {
+				items.forEach(li => {
+					const text = this.normalizeText(li.innerText);
+					li.style.display = text.includes(filterValue) ? '' : 'none';
+				});
+			}
+		});
+
+		ul.addEventListener(EVENT.SCROLL, () => {
 			let scrollTop = ul.scrollTop;
 			let offsetHeight = ul.offsetHeight;
 			let scrollHeight = ul.scrollHeight;
@@ -756,6 +777,13 @@ export class AonParent extends AonElement {
 		this.getElement("aonParentSidenavRight").classList.remove("hidden");
 	}
 	
+	normalizeText(text) {
+		return text
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')  // eliminar acentos
+			.replace(/[\s\uFEFF\xA0]+/g, '')  // eliminar espacios, tabs, etc.
+			.toLowerCase();
+	}
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){

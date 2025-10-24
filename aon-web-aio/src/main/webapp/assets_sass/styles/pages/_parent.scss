@@ -8,11 +8,12 @@
     }
     #UlCompanies{
       list-style    : none;
-      padding       : v.$px-0;
+      padding       : v.$padding-min v.$px-0 v.$px-0 v.$px-0;
       margin        : v.$px-0;
       display       : flex;
       flex-direction: column;
       gap           : v.$gap-min;
+
       li{
         display      : flex;
         gap          : v.$gap-min;
