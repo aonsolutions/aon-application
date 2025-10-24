@@ -500,7 +500,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		if(AonStringUtils.isBlank(addressMunicipality.getValue())) return "El campo Localidad es obligatorio";
 		
 		if(AonStringUtils.isBlank(account.getValue()) || !new BankAccount(account.getValue()).isValidIban()) return "El campo IBAN es obligatorio o tiene un formato incorrecto";
-		if(AonStringUtils.isBlank(bic.getValue()) || !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) return "El campo BIC es obligatorio o es incorrecto";
+		if(AonStringUtils.isBlank(bic.getValue()) || (null != getBankSwift(account.getValue()) && !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) ) return "El campo BIC es obligatorio o es incorrecto";
 		
 		return null;
 	}
