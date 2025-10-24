@@ -23,6 +23,7 @@ $color-grad-max : #3D0089;
 $color-dark-0  : #fff;     // es $color-0 en claro
 $color-dark-100: #f1f5f9;  // es $color-100 en claro
 $color-dark-300: #cbd5e1;  // es $color-300 en claro
+$color-dark-400: #64748b;  // es $color-400 en claro
 
 $color-sky-50  : #f0f9ff;
 $color-sky-100 : #e0f2fe;
@@ -103,6 +104,7 @@ $color-text-login         : $color-text-secundary;
 $color-text-general       : $color-text-secundary;
 $color-text-button        : $color-dark-0;
 $color-text-button-transp : $color-dark-0;
+$color-text-placeholder   : $color-dark-400;
 
 // Colores card
 $color-text-card          : $color-text-secundary;
@@ -142,7 +144,8 @@ $color-menu-green : $color-green-400;
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, 
+    $color-text-button-transp, $color-text-placeholder,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
     $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,
