@@ -19,12 +19,12 @@ import { Project } from '../../models/project/Project.js';
 import { AonProjectList } from './aon-project-list.js';
 
 export class AonProject extends AonElement {
-    PROJECT_TOOLBAR;
-    PROJECT_CARD;
-    PROJECT_TABLE;
-    PROJECT_TYPE;
-    PROJECT_NAME;
-    PROJECT_REGISTRY;
+	PROJECT_TOOLBAR;
+	PROJECT_CARD;
+	PROJECT_TABLE;
+	PROJECT_TYPE;
+	PROJECT_NAME;
+	PROJECT_REGISTRY;
 	PROJECT_WORKGROUP;
 	PROJECT_TASK_HOLDER;
 
@@ -79,9 +79,6 @@ export class AonProject extends AonElement {
 
 		this.buildGeneralCard(div);
 	}
-
-	
-
 
 	buildGeneralCard(parent){
 		let card = this.createCard(this.PROJECT_CARD, MSG.GENERAL_INFORMATION);

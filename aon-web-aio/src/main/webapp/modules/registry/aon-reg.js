@@ -4,6 +4,7 @@ import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 import {COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonIcon } from "../../components/aon-icon";
 import { AonNewInput } from '../../components/aon-new-input';
 import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
@@ -130,7 +131,6 @@ export class AonReg extends AonElement {
 			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()},
 			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
-
 	}
 
 	build() {
@@ -202,17 +202,15 @@ export class AonReg extends AonElement {
 		this.buildRegistralCard(div);
 	}
 
-
 	buildGeneralCard(parent){
 		let card = new AonCard();
 		card.id = this.GENERAL_CARD;
 		card.title = MSG.GENERAL_INFORMATION;
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		parent.appendChild(card);
-		card.firstChild.firstChild.style.marginBottom = "5px";
+		// card.firstChild.firstChild.style.marginBottom = "5px";
 
 		if(this.registry.id){
-			console.log(this.clientFile)
 			if(this.isCustomer() && !this.clientFile){
 				this.buildEnterpriseLinked();
 			}
@@ -232,8 +230,8 @@ export class AonReg extends AonElement {
 		table.addRow();
 
 		let registrySegment = this.registry.getRegistrySegments()
-		.map(s =>  new RegistrySegment(s))
-		.filter(s => !s.isRemoved());
+			.map(s =>  new RegistrySegment(s))
+			.filter(s => !s.isRemoved());
 
 		let segmentsDiv = document.createElement(TAG.DIV);
 		segmentsDiv.style.display = "flex";
@@ -391,10 +389,8 @@ export class AonReg extends AonElement {
 		statusText.style.color = "#5f6368";
 		statusDiv.appendChild(statusText);
 
-		let iconArrowDown = this.createElement(TAG.DIV);
-		iconArrowDown.style.fontSize  = "18px";
-		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		let iconArrowDown  = new AonIcon();
+		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 		statusDiv.appendChild(iconArrowDown);
 
 		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
@@ -450,7 +446,7 @@ export class AonReg extends AonElement {
 		let card = new AonCard();
 		card.id = this.MEDIA_CARD;
 		card.title = MSG.CONTACT_DATA;
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -466,7 +462,7 @@ export class AonReg extends AonElement {
 		let card = new AonCard();
 		card.id = this.BANK_CARD;
 		card.title = MSG.BANK_ACCOUNTS;
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -475,12 +471,11 @@ export class AonReg extends AonElement {
 		this.buildBanks(div);	
 	}
 
-
 	buildPaymethodCard(parent){
 		let card = new AonCard();
 		card.id = this.PAYMETHOD_CARD;
 		card.title = 'Forma de Pago Predeterminada';
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -584,7 +579,7 @@ export class AonReg extends AonElement {
 		let card = new AonCard();
 		card.id = this.REGISTRAL_CARD;
 		card.title = MSG.REGISTRATION_DATA;
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);

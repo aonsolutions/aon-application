@@ -3,6 +3,7 @@ import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_DOMAIN_ID, SIG_D
 import { AonCard } from "../../../components/aon-card.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
+import { AonIcon } from "../../../components/aon-icon";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
@@ -101,11 +102,12 @@ export class AonCustomer extends AonReg {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.DIV;
 		div.style.display = "flex";
-		div.style.width = "100%";
 		div.style.flexWrap = "wrap";
-		div.style.height = 'calc(100vh - 15rem)';
-  		div.style.overflowY = 'auto';
-  		div.style.margin = '.5rem 0';
+		div.style.gap = "1rem";
+		// div.style.width = "100%";
+		// div.style.height = 'calc(100vh - 15rem)';
+		// div.style.overflowY = 'auto';
+		// div.style.margin = '.5rem 0';
 		this.appendChild(div);
 
 		this.buildGeneralData();
@@ -160,7 +162,7 @@ export class AonCustomer extends AonReg {
 		
 		generalDataTable.addRow();
 
-		let transaction = new AonSelect();
+		let transaction = new AonNewSelect();
 		transaction.id = this.FISCAL_TRANSACTION;
 		transaction.title = MSG.TRANSACTION_TYPE;
 		transaction.options = JSON.stringify(Transactions);
@@ -198,7 +200,7 @@ export class AonCustomer extends AonReg {
 		let card = new AonCard();
 		card.id = "cardSeller";
 		card.title = "Agentes";
-		card.style.width = "50%";
+		// card.style.width = "50%";
 		card.style.cursor = "pointer";
 		parent.appendChild(card);
 
@@ -208,7 +210,8 @@ export class AonCustomer extends AonReg {
 
 			// Scroll to top
 			let aonOfficePanelContent = this.getElement("aonOfficePanelContent");
-			aonOfficePanelContent.scrollTop = 0;
+			if(aonOfficePanelContent)
+				aonOfficePanelContent.scrollTop = 0;
 		});
 
 		let div = this.createElement(TAG.DIV);
@@ -247,7 +250,7 @@ export class AonCustomer extends AonReg {
 		let card = new AonCard();
 		card.id = "cardAdditionalInformation";
 		card.title = MSG.ADDITIONAL_INFORMATION;
-		card.style.width = "50%";
+		// card.style.width = "50%";
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -315,7 +318,7 @@ export class AonCustomer extends AonReg {
 		let card = new AonCard();
 		card.id = this.FISCAL_CARD;
 		card.title = MSG.FISCAL_DATA;
-		card.style.width = "50%";
+		// card.style.width = "50%";
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -401,9 +404,7 @@ export class AonCustomer extends AonReg {
 				registry: this.registry.getId(),
 				parentId: this.registry.getDomain().getParentId(),
 				document: this.registry.getDocument(),
-			})
-			.then((resp) => {
-				console.log("getRelationShip", resp);
+			}).then((resp) => {
 				this.buildEnterpriseLinkedView(resp);
 			})
 			/*
@@ -439,11 +440,9 @@ export class AonCustomer extends AonReg {
 		main.style.marginRight = "6px";
 		entepriseLinked.appendChild(main);
 
-		let statusBox = this.createElement(TAG.DIV);
-		statusBox.className = CONSTANT.MATERIAL_ICONS;
-		statusBox.style.fontSize = "18px";
+		let statusBox = new AonIcon();
 		statusBox.style.color = color;
-		statusBox.innerText = link ? MATERIAL_ICONS.LINK : MATERIAL_ICONS.LINK_OFF;
+		statusBox.icon = link ? MATERIAL_ICONS.LINK : MATERIAL_ICONS.LINK_OFF;
 		main.appendChild(statusBox);
 
 		let statusText = this.createElement(TAG.DIV);
@@ -453,10 +452,8 @@ export class AonCustomer extends AonReg {
 		statusText.style.color = "#5f6368";
 		main.appendChild(statusText);
 
-		let iconArrowDown = this.createElement(TAG.DIV);
-		iconArrowDown.style.fontSize = "18px";
-		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		let iconArrowDown = new AonIcon();
+		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
 		if (link || !companies.length) {
 			main.appendChild(iconArrowDown);
@@ -502,11 +499,9 @@ export class AonCustomer extends AonReg {
 		main.style.marginRight = "6px";
 		entepriseLinked.appendChild(main);
 
-		let statusBox = this.createElement(TAG.DIV);
-		statusBox.className = CONSTANT.MATERIAL_ICONS;
-		statusBox.style.fontSize = "18px";
+		let statusBox =  new AonIcon();
 		statusBox.style.color = color;
-		statusBox.innerText = link ? MATERIAL_ICONS.LINK : MATERIAL_ICONS.LINK_OFF;
+		statusBox.icon = link ? MATERIAL_ICONS.LINK : MATERIAL_ICONS.LINK_OFF;
 		main.appendChild(statusBox);
 
 		let statusText = this.createElement(TAG.DIV);
@@ -516,10 +511,8 @@ export class AonCustomer extends AonReg {
 		statusText.style.color = "#5f6368";
 		main.appendChild(statusText);
 
-		let iconArrowDown = this.createElement(TAG.DIV);
-		iconArrowDown.style.fontSize = "18px";
-		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		let iconArrowDown  =  new AonIcon();
+		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
 		main.appendChild(iconArrowDown);
 		
@@ -991,7 +984,7 @@ export class AonCustomer extends AonReg {
 		div.style.marginTop = "10px";
 		dialog.setContent(div);
 
-		let selectCompany = new AonSelect();
+		let selectCompany = new AonNewSelect();
 		selectCompany.id = "selectSupplantCompany";
 		selectCompany.title = MSG.COMPANY;
 		selectCompany.autocomplete = true;
@@ -1026,7 +1019,7 @@ export class AonCustomer extends AonReg {
 		div.style.marginTop = "10px";
 		dialog.setContent(div);
 
-		let selectCompany = new AonSelect();
+		let selectCompany = new AonNewSelect();
 		selectCompany.id = "selectSupplantCompany";
 		selectCompany.title = MSG.COMPANY;
 		selectCompany.autocomplete = true;

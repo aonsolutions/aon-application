@@ -81,6 +81,14 @@
   --logoHeader-#{$theme}: #{$logoHead};
   --logoHeaderMobile-#{$theme}: #{$logo};
   --logo-#{$theme}: #{$logo};
+
+  // Por ahora hasta que se metan por clases
+  --onlineGreen : #{$color-green-500};
+  --aonBlue     : #{$color-corp-blue};
+  --aonOrange   : #{$color-corp-orange};
+  --aonGreen    : #{$color-green-500};
+  --aonRed      : #{$color-red-500};
+
   body{
     color            : $color-text;
     margin           : $body-margin;
@@ -545,7 +553,7 @@
       }
       // Cuando el componente tenga readonly o disabled
       &[readonly="true"],
-      &[readonly="readonly"],
+      // &[readonly="readonly"], // por que a veces dejan editar...
       &[disabled="true"],
       &[disabled="disabled"]{
         input {
