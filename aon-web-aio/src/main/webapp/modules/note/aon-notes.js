@@ -330,6 +330,7 @@ export class AonNotes extends AonElement {
         this.filter.tag = undefined;
       }
       await this.reloadNotes();
+      this.DIALOG.close();
     }, "delete");
     this.DIALOG.open();
   }
@@ -513,6 +514,7 @@ export class AonNotes extends AonElement {
       this.DIALOG.addSendAction(async () => {
         await deleteNote(note);
         await this.reloadNotes();
+        this.DIALOG.close();
       }, "delete");
       this.DIALOG.open();
     });
@@ -589,6 +591,7 @@ export class AonNotes extends AonElement {
         note.noteTag = selectInputDic.value;
         await this.saveNote(note);
         await this.reloadNotes();
+        this.DIALOG.close();
       }, "save");
 
       this.DIALOG.open();
