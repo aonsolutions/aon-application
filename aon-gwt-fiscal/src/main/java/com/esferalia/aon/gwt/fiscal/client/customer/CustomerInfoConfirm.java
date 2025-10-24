@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.BankSwift;
+import com.esferalia.aon.occam.api.model.finance.BicSwiftValidator;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -45,9 +46,9 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 	
 	private HTMLPanel generalInfoContent = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
-	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pais");
-	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo Documento");
+	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pa\u00eds Emisi\u00f3n");
+	private AonCustomTextBox document = new AonCustomTextBox("N\u00famero Documento");
 	private AonCustomTextBox name = new AonCustomTextBox("Nombre/Raz\u00f3n Social");
 	
 	private HTMLPanel addressContent = new HTMLPanel(AonStringUtils.EMPTY);
@@ -131,7 +132,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		HTMLPanel row = new HTMLPanel(AonStringUtils.EMPTY);
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		documentType.setWidth("6rem");
+		documentType.setWidth("7rem");
 		documentCountry.setWidth("10rem");
 		
 		row.add(documentType);
@@ -272,7 +273,11 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 			}
 			else AonMessagePanel.showError(messagePanel, "El IBAN es incorrecto");
 		});
-		bic.addValueChangeHandler(e -> hasAccountChange = true);
+		
+		bic.addValueChangeHandler(e -> {
+			if(BicSwiftValidator.isValidBic(bic.getValue())) hasAccountChange = true;
+			else AonMessagePanel.showError(messagePanel, "El BIC es incorrecto");
+		});
 		
 		content.add(payMethodContent);
 	}
@@ -500,7 +505,9 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		if(AonStringUtils.isBlank(addressMunicipality.getValue())) return "El campo Localidad es obligatorio";
 		
 		if(AonStringUtils.isBlank(account.getValue()) || !new BankAccount(account.getValue()).isValidIban()) return "El campo IBAN es obligatorio o tiene un formato incorrecto";
-		if(AonStringUtils.isBlank(bic.getValue()) || (null != getBankSwift(account.getValue()) && !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) ) return "El campo BIC es obligatorio o es incorrecto";
+		if(AonStringUtils.isBlank(bic.getValue()) || 
+				( (null != getBankSwift(account.getValue()) && !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) || !BicSwiftValidator.isValidBic(bic.getValue())) 
+		) return "El campo BIC es obligatorio o es incorrecto";
 		
 		return null;
 	}
