@@ -45,8 +45,10 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 	
 	private HTMLPanel generalInfoContent = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private AonCustomTextBox name = new AonCustomTextBox("Raz\u00f3n Social");
+	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
+	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pais");
 	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox name = new AonCustomTextBox("Nombre/Raz\u00f3n Social");
 	
 	private HTMLPanel addressContent = new HTMLPanel(AonStringUtils.EMPTY);
 	
@@ -95,7 +97,8 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		this.user = user;
 		this.customerRelatedRegistry = customerCompany.getId();
 		
-		setCaption("Informaci\u00f3n General");
+		setCaption("Datos Facturaci\u00f3n");
+		showCloseButton(true);
 		
 		getCustomerInfo(end -> {
 			content.addStyleName(AON.CSS.aonFlexColumn());
@@ -112,6 +115,8 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 			setWidget(content);
 			center();
 			show();
+			
+			getCloseButton().addClickHandler(e -> onCancel());
 		});
 	}
 
@@ -119,21 +124,30 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		generalInfoContent.addStyleName(AON.CSS.aonFlexColumn());
 		generalInfoContent.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		Label generalInfoTitle = new Label("Datos Generales");
-		generalInfoTitle.getElement().getStyle().setProperty("font-weight", "bold");
-		
+		documentType.setEnable(false);
+		documentCountry.setEnable(false);
 		document.setEnable(false);
 		
 		HTMLPanel row = new HTMLPanel(AonStringUtils.EMPTY);
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		row.add(name);
+		documentType.setWidth("6rem");
+		documentCountry.setWidth("10rem");
+		
+		row.add(documentType);
+		row.add(documentCountry);
 		row.add(document);
 		
-		generalInfoContent.add(generalInfoTitle);
+		HTMLPanel row2 = new HTMLPanel(AonStringUtils.EMPTY);
+		row2.addStyleName(AON.CSS.aonItemFlex());
+		row2.add(name);
+		
 		generalInfoContent.add(row);
+		generalInfoContent.add(row2);
 		
 		if(null != this.customer) {
+			documentType.setValue(null == customer.getRegistry().getDocumentType() ? "" : customer.getRegistry().getDocumentType().getDescription());
+			documentCountry.setValue(null == customer.getRegistry().getDocumentCountry() ? "" : customer.getRegistry().getDocumentCountry().getName());
 			name.setValue(customer.getRegistry().getName());
 			document.setValue(customer.getRegistry().getDocument());
 		}
@@ -150,7 +164,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		addressContent.addStyleName(AON.CSS.aonFlexColumn());
 		addressContent.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		Label addressTitle = new Label("Datos Direcci\u00f3n");
+		Label addressTitle = new Label("Direcci\u00f3n");
 		addressTitle.getElement().getStyle().setProperty("font-weight", "bold");
 		addressTitle.getElement().getStyle().setProperty("margin-top", ".7rem");
 		
@@ -222,7 +236,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		payMethodContent.addStyleName(AON.CSS.aonFlexColumn());
 		payMethodContent.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		Label payMethodTitle = new Label("Datos Econ\u00f3micos");
+		Label payMethodTitle = new Label("Datos Bancarios");
 		payMethodTitle.getElement().getStyle().setProperty("font-weight", "bold");
 		payMethodTitle.getElement().getStyle().setProperty("margin-top", ".7rem");
 		
@@ -231,11 +245,10 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		
 		aonConfiguration.getPayMethods().stream().filter(pm -> pm.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)).forEach(pm -> payMethod.addItem(pm.getName(), pm.getId().toString()));
 		payMethod.setEnable(false);
-		payMethod.setWidth("6rem");
 		
 		bic.setWidth("8rem");
 		
-		row.add(payMethod);
+		//row.add(payMethod);
 		row.add(account);
 		row.add(bic);
 		
@@ -564,5 +577,6 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 	}
 
 	protected abstract void onEnd();
+	protected abstract void onCancel();
 
 }
