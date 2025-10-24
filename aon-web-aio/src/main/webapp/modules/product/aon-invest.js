@@ -122,7 +122,7 @@ export class AonInvest extends AonElement {
 
 		let typeSelect = this.createSelect(this.INVEST_TYPE, MSG.TYPE);
     	typeSelect.setOptions(InvestAssetTypeOptions);
-		typeSelect.value = this.investAsset.type;
+		typeSelect.value = this.investAsset.type || '';
 		typeSelect.addEventListener(EVENT.SELECT, () => {
 			this.investAsset.type = typeSelect.value;
 			if(this.autosave) this.save();
@@ -132,7 +132,7 @@ export class AonInvest extends AonElement {
 
 		let regimeSelect = this.createSelect(this.INVEST_REGIME, MSG.REGIME);
     	regimeSelect.setOptions(InvestAssetRegimeOptions);
-		regimeSelect.value = this.investAsset.regime;
+		regimeSelect.value = this.investAsset.regime || '';
 		regimeSelect.addEventListener(EVENT.SELECT, () => {
 			this.investAsset.regime = regimeSelect.value;
 			if(this.autosave) this.save();
