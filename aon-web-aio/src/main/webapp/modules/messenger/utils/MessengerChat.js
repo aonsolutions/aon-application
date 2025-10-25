@@ -215,7 +215,6 @@ const buildTabs = (task, secondDiv) => {
         }
       });
     });
-    
 }
 
 const buildWrapper = (secondDiv) => {
@@ -226,10 +225,10 @@ const buildWrapper = (secondDiv) => {
     const wrapper = newComponent({
       type: MESSENGER_COMPONENTS.WRAPPER,
       classes: [CSS.FLEX_COLUMN],
-      styles: {
-        width:'94%',
-        height: '100%',
-      }
+      // styles: {
+      //   width:'94%',
+      //   height: '100%',
+      // }
     }).element;
     secondDiv.appendChild(wrapper);
 
@@ -237,10 +236,9 @@ const buildWrapper = (secondDiv) => {
      * The chat itself
      */
     const chat = TaskCreationUtils.createChat(); 
-    
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
-
+    
     addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
 
     return wrapper;
@@ -275,10 +273,10 @@ const buildChat = (task, wrapper) => {
 const addTextAreaChat = (wrapper, task) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const divs = TaskCreationUtils.createSectionComment(wrapper);
-  setStyles(divs.divWrite,{
-    borderRadius:"5px",
-    border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
-  });
+  // setStyles(divs.divWrite,{
+  //   borderRadius:"5px",
+  //   border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
+  // });
 
   const label = TaskCreationUtils.createLabelFileText();
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
@@ -369,8 +367,8 @@ const createSecondDiv = (mainView) => {
 const addChatButtonsUpDown = (secondDiv) => {
   const transparent = "transparent";
   const leftButtonBar = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-    styles: { width: "6%" }
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER, 'upIcon-downIcon'],
+    // styles: { width: "6%" }
   });
   leftButtonBar.appendTo(secondDiv);
 
@@ -397,24 +395,20 @@ const getTitleHtml = (task, isParent = false) => {
 
   const { icon_color, icon } = TaskUtils.getIconJson(task);
 
-  let iconEl = document.createElement(TAG.I);
-
+  let iconEl = new AonIcon();
   if(task.isTask()) {
-    iconEl = new AonIcon();
     iconEl.icon = AON_ICONS.AON_BRANCH;
     iconEl.title = "Branch";
     iconEl.color = icon_color;
   } else {
     setStyles(iconEl,{
       position: "relative",
-      fontSize: "1.4em",
-      top: "3px",
       marginLeft: "1px",
       color:icon_color
     });
     
-    iconEl.title      = !isParent ? task.getSource() : MSG.PARENT;
-    iconEl.innerText  = !isParent ? icon : MATERIAL_ICONS.FORK_LEFT;
+    iconEl.title = !isParent ? task.getSource() : MSG.PARENT;
+    iconEl.icon  = !isParent ? icon : MATERIAL_ICONS.FORK_LEFT;
     iconEl.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
   } 
 

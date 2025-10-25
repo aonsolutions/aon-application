@@ -1,0 +1,75 @@
+  @use '../variables' as v;
+
+#rootPanel {
+  aon-messenger{
+    aon-messenger-chat{
+      .aonSubContent #mainView{
+        display: flex;
+        gap: v.$gap;
+        #firstDiv{
+          aon-card{
+            .aonCardContent{
+              padding: v.$padding-min v.$px-0;
+            }
+          }
+        }
+        #secondDiv {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          gap: v.$gap;
+          
+          wrapper{
+            display: flex;
+            flex-direction: column;
+            gap: v.$gap;
+
+            chat {
+              display: flex;
+              flex-direction: column;
+              height: v.$vh-70;
+    
+              &.continueLined::after {
+                content: "";
+                height: var(--height);
+                left: v.$px-25;
+                position: absolute;
+                top: v.$px-1;
+                z-index: -10;
+              }
+    
+              .flexRow {
+                display: flex;
+                align-items: center;
+                gap: v.$gap-min;
+              }
+    
+              .chat-icon {
+                display: flex;
+              }
+    
+              > message {
+                width: v.$pct-70 !important;
+              }
+            }
+    
+            .chat-textarea {
+              display: flex;
+              flex-direction: column;
+              border-radius: v.$border-radius;
+            }
+          }
+
+          .upIcon-downIcon{
+            margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            height: v.$pct-100;
+            justify-content: flex-end;
+            gap: v.$px-48;
+          }
+        }
+      }
+    }
+  }
+}

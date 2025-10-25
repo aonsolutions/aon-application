@@ -311,16 +311,12 @@ aon-iban{
 
 // Textarea
 aon-textarea {
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-
   display: flex;
   flex-direction: column;
   transition: 0.75s;
   width: v.$pct-100;
   border-radius: v.$border-radius;
   .bar {
-    border-bottom: v.$px-1 solid #e0e0e0;
-    
     display: flex;
     flex-wrap: wrap;
     gap: v.$gap-min;
@@ -342,9 +338,6 @@ aon-textarea {
       width: v.$px-16;
       height: v.$px-16;
       cursor: pointer;
-      &:hover {
-        background: #f0f0f0;
-      }
     }
   }
   .contentEditable{
@@ -368,8 +361,6 @@ aon-textarea {
     border-radius: v.$border-radius;
   }
   .aon-textarea-label {
-    color: grey;
-    border-top: v.$px-1 dotted grey;
     box-sizing: border-box;
     width: v.$pct-100;
     cursor: pointer;
@@ -380,12 +371,10 @@ aon-textarea {
   }
   .divDragOver {
     &.highlight {
-      border: v.$px-2 dashed rgba(3, 88, 216, 0.3);
       &::after {
         content: attr(data-drag-over);
         opacity: v.$num-1;
         position: absolute;
-        color: #808080;
         font-size: v.$px-20;
         top: v.$pct-50;
         left: v.$pct-50;
@@ -398,19 +387,4 @@ aon-textarea {
 a[placeholder]:empty::before {
   content: attr(placeholder);
   pointer-events: none;
-  color: #ccc;
-}
-
-aon-messenger-chat{
-  .aonSubContent #mainView{
-    display: flex;
-    gap: v.$gap;
-    #firstDiv{
-      aon-card{
-        .aonCardContent{
-          padding: v.$padding-min v.$px-0;
-        }
-      }
-    }
-  }
 }

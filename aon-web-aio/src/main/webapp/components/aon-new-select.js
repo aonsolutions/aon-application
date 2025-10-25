@@ -615,10 +615,8 @@ export class AonNewSelect extends AonNewInput {
    * @param {Boolean} load
    */
   loading(load){
-    const input = this.getElement(this.INPUT);
-    if(input){
-      input.loading(load);
-    }
+    // Funcion del input
+    super.loading(load);
   }
 
   getDetail(){

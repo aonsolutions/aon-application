@@ -38,6 +38,8 @@
   $transition       : background-color v.$t-03 ease;
   $box-sizing       : border-box;
 
+  $border-dotted: v.$px-1 dotted $color-200;
+
   $button-border : v.$px-0;
 
   $loginbutton-background            : linear-gradient(to right, $color-900, $color-900, $color-grad-max, $color-grad-min);
@@ -83,11 +85,13 @@
   --logo-#{$theme}: #{$logo};
 
   // Por ahora hasta que se metan por clases
-  --onlineGreen : #{$color-green-500};
-  --aonBlue     : #{$color-corp-blue};
-  --aonOrange   : #{$color-corp-orange};
-  --aonGreen    : #{$color-green-500};
-  --aonRed      : #{$color-red-500};
+  --onlineGreen       : #{$color-green-500};
+  --aonBlue           : #{$color-corp-blue};
+  --aonOrange         : #{$color-corp-orange};
+  --aonGreen          : #{$color-green-500};
+  --aonRed            : #{$color-red-500};
+  --materialBlue      : #{$color-blue-500};
+  --materialRed       : #{$color-red-500};
 
   body{
     color            : $color-text;
@@ -601,6 +605,30 @@
         box-shadow      : $box-shadow-dialog;
       }
     }
+    // Textarea
+    aon-textarea {
+      box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+      .bar {
+        border-bottom: $border;
+        aon-icon{
+          &:hover {
+            background: $color-info-alpha;
+          }
+        }
+      }
+      .aon-textarea-label {
+        border-top: $border-dotted;
+      }
+      .divDragOver {
+        &.highlight {
+          border: v.$px-2 dashed $color-text;
+        }
+      }
+    }
+    // en notificaciones... tiene nuna etiqueta A que es un input
+    a[placeholder]:empty::before {
+      color: $color-text-placeholder;
+    }
     // aon-new-suggestion
     // Input que busca mientras escribes, el DIV donde muestras, 
     // no esta en el componente. Se tiene que reacer
@@ -921,6 +949,33 @@
         }
       // FIN aon-invoice-home
     }
+    // Notificaciones
+    aon-messenger{
+      aon-messenger-chat{
+        .aonSubContent #mainView{
+          #secondDiv {
+            wrapper{
+              chat {
+                &.continueLined::after {
+                  border-left: v.$px-2 solid $color-text;
+                }
+                .chat-icon {
+                  background-color: $color-box;
+                }
+                message {
+                  color: $color-900;
+                }
+              }
+              .chat-textarea {
+                border: $border;
+                color: $color-text;
+              } 
+            }
+          }
+        }
+      }
+    }
+    // FIN Notificaciones
     // Notas
     aon-notes .aonFlex #notesContainer{
       .noteCard{
@@ -950,5 +1005,6 @@
         }
       }
     }
+    // FIN Notas
   }
 }

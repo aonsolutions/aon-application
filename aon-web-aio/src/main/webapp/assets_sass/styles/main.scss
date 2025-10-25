@@ -21,6 +21,7 @@
 @use './pages/invoices' as invoices;          // invoices- Facturacion
 @use './pages/documental' as doc;             // doc   - Documentos
 @use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
+@use './pages/messenger' as messenger;        // messenger - Notificaciones
 @use './pages/notes' as notes;                // notes - Notas que se crean
 @use './pages/marketplace' as marketplace;    // marketplace - Contratacion
 

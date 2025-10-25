@@ -405,7 +405,7 @@ export class AonTextArea extends AonElement {
 
 				textNodes.forEach(node => {
 					const span = document.createElement("span");
-					span.style.color = color;
+					// span.style.color = color; // en modo oscuro sale mal
 					span.textContent = node.textContent;
 
 					// Reemplazar texto original con span

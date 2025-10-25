@@ -47,7 +47,7 @@ const createDivGridBefore = (parent, child, properties)=> {
 }
 
 const createBtnAccept = () => {
-  let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
+  let btnAccept = setStyles(document.createElement(TAG.BUTTON));
   btnAccept.className = CSS.AON_BUTTON;
   btnAccept.textContent = "Procesar";
   return btnAccept;
@@ -96,8 +96,10 @@ const createMobileMainView = () => newComponent({
   // },
 }).element;
 
-
 const createDivEditable = (parent, title, value, id, placeholder) => {
+
+consoleLog('createDivEditable ----', 'green')
+
   const div = createStartJustifiedColumn();
   if(parent) 
     parent.appendChild(div.element);
@@ -113,7 +115,7 @@ const createDivEditable = (parent, title, value, id, placeholder) => {
     type: "aon-new-textarea",
     title: textareaTitle,
     id,
-    text: value ? value : null,
+    value: value ? value : null,
     // classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
     // styles: {
     //   fontSize: "15px",
@@ -143,7 +145,7 @@ const createTitle = (title) => newComponent({
     fontWeight: "400",
     border: "none",
     width: "100%",
-    color: CSS.variable(COLORS.AON_GRAY),
+    // color: CSS.variable(COLORS.AON_GRAY),
     paddingTop: "14px"
   }
 }).element;
@@ -227,7 +229,7 @@ const createCommentContent = (properties) => newComponent({
     fontSize: "1em",
     textAlign : "left",
     fontWeight : "400",
-    color :  CSS.variable(COLORS.GRAYSON),
+    // color :  CSS.variable(COLORS.GRAYSON),
     paddingTop :"5px",
     wordWrap: "break-word"
   }
@@ -250,13 +252,13 @@ const createAction = (icon, message, submessage, margin=true) => {
   });
 
   const wrapper = newComponent({
-  classes : [CSS.CENTER_FLEX],
+    classes : [CSS.CENTER_FLEX, 'chat-icon'],
     styles : {
-      width : '20px',
-      height : '20px',
-      borderRadius : "100em",
-      marginRight : margin ? "1em" : "0",
-      background : CSS.variable(COLORS.AON_LIGHT_GRAY),
+      // width : '20px',
+      // height : '20px',
+      // borderRadius : "100em",
+      // marginRight : margin ? "1em" : "0",
+      // background : CSS.variable(COLORS.AON_LIGHT_GRAY),
     }
   }).element;
   comp.element.appendChild(wrapper);
@@ -274,9 +276,9 @@ const createAction = (icon, message, submessage, margin=true) => {
   if(message){
     const text = createText({
       text : message,
-      fontSize : "1.1em",
+      fontSize : ".7em",
       fontWeight:400,
-      color : CSS.variable(COLORS.GRAYSON)
+      // color : CSS.variable(COLORS.GRAYSON)
     });
     text.element.style.flex = "1 0";
     text.appendTo(comp.element);
@@ -314,8 +316,8 @@ const createStartJustifiedRow = (styles) => newComponent({
 const createStartJustifiedColumn = () => newComponent({
   classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
   styles: {
-    width : "100%", 
-    marginBottom: "5px"
+    // width : "100%", 
+    marginBottom: "0.5rem"
   }
 });
 
@@ -359,13 +361,14 @@ const createMaterialIcon = (properties) => newComponent({
  * @returns 
  */
 const createOutlinedMaterialIcon = (properties) =>  newComponent({
-    type: 'i',
+    type: 'aon-icon',
     text: properties.name,
-    classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
-    styles: {
-        fontSize: properties.size ? properties.size : "24px",
-        color: properties.color ? properties.color : "#404040"
-    },
+    icon: properties.name,
+    // classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
+    // styles: {
+    //     fontSize: properties.size ? properties.size : "24px",
+    //     color: properties.color ? properties.color : "#404040"
+    // },
     attributes:{
       title: properties.title || properties.name,
     }
@@ -517,8 +520,6 @@ const createAonTextAreaEditor = (placeholder) => {
   return aonTextAreaEditor; 
 } 
 
-
-
 const iconComment = (icon_name) => {
     const a = setStyles(document.createElement(TAG.A),{
         boxShadow: "none",
@@ -531,12 +532,8 @@ const iconComment = (icon_name) => {
         cursor: "pointer"
     });
 
-    const icon = setStyles(document.createElement("i"),{
-        fontSize: "1.8em",
-        lineHeight: "44px",
-        color: CSS.variable(COLORS.AON_BLUE)
-    });
-    icon.className   = CONSTANT.MATERIAL_ICONS;
+    const icon       = setStyles(document.createElement("aon-icon"),{});
+    icon.icon        = icon_name;
     icon.textContent = icon_name;
     a.appendChild(icon);
 
@@ -589,7 +586,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
       iconEdit.id = MESSENGER_IDS.ICON_EDIT_WORKFLOW;
       message.appendChild(iconEdit);
       iconEdit.title = MSG.EDIT;
-      setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: "1" , right: "17px", cursor: "pointer" });
+      setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), position:"absolute", bottom: "0.5rem", zIndex: "1" , right: "0.5rem", cursor: "pointer" });
       iconEdit.addEventListener(EVENT.CLICK, ()=> {
         TaskUtils.setContentMessageChat(task, parseInt(message.dataset.id))
       });
@@ -688,7 +685,8 @@ const createChatMessageNew = (properties, chat) => {
  * @returns Object divs
  */
 const createSectionComment = (div) => {
-    const divWrite = setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
+    const divWrite = setStyles(document.createElement(TAG.DIV));
+    divWrite.classList.add('chat-textarea')
     div.appendChild(divWrite);
 
     const divComment = setStyles(document.createElement(TAG.DIV),{ display: "flex", minHeight: "57px"});
@@ -717,7 +715,7 @@ const createSectionComment = (div) => {
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
       position: "relative",
       margin: "5px 0 5px 5px",
-      color: "#4b4b4b",
+      // color: "#4b4b4b",
       border: "none",
       outline: "none",
       width: "82%",
@@ -753,7 +751,7 @@ const createChat = () => newComponent({
     classes: ["continueLined", CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
     styles: {
         position: "relative",
-        width: '100%',
+        // width: '100%',
         zIndex: "0",
         minHeight: '311px',
         padding: "15px",
@@ -792,7 +790,7 @@ const createInputTitle = () => setAttributes(new AonNewInput(),{
 
 
 const createLabelFileText = () => {
-  const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
+  const label = setStyles(document.createElement(TAG.LABEL),{ cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
   const span  = setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
   span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
   label.appendChild(span);
@@ -910,12 +908,14 @@ const openDialogBranch = (task)=> {
     }
   });
 
+consoleLog('éstamos viendo esto ----')
+
   const noteId = "sendHistoricId";
   const note = createAonTextArea(`${MSG.WRITE_A_COMMENT} (Opcional)...`);
   note.id = noteId;
   note.name = noteId;
   div.appendChild(note);
-  note.height = "100px";
+  // note.height = "100px";
 
   dialog.addSendAction(async()=>{
     if(taskHolder.value && workgroup.value){
@@ -1057,6 +1057,9 @@ const openDialogDailyTracking = (task)=> {
     form.appendChild(trackingDuration);
 
     const noteId = MESSENGER_IDS.COMMENT_DAILY_TRACKING;
+
+    console.log(' -- aaaaaaaaaaaaaaaaaaa --  ')
+
     const note   = createAonTextArea(`${MSG.WRITE_A_COMMENT} (${MSG.OPTIONAL})...`);
     note.id = noteId;
     note.name = noteId;

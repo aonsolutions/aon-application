@@ -129,10 +129,10 @@ const addIconToolbar = (toolbar, task) => {
       iconEl = TaskCreationUtils.createOutlinedMaterialIcon({
         name: iconJson.icon,
         color: iconJson.icon_color,
-        size: "20px",
+        // size: "20px",
       });
-      iconEl.style.marginLeft = "10px";
-      iconEl.style.marginTop = "-1px";
+      // iconEl.style.marginLeft = "10px";
+      // iconEl.style.marginTop = "-1px";
     }
 
     titleSpan.appendChild(iconEl);
