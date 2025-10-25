@@ -89,7 +89,7 @@ export class AonMobilePackaging extends AonElement {
 
 	build() {
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.resetPackaging());
-		
+
 		let toolbar = new AonToolbar();
 		toolbar.id = this.PACKAGING_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;

@@ -35,7 +35,7 @@ $icon-padding-right : v.$px-40;
 $icon-padding-left  : v.$px-40;
 
 aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
-aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
+aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity{
   &[visible="false"] {
     display: none;
   }
