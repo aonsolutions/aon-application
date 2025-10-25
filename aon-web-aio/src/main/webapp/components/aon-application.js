@@ -584,7 +584,10 @@ export class AonApplication extends AonElement {
         } else {
           select.clearSelectable();
         }
-        select.setOptions(options);
+		if(options) 
+			select.setOptions(options) 
+		else 
+			select.setOptions(data.options) 
         select.addEventListener(EVENT.SELECT, () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
@@ -888,11 +891,17 @@ export class AonApplication extends AonElement {
         }
         select.setOptions(options);
         select.addEventListener(EVENT.SELECT, () => {
-          let yearSelected = JSON.parse(select.value);
-          // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
-          let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
-          let optionFiltered = filteredYears[0];
-          optionFiltered.fn();
+			let yearSelected;
+			try {
+				yearSelected = JSON.parse(select.value);
+			} catch {
+				yearSelected = select.value;
+			}
+	        // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
+	        let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
+	        let optionFiltered = filteredYears[0];
+			if(optionFiltered != undefined && optionFiltered.fn != undefined)
+	        	optionFiltered.fn();
         });
       }
     }

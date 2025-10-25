@@ -29,19 +29,20 @@ export class AonTab extends AonElement {
     }
 
     build() {
-        if (!this.options || this.options.length === 0) {
-            console.log("No hay opciones disponibles, en Tab.");
-            return;
-        }
+//        if (!this.options || this.options.length === 0) {
+//            console.log("No hay opciones disponibles, en Tab.");
+//            return;
+//        }
 
         const tabs = this.createElement(TAG.DIV);
         tabs.classList.add('tabs');
         this.tabsComponent = tabs;
         this.appendChild(tabs);
 
-        this.options.forEach((option, i) => {
-            this.printOption(option, i);
-        })
+		if(this.options)
+	        this.options.forEach((option, i) => {
+	            this.printOption(option, i);
+	        })
     }
 
     printOption(option, i) {
