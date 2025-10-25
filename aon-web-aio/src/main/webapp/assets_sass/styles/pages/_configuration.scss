@@ -1,0 +1,35 @@
+@use '../variables' as v;
+
+#rootPanel {
+  aon-configuration {
+    aon-new-user{
+      aon-card aon-basic-table.table-security table{
+        tr {
+          vertical-align: middle;
+          text-align: center;
+
+          td {
+            vertical-align: middle;
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: v.$px-0 v.$padding-min;
+            &:first-child{
+              width: v.$px-24;
+              max-width: v.$px-24;
+            }
+          }
+        }
+      }
+    }
+    aon-comunica-config{
+      aon-card  .aonCardContent{
+        .flexColumn{
+          display: flex;
+          flex-direction: column;
+          gap: v.$gap;
+        }
+      }
+    }
+  }
+}

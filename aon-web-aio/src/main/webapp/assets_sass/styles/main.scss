@@ -25,6 +25,7 @@
 @use './pages/notes' as notes;                // notes - Notas que se crean
 @use './pages/marketplace' as marketplace;    // marketplace - Contratacion
 @use './pages/warehouse' as warehouse;        // warehouse - Almacen
+@use './pages/configuration' as configuration;// configuration - Configuracion
 
 // Temas y Resoluciones
 @use './theme-base' as themeBase;

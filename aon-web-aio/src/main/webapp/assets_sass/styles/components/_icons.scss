@@ -5,6 +5,7 @@ $iconbutton-font-size        : v.$px-16;
 $position                    : relative;
 $iconbutton-font-size-hidden : v.$px-0;
 $icon-size                   : v.$px-24;
+$icon-size-x                 : v.$px-48;
 $content                     : '';
 $display                     : inline-flex;
 $mask                        : no-repeat center;
@@ -121,6 +122,17 @@ $icons: (
   "fork_left"            : '../icons/git-branch.svg',
   "group_add"            : '../icons/user-plus.svg',
   "support_agent"        : '../icons/headphones-micro.svg',
+  "social_distance"      : '../icons/user-suplant.svg',
+  "forward_to_inbox"     : '../icons/mail-plus.svg',
+  "share"                : '../icons/share-2.svg',
+  "Alternate_Email"      : '../icons/at-sign.svg',
+  "code"                 : '../icons/code.svg',
+  "security"             : '../icons/shield.svg',
+  "aon_ocr"              : '../icons/scan.svg',
+  "aon_bank"             : '../icons/dollar-sign.svg',
+  "aon_app"              : '../icons/aon.svg',
+  "toggle_on"            : '../icons/toggle-right.svg',
+  "toggle_off"           : '../icons/toggle-left.svg',
   /* texarea con opciones */
   "format_bold"         : '../icons/bold.svg',
   "format_italic"       : '../icons/italic.svg',
@@ -169,8 +181,8 @@ $icons: (
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
   aon-icon-button[icon="#{$icon-name}"]{
-    width  : $icon-size;
     height : $icon-size;
+    width  : $icon-size;
     button{
       width  : $icon-size;
       height : $icon-size;
@@ -204,6 +216,12 @@ $icons: (
     height           : $icon-size;
     font-size        : 0; // ocultar texto si queda alguno
     background-color : currentColor;
+
+    // Mas grande
+    &[icon="social_distance"]{
+      height : $icon-size-x;
+      width  : $icon-size-x;
+    }
 
     mask: url(#{$icon-data}) $mask;
     mask-size         : $mask-size;
