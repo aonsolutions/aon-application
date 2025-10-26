@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.BankSwift;
+import com.esferalia.aon.occam.api.model.finance.BicSwiftValidator;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -45,9 +46,9 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 	
 	private HTMLPanel generalInfoContent = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
-	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pais");
-	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo Documento");
+	private AonCustomTextBox documentCountry = new AonCustomTextBox("Pa\u00eds Emisi\u00f3n");
+	private AonCustomTextBox document = new AonCustomTextBox("N\u00famero Documento");
 	private AonCustomTextBox name = new AonCustomTextBox("Nombre/Raz\u00f3n Social");
 	
 	private HTMLPanel addressContent = new HTMLPanel(AonStringUtils.EMPTY);
@@ -131,7 +132,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		HTMLPanel row = new HTMLPanel(AonStringUtils.EMPTY);
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		documentType.setWidth("6rem");
+		documentType.setWidth("7rem");
 		documentCountry.setWidth("10rem");
 		
 		row.add(documentType);
@@ -262,21 +263,76 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		}
 		
 		account.addValueChangeHandler(e -> {
-			if(account.getValue().contains(" ")) account.setValue(account.getValue().replaceAll(" ", ""));
+			if(account.getValue().contains(" ")) account.setValue(account.getValue().replaceAll("[^A-Za-z0-9]", "").toUpperCase());
 			
 			BankAccount bankAccount = new BankAccount(account.getValue());
 			if(bankAccount.isValidIban()) {
+				String oldBic = bic.getValue();
 				String bankSwift = getBankSwift(account.getValue());
-				bic.setValue(bankSwift);
+				bic.setValue(AonStringUtils.isBlank(oldBic) ? bankSwift : (AonStringUtils.isBlank(bankSwift) ? oldBic : bankSwift));
 				hasAccountChange = true;
+				AonMessagePanel.hideMessage(messagePanel);
+			} else if(isValidCCC(account.getValue())) {
+				String iban = cccToIban(account.getValue());
+				BankAccount bankAccountAux = new BankAccount(iban);
+				if(bankAccountAux.isValidIban()) {
+					String oldBic = bic.getValue();
+					String bankSwift = getBankSwift(iban);
+					account.setValue(iban);
+					bic.setValue(AonStringUtils.isBlank(oldBic) ? bankSwift : (AonStringUtils.isBlank(bankSwift) ? oldBic : bankSwift));
+					hasAccountChange = true;
+					AonMessagePanel.hideMessage(messagePanel);
+				} else AonMessagePanel.showError(messagePanel, "El CCC introducido es incorrecto");
 			}
 			else AonMessagePanel.showError(messagePanel, "El IBAN es incorrecto");
 		});
-		bic.addValueChangeHandler(e -> hasAccountChange = true);
+		
+		bic.addValueChangeHandler(e -> {
+			if(BicSwiftValidator.isValidBic(bic.getValue())) {
+				hasAccountChange = true;
+				AonMessagePanel.hideMessage(messagePanel);
+			}
+			else AonMessagePanel.showError(messagePanel, "El BIC es incorrecto");
+		});
 		
 		content.add(payMethodContent);
 	}
 	
+	private boolean isValidCCC(String value) {
+		value = value.replaceAll("\\s+", "");
+		return value.matches("\\d{20}");
+	}
+	
+	/**
+     * Convierte un CCC español (20 dígitos) a IBAN.
+     */
+    private static String cccToIban(String ccc) {
+        String countryCode = "ES";
+        String countryDigits = "1428"; // E=14, S=28
+        String temp = ccc + countryDigits + "00";
+        int mod = modulo97(temp);
+        int controlDigits = 98 - mod;
+        String controlStr = (controlDigits < 10 ? "0" : "") + controlDigits;
+        return countryCode + controlStr + ccc;
+    }
+
+    /**
+     * Calcula módulo 97 de un número muy grande representado como String
+     */
+    private static int modulo97(String num) {
+        int fragmento = 0;
+        for (int i = 0; i < num.length(); i++) {
+            int digit = charToDigit(num.charAt(i));
+            fragmento = (fragmento * 10 + digit) % 97;
+        }
+        return fragmento;
+    }
+
+    // Versión compatible GWT
+    private static int charToDigit(char c) {
+        return c - '0';
+    }
+
 	private String getBankSwift(String account) {
 		if (AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
@@ -348,7 +404,13 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		messagePanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		AonTableButton info = new AonTableButton("Actualizaci\u00f3n Informaci\u00f3n", AON.CSS.aonIconInfo());
-		HTMLPanel message = new HTMLPanel("Los datos modificados se van a actualizar. <br>Con estos datos ya se han emitido facturas y puede provocar que tenga que emitir rectificativas correspondientes al ejercicio actual.");
+		
+		String messageContent = "Se proceder\u00e1 a emitir factura con los datos indicados por los servicios contratados mediante " + aonConfiguration.getPayMethods().stream().filter(pm -> pm.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)).findFirst().get().getName() + ".";
+		
+		if(hasInfoChange || hasAddressChange)
+			messageContent += "<br>Con estos datos ya se han emitido facturas y puede provocar que tenga que emitir rectificativas correspondientes al ejercicio actual.";
+		
+		HTMLPanel message = new HTMLPanel(messageContent);
 		
 		messagePanel.add(info);
 		messagePanel.add(message);
@@ -457,7 +519,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 			}
 			
 			String bankAlias = getBankAlias(account.getValue());
-			if(bankAlias.length() > 25) bankAlias = bankAlias.substring(0, 25);
+			if(AonStringUtils.isNotBlank(bankAlias) && bankAlias.length() > 25) bankAlias = bankAlias.substring(0, 25);
 			
 			RegistryBank rbank = new RegistryBank()
 					.setBankAccount(new BankAccount(account.getValue()))
@@ -500,7 +562,9 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 		if(AonStringUtils.isBlank(addressMunicipality.getValue())) return "El campo Localidad es obligatorio";
 		
 		if(AonStringUtils.isBlank(account.getValue()) || !new BankAccount(account.getValue()).isValidIban()) return "El campo IBAN es obligatorio o tiene un formato incorrecto";
-		if(AonStringUtils.isBlank(bic.getValue()) || (null != getBankSwift(account.getValue()) && !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) ) return "El campo BIC es obligatorio o es incorrecto";
+		if(AonStringUtils.isBlank(bic.getValue()) || 
+				( (null != getBankSwift(account.getValue()) && !AonStringUtils.equalsIgnoreCase(bic.getValue(), getBankSwift(account.getValue()))) || !BicSwiftValidator.isValidBic(bic.getValue())) 
+		) return "El campo BIC es obligatorio o es incorrecto";
 		
 		return null;
 	}
