@@ -1023,5 +1023,20 @@
       }
     }
     // FIN Notas
+    // Contratacion
+    aon-booking{
+      ul{
+        border: $border;
+        li{
+          border-bottom: $border;
+          aon-icon{
+            &[color="lightgray"] {
+              color: $color-text-placeholder;
+            }
+          }
+        }
+      }
+    }
+    // FIN Contratacion
   }
 }
