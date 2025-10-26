@@ -1,5 +1,5 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { AonSearch } from "../../../components/aon-search.js";
+// import { AonSearch } from "../../../components/aon-search.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
 import { AonElement } from "../../../components/AonElement.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
@@ -57,7 +57,7 @@ export class AonWorkgroup extends AonElement {
     usersDiv.id = this.USERS;
     usersDiv.style.display = "none";
     usersDiv.style.width = "50%";
-    usersDiv.style.borderLeft = "1px solid #ddd";
+    // usersDiv.style.borderLeft = "1px solid #ddd";
     div.appendChild(usersDiv);
 
     list.addEventListener(EVENT.SELECT, (event) => {
@@ -71,8 +71,9 @@ export class AonWorkgroup extends AonElement {
     this.clearElement(parent);
 
     let div = this.createElement(TAG.DIV);
-    div.style.borderBottom = "1px solid #ddd";
-    div.style.height = "48px";
+    div.classList.add('title');
+    // div.style.borderBottom = "1px solid #ddd";
+    // div.style.height = "48px";
     parent.appendChild(div);
 
     let workgroupBack = new AonIconButton();
@@ -80,9 +81,9 @@ export class AonWorkgroup extends AonElement {
     workgroupBack.title = MSG.CLOSE;
     workgroupBack.icon = MATERIAL_ICONS.CLOSE;
     workgroupBack.noHover = true;
-    workgroupBack.style.top = "10px";
-    workgroupBack.style.position = "relative";
-    workgroupBack.style.right = "4px";
+    // workgroupBack.style.top = "10px";
+    // workgroupBack.style.position = "relative";
+    // workgroupBack.style.right = "4px";
     div.appendChild(workgroupBack);
 
     workgroupBack.addEventListener(EVENT.CLICK, () => {
@@ -90,11 +91,12 @@ export class AonWorkgroup extends AonElement {
     });
 
     let span = this.createElement(TAG.SPAN);
+    span.classList.add('description');
     span.innerHTML = workgroup.description;
-    span.style.position = "absolute";
-    span.style.margin = "20px";
-    span.style.fontWeight = "500";
-    span.style.color = "rgb(95, 99, 104)";
+    // span.style.position = "absolute";
+    // span.style.margin = "20px";
+    // span.style.fontWeight = "500";
+    // span.style.color = "rgb(95, 99, 104)";
     div.appendChild(span);
 
     // let aonSearch = new AonSearch();
@@ -106,17 +108,17 @@ export class AonWorkgroup extends AonElement {
     let user = new AonIconButton();
     user.id = this.USERS + "User";
     user.icon = MATERIAL_ICONS.PERSON;
-    user.style.position = "absolute";
+    // user.style.position = "absolute";
     user.style.display = "none";
-    user.style.top = "6px";
+    // user.style.top = "6px";
     user.classList.add(CSS.AON_RIGHT_20);
     div.appendChild(user);
 
     let addButton = new AonIconButton();
     addButton.id = this.USERS + "AddButton";
     addButton.icon = MATERIAL_ICONS.PERSON_ADD;
-    addButton.style.position = "absolute";
-    addButton.style.top = "6px";
+    // addButton.style.position = "absolute";
+    // addButton.style.top = "6px";
     addButton.classList.add(CSS.AON_RIGHT_20);
     div.appendChild(addButton);
 
@@ -298,8 +300,7 @@ saveData(taskholder, workgroup) {
 
   loadUserList(workgroup, search) {
     search = search || "";
-    let userList =
-      this.getElement(this.USER_LIST) || new AonTaskHolderSimpleList();
+    let userList = this.getElement(this.USER_LIST) || new AonTaskHolderSimpleList();
     userList = new AonTaskHolderSimpleList();
     userList.id = this.USER_LIST;
     let filteredUsers = this.users.filter(

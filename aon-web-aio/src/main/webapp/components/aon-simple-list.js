@@ -8,7 +8,6 @@ export class AonSimpleList extends AonElement {
   UL;
   filter;
 
-
   static get observedAttributes() {
     return [];
   }
@@ -20,7 +19,6 @@ export class AonSimpleList extends AonElement {
   set id(id) {
     this.setAttribute(CONSTANT.ID, id);
   }
-
 
   attributeChangedCallback(name, oldValue, newValue) {}
 
@@ -66,7 +64,7 @@ export class AonSimpleList extends AonElement {
   addLi(data, index, fn, icon, iconFn) {
     let li = this.createElement(TAG.LI);
     li.className = "aonLi aonAppLi";
-    li.style.height = '48px';
+    // li.style.height = '48px';
     li.addEventListener(EVENT.CLICK, fn);
 
     let span = this.createElement(TAG.SPAN);
@@ -79,9 +77,10 @@ export class AonSimpleList extends AonElement {
       aonIcon.size      = "24";
       spanHtml = aonIcon.outerHTML;
     } else if (data.icon) {
-      let ic = this.createElement(TAG.I);
-      ic.classList.add(data.icon_class|| CONSTANT.MATERIAL_ICONS, "aonAvatar");
-      ic.textContent = data.icon;
+      // let ic = this.createElement(TAG.I);
+      // ic.classList.add(data.icon_class|| CONSTANT.MATERIAL_ICONS, "aonAvatar");
+      let ic = new AonIcon();
+      ic.icon = data.icon;
       if(data.icon_color) ic.style.color = data.icon_color;
       spanHtml = ic.outerHTML;
     }  else if (data.iconHTML) {
@@ -94,34 +93,35 @@ export class AonSimpleList extends AonElement {
 
     span.innerHTML = spanHtml;
 
+    let div = this.createElement(TAG.DIV);
+    div.className = "aonListText";
+    // div.style.marginTop = '10px';
+    div.innerHTML = data.title;
+    
+    if(data.paddingTopTitle) {
+      div.style.paddingTop = data.paddingTopTitle;
+    }
+    span.appendChild(div);
+
     if(icon){
-      let remove = this.createElement(TAG.I);
-      remove.classList.add(CONSTANT.MATERIAL_ICONS);
-      remove.classList.add("aonAvatar");
-      remove.textContent = icon;
+      // let remove = this.createElement(TAG.I);
+      // remove.classList.add(CONSTANT.MATERIAL_ICONS, "aonAvatar");
+      // remove.textContent = icon;
+      // remove.style.display = 'none';
+      // remove.style.position = 'absolute';
+      // remove.style.right = '0px';
+      // remove.title = MSG.DELETE;
+      let remove = new AonIcon();
+      remove.classList.add("remove-icon");
       remove.style.display = 'none';
-      remove.style.position = 'absolute';
-      remove.style.right = '0px';
+      remove.icon = icon;
       remove.title = MSG.DELETE;
       remove.addEventListener(EVENT.CLICK, iconFn);
       span.appendChild(remove);
       
       li.addEventListener(EVENT.POINTEROVER, () => remove.style.display  = 'block');
       li.addEventListener(EVENT.POINTERLEAVE, () => remove.style.display = 'none');
-  
     }
-
-
-    let div = this.createElement(TAG.DIV);
-    div.className = "aonListText";
-    div.style.marginTop = '10px';
-    div.innerHTML = data.title;
-    
-    if(data.paddingTopTitle) {
-      div.style.paddingTop = data.paddingTopTitle;
-    }
-
-    span.appendChild(div);
 
     if(data.subtitle){
       let span3 = this.createElement(TAG.SPAN);

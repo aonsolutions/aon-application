@@ -974,7 +974,7 @@
             wrapper{
               chat {
                 &.continueLined::after {
-                  border-left: v.$px-2 solid $color-text;
+                  border-left: v.$px-2 solid $color-text-placeholder;
                 }
                 .chat-icon {
                   background-color: $color-box;
@@ -1038,5 +1038,23 @@
       }
     }
     // FIN Contratacion
+    //
+    //
+    // Vistas mezcladas se repite codigo en muchos lados y no se diferencian bien
+    aon-configuration, aon-office-panel{
+      aon-workgroup{
+        #aonWorkgroupUsers, #aonWorkgroupListUsers{
+          border-left: $border;
+          .title{
+            border-bottom: $border;
+          }
+          ul {
+            li{
+              border-bottom: $border;
+            }
+          }
+        }
+      }
+    }
   }
 }
