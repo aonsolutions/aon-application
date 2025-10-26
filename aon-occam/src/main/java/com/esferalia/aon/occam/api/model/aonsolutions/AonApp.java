@@ -238,9 +238,9 @@ public enum AonApp implements Serializable {
 		case MESSENGER:
 			return List.of(AonRole.MESSENGER_PORTAL);
 		case ACCOUNTING:
-			return List.of(AonRole.ACCOUNTING);
+			return List.of(AonRole.ACCOUNTING_MANAGER);
 		case FISCAL:
-			return List.of(AonRole.FISCAL);
+			return List.of(AonRole.FISCAL_MANAGER);
 		case PAYROLL:
 			return List.of(AonRole.PAYROLL_PORTAL);
 		case OCR:
@@ -259,6 +259,8 @@ public enum AonApp implements Serializable {
 			return List.of(AonRole.BANK);
 		case TIMECONTROL:
 			return List.of(AonRole.TIMECONTROL_PORTAL);
+		case MANAGEMENT:
+			return List.of(AonRole.MANAGEMENT);
 		case PACK_SUITE:
 			return List.of();
 		case PACK_PORTAL:

@@ -13,11 +13,12 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInfoConfirm;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -60,6 +61,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	private RegistryModuleOptions currentDomainOptions;
 	private RegistryModuleOptions officeDomainOptions;
 	private Integer customerRelatedRegistry;
+	private Company customerCompany;
 	private LinkedList<Workplace> workplaces;
 	
 	private DomainType domainType;
@@ -70,15 +72,16 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	private LinkedList<Fee> customerFees;
 	
 	// Constructor
-	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Integer customerRelatedRegistry, LinkedList<Workplace> workplaces) {
+	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Company customerCompany, LinkedList<Workplace> workplaces) {
 		super("");
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
-		this.customerRelatedRegistry = customerRelatedRegistry;
+		this.customerRelatedRegistry = customerCompany.getId();
 		this.currentDomainOptions = currentDomainOptions;
 		this.officeDomainOptions = officeDomainOptions;
+		this.customerCompany = customerCompany;
 		this.workplaces = workplaces;
 		
 		addStyleName(AON.CSS.aonFlexColumn());
@@ -187,15 +190,42 @@ public class ProductCatalogueBooking extends HTMLPanel {
     			card = new CataloguePackBookingCard(packProduct, tariff, customerFees) {
 
 					@Override
-					protected void onCreateCustomerFeeByItem(Product product) {			
-						createFee(packProduct);	
+					protected void onCreateCustomerFeeByItem(Product product) {	
+						if(customerFees.isEmpty()) {
+							new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+								
+								@Override
+								protected void onEnd() {
+									createFee(packProduct);
+								}
+								
+								@Override
+								protected void onCancel() {}
+								
+							};
+						} else
+							createFee(packProduct);
+							
 					}};
     		else
     			card = new CataloguePackBookingCard(packProduct, itemTariff.get(), customerFees) {
 
 					@Override
 					protected void onCreateCustomerFeeByItem(Product product) {
-						createFee(packProduct);	
+						if(customerFees.isEmpty()) {
+							new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+								
+								@Override
+								protected void onEnd() {
+									createFee(packProduct);
+								}
+								
+								@Override
+								protected void onCancel() {}
+								
+							};
+						} else
+							createFee(packProduct);
 					}};
 	       
     		packsCataloguePanel.add(card);
@@ -393,17 +423,44 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	}
 	
 	private void reloadDialog() {
-		AonDialog dialog = new AonDialog("Contrataci\u00f3n Actulizada", new HTMLPanel("La contrataci\u00f3n ha sido actualizada. Se recomienda refrescar la sesi\u00f3n para actualizar las nuevas funcionalidades."));
-		dialog.confirm(new AonAcceptDialogCallback() {
-			
-			@Override
-			public void onCancel() { dialog.hide(); }
-			
-			@Override
-			public void onAccept() {
-				reloadParent();
-			}
+		AonCustomDialog dialog = new AonCustomDialog();
+		dialog.showCloseButton(true);
+		
+		HTMLPanel dialogContent = new HTMLPanel("");
+		dialogContent.addStyleName(AON.CSS.aonFlexColumn());
+		dialogContent.getElement().getStyle().setProperty("padding", "1rem");
+		
+		HTMLPanel buttonsPanel = new HTMLPanel("");
+		buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonsPanel.getElement().getStyle().setProperty("justify-content", "center");
+		buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
+		buttonsPanel.setWidth("100%");
+		
+		Button acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButton());
+		acceptBtnDialog.setText("Recargar");
+		buttonsPanel.add(acceptBtnDialog);
+		
+		HTMLPanel messagePanel = new HTMLPanel("");
+		messagePanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		AonTableButton info = new AonTableButton("Informaci\u00f3n", AON.CSS.aonIconInfo());
+		HTMLPanel message = new HTMLPanel("La contrataci\u00f3n ha sido actualizada. Se va a proceder a refrescar la sesi\u00f3n para actualizar las nuevas funcionalidades.");
+		
+		messagePanel.add(info);
+		messagePanel.add(message);
+		dialogContent.add(messagePanel);
+		
+		acceptBtnDialog.addClickHandler(ev -> {
+			reloadParent();
 		});
+		
+		dialogContent.add(buttonsPanel);
+		
+		dialog.setCaption("Contrataci\u00f3n Actualizada");
+		dialog.add(dialogContent);
+		dialog.center();
+		dialog.show();
 	}
 
 	private void createServices(HTMLPanel cataloguePanel, List<Product> aonServices) {
@@ -447,7 +504,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				pricePanel.getElement().getStyle().setProperty("align-items", "center");
 				
 				String priceValue = formaDouble(aonService.getItem().getPrice());
-				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "<small><b> \u20ac </b>" + " al mes *");
+				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "<small> \u20ac" + " al mes *");
 				price.getElement().getStyle().setProperty("text-align", "center");
 				price.getElement().getStyle().setProperty("width", "8rem");
 				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "#002469");
@@ -520,22 +577,24 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			HTMLPanel buttonsPanel = new HTMLPanel("");
 			buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
 			buttonsPanel.getElement().getStyle().setProperty("justify-content", "center");
+			buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
 			buttonsPanel.setWidth("100%");
 			
 			Button closeBtnDialog = new Button();
-			closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+			closeBtnDialog.setStyleName(AON.CSS.aonCancelButton());
 			closeBtnDialog.setText(AON.MSG.cancelAction());
 			closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
 			closeBtnDialog.addClickHandler(ev -> dialog.hide());
 			buttonsPanel.add(closeBtnDialog);
 			
 			Button acceptBtnDialog = new Button();
-			acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-			acceptBtnDialog.setText(AON.MSG.accept());
+			acceptBtnDialog.setStyleName(AON.CSS.aonOkButton());
+			acceptBtnDialog.setText(isFeeProduct(packProduct.getItem().getId()) ? "Descontratar" : "Contratar");
+			acceptBtnDialog.getElement().getStyle().setProperty("background-color", "#eee");
 			acceptBtnDialog.setEnabled(false);
 			buttonsPanel.add(acceptBtnDialog);
 			
-			HTMLPanel message = new HTMLPanel(isFeeProduct(packProduct.getItem().getId()) 
+			HTMLPanel message = new HTMLPanel(!isFeeProduct(packProduct.getItem().getId()) 
 					? "Se va a proceder con la contrataci\u00f3n del producto <b>" + packProduct.getName() + "</b>" 
 					: "Se va a proceder a descontratar el producto <b>" + packProduct.getName() + "</b>" 
 					);
@@ -545,9 +604,12 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			terms.addStyleName(AON.CSS.aonItemFlex());
 			
 			CheckBox acceptTerms = new CheckBox();
-			acceptTerms.addValueChangeHandler(ev -> acceptBtnDialog.setEnabled(acceptTerms.getValue()));
+			acceptTerms.addValueChangeHandler(ev -> {
+				acceptBtnDialog.setEnabled(acceptTerms.getValue());
+				acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
+			});
 			Label temrsMessage = new Label("He leido y acepto los ");
-			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf", "_blank");
+			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://ayudatpymes.com/aviso-legal/terminos-condiciones/", "_blank");
 			termsAnchor.getElement().getStyle().setProperty("color", "#002469");
 			Label temrsMessage_2 = new Label(" de contrataci\u00f3n de Aon");
 					
@@ -559,8 +621,25 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			
 			acceptBtnDialog.addClickHandler(ev -> {
 				if(acceptTerms.getValue()) {
-					createFee(packProduct);
-					dialog.hide();
+					if(customerFees.isEmpty()) {
+						new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+							
+							@Override
+							protected void onEnd() {
+								createFee(packProduct);
+								dialog.hide();
+							}
+							
+							@Override
+							protected void onCancel() {
+								dialog.hide();
+							}
+							
+						};
+					} else {
+						createFee(packProduct);
+						dialog.hide();
+					}
 				} else
 					AonMessagePanel.showError(messageDialogPanel, "Debe aceptar los terminos y condiciones para poder aceptar");
 			});

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -54,9 +53,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 	private AonCustomDockLayout aonCustomDockLayout;
 
 	private final String EMPTY_STRING = "";
-
-	private AonCustomListBox domainType = new AonCustomListBox("Tipo Dominio");
-	private AonCustomListBox tariff = new AonCustomListBox("Tarifa");
 	
 	private HTMLPanel container;
 	
@@ -85,7 +81,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 		AON.ensureInjected();
 		ensureGwtSelector();
 		
-		aonCustomDockLayout = new AonCustomDockLayout("Cat\u00e1logo") {
+		aonCustomDockLayout = new AonCustomDockLayout(null, false) {
 			
 			@Override
 			protected void onClearFilter() {
@@ -98,11 +94,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 		
 		getTariffs(tariffsDb -> {
 			this.tariffs = tariffsDb;
-			
-			createToolbar();
-			
-			aonCustomDockLayout.hideToolbar();
-			aonCustomDockLayout.hideSearchWidget();
 			
 			container = new HTMLPanel(EMPTY_STRING);
 			container.addStyleName(AON.CSS.aonFlexColumn());
@@ -120,24 +111,10 @@ public class ProductCatalogueModule  implements EntryPoint {
 		currentDomainOptions.getParentWidget().add(aonCustomDockLayout);
 	}
 	
-	private void createToolbar() {
-		domainType.clearItems();
-		DomainType.getValues().forEach(domainTypeIt -> domainType.addItem(domainTypeIt.getName(), domainTypeIt.ordinal() + ""));
-		domainType.addChangeHandler(e -> onSearch());
-		domainType.setVisible(false);
-		aonCustomDockLayout.addToolbarButton(domainType);
-		
-		tariff.clearItems();
-		tariffs.forEach(tariffIt -> tariff.addItem(tariffIt.getName(), tariffIt.getId().toString()));
-		tariff.addChangeHandler(e -> onSearch());
-		tariff.setVisible(false);
-		aonCustomDockLayout.addToolbarButton(tariff);
-	}
-	
 	public void onSearch() {
 		productCatalogue.onSearch(
-				DomainType.safeValueOf(Byte.parseByte(domainType.getValue())), 
-				tariffs.stream().filter(tariffIt -> tariffIt.getId().equals(Integer.parseInt(tariff.getValue()))).findFirst().get());
+				DomainType.ENTERPRISE, 
+				tariffs.get(0));
 	}
 	
 	private void getTariffs(Consumer<List<Tariff>> success) {
@@ -145,7 +122,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 			
 			@Override
 			public void onSuccess(AonConfiguration config) {
-				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany().getId(), config.getWorkplaces());
+				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany(), config.getWorkplaces());
 				productCatalogue.setHeight("100%");
 				
 				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {

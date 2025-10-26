@@ -82,6 +82,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -482,5 +484,10 @@ public interface CommonServiceAsync {
 	
 	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> asyncCallback) throws AonCoreException;
+	void saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod, AsyncCallback<RegistryPayMethod> asyncCallback) throws AonCoreException;
+	void getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry, AsyncCallback<List<RegistryRelationship>> asyncCallback) throws AonCoreException;
+	void saveCustomer(String domainName, Integer domainId, String user, Customer customer, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
 	
 }

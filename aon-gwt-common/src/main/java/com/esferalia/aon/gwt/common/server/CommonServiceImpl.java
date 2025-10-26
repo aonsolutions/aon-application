@@ -119,6 +119,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -1766,6 +1767,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			userDb.setType(UserType.NORMAL);
 			userDb.setEnterprise(null);
 			AON.saveUser(new Domain().setName(domainName).setId(domainId), user, userDb);
+			
+			List<AonRole> aonUserAppRoles = List.of(AonRole.ENTERPRISE, AonRole.EMPLOYEE);
+			Byte[] arrayAonRoles = aonUserAppRoles.stream()
+				    .map(ar -> ar.value())
+				    .toArray(Byte[]::new);
+			
+			List<UserAppRole> userAppRoles = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userDb.getId()).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+			userAppRoles.forEach(userAppRole -> AON_SOLUTIONS.deleteUserAppRole(domainName, domainId, user, f -> f.getIdProperty().eq(userAppRole.getId()).and(f.getDomainProperty().eq(domainId))));
+			
 		}
 		
 		if(product.isComposition()) {
@@ -1806,10 +1816,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
-		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getAppProperty().eq(itemCode.byteValue()))).collect(Collectors.toList());
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+		Byte[] arrayAonRoles = aonRoles.stream()
+			    .map(ar -> ar.value())
+			    .toArray(Byte[]::new);
+		
+		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+		
 		if(userAppRole.isEmpty()) {
-			List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
-			
 			aonRoles.forEach(aonRole -> {
 				UserAppRole newUserAppRole = new UserAppRole()
 						.setDomain(domainId)
@@ -1821,6 +1835,38 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			});
 			
 		} 
+	}
+	
+	@Override
+	public List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException {
+		List<RegistryPayMethod> registryPayMethods = AON.getRegistryPayMethodStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registry))).collect(Collectors.toList());
+		return registryPayMethods;
+	}
+	
+	@Override
+	public RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod) throws AonCoreException {
+		if(null == registryPayMethod.getRbank().getId())
+			AON.saveRegistryBank(new Domain().setName(domainName).setId(domainId), 
+					user, registryPayMethod.getRbank());
+		
+		return AON.saveRegistryPayMethod(
+				new Domain().setName(domainName).setId(domainId), 
+				new User().setLogin(user), 
+				registryPayMethod);
+	}
+	
+	@Override
+	public List<RegistryRelationship> getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry) throws AonCoreException {
+		List<RegistryRelationship> registryRelationships = AON_SOLUTIONS.getRegistryRelationshipStream(
+				new Domain().setName(domainName).setId(domainId), 
+				new User().setLogin(user), 
+				f -> f.getDomainProperty().eq(domainId).and(f.getRelatedRegistryProperty().eq(customerRelatedRegistry))).collect(Collectors.toList());
+		
+		return registryRelationships;
+	}
+	@Override
+	public Customer saveCustomer(String domainName, Integer domainId, String user, Customer customer) throws AonCoreException {
+		return AON.saveCustomer(domainName, domainId, user, customer);
 	}
 
 }

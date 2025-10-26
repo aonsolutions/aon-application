@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server.console.utilities;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
@@ -27,19 +29,22 @@ import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 
+
 	private static final String DOMAIN_NEW_SCOPE = "{0} (New scope: {1})";
 	private static final String NO_SCOPES       = " SIN SCOPES";
 	private static final String ONE_SCOPE       = " OK 1 SCOPE ({0})";
-	private static final String MULTIPLE_SCOPES = "DOMINIO CON {0} SCOPES";
+	private static final String MULTIPLE_SCOPES = "DOMINIO {0} - {1} CON {2} SCOPES";
 	private static final String UNUSED_SCOPE_DELETED = "Borrando scope {0} no utilizado";
+	private static final String USER_SCOPE_DELETED = "Borrando {0} user-scopes duplicados (User: {1}, Scope: {2})";
 	
-	private static record Context(Domain domain, long count, Integer newScope) {}
+	private static record RunContext(Domain domain, long count, Integer newScope) {}
 
 	@Override
 	protected String getTitle() {
@@ -54,9 +59,10 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 			check(ctx, processId, params, domainParams);
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "Fin del proceso"));
 		} catch (AonConsoleUtilityException e) {
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
+			if (AonStringUtils.isNotEmpty( e.getMessage() ) ) {
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
+			}
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, "Final del proceso."));	
-			
 		}
 		
 	}
@@ -84,30 +90,45 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 		if (domainParams != null && domainParams.getParent() != null) {
 			cond = cond.and( DOMAIN.PARENT.eq(domainParams.getParent()) );
 		}
-		ctx.getDslContext()
+		SelectConditionStep<Record> select = ctx.getDslContext()
 			.select()
 			.from(DOMAIN)
-			.where(cond)
+			.where(cond);
+		
+		if (select.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isEmpty()) {
+			
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId
+				, "No se encontraron dominios que cumplan las condiciones: " + cond.toString() ));
+			
+		} else {
+			select
 			.fetch()
 			.stream()
 			.map( new DomainFiller() )
 			.forEach( d -> checkTables(ctx,processId, params, d))
-		;
+			;
+		}
+			
 	}
 	
 	
 	private static void checkTables(AONContext ctx, String processId, ConsoleParams params, Domain d) {
 		ctx.getDslContext().transaction( trx -> {
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.subtitle(processId,MessageFormat.format("Checking {0} -- {1} domain",d.getId(),d.getName()) ));
-			Context c = getDomainContext(ctx, processId, params,d);
+			RunContext c = getDomainContext(ctx, processId, params,d);
 			if (c.newScope != null) {
 				AonCollectionUtils.stream(ScopeDAO.SCOPE_TABLES)
-					.forEach( t -> checkTable(ctx, processId, params, c, t) );
+					.forEach( t -> checkTable(ctx, processId, params, c, t));
 			}
+			deleteDuplicatedUserScopes( ctx, processId, params, d);
 		});
 	}
 	
-	private static void checkTable(AONContext ctx, String processId, ConsoleParams params, Context c, Table<?> table) {
+	private static void checkTable(AONContext ctx, String processId, ConsoleParams params, RunContext c, Table<?> table) {
 		int allRows = getRows( ctx, c.domain, table);
 		if (allRows > 0) {
 			Integer[] scopes = getWrongScopes(ctx, c.domain, table);
@@ -155,7 +176,7 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 			.getValue(countField);
 	}
 
-	private static Context getDomainContext(AONContext ctx, String processId, ConsoleParams params, Domain d) throws AonConsoleUtilityException {
+	private static RunContext getDomainContext(AONContext ctx, String processId, ConsoleParams params, Domain d) throws AonConsoleUtilityException {
 		tryToDeleteUnusedDomainScopes( ctx, processId, params, d);
 		long scopes = ctx.getDslContext()
 			.select()
@@ -202,11 +223,13 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,MessageFormat.format(ONE_SCOPE,newScope)));
 		} else {
 			// Existe más de un scope en el dominio
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId
-				,MessageFormat.format(MULTIPLE_SCOPES,AonStringUtils.leftPad( AonNumberUtils.toString(scopes), 4))
-			));
+			String msg = MessageFormat.format(MULTIPLE_SCOPES
+				,d.getId()
+				,d.getName()
+				,AonStringUtils.leftPad( AonNumberUtils.toString(scopes), 4));
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 		}
-		return new Context(d, scopes, newScope);
+		return new RunContext(d, scopes, newScope);
 	}
 	
 	private static void tryToDeleteUnusedDomainScopes(AONContext ctx, String processId, ConsoleParams params, Domain d) {
@@ -318,4 +341,37 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 			.map(new ScopeFiller())
 		;
 	}
+	
+	private static void deleteDuplicatedUserScopes(AONContext ctx, String processId, ConsoleParams params, Domain d) {
+		 // Borrar todos los que no sean el minimo ID por grupo user,scope
+		MutableBoolean something = new MutableBoolean(false);
+		AggregateFunction<Integer> minId = DSL.min(USER_SCOPE.ID);
+		AggregateFunction<Integer> countId = DSL.count(USER_SCOPE.ID);
+		ctx.getDslContext().select( USER_SCOPE.USER_ID, USER_SCOPE.SCOPE, minId, countId )
+			 .from(USER_SCOPE)
+			 .where(USER_SCOPE.DOMAIN.eq(d.getId()))
+             .groupBy(USER_SCOPE.USER_ID, USER_SCOPE.SCOPE)
+             .having(countId.gt(1) )
+             .fetch()
+             .stream()
+             .forEach( r -> {
+            	 something.setValue(true);
+            	 Integer min = r.getValue(minId);
+            	 Integer userId = r.getValue(USER_SCOPE.USER_ID);
+            	 Integer scopeId = r.getValue(USER_SCOPE.SCOPE);
+            	 int deleted = ctx.getDslContext().deleteFrom(USER_SCOPE)
+        			 .where(USER_SCOPE.DOMAIN.eq(d.getId()))
+        			 .and(USER_SCOPE.USER_ID.eq(userId))
+        			 .and(USER_SCOPE.SCOPE.eq(scopeId))
+        			 .and(USER_SCOPE.ID.ne(min))
+        			 .execute();
+ 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId
+					,MessageFormat.format(USER_SCOPE_DELETED,deleted,userId,scopeId)));
+             }
+        );
+		if (something.isFalse()) {
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"OK No se encontraron USER_SCOPE duplicados"));
+		}
+	}
+	
 }
