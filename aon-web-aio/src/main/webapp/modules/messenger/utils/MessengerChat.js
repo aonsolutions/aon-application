@@ -137,8 +137,8 @@ const buildTabs = (task, secondDiv) => {
     secondDiv.classList.add(CSS.FLEX_WRAP);
 
     let tab = setStyles(new AonTab(),{
-      overflow: 'auto',
-      whiteSpace: 'nowrap'
+      // overflow: 'auto',
+      // whiteSpace: 'nowrap'
     });
     tab.id = MESSENGER_IDS.AON_TAB;
     tab.className = CSS.MATERIAL_SCROLL;
