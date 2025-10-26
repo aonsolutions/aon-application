@@ -34,6 +34,8 @@ $button-width  : v.$px-24;
 $icon-padding-right : v.$px-40;
 $icon-padding-left  : v.$px-40;
 
+// Simplificar que haya tantos textarea?
+//
 aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
 aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity{
   &[visible="false"] {
@@ -58,6 +60,8 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity{
       }
       textarea{
         max-width     : v.$pct-100;
+        height        : $input-height;
+        min-height    : $input-height;
         padding       : $padding;
         border-radius : v.$border-radius;
         box-sizing    : $input-box-sizing;
@@ -217,6 +221,9 @@ aon-new-date, aon-new-select, aon-iban{
 }
 // Buscar INPUT
 aon-search{
+  &[visible="false"] {
+    display: none;
+  }
   position   : relative;
   display    : flex;
   align-items: center;
@@ -293,6 +300,9 @@ aon-search{
 }
 // Submenu que sale en el IBAN
 aon-iban{
+  &[visible="false"] {
+    display: none;
+  }
   position: relative;
   display : block;
   width   : v.$pct-100;
@@ -309,8 +319,36 @@ aon-iban{
   }
 }
 
-// Textarea
+// Textarea 2
+aon-autosize-textarea{
+  &[visible="false"] {
+    display: none;
+  }
+  display        : $inputboxlabel-display;
+  flex-direction : column;
+  width          : $inputboxlabel-width;
+  max-width      : $inputboxlabel-width;
+  gap            : $inputboxlabel-gap;
+  .aonAutosizeTextareaTitle{
+    height      : $span-height;
+    display     : $span-display;
+    align-items : $span-align-items;
+  }
+  textarea{
+    max-width     : v.$pct-100;
+    height        : $input-height;
+    min-height    : $input-height;
+    padding       : $padding;
+    border-radius : v.$border-radius;
+    box-sizing    : $input-box-sizing;
+  }
+}
+
+// Textarea 3
 aon-textarea {
+  &[visible="false"] {
+    display: none;
+  }
   display: flex;
   flex-direction: column;
   transition: 0.75s;

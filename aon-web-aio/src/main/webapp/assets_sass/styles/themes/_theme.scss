@@ -39,6 +39,8 @@
   $box-sizing       : border-box;
 
   $border-dotted: v.$px-1 dotted $color-200;
+  $border-dashed: v.$px-2 dashed $color-200;
+  $border-dashed-color-text: v.$px-2 dashed $color-text;
 
   $button-border : v.$px-0;
 
@@ -525,7 +527,8 @@
     }
     // Input
     aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
-    aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity{
+    aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity,
+    aon-autosize-textarea{
       .aonInputMsg{
         .aonInputMsgError{
           color: $color-red-500;
@@ -542,7 +545,7 @@
           border-top : v.$px-4 solid $color-900;
         }
       }
-      input{
+      input, textarea{
         border           : $input-border;
         background-color : $color-input;
         color            : $color-text;
@@ -605,7 +608,6 @@
         box-shadow      : $box-shadow-dialog;
       }
     }
-    // Textarea
     aon-textarea {
       box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
       .bar {
@@ -621,7 +623,7 @@
       }
       .divDragOver {
         &.highlight {
-          border: v.$px-2 dashed $color-text;
+          border: $border-dashed-color-text;
         }
       }
     }
@@ -784,6 +786,12 @@
         &:hover{
           background: $color-corp-blue;
         }
+      }
+    }
+    aon-upload{
+      border: $border-dashed;
+      &:hover{
+        border: $border-dashed-color-text;
       }
     }
     // Modal cuando se suben archivos

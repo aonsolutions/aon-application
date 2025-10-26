@@ -12,7 +12,6 @@ import { AonUpload } from '../../components/aon-upload.js';
 import { getReader } from '../../services/utils.js';
 
 export class AonCategoryAdd extends AonElement {
-
     category;
     type;
     id;
@@ -27,12 +26,10 @@ export class AonCategoryAdd extends AonElement {
     initialize() {
         this.id = "aonCategoryAdd";
         this.setCategory(this.data);
-
         // console.log(this.category);
 	}
 
 	build() {
-
         const form = CreateComponent.createForm(this.id+"Form");
         this.appendChild(form);
 
@@ -44,7 +41,7 @@ export class AonCategoryAdd extends AonElement {
         const nameEl = CreateComponent.createAonInput({
             attributes:{
                 id:this.id+"category",
-                description:MSG.NAME,
+                title:MSG.NAME,
                 required:true,
                 value: this.category.getName() || ""
             },
@@ -92,7 +89,7 @@ export class AonCategoryAdd extends AonElement {
         const urlEl = CreateComponent.createAonInput({
             attributes:{
                 id:this.id+"url",
-                description:"URL",
+                title:"URL",
                 value: this.category.getUrl() || ""
             },
             events:{
