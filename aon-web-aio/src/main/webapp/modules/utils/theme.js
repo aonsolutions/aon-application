@@ -4,7 +4,7 @@ import { AonElement } from '../../components/AonElement';
 let manualOverride  = localStorage.getItem('theme-mode'); // 'light' | 'dark' | 'auto' | null
 const darkQuery     = window.matchMedia('(prefers-color-scheme: dark)');
 const root          = document.documentElement;
-const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // s�lo en local
+const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // solo en local
 
 const themes = [
   {
@@ -127,10 +127,12 @@ const getEffectiveMode = () => {
 };
 
 const applyTheme = () => {
-  let favicon       = "";
-  let title         = "";
-  let logoHeader    = "";
-  let logo          = "";
+  let themeData = {
+    favicon: "",
+    title: "",
+    logoHeader: "",
+    logo: ""
+  };
   const isDark      = getEffectiveMode();
   const themeClass  = getThemeClass(isDark);
 
@@ -138,21 +140,30 @@ const applyTheme = () => {
   root.classList.add(themeClass);
   getCustomViewConfiguration().then(res => {
     if(Object.keys(res).length > 0){
-      favicon    = isDark ? res.images?.["favicon-darksvg"] : res.images?.["faviconsvg"];
-      title      = res.params?.["AON_CUSTOMIZE_TITLE"];
+      favicon = isDark ? res.images?.["favicon-darksvg"] : res.images?.["faviconsvg"];
+      title   = res.params?.["AON_CUSTOMIZE_TITLE"];
       if (AonElement.isMobile() || AonElement.isMobileResolution()) {
         logoHeader = res.images?.["login-logo-dark"]
       } else {
         logoHeader = res.images?.["header-logo-dark"];
       }
-      logo       = isDark ? res.images?.["login-logo-dark"] : res.images?.["aon-login-logo"];
+      logo = isDark ? res.images?.["login-logo-dark"] : res.images?.["aon-login-logo"];
     }
     // Aplicamos el estilo del Custom, si no tenemos el del sass 
-    applyFavicon(themeClass, favicon);
-    applyTitle(themeClass, title);
-    applyLogoHeader(themeClass, logoHeader);
-    applyLogo(themeClass, logo);
-  }).catch(err => console.error("Error getCustomViewImage:", err));  
+    applyCustomTheme(themeClass, themeData);
+  }).catch(err => {
+    // console.error("Error getCustomViewImage:", err)
+    // Aplicamos el estilo sin el custom, por si no devuelve nada
+    applyCustomTheme(themeClass, themeData);
+  });
+};
+
+// Aplicar los elementos
+const applyCustomTheme = (themeClass, themeData) => {
+  applyFavicon(themeClass, themeData.favicon);
+  applyTitle(themeClass, themeData.title);
+  applyLogoHeader(themeClass, themeData.logoHeader);
+  applyLogo(themeClass, themeData.logo);
 };
 
 // Permite actualizar botones activos visualmente
