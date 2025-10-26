@@ -16,7 +16,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInfoConfirm;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -59,6 +61,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	private RegistryModuleOptions currentDomainOptions;
 	private RegistryModuleOptions officeDomainOptions;
 	private Integer customerRelatedRegistry;
+	private Company customerCompany;
 	private LinkedList<Workplace> workplaces;
 	
 	private DomainType domainType;
@@ -69,15 +72,16 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	private LinkedList<Fee> customerFees;
 	
 	// Constructor
-	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Integer customerRelatedRegistry, LinkedList<Workplace> workplaces) {
+	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Company customerCompany, LinkedList<Workplace> workplaces) {
 		super("");
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
-		this.customerRelatedRegistry = customerRelatedRegistry;
+		this.customerRelatedRegistry = customerCompany.getId();
 		this.currentDomainOptions = currentDomainOptions;
 		this.officeDomainOptions = officeDomainOptions;
+		this.customerCompany = customerCompany;
 		this.workplaces = workplaces;
 		
 		addStyleName(AON.CSS.aonFlexColumn());
@@ -186,15 +190,42 @@ public class ProductCatalogueBooking extends HTMLPanel {
     			card = new CataloguePackBookingCard(packProduct, tariff, customerFees) {
 
 					@Override
-					protected void onCreateCustomerFeeByItem(Product product) {			
-						createFee(packProduct);	
+					protected void onCreateCustomerFeeByItem(Product product) {	
+						if(customerFees.isEmpty()) {
+							new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+								
+								@Override
+								protected void onEnd() {
+									createFee(packProduct);
+								}
+								
+								@Override
+								protected void onCancel() {}
+								
+							};
+						} else
+							createFee(packProduct);
+							
 					}};
     		else
     			card = new CataloguePackBookingCard(packProduct, itemTariff.get(), customerFees) {
 
 					@Override
 					protected void onCreateCustomerFeeByItem(Product product) {
-						createFee(packProduct);	
+						if(customerFees.isEmpty()) {
+							new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+								
+								@Override
+								protected void onEnd() {
+									createFee(packProduct);
+								}
+								
+								@Override
+								protected void onCancel() {}
+								
+							};
+						} else
+							createFee(packProduct);
 					}};
 	       
     		packsCataloguePanel.add(card);
@@ -578,7 +609,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
 			});
 			Label temrsMessage = new Label("He leido y acepto los ");
-			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf", "_blank");
+			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://ayudatpymes.com/aviso-legal/terminos-condiciones/", "_blank");
 			termsAnchor.getElement().getStyle().setProperty("color", "#002469");
 			Label temrsMessage_2 = new Label(" de contrataci\u00f3n de Aon");
 					
@@ -590,8 +621,25 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			
 			acceptBtnDialog.addClickHandler(ev -> {
 				if(acceptTerms.getValue()) {
-					createFee(packProduct);
-					dialog.hide();
+					if(customerFees.isEmpty()) {
+						new CustomerInfoConfirm(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerCompany) {
+							
+							@Override
+							protected void onEnd() {
+								createFee(packProduct);
+								dialog.hide();
+							}
+							
+							@Override
+							protected void onCancel() {
+								dialog.hide();
+							}
+							
+						};
+					} else {
+						createFee(packProduct);
+						dialog.hide();
+					}
 				} else
 					AonMessagePanel.showError(messageDialogPanel, "Debe aceptar los terminos y condiciones para poder aceptar");
 			});

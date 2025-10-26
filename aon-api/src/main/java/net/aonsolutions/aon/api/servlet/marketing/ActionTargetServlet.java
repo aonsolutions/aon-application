@@ -214,8 +214,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if (targetOpt.isEmpty()) {
 			target = new Target()
 					.copy(new Registry().setDomain(api.getDomain()).setName(actionTarget.getTarget().getName())
-							.setDocumentType(
-									DocumentType.values()[Integer.parseInt(actionTarget.getTarget().getDocumentType())])
+							.setDocumentType(DocumentType.identify(actionTarget.getTarget().getDocument()))
 							.setDocumentCountry(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
 							.setDocument(actionTarget.getTarget().getDocument())
 							.setNationality(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))

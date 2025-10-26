@@ -75,7 +75,12 @@ public class ConfigurationDAO {
 		
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
-		Integer[] userScopes = SecurityDAO.getUserScopes(ctx, conf.getUser().getId());
+		
+		Integer[] userScopesAux = null;
+		if(null != conf.getUser() && null != conf.getUser().getId())
+			userScopesAux = SecurityDAO.getUserScopes(ctx, conf.getUser().getId());
+		Integer[] userScopes = userScopesAux;
+		
 		conf.setMd5(getMd5(conf.getUser().getLogin()+conf.getDomain().getName()))
 			.setUserOperator(operator)
 			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
@@ -102,7 +107,7 @@ public class ConfigurationDAO {
 			.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
 			.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
 			.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
-			.setDefaultCreditor(getDefaultCreditor(ctx))
+			.setDefaultCreditor(userScopes == null ? null : getDefaultCreditor(ctx))
 			.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
 			.setOcrDefaultItem( getOcrDefaultItem(ctx) )
 			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
