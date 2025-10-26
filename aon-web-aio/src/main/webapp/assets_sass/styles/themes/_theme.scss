@@ -18,9 +18,10 @@
     $logo, $logo-width, $logo-height
 ) {
   
-  $color-900-alpha   : #{$color-900}0D;
-  $color-info-alpha  : #{$color-900}E6;
-  $color-dialog-alpha: #{$color-800}80;
+  $color-900-alpha    : #{$color-900}0D;
+  $color-info-alpha   : #{$color-900}E6;
+  $color-tooltip-alpha: #{$color-800}E6;
+  $color-dialog-alpha : #{$color-800}80;
   
   $body-margin       : unset;
   $aonmodule-display : flex;
@@ -332,6 +333,13 @@
         }
       }
     }
+    // info en tooltip
+    aon-info{
+      .tooltip {
+        background: $color-tooltip-alpha;
+        color: $color-text-button;
+      }
+    }
     // dialog
     aon-dialog{
       &[type="menu"]{
@@ -640,10 +648,10 @@
     a[placeholder]:empty::before {
       color: $color-text-placeholder;
     }
-    // aon-new-suggestion
+    // aon-new-suggestion || aon-new-textarea (buscar que tiene)
     // Input que busca mientras escribes, el DIV donde muestras, 
     // no esta en el componente. Se tiene que reacer
-    .suggestion-list{
+    .suggestion-list, aon-new-textarea .options{
       &.is-visible{
         background-color: $color-input;
         box-shadow      : $box-shadow-dialog;

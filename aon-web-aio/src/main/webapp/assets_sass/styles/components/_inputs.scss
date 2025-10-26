@@ -265,10 +265,10 @@ aon-search{
     }
   }
 }
-// aon-new-suggestion
+// aon-new-suggestion || aon-new-textarea (buscar que tiene)
 // Input que busca mientras escribes, el DIV donde muestras, 
 // no esta en el componente. Se tiene que reacer
-.suggestion-list{
+.suggestion-list, aon-new-textarea .options{
   display   : none;
   visibility: hidden;
   &.is-visible{
