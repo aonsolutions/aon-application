@@ -11,7 +11,6 @@ import { CategoryService } from "../../../services/categoryService.js";
 import { News } from "../../../models/news/News.js"
 import * as ACTIONS from "../../actions.js";
 
-
 export class AonNewsAdd extends AonElement {
   ACTION;
   TITLE;
@@ -20,6 +19,7 @@ export class AonNewsAdd extends AonElement {
   news;
   CATEGORYS;
   data;
+
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -66,7 +66,6 @@ export class AonNewsAdd extends AonElement {
     this.CATEGORYS = [];
   }
 
-
   build() {
     this.buildToolbar();
     this.paintView();
@@ -75,7 +74,6 @@ export class AonNewsAdd extends AonElement {
 
   buildToolbar() {
     const toolbar = CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
-
     toolbar.removeButtons();
 
     if(this.news.getId()){
@@ -93,7 +91,6 @@ export class AonNewsAdd extends AonElement {
     const {cardOne, cardTwo} = NewsAddUtils.createForm(this.id, this);
 
     NewsAddUtils.buildFormGeneral(cardOne.getContent(), this.news);
-
     NewsAddUtils.buildEditor(cardTwo.getContent(), this.news, this);
   }
 

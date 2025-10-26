@@ -104,7 +104,6 @@ export const CIRCLE = 'circle';
 export const CLASS = 'class';
 export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
-export const CLOUD_UPLOAD = 'cloud_upload';
 export const CODE = 'code';
 export const COGNITION_2 = "cognition_2";
 export const COMMENT = 'comment';
@@ -299,6 +298,7 @@ export const TERMINAL = 'terminal';
 // ----- U
 
 export const UNARCHIVE = 'unarchive';
+export const UPLOAD_CLOAD = 'upload-cloud';
 
 // ----- V
 

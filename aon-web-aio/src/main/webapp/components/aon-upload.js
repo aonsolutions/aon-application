@@ -1,6 +1,7 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { Attach } from '../models/Attach.js';
 import { AonDialog } from './aon-dialog.js';
+import { AonIcon } from './aon-icon';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
 
@@ -96,9 +97,8 @@ export class AonUpload extends AonElement {
         label.className = CSS.AON_UPLOAD_LABEL;
         div.appendChild(label);
 
-        let uploadIcon = this.createElement(TAG.I);
-        uploadIcon.className = CSS.MATERIAL_ICONS;
-        uploadIcon.innerHTML = MATERIAL_ICONS.CLOUD_UPLOAD;
+        let uploadIcon  = new AonIcon();
+        uploadIcon.icon = MATERIAL_ICONS.UPLOAD_CLOAD;
         label.appendChild(uploadIcon);
         
         let span = this.createElement(TAG.SPAN);
@@ -112,9 +112,6 @@ export class AonUpload extends AonElement {
         if(!this.showDeleteButton) {
             button.classList.add(CSS.AON_NONE);
         }
-        button.style.position = 'absolute';
-        button.style.top = '0px';
-        button.style.right = '0px';
         button.addEventListener(EVENT.CLICK, (ev) => {
             ev.preventDefault();
             ev.stopPropagation();

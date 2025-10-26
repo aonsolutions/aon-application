@@ -426,3 +426,11 @@ a[placeholder]:empty::before {
   content: attr(placeholder);
   pointer-events: none;
 }
+
+// Editor
+aon-textarea-editor{
+  .textBoxEnvelope{
+    border-radius : v.$border-radius;
+    box-sizing: border-box;
+  }
+}

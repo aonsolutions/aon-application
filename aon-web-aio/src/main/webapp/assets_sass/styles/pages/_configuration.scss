@@ -31,5 +31,15 @@
         }
       }
     }
+    aon-news-add{
+      .canal-button{
+        display: flex;
+        align-items: flex-end;
+        gap: v.$gap;
+        aon-new-select{
+          width: v.$pct-100;
+        }
+      }
+    }
   }
 }

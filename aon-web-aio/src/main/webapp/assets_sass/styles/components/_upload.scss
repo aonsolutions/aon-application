@@ -19,6 +19,7 @@ aon-new-upload, aon-upload{
 		}
 	}
 	.aonUpload{
+		display		 : flex;
 		aon-icon-button{
 			display: flex;
 			justify-content: flex-end;
