@@ -5,11 +5,14 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -47,6 +50,24 @@ public class UserDAO {
 			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
 			.where(USER_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Optional<User> get(AONContext ctx, Integer domain, String login) {
+		Param<Integer> domainParam = DSL.inline(domain);
+		Optional<User> optUser = ctx.getDslContext().select()
+			.from(USER)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
+			.where(USER.DOMAIN.in(domainParam, DOMAIN.PARENT))
+			.and(USER.LOGIN.eq(login))
+			.fetch()
+			.stream()
+			.map(new UserFiller())
+			.findFirst();
+		optUser.ifPresent(user -> {
+			user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
+		});
+		return optUser;
 	}
 	
 	public static User get(AONContext ctx, UserFilter filter, Options...options) {

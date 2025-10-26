@@ -34,7 +34,7 @@ public class EnterpriseActivityJSON {
 	}
 	
 	public static Optional<EnterpriseActivity> from(JSONObject json) {
-		if(json == null) return Optional.empty();
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
 		return Optional.of(
 			new EnterpriseActivity()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
@@ -66,7 +66,7 @@ public class EnterpriseActivityJSON {
 		return to(act).orElse( new JSONObject() );
 	}
 	public static Optional<JSONObject> to(Optional<EnterpriseActivity> act) {
-		return act.flatMap( a -> to( a) );
+		return act.flatMap( EnterpriseActivityJSON::to );
 	}
 	public static Optional<JSONObject> to(EnterpriseActivity object) {
 		if(object == null) return Optional.empty();

@@ -28,15 +28,15 @@ import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecor
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
-import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -113,7 +113,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	private FiscalModel model;
 	private FiscalModelModuleOptions<FiscalModel> options;
 	InvoiceGrid invoiceGrid;
-	InvoiceParams filterParams;
+	InvoiceCommunicationParams filterParams;
 	
 	List<Invoice> selectedInvoices;
 	Model240 model240;
@@ -121,10 +121,10 @@ public class LroeModel240 extends DockLayoutPanel {
 	protected LroeModel240(Model240 parent, FiscalModelModuleOptions<FiscalModel> options) {
 		super(Unit.PX);
 		this.model240 = parent;
-		SII_SERVICE.getTbaiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<TbaiConfiguration>() {
+		SII_SERVICE.getConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<InvoiceCommunicationConfiguration>() {
 			
 			@Override
-			public void onSuccess(TbaiConfiguration result) {
+			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				FiscalModel mod240 = new FiscalModel();
 				mod240.setAdministration(Administration.BIZKAIA);
 				mod240.setModel(FiscalModelType.M240);
@@ -230,8 +230,8 @@ public class LroeModel240 extends DockLayoutPanel {
 						bajaButton.setEnabled(false);
 						
 						refreshButton.setVisible(selFiles.size() == 1
-								&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
-								&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
+							&& !selFiles.getFirst().getLroeInfo().map(i -> i.isAccepted()).orElse(false)
+							&& !selFiles.getFirst().getLroeInfo().map(i -> i.isAcceptedWithErrors()).orElse(false));
 					}
 				};
 				add(invoiceGrid);
@@ -247,7 +247,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	}
 	
 	public void initializeFilter() {
-		this.filterParams = new InvoiceParams()
+		this.filterParams = new InvoiceCommunicationParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
 			.setCommunicationType(InvoiceCommunicationType.LROE);
@@ -285,9 +285,8 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE)
-				.setType(InvoiceType.PURCHASE)
-				.addType(InvoiceType.EXPENSES);
+					.setCommunicationType(InvoiceCommunicationType.LROE)
+					.setType(InvoiceType.PURCHASE,InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -425,7 +424,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(String value) {
-				getFilterParams().setValue(value).setPage(1).setPerPage(30);
+				getFilterParams().setQuery(value).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -448,7 +447,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -465,7 +464,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -489,7 +488,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onChange(ChangeEvent event) {
 				InvoiceCommunicationStatus st = InvoiceCommunicationStatus.safeValueOf(status.getSelectedValue());
-				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(30);
+				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -506,8 +505,8 @@ public class LroeModel240 extends DockLayoutPanel {
 		else return "Pendiente";
 	}
 	
-	public InvoiceParams getFilterParams() {
-		if(filterParams == null) filterParams = new InvoiceParams(); 
+	public InvoiceCommunicationParams getFilterParams() {
+		if(filterParams == null) filterParams = new InvoiceCommunicationParams(); 
 		return filterParams;
 	}
 	
@@ -586,7 +585,7 @@ public class LroeModel240 extends DockLayoutPanel {
 					getModel240().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
+							if(invoice.isSales() && invoice.getLroeInfo().map(i -> i.isAccepted()).orElse(false)) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
@@ -627,10 +626,10 @@ public class LroeModel240 extends DockLayoutPanel {
 						});
 					} else {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(!invoice.getInvoiceInfo().getStatus().isAccepted()) {
+							if(!invoice.getLroeInfo().map(i -> i.isAccepted()).orElse(false)) {
 								String message = "La factura " + invoice.getReferenceCode() + " no est\u00e1 enviada. No se puede anular.";
 								vp.add(getErrorMessage(message));
-							} else if(invoice.getInvoiceInfo().getStatus().isAnnulled()) {
+							} else if(invoice.getLroeInfo().map(i -> i.isAnnulled()).orElse(false)) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 anulada.";
 								vp.add(getErrorMessage(message));
 							} else {

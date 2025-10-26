@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -24,13 +25,18 @@ public class SellerJSON {
  		return list;
 	}
 	
+	public static Optional<Seller> from(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of(new Seller()
+				.copy(RegistryJSON.fromJSON(json))
+				.setCommissionType(CommissionTypeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.COMMISSION_TYPE)))
+				.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
+				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE)));
+
+	}
 	
 	public static Seller fromJSON(JSONObject json) {
-		return new Seller()
-			.copy(RegistryJSON.fromJSON(json))
-			.setCommissionType(CommissionTypeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.COMMISSION_TYPE)))
-			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
-			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE));
+		return from( json).orElse( new Seller());
 	}
 	
 

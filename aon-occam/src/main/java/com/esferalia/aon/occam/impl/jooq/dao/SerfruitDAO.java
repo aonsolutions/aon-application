@@ -357,13 +357,10 @@ public class SerfruitDAO {
         if(ap!=null && ap.getValue()!=null && NumberUtils.isNumber(ap.getValue())) {
             return Integer.valueOf(ap.getValue());
         } else {
-            Tax tax = AON.getTaxStream(ctx.getDomainName(),
-                    ctx.getDomainId(),
-                    ctx.getUser(),
-                    f -> f.getDomainProperty().eq(ctx.getDomainId())
-                    .and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))
-                    ).sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
-                    .findFirst().orElse(new Tax());
+            Tax tax = TaxDAO.getVatTaxes(ctx, ctx.getDomainId())
+           		.sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
+                   .findFirst()
+                   .orElse(new Tax());
             return tax.getId();
         }
     }

@@ -146,16 +146,16 @@ public class AonDocumentUtil {
 			 || "DK".equals(country) || "EE".equals(country)
 			 || "EL".equals(country) || "GR".equals(country) 
 			 || "FI".equals(country) || "FR".equals(country) 
-			 || "GB".equals(country) || "HR".equals(country) 
-			 || "HU".equals(country) || "IE".equals(country) 
-			 || "IT".equals(country) || "LT".equals(country) 
-			 || "LU".equals(country) || "LV".equals(country) 
-			 || "MT".equals(country) || "NL".equals(country) 
-			 || "PL".equals(country) || "PT".equals(country) 
-			 || "RO".equals(country) || "SE".equals(country)
-			 || "SI".equals(country) || "SK".equals(country));
+			 || "GB".equals(country) || "XI".equals(country)
+			 || "HR".equals(country) || "HU".equals(country) 
+			 || "IE".equals(country) || "IT".equals(country) 
+			 || "LT".equals(country) || "LU".equals(country) 
+			 || "LV".equals(country) || "MT".equals(country) 
+			 || "NL".equals(country) || "PL".equals(country) 
+			 || "PT".equals(country) || "RO".equals(country) 
+			 || "SE".equals(country) || "SI".equals(country) 
+			 || "SK".equals(country));
 	}
-
 	public static boolean isValidComunitaryCode(String country , String doc){
 		if (!isValidComunitaryCountry(country)) return false;
 		int len = doc.length();
@@ -191,6 +191,7 @@ public class AonDocumentUtil {
 			// Un bloque de 3 cifras, un bloque de 4 cifras y un bloque de 2 cifras; o lo mismo 
 			// seguido de un bloque de 3 cifras; o un bloque de 5 caracteres
 			||  ( "GB".equals(country) && (len==5 || len == 9 || len == 12) ) 
+			||  ( "XI".equals(country) && (len==5 || len == 9 || len == 12) )
 			//HR-Croacia 	HR99999999999 	Un bloque de 11 cifras
 			||  ( "HR".equals(country) && AonStringUtils.isNumeric(doc) && len==11 ) 
 			//HU-Hungría 	HU99999999 	Un bloque de 8 cifras

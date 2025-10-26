@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceBatchDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceBatchDetailProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.watson.AonError;

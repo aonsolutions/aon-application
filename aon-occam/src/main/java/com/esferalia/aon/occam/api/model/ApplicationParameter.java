@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class ApplicationParameter implements Serializable {
@@ -46,14 +47,19 @@ public class ApplicationParameter implements Serializable {
 	public String getValue() {
 		return value;
 	}
-
 	public ApplicationParameter setValue(String value) {
 		this.value = value;
 		return this;
+	}
+	public boolean trueValue() {
+		return AonStringUtils.equalsIgnoreCase(getValue(), "true")
+			|| AonStringUtils.equalsIgnoreCase(getValue(), "1");
 	}
 
 	public boolean isEmpty() {
 		return getId() == null && getDomain() == null 
 			&& getName() == null && getValue() == null;
 	}
+	
+	
 }

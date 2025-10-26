@@ -3,18 +3,23 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -35,14 +40,10 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -51,7 +52,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
@@ -61,36 +61,26 @@ import com.google.gwt.view.client.ProvidesKey;
 
 public abstract class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
-	interface GridBinder extends UiBinder<Widget, InvoiceGrid> {
-	}
-
-	private static final GridBinder binder = GWT.create(GridBinder.class);
-
-	DataGridResources resources = GWT.create(DataGridResources.class);
-
-	public interface DataGridResources extends DataGrid.Resources {
-		@Source("com/esferalia/aon/gwt/common/client/css/DataGrid.css")
-		Style dataGridStyle();
-	}
-
 	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
 		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
 		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
+//	public interface DataGridResources extends DataGrid.Resources {
+//		@Source("com/esferalia/aon/gwt/common/client/css/DataGrid.css")
+//		Style dataGridStyle();
+//	}
 	
-	@UiField(provided = true) CustomDataGrid<Invoice> dataGrid;
-
-	Integer cont = 0;
-
-	boolean isFechaIVA = false;
-	
-	private InvoiceParams filterParams;
+	private CustomDataGrid<Invoice> dataGrid;
+//	private DataGridResources resources = GWT.create(DataGridResources.class);
+	private Integer cont = 0;
+	private boolean isFechaIVA = false;
+	private InvoiceCommunicationParams filterParams;
 	private FiscalModelModuleOptions<FiscalModel> options;
 	
-	public InvoiceParams getFilterParams() {
-		if(filterParams == null) filterParams = new InvoiceParams(); 
+	public InvoiceCommunicationParams getFilterParams() {
+		if(filterParams == null) filterParams = new InvoiceCommunicationParams(); 
 		return filterParams;
 	}
 	
@@ -110,10 +100,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	};
 	
 	public void getInvoices(AsyncCallback<List<Invoice>> callback) {
-		SII_SERVICE.getInvoices(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams(), callback);
+		SII_SERVICE.getInvoices(options.getOccam(), getFilterParams(), callback);
 	}
 	
-	public void setFilterParams(InvoiceParams filterParams) {
+	public void setFilterParams(InvoiceCommunicationParams filterParams) {
 		this.filterParams = filterParams.setPage(1);	
 		getInvoices(new AsyncCallback<List<Invoice>>() {
 
@@ -125,7 +115,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 				dataGrid.redraw();
 			}
 
-			@Override public void onFailure(Throwable caught) {}
+			@Override 
+			public void onFailure(Throwable caught) {
+				AonMessageDialog.error(caught.getMessage());
+			}
 		});
 	}
 	
@@ -136,12 +129,12 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		dataGrid.redraw();
 	}
 	
-	public InvoiceGrid(FiscalModelModuleOptions<FiscalModel> options, InvoiceParams filterParams, boolean fechaIva) {
+	public InvoiceGrid(FiscalModelModuleOptions<FiscalModel> options, InvoiceCommunicationParams filterParams, boolean fechaIva) {
 		this.filterParams = filterParams;
 		this.options = options;
 		this.isFechaIVA = fechaIva;
 		
-		dataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, resources, PROVIDES_KEY);
+		dataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, PROVIDES_KEY);
 		dataGrid.getElement().getStyle().setMarginLeft(10, Unit.PX);
 		dataGrid.getElement().getStyle().setMarginRight(10, Unit.PX);
 		dataGrid.getElement().getStyle().setMarginBottom(10, Unit.PX);
@@ -160,7 +153,9 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 							dataGrid.redraw();
 						}
 
-						@Override public void onFailure(Throwable caught) {}
+						@Override public void onFailure(Throwable caught) {
+							AonMessageDialog.error(caught.getMessage());
+						}
 					});
 					
 				}
@@ -186,11 +181,12 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			
 			@Override
 			public void onFailure(Throwable caught) {
-					
+				AonMessageDialog.error(caught.getMessage());	
 			}
 		});
 
-		initWidget(binder.createAndBindUi(this));
+		// initWidget(binder.createAndBindUi(this));
+		initWidget(dataGrid);
 	}
 
 	LinkedList<Invoice> selFiles = new LinkedList<>();
@@ -394,24 +390,44 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		Column<Invoice, String> statusColumn = new Column<Invoice, String>(new TextCell()) {
 			@Override
 			public void render(Context context, Invoice object, SafeHtmlBuilder sb) {
-				if(object.getInvoiceInfo() != null && !object.getInvoiceInfo().isEmpty()) {
-					String color = "gray";
-					String status = "Pendiente";
-					if(object.getInvoiceInfo().getStatus().isAccepted()) {
-						color = "green";
-						status = "Aceptada";
-					} else if(object.getInvoiceInfo().getStatus().isAcceptedWithErrors()) {
-						color = "orange";
-						status = "Aceptada con Errores";
-					} else if(object.getInvoiceInfo().getStatus().isWrong()) {
-						color = "red";
-						status = "Incorrecta";
-					} else if(object.getInvoiceInfo().getStatus().isAnnulled()) {
-						color = "red";
-						status = "Anulada";
-					}
-					sb.appendHtmlConstant( "<i class=\"material-icons\" style='font-size:16px;position:absolute;color:"+ color +";'>circle</i>" +  "<span style='padding-left:20px;'>"+ status);
-				} else sb.appendHtmlConstant("-");
+				if (AonCollectionUtils.isEmpty(object.getCommunicationInfo())) {
+					sb.appendHtmlConstant("-");
+				} else {
+					AonCollectionUtils.stream( object.getCommunicationInfo() )
+						.filter( coi -> coi.getValue() != null )
+						.map( Entry::getValue )
+						.forEach( ci -> {
+							Pair<String, String> colorAndStatus = new Pair<>("gray","Pendiente"); 
+							if (ci.getStatus() != null) {
+								ci.getStatus().accept( new InvoiceCommunicationStatusVisitor() {
+									@Override 
+									public void visitPending() { 
+										colorAndStatus.setLeft("gray").setRight("Pendiente");
+									}
+									@Override public void visitAccepted() {
+										colorAndStatus.setLeft("green").setRight("Aceptada");
+									}
+									@Override public void visitAcceptedWithErrors() {
+										colorAndStatus.setLeft("orange").setRight("Aceptada con Errores");
+									}
+									@Override public void visitWrong() {
+										colorAndStatus.setLeft("red").setRight("Incorrecta");
+									}
+									@Override public void visitCancelled() {
+										colorAndStatus.setLeft("red").setRight("Anulada");
+									}
+								} );
+							}
+							sb.appendHtmlConstant( 
+								 "<i class='material-icons' style='font-size:16px;position:absolute;color:"+ colorAndStatus.getLeft() +";'>"
+								 		+ "circle"
+						 		+ "</i>" 
+								+  "<span style='padding-left:20px;'>"
+									+ colorAndStatus.getRight() 
+								+ "</span>");
+						}
+					);
+				}
 			}
 
 			@Override
@@ -469,7 +485,7 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	
 
 
-	public final class CheckboxHeader extends Header {
+	public final class CheckboxHeader extends Header<Boolean> {
 
 	    private final MultiSelectionModel<Invoice> selectionModel;
 

@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -16,21 +12,30 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 
 @SuppressWarnings("serial")
@@ -88,20 +93,39 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
-
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(login);
 			String qrUrl = "https://" + domainName + "/dip?d=" + company.getRegistry().getDocument() 
 						+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
 						+ "&s=" + invoice.getSeries()
 						+ "&n=" + invoice.getNumber()
 						+ "&t=" + invoice.getTotal();  
-			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 			String tbaiId = "";
-			if(tbai.isActive()) {
-				TbaiData tbaiData = TbaiData.getInstance(tbai);
+			if(icc.isTbai()) {
+				TbaiData tbaiData = TbaiData.getInstance(icc);
 				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
+			} else if(icc.isVerifactu()) {
+				if (invoice.getCommunicationInfo() != null) {
+					InvoiceInfo info = invoice.getCommunicationInfo().get(InvoiceCommunicationType.VERIFACTU);
+					if (info != null) {
+						qrUrl = info.getCheckUrl();
+					}
+				}
+//				Integer invoiceId = invoice.getId();
+//				InvoiceData data = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
+//				f.getDomainProperty().eq(domainId)
+//				.and(f.getInvoiceProperty().eq(invoiceId))
+//				.and(f.getNameProperty().eq("VERIFACTU_QR")));
+//				if(data != null && AonStringUtils.isNotBlank(data.getValue())) {
+//					qrUrl = data.getValue();
+//				}
 			}
+			
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
 			responseFile(resp, "factura", MimeType.PDF);

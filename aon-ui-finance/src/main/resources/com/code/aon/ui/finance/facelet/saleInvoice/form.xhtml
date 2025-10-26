@@ -18,15 +18,17 @@
 						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
-					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice}" />
-					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending or saleInvoice.tbaiInvoice}" />
+					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice or saleInvoice.verifactuInvoice}" />
+					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending or saleInvoice.tbaiInvoice or saleInvoice.verifactuInvoice}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:if test="#{saleInvoice.tbaiInvoice and !saleInvoice.recorded}"> 
+						<!-- ****************** IicketBAI ************************  --> 
+						<aon:if test="#{saleInvoice.tbaiInvoice and !saleInvoice.recorded}">
 							<aon:commandButton id="tbaiInvoiceRemove"	
-								value="Borrar"
+								value="&#160;"
+								title="Anular"
 								action="#{saleInvoice.tbai}"
 								onclick="#{saveOnClick}" 
 								styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -36,8 +38,9 @@
 							</aon:commandButton>
 						</aon:if>
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
-							<aon:commandButton id="accept"	
-								value="Emitir"
+							<aon:commandButton id="acceptTbai"	
+								value="&#160;"
+								title="Emitir"
 								action="#{saleInvoice.tbai}"
 								onclick="#{saveOnClick}" 
 								styleClass="aon-finding-toolbar-item aon-icon-check-black"
@@ -46,36 +49,64 @@
 										value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
-						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
 							<aon:outputLink 
-								id="tbaiUrl"	
+								id="saleInvoice-tbaiUrlAraba"	
 								target="_blank" 
 								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
 								styleClass="aon-finding-toolbar-item aon-icon-araba">
-								Ticket Bai
 							</aon:outputLink>
 						</aon:if>
-						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}"> 
 							<aon:outputLink 
-								id="tbaiUrl"	
+								id="saleInvoice-tbaiUrlGipuzkoa"	
 								target="_blank" 
 								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
 								styleClass="aon-finding-toolbar-item aon-icon-gipuzkoa">
-								Ticket Bai
+							</aon:outputLink>
+						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
+							<aon:outputLink 
+								id="saleInvoice-tbaiUrlBizkaia"	
+								target="_blank" 
+								value="#{saleInvoice.tbaiUrl}"
+								style="height: 12px;"
+								styleClass="aon-finding-toolbar-item aon-icon-bizkaia">
 							</aon:outputLink>
 						</aon:if>
 						
-						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
-							<aon:outputLink id="tbaiUrl"	
-								target="_blank" 
-								value="#{saleInvoice.tbaiUrl}"
-								styleClass="aon-finding-toolbar-item aon-icon-bizkaia">
-								Ticket Bai
-								</aon:outputLink>
+						<!-- ****************** Verifactu ************************  --> 
+						<aon:if test="#{saleInvoice.verifactuInvoice and !saleInvoice.recorded}">
+							<aon:commandButton id="verifactuInvoiceRemove"	
+								value="&#160;"
+								title="Anular"
+								action="#{saleInvoice.verifactu}"
+								onclick="#{saveOnClick}" 
+								styleClass="aon-finding-toolbar-item aon-icon-delete"
+								reRender="showCertVerifactuAnularWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuAnularWindow}"
+										value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
-					
+						<aon:if test="#{saleInvoice.issueableToVerifactu}">
+							<aon:commandButton id="acceptVerifactu"	
+								value="&#160;"
+								title="Emitir"
+								action="#{saleInvoice.verifactu}"
+								styleClass="aon-finding-toolbar-item aon-icon-check-black"
+								onclick="#{saveOnClick}" 
+								reRender="showCertVerifactuWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuWindow}"
+										value="#{true}" />
+							</aon:commandButton>
+						</aon:if>
+<!-- 
+						<aon:if test="#{!saleInvoice.nevv and saleInvoice.verifactu and !saleInvoice.verifactuInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}">
+ -->						
+						
+						<!-- ****************** Common ************************  --> 
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
@@ -98,7 +129,7 @@
 						
 						<aon:outputLink id="saleInvoice-downloadPdf"
 							target="_blank" value="#{saleInvoice.downloadURL}" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and (saleInvoice.tbai or printParams.saleInvoiceDefault) }"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and (saleInvoice.tbai or saleInvoice.verifactu or printParams.saleInvoiceDefault) }"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 					    </aon:outputLink>
 						<!-- 
@@ -120,7 +151,7 @@
 
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai and !printParams.saleInvoiceDefault}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai and !saleInvoice.verifactu and !printParams.saleInvoiceDefault}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -332,6 +363,18 @@
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
+						<!-- 
+						<aon:if test="#{saleInvoice.verifactu}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="verifactu"
+								value="Envíos VERI*FACTU"
+								iconClass="aon-icon-aeat"
+								reRender="showVerifactuWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showVerifactuWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						 -->
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator />
 							<aon:menuItem iconClass="aon-icon-file-download">
@@ -385,6 +428,76 @@
 					</ui:include>
 				</aon:if>			
 				<aon:if test="#{!saleInvoice.nevv}">
+					<!-- ************************* VERIFACTU INFO ************************* -->				
+					<aon:if test="#{saleInvoice.verifactu}">
+						<aon:panelGrid id="verifactuBlock" columns="5" 
+						styleClass="aon-width-all aon-margin-top aon-margin-bottom"
+						columnClasses="
+							 aon-width-40
+							,aon-width-100
+							,aon-width-150
+							,aon-width-auto">
+							
+							<aon:div styleClass="aon-icon-aeat" style="background-size: cover; background-position: center center; height: 30px;">
+								<aon:outputText value="" style="padding-left: 20px;"/>
+							</aon:div>
+							
+							<aon:div style="padding: 0px 5px; border: solid #3a85c3 0.5px; height: 30px; line-height: 30px; background-color: #3a85c3;">
+								<aon:outputText value="Veri*Factu" styleClass="aon-bold" style="color: white; font-size: 1.5em;"/>
+							</aon:div>
+							 
+							<aon:div style="padding: 0px 5px; height: 30px; line-height: 30px; text-align: center middle;">
+								<aon:if test="#{saleInvoice.verifactuAccepted}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-green"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuAcceptedWithErrors}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-yellow"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuWrong}">
+									<aon:outputText value="#{saleInvoice.verifactuStatusDescription}"
+										style="padding-left: 20px; margin-left: 5px; color: red;"
+										styleClass="aon-bold aon-icon-point-red"
+									/>
+								</aon:if>
+								<aon:if test="#{saleInvoice.verifactuNoStatus}">
+									<aon:outputText value="SIN ESTADO"
+										style="padding-left: 20px; margin-left: 5px;"
+										styleClass="aon-bold aon-icon-point-orange"
+									/>
+								</aon:if>
+							</aon:div>
+							
+							<aon:div  style="padding: 0 5px; border: solid #3a85c3 0.5px; height: 30px; display: flex; align-items: center; gap: 5px;">
+								<aon:commandButton id="verifactuInfo"	
+									value="Envíos realizados"
+									style="margin-left: 10px;"
+									styleClass="aon-icon-commandButton aon-icon-category"
+									reRender="showVerifactuWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showVerifactuWindow}" value="#{true}" />							
+								</aon:commandButton>
+								
+								<aon:if test="#{saleInvoice.verifactuInvoice}">		
+									<aon:outputLink id="verifactuUrl"	
+										target="_blank" 
+										value="#{saleInvoice.verifactuUrl}"
+										style="margin-left: 10px;"
+										styleClass="aon-icon-commandButton aon-icon-check-blue">
+										Comprobar factura
+									</aon:outputLink>
+								</aon:if>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:if>
+							
+	
+					
+					
 					<aon:panelGrid id="dataTable" columns="4"
 						styleClass="aon-width-all aon-margin-bottom"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-500,
@@ -516,10 +629,19 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalTbai.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalVerifactu.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbai.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
-				<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbaiAnular.xhtml">
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbaiAnular.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertVerifactu.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertVerifactuAnular.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalFacturae.xhtml">

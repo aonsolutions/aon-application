@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -43,6 +44,8 @@ import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DBProduct {
 	
@@ -719,7 +722,9 @@ public class DBProduct {
 	}
 	
 	public static Tax getTax(String domainName, Integer domainId, Integer id, String login) {
-		return AON.getTax(domainName, domainId, login, id);
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
+		return AON.getTax(occam, domainId, id).orElse(new Tax());
+		// return AON.getTax(domainName, domainId, login, id);
 	}
 	
 	public static LinkedList<Tax> getRetentions(String domainName, Integer domainId, String login)  {
@@ -817,23 +822,33 @@ public class DBProduct {
 	}
 	
 	public static Tax getIVAName(String domainName, Integer domainId, String name, String login) {
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
-				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
-		if(tax.getId() == null && domain.isEnableHeredity())
-			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
-				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
-		return tax;
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
+		return AON.getVatStream(occam, domainId)
+			.filter(t -> AonStringUtils.equals(name, t.getName()))
+			.findFirst()
+			.orElse(new Tax());
+//		Domain domain = AON.getDomain(domainName, domainId, login);
+//		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
+//				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
+//		if(tax.getId() == null && domain.isEnableHeredity())
+//			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
+//				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
+//		return tax;
 	}
 	
 	public static Tax getIVAName(String domainName, Integer domainId, String login, Double percent) {
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
-				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
-		if(tax.getId() == null && domain.isEnableHeredity())
-			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
-				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
-		return tax;
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
+		return AON.getVatStream(occam, domainId)
+			.filter(t -> AonNumberUtils.equals(percent, t.getPercentage()))
+			.findFirst()
+			.orElse(new Tax());
+//		Domain domain = AON.getDomain(domainName, domainId, login);
+//		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
+//				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
+//		if(tax.getId() == null && domain.isEnableHeredity())
+//			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
+//				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
+//		return tax;
 	}
 	
 	public static OldItem compare(OldItem i,OldItem item){

@@ -1,5 +1,8 @@
 package com.esferalia.aon.watson.server;
 
+import java.util.Objects;
+
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonEnumUtils {
@@ -31,4 +34,17 @@ public class AonEnumUtils {
 		return false;
 	}
 	
+    public static boolean in(Enum<?> value, Enum<?> ... options) {
+		if (value == null || options == null || options.length == 0) {
+			return false;
+		}
+		return AonCollectionUtils.stream(options)
+			.filter(Objects::nonNull)
+			.anyMatch(option -> option == value);
+	}
+    
+    public static boolean notIn(Enum<?> value, Enum<?> ... options) {
+    	return !in(value,options);
+    }
+
 }

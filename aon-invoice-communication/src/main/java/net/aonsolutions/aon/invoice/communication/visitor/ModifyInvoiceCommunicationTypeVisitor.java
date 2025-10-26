@@ -2,10 +2,10 @@ package net.aonsolutions.aon.invoice.communication.visitor;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.User;
 
-public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
+public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements InvoiceCommunicationTypeVisitor {
 
 	public ModifyInvoiceCommunicationTypeVisitor(Domain domain, User user, Invoice invoice) {
 		super(domain, user, invoice);
@@ -42,6 +42,11 @@ public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitCLOSING() {
+		// Not implemented
+	}
+	
+	@Override
+	public void visitVERIFACTU() {
 		// Not implemented
 	}
 

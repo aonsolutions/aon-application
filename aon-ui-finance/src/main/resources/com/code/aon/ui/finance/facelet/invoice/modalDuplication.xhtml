@@ -73,7 +73,7 @@
 												<ui:param name="sfc_seriesProperty" value="#{invoiceController.duplicationSeries}" />
 												<ui:param name="sfc_numberProperty" value="#{invoiceController.duplicationNumber}" />
 												<ui:param name="sfc_numberEditable" value="#{invoiceController.duplicationNumberEditable}" />
-												<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai}"/>
+												<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai and !invoiceController.verifactu}"/>
 												<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
 													value="#{invoiceController.onDuplicationSeriesChanged}" />	
 												<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
