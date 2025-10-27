@@ -14,6 +14,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	
+	C000("Error: \"{0}\" "),
 	C001("No se ha indicado el dato \"{0}\" y es obligatorio"),
 	C002("La longitud de el dato \"{0}\" supera los {1} caracteres m\u00E1ximos permitidos"),
 	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
@@ -33,6 +34,10 @@ public enum InvoiceErrorMessages implements Serializable {
 	C017("No se han podido determinar bases y cuotas de la factura"),
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
+	C020("La divisa de la factura no es euro"),
+	
+	C050("Error comunicaci\u00F3n: \"{0}\" \"{1}\""),
+	C051("Factura comunicada con errores: \"{0}\" \"{1}\""),
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),

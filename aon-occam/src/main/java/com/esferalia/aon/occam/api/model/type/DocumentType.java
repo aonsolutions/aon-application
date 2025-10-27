@@ -53,6 +53,9 @@ public enum DocumentType implements Serializable {
 	public static Byte value(DocumentType dt) {
 		return dt==null?null:dt.value();
 	}
+	public static String name(DocumentType dt) {
+		return dt==null?null:dt.name();
+	}
 	
 	public static DocumentType identify(String input) {
         if (input == null) return DocumentType.NOT_CENSUSED;

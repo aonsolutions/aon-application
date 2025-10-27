@@ -62,4 +62,14 @@ public class Filler {
 		}
 		return 0;
 	}
+	
+	protected static <K> K getEnum(Record r, Field<Byte> field, Class<K> keyType) {
+		if ( getValue(r, field) == null ) return null;
+		byte n = getByte(r, field);
+		if ( n < 0 ) return null;
+		K[] values  = keyType.getEnumConstants();
+		if ( n >= values.length ) return null;
+		return values[n];
+	}
+	
 }

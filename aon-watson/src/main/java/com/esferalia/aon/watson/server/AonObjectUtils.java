@@ -165,6 +165,9 @@ public class AonObjectUtils {
     public static boolean equals(final Object a, final Object b) {
             return (a == b) || (a != null && a.equals(b));
     }
+    public static boolean notEquals(final Object a, final Object b) {
+    	return !equals(a, b); 
+    }
 
     /**
      * <p>Compares two objects for inequality, where either one or both

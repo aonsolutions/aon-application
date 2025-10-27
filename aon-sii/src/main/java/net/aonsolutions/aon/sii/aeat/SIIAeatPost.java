@@ -14,8 +14,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaBienBajaType;
@@ -60,13 +60,13 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIAeatPost extends SIIPost{
 
-	public static SIIAeatPost getInstance(SiiConfiguration siiConfiguration) {
-		return new SIIAeatPost(siiConfiguration );
+	public static SIIAeatPost getInstance(InvoiceCommunicationConfiguration icc) {
+		return new SIIAeatPost(icc);
 	}
 	
 
-	public SIIAeatPost(SiiConfiguration siiConfiguration) {
-		super(siiConfiguration);
+	public SIIAeatPost(InvoiceCommunicationConfiguration icc) {
+		super(icc);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

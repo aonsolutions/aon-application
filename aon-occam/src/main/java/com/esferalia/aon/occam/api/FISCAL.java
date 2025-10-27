@@ -31,14 +31,9 @@ public class FISCAL {
 		}
 	}
 	
-	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, AccountingReportParams params, String sii) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
+	public static Stream<VatContext> getSiiVatContext(Occam occam, AccountingReportParams params, String sii) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFiscal().getSiiVatContext(ctx, params, sii);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	

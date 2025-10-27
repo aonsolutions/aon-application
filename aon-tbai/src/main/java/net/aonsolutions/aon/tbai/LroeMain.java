@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.security.User;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
@@ -22,8 +22,8 @@ public class LroeMain {
 				response = lroe.alta(ic);
 			} else if(FiscalModelType.M240.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE240_2 lroe = new LROE240_2();
-				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));
-				response = lroe.alta(ic.getTbaiConfiguration(), ic.getCompany(), ic.getInvoice());
+				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getConfiguration(), ic.getInvoice()));
+				response = lroe.alta(ic.getConfiguration(), ic.getCompany(), ic.getInvoice());
 			}
 		}
 		if(response != null) {

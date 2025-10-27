@@ -325,4 +325,8 @@ public class AonMathUtils {
 	public static boolean isNotZero(BigDecimal value) {
 		return !isZero(value);
 	}
+
+	public static double changeSign(double value) {
+		return round(value * -1 , 2);
+	}
 }

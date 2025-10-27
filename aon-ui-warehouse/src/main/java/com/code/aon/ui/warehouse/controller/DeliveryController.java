@@ -18,7 +18,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -97,12 +96,14 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryPackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
@@ -718,14 +719,15 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		Delivery to = (Delivery)this.getTo();
 		try {
 	        DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-	        boolean tbai = isTbai();
-	        if(tbai) {
+	        InvoiceCommunicationConfiguration config = getInvoiceCommunicationConfiguration();
+	        boolean communication = config.isTbai() || config.isVerifactu();
+	        if(communication) {
 	        	String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getInvoiceSeries());
 	        	setInvoiceNumber(number);
 	        }
-			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), isTbai());
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), communication);
 			onLoadInvoice(event);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -734,14 +736,15 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public boolean isTbai() {
-		return getTbaiConfiguration().isActive();
+		return getInvoiceCommunicationConfiguration().isTbai();
 	}
 	
-	public TbaiConfiguration getTbaiConfiguration() {
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return AON.getTbaiConfiguration(domainName, domainId, login);
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		Occam occam = new Occam()
+			.setDomainName(AonUtil.getDomainName())
+			.setDomain(DomainManager.getCurrentDomain())
+			.setUser("");
+		return AON.getInvoiceCommunicationConfiguration(occam);
 	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {

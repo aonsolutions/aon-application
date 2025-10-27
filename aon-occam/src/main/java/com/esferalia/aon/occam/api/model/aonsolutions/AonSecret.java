@@ -51,4 +51,16 @@ public class AonSecret {
 			.setData(data)
 			.setPassword(password);
 	}
+	
+	public static Certificate getSigCert() {
+		JSONObject json = getJSON(AonSecrets.SIG_CERT.getDescription());
+		String cert = JsonUtils.getString(json, "cert");
+		String password = JsonUtils.getString(json, "password");
+		
+		byte[] data = Base64.getDecoder().decode(cert);
+
+		return new Certificate()
+			.setData(data)
+			.setPassword(password);
+	}
 }

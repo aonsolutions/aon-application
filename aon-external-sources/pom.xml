@@ -135,6 +135,7 @@
 				</executions>
 				<configuration>
 					<schemaDirectory> src/main/xsd/tbai </schemaDirectory>
+					<schemaDirectory> src/main/xsd/verifactu </schemaDirectory>
 					<outputDirectory> src/main/java </outputDirectory>
 				</configuration>
 			</plugin>

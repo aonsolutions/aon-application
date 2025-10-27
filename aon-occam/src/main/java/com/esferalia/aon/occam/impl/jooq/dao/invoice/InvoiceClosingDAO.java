@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -45,7 +45,7 @@ public class InvoiceClosingDAO {
 			.map(Invoice::getId).collect(Collectors.toSet());
 			
 			StringBuilder builder = new StringBuilder();
-			InvoiceDataDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			InvoiceDataDAO.stream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getNameProperty().eq("MD5"))
 					.and(f.getInvoiceProperty().in(invoices.toArray(Integer[]::new))))
 			.filter(r -> !AonStringUtils.isBlank(r.getValue()))

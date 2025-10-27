@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.jooq.Condition;
@@ -19,19 +20,19 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.AonError;
@@ -275,6 +276,27 @@ public class InvoiceValidation {
 			}
 		}
 	};
+	
+	private static final Consumer<InvoiceValidationContext> RECTIFICATION_DATA = ivc -> {
+		if (ivc.inv.getId() == null 
+			&& ivc.inv.isRectifier() 
+			&& ivc.inv.getRectificationInvoice() != null) {
+			com.esferalia.aon.jooq.tables.Invoice invRect = INVOICE.as("INV_RECT");
+			ivc.ctx.getDslContext().select( invRect.REFERENCE_CODE, invRect.ISSUE_DATE )
+				.from(INVOICE)
+				.join(invRect).on(invRect.ID.eq(INVOICE.RECTIFICATION_INVOICE))
+				.where(INVOICE.ID.eq(ivc.inv.getRectificationInvoice()))
+				.and(INVOICE.RECTIFICATION_TYPE.eq(RectificationType.RECTIFIED.value()))
+				.fetch()
+				.stream()
+				.findFirst()
+				.ifPresent( r -> {
+					throw new AonCoreException(AonError.INVOICE_RECTIFIED_ALREADY_RECTIFIED.format(
+						r.getValue(invRect.REFERENCE_CODE),r.getValue(invRect.ISSUE_DATE) ));
+				});
+		}
+	};
+	
 
 	/**
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
@@ -290,20 +312,43 @@ public class InvoiceValidation {
 	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
-		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ivc.ctx);
-		if(tbai.isActive()) {
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
+		if (config.isTbai()) {
 			boolean accepted = true;
-			if(tbai.isBizkaia()) {
-				InvoiceInfo info = InvoiceInfoDAO.get(ivc.ctx, f -> f.getInvoiceProperty().eq(ivc.inv.getId())
-						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-				accepted = info.isAccepted() || info.isAcceptedWithErrors();
+			if(config.isBizkaia()) {
+				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
+					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
+					.filter( Objects::nonNull )
+					.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+					.orElse( true )
+				;
 			}
-			
 			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
 			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
 				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+			}
+		}
+	};
+	
+	/**
+	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden borrar.
+	 */
+	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
+		if(config.isVerifactu()) {
+			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
+				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
+				.filter( Objects::nonNull )
+				.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+				.orElse( true )
+			;
+			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.VERIFACTU.value())
+					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
+			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
+			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_VERIFACTU.getMessage());
 			}
 		}
 	};
@@ -323,6 +368,7 @@ public class InvoiceValidation {
 			.andThen(CHECK_TEN_YEARS)
 			.andThen(CHECK_FINANCES)
 			.andThen(ALCATRAZ)
+			.andThen(RECTIFICATION_DATA)
 			.accept(new InvoiceValidationContext(ctx,config,inv));
 
 	}
@@ -349,6 +395,7 @@ public class InvoiceValidation {
 		.andThen(OPERATIONS_DEADLINE)
 		.andThen(SII)
 		.andThen(TBAI)
+		.andThen(VERIFACTU)
 		.andThen(ALCATRAZ)
 		.accept(new InvoiceValidationContext(ctx,config,inv));
 	}

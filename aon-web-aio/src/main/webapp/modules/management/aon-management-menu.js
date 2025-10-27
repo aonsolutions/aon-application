@@ -140,7 +140,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "SII - Suministro Inmediato de Información",
                 title: "SII - Suministro Inmediato de Información",
-                action: () => GWT.iLoad(GWT.MODEL_SII)
+                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }, {
                 description: "Modelo 347 - Declaración anual operaciones con terceras personas.",
                 title: "Modelo 347 - Declaración anual operaciones con terceras personas.",

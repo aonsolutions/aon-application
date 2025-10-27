@@ -93,6 +93,7 @@ export const COMMENTS = 'Comments';
 export const COMMERCE = 'Commerce';
 export const COMMERCIAL = 'Commercial';
 export const COMMUNICATION = 'Communication';
+export const COMMUNICATIONS = 'Communications';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
 export const COMPANY_COSTS = 'Company Costs';

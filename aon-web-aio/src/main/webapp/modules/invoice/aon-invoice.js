@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
+import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, rectifyInvoice, deleteInvoice, deleteRawdocInvoices,
 	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	signInvoice, getApiConfiguration, getAeatCertificates, getCommunicationHistory, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
 	getPaymethod} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
@@ -10,7 +10,7 @@ import { ToolbarType } from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonViewer } from '../../components/aon-viewer.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, AON_ICONS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { Transactions } from '../../services/transaction.js';
 import { BillingPeriods, ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
@@ -31,6 +31,7 @@ import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
+import { AonIcon } from '../../components/aon-icon.js';
 
 export class AonInvoice extends AonElement {
 
@@ -90,7 +91,7 @@ export class AonInvoice extends AonElement {
 	async connectedCallback () {
 		this.initialize();
 		this.initializeFunctions();
-		this.configuration = await getInvoiceConfiguration();
+		this.configuration = await getApiConfiguration();
 
 		this.getInvoice().surcharge = this.getInvoice().surcharge 
 			|| (!this.getInvoice().isEmitida() && this.getCompany().surcharge);
@@ -111,13 +112,18 @@ export class AonInvoice extends AonElement {
 		this.TABS = this.id + 'Tabs';
 		this.CONTENT = this.id + 'Content';
 		this.DATA = this.id + 'Data';
-		this.TBAI_CARD = this.id + 'Tbai' + CONSTANT.CARD.initCap();
 		this.COMMUNICATION = this.id + 'Communication';
+		this.COMMUNICATION_CARD = this.COMMUNICATION + CONSTANT.CARD.initCap();
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
 		this.COMMENTS = this.DATA + 'Comments';
 		this.COMMENT_CARD = this.DATA + 'CommentsCard';
+		this.RECTIFY_CONTENT = this.DATA + "RectifyContent"
+		this.RECTIFY_CONTENT_TABLE = this.RECTIFY_CONTENT + CONSTANT.TABLE.initCap();
+		this.RECTIFY_CONTENT_SERIES = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_SERIES.initCap();
+		this.RECTIFY_CONTENT_DATE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_DATE.initCap();
+		this.RECTIFY_CONTENT_CAUSE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_CAUSE.initCap();
 		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
@@ -182,6 +188,12 @@ export class AonInvoice extends AonElement {
 		this.DETAIL_CATEGORY = this.DETAIL + CONSTANT.CATEGORY.initCap();
 		// TODO BIEN AFECTO
 
+		// ----- COMMUNICATION
+		this.COMMUNICATION_INFO = CONSTANT.AON_INVOICE_COMMUNICATION_INFO;
+		this.COMMUNICATION_INFO_TABLE = this.COMMUNICATION_INFO + CONSTANT.TABLE.initCap();
+		this.COMMUNICATION_HISTORY = CONSTANT.AON_INVOICE_COMMUNICATION_HISTORY;
+		this.COMMUNICATION_HISTORY_TABLE = this.COMMUNICATION_HISTORY + CONSTANT.TABLE.initCap();
+
 		// ----- FINANCE
 
 		this.FINANCE = CONSTANT.AON_INVOICE_FINANCE;
@@ -234,6 +246,26 @@ export class AonInvoice extends AonElement {
 		return this.configuration.company.banks
 			? this.configuration.company.banks.filter(f => f.active)
 			: [];
+	}
+
+	getTax( id ) {
+		if (id && this.configuration && this.configuration.taxes && this.configuration.taxes.length > 0) {
+			return this.configuration.taxes.find(t => t.id === id);
+		}
+		return undefined;
+	}
+
+	getDefaultWithholdingType() {
+		if (this.configuration && this.configuration.defaultRetentionTax) {
+			if (this.configuration.taxes && this.configuration.taxes.length > 0) {
+				let tax = this.getTax(this.configuration.defaultRetentionTax);
+				if (tax) {
+					return tax.withholding_type;
+				} 
+				
+			}
+		}
+		return undefined;
 	}
 
 	getInvoice() {
@@ -399,7 +431,10 @@ export class AonInvoice extends AonElement {
 					moreActions.push(send);
 				}
 	
-				if(!this.getInvoice().isRawdoc() && !this.getInvoice().isRectified()){
+				if(!this.getInvoice().isRawdoc() 
+					&& !this.getInvoice().isRectified() 
+					&& !this.getInvoice().isRectifier()){
+						
 					let rectify = ACTION.RECTIFY_INVOICE;
 					rectify.permission = true;
 					rectify.backgroundColor = INVOICE.color;
@@ -480,9 +515,42 @@ export class AonInvoice extends AonElement {
 		} else {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
+		this.buildCommunicationToolbar(invoiceToolbar);
+	}
+
+	buildCommunicationToolbar(invoiceToolbar) {
+		if (this.isVerifactuTest()) {
+			let vaction  = {
+				id: 'Communication_verifactu_test',
+				name: "VERIFACTUENTORNOTEST",
+				title: "VERIFACTU ENTORNO TEST",
+				icon: MATERIAL_ICONS.WARNING
+			};
+			let vtb =invoiceToolbar.addButtonTitle(vaction, () => window.alert("VERIFACTU ENTORNO TEST"));
+			vtb.getButton().style.color = "red";
+		}
 		
-		if(this.getInvoice().isTbai()) {
-			invoiceToolbar.addButtonTitle(ACTION.TICKETBAI, () => open(this.getInvoice().getTbaiUrl()));
+		if (this.hasCommunicationInfo()) {
+			let ci = this.getInvoice().communicationInfo;
+			let keys = Object.keys(ci ?? {});
+			for (let i = 0; i < keys.length; i++) {
+				let key = keys[i];
+				let communicationStatus = ci[key].communicationStatus;
+				let checkURL = ci[key].checkUrl;
+				let fn = ( checkURL ) 
+					? () => open(checkURL)
+					: undefined;
+				let action  = {
+					id: 'Communication_' + key,
+					name: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					icon: MATERIAL_ICONS.QR_CODE_2
+				};
+				let aib = invoiceToolbar.addButtonTitle(action, fn);
+				if (aib && communicationStatus) {
+					aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
+				}
+			}
 		}
 	}
 
@@ -509,8 +577,14 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	hasCommunicationInfo() {
+		return (this.getInvoice()
+			&& this.getInvoice().communicationInfo 
+			&& Object.keys(this.getInvoice().communicationInfo).length > 0);
+	}
+
 	buildTabs(data) {
-		if(!this.invoice.isRawdoc() && this.invoice.isTbai()) {
+		if(!this.invoice.isRawdoc()) { 
 			let tab = new AonTab();
 			tab.id = this.TABS;
 			tab.setOptions(this.options);
@@ -554,8 +628,188 @@ export class AonInvoice extends AonElement {
 		communication.id = this.COMMUNICATION;
 		communication.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
 		content.appendChild(communication);
-		this.buildTbaiCard(communication);
+		this.buildCommunicationCard(communication);
 	}
+
+	buildCommunicationCard(parent) {
+		let title = "Detalle de comunicaciones de la factura";
+		let card = this.createAonElement(new AonCard(), this.COMMUNICATION_CARD, title);
+		card.style.width = this.fileOpened ? '100%' : '50%';
+		parent.appendChild(card);
+
+		let table = this.getElement(this.COMMUNICATION_INFO_TABLE);
+		if (!table) {
+			table = new AonBasicTable();
+			table.id = this.COMMUNICATION_INFO_TABLE;
+			card.setContent(table);
+		}
+		table.removeRows();
+		
+		getCommunicationHistory(this.invoice.id).then(hist => {
+			let keys = Object.keys(hist ?? {});
+			if (keys.length === 0) {
+				table.addRow();
+				
+				let span1 = this.createElement(TAG.SPAN);
+				span1.innerHTML = MSG.NO_DATA;
+				table.addCell(span1);
+			} else {
+				for(let i = 0; i < keys.length; i++) {
+					let key = keys[i];
+
+					let info = hist[key].communicationInfo;
+					
+					table.addRow();
+
+					let typeButton = this.getCommunicationTypeIcon(info.communicationType);
+					typeButton.id = key+i+"button";
+					if ( info.checkUrl ) {
+						typeButton.title = "Comprobar";
+						typeButton.addEventListener(EVENT.CLICK, () => open(info.checkUrl));
+					} else {
+						typeButton.style.cursor = "none";
+					}
+					table.addCell(typeButton);
+
+					let span1 = this.createElement(TAG.SPAN);
+					span1.innerHTML = key;
+					table.addCell(span1);
+
+					let icon = this.createElement(TAG.I);
+					icon.className = "material-icons";
+					icon.title = this.getCommunicationStatusLabel(info.communicationStatus);
+					icon.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+					icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+					table.addCell(icon);
+
+					let span2 = this.createElement(TAG.SPAN);
+					span2.innerHTML = this.getCommunicationStatusLabel(info.communicationStatus);
+					span2.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+					table.addCell(span2);
+
+					let infoDate = info.modification_date ?
+						info.modification_date : info.creation_date;
+					let span3 = this.createElement(TAG.SPAN);
+					span3.innerHTML = infoDate ? this.formatDate(infoDate) : "";
+					table.addCell(span3);
+
+					let infoUser = info.modification_user ?
+						info.modification_user : info.creation_user;
+					let span4 = this.createElement(TAG.SPAN);
+					span4.innerHTML = infoUser ? infoUser : "";
+					table.addCell(span4);
+
+					let commHist  = hist[key].communicationHistory;
+					
+					if (commHist && commHist.length > 0) {
+						table.addRow();
+
+						let dummySpan = this.createElement(TAG.SPAN);
+						table.addCell(dummySpan);
+
+						let histTable = this.getElement(this.COMMUNICATION_TABLE + "_" + key);
+						if(!histTable) {
+							histTable = new AonBasicTable();
+							histTable.id = this.COMMUNICATION_TABLE + "_" + key;
+							table.addCell(histTable, "5" );
+						}
+						histTable.removeRows();
+
+						for(let x = 0; x < commHist.length; x++) {
+							let hist = commHist[x];
+							this.printCommunicationHistory(histTable, hist, i);
+						}
+
+					}
+				}
+			}
+		});
+	}
+
+	printCommunicationHistory(table, commHist, i) {
+		table.addRow();
+		
+		let span1 = this.createElement(TAG.SPAN);
+		span1.innerHTML = commHist.operation;
+		table.addCell(span1);
+
+		let icon = this.createElement(TAG.I);
+		icon.className = "material-icons";
+		icon.title = this.getCommunicationStatusLabel(commHist.status);;
+		icon.style.color = this.getCommunicationStatusColor(commHist.status);
+        icon.innerHTML = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+		table.addCell(icon);
+
+		let span2 = this.createElement(TAG.SPAN);
+		span2.innerHTML = commHist.date ? this.formatDate(commHist.date) : "";
+		table.addCell(span2);
+
+		let span3 = this.createElement(TAG.SPAN);
+		span3.innerHTML = commHist.creation_user ?  commHist.creation_user : "";
+		table.addCell(span3);
+
+		let requestDownload = new AonIconButton();
+		requestDownload.title = "Descargar petición";
+		requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+		requestDownload.addEventListener(EVENT.CLICK, () => {
+			open(commHist.requestUrl, '_blank');
+		});
+		table.addCell(requestDownload);
+
+		let responseDownload = new AonIconButton();
+		responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+		responseDownload.title= "Descargar respuesta";
+		responseDownload.addEventListener(EVENT.CLICK, () => {
+			open(commHist.responseUrl, '_blank');
+		});
+		table.addCell(responseDownload);
+
+		if (commHist.responseMessages && commHist.responseMessages.length > 0) {
+			let showErrors  = new AonIconButton();
+			showErrors.icon = MATERIAL_ICONS.CHAT_ERROR;
+			showErrors.title= "Mostrar errores";
+			showErrors.style.color = "red";
+			table.addCell(showErrors);
+
+			let historyRowNumber = table.addRow();
+			let historyTr = table.getRow(historyRowNumber);
+			historyTr.style.display = "none";
+			showErrors.addEventListener(EVENT.CLICK, () => {
+				historyTr.style.display = historyTr.style.display == "none" ? "contents" : "none";
+			});
+			let ul = this.createElement(TAG.UL);
+			ul.classList.add(CSS.AON_UL);
+			ul.style.width = '100%';
+			for(let i = 0; i < commHist.responseMessages.length; i++) {
+				let item = commHist.responseMessages[i];
+				let li = this.createElement(TAG.LI);
+				li.style.paddingLeft = "20px";
+				li.style.backgrounColor = 'transparent !important';
+				let errSpan = this.createElement(TAG.SPAN);
+				errSpan.innerHTML = item;
+				li.appendChild(errSpan);
+				ul.appendChild(li);
+			}
+			table.addCell(ul, "7" );
+		} else {
+			let dummySpan = this.createElement(TAG.SPAN);
+			table.addCell(dummySpan);
+		}
+
+	}
+
+	formatDate(isoString) {
+		const d = new Date(isoString);
+		const pad = n => n.toString().padStart(2, "0");
+		const day    = pad(d.getDate());
+		const month  = pad(d.getMonth() + 1);
+		const year   = d.getFullYear();
+		const hours  = pad(d.getHours());
+		const mins   = pad(d.getMinutes());
+		const secs   = pad(d.getSeconds());
+		return `${day}/${month}/${year} ${hours}:${mins}:${secs}`;
+	}
+
 
 	buildFileContent() {
 		let div = this.getElement(this.DIV);
@@ -565,57 +819,42 @@ export class AonInvoice extends AonElement {
 		div.appendChild(file);
 	}
 
-	buildTbaiCard(parent) {
-		let card = this.createAonElement(new AonCard(), this.TBAI_CARD, MSG.TICKETBAI);
-		card.style.width = this.fileOpened ? '100%' : '50%';
-		parent.appendChild(card);
-
-		let table = this.getElement(this.DETAIL_TABLE);
-		if(!table) {
-			table = new AonBasicTable();
-			table.id = this.DETAIL_TABLE;
-			card.setContent(table);
+	getCommunicationTypeIcon(type) {
+		let typeIconButton = new AonIconButton();
+		if ("SII" === type || "TBAI" === type) {
+			let administration = this.configuration ? this.configuration.administration : '';
+			if ("ALAVA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
+			else if ("BIZKAIA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+			else if ("GIPUZKOA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
+			else if ("NAVARRA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
+			else if ("COMMON_TERRITORY" === administration) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+			else if ("CANARIAS" === administration) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
+		} else if ("LROE" === type) { typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+		} else if ("SERES" === type) { typeIconButton.aonIcon = AON_ICONS.SERES;
+		} else if ("EMAIL" === type) { typeIconButton.icon = MATERIAL_ICONS.MAIL;
+		} else if ("CLOSING" === type) { typeIconButton.icon = MATERIAL_ICONS.LOCK;
+		} else if ("VERIFACTU" === type) { typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
 		}
-		table.removeRows();
-
-		getTbaiHistory(this.invoice.id).then(requests => {
-			for(let i = 0; i < requests.length; i++) {
-				let history = requests[i];
-				this.printTbaiHistory(table, history, i);
-			}
-		});
+		if (!typeIconButton.icon) {
+			typeIconButton.icon = MATERIAL_ICONS.QUESTION_MARK;
+		}
+		return typeIconButton;
 	}
 
-	printTbaiHistory(table, history, i) {
-		table.addRow(); // ----- ROW i
-		
-		let span = this.createElement(TAG.SPAN);
-		span.innerHTML = history.date;
-		table.addCell(span);
+	getCommunicationStatusLabel(status) {
+		if("PENDING" === status) return "Pendiente";
+		else if("ACCEPTED" === status) return "Aceptada";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("WRONG" === status) return "Incorrecta";
+		else return "Sin Estado";
+	}
 
-		let span2 = this.createElement(TAG.SPAN);
-		span2.innerHTML = history.operation;
-		table.addCell(span2);
-
-		let icon = this.createElement(TAG.I);
-		icon.className = "material-icons";
-		icon.style.color =  history.ok ? "green" : "red";
-        icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
-		table.addCell(icon);
-
-		let requestDownload = new AonIconButton();
-		requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
-		requestDownload.addEventListener(EVENT.CLICK, () => {
-			open(history.requestUrl, '_blank');
-		});
-		table.addCell(requestDownload);
-
-		let responseDownload = new AonIconButton();
-		responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
-		responseDownload.addEventListener(EVENT.CLICK, () => {
-			open(history.responseUrl, '_blank');
-		});
-		table.addCell(responseDownload);
+	getCommunicationStatusColor(status) {
+		if("PENDING" === status) return "orange";
+		else if("ACCEPTED" === status) return "green";
+		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("WRONG" === status) return "red"
+		else return "gray";
 	}
 	
 	buildCommentCard(parent) {
@@ -1344,7 +1583,7 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
 			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				let accs = accounts.map(acc => {return {name: acc.description, value: acc.code};});
 				category.options = JSON.stringify(accs);
 				category.value = this.invoice.getCategory();
 			});
@@ -1627,7 +1866,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked, this.configuration ? this.configuration.withholdingPercent : undefined);
+			this.invoice.setWithholding(irpf.checked, this.getDefaultWithholdingType());
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1656,7 +1895,7 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val || (this.configuration ? this.configuration.withholdingPercent : undefined);
+			irpfType.value = val || this.getDefaultWithholdingType();
 		} 
 	}
 
@@ -1794,6 +2033,7 @@ export class AonInvoice extends AonElement {
 
 	buildDetailCard(parent) {
 		let card = this.getElement(this.DETAIL);
+		if(!card && !parent) return;
 		if(!card) {
 			card = new AonCard();
 			card.id = this.DETAIL;
@@ -2215,7 +2455,7 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(category, '2');
 			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				let accs = accounts.map(acc => {return {name: acc.description, value: acc.code};});
 				category.options = JSON.stringify(accs);
 				category.value = detail.category || this.invoice.getCategory();
 			});	
@@ -2660,8 +2900,12 @@ export class AonInvoice extends AonElement {
 			viewer.addEventListener(EVENT.PRINT_PDF_PAGE, (e) => { if ( !e.detail.text ) getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printPdfTextLayer(e.detail.page, t)); } );
 			fileDiv.appendChild(viewer);
 		}
-		this.buildDetailCard();
-		if(reload) this.buildFinanceCard();
+		
+		let general = this.getElement(this.GENERAL);
+		if(general) {
+			this.buildDetailCard();
+			if(reload) this.buildFinanceCard();
+		}
 	}
 
 	previousInvoice() {
@@ -2686,9 +2930,30 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	mustBeCommunicated() {
+		return this.configuration
+			&& this.configuration.communication
+			&& (this.configuration.communication.tbai
+			 || this.configuration.communication.verifactu
+		);
+	}
+	isVerifactuTest() {
+		return this.configuration
+			&& this.configuration.communication
+			&& this.configuration.communication.verifactu
+			&& this.configuration.communication.verifactuTest
+		;
+	}
+	isTbaiTest() {
+		return this.configuration
+			&& this.configuration.communication
+			&& this.configuration.communication.tbai
+			&& this.configuration.communication.tbaiTest
+		;
+	}
 	acceptInvoice() {
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
@@ -2738,7 +3003,26 @@ export class AonInvoice extends AonElement {
 					}).catch(e => {
 						this.accept = true;
 						this.getApplication().stopLoader(); 
-						this.showError(e)
+						// this.showError(e)
+						if (typeof e === "string") {
+							try {
+								e = JSON.parse(e);
+							} catch (err) {
+								console.error("No es un JSON válido:", err);
+								return;
+							}
+						}
+						 if (e && e.messages) {
+							if (this.invoice.messages) {
+								this.invoice.messages.push(...e.messages);
+							} else {
+								this.invoice.messages = e.messages;
+							}
+							this.reload();
+						} else {
+							this.showError(e);
+						}
+						
 					});
 				});
 			}
@@ -2919,8 +3203,91 @@ export class AonInvoice extends AonElement {
 		});
 		d.open();
 	}
-	
+
+	checkRectifySeries() {
+		if (this.configuration
+			&& this.configuration.series
+			&& this.configuration.series.length > 0) {
+			return this.configuration.series.some( ser => ser.rectification === true);	
+		}
+		return false;
+	}
+
+	newRectifyInvoice() {
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+			if (!this.checkRectifySeries()) {
+				this.showMessageError("En entornos con VERIFACTU/TicketBAI activo,"
+					+" debe existir al menos una serie para facturas rectificativas.");
+				return;
+			}
+
+			let aonInvoice = this.getElement('aonInvoice');
+			let d = document.getElementById(aonInvoice.DIALOG);
+			d.clear();
+			d.setTitle(MSG.RECTIFY_INVOICE);
+			if(!this.isMobile()) d.width = '400px';
+
+			let rectifyContent  = this.createElement(TAG.DIV);
+			rectifyContent.id = this.RECTIFY_CONTENT;
+			d.setContent(rectifyContent);
+
+			let table = new AonBasicTable();
+			table.id = this.RECTIFY_CONTENT_TABLE;
+			rectifyContent.appendChild(table);
+
+			table.addRow();
+			let rectSeries  = createSelect(this.RECTIFY_CONTENT_SERIES, MSG.SERIE);
+			let rectOptions = this.configuration.series
+				.filter( ser => ser.rectification === true)
+				.map(ser  => { return {value: ser.code,name: ser.code};}
+			);
+			rectSeries.options = JSON.stringify(rectOptions);
+			if (rectOptions.length == 1) {
+				rectSeries.value = rectOptions[0].value;
+			}
+			table.addCell(rectSeries);
+
+			table.addRow();
+			let rectDate = createDate(this.RECTIFY_CONTENT_DATE, MSG.DATE);
+			rectDate.setDate(new Date());
+			table.addCell(rectDate);
+
+			table.addRow();
+			let rectCause = createTextarea(this.RECTIFY_CONTENT_CAUSE, MSG.CAUSE);
+			rectCause.maxlength = "256";
+			rectCause.rows = "4";
+			table.addCell(rectCause);
+			
+			d.addAcceptAction(() => { 
+				this.getApplication().startLoader();
+				let data = {
+					series: rectSeries.getValue(),
+					date: rectDate.getValue(),
+					cause: rectCause.getValue(),
+					invoice: this.invoice
+				};
+				rectifyInvoice(data).then(r => {
+					r.status = 'inbox';
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader(); 
+					this.fileOpened = false;
+					this.reload();
+				}).catch(e => {
+					this.getApplication().stopLoader(); 
+					this.showError(e)
+				});
+			});
+			d.open();
+		}
+	}
+
 	rectifyInvoice() {
+		// [START] TEMP SOLUTION!!
+		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+			return this.newRectifyInvoice();
+		}
+		// [END]
+
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
@@ -3096,41 +3463,54 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
-		let data = {id: this.getInvoice().id};
-		if(this.getInvoice().isTbai()) {
-			let d = this.getApplication().getDialog();
-			d.clear();
-			if(!this.isMobile()) d.width = '400px';
-			d.setTitle("Anular");
-			let certSelect = createSelect("cert", "Certificado");
-			getAeatCertificates().then(certs => {
-				certSelect.setOptions(certs.map(s => {
-					return {
-					  value: s.id,
-					  name: s.name
-					}
-				  }));
-			}); 
-			d.setContent(certSelect);
-			d.addAcceptAction(() => {
+		this.getApplication().confirmDialog(
+			  MSG.DELETE
+			, MSG.DELETE_CONFIRM + " la factura?"
+		,()=>{
+			let data = {id: this.getInvoice().id};
+			if (this.getInvoice().canBeAnnulled()) {
+				let d = this.getApplication().getDialog();
+				d.clear();
+				if(!this.isMobile()) d.width = '400px';
+				d.setTitle("Anular");
+				let certSelect = createSelect("cert", "Certificado");
+				getAeatCertificates().then(certs => {
+					certSelect.setOptions(certs.map(s => {
+						return {
+						value: s.id,
+						name: s.name
+						}
+					}));
+				}); 
+				d.setContent(certSelect);
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					let data = this.getInvoice();
+					data.cert = certSelect.value;
+					deleteInvoice(data).then(() => {
+						this.getApplication().stopLoader(); 
+						this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
+						this.showMessage(MSG.DELETED_DATA);
+						this.back();
+					}).catch(e => {
+						this.getApplication().stopLoader(); 
+						this.showError(e);
+					});
+				});			
+				d.open();
+			} else {
 				this.getApplication().startLoader();
-				let data = this.getInvoice();
-				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
 					this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
-				}).catch(e => this.showError(e));
-			});			
-			d.open();
-		} else {
-			deleteInvoice(data).then(() => {
-				this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
-				this.showMessage(MSG.DELETED_DATA);
-				this.back();
-			}).catch(e => this.showError(e));
-		}
+				}).catch(e => {
+					this.getApplication().stopLoader(); 
+					this.showError(e);
+				});
+			}
+		});
 	}
 	
 	restoreInvoice() {

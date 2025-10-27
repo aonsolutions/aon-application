@@ -104,6 +104,12 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static Stream<Account> getAccounts(Occam occam, AccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getAccounts(ctx, filter);
+		}
+	}
+
 	public static Stream<Account> getAccounts(String domainName, int domainId, String login, AccountFilter filter, int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().getAccounts(ctx, filter, offset, limit);

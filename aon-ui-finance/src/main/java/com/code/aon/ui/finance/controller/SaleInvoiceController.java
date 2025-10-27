@@ -78,24 +78,30 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -113,6 +119,10 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showFacturaeInfoWindow;
 	private boolean showTbaiAccept;
 	
+	private boolean showCertVerifactuWindow;
+	private boolean showCertVerifactuAnularWindow;
+	private boolean showVerifactuAccept;
+	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
 	private UdapaEdiInvoiceImporterHandler udapaImporter;
@@ -120,6 +130,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private FtpSaleInvoiceDownloadHandler ftpEdiDownloader;
 	
 	private FtpSaleInvoiceUploaderHandler ftpEdiUploader;
+	private InvoiceCommunicationStatus verifactuStatus;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -184,12 +195,30 @@ public class SaleInvoiceController extends InvoiceController {
 			setShowTbaiAccept(showCertTbaiWindow);
 	}
 	
+	public boolean isShowCertVerifactuWindow() {
+		return showCertVerifactuWindow;
+	}
+
+	public void setShowCertVerifactuWindow(boolean showCertVerifactuWindow) {
+		this.showCertVerifactuWindow = showCertVerifactuWindow;
+		if(showCertVerifactuWindow)
+			setShowVerifactuAccept(showCertVerifactuWindow);
+	}
+	
 	public boolean isShowCertTbaiAnularWindow() {
 		return showCertTbaiAnularWindow;
 	}
 
 	public void setShowCertTbaiAnularWindow(boolean showCertTbaiAnularWindow) {
 		this.showCertTbaiAnularWindow = showCertTbaiAnularWindow;
+	}
+	
+	public boolean isShowCertVerifactuAnularWindow() {
+		return showCertVerifactuAnularWindow;
+	}
+
+	public void setShowCertVerifactuAnularWindow(boolean showCertVerifactuAnularWindow) {
+		this.showCertVerifactuAnularWindow = showCertVerifactuAnularWindow;
 	}
 	
 	public boolean isShowFacturaeInfoWindow() {
@@ -519,14 +548,13 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Override
 	protected synchronized void accept() {
-		if(isNevv() && isTbai()) {
+		if(isNevv() && (isTbai() || isVerifactu())) {
 			Invoice invoice = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			Integer number = AON.getInvoiceMinNumber(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, invoice.getSeries());
 			invoice.setNumber(number < 0 ? number : -1);
-
 		}
 		setTbaiUrl(null);
 		if(!isTbaiInvoice()) {
@@ -599,12 +627,16 @@ public class SaleInvoiceController extends InvoiceController {
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			}
 
-			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			tbaiConfiguration.setCertificate(getCertData());
-			if(tbaiConfiguration.isActive()) {
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(invoice.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+			if(icc.isTbai()) {
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				icc.setCertificate(getCertData());
 				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
+				tbai.createEmisionLROE(company, invoice, icc);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -619,12 +651,16 @@ public class SaleInvoiceController extends InvoiceController {
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			Company company = AON.getCompanyForDomain(domainName, inv.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, inv.getDomain(), login);
-			tbaiConfiguration.setCertificate(getCertData());
-			if(tbaiConfiguration.isActive()) {
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+			icc.setCertificate(getCertData());
+			if(icc.isTbai()) {
 				TbaiMain tbai = new TbaiMain();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-				tbai.zuzenduTBAI(company, invoice, tbaiConfiguration, false);
+				tbai.zuzenduTBAI(company, invoice, icc, false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -639,12 +675,16 @@ public class SaleInvoiceController extends InvoiceController {
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			Company company = AON.getCompanyForDomain(domainName, inv.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, inv.getDomain(), login);
-			tbaiConfiguration.setCertificate(getCertData());
-			if(tbaiConfiguration.isActive()) {
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+			icc.setCertificate(getCertData());
+			if(icc.isTbai()) {
 				TbaiMain tbai = new TbaiMain();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-				tbai.zuzenduTBAI(company, invoice, tbaiConfiguration, true);
+				tbai.zuzenduTBAI(company, invoice, icc, true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -654,7 +694,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Transient
 	public synchronized void issueInvoice() {
-		if(!isShowTbaiAccept()) return;
+		if(!isShowTbaiAccept() && !isShowVerifactuAccept()) return;
 		try {
 			setShowTbaiAccept(false);
 			if(lroe) {
@@ -667,11 +707,21 @@ public class SaleInvoiceController extends InvoiceController {
 				String login = UserUtils.getInstance().getLoggedUser().getLogin();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 				tbaiValidation(invoice);
-								
+				
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				Occam occam = new Occam()
+					.setDomainName(domainName)
+					.setDomain(inv.getDomain())
+					.setUser(login);
+				InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+				if (config.isVerifactu()) {
+					communicateInvoice(occam, config, company, invoice, getCertificate());
+					return;
+				}
+
 				if(invoice.getNumber() < 1) {
-					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
-					Integer number = lastInvoice.getNumber() > 0
-							? lastInvoice.getNumber() + 1 : 1;
+					Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
 					inv.setNumber(number);
@@ -681,16 +731,27 @@ public class SaleInvoiceController extends InvoiceController {
 					updateFinances(domainName, login, invoice);
 				}
 
-				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			
-				tbaiConfiguration.setCertificate(getCertData());
-				if(tbaiConfiguration.isActive()) {
+				config.setCertificate(getCertData());
+				if(config.isTbai()) {
 					TbaiMain tbai = new TbaiMain();
-					tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
-					setTbaiUrl(TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
+					tbai.createEmisionTBAI(company, invoice, config);
+					setTbaiUrl(TbaiData.getInstance(config).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
-		
+				
+//				VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
+//
+//				verifactuConfiguration.setCertificate(getCertData());
+//				if(verifactuConfiguration.isActive()) {
+//					Domain domain = new Domain().setName(domainName).setId(invoice.getDomain());
+//					User user = new User().setLogin(login);
+//					AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+//							new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
+//								.setCompany(company)
+//								.setVerifactuConfiguration(verifactuConfiguration);
+//
+//					InvoiceCommunicationType.VERIFACTU.visit(visitor);
+//				}
+				
 				// SII
 			}
 		} catch (Exception e) {
@@ -699,11 +760,41 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
-	public void updateFinances(String domainName, String login, com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
-		invoice.getFinances().stream().forEach(finance -> {
-			finance.setConcept(invoice.getDocumentNumber());
-			AON.saveFinance(domainName, invoice.getDomain(), login, finance);
-		});
+	private void communicateInvoice(Occam occam
+		, InvoiceCommunicationConfiguration config
+		, Company company
+		, com.esferalia.aon.occam.api.model.finance.Invoice invoice
+		, Integer certId) {
+		
+		List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.toList(invoice);
+		Domain domain = AON.getDomain(occam, invoice.getDomain());
+		User user = AON.getUser(occam.getDomainName(), occam.getDomain(), occam.getUser());
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, user, certId, invoices)
+			.setConfig(config)
+			.setCompany(company);
+		
+		try {
+			InvoiceCommunicator.issueInvoice(communicator);
+			setVerifactuStatus( null );
+			refresh( null );
+		} catch (Exception e) {
+			
+			try {
+				InvoiceCommunicator.throwRightException(e, invoice);
+			} catch (InvoiceErrorException e1) {
+				AonCollectionUtils.stream(e1.getMessages())
+					.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
+			}
+		}
+	}
+
+	private void updateFinances(String domainName, String login, com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
+		invoice.financeStream()
+			.forEach(finance -> {
+				finance.setConcept(invoice.getDocumentNumber());
+				AON.saveFinance(domainName, invoice.getDomain(), login, finance);
+			}
+		);
 	}
 	
 	private void tbaiValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
@@ -791,6 +882,11 @@ public class SaleInvoiceController extends InvoiceController {
 		anular = false;
 	}
 	
+	public void verifactu() {
+		lroe = false;
+		anular = false;
+	}
+
 	public void lroe() {
 		lroe = true;
 		anular = false;
@@ -807,32 +903,74 @@ public class SaleInvoiceController extends InvoiceController {
 		resetTo();
 	}
 
-	public void anularInvoice() {
+	public String onAnularVerifactu() {
+		if(isVerifactuInvoice()) {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.toList(invoice);
+			Domain domain = AON.getDomain(occam, invoice.getDomain());
+			User user = AON.getUser(occam.getDomainName(), occam.getDomain(), occam.getUser());
+			InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, user, getCertificate(), invoices)
+				.setConfig(config)
+				.setCompany(company);
+			try {
+				InvoiceCommunicator.cancelInvoice(communicator);
+				setVerifactuStatus( null );
+				initializeModel();
+				resetTo();
+				return backAction();
+			} catch (Exception e) {
+				try {
+					InvoiceCommunicator.throwRightException(e, invoice);
+				} catch (InvoiceErrorException e1) {
+					AonCollectionUtils.stream(e1.getMessages())
+						.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
+				}
+				return null;
+			}
+		} else {
+			throw new AbortProcessingException("La factura no es Verifactu");
+		}
+	}
+	
+	private void anularInvoice() {
 		if(isTbaiInvoice()) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			tbaiConfiguration.setCertificate(getCertData());
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(invoice.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+			config.setCertificate(getCertData());
 			try {
 				checkCertificate();
 				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+				tbai.createAnulacionTBAI(company, invoice, config);
 				// NUEVO ANULAR
-				// TBAI.getInstance().cancel(tbaiConfiguration, company, invoice);
+				// TBAI.getInstance().cancel(config, company, invoice);
 
 				AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 			} catch (Exception e) {
-				if(tbaiConfiguration.isTest()) {
+				if(config.isTbaiTest()) {
 					AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 				} else {
 					e.printStackTrace();
 					AonUtil.addErrorMessage(e.getMessage());
 				}
 			}
-		}	
+		} 
 	}
 	
 	@Override
@@ -900,11 +1038,71 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showTbaiAccept = showTbaiAccept;
 	}
 	
+	public boolean isShowVerifactuAccept() {
+		return showVerifactuAccept;
+	}
+	
+	public void setShowVerifactuAccept(boolean showVerifactuAccept) {
+		this.showVerifactuAccept = showVerifactuAccept;
+	}
+	
 	public boolean isInvoiceTbaiAccepted() {
 		Invoice inv = (Invoice) getTo();
-		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-		return info.getStatus().isAccepted();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(inv.getDomain())
+			.setUser(login);
+		return AON.getInvoiceInfo(occam, inv.getId(), InvoiceCommunicationType.LROE)
+			.map( InvoiceInfo::getStatus )
+			.map( InvoiceCommunicationStatus::isAccepted )
+			.orElse(false);
+	}
+	
+	public boolean isInvoiceVerifactuAccepted() {
+		return isVerifactuAccepted();
+//		Invoice inv = (Invoice) getTo();
+//		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
+//				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
+//		return info.getStatus().isAccepted();
+	}
+	
+	public InvoiceCommunicationStatus getVerifactuStatus() {
+		if (verifactuStatus == null) {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			AON.getInvoiceInfo(occam, inv.getId(), InvoiceCommunicationType.VERIFACTU)
+				.ifPresentOrElse( 
+					info -> setVerifactuStatus( info.getStatus() ),
+					()  -> setVerifactuStatus( InvoiceCommunicationStatus.PENDING )
+				);
+		}
+		return verifactuStatus;
+	}
+	public void setVerifactuStatus(InvoiceCommunicationStatus invoiceCommunicationStatus) {
+		this.verifactuStatus = invoiceCommunicationStatus;
+	}
+	public String getVerifactuStatusDescription() {
+		return StringUtils.upperCase(this.verifactuStatus == null ? "" : this.verifactuStatus.getDescription());
+	}
+	
+	public boolean isVerifactuNoStatus() {
+		return getVerifactuStatus() == null || getVerifactuStatus() == InvoiceCommunicationStatus.PENDING;		
+	}
+	public boolean isVerifactuAccepted() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED;		
+	}
+	public boolean isVerifactuAcceptedWithErrors() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;
+	}
+	public boolean isVerifactuWrong() {
+		return getVerifactuStatus() == InvoiceCommunicationStatus.WRONG;
 	}
 	
 	public boolean isPass() {	

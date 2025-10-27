@@ -2,10 +2,13 @@ package com.esferalia.aon.watson.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -86,7 +89,7 @@ public class AonCollectionUtils {
 	public static <T> boolean isNotEmpty(T[] array) {
 		return !isEmpty(array);
 	}
-	public static <T> int size(final T[] array){
+	public static <T> int size(T[] array) {
 		return  isEmpty(array) ? 0 : array.length;
 	}
 
@@ -128,6 +131,7 @@ public class AonCollectionUtils {
 		}
 		return false;
 	}
+	
 	public static boolean contains(int[] types, int type) {
 		if (types == null) return false;
 		for (int t : types) {
@@ -137,5 +141,11 @@ public class AonCollectionUtils {
 		}
 		return false;
 	}
-	
+
+	public static <T> List<T> toList(T t) {
+		LinkedList<T> l = new LinkedList<>();
+		if (t != null) l.add(t);
+		return l;
+	}
+
 }

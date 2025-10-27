@@ -94,6 +94,7 @@ export const COMMERCE = 'Comercio';
 export const COMMERCIAL = 'Comercial';
 export const COMMERCIAL_NAME = 'Nome Comercial';
 export const COMMUNICATION = 'Comunicación';
+export const COMMUNICATIONS = 'Comunicacións';
 export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = 'Custos da Empresa';

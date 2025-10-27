@@ -8,10 +8,12 @@ import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -84,9 +86,9 @@ public class LROE140_1_1 extends LROE140 {
 		return proba;
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
+	public LROEResponse alta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(icc, invoice));
 			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAltaPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -98,7 +100,7 @@ public class LROE140_1_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -120,9 +122,9 @@ public class LROE140_1_1 extends LROE140 {
 		return lroe;
 	}
 	
-	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
+	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice, byte[] tbai)  {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoice));
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoice));
 			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -134,15 +136,15 @@ public class LROE140_1_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
 	}
 	
-	public boolean consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+	public boolean consulta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.C_00, getEjercicio(tbaiConfiguration, invoice));
+			LROEInfo info = buildInfo(OperacionEnum.C_00, getEjercicio(icc, invoice));
 			LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = buildConsulta(person, invoice, info);
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGConsultaPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -153,14 +155,14 @@ public class LROE140_1_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(icc, buildJSON(person, info), data);
 			
 			LROEPF140IngresosConFacturaConSGConsultaRespuesta resp = (LROEPF140IngresosConFacturaConSGConsultaRespuesta) 
 					unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());
 			
 			
 			if(SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros())) {
-				saveTbai(tbaiConfiguration, person, invoice, resp);
+				saveTbai(icc, person, invoice, resp);
 				DataRequest request = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, data);
 				response.setDataRequest(request);
 				LroeData.saveResponse(person.getDomain(), new User().setLogin(""), invoice, response, info);
@@ -173,7 +175,7 @@ public class LROE140_1_1 extends LROE140 {
 		}
 	}
 	
-	private void saveTbai(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, LROEPF140IngresosConFacturaConSGConsultaRespuesta resp) {
+	private void saveTbai(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice, LROEPF140IngresosConFacturaConSGConsultaRespuesta resp) {
 		TbaiSign tbaiSign = new TbaiSign();
 		String signature = resp.getIngresos().getIngreso().get(0).getTicketBai().getSignature();
 		String date = resp.getIngresos().getIngreso().get(0).getTicketBai().getFactura().getCabeceraFactura().getFechaExpedicionFactura();
@@ -195,7 +197,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 		String total = resp.getIngresos().getIngreso().get(0).getTicketBai().getFactura().getDatosFactura().getImporteTotalFactura();
 
-		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
+		String qrUrl = TbaiUri.getUrlQr(icc) + "?id=" + tbaiId + "&s="
 			+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 			+ total;
 		
@@ -205,9 +207,11 @@ public class LROE140_1_1 extends LROE140 {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		TbaiData.getInstance(tbaiConfiguration)
-			.saveResponsePending(person.getDomain(), new User().setLogin(""), invoice, tresp,
-			bc, new DataRequest(), qrUrl);
+		try(CloseableAONContext ctx = AONContext.getAONContext(person.getDomain(), "")){
+			TbaiData.getInstance(icc)
+				.saveResponsePending(ctx, person.getDomain(), invoice, tresp, bc, new DataRequest(), qrUrl);			
+		}
+
 	}
 
 	private LROEPF140IngresosConFacturaConSGConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {

@@ -28,7 +28,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -42,7 +41,10 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 public class RectifierInvoiceController implements IFinanceConstants, Serializable {
 	
@@ -282,12 +284,19 @@ public class RectifierInvoiceController implements IFinanceConstants, Serializab
 					String domainName = AonUtil.getDomainName();
 					Integer domainId = DomainManager.getCurrentDomain();
 					String login = UserUtils.getInstance().getLoggedUser().getLogin();
-					TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, domainId, login);
-					
+					Occam occam = new Occam()
+						.setDomainName(domainName)
+						.setDomain(domainId)
+						.setUser(login);
+					InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 					RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
-					rectifier = rectificationManager.specialRectifyInvoice(invoice, getRectificationSeries(), rectificationNumber++, 
-																			getRectificationDate(),	getRectificationCause(), iw.getPercent(),
-																			tbaiConfiguration.isActive());
+					rectifier = rectificationManager.specialRectifyInvoice(invoice
+							, getRectificationSeries()
+							, rectificationNumber++
+							, getRectificationDate()
+							, getRectificationCause()
+							, iw.getPercent()
+							, icc.isTbai());
 					firstRectifierId = (firstRectifierId == 0) ? rectifier.getId() : firstRectifierId;
 				}
 			}

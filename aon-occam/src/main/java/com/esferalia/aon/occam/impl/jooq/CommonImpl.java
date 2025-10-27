@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -370,21 +371,33 @@ public class CommonImpl implements ICommon {
 	// ------------------ TAX
 	
 	@Override
-	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter){
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getStream(ctx, filter));
+			configuration -> TaxDAO.stream(ctx, domainId ));
 	}
 	
 	@Override
-	public Stream<Tax> getVatStream(AONContext ctx){
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId, TaxFilter filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getVatTaxes(ctx));
+			configuration -> TaxDAO.stream(ctx, domainId, filter));
+	}
+
+	@Override
+	public Stream<Tax> getVatStream(AONContext ctx, Integer domainId){
+		return ctx.getDslContext().transactionResult(
+			configuration -> TaxDAO.getVatTaxes(ctx, domainId));
 	}
 	
 	@Override
-	public Stream<Tax> getWithholdingStream(AONContext ctx){
+	public Stream<Tax> getWithholdingStream(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getWithholdingTaxes(ctx));
+			configuration -> TaxDAO.getWithholdingTaxes(ctx, domainId));
+	}
+	
+	@Override
+	public Optional<Tax> getTax(AONContext ctx, Integer domainId, Integer taxId) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> TaxDAO.get(ctx, domainId, taxId));
 	}
 
 	// ------------------ DATA REQUEST
@@ -645,4 +658,11 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ActivitySummaryDAO.getActivitySummary(ctx, domainId, parentDomainId, userId, params));
 	}
+	
+	// API CONFIGURATION
+	@Override
+	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId) {
+		return ConfigurationDAO.getApiConfiguration(ctx, domainId);
+	}
+	
 }
