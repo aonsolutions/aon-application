@@ -322,16 +322,16 @@ export const MY_DATA = 'Nire Datuak';
 export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
 export const MAGIC_LINK = 'Sarbide-esteka posta elektronikoz bidaltzen';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Fakturak igorri, gastuak erregistratu edo bezeroak, hartzekodunak eta hornitzaileak sortu.";
+export const MENU_ACCOUNTING_INFO = "Kontabilitateko txostenak eta grafikoak kontsultatu: irabaziak eta galerak, ustiapen-kontuak, balantzeak eta gehiago.";
+export const MENU_FISCAL_INFO = "Ikusi zure zergetako aurrekalkulu automatikoak, kontabilizatutako fakturetan eta aurkeztutako ereduetan oinarrituak.";
+export const MENU_PAYROLL_INFO = "Kontsultatu lan arloko txostenak eta grafikoak: nominak, kontratuak, enpresaren kostuak eta gehiago.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Gorde eta partekatu dokumentazio osagarria, hala nola aurreko urteetako zerga-ereduak edo beste software bateko fakturak.";
+export const MENU_TIMECONTROL_INFO = "Erregistratu lanaldia indarrean dagoen araudia betez.";
+export const MENU_NOTES_INFO = "Sortu eta antolatu behar dituzun ohar guztiak.";
+export const MENU_MESSENGER_INFO = "Bezeroaren eta aholkulariaren, edo langilearen eta enpresaren arteko komunikazio-kanal zuzena.";
+export const MENU_WAREHOUSE_INFO = "Kudeatu stocka eta eguneratu zure produktuen inbentarioa.";
 
 // ----- N
 

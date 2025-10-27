@@ -518,7 +518,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		Booking oldBooking = AON.getBooking(api.getDomain(), api.getUser());
 		boolean domainPayer = JsonUtils.getboolean(api.getData(), "domainPayer");
 		
-		boolean domainActive = JsonUtils.getboolean(api.getData(), "domainActive");
+		boolean domainActive = api.getDomain().isActive();
 		Date domainExpirationDate = JsonUtils.getDate(api.getData(), "domainExpirationDate");
 		Integer domainScope = JsonUtils.getInteger(api.getData(), "domainScope");
 		

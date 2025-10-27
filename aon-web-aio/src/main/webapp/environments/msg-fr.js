@@ -326,16 +326,16 @@ export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Émets des factures, enregistre des dépenses ou crée des clients, créanciers et fournisseurs.";
+export const MENU_ACCOUNTING_INFO = "Consulte les rapports et graphiques de votre comptabilité : compte de résultats, comptes d’exploitation, bilans et plus encore";
+export const MENU_FISCAL_INFO = "Visualisez les pré-calculs automatiques de vos impôts basés sur vos factures comptabilisées et les déclarations déjà déposées.";
+export const MENU_PAYROLL_INFO = "Consultez les rapports et graphiques du domaine du travail : fiches de paie, contrats, coûts de l’entreprise et plus encore.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Stockez et partagez des documents supplémentaires, tels que des formulaires fiscaux des années précédentes ou des factures provenant d’un autre logiciel.";
+export const MENU_TIMECONTROL_INFO = "Enregistrez le temps de travail conformément à la réglementation en vigueur.";
+export const MENU_NOTES_INFO = "Créez et organisez des notes sur tout ce dont vous avez besoin.";
+export const MENU_MESSENGER_INFO = "Canal de communication directe entre client et conseiller, ou entre employé et entreprise.";
+export const MENU_WAREHOUSE_INFO = "Gérez le stock et maintenez à jour l’inventaire de vos produits.";
 
 
 // ----- N

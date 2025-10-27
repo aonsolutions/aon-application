@@ -324,16 +324,16 @@ export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Emite facturas, rexistra gastos ou crea clientes, acredores e provedores.";
+export const MENU_ACCOUNTING_INFO = "Consulta informes e gráficos da túa contabilidade: perdas e ganancias, contas de explotación, balances e máis.";
+export const MENU_FISCAL_INFO = "Visualiza os precálculos automáticos dos teus impostos baseados nas túas facturas contabilizadas e nos modelos xa presentados.";
+export const MENU_PAYROLL_INFO = "Consulta informes e gráficos da área laboral: nóminas, contratos, custos da empresa e máis.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Almacena e comparte documentación adicional, como modelos fiscais de anos anteriores ou facturas doutro software.";
+export const MENU_TIMECONTROL_INFO = "Rexistra a xornada laboral cumprindo coa normativa vixente.";
+export const MENU_NOTES_INFO = "Crea e organiza anotacións de todo o que necesites.";
+export const MENU_MESSENGER_INFO = "Canle de comunicación directa entre cliente e asesor, ou entre empregado e empresa.";
+export const MENU_WAREHOUSE_INFO = "Xestiona o stock e mantén ao día o inventario dos teus produtos.";
 
 // ----- N
 
