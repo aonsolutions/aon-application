@@ -190,9 +190,11 @@ public class FieMassiveParser {
 					
 					Float regulatoryBase = null;
 				
-					try { regulatoryBase = Float.parseFloat(substring(line,33,34)+"."+substring(line,33,35));}
+					try { 
+						regulatoryBase = Float.parseFloat(substring(line,33,34)+"."+substring(line,33,35));
+						listener.onItdRegulatoryBase(regulatoryBase);			
+					}
 					catch (NumberFormatException e){}
-					listener.onItdRegulatoryBase(regulatoryBase);			
 					
 					listener.endITD();
 		    	}  else if(line.startsWith("OIT")) {

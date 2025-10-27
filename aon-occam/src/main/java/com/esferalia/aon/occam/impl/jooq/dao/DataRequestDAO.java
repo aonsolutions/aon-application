@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.DataRequest.DATA_REQUEST;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -63,6 +64,16 @@ public class DataRequestDAO {
 	
 	public static DataRequest get(AONContext ctx, DataRequestFilter filter) {
 		return select(ctx, filter).limit(1).fetch().stream().map(new DataRequestFiller()).findFirst().orElse(new DataRequest());
+	}
+	
+	public static Optional<DataRequest> get(AONContext ctx, Integer dataRequestId) {
+		return ctx.getDslContext().select()
+			.from(DATA_REQUEST)
+			.where(DATA_REQUEST.ID.eq(dataRequestId))
+			.fetch()
+			.stream()
+			.map(new DataRequestFiller())
+			.findFirst();
 	}
 	
 	public static DataRequest save(AONContext ctx, DataRequest dataRequest) {

@@ -19,10 +19,10 @@ public class ExternalDocJSON {
 	// ************************************************ [FROM] ***
 	// ***********************************************************
 	
-	public static <T extends Enum<?>> Optional<ExternalDoc<T>> fromJSON(JSONObject json, Supplier<ExternalDoc<T>> docSupplier) {
+	public static <T extends Enum<?>> Optional<ExternalDoc<T>> from(JSONObject json, Supplier<ExternalDoc<T>> docSupplier) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
 		ExternalDoc<T> doc = docSupplier.get();
-		DocJSON.fromJSON(json, () -> doc);
+		DocJSON.from(json, () -> doc);
 		return Optional.of(doc
 			.setAonTable(JsonUtils.getString(json, IJsonNames.AON_TABLE))
 			.setExternalStorage(ExternalStorage.safeValueOf(JsonUtils.getString(json, IJsonNames.EXTERNAL_STORAGE)))
@@ -38,17 +38,17 @@ public class ExternalDocJSON {
 	// ************************************************** [TO] ***
 	// ***********************************************************
 	
-	public static <T extends Enum<?>> Optional<JSONObject> toJSON(ExternalDoc<T> doc, Supplier<JSONObject> jsonSupplier) {
+	public static <T extends Enum<?>> Optional<JSONObject> to(ExternalDoc<T> doc, Supplier<JSONObject> jsonSupplier) {
 		if (doc == null) return Optional.empty();
-		return DocJSON.toJSON(doc, jsonSupplier )
+		return DocJSON.to(doc, jsonSupplier )
 			.map(json -> json
-			.put(IJsonNames.AON_TABLE, doc.getAonTable() )
-			.put(IJsonNames.EXTERNAL_STORAGE, ExternalStorage.name( doc.getExternalStorage()) )
-			.put(IJsonNames.S3_BUCKET, doc.getS3Bucket())
-			.put(IJsonNames.S3_KEY, doc.getS3Key())
-			.put(IJsonNames.DRIVE_ID, doc.getDriveId())
-			.put(IJsonNames.AON_ID, doc.getAonId())
-			.put(IJsonNames.URL, doc.getUrl())
+				.put(IJsonNames.AON_TABLE, doc.getAonTable() )
+				.put(IJsonNames.EXTERNAL_STORAGE, ExternalStorage.name( doc.getExternalStorage()) )
+				.put(IJsonNames.S3_BUCKET, doc.getS3Bucket())
+				.put(IJsonNames.S3_KEY, doc.getS3Key())
+				.put(IJsonNames.DRIVE_ID, doc.getDriveId())
+				.put(IJsonNames.AON_ID, doc.getAonId())
+				.put(IJsonNames.URL, doc.getUrl())
 		);
 	}
 

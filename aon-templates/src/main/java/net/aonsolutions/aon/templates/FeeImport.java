@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
@@ -39,6 +40,7 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.templates.importation.IConstants;
@@ -300,7 +302,22 @@ public class FeeImport extends Import {
 		OldItem oldItem = fee.getItem();
 		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> productFilter(domain, user, oldItem, f));			
 		if(product.getId() == null) {
-			Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
+			
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+			// Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
+			Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain( domain.getId())
+				.setUser( user.getLogin());
+			Tax tax = AON.getVatStream(occam,domain.getId())
+				.filter( t -> AonNumberUtils.equals(21.0,t.getPercentage()))
+				.findFirst()
+				.orElse(new Tax());
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
 			
 			String name = AonStringUtils.isEmpty(fee.getDescription()) 
 					? fee.getItem().getProduct().getCode()
@@ -465,13 +482,23 @@ public class FeeImport extends Import {
 		return filter;
     }
 	
-	private static Filter vatFilter(Domain domain, User user, TaxProperties f) {
-		Filter filter = f.getTaxTypeProperty().eq(TaxType.VAT.value())
-				.and(f.getPercentageProperty().eq(21.0));
-		if(domain.getParentId() != null) {
-			filter = filter.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())));
-		} else filter = filter.and(f.getDomainProperty().eq(domain.getId()));
-		return filter;
-	}
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+//	private static Filter vatFilter(Domain domain, User user, TaxProperties f) {
+//		Filter filter = f.getTaxTypeProperty().eq(TaxType.VAT.value())
+//				.and(f.getPercentageProperty().eq(21.0));
+//		if(domain.getParentId() != null) {
+//			filter = filter.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())));
+//		} else filter = filter.and(f.getDomainProperty().eq(domain.getId()));
+//		return filter;
+//	}
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
+	// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
 	
 }

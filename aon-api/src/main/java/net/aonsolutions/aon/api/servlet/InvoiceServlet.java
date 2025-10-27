@@ -2,13 +2,15 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -18,22 +20,23 @@ import org.json.JSONObject;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FINANCE;
+import com.esferalia.aon.occam.api.json.AccountJSON;
+import com.esferalia.aon.occam.api.json.ApiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TaxJSON;
-import com.esferalia.aon.occam.api.json.WorkplaceJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceCommunicationConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
-import com.esferalia.aon.occam.api.json.invoice.SiiConfigurationJSON;
-import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
-import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
@@ -46,34 +49,44 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -90,12 +103,12 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.TbaiUri;
-import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends AonApiHttpServlet{
@@ -115,11 +128,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/count":
 				response(req, resp, getInvoiceCount(api));
 				break;
-			case "/invoice_new_portal":
-				response(req, resp, getInvoiceNewPortalObject(api));
-				break;
 			case "/accounts":
-				response(req, resp, getAccountsObject(api));
+				response(req, resp, getExpAccounts(api));
 				break;
 			case "/series":
 				response(req, resp, getInvoiceSeries(api));
@@ -129,6 +139,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/configuration":
 				response(req, resp, getConfiguration(api));
+				break;
+			case "/api_configuration":
+				response(req, resp, getApiConfiguration(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -182,6 +195,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/accept":
 				response(req, resp, acceptInvoice(api));
 				break;
+			case "/rectify":
+				response(req, resp, rectifyInvoice(api));
+				break;
 			case "/sign":
 				response(req, resp, signInvoice(api));
 				break;
@@ -205,9 +221,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/rawdoc":
 				response(req, resp, RawdocServlet.deleteRawdocs(api));
 				break;
-			case "/cancel":
-				response(req, resp, deleteInvoiceTBAI(api));
-				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -216,26 +229,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private Object getInvoiceNewPortalObject(AonApiData api) {
-		InvoiceFilter filter = new InvoiceFilter()
-				.setDescription(api.getData().optString("description"))
-				.setStatus(api.getData().optString(IConstants.STATUS))
-				.setTypes(api.getData().opt(IConstants.TYPE) != null 
-					? api.getData().optString(IConstants.TYPE).split(","): null)
-				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
-				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
-				.setPage(api.getData().optInt("page"))
-				.setPerPage(api.getData().optInt("per_page"))
-				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
-		JSONArray jsArray = new JSONArray();
-		AON_SOLUTIONS.getInvoiceNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter))
-		.forEach(invoice -> {
-			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
-		});
-		return jsArray;
-	}
-
 	private JSONObject getInvoiceCount(AonApiData api) {
 		String domainName = api.getDomain().getName();
 		Integer domainId = api.getDomain().getId();
@@ -247,9 +240,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private Object getInvoiceObject(AonApiData api) {
-		if(api.getData().opt(IConstants.ID) != null) {
-			Integer id = api.getData().optInt(IConstants.ID);
-			return getInvoice(api.getDomain(), api.getUser().getLogin(), id);
+		Integer id = api.getData().optIntegerObject(IConstants.ID, null);
+		if (id != null) {
+			return getInvoice(api, id);
 		} else {
 			InvoiceFilter filter = new InvoiceFilter()
 				.setDescription(api.getData().optString("description"))
@@ -266,72 +259,57 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private JSONArray getAccountsObject(AonApiData api) {
-		JSONArray array = new JSONArray();
+	private JSONArray getExpAccounts(AonApiData api) {
 		String type = api.getData().optString(IConstants.TYPE);
-		ACCOUNTING.getAccounts(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> accountFilter(f, api.getDomain(), type)).forEach(acc -> {
-			if(acc.getCode().length() > 5) {
-				JSONObject json = new JSONObject();
-				json.put("code", acc.getCode());
-				json.put("name", acc.getDescription());
-				array.put(json);
-			}
-		});
-		return array;
+		return ACCOUNTING.getAccounts(api.getOccam(), f -> AonApiServletUtils.accountFilter(f, api.getDomain(), type))
+			.map( AccountJSON::to )
+			.filter( Optional<JSONObject>::isPresent )
+			.map( Optional<JSONObject>::get )
+			.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED));
 	}
 	
-	private JSONObject deleteInvoiceTBAI(AonApiData api) {
-		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		tbaiConfiguration.setCertificate(checkCertificate(api));
-		
-		List<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
-		invoiceIds.stream().forEach(id -> {
-			
-			Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(),
-					api.getUser().getLogin(), id);
-
-			try {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-				AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
-			} catch (Exception e) {
-				if(tbaiConfiguration.isTest()) {
-					AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
-				} else {
-					e.printStackTrace();
-				}
-			}
-			
-		});
-		return new JSONObject();
-	}
-	
-	private JSONObject deleteInvoice(AonApiData api) {
+	private JSONObject deleteInvoice(AonApiData api) throws Exception {
 		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-
-		boolean accepted = true;
-		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
-			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
-				f.getInvoiceProperty().eq(invoiceId)
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
-			accepted = info.isAccepted() || info.isAcceptedWithErrors();
-		}
-
-		if(invoice.isSales() && tbaiConfiguration.isActive() && accepted) {
-			tbaiConfiguration.setCertificate(checkCertificate(api));
-			TbaiMain tbai = new TbaiMain();
-			try {
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new AonApiException(e.getMessage());
+		
+		
+		// ***********************************
+		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
+		if (invoice.isSales()) {
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+			if (config.isVerifactu()) {
+				if (InvoiceCommunicator.mustBeAnnulled(api.getOccam(), invoice, InvoiceCommunicationType.VERIFACTU)) {
+					cancelAndCommunicateInvoice(api, config, company, invoice);
+					return new JSONObject();
+				}
+			}
+			if (config.isTbai()) {
+				boolean accepted = true;
+				if(config.isBizkaia()) {
+					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+						accepted = InvoiceInfoDAO.getMap(ctx, config, api.getDomain().getId(), invoiceId)
+								.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
+								.filter( Objects::nonNull )
+								.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+								.orElse( true )
+							;
+					}
+				}
+				if (accepted) {
+					config.setCertificate(checkCertificate(api));
+					TbaiMain tbai = new TbaiMain();
+					try {
+						tbai.createAnulacionTBAI(company, invoice, config);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AonApiException(e.getMessage());
+					}
+				}
+				
 			}
 		}
+		// ***********************************
 		
 		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getAttachModuleProperty().eq(invoiceId)
@@ -340,295 +318,198 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		// ids to null
 		invoice.setId(null);
-		invoice.setDetails(invoice.getDetails().stream().map(r -> {
-			r.setId(null);
-			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
-			return r;
-		}).toList());
+		invoice
+			.detailStream()
+			.map( d -> d.setId(null))
+			.flatMap(d -> d.taxStream())
+			.forEach(t -> t.setId(null))
+		; 
+//		invoice.setDetails(invoice.getDetails().stream().map(r -> {
+//			r.setId(null);
+//			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
+//			return r;
+//		}).toList());
 		// ----------
-		
+	
 		Rawdoc rawdoc = new Rawdoc()
-				.setData(attach.getData())
-				.setDomain(invoice.getDomain())
-				.setJson(InvoiceJSON.toJSON(invoice).toString())
-				.setMimeType(attach.getMimeType())
-				.setNature(RawdocNature.INVOICE)
-				.setStatus(RawdocStatus.DRAFT)
-				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
+			.setData(attach.getData())
+			.setDomain(invoice.getDomain())
+			.setJson(InvoiceJSON.toJSON(invoice).toString())
+			.setMimeType(attach.getMimeType())
+			.setNature(RawdocNature.INVOICE)
+			.setStatus(RawdocStatus.DRAFT)
+			.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
 		AON.deleteInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
 		AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
-		return new JSONObject();
-	}
-
-
-	public static List<Integer> toList(JSONArray array) {
-	    if(array==null || array.isEmpty())
-	        return new LinkedList<>();
-	    LinkedList<Integer> list = new LinkedList<>();
-	    for(int i=0; i<array.length(); i++) {
-	    	list.add(array.optInt(i));
-	    }
-	    return list;
-	}
-	
-	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
-    	Filter filter =  f.getDomainProperty().eq(domainId);
-    
-    	if(invoiceFilter.getDescription() != null) {
-    		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-        			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))
-        			.or(f.getSeriesProperty().like("%" + invoiceFilter.getDescription() + "%"))
-        			.or(f.getRegistryDocumentProperty().like("%" + invoiceFilter.getDescription() + "%"))
-        			;
-    		if (AonStringUtils.isNumeric(invoiceFilter.getDescription())) {
-   				Integer i = AonNumberUtils.toInteger( invoiceFilter.getDescription() );
-   				Double d = AonNumberUtils.toDouble( invoiceFilter.getDescription() );
-				ft = ft.or (f.getNumberProperty().like(i))
-					.or (f.getTotalProperty().like(d));
-   			}
-    		filter = filter.and( ft );
-    	}
-
-    	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
-    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value())
-    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
-    		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
-    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
-   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
-    		}
-    		filter = filter.and(filter2); 
-    	}
-    	
-    	if(invoiceFilter.getFrom() != null) {
-    		filter = filter.and(f.getStartIssueDateProperty().ge(invoiceFilter.getFrom()));
-    	}
-    	
-    	if(invoiceFilter.getTo() != null) {
-    		filter = filter.and(f.getEndIssueDateProperty().le(invoiceFilter.getTo()));
-    	}
-    	
-    	if(invoiceFilter.getRecorded() != null) {
-    		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
-    	}
-    	
-    	if(invoiceFilter.getRegistry() != null) {
-    		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
-    	}
-    	
-    	if(invoiceFilter.getPage() != null) {
-    		filter.page(invoiceFilter.getPage());
-    	} 
-    	
-    	if(invoiceFilter.getPerPage() != null) {
-    		filter.perPage(invoiceFilter.getPerPage());
-    	}
-    	
-		return filter;
-    }
-	
-	public static Filter accountFilter(AccountProperties f, Domain domain, String type) {
-		Integer[] domains = { domain.getId(), domain.getParentId() };
-		Filter filter =  f.getDomainProperty().in(domains);
 		
-    	InvoiceType iType = InvoiceType.safeValueOf(type);
-    	if(iType != null && InvoiceType.SALES.equals(iType)) {
-    		filter = filter.and(f.getCodeProperty().like("700%").or(f.getCodeProperty().like("705%"))); 
-    	}
-    	if(iType != null && InvoiceType.PURCHASE.equals(iType)) {
-    		filter = filter.and(f.getCodeProperty().like("60%").or(f.getCodeProperty().like("62%"))); 
-    	}
-    	if(iType != null && (InvoiceType.EXPENSES.equals(iType) || InvoiceType.UNDEDUCTIBLE.equals(iType))) {
-    		filter = filter.and(f.getCodeProperty().like("629%")); 
-    	}
-    	
-		return filter;
-    }
+		return new JSONObject();	
+	}
 
-	private static JSONObject getInvoice(Domain domain, String login, Integer id) {
-		Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, id);
+	private static JSONObject getInvoice(AonApiData api, Integer invoiceId) {
+		return getInvoice(api, invoiceId, null);
+	}
+	
+	private static JSONObject giveBackInvoice(AONContext ctx, Invoice invoice) {
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 
-		TbaiConfiguration tbai = AON.getTbaiConfiguration(domain, login);
-		if(tbai.isActive()) {	
-			String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
-			if(!AonStringUtils.isBlank(tbaiUrl)) {
-				json.put("tbai", true);
-				json.put("tbaiUrl", tbaiUrl);
+		Integer invoiceId = invoice.getId();
+		if (invoiceId != null) {
+			Integer domainId = invoice.getDomain();
+			// [START]
+			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
+			if (!icc.isBizkaia() && icc.isTbai()) {
+				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, domainId, invoiceId);
+				AonCollectionUtils.stream(history)
+				.filter(e -> !invoice.hasInvoiceInfo(e.getKey()))
+				.forEach(e -> invoice.putInvoiceInfo(e.getKey(), e.getValue().getInfo()) )
+				;
 			}
+			// [START]
+			// Este atributo debe modificarse a lo existente en InvoiceDOC
+			json.put(IJsonNames.FILE, InvoiceJSONUtils.buildInvoiceFileJSON(ctx, invoice));
+			// [END]
 		}
-		json.put(IJsonNames.FILE, buildInvoiceFileJSON(domain, login, invoice));
-		System.out.println( json.toString(1) );
-		return json;
-	}
-	
-	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
-		JSONObject json = new JSONObject();
-
-		InvoiceDoc invoiceDoc = invoice.getDoc().orElse(null);
-		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
-		if(invoiceDoc == null) invoiceDoc = AON.getInvoiceDoc(occam, invoice.getDomain(), invoice.getId()).orElse(null);
 		
-		if(invoiceDoc != null) {
-		    json.put(IJsonNames.URL, invoiceDoc.getUrl());
-		    json.put(IConstants.CONTENT_TYPE, invoiceDoc.getMimeType().getName());
-			return json;
-		} else {
-			Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
-					f -> f.getAttachModuleProperty().eq(invoice.getId())
-					, AttachType.INVOICE);
-
-			if(invoiceAttach != null && invoiceAttach.getId() != null) {
-				JSONObject data = new JSONObject();
-				data.put(IConstants.DOMAIN_NAME, domain.getName());
-				data.put(IConstants.DOMAIN_ID, domain.getId());
-				data.put(IJsonNames.ID, invoiceAttach.getId());
-				data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
-				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				String path = "/ms/api/file/" +  result;	
-				String url = "https://" + domain.getName() + path; 
-			    json.put(IJsonNames.URL, url);
-			    json.put(IJsonNames.PATH, path);
-			    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
-				return json;
-			} else if(invoice.isSales()){
-				JSONObject data = new JSONObject();
-				data.put(IConstants.DOMAIN_NAME, domain.getName());
-				data.put(IConstants.DOMAIN_ID, domain.getId());
-				data.put(IJsonNames.ID, invoice.getId());
-				data.put(IConstants.SOURCE, "invoice");
-				data.put(IJsonNames.LOGIN, login);
-			
-				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				String path = "/ms/api/download_invoice_pdf?json=" +  result;
-				String url = "https://" + domain.getName() + path;
-			    json.put(IJsonNames.URL, url);
-			    json.put(IJsonNames.PATH, path);
-			    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
-				return json;
-			}	
+		
+		// [START]
+		// Borrar
+		System.out.println( " ****** REQUESTED INVOICE ("+ invoiceId+")");
+		System.out.println( json.toString(1));
+		System.out.println( " ****** ");
+		// [END]
+		
+		return json;
+		
+	}
+	private static JSONObject getInvoice(AonApiData api, Integer invoiceId, List<InvoiceError> previousErrors) {
+		checkApiData(api);
+		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		Integer domainId = domain.getId();
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domainId)
+			.setUser(login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			Invoice invoice = InvoiceDAO.getFullInvoice(ctx, invoiceId);
+			if (invoice == null || invoice.getId() == null) {
+				throw new AonApiException("Factura no encontrada");
+			}
+			AonCollectionUtils.stream(previousErrors).forEach(invoice::addMessage);
+			return giveBackInvoice(ctx, invoice);
 		}
-		return null;
 	}
 	
 	private static JSONArray getInvoices(AonApiData api, InvoiceFilter filter) {
 		if(!isRawdoc(filter.getStatus())) {
-			JSONArray jsArray = new JSONArray();
-			String domainName = api.getDomain().getName();
 			Integer domainId = api.getDomain().getId();
-			String login = api.getUser().getLogin();
-			AON_SOLUTIONS.getInvoices(domainName, domainId, login, f -> invoiceFilter(f, domainId, filter))
-				.forEach(invoice -> jsArray.put(invoiceList2JSON(api.getDomain(), api.getUser(), invoice)));
-			return jsArray;
+			try(CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+				return InvoiceApiDAO.getInvoices(ctx, f -> AonApiServletUtils.invoiceFilter(f, domainId, filter))
+					.map( i ->  invoiceList2JSON(ctx, i))
+					.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED));
+			}
 		} else {
 			return RawdocServlet.getRawdocs(api);
 		}
 	}
 	
-	private static JSONObject invoiceList2JSON(Domain domain, User user, Invoice invoice) {
+	private static JSONObject invoiceList2JSON(AONContext ctx, Invoice invoice) {
+		
 		String referenceAux = "";
 		if(!AonStringUtils.isBlank(invoice.getSeries())) {
 			referenceAux = referenceAux + invoice.getSeries() + "/";
 		}
-
 		referenceAux = referenceAux + "PROFORMA";
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.ID, invoice.getId());
-		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 
-				? invoice.getReferenceCode() : referenceAux);
-		json.put(IJsonNames.NAME, invoice.getRegistryName());
-		json.put(IJsonNames.TOTAL, invoice.getTotal());
-		json.put(IJsonNames.STATUS, invoice.isRecorded() 
-				? InvoiceStatus.SCORED.name().toLowerCase() 
-				: InvoiceStatus.PENDING.name().toLowerCase());
-		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
-		json.put(IJsonNames.SERIES, invoice.getSeries());
-		json.put(IJsonNames.SERIE, invoice.getSeries());
-		json.put(IJsonNames.NUMBER, invoice.getNumber());
-		json.put(IJsonNames.SIGNED, invoice.isSigned());
-
-		InvoiceData invoiceData = AON.getInvoiceData(domain, user, f -> f.getInvoiceProperty().eq(invoice.getId())
-				.and(f.getNameProperty().eq("MD5")));
-		if(invoiceData != null && !AonStringUtils.isBlank(invoiceData.getValue())) {
-			String md5 = AonDigestUtils.md5Hex(invoice.flat());
-			json.put("altered", !md5.equalsIgnoreCase(invoiceData.getValue()));
-		}
-
+		JSONObject json = new JSONObject()
+			.put(IJsonNames.ID, invoice.getId())
+			.put(IJsonNames.DATE, invoice.getIssueDate())
+			.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 ? invoice.getReferenceCode() : referenceAux)
+			.put(IJsonNames.NAME, invoice.getRegistryName())
+			.put(IJsonNames.TOTAL, invoice.getTotal())
+			.put(IJsonNames.STATUS, invoice.isRecorded() ? InvoiceStatus.SCORED.name().toLowerCase() : InvoiceStatus.PENDING.name().toLowerCase())
+			.put(IJsonNames.TYPE, invoice.getType().getTediName())
+			.put(IJsonNames.SERIES, invoice.getSeries())
+			.put(IJsonNames.SERIE, invoice.getSeries())
+			.put(IJsonNames.NUMBER, invoice.getNumber())
+			.put(IJsonNames.SIGNED, invoice.isSigned())
+			.put(IJsonNames.COMMUNICATION_INFO, InvoiceJSON.getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null));
+		InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.MD5)
+			.filter(id -> AonStringUtils.isNotBlank(id.getValue()))
+			.ifPresent(id -> {
+				String md5 = AonDigestUtils.md5Hex(invoice.flat());
+				json.put("altered", !md5.equalsIgnoreCase(id.getValue()));
+			});
 		return json;
 	}
+
+	// [END REMOVE]
+	// -----------------------------------
+	// -----------------------------------
+	// -----------------------------------
 	
-	private static JSONObject InvoiceNewPortalList2JSON(InvoiceNewPortal invoice, AonApiData api) {
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.ID, invoice.getId());
-		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
-		json.put(IJsonNames.NAME, invoice.getRegistryName());
-		json.put(IJsonNames.TOTAL, invoice.getTotal());
-		json.put(IJsonNames.TYPE, invoice.getType());
-		json.put(IJsonNames.STATUS, invoice.isRecorded() 
-				? InvoiceStatus.SCORED.name().toLowerCase() 
-				: InvoiceStatus.PENDING.name().toLowerCase());
-		json.put(IJsonNames.NUMBER, invoice.getNumber());
-		json.put(IJsonNames.SERIE, invoice.getSeries());
-		if(invoice.getMimeType() != null) {
-			JSONObject data = new JSONObject();
-			data.put("domain_name", api.getDomain().getName());
-			data.put("domain_id", api.getDomain().getId());
-			data.put("id", invoice.getId());
-			data.put("attach_type", AttachType.RAWDOC.getName());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "/ms/api/file/" +  result;
-			json.put(IJsonNames.FILE, url);
-			json.put(IJsonNames.CONTENT_TYPE, invoice.getMimeType().getName());
-		} else {
-			JSONObject data = new JSONObject();
-			data.put("id", invoice.getId());
-			data.put("source", "rawdoc");
-			data.put("domain_id", api.getDomain().getId());
-			data.put("domain_name", api.getDomain().getName());
-			data.put("login", api.getUser().getLogin());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "/ms/api/download_invoice_pdf?json=" +  result;
-			json.put(IJsonNames.FILE, url);
-			json.put(IJsonNames.CONTENT_TYPE, MimeType.PDF.getName());
+	public static JSONObject rectifyInvoice(AonApiData api) throws Exception {
+		JSONObject invoiceJSON = JsonUtils.getJSONObject( api.getData(), "invoice");
+		String series = JsonUtils.getString( api.getData(), "series");
+		Date date = JsonUtils.getDate( api.getData(), "date");
+		String cause = JsonUtils.getString( api.getData(), "cause");
+		
+		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);
+		InvoiceRectificationData ird = new InvoiceRectificationData()
+			.setType( invoice.getType())
+			.setSeries(series)
+			.setIssueDate(date)
+			.setCause(cause)
+			.setRectificationtype(RectificationType.NORMAL_RECTIFIER )
+			.setSettleFinances(false)
+		;
+		try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+			
+			Invoice rectified = InvoiceDAO.rectifyInvoice(ctx, invoice.getId(), ird
+				, false		// No se graba la factura rectificativa. Se devuelve para grabar en rawdoc.
+			);
+			
+			return giveBackInvoice(ctx, rectified);
 		}
-		return json;
 	}
 	
 	public static JSONObject acceptInvoice(AonApiData api) throws Exception {
-		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
-		if(invoice.isSales()) {
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
+		
+		if (invoice.isSales()) {
+			
+			// ***********************************
+			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
+			if (icc.isVerifactu()) {
+				return acceptAndCommunicateInvoice(api, icc, company);	
+			}
+			// ***********************************
+			
 			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
 				invoice.setReferenceCode(null);	
 			}
-		}
-		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
-		if(invoice.isSales() && tbaiConfiguration.isActive() && invoice.isThirdPart()) {
-			checkTbaiId(company, invoice, tbaiId);
-		} else if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			tbaiConfiguration.setCertificate(checkCertificate(api));
-			tbaiValidation(invoice);
+			
+			if (icc.isTbai() && invoice.isThirdPart()) {
+				checkTbaiId(company, invoice, tbaiId);
+			} else if( icc.isTbai()) {
+				Certificate certificate = checkCertificate(api);
+				icc.setCertificate(certificate);
+				invoiceValidation(invoice);
+			}
 		}
 		
+		
 		Integer rawdocId = invoice.getId();
+		invoice.setRawdocId(invoice.getId());
 		invoice.setId(null);
 		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
-		acceptTbai(tbaiConfiguration, company, invoice);
-		saveInvoiceData(api, tbaiConfiguration, invoice, tbaiId);
-		JSONObject json = InvoiceJSON.toJSON(invoice);
-		if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			String tbaiUrl = TbaiData.getInstance(tbaiConfiguration).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
-			if(!AonStringUtils.isBlank(tbaiUrl)) {
-				json.put("tbai", true);
-				json.put("tbaiUrl", tbaiUrl);
-			}
-		}
-		json.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
-
-		return json;
+		acceptTbai(icc, company, invoice);
+		saveInvoiceData(api, icc, invoice, tbaiId);
+		return getInvoice(api, invoice.getId(), invoice.messageStream().toList());
 	}
 	
 	public static void processInvoiceFile(AonApiData api, Invoice invoice) {
@@ -640,48 +521,28 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			if(s3Key != null) {
 				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
 				InvoiceDoc invoiceDoc = new InvoiceDoc()
-						.setExternalStorage(ExternalStorage.AWS)
-						.setS3Bucket("aon-upload-post")
-						.setS3Key(s3Key)
-						.setInvoice(invoice.getId())
-						.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-						.setType(InvoiceAttachmentType.INVOICE)
-						.setDomain(invoice.getDomain());
-
+					.setExternalStorage(ExternalStorage.AWS)
+					.setS3Bucket("aon-upload-post")
+					.setS3Key(s3Key)
+					.setInvoice(invoice.getId())
+					.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+					.setType(InvoiceAttachmentType.INVOICE)
+					.setDomain(invoice.getDomain());
 				AON.saveInvoiceDoc(api.getOccam(), invoiceDoc);
-
-//				try {
-//					byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
-//					if(data != null) {
-//						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-//						Attach attach = new Attach()
-//							.setDate(new Date())
-//							.setDomain(new Domain().setId(invoice.getDomain()))
-//							.setAttachModule(invoice.getId())
-//							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-//							.setAttachType(AttachType.INVOICE)
-//							.setType(InvoiceAttachmentType.INVOICE.value())
-//							.setData(data);
-//
-//						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
-//					}
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
 			}
 		}
 	}
 	
-	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws Exception {
-		if(invoice.isSales() && tbaiConfiguration.isActive() && !invoice.isThirdPart()) {
+	public static void acceptTbai(InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
+		if(invoice.isSales() && icc.isTbai() && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
-			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			tbai.createEmisionTBAI(company, invoice, icc);
 		}
 	}
-	
-	public static void saveInvoiceData(AonApiData api, TbaiConfiguration tbaiConfiguration, Invoice invoice, String tbaiId) throws UnsupportedEncodingException {
-		if(invoice.isSales() && tbaiConfiguration.isActive() && invoice.isThirdPart()){
-			String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
+
+	public static void saveInvoiceData(AonApiData api, InvoiceCommunicationConfiguration icc, Invoice invoice, String tbaiId) throws UnsupportedEncodingException {
+		if(invoice.isSales() && icc.isTbai() && invoice.isThirdPart()){
+			String qrUrl = TbaiUri.getUrlQr(icc) + "?id=" + tbaiId + "&s="
 					+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 					+ invoice.getTotal();
 			String crc = CRC8.calculate(qrUrl);
@@ -690,13 +551,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			InvoiceData dataTbaiId = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("TBAI_ID")
+					.setName(InvoiceDataName.TBAI_ID)
 					.setValue(tbaiId);
 			
 			InvoiceData dataTbaiUrl = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("TBAI_URL")
+					.setName(InvoiceDataName.TBAI_URL)
 					.setValue(qrUrl);
 			
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiId);
@@ -706,7 +567,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			InvoiceData dataThirdPart = new InvoiceData()
 					.setDomain(invoice.getDomain())
 					.setInvoice(invoice.getId())
-					.setName("THIRD_PART")
+					.setName(InvoiceDataName.THIRD_PART)
 					.setValue("true");
 			
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataThirdPart);
@@ -724,10 +585,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				+ "&s=" + invoice.getSeries()
 				+ "&n=" + invoice.getNumber()
 				+ "&t=" + invoice.getTotal();  
-		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
 		String tbaiId = "";
-		if(tbai.isActive()) {
-			TbaiData tbaiData = TbaiData.getInstance(tbai);
+		if(icc.isTbai()) {
+			TbaiData tbaiData = TbaiData.getInstance(icc);
 			String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 			qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			tbaiId = tbaiData.getTbaiId(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
@@ -777,7 +638,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String status = JsonUtils.getString(api.getData(), IJsonNames.STATUS);
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.getId() == null || isRawdoc(status)) {
-			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
+			invoice.detailStream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
 			invoice = AON_SOLUTIONS.validateInvoice(api.getDomain(), api.getUser(), invoice);
 		} else invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 
@@ -796,33 +657,53 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return file;
 	}
 	
+	private JSONObject getApiConfiguration(AonApiData api) {
+//		Date start1 = new Date();
+//		Date end1 = new Date();
+		Integer domainId = api.getDomain().getId();
+		ApiConfiguration conf = AON.getApiConfiguration(api.getOccam(), domainId );
+		return ApiConfigurationJSON.to(conf);
+//		JSONObject json = ApiConfigurationJSON.to(conf);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println( "NEW Configuration secs: "  + (end1.getTime() - start1.getTime()) );
+//		System.out.println( "[START] NEW Configuration *****" );
+//		System.out.println( json.toString(1) );
+//		System.out.println( "[END] NEW Configuration *****" );
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+	}
+	
 	private JSONObject getConfiguration(AonApiData api) {
+		Date start = new Date();
 		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
-		Tax withholdingPercent = AON.getTax(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), withholdingPercentId);
-		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
-
+		WithholdingType withholdingType = AON.getTax(api.getOccam(), api.getDomain().getId(), withholdingPercentId)
+			.filter( t -> t.getWithholdingType() != null)
+			.map(Tax::getWithholdingType)
+			.orElse(WithholdingType.PROFESSIONAL);
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		List<RegistryAdditionalInfo> rais = new LinkedList<>();
 		rais.add(RegistryAdditionalInfo.BANKS);
 		JSONObject companyJSON = RegistryServlet.getRegistryAdditionalInfo(CompanyJSON.toJSON(company), api, api.getData(), company.getId(), rais);;
 		
 		JSONObject json = new JSONObject();
-		json.put("print", getPrintConfiguration(api));
-		json.put("company", companyJSON);
+		json.put(IJsonNames.PRINT, getPrintConfiguration(api));
+		json.put(IJsonNames.COMPANY, companyJSON);
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
-		json.put("tbai", getTbaiConfiguration(api));
-		json.put("sii", getSiiConfiguration(api));
+		json.put(IJsonNames.COMMUNICATION, getInvoiceCommunicationConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
-		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
-		json.put("invofox", InvofoxServlet.getConfiguration(api));
+		json.put("withholdingPercent", withholdingType.name());
+		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
 		LinkedList<Workplace> workplaces = AON.getWorkplaces(api.getOccam(), api.getDomain().getId())
-				.collect(Collectors.toCollection(LinkedList::new));
+			.collect(Collectors.toCollection(LinkedList::new));
 		json.put(IJsonNames.WORKPLACES, workplaces);
 		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}
-	
+
 	private JSONObject saveConfiguration(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
@@ -846,27 +727,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));
 
-		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
-		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
-		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
-		
-		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
-				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), "invofox"))) 
+		JSONObject print = savePrintConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.PRINT));
+		JSONObject icc = saveInvoiceCommunicationConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.TBAI));
+		JSONObject invofox = JsonUtils.has(api.getData(), IJsonNames.INVOFOX) ? 
+				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), IJsonNames.INVOFOX))) 
 				: new JSONObject();
 		
 		return new JSONObject()
-			.put("administration", administration.name())	
-			.put("print", print)
-			.put("tbai", tbai)
-			.put("sii", sii)
-			.put("invofox", invofox)
+			.put(IJsonNames.ADMINISTRATION, administration.name())	
+			.put(IJsonNames.PRINT, print)
+			.put(IJsonNames.COMMUNICATION, icc)
+			.put(IJsonNames.INVOFOX, invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
 	
 	private JSONArray getVats(AonApiData api) {
-		return TaxJSON.toJSON(
-			AON.getTaxStream(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-		);
+		return TaxJSON.toJSON(AON.getTaxStream(api.getOccam(), api.getDomain().getId()));
 	}
 	
 	private JSONObject getPrintConfiguration(AonApiData api) {
@@ -902,28 +778,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return getPrintConfiguration(api);
 	}
 	
-	private JSONObject getSiiConfiguration(AonApiData api) {
-		SiiConfiguration sii = AON.getSiiConfiguration(api.getDomain(), api.getUser());
-		return SiiConfigurationJSON.toJSON(sii);
+	private JSONObject getInvoiceCommunicationConfiguration(AonApiData api) {
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+		return InvoiceCommunicationConfigurationJSON.to(config).orElse(null);
 	}
 	
-	private JSONObject saveSiiConfiguration(AonApiData api, JSONObject json) {
-		SiiConfiguration sii = SiiConfigurationJSON.fromJSON(json);
-		AON.saveSiiConfiguration(api.getDomain(), api.getUser(), sii);
-		return json;
+	private JSONObject saveInvoiceCommunicationConfiguration(AonApiData api, JSONObject json) {
+		return InvoiceCommunicationConfigurationJSON.from(json)
+			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
+			.flatMap(InvoiceCommunicationConfigurationJSON::to)
+			.orElse(null);
 	}
-	
-	private JSONObject getTbaiConfiguration(AonApiData api) {
-		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		return TbaiConfigurationJSON.toJSON(tbai);
-	}
-	
-	private JSONObject saveTbaiConfiguration(AonApiData api, JSONObject json) {
-		TbaiConfiguration t = TbaiConfigurationJSON.fromJSON(json);
-		AON.saveTbaiConfiguration(api.getDomain(), api.getUser(), t);
-		return json;
-	}
-	
+
 	private static RawdocStatus getRawdocStatus(String status) {
 		return RawdocStatus.safeValueOf(status);
 	}
@@ -932,7 +798,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return getRawdocStatus(status) != null;
 	}
 	
-	private static  void tbaiValidation(Invoice invoice) throws Exception {
+	private static void invoiceValidation(Invoice invoice) throws Exception {
 		checkInvoice(invoice);
 		checkRegistry(invoice);
 	}
@@ -978,26 +844,93 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			throw new Exception("El Documento del cliente no es válido.");
 		}
 	}
-	
-	
-	public static void main(String[] args) {
-//		JSONObject data = new JSONObject();
-//		data.put(IConstants.DOMAIN_NAME, "innovative-mac.aonsolutions.net");
-//		data.put(IConstants.DOMAIN_ID, 562);
-//		data.put(IJsonNames.ID, 1209900); //1177840);
-//		data.put(IConstants.ATTACH_TYPE, AttachType.DATA.getName());
-//		String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-//		String url = "innovative-mac.aonsolutions.net/ms/api/file/" +  result;	
-//		System.out.println(url);
-
-	}
-	
-	/// ***********************************************************************
-	/// ***********************************************************************
-	/// ***********************************************************************
-	/// ***********************************************************************
 
 	private JSONArray getInvoiceSeries(AonApiData api) {
 		return InvoiceSeriesJSON.to(FINANCE.getInvoiceSalesSeries(api.getOccam(), api.getDomain().getId()));	
 	}
+	
+	// ************************************************************
+	// ******************************* [ACCEPT AND COMMUNICATE] ***
+	// ************************************************************
+	public static JSONObject acceptAndCommunicateInvoice(AonApiData api, InvoiceCommunicationConfiguration config, Company company) throws InvoiceCommunicationException, InvoiceErrorException {
+		checkApiData(api);
+		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
+		Invoice invoice = InvoiceJSON.from(api.getData())
+			.orElseThrow(() -> new AonApiException("Invalid invoice data provided."));
+		processInvoiceFile2(api, invoice);
+		invoice.setRawdocId(invoice.getId());
+		invoice.setId(null);
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
+			.setConfig(config)
+			.setCompany(company);
+		
+		try {
+			InvoiceCommunicator.acceptInvoice(communicator);
+		} catch (Exception e) {
+			InvoiceCommunicator.throwRightException( e, invoice  );
+		}
+		return getInvoice(api, invoice.getId(), invoice.messageStream().toList());
+	}
+	
+	private static void processInvoiceFile2(AonApiData api, Invoice invoice) {
+		JSONObject fileJSON = JsonUtils.getJSONObject(api.getData(), IJsonNames.FILE);
+		if (!fileJSON.isEmpty()) {
+			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
+			String contentType = JsonUtils.getString(fileJSON, "content_type");
+			if(s3Key != null) {
+				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+				InvoiceDoc invoiceDoc = new InvoiceDoc()
+					.setExternalStorage(ExternalStorage.AWS)
+					.setS3Bucket("aon-upload-post")
+					.setS3Key(s3Key)
+					.setInvoice(invoice.getId())
+					.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+					.setType(InvoiceAttachmentType.INVOICE)
+					.setDomain(invoice.getDomain());
+				invoice.setDoc(invoiceDoc);
+			}
+		}
+	}
+	
+	// ************************************************************
+	// ******************************* [CANCEL AND COMMUNICATE] ***
+	// ************************************************************
+	
+	private static void cancelAndCommunicateInvoice(AonApiData api, InvoiceCommunicationConfiguration config,Company company, Invoice invoice) throws InvoiceCommunicationException, InvoiceErrorException {
+		checkApiData(api);
+		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
+		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+		InvoiceCommunicatorContext icc = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
+				.setConfig(config)
+				.setCompany(company)
+				.setPreserveRawdocOnDeletion(true);
+		try {
+			InvoiceCommunicator.cancelInvoice(icc);
+		} catch (Exception e) {
+			InvoiceCommunicator.throwRightException( e, invoice  );
+//			if (invoice.hasMessages()) {
+//				List<InvoiceError> errors = invoice.messageStream()
+//					.collect(Collectors.toCollection(LinkedList::new));
+//				e.printStackTrace();
+//				throw new InvoiceErrorException(errors);
+//			}
+//
+//			// Para evitar recursividad --- 
+//			Set<Throwable> visited = new HashSet<>();
+//			Throwable current = e;
+//			while (current != null && !visited.contains(current)) {
+//				visited.add(current);
+//				current = current.getCause();
+//			}
+//			// ------------------------------			
+//			throw AonCollectionUtils.stream(visited)
+//				.filter( InvoiceCommunicationException.class::isInstance )
+//				.map(ex -> (InvoiceCommunicationException) ex)
+//				.findFirst()
+//				.orElse( new InvoiceCommunicationException(e.getMessage()))
+//			;
+		}
+	}
+	
 }

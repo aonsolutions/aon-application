@@ -13,7 +13,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -24,6 +23,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType.InvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -475,36 +475,41 @@ public class InvoiceFaker {
 	}
 
 	private static void checkInvoice(Invoice invoice) {
-		invoice.getTransaction().visit( new IInvoiceTransactionTypeVisitor() {
+		invoice.getTransaction().visit( new InvoiceTransactionTypeVisitor<Void>() {
 			
 			@Override
-			public void visitOtherISP() {
+			public Void visitOtherISP() {
 				invoice.setVatImportation(false);
 				invoice.setWithholdingFarmer(false);
+				return null;
 			}
 			
 			@Override
-			public void visitNational() {
+			public Void visitNational() {
 				invoice.setVatImportation(false);
+				return null;
 			}
 			
 			@Override
-			public void visitIntracommunity() {
+			public Void visitIntracommunity() {
 				invoice.setVatImportation(false);
 				invoice.setWithholdingFarmer(false);
 				invoice.setVatAccrualPayment(false);
+				return null;
 			}
 			
 			@Override
-			public void visitExtracommunity() {
+			public Void visitExtracommunity() {
 				invoice.setWithholdingFarmer(false);
 				invoice.setVatAccrualPayment(false);
+				return null;
 			}
 			
 			@Override
-			public void visitCanCeuMel() {
+			public Void visitCanCeuMel() {
 				invoice.setWithholdingFarmer(false);
 				invoice.setVatAccrualPayment(false);
+				return null;
 			}
 		});
 		

@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -130,22 +130,22 @@ public class Lroe140_2_1Test {
 				.setType(CERT_TYPE);
 	}
 	
-	private TbaiConfiguration getTbaiConfiguration() throws IOException {
-		return new TbaiConfiguration()
-				.setActive(true)
+	private InvoiceCommunicationConfiguration getConfiguration() throws IOException {
+		return new InvoiceCommunicationConfiguration()
+				.setTbai(true)
 				.setAdministration(Administration.BIZKAIA)
 				.setCertificate(getCertificate())
-				.setTest(true);
+				.setTbaiTest(true);
 	}
 	
 	@Test
 	public void test() throws Exception {
-		TbaiConfiguration tbaiConfig = getTbaiConfiguration();
+		InvoiceCommunicationConfiguration icc = getConfiguration();
 		Person person = getPerson();
 		Invoice invoice = buildInvoice();
 		LROE140_2_1 lroe = new LROE140_2_1();
-//		lroe.alta(tbaiConfig, person, invoice);
-		lroe.consulta(tbaiConfig, person, invoice);
+//		lroe.alta(icc, person, invoice);
+		lroe.consulta(icc, person, invoice);
 	}
 	
 }

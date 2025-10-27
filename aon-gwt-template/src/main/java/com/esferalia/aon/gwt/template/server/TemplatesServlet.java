@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -913,9 +914,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 		Domain d = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
 		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		List<Tax> taxList = d.getParentId() != null 
-			? AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId()))).toList()
-			: AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId())).toList();
+		Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(user.getLogin());
+		List<Tax> taxList = AON.getTaxStream(occam, domain.getId()).collect(Collectors.toCollection(LinkedList::new));
+//		List<Tax> taxList = d.getParentId() != null 
+//			? AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId()))).toList()
+//			: AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId())).toList();
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0 && row.getPhysicalNumberOfCells()> 3){
 				Iterator<Cell> cellIterator = row.cellIterator();

@@ -36,12 +36,13 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvofoxEnvironment;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDataNames;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -346,7 +347,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						InvoiceData invoiceData = new InvoiceData()
 								.setDomain(api.getDomain().getId())
 								.setInvoice(inv.getId())
-								.setName(InvoiceDataNames.INVOFOX_ID.name())
+								.setName(InvoiceDataName.INVOFOX_ID)
 								.setValue(documentId)
 								.setStartDate(new Date());
 						AON.saveInvoiceData(api.getDomain(), api.getUser(), invoiceData);
@@ -582,7 +583,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	public static JSONObject getConfiguration(AonApiData api) {
-		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+			return getConfiguration(ctx);
+		}
+	}
+	
+	public static JSONObject getConfiguration(AONContext ctx) {
+		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(ctx);
 		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
 
 		JSONArray environments = new JSONArray();
@@ -823,6 +830,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.ifPresent(errors -> errors.forEach(ocrError -> getMessages(ocrError)
 								.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))))));
 
+		ocrDocument.getData().ifPresent(i -> i.getCurrency().ifPresent(c -> {
+			if(!AonStringUtils.containsIgnoreCase(c.getValue().orElse(""), "EUR")) {
+				InvoiceError invoiceError = new InvoiceError();
+				invoiceError.setLevel(InvoiceErrorLevel.WRN);
+				invoiceError.setCode(InvoiceErrorMessages.C020.name());
+				invoiceError.setMessage(InvoiceErrorMessages.C020.getMessage());
+				messages.add(InvoiceErrorJSON.toJSON(invoiceError));
+			}
+		}));
 		ocrDocument.getData().ifPresent(ocrInvoice -> getMessages(ocrInvoice, company)
 				.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))));
 

@@ -23,6 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -403,10 +404,14 @@ public class OfferPdfServlet extends HttpServlet {
         Double total = 0.0;
         Double quota = 0.0;
         LinkedList<OfferDetail> details = AON.getOfferDetails(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(offer.getId())).collect(Collectors.toCollection(LinkedList::new));
+        Occam occam = new Occam()
+    		.setDomainName(domain.getName())
+    		.setDomain( domain.getId())
+    		.setUser("");
         for (OfferDetail detail : details) {
         	//Item item = AON.getItem(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(detail.getItem().getId()));
         	OldProduct product = AON.getProduct(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getItem().getProduct().getId()));
-        	Tax tax = AON.getTax(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(product.getVat()));
+        	Tax tax = AON.getTax(occam, domain.getId(), product.getVat()).orElse(new Tax());
         	t1.addCell(new Paragraph(detail.getDescription(), getColorFont(9, DARK_BLUE)));
             t1.addCell(getRightCell(new Paragraph(Double.toString(AonMathUtils.round(detail.getQuantity())), getColorFont(9, DARK_BLUE))));
             t1.addCell(getRightCell(new Paragraph(Double.toString(AonMathUtils.round(detail.getPrice())) + " \u20AC", getColorFont(9, DARK_BLUE))));

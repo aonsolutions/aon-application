@@ -81,6 +81,7 @@
     <module>aon-sii</module>
     <module>aon-seres</module>
     <module>aon-tbai</module>
+    <module>aon-verifactu</module>
     <module>aon-invoice-communication</module>
     <module>aon-external-sources</module>
     <module>aon-sign</module>

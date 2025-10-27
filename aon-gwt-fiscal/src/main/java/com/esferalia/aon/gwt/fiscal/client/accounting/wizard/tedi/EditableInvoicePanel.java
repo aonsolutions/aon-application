@@ -40,12 +40,12 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType.InvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -1957,10 +1957,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			uossRegime.setVisible(false);
 			euossRegime.setVisible(false);
 		} else {
-			invoiceCallback.getInvoice().getTransaction().visit(new IInvoiceTransactionTypeVisitor() {
+			invoiceCallback.getInvoice().getTransaction().visit(new InvoiceTransactionTypeVisitor<Void>() {
 				
 				@Override
-				public void visitNational() {
+				public Void visitNational() {
 					visitCommon();
 					investment.setVisible(true);
 					withholding.setVisible(true);
@@ -1976,10 +1976,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					);
 					euossRegime.setVisible( false );
 					iossRegime.setVisible( false );
+					return null;
 				}
 				
 				@Override
-				public void visitOtherISP() {
+				public Void visitOtherISP() {
 					visitCommon();
 					investment.setVisible(true);
 					withholding.setVisible(true);
@@ -1990,11 +1991,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					iossRegime.setVisible(false);
 					uossRegime.setVisible(false);
 					euossRegime.setVisible(false);
+					return null;
 				}
 				
 				
 				@Override
-				public void visitIntracommunity() {
+				public Void visitIntracommunity() {
 					visitCommon();
 					investment.setVisible(true);
 					withholding.setVisible(false);
@@ -2005,10 +2007,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					iossRegime.setVisible(false);
 					uossRegime.setVisible(false);
 					euossRegime.setVisible(false);
+					return null;
 				}
 				
 				@Override
-				public void visitExtracommunity() {
+				public Void visitExtracommunity() {
 					visitCommon();
 					withholding.setVisible(false);
 					surcharge.setVisible(true);
@@ -2040,11 +2043,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						&& isDefaultAdmonCanarias( invoiceCallback )
 					);
 					uossRegime.setVisible( false  );
+					return null;
 				}
 				
 				@Override
-				public void visitCanCeuMel() {
-					visitExtracommunity();
+				public Void visitCanCeuMel() {
+					return visitExtracommunity();
 				}
 				
 				private void visitCommon() {

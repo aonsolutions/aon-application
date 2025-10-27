@@ -11,6 +11,8 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,15 +20,16 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -58,11 +61,29 @@ public class DataResponseDAO {
 	
 
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, DataResponseFilter filter){	
+	private static SelectJoinStep<Record> select(AONContext ctx){	
 		return ctx.getDslContext()
 				.select()
-				.from(DATA_RESPONSE)
-				.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
+				.from(DATA_RESPONSE);
+	}
+	private static SelectConditionStep<Record> select(AONContext ctx, DataResponseFilter filter){	
+		return select(ctx)
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
+	}
+	public static Optional<DataResponse> get(AONContext ctx, Integer id, Options...options) {
+		return select(ctx)
+			.where(DATA_RESPONSE.ID.eq(id))
+			.orderBy(DATA_RESPONSE.ID.desc())
+			.fetch()
+			.stream()
+			.map(new DataResponseFiller())
+			.map(dr -> {
+				if(options.length > 0 && options[0].isFull()) {
+					dr.setDetails(getDataResponseDetailStream(ctx, f -> f.getDataResponseProperty().eq(dr.getId())).collect(Collectors.toCollection(LinkedList::new)));
+				}
+				return dr;
+			})
+			.findFirst();
 	}
 	
 	public static DataResponse get(AONContext ctx, DataResponseFilter filter, Options...options) {
@@ -134,13 +155,18 @@ public class DataResponseDAO {
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());		
 	}
 
-	public static DataResponse getLast(AONContext ctx, DataResponseFilter filter){
+	public static Optional<DataResponse> getLastDataResponse(AONContext ctx, DataResponseFilter filter){
 		return ctx.getDslContext()
 			.select().from(DATA_RESPONSE)
 			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
 			.orderBy(DATA_RESPONSE.ID.desc()).limit(1)
 			.fetch().stream().map(new DataResponseFiller())
-			.findFirst().orElse(new DataResponse());
+			.findFirst();
+	}
+
+	public static DataResponse getLast(AONContext ctx, DataResponseFilter filter){
+		return getLastDataResponse(ctx, filter)
+			.orElse(new DataResponse());
 	}
 	
 	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){
@@ -404,6 +430,56 @@ public class DataResponseDAO {
 			AonIOUtils.closeQuietly(is);
 		}
 		return null;
-	}	
+	}
 	
+	public static Optional<String> getDetailValue(AONContext ctx, Integer domainId, Integer invoiceId, DataResponseSource source, String dataVariable) {
+		return getDetail(ctx, domainId, invoiceId, source, dataVariable)
+			.map(drd -> drd.getDataValue());
+	}
+	
+	public static Optional<DataResponseDetail> getDetail(AONContext ctx, Integer domainId, Integer invoiceId, DataResponseSource source, String dataVariable) {
+		return ctx.getDslContext()
+			.select(DATA_RESPONSE_DETAIL.fields())
+			.from(DATA_RESPONSE)
+			.innerJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
+			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.and(DATA_RESPONSE.SOURCE_ID.eq(invoiceId))
+			.and(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(dataVariable))
+			.orderBy(DATA_RESPONSE.ID.desc())
+			.fetch()
+			.stream()
+			.map(new DataResponseDetailFiller())
+			.findFirst()
+		;
+	}
+	
+	public static Optional<DataResponse> getLastDataResponse(AONContext ctx, Integer domainId, DataResponseSource source, Integer sourceId){
+		return ctx.getDslContext()
+			.select().from(DATA_RESPONSE)
+			.where(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.and(DATA_RESPONSE.SOURCE_ID.eq(sourceId))
+			.orderBy(DATA_RESPONSE.ID.desc()).limit(1)
+			.fetch()
+			.stream()
+			.map(new DataResponseFiller())
+			.findFirst();
+	}
+	
+	private static class DataResponseDetailFiller implements Function<Record, DataResponseDetail> {
+		@Override
+		public DataResponseDetail apply(Record r) {
+			return new DataResponseDetail()
+				.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
+				.setDomain(r.getValue(DATA_RESPONSE_DETAIL.DOMAIN))
+				.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+				.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
+				.setDataValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE))
+				.setCreationDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE))
+				.setCreationUser(r.getValue(DATA_RESPONSE_DETAIL.CREATION_USER))
+				.setModificationDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_USER))
+			;
+		}
+	}
 }

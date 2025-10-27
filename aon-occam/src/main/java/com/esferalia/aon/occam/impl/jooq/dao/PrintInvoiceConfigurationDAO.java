@@ -24,6 +24,10 @@ public class PrintInvoiceConfigurationDAO {
 
 	}
 	
+	public static PrintInvoiceConfiguration get(AONContext ctx) {
+		return get(ctx, false);
+	}
+	
 	public static PrintInvoiceConfiguration get(AONContext ctx, Boolean withData) {
 		ctx.checkRead();
 		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();

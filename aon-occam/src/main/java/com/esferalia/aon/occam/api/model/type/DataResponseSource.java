@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+
 public enum DataResponseSource implements Serializable{
 
 	QUALITY,
@@ -40,7 +42,8 @@ public enum DataResponseSource implements Serializable{
 	MOD200,
 	LROE_TEST,
 	PACKAGING_DELIVERY,
-	MOD369
+	MOD369,
+	VERIFACTU
 	;
 
 
@@ -64,5 +67,20 @@ public enum DataResponseSource implements Serializable{
 		if (i < 0 || i >= DataResponseSource.values().length)
 			return null;
 		return DataResponseSource.values()[i];
+	}
+	
+	public static DataResponseSource safeValueOf(InvoiceCommunicationType ict) {
+		if(InvoiceCommunicationType.SII.equals(ict)) {
+			return DataResponseSource.SII;
+		} else if(InvoiceCommunicationType.TBAI.equals(ict)) {
+			return DataResponseSource.TBAI;
+		} else if(InvoiceCommunicationType.LROE.equals(ict)) {
+			return DataResponseSource.LROE;
+		} else if(InvoiceCommunicationType.VERIFACTU.equals(ict)) {
+			return DataResponseSource.VERIFACTU;
+		} else if(InvoiceCommunicationType.SERES.equals(ict)) {
+			return DataResponseSource.SERES_INVOICE;
+		}
+		return null;
 	}
 }

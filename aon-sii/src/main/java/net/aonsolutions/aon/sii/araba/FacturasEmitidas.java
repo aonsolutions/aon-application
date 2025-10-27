@@ -659,7 +659,7 @@ public class FacturasEmitidas extends SIIBuilt{
 	 * @param company
 	 * @return CabeceraSii
 	 */
-	private CabeceraSii cabecera(Company company, Boolean mod, String terceros){
+	private CabeceraSii cabecera(Company company, Boolean mod, String terceros) {
 		CabeceraSii cabecera = new CabeceraSii();
 		cabecera.setIDVersionSii("1.1");
 		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);

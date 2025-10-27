@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro.EstadoRegistroType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro.RespuestaBienBajaType;
@@ -59,12 +59,12 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIGipuzkoaPost extends SIIPost{
 
-	public static SIIGipuzkoaPost getInstance(SiiConfiguration siiConfiguration) {
-		return new SIIGipuzkoaPost(siiConfiguration);
+	public static SIIGipuzkoaPost getInstance(InvoiceCommunicationConfiguration icc) {
+		return new SIIGipuzkoaPost(icc);
 	}
 
-	public SIIGipuzkoaPost(SiiConfiguration siiConfiguration) {
-		super(siiConfiguration);
+	public SIIGipuzkoaPost(InvoiceCommunicationConfiguration icc) {
+		super(icc);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

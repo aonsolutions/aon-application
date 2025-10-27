@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -133,14 +134,19 @@ public class ProductUtils {
         if(ap!=null && ap.getValue()!=null && NumberUtils.isNumber(ap.getValue())) {
             return Integer.valueOf(ap.getValue());
         } else {
-            Tax tax = AON.getTaxStream(ctx.getDomainName(),
-                    ctx.getDomainId(),
-                    ctx.getUser(),
-                    f -> f.getDomainProperty().eq(ctx.getDomainId())
-                    .and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))
-                    ).sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
-                    .findFirst().orElse(new Tax());
-            return tax.getId();
+			return TaxDAO.getVatTaxes(ctx, ctx.getDomainId())
+				.sorted( (o1, o2) -> o1.getId().compareTo(o2.getId()) )
+				.findFirst()
+				.map(t -> t.getId())
+				.orElse(0);
+//            Tax tax = AON.getTaxStream(ctx.getDomainName(),
+//                    ctx.getDomainId(),
+//                    ctx.getUser(),
+//                    f -> f.getDomainProperty().eq(ctx.getDomainId())
+//                    .and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))
+//                    ).sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
+//                    .findFirst().orElse(new Tax());
+//            return tax.getId();
         }
     }
     

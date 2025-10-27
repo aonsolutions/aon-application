@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -316,7 +317,7 @@ public enum Country implements Serializable {
 			|| this == HR	//CROACIA 
 			|| this == CY	//CHIPRE 
 			|| this == DK	//DINAMARCA
-							//ESPAÑA
+							//ESPAï¿½A
 			|| this == SI	//ESLOVENIA 
 			|| this == EE	//ESTONIA 
 			|| this == FI	//FINLANDIA 
@@ -338,8 +339,7 @@ public enum Country implements Serializable {
 			|| this == RO 	//RUMANIA
 			|| this == SE	//SUECIA 
 			|| this == XI	//IRLANDA DEL NORTE
-		;	
-		
+		;
 	}
 
 	public static Country safeValueOf(String iso2) {
@@ -397,5 +397,17 @@ public enum Country implements Serializable {
 		}
 		return country.getIso2();
 	}
-	
+
+	public static Optional<Country> safeName(String c) {
+		if (AonStringUtils.isBlank(c)) return Optional.empty();
+		try {
+			return Optional.of(Country.valueOf(c));
+		} catch (IllegalArgumentException e) {
+			return Optional.empty();
+		}
+	}
+	public static String name(Country c) {
+		return c==null?null:c.name();
+	}
+
 }
