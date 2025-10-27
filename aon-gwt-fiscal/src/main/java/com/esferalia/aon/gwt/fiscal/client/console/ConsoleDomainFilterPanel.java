@@ -78,7 +78,10 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		schemaBox.addItem(AonStringUtils.EMPTY);
 		AonCollectionUtils.stream(ConsoleSchema.values())
 			.forEach( s -> schemaBox.addItem(s.name(), s.getSchema()));
-		
+		schemaBox.addChangeHandler(e -> {
+			fire(opt);
+			parentBox.setSchema( schemaBox.getSelectedValue() );
+		});
 		paintFields( opt );
 
 //		ConsoleModule.CONSOLE_SERVICE.getSchemas(opt.getOccam(), new AsyncCallback<String[]>() {
@@ -141,7 +144,6 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		
 		parentBox = new AonDomainBox(opt.getOccam(), true);
 		parentBox.addSelectionHandler(e -> fire(opt));
-		parentBox.setEnabled(false);
 
 		orphanBox = new ListBox();
 		orphanBox.addItem(ALL);

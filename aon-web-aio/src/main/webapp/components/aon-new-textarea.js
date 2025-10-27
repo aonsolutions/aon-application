@@ -4,7 +4,6 @@ import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG} from '../environ
 import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewTextarea extends AonElement {
-
     ROOT;
     BOX;
     LABEL;
@@ -20,8 +19,7 @@ export class AonNewTextarea extends AonElement {
     OPTIONS_LI;
     options;
     selected;
-    
-    
+
     get id() {
         return this.getAttribute(CONSTANT.ID);
     }
@@ -86,6 +84,14 @@ export class AonNewTextarea extends AonElement {
        this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
     }
 
+    get rows() {
+        return this.getAttribute(CONSTANT.ROWS);
+    }
+    
+    set rows(rows) {
+       this.setAttribute(CONSTANT.ROWS,rows);
+    }
+
     connectedCallback() {
         this.initialize();
         this.build();
@@ -102,7 +108,6 @@ export class AonNewTextarea extends AonElement {
         this.ICON = this.id + CONSTANT.ICON.initCap();
         this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
         this.value = this.value || CONSTANT.EMPTY;
-
 
         this.OPTIONS = this.id + 'Options';
         this.OPTIONS_UL = this.OPTIONS + 'Ul';
@@ -158,6 +163,9 @@ export class AonNewTextarea extends AonElement {
         label.appendChild(textarea);
         if(this.maxlength) {
             textarea.setAttribute("maxlength", this.maxlength);
+        }
+        if(this.rows) {
+            textarea.setAttribute("rows", this.rows);
         }
 
         let span = this.createElement(TAG.SPAN);
@@ -349,7 +357,6 @@ export class AonNewTextarea extends AonElement {
         this.disabled = disabled;
     }
 
-
     closeOptions() {
         let opt = this.getElement(this.OPTIONS);
         if (opt.classList.contains('is-visible')) {
@@ -359,6 +366,7 @@ export class AonNewTextarea extends AonElement {
 
     buildOptions(options) {
         let opt = this.getElement(this.OPTIONS);
+        opt.classList.add('options')
         let textarea = this.getElement(this.TEXTAREA);
 
         this.clearElement(opt);
@@ -388,38 +396,7 @@ export class AonNewTextarea extends AonElement {
             document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
         } else this.closeOptions();
     }
- 
-    buildOptions(options) {
-        let opt = this.getElement(this.OPTIONS);
-        let textarea = this.getElement(this.TEXTAREA);
- 
-        this.clearElement(opt);
-        this.options = options;
-        this.selected = -1;
-        if(options && options.length > 0) {
-            opt.classList.add('is-visible');
-            let ul = this.createElement(TAG.UL);
-            ul.id = this.OPTIONS_UL;
-            ul.classList.add(CSS.AON_UL);
-            ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
-            ul.setAttribute('for', this.getAttribute('id') + 'Icon');
-            for (let i = 0; i < options.length; i++) {
-                let li = this.createElement('li');
-                li.id = this.OPTIONS_LI + i;
-                li.className = 'aonInputListOptionsItem'
-                li.innerHTML = options[i].name;
-                li.addEventListener('click', (e) => {
-                    opt.classList.remove('is-visible');
-                    this.value = options[i].name;
-                    textarea.innerHTML = this.value;
-                    this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
-                });
-                ul.appendChild(li);
-            }
-            opt.appendChild(ul);
-            document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
-        } else this.closeOptions();
-    }
+
     clickOutOption(event) {
         let opt = this.getElement(this.OPTIONS);
         let isClickInside =  opt.contains(event.target);

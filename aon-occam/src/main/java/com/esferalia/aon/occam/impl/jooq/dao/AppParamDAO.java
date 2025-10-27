@@ -5,10 +5,14 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -16,8 +20,8 @@ import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ApplicationParameterPropertiesDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -31,7 +35,108 @@ public class AppParamDAO {
 	private AppParamDAO() {
 		
 	}
+	
+	// **********************************************************************
+	// ************************************************************ [READ] **
+	// **********************************************************************
+	private static SelectJoinStep<Record> select(AONContext ctx) {
+		return ctx.getDslContext().select()
+				.from(APP_PARAM);
+	}
+	public static Optional<ApplicationParameter> get(AONContext ctx, Integer domainId, AppParam param) {
+		if (param == null) return Optional.empty();
+		return get(ctx, domainId, param.name());
+	}
+	public static Optional<ApplicationParameter> get(AONContext ctx, Integer domainId, String name) {
+		return select(ctx)
+			.where(APP_PARAM.DOMAIN.eq(domainId))
+			.and( APP_PARAM.NAME.eq(name))
+			.fetch().stream()
+			.map( new ApplicationParameterFiller() )
+			.findFirst();
+	}
+	public static Stream<ApplicationParameter> getByPattern(AONContext ctx, Integer domainId, String pattern) {
+		return select(ctx)
+			.where(APP_PARAM.DOMAIN.eq(domainId))
+			.and( APP_PARAM.NAME.like(pattern))
+			.fetch().stream()
+			.map( new ApplicationParameterFiller() );
+	}
+	
+	public static Optional<Integer> getInteger(AONContext ctx, Integer domainId, AppParam param) {
+		return get(ctx, domainId, param).map(p -> AonNumberUtils.toInteger(p.getValue()));
+	}
+	public static boolean getBoolean(AONContext ctx, Integer domainId, AppParam param) {
+		return get(ctx, domainId, param)
+			.map(p -> p.trueValue())
+			.orElse(false)
+		;
+	}
 
+	
+	
+	// **********************************************************************
+	// *********************************************************** [WRITE] **
+	// **********************************************************************
+	public static ApplicationParameter save(AONContext ctx, Integer domainId, AppParam param, String paramValue){
+		if (param == null) new AonCoreException("Param is empty");
+		return save(ctx, domainId, param.name(), paramValue);
+	}
+	public static ApplicationParameter save(AONContext ctx, Integer domainId, String paramName, String paramValue){
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.select()
+			.from(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(domainId))
+			.and(APP_PARAM.NAME.eq(paramName))
+			.fetch()
+			.stream()
+			.findFirst()
+			.ifPresentOrElse(
+				p -> {
+					ctx.getDslContext()
+						.update(APP_PARAM)
+							.set(APP_PARAM.VALUE, paramValue)
+						.where(APP_PARAM.DOMAIN.eq(domainId))
+						.and(APP_PARAM.NAME.eq(paramName))
+						.execute();
+				}
+				, () -> {
+					ctx.getDslContext()
+						.insertInto(APP_PARAM)
+						.set(APP_PARAM.DOMAIN, domainId)
+						.set(APP_PARAM.NAME, paramName)
+						.set(APP_PARAM.VALUE , paramValue)
+					.execute();
+				});
+		return get(ctx, domainId, paramName)
+			.orElseThrow(() -> new AonCoreException("Param not saved or not found"));
+	}
+	
+	// **********************************************************************
+	// ********************************************************** [FILLER] **
+	// **********************************************************************
+	private static class ApplicationParameterFiller extends Filler implements Function<Record, ApplicationParameter> {
+
+		@Override
+		public ApplicationParameter apply(Record r) {
+			return build(r);
+		}
+		
+		public static ApplicationParameter build(Record r) {
+			return new ApplicationParameter()
+				.setId(getValue(r, APP_PARAM.ID))
+				.setDomain(getValue(r, APP_PARAM.DOMAIN))
+				.setName(getValue(r, APP_PARAM.NAME))
+				.setValue(getValue(r, APP_PARAM.VALUE))
+			;
+		}
+	}
+
+
+	// **********************************************************************
+	// ************************************************************* [OLD] **
+	// **********************************************************************
 	public static String fetchValue(AONContext ctx, AppParam param) {
 		ApplicationParameter ap = fetchOne(ctx, param.getValue());
 		return ap == null ? null : ap.getValue(); 

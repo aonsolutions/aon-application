@@ -65,6 +65,8 @@ export class AonNewDate extends AonNewInput {
       // Si no se le pasa el valor date
       this.date  = this.date || this.today;
     }
+    // 
+    this.setType('text');
   }
 
   buildDate() {
@@ -303,7 +305,8 @@ export class AonNewDate extends AonNewInput {
       // Marcar el dia seleccionado
       innerDiv.classList.toggle('day-selected', this.isSameDate(date));
 
-      td.addEventListener(EVENT.CLICK, () => {
+      td.addEventListener(EVENT.CLICK, (event) => {
+        event.stopPropagation();
         this.setDate(actDate);
         this.closeDatepicker();
       });

@@ -20,12 +20,12 @@
 					<ui:param name="sfc_seriesValid" value="#{invoiceController.seriesValid}" />
 					<ui:param name="sfc_editable" value="#{!invoiceController.readOnly and financeController.allPending}" />								
 					<ui:param name="sfc_numberReset" value="#{invoiceController.nevv}" />								
-					<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai or invoiceController.firstNumberOfSeries}"/>
+					<ui:param name="sfc_showNumberEditable" value="#{(!invoiceController.tbai and !invoiceController.verifactu) or invoiceController.firstNumberOfSeries}"/>
 					<ui:define name="additionalSeriesContent">
 						<aon:commandButton id="Invoice_NextNumber" immediate="#{true}"
 							title="#{bundle.finance_invoice_find_next_number}"
 							styleClass="aon-icon-commandButton aon-icon-ambito"
-							rendered="#{sfc_editable and !invoiceController.tbai}" value="&#160;"
+							rendered="#{sfc_editable and !invoiceController.tbai and !invoiceController.verifactu}" value="&#160;"
 							actionListener="#{invoiceController.onFindNextFreeNumber}"
 							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
 						</aon:commandButton>															
@@ -84,11 +84,11 @@
 		</aon:panelGrid>
 	</aon:div>
 	
-	<aon:if test="#{invoiceController.tbai and invoiceController.to.sales}">
+	<aon:if test="#{(invoiceController.tbai or invoiceController.verifactu) and invoiceController.to.sales}">
 		<aon:outputLabel for="Invoice_issueDate"
 			value="Fecha Operación" />
 	</aon:if>
-	<aon:if test="#{!invoiceController.tbai or (invoiceController.tbai and !invoiceController.to.sales)}">
+	<aon:if test="#{(!invoiceController.tbai and !invoiceController.verifactu) or ((invoiceController.tbai or invoiceController.verifactu) and !invoiceController.to.sales)}">
 		<aon:outputLabel for="Invoice_issueDate"
 			value="#{bundle.aon_date}" />	
 	</aon:if>
@@ -152,7 +152,7 @@
 		</ui:include>
 	</aon:if>
 
-	<aon:if test="#{!invoiceController.nevv and (!invoiceController.tbai or (invoiceController.tbai and !invoiceController.to.sales))}">
+	<aon:if test="#{!invoiceController.nevv and ((!invoiceController.tbai and !invoiceController.verifactu) or ((invoiceController.tbai or invoiceController.verifactu) and !invoiceController.to.sales))}">
 		<aon:outputLabel for="Invoice_taxDate" 
 			value="#{bundle.finance_tax_date}" />
 		<aon:div>
@@ -175,7 +175,7 @@
 		</aon:div>
 	</aon:if>
 	
-	<aon:if test="#{!invoiceController.nevv and invoiceController.tbai and invoiceController.to.sales}">
+	<aon:if test="#{!invoiceController.nevv and (invoiceController.tbai or invoiceController.verifactu) and invoiceController.to.sales}">
 		<aon:outputLabel for="Invoice_taxDate" 
 				value="Fecha Emisión" />
 		<aon:outputText value="#{invoiceController.expDate}" />

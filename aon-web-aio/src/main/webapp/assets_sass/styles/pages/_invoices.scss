@@ -88,8 +88,10 @@ $panding-icon-table: calc(v.$input-height / v.$num-4);
       aon-invoice{
         #aonInvoiceSheetDataGeneral{
           display: flex;
+          flex-wrap: wrap;
           aon-card{
             flex: v.$num-1 v.$num-1 v.$pct-50;
+            box-sizing: border-box;
           }
         }
         table{

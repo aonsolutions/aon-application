@@ -106,15 +106,14 @@ export class AonFiscal extends AonElement {
 					id: year,
 					icon: MATERIAL_ICONS.EVENT,
 					name: year,
+					value: year,
 					clickable: true,
 					fn: () => {
 						this._filter.year = year;
 						this._filter.estimationFilter = undefined;
 						this.addBackgroundSidenav();
-
 						this.checkAviablePeriodsForYear();
 						this._filter.period = undefined;
-
 						this.showView(FISCAL_VIEWS.AON_TAX);
 					},
 				}));
@@ -290,6 +289,7 @@ export class AonFiscal extends AonElement {
 				icon: MATERIAL_ICONS.EVENT,
 				clickable: true,
 				id: "Todos",
+				value: "Todos",
 				fn: () => {
 					this._filter.period = undefined;
 					this._filter.estimationFilter = undefined;
@@ -303,7 +303,6 @@ export class AonFiscal extends AonElement {
 			//   let futurePeriod = await this.filterFutureFiscal();
 			//   periods.push(futurePeriod);
 			// }
-
 			let data2 = {
 				parent: "Periodo",
 				id: "Ejercicio",

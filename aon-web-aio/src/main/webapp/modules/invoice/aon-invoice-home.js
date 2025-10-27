@@ -6,7 +6,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environmen
 import Apps from "../../services/app.js";
 import { AonDashboardChargePayments } from "../accounting/aon-dashboard-charge-payments.js";
 import { AonInvoice } from "./aon-invoice.js";
-import { AonMobileInvoice } from "./aon-mobile-invoice.js";
+// import { AonMobileInvoice } from "./aon-mobile-invoice.js";
 
 import { getCounter } from './InvoiceCounter.js';
 import * as OPTION from './InvoiceOptions.js';
@@ -75,7 +75,7 @@ export class AonInvoiceHome extends AonElement {
 		let dashboard = this.createDiv(this.DASHBOARD, CSS.AON_DASHBOARD);
 		this.appendChild(dashboard);
 
-		if (!this.getDur().isTrial())
+		if (!this.getDur().isTrial() || this.getDur().hasBeenTrial())
 			this.buildUploadPanel(dashboard);
 
 		this.buildFastPanel(dashboard);
@@ -201,7 +201,7 @@ export class AonInvoiceHome extends AonElement {
 		let cardPanel = this.createDiv(this.CARD_PANEL, CSS.FLEX_ROW);
 		dashboard.appendChild(cardPanel);
 
-		if(!this.getDur().isTrial()) {
+		if(!this.getDur().isTrial() || this.getDur().hasBeenTrial()) {
 			let invoiceResumeCard = new AonCard();
 			invoiceResumeCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			invoiceResumeCard.id = this.INVOICE_RESUME;

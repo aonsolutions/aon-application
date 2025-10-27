@@ -137,11 +137,12 @@ export class AonComunicaConfig extends AonElement {
   }
 
   buildCard(){
-    let div = setStyles(this.createElement(TAG.DIV),{display: "flex", flexWrap:"wrap", width:"100%" });
+    // let div = setStyles(this.createElement(TAG.DIV),{display: "flex", flexWrap:"wrap", width:"100%" });
+    let div = setStyles(this.createElement(TAG.DIV));
     this.appendChild(div);
 
     let formOne = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_CONTRACT_TYPES});
-    formOne.style.width = "50%";
+    // formOne.style.width = "50%";
     div.appendChild(formOne);
 
     let card = setAttributes(new AonCard(), { id:this.CARD });
@@ -149,7 +150,7 @@ export class AonComunicaConfig extends AonElement {
 
 
     let formTwo = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_QUOTE_GROUP});
-    formTwo.style.width = "50%";
+    // formTwo.style.width = "50%";
     div.appendChild(formTwo);
 
     let cardTwo = setAttributes(new AonCard(), { id:this.CARD_TWO });
@@ -157,7 +158,7 @@ export class AonComunicaConfig extends AonElement {
 
 
     let formThree = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_EMAILS});
-    formThree.style.width = "50%";
+    // formThree.style.width = "50%";
     div.appendChild(formThree);
 
     let cardThree = setAttributes(new AonCard(), { id:this.CARD_THREE });

@@ -19,11 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresInsert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.PPEUpdate2CostFix;
-import net.aonsolutions.db.up2date.security.AddAonClassic;
-import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDescriptionFix;
+import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDescriptionFixII;
+import net.aonsolutions.db.up2date.tgss.PrestITDescriptionFix;
 
 public class Up2Date {
 
@@ -559,7 +557,9 @@ public class Up2Date {
 			// PPEUpdate2CostFix.PPEUPDATE2COSTFIX,
 			// BonificEntrenadoresYMonitoresInsert.BONIFICENTRENADORESYMONITORESINSERT,
 			// AddAonClassic.ADD_AON_CLASSIC,
-			PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
+			// PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
+			// PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
+			// PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

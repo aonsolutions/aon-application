@@ -229,4 +229,83 @@ public enum AonApp implements Serializable {
 		return list;
 	}
 
+	public static List<AonRole> getPortalAonRole(AonApp aonApp) {
+		switch (aonApp) {
+		case INVOICE:
+			return List.of(AonRole.INVOICE_PORTAL);
+		case DOCUMENTAL:
+			return List.of(AonRole.DOCUMENTAL);
+		case MESSENGER:
+			return List.of(AonRole.MESSENGER_PORTAL);
+		case ACCOUNTING:
+			return List.of(AonRole.ACCOUNTING_MANAGER);
+		case FISCAL:
+			return List.of(AonRole.FISCAL_MANAGER);
+		case PAYROLL:
+			return List.of(AonRole.PAYROLL_PORTAL);
+		case OCR:
+			return List.of(AonRole.OCR);
+		case AIO:
+			return List.of(AonRole.AON_AIO);
+		case ALMA:
+			return List.of(AonRole.ALMA);
+		case COMUNICA:
+			return List.of(AonRole.COMUNICA_PORTAL);
+		case BIDOQ:
+			return List.of(AonRole.BIDOQ);
+		case CONVENIOS:
+			return List.of(AonRole.CONVENIOS);
+		case BANK:
+			return List.of(AonRole.BANK);
+		case TIMECONTROL:
+			return List.of(AonRole.TIMECONTROL_PORTAL);
+		case MANAGEMENT:
+			return List.of(AonRole.MANAGEMENT);
+		case PACK_SUITE:
+			return List.of();
+		case PACK_PORTAL:
+			return List.of();
+		case PACK_PAYROLL:
+			return List.of();
+		case PACK_FISCAL_ACCOUNTING:
+			return List.of();
+		case SELFCONTA:
+			return List.of(AonRole.SELFCONTA);
+		case CUSTOM_VIEW:
+			return List.of();
+		case AULA:
+			return List.of();
+		case NOTES:
+			return List.of(AonRole.NOTES);
+		case SALTRA:
+			return List.of(AonRole.SALTRA_PORTAL);
+		case BASIC_MANAGEMENT:
+			return List.of();
+		case STANDAR_MANAGEMENT:
+			return List.of();
+		case PROFESSIONAL_MANAGEMENT:
+			return List.of();
+		case API_SERVICE:
+			return List.of();
+		case WAREHOUSE:
+			return List.of(AonRole.WAREHOUSE);
+		case COMMERCIAL:
+			return List.of(AonRole.COMMERCIAL);
+		case MARKETING:
+			return List.of(AonRole.MARKETING);
+		case TREASURY:
+			return List.of(AonRole.TREASURY);
+		case GROUPWARE:
+			return List.of(AonRole.GROUPWARE);
+		case INVOFOX:
+			return List.of(AonRole.INVOFOX);
+		case SERES:
+			return List.of(AonRole.SERES);
+		case FACTURAE:
+			return List.of(AonRole.FACTURAE);
+		default:
+			return List.of(AonRole.ENTERPRISE);
+		}
+	}
+
 }

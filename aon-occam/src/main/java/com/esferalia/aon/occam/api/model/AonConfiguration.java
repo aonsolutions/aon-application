@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.config.AccountingConfig;
 import com.esferalia.aon.occam.api.model.config.FiscalConfig;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -28,6 +29,7 @@ public class AonConfiguration implements Serializable {
 	private boolean aonSolutions;
 	private AccountingConfig accounting = new AccountingConfig();
 	private FiscalConfig fiscal = new FiscalConfig();
+	private InvoiceCommunicationConfiguration communicationConfig;
 	private DomainUserRoles dur;
 
 	// 	------------------- Revisar	
@@ -354,4 +356,11 @@ public class AonConfiguration implements Serializable {
 		return accounting;
 	}
 	
+	public InvoiceCommunicationConfiguration getCommunicationConfig() {
+		return communicationConfig;
+	}
+	public AonConfiguration setCommunicationConfig(InvoiceCommunicationConfiguration communicationConfig) {
+		this.communicationConfig = communicationConfig;
+		return this;
+	}
 }

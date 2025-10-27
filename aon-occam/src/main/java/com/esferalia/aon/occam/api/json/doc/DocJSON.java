@@ -24,7 +24,7 @@ public class DocJSON {
 	// ************************************************ [FROM] ***
 	// ***********************************************************
 	
-	public static <T extends Enum<?>> Optional<Doc<T>> fromJSON(JSONObject json, Supplier<Doc<T>> docSupplier) {
+	public static <T extends Enum<?>> Optional<Doc<T>> from(JSONObject json, Supplier<Doc<T>> docSupplier) {
 		if (JsonUtils.isEmpty(json)) return Optional.empty();
 		Doc<T> doc = docSupplier.get();
 		return Optional.of(doc
@@ -56,7 +56,7 @@ public class DocJSON {
 	// ************************************************** [TO] ***
 	// ***********************************************************
 	
-	public static <T extends Enum<?>> Optional<JSONObject> toJSON(Doc<T> doc, Supplier<JSONObject> jsonSupplier) {
+	public static <T extends Enum<?>> Optional<JSONObject> to(Doc<T> doc, Supplier<JSONObject> jsonSupplier) {
 		if (doc == null) return Optional.empty();
 		return Optional.of(
 			jsonSupplier.get()

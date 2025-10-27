@@ -184,8 +184,8 @@ public final class OCRNames {
 	
 	public static final String RAW = "raw";
 	public static final String RAWDOC = "rawdoc";
-	public static final String RE_AMOUNT = "reAmount";
-	public static final String RE_RATE = "reRate";
+	public static final String RE_AMOUNT = "REAmount";
+	public static final String RE_RATE = "RERate";
 	public static final String READINGS  = "readings";
 	public static final String RECIPIENT_ADDRESS_DETAILS = "recipientAddressDetails";
 	public static final String RECIPIENT_ADDRESS = "recipientAddress";

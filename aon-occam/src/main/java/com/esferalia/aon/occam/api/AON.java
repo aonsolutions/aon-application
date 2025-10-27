@@ -100,6 +100,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
@@ -115,6 +116,7 @@ import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -122,7 +124,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -131,9 +133,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -269,7 +273,6 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
-import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -664,13 +667,8 @@ public class AON {
 	}
 	
 	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().deleteScope(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -964,6 +962,11 @@ public class AON {
 		}
 	}
 	
+	public static ApplicationParameter getApplicationParameter(Occam occam, AppParam param){
+		ApplicationParameter ap = fetchApplicationParameter(occam.getDomainName(), occam.getDomain(), occam.getUser(), param);
+		return ap != null ? ap : new ApplicationParameter();
+	}
+	
 	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login, AppParam param){
 		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
 		return ap != null ? ap : new ApplicationParameter();
@@ -1148,7 +1151,11 @@ public class AON {
 		return getCompanyStream(ctx, filter)
 				.findFirst().orElse(new Company());
 	}
-
+	
+	public static Company getCompanyForDomain(Occam occam) {
+		return getCompany(occam.getDomainName(), occam.getDomain(), occam.getUser(), f -> f.getDomainProperty().eq(occam.getDomain()));
+	}
+	
 	public static Company getCompanyForDomain(String domainName, int domainId, String login) {
 		return getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 	}
@@ -1990,6 +1997,9 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return acceptInvoice(ctx, invoice, rawdocId);
 		}
+	}
+	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice){
+		return getFinance().acceptInvoice(ctx, invoice, null);
 	}
 	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
@@ -6352,41 +6362,34 @@ public class AON {
 	// ************************************* TAX **
 	// ********************************************
 
-	public static Stream<Tax> getVatStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getVatStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getVatStream(ctx);
+			return getCommon().getVatStream(ctx,domainId);
 		}
 	}
 	
-	public static Stream<Tax> getWithholdingStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getWithholdingStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getWithholdingStream(ctx);
+			return getCommon().getWithholdingStream(ctx,domainId);
 		}
 	}
 	
-	public static Stream<Tax> getTaxStream(Occam occam, TaxFilter filter){
+	public static Stream<Tax> getTaxStream(Occam occam, Integer domainId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getCommon().getTaxStream(ctx, filter);
+			return getCommon().getTaxStream(ctx, domainId);
+		}
+	}
+
+	public static Stream<Tax> getTaxStream(Occam occam, Integer domainId, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTaxStream(ctx, domainId, filter);
 		}
 	}
 	
-	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getCommon().getTaxStream(ctx, filter);
+	public static Optional<Tax> getTax(Occam occam, Integer domainId, Integer id){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTax(ctx, domainId, id);
 		}
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
-		return getTax(domainName, domainId, login, f -> f.getIdProperty().eq(id));
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, String name){
-		return getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
-				.and(f.getNameProperty().eq(name)));
-	}
-	
-	public static Tax getTax(String domainName, Integer domainId, String login, TaxFilter filter){
-		return getTaxStream(domainName, domainId, login, filter).findFirst().orElse(new Tax());
 	}
 	
 	// ********************************************
@@ -7112,7 +7115,7 @@ public class AON {
 				return getSecurity().getCertificates(ctx, filter);
 			}
 		}
-
+		
 		public static Certificate getCertificate(Domain domain, User user, String certificateType) {
 			return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
 		}	
@@ -7825,6 +7828,11 @@ public class AON {
 			return getRawdoc().rawdocSave(ctx, rawdoc);
 		}	
 	}
+	public static Rawdoc rawdocSave(Occam occam, Integer rawdocId, String invoiceJson) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().rawdocSave(ctx, rawdocId, invoiceJson);
+		}	
+	}
 	
 	public static void rawdocDelete(Occam occam, Integer rawdocId) {
 		rawdocDelete(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
@@ -8090,65 +8098,35 @@ public class AON {
 		}
 	}
 	
-	// TICKET BAI CONFIGURATION
-
-	public static TbaiConfiguration getTbaiConfiguration(Domain domain, User user) {
-		return getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	}
-		
-	public static TbaiConfiguration getTbaiConfiguration(Domain domain, String login) {
-		return getTbaiConfiguration(domain.getName(), domain.getId(), login);
-	}
-		
-	public static TbaiConfiguration getTbaiConfiguration(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getTbaiConfiguration(ctx);
-		}
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, User user, TbaiConfiguration config) {
-		return saveTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, String login, TbaiConfiguration config) {
-		return saveTbaiConfiguration(domain.getName(), domain.getId(), login, config);
-	}
-		
-	public static TbaiConfiguration saveTbaiConfiguration(String domainName, Integer domainId, String login, TbaiConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().saveTbaiConfiguration(ctx, config);
+	// INVOICE COMMUNICATION CONFIGURATION
+	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain());
 		}
 	}
 	
-	// SII CONFIGURATION
+	public static InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(Occam occam, int domainId, InvoiceCommunicationConfiguration config) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().saveInvoiceCommunicationConfiguration(ctx, domainId, config);
+		}
+	}
+	
+	// SII 
+	public static void prepareNewSii(Occam occam) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().prepareNewSii(ctx);
+		}
+	}
 
-	public static SiiConfiguration getSiiConfiguration(Domain domain, User user) {
-		return getSiiConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	}
-		
-	public static SiiConfiguration getSiiConfiguration(Domain domain, String login) {
-		return getSiiConfiguration(domain.getName(), domain.getId(), login);
-	}
-		
-	public static SiiConfiguration getSiiConfiguration(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getSiiConfiguration(ctx);
+	// COMMUNICATION INVOICES 
+	public static List<Invoice> getCommunicationInvoices(Occam occam, InvoiceCommunicationParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getCommunicationInvoices(ctx,params)
+					.collect(Collectors.toCollection(LinkedList::new));
 		}
-	}
 		
-	public static SiiConfiguration saveSiiConfiguration(Domain domain, User user, SiiConfiguration config) {
-		return saveSiiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
 	}
-		
-	public static SiiConfiguration saveSiiConfiguration(Domain domain, String login, SiiConfiguration config) {
-		return saveSiiConfiguration(domain.getName(), domain.getId(), login, config);
-	}
-		
-	public static SiiConfiguration saveSiiConfiguration(String domainName, Integer domainId, String login, SiiConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().saveSiiConfiguration(ctx, config);
-		}
-	}
+	
 	
 	// GEOZONE
 	
@@ -8162,6 +8140,12 @@ public class AON {
 	public static Person savePerson(Domain domain, String login, Person person) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getPerson().savePerson(ctx, person);
+		}
+	}
+
+	public static Person getPerson(Occam occam, PersonFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getPerson().getPerson(ctx, filter);
 		}
 	}
 	
@@ -8316,14 +8300,20 @@ public class AON {
 		}
 	}	
 	
-	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceInfo(ctx, filter);
+//	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+//			return getFinance().getInvoiceInfo(ctx, filter);
+//		}
+//	}
+//
+	public static Optional<InvoiceInfo> getInvoiceInfo(Occam occam, Integer invoiceId, InvoiceCommunicationType type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceInfo(ctx, invoiceId, type);
 		}
 	}
 
-	public static InvoiceInfo saveInvoiceInfo(Domain domain, User user, InvoiceInfo invoiceInfo) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+	public static InvoiceInfo saveInvoiceInfo(Occam occam, InvoiceInfo invoiceInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().saveInvoiceInfo(ctx, invoiceInfo);
 		}
 	}
@@ -8333,10 +8323,22 @@ public class AON {
 			getFinance().deleteInvoiceInfo(ctx, invoiceId);
 		}
 	}	
+
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Occam occam, InvoiceCommunicationTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
+		}
+	}
 	
 	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
+		}
+	}
+	
+	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Occam occam, InvoiceCommunicationTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
 	
@@ -8363,6 +8365,18 @@ public class AON {
 			getFinance().deleteInvoiceCommunicationTracking(ctx, invoiceId);
 		}
 	}	
+	
+	public static InvoiceBatch saveInvoiceBatch(Domain domain, User user, InvoiceBatch invoiceBatch) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().saveInvoiceBatch(ctx, invoiceBatch);
+		}
+	}
+	
+	public static InvoiceBatchDetail saveInvoiceBatchDetail(Domain domain, User user, InvoiceBatchDetail invoiceBatchDetail) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().saveInvoiceBatchDetail(ctx, invoiceBatchDetail);
+		}
+	}
 
 	public static Booking getBooking(Domain domain, User user) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
@@ -8969,6 +8983,32 @@ public class AON {
 	public static List<ActivitySummaryObject> getActivitySummary(String domainName, Integer domainId, String login, Integer parentDomainId,  Integer userId, ActivitySummaryParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getActivitySummary(ctx, domainId, parentDomainId, userId, params);
+		}
+	}
+
+	// API CONFIGURATION
+	
+	public static ApiConfiguration getApiConfiguration(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getApiConfiguration(ctx, domainId);
+		}
+	}
+
+	public static void saveBookingApp(String domainName, int domainId, String login, DomainApp aonApp, boolean active) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, active);
+		}
+	}
+
+	public static void deleteBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().deleteBookingApp(ctx, aonApp);
+		}
+	}
+
+	public static void createBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getSecurity().saveBookingApp(ctx, aonApp, true);
 		}
 	}
 	

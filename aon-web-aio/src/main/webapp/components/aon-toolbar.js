@@ -311,11 +311,13 @@ export class AonToolbar extends AonElement {
 			aib.id = id;
 			aib.icon  = action.icon;
 			aib.title = action.name;
-			aib.addEventListener(EVENT.CLICK, fn);
+			if (fn) aib.addEventListener(EVENT.CLICK, fn);
 			span.appendChild(aib);
 			let titleSection = this.getElement(this.TITLE_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
+			return aib;
 		}
+		return null;
 	}
 
 	showButton(id, show = false) {

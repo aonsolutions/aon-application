@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -39,7 +38,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -52,10 +51,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -75,8 +76,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceConsoleDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailExtendedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
@@ -86,8 +89,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
@@ -193,12 +196,12 @@ public class FinanceImpl implements IFinance {
 	
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceDetails(ctx, filter);
+		return InvoiceDetailExtendedDAO.getInvoiceDetails(ctx, filter);
 	}
 	
 	@Override
 	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
-		return InvoiceDAO.getInvoiceDetailsExtended(ctx, filter, callback);
+		return InvoiceDetailExtendedDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
 	@Override
@@ -668,7 +671,7 @@ public class FinanceImpl implements IFinance {
 				configuration -> PrintInvoiceConfigurationDAO.save(ctx, pic));
 	}
 
-	// ---------- TBAI CONFIGURATION
+	// ---------- INVOFOX CONFIGURATION
 	
 	@Override
 	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
@@ -681,35 +684,31 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvofoxConfigurationDAO.save(ctx, config));
 	}
-	
-	// ---------- TBAI CONFIGURATION
-	
-	@Override
-	public TbaiConfiguration getTbaiConfiguration(AONContext ctx) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TbaiConfigurationDAO.get(ctx));
-	}
 
-	@Override
-	public TbaiConfiguration saveTbaiConfiguration(AONContext ctx, TbaiConfiguration pic) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TbaiConfigurationDAO.save(ctx, pic));
-	}
+	// ---------- INVOICE COMMUNICATION CONFIGURATION
 
-	// ---------- SII CONFIGURATION
+	public Stream<Invoice> getCommunicationInvoices(AONContext ctx, InvoiceCommunicationParams params ) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceCommunicationDAO.getInvoices(ctx, params));
+	}
 	
 	@Override
-	public SiiConfiguration getSiiConfiguration(AONContext ctx) {
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int domainId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> SiiConfigurationDAO.get(ctx));
+				configuration -> InvoiceCommunicationDAO.get(ctx, domainId));
 	}
 
 	@Override
-	public SiiConfiguration saveSiiConfiguration(AONContext ctx, SiiConfiguration pic) {
+	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId, InvoiceCommunicationConfiguration config) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> SiiConfigurationDAO.save(ctx, pic));
+				configuration -> InvoiceCommunicationDAO.save(ctx, domainId, config));
 	}
 
+	@Override
+	public void prepareNewSii(AONContext ctx) {
+		ctx.getDslContext().transaction(configuration -> InvoiceCommunicationDAO.prepareNewSii(ctx));
+	}
+	
 	@Override
 	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.getDslContext().transaction(
@@ -743,7 +742,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDataDAO.getStream(ctx, filter));
+				configuration -> InvoiceDataDAO.stream(ctx, filter));
 	}
 	
 	@Override
@@ -758,12 +757,18 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceDataDAO.save(ctx, invoiceData));				
 	}
 	
+//	@Override
+//	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
+//		return ctx.getDslContext().transactionResult(
+//				configuration -> InvoiceInfoDAO.get(ctx, filter));
+//	}
+//	
 	@Override
-	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
+	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceInfoDAO.get(ctx, filter));
+				configuration -> InvoiceInfoDAO.get(ctx, invoiceId, type));
 	}
-	
+
 	@Override
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo) {
 		return ctx.getDslContext().transactionResult(
@@ -773,7 +778,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(
-				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
+				configuration -> InvoiceInfoDAO.deleteByInvoice(ctx, invoiceId));
 	}
 	
 	@Override
@@ -934,5 +939,18 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(
 			configuration -> InvoiceDocDAO.save(ctx, invoiceDoc));
 	}
-
+	
+	// ------------------------------------- INVOICE BATCH
+	
+	@Override
+	public InvoiceBatch saveInvoiceBatch(AONContext ctx, InvoiceBatch invoiceBatch) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceBatchDAO.save(ctx, invoiceBatch));
+	}
+	
+	@Override
+	public InvoiceBatchDetail saveInvoiceBatchDetail(AONContext ctx, InvoiceBatchDetail invoiceBatchDetail) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceBatchDetailDAO.save(ctx, invoiceBatchDetail));
+	}
 }

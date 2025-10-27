@@ -1319,7 +1319,6 @@ export class AonNewMenu extends AonElement {
 		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
 	}
-
 	setSelectedMenuSidenav(app) {
 		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);

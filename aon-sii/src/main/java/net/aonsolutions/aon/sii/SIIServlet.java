@@ -25,14 +25,15 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -82,11 +83,15 @@ public class SIIServlet extends HttpServlet{
 		AccountingReportParams params = new AccountingReportParams();
 		params.setDomain(domain.getId());
 		params.setInvoices(ids);
-				
+			
+		Occam occamm = new Occam()
+			.setDomainName( domain.getName())
+			.setDomain(domain.getId())
+			.setUser(login);
 		if(ids.length > 0) {
 			Invoice invoice = AON.getInvoice(domain.getName(), domain.getId(), login, ids[0]);//AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, ids[0]);	
 			
-			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
+			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(occamm, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
 			
 			Integer cert = Integer.parseInt(parameters.get("cert"));
@@ -105,11 +110,11 @@ public class SIIServlet extends HttpServlet{
 				pass = AonCertificateUtils.getCertificatePassword(attach.getDescription());
 			}
 			
-			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
-			siiConfiguration.setCertificate(new Certificate()
-					.setData(attach.getData())
-					.setPassword(pass)
-					.setType(CertificateType.AEAT.name()));
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occamm);
+			icc.setCertificate(new Certificate()
+				.setData(attach.getData())
+				.setPassword(pass)
+				.setType(CertificateType.AEAT.name()));
 			try {
 				CertificateInfo certificateInfo = AON.getCertificateInfo(attach.getData(), pass);
 				if(certificateInfo.getToDate() != null && certificateInfo.getToDate().before(new Date())) {
@@ -119,7 +124,7 @@ public class SIIServlet extends HttpServlet{
 				e.printStackTrace();
 			}
 			try{
-				SIIManager manager = SIIManager.getInstance(siiConfiguration);
+				SIIManager manager = SIIManager.getInstance(icc);
 
 				Object object = new Object();
 				
@@ -172,7 +177,7 @@ public class SIIServlet extends HttpServlet{
 						object = manager.bajaAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
 					}
 				}
-				saveCertificate(domain, siiConfiguration.getCertificate(), attach);
+				saveCertificate(domain, icc.getCertificate(), attach);
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
 				LOGGER.info(e.getMessage());

@@ -4,6 +4,7 @@ import { API_URL, SIG_URL } from "../environments/environments.js";
 import { generateTokenSig } from "./userService.js";
 
 // PRINT CONFIGURATION
+export const getApiConfiguration = (data) =>  get(`${API_URL}/invoice/api_configuration`, data);
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
 export const saveInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/configuration`, data);
 
@@ -26,7 +27,7 @@ export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
 export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
-export const nullInvoice = (data) => remove(`${API_URL}/invoice/cancel`, data);
+export const rectifyInvoice = (data) => put(`${API_URL}/invoice/rectify`, data);
 
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 
@@ -51,6 +52,7 @@ export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&domainLogin=${data.domainLogin}&cert=${data.cert}&period=${data.period}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
+export const getCommunicationHistory = (invoice) => post(`${API_URL}/communication/history`, {invoice});
 
 export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});
 export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configuration`, data);

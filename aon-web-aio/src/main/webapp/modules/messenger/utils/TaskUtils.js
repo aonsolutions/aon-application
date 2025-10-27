@@ -1,34 +1,13 @@
-import {
-  AON_ICONS,
-  API_URL,
-  COLORS,
-  CONSTANT,
-  CSS,
-  EVENT,
-  MATERIAL_ICONS,
-  MSG,
-  SIG_URL,
-  TAG,
+import { 
+  AON_ICONS, API_URL, COLORS, CONSTANT, CSS, EVENT, 
+  MATERIAL_ICONS, MSG, SIG_URL, TAG,
 } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
-import {
-  setAttributes,
-  setClasses,
-  setDataset,
-  setStyles,
-} from "../../../services/utilsComponents.js";
-
-import {
-  MessengerOptions,
-  MESSENGER_COMPONENTS,
-  MESSENGER_DIRECTION,
-  MESSENGER_IDS,
-  MESSENGER_VIEWS,
-  TAG_TYPE,
-  TASK_SOURCE,
-  TASK_STATUS,
-  WORKFLOW_TYPE,
-  WORKFLOW_TYPES,
+import { setAttributes, setClasses, setDataset, setStyles, } from "../../../services/utilsComponents.js";
+import { 
+  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, 
+  MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, 
+  WORKFLOW_TYPE, WORKFLOW_TYPES,
 } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskFill } from "./TaskFill.js";
@@ -75,6 +54,16 @@ const buildTextareaToolbar = (aonTextArea) => {
     () => documentExec("italic")
   );
 
+  //UNDERLINED
+  aonTextArea.addToolbarOptionLeft(
+    {
+      id: MATERIAL_ICONS.FORMAT_UNDERLINED,
+      icon: MATERIAL_ICONS.FORMAT_UNDERLINED,
+      name: "Subrayado",
+    },
+    () => documentExec("underline")
+  );
+
   /**
    * List bulleted button - listItem
    */
@@ -97,16 +86,6 @@ const buildTextareaToolbar = (aonTextArea) => {
       name: "Insertar enlace",
     },
     () => createLink()
-  );
-
-  //UNDERLINED
-  aonTextArea.addToolbarOptionLeft(
-    {
-      id: MATERIAL_ICONS.FORMAT_UNDERLINED,
-      icon: MATERIAL_ICONS.FORMAT_UNDERLINED,
-      name: "Subrayado",
-    },
-    () => documentExec("underline")
   );
 
   //FORMAT_QUOTE
@@ -150,10 +129,10 @@ const addIconToolbar = (toolbar, task) => {
       iconEl = TaskCreationUtils.createOutlinedMaterialIcon({
         name: iconJson.icon,
         color: iconJson.icon_color,
-        size: "20px",
+        // size: "20px",
       });
-      iconEl.style.marginLeft = "10px";
-      iconEl.style.marginTop = "-1px";
+      // iconEl.style.marginLeft = "10px";
+      // iconEl.style.marginTop = "-1px";
     }
 
     titleSpan.appendChild(iconEl);
@@ -479,7 +458,7 @@ const buildForm = (task, divMain) => {
   createTagsDiv(task, divMain);
 
   //-----------------------CREATE FIRST CARD
-  const aonCard = TaskCreationUtils.createCardMessenger(MSG.DATA, "");
+  const aonCard = TaskCreationUtils.createCardMessenger(MSG.DATA, "Solicitud");
   aonCard.flex = "true";
   divMain.appendChild(aonCard);
   aonCard.getCard().style.margin = 0;

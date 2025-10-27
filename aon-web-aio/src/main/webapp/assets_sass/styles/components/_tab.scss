@@ -8,6 +8,7 @@ aon-tab {
     padding      : v.$padding-min;
     display      : flex;
     align-content: center;
+    flex-wrap    : wrap;
     box-sizing   : border-box;
     gap          : v.$gap-min;
     border-radius: v.$border-radius;
@@ -18,6 +19,7 @@ aon-tab {
       align-items  : center;
       box-sizing   : border-box;
       border-radius: v.$border-radius;
+      font-size    : v.$px-14;
     }
   }
 }

@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -161,14 +162,15 @@ public interface ICommon {
 	public Tag saveTag(CloseableAONContext ctx, Tag tag);
 	
 	//TAX
-
-	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
-	public Stream<Tax> getVatStream(AONContext ctx);
-	public Stream<Tax> getWithholdingStream(AONContext ctx);
+	public Optional<Tax> getTax(AONContext ctx, Integer domainId, Integer taxId);
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId);
+	public Stream<Tax> getTaxStream(AONContext ctx, Integer domainId, TaxFilter filter);
+	public Stream<Tax> getVatStream(AONContext ctx, Integer domainId);
+	public Stream<Tax> getWithholdingStream(AONContext ctx, Integer domainId);
 
 	// DATA RESPONSE
 	
-	public DataRequest getDataRequest(AONContext ctx, DataRequestFilter filter);
+	public DataRequest getDataRequest(AONContext ctx,DataRequestFilter filter);
 	public Stream<DataRequest> getDataRequestStream(AONContext ctx, DataRequestFilter filter);
 	public DataRequest saveDataRequest(AONContext ctx, DataRequest dataRequest);
 	
@@ -229,6 +231,9 @@ public interface ICommon {
 	
 	// ACTIVITY SUMMARY
 	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params);
+	
+	// API CONFIGURATION
+	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId);	
 	
 
 }

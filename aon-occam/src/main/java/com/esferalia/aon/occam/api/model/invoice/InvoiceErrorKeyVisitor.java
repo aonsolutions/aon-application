@@ -39,4 +39,5 @@ public interface InvoiceErrorKeyVisitor<T> {
 	void visitGeneric(T t);
 	void visitWithholding(T t);
 	void visitExpenseAccount(T t);
+	void visitCommunication(T t);
 }

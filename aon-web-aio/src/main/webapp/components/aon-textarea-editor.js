@@ -3,10 +3,9 @@ import { getReader } from '../services/utils.js';
 import { openFileUrl } from '../services/fileService.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG} from '../environments/environments.js';
 import { AonDialog } from "./aon-dialog.js";
+import { AonIcon } from "./aon-icon";
 //import '../css/aon-textarea-editor.css';
-
 export class AonTextareaEditor extends AonElement {
-
     #windowListeners;
 
     textBox;
@@ -621,10 +620,11 @@ export class AonTextareaEditor extends AonElement {
         container.style.cursor = "pointer";
         container.style.position = "relative";
 
-
-        let containerI = document.createElement("i");
-        containerI.classList.add("material-icons");
-        containerI.innerHTML = materialIcon;
+        // let containerI = document.createElement("i");
+        // containerI.classList.add("material-icons");
+        // containerI.innerHTML = materialIcon;
+        let containerI = new AonIcon();
+        containerI.icon = materialIcon;
         containerI.style.width = "100%";
         // containerI.style.height = "100%";
         containerI.style.textAlign = "center";
@@ -742,9 +742,11 @@ export class AonTextareaEditor extends AonElement {
                 option.style.fontSize = value.fontSize;
             option.style.padding = "0 10px";
             if (value.icon) {
-                let icon = document.createElement("i");
-                icon.classList.add("material-icons");
-                icon.innerText = value.icon;
+                // let icon = document.createElement("i");
+                // icon.classList.add("material-icons");
+                // icon.innerText = value.icon;
+                let icon = new AonIcon();
+                icon.icon = value.icon;
                 option.appendChild(icon);
             }
             if (value.name) {
@@ -849,85 +851,89 @@ export class AonTextareaEditor extends AonElement {
     }
 
     commonSelector(materialIcon, dropdownElement, color) {
-            let defaultIconColor = "#444";
+        let defaultIconColor = "#444";
 
-            let selector = document.createElement("div");
-            this.hoverEfect(selector);
-            selector.style.display = "flex";
-            selector.style.flexDirection = "row";
-            selector.style.position = "relative";
-            selector.style.color = color || defaultIconColor;
-    
-            selector.style.border = "none";
-            selector.style.cursor = "pointer";
-            selector.style.borderRadius = "5px";
-            selector.style.background = "none";
-            selector.style.textOverflow = "ellipsis";
-            selector.style.height = "1.5em";
-            // selector.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
-            selector.classList.add("commonSelector");
-    
-            this.unselectable(selector);
-            
-            let icon = document.createElement("div");
-            icon.classList.add("material-icons");
-            icon.innerText = materialIcon;
-            selector.appendChild(icon);
-            let drop = document.createElement("div");
-            drop.classList.add("material-icons");
-            drop.innerText = "expand_more";
-            selector.appendChild(drop);
-            let options = dropdownElement;
-            
-            [icon, drop].forEach(el => el.style.fontSize = "20px");
+        let selector = document.createElement("div");
+        this.hoverEfect(selector);
+        selector.style.display = "flex";
+        selector.style.flexDirection = "row";
+        selector.style.position = "relative";
+        selector.style.color = color || defaultIconColor;
 
-            selector.addEventListener("mousedown", (ev) => {
-                ev.preventDefault();
-                ev.stopPropagation();
-            });
+        selector.style.border = "none";
+        selector.style.cursor = "pointer";
+        selector.style.borderRadius = "5px";
+        selector.style.background = "none";
+        selector.style.textOverflow = "ellipsis";
+        selector.style.height = "1.5em";
+        // selector.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
+        selector.classList.add("commonSelector");
 
-            selector.addEventListener("click", (ev) => {
-                if (options.parentElement !== selector) {
-                    selector.appendChild(options);
-                    let selParent = selector.parentElement;
-                    if (selParent.classList.contains("additionalElementsDropdown")) {
+        this.unselectable(selector);
+        
+        // let icon = document.createElement("div");
+        // icon.classList.add("material-icons");
+        // icon.innerText = materialIcon;
+        let icon = new AonIcon();
+        icon.icon = materialIcon;
+        selector.appendChild(icon);
+        // let drop = document.createElement("div");
+        // drop.classList.add("material-icons");
+        // drop.innerText = "expand_more";
+        let drop = new AonIcon();
+        drop.icon = "expand_more";
+        selector.appendChild(drop);
+        let options = dropdownElement;
+        
+        [icon, drop].forEach(el => el.style.fontSize = "20px");
 
-                    }
-                } else {
-                    let clickedEl = ev.target;
+        selector.addEventListener("mousedown", (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+        });
 
-                    if (!(clickedEl.classList.contains("commonSelector") || (clickedEl.parentElement.classList.contains("commonSelector") && clickedEl.parentElement !== selector))) {
-                        selector.removeChild(options);
-                    }
-                    
+        selector.addEventListener("click", (ev) => {
+            if (options.parentElement !== selector) {
+                selector.appendChild(options);
+                let selParent = selector.parentElement;
+                if (selParent.classList.contains("additionalElementsDropdown")) {
+
                 }
-            });
+            } else {
+                let clickedEl = ev.target;
 
-            let windowListener = (ev) => {
-                if (selector && selector.contains(options)) {
-                    if (ev.target != selector && !selector.contains(ev.target)) {
-                        selector.removeChild(options);
-                    }
+                if (!(clickedEl.classList.contains("commonSelector") || (clickedEl.parentElement.classList.contains("commonSelector") && clickedEl.parentElement !== selector))) {
+                    selector.removeChild(options);
                 }
-            };
-    
-            window.addEventListener("click", windowListener);
-            this.#windowListeners.push({
-                event: "click",
-                listener: windowListener
-            });
-            let resizeListener = () => {
-                clearTimeout(this.#timeoutResize);
-                this.#timeoutResize = setTimeout(() => {
-                    if (this.bar) {
-                        this.resizeBar();
-                    }
-                }, 50);
+                
+            }
+        });
 
-            };
-            window.addEventListener("resize", resizeListener);
+        let windowListener = (ev) => {
+            if (selector && selector.contains(options)) {
+                if (ev.target != selector && !selector.contains(ev.target)) {
+                    selector.removeChild(options);
+                }
+            }
+        };
 
-            return selector;
+        window.addEventListener("click", windowListener);
+        this.#windowListeners.push({
+            event: "click",
+            listener: windowListener
+        });
+        let resizeListener = () => {
+            clearTimeout(this.#timeoutResize);
+            this.#timeoutResize = setTimeout(() => {
+                if (this.bar) {
+                    this.resizeBar();
+                }
+            }, 50);
+
+        };
+        window.addEventListener("resize", resizeListener);
+
+        return selector;
     }
 
 
@@ -1552,8 +1558,7 @@ export class AonTextareaEditor extends AonElement {
         this.textBoxEnvelope.style.backgroundColor = this.isMobile() ? this.#textAreaHoverBackground : this.#textAreaBackground;
         this.textBoxEnvelope.style.padding = "5px";
         this.textBoxEnvelope.style.cursor = "text";
-        this.textBoxEnvelope.classList.add("materialScroll");
-        this.textBoxEnvelope.classList.add("textBoxEnvelope");
+        this.textBoxEnvelope.classList.add("materialScroll", "textBoxEnvelope");
         
         this.textBox = this.textBoxElement();
         this.textBoxEnvelope.addEventListener("click", (ev) => {

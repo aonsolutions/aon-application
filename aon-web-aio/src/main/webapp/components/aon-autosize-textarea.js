@@ -1,10 +1,8 @@
 import { CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
 import { AonElement } from "./AonElement.js";
-
 //import '../css/aon-autosize-textarea.css';
 
 export class AonAutosizeTextarea extends AonElement {
-
     mainColor;
     detailColor;
 
@@ -22,7 +20,6 @@ export class AonAutosizeTextarea extends AonElement {
     options;
     selected;
     
-
     /**
      * @param {string} limit
      */
@@ -152,7 +149,6 @@ export class AonAutosizeTextarea extends AonElement {
         }
     }
 
-
     build() {
         this.className = CSS.AON_AUTOSIZE_TEXTAREA;
         this.tabIndex = 0;
@@ -227,7 +223,7 @@ export class AonAutosizeTextarea extends AonElement {
     }
     
     createTextArea() {
-        let lineHeight = "1.3em";
+        // let lineHeight = "1.3em";
         this.TEXTAREA = this.createElement("textarea");
         if (this.name) {
             this.TEXTAREA.name = this.name;
@@ -235,8 +231,8 @@ export class AonAutosizeTextarea extends AonElement {
         this.TEXTAREA.id = this.TEXTAREA_ID;
         this.TEXTAREA.rows = 1;
         this.TEXTAREA.style.display = "block";
-        this.TEXTAREA.style.backgroundColor = "transparent";
-        this.TEXTAREA.style.border = "none";
+        // this.TEXTAREA.style.backgroundColor = "transparent";
+        // this.TEXTAREA.style.border = "none";
         this.TEXTAREA.style.overflowY = "scroll";
         this.TEXTAREA.style.maxHeight = this._scrollLimit;
         // this.TEXTAREA.style.height = lineHeight;

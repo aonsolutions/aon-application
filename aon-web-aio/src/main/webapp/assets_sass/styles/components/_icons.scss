@@ -5,6 +5,7 @@ $iconbutton-font-size        : v.$px-16;
 $position                    : relative;
 $iconbutton-font-size-hidden : v.$px-0;
 $icon-size                   : v.$px-24;
+$icon-size-x                 : v.$px-48;
 $content                     : '';
 $display                     : inline-flex;
 $mask                        : no-repeat center;
@@ -25,9 +26,8 @@ $icons: (
   "notification_add"     : '../icons/bell-plus.svg',
   "help_outline"         : '../icons/help-circle.svg',
   "business"             : '../icons/building.svg',
+  "apartment"            : '../icons/building.svg',
   "home"                 : '../icons/home.svg',
-  "chevron-down"         : '../icons/chevron-down.svg',
-  "chevron-right"        : '../icons/chevron-right.svg',
   "delete"               : '../icons/trash-2.svg',
   "edit"                 : '../icons/edit.svg', 
   "add"                  : '../icons/plus.svg',
@@ -52,12 +52,18 @@ $icons: (
   "sticker"              : '../icons/sticker.svg',
   "more_vert"            : '../icons/more-vertical.svg',
   "file_copy"            : '../icons/copy.svg',
+  "content_copy"         : '../icons/copy.svg',
   "paperclip"            : '../icons/paperclip.svg',
   "calendar_today"       : '../icons/calendar-days.svg',
+  "arrow_drop_up"        : '../icons/chevron-up.svg',
+  "expand_less"          : '../icons/chevron-up.svg',
+  "chevron-down"         : '../icons/chevron-down.svg',
+  "keyboard_arrow_down"  : '../icons/chevron-down.svg',
+  "arrow_drop_down"      : '../icons/chevron-down.svg',
+  "expand_more"           : '../icons/chevron-down.svg',
+  "chevron-right"        : '../icons/chevron-right.svg',
   "keyboard_arrow_left"  : '../icons/chevron-left.svg',
   "keyboard_arrow_right" : '../icons/chevron-right.svg',
-  "arrow_drop_down"      : '../icons/chevron-down.svg',
-  "arrow_drop_up"        : '../icons/chevron-up.svg',
   "check"                : '../icons/check.svg',
   "done"                 : '../icons/check.svg',
   "autorenew"            : '../icons/refresh-cw.svg',
@@ -86,6 +92,7 @@ $icons: (
   "archive"              : '../icons/archive.svg',
   "error"                : '../icons/info.svg',
   "check_circle"         : '../icons/check-circle.svg',
+  "check_circle_outline" : '../icons/check-circle.svg',
   "bar_chart"            : '../icons/bar-chart.svg',
   "person"               : '../icons/user.svg',
   "person_add"           : '../icons/user-plus.svg',
@@ -104,6 +111,57 @@ $icons: (
   "file-pie-chart"       : '../icons/file-pie-chart.svg',
   "cancel"               : '../icons/x-circle.svg',
   "assignment"           : '../icons/clipboard-list.svg',
+  "work"                 : '../icons/briefcase.svg',
+  "report"               : '../icons/alert-octagon.svg',
+  "swap_calls"           : '../icons/swap_calls.svg',
+  "draw"                 : '../icons/draw.svg',
+  "face"                 : '../icons/face.svg',
+  "aon_branch"           : '../icons/git-branch-plus.svg',
+  "send"                 : '../icons/send.svg',
+  "open_in_full"         : '../icons/maximize-2.svg',
+  "fork_left"            : '../icons/git-branch.svg',
+  "group_add"            : '../icons/user-plus.svg',
+  "support_agent"        : '../icons/headphones-micro.svg',
+  "social_distance"      : '../icons/user-suplant.svg',
+  "forward_to_inbox"     : '../icons/mail-plus.svg',
+  "share"                : '../icons/share-2.svg',
+  "Alternate_Email"      : '../icons/at-sign.svg',
+  "code"                 : '../icons/code.svg',
+  "security"             : '../icons/shield.svg',
+  "aon_ocr"              : '../icons/scan.svg',
+  "aon_bank"             : '../icons/dollar-sign.svg',
+  "aon_app"              : '../icons/aon.svg',
+  "toggle_on"            : '../icons/toggle-right.svg',
+  "toggle_off"           : '../icons/toggle-left.svg',
+  /* texarea con opciones */
+  "format_bold"         : '../icons/bold.svg',
+  "format_italic"       : '../icons/italic.svg',
+  "format_underlined"   : '../icons/underline.svg',
+  "format_color_text"   : '../icons/text.svg',
+  "format_list_numbered": '../icons/list-ordered.svg',
+  "format_quote"        : '../icons/quote.svg',
+  "format_size"         : '../icons/heading.svg',
+  "format_align_left"   : '../icons/align-left.svg',
+  "format_align_right"  : '../icons/align-right.svg',
+  "format_align_center" : '../icons/align-center.svg',
+  "format_align_justify": '../icons/align-justify.svg',
+  "format_color_fill"   : '../icons/paint-bucket.svg',
+  "format_list_bulleted": '../icons/list.svg',
+  "format_indent_decrease": '../icons/outdent.svg',
+  "format_indent_increase": '../icons/indent.svg',
+  "strikethrough_s"     : '../icons/strikethrough.svg',
+  "format_strikethrough": '../icons/eraser.svg',
+  "insert_link"         : '../icons/link-2.svg',
+  "html"                : '../icons/code.svg',
+  "fullscreen"          : '../icons/expand.svg',
+  "attach_file"         : '../icons/paperclip.svg',
+  "aon_saltra"          : '../icons/saltra.svg',
+  "aon_convenios"       : '../icons/convenios.svg',
+  "aon_custom"          : '../icons/convenios.svg',
+  "aon_aula"            : '../icons/aula.svg',
+  "seres"               : '../icons/seres.svg',
+  "360"                 : '../icons/archive-restore.svg',
+  "delete_forever"      : '../icons/trash-2.svg',
   /* nombres que le han puesto en los iconos de la izquierda... */
   "widgets"            : '../icons/box.svg',
   "add_circle_outline" : '../icons/plus-square.svg',
@@ -144,8 +202,8 @@ $icons: (
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
   aon-icon-button[icon="#{$icon-name}"]{
-    width  : $icon-size;
     height : $icon-size;
+    width  : $icon-size;
     button{
       width  : $icon-size;
       height : $icon-size;
@@ -179,6 +237,12 @@ $icons: (
     height           : $icon-size;
     font-size        : v.$px-0; // ocultar texto si queda alguno
     background-color : currentColor;
+
+    // Mas grande
+    &[icon="social_distance"]{
+      height : $icon-size-x;
+      width  : $icon-size-x;
+    }
 
     mask: url(#{$icon-data}) $mask;
     mask-size         : $mask-size;

@@ -118,7 +118,7 @@ public class InvoiceDetailDAO {
         return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
     }
 	
-	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
+	private static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
 		return select(ctx, filter).limit(1)
 			.fetch().stream().map(new InvoiceDetailFiller())
 			.findFirst().orElse(new InvoiceDetail());

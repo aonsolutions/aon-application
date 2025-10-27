@@ -13,6 +13,7 @@
 
 // Importamos vistas
 @use './pages/index' as index;                // login
+@use './pages/parent' as parent;              // listado de empresas
 @use './pages/home' as home;                  // home  - logueado
 @use './pages/home_desktop' as home_desktop;  // home  - en empresa
 @use './pages/certification' as certi;        // certification - Listado de certificados con las Agencias que se tienen
@@ -20,8 +21,11 @@
 @use './pages/invoices' as invoices;          // invoices- Facturacion
 @use './pages/documental' as doc;             // doc   - Documentos
 @use './pages/timecontrol' as timecontrol;    // timecontrol - Control horario
+@use './pages/messenger' as messenger;        // messenger - Notificaciones
 @use './pages/notes' as notes;                // notes - Notas que se crean
 @use './pages/marketplace' as marketplace;    // marketplace - Contratacion
+@use './pages/warehouse' as warehouse;        // warehouse - Almacen
+@use './pages/configuration' as configuration;// configuration - Configuracion
 
 // Temas y Resoluciones
 @use './theme-base' as themeBase;

@@ -98,6 +98,7 @@ $color-text-login         : $color-500;
 $color-text-general       : $color-500;
 $color-text-button        : $color-0;
 $color-text-button-transp : $color-800;
+$color-text-placeholder   : $color-300;
 
 // Colores card
 $color-text-card          : $color-text-general;
@@ -124,8 +125,8 @@ $logoHead-height : v.$px-27;
 
 // Logo
 $logo        : "dist/logos/ayudat/logo-gris.svg";
-$logo-width  : v.$px-100;
-$logo-height : v.$px-100;
+$logo-width  : v.$px-150;
+$logo-height : v.$px-150;
 
 // Colores icono y texto del menu
 $color-menu-green : $color-green-600;
@@ -137,7 +138,8 @@ $color-menu-green : $color-green-600;
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, 
+    $color-text-button-transp, $color-text-placeholder,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
     $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,

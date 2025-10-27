@@ -44,16 +44,23 @@ export class AonNewNumber extends AonNewInput {
     attributeChangedCallback(name, oldValue, newValue) {
         if (CONSTANT.VALUE === name) {
             let input = this.getElement(this.INPUT);
-            if (newValue && 'undefined' !== newValue && input 
-                && !isNaN(newValue) && !newValue.includes(','))
+            // Evita formatear si el usuario está escribiendo
+            if (!input) return;
+            if (document.activeElement === input) return;
+
+            if (newValue && 'undefined' !== newValue && input && !isNaN(newValue) && !newValue.includes(',')){
                 input.value = this.onBlur2(newValue);
-            if (input && newValue === '') input.value = '';
+            }
+            if (input && newValue === ''){
+                input.value = '';
+            }
             let desc = this.getElement(this.TITLE);
             if(desc && input.value.length > 0) {
-              desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
-            } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
-        }
-        else if (CONSTANT.DISABLED === name) {
+                desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
+            } else if(desc){
+                desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
+            } 
+        } else if (CONSTANT.DISABLED === name) {
             let input = this.getElement(this.INPUT);
             if(input) {
                 if(this.isDisabled())

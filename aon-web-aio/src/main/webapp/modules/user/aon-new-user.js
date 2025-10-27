@@ -13,6 +13,7 @@ import { createCard, createIcon, createInput, createSelect, createSwitch, create
 import * as ACTION from '../actions.js';
 import { AonScopeSimpleList } from '../scope/aon-scope-simple-list.js';
 import { AonTab } from '../../components/aon-tab.js';
+import { AonIcon } from '../../components/aon-icon';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonSelect } from '../../components/aon-select.js';
 
@@ -241,7 +242,7 @@ export class AonNewUser extends AonElement {
 		this.buildStatus(card);
 
 		let div = this.createDiv();
-		div.style.marginBottom = '10px';
+		// div.style.marginBottom = '10px';
 		card.setContent(div);
 
 		let table = createTable(this.AUTH_TABLE, div);
@@ -360,6 +361,7 @@ export class AonNewUser extends AonElement {
 		card.setContent(div);
 	
 		let table = createTable(this.SECURITY_TABLE, div);
+		table.classList.add('table-security')
 
 		this.buildPermissionButtons();
 		
@@ -464,7 +466,7 @@ export class AonNewUser extends AonElement {
 		let active = createSwitch(this.SECURITY_TABLE_ACTIVE + i);
 		active.checked = app.is(this.userDur);
 		active.disabled = "admin" != app.app && this.userDur.isAdmin() && active.isChecked();
-		active.style.paddingRight = '10px';
+		// active.style.paddingRight = '10px';
 		
 		active.addEventListener(EVENT.CHANGE, () => {
 			this.activeAction(app, active.isChecked());
@@ -526,16 +528,14 @@ export class AonNewUser extends AonElement {
 		statusText.style.color = "#5f6368";
 		statusDiv.appendChild(statusText);
 
-		let iconArrowDown = this.createDiv();
-		iconArrowDown.style.fontSize  = "18px";
-		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		let iconArrowDown = new AonIcon();
+		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 		statusDiv.appendChild(iconArrowDown);
 
-		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown,card));
 	}
 
-	getOptionsStatus(element){
+	getOptionsStatus(element,card){
 		const top = element.getBoundingClientRect().top + 24;
 		const left = element.getBoundingClientRect().left + 3;
 		let d = this.getApplication().getOptionDialog();
@@ -547,6 +547,7 @@ export class AonNewUser extends AonElement {
 				icon:"toggle_on", 
 				fn:()=> {
 					this.user.active = true;
+					this.buildStatus(card);
 					this.save();
 				}
 			},
@@ -556,6 +557,7 @@ export class AonNewUser extends AonElement {
 				icon:"toggle_off", 
 				fn:()=> {
 					this.user.active = false;
+					this.buildStatus(card);
 					this.save();
 				}
 			}

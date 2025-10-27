@@ -11,6 +11,7 @@ import { AonToast } from "./aon-toast.js";
 import { createSelect } from './CreateComponent.js';
 
 export class AonApplication extends AonElement {
+  AON_MODULE_LOADER = CONSTANT.ID_LOADER;
   SIDENAV;
   SIDENAV_RIGHT;
   TOOLBAR;
@@ -583,7 +584,10 @@ export class AonApplication extends AonElement {
         } else {
           select.clearSelectable();
         }
-        select.setOptions(options);
+		if(options) 
+			select.setOptions(options) 
+		else 
+			select.setOptions(data.options) 
         select.addEventListener(EVENT.SELECT, () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
@@ -887,11 +891,17 @@ export class AonApplication extends AonElement {
         }
         select.setOptions(options);
         select.addEventListener(EVENT.SELECT, () => {
-          let yearSelected = JSON.parse(select.value);
-          // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
-          let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
-          let optionFiltered = filteredYears[0];
-          optionFiltered.fn();
+			let yearSelected;
+			try {
+				yearSelected = JSON.parse(select.value);
+			} catch {
+				yearSelected = select.value;
+			}
+	        // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
+	        let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
+	        let optionFiltered = filteredYears[0];
+			if(optionFiltered != undefined && optionFiltered.fn != undefined)
+	        	optionFiltered.fn();
         });
       }
     }
@@ -1008,15 +1018,15 @@ export class AonApplication extends AonElement {
     let toolbar = this.getElement(this.TOOLBAR);
     return toolbar.getSearchButton();
   }
-  
+
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
     if (toolbar) {
       toolbar.setAttribute("option", title);
       //----------ADD COLOR SIDENAV SELECTED---------
-      let li = this.getElement(this.SIDENAV+title);
-//      if(li) li.style.backgroundColor = "#d3e3fd";  
-    } 
+      // let li = this.getElement(this.SIDENAV+title);
+      // if(li) li.style.backgroundColor = "#d3e3fd";  
+    }
   }
 
   addTitleToolSection(title) {
@@ -1258,6 +1268,14 @@ export class AonApplication extends AonElement {
       this.buildDragAndDrop(false);
     }
   }
+
+  startLoading() {
+		this.getElement(this.AON_MODULE_LOADER).startLoading();
+	}
+
+	stopLoading() {
+		this.getElement(this.AON_MODULE_LOADER).stopLoading();
+	}
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

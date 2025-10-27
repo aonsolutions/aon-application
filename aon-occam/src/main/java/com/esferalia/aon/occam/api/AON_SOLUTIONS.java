@@ -58,7 +58,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
-import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -308,10 +307,17 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Auth updateAuthPassword(Auth auth) {
-		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){		
-			return getSecurity().updateAuthPassword(ctx, auth);
-		}
+		for(String schema: AONContext.getSchemas()) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+					if(schema.equalsIgnoreCase(auth.getSchema()))
+						getSecurity().updateAuthPassword(ctx, auth);
+					getSecurity().updateUserPassword(ctx, auth);
+				}
+			} 
+		}		
+		return auth;
 	}
 	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
@@ -527,10 +533,11 @@ public class AON_SOLUTIONS {
 	
 	// INVOICE
 	
-	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+	public static List<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getInvoices(ctx, filter);
-		} 
+			return getApi().getInvoices(ctx, filter )
+				.collect(Collectors.toCollection(LinkedList::new));
+		}
 	}
 	
 	public static Stream<Invoice> getChartInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
@@ -548,12 +555,6 @@ public class AON_SOLUTIONS {
 	public static Pair<Date, Date> getInvoicesChartPeriod(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoicesChartPeriod(ctx, filter);
-		} 
-	}
-	
-	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getInvoiceNewPortal(ctx, filter);
 		} 
 	}
 	

@@ -15,7 +15,6 @@ import { addHorizontalScroll, sortBy } from "../../../services/utils.js";
 import { AonIcon } from "../../../components/aon-icon.js";
 import { getTasks } from "../../../services/taskService.js";
 
-
 /**
  * 
  * @param {Task} task
@@ -25,15 +24,15 @@ const buildForm = (task)=> {
   buildToolbar(task);
 
   const mainView = TaskCreationUtils.createMainView(aonMessengerChat); //DIV MAIN
-  mainView.style.overflow = 'auto';
+  // mainView.style.overflow = 'auto';
   mainView.classList.add(CSS.NO_SCROLLBAR);
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
-  firstDiv.style.boxSizing = 'border-box';
+  // firstDiv.style.boxSizing = 'border-box';
 
   const secondDiv = setStyles(createSecondDiv(mainView),{ //-------------------------DIV RIGHT
-    boxSizing: 'border-box',
-    height: '96%'
+    // boxSizing: 'border-box',
+    // height: '96%'
   });
 
   TaskUtils.buildForm(task, firstDiv);
@@ -42,7 +41,6 @@ const buildForm = (task)=> {
     buildTabs(task, secondDiv);
   } 
 }
-
 
 /**
  * 
@@ -139,8 +137,8 @@ const buildTabs = (task, secondDiv) => {
     secondDiv.classList.add(CSS.FLEX_WRAP);
 
     let tab = setStyles(new AonTab(),{
-      overflow: 'auto',
-      whiteSpace: 'nowrap'
+      // overflow: 'auto',
+      // whiteSpace: 'nowrap'
     });
     tab.id = MESSENGER_IDS.AON_TAB;
     tab.className = CSS.MATERIAL_SCROLL;
@@ -217,7 +215,6 @@ const buildTabs = (task, secondDiv) => {
         }
       });
     });
-    
 }
 
 const buildWrapper = (secondDiv) => {
@@ -228,10 +225,10 @@ const buildWrapper = (secondDiv) => {
     const wrapper = newComponent({
       type: MESSENGER_COMPONENTS.WRAPPER,
       classes: [CSS.FLEX_COLUMN],
-      styles: {
-        width:'94%',
-        height: '100%',
-      }
+      // styles: {
+      //   width:'94%',
+      //   height: '100%',
+      // }
     }).element;
     secondDiv.appendChild(wrapper);
 
@@ -239,10 +236,9 @@ const buildWrapper = (secondDiv) => {
      * The chat itself
      */
     const chat = TaskCreationUtils.createChat(); 
-    
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
-
+    
     addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
 
     return wrapper;
@@ -277,10 +273,10 @@ const buildChat = (task, wrapper) => {
 const addTextAreaChat = (wrapper, task) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const divs = TaskCreationUtils.createSectionComment(wrapper);
-  setStyles(divs.divWrite,{
-    borderRadius:"5px",
-    border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
-  });
+  // setStyles(divs.divWrite,{
+  //   borderRadius:"5px",
+  //   border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
+  // });
 
   const label = TaskCreationUtils.createLabelFileText();
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
@@ -335,13 +331,13 @@ const createFirstDiv = (mainView) => {
     id: MESSENGER_IDS.FIRST_DIV,
     styles: {
       width: "40%",
-      minWidth: "400px",
-      paddingTop: "15px",// "20px",
-      paddingRight: "20px",
-      paddingLeft: "30px",
-      paddingBottom: "30px",
-      overflow:"auto",
-      top: 0
+      // minWidth: "400px",
+      // paddingTop: "15px",// "20px",
+      // paddingRight: "20px",
+      // paddingLeft: "30px",
+      // paddingBottom: "30px",
+      // overflow:"auto",
+      // top: 0
     },
   });
   div.appendTo(mainView);
@@ -355,8 +351,8 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
       width: "60%",
-      paddingBottom: "30px",
-      paddingRight: "10px"
+      // paddingBottom: "30px",
+      // paddingRight: "10px"
     },
   });
   secondDiv.appendTo(mainView);
@@ -371,8 +367,8 @@ const createSecondDiv = (mainView) => {
 const addChatButtonsUpDown = (secondDiv) => {
   const transparent = "transparent";
   const leftButtonBar = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-    styles: { width: "6%" }
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER, 'upIcon-downIcon'],
+    // styles: { width: "6%" }
   });
   leftButtonBar.appendTo(secondDiv);
 
@@ -393,31 +389,26 @@ const addChatButtonsUpDown = (secondDiv) => {
   leftButtonBar.appendChild(downIcon);
 }
 
-
 const getTitleHtml = (task, isParent = false) => {
 
   const span = document.createElement(TAG.SPAN);
 
   const { icon_color, icon } = TaskUtils.getIconJson(task);
 
-  let iconEl = document.createElement(TAG.I);
-
+  let iconEl = new AonIcon();
   if(task.isTask()) {
-    iconEl = new AonIcon();
     iconEl.icon = AON_ICONS.AON_BRANCH;
     iconEl.title = "Branch";
     iconEl.color = icon_color;
   } else {
     setStyles(iconEl,{
       position: "relative",
-      fontSize: "1.4em",
-      top: "3px",
       marginLeft: "1px",
       color:icon_color
     });
     
-    iconEl.title      = !isParent ? task.getSource() : MSG.PARENT;
-    iconEl.innerText  = !isParent ? icon : MATERIAL_ICONS.FORK_LEFT;
+    iconEl.title = !isParent ? task.getSource() : MSG.PARENT;
+    iconEl.icon  = !isParent ? icon : MATERIAL_ICONS.FORK_LEFT;
     iconEl.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
   } 
 
@@ -437,8 +428,6 @@ const getTitleHtml = (task, isParent = false) => {
 
   return span.outerHTML;
 };
-
-
 
 // --------------------------------ADD TAB GROUP TASK
 
@@ -523,7 +512,6 @@ const updateListTask = (task) => {
   simpleListTask.tasks = tasksTmp;
   simpleListTask.init();
 }
-
 
 export const MessengerChat = {
   buildForm,

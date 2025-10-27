@@ -146,7 +146,7 @@ export class AonProduct extends AonElement {
 				{name: MSG.SUPPLIED, value: 'PREPAYMENT'}];
 			let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
     	    typeSelect.setOptions(types);
-			typeSelect.value = this.expense ? 'EXPENSE' : this.product.getType();
+			typeSelect.value = this.expense ? 'EXPENSE' : '';
 			
 			typeSelect.addEventListener(EVENT.CHANGE, (e) => {
 				this.product.setType(typeSelect.getDetail().value);
@@ -199,7 +199,7 @@ export class AonProduct extends AonElement {
 		let retentionSelect = this.createSelect(this.PRODUCT_RETENTION, MSG.IRPF);
 		retentionSelect.default = true;
 		retentionSelect.setOptions(TaxRetentionPercentage);
-		retentionSelect.value = this.product.retention;
+		retentionSelect.value = this.product.retention || '';
 		retentionSelect.addEventListener(EVENT.CHANGE, () => {
 			this.product.setRetention(retentionSelect.getDetail().value);
 			this.getElement(this.ITEM_PVP).value = this.getPvp();

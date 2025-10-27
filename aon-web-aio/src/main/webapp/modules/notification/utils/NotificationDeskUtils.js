@@ -1,4 +1,5 @@
-import { COLORS, CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
+import { AonIcon } from "../../../components/aon-icon.js";
+import { COLORS, CSS, MATERIAL_ICONS, TAG } from "../../../environments/environments.js";
 import { setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
@@ -35,8 +36,6 @@ const buildRow = (res)=>{
 
   row.appendChild( buildSubTitle(res) );
 
-  const expandMore = "expand_more";
-  const expandLess = "expand_less";
   row.onclick = () => {
     aonNotification.markReadNotification(res);
 
@@ -44,11 +43,17 @@ const buildRow = (res)=>{
   
     const subTitle = document.getElementById('notificationSubTitle'+id);
 
-    const expand = expandIcon.innerText === expandMore;
+    const expand = expandIcon.icon === MATERIAL_ICONS.CHEVRON_DOWN;
 
-    expandIcon.innerText = expand ? expandLess : expandMore;
+    expandIcon.icon = expand ? MATERIAL_ICONS.CHEVRON_RIGHT : MATERIAL_ICONS.CHEVRON_DOWN;
 
-    if(expand && res.source && res.source_id){
+    if (expandIcon.icon === MATERIAL_ICONS.CHEVRON_RIGHT) {
+      expandIcon.style.transform = "rotate(180deg)";
+    } else {
+      expandIcon.style.transform = "rotate(0deg)";
+    }
+
+    if (expand && res.source && res.source_id) {
       const subTitleDiv = document.getElementById('notificationDivSubTitle'+id)
       subTitleDiv.appendChild(buildButtonMore(true, res));
     } else {
@@ -72,18 +77,18 @@ const buildTitle = (res)=>{
     justify-content: space-between;
   `;
 
-  let campaignIcon = document.createElement(TAG.SPAN);
-  campaignIcon.className = 'material-icons';
-  campaignIcon.innerText = 'campaign';
-
-  campaignIcon.style = `
+  let notificationIcon = document.createElement('aon-icon');
+  notificationIcon.setAttribute('icon', 'notifications');
+  notificationIcon.textContent = 'notifications'; 
+  notificationIcon.style = `
     margin: 0px;
     min-width: 0px;
     display: flex;
     width: 26px;
     padding-top: 4px;
+    margin-right: 16px;
   `;
-  div.appendChild(campaignIcon);
+  div.appendChild(notificationIcon);
 
   let divTitle = document.createElement(TAG.DIV);
   divTitle.style = `
@@ -132,24 +137,20 @@ const buildTitle = (res)=>{
   `;
   divDate.appendChild(labelDate);
 
-  let expandIcon = document.createElement(TAG.SPAN);
-  expandIcon.id = "notificationExpandIcon"+res.id;
-  expandIcon.className = 'material-icons';
-  expandIcon.innerText = 'expand_more'; // expand_less
-  expandIcon.style = `
+  let arrowTitle  = new AonIcon();
+  arrowTitle.icon = MATERIAL_ICONS.CHEVRON_DOWN;
+  arrowTitle.id = 'notificationExpandIcon' + res.id;
+  arrowTitle.style = `
     margin: 0px;
     min-width: 0px;
     color: rgb(112, 122, 138);
     font-size: 16px;
     fill: rgb(112, 122, 138);
-    transform: rotate(180deg);
-    transition: all 0.3s ease 0s;
+    transition: color 0.3s ease, fill 0.3s ease;
     width: 1em;
     height: 1em;
   `;
-
-  divDate.appendChild(expandIcon);
-
+  divDate.appendChild(arrowTitle);
   return div;
 }
 

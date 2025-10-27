@@ -21,6 +21,19 @@ export const login = (data) => {
   });
 };
 
+export const signin = (data) => {
+  return new Promise(async (resolve, reject) => {
+    request("POST", `${API_URL}/signin`, undefined, data, (token, error) => {
+      if (error) {
+        reject(error);
+      } else {
+        localStorage.setItem("aon_session_id", JSON.parse(token).session_id);
+        resolve(token);
+      }
+    });
+  });
+};
+
 export const closeSession = () => {
   LS.remove(LS.AON_SESSION_ID);
   LS.remove(LS.AON_DOMAIN_ID);

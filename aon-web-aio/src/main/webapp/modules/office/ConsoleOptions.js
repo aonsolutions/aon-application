@@ -9,13 +9,13 @@ export const LINK_DOMAINS = {
 export const SYNC_DOMAINS = {
   id: "syncCustomerDomain",
   name: "Vinc. Clientes/Dominios",
-  icon: MATERIAL_ICONS.DATASET_LINKED
+  // icon: MATERIAL_ICONS.DATASET_LINKED
 }
 
 export const SIG_CONSOLE = {
   id: "sigConsole",
   name: "Admin. Dominios",
-  icon: MATERIAL_ICONS.TERMINAL
+  // icon: MATERIAL_ICONS.TERMINAL
 }
 
 export const BOOKING_PANEL = {
@@ -35,5 +35,5 @@ export const ConsoleSidenav = {
 export const LINK_CUSTOMER_DOMAINS = {
   id: CONSTANT.LINK_CUSTOMER_DOMAINS.initCap(),
   name: "Vincular a dominios",
-  icon: MATERIAL_ICONS.DATASET_LINKED
+  // icon: MATERIAL_ICONS.DATASET_LINKED
 }

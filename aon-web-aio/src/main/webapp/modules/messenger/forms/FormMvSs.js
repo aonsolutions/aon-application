@@ -41,7 +41,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id: "ipf",
             name:"ipf",
-            description: "DNI/NIE",
+            title: "DNI/NIE",
             value: data.ipf ? data.ipf : ""
         }
     })
@@ -51,7 +51,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id:"nss",
             name:"nss",
-            description:"NSS/NAF (Opcional)",
+            title:"NSS/NAF (Opcional)",
             value: data.nss ? data.nss : ""
         }
     })
@@ -61,7 +61,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id: "name",
             name:"name",
-            description: MSG.NAME,
+            title: MSG.NAME,
             value: data.name ? data.name : ""
         }
     })
@@ -71,7 +71,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id:"surname",
             name:"surname",
-            description:"1er Apellido",
+            title:"1er Apellido",
             value: data.surname ? data.surname : ""
         }
     })
@@ -81,7 +81,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id: "lastSurname",
             name:"lastSurname",
-            description: `2do Apellido (${MSG.OPTIONAL})`,
+            title: `2do Apellido (${MSG.OPTIONAL})`,
             value: data.lastSurname ? data.lastSurname : ""
         }
     })
@@ -113,7 +113,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id:"category",
             name:"category",
-            description:"Categoria profesional",
+            title:"Categoria profesional",
             value: data.category ? data.category : "",
         }
     })
@@ -136,7 +136,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id:"salary", 
             name:"salary", 
-            description:"Salario mensual",
+            title:"Salario mensual",
             decimals:"2",
             format:CONSTANT.TRUE,
             value: data.salary ? data.salary : "",
@@ -173,7 +173,7 @@ const createDataEnterprise = (form, data) => {
             id:"hour", 
             name:"hour", 
             decimals:"2",
-            description:MSG.HOURS,
+            title:MSG.HOURS,
             format:CONSTANT.TRUE,
             value: data.hour ? data.hour : "",
         }
@@ -185,7 +185,7 @@ const createDataEnterprise = (form, data) => {
         attributes:{
             id:"coef", 
             name:"coef", 
-            description:"Coef",
+            title:"Coef",
             decimals:"2",
             format:CONSTANT.TRUE,
             value: data.coef ? data.coef : "",

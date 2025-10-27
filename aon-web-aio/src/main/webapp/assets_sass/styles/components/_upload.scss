@@ -1,13 +1,14 @@
 @use '../variables' as v;
 
-aon-new-upload{
-	display: flex;
-	.upload-component{
+aon-new-upload, aon-upload{
+	display				: flex;
+	border-radius : v.$border-radius;
+	.upload-component, .aonUpload{
 		width					: v.$pct-100;
 		padding       : v.$padding-min v.$padding;
 		cursor				: pointer;
 		border-radius : v.$border-radius;
-		.upload-component-label{
+		.upload-component-label, .aonUploadLabel{
 			cursor		 : pointer;
 			display		 : flex;
 			align-items: center;
@@ -15,6 +16,14 @@ aon-new-upload{
 			.upload-component-text{
 				font-size: v.$px-16;
 			}
+		}
+	}
+	.aonUpload{
+		display		 : flex;
+		aon-icon-button{
+			display: flex;
+			justify-content: flex-end;
+			width: v.$pct-100;
 		}
 	}
 }

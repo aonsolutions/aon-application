@@ -110,7 +110,8 @@ export class AonTax extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+//    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+	let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
@@ -119,11 +120,11 @@ export class AonTax extends AonElement {
 
   async getTable() {
     this.applicationEl = await waitEl("#aonFiscal");
-    if (this.isMobile()) {
-      await this.getTableMobile();
-    } else {
+//    if (this.isMobile()) {
+//      await this.getTableMobile();
+//    } else {
       await this.getTableDesk();
-    }
+//    }
   }
 
   async getTableDesk() {
@@ -254,6 +255,7 @@ export class AonTax extends AonElement {
 
     let div = this.builDialog(resp);
     dialog.setContent(div);
+	dialog.removeCliclOutsideDialogClose();
 
     if ("CUSTOMER_CHECK" === resp.status) {
       this.createFooterDialog(resp, dialog, div);
@@ -379,6 +381,7 @@ export class AonTax extends AonElement {
     aonInputId.title = "id";
     aonInputId.value = resp.id;
     aonInputId.visible = false;
+	aonInputId.classList.add("hidden");
     form.appendChild(aonInputId);
     
     // NRC
@@ -473,9 +476,8 @@ export class AonTax extends AonElement {
     }
 
     divMain.appendChild(div);
-
     // Boton Rechazar
-    const buttonCancel = dialog.addCancelAction(() =>{
+    const buttonCancel = dialog.addCancelAction(() => {
       this.visibleFields(null);
       const tipodec = this.getElement('tipodec');
       if (tipodec) tipodec.disabled = true;

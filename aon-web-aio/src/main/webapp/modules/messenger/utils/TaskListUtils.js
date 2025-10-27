@@ -297,19 +297,16 @@ const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
 const getIcon = (task, size = undefined, isChild = undefined) => {
   const { source, status, parent, id } = task;
 
-  // let div = document.createElement(TAG.DIV);
+  let div = document.createElement(TAG.DIV);
 
   let iconJson = getIconList({ source, status, parent });
 
-  // let span = setStyles(document.createElement(TAG.SPAN), {
-  //   color: iconJson.icon_color,
-  //   position: "relative",
-  // });
-  let span = setStyles(document.createElement(TAG.DIV));
-  // let span = setStyles(document.createElement(TAG.SPAN));
-  span.classList.add('task-icon')
+  let span = setStyles(document.createElement(TAG.SPAN), {
+    color: iconJson.icon_color,
+    position: "relative",
+  });
   span.title = source;
-  // div.appendChild(span);
+  div.appendChild(span);
 
   span.dataset.taskId = id;
   if (isChild) {
@@ -329,18 +326,16 @@ const getIcon = (task, size = undefined, isChild = undefined) => {
     } catch (e) {}
   }
 
-  let icon  = new AonIcon();
-  icon.icon = iconJson.aonIcon ? iconJson.aonIcon : iconJson.icon;
-  span.appendChild(icon);
-
   // let icon = document.createElement(TAG.I);
+
   // if (iconJson.aonIcon) {
-  //   icon = new AonIcon();
-  //   icon.icon = iconJson.aonIcon;
-  //   icon.color = iconJson.icon_color;
-  //   if (size) {
-  //     icon.size = size;
-  //   }
+    let icon = new AonIcon();
+    icon.icon = iconJson.aonIcon ? iconJson.aonIcon : iconJson.icon;
+    // if(iconJson.icon_color)
+    //   icon.color = iconJson.icon_color;
+    // if (size) {
+    //   icon.size = size;
+    // }
   // } else {
   //   icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
   //   icon.textContent = iconJson.icon;
@@ -348,9 +343,8 @@ const getIcon = (task, size = undefined, isChild = undefined) => {
   //     icon.style.fontSize = size;
   //   }
   // }
-  // span.appendChild(icon);
-
-  return span;
+  span.appendChild(icon);
+  return div;
 };
 
 const getAssignedHtml = (res, domainId) => {

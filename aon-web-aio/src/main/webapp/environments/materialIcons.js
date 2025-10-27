@@ -95,6 +95,7 @@ export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
 export const CHANGE_HISTORY = 'change_history';
+export const CHAT_ERROR  = 'chat_error';
 export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
 export const CHEVRON_DOWN = 'chevron-down';
@@ -104,7 +105,6 @@ export const CIRCLE = 'circle';
 export const CLASS = 'class';
 export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
-export const CLOUD_UPLOAD = 'cloud_upload';
 export const CODE = 'code';
 export const COGNITION_2 = "cognition_2";
 export const COMMENT = 'comment';
@@ -211,6 +211,7 @@ export const LIST_ALT = 'list_alt';
 export const LOCAL_MALL = 'local_mall';
 export const LOCAL_SHIPPING = 'local_shipping';
 export const LOCATION_ON = 'location_on';
+export const LOCK = 'lock';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 
@@ -258,6 +259,7 @@ export const POINT_OF_SALE = 'point_of_sale';
 
 export const QR_CODE_2 = 'qr_code_2';
 export const QR_CODE_SCANNER = 'qr_code_scanner';
+export const QUESTION_MARK = 'question_mark';
 
 // ----- R
 
@@ -299,6 +301,7 @@ export const TERMINAL = 'terminal';
 // ----- U
 
 export const UNARCHIVE = 'unarchive';
+export const UPLOAD_CLOAD = 'upload-cloud';
 
 // ----- V
 

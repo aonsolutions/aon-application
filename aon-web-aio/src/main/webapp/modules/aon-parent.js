@@ -1,16 +1,28 @@
-import {AonElement} from '../components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getCompaniesBySchemas, getTimeControl} from  '../services/service.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
+// Componentes (clases de la UI)
+import { AonElement } from '../components/AonElement.js';
 import { AonApplication } from '../components/aon-application.js';
 import { AonTab } from '../components/aon-tab.js';
-import * as LS from '../services/localStorageService.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonNewInput } from '../components/aon-new-input';
+import { AonIcon } from '../components/aon-icon.js';
+
+// Servicios (lógica de negocio y peticiones)
+import { closeSession, getCompanies, getUserNotice, getCompaniesBySchemas, getTimeControl } from '../services/service.js';
+import * as LS from '../services/localStorageService.js';
 import { ClassicApps, Apps } from '../services/app.js';
+
+// Módulos (funcionalidades o utilidades específicas)
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 import * as JSF from './aon-jsf-app.js';
+import { initSingletonAccess } from '../js/singletonAccess.js';
+
+
+// Entornos y configuraciones
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
 
 export class AonParent extends AonElement {
+	aonApplication;
 	notice;
 	filter;
 	selected;
@@ -52,31 +64,35 @@ export class AonParent extends AonElement {
 
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
+		initSingletonAccess();
 	}
 
 	init(filter) {
 		this.domainId = parseInt(localStorage.getItem('aon_domain_id'));
-		//TODO: aonParent.startLoader();
-		let aonApplication = new AonApplication();
-		aonApplication.setAttribute("sidenav_width", "300px");
-		this.createApplication(this.PARENT, "", aonApplication);
-
-		this.hideCompanyView();
-		this.build();
-		this.buildSidenav();
-		const loader = this.getElement("aonParentLoader");
-		loader.start();
-
-		this.select(filter, companies => {
-			this.showCompanyView();
+		this.aonApplication = new AonApplication();
+		this.aonApplication.startLoading();
+		this.getWelcomeMessage(false).then(msg => {
+			this.createApplication(this.PARENT, msg, this.aonApplication);			
+			this.hideCompanyView();
+			this.build();
+			this.buildSidenav();
 			const loader = this.getElement("aonParentLoader");
-			loader.stop();
-			// Filtrar empresas excluyendo la actual (la que coincide con isLocationCompany)
-			let finalCompanies = companies.filter(company => !this.isLocationCompany(company));
-			// total de la lista filtrada
-			this.decorateTabs(finalCompanies);
-			this.getApplication().updateSidenavCount(this.ENTERPRISES, finalCompanies.length || 0);
-			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`);
+			loader.start();
+			
+			this.select(filter, companies => {
+				this.showCompanyView();
+				const loader = this.getElement("aonParentLoader");
+				loader.stop();
+				// Filtrar empresas excluyendo la actual (la que coincide con isLocationCompany)
+				let finalCompanies = companies.filter(company => !this.isLocationCompany(company));
+				// total de la lista filtrada
+				this.decorateTabs(finalCompanies);
+				this.getApplication().updateSidenavCount(this.ENTERPRISES, finalCompanies.length || 0);
+				this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`);
+				
+				// Quitamos el cargando global
+				this.aonApplication.stopLoading();
+			});
 		});
 	}
 
@@ -290,14 +306,13 @@ export class AonParent extends AonElement {
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.getApplication().setContent(parentDiv);
 
-		let welcomeDiv = this.createDiv();
-		welcomeDiv.className = CSS.AON_WELCOME_DIV;
+		// let welcomeDiv = this.createDiv();
+		// welcomeDiv.className = CSS.AON_WELCOME_DIV;
 
-		let welcomeSpan = this.createSpan();
-		this.getWelcomeMessage().then( msg => welcomeSpan.innerHTML = msg ); 
-		welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
-		welcomeDiv.appendChild(welcomeSpan);
-		
+		// let welcomeSpan = this.createSpan();
+		// this.getWelcomeMessage().then( msg => welcomeSpan.innerHTML = msg );
+		// welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
+		// welcomeDiv.appendChild(welcomeSpan);
 				
 		let welcomeImg = this.createElement(TAG.IMG);
 		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
@@ -361,68 +376,7 @@ export class AonParent extends AonElement {
 				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE}})
 			}
 		];
-
 		companyFilterTabDiv.setOptions(filterOptions);
-
-		// let companyFilterTabDiv = this.createDiv();
-		// companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
-		// companyFilterTabDiv.className = CSS.AON_TAB;
-
-	///
-	
-		// let defaultFilter = { 
-		// 	type: undefined, 
-		// 	active: undefined, 
-		// 	inactive: undefined, 
-		// 	shared: undefined, 
-		// 	entorno: undefined, 
-		// 	despacho: undefined, 
-		// 	domainActive: undefined
-		// };
-		
-		// let filterOptions = [
-		// 	{
-		// 		id: 'active',
-		// 		name: MSG.ACTIVES,
-		// 		icon: 'domain',
-		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'active', active: true, domainActive:true, name: MSG.ACTIVES}})
-		// 	}, {
-		// 		id: 'inactive',
-		// 		name: MSG.INACTIVES,
-		// 		icon: 'domain_disabled',
-		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'inactive', inactive: true, domainActive:false, name: MSG.INACTIVES}})
-		// 	}, {
-		// 		id: 'shared',
-		// 		name: MSG.SHARED,
-		// 		icon: MATERIAL_ICONS.SHARE,
-		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'shared', shared: true, name: MSG.SHARED}})
-		// 	}, {
-		// 		id: 'consultancy',
-		// 		name: MSG.ENVIRONMENT,
-		// 		icon: MATERIAL_ICONS.APARTMENT,
-		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'consultancy', entorno:true, type:"CONSULTANCY", name: MSG.ENVIRONMENT}})
-		// 	},{
-		// 		id: 'office',
-		// 		name: MSG.OFFICE,
-		// 		icon: 'work',
-		// 		fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE}})
-		// 	}
-		// ];
-
-		// for( let filterOption of filterOptions ){
-			// let companyFilterTabA = this.createElement(TAG.A);
-			// companyFilterTabA.className = CSS.AON_TAB_ITEM;
-			// companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => {
-			// 	filterOption.fn(ev)
-			// });
-	
-			// let companyFilterTabSpan = this.createElement(TAG.SPAN);
-			// companyFilterTabSpan.innerHTML = filterOption.name; 
-			// companyFilterTabSpan.className = CSS.AON_TAB_ITEM_TEXT;
-			// companyFilterTabSpan.id = `${this.COMPANY_FILTER_TAB}-${filterOption.id}`;
-			// companyFilterTabA.appendChild(companyFilterTabSpan);
-			// companyFilterTabDiv.appendChild(companyFilterTabA);
-		// }
 	
 		companyDiv.appendChild(companyTitleDiv);
 		companyDiv.appendChild(companyFilterTabDiv);
@@ -431,24 +385,43 @@ export class AonParent extends AonElement {
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
-		// ul.style.overflowY = 'auto';
-		// ul.style.width = "100%";
-	
+		ul.style.overflowY = 'auto';
+		// Crear el input de filtro
+		const filterInput 		= new AonNewInput();
+		filterInput.title 		= 'Filtrar';
+		filterInput.className = 'aonCompanyFilterInput';
+
+		companyDiv.appendChild(filterInput);
 		companyDiv.appendChild(ul);
-		// ul.addEventListener("scroll", () => {
-		// 	let scrollTop = ul.scrollTop;
-		// 	let offsetHeight = ul.offsetHeight;
-		// 	let scrollHeight = ul.scrollHeight;
+		
+		// Evento de filtrado
+		filterInput.addEventListener(EVENT.KEYUP, () => {
+			const filterValue = this.normalizeText(filterInput.value.trim());
+			const items = ul.querySelectorAll('li');
+			if (filterValue === '') {
+				items.forEach(li => li.style.display = '');
+			} else {
+				items.forEach(li => {
+					const text = this.normalizeText(li.innerText);
+					li.style.display = text.includes(filterValue) ? '' : 'none';
+				});
+			}
+		});
+
+		ul.addEventListener(EVENT.SCROLL, () => {
+			let scrollTop = ul.scrollTop;
+			let offsetHeight = ul.offsetHeight;
+			let scrollHeight = ul.scrollHeight;
 			
-		// 	if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
-		// 		this.loadMore();
-		// 	}
-		// });
+			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
+				this.loadMore();
+			}
+		});
 
 		let contentDiv = this.createDiv();
 		contentDiv.appendChild(companyDiv);
 	
-		parentDiv.appendChild(welcomeDiv);
+		// parentDiv.appendChild(welcomeDiv);
 		parentDiv.appendChild(contentDiv);
 	
 		const interval = setInterval(() => {
@@ -478,13 +451,14 @@ export class AonParent extends AonElement {
 				});
 			}
 		}, 100);
-		if(!LS.isOnlyOne())	
+		if(!LS.isOnlyOne()){
 			LS.setCompanySelected(false);
-		else 
+		} else {
 			LS.setCompanySelected(true);
-    }
+		}
+	}
 
-    loadMore() {
+	loadMore() {
 		//TODO: this.getApplication().startLoader();
 		getCompanies().then( companies => {
 			let first = this.page * 30;
@@ -640,15 +614,19 @@ export class AonParent extends AonElement {
 
 		let icon = this.getIcon(company);
 
-		let iconI = this.createElement(TAG.I);
-		iconI.className = 'material-icons aonAvatar';
-		iconI.innerHTML = icon;
+		let iconFirst = this.createElement(TAG.DIV);
+		iconFirst.classList.add('first-icon');
+		let iconI  = new AonIcon();
+		iconI.icon = icon;
+		iconFirst.appendChild(iconI);
+		li.appendChild(iconFirst);
 
 		let nameSpan = this.createElement(TAG.SPAN);
+		nameSpan.className = 'aonLiSpanNameEnterprise';
 		nameSpan.innerHTML = company.name;
 
 		let detailSpan = this.createElement(TAG.SPAN);
-		detailSpan.className = 'aonLiSpanSubtitle'  ;
+		detailSpan.className = 'aonLiSpanSubtitle';
 		let docSpan = this.createElement(TAG.SPAN);
 		docSpan.innerHTML = company.document || `<span class='${CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING}' >Por favor, introduzca un CIF/NIF/Documento válido.</span>`;
 		
@@ -659,8 +637,7 @@ export class AonParent extends AonElement {
 
 		detailSpan.appendChild(docSpan);
 		detailSpan.appendChild(expirationSpan);
-		
-		companySpan.appendChild(iconI);
+
 		companySpan.appendChild(nameSpan);
 		companySpan.appendChild(detailSpan);
 		li.appendChild(companySpan);
@@ -672,16 +649,16 @@ export class AonParent extends AonElement {
 		li.appendChild(countSpan);
 		
 		if (company.active && !company.expired) {
-			let sp = this.createElement(TAG.SPAN);
-			let i2 = this.createElement(TAG.I);
-			i2.className = 'material-icons aonAvatar';
-			i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
-			sp.appendChild(i2);
-			sp.addEventListener(EVENT.CLICK, (event) => {
-				this.open(company);
+			let sp = this.createElement(TAG.DIV);
+			sp.classList.add('last-icon');
+			let i2 =  new AonIcon();
+			i2.icon = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			i2.addEventListener(EVENT.CLICK, (event) => {
 				event.stopPropagation();
+				this.open(company);
 			});
-			sp.title = `Abrir ${company.name} en una pestaña nueva`;
+			i2.title = `Abrir ${company.name} en una pestaña nueva`;
+			sp.appendChild(i2);
 			li.appendChild(sp);
 		}
 		
@@ -758,34 +735,34 @@ export class AonParent extends AonElement {
 		});
     }
 
-	async getWelcomeMessage() {
-		const company = LS.getCompany();
-		const dur = this.getDur();
-		const isConsultancy = company?.type === 'CONSULTANCY';
+	async getWelcomeMessage(returnHtml = true) {
+    const company = LS.getCompany();
+    const dur = this.getDur();
+    const isConsultancy = company?.type === 'CONSULTANCY';
 
-		const buildSpan = (textLight, textBold) =>
-			`<span style='font-weight:lighter;'>${textLight}</span> <span style='font-weight:bolder;'>${textBold}</span>`;
+    const buildSpan = (textLight, textBold) =>
+        `<span style='font-weight:lighter;'>${textLight}</span> <span style='font-weight:bolder;'>${textBold}</span>`;
 
-		try {
-			if (isConsultancy) {
-				const durBuilt = await this.buildDur();
-				return buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description);
-			}
+    try {
+        if (isConsultancy) {
+            const durBuilt = await this.buildDur();
+            return returnHtml ? buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description) : durBuilt.domain.description;
+        }
 
-			if (company?.name) {
-				return buildSpan(MSG.ENVIRONMENT, company.name);
-			}
+        if (company?.name) {
+            return returnHtml ? buildSpan(MSG.ENVIRONMENT, company.name) : company.name;
+        }
 
-			if (dur) {
-				return buildSpan(MSG.ENVIRONMENT, dur.domain.description);
-			}
+        if (dur) {
+            return returnHtml ? buildSpan(MSG.ENVIRONMENT, dur.domain.description) : dur.domain.description;
+        }
 
-			const durBuilt = await this.buildDur();
-				return buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description);
+        const durBuilt = await this.buildDur();
+        return returnHtml ? buildSpan(MSG.ENVIRONMENT, durBuilt.domain.description) : durBuilt.domain.description;
 
-		} catch (err) {
-			return `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>`;
-		}
+    } catch (err) {
+        return returnHtml ? `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>` : MSG.WELCOME_TO_AON_SOLUTIONS;
+    }
 	}
 	
 	hideCompanyView(){
@@ -800,6 +777,13 @@ export class AonParent extends AonElement {
 		this.getElement("aonParentSidenavRight").classList.remove("hidden");
 	}
 	
+	normalizeText(text) {
+		return text
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')  // eliminar acentos
+			.replace(/[\s\uFEFF\xA0]+/g, '')  // eliminar espacios, tabs, etc.
+			.toLowerCase();
+	}
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){

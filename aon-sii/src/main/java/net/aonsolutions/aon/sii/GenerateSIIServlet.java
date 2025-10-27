@@ -10,12 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,11 +20,18 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "GenerateSIIServlet", urlPatterns = { "/generate_sii/*",
@@ -70,15 +71,21 @@ public class GenerateSIIServlet extends HttpServlet{
 		AccountingReportParams params = new AccountingReportParams();
 		params.setDomain(domain.getId());
 		params.setInvoices(ids);
+		
+		Occam occam = new Occam()
+			.setDomainName( domain.getName())
+			.setDomain(domain.getId())
+			.setUser(login);
+
 		LOGGER.info("GET SII VAT CONTEXT");
-		LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
-				.collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(occam, params, option)
+			.collect(Collectors.toCollection(LinkedList::new));
 		LOGGER.info("AFTER GET SII VAT CONTEXT");		
 		LOGGER.info("SII. TAMAÑO VAT CONTEXT: " + contextList.size());
-
-		SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
+		
+		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 		try{
-			SIIManager manager = SIIManager.getInstance(siiConfiguration);
+			SIIManager manager = SIIManager.getInstance(icc);
 
 			byte[] object = null;
 				

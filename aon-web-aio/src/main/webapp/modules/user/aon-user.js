@@ -5,11 +5,12 @@ import { Role, ToolbarType } from '../../models/enums.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
-import '../../components/aon-icon.js';
+// import '../../components/aon-icon.js';
 import '../../components/aon-new-input.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
+import {AonIcon} from '../../components/aon-icon';
 
 import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS, COLORS, EVENT } from '../../environments/environments.js';
 
@@ -289,10 +290,8 @@ export class AonUser extends AonElement {
 		statusText.style.color = "#5f6368";
 		statusDiv.appendChild(statusText);
 
-		let iconArrowDown = this.createElement(TAG.DIV);
-		iconArrowDown.style.fontSize  = "18px";
-		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		let iconArrowDown = new AonIcon();
+		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 		statusDiv.appendChild(iconArrowDown);
 
 		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
@@ -395,15 +394,15 @@ export class AonUser extends AonElement {
 	build() {
 		let card = document.getElementById('aonConfigurationUserCard');
 		let html = `<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
+				<aon-new-input class="aonWidth100" id="aonConfigurationUserCardEmail" title="Email" value=""></aon-new-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth25" id="aonConfigurationUserCardName" description="${MSG.NAME}" value=""></aon-input>
-				<aon-input class="aonWidth75" id="aonConfigurationUserCardSurname" description="${MSG.SURNAME}" value=""></aon-input>
+				<aon-new-input class="aonWidth25" id="aonConfigurationUserCardName" title="${MSG.NAME}" value=""></aon-new-input>
+				<aon-new-input class="aonWidth75" id="aonConfigurationUserCardSurname" title="${MSG.SURNAME}" value=""></aon-new-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input>
-				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
+				<aon-new-input class="aonWidth50" id="aonConfigurationUserCardDocument" title="DNI/NIE" value=""></aon-new-input>
+				<aon-new-input class="aonWidth50" id="aonConfigurationUserCardPhone" title="Teléfono Móvil" value=""></aon-new-input>
 			</form>
 			`;
 		if(this.hasAttribute('showPassword')) {
@@ -412,7 +411,7 @@ export class AonUser extends AonElement {
 				<table style="width:100%">
 				<tr>
 					<td>
-						<aon-input  id="aonConfigurationUserCardPassword" type="password" description="Contraseña" value="12345678" disabled="true"></aon-input>
+						<aon-new-input  id="aonConfigurationUserCardPassword" type="password" title="Contraseña" value="12345678" disabled="true"></aon-new-input>
 					</td>
 					<td style="padding-bottom:20px; width:40px">
 						<aon-icon-button id="aonConfigurationUserCardPasswordEdit" icon="edit"></aon-icon-button>

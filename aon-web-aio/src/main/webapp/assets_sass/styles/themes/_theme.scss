@@ -1,25 +1,27 @@
 @use '../variables' as v;
 
 @mixin theme(
-  $theme, $favicon, $title,
-  $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
-  $color-400, $color-500, $color-600, $color-700, 
-  $color-800, $color-900, $color-input, $color-box,
-  $color-grad-min, $color-grad-max,
-  $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, $color-text-button-transp,
-  $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
-  $color-switch-off, $color-switch-on, $color-switch,
-  $color-red-100,  $color-red-500, $color-red-900,
-  $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
-  $color-blue-100, $color-blue-500, $color-blue-900,
-  $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
-  $logoHead, $logoHead-width, $logoHead-height,
-  $logo, $logo-width, $logo-height
+    $theme, $favicon, $title,
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
+    $color-400, $color-500, $color-600, $color-700, 
+    $color-800, $color-900, $color-input, $color-box,
+    $color-grad-min, $color-grad-max,
+    $color-text, $color-text-head, $color-text-login, $color-text-general, $color-login-form, $color-text-button, 
+    $color-text-button-transp, $color-text-placeholder,
+    $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover, $color-notif-hover,
+    $color-switch-off, $color-switch-on, $color-switch,
+    $color-red-100,  $color-red-500, $color-red-900,
+    $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
+    $color-blue-100, $color-blue-500, $color-blue-900,
+    $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
+    $logoHead, $logoHead-width, $logoHead-height,
+    $logo, $logo-width, $logo-height
 ) {
   
-  $color-900-alpha   : #{$color-900}0D;
-  $color-info-alpha  : #{$color-900}E6;
-  $color-dialog-alpha: #{$color-800}80;
+  $color-900-alpha    : #{$color-900}0D;
+  $color-info-alpha   : #{$color-900}E6;
+  $color-tooltip-alpha: #{$color-800}E6;
+  $color-dialog-alpha : #{$color-800}80;
   
   $body-margin       : unset;
   $aonmodule-display : flex;
@@ -36,6 +38,10 @@
   $color-separator  : $color-200;
   $transition       : background-color v.$t-03 ease;
   $box-sizing       : border-box;
+
+  $border-dotted: v.$px-1 dotted $color-200;
+  $border-dashed: v.$px-2 dashed $color-200;
+  $border-dashed-color-text: v.$px-2 dashed $color-text;
 
   $button-border : v.$px-0;
 
@@ -80,6 +86,16 @@
   --logoHeader-#{$theme}: #{$logoHead};
   --logoHeaderMobile-#{$theme}: #{$logo};
   --logo-#{$theme}: #{$logo};
+
+  // Por ahora hasta que se metan por clases
+  --onlineGreen       : #{$color-green-500};
+  --aonBlue           : #{$color-corp-blue};
+  --aonOrange         : #{$color-corp-orange};
+  --aonGreen          : #{$color-green-500};
+  --aonRed            : #{$color-red-500};
+  --materialBlue      : #{$color-blue-500};
+  --materialRed       : #{$color-red-500};
+
   body{
     color            : $color-text;
     margin           : $body-margin;
@@ -317,6 +333,13 @@
         }
       }
     }
+    // info en tooltip
+    aon-info{
+      .tooltip {
+        background: $color-tooltip-alpha;
+        color: $color-text-button;
+      }
+    }
     // dialog
     aon-dialog{
       &[type="menu"]{
@@ -340,8 +363,8 @@
               }
             }
           }
-          .dialog-body{
-          }
+          // .dialog-body{
+          // }
         }
       }
     }
@@ -501,8 +524,8 @@
           background-color : $iconbutton-hover-background-color;
         }
       }
-      &.dialog-button-save{
-      }
+      // &.dialog-button-save{
+      // }
       &.dialog-button-delete{
         background-color : $color-red-900;
         &:hover{
@@ -512,7 +535,8 @@
     }
     // Input
     aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
-    aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
+    aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity,
+    aon-autosize-textarea{
       .aonInputMsg{
         .aonInputMsgError{
           color: $color-red-500;
@@ -529,17 +553,27 @@
           border-top : v.$px-4 solid $color-900;
         }
       }
-      input{
+      input, textarea{
         border           : $input-border;
         background-color : $color-input;
         color            : $color-text;
         &::placeholder{
-          color   : $color-300;
+          color   : $color-text-placeholder;
           opacity : v.$num-09;
         }
         &:focus {
           outline: none;
           border : $input-border-focus;
+        }
+      }
+      // Cuando el componente tenga readonly o disabled
+      &[readonly="true"],
+      // &[readonly="readonly"], // por que a veces dejan editar...
+      &[disabled="true"],
+      &[disabled="disabled"]{
+        input {
+          background-color: $color-200;
+          cursor: not-allowed;
         }
       }
       //
@@ -582,10 +616,42 @@
         box-shadow      : $box-shadow-dialog;
       }
     }
-    // aon-new-suggestion
+    aon-textarea-editor{
+      .textBoxEnvelope{
+        border: $border;
+        &:focus {
+          outline: none;
+          border : $input-border-focus;
+        }
+      }
+    }
+    aon-textarea {
+      box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+      .bar {
+        border-bottom: $border;
+        aon-icon{
+          &:hover {
+            background: $color-info-alpha;
+          }
+        }
+      }
+      .aon-textarea-label {
+        border-top: $border-dotted;
+      }
+      .divDragOver {
+        &.highlight {
+          border: $border-dashed-color-text;
+        }
+      }
+    }
+    // en notificaciones... tiene nuna etiqueta A que es un input
+    a[placeholder]:empty::before {
+      color: $color-text-placeholder;
+    }
+    // aon-new-suggestion || aon-new-textarea (buscar que tiene)
     // Input que busca mientras escribes, el DIV donde muestras, 
     // no esta en el componente. Se tiene que reacer
-    .suggestion-list{
+    .suggestion-list, aon-new-textarea .options{
       &.is-visible{
         background-color: $color-input;
         box-shadow      : $box-shadow-dialog;
@@ -739,6 +805,12 @@
         }
       }
     }
+    aon-upload{
+      border: $border-dashed;
+      &:hover{
+        border: $border-dashed-color-text;
+      }
+    }
     // Modal cuando se suben archivos
     aon-upload-toast{
       box-shadow: $box-shadow-dialog;
@@ -780,6 +852,27 @@
           box-shadow       : $box-shadow;
           .aonLoginTitle{
             color : $color-text-login;
+          }
+        }
+      }
+    }
+    // Parent
+    aon-parent{
+      #UlCompanies{
+        li{
+          border: $border;
+          color : $color-text-general;
+          &:hover, &.selected{
+            box-shadow: $box-shadow;
+            background-color: $color-500;
+            color           : $color-text-button;
+          }
+          .aonLiSpan{
+            .aonLiSpanSubtitle{
+              .aonInputBoxLabelSpanWarning{
+                color: $color-corp-orange;
+              }
+            }
           }
         }
       }
@@ -881,6 +974,33 @@
         }
       // FIN aon-invoice-home
     }
+    // Notificaciones
+    aon-messenger{
+      aon-messenger-chat{
+        .aonSubContent #mainView{
+          #secondDiv {
+            wrapper{
+              chat {
+                &.continueLined::after {
+                  border-left: v.$px-2 solid $color-text-placeholder;
+                }
+                .chat-icon {
+                  background-color: $color-box;
+                }
+                message {
+                  color: $color-900;
+                }
+              }
+              .chat-textarea {
+                border: $border;
+                color: $color-text;
+              } 
+            }
+          }
+        }
+      }
+    }
+    // FIN Notificaciones
     // Notas
     aon-notes .aonFlex #notesContainer{
       .noteCard{
@@ -906,6 +1026,40 @@
           textarea{
             background-color: transparent;
             border: unset;
+          }
+        }
+      }
+    }
+    // FIN Notas
+    // Contratacion
+    aon-booking{
+      ul{
+        border: $border;
+        li{
+          border-bottom: $border;
+          aon-icon{
+            &[color="lightgray"] {
+              color: $color-text-placeholder;
+            }
+          }
+        }
+      }
+    }
+    // FIN Contratacion
+    //
+    //
+    // Vistas mezcladas se repite codigo en muchos lados y no se diferencian bien
+    aon-configuration, aon-office-panel{
+      aon-workgroup{
+        #aonWorkgroupUsers, #aonWorkgroupListUsers{
+          border-left: $border;
+          .title{
+            border-bottom: $border;
+          }
+          ul {
+            li{
+              border-bottom: $border;
+            }
           }
         }
       }

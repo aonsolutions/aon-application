@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tedi.invofox;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -54,6 +55,10 @@ public class OCRResult implements Serializable {
 	
 	public void add(InvoiceError error) {
 		messages.add(error);
+	}
+
+	public void addAll(Collection<InvoiceError> errors) {
+		messages.addAll(errors);
 	}
 
 	public void clearMessages() {

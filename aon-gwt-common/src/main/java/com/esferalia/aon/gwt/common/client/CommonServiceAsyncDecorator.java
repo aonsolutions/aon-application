@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -80,6 +81,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -996,6 +999,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getCatalogueList(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getOfficeSibling(String domainName, int domain, String user, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getOfficeSibling(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// **************************************************
 	// ****************************************** [SALES]
 	// **************************************************
@@ -1385,6 +1394,60 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomerFeesRelatedRegistry(domainName, domainId, user, customerRelatedRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createFeeRelatedRegistry(domainName, domain, user, customerRelatedRegistry, fee, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void updateEndDatePackFee(String domainName, int domain, String user, Fee fee,AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.updateEndDatePackFee(domainName, domain, user, fee, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.updateBookingFee(domainName, domain, user, fee, product, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createBookingFee(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRegistryPayMethods(domainName, domainId, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod, AsyncCallback<RegistryPayMethod> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveRegistryPayMethod(domainName, domainId, user, registryPayMethod, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry, AsyncCallback<List<RegistryRelationship>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRegistryRelationshipsByRelated(domainName, domainId, user, customerRelatedRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveCustomer(String domainName, Integer domainId, String user, Customer customer, AsyncCallback<Customer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveCustomer(domainName, domainId, user, customer, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

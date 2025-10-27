@@ -162,7 +162,7 @@ public class InvoiceFiscalDAO {
 				
 				@Override
 				public void visitVatAgriculture() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, invoice.isWithholdingFarmer());
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_AGRICULTURE, invoice.isWithholdingFarmer());
 				}
 				
 				@Override

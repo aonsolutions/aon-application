@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Base64;
+import java.util.Optional;
 
 import org.json.JSONObject;
 
@@ -48,6 +49,11 @@ public class PrintInvoiceConfigurationJSON {
 				.setLanguage(AonLanguage.safeValueOf(JsonUtils.getString(json, IJsonNames.LANGUAGE)))
 				.setTheme(PrintInvoiceThemeConfigurationJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.THEME)))
 				.setLegal(JsonUtils.getString(json, IJsonNames.LEGAL));
+	}
+	
+	public static Optional<JSONObject> to(PrintInvoiceConfiguration pic) {
+		if (pic == null) return Optional.empty();
+		return Optional.of( toJSON(pic) );		
 	}
 	
 	public static JSONObject toJSON(PrintInvoiceConfiguration pic) {

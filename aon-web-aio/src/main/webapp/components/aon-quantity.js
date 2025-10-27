@@ -3,7 +3,6 @@ import { round } from '../services/utils.js';
 import { AonNewInput } from './aon-new-input.js';
 
 export class AonQuantity extends AonNewInput {
-
     TAG_SPAN;
 
     quantity;

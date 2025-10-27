@@ -348,36 +348,40 @@ export class AonDialogMenu extends AonElement {
 			});
 		}
 
-        if(item.image) {
-          item.icon = item.image;
+		if(item.image) {
+			item.icon = item.image;
 		} else if(item.aonIcon) {
-          item.icon = item.aonIcon;
+			item.icon = item.aonIcon;
 		}
 
-        const aonIcon = new AonIcon();
-        aonIcon.icon = item.icon;
-        li.appendChild(aonIcon);
+		const aonIcon = new AonIcon();
+		aonIcon.icon = item.icon;
+		li.appendChild(aonIcon);
 
 		let span = document.createElement(TAG.SPAN);
 		span.innerHTML = item.name;
 		span.title     = item.title || item.name;
-        // mostrando menu de idomas, seleccionamos en el que estamos
-        if(item.selectLanguage && item.selectLanguage === this.lenguajeSelect()){
-          li.classList.add('selected');
-        }
+			// mostrando menu de idomas, seleccionamos en el que estamos
+			if(item.selectLanguage && item.selectLanguage === this.lenguajeSelect()){
+				li.classList.add('selected');
+			}
 		li.appendChild(span);
-		li.addEventListener(EVENT.CLICK, (ev) => {
-			this.close();
-			item.fn(ev);
-		});
+		if (item.fn && typeof item.fn === 'function') {
+			console.log(item.fn)
+			// li.addEventListener(EVENT.CLICK, (ev) => {
+			li.addEventListener("click", (ev) => {
+				item.fn(ev);
+				this.close();
+			});
+		}
 		return li;
 	}
     
-    lenguajeSelect(){
-      if(LS.getLanguage()){
-        return LS.getLanguage();
-      } else return MSG.SPANISH;
-    }
+	lenguajeSelect(){
+		if(LS.getLanguage()){
+			return LS.getLanguage();
+		} else return MSG.SPANISH;
+	}
 }
 
 if(!window.customElements.get('aon-dialog-menu')){

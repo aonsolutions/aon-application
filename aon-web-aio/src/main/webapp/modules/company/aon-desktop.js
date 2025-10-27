@@ -306,7 +306,7 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Usage Summary
 		// ------------------------------------------------
-		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
+		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial() ) {
 			// Trial Card
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -412,24 +412,30 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Requests ( Issues )
 		// ------------------------------------------------
-		if (this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
-			// Solicitudes
-			let messengerCard = new AonCard();
-			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			messengerCard.id = "messengerCard";
-			messengerCard.title = MSG.REQUESTS;
-			messengerCard.setApp(Apps.MESSENGER);
-			messengerCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.MESSENGER.app));
-			cardsPanel.appendChild(messengerCard);
-			let aonMessengerCard = new AonMessengerCard(() => this.appSelection(Apps.MESSENGER.app));
+		// if (this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
+		// 	// Solicitudes
+		// 	let messengerCard = new AonCard();
+		// 	messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
+		// 	messengerCard.id = "messengerCard";
+		// 	// messengerCard.title = "Solicitudes";
+		// 	messengerCard.message = MSG.REQUESTS;
+		// 	messengerCard.setApp(Apps.MESSENGER);
+		// 	messengerCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.MESSENGER.app));
+		// 	cardsPanel.appendChild(messengerCard);
+		// 	messengerCard.getCardTitle1().style.cursor = 'pointer';
+		// 	let aonMessengerCard = new AonMessengerCard(() => this.appSelection(Apps.MESSENGER.app));
 
-			messengerCard.setContent(aonMessengerCard);
+		// 	messengerCard.setContent(aonMessengerCard);
 
-			let messages = await MessegerUtils.getMeseggers();
-			let messageBadge = MessegerUtils.getMessageBadge(messages.length);
-			messageBadge.addEventListener(EVENT.CLICK, () => this.appSelection(Apps.MESSENGER.app));
-			messengerCard.addSection2(messageBadge);
-		}
+		// 	let messages = await MessegerUtils.getMeseggers();
+		// 	let messageBadge = MessegerUtils.getMessageBadge(messages.length);
+		// 	messageBadge.addEventListener(EVENT.CLICK, () => this.appSelection(Apps.MESSENGER.app));
+		// 	messengerCard.addSection2(messageBadge);
+
+		// 	messengerCard.firstChild.style.minHeight = "28rem";
+		// 	messengerCard.firstChild.children.item(1).style.height = "22.5rem";
+		// 	messengerCard.firstChild.style.margin = '0';
+		// }
 
 		// Check if company has address, required for TRIAL
 		let data = {

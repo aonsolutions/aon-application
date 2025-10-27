@@ -14,6 +14,7 @@ import org.jooq.tools.json.ParseException;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceMinJSON;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -43,7 +44,7 @@ public class InvoiceStreamServlet extends HttpServlet {
 			PrintWriter writer = new PrintWriter (resp.getWriter(), true); 
 			writer.print( "[" );
 			AON.getInvoiceHeaders(occam, params, offset, limit)
-				.map( InvoiceJSON::toMinimalJSON )
+				.map( InvoiceMinJSON::toJSON )
 				.forEach( js -> writer.print( js.toString() ));
 			writer.print( "]" );
 			resp.flushBuffer();

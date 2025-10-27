@@ -62,7 +62,7 @@ const buildFormGeneral = (parent, news) => {
         attributes:{
             name:"title",
             id:"title",
-            description:MSG.TITLE,
+            title:MSG.TITLE,
             required:true,
             value: news.getTitle() || ""
         },
@@ -113,7 +113,7 @@ const buildFormGeneral = (parent, news) => {
         attributes:{
             name:"init_date_time",
             id:"init_date_time",
-            description:MSG.HOUR,
+            title:MSG.HOUR,
             type:"time"
         }, events:{
             change: ({target}) => {
@@ -151,7 +151,7 @@ const buildFormGeneral = (parent, news) => {
         attributes:{
             name:"end_date_time",
             id:"end_date_time",
-            description:MSG.HOUR,
+            title:MSG.HOUR,
             type:"time"
         }, events:{
             change: ({target}) => {
@@ -250,15 +250,15 @@ const buildUnloadFile = (parent, news)=>{
  * buildChannel
  */
 const buildChannel = (parent, news) => {
-    let divC = createDiv({classes:[CSS.AON_COL_XS_11]})
+    // let divC = createDiv({classes:[CSS.AON_COL_XS_11]})
+    let divC = createDiv({classes:['canal-button']})
     divC.appendTo(parent);
 
-    let divB = createDiv({classes:[CSS.AON_COL_XS_1]})
-    divB.appendTo(parent);
+    // let divB = createDiv({classes:[CSS.AON_COL_XS_1]})
+    // divB.appendTo(parent);
 
     let category = null;
     let button   = null;
-
 
     const setIconButton = (btn, edit) => {
         btn.icon = edit ? MATERIAL_ICONS.EDIT : MATERIAL_ICONS.OPEN_IN_NEW; 
@@ -299,12 +299,13 @@ const buildChannel = (parent, news) => {
 
     divC.appendChild(category);
 
-    divB.appendChild(button);
+    divC.appendChild(button);
+    // divB.appendChild(button);
 
-    setStyles(button.getButton(), {
-        top:"12px",
-        left:"-6px"
-    })
+    // setStyles(button.getButton(), {
+    //     top:"12px",
+    //     left:"-6px"
+    // })
 }
 
 

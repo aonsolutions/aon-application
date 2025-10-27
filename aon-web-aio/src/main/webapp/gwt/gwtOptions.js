@@ -436,6 +436,13 @@ export const MODEL_SII = {
   entryPoint: 'sii'
 };
 
+export const NEW_MODEL_SII = {
+  title: "Modelo SII",
+  name: "Modelo SII",
+  module: GWT_FISCAL,
+  entryPoint: 'Sii'
+};
+
 export const INVOICE_STAT = {
   title: 'estadisticas',
   name: 'estadisticas',
@@ -646,6 +653,11 @@ export const CONSOLE = {
 export const CUSTOMER_PAYROLL_ACTIVITY_MODULE = {
   module: GWT_FISCAL,
   entryPoint: 'CustomerLinkedActivity'
+};
+
+export const PRODUCT_CATALOGUE_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'ProductCatalogueModule'
 };
 
 export const SYNC_SIG_CUSTOMER_DOMAIN = {

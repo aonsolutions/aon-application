@@ -268,7 +268,17 @@ export class AonNewInput extends AonElement {
 		const loader = this.getElement(this.LOADER);
 		if(loader) loader.classList.add("hidden");
 	}
-	
+	/**
+ * 
+ * @param {Boolean} load
+ */
+	loading(load){
+		if(load)
+			this.showLoader();
+		else
+			this.hideLoader();
+	}
+
 	showIcon() {
 		const icon = this.getElement(this.ICON_BUTTON);
 		if(icon != null && icon.id != "undefined") icon.getButton().classList.remove("hidden");

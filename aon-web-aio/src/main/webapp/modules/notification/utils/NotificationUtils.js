@@ -50,7 +50,7 @@ const buildDialogAdd = (idForm) =>{
       attributes:{
         name:"title", 
         id:"title", 
-        description:MSG.TITLE,
+        title:MSG.TITLE,
         type:"text"
       }
     }, form);
@@ -59,7 +59,7 @@ const buildDialogAdd = (idForm) =>{
       attributes:{
         name:"body",
         id:"body",
-        description:"Mensaje",
+        title:MSG.MESSAGE,
         type:"text"
       }
     }, form);

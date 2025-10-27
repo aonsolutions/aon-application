@@ -2,7 +2,7 @@ package net.aonsolutions.aon.sign;
 
 import java.util.Properties;
 
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 import es.gob.afirma.core.signers.AOSignConstants;
 import es.gob.afirma.core.signers.AdESPolicy;
@@ -39,22 +39,22 @@ public class TbaiSigner extends XadesSigner {
 		return new TbaiSigner();
 	}
 	
-	public byte[] sign(TbaiConfiguration tbai, byte[] data) throws AonSignerException {
-		return sign(tbai.getCertificate(), data, getTbaiExtraParams(tbai));
+	public byte[] sign(InvoiceCommunicationConfiguration icc, byte[] data) throws AonSignerException {
+		return sign(icc.getCertificate(), data, getTbaiExtraParams(icc));
 	}
 	
-	public Properties getTbaiExtraParams(TbaiConfiguration tbai) {
+	public Properties getTbaiExtraParams(InvoiceCommunicationConfiguration icc) {
     	final Properties xParams = new Properties();
     	xParams.setProperty(XAdESExtraParams.FORMAT, AOSignConstants.SIGN_FORMAT_XADES_ENVELOPED);
      	xParams.setProperty(AonXAdESExtraParams.SIGNER_CLAIMED_ROLES, "emisor");
-    	xParams.putAll(getPolicyTbai(tbai).asExtraParams());
+    	xParams.putAll(getPolicyTbai(icc).asExtraParams());
     	return xParams;
     }
 	
-	private AdESPolicy getPolicyTbai(TbaiConfiguration tbai) {
-	  	if(tbai.isAraba()) {
+	private AdESPolicy getPolicyTbai(InvoiceCommunicationConfiguration icc) {
+	  	if(icc.isAraba()) {
 	   		return POLICY_TBAI_ARABA;
-	   	} else if(tbai.isBizkaia()) {
+	   	} else if(icc.isBizkaia()) {
 	   		return POLICY_TBAI_BIZKAIA;
 	   	} else return POLICY_TBAI_GIPUZKOA;    		
 	}

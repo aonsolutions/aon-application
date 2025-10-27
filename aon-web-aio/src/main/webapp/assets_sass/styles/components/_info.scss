@@ -4,11 +4,9 @@ aon-info{
 	margin-left: auto;
 	.tooltip {
 		position: fixed;
-		background: rgba(0, 0, 0, 0.85);
-		color: #fff;
 		border-radius: v.$border-radius;
 		padding: v.$padding-min v.$padding;
-		z-index: v.$num-1;
+		z-index: v.$num-99;
 		pointer-events: none;
 		opacity: v.$num-0;
 		transition: opacity v.$t-02 ease;

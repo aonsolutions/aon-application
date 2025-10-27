@@ -9,6 +9,7 @@ import { AonSwitch } from '../../components/aon-switch.js';
 import { CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
 import { AonToast } from '../../components/aon-toast.js';
+import { AonIcon } from '../../components/aon-icon';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -107,6 +108,7 @@ export class AonBooking extends AonElement {
 				this.domainActive = this.dur.getDomain().isActive();
 				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
 				this.domainScope = this.dur.getDomain().getScope();
+				
 				this.build();			
 			});
 		}
@@ -173,20 +175,20 @@ export class AonBooking extends AonElement {
 		this.clearElement(content);
 		
 		let userTrialContent = this.createElement(TAG.DIV); 
-//		userTrialContent.style.display = 'flex';
+		userTrialContent.style.display = 'flex';
 		content.appendChild(userTrialContent);
 		
 		let userContent = this.createElement(TAG.DIV); 
-//		userContent.style.display = 'flex';
-//		userContent.style.flexDirection = 'column';
+		userContent.style.display = 'flex';
+		userContent.style.flexDirection = 'column';
 		userTrialContent.appendChild(userContent);
 		
 		this.buildUser(userContent);
 		
 		if(dur.isTrial()){
 			let trialContent = this.createElement(TAG.DIV); 
-//			trialContent.style.display = 'flex';
-//			trialContent.style.flexDirection = 'column';
+			trialContent.style.display = 'flex';
+			trialContent.style.flexDirection = 'column';
 			userTrialContent.appendChild(trialContent);
 			
 			this.buildTrial(trialContent);
@@ -312,7 +314,7 @@ export class AonBooking extends AonElement {
 
 		let div = this.createElement(TAG.DIV); 
 		userEnterpriseCard.setContent(div);
-//		div.style.display = 'flex';
+		div.style.display = 'flex';
 		// content.appendChild(div);
 
 		let div1 = this.createElement(TAG.DIV); 
@@ -356,8 +358,8 @@ export class AonBooking extends AonElement {
 		freemiunCard.getCardTitle1().style.cursor = 'pointer';
 
 		let div = this.createElement(TAG.DIV); 
-		// div.style.display = 'flex';
-		// div.style.gap = '0.5rem';
+		div.style.display = 'flex';
+		div.style.gap = '0.5rem';
 		freemiunCard.setContent(div);
 
 		let div1 = this.createElement(TAG.DIV);
@@ -497,17 +499,14 @@ export class AonBooking extends AonElement {
 //			span.style.margin = '20px';
 
 			let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
-            
-            console.log(app);
-            
 			if(app.icon) {
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
 			} else if(app.symbol) {
-				let icon = this.createSpan();
+				let icon = new AonIcon();
 				icon.id = this.APP + app.app + 'Icon';
-				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-				icon.innerHTML = app.symbol;
-//				icon.style.color = color;
+				// icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.icon = app.symbol;
+				icon.style.color = color;
 //				icon.style.paddingTop = '5px';
 //				icon.style.paddingLeft = '4px';
 				span.appendChild(icon);
@@ -576,7 +575,7 @@ export class AonBooking extends AonElement {
 			// 	parentContract.style.display = 'inline';
 			// } else 
 			if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
-//				contract.style.display = 'none';
+				contract.style.display = 'none';
 				let pack = this.getPack(dur, app.app.toUpperCase());
 				if(pack) {
 					let message = document.createElement('span');
@@ -649,7 +648,7 @@ export class AonBooking extends AonElement {
 			} else contractSwitch.title = contract ? 'Descontratar' : 'Contratar';
 
 			if((contract && text)){
-//				contractSwitch.style.display = 'none';
+				contractSwitch.style.display = 'none';
 				let message = this.getElement(this.APP + app.app + 'Text');
 				if(!message) {
 					message = document.createElement('span');
@@ -659,12 +658,12 @@ export class AonBooking extends AonElement {
 					this.getElement(this.APP + app.app + 'Buttons').appendChild(message);
 				}
 				message.innerHTML = text;
-//				message.style.display = 'inline';
+				message.style.display = 'inline';
 			} else {
-//				contractSwitch.style.display = 'inline';
+				contractSwitch.style.display = 'inline';
 				let message = this.getElement(this.APP + app.app + 'Text');
 				if(message) {
-//					message.style.display = 'none';
+					message.style.display = 'none';
 				}
 			}
 			
@@ -721,7 +720,7 @@ export class AonBooking extends AonElement {
 
 			contractSwitch.checked = contract;
 			if((contract)){
-//				contractSwitch.style.display = 'none';
+				contractSwitch.style.display = 'none';
 				let message = this.getElement(this.APP + pack.app + 'Text');
 				if(!message) {
 					message = document.createElement('span');
@@ -731,12 +730,12 @@ export class AonBooking extends AonElement {
 					this.getElement(this.APP + pack.app + 'Buttons').appendChild(message);
 				}
 				message.innerHTML = 'Incluido en ' + includePack.title;
-//				message.style.display = 'inline';
+				message.style.display = 'inline';
 			} else {
-//				contractSwitch.style.display = 'inline';
+				contractSwitch.style.display = 'inline';
 				let message = this.getElement(this.APP + pack.app + 'Text');
 				if(message) {
-//					message.style.display = 'none';
+					message.style.display = 'none';
 				}
 			}
 		}
@@ -887,7 +886,10 @@ export class AonBooking extends AonElement {
 					users: this.users,
 					domainPayer: this.domainPayer,
 					trial: this.trial,
-					trialValue: this.trialValue
+					trialValue: this.trialValue,
+					domainActive: this.domainActive,
+					domainExpirationDate: this.domainExpirationDate,
+					domainScope: this.domainScope,
 				}, this.sessionData).then(() => {
 					toast.start({
 						type: 'success',
@@ -903,6 +905,7 @@ export class AonBooking extends AonElement {
 
 	buildTitle(content, title) {
 		let div = document.createElement('div');
+		div.classList.add('booking-title-group')
 //		div.style.color = 'gray';
 //		div.style.paddingTop = '20px';
 //		div.style.paddingBottom = '20px';

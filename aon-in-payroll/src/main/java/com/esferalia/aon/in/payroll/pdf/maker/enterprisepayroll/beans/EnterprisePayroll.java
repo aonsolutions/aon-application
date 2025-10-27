@@ -7,12 +7,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterprisePayroll {
 	
@@ -119,6 +123,27 @@ public class EnterprisePayroll {
 					aonEn.mergeSsEntry(ssEn);
 					aonEntries.put(key, aonEn);
 					
+				}
+				
+				List<Entry<String, EnterprisePayrollEntry>> orphanAonEntries = aonEntries.entrySet().stream()
+						.filter(mapEntry -> !mapEntry.getValue().HasSs()).toList();
+				
+				for(Map.Entry<String, EnterprisePayrollEntry> aonOrphanEntry : orphanAonEntries) {
+					aonEntries.entrySet().stream()
+					.filter( e-> e.getValue().HasSs() )
+					.filter(e -> AonStringUtils.equals(e.getValue().getTipo().orElse(":-)"), aonOrphanEntry.getValue().getTipo().orElse(":-(")))
+					.filter(e -> AonStringUtils.equals(e.getValue().getCcc(), aonOrphanEntry.getValue().getCcc()))
+					.filter(e -> AonStringUtils.equals(e.getValue().getNaf(), aonOrphanEntry.getValue().getNaf()))
+					.filter(e -> e.getValue().intersects(aonOrphanEntry.getValue()))
+					.findFirst().ifPresent( e -> {
+						EnterprisePayrollEntry mergedEntry = EnterprisePayrollEntry.merge(e.getValue(), aonOrphanEntry.getValue());
+						mergedEntry.getSsTotalSS().ifPresent( ssTotalSS -> mergedEntry.getSsTotal().ifPresent(ssTotal -> {
+							if ( Math.abs( ssTotalSS - ssTotal ) < 0.09 ) {
+								aonEntries.put(e.getKey(), mergedEntry);
+								aonEntries.remove(aonOrphanEntry.getKey());
+							}
+						}));
+					});
 				}
 				
 			} else

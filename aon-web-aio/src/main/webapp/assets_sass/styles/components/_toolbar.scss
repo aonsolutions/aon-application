@@ -29,6 +29,11 @@ aon-toolbar{
       width       : v.$pct-100;
       &:last-child{
         justify-content: flex-end;
+        .aonSecondaryToolbarTitle{
+          display     : flex;
+          align-items : center;
+          gap         : v.$gap-min;
+        }
       }
     }
     // Las migas de pan

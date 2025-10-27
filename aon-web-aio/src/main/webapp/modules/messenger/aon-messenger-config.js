@@ -17,7 +17,6 @@ import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonNewInput } from '../../components/aon-new-input.js';
 
-
 export class AonMessengerConfig extends AonElement {
   FORM;
   CARD;
@@ -96,11 +95,9 @@ export class AonMessengerConfig extends AonElement {
       }
     });
 
-
   }
 
   cardInternal(divFirst, params){
-
     let card = setAttributes(new AonCard(), { title:"Internas", id:this.CARD });
     divFirst.appendChild(card);
 
@@ -126,7 +123,6 @@ export class AonMessengerConfig extends AonElement {
             this.fillTaskHolder(taskHolder, detail.id);
     });
 
-
     let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
     textC.innerText = MSG.COMMUNICATION;
@@ -151,7 +147,6 @@ export class AonMessengerConfig extends AonElement {
     let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_ASSIGN, title: MSG.ASSIGN, checked:params[APP_REQUESTS_INT_ASSIGN]});
     div.appendChild(assign);
 
-
     // --------------------PARAMS SEND EMAIL--------------------------------
     let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
     textEmail.innerText = `${MSG.SEND} ${MSG.EMAIL} al:`;
@@ -171,7 +166,6 @@ export class AonMessengerConfig extends AonElement {
   }
 
   cardExternal(divSecond, params){
-
     let card = setAttributes(new AonCard(), { title:"Externas", id:this.CARD_TWO });
     divSecond.appendChild(card);
 
@@ -197,7 +191,6 @@ export class AonMessengerConfig extends AonElement {
         }
     });
 
-
     let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
     textC.innerText = MSG.COMMUNICATION;
@@ -221,7 +214,6 @@ export class AonMessengerConfig extends AonElement {
 
     let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_ASSIGN, title: MSG.ASSIGN, checked:params[APP_REQUESTS_EXT_ASSIGN]});
     div.appendChild(assign);
-
 
     // --------------------PARAMS SEND EMAIL--------------------------------
 
@@ -312,7 +304,6 @@ export class AonMessengerConfig extends AonElement {
       return [];
     });
   }
-
 
   getWorkgroups(){
     return this.WORKGROUPS;
