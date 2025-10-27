@@ -4,6 +4,7 @@ import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { title } from "../../css/aon-customView.js";
 //import '../../css/aon-grid.css';
 //import '../../css/aon-css-utils.css';
 
@@ -141,7 +142,7 @@ export const createEnterpriseData = (parent) => {
         attributes:{
             name:"regime",
             id:"regime",
-            description:MSG.REGIME,
+            title:MSG.REGIME,
             visible:CONSTANT.FALSE,
         }
     }, parent);
@@ -222,7 +223,7 @@ export const createContractData = (parent, isManager) => {
         attributes:{
             name:"situation",
             id:"situation",
-            description:MSG.SITUATION,
+            title:MSG.SITUATION,
             value:"AL",
             visible:CONSTANT.FALSE
         }
@@ -330,7 +331,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"nss",
             id: id+"Nss", 
-            description:"NSS/NAF", 
+            title:"NSS/NAF", 
             autocomplete:"on"
         }
     }, divNss.element);
@@ -343,7 +344,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"ipf",
             id: id+"Dni", 
-            description:"DNI/NIE", 
+            title:"DNI/NIE", 
             autocomplete:"on",
             disabled: true
         }
@@ -357,7 +358,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"apellido1",
             id:"apellido1",
-            description:"1er Apellido",
+            title:"1er Apellido",
             type:"text",
         }
     }, divT.element);
@@ -368,7 +369,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"apellido2",
             id:"apellido2",
-            description:"2do Apellido",
+            title:"2do Apellido",
             type:"text",
         }
     }, divT.element);
@@ -379,7 +380,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"name",
             id:"name",
-            description:MSG.NAME,
+            title:MSG.NAME,
             type:"text",
             disabled: CONSTANT.TRUE
         }
