@@ -14,10 +14,15 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -29,6 +34,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 class InvoiceConsoleTable extends ScrollPanel{
 
@@ -106,6 +112,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 			.addCell(new Label("Fec. Imp."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Fec. Crea."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Total"),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
+			.addCell(new Label(""),AON.CSS.aonWidth120())
 		;
 	}
 
@@ -177,7 +184,54 @@ class InvoiceConsoleTable extends ScrollPanel{
 					.addCell(taxDateLabel)
 					.addCell(creationDateLabel)
 					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() )
+					.addCell(getComunicationWidget(opts,inv), AON.CSS.aonTextRight() )
 				;
+			}
+
+			class AdministrationVisitor implements IAdministrationVisitor<String> {
+				@Override public String visitAlava() 			{return AON.CSS.aonIconAraba();}
+				@Override public String visitBizkaia() 			{return AON.CSS.aonIconBizkaia();}
+				@Override public String visitGipuzkoa() 		{return AON.CSS.aonIconGipuzkoa();}
+				@Override public String visitNavarra() 			{return AON.CSS.aonIconNavarra();}
+				@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeat();}
+				@Override public String visitCanarias() 		{return AON.CSS.aonIconCanarias();}
+				@Override public String visitUnknown() 			{return AON.CSS.aonIconAeat();}
+			}
+			private Widget getComunicationWidget(InvoiceConsoleModuleOptions opts, Invoice inv) {
+				FlowPanel container = new FlowPanel();
+				InvoiceCommunicationConfiguration cc = opts.getConfiguration().getCommunicationConfig();
+				Administration adm = cc.getAdministration() == null? Administration.COMMON_TERRITORY : cc.getAdministration();
+				AdministrationVisitor visitor = new AdministrationVisitor();
+				AonCollectionUtils.valuesStream(inv.getCommunicationInfo())
+					.filter(info -> info != null)
+					.filter(info -> info.getType() != null)
+					.forEach( info -> {
+						try {
+							info.getType().visit(new InvoiceCommunicationTypeVisitor() {
+								
+								private void addLabel( String iconStyle) {
+									InlineLabel label = new InlineLabel();
+									label.setStyleName(AON.CSS.aonLabelWithIcon());
+									label.addStyleName(iconStyle);
+									label.addStyleName(AON.CSS.aonMarginRight());
+									label.setTitle( info.getStatus() == null ? "SIN ESTADO" : info.getStatus().getDescription() );
+									container.add(label);
+								}
+								
+								@Override public void visitVERIFACTU() throws InvoiceCommunicationException { addLabel(AON.CSS.aonIconAeat());}
+								@Override public void visitTBAI() throws InvoiceCommunicationException { addLabel( adm.visit(  visitor ));}
+								@Override public void visitSII() throws InvoiceCommunicationException { addLabel( adm.visit(  visitor ));}
+								@Override public void visitSERES() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconSepe());}
+								@Override public void visitLROE() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconBizkaia());}
+								@Override public void visitEMAIL() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconEmail());}
+								@Override public void visitCLOSING() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconLock());}
+							});
+						} catch (Exception e) {
+							// Nothing
+						}
+
+					});
+				return container;
 			}
 
 			private String getSourceDescription(InvoiceSource source) {

@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRawdoc;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -53,6 +54,12 @@ public class RawdocImpl implements IRawdoc {
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.save(ctx, rawdoc));			
+	}
+	
+	@Override
+	public Rawdoc rawdocSave(AONContext ctx, Integer rawdocId, String invoiceJson) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.save(ctx, rawdocId, invoiceJson));			
 	}
 	
 	@Override

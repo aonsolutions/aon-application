@@ -171,5 +171,5 @@ public class WorkplaceDAO {
 				.map(new WorkplaceFiller())
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
-	
+
 }

@@ -236,6 +236,10 @@ public class AttachmentDAO {
 		if(withData) select = ctx.getDslContext().select().from(SEPE_BATCH_ATTACH);
 		return SEPE_ATTACH_PROPERTIES.build(select, filter).fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
 	}
+
+	public static Attach getDataAttach(AONContext ctx, AttachFilter filter, Boolean withData){	
+		return getDataAttachStream(ctx, filter, withData).findFirst().orElse(new Attach());
+	}
 	
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);

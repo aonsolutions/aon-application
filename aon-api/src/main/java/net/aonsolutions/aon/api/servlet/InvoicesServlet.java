@@ -18,14 +18,17 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
@@ -51,7 +54,6 @@ public class InvoicesServlet extends AonApiHttpServlet {
     public static final String INVOICE_RECORD = "/:id/record";
     public static final String RAWDOC = "/rawdoc/:id";
     public static final String ACCEPT = "/accept";
-    public static final String RECORD = "/record";
     public static final String COUNT = "/count";
     public static final String CHART = "/chart";
     public static final String CHART_PERIOD = "/chart/period";
@@ -104,11 +106,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
             AonApiData api = initialize(req);
             Object object = new AonRouting(api)
                     .addRoute(ACCEPT, InvoicesServlet::acceptInvoice)
-                    .addRoute(RECORD, InvoicesServlet::recordInvoices)
                     .addRoute(INVOICE_DUPLICATE_FIX, InvoicesServlet::invoiceDuplicateFix)
             		.addRoute(INVOICES, InvoicesServlet::saveInvoice)
                     .addRoute(INVOICE, InvoicesServlet::saveInvoice)
-                    .addRoute(INVOICE_RECORD, InvoicesServlet::recordInvoice)
                     .apply();
 
             response(req, resp, object);
@@ -210,9 +210,64 @@ public class InvoicesServlet extends AonApiHttpServlet {
 		Integer invoiceId = vars.getInt(IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
-		json.put(IJsonNames.FILE, InvoiceServlet.buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+		json.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
 		return json;
     }
+    
+	/**
+	 * @deprecated
+	 * @use com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils.buildInvoiceFileJSON
+	 */
+	@Deprecated
+	private static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
+		JSONObject json = new JSONObject();
+
+		InvoiceDoc invoiceDoc = invoice.getDoc().orElse(null);
+		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
+		if(invoiceDoc == null) invoiceDoc = AON.getInvoiceDoc(occam, invoice.getDomain(), invoice.getId()).orElse(null);
+		
+		if(invoiceDoc != null) {
+		    json.put(IJsonNames.URL, invoiceDoc.getUrl());
+		    json.put(IConstants.CONTENT_TYPE, invoiceDoc.getMimeType().getName());
+			return json;
+		} else {
+			Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
+					f -> f.getAttachModuleProperty().eq(invoice.getId())
+					, AttachType.INVOICE);
+
+			if(invoiceAttach != null && invoiceAttach.getId() != null) {
+				JSONObject data = new JSONObject();
+				data.put(IConstants.DOMAIN_NAME, domain.getName());
+				data.put(IConstants.DOMAIN_ID, domain.getId());
+				data.put(IJsonNames.ID, invoiceAttach.getId());
+				data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
+				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+				String path = "/ms/api/file/" +  result;	
+				String url = "https://" + domain.getName() + path; 
+			    json.put(IJsonNames.URL, url);
+			    json.put(IJsonNames.PATH, path);
+			    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
+				return json;
+			} else if(invoice.isSales()){
+				JSONObject data = new JSONObject();
+				data.put(IConstants.DOMAIN_NAME, domain.getName());
+				data.put(IConstants.DOMAIN_ID, domain.getId());
+				data.put(IJsonNames.ID, invoice.getId());
+				data.put(IConstants.SOURCE, "invoice");
+				data.put(IJsonNames.LOGIN, login);
+			
+				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+				String path = "/ms/api/download_invoice_pdf?json=" +  result;
+				String url = "https://" + domain.getName() + path;
+			    json.put(IJsonNames.URL, url);
+			    json.put(IJsonNames.PATH, path);
+			    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+				return json;
+			}	
+		}
+		return null;
+	}
+    
     
     private static JSONObject getRawdoc(AonApiData api) {
   		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
@@ -321,30 +376,6 @@ public class InvoicesServlet extends AonApiHttpServlet {
         json.put(IJsonNames.TYPE, invoice.getType().value());
         json.put(IJsonNames.TAXABLE_BASE, invoice.getTaxableBase());
         return json;
-    }
-    
-    private static JSONObject recordInvoices(AonApiData api) {
-//    	JsonUtils.getJSONArray(api.getData(), IJsonNames.INVOICES).toList().stream().forEach(object -> {
-//    		System.out.println(object);
-//    		System.out.println(object.toString());
-//    		JSONObject document = InvofoxServlet.getDocument(api.getDomain(), api.getUser(), object.toString());
-//    		recordInvoice(api.getDomain(), api.getUser(), document);
-//    	});
-    	return new JSONObject();
-    }
-    
-    private static JSONObject recordInvoice(AonApiData api) {
-    	return recordInvoice(api.getDomain(), api.getUser(), api.getData());
-    }
-    
-    private static JSONObject recordInvoice(Domain domain, User user, JSONObject invoice) {
-//    	AccountingInvoice ai = Rawdoc2AccountingInvoice.getAccountingInvoice(domain, user, invoice);
-//    	try {
-//    		ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//		}
-    	return new JSONObject();    	
     }
     
 	private static JSONObject invoiceDuplicateFix(AonApiData api) {

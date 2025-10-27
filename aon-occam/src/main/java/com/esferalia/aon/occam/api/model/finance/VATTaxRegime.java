@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IVATTaxRegimeVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum VATTaxRegime implements Serializable {
 	
@@ -95,8 +96,16 @@ public enum VATTaxRegime implements Serializable {
 		return name;
 	}
 	
-	public void visit(IVATTaxRegimeVisitor visitor) {
-		// Implemented on each type
-	};
+	public static VATTaxRegime safeValueOf( String i ) {
+		if (AonStringUtils.isBlank(i)) return null;
+		for (VATTaxRegime rs : values()) {
+			if(i.equalsIgnoreCase(rs.name())) return rs;
+		}
+		return null;
+	}
+
+	public abstract void visit(IVATTaxRegimeVisitor visitor);
+	
+	
 	
 }

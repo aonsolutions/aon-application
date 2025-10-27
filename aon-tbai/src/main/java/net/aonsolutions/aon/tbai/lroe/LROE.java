@@ -33,7 +33,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
@@ -52,15 +52,15 @@ public class LROE implements Serializable {
 	protected static final String LROE = "LROE";
 	protected static final String DATE_FORMAT = "dd-MM-yyyy";
 	
-	public LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
+	public LROEResponse send(InvoiceCommunicationConfiguration icc, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getData());	
+			ByteArrayInputStream key = new ByteArrayInputStream(icc.getCertificate().getData());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+			keyStore.load(key, icc.getCertificate().getPassword().toCharArray());
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-   			kmf.init(keyStore, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+   			kmf.init(keyStore, icc.getCertificate().getPassword().toCharArray());
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
 
@@ -69,7 +69,7 @@ public class LROE implements Serializable {
 			SSLContext.setDefault(sslContext);
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
            
-			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
+			String uri = TbaiUri.getUrlEmision(icc);
 			url = new URL(uri);
 			System.out.println("***** REQUEST *****");
 			System.out.println("[POST] " + uri);
@@ -145,15 +145,15 @@ public class LROE implements Serializable {
 		}
 	}
 	
-	public LROEResponse sendConsulta(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
+	public LROEResponse sendConsulta(InvoiceCommunicationConfiguration icc, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getData());	
+			ByteArrayInputStream key = new ByteArrayInputStream(icc.getCertificate().getData());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+			keyStore.load(key, icc.getCertificate().getPassword().toCharArray());
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-   			kmf.init(keyStore, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+   			kmf.init(keyStore, icc.getCertificate().getPassword().toCharArray());
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
 
@@ -162,7 +162,7 @@ public class LROE implements Serializable {
 			SSLContext.setDefault(sslContext);
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
            
-			String uri = TbaiUri.getUrlConsulta(tbaiConfiguration);
+			String uri = TbaiUri.getUrlConsulta(icc);
 			url = new URL(uri);
 			System.out.println("***** REQUEST *****");
 			System.out.println("[POST] " + uri);
@@ -326,7 +326,7 @@ public class LROE implements Serializable {
 		return unmar.unmarshal(new StringReader(response));
 	}
 	
-	public Integer getEjercicio(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
+	public Integer getEjercicio(InvoiceCommunicationConfiguration icc, Invoice invoice) {
 		if(invoice.getDomain().equals(29434) && invoice.getId().equals(27075541)) {
 			return 2024;
 		}
@@ -334,7 +334,7 @@ public class LROE implements Serializable {
 		if(invoice.isSales()) {
 			ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
 		} else {
-			ejercicioDate = tbaiConfiguration.isRegistryTaxDate()
+			ejercicioDate = icc.isRegistryTaxDate()
 					? invoice.getTaxDate() : invoice.getCreationDate();
 			if(ejercicioDate.before(invoice.getIssueDate()))
 				ejercicioDate = invoice.getIssueDate();

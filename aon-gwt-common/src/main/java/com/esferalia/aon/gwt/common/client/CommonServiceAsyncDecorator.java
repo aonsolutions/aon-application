@@ -81,6 +81,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -1422,6 +1424,30 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.createBookingFee(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRegistryPayMethods(domainName, domainId, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod, AsyncCallback<RegistryPayMethod> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveRegistryPayMethod(domainName, domainId, user, registryPayMethod, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry, AsyncCallback<List<RegistryRelationship>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRegistryRelationshipsByRelated(domainName, domainId, user, customerRelatedRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveCustomer(String domainName, Integer domainId, String user, Customer customer, AsyncCallback<Customer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveCustomer(domainName, domainId, user, customer, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

@@ -37,25 +37,24 @@ import javax.xml.soap.SOAPMessage;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 public class SIIPost {
 	
-	public static SIIPost getInstance(SiiConfiguration siiConfiguration) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		return new SIIPost(siiConfiguration);
+	public static SIIPost getInstance(InvoiceCommunicationConfiguration icc) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		return new SIIPost(icc);
 	}
 	
-	SiiConfiguration siiConfiguration;
-
-	Marshaller marshaller;
-	Unmarshaller unmarshaller;
+	private InvoiceCommunicationConfiguration icc;
+	private Marshaller marshaller;
+	private Unmarshaller unmarshaller;
 	
-	public SIIPost(SiiConfiguration siiConfiguration) {
-		this.siiConfiguration = siiConfiguration;
+	public SIIPost(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
 	}
 	
-	public SiiConfiguration getSiiConfiguration() {
-		return siiConfiguration;
+	public InvoiceCommunicationConfiguration getSiiConfiguration() {
+		return icc;
 	}
 	
 	private void secure(String uri) {

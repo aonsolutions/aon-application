@@ -92,6 +92,7 @@ export const COMMENTS = 'Comentaris';
 export const COMMERCE = 'Comerç'
 export const COMMERCIAL = 'Comercial';
 export const COMMUNICATION = 'Comunicació';
+export const COMMUNICATIONS = 'Comunicacions';
 export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = `Costos d'Empresa`;

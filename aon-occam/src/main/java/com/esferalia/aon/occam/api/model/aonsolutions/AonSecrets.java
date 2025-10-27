@@ -10,7 +10,8 @@ public enum AonSecrets implements Serializable {
 
 	AON_SECRET("aonsolutions/aonsecret"),
 	AON_CERT("aonsolutions/aoncert"),
-	AON_PASSWORD("");
+	AON_PASSWORD(""),
+	SIG_CERT("aonsolutions/sigcert");
 	
 	String description;
 	

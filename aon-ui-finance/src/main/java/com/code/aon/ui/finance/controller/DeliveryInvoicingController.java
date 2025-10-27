@@ -34,7 +34,8 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 public class DeliveryInvoicingController implements IFinanceConstants, Serializable {
 	
@@ -214,14 +215,18 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 	}	
 	
 	public boolean isTbai() {
-		return getTbaiConfiguration().isActive();
+		return getInvoiceCommunicationConfiguration().isTbai();
 	}
 	
-	public TbaiConfiguration getTbaiConfiguration() {
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
-		return AON.getTbaiConfiguration(domainName, domainId, login);
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(domainId)
+			.setUser(login);
+		return AON.getInvoiceCommunicationConfiguration(occam);
 	}
 
 	public void onAddSegment(ActionEvent event) {

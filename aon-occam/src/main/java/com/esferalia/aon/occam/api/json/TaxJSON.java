@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -7,9 +8,13 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class TaxJSON {
 	
@@ -38,7 +43,7 @@ public class TaxJSON {
 	}
 	
 	public static JSONArray toJSON(List<Tax> list) {
-		return toJSON(list.stream());
+		return toJSON(AonCollectionUtils.stream(list));
 	}
 	
 	public static JSONArray toJSON(Stream<Tax> stream) {
@@ -51,9 +56,16 @@ public class TaxJSON {
 		return new JSONObject()
 			.put(IJsonNames.ID, tax.getId())
 			.put(IJsonNames.DOMAIN, tax.getDomain())
-
-			// ...
-			
-			;
+			.put(IJsonNames.NAME, tax.getName())
+			.put(IJsonNames.START_DATE, JsonUtils.getDateJSON(tax.getStartDate()))
+			.put(IJsonNames.TYPE, TaxType.name(tax.getType()))
+			.put(IJsonNames.PERCENTAGE, tax.getPercentage())
+			.put(IJsonNames.SURCHARGE, tax.getSurcharge())
+			.put(IJsonNames.VAT_DEDUCTION_TYPE, VatDeductionType.name(tax.getVatDeductionType()))
+			.put(IJsonNames.WITHHOLDING_TYPE, WithholdingType.name(tax.getWithholdingType()))
+			.put(IJsonNames.TYPE, TaxType.name(tax.getType()))
+			.put(IJsonNames.SALES_ACCOUNT, AccountJSON.to(tax.getSalesAccount() ).orElse(null))
+			.put(IJsonNames.PURCHASE_ACCOUNT, AccountJSON.to(tax.getPurchaseAccount() ).orElse(null))
+		;
 	}
 }
