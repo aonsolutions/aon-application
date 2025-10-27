@@ -38,14 +38,13 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -173,7 +172,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 						.setFrom(JsonUtils.getDate(json, IJsonNames.FROM))
 						.setTo(JsonUtils.getDate(json, IJsonNames.TO))
 						.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY));
-				AON.getInvoiceStream(occam, f -> InvoiceServlet.invoiceFilter(f, domain.getId(), filter))
+				AON.getInvoiceStream(occam, f -> AonApiServletUtils.invoiceFilter(f, domain.getId(), filter))
 					.forEach(i -> {
 						File file = getInvoiceFile(domain, user, occam, i.getId(), "Factura " + i.getReferenceCode());
 						if(file != null) list.add(file);
@@ -299,10 +298,10 @@ public class MultipleDownloadServlet extends HttpServlet{
 							+ "&s=" + invoice.getSeries()
 							+ "&n=" + invoice.getNumber()
 							+ "&t=" + invoice.getTotal();  
-					TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
+					InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 					String tbaiId = "";
-					if(tbai.isActive()) {	
-						TbaiData tbaiData = TbaiData.getInstance(tbai);
+					if(icc.isTbai()) {	
+						TbaiData tbaiData = TbaiData.getInstance(icc);
 						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
 						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());

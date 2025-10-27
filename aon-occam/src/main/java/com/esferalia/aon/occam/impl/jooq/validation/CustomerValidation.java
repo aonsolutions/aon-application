@@ -9,7 +9,10 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public class CustomerValidation {
 	
-	public static BiConsumer<Customer,AONContext> EMPTY_SCOPE = (customer,ctx) -> {
+	private CustomerValidation() {
+	}
+	
+	private static final BiConsumer<Customer,AONContext> EMPTY_SCOPE = (customer,ctx) -> {
 		if (customer.getScope().isEmpty()) 
 			throw new AonCoreException(AonError.EMPTY_SCOPE.getMessage());
 	};

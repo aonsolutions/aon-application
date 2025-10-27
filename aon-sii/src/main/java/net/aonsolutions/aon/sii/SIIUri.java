@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.sii;
 
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class SIIUri {
@@ -221,9 +221,9 @@ public class SIIUri {
 		return "";
 	}
 	
-	public String getURI(SiiConfiguration siiConfiguration, SIIType type) {
-		return siiConfiguration.isTest() 
-			? getURIPruebas(type, siiConfiguration.getAdministration())
-			: getURI(type, siiConfiguration.getAdministration());
+	public String getURI(InvoiceCommunicationConfiguration icc, SIIType type) {
+		return icc.isSiiTest() 
+			? getURIPruebas(type, icc.getAdministration())
+			: getURI(type, icc.getAdministration());
 	}
 }

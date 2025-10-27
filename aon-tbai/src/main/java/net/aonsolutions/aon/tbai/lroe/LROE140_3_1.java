@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetType;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
@@ -128,9 +128,9 @@ public class LROE140_3_1 extends LROE140 {
 		return null;
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) throws StatusCodeException {
+	public LROEResponse alta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) throws StatusCodeException {
 		try {
-			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
+			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00, getEjercicio(icc, invoice));
 			final LROEPF140BienesAltaAltaModifPeticion p140 = build(person, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140BienesAltaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -140,17 +140,17 @@ public class LROE140_3_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] data = toGzip(bos.toByteArray());
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(icc, buildJSON(person, info), data);
 		} catch (Exception e) {
 			return error(e);
 		}
 	}
 	
-	public void modificacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	public void modificacion(InvoiceCommunicationConfiguration icc, Invoice invoice, byte[] xml)  {
 
 	}
 	
-	public void anulacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	public void anulacion(InvoiceCommunicationConfiguration icc, Invoice invoice, byte[] xml)  {
 
 	}
 }

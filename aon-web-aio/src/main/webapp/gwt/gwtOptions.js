@@ -436,6 +436,13 @@ export const MODEL_SII = {
   entryPoint: 'sii'
 };
 
+export const NEW_MODEL_SII = {
+  title: "Modelo SII",
+  name: "Modelo SII",
+  module: GWT_FISCAL,
+  entryPoint: 'Sii'
+};
+
 export const INVOICE_STAT = {
   title: 'estadisticas',
   name: 'estadisticas',

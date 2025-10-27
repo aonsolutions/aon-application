@@ -20,10 +20,12 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -73,7 +75,12 @@ public class ConfigurationDAO {
 		
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
-		Integer[] userScopes = SecurityDAO.getUserScopes(ctx, conf.getUser().getId());
+		
+		Integer[] userScopesAux = null;
+		if(null != conf.getUser() && null != conf.getUser().getId())
+			userScopesAux = SecurityDAO.getUserScopes(ctx, conf.getUser().getId());
+		Integer[] userScopes = userScopesAux;
+		
 		conf.setMd5(getMd5(conf.getUser().getLogin()+conf.getDomain().getName()))
 			.setUserOperator(operator)
 			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
@@ -88,27 +95,24 @@ public class ConfigurationDAO {
 							.and(p.getScopeProperty().in( userScopes ))
 					
 					))
-			.setVatTaxes( TaxDAO.getVatTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setVatTaxes( TaxDAO.getVatTaxes(ctx,ctx.getDomainId(),params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
 			.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 			.setPayMethods(PayMethodDAO.getOrderByNames(ctx))
 			.setPayMethodTypeDetails(PayMethodDAO.getPayMethodTypeDetails(ctx))
-			.setDefaultVatPercent(defaultVatPercent == 0
-				?null
-				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
-			.setWithholdingTaxes( TaxDAO.getWithholdingTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setDefaultVatPercent(TaxDAO.get(ctx, ctx.getDomainId(), defaultVatPercent).orElse(null))
+			.setWithholdingTaxes( TaxDAO.getWithholdingTaxes(ctx,ctx.getDomainId(),params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setSegments( RegistrySegmentDAO.getSegments(ctx, p-> p.getDomainProperty().eq( ctx.getDomainId())).collect(Collectors.toCollection(LinkedList::new)))
-			.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
-				?null
-				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
+			.setDefaultWithholdingPercent(TaxDAO.get(ctx,ctx.getDomainId(), defaultWithholdingPercent).orElse(null))
 			.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
 			.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
 			.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
-			.setDefaultCreditor(getDefaultCreditor(ctx))
+			.setDefaultCreditor(userScopes == null ? null : getDefaultCreditor(ctx))
 			.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
 			.setOcrDefaultItem( getOcrDefaultItem(ctx) )
 			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
 			.setAlphaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_ALPHA_ENABLED)))
+			.setCommunicationConfig( InvoiceCommunicationDAO.get(ctx, ctx.getDomainId()))
 		;
 		if (params.hasAccounting() ) {
 			fillAccountingParameters(ctx, conf);
@@ -334,5 +338,23 @@ public class ConfigurationDAO {
 	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 	    }       
         return sb.toString();
+	}
+	
+	public static ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId) {
+		return new ApiConfiguration()
+			.setCompany( CompanyDAO.getFull(ctx, domainId) )
+			.setAdministration(
+				AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
+					.map( a -> Administration.safeValueOf(AonNumberUtils.toInteger(a.getValue())))
+					.orElse(Administration.UNKNOWN) )
+			.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
+			.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
+			.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
+			.setSeries( SeriesDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
+			.setWorkplaces( WorkplaceDAO.getWorkplaces(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)))
+			.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
+			.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
+			.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )
+		;
 	}
 }

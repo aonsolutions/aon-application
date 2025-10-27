@@ -1,16 +1,18 @@
 package com.esferalia.aon.occam.api.model.type;
 
-import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.CATALAN;
-import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.SPANISH;
 import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.BASQUE;
+import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.CATALAN;
 import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.GALICIAN;
+import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.SPANISH;
 import static com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage.VALENCIAN;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 // Á --> \u00C1 á --> \u00E1
@@ -454,4 +456,14 @@ public enum StreetType {
 		return null;
 	}
 	
+	public static Optional<StreetType> safeName( String value ) {
+		if (AonStringUtils.isBlank(value)) return Optional.empty();
+		return AonCollectionUtils.stream(StreetType.values())
+			.filter(st -> AonStringUtils.equalsIgnoreCase(value, st.name()))
+			.findAny();
+	}
+
+	public static String name(StreetType streetType) {
+		return streetType==null?null:streetType.name();
+	}
 }

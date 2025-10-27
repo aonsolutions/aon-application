@@ -26,7 +26,6 @@ import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceOpType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -42,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -751,20 +751,22 @@ public class ServalInvoiceImport extends ImportUtils{
 		}
 		return ra;
 	}
-	
 
-	
 	public static Error insertInvoice(Domain domain, User user, Integer i, InvoiceImportClass iic, boolean record) {
 		Error error = new Error().setError(true);
+		try { 
+			Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
 
-		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	
-
-//		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
-//		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
-//		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
+			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
 		
-		try {
+			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
+			if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
+						+ " está activado, no se pueden importar facturas emitidas");
+			}
+		
+			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	
 			validate(iic, record);
 			Invoice invoice = buildInvoice(aonCtx, domain, user, iic);
 			RegistryAddress address = buildAddress(aonCtx, domain, iic);
@@ -929,10 +931,6 @@ public class ServalInvoiceImport extends ImportUtils{
 				} 
 			}
 
-			Occam occam = new Occam()
-					.setDomain(domain.getId())
-					.setDomainName(domain.getName())
-					.setUser(user.getLogin());
 			AON.acceptInvoice(occam, invoice, null);
 		} catch (Exception e) {
 			e.printStackTrace();

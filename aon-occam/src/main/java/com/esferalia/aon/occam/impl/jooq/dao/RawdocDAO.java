@@ -47,6 +47,8 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediInvoiceType;
@@ -267,6 +269,26 @@ public class RawdocDAO {
 		return rawdoc.getId() != null
 			? update(ctx, rawdoc)
 			: insert(ctx, rawdoc);
+	}
+	
+	public static Rawdoc save(AONContext ctx, Integer rawdocId, String invoiceJson) {
+		ctx.checkWrite();
+		if (rawdocId == null || AonMathUtils.isZero(rawdocId)) {
+			throw new AonCoreException(AonError.EMPTY_DATA.format("ID"));
+		}
+		if (AonStringUtils.isBlank(invoiceJson)) {
+			throw new AonCoreException(AonError.EMPTY_DATA.format("InvoiceJSON"));
+		}
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.JSON,invoiceJson)
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(RAWDOC.ID.eq(rawdocId))
+			.execute();
+		ctx.log().info("UPDATE invoiceJSON RAWDOC id: {0} ({1} filas)",rawdocId,count);
+		return get(ctx, rawdocId )
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
 	public static void delete(AONContext ctx, RawdocFilter filter) {
@@ -524,4 +546,5 @@ public class RawdocDAO {
 			.findFirst()
 			.orElse(null);
 	}
+
 }

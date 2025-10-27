@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 
 public class CompanyJSON {
 	
@@ -41,11 +42,23 @@ public class CompanyJSON {
 	}
 	
 	public static JSONObject toJSON(Company company) {
-		return RegistryJSON.toJSON(company)
+		JSONObject companyJson = RegistryJSON.toJSON(company);
+		return fill(companyJson, company);
+	}
+	
+
+	public static JSONObject toJSON(CompanyFull cf) {
+		JSONObject companyJson = RegistryJSON.toJSON(cf);
+		return fill(companyJson, cf.getRegistry());
+	}
+	
+	private static JSONObject fill(JSONObject companyJson, Company company) {
+		return companyJson
 			.put(IJsonNames.ACTIVE, company.isActive())
 			.put(IJsonNames.SURCHARGE, company.isSurcharge())
 			.put(IJsonNames.WITHHOLDING, company.isWithholding())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, company.isVatAccrualPayment())
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
+	
 }

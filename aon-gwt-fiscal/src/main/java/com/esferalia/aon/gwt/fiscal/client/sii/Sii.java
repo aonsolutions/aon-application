@@ -78,7 +78,7 @@ public class Sii  implements EntryPoint {
 		declarationContainer = new SimpleLayoutPanel();
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		splitLayoutPanel.add(declarationContainer);
-		declarationContainer.setWidget(new SiiMain(api, options));
+		declarationContainer.setWidget(new SiiMain(this, api, options));
 		options.getParentWidget().add(aonLayout);		
 	}
 
@@ -103,14 +103,19 @@ public class Sii  implements EntryPoint {
 		return footPanel; 
 	}
 	
-	private void closeFootPanel() {
+	public void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-	private void openFootPanelIfNeeded() {
+	
+	public void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
 			splitLayoutPanel.animate(500);
 		}
+	}
+	
+	public ScrollPanel getBreakdownPanel() {
+		return breakdownPanel;
 	}
 }

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
+import java.util.Optional;
+
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -21,6 +23,11 @@ public class InvofoxConfigurationJSON {
 			.setAutoAccept(JsonUtils.getboolean(json, IJsonNames.AUTO_ACCEPT))
 			.setAutoRecord(JsonUtils.getboolean(json, IJsonNames.AUTO_RECORD));
 
+	}
+	
+	public static Optional<JSONObject> to(InvofoxConfiguration config) {
+		if (config == null) return Optional.empty();
+		return Optional.of( toJSON(config) );		
 	}
 	
 	public static JSONObject toJSON(InvofoxConfiguration config) {

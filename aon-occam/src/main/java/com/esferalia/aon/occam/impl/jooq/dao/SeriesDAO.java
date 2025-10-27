@@ -16,15 +16,58 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.Series;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class SeriesDAO {
 	
+	private SeriesDAO() {
+		
+	}
+	
+	// ****************************************************************
+	// ***************************************************** [READ] ***
+	// ****************************************************************
+	
+	public static Stream<Series> stream(AONContext ctx, Integer domainId){
+		return ctx.getDslContext().select()
+			.from(SERIES)
+			.where(SERIES.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.fetch()
+			.stream()
+			.map(new SeriesFiller());	
+	}
+	
+	private static class SeriesFiller extends Filler implements Function<Record, Series> {
+		@Override
+		public Series apply(Record r) {
+			return new Series()
+				.setId(getValue(r, SERIES.ID))
+				.setDomain(getValue(r, SERIES.DOMAIN))
+				.setScope(getValue(r, SERIES.SCOPE))
+				.setCode(getValue(r, SERIES.CODE))
+				.setDescription(getValue(r, SERIES.DESCRIPTION))
+				.setActive(getBoolean( r, SERIES.ACTIVE))
+				.setTas(getBoolean( r, SERIES.TAS))
+				.setOffer(getBoolean( r, SERIES.OFFER))
+				.setSales(getBoolean( r, SERIES.SALES))
+				.setDelivery(getBoolean( r, SERIES.DELIVERY))
+				.setInvoice(getBoolean( r, SERIES.INVOICE))
+				.setRectification(getBoolean(r, SERIES.RECTIFICATION))
+				.setPos(getBoolean( r, SERIES.POS))
+				.setSecurityLevel(getEnum(r, SERIES.SECURITY_LEVEL, SecurityLevel.class))
+			;
+		}
+	}
+	// ****************************************************************
+	// **************************************************** [OLD] ***
+	// ****************************************************************
+	
+	@Deprecated
 	private static final SeriesPropertiesDAO SERIES_PROPERTIES = new SeriesPropertiesDAO();
 
-	protected static class SeriesPropertiesDAO implements SeriesProperties {
+	@Deprecated
+	private static class SeriesPropertiesDAO implements SeriesProperties {
 		protected Condition[] getConditions(SeriesFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -46,6 +89,7 @@ public class SeriesDAO {
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(SERIES.SECURITY_LEVEL);}
 	}
 	
+	@Deprecated
 	public static Stream<Series> getSeries(AONContext ctx, SeriesFilter filter){
 		return ctx.getDslContext().select()
 				.from(SERIES)
@@ -55,6 +99,10 @@ public class SeriesDAO {
 				.map(new SeriesFiller());	
 	}
 	
+	/**
+	 * @deprecated Don't use ctx.getUser()!. Pass user by param.
+	 */
+	@Deprecated
 	public static LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().select()
 			.from(SERIES).join(USER_SCOPE).on(SERIES.SCOPE.eq(USER_SCOPE.SCOPE))
@@ -66,6 +114,7 @@ public class SeriesDAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	@Deprecated
 	public static Stream<Series> getInvoiceSeries(AONContext ctx){
 		return getSeries(ctx, 
 			p -> 
@@ -74,6 +123,7 @@ public class SeriesDAO {
 				.and(p.getInvoiceProperty().eq((byte) 1)  )
 				);	
 	}
+	@Deprecated
 	public static Stream<Series> getRectificationSeries(AONContext ctx){
 		return getSeries(ctx, 
 			p -> 
@@ -81,29 +131,6 @@ public class SeriesDAO {
 				.and(p.getActiveProperty().eq((byte) 1)  )
 				.and(p.getRectificationProperty().eq((byte) 1)  )
 				);	
-	}
-
-	private static class SeriesFiller implements Function<Record, Series> {
-		
-		@Override
-		public Series apply(Record r) {
-			return new Series()
-					.setId(r.getValue(SERIES.ID))
-					.setDomain(r.getValue(SERIES.DOMAIN))
-					.setScope(r.getValue(SERIES.SCOPE))
-					.setCode(r.getValue(SERIES.CODE))
-					.setDescription(r.getValue(SERIES.DESCRIPTION))
-					.setActive(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setTas(AonEnumUtils.getBoolean( r.getValue(SERIES.TAS)))
-					.setOffer(AonEnumUtils.getBoolean( r.getValue(SERIES.OFFER)))
-					.setSales(AonEnumUtils.getBoolean( r.getValue(SERIES.SALES)))
-					.setDelivery(AonEnumUtils.getBoolean( r.getValue(SERIES.DELIVERY)))
-					.setInvoice(AonEnumUtils.getBoolean( r.getValue(SERIES.INVOICE)))
-					.setRectification(AonEnumUtils.getBoolean( r.getValue(SERIES.RECTIFICATION)))
-					.setPos(AonEnumUtils.getBoolean( r.getValue(SERIES.POS)))
-					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(SERIES.SECURITY_LEVEL)))
-					;
-		}
 	}
 	
 }

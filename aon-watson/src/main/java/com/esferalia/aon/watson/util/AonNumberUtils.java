@@ -99,6 +99,10 @@ public class AonNumberUtils {
 		if (number == null) return null; 
 		return Short.valueOf( number.shortValue());
 	}
+	public static short toshort(Number number) {
+		if (number == null) return 0; 
+		return number.shortValue();
+	}
 
 	public static Double toDouble(Number number) {
 		if (number == null) return null; 

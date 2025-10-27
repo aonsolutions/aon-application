@@ -59,12 +59,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -251,11 +252,16 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 					File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
 					FileOutputStream out = new FileOutputStream(file);
 					
+					Occam occam = new Occam()
+						.setDomainName(domain.getName())
+						.setDomain( domain.getId() )
+						.setUser(login)
+					;
 					String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
-					TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
+					InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 					String tbaiId = "";
-					if(tbai.isActive()) {
-						TbaiData tbaiData = TbaiData.getInstance(tbai);
+					if(icc.isTbai()) {
+						TbaiData tbaiData = TbaiData.getInstance(icc);
 						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), login, invoice.getId());
