@@ -86,8 +86,10 @@ public class CustomViewDocumentServlet extends HttpServlet {
 	}
 	
 	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
-		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
-		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
+		if (attach != null && attach.getData() != null) {
+			ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
+			responseFile(resp, attach.getDescription(), is, attach.getMimeType());
+		}
 	}
 	
 	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype) throws IOException {

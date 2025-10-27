@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -12,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -23,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -91,6 +96,8 @@ public class Invoice implements Serializable, HasAudit {
 	private Date modificationDate;
 
 	private String siiStatus;
+	
+	private Integer rawdocId;
 
 	private List<InvoiceDetail> details;
 	private List<Finance> finances;
@@ -100,7 +107,7 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	private InvoiceDoc doc;
 	
-	private InvoiceInfo invoiceInfo;
+	private HashMap<InvoiceCommunicationType,InvoiceInfo> communicationInfo = new HashMap<>();
 		
 	private List<InvoiceError> messages;
 	
@@ -137,11 +144,20 @@ public class Invoice implements Serializable, HasAudit {
 		this.domain = domain;
 		return this;
 	}
+	
+	public Optional<EnterpriseActivity> optActivity() {
+		return Optional.ofNullable(this.activity);
+	}
+	/**
+	 * @deprecated This method will be refactored to return value without change it. 
+	 * use optActivity()
+	 */
+	@Deprecated
 	public EnterpriseActivity getActivity() {
-		if(activity == null) {
-			activity = new EnterpriseActivity();
+		if (this.activity == null) {
+			this.activity = new EnterpriseActivity();
 		}
-		return activity;
+		return this.activity;
 	}
 	public Invoice setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
@@ -188,6 +204,9 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 		return this;
+	}
+	public Date getExpDate() {
+		return ensureFiscal().getExpDate() != null ? ensureFiscal().getExpDate() : issueDate;
 	}
 	public Date getTaxDate() {
 		return taxDate;
@@ -426,6 +445,9 @@ public class Invoice implements Serializable, HasAudit {
 		this.retentionQuota = retentionQuota;
 		return this;
 	}
+	public double getGrossTotal() {
+		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0));	
+	}
 	public double getTotal() {
 		return total;
 	}
@@ -521,6 +543,14 @@ public class Invoice implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
+	public Optional<Integer> getRawdocId() {
+		return Optional.ofNullable(rawdocId);
+	}
+	public Invoice setRawdocId(Integer rawdocId) {
+		this.rawdocId = rawdocId;
+		return this;
+	}
 	// ---------------------------------------------------- [DETAILS]
 	public Stream<InvoiceDetail> detailStream() {
 		return AonCollectionUtils.stream(this.details);
@@ -590,6 +620,11 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice addMessage(InvoiceError message) {
 		ensureMessages().add(message);
+	    return this;
+	}
+	public Invoice addMessages(Collection<InvoiceError> messages) {
+    	AonCollectionUtils.stream(messages )
+			.forEach( m -> ensureMessages().add(m) );
 	    return this;
 	}
 	
@@ -725,6 +760,11 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	// ----------- VAT REGIMES
+	public boolean isExempt() {
+		return optActivity().filter(a -> a.getVatRegime() == VATRegime.EXEMPT).isPresent()
+			|| (getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_EXEMPT))
+		;
+	}
 	
 	public boolean isVatUnion() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_UNION);
@@ -750,24 +790,48 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public boolean isSalesOSS() {
+		return (isSales() && (isVatUnion() || isVatUnionExternal() || isVatImportation()));
+	}
+	
 	public boolean isSimplified() {
-		return AonStringUtils.isBlank(getRegistryDocument()) || AonStringUtils.isBlank(getRegistryName())
-				|| (AonStringUtils.isBlank(getAddress().getZip()) && getRegistryAddress() == null);
+		return AonStringUtils.isBlank(getRegistryDocument()) 
+			|| AonStringUtils.isBlank(getRegistryName())
+			|| (AonStringUtils.isBlank(getAddress().getZip()) && getRegistryAddress() == null);
 	}
 	
 	public boolean isProforma() {
 		return getNumber() <= 0;
 	}
 	
-	public InvoiceInfo getInvoiceInfo() {
-		if(invoiceInfo == null) {
-			invoiceInfo = new InvoiceInfo();
-		}
-		return invoiceInfo;
+	public Map<InvoiceCommunicationType, InvoiceInfo> getCommunicationInfo() {
+		return communicationInfo;
 	}
-
-	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
-		this.invoiceInfo = invoiceInfo;
+	public Invoice addCommunicationInfo(Map<InvoiceCommunicationType, InvoiceInfo> map) {
+		if (map != null) this.communicationInfo.putAll(map);
+		return this;
+	}
+	public boolean hasInvoiceInfo( InvoiceCommunicationType type ) {
+		if (this.communicationInfo == null) return false;
+		return this.communicationInfo.containsKey(type);
+	}
+	public Optional<InvoiceInfo> getInvoiceInfo( InvoiceCommunicationType type ) {
+		InvoiceInfo info = communicationInfo.get(type);
+		return Optional.ofNullable( info );
+	}
+	
+	public Optional<InvoiceInfo> getVerifactuInfo() { return getInvoiceInfo(InvoiceCommunicationType.VERIFACTU); }
+	public Optional<InvoiceInfo> getLroeInfo() { return getInvoiceInfo(InvoiceCommunicationType.LROE); }
+	public Optional<InvoiceInfo> getTbaiInfo() { return getInvoiceInfo(InvoiceCommunicationType.TBAI); }
+	public Optional<InvoiceInfo> getSiiInfo() { return getInvoiceInfo(InvoiceCommunicationType.SII); }
+	
+	
+	public Invoice putInvoiceInfo(InvoiceInfo invoiceInfo) {
+		return putInvoiceInfo(invoiceInfo.getType(), invoiceInfo);	
+	}
+	
+	public Invoice putInvoiceInfo(InvoiceCommunicationType type, InvoiceInfo invoiceInfo) {
+		communicationInfo.put(type, invoiceInfo);
 		return this;
 	}
 	
@@ -805,6 +869,10 @@ public class Invoice implements Serializable, HasAudit {
 			setTaxBreakdown( new TaxBreakdown());
 		}
 		return this.taxBreakdown;
+	}
+	public Invoice refreshTaxBreakdown() {
+		ensureTaxBreakdown().refresh(this);
+		return this;
 	}
 	public Invoice addTax(InvoiceTax it) {
 		ensureTaxBreakdown().add(it);
@@ -941,6 +1009,7 @@ public class Invoice implements Serializable, HasAudit {
 	 * @deprecated This method will be removed 
 	 * use messageStream()
 	 */
+	@Deprecated
 	public List<InvoiceError> getMessages() {
 	    if ( messages == null ) {
 	    	messages = new LinkedList<>();
@@ -951,9 +1020,11 @@ public class Invoice implements Serializable, HasAudit {
 	 * @deprecated This method will be removed 
 	 * use addMessage(InvoiceError message)
 	 */
+	@Deprecated
 	public Invoice setMessages(LinkedList<InvoiceError> messages) {
 	    this.messages = messages;
 	    return this;
 	}
+
 }
 

@@ -84,6 +84,14 @@ export class AonNewTextarea extends AonElement {
        this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
     }
 
+    get rows() {
+        return this.getAttribute(CONSTANT.ROWS);
+    }
+    
+    set rows(rows) {
+       this.setAttribute(CONSTANT.ROWS,rows);
+    }
+
     connectedCallback() {
         this.initialize();
         this.build();
@@ -155,6 +163,9 @@ export class AonNewTextarea extends AonElement {
         label.appendChild(textarea);
         if(this.maxlength) {
             textarea.setAttribute("maxlength", this.maxlength);
+        }
+        if(this.rows) {
+            textarea.setAttribute("rows", this.rows);
         }
 
         let span = this.createElement(TAG.SPAN);

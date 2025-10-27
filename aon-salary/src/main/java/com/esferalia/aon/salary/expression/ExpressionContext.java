@@ -533,6 +533,7 @@ public class ExpressionContext {
 		}
 	}
 
+
 	private static String getUndefinedProperty(PropertyAccessException e) {
 		for (Throwable parent = e.getCause(); parent != null; parent = parent.getCause()) {
 			if (parent instanceof UnresolveablePropertyException)
@@ -892,6 +893,11 @@ public class ExpressionContext {
 			
 			return result != null ? round(result.toString()) : null;
 		} catch (PropertyAccessException e) {
+			
+			for ( Throwable t = e.getCause(); t != null ; t = t.getCause() )
+				if ( t instanceof MacroException macroException )
+					return evalTemplate(macroException.doMacro(template), start, end );
+				
 			throwExpressionException(e);
 			throw new UndefinedVariablesException(getUndefinedProperty(e, (PeriodMap) null));
 		} catch (UnresolveablePropertyException e) {

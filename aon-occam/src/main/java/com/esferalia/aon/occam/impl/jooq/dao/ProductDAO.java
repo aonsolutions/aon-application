@@ -146,16 +146,6 @@ public class ProductDAO {
 		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
 		.where(condition);
 		
-		System.out.println(ctx.getDslContext().select()
-		.from(PRODUCT)
-		.join(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-		.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
-		.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
-		.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
-		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
-		.where(condition).getSQL(ParamType.INLINED));
-		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
 				select.orderBy(PRODUCT.CODE);
@@ -163,10 +153,12 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME);
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME);
-			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+			else if(AonStringUtils.equals(params.getOrderBy(), "composite"))
 				select.orderBy(PRODUCT.COMPOSITION);
 			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
 				select.orderBy(PRODUCT.STATUS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "pack"))
+				select.orderBy(PRODUCT.MANUFACTURED);
 		} else {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
 				select.orderBy(PRODUCT.CODE.desc());
@@ -174,10 +166,12 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME.desc());
-			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+			else if(AonStringUtils.equals(params.getOrderBy(), "composite"))
 				select.orderBy(PRODUCT.COMPOSITION.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
 				select.orderBy(PRODUCT.STATUS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "pack"))
+				select.orderBy(PRODUCT.MANUFACTURED.desc());
 		}
 		
 		LinkedList<Product> products = select.limit(params.getOffset(), params.getLimit())
@@ -185,9 +179,6 @@ public class ProductDAO {
 				.stream()
 				.map(new ProductFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
-		
-		System.out.println("Products size : " + products.size() + ", offset : " + params.getOffset() + ", limit : " +  params.getLimit());
-			
 		return products;
 	}
 	
@@ -213,9 +204,10 @@ public class ProductDAO {
 			condition = condition.and(PRODUCT.COMPOSITION.eq(params.getProductComposition() ? (byte) 1 : 0));
 		
 		if(null != params.getDomainType())
-			condition = condition.and(ITEM.BARCODE.isNotNull())
-					   .and(DSL.length(ITEM.BARCODE).eq(12))
-					   .and(getDomainTypeChar(params.getDomainType()));
+			condition = condition.and(ITEM.BARCODE.isNull()
+					.or(
+							DSL.length(ITEM.BARCODE).eq(12).and(getDomainTypeChar(params.getDomainType()))
+					));
 		
 		return condition;
 	}

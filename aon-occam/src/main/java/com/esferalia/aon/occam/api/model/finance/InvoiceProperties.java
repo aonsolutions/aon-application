@@ -45,10 +45,6 @@ public interface InvoiceProperties extends Serializable {
 	Property<Timestamp> getModificationDateProperty();
 	Property<String> getModificationUserProperty();
 	
-	// INVOICE COMMUNICATION
-	Property<Byte> getInvoiceInfoTypeProperty();
-	Property<Byte> getInvoiceInfoStatusProperty();
-	
 	Property<Integer> getDetailIdProperty();
 	
 }

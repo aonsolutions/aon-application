@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class RegistryAddressJSON {
 	
@@ -46,7 +47,7 @@ public class RegistryAddressJSON {
 	}
 	
 	public static JSONArray toJSON(List<RegistryAddress> addresses) {
-		return toJSON(addresses.stream());
+		return toJSON(AonCollectionUtils.stream(addresses));
 	}
 	
 	public static JSONArray toJSON(Stream<RegistryAddress> addresses) {

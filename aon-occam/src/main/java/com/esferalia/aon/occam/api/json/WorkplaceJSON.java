@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class WorkplaceJSON {
 	
@@ -40,7 +41,7 @@ public class WorkplaceJSON {
 	}
 	
 	public static JSONArray toJSON(List<Workplace> list) {
-		return toJSON(list.stream());
+		return toJSON(AonCollectionUtils.stream(list));
 	}
 	
 	public static JSONArray toJSON(Stream<Workplace> stream) {

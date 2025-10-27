@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 import https.sii_araba_eus.documentos.respuestasuministro.EstadoRegistroType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaBienBajaType;
@@ -59,13 +59,13 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIArabaPost extends SIIPost{
 
-	public static SIIArabaPost getInstance(SiiConfiguration siiConfiguration) {
-		return new SIIArabaPost(siiConfiguration);
+	public static SIIArabaPost getInstance(InvoiceCommunicationConfiguration icc) {
+		return new SIIArabaPost(icc);
 	}
 	
 
-	public SIIArabaPost(SiiConfiguration siiConfiguration) {
-		super(siiConfiguration);
+	public SIIArabaPost(InvoiceCommunicationConfiguration icc) {
+		super(icc);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

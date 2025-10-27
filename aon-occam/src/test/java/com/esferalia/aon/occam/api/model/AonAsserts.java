@@ -74,7 +74,10 @@ public class AonAsserts {
 					fail("Array ..: " + current + " is empty");		
 				} 
 				for ( int i = 0; i < a.length(); i++) {
-					assertNotEmptyKeys( current + "["+i+"]" , a.getJSONObject(i));
+					Object arrItem = a.get(i);
+					if (arrItem != null && arrItem.getClass().isAssignableFrom( JSONObject.class)) {
+						assertNotEmptyKeys( current + "["+i+"]" , a.getJSONObject(i));
+					}
 				}
 			} else {
 				JSONObject j = json.optJSONObject(name);

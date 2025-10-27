@@ -3,10 +3,10 @@ package com.esferalia.aon.occam.api;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 
 public interface IRawdoc {
 	
@@ -21,6 +21,7 @@ public interface IRawdoc {
 	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx);
 	public Optional<Rawdoc> getRawdocFull(AONContext ctx, int id);
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
+	public Rawdoc rawdocSave(AONContext ctx, Integer rawdocId, String invoiceJson);
 	void rawdocDelete(AONContext ctx, RawdocFilter filter);
 	void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);

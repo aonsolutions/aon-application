@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -131,15 +131,15 @@ public class LROE240_5_2 extends LROE240 {
 		return factura;
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+	public LROEResponse alta(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) {
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		return alta(tbaiConfiguration, company, invoices);
+		return alta(icc, company, invoices);
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices) {
+	public LROEResponse alta(InvoiceCommunicationConfiguration icc, Company company, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoices.get(0)));
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(icc, invoices.get(0)));
 			 
 			final LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion p240 = build(company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion.class);
@@ -153,7 +153,7 @@ public class LROE240_5_2 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(icc, buildJSON(company, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -194,15 +194,15 @@ public class LROE240_5_2 extends LROE240 {
 	}
 	
 	
-	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) {
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		return anulacion(company, tbaiConfiguration, invoices);
+		return anulacion(company, icc, invoices);
 	}
 	
-	public LROEResponse anulacion(Company company, TbaiConfiguration tbaiConfiguration, List<Invoice> invoices) {
+	public LROEResponse anulacion(Company company, InvoiceCommunicationConfiguration icc, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoices.get(0)));
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoices.get(0)));
 			final LROEPJ240BienesAnulacionPeticion p240 = buildBaja(company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240BienesAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -214,7 +214,7 @@ public class LROE240_5_2 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(icc, buildJSON(company, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

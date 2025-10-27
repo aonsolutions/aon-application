@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class InvoiceParams implements Serializable {

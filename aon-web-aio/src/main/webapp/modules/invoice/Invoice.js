@@ -45,8 +45,11 @@ export class Invoice {
 
   creation_user;
 
-  tbai; // boolean
-  tbaiUrl;
+  // tbai; // boolean
+  // tbaiUrl;
+
+  // verifactu; // boolean
+  // verifactuUrl;
 
   workplace;
   
@@ -54,6 +57,8 @@ export class Invoice {
   ocrStatus;
 
   thirdPart;
+
+  communicationInfo;
 
   constructor(invoice) {
     this.buildObject(invoice);
@@ -124,12 +129,15 @@ export class Invoice {
       this.rectificationInvoice = invoice.rectificationInvoice || undefined;
       this.documentNumber = invoice.documentNumber || undefined;
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
-      this.tbai = invoice.tbai || false;
-      this.tbaiUrl = invoice.tbaiUrl || '';
+      // this.tbai = invoice.tbai || false;
+      // this.tbaiUrl = invoice.tbaiUrl || '';
+      // this.verifactu = invoice.verifactu || false;
+      // this.verifactuUrl = invoice.verifactuUrl || '';
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
       this.thirdPart = invoice.thirdPart || false;
+      this.communicationInfo = invoice.communicationInfo;
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
@@ -178,9 +186,9 @@ export class Invoice {
 
       this.withholding = false; //this.isEmitida() ? company.withholding : false;
       this.creation_user = LS.getDomainLogin();
-      this.tbai = false;
+      // this.tbai = false;
+      // this.tbaiUrl = '';
       this.signed = false;
-      this.tbaiUrl = '';
       this.thirdPart = false;
     }
     // getCompany().then(company => {
@@ -430,14 +438,24 @@ export class Invoice {
     return this.signed;
   }
 
-  isTbai() {
-    return this.tbai;
+  isTbai()          { throw new Error("Invoice.js isTBAI() Not Supported!");}
+  isVerifactu()     { throw new Error("Invoice.js isVerifactu() Not Supported!");}
+  getTbaiUrl()      { throw new Error("Invoice.js getTbaiUrl() Not Supported!");}
+  getVerifactuUrl() { throw new Error("Invoice.js getVerifactuUrl() Not Supported!");}
+  
+  canBeAnnulled() {
+    if (!this.id) return false;
+    if (!this.communicationInfo || Object.keys(this.communicationInfo).length === 0) {
+      return false;
+    }
+    let validSources = ["VERIFACTU", "TBAI", "LROE"];
+    let validStatuses = ["ACCEPTED", "ACCEPTED_WITH_ERRORS"];
+    return validSources.some(src => {
+      let info = this.communicationInfo[src];
+      return info && validStatuses.includes(info.communicationStatus);
+    });
   }
-
-  getTbaiUrl() {
-    return this.tbaiUrl;
-  }
-
+  
   setService(service) {
     this.service = service;
     return this;

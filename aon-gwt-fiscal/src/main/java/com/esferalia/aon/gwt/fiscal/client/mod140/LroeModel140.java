@@ -25,16 +25,16 @@ import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecor
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
-import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -137,7 +137,7 @@ public class LroeModel140 extends DockLayoutPanel {
 	private FiscalModel model;
 	private FiscalModelModuleOptions<FiscalModel> options;
 	InvoiceGrid invoiceGrid;
-	InvoiceParams filterParams;
+	InvoiceCommunicationParams filterParams;
 	
 	List<Invoice> selectedInvoices;
 	Model140 model140;
@@ -147,10 +147,10 @@ public class LroeModel140 extends DockLayoutPanel {
 		super(Unit.PX);
 		this.model140 = parent;
 		
-		SII_SERVICE.getTbaiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<TbaiConfiguration>() {
+		SII_SERVICE.getConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<InvoiceCommunicationConfiguration>() {
 			
 			@Override
-			public void onSuccess(TbaiConfiguration result) {
+			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				FiscalModel mod140 = new FiscalModel();
 				mod140.setAdministration(Administration.BIZKAIA);
 				mod140.setModel(FiscalModelType.M140);
@@ -255,8 +255,8 @@ public class LroeModel140 extends DockLayoutPanel {
 						bajaButton.setVisible(visible);
 						
 						refreshButton.setVisible(selFiles.size() == 1
-							&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
-							&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
+							&& !selFiles.getFirst().getLroeInfo().map(i -> i.isAccepted()).orElse(false)
+							&& !selFiles.getFirst().getLroeInfo().map(i -> i.isAcceptedWithErrors()).orElse(false));
 					}
 				};
 			
@@ -274,7 +274,7 @@ public class LroeModel140 extends DockLayoutPanel {
 	}
 	
 	public void initializeFilter() {
-		this.filterParams = new InvoiceParams()
+		this.filterParams = new InvoiceCommunicationParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
 			.setCommunicationType(InvoiceCommunicationType.LROE);
@@ -321,7 +321,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(String value) {
-				getFilterParams().setValue(value).setPage(1).setPerPage(30);
+				getFilterParams().setQuery(value).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -366,7 +366,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -383,7 +383,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(30);
+				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -407,7 +407,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onChange(ChangeEvent event) {
 				InvoiceCommunicationStatus st = InvoiceCommunicationStatus.safeValueOf(status.getSelectedValue());
-				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(30);
+				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(50);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		});
@@ -524,8 +524,8 @@ public class LroeModel140 extends DockLayoutPanel {
 		diskForm.submit();
 	}
 	
-	public InvoiceParams getFilterParams() {
-		if(filterParams == null) filterParams = new InvoiceParams(); 
+	public InvoiceCommunicationParams getFilterParams() {
+		if(filterParams == null) filterParams = new InvoiceCommunicationParams(); 
 		return filterParams;
 	}
 
@@ -550,9 +550,8 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE)
-				.setType(InvoiceType.PURCHASE)
-				.addType(InvoiceType.EXPENSES);
+					.setCommunicationType(InvoiceCommunicationType.LROE)
+					.setType(InvoiceType.PURCHASE, InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -642,7 +641,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
+							if(invoice.isSales() && invoice.getLroeInfo().map(i -> i.isAccepted()).orElse(false)) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {

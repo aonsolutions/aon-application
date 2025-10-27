@@ -46,14 +46,13 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-	
+
 	loadScripts(); 
+
 	loadTheme()
 	.finally(loadIsReadOnly)
 	.finally( () =>  {
-		title();
-		favicon(); 
-		document.body.appendChild(new AonModule()) 
+		loadModule(); 
 	} ) ;  
 
 	// TODO: loadScriptFirebase();
@@ -175,7 +174,7 @@ window.isReadOnly = () => isReadOnly();
 
 const getParam = (paramName) => {
 	const queryString = window.location.search;
-	const searchParams = new getParamURLSearchParams(queryString);
+	const searchParams = new URLSearchParams(queryString);
 	return searchParams.get(paramName);
 };
 

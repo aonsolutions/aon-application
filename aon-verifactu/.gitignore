@@ -1,0 +1,8 @@
+/target/
+/.settings/
+/gwt-unitCache/
+/war/
+/bin/
+/.classpath
+/.project
+/src/main/generated-sources/

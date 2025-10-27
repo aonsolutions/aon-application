@@ -825,15 +825,7 @@ public class ConsoleDomainPanel extends AonLayoutPanel {
 		this.schemasOffsets = new int[ConsoleSchema.values().length];
 		for ( int i = 0; i < schemasOffsets.length; i++ ) schemasOffsets[i] = 0;
 	}
-//	private int getOffset( ConsoleSchema cs ) {
-//		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
-//		return schemasOffsets[ cs.ordinal() ]; 
-//	}
-//	private int setOffset( ConsoleSchema cs, int offset ) {
-//		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
-//		schemasOffsets[ cs.ordinal() ] = offset;
-//		return schemasOffsets[ cs.ordinal() ]; 
-//	}
+	
 	private int addOffset( ConsoleSchema cs ) {
 		return addOffset(cs, 1);
 	}
@@ -845,8 +837,11 @@ public class ConsoleDomainPanel extends AonLayoutPanel {
 	
 	private void utilities(ConsoleDomainTableCallback callback) {
 		ConsoleUtilitiesPanel panel = new ConsoleUtilitiesPanel(callback);
-		AonCloseTab closeTab = new AonCloseTab(UTILITIES, true);
-		mainTabLayout.add( panel, closeTab, UTILITIES);
+		Widget w = mainTabLayout.getWidget( UTILITIES );
+		if (w == null) {
+			AonCloseTab closeTab = new AonCloseTab(UTILITIES, true);
+			mainTabLayout.add( panel, closeTab, UTILITIES);
+		} 
 		mainTabLayout.selectTab(UTILITIES);
 	}
 

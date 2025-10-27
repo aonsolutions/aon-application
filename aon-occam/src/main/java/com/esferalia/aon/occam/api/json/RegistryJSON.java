@@ -1,9 +1,18 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 
@@ -42,5 +51,14 @@ public class RegistryJSON {
 			.put(IJsonNames.LEGAL_PERSON, registry.isLegalPerson())
 			.put(IJsonNames.NATIONALITY, registry.getNationality() != null ? registry.getNationality().getIso2() : null)
 			.put(IJsonNames.CONFIDENTIAL, registry.isConfidential());
+	}
+
+	public static JSONObject toJSON(RegistryFull<?> rf) {
+		return toJSON( rf.getRegistry())
+			.put(IJsonNames.BANKS, RegistryBankJSON.toJSON(rf.getBanks()) )
+			.put(IJsonNames.ADDRESSES, RegistryAddressJSON.toJSON(rf.getAddresses()) )
+			.put(IJsonNames.MEDIAS, RegistryMediaJSON.toJSON(rf.getMedias()) )
+			.put(IJsonNames.RECORD_DATAS, RecordDataJSON.toJSON(rf.getRecordDatas()) )
+		;
 	}
 }

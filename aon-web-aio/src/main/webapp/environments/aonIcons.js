@@ -7,10 +7,12 @@ export const FACE = 'face';
 
 export const AON_ACCOUNTING = 'aon_accounting';
 export const AON_NEW_ACCOUNTING = 'aon_new_accounting';
+export const AON_AEAT = 'aon_aeat';
 export const AON_ARABA = 'aon_araba';
 export const AON_AULA = 'aon_aula';
 export const AON_BANK = 'aon_bank';
 export const AON_BIZKAIA = 'aon_bizkaia';
+export const AON_CANARY = 'canary';
 export const AON_CAU = 'aon_cau';
 export const AON_COMUNICA = 'aon_comunica';
 export const AON_CONVENIOS = 'aon_convenios';

@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -46,6 +47,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -837,7 +839,17 @@ public class InvoiceImport extends ImportUtils{
 		}
 	}
 	
-	private static Invoice buildInvoice(AonConfiguration aonCtx, Domain domain, User user, InvoiceImportClass iic) {
+	private static Invoice buildInvoice(AonConfiguration aonCtx, Domain domain, User user, InvoiceImportClass iic) throws Exception {
+		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
+
+		InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
+	
+		InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
+		if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+			throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
+					+ " está activado, no se pueden importar facturas emitidas");
+		}
+		
 		Invoice invoice = new Invoice();
 		invoice.setScope(getScope(domain, user));
 		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
@@ -935,15 +947,25 @@ public class InvoiceImport extends ImportUtils{
 	
 	public static Error insertInvoice(Domain domain, User user, Integer i, InvoiceImportClass iic) {
 		Error error = new Error().setError(true);
-
-		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	
-		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
-		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
-		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
-		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
-		
 		try {
+			Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
+
+			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
+		
+			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
+			if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
+					+ " está activado, no se pueden importar facturas emitidas");
+			}
+		
+			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
+
+			PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
+			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
+			Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
+			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
+		
+
 			if(iic.getAccount() == null || iic.getAccount().isBlank()) {
 				throw new Exception("La cuenta contable es un dato obligatorio.");
 			}

@@ -25,13 +25,14 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -168,12 +169,16 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 	public void checkInvoiceTbai(Invoice inv) {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		TbaiConfiguration tbai =  AON.getTbaiConfiguration(domain, "");
-		if(tbai.isActive()) {
-			DataResponseSource source = tbai.isTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
-			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", f ->
-					f.getDomainProperty().eq(domain.getId())
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(domainId)
+			.setUser(login);
+		InvoiceCommunicationConfiguration icc =  AON.getInvoiceCommunicationConfiguration(occam);
+		if(icc.isTbai()) {
+			DataResponseSource source = icc.isTbaiTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
+			DataResponse dr = AON.getDataResponse(domainName, domainId, "", f ->
+					f.getDomainProperty().eq(domainId)
 					.and(f.getSourceProperty().eq(source.value()))
 					.and(f.getSourceIdProperty().eq(inv.getId())));
 

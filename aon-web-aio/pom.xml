@@ -526,6 +526,12 @@
     </dependency>
     <dependency>
       <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.verifactu</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.invoice.communication</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

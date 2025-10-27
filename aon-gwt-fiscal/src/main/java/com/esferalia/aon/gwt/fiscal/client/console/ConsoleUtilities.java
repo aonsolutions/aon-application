@@ -1,20 +1,26 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 public enum ConsoleUtilities implements Serializable {
 	
 	LIST_DOMAINS ("Listado de dominios") {
 		@Override 
-		public <T> T visit(ConsoleUtilitiesVisitor<T> visitor) throws IOException {
+		public <T> T visit(ConsoleUtilitiesVisitor<T> visitor) {
 			return visitor.visitListDomains();
+		}
+	}
+	
+	,SCOPE_INTEGRITY_FIX ("Arreglo integridad de SCOPES") {
+		@Override 
+		public <T> T visit(ConsoleUtilitiesVisitor<T> visitor) { 
+			return visitor.visitScopeIntegrityFix();
 		}
 	}
 	
 	,NORDIGEN_FIX ("Arreglo NORDIGEN") {
 		@Override 
-		public <T> T visit(ConsoleUtilitiesVisitor<T> visitor) throws IOException {
+		public <T> T visit(ConsoleUtilitiesVisitor<T> visitor){
 			return visitor.visitNordigenFix();
 		}
 	}
@@ -29,11 +35,12 @@ public enum ConsoleUtilities implements Serializable {
 		return this.description;
 	}
 
-	public abstract <T> T visit(ConsoleUtilitiesVisitor<T> visitor) throws IOException;
+	public abstract <T> T visit(ConsoleUtilitiesVisitor<T> visitor);
 
 	public interface ConsoleUtilitiesVisitor<T> {
-		public T visitListDomains() throws IOException;
-		public T visitNordigenFix() throws IOException;
+		public T visitListDomains();
+		public T visitScopeIntegrityFix();
+		public T visitNordigenFix();
 		
 	}
 
