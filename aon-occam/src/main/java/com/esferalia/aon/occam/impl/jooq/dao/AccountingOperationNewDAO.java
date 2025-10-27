@@ -42,6 +42,8 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.EnterpriseActivity;
+import com.esferalia.aon.jooq.tables.Iae;
 import com.esferalia.aon.jooq.tables.InvoiceTax;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -68,6 +71,9 @@ public class AccountingOperationNewDAO {
 	
 	private static final byte TRUE_BYTE = 1;
 	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF
+	
+	private static EnterpriseActivity allEnterpriseActivity = ENTERPRISE_ACTIVITY.as("allEnterpriseActivity");
+	private static Iae otherIae = IAE.as("otherIae");
 
 	// Códigos de concepto donde es obligatorio identificar al destinatario/expedidor, se usa en los asientos sin factura para poner el NIF y Nombre de la empresa
 	private static final String[] REQUIRED_CONCEPTS = {"I07","G01","G03","G04","G05","G45","G46","G07","G08","G09","G10","G11","G12","G13","GY4","G14","G15","G16","G17","G18","G19","G40","G41","G42","G20","G22","G44","G23","G24","G25","G26","G34","G35","G36","G43","G37"};
@@ -141,6 +147,10 @@ public class AccountingOperationNewDAO {
 		,INVEST_ASSET.RETENTION_PERCENT
 		,proratePercentageField
 		,prorateTypeField
+		,allEnterpriseActivity.VAT_REGIME
+		,otherIae.SECTION
+		,otherIae.EPIGRAPH
+		
 	};
 	
 	// Cobros/Pagos RECC
@@ -214,16 +224,16 @@ public class AccountingOperationNewDAO {
 	private static Stream<OperationBreakdownNew> getOperationBreakdownFac(AONContext ctx, OperationParamsNew params) {
 		
 		// Obtener porcentaje y tipo de prorrata del último modelo 303
-		getLastProrate(ctx, params); 
+		getLastProrate(ctx, params);
 		
-//		return getSelectFac(ctx)
-//			.where(getWhereFac(ctx, params))
-//			.fetch()
-//			.stream()
-//			.map(rec -> new OperationBreakdownFacFiller().apply(rec, params));
+		// Si se aplica la regla de prorrata, ver si hay dos actividades una exenta y la otra no, 
+		// para repartir las facturas imputadas a todas las actividades, entre las dos actividades, si la factura lleva prorrata
+		if (params.getLastProratePercentage() > 0.0) {
+			mustDistributeInvoice(ctx, params);
+		}
 		
 		// Obtener facturas
-		Stream<OperationBreakdownNew> invoices = getSelectFac(ctx)
+		Stream<OperationBreakdownNew> invoices = getSelectFac(ctx, params)
 				.where(getWhereFac(ctx, params))
 				.fetch()
 				.stream()
@@ -237,6 +247,40 @@ public class AccountingOperationNewDAO {
 		
 	}
 	
+	// Se comprueba si se deben repartir las facturas, en aquellas facturas imputadas a todas las actividades
+	// Por ahora solo si existen unicamente dos actividades, una de ellas con Régimen Exento de IVA y la otra no
+	private static void mustDistributeInvoice(AONContext ctx, OperationParamsNew params) {
+		
+		params.setDistributeInvoice(false);
+
+		// Obtenemos las actividades de la empresa (activas en el periodo que se le pasa)
+		int countNormal = ctx.getDslContext()
+				   .selectCount()
+				   .from(ENTERPRISE_ACTIVITY)
+				   .where(ENTERPRISE_ACTIVITY.DOMAIN.eq(ctx.getDomainId()))
+				   .and(ENTERPRISE_ACTIVITY.START_DATE.isNull().or(ENTERPRISE_ACTIVITY.START_DATE.lessOrEqual(AonDateUtils.toSql(params.getToDate()))))
+				   .and(ENTERPRISE_ACTIVITY.END_DATE.isNull().or(ENTERPRISE_ACTIVITY.END_DATE.greaterOrEqual(AonDateUtils.toSql(params.getFromDate()))))
+				   .and(ENTERPRISE_ACTIVITY.VAT_REGIME.notEqual(VATRegime.EXEMPT.value()))
+				   .fetchOne()
+				   .value1();
+		
+		int countExenta = ctx.getDslContext()
+				   .selectCount()
+				   .from(ENTERPRISE_ACTIVITY)
+				   .where(ENTERPRISE_ACTIVITY.DOMAIN.eq(ctx.getDomainId()))
+				   .and(ENTERPRISE_ACTIVITY.START_DATE.isNull().or(ENTERPRISE_ACTIVITY.START_DATE.lessOrEqual(AonDateUtils.toSql(params.getToDate()))))
+				   .and(ENTERPRISE_ACTIVITY.END_DATE.isNull().or(ENTERPRISE_ACTIVITY.END_DATE.greaterOrEqual(AonDateUtils.toSql(params.getFromDate()))))
+				   .and(ENTERPRISE_ACTIVITY.VAT_REGIME.equal(VATRegime.EXEMPT.value()))
+				   .fetchOne()
+				   .value1();
+		
+		// Si solo hay dos actividades y una es régimen exento de IVA y la otra no, entonces se reparte 
+		if (countNormal == 1 && countExenta == 1) {
+			params.setDistributeInvoice(true);
+		}
+		
+	}
+
 	// Obtener ajuste de la prorrata del modelo 303 del ultimo periodo, si estamos obteniendo los datos hasta final del ejercicio, solo libro de IVA y Libro Unificado
 	private static Stream<OperationBreakdownNew> getProrateAdjustment(AONContext ctx, OperationParamsNew params) {
 		
@@ -252,15 +296,15 @@ public class AccountingOperationNewDAO {
 					   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
 					   .fetchAny();
 			
-			Double prorateAmount = rec.getValue(FS_MODEL_DETAIL.AMOUNT);
-			
-			// Se ponen los datos de la actividad principal en esta línea del ajuste de la prorrata
-			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
-			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
-			
-			if (prorateAmount == null) {
+			if (rec == null) {
 				return Stream.empty();
 			} else {
+				Double prorateAmount = rec.getValue(FS_MODEL_DETAIL.AMOUNT);
+				
+				// Se ponen los datos de la actividad principal en esta línea del ajuste de la prorrata
+				String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
+				String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
+				
 				OperationBreakdownNew prorateAdjustment = new OperationBreakdownNew()
 						.setActivityCode(activityCode) 					// Actividad: Código
 						.setActivityType(activityType) 					// Actividad: Tipo
@@ -359,7 +403,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Facturas 
-	private static SelectOnConditionStep<Record> getSelectFac(AONContext ctx) {
+	private static SelectOnConditionStep<Record> getSelectFac(AONContext ctx, OperationParamsNew params) {
 
 		// SE HACE UN LEFT JOIN CON INVOIVE_TAX, PARA QUE SALGAN LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, PUES 
 		// ACTUALMENTE NO CREAN REGISTRO EN INVOICE_TAX Y SI SE HACE UN INNER JOIN NO SALDRIAN
@@ -378,6 +422,17 @@ public class AccountingOperationNewDAO {
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))  // Retención IRPF
 			.leftOuterJoin(INVEST_ASSET).on(INVEST_ASSET.ID.equal(INVOICE_DETAIL.INVEST_ASSET))
+			// ACTIVIDAD NULA EN INVOICE SE COGEN LAS ACTIVIDADES DE LA EMPRESA, SOLO SI DEBEN REPARTIRSE ESAS FACTURAS
+			.leftOuterJoin(allEnterpriseActivity).on(
+					allEnterpriseActivity.DOMAIN.equal(INVOICE.DOMAIN)
+						.and(INVOICE.ACTIVITY.isNull())
+						.and(INVOICE.TYPE.notEqual(InvoiceType.SALES.value()))  
+						.and(allEnterpriseActivity.START_DATE.isNull().or(INVOICE.TAX_DATE.greaterOrEqual(allEnterpriseActivity.START_DATE)))
+						.and(allEnterpriseActivity.END_DATE.isNull().or(INVOICE.TAX_DATE.lessOrEqual(allEnterpriseActivity.END_DATE)))
+						.and(params.isDistributeInvoice() ? DSL.trueCondition() :  DSL.falseCondition()) // PARA QUE SE APLIQUE O NO EL LEFT JOIN
+			)
+			.leftOuterJoin(otherIae).on(otherIae.ID.equal(allEnterpriseActivity.IAE))
+			
 			;
 	}
 	
@@ -558,6 +613,15 @@ public class AccountingOperationNewDAO {
 			
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
+			String activityIAE = rec.getValue(IAE.EPIGRAPH);
+			
+			// Actividad nula, el IAE se coge de las actividades definidas en la empresa (solo compras y gastos y si se deben repartir esas facturas)
+			if (!isSales && params.isDistributeInvoice() && rec.getValue(INVOICE.ACTIVITY) == null) {
+				activityCode = AonStringUtils.isBlank(rec.getValue(otherIae.EPIGRAPH)) ? "" : "A";
+				activityType = getActivityType(rec.getValue(otherIae.SECTION), rec.getValue(otherIae.EPIGRAPH));
+				activityIAE = rec.getValue(otherIae.EPIGRAPH);
+			}
+			
 			String documentType = getDocumentType(rec);
 			String invoiceType = getInvoiceType(rec, isVatUnion);			
 			String operationKey = getOperationKey(rec);
@@ -586,6 +650,11 @@ public class AccountingOperationNewDAO {
 				 (params.getTabType() == 1 && !rec.getValue(accountCodeField).startsWith("6")))) {  // Compras o Gastos
 				conceptAmount = 0.0;
 				conceptCode = ""; 
+			}
+			
+			// Repartir gasto, si deben repartirse las facturas, por ahora solo se reparten en función del porcentaje de prorrata
+			if (!isSales && params.isDistributeInvoice() && rec.getValue(INVOICE.ACTIVITY) == null && conceptAmount != 0.0) {
+				conceptAmount = getAmountDistributed(rec, params, conceptAmount);
 			}
 			
 			// Total factura = base + IVA + REQ (excepto recibidas ISP o intracomunitarias o UOSS)
@@ -649,7 +718,7 @@ public class AccountingOperationNewDAO {
 			return new OperationBreakdownNew()
 				.setActivityCode(activityCode) 									// Actividad: Código
 				.setActivityType(activityType) 									// Actividad: Tipo
-				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 					// Actividad: Grupo o Epígrafe del IAE
+				.setActivityIAE(activityIAE) 									// Actividad: Grupo o Epígrafe del IAE
 				.setInvoiceType(invoiceType) 									// Tipo de Factura	
 				.setConceptCode(conceptCode) 									// Codigo Concepto de Ingreso o Gasto
 				.setConceptAmount(conceptAmount) 								// Ingreso computable o Gasto deducible 	
@@ -736,9 +805,47 @@ public class AccountingOperationNewDAO {
 			}
 			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
 			if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
-				dedQuota = AonMathUtils.round(dedQuota * proratePer / 100);
+				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
+					dedQuota = 0.0;
+				else
+					dedQuota = AonMathUtils.round(dedQuota * proratePer / 100);
 			}			
 			return dedQuota;
+		}
+		
+		private double getAmountDistributed(Record rec, OperationParamsNew params, double amount) {
+			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
+			if (AonMathUtils.isZero(dedQuota)) {
+				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT));
+				double quota = getQuota(rec);
+				if (AonMathUtils.isZero(percent) || percent == 100) {
+					dedQuota = quota;
+				} else {
+					dedQuota = AonMathUtils.round(quota * percent / 100);
+				}
+			}			
+			// Comprobar si la factura lleva porcentaje de prorrata y debe aplicarse:
+			// Prorrata General: Se aplica a todas las facturas
+			// Prorrata Especial: Se aplica solo a las facturas que no tienen actividad (es decir que se imputan a todas las actividades)
+			double proratePer;
+			String prorateTyp; 
+			if (rec.getValue(proratePercentageField) == null) {
+				// Si la factura aún no está declarada en el modelo 303, entonces se coge el porcentaje de prorrata del último modelo 303 creado
+				proratePer = params.getLastProratePercentage();
+				prorateTyp = params.getLastProrateType(); 
+			} else {
+				// Si la factura ya está declarada en el modelo 303, se cogen los datos de dicho modelo
+				proratePer = AonNumberUtils.todouble(rec.getValue(proratePercentageField));
+				prorateTyp = rec.getValue(prorateTypeField);
+			}
+			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
+			if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
+					amount = (amount - AonMathUtils.round(amount * proratePer / 100)) + (dedQuota - AonMathUtils.round(dedQuota * proratePer / 100)) ;
+				else
+					amount = AonMathUtils.round(amount * proratePer / 100);
+			}			
+			return amount;
 		}
 	
 		private double getRetentionQuota(Record rec) {
