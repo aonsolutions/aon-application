@@ -8,8 +8,8 @@ aon-upload-toast{
   margin-bottom: v.$px-16;
   aon-card .aonCardContent .aonUlUploadToast{
     list-style: none;
-    margin    : 0;
-    padding   : 0;
+    margin    : v.$px-0;
+    padding   : v.$px-0;
     .aonLi{
       display: flex;
       gap    : v.$gap;

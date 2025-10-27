@@ -11,9 +11,9 @@ aon-badge{
 
   .badge {
     position: absolute;
-    top: 0;
-    right: 0;
-    transform: translate(50%, -50%);
+    top: v.$px-0;
+    right: v.$px-0;
+    transform: translate(v.$pct-50, v.$pct-neg50);
     border-radius: v.$pct-100;
     width: $badge-size;
     height: $badge-size;

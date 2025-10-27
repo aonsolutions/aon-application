@@ -13,9 +13,9 @@
 */
 /* --- Configuracion Base para que todo ocupe el 100% de la altura --- */
 html, body, aon-module, aon-module > div, aon-module > div > div {
-  height  : 100%;
-  margin  : 0;
-  padding : 0;
+  height  : v.$pct-100;
+  margin  : v.$px-0;
+  padding : v.$px-0;
 }
 
 /* --- 1. Layout Principal (Menu Principal | Resto de la App) --- */
@@ -24,11 +24,11 @@ aon-module > div > div {
   display: flex;
 }
 #aonMenuSidenav {
-  flex-shrink: 0;
+  flex-shrink: v.$px-0;
 }
 #rootPanel {
-  flex-grow : 1;
-  min-width : 0;
+  flex-grow : v.$num-1;
+  min-width : v.$px-0;
   display   : flex;
 }
 
@@ -36,30 +36,30 @@ aon-module > div > div {
 aon-aplication {
   display       : flex;
   flex-direction: column;
-  flex-grow     : 1;
+  flex-grow     : v.$num-1;
 }
 aon-toolbar {
-  flex-shrink: 0;
+  flex-shrink: v.$px-0;
 }
 .aon-flex {
-  flex-grow : 1;
+  flex-grow : v.$num-1;
   display   : flex;
-  min-height: 0;
+  min-height: v.$px-0;
 }
 
 /* --- 3. Layout Interno (Submenu | Contenido Final) --- */
 .aonSidenav {
-  flex-shrink : 0;
+  flex-shrink : v.$px-0;
   width       : auto;
   white-space : nowrap;
   margin-bottom : v.$px-100;
 }
 
 /* --- 4. Contenido --- */
-$height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$height-toolbar + v.$padding-min)*2));
+$height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$height-toolbar + v.$padding-min)*v.$num-2));
 .aonContentBeta {
   position      : relative;
-  flex-grow     : 1;
+  flex-grow     : v.$num-1;
   min-width     : v.$px-0;
   display       : flex;
   flex-direction: column;
@@ -72,7 +72,7 @@ $height-min-body: calc(v.$vh-100 - ((v.$height-cabecera + v.$height-toolbar + v.
 
 /* --- 5. Submenu de observaciones --- */
 .aonRightSidenav {
-  flex-shrink : 0;
+  flex-shrink : v.$px-0;
   width       : auto;
   white-space : nowrap;
   margin-bottom : v.$px-100;

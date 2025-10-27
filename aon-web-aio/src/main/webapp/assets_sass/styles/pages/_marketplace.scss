@@ -10,18 +10,18 @@
         background-color: #09e7fc;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: v.$px-16;
         li{
           display: flex;
           >span{
-            width: 100%;
+            width: v.$pct-100;
           }
           span{
             display: flex;
             align-items: center;
             gap: v.$gap;
             &.aonMarketplaceApp-buttons{
-              width: 100%;
+              width: v.$pct-100;
               justify-content: flex-end;
             }
           }

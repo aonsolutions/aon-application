@@ -17,14 +17,14 @@ aon-home{
 // Esta fuera para que cargue en las vista JAVA
 /* Contenedor que agrupa topnav + contenido */
 #rootPanel {
-  flex           : 1;
+  flex           : v.$num-1;
   display        : flex;
   flex-direction : column;
   overflow       : auto;
   margin-top     : v.$menu-top-height; // para que salga el contenido debajo del menu
   padding        : v.$padding;
   &.hidden-top {
-    margin-top   : 0; // No tinee menu arriba
+    margin-top   : v.$px-0; // No tinee menu arriba
   }
   .aonFlex{
     &#sidenav-content{
@@ -35,7 +35,7 @@ aon-home{
     gap     : v.$gap;
     &:has(.aonSidenav.sidenav-hidden) {
       // Valor de gap que desees cuando .aonSidenav esté oculto
-      gap: 0;  
+      gap: v.$px-0;  
     }
     .aonSidenav:empty{
       display: none;
@@ -45,7 +45,7 @@ aon-home{
         display: none;
       }
       img.aonWelcomeLogo{
-        width: 10rem;
+        width: v.$px-160;
       }
     }
   }
@@ -53,7 +53,7 @@ aon-home{
   .suiteMenuContent{
     .content-card-title{
       h2{
-        margin-top: 0;
+        margin-top: v.$px-0;
       }
     }
     .content-card-body{
@@ -64,11 +64,11 @@ aon-home{
       width           : v.$pct-100;
 
       aon-card{
-        width     : calc(33.33% - v.$gap); 
+        width     : calc(v.$pct-33-33 - v.$gap); 
         min-width : v.$px-464; 
         box-sizing: border-box;
         .aonCardContent{
-          padding: v.$padding 0;
+          padding: v.$padding v.$px-0;
           &>div{
             display : grid;
             .suiteMenuCardDataSpan{

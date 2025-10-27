@@ -16,8 +16,8 @@
         &::after {
           content         : "";
           position        : absolute;
-          top             : 0;
-          left            : 0;
+          top             : v.$px-0;
+          left            : v.$px-0;
           width           : v.$pct-100;
           height          : v.$padding;
           transform       : rotateX(8deg);
@@ -49,8 +49,8 @@
           }
           .note-footer{
             position      : absolute;
-            bottom        : calc(v.$padding / 2);
-            left          : 0;
+            bottom        : calc(v.$padding / v.$num-2);
+            left          : v.$px-0;
             width         : v.$pct-100;
             small{
               display       : flex;

@@ -39,11 +39,11 @@ aon-toolbar{
             aon-icon{
               font-size   : v.$px-14;
               font-family : v.$font-primary-bold;
-              transition  : transform 0.3s ease-in-out;
-              transform   : rotate(0deg);
+              transition  : transform v.$t-03 ease-in-out;
+              transform   : rotate(v.$deg-0);
             }
             &.sidenav-hidden aon-icon[icon="chevron-down"] {
-              transform: rotate(-90deg);
+              transform: rotate(v.$deg-neg90);
             }
           }
         }

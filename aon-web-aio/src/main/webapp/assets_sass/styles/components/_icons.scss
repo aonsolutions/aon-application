@@ -177,7 +177,7 @@ $icons: (
     display          : inline-block;
     width            : $icon-size;
     height           : $icon-size;
-    font-size        : 0; // ocultar texto si queda alguno
+    font-size        : v.$px-0; // ocultar texto si queda alguno
     background-color : currentColor;
 
     mask: url(#{$icon-data}) $mask;

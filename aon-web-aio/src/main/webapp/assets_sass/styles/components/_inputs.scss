@@ -73,7 +73,7 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
       position        : $inputiconlabel-position;
       justify-content : $inputiconlabel-justify-content;
       top             : -($input-height - $padding-top);
-      right           : calc($icon-padding-right / 4);
+      right           : calc($icon-padding-right / v.$num-4);
       aon-icon-button {
         height        : $iconbutton-height;
         align-content : $iconbutton-align-content;
@@ -85,11 +85,11 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
           width         : v.$px-16;
           height        : v.$px-16;
           border-radius : v.$pct-100;
-          animation     : loaderSpinInput 1s linear infinite;
+          animation     : loaderSpinInput v.$t-1 linear infinite;
         }
         @keyframes loaderSpinInput {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% { transform: rotate(v.$deg-0); }
+          100% { transform: rotate(v.$deg-360); }
         }
       }
     }
@@ -134,7 +134,7 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
         .datepicker-month, .datepicker-year{
           cursor        : pointer;
           border-radius : v.$border-radius;
-          padding       : calc(v.$padding-min / 2) v.$padding-min;
+          padding       : calc(v.$padding-min / v.$num-2) v.$padding-min;
         }
       }
       table{
@@ -159,7 +159,7 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban{
         .months-btn, .year-btn{
           cursor        : pointer;
           border-radius : v.$border-radius;
-          padding       : calc(v.$padding-min / 2) v.$padding-min;
+          padding       : calc(v.$padding-min / v.$num-2) v.$padding-min;
         }
       }
     }
@@ -241,7 +241,7 @@ aon-search{
     display      : none;
     position     : absolute;
     top          : $input-height;
-    z-index      : 1;
+    z-index      : v.$px-1;
     padding      : v.$padding;
     gap          : v.$gap-min;
     border-radius: v.$border-radius;

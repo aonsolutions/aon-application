@@ -34,12 +34,12 @@
         display : flex;
         cursor  : pointer;
         .rotate-icon {
-          transition: transform 0.3s ease;
-          transform: rotate(0deg);
+          transition: transform v.$t-03 ease;
+          transform: rotate(v.$deg-0);
           will-change: transform;
         }
         .rotate-icon.rotated {
-          transform: rotate(-180deg);
+          transform: rotate(v.$deg-neg180);
         }
       }
       // LOGO - Cuando esta logueado

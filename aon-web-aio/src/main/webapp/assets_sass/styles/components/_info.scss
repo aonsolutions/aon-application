@@ -10,7 +10,7 @@ aon-info{
 		padding: v.$padding-min v.$padding;
 		z-index: v.$num-1;
 		pointer-events: none;
-		opacity: 0;
-		transition: opacity 0.2s ease;
+		opacity: v.$num-0;
+		transition: opacity v.$t-02 ease;
 	}
 }

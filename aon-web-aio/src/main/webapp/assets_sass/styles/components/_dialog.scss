@@ -70,7 +70,7 @@ aon-dialog{
         }
         .dialog-body-action{
           display        : flex;
-          gap            : 1rem;
+          gap            : v.$gap;
           justify-content: flex-end;
           button{
             min-width: v.$pct-27;

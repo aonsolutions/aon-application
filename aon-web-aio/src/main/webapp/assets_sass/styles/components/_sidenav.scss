@@ -11,12 +11,12 @@ $icon-gap : v.$gap-min;
   gap           : v.$gap;
   padding-bottom: v.$padding;
   max-width     : v.$px-500;
-  transform     : translateX(0);
+  transform     : translateX(v.$scl-0);
   opacity       : v.$num-1;
   transition: transform v.$t-03 ease-in-out, max-width v.$t-03 ease-in-out, opacity v.$t-03 ease-in-out;
   &.sidenav-hidden {
     max-width: v.$num-0;
-    transform: translateX(-100%);
+    transform: translateX(v.$pct-neg100);
     opacity  : v.$num-0;
   }
   div:first-child .aonSidenavTitle{
@@ -33,7 +33,7 @@ $icon-gap : v.$gap-min;
       font-family: v.$font-primary-bold;
     }
     aon-icon[icon="chevron-down"] {
-      transform : rotate(0deg);
+      transform : rotate(v.$deg-0);
       transition: transform v.$t-03 ease;
     }
     .aonSidenavTitleName, .aonSidenavTitleName >span {
@@ -60,17 +60,17 @@ $icon-gap : v.$gap-min;
   }
   ul {
     list-style    : none;
-    margin        : 0;
-    padding       : 0;
-    opacity       : 1;
-    transform     : translateY(0);
+    margin        : v.$px-0;
+    padding       : v.$px-0;
+    opacity       : v.$num-1;
+    transform     : translateY(v.$scl-0);
     pointer-events: auto;
     visibility    : visible;
     transition    : opacity v.$t-03 ease, transform v.$t-03 ease;
     li{
       font-family    : v.$font-primary-regular;
       font-size      : v.$px-12;
-      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding * 2);
+      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding * v.$num-2);
       cursor         : pointer;
       display        : flex;
       gap            : v.$gap-min;
@@ -97,37 +97,37 @@ $icon-gap : v.$gap-min;
       }
     // subapartado
       aon-icon[icon="chevron-right"] {
-        transform : rotate(0deg);
+        transform : rotate(v.$deg-0);
         transition: transform v.$t-03 ease-in-out;
       }
       &:not(.sidenav-submenu-hidden) aon-icon[icon="chevron-right"] {
-        transform: rotate(+90deg);
+        transform: rotate(v.$deg-90);
       }
       // Ocultar un subapartado
       &.elementHidden{
-        opacity       : 0;
+        opacity       : v.$num-0;
         transform     : translateY(v.$px-20);
         pointer-events: none;
         visibility    : hidden;
-        height        : 0;
-        margin        : 0;
-        padding       : 0;
+        height        : v.$px-0;
+        margin        : v.$px-0;
+        padding       : v.$px-0;
         overflow      : hidden;
       }
       // Mostrar un subapartado
       &.elementVisible {
-        opacity: 1;
-        transform: translateY(0);
+        opacity: v.$num-1;
+        transform: translateY(v.$scl-0);
         pointer-events: auto;
         visibility: visible;
         transition: opacity v.$t-03 ease, transform v.$t-03 ease;
       }
       &:has(ul){
-        padding: 0;
+        padding: v.$px-0;
         ul{
           width: v.$pct-100;
           li{
-            padding: v.$px-10 v.$padding v.$px-10 (v.$padding * 3);
+            padding: v.$px-10 v.$padding v.$px-10 (v.$padding * v.$num-3);
           }
         }
       }
@@ -144,22 +144,22 @@ $icon-gap : v.$gap-min;
     }
     // Hijos que no sea el titulo
     > div:not(.aonSidenavTitle){
-      padding: v.$px-0 v.$padding v.$px-0 v.$padding*2;
+      padding: v.$px-0 v.$padding v.$px-0 v.$padding*v.$num-2;
     }
   }
   // Ocultar un apartado
   .sidenav-hidden{
     .aonSidenavTitle aon-icon[icon="chevron-down"] {
-      transform: rotate(-90deg);
+      transform: rotate(v.$deg-neg90);
     }
     ul{
-      opacity       : 0;
-      transform     : translateY(20px);
+      opacity       : v.$num-0;
+      transform     : translateY(v.$px-20);
       pointer-events: none;
       visibility    : hidden;
-      height        : 0;
-      margin        : 0;
-      padding       : 0;
+      height        : v.$px-0;
+      margin        : v.$px-0;
+      padding       : v.$px-0;
       overflow      : hidden;
     }
   }
@@ -169,7 +169,7 @@ $icon-gap : v.$gap-min;
   }
   // Componente dentro de este
   .sidenav-component{
-    padding: 0 v.$padding;
+    padding: v.$px-0 v.$padding;
     // Marcaje
     aon-sign{
       display       : flex;

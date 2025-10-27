@@ -43,10 +43,10 @@ button {
 aon-icon-button{
   &[disabled]{
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: v.$num-05;
     button{
       cursor: not-allowed;
-      opacity: 0.5;
+      opacity: v.$num-05;
     }
   }
 }

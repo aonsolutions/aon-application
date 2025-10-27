@@ -39,6 +39,7 @@ $breakpoint-xl        : 1920px;
 $breakpoint-lg        : 1366px;
 $breakpoint-md        : 1024px;
 $breakpoint-sm        : 768px;
+$breakpoint-xs-s      : 650px;
 $breakpoint-xs        : 600px;
 $breakpoint-mobile    : 480px;
 $breakpoint-mobile-sm : 360px;
@@ -74,6 +75,7 @@ $px-10  : 0.625rem;
 $px-11  : 0.6875rem;
 $px-12  : 0.75rem;
 $px-13  : 0.8125rem;
+$px-13-2: 0.85rem;
 $px-14  : 0.875rem;
 $px-15  : 0.9375rem;
 $px-16  : 1rem;
@@ -182,18 +184,21 @@ $px-500 : 31.25rem;
 $px-800 : 50rem;
 
 // PORCENTAJES
-$pct-10  : 10%;
-$pct-25  : 25%;
-$pct-27  : 27%;
-$pct-30  : 30%;
-$pct-32  : 32%;
-$pct-50  : 50%;
-$pct-75  : 75%;
-$pct-90  : 90%;
-$pct-100 : 100%;
-$pct-150 : 150%;
-$pct-200 : 200%;
-$pct-300 : 300%;
+$pct-neg100: -100%;
+$pct-neg50 : -50%;
+$pct-10    : 10%;
+$pct-25    : 25%;
+$pct-27    : 27%;
+$pct-30    : 30%;
+$pct-32    : 32%;
+$pct-33-33 : 33.33%;
+$pct-50    : 50%;
+$pct-75    : 75%;
+$pct-90    : 90%;
+$pct-100   : 100%;
+$pct-150   : 150%;
+$pct-200   : 200%;
+$pct-300   : 300%;
 
 // VIEWPORT
 $vw-16  : 16vw;
@@ -203,13 +208,19 @@ $vh-90  : 90vh;
 $vh-100 : 100vh;
 
 // NUMEROS
-$num-0  : 0;
-$num-1  : 1;
-$num-2  : 2;
-$num-3  : 3;
-$num-4  : 4;
-$num-5  : 5;
-$num-99 : 99;
+$num-0    : 0;
+$num-05   : 0.5;
+$num-09   : 0.9;
+$num-1    : 1;
+$num-1-1  : 1.1;
+$num-1-03 : 1.03;
+$num-1-3  : 1.3;
+$num-2    : 2;
+$num-3    : 3;
+$num-4    : 4;
+$num-5    : 5;
+$num-99   : 99;
+$num-99999: 99999;
 
 //Tamaños de fuente por elemento o clase
 $font-size-h1               : $px-48;
@@ -280,11 +291,15 @@ $letter-spacing-input       : $letter-spacing-0;
 $letter-spacing-placeholder : $letter-spacing-0;
 
 // TIEMPO
+$t-neg032 : -0.32s;
+$t-neg016 : -0.16s;
 $t-01  : 0.1s;
 $t-02  : 0.2s;
 $t-03  : 0.3s;
 $t-05  : 0.5s;
 $t-07  : 0.7s;
+$t-1   : 1s;
+$t-1-4 : 1.4s;
 $t-2   : 2s;
 $t-5-4 : 5.4s;
 
@@ -319,3 +334,14 @@ $menu-top-height  : $px-60;                 // Altura que tiene
 
 // cuanto ocupa Input para ajustar otros estilos
 $input-height: $px-40;
+
+//Grados
+$deg-neg180: -180deg;
+$deg-neg90 : -90deg;
+$deg-0     : 0deg;
+$deg-90    : 90deg;
+$deg-360   : 360deg;
+
+//Escala
+$scl-0 : 0;
+$scl-1 : 1.0;

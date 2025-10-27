@@ -4,11 +4,11 @@ aon-table{
   table{
     width           : v.$pct-100;
     border-collapse : separate;
-    border-spacing  : 0 v.$gap;
+    border-spacing  : v.$px-0 v.$gap;
     margin-top      : -(v.$gap);
     th, td {
       border    : none;
-      padding   : 0 v.$padding;
+      padding   : v.$px-0 v.$padding;
       font-size : v.$px-13;
     }
     thead{
@@ -29,7 +29,7 @@ aon-table{
         cursor: pointer;
         td {
           height        : v.$px-58;
-          border-radius : 0;
+          border-radius : v.$px-0;
           // ponemos ... si tenemos mucho texto
           white-space   : nowrap;
           overflow      : hidden;
@@ -91,7 +91,7 @@ aon-table{
           justify-content: space-between;
           gap: v.$gap;
           border: none !important;
-          padding: 0;
+          padding: v.$px-0;
           word-wrap: break-word;
           max-width: v.$pct-100 !important;
           font-size: v.$px-14 !important;

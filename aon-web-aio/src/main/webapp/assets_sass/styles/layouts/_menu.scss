@@ -12,7 +12,7 @@
     <div id="rootPanel">Contenido</div>
   </div>
 */
-$menu-resolucion: v.$menu-resolucion-mobile + 1;
+$menu-resolucion: v.$menu-resolucion-mobile + v.$num-1;
 $icon-min: v.$px-16;
 #aonMenu{
   &.min-hidden{
@@ -23,7 +23,7 @@ $icon-min: v.$px-16;
       max-width : v.$left-aonMenuLeft-min;
       span.aonNewMenuAppSpan, aon-info{
         display       : none !important;
-        opacity       : 0;
+        opacity       : v.$px-0;
         pointer-events: none; 
       }
     }
@@ -38,8 +38,8 @@ $icon-min: v.$px-16;
     &.hidden-mobile{
       #aonMenuSidenav {
         // display: none;
-        transform: translateX(-100%);
-        opacity: 0;
+        transform: translateX(v.$pct-neg100);
+        opacity: v.$px-0;
         pointer-events: none;
       }
     }
@@ -50,9 +50,9 @@ $icon-min: v.$px-16;
       min-width : v.$pct-100 !important;
       max-width : v.$pct-100 !important;
       z-index   : v.$num-5;
-      transform: translateX(0);   // visible por defecto
-      opacity: 1;
-      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out
+      transform: translateX(v.$scl-0);   // visible por defecto
+      opacity: v.$num-1;
+      transition: transform v.$t-03 ease-in-out, opacity v.$t-03 ease-in-out
     }
     #aonMenuTopnav {
       width     : v.$pct-100 !important;
@@ -146,10 +146,10 @@ $icon-min: v.$px-16;
         &:hover {
           >div{
             i{
-              transform : scale(1.3);
+              transform : scale(v.$num-1-3);
             }
             span{
-              transform : scale(1.1);
+              transform : scale(v.$num-1-1);
             }
           }
         }

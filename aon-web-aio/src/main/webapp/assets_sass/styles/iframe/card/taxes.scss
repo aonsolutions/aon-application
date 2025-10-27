@@ -3,10 +3,10 @@
 .iframe-fiscal{
   overflow: hidden;
     #rootPanel{
-    width           : 100%;
+    width           : v.$pct-100;
     background-color: transparent !important;
-    margin          : 0;
-    padding         : 0;
+    margin          : v.$px-0;
+    padding         : v.$px-0;
     /*color           : white;*/
     overflow        : hidden;
     
@@ -17,11 +17,11 @@
 
     // Variables opcionales
     $border-color: #ccc;
-    $cell-padding: 0.25rem;
+    $cell-padding: v.$px-4;
 
     .aon_display_table {
       display: table;
-      width: 100%;
+      width: v.$pct-100;
       table-layout: fixed;
       border-collapse: collapse;
 
@@ -30,7 +30,7 @@
         display: table-row;
 
         &.aon_font_smaller {
-          font-size: 0.85rem;
+          font-size: v.$px-13-2;
         }
 
         &.aon_bold {
@@ -46,7 +46,7 @@
           background-color: transparent;
           
           &.aon_border_bottom {
-            border-bottom: 1px solid $border-color;
+            border-bottom: v.$px-1 solid $border-color;
           }
 
           &.aon_text_center {
@@ -59,8 +59,8 @@
 
           // Boton dentro de celda
           button.aon_table_button {
-            width   : 100%;
-            padding : 0.5rem 0;
+            width   : v.$pct-100;
+            padding : v.$px-8 v.$px-0;
             border  : none;
             cursor  : pointer;
           }

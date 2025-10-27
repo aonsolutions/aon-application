@@ -75,7 +75,7 @@ aon-new-login{
   }
 }
 // Si no tenemos mucha altura ocultamos el logo
-@media (max-height: 650px) {
+@media (max-height: v.$breakpoint-xs-s) {
   aon-new-login{
     #logoContent {
       display : none;
