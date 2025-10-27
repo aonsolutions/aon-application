@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -91,6 +92,13 @@ public class InvoiceAutoComplete {
 	};
 
 	
+	public static final BiConsumer<Invoice,AonConfigurationContext> CHECK_REFERENCE_CODE = (inv,ctx) -> {
+		if(inv.isSales()) {
+			if (AonStringUtils.contains( inv.getReferenceCode(), "undefined")) {
+				inv.setReferenceCode(null);	
+			}
+		}
+	};
 	
 	/**
 	 * Se rellena el número de referencia para las facturas de ventas.
@@ -105,7 +113,7 @@ public class InvoiceAutoComplete {
 				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
-			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
+			if (AonStringUtils.isBlank(inv.getReferenceCode())) {
 				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
 				if (!AonStringUtils.isBlank(inv.getSeries())) {
 					referenceCode = inv.getSeries() + "/" + referenceCode;
@@ -216,8 +224,9 @@ public class InvoiceAutoComplete {
 	};
 	
 	/**
-	 * Aseguramos el nombre del titular de la factura.
+	 * ES NECESARIO REFACTOR DE ESTE METODO!!
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
@@ -338,62 +347,63 @@ public class InvoiceAutoComplete {
 					}
 				}
 			} else inv.setRegistry(inv.getRegistryData().getId());
-		}
 		
-		if(inv.getRegistryData().isGlobal()) {
-			Registry registry = GlobalDAO.copyRegistry(ctx.getContext(), inv.getRegistryData().getId());
-			inv.setRegistry(registry.getId());
-			inv.setRegistryData(registry);
+		
+			if(inv.getRegistryData().isGlobal()) {
+				Registry registry = GlobalDAO.copyRegistry(ctx.getContext(), inv.getRegistryData().getId());
+				inv.setRegistry(registry.getId());
+				inv.setRegistryData(registry);
+				if(InvoiceType.SALES.equals(inv.getType())) {
+					CustomerDAO.save(ctx.getContext(), new Customer()
+							.copy(registry).setScope(inv.getScope()));
+				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
+					SupplierDAO.save(ctx.getContext(), new Supplier()
+							.copy(registry).setScope(inv.getScope()));
+				} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
+						|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
+					CreditorDAO.save(ctx.getContext(), new Creditor()
+							.copy(registry).setScope(inv.getScope()));
+				}	
+			}
+		
+			Integer registryId = inv.getRegistryData().getId() != null
+					? inv.getRegistryData().getId() : inv.getRegistry();
 			if(InvoiceType.SALES.equals(inv.getType())) {
-				CustomerDAO.save(ctx.getContext(), new Customer()
-						.copy(registry).setScope(inv.getScope()));
+				Customer customer = CustomerDAO.get(ctx.getContext(), registryId);
+				if(customer.isEmpty()) {
+					CustomerDAO.save(ctx.getContext(), new Customer()
+						.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+				}
 			} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
-				SupplierDAO.save(ctx.getContext(), new Supplier()
-						.copy(registry).setScope(inv.getScope()));
+				Supplier supplier = SupplierDAO.get(ctx.getContext(), registryId);
+				if(supplier.isEmpty()) {
+					SupplierDAO.save(ctx.getContext(), new Supplier()
+						.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+				}
 			} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
 					|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
-				CreditorDAO.save(ctx.getContext(), new Creditor()
-						.copy(registry).setScope(inv.getScope()));
+				Creditor creditor = CreditorDAO.get(ctx.getContext(), registryId);
+				if(creditor.isEmpty()) {
+					CreditorDAO.save(ctx.getContext(), new Creditor()
+						.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+				}
 			}	
-		}
-	
-		Integer registryId = inv.getRegistryData().getId() != null
-				? inv.getRegistryData().getId() : inv.getRegistry();
-		if(InvoiceType.SALES.equals(inv.getType())) {
-			Customer customer = CustomerDAO.get(ctx.getContext(), registryId);
-			if(customer.isEmpty()) {
-				CustomerDAO.save(ctx.getContext(), new Customer()
-					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+			
+			if(inv.getRegistryDocumentType() == null && inv.getRegistryDocumentCountry() == null) {
+			    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+	            inv.setRegistryDocumentType(registry.getDocumentType());
+			    inv.setRegistryDocumentCountry(registry.getDocumentCountry());
 			}
-		} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
-			Supplier supplier = SupplierDAO.get(ctx.getContext(), registryId);
-			if(supplier.isEmpty()) {
-				SupplierDAO.save(ctx.getContext(), new Supplier()
-					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+			
+			if(inv.getRegistryDocumentType() == null) {
+			    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+	            inv.setRegistryDocumentType(registry.getDocumentType());
+	        }
+			
+			if(inv.getRegistryDocumentCountry() == null) {
+			    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+	            inv.setRegistryDocumentCountry(registry.getDocumentCountry());
 			}
-		} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
-				|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
-			Creditor creditor = CreditorDAO.get(ctx.getContext(), registryId);
-			if(creditor.isEmpty()) {
-				CreditorDAO.save(ctx.getContext(), new Creditor()
-					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
-			}
-		}	
-		
-		if(inv.getRegistryDocumentType() == null && inv.getRegistryDocumentCountry() == null) {
-		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
-            inv.setRegistryDocumentType(registry.getDocumentType());
-		    inv.setRegistryDocumentCountry(registry.getDocumentCountry());
-		}
-		
-		if(inv.getRegistryDocumentType() == null) {
-		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
-            inv.setRegistryDocumentType(registry.getDocumentType());
-        }
-		
-		if(inv.getRegistryDocumentCountry() == null) {
-		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
-            inv.setRegistryDocumentCountry(registry.getDocumentCountry());
 		}
 	};
 	
@@ -446,7 +456,15 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos los detalles de la factura.
 	 */
-	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
+	private static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
+		inv.detailStream().forEach( d-> completeDetail( ctx, inv, d));
+	};
+	
+	/**
+	 * Aseguramos los detalles de la factura.
+	 */
+	@Deprecated
+	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS2 = (inv,ctx) -> {
 		if((inv.getDetails() == null || inv.getDetails().isEmpty()) && inv.getBreakdown() != null) {	
 			LinkedList<InvoiceDetail> invoiceDetails = new LinkedList<>();
 			InvoiceBreakdown ret = inv.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
@@ -468,7 +486,6 @@ public class InvoiceAutoComplete {
 									: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
 					invoiceTax.add(it1);
 				}
-				
 				InvoiceTax it = new InvoiceTax()
 						.setDomain(inv.getDomain())
 						.setTaxType(TaxType.VAT)
@@ -479,10 +496,13 @@ public class InvoiceAutoComplete {
 						.setSurchargeQuota(b.getSurchargeQuota())
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(b.getQuota())
-						.setAccount(inv.isSales()
-								? ctx.getConfiguration().accounting().getDefaultChargedVatAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidVatAccount().getId());
+						.setDeductibleQuota(b.getQuota());
+				Account a = inv.isSales() 
+						? ctx.getConfiguration().accounting().getDefaultChargedVatAccount()
+						: ctx.getConfiguration().accounting().getDefaultPaidVatAccount();
+				if (a != null) {
+					it.setAccount(a.getId());
+				}
 				invoiceTax.add(it);
 				
 				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());
@@ -517,7 +537,7 @@ public class InvoiceAutoComplete {
 		inv.getDetails().stream().forEach(detail -> {
 			
 			if(detail.getId() != null) {
-				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), detail.getId());
 				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
 					detail.setId(null);
 				}
@@ -533,10 +553,14 @@ public class InvoiceAutoComplete {
 				double base = detail.getInvoiceTaxes().get(i).getBase();
 				if(TaxType.VAT.equals(detail.getInvoiceTaxes().get(i).getTaxType())) {
 					it = detail.getInvoiceTaxes().get(i);
-					if(detail.getInvoiceTaxes().get(i).getAccount() == null)
-						detail.getInvoiceTaxes().get(i).setAccount(inv.isSales() 
-								? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
+					if(detail.getInvoiceTaxes().get(i).getAccount() == null) {
+						Account a = inv.isSales() 
+							? ctx.getConfiguration().accounting().getDefaultChargedVatAccount()
+							: ctx.getConfiguration().accounting().getDefaultPaidVatAccount();
+						if (a != null) {
+							detail.getInvoiceTaxes().get(i).setAccount(a.getId());
+						}
+					}
 					
 					if(ia != null && ia.getId() != null) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getVatPercent());
@@ -545,10 +569,14 @@ public class InvoiceAutoComplete {
 				}
 				
 				if(TaxType.RETENTION.equals(detail.getInvoiceTaxes().get(i).getTaxType())) {
-					if(detail.getInvoiceTaxes().get(i).getAccount() == null)
-						detail.getInvoiceTaxes().get(i).setAccount(inv.isSales() 
-								? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()
-								: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());
+					if(detail.getInvoiceTaxes().get(i).getAccount() == null) {
+						Account a = inv.isSales() 
+							? ctx.getConfiguration().accounting().getDefaultChargedRetAccount()
+							: ctx.getConfiguration().accounting().getDefaultPaidRetAccount();
+						if (a != null) {
+							detail.getInvoiceTaxes().get(i).setAccount(a.getId());
+						}
+					}
 					if(ia != null && ia.getId() != null) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getRetentionPercent()); 
 						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(base * ia.getRetentionPercent() / 100));
@@ -658,11 +686,12 @@ public class InvoiceAutoComplete {
 		return i;
 	}
 	
+	
 	/**
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FINANCES = (inv,ctx) -> 
-		inv.getFinances().stream().forEach(finance -> {
+		inv.financeStream().forEach(finance -> {
 			finance.setDomain(inv.getDomain());
 			finance.setInvoice(inv);
 			finance.setRegistry(inv.getRegistryData());
@@ -691,10 +720,35 @@ public class InvoiceAutoComplete {
 		});
 	
 
+		/**
+		 * Aseguramos el ambito de la factura.
+		 */
+		public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
+			if ((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
+				if(inv.isSales()) {
+					Customer customer = CustomerDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getRegistryProperty().eq(inv.getRegistry())));
+					inv.setScope(customer.getScope());
+				} else if(inv.isPurchase()) {
+					Supplier supplier = SupplierDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getRegistryProperty().eq(inv.getRegistry())));
+					inv.setScope(supplier.getScope());				
+				} else if(inv.isExpenses() || inv.isUndeductible()){
+					Creditor creditor = CreditorDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getRegistryProperty().eq(inv.getRegistry())));
+					inv.setScope(creditor.getScope());
+				}
+			}
+		};
+
 	/**
 	 * Aseguramos el ambito de la factura.
 	 */
-	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
+	@Deprecated
+	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE2 = (inv,ctx) -> {
 		if((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
 			if(inv.isSales()) {
 				Customer customer = CustomerDAO.get(ctx.getContext(), f -> 
@@ -772,32 +826,54 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
+		.andThen(COMPLETE_SCOPE)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_SECURITY_LEVEL)
+		.andThen(COMPLETE_DETAILS)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 	
 	public static void completeInvoice2(AONContext ctx, AonConfiguration config, Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
+		.andThen(CHECK_REFERENCE_CODE)
 		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
-		.andThen(COMPLETE_SCOPE)
+		.andThen(COMPLETE_SCOPE2)
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_REGISTRY_ADDRESS_DATA)
 		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
-		.andThen(COMPLETE_DETAILS)
+		.andThen(COMPLETE_DETAILS2)
 		.andThen(COMPLETE_FINANCES)
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
+	
+	private static final Consumer<InvoiceDetailContext> COMPLETE_DETAIL_DOMAIN = ctx -> {
+		ctx.det.setDomain(ctx.inv.getDomain());
+	};
+	
+	private static final Consumer<InvoiceDetailContext> COMPLETE_DETAIL_WORKPLACE = ctx -> {
+		if (ctx.det.getWorkplace() == null && AonCollectionUtils.size( ctx.config.getWorkplaces() ) == 1) {
+			ctx.det.setWorkplace( ctx.config.getWorkplaces().get(0) );
+		}
+	};
+	
+	private static record InvoiceDetailContext(AONContext ctx,AonConfiguration config, Invoice inv, InvoiceDetail det) {}  
+	private static void completeDetail(AonConfigurationContext ctx, Invoice inv, InvoiceDetail det) {
+		COMPLETE_DETAIL_DOMAIN
+		.andThen(COMPLETE_DETAIL_WORKPLACE)
+			.accept(new InvoiceDetailContext(ctx.getContext(),ctx.getConfiguration(),inv,det));
+		
+	}
+	
 }

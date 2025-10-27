@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class RegistryBankJSON {
 
@@ -56,7 +57,7 @@ public class RegistryBankJSON {
 	}
 	
 	public static JSONArray toJSON(List<RegistryBank> rbanks) {
-		return toJSON(rbanks.stream());
+		return toJSON(AonCollectionUtils.stream(rbanks));
 	}
 	
 	public static JSONArray toJSON(Stream<RegistryBank> rbanks) {

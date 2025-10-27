@@ -20,6 +20,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_ENTRY = "accountEntry";
 	public static final String ACCOUNT_ENTRY_ID = "accountEntryId";
 	public static final String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
+	public static final String ACCOUNT_ID = "accountId";
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
@@ -31,11 +32,14 @@ public final class IJsonNames {
 	public static final String ACTIVITY_NAME = "activityName";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
+	public static final String ADDRESS3 = "address3";
+	public static final String ADDRESSES = "addresses";
 	public static final String ADJ_ACCOUNT = "adjAccount";
 	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
+	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
@@ -63,7 +67,6 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTO_ACCEPT = "autoAccept";
 	public static final String AUTO_RECORD = "autoRecord";
-	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	public static final String AVAILABLE_BALANCE = "availableBalance";
 	public static final String ADVERTISING = "advertising";
@@ -82,6 +85,7 @@ public final class IJsonNames {
 	public static final String BANK = "bank";
 	public static final String BANK_ACCOUNT = "bank_account";
 	public static final String BANK_ALIAS = "bankAlias";
+	public static final String BANKS = "banks";
 	public static final String BARCODE = "barcode";
 	public static final String BASE = "base";
 	public static final String BATCHED = "batched";
@@ -108,8 +112,10 @@ public final class IJsonNames {
 	public static final String CASH_ACCOUNT= "cashAccount";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
+	public static final String CERT = "cert";
 	public static final String CITY = "city";
 	public static final String CHARGE_DATE = "chargeDate";
+	public static final String CHECK_URL = "checkUrl";
 	public static final String CHILD_COUNT = "childCount";
 	public static final String CHILDS = "childs";
 	public static final String CLASS_NAME = "class_name";
@@ -123,6 +129,11 @@ public final class IJsonNames {
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
+	public static final String COMMUNICATION = "communication";
+	public static final String COMMUNICATION_HISTORY = "communicationHistory";
+	public static final String COMMUNICATION_INFO = "communicationInfo";
+	public static final String COMMUNICATION_STATUS = "communicationStatus";
+	public static final String COMMUNICATION_TYPE = "communicationType";
 	public static final String COMPANY = "company";
 	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";
@@ -170,6 +181,8 @@ public final class IJsonNames {
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
+	public static final String DEFAULT_RETENTION_TAX = "defaultRetentionTax";
+	public static final String DEFAULT_VAT_TAX = "defaultVatTax";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELETE = "delete";
 	public static final String DELETED = "deleted";
@@ -248,6 +261,7 @@ public final class IJsonNames {
 	public static final String ERROR = "error";
 	public static final String ERRORS = "errors";
 	public static final String EXP_ACCOUNT = "expAccount";
+	public static final String EXP_DATE = "expDate";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
@@ -295,6 +309,7 @@ public final class IJsonNames {
 	public static final String HEADER_TEXT = "headerText";
 	public static final String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	public static final String HIDE_FILTER = "hideFilter";
+	public static final String HUELLA = "huella";
 	// ---------------------------------------------------------------------------------------------	[I] 
 	public static final String IAE = "iae";
 	public static final String IBAN = "iban";
@@ -307,7 +322,6 @@ public final class IJsonNames {
 	public static final String IN_PERIOD_OPENING_DEBIT = "inPeriodOpeningDebit";
 	public static final String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	public static final String INACTIVE = "inactive";
-	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
 	public static final String INDEX = "index";
 	public static final String INGENET = "ingenet";
@@ -325,11 +339,15 @@ public final class IJsonNames {
 	public static final String INVENTORIABLE = "inventoriable";
 	public static final String INVEST_ASSET = "investAsset";
 	public static final String INVESTMENT = "investment";
+	public static final String INVOFOX = "invofox";
 	public static final String INVOFOX_ID = "invofoxId";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
+	public static final String INVOICE_BREAKDOWN = "invoiceBreakdown";;
 	public static final String INVOICE_DETAIL = "invoiceDetail";
 	public static final String INVOICE_DOC = "invoiceDoc";
+	public static final String INVOICE_FISCAL = "invoiceFiscal";
+	public static final String INVOICE_INFO = "invoiceInfo";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
@@ -387,6 +405,7 @@ public final class IJsonNames {
 	public static final String MANUFACTURED = "manufactured";
 	public static final String MAX_DEFINED_USERS = "maxDefinedUsers";
 	public static final String MEDIA = "media";
+	public static final String MEDIAS = "medias";
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
 	public static final String MIME_TYPE = "mimeType";
@@ -432,6 +451,7 @@ public final class IJsonNames {
 	public static final String OLD_PARENT_DOMAIN_MODULES = "oldParentDomainModules";
 	public static final String OLD_STATUS = "oldStatus";
 	public static final String OPENING_ENTRIES_EXCLUDED = "openingEntriesExcluded";
+	public static final String OPERATION = "operation";
 	public static final String OPERATING_ENTRIES_EXCLUDED = "operatingEntriesExcluded";
 	public static final String ORDER_BY = "orderBy";
 	public static final String ORDER = "order";
@@ -492,11 +512,13 @@ public final class IJsonNames {
 	public static final String PLAN = "plan";
 	public static final String PORTAL = "portal";
 	public static final String POS = "pos";
+	public static final String POS_SHIFT = "posShift";
 	public static final String POSTAL_CODE = "postal_code";
 	public static final String PREPAYMENT = "prepayment";
 	public static final String PREVIOUS_PERIODS = "previousPeriods";
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
+	public static final String PRINT = "print";
 	public static final String PRINTER = "printer";
 	public static final String PRIORITY = "priority";
 	public static final String PROCESS_ID = "processId";
@@ -541,10 +563,17 @@ public final class IJsonNames {
 	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
+	public static final String RECORD_DATAS = "recordDatas";
 	public static final String RECORD_DATE = "recordDate";
+	public static final String RECORDABLE = "recordable";
 	public static final String RECORDED = "recorded";
 	public static final String RECTIFICATION = "rectification";
 	public static final String RECTIFICATION_INVOICE = "rectificationInvoice";
+	public static final String RECTIFICATION_INVOICE_ID = "rectificationInvoiceId";
+	public static final String RECTIFICATION_INVOICE_SERIES = "rectificationInvoiceSeries";
+	public static final String RECTIFICATION_INVOICE_NUMBER = "rectificationInvoiceNumber";
+	public static final String RECTIFICATION_INVOICE_REFERENCE = "rectificationInvoiceReference";
+	public static final String RECTIFICATION_INVOICE_DATE = "rectificationInvoiceDate";
 	public static final String RECTIFICATION_TYPE = "rectificationType";
 	public static final String RECTIFIED = "rectified";
 	public static final String RECTIFIER = "rectifier";
@@ -556,7 +585,6 @@ public final class IJsonNames {
 	public static final String REGISTRY_ACCOUNT = "registryAccount";
 	public static final String REGISTRY_ADDRESS = "registryAddress";
 	public static final String REGISTRY_COMPANY = "registryCompany";
-	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
 	public static final String REGISTRY_DOCUMENT_COUNTRY = "registryDocumentCountry";
@@ -568,8 +596,11 @@ public final class IJsonNames {
 	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
+	public static final String REQUEST_URL = "requestUrl";
 	public static final String REQUISITION = "requisition";
 	public static final String RESERVATION = "reservation";
+	public static final String RESPONSE_URL = "responseUrl";
+	public static final String RESPONSE_MESSAGES = "responseMessages";
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
@@ -584,6 +615,7 @@ public final class IJsonNames {
 	public static final String RSS = "rss";
 	public static final String RRELATIONSHIP = "rrelationship";
 	public static final String RELATED_REGISTRY = "relatedRegistry";
+	
 	// ---------------------------------------------------------------------------------------------	[S] 
 
 	public static final String S3_BUCKET = "s3Bucket";
@@ -610,6 +642,7 @@ public final class IJsonNames {
 	public static final String SELLER = "seller";
 	public static final String SELLERS = "sellers";
 	public static final String SELLER_IDS = "sellerIds";
+	public static final String SELLER_NAME = "sellerName";
 	public static final String SENDER = "sender";
 	public static final String SEPA_MANDATE_REF = "sepaMandateRef";
 	public static final String SERFRUIT = "serfruit";
@@ -636,10 +669,16 @@ public final class IJsonNames {
 	public static final String SHIPPING_PERIOD = "shippingPeriod";
 	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
+	public static final String SII = "sii";
+	public static final String SII_AUTOSEND = "siiAutosend";
+	public static final String SII_INCLUDE_DATE = "siiIncludeDate";
+	public static final String SII_REGISTRY_DATE = "siiRegistryDate";
 	public static final String SII_STATUS = "siiStatus";
+	public static final String SII_TEST = "siiTest";
 	public static final String SIGNATURE = "signature";
 	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
+	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
 	public static final String SOURCE_IDS = "source_ids";
@@ -682,6 +721,10 @@ public final class IJsonNames {
 	public static final String TAG = "tag";
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
+	public static final String TBAI = "tbai";
+	public static final String TBAI_INCLUDE_DATE = "tbaiIncludeDate";
+	public static final String TBAI_REGISTRY_DATE = "tbaiRegistryDate";
+	public static final String TBAI_TEST = "tbaiTest";
 	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
@@ -729,12 +772,19 @@ public final class IJsonNames {
 	public static final String VAT_PERCENT = "vatPercent";
 	public static final String VAT_QUOTA = "vatQuota";
 	public static final String VAT_REGIME = "vatRegime";
+	public static final String VAT_REGIMES = "vatRegimes";
 	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
 	public static final String VAT_UNION = "vatUnion";
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
+	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_INCLUDE_DATE = "verifactuIncludeDate";
+	public static final String VERIFACTU_REGISTRY_DATE = "verifactuRegistryDate";
+	public static final String VERIFACTU_TEST = "verifactuTest";
+	public static final String VERIFACTU_URL = "verifactuUrl";
+	public static final String VERSION = "version";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	public static final String WAREHOUSE = "warehouse";
@@ -757,5 +807,6 @@ public final class IJsonNames {
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
+	
 
 }

@@ -238,7 +238,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 				acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
 			});
 			Label temrsMessage = new Label("He leido y acepto los ");
-			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf", "_blank");
+			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://ayudatpymes.com/aviso-legal/terminos-condiciones/", "_blank");
 			termsAnchor.getElement().getStyle().setProperty("color", "#002469");
 			Label temrsMessage_2 = new Label(" de contrataci\u00f3n de Aon");
 					

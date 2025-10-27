@@ -39,13 +39,7 @@ public final class AonChronometer {
 	}
 
 	public String getCurrentTime() {
-		String r = "";
-		double minutes = getCurrentMinutes();
-		if (minutes != 0) {
-			r = minutes + " min. ";
-		}
-		r = (System.currentTimeMillis() - begin) / 1000.0 + " seg. ";
-		return r;
+		return (System.currentTimeMillis() - begin) / 1000.0 + " seg. ";
 	}
 
 	public double getSeconds() {

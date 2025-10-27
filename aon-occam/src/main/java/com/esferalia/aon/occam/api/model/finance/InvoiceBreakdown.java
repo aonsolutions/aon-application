@@ -13,7 +13,8 @@ public class InvoiceBreakdown implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private Integer invoice;	
+	private Integer invoice;
+	private boolean prepayment;
 	private TaxType taxType;
 	private double base;
 	private double percentage;
@@ -23,6 +24,7 @@ public class InvoiceBreakdown implements Serializable {
 	private double deductibleQuota;
 	private WithholdingType withholdingType;
 	private VatDeductionType vatDeductionType;
+	private VATExemptionCause vatExemptionCause;
 	
 	public Integer getId() {
 		return id;
@@ -45,6 +47,14 @@ public class InvoiceBreakdown implements Serializable {
 	}
 	public InvoiceBreakdown setInvoice(Integer invoice) {
 		this.invoice = invoice;
+		return this;
+	}
+	
+	public boolean isPrepayment() {
+		return prepayment;
+	}
+	public InvoiceBreakdown setPrepayment(boolean prepayment) {
+		this.prepayment = prepayment;
 		return this;
 	}
 	
@@ -121,6 +131,14 @@ public class InvoiceBreakdown implements Serializable {
 		return this;
 	}
 	
+	public VATExemptionCause getVatExemptionCause() {
+		return vatExemptionCause;
+	}
+	public InvoiceBreakdown setVatExemptionCause(VATExemptionCause vatExemptionCause) {
+		this.vatExemptionCause = vatExemptionCause;
+		return this;
+	}
+	
 	public boolean isSurcharge() {
 		return AonMathUtils.isGreatherThanZero( getSurcharge() );
 	}
@@ -136,11 +154,10 @@ public class InvoiceBreakdown implements Serializable {
 			&& this.getTaxType() == b.getTaxType()
 			&& AonMathUtils.equals(this.getPercentage(),b.getPercentage())
 			&& AonMathUtils.equals(this.getSurcharge(),b.getSurcharge())
-			// La factura debería tener un único WithholdingType 
-			/* && this.getWithholdingType() == b.getWithholdingType() */
-			// La factura debería tener un único VatDeductionType
-			/* && this.getVatDeductionType() == b.getVatDeductionType() */
-			;
+			&& this.getWithholdingType() == b.getWithholdingType()
+			&& this.getVatDeductionType() == b.getVatDeductionType()
+			&& this.isPrepayment() == b.isPrepayment()
+		;
 	}
 	
 	public InvoiceBreakdown add(InvoiceBreakdown ib) {
@@ -167,6 +184,8 @@ public class InvoiceBreakdown implements Serializable {
 			.setSurchargeQuota(it.getSurchargeQuota())
 			.setDeductibleQuota(it.getDeductibleQuota())
 			.setWithholdingType(it.getWithholdingType())
-			.setVatDeductionType(it.getVatDeductionType());
+			.setVatDeductionType(it.getVatDeductionType())
+			.setPrepayment(false)
+		;
 	}
 }

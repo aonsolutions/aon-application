@@ -33,6 +33,10 @@ public enum PayMethodType implements Serializable {
 	public byte value() {
 		return (byte) this.ordinal();
 	}
+	
+	public static String name( PayMethodType i ) {
+		return i == null ? null : i.name(); 
+	}
 
 	public static PayMethodType safeValueOf( Byte i ) {
 		if (i == null) return null;

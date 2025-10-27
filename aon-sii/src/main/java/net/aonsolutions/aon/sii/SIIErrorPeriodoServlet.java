@@ -11,11 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
@@ -31,18 +26,24 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
@@ -77,20 +78,24 @@ public class SIIErrorPeriodoServlet extends HttpServlet{
 			String pass = parameters.get("pass");
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(cert)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-			
+			Occam occam = new Occam()
+				.setDomainName( domain.getName())
+				.setDomain(domain.getId())
+				.setUser(login);
+
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
 
-			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
-			siiConfiguration.setCertificate(new Certificate()
-					.setData(attach.getData())
-					.setPassword(pass)
-					.setType(CertificateType.AEAT.name()));
+			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+			icc.setCertificate(new Certificate()
+				.setData(attach.getData())
+				.setPassword(pass)
+				.setType(CertificateType.AEAT.name()));
 			try{
-				SIIManager manager = SIIManager.getInstance(siiConfiguration);
+				SIIManager manager = SIIManager.getInstance(icc);
 				invIds.stream().forEach(id -> {
 					Integer[] ids = new Integer[1];
 					ids[0] = id;
@@ -98,7 +103,7 @@ public class SIIErrorPeriodoServlet extends HttpServlet{
 					params.setDomain(domain.getId());
 					params.setInvoices(ids);
 
-					LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
+					LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(occam, params, option)
 						.collect(Collectors.toCollection(LinkedList::new));
 					try {
 						manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros, true);

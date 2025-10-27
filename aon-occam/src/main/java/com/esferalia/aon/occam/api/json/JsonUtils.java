@@ -3,12 +3,15 @@ package com.esferalia.aon.occam.api.json;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -99,15 +102,25 @@ public class JsonUtils {
 	
 	public static Short getShort(JSONObject json, String key) {
 		Number opt = json.optNumber(key, null);
-		return null == opt ? null : AonNumberUtils.toDouble(opt).shortValue(); 
+		return AonNumberUtils.toShort(opt); 
 	}
 	
+	public static short getshort(JSONObject json, String key) {
+		Number opt = json.optNumber(key, null);
+		return AonNumberUtils.toshort(opt); 
+	}
+
 	public static Integer getInteger(JSONObject json, String key ) {
 		if(json == null) return null;
 		Number opt = json.optNumber(key, null);
 		return null == opt ? null : AonNumberUtils.toInteger(opt);
 	}
 	
+	/**
+	 * @deprecated Same implementation as getInteger(JSONObject json, String key ) 
+	 * @use getInteger(JSONObject json, String key )
+	 */
+	@Deprecated
 	public static Integer optInteger(JSONObject json, String key ) {
 		if(json == null) return null;
 		Number opt = json.optNumber(key, null);
@@ -168,6 +181,13 @@ public class JsonUtils {
 		return null;
 	}
 	
+	public static String getDateTimeJSON(Date date) {
+		if (date != null) {
+			return AonDateUtils.dateTimeFormat(date);
+		}
+		return null;
+	}
+
 	public static JSONObject putDate(JSONObject json, String key , Date date) {
 		if (date != null) {
 			String value = getDateJSON(date);
@@ -193,8 +213,33 @@ public class JsonUtils {
 		if (json == null) return true;
 		return AonCollectionUtils.isEmpty(json.keySet());
 	}
+	public static boolean isNotEmpty(JSONObject json) {
+		return !isEmpty(json);
+	}
 	public static boolean isEmpty(JSONArray jsonArray) {
 		return (jsonArray == null || jsonArray.length() == 0);
 	}
+	public static JSONArray nullIfEmpty(JSONArray jsonArray) {
+		return isEmpty(jsonArray) ? null : jsonArray;
+	}
 
+	public static class JSONArrayCollector {
+		private JSONArrayCollector() {
+		}
+		
+	    public static <T> Collector<T, JSONArray, JSONArray> toJSONArray() {
+	        return Collector.of(
+	            JSONArray::new,                  // supplier
+	            JSONArray::put,                  // accumulator
+	            (left, right) -> {               // combiner
+	                for (int i = 0; i < right.length(); i++) {
+	                    left.put(right.get(i));
+	                }
+	                return left;
+	            },
+	            Collector.Characteristics.IDENTITY_FINISH
+	        );
+	    }
+	}
+	
 }

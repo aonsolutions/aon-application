@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -1087,8 +1089,9 @@ public class AonDateUtils {
     }
 
 	public static String format(Date date, String pattern) {
+		if (date == null) return null;
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
-		return date == null ? null : format.format(date);
+		return format.format(date);
 	}
 	
 	public static Date parse(String date, String pattern) {
@@ -1397,4 +1400,41 @@ public class AonDateUtils {
 		if (second == null) return false;
 		return first.after(second);
 	}
+	
+	public static boolean isBefore(Date first, Date second) {
+		if (first == null) return false;
+		if (second == null) return false;
+		return first.before(second);
+	}
+
+	public static Date today() {
+		return Date.from(
+			LocalDate
+				.now()
+				.atStartOfDay(ZoneId.systemDefault())
+				.toInstant()
+		);
+	}
+	
+    /**
+     * Verifica si value está entre start y end (inclusive).
+     * Si value, start o end son null -> false.
+     */
+    public static boolean isBetween(Date value, Date start, Date end) {
+        if (value == null || start == null || end == null) return false;
+        return !value.before(start) && !value.after(end);
+    }
+
+    /**
+     * Verifica si target está entre start y end (inclusive).
+     * Si target es null -> false.
+     * Si start o end son null -> se ignora ese límite.
+     */
+    public static boolean isInRange(Date value, Date start, Date end) {
+        if (value == null) return false;
+        boolean afterStart = (start == null) || !value.before(start);
+        boolean beforeEnd  = (end == null)   || !value.after(end);
+        return afterStart && beforeEnd;
+    }
+        
 }

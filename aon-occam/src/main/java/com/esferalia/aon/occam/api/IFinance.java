@@ -15,7 +15,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -34,7 +33,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -47,10 +46,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -224,21 +225,15 @@ public interface IFinance {
 
 	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx);
 	public InvofoxConfiguration saveInvofoxConfiguration(AONContext ctx, InvofoxConfiguration config);
+
+	// 	********************************************
+	// 	********** INVOICE COMMUNICATION ***********
+	// 	********************************************
 	
-	// 	***********************************************
-	// 	********** TICKET BAI CONFIGURATION ***********
-	// 	***********************************************
-
-	public TbaiConfiguration getTbaiConfiguration(AONContext ctx);
-	public TbaiConfiguration saveTbaiConfiguration(AONContext ctx, TbaiConfiguration config);
-	
-	// 	***********************************************
-	// 	************* SII CONFIGURATION ***************
-	// 	***********************************************
-
-	public SiiConfiguration getSiiConfiguration(AONContext ctx);
-	public SiiConfiguration saveSiiConfiguration(AONContext ctx, SiiConfiguration config);
-
+	public Stream<Invoice> getCommunicationInvoices(AONContext ctx, InvoiceCommunicationParams params);
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice);
+	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId , InvoiceCommunicationConfiguration config);
+	public void prepareNewSii(AONContext ctx);
 	
 	// 	***********************************************
 	// 	***************** INVOICE FISCAL **************
@@ -253,7 +248,8 @@ public interface IFinance {
 	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData);
 	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
-	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
+//	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
+	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId);
 	
@@ -262,6 +258,13 @@ public interface IFinance {
 	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter);
 	public InvoiceCommunicationTracking saveInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking);
 	public void deleteInvoiceCommunicationTracking(AONContext ctx, Integer invoiceId);
+	
+	// 	***********************************************
+	// 	***************** INVOICE BATCH ***************
+	// 	***********************************************
+	
+	public InvoiceBatch saveInvoiceBatch(AONContext ctx, InvoiceBatch invoiceBatch);
+	public InvoiceBatchDetail saveInvoiceBatchDetail(AONContext ctx, InvoiceBatchDetail invoiceBatchDetail);
 	
 	// 	***********************************************
 	// 	***************** BOOKING CHECK ***************
@@ -311,7 +314,7 @@ public interface IFinance {
 	// 	************************ INVOICE DOC ***
 	// 	****************************************
 	Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId);	
-	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);	
+	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);
 	
 }
 	
