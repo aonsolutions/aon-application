@@ -532,10 +532,10 @@ export class AonNewUser extends AonElement {
 		iconArrowDown.icon = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 		statusDiv.appendChild(iconArrowDown);
 
-		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown,card));
 	}
 
-	getOptionsStatus(element){
+	getOptionsStatus(element,card){
 		const top = element.getBoundingClientRect().top + 24;
 		const left = element.getBoundingClientRect().left + 3;
 		let d = this.getApplication().getOptionDialog();
@@ -547,6 +547,7 @@ export class AonNewUser extends AonElement {
 				icon:"toggle_on", 
 				fn:()=> {
 					this.user.active = true;
+					this.buildStatus(card);
 					this.save();
 				}
 			},
@@ -556,6 +557,7 @@ export class AonNewUser extends AonElement {
 				icon:"toggle_off", 
 				fn:()=> {
 					this.user.active = false;
+					this.buildStatus(card);
 					this.save();
 				}
 			}

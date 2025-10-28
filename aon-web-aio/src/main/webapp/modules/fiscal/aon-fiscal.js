@@ -96,7 +96,8 @@ export class AonFiscal extends AonElement {
 		this.getModelsFiscal().then(async (mdls) => {
 
 			if (mdls && mdls.length !== 0) {
-				let firstYear = this.getFirstYear(mdls);
+//				let firstYear = this.getFirstYear(mdls);
+				let firstYear = this.getFirstYear(mdls.sort((a, b) => b.year - a.year));
 				if (firstYear && !this._filter.year) {
 					this._filter.year = firstYear;
 				}
@@ -117,7 +118,7 @@ export class AonFiscal extends AonElement {
 						this.showView(FISCAL_VIEWS.AON_TAX);
 					},
 				}));
-
+				ejercicios.sort((a, b) => b.id - a.id);
 				let data = {
 					id: "Periodo",
 					title: "Periodo",

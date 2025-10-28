@@ -492,8 +492,8 @@ export class AonReg extends AonElement {
 		paymethodSelect.id = this.PAYMETHOD_PAYMETHOD;
 		paymethodSelect.title = MSG.PAYMETHOD;
 		table.addCell(paymethodSelect, 4);
-
 		table.addRow();
+		if(typeof this.registry.getPaymethod().getPaymethod() === 'undefined') paymethodSelect.hideLoader();
 
 		let pm = this.registry.getPaymethod().getPaymethod();
 		let banks = (this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')
@@ -522,6 +522,7 @@ export class AonReg extends AonElement {
 		getPaymethods({}).then(paymethods => {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod().id || paymethods[0].id;
+			paymethodSelect.hideLoader();
 		});
 		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
 			this.registry.getPaymethod().getPaymethod().id = paymethodSelect.value;

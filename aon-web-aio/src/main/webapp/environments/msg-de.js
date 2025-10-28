@@ -322,16 +322,16 @@ export const MY_DATA = 'My Data';
 export const MAGIC_LINK = 'Zusendung des Zugangslinks per E-Mail';
 export const MY_MANAGER = 'Mein Manager';
 export const MY_USER = 'My User';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Stelle Rechnungen aus, erfasse Ausgaben oder lege Kunden, Gläubiger und Lieferanten an.";
+export const MENU_ACCOUNTING_INFO = "Rufe Berichte und Diagramme deiner Buchhaltung ab: Gewinn- und Verlustrechnung, Betriebskonten, Bilanzen und mehr.";
+export const MENU_FISCAL_INFO = "Sieh dir automatische Vorberechnungen deiner Steuern an, basierend auf deinen verbuchten Rechnungen und bereits eingereichten Formularen.";
+export const MENU_PAYROLL_INFO = "Rufe Berichte und Diagramme aus dem Personalbereich ab: Gehaltsabrechnungen, Verträge, Unternehmenskosten und mehr.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Speichere und teile zusätzliche Unterlagen, wie Steuerformulare aus früheren Jahren oder Rechnungen aus anderer Software.";
+export const MENU_TIMECONTROL_INFO = "Erfasse die Arbeitszeit gemäß den geltenden Vorschriften.";
+export const MENU_NOTES_INFO = "Erstelle und organisiere Notizen zu allem, was du brauchst.";
+export const MENU_MESSENGER_INFO = "Direkter Kommunikationskanal zwischen Kunde und Berater oder zwischen Mitarbeiter und Unternehmen.";
+export const MENU_WAREHOUSE_INFO = "Verwalte deinen Bestand und halte dein Produktinventar stets aktuell.";
 
 // ----- N
 

@@ -324,16 +324,16 @@ export const MY_DATA = 'My Data';
 export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
 export const MAGIC_LINK = 'Sending access link by email';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Issue invoices, record expenses, or create customers, creditors, and suppliers.";
+export const MENU_ACCOUNTING_INFO = "View reports and charts of your accounting: profit and loss, operating accounts, balance sheets, and more.";
+export const MENU_FISCAL_INFO = "View automatic pre-calculations of your taxes based on your recorded invoices and already submitted tax forms";
+export const MENU_PAYROLL_INFO = "View reports and charts from the labor area: payrolls, contracts, company costs, and more.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Store and share additional documentation, such as tax forms from previous years or invoices from other software.";
+export const MENU_TIMECONTROL_INFO = "Record the working hours in compliance with current regulations.";
+export const MENU_NOTES_INFO = "Create and organize notes for everything you need.";
+export const MENU_MESSENGER_INFO = "Direct communication channel between client and advisor, or employee and company.";
+export const MENU_WAREHOUSE_INFO = "Manage your stock and keep your product inventory up to date.";
 
 // ----- N
 

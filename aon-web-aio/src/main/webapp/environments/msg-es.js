@@ -341,16 +341,16 @@ export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 export const MAGIC_LINK = 'Envío de enlace de acceso por email';
 export const UPPER_MENU = 'Menú de cabecera';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Emite facturas, registra gastos o crea clientes, acreedores y proveedores.";
+export const MENU_ACCOUNTING_INFO = "Consulta informes y gráficos de tu contabilidad: pérdidas y ganancias, cuentas de explotación, balances y más.";
+export const MENU_FISCAL_INFO = "Visualiza precálculos automáticos de tus impuestos basados en tus facturas contabilizadas y modelos ya presentados.";
+export const MENU_PAYROLL_INFO = "Consulta informes y gráficos del área laboral: nóminas, contratos, costes de empresa y más.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Almacena y comparte documentación adicional, como modelos fiscales de años anteriores o facturas de otro software.";
+export const MENU_TIMECONTROL_INFO = "Registra la jornada laboral cumpliendo con la normativa vigente.";
+export const MENU_NOTES_INFO = "Crea y organiza anotaciones de todo lo que necesites.";
+export const MENU_MESSENGER_INFO = "Canal de comunicación directa entre cliente y asesor, o empleado y empresa.";
+export const MENU_WAREHOUSE_INFO = "Gestiona el stock y mantén al día el inventario de tus productos.";
 
 // ----- N
 

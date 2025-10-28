@@ -320,16 +320,16 @@ export const MY_DATA = 'Les Meves Dades';
 export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 export const MAGIC_LINK = 'Enviament d´enllaç d´accés per email';
-export const MENU_INVOICE_INFO = "Texto de prueba para la info";
-export const MENU_ACCOUNTING_INFO = "Texto de prueba para la info";
-export const MENU_FISCAL_INFO = "Texto de prueba para la info";
-export const MENU_PAYROLL_INFO = "Texto de prueba para la info";
+export const MENU_INVOICE_INFO = "Emet factures, registra despeses o crea clients, creditors i proveïdors.";
+export const MENU_ACCOUNTING_INFO = "Consulta informes i gràfics de la teva comptabilitat: pèrdues i guanys, comptes d’explotació, balanços i més.";
+export const MENU_FISCAL_INFO = "Visualitza els precàlculs automàtics dels teus impostos basats en les teves factures comptabilitzades i els models ja presentats.";
+export const MENU_PAYROLL_INFO = "Consulta informes i gràfics de l’àrea laboral: nòmines, contractes, costos de l’empresa i més.";
 export const MENU_COMUNICA_INFO = "Texto de prueba para la info";
-export const MENU_DOCUMENTAL_INFO = "Texto de prueba para la info";
-export const MENU_TIMECONTROL_INFO = "Texto de prueba para la info";
-export const MENU_NOTES_INFO = "Texto de prueba para la info";
-export const MENU_MESSENGER_INFO = "Texto de prueba para la info";
-export const MENU_WAREHOUSE_INFO = "Texto de prueba para la info";
+export const MENU_DOCUMENTAL_INFO = "Emmagatzema i comparteix documentació addicional, com models fiscals d’anys anteriors o factures d’un altre programari.";
+export const MENU_TIMECONTROL_INFO = "Registra la jornada laboral complint amb la normativa vigent.";
+export const MENU_NOTES_INFO = "Crea i organitza anotacions de tot el que necessitis.";
+export const MENU_MESSENGER_INFO = "Canal de comunicació directa entre client i assessor, o entre empleat i empresa.";
+export const MENU_WAREHOUSE_INFO = "Gestiona l’estoc i mantén al dia l’inventari dels teus productes.";
 
 // ----- N
 
