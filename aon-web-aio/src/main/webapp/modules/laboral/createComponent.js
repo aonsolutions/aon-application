@@ -119,13 +119,15 @@ export const createEnterpriseData = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    CreateComponent.createAonSelect({
+    const selectCta = CreateComponent.createAonSelect({
         attributes:{
             name:"ctaCti",
             id:"ctaCti",
-            title:"Cuenta de cotización"
+            title:"Cuenta de cotización",
+            disabled:true
         }
     }, divC.element);
+    selectCta?.removeLoader?.();
 
     // divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
     // divC.appendTo(parent);
@@ -149,7 +151,6 @@ export const createEnterpriseData = (parent) => {
 
 export const createContractData = (parent, isManager) => {
     let divC;
-     
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     const dateContract = CreateComponent.createAonDate({
@@ -320,7 +321,7 @@ export const createEmployeeData = (parent, id) => {
     let span = document.createElement(TAG.SPAN);
     span.textContent =  MSG.RESTORE;
     divReiniciar.appendChild(span);
-    CreateComponent.createAonIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
+    CreateComponent.createAonIconButton({attributes:{ id: id+"IconReset", icon:"360"}}, divReiniciar);    
 
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4] })
     divT.appendTo(parent);
@@ -330,7 +331,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"nss",
             id: id+"Nss", 
-            description:"NSS/NAF", 
+            title:"NSS/NAF", 
             autocomplete:"on"
         }
     }, divNss.element);
@@ -343,7 +344,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"ipf",
             id: id+"Dni", 
-            description:"DNI/NIE", 
+            title:"DNI/NIE", 
             autocomplete:"on",
             disabled: true
         }
@@ -357,7 +358,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"apellido1",
             id:"apellido1",
-            description:"1er Apellido",
+            title:"1er Apellido",
             type:"text",
         }
     }, divT.element);
@@ -368,7 +369,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"apellido2",
             id:"apellido2",
-            description:"2do Apellido",
+            title:"2do Apellido",
             type:"text",
         }
     }, divT.element);
@@ -379,7 +380,7 @@ export const createEmployeeData = (parent, id) => {
         attributes:{
             name:"name",
             id:"name",
-            description:MSG.NAME,
+            title:MSG.NAME,
             type:"text",
             disabled: CONSTANT.TRUE
         }
@@ -391,7 +392,7 @@ export const createEmployeeData = (parent, id) => {
 const addIconSurname = () => {
     const surnameTwo = document.getElementById("apellido2");
     if(surnameTwo){
-        surnameTwo.addAonIcon("aon_seg_social");
+        surnameTwo.addIcon("aon_new_payroll");
         if(surnameTwo.getIcon()){
             let iass = surnameTwo.getIcon().querySelector("aon-icon");
             if(iass)
