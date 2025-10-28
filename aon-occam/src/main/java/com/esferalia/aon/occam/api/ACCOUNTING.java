@@ -137,8 +137,8 @@ public class ACCOUNTING {
 		}
 	}
 	
-	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName, int domain, String user) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
+	public static LinkedList<AccountPeriod> getDomainPeriods(Occam occam) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {	
 			return getAccounting().getDomainPeriods(ctx);
 		}
 	}
@@ -164,8 +164,8 @@ public class ACCOUNTING {
 		return getAccounting().getPeriod(ctx, id);
 	}
 
-	public static AccountPeriod save(String domainName, Integer domainId, String login, AccountPeriod ap) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {	
+	public static AccountPeriod save(Occam occam, AccountPeriod ap) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {	
 			return save(ctx, ap);
 		}
 	}
@@ -174,8 +174,8 @@ public class ACCOUNTING {
 		return getAccounting().save(ctx, ap);
 	}
 
-	public static void deleteAccountPeriod(String domainName, Integer domainId, String login, AccountPeriod ap) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+	public static void deleteAccountPeriod(Occam occam, AccountPeriod ap) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			delete(ctx, ap);
 		}
 	}
