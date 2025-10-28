@@ -74,17 +74,18 @@ export class AonFutureTax extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+//    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+	let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
 
   async getTable() {
-    if (this.isMobile()) {
-      await this.getTableMobile();
-    } else {
+//    if (this.isMobile()) {
+//      await this.getTableMobile();
+//    } else {
       await this.getTableDesk();
-    }
+//    }
   }
 
   async getTableDesk() {
