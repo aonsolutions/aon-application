@@ -4,7 +4,6 @@ import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
 export class AonViewer extends AonElement {
-
 	_scale;
 	AON_IMG_DIV;
 	AON_TEXT_DIV;
@@ -12,6 +11,7 @@ export class AonViewer extends AonElement {
 	AON_CANVAS_DIV;
 	AON_CANVAS_IFRAME;
 	PDF;
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -88,10 +88,6 @@ export class AonViewer extends AonElement {
 		} catch ( err ) {
 			console.log(err);			
 		}
-		
-
-		
-
 
 		let div = this.createElement(TAG.DIV);
 		div.id = this.AON_VIEWER_DIV;

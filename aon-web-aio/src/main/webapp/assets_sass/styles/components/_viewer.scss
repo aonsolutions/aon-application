@@ -1,0 +1,6 @@
+@use '../variables' as v;
+
+aon-viewer{
+  display: block;
+  height: v.$vh-100;
+}
