@@ -2813,7 +2813,7 @@ export class AonInvoice extends AonElement {
 		let dataDiv = this.getElement(this.DATA);
 		this.fileOpened = !visible;
 		if(visible) {
-			button.icon = 'visibility';
+			button.setIcon('visibility');
 			fileDiv.style.display = 'none';
 			dataDiv.style.width = '100%';
 
@@ -2823,7 +2823,7 @@ export class AonInvoice extends AonElement {
 			let communication = this.getElement(this.COMMUNICATION);
 			if(communication) communication.style.display = 'flex';
 		} else {
-			button.icon = 'visibility_off';
+			button.setIcon('visibility_off');
 			fileDiv.style.display = 'block';
 			fileDiv.style.width = '50%';
 			dataDiv.style.width = '50%';

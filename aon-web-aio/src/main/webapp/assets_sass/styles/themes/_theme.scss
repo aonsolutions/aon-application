@@ -518,7 +518,7 @@
         }
       }
       &.aonIconButton{
-        // es demasiado global
+        // es demasiado globaly
         background-color   : transparent;
         color              : $color-text-button;
         &:hover{
@@ -544,9 +544,12 @@
         }
       }
       aon-icon-button{
-        aon-icon {
-          &::after {
-            background-color: $color-300;
+        button.aonIconButton{
+          color: $color-300;
+          aon-icon {
+            &::after {
+              background-color: $color-300;
+            }
           }
         }
         .aon-spinner-input-loading{

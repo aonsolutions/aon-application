@@ -178,8 +178,7 @@ export class AonNotificationPanel extends AonElement {
         iconVisibility.className = "material-icons";
         iconVisibility.classList.add("notificationPanelRowSpan");
         iconVisibility.title = "Marcar como leído";
-        iconVisibility.innerHTML = "visibility_off";
-        iconVisibility.setAttribute("data-icon", "visibility_off");
+        iconVisibility.icon = "visibility_off";
         iconVisibility.style.visibility = "hidden";
         divGeneral.appendChild(iconVisibility);
 
