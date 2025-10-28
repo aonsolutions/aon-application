@@ -3245,18 +3245,17 @@ export class AonInvoice extends AonElement {
 			return this.newRectifyInvoice();
 		}
 		// [END]
-
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.RECTIFY_INVOICE);
-		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea" placeholder="Causa..."></textarea>');
+		let commentTextArea = createTextarea('commentTextArea', MSG.CAUSE);
+		console.log(commentTextArea);
+		d.setContent(commentTextArea);
 		d.addAcceptAction(() => {
 			let recInv = this.invoice;
 			recInv.setRectificationInvoice(this.getInvoice());
-
-			let ta = this.getElement('commentTextArea');
 			let dt = new Date()
 			let m = dt.getMonth() + 1;
 			let month = m < 10 ? '0' + m : m;
@@ -3265,7 +3264,7 @@ export class AonInvoice extends AonElement {
 				date: dateStr,
 				user: '',
 				status: this.getCommentStatus(),
-				reason: ta.value
+				reason: commentTextArea.getValue()
 			};
 			recInv.remarks.push(comment);
 			recInv.id = undefined;
@@ -3276,7 +3275,6 @@ export class AonInvoice extends AonElement {
 			recInv.status = 'inbox';
 			recInv.tbai = undefined;
 			recInv.tbaiUrl = undefined;
-
 			if(recInv.finances) {
 				recInv.finances.forEach((item, i) => {
 					recInv.finances[i].id = undefined;
@@ -3284,7 +3282,6 @@ export class AonInvoice extends AonElement {
 					recInv.finances[i].amount = recInv.finances[i].amount * (-1);
 				});
 			}
-
 			if(recInv.details) {
 				recInv.details.forEach((item, i) => {
 					item.id = undefined;
@@ -3292,15 +3289,9 @@ export class AonInvoice extends AonElement {
 					recInv.setDetail(item, i);
 				});
 			}
-
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(recInv.type, recInv);
 		});
-
-		let ta = this.getElement('commentTextArea');
-		ta.style.outline = 'none';
-		ta.style.width = '100%';
-		ta.style.height = '100px';
 		d.open();
 	}
 
@@ -3337,7 +3328,7 @@ export class AonInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.FACTURAE);
-		let div  =this.createDiv();
+		let div = this.createDiv();
 		let certSelect = createSelect(this.FACTURAE_CERTIFICATE, MSG.CERTIFICATE, div);
 		certSelect.setAlias('id', 'name');
 		getAeatCertificates().then(certs =>	certSelect.setOptions(certs));
