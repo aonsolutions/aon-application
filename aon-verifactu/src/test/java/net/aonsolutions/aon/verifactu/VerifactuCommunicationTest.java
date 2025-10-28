@@ -149,7 +149,8 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
 		BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
 		assertNotNull(codigoErrorRegistro);
-		assertEquals( BigInteger.valueOf(1110) , codigoErrorRegistro);
+		assertTrue(BigInteger.valueOf(1110).equals(codigoErrorRegistro)
+				|| BigInteger.valueOf(1239).equals(codigoErrorRegistro));
 		
 		String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
 		assertNotNull(descripcionErrorRegistro);

@@ -408,13 +408,13 @@ public class LROE140_2_1 extends LROE140 {
 	private CabeceraGastosConsultaType buildCabeceraFactura(Invoice invoice) {
 		CabeceraGastosConsultaType cabecera = new CabeceraGastosConsultaType();
 		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
-		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		fecha.setDesde(AonDateUtils.format(new Date(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(AonDateUtils.addDays(invoice.getIssueDate(), -1), DATE_FORMAT));
+		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
 		
 		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
 		boolean tax = invoice.getTaxDate().before(invoice.getCreationDate());
-		fechaRec.setDesde(AonDateUtils.format(tax ? invoice.getTaxDate() : invoice.getCreationDate(), DATE_FORMAT));
+		fechaRec.setDesde(AonDateUtils.format(AonDateUtils.addDays(tax ? invoice.getTaxDate() : invoice.getCreationDate(), - 1), DATE_FORMAT));
 		fechaRec.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaRecepcion(fechaRec);
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
@@ -429,6 +429,8 @@ public class LROE140_2_1 extends LROE140 {
 	public boolean consulta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			info.setEjercicio(getEjercicio(icc, invoice));
+			invoice.setEpigraph(invoice.getActivity().getIae().getFullEpigraph());
 			LROEPF140GastosConFacturaConsultaPeticion lroe = buildConsulta(person, invoice, info);
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaConsultaPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -442,7 +444,7 @@ public class LROE140_2_1 extends LROE140 {
 			LROEResponse response = sendConsulta(icc, buildJSON(person, info), data);
 			
 			LROEPF140GastosConFacturaConsultaRespuesta resp = (LROEPF140GastosConFacturaConsultaRespuesta) 
-                    unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());
+                    unmarshall(LROEPF140GastosConFacturaConsultaRespuesta.class, response.getResponseDataStr());
             
             if(SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros())) {
                 DataRequest request = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, data);
