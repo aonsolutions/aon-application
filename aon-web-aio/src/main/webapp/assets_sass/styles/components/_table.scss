@@ -6,6 +6,7 @@ aon-table{
     border-collapse : separate;
     border-spacing  : 0 v.$gap;
     margin-top      : -(v.$gap);
+    table-layout    : fixed;
     th, td {
       border    : none;
       padding   : 0 v.$padding;
@@ -67,7 +68,6 @@ aon-table{
   @media (max-width: v.$menu-resolucion-mobile) {
     table {
       // display: block;
-
       thead {
         display: none;
       }

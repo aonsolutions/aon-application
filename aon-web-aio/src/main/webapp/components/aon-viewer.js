@@ -129,7 +129,7 @@ export class AonViewer extends AonElement {
 
 	buildButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
-		div.style.zIndex = "3";
+		// div.style.zIndex = "3";
 		div.style.visibility = 'hidden';
 		div.style.display = "flex";
 		div.style.flexDirection = "column";
