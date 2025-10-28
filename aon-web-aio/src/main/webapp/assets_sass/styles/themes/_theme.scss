@@ -485,8 +485,8 @@
       border            : $button-border;
       &:hover{
         background-color : $color-500;
-      }      
-      aon-icon-button aon-icon {
+      }
+      aon-icon-button aon-icon{
         &::after {
           background-color : $color-300;
         }
@@ -518,8 +518,9 @@
         }
       }
       &.aonIconButton{
-        background-color   : $color-600;
-        color              : $color-300;
+        // es demasiado global
+        background-color   : transparent;
+        color              : $color-text-button;
         &:hover{
           background-color : $iconbutton-hover-background-color;
         }
@@ -814,6 +815,21 @@
     // Modal cuando se suben archivos
     aon-upload-toast{
       box-shadow: $box-shadow-dialog;
+    }
+    // Visualizador de documentos
+    aon-viewer{
+      #aonViewerButtonsDiv{
+        aon-icon-button{
+          button{
+            background-color  : $color-900;
+            color             : $color-text-button;
+            border            : $button-border;
+            &:hover{
+              background-color : $color-500;
+            }
+          }
+        }
+      }
     }
   // 
   // Pages

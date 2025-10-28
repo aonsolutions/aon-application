@@ -3,4 +3,17 @@
 aon-viewer{
   display: block;
   height: v.$vh-100;
+
+  #aonViewerButtonsDiv{
+    aon-icon-button{
+      button{
+        border-radius  : v.$pct-100;
+        width          : v.$px-40;
+        height         : v.$px-40;
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+      }
+    }
+  }
 }

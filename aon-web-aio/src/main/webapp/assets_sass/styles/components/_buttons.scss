@@ -50,18 +50,3 @@ aon-icon-button{
     }
   }
 }
-
-// visualizador en facturas
-#aonViewerButtonsDiv{
-  // por ahora -- seria crear una clase
-  aon-icon-button{
-    button{
-      border-radius  : v.$pct-100;
-      width          : v.$px-40;
-      height         : v.$px-40;
-      display        : flex;
-      justify-content: center;
-      align-items    : center;
-    }
-  }
-}
