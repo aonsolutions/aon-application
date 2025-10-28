@@ -314,7 +314,6 @@ const openFullComment = (aonMessengerChat, aonTextArea, task) => {
     aonTextArea.FILES = textarea.getFiles();
   });
 
-
   let button = dialog.addSendAction(()=>{
       aonMessengerChat.saveComment(undefined, task);
       dialog.close();

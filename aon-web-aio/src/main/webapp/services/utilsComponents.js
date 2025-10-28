@@ -57,7 +57,7 @@ export const createSpan = (properties)=> newComponent({
     if (properties.title)
       properties.element.setAttribute('title', properties.title);
     if (properties.value)
-      properties.element.setAttribute('title', properties.value);
+      properties.element.setAttribute('value', properties.value);
     // Add icon as attribute if exists (para el div icono sea un aon-icon)
     if (properties.icon)
       properties.element.setAttribute('icon', properties.icon);
