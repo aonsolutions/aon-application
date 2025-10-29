@@ -346,6 +346,38 @@ public class AccountPeriodDAO {
 			}
 		};
 		
+		/**
+		 * Al modificar no puede haber apuntes fuera del rango.
+		 */
+		private static final BiConsumer<AccountPeriod,AONContext> EXISTING_ENTRIES_RANGE = (ap,ctx) -> {
+			if ( ap.getId() != null ) {
+				Integer count = ctx.getDslContext().select( DSL.count(ACCOUNT_ENTRY.ID) )
+					.from(ACCOUNT_ENTRY)
+					.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+					.and(ACCOUNT_ENTRY.ENTRY_DATE.lt( AonDateUtils.toSql(ap.getInitiationDate())))
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(DSL.count(ACCOUNT_ENTRY.ID)) )
+					.findFirst()
+					.orElse(0);
+				if (count > 0) {
+					throw new AonCoreException(AonError.ACCOUNT_PERIOD_HAS_PREVIOUS_ENTRIES.format(count));
+				}
+				count = ctx.getDslContext().select( DSL.count(ACCOUNT_ENTRY.ID) )
+					.from(ACCOUNT_ENTRY)
+					.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+					.and(ACCOUNT_ENTRY.ENTRY_DATE.gt( AonDateUtils.toSql(ap.getDeadline())))
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(DSL.count(ACCOUNT_ENTRY.ID)) )
+					.findFirst()
+					.orElse(0);
+				if (count > 0) {
+					throw new AonCoreException(AonError.ACCOUNT_PERIOD_HAS_LATER_ENTRIES.format(count));
+				}
+			}
+		};
+		
 		private static final BiConsumer<AccountPeriod,AONContext> HAS_ENTRIES_CHECK = (ap,ctx) -> {
 			Integer count = ctx.getDslContext().select( DSL.count(ACCOUNT_ENTRY.ID) )
 				.from(ACCOUNT_ENTRY)
@@ -369,6 +401,7 @@ public class AccountPeriodDAO {
 				.andThen(EMPTY_DEADLINE)
 				.andThen(WRONG_RANGE)
 				.andThen(OVERLAP)
+				.andThen(EXISTING_ENTRIES_RANGE)
 				.accept(ap, ctx);
 
 		}

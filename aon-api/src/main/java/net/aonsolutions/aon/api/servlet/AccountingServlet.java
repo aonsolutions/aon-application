@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
@@ -122,7 +123,11 @@ public class AccountingServlet extends AonApiHttpServlet{
 	private static JSONArray getPeriods(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		AccountingReportParams params = AccountingReportParamsJSON.fromJSON( jsonParams );
-		Collection<AccountPeriod> periods = ACCOUNTING.getDomainPeriods(params.getDomainName(), params.getDomain(), params.getUser());
+		Occam occam = new Occam()
+			.setDomainName(params.getDomainName())
+			.setDomain( params.getDomain())
+			.setUser( params.getUser()); 		
+		Collection<AccountPeriod> periods = ACCOUNTING.getDomainPeriods(occam);
 		return AccountPeriodsJSON.toJSON(periods);
 	}
 	
