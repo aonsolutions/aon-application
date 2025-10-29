@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountingPeriodServiceAsyncDecorator implements AccountingPeriodServiceAsync {
@@ -17,18 +18,18 @@ public class AccountingPeriodServiceAsyncDecorator implements AccountingPeriodSe
 
 
 	@Override
-	public void getPeriods(String domainName, int domain, String user, AsyncCallback<LinkedList<AccountPeriod>> callback) {
+	public void getPeriods(Occam occam, AsyncCallback<LinkedList<AccountPeriod>> callback) {
 		AON.start();
-		serviceAsync.getPeriods(domainName, domain, user, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
+		serviceAsync.getPeriods(occam, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
 	}
 	@Override
-	public void save(String domainName, int domain, String user, AccountPeriod accountPeriod, AsyncCallback<AccountPeriod> callback) {
+	public void save(Occam occam, AccountPeriod accountPeriod, AsyncCallback<AccountPeriod> callback) {
 		AON.start();
-		serviceAsync.save(domainName, domain, user, accountPeriod, new AsyncCallbackWrapper<AccountPeriod>(callback));
+		serviceAsync.save(occam, accountPeriod, new AsyncCallbackWrapper<AccountPeriod>(callback));
 	}
 	@Override
-	public void delete(String domainName, int domain, String user, AccountPeriod accountPeriod, AsyncCallback<Void> callback) {
+	public void delete(Occam occam, AccountPeriod accountPeriod, AsyncCallback<Void> callback) {
 		AON.start();
-		serviceAsync.delete(domainName, domain, user, accountPeriod, new AsyncCallbackWrapper<Void>(callback));
+		serviceAsync.delete(occam, accountPeriod, new AsyncCallbackWrapper<Void>(callback));
 	}
 }
