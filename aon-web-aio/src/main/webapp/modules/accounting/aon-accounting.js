@@ -73,7 +73,7 @@ export class AonAccounting extends AonElement {
 			});
 
 		let periodOptions = this.PERIODS.map((period) => ({
-			id: period.name,
+			value: period.name,
 			icon: MATERIAL_ICONS.EVENT,
 			name: MSG.EXERCISE + " " + period.name,
 			clickable: true,
@@ -86,7 +86,7 @@ export class AonAccounting extends AonElement {
 		
 		let viewOptions = [
 			{
-				id: 'VistaAnual',
+				value: 'VistaAnual',
 				name: MSG.ANNUAL_VIEW,
 				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
@@ -96,7 +96,7 @@ export class AonAccounting extends AonElement {
 				}
 			},
 			{
-				id: 'VistaTrimestral',
+				value: 'VistaTrimestral',
 				name: MSG.QUARTERLY_VIEW,
 				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
@@ -106,7 +106,7 @@ export class AonAccounting extends AonElement {
 				}
 			},
 			{
-				id: 'VistaMensual',
+				value: 'VistaMensual',
 				name: MSG.MONTHLY_VIEW,
 				// icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
@@ -119,7 +119,7 @@ export class AonAccounting extends AonElement {
 
 		let detailOptions = [
 			{
-				id: 'Estándar',
+				value: 'Estándar',
 				name: MSG.STANDARD,
 				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {
@@ -129,7 +129,7 @@ export class AonAccounting extends AonElement {
 				}
 			},
 			{
-				id: 'Resumido',
+				value: 'Resumido',
 				name: MSG.SUMMARIZED,
 				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {
@@ -139,7 +139,7 @@ export class AonAccounting extends AonElement {
 				}
 			},
 			{
-				id: 'Detallado',
+				value: 'Detallado',
 				name: MSG.DETAILED,
 				// icon: MATERIAL_ICONS.LIST,
 				fn: () => {

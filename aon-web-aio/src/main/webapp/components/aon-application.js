@@ -592,9 +592,13 @@ export class AonApplication extends AonElement {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
           let filteredYears = options.filter(option => option.name == yearSelected);
+          if(filteredYears.length == 0){
+            filteredYears = options.filter(option => option.value == yearSelected);
+          }
           let optionFiltered = filteredYears[0];
-          optionFiltered.fn();
-         
+          if (optionFiltered && typeof optionFiltered.fn === "function") {
+            optionFiltered.fn();
+          }
         });
         return select;
       }
