@@ -1089,6 +1089,13 @@
           }
         }
       }
+      aon-scope-simple-list{
+        ul {
+          li{
+            border-bottom: $border;
+          }
+        }
+      }
     }
   }
 }
