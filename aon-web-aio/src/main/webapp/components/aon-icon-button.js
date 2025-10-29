@@ -32,11 +32,11 @@ export class AonIconButton extends AonElement {
   }
 
   get aonIcon() {
-    return this.getAttribute("aonIcon");
+    return this.getAttribute("icon");
   }
 
   set aonIcon(aonIcon) {
-    this.setAttribute("aonIcon", aonIcon);
+    this.setAttribute("icon", aonIcon);
   }
 
   get image() {
@@ -153,7 +153,7 @@ export class AonIconButton extends AonElement {
 
   build() {
     this.clear();
-    let background = this.hasAttribute("background") ? this.getAttribute("background")  : "transparent";
+    // let background = this.hasAttribute("background") ? this.getAttribute("background")  : "transparent";
 
     this.getButton().className = "aonIconButton";
     this.getButton().type = "button";

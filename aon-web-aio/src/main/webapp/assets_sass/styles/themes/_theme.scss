@@ -488,7 +488,7 @@
       }
       aon-icon-button aon-icon{
         &::after {
-          background-color : $color-300;
+          background-color : $color-text-button;
         }
       }
       &.aonButton{
@@ -520,7 +520,7 @@
       &.aonIconButton{
         // es demasiado globaly
         background-color   : transparent;
-        color              : $color-text-button;
+        color              : $color-text;
         &:hover{
           background-color : $iconbutton-hover-background-color;
         }

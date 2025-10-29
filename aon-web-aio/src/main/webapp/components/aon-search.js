@@ -244,20 +244,12 @@ export class AonSearch extends AonElement {
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
 				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
-                if(this.newStyle){
-                  advanceButton.icon =  MATERIAL_ICONS.FILTER_ALT;
-                } else {
-                  advanceButton.icon =  MATERIAL_ICONS.FILTER_LIST;
-                } 
+				advanceButton.setIcon(MATERIAL_ICONS.FILTER_ALT);
 				this.closeOptions();
 			} else {
 				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
-				advanceButton.icon =  MATERIAL_ICONS.CLOSE;
-                if(!this.newStyle){
-                  divOpts.style.display = "block";
-                } else {
-                  divOpts.style.display = "grid";
-                }
+				advanceButton.setIcon( MATERIAL_ICONS.FILTER_ALT_OFF);
+				divOpts.style.display = "grid";
 				divOpts.classList.add('is-visible');
 			}
 		}
