@@ -124,7 +124,7 @@ export class AonIconButton extends AonElement {
         this.style.display = "block";
       }
     } else if (CONSTANT.ICON === name) {
-      this.getIcon().innerHTML = this.getAttribute(CONSTANT.ICON);
+      this.getIcon().icon = this.getAttribute(CONSTANT.ICON);
     } else if ("image" === name) {
       let image = this.getElement(this.IMAGE);
       if (image) image.src = this.getAttribute("image");
