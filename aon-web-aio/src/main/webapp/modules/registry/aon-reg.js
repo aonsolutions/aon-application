@@ -191,6 +191,7 @@ export class AonReg extends AonElement {
 
 	buildCertificates() {
 		let div = this.getElement(this.DIV);
+		div.style.height = '100vh';
 		// div.style.position = 'absolute';
 		// div.style.height = '100%';
 		GWT.iLoad(GWT.MAIN_DIGITAL_CERTIFICATES, this.DIV);

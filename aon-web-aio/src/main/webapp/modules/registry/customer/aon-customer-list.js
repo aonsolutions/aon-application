@@ -43,7 +43,7 @@ export class AonCustomerList extends AonRegistryList {
 				additional_info
 			};
 
-			return this.filter.type == "false" ? getTarget(data) : getCustomer(data);
+			return this.filter && this.filter.type == "false" ? getTarget(data) : getCustomer(data);
 		}
 		
 		return null;

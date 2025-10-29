@@ -1109,7 +1109,7 @@ export class AonHeader extends AonElement {
 		if(company.type === 'OFFICE') icon = 'work';
 		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
 		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
-		else if(!company.active) icon = 'domain_disabled';
+		else if(!company.active) icon = 'building-off';
 		
 		return icon;
 	}

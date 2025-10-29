@@ -93,7 +93,7 @@ export class AonParent extends AonElement {
 				fn: () => this.init({active: true, domainActive:true})
 			}, {
 				name: MSG.INACTIVES,
-				icon: 'domain_disabled',
+				icon: 'building-off',
 				fn: () => this.init({inactive: true, domainActive:false})
 			}, {
 				name: MSG.SHARED,
@@ -295,7 +295,7 @@ export class AonParent extends AonElement {
 					}, {
 						id: 'inactive',
 						name: MSG.INACTIVES,
-						icon: 'domain_disabled',
+						icon: 'building-off',
 						fn: () => this.init({inactive: true, domainActive:false})
 					}, {
 						id: 'shared',
@@ -396,7 +396,7 @@ export class AonParent extends AonElement {
 		if(company.type === 'OFFICE') icon = 'work';
 		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
 		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
-		else if(!company.active) icon = 'domain_disabled';
+		else if(!company.active) icon = 'building-off';
 
 		let i = this.createElement(TAG.I);
 		i.className = 'material-icons aonAvatar';
