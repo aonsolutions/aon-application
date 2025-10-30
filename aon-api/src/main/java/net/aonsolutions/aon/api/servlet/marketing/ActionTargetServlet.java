@@ -738,6 +738,22 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 			registryAddress = RegistryAddressDAO.save(ctx, registryAddress);
 			comapnyRaddressId = registryAddress.getId();
+		} else {
+			RegistryAddress registryAddress = new RegistryAddress()
+					.setDomain(newDomain.getId())
+					.setRegistry(newCompany.getId())
+					.setMain(true)
+					.setStreetType(StreetType.CALLE)
+					.setAddress(null)
+					.setNumber(null)
+					.setZip(null)
+					.setCity(null)
+					.setGeozone(null)
+					.setGeozoneCode(null)
+					.setGeozoneName(null);
+
+			registryAddress = RegistryAddressDAO.save(ctx, registryAddress);
+			comapnyRaddressId = registryAddress.getId();
 		}
 
 		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.FIXED_PHONE, phone, comapnyRaddressId);
