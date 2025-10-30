@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Accounting Report Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/AccountingReport" })
@@ -23,8 +24,8 @@ public class AccountingReportServiceImpl extends AonStatelessRemoteServiceServle
 	private static final long serialVersionUID = -3171037725671037932L;
 
 	@Override
-	public LinkedList<AccountPeriod> getDomainPeriods(String domainName, int domain, String user) throws AonCoreException {
-		return ACCOUNTING.getDomainPeriods(domainName, domain, user);
+	public LinkedList<AccountPeriod> getDomainPeriods(Occam occam) throws AonCoreException {
+		return ACCOUNTING.getDomainPeriods(occam);
 	}
 	
 	@Override
