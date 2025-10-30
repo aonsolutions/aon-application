@@ -97,7 +97,7 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'CANARIAS', name: 'A.T. Canaria'}
         ]);
         administration.value = this.configuration.administration;
-        administration.onChange(() => {
+        administration.addEventListener(EVENT.CHANGE, () => {
             this.configuration.administration = administration.value;
             this.configuration.communication.administration = administration.value;
             if(this.isTicketBai() || this.isNavarra()) {
@@ -174,7 +174,7 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'audit', name: 'Fecha Auditoria'}
         ]);
         tbaiRegistryDate.value = this.configuration.communication.tbaiRegistryDate;
-        tbaiRegistryDate.onChange(() => {
+        tbaiRegistryDate.addEventListener(EVENT.CHANGE, () => {
             this.configuration.communication.tbaiRegistryDate = tbaiRegistryDate.value;
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
@@ -183,14 +183,15 @@ export class AonInvoiceCommunication extends AonElement {
         if(!this.configuration.communication.tbai) {
             tbaiIncludeDate.classList.add(CSS.AON_NONE);
         }
-        tbaiIncludeDate.onChange(() => {
-            this.configuration.communication.tbaiIncludeDate = tbaiIncludeDate.value;
+        if(this.configuration.communication.tbaiIncludeDate) {
+            tbaiIncludeDate.setDate(this.configuration.communication.tbaiIncludeDate);
+        }
+        tbaiIncludeDate.addEventListener(EVENT.CHANGE, () => {
+            this.configuration.communication.tbaiIncludeDate = tbaiIncludeDate.getDateValue();
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
+
         table.addCell(tbaiIncludeDate, 1).style.height = '50px';
-        if(this.configuration.communication.tbaiIncludeDate) {
-            tbaiIncludeDate.value = this.configuration.communication.tbaiIncludeDate;
-        }
 
         table.addRow();
     }
@@ -276,7 +277,7 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'audit', name: 'Fecha Auditoria'}
         ]);
         siiRegistryDate.value = this.configuration.communication.siiRegistryDate;
-        siiRegistryDate.onChange(() => {
+        siiRegistryDate.addEventListener(EVENT.CHANGE, () => {
             this.configuration.communication.siiRegistryDate = siiRegistryDate.value;
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
@@ -285,12 +286,14 @@ export class AonInvoiceCommunication extends AonElement {
         if(!this.configuration.communication.sii) {
             siiIncludeDate.classList.add(CSS.AON_NONE);
         }
-        siiIncludeDate.onChange(() => {
-            this.configuration.communication.siiIncludeDate = siiIncludeDate.value;
+        if(this.configuration.communication.siiIncludeDate) 
+            siiIncludeDate.setDate(this.configuration.communication.siiIncludeDate);
+        siiIncludeDate.addEventListener(EVENT.CHANGE, () => {
+            this.configuration.communication.siiIncludeDate = siiIncludeDate.getDateValue();
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
+
         table.addCell(siiIncludeDate, 1).style.height = '50px';
-        siiIncludeDate.value = this.configuration.communication.siiIncludeDate;
 
         table.addRow();
 
