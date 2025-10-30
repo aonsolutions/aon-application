@@ -788,6 +788,8 @@ export class AonApplication extends AonElement {
           let toolbar = this.getElement(this.TOOLBAR);
           if(toolbar) toolbar.setAttribute("option", option.name);
           if(option.fn){
+            // Se escoge alguna opcionsubimos el scroll
+            this.scrollTop();
             let count = 0;
             if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
             option.fn(count);
@@ -1280,6 +1282,10 @@ export class AonApplication extends AonElement {
 	stopLoading() {
 		this.getElement(this.AON_MODULE_LOADER).stopLoading();
 	}
+
+  scrollTop() {
+    this.getRootPanel().scrollTo({ top: 0, behavior: "smooth" });
+  }
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);
