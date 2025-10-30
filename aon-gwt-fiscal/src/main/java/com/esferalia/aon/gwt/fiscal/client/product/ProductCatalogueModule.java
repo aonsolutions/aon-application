@@ -16,11 +16,13 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -34,6 +36,7 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 
 public class ProductCatalogueModule  implements EntryPoint {
 	
@@ -80,12 +83,14 @@ public class ProductCatalogueModule  implements EntryPoint {
 
 		initializeCommonService();
 		
-		getAviableProductBooking(products -> {
-			if(products.isEmpty())
-				Window.alert("moduleLoadSig");
-				//moduleLoadSig();
-			else
-				moduleLoad();
+		getDomainRelationships(rrelationships -> {
+			getAviableProductBooking(products -> {
+				if(products.isEmpty())
+					Window.alert("moduleLoadSig");
+					//moduleLoadSig();
+				else
+					moduleLoad();
+			});
 		});
 		
 	}
@@ -228,6 +233,51 @@ public class ProductCatalogueModule  implements EntryPoint {
 			}
 		});
 		
+	}
+	
+	private void getDomainRelationships(Consumer<List<RegistryRelationship>> success) {
+		commonService.getRegistryRelationships(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<List<RegistryRelationship>>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				noRelationshipMessage();
+			}
+
+			@Override
+			public void onSuccess(List<RegistryRelationship> registryRelationships) {
+				success.accept(registryRelationships);
+			}
+		});
+	}
+	
+	private void noRelationshipMessage() {
+		AON.ensureInjected();
+		ensureGwtSelector();
+		
+		HTMLPanel content = new HTMLPanel("");
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		content.setWidth("100%");
+		content.setHeight("100%");
+		
+		Label title = new Label("Dominio sin vinculaci\u00f3n");
+		title.addStyleName(AON.CSS.aonMessageTitle());
+		title.getElement().getStyle().setProperty("font-size", "1rem");
+
+		HTMLPanel dialogContent = new HTMLPanel("");
+		dialogContent.addStyleName(AON.CSS.aonItemFlex());
+		dialogContent.getElement().getStyle().setProperty("padding", "1rem");
+		
+		AonTableButton info = new AonTableButton("Sin vinculaci\u00f3n", AON.CSS.aonIconWarning());
+		HTMLPanel message = new HTMLPanel("El dominio del cliente no est\u00e1 vinculado al despacho. No se puede mostrar los planes.");
+		
+		dialogContent.add(info);
+		dialogContent.add(message);
+		
+		content.add(title);
+		content.add(dialogContent);
+		
+		currentDomainOptions.getParentWidget().add(content);
 	}
 	
 	private void ensureGwtSelector() {

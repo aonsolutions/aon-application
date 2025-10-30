@@ -192,6 +192,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
@@ -9034,6 +9035,12 @@ public class AON {
 	public static void createBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getSecurity().saveBookingApp(ctx, aonApp, true);
+		}
+	}
+	
+	public static List<RegistryRelationship> getRegistryRelationships(String domainName, int domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSecurity().getRegistryRelationships(ctx, domainId);
 		}
 	}
 	

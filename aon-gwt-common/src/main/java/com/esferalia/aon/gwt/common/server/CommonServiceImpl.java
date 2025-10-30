@@ -1867,9 +1867,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		return registryRelationships;
 	}
+	
 	@Override
 	public Customer saveCustomer(String domainName, Integer domainId, String user, Customer customer) throws AonCoreException {
 		return AON.saveCustomer(domainName, domainId, user, customer);
+	}
+	
+	@Override
+	public List<RegistryRelationship> getRegistryRelationships(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getRegistryRelationships(domainName, domain, user);
 	}
 
 }

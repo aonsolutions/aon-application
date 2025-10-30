@@ -1475,4 +1475,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.saveCustomer(domainName, domainId, user, customer, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getRegistryRelationships(String domainName, int domain, String user, AsyncCallback<List<RegistryRelationship>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRegistryRelationships(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
 }

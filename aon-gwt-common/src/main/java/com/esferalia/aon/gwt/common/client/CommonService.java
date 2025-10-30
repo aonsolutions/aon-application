@@ -499,5 +499,6 @@ public interface CommonService extends RemoteService {
 	List<RegistryRelationship> getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry) throws AonCoreException;
 	Customer saveCustomer(String domainName, Integer domainId, String user, Customer customer) throws AonCoreException;
 	
+	List<RegistryRelationship> getRegistryRelationships(String domainName, int domain, String user) throws AonCoreException;
 	
 }
