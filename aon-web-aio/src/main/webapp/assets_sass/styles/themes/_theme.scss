@@ -271,6 +271,9 @@
       &::after {
         background-color: $color-text;
       }
+      &[color="lightgray"] {
+        color: $color-text-placeholder;
+      }
     }
     // Mensaje de info
     aon-info{
@@ -1083,11 +1086,6 @@
         border: $border;
         li{
           border-bottom: $border;
-          aon-icon{
-            &[color="lightgray"] {
-              color: $color-text-placeholder;
-            }
-          }
         }
       }
     }
