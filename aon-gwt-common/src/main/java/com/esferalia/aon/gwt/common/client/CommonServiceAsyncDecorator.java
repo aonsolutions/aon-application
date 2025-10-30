@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -792,9 +793,21 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getProductsBooking(ProductParams params, AsyncCallback<List<ProductBooking>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProductsBooking(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Product> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getProduct(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getProductBooking(String domainName, Integer domain, String user, Integer id, AsyncCallback<ProductBooking> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProductBooking(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -808,11 +821,23 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.saveProduct(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void saveProductBooking(String domainName, Integer domain, String user, ProductBooking product, AsyncCallback<ProductBooking> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveProductBooking(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item, AsyncCallback<Product> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.createProduct(domainName, domain, user, product, productTags, item, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void createProductBooking(String domainName, Integer domain, String user, ProductBooking product, List<ProductTag> productTags, Item item, AsyncCallback<ProductBooking> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createProductBooking(domainName, domain, user, product, productTags, item, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -1415,13 +1440,13 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+	public void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.updateBookingFee(domainName, domain, user, fee, product, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> callback) throws AonCoreException {
+	public void createBookingFee(String domainName, int domain, String user, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.createBookingFee(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
 	}

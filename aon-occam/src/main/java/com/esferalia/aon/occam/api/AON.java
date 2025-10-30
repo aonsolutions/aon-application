@@ -158,6 +158,7 @@ import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -1489,6 +1490,12 @@ public class AON {
 		}
 	}
 	
+	public static ProductBooking getProductBooking(Domain domain, String login, ProductFilter filter) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductBooking(ctx, filter);
+		}
+	}
+	
 	public static Stream<Product> getProductStream(Domain domain, String login, ProductFilter filter) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().getProductStream(ctx, filter);
@@ -1507,9 +1514,21 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<ProductBooking> getProductBookingList(Domain domain, String login, ProductParams params) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductBookingList(ctx, params);
+		}
+	}
+	
 	public static Product saveProduct(Domain domain, String login, Product product) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().saveProduct(ctx, product);
+		}
+	}
+	
+	public static ProductBooking saveProductBooking(Domain domain, String login, ProductBooking product) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveProductBooking(ctx, product);
 		}
 	}
 	
@@ -1522,6 +1541,12 @@ public class AON {
 	public static Product createProduct(Domain domain, String login, Product product, List<ProductTag> productTags, Item item) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().createProduct(ctx, product, productTags, item);
+		}
+	}
+	
+	public static ProductBooking createProductBooking(Domain domain, String login, ProductBooking product, List<ProductTag> productTags, Item item) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().createProductBooking(ctx, product, productTags, item);
 		}
 	}
 	

@@ -98,6 +98,7 @@ import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -799,8 +800,19 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public List<ProductBooking> getProductsBooking(ProductParams params) throws AonCoreException {
+		List<ProductBooking> products = AON.getProductBookingList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		return products;
+	}
+	
+	@Override
 	public Product getProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		return AON.getProduct(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(id));
+	}
+	
+	@Override
+	public ProductBooking getProductBooking(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getProductBooking(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(id));
 	}
 	
 	@Override
@@ -814,8 +826,18 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public ProductBooking saveProductBooking(String domainName, Integer domain, String user, ProductBooking product) throws AonCoreException {
+		return AON.saveProductBooking(new Domain().setName(domainName).setId(domain), user, product);
+	}
+	
+	@Override
 	public Product createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item) throws AonCoreException {
 		return AON.createProduct(new Domain().setName(domainName).setId(domain), user, product, productTags, item);
+	}
+	
+	@Override
+	public ProductBooking createProductBooking(String domainName, Integer domain, String user, ProductBooking product, List<ProductTag> productTags, Item item) throws AonCoreException {
+		return AON.createProductBooking(new Domain().setName(domainName).setId(domain), user, product, productTags, item);
 	}
 
 	@Override
@@ -1671,7 +1693,18 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));
 		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
 		
+		Workplace workplace = AON.getWorkplaces(
+			    new Occam()
+			        .setDomainName(domainName)
+			        .setDomain(domainId)
+			        .setUser(user),
+			    domainId
+			)
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("Este cliente ya no está vinculado al dominio"));
+		
 		fee.setCustomer(new Customer().setId(existRelationShip.get().getRegistry()));
+		fee.setWorkplace(workplace);
 		
 		AON.save(domainName, domainId, user, fee);
 	}
@@ -1689,57 +1722,39 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public void updateBookingFee(String domainName, int domainId, String user, Fee fee, Product product) {
+	public void updateBookingFee(String domainName, int domainId, String user, Fee fee, ProductBooking product) {
 		Date currentDate = new Date();
 		Date yesterday = AonDateUtils.addDays(currentDate, -1);
 		
 		User userDb = AON.getUser(domainName, domainId, user);
 		
-		if(product.isComposition()) {
-			Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
-			
-			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(fee.getItem().getId()))).collect(Collectors.toList());
-			
-			if(itemCompositions.isEmpty())
-				updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
-			else {
-				itemCompositions.forEach(itemComposition -> {
-					Integer compositionItemId = itemComposition.getCompositionItemId();
-					OldItem composition = AON.getItem(siblingOffice.getName(), siblingOffice.getId(), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(compositionItemId)));
-					
-					updateDomainApp(domainName, domainId, user, composition.getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
-				});
-			}
-			
-		} else
-			updateDomainApp(domainName, domainId, user, fee.getItem().getBarcode(), userDb.getId(), fee.getStartDate().after(yesterday));
+		Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
+		
+		OldItem feeItem = AON.getItem(siblingOffice.getName(), siblingOffice.getId(), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(fee.getItem().getId())));
+		
+		ProductBooking feeProductBooking = AON.getProductBooking(new Domain().setName(siblingOffice.getName()).setId(siblingOffice.getId()), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(feeItem.getProduct().getId())));
+		
+		feeProductBooking.getAonApps().forEach(aonApp -> {
+			updateDomainApp(domainName, domainId, user, aonApp, userDb.getId(), fee.getStartDate().after(yesterday));
+		});
 		
 	}
 	
-	private void updateDomainApp(String domainName, int domainId, String user, String barcode, Integer userId, boolean delete) {
+	private void updateDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId, boolean delete) {
 		try {
-			Integer itemCode = Integer.parseInt(barcode.substring(0, 2));
-			
 			Stream<DomainApp> domainApps = AON_SOLUTIONS.getDomainApp(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId));
-			Optional<DomainApp> domainApp = domainApps.filter(da -> da.getApp().equals(AonApp.values()[itemCode])).findFirst();
+			Optional<DomainApp> domainApp = domainApps.filter(da -> da.getApp().equals(aonApp)).findFirst();
 			
-			if(delete) {
-				if(domainApp.isPresent())
-					AON.deleteBookingApp(domainName, domainId, user, domainApp.get());
-			} else {
-				if(domainApp.isPresent()) {
-					domainApp.get().setActive(false);
-					AON.saveBookingApp(domainName, domainId, user, domainApp.get(), delete);
-				}
-			}
+			if(domainApp.isPresent())
+				AON.saveBookingApp(domainName, domainId, user, domainApp.get(), delete);
 			
-			updateUserAppRole(domainName, domainId, user, userId, itemCode);
+			updateUserAppRole(domainName, domainId, user, userId, aonApp);
 			
 		} catch (Exception e) {}
 	}
 	
-	private void updateUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
-		List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+	private void updateUserAppRole(String domainName, int domainId, String user, Integer userId, AonApp aonApp) {
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(aonApp);
 		Byte[] arrayAonRoles = aonRoles.stream()
 			    .map(ar -> ar.value())
 			    .toArray(Byte[]::new);
@@ -1752,7 +1767,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public void createBookingFee(String domainName, int domainId, String user, Product product) throws AonCoreException {
+	public void createBookingFee(String domainName, int domainId, String user, ProductBooking product) throws AonCoreException {
 
 		User userDb = AON.getUser(domainName, domainId, user);
 		
@@ -1779,45 +1794,28 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			
 		}
 		
-		if(product.isComposition()) {
-			Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
-			
-			List<ItemComposition> itemCompositions = AON.getItemCompositionStream(siblingOffice, user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getItemProperty().eq(product.getItem().getId()))).collect(Collectors.toList());
-			
-			if(itemCompositions.isEmpty()) {
-				insertDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId());
-			} else {
-				itemCompositions.forEach(itemComposition -> {
-					Integer compositionItemId = itemComposition.getCompositionItemId();
-					OldItem composition = AON.getItem(domainName, domainId, user, f -> f.getIdProperty().eq(compositionItemId));
-					
-					insertDomainApp(domainName, domainId, user, composition.getBarcode(), userDb.getId());
-				});
-			}
-			
-		} else
-			insertDomainApp(domainName, domainId, user, product.getItem().getBarcode(), userDb.getId());
+		product.getAonApps().forEach(aonApp -> {
+			insertDomainApp(domainName, domainId, user, aonApp, userDb.getId());
+		});
 		
 	}
 	
-	private void insertDomainApp(String domainName, int domainId, String user, String barcode, Integer userId) {
+	private void insertDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId) {
 		try {
-			Integer itemCode = Integer.parseInt(barcode.substring(0, 2));
-			
 			DomainApp domainApp = new DomainApp()
 					.setDomain(domainId)
 					.setActive(true)
-					.setApp(AonApp.values()[itemCode])
+					.setApp(aonApp)
 					;
 			AON.createBookingApp(domainName, domainId, user, domainApp);
 			
-			insertUserAppRole(domainName, domainId, user,userId, itemCode);
+			insertUserAppRole(domainName, domainId, user,userId, aonApp);
 			
 		} catch (Exception e) {}
 	}
 	
-	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, Integer itemCode) {
-		List<AonRole> aonRoles = AonApp.getPortalAonRole(AonApp.values()[itemCode]);
+	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, AonApp aonApp) {
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(aonApp);
 		Byte[] arrayAonRoles = aonRoles.stream()
 			    .map(ar -> ar.value())
 			    .toArray(Byte[]::new);
@@ -1841,6 +1839,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException {
 		List<RegistryPayMethod> registryPayMethods = AON.getRegistryPayMethodStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registry))).collect(Collectors.toList());
+		registryPayMethods.forEach(rp -> {
+			if(null != rp.getRbank() && null != rp.getRbank().getId())
+				rp.setRbank(AON.getRegistryBank(new Domain().setName(domainName).setId(domainId), user, f -> f.getIdProperty().eq(rp.getRbank().getId())));
+		});
 		return registryPayMethods;
 	}
 	

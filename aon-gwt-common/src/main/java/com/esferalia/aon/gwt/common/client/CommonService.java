@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -109,6 +110,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -317,10 +319,14 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	List<Product> getProducts(ProductParams params) throws AonCoreException;
+	List<ProductBooking> getProductsBooking(ProductParams params) throws AonCoreException;
 	Product getProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	ProductBooking getProductBooking(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	void deleteProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Product saveProduct(String domainName, Integer domain, String user, Product product) throws AonCoreException;
+	ProductBooking saveProductBooking(String domainName, Integer domain, String user, ProductBooking product) throws AonCoreException;
 	Product createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item) throws AonCoreException;
+	ProductBooking createProductBooking(String domainName, Integer domain, String user, ProductBooking product, List<ProductTag> productTags, Item item) throws AonCoreException;
 	
 	Item getItem(String domainName, Integer domain, String user, Integer productId) throws AonCoreException;
 	Item saveItem(String domainName, int domain, String user, Item item) throws AonCoreException;
@@ -485,8 +491,8 @@ public interface CommonService extends RemoteService {
 	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException;
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee) throws AonCoreException;
 	
-	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product) throws AonCoreException;
-	void createBookingFee(String domainName, int domain, String user, Product product) throws AonCoreException;
+	void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, ProductBooking product) throws AonCoreException;
 	
 	List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException;
 	RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod) throws AonCoreException;

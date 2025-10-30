@@ -19,15 +19,19 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 
@@ -73,8 +77,17 @@ public class ProductCatalogueModule  implements EntryPoint {
 		currentDomainOptions.setUser(getCurrentUser());
 		
 		officeDomainOptions = new RegistryModuleOptions();
+
+		initializeCommonService();
 		
-		moduleLoad();
+		getAviableProductBooking(products -> {
+			if(products.isEmpty())
+				Window.alert("moduleLoadSig");
+				//moduleLoadSig();
+			else
+				moduleLoad();
+		});
+		
 	}
 	
 	public void moduleLoad() {
@@ -89,8 +102,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 				
 			}
 		};
-		
-		initializeCommonService();
 		
 		getTariffs(tariffsDb -> {
 			this.tariffs = tariffsDb;
@@ -122,7 +133,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 			
 			@Override
 			public void onSuccess(AonConfiguration config) {
-				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany(), config.getWorkplaces());
+				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany());
 				productCatalogue.setHeight("100%");
 				
 				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
@@ -166,6 +177,57 @@ public class ProductCatalogueModule  implements EntryPoint {
 				AonMessagePanel.showError(messagePanel, "Error config: " + caught.getMessage());
 			}
 		});
+	}
+	
+	private void getAviableProductBooking(Consumer<List<ProductBooking>> success) {
+		commonService.getAonConfiguration(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<AonConfiguration>() {
+			
+			@Override
+			public void onSuccess(AonConfiguration config) {
+				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
+
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, "Error obteniendo despacho: " + error.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Domain officeDomain) {
+						officeDomainOptions.setDomainName(officeDomain.getName());
+						officeDomainOptions.setDomain(officeDomain.getId());
+						
+						ProductParams params = new ProductParams()
+								.setDomainName(officeDomainOptions.getDomainName())
+								.setDomain(officeDomainOptions.getDomain())
+								.setUser(officeDomainOptions.getUser())
+								.setType(ProductType.AUXILIARY)
+								.setDomainType(DomainType.ENTERPRISE)
+								.setOffset(0)
+								.setLimit(Integer.MAX_VALUE)
+								;
+						
+						commonService.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
+							
+							@Override
+							public void onSuccess(List<ProductBooking> productsDB) {
+								success.accept(productsDB);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error productos: " + caught.getMessage());
+							}
+						});
+						
+					}});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error config: " + caught.getMessage());
+			}
+		});
+		
 	}
 	
 	private void ensureGwtSelector() {
