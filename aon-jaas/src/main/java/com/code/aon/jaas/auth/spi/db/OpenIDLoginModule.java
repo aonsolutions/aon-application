@@ -21,6 +21,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.jaas.auth.session.UserNotFoundLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -156,7 +157,7 @@ public class OpenIDLoginModule extends LoginModule {
 				if ( domainId != null ) {
 					try {
 						super.getUsersPassword(); 
-					} catch (Exception e) {
+					} catch (UserNotFoundLoginException e) {
 						if ( password != null){
 							String uuid = getAuth(domainName, 0, info[0]);
 							((AuthPrincipal) getIdentity()).setUuid(uuid);

@@ -24,6 +24,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.SimpleGroup;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.jaas.auth.session.UserNotFoundLoginException;
 import com.code.aon.jaas.auth.spi.UsernamePasswordLoginModule;
 import com.code.aon.jaas.security.acl.Group;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
@@ -120,7 +121,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			principal.setApplicationId(applicationId);
 			User user = dbUtil.getUser(domain, principal.getShortName());
 			if ( user == null ) {
-				throw new AuthenticationLoginException( "aon_login_err_1", principal.getShortName() );
+				throw new UserNotFoundLoginException( "aon_login_err_1", principal.getShortName() );
 			}
 			if (! user.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_user_inactive", principal.getShortName() );	

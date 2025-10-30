@@ -24,15 +24,15 @@ public class LoginTestCase extends AppBaseTestCase {
 	
 	@ParameterizedTest
 	@CsvSource({
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,admin,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo@payroll-test.aonsolutions.org,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,inactivo,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,admin,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,inactivo@payroll-test.aonsolutions.org,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
 		
-		"http://inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
-		"http://default-inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
+		"http://inactive-test.aonsolutions.org:8080/,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
+		"http://default-inactive-test.aonsolutions.org:8080/,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
 
-		"http://expired-multi-test.aonsolutions.org:8080/?jaas,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
-		"http://expired-multi-test.aonsolutions.org:8080/?jaas,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		"http://expired-multi-test.aonsolutions.org:8080/,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		"http://expired-multi-test.aonsolutions.org:8080/,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
 		
 		"http://multi-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive.",
 		//"http://factory-inactive-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive."
