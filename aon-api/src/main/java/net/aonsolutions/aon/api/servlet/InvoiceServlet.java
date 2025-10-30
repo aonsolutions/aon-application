@@ -728,7 +728,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));
 
 		JSONObject print = savePrintConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.PRINT));
-		JSONObject icc = saveInvoiceCommunicationConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.TBAI));
+		JSONObject icc = saveInvoiceCommunicationConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.COMMUNICATION));
 		JSONObject invofox = JsonUtils.has(api.getData(), IJsonNames.INVOFOX) ? 
 				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), IJsonNames.INVOFOX))) 
 				: new JSONObject();
