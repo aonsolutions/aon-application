@@ -201,4 +201,72 @@ public class LoginTestCase extends AppBaseTestCase {
 			}
 		}
 	}
+
+	@Test
+	@Order(7)
+	public void testLoginFactoryUser() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://multi-test.aonsolutions.org:8080/?jaas");
+		String email = System.getProperty("integration.test.env.app.auth", "factory@multi-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
+			
+			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+			webDriver.switchTo().frame(aonJsfAppFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:offerList")));
+			
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
+	@Test
+	@Order(7)
+	public void testLoginParentInactiveChild() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
+		String email = System.getProperty("integration.test.env.app.auth", "admin");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonCompanyTabFilter-inactive"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
+
+			WebElement aonJsfAccountingGraphFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAccountingGraphFrame")));
+			webDriver.switchTo().frame(aonJsfAccountingGraphFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("graphForm:accountColumnChartDiv")));
+			
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
 }

@@ -174,7 +174,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 	protected Group[] getRoleSets() throws LoginException {
 		boolean trace = log.isTraceEnabled();
 		
-		if ( this.dataBaseName == null ) {
+		if ( this.dataBaseName == null || this.appplicationUser == null ) {
 			return new Group[0];
 		}
 		
