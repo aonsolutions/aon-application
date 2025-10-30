@@ -22,9 +22,19 @@ $icon-min: v.$px-16;
       min-width : v.$left-aonMenuLeft-min;
       max-width : v.$left-aonMenuLeft-min;
       span.aonNewMenuAppSpan, aon-info{
+        // ocultar texto
         display       : none !important;
         opacity       : 0;
         pointer-events: none; 
+      }
+      #aonMenuBottom aon-button button{
+        padding: v.$px-0;
+        span{
+          // ocultar texto de los botones
+          display       : none !important;
+          opacity       : 0;
+          pointer-events: none; 
+        }
       }
     }
     /* Menu arriba cuando reducimos */
@@ -124,6 +134,12 @@ $icon-min: v.$px-16;
           display: none;
         }
       }
+    }
+    #aonMenuBottom {
+      display       : flex;
+      flex-direction: column;
+      gap           : v.$gap-min;
+      padding       : v.$padding v.$padding-min;
     }
   }
   /* Menu superior */

@@ -62,19 +62,25 @@
   $gradient-turquoise-size       : $loginbutton-background-size;
   $gradient-turquoise-position   : $loginbutton-backgorund-position;
   $gradient-turquoise-transition : background v.$t-01 ease;
-  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;
 
   $gradient-blue-background : linear-gradient(to right, $color-corp-blue, $color-corp-blue, $color-grad-max, $color-grad-min);
   $gradient-blue-size       : $loginbutton-background-size;
   $gradient-blue-position   : $loginbutton-backgorund-position;
   $gradient-blue-transition : background v.$t-01 ease;
-  $gradient-blue-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-blue-hover-background-size : $loginbutton-hover-background-size;
+  
+  $gradient-orange-background : linear-gradient(to right,$color-corp-orange, $color-corp-orange, $color-grad-max, $color-grad-min);
+  $gradient-orange-size       : $loginbutton-background-size;
+  $gradient-orange-position   : $loginbutton-backgorund-position;
+  $gradient-orange-transition : background v.$t-01 ease;
+  $gradient-orange-hover-background-size : $loginbutton-hover-background-size;
   
   $gradient-box-background : linear-gradient(to right, $color-box, $color-box, $color-grad-max, $color-grad-min);
   $gradient-box-size       : $loginbutton-background-size;
   $gradient-box-position   : $loginbutton-backgorund-position;
   $gradient-box-transition : background v.$t-01 ease;
-  $gradient-box-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-box-hover-background-size : $loginbutton-hover-background-size;
   
   $iconbutton-hover-background-color : transparent;
 
@@ -531,6 +537,20 @@
         background-color : $color-red-900;
         &:hover{
           background-color : $color-red-500;
+        }
+      }
+    }
+    // Controlando los colores
+    aon-button{
+      // color orange
+      &.color-orange button{
+        background            : $gradient-orange-background;
+        background-size       : $gradient-orange-size;
+        background-position   : $gradient-orange-position;
+        transition            : $gradient-orange-transition;
+        box-shadow            : $box-shadow-dialog;
+        &:hover{
+          background-position : $gradient-orange-hover-background-size ;
         }
       }
     }
