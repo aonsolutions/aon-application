@@ -51,24 +51,24 @@ export class AonUserPanel extends AonElement {
 
 		let filterOptions = this._roles.isParentUser() ? [{
 				name: 'Empresa',
-				icon: 'domain',
+				// icon: 'domain',
 				fn: () => this.init('company')
 			}, {
 				name: 'Entorno',
-				icon: 'apartment',
+				// icon: 'apartment',
 				fn: () => this.init('entorno')
 			}, {
 				name: 'Compartidas',
-				icon: 'share',
+				// icon: 'share',
 				fn: () => this.init('shared')
 			}
-		]: [{
+		] : [{
 				name: 'Empresa',
-				icon: 'domain',
+				// icon: 'domain',
 				fn: () => this.init('company')
 			}, {
 				name: 'Compartidas',
-				icon: 'share',
+				// icon: 'share',
 				fn: () => this.init('shared')
 			}
 		];

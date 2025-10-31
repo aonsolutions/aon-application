@@ -1,7 +1,7 @@
 @use '../variables' as v;
 
 #rootPanel {
-  aon-configuration, aon-office-panel{
+  aon-configuration, aon-office-panel, aon-user-panel{
     aon-new-user{
       aon-card aon-basic-table.table-security table{
         tr {
