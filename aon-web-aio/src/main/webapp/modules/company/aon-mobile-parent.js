@@ -134,7 +134,7 @@ export class AonMobileParent extends AonElement {
 		if(company.type === 'OFFICE') i.innerHTML = 'work';
 		else if(company.parent) i.innerHTML = 'apartment';
   		else if(company.shared) i.innerHTML = 'share';
-  		else if(!company.active) i.innerHTML = 'domain_disabled';
+  		else if(!company.active) i.innerHTML = 'building-off';
   		else i.innerHTML = 'business';
   		let span2 = this.createElement(TAG.SPAN);
   		span2.innerHTML = company.name;

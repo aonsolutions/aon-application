@@ -506,13 +506,14 @@ export class AonBooking extends AonElement {
 				icon.id = this.APP + app.app + 'Icon';
 				// icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 				icon.icon = app.symbol;
-				icon.style.color = color;
-//				icon.style.paddingTop = '5px';
-//				icon.style.paddingLeft = '4px';
+				icon.color = color;
+				// icon.style.color = color;
+				// icon.style.paddingTop = '5px';
+				// icon.style.paddingLeft = '4px';
 				span.appendChild(icon);
 			} else {
 				let img = document.createElement('img');
-//				img.style.width = '30px';
+				// img.style.width = '30px';
 				img.src = app.logo;
 				span.appendChild(img);
 			}

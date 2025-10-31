@@ -414,7 +414,11 @@ public class DiaryImport extends ImportUtils {
 			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", ae.getEntry().getEntryDate());
 			if(ap == null) { 
 				Integer year = AonDateUtils.getYear(ae.getEntry().getEntryDate());
-				ap = ACCOUNTING.save(domain.getName(), domain.getId(), "", new AccountPeriod()
+				Occam occam = new Occam()
+					.setDomainName( domain.getName() )
+					.setDomain(domain.getId())
+					.setUser("");
+				ap = ACCOUNTING.save(occam, new AccountPeriod()
 						.setDomain(domain.getId())
 						.setName(year.toString())
 						.setInitiationDate(AonDateUtils.getYearFirstDay(year))

@@ -293,6 +293,10 @@ export class AonNewInput extends AonElement {
       return this.getElement(this.ICON_BUTTON);
     }
 
+	getIcon(){
+   		return this.getElement(this.ICON);
+  	}
+	
 	addIconWithRemove(icon, color, removeFn) {
 		this.setAttribute("data-icon", "true");
 		let div = this.getElement(this.BOX);

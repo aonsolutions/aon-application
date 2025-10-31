@@ -372,13 +372,8 @@ const getAssignedHtml = (res, domainId) => {
     divOne.title = workgroupDescription;
     div.appendChild(divOne);
 
-    const icon = setStyles(document.createElement(TAG.I), {
-      fontSize: "17px",
-      lineHeight: "19px",
-    });
-
-    icon.className = CSS.MATERIAL_ICONS;
-    icon.innerText = MATERIAL_ICONS.PEOPLE_ALT;
+    const icon = new AonIcon();
+    icon.icon = MATERIAL_ICONS.PEOPLE_ALT;
     divOne.appendChild(icon);
   }
 
@@ -420,13 +415,8 @@ const getAssignedHtml = (res, domainId) => {
     divOne.title = "Sin asignar";
     div.appendChild(divOne);
 
-    const icon = setStyles(document.createElement(TAG.I), {
-      fontSize: "17px",
-      lineHeight: "19px",
-    });
-
-    icon.className = CSS.MATERIAL_ICONS;
-    icon.innerText = MATERIAL_ICONS.GROUP_OFF;
+    const icon = new AonIcon();
+    icon.icon = MATERIAL_ICONS.GROUP_OFF;
     divOne.appendChild(icon);
   }
 

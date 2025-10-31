@@ -1,7 +1,7 @@
 @use '../variables' as v;
 
 #rootPanel {
-  aon-configuration, aon-office-panel{
+  aon-configuration, aon-office-panel, aon-user-panel{
     aon-new-user{
       aon-card aon-basic-table.table-security table{
         tr {
@@ -66,6 +66,27 @@
               .remove-icon{
                 cursor: pointer;
               }
+            }
+          }
+        }
+      }
+    }
+    // no es un componente por lo que veo ahora mismo
+    aon-scope-simple-list{
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        li{
+          .aonLiSpan{
+            display: flex;
+            padding: v.$padding;
+            gap: v.$gap-min;
+            .aonListText{
+              width: v.$pct-100;
+            }
+            .remove-icon{
+              cursor: pointer;
             }
           }
         }

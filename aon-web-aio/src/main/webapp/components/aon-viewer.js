@@ -4,7 +4,6 @@ import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
 export class AonViewer extends AonElement {
-
 	_scale;
 	AON_IMG_DIV;
 	AON_TEXT_DIV;
@@ -12,6 +11,7 @@ export class AonViewer extends AonElement {
 	AON_CANVAS_DIV;
 	AON_CANVAS_IFRAME;
 	PDF;
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -88,10 +88,6 @@ export class AonViewer extends AonElement {
 		} catch ( err ) {
 			console.log(err);			
 		}
-		
-
-		
-
 
 		let div = this.createElement(TAG.DIV);
 		div.id = this.AON_VIEWER_DIV;
@@ -129,7 +125,7 @@ export class AonViewer extends AonElement {
 
 	buildButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
-		div.style.zIndex = "3";
+		// div.style.zIndex = "3";
 		div.style.visibility = 'hidden';
 		div.style.display = "flex";
 		div.style.flexDirection = "column";
@@ -142,7 +138,7 @@ export class AonViewer extends AonElement {
 		let aibm = new AonIconButton();
 		aibm.id = "aonViewerButtonsDivEmail";
 		aibm.icon = "email";
-		aibm.background = "#f1f1f1";
+		// aibm.background = "#f1f1f1";
 		aibm.addEventListener(EVENT.CLICK, () => {
 			this.dispatchEvent(new CustomEvent(EVENT.SEND_MAIL));
 		});
@@ -155,7 +151,7 @@ export class AonViewer extends AonElement {
 			let aibp = new AonIconButton();
 			aibp.id = "aonViewerButtonsDivPrint";
 			aibp.icon = "print";
-			aibp.background = "#f1f1f1";
+			// aibp.background = "#f1f1f1";
 			aibp.addEventListener(EVENT.CLICK, () => this.printDocument());
 			print.appendChild(aibp);
 			div.appendChild(print);
@@ -166,7 +162,7 @@ export class AonViewer extends AonElement {
 		let aibd = new AonIconButton();
 		aibd.id = "aonViewerButtonsDivDownload";
 		aibd.icon = "download";
-		aibd.background = "#f1f1f1";
+		// aibd.background = "#f1f1f1";
 		aibd.addEventListener(EVENT.CLICK, () => open(this.file));
 		download.appendChild(aibd)
 		div.appendChild(download);
@@ -178,7 +174,7 @@ export class AonViewer extends AonElement {
 			let aiba = new AonIconButton();
 			aiba.id = "aonViewerButtonsDivAjustar";
 			aiba.icon = "zoom_out_map";
-			aiba.background = "#f1f1f1";
+			// aiba.background = "#f1f1f1";
 			aiba.addEventListener(EVENT.CLICK, () => {
 				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = 1;
@@ -192,7 +188,7 @@ export class AonViewer extends AonElement {
 			let aibz = new AonIconButton();
 			aibz.id = "aonViewerButtonsDivZoomPlus";
 			aibz.icon = "zoom_in";
-			aibz.background = "#f1f1f1";
+			// aibz.background = "#f1f1f1";
 			aibz.addEventListener(EVENT.CLICK, () => {
 				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = this._scale - 0.25;
@@ -205,7 +201,7 @@ export class AonViewer extends AonElement {
 			let aibzm = new AonIconButton();
 			aibzm.id = "aonViewerButtonsDivZoomMinus";
 			aibzm.icon = "zoom_out";
-			aibzm.background = "#f1f1f1";
+			// aibzm.background = "#f1f1f1";
 			aibzm.addEventListener(EVENT.CLICK, () => {
 				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = this._scale + 0.25;
@@ -448,8 +444,7 @@ export class AonViewer extends AonElement {
 									}
 								}));
 							})
-							.catch( err => console.log('Error rendering text layer : ' + err ))
-							;
+							.catch( err => console.log('Error rendering text layer : ' + err ));
 						});
 			
 					});

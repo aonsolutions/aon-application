@@ -28,6 +28,7 @@ export class AonNewDate extends AonNewInput {
     this.build();
     this.buildDate();
     this.buildDatepicker();
+    this.observeInputDisabled();
   }
 
   initialize() {
@@ -389,13 +390,13 @@ export class AonNewDate extends AonNewInput {
   openDatepicker() {
     const datePicker = this.getElement(this.DATEPICKER);
     if(datePicker){
-      if(!this.isReadonly()) {
+      if (!this.isReadonly() && !this.hasAttribute('disabled')) {
         this.buildCalendar();
         datePicker.classList.add('is-visible');
       }
-      if(this.isMobile()){
-        datePicker.classList.add('is-mobile');
-      }
+      // if(this.isMobile()){
+      //   datePicker.classList.add('is-mobile');
+      // }
     }
   }
 
@@ -417,8 +418,7 @@ export class AonNewDate extends AonNewInput {
   setDate(date) {
     let input = this.getElement(this.INPUT);
     if ( date ) {
-      this.date = (date instanceof Date)
-        ? date : AonDateUtils.parse(date);
+      this.date = (date instanceof Date) ? date : AonDateUtils.parse(date);
       if (input)
         input.value = AonDateUtils.formatDate(this.date, '/');
     } else {
@@ -595,6 +595,43 @@ export class AonNewDate extends AonNewInput {
       yearPicker.classList.remove('hidden');
       yearPicker.innerHTML = this.year;
       this.activePicker = '';
+    }
+  }
+
+  observeInputDisabled() {
+    const input = this.getElement(this.INPUT);
+    if (!input) return;
+
+    // Crear observador para cambios de atributo
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'disabled') {
+          const isDisabled = input.disabled;
+          this.syncDisabledState(isDisabled);
+        }
+      }
+    });
+
+    observer.observe(input, { attributes: true });
+  }
+
+  syncDisabledState(isDisabled) {
+    if (isDisabled) {
+      this.setAttribute('disabled', 'true');
+      this.classList.add('aon-disabled');
+    } else {
+      this.removeAttribute('disabled');
+      this.classList.remove('aon-disabled');
+    }
+  }
+  static get observedAttributes() {
+    return ['disabled'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'disabled') {
+      const input = this.getElement(this.INPUT);
+      if (input) input.disabled = newValue !== null;
     }
   }
 

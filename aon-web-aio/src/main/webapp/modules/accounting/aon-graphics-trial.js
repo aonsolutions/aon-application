@@ -200,10 +200,10 @@ export class AonGraphicsTrial extends AonElement {
 
     const id = "chart_div";
 
-    const iframeId = this.id+ "Iframe";
+    const iframeId = this.id + "Iframe";
     let aonIframe = this.getElement(iframeId);
-    if(!aonIframe){
-      aonIframe =  new AonIframe();
+    if (!aonIframe) {
+      aonIframe = new AonIframe();
       aonIframe.id = iframeId;
       aonIframe.style.height = "100%";
       aonIframe.style.width = "100%";
@@ -222,15 +222,35 @@ export class AonGraphicsTrial extends AonElement {
       let div = this.createElement(TAG.DIV);
       div.innerHTML = "";
       div.id = id;
+
+      let toolbar = document.getElementById("aonGraphicsTrialToolbar");
+      let toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
+      let availableHeight = window.innerHeight - toolbarHeight;
+
+      aonIframe.style.display = "block";
+      aonIframe.style.width = "100%";
+      aonIframe.style.height = availableHeight + "px";
+
+      const innerIframe = aonIframe.querySelector("iframe");
+      if (innerIframe) {
+        innerIframe.style.height = "100%";
+        innerIframe.style.width = "100%";
+      }
+
       div.style.textAlign = "center";
       div.style.display = "flex";
+      div.style.flexDirection = "column";
       div.style.justifyContent = "center";
-      div.style.flexWrap = "wrap";
+      div.style.alignItems = "center";
+      div.style.flexWrap = "nowrap";
       div.style.height = "100%";
       div.style.width = "100%";
-      div.style.alignItems = "center";
+      div.style.minHeight = availableHeight + "px";
       div.style.position = "relative";
+      div.style.overflow = "visible";
+      div.style.boxSizing = "border-box";
       div.className = CSS.MATERIAL_SCROLL;
+
       aonIframe.addContent(div);
       if(!this.selectedPeriod){
         this.selectedPeriod = this.PERIODS[0];
@@ -269,7 +289,6 @@ export class AonGraphicsTrial extends AonElement {
     }
    
     this.filter.show = showFilter;
-    this.getElement("show").value = showFilter;
 
     AccoutingChart.colChart(
       parent,
