@@ -27,6 +27,7 @@ export class AonModelMatrixCard extends AonElement {
 
 	fixGwtPopups(gwtIFrame) {
 		const gwtDocument = gwtIFrame.document || gwtIFrame.contentDocument || gwtIFrame.contentWindow.document;
+    /*
         // LIMPIAR CSS CARGADO
         gwtDocument.querySelectorAll('link[rel="stylesheet"], style').forEach(el => el.remove());
         // LIMPIAR ETIQUETA - STYLE - CARGADO | IFRAME
@@ -48,35 +49,35 @@ export class AonModelMatrixCard extends AonElement {
               gwtDocument.head.appendChild(link);
             }
           });
-
+    */
 		// Create an observer instance linked to the callback function
 		const observer = new MutationObserver((records, observer) => {
 			for (const record of records) {
 				for (const addedNode of record.addedNodes) {
-                  // Si se añade un <style>, lo eliminamos inmediatamente
-                  if (
-                    (addedNode.tagName === 'LINK' && addedNode.rel === 'stylesheet' && !addedNode.hasAttribute('data-preserve')) 
-                    || addedNode.tagName === 'STYLE'
-                  ) {
-                      addedNode.remove();
-                  }
-                  
-                  if (addedNode.className == 'gwt-PopupPanelGlass') {
-//                      gwtIFrame.style.top = '0px';
-//                      gwtIFrame.style.left = '0px';
-//                      gwtIFrame.style.zIndex = '999';
-//                      gwtIFrame.style.position = 'fixed';
-//                      gwtIFrame.style.width = `calc(100vw)`;
-//                      gwtIFrame.style.height = `calc(100vh)`;
-                  } else if (addedNode.className == 'gwt-PopupPanel') {
-                      if (gwtDocument.getElementsByClassName('gwt-PopupPanel').item(0) == addedNode ) {
-                          // If the added node is the first gwt-PopupPanel, we need to adjust its size.
-                          const gwtPopupPanel = addedNode;
-                          const gwtPopupContent = gwtPopupPanel.firstChild;
-//                          gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
-//                          gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
-                      }
-                  }
+          // Si se aï¿½ade un <style>, lo eliminamos inmediatamente
+          // if (
+          //   (addedNode.tagName === 'LINK' && addedNode.rel === 'stylesheet' && !addedNode.hasAttribute('data-preserve')) 
+          //   || addedNode.tagName === 'STYLE'
+          // ) {
+          //     addedNode.remove();
+          // }
+          
+          if (addedNode.className == 'gwt-PopupPanelGlass') {
+            // gwtIFrame.style.top = '0px';
+            // gwtIFrame.style.left = '0px';
+            // gwtIFrame.style.zIndex = '999';
+            // gwtIFrame.style.position = 'fixed';
+            // gwtIFrame.style.width = `calc(100vw)`;
+            // gwtIFrame.style.height = `calc(100vh)`;
+          } else if (addedNode.className == 'gwt-PopupPanel') {
+              if (gwtDocument.getElementsByClassName('gwt-PopupPanel').item(0) == addedNode ) {
+                // If the added node is the first gwt-PopupPanel, we need to adjust its size.
+                const gwtPopupPanel = addedNode;
+                const gwtPopupContent = gwtPopupPanel.firstChild;
+                // gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
+                // gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
+              }
+          }
 				}
 				for (const removedNode of record.removedNodes) {
 					if (removedNode.className == 'gwt-PopupPanelGlass') {

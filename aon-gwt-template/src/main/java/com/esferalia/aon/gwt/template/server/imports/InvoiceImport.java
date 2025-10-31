@@ -636,6 +636,9 @@ public class InvoiceImport extends ImportUtils{
 		try {
 			validate(ivs.get(i));
 			AccountingInvoice ai = new AccountingInvoice();
+			if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
+				throw new Exception("No existe ningún centro de trabajo.");
+			}
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 			RegistryAddress address = buildAddress(aonCtx, domain, ivs.get(i));
@@ -979,6 +982,9 @@ public class InvoiceImport extends ImportUtils{
 			}
 			
 			AccountingInvoice ai = new AccountingInvoice();
+			if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
+				throw new Exception("No existe ningún centro de trabajo.");
+			}
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 			Invoice invoice = new Invoice();

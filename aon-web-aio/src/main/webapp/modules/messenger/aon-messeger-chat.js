@@ -266,6 +266,11 @@ export class AonMessengerChat extends AonElement {
     this.getApplication().startLoading();
     this.autoCompleteTask();
 
+
+console.log('  asdasd asd asd asd asd    ')
+console.log(this.task.getSource() === TASK_SOURCE.REQUEST)
+
+
     try {
       if(this.task.getSource() === TASK_SOURCE.REQUEST){
         await this.saveSourceRequest();
@@ -288,17 +293,21 @@ export class AonMessengerChat extends AonElement {
   }
 
   async saveSourceRequest(){
-      const json = this.getFormJson();
-      if(json){
-        this.task.setDescriptionJson(json);
-        const data = await saveTask(this.task);
-        this.task.editTask(data);
-        if(this.getData().id){
-          this.setData(data);
-        } else {
-          this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-        }
+    const json = this.getFormJson();
+
+console.log(json)
+
+
+    if(json){
+      this.task.setDescriptionJson(json);
+      const data = await saveTask(this.task);
+      this.task.editTask(data);
+      if(this.getData().id){
+        this.setData(data);
+      } else {
+        this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
+    }
   }
 
   async saveSourceQuery(){
@@ -432,6 +441,11 @@ export class AonMessengerChat extends AonElement {
     if(processType){
       this.task.title = processType.getText();
       const type = processType.value;
+
+
+console.log('getFormJson -------------------------------');
+console.log(type);
+
       if("1" === type){
         json = FormVacation.getFormJson();
       } else if("2" === type){

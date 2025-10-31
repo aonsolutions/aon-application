@@ -31,13 +31,13 @@ import { TaskCreationUtils } from "../utils/TaskCreationUtils.js";
 
 /**
  * 
- * @returns json form vacacion json
+ * @returns json form json
  */
  const getFormJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
     if(form){
         const formSerialize = serializeForm(form);
-        let observation = form.querySelector("#observation").innerText;
+        let observation = form.querySelector("#observation textarea")?.value.trim() ?? '';
         return { ...formSerialize, observation };
     }
     return null;

@@ -468,7 +468,7 @@ export class AonNewLogin extends AonElement {
     let loader = this.getElement("aonLoginLoader");
     loader.style.display = "";
     loader.start();
-    (this.useJaas()?signin:login)(data)
+    signin(data)
       .then(() => {
         // document.body.style.background = 'transparent';
         loader.stop();

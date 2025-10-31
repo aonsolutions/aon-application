@@ -62,19 +62,25 @@
   $gradient-turquoise-size       : $loginbutton-background-size;
   $gradient-turquoise-position   : $loginbutton-backgorund-position;
   $gradient-turquoise-transition : background v.$t-01 ease;
-  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-turquoise-hover-background-size : $loginbutton-hover-background-size;
 
   $gradient-blue-background : linear-gradient(to right, $color-corp-blue, $color-corp-blue, $color-grad-max, $color-grad-min);
   $gradient-blue-size       : $loginbutton-background-size;
   $gradient-blue-position   : $loginbutton-backgorund-position;
   $gradient-blue-transition : background v.$t-01 ease;
-  $gradient-blue-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-blue-hover-background-size : $loginbutton-hover-background-size;
+  
+  $gradient-orange-background : linear-gradient(to right,$color-corp-orange, $color-corp-orange, $color-grad-max, $color-grad-min);
+  $gradient-orange-size       : $loginbutton-background-size;
+  $gradient-orange-position   : $loginbutton-backgorund-position;
+  $gradient-orange-transition : background v.$t-01 ease;
+  $gradient-orange-hover-background-size : $loginbutton-hover-background-size;
   
   $gradient-box-background : linear-gradient(to right, $color-box, $color-box, $color-grad-max, $color-grad-min);
   $gradient-box-size       : $loginbutton-background-size;
   $gradient-box-position   : $loginbutton-backgorund-position;
   $gradient-box-transition : background v.$t-01 ease;
-  $gradient-box-hover-background-size : $loginbutton-hover-background-size;  
+  $gradient-box-hover-background-size : $loginbutton-hover-background-size;
   
   $iconbutton-hover-background-color : transparent;
 
@@ -264,6 +270,9 @@
     aon-icon {
       &::after {
         background-color: $color-text;
+      }
+      &[color="lightgray"] {
+        color: $color-text-placeholder;
       }
     }
     // Mensaje de info
@@ -485,10 +494,10 @@
       border            : $button-border;
       &:hover{
         background-color : $color-500;
-      }      
-      aon-icon-button aon-icon {
+      }
+      aon-icon-button aon-icon{
         &::after {
-          background-color : $color-300;
+          background-color : $color-text-button;
         }
       }
       &.aonButton{
@@ -518,8 +527,9 @@
         }
       }
       &.aonIconButton{
-        background-color   : $color-600;
-        color              : $color-300;
+        // es demasiado globaly
+        background-color   : transparent;
+        color              : $color-text;
         &:hover{
           background-color : $iconbutton-hover-background-color;
         }
@@ -533,19 +543,36 @@
         }
       }
     }
+    // Controlando los colores
+    aon-button{
+      // color orange
+      &.color-orange button{
+        background            : $gradient-orange-background;
+        background-size       : $gradient-orange-size;
+        background-position   : $gradient-orange-position;
+        transition            : $gradient-orange-transition;
+        box-shadow            : $box-shadow-dialog;
+        &:hover{
+          background-position : $gradient-orange-hover-background-size ;
+        }
+      }
+    }
     // Input
-    aon-input, aon-new-input, aon-new-number, aon-new-suggestion,
+    aon-input, aon-new-input, aon-new-number, aon-new-suggestion, aon-email,
     aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity,
-    aon-autosize-textarea{
+    aon-autosize-textarea, textarea{
       .aonInputMsg{
         .aonInputMsgError{
           color: $color-red-500;
         }
       }
       aon-icon-button{
-        aon-icon {
-          &::after {
-            background-color: $color-300;
+        button.aonIconButton{
+          color: $color-300;
+          aon-icon {
+            &::after {
+              background-color: $color-300;
+            }
           }
         }
         .aon-spinner-input-loading{
@@ -815,6 +842,21 @@
     aon-upload-toast{
       box-shadow: $box-shadow-dialog;
     }
+    // Visualizador de documentos
+    aon-viewer{
+      #aonViewerButtonsDiv{
+        aon-icon-button{
+          button{
+            background-color  : $color-900;
+            color             : $color-text-button;
+            border            : $button-border;
+            &:hover{
+              background-color : $color-500;
+            }
+          }
+        }
+      }
+    }
   // 
   // Pages
   // 
@@ -972,6 +1014,13 @@
             }
           }
         }
+        aon-invoice{
+          #aonInvoiceSheetDataComments{
+            aon-card, ul, .aonCardContent{
+              color: $color-0;
+            }
+          }
+        }
       // FIN aon-invoice-home
     }
     // Notificaciones
@@ -1037,11 +1086,6 @@
         border: $border;
         li{
           border-bottom: $border;
-          aon-icon{
-            &[color="lightgray"] {
-              color: $color-text-placeholder;
-            }
-          }
         }
       }
     }
@@ -1049,7 +1093,7 @@
     //
     //
     // Vistas mezcladas se repite codigo en muchos lados y no se diferencian bien
-    aon-configuration, aon-office-panel{
+    aon-configuration, aon-office-panel, aon-user-panel{
       aon-workgroup{
         #aonWorkgroupUsers, #aonWorkgroupListUsers{
           border-left: $border;
@@ -1060,6 +1104,13 @@
             li{
               border-bottom: $border;
             }
+          }
+        }
+      }
+      aon-scope-simple-list{
+        ul {
+          li{
+            border-bottom: $border;
           }
         }
       }

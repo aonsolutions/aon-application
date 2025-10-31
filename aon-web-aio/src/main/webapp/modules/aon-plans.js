@@ -1,13 +1,11 @@
 import {AonElement} from '../components/AonElement.js';
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
-import { AonIcon } from '../components/aon-icon';
+import { MSG, EVENT, TAG } from '../environments/environments.js';
 import { AonCard } from '../components/aon-card';
 import { AonApplication } from '../components/aon-application.js';
-import * as LS from '../services/localStorageService.js';
-import { getContratado, getDomainUserRoles, sendFormData } from '../services/companyService.js';
+import { getDomainUserRoles, sendFormData } from '../services/companyService.js';
 import { getAuth } from '../services/authService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
-
+import * as GWT from '../gwt/gwt.js';
 export class AonPlans extends AonElement {
   dur;
   plans = [
@@ -63,50 +61,55 @@ export class AonPlans extends AonElement {
   }
 
   build() {
-    // Titulo
-    const tittleDiv = this.createElement(TAG.DIV);
-    tittleDiv.className = "title-plans";
-
-    const titleH2 = this.createElement(TAG.H2);
-    titleH2.innerHTML = "Mejora tu plan. Impulsa tu negocio.";
-    tittleDiv.appendChild(titleH2);
-
-    //Subtitulo
-    const subtitleP = this.createElement(TAG.DIV);
-    subtitleP.textContent = "Olvídate de invertir en recursos externos para aumentar tu productividad. Nuestro software tiene todo lo que necesitas en un único lugar ¡Descúbrelo!";
-    tittleDiv.appendChild(subtitleP);
-    this.applicationEl.addContent(tittleDiv);
-
-    // Contenedor de las 4 cards
-    const plansGrid = this.createElement(TAG.DIV);
-    plansGrid.classList.add("plansGrid");
-    getContratado({}).then(response => {
-        const userLevel = this.getUserPlanLevel(response);
-        this.plans.forEach((plan, index) => {
-          this.buildPlanCard(plan, index, userLevel, plansGrid);
+    if(this.getDur().isTrial() || this.getDur().hasBeenTrial()){
+      // Autocontratacion
+      GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE)
+    } else {
+      // Titulo
+      const tittleDiv = this.createElement(TAG.DIV);
+      tittleDiv.className = "title-plans";
+  
+      const titleH2 = this.createElement(TAG.H2);
+      titleH2.innerHTML = "Mejora tu plan. Impulsa tu negocio.";
+      tittleDiv.appendChild(titleH2);
+  
+      //Subtitulo
+      const subtitleP = this.createElement(TAG.DIV);
+      subtitleP.textContent = "Olvídate de invertir en recursos externos para aumentar tu productividad. Nuestro software tiene todo lo que necesitas en un único lugar ¡Descúbrelo!";
+      tittleDiv.appendChild(subtitleP);
+      this.applicationEl.addContent(tittleDiv);
+  
+      // Contenedor de las 4 cards
+      const plansGrid = this.createElement(TAG.DIV);
+      plansGrid.classList.add("plansGrid");
+      // getContratado({}).then(response => {
+      //     const userLevel = this.getUserPlanLevel(response);
+      //     this.plans.forEach((plan, index) => {
+      //       this.buildPlanCard(plan, index, userLevel, plansGrid);
+      //     });
+      // });
+      // this.applicationEl.addContent(plansGrid);
+  
+      // Contenedor de la card de usuarios
+      const cardAddUsers      = new AonCard;
+      cardAddUsers.className  = "plansFooter";
+      cardAddUsers.title      = "¿Necesitas añadir usuarios?";
+      // Agregamos la card
+      this.applicationEl.addContent(cardAddUsers);
+        // Adjuntamos datos a la card
+        const usersDesc = this.createElement(TAG.DIV);
+        usersDesc.textContent = `Para utilizar de forma simultánea este software con otras personas, necesitas varios usuarios. Cada usuario dispondrá de un acceso individual a las funcionalidades contratadas.`;
+        cardAddUsers.addContent(usersDesc);
+  
+        // Adjuntamos boton a la card
+        const usersButton = this.createElement(TAG.BUTTON);
+        usersButton.classList.add("planButton");
+        usersButton.textContent = "AÑADE USUARIOS";
+        usersButton.addEventListener(EVENT.CLICK, () => {
+            this.sendDataforPlan("Añadir usuarios");
         });
-    });
-    this.applicationEl.addContent(plansGrid);
-
-    // Contenedor de la card de usuarios
-    const cardAddUsers      = new AonCard;
-    cardAddUsers.className  = "plansFooter";
-    cardAddUsers.title      = "¿Necesitas añadir usuarios?";
-    // Agregamos la card
-    this.applicationEl.addContent(cardAddUsers);
-      // Adjuntamos datos a la card
-      const usersDesc = this.createElement(TAG.DIV);
-      usersDesc.textContent = `Para utilizar de forma simultánea este software con otras personas, necesitas varios usuarios. Cada usuario dispondrá de un acceso individual a las funcionalidades contratadas.`;
-      cardAddUsers.addContent(usersDesc);
-
-      // Adjuntamos boton a la card
-      const usersButton = this.createElement(TAG.BUTTON);
-      usersButton.classList.add("planButton");
-      usersButton.textContent = "AÑADE USUARIOS";
-      usersButton.addEventListener(EVENT.CLICK, () => {
-          this.sendDataforPlan("Añadir usuarios");
-      });
-      cardAddUsers.addContent(usersButton);
+        cardAddUsers.addContent(usersButton);
+    }
   }
 
   buildPlanCard(plan, index, userLevel, plansGrid) {

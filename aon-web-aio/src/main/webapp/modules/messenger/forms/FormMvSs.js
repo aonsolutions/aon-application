@@ -12,6 +12,9 @@ import { CreateComponent } from "../../../components/CreateComponent.js";
  * @param {Object} data 
  */
 const createDataEnterprise = (form, data) => {
+    const regime = CreateComponent.createAonInput({
+        attributes:{ id:"regime", name:"regime", visible:CONSTANT.FALSE }
+    }, form);
 
     let ctaCti = CreateComponent.createAonSelect({
         attributes:{ title: "Cuenta de cotización", id:"ctaCti", name:"ctaCti"},
@@ -23,10 +26,6 @@ const createDataEnterprise = (form, data) => {
     })
     TaskCreationUtils.createDivGrid(form, ctaCti, {classes:[CSS.AON_COL_XS_12]})
     fillCtaCti(ctaCti, data);
-
-    CreateComponent.createAonInput({
-        attributes:{ id:"regime", name:"regime", visible:CONSTANT.FALSE }
-    }, form);
 }
 
 /**
@@ -396,7 +395,6 @@ const fillRlce = (aonSelect, rlce) => {
     });
 }
 
-
 const calculoCoef = ({value}) =>  {
     if(value){
         let horas_convenio = value === 1 ? 40 : 8;
@@ -409,7 +407,6 @@ const calculoCoef = ({value}) =>  {
         document.getElementById('coef').value = coef;
     }
 }
-
 
 const processAccept = async (aonMessengerChat) => {
     let application = aonMessengerChat.getApplication();
@@ -503,7 +500,7 @@ const createForm = (task, card) =>{
 
 /**
  * 
- * @returns json form vacacion json
+ * @returns json form json
  */
  const getFormJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
@@ -512,7 +509,7 @@ const createForm = (task, card) =>{
         if(formSerialize.domain && typeof formSerialize.domain === 'string'){
             formSerialize.domain = JSON.parse(formSerialize.domain);
         }
-        let observation = form.querySelector("#observation").innerText;
+        let observation = form.querySelector("#observation textarea")?.value.trim() ?? '';
         return { ...formSerialize, observation };
     }
     return null;

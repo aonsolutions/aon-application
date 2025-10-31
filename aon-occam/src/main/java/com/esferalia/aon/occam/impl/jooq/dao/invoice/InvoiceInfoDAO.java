@@ -4,15 +4,18 @@ import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Timestamp;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -29,6 +32,8 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceInfoDAO {
+	
+	private static final String TBAIURL = "tbaiUrl";
 	
 	private InvoiceInfoDAO() {
 	
@@ -69,8 +74,36 @@ public class InvoiceInfoDAO {
 				 () -> new EnumMap<InvoiceCommunicationType,InvoiceInfo>(InvoiceCommunicationType.class)
 				,(m, v) -> m.put(v.getType(), v)
 				,Map::putAll
-			)
-		;
+			);
+		
+		if(icc.isTbai() && !icc.isBizkaia()) {
+			DataResponseSource drs = icc.isTbaiTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+			if(!enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
+				List<Boolean> list =  DataResponseDAO.getStream(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getSourceProperty().eq(drs.value())).and(f.getSourceIdProperty().eq(invoiceId)))
+						.map(r -> "ok".equalsIgnoreCase(r.getCode()))
+						.collect(Collectors.toList());
+				if(!list.isEmpty()) {
+					InvoiceCommunicationStatus status = list.stream().filter(f -> f)
+						.map(r -> InvoiceCommunicationStatus.ACCEPTED)
+						.findFirst()
+						.orElse(InvoiceCommunicationStatus.WRONG);
+					InvoiceInfo invoiceInfo = new InvoiceInfo()
+							.setDomain(domainId)
+							.setInvoice(invoiceId)
+							.setType(InvoiceCommunicationType.TBAI)
+							.setStatus(status);
+					save(ctx, invoiceInfo);
+					enumMap.put(InvoiceCommunicationType.TBAI, invoiceInfo);					
+				}	
+ 			}
+			if(enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
+				String url = InvoiceDataDAO.get(ctx, domainId, invoiceId, InvoiceDataName.TBAI_URL)
+						.map(InvoiceData::getValue)
+						.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, drs, TBAIURL)).orElse(null);
+				enumMap.get(InvoiceCommunicationType.TBAI).setCheckUrl(url);	 
+			}
+		}
+		
 		if (icc != null) {
 			AonCollectionUtils.stream(icc.getTypes())
 				.forEach( t -> enumMap.computeIfAbsent(t, 
@@ -93,6 +126,7 @@ public class InvoiceInfoDAO {
 				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
 			}
 		}
+		
 		// ---------------------------------------------------------------------------------------
 		
 		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();

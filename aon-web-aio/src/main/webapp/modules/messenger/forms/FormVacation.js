@@ -72,15 +72,21 @@ import { TaskCreationUtils } from "../utils/TaskCreationUtils.js";
  */
  const getFormJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
-    if(form){
-        let observation = form.querySelector("#observation").innerText;
+
+
+console.log('Vacation (getFormJson) *****')
+console.log(form)
+
+if(form){
+    let observation = form.querySelector("#observation textarea")?.value.trim() ?? '';
+    console.log(observation)
         //DATES
         let dates = [];
         [...form.querySelectorAll("table tr")].map(tr=>{
             const startDate = tr.querySelector("[id*=startDate]");
             const endDate = tr.querySelector("[id*=endDate]");
-            if(startDate && endDate && startDate.value && endDate.value){
-                dates.push({startDate: startDate.value, endDate: endDate.value});
+            if(startDate && endDate && startDate.date && endDate.date){
+                dates.push({startDate: startDate.getDateValue(), endDate: endDate.getDateValue()});
             }
         })
 
@@ -107,7 +113,8 @@ const addDates = (table, i, data={}) =>{
     });
 
     table.addCell(startDate);
-    startDate.value = data.startDate || AonDateUtils.formatDateOrigin(new Date());
+    const startDateDate = data.startDate || new Date();
+    startDate.setDate(startDateDate);
 
     //DATE END
     let endDate = setAttributes(new AonNewDate(),{
@@ -116,7 +123,10 @@ const addDates = (table, i, data={}) =>{
     });
 
     table.addCell(endDate);
-    if(data.endDate) endDate.value = data.endDate;
+    if(data.endDate){
+        const endtDateDate = data.endDate;
+        endDate.setDate(endtDateDate);
+    }
 
     // ----- BUTTON DELETE
     let dataDelete = setAttributes(new AonIconButton(),{

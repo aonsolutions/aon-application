@@ -40,7 +40,7 @@ const buildDialogAdd = (idForm) =>{
       attributes:{
         name:"email",
         id:"email",
-        description:MSG.EMAIL,
+        title:MSG.EMAIL,
         type:"text",
         hidden:true
       }

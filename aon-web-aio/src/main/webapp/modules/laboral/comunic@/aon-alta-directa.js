@@ -155,6 +155,9 @@ export class AonAltaDirecta extends AonElement {
         let nss = this.getElement(`${this.id}Nss`);
         nss.addEventListener(EVENT.CHANGE, ({ target }) =>  this.comprobarNss(target.value));
 
+        this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.resetFields());
+
+
         let contractEl = this.querySelector('#contract');
         if(contractEl){
             contractEl.addEventListener(EVENT.CHANGE, (ev) =>this.selectTypeContract(ev));
@@ -171,19 +174,20 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('horas').addEventListener(EVENT.CHANGE, () => this.calculoCoef());
 
         this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
-            let div_apellidos = this.getElement('div_apellidos');
-            let dni = this.getElement(`${this.id}Dni`);
-            nss.disabled = target.checked;
-            dni.disabled = !target.checked;
+            const div_apellidos = this.getElement('div_apellidos');
+            const dni = this.getElement(`${this.id}Dni`);
+            const nss = this.getElement(`${this.id}Nss`);
+            nss.setDisabled(target.checked);
+            dni.setDisabled(!target.checked);
+
             dni.value = nss.value = "";
-            div_apellidos.hidden = target.checked;
+
             div_apellidos.hidden = !target.checked;
-            nss.removeIcon();
         });
 
         this.getElement('coef').addEventListener(EVENT.CHANGE, () => this.calculoHoras());
 
-        this.getElement('apellido2IconLabel').addEventListener(EVENT.CLICK, () => this.getNaf());
+        this.getElement(`apellido2IconButtonAonIcon`).addEventListener(EVENT.CLICK, () => this.getNaf());
 
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
 
@@ -403,6 +407,7 @@ export class AonAltaDirecta extends AonElement {
             try {
                 const { cccs } = detail;
                 let ctaCti = this.getElement('ctaCti');
+                ctaCti.setDisabled(false);
                 let options = cccs
                 .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
                 ctaCti.setOptions(options);
@@ -551,7 +556,6 @@ export class AonAltaDirecta extends AonElement {
             dni.value = name.value = "";
             if (mod < 10) mod = '0' + mod;
             if (value.length > 11 && mod == last_nss) {
-                nss_sugges.removeIcon();
                 nss_sugges.loading(true);
                 await this.getIpf(value);
                 nss_sugges.loading(false);
@@ -697,7 +701,7 @@ export class AonAltaDirecta extends AonElement {
             try {
                 const resp = await getNafxipf(contrato);
                 if (resp) {
-                    nss_sugges.value = resp.nss;
+                    nss_sugges.setValue(resp.nss);
                     setValueName('name', resp.name);
                     this.disabledCardTrabajor(true);
                 }
@@ -724,6 +728,37 @@ export class AonAltaDirecta extends AonElement {
             this.getElement(`name`).disabled = true;
         }
     }
+    resetFields() {
+        const nss = this.getElement(`${this.id}Nss`);
+        const dni = this.getElement(`${this.id}Dni`);
+        const name = this.getElement(`name`);
+        const divApellidos = this.getElement('div_apellidos');
+        const apellido1 = this.getElement('apellido1');
+        const apellido2 = this.getElement('apellido2');
+        const switchDni = this.getElement('switchDni');
+        const divReiniciar = this.getElement(`${this.id}Reiniciar`);
+
+        nss?.setValue('');
+        dni?.setValue('');
+        name?.setValue('');
+        apellido1?.setValue('');
+        apellido2?.setValue('');
+
+        nss?.setDisabled(false);  
+        dni?.setDisabled(true);   
+        name?.setDisabled(true);  
+        if (divApellidos) divApellidos.hidden = true;
+
+        if (switchDni) {
+            switchDni.hidden = false;
+            switchDni.checked = false;
+        }
+
+        if (divReiniciar) {
+            divReiniciar.hidden = true;
+        }
+    }
+
 
     openDialogBaja(){
         let application = this.getApplication();
