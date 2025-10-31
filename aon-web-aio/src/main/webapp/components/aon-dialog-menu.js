@@ -45,7 +45,8 @@ export class AonDialogMenu extends AonElement {
   	}
 
 	initialize() {
-      this.id = this.id || "aonDialogMenu";
+      const id = this.id || `aonDialogMenu-${generateSimpleUUID()}`;
+      this.id = id;
       this.DIALOG = this.id + 'DialogMenu';
       this.CONTENT = this.DIALOG + 'Content';
       this.LIST = this.DIALOG + 'List';

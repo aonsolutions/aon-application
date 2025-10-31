@@ -92,7 +92,8 @@ export class AonColor extends AonElement {
 	}
 
   initialize() {
-    this.id = this.id || 'aonColor';
+    const id = this.id || `aonColor-${generateSimpleUUID()}`;
+    this.id = id;
 		this.INPUT = this.id + CONSTANT.INPUT.initCap();
 		this.TITLE = this.id + CONSTANT.TITLE.initCap();
   }

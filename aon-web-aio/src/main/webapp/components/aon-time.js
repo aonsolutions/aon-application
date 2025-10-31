@@ -257,7 +257,8 @@ export class AonTime extends AonElement {
     }
     
     initialize() {
-        this.id = this.id || Math.random().toString(36).substring(7);
+        const id = this.id || `aonTime-${generateSimpleUUID()}`;
+        this.id = id;
         this.HOUR_INPUT_ID = this.id + "HourInput";
         this.MINUTE_INPUT_ID = this.id + "MinuteInput";
     }

@@ -32,7 +32,8 @@ export class AonSimpleList extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonUserSimpletList";
+    const id = this.id || `aonUserSimpleList-${generateSimpleUUID()}`;
+    this.id = id;
     this.UL = this.id + "UL";
     this.filter = this.filter || {};
   }

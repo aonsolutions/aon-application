@@ -23,7 +23,8 @@ export class AonTab extends AonElement {
     }
 
     initialize() {
-        this.id       = this.id || 'aonTab';
+        const id      = this.id || `aonTab-${generateSimpleUUID()}`;
+        this.id       = id;
         this.TAB      = this.id + "Div";
         this.selected = 0;
     }

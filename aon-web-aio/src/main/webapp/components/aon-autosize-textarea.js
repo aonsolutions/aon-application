@@ -104,7 +104,8 @@ export class AonAutosizeTextarea extends AonElement {
         this.detailColor = "darkgray";
         this.mainColor = "transparent";
         
-        this.id = this.id || Math.random().toString(36).substring(7);
+        const id = this.id || `aonAutosizeTextarea-${generateSimpleUUID()}`;
+        this.id = id;
         this.TEXTAREA_ID = this.id + "Textarea";
         this.TITLE_BAR_ID = this.id + "TitleBar";
 

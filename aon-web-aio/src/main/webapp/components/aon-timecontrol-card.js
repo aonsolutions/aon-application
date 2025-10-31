@@ -11,7 +11,8 @@ export class AonTimeControlCard extends AonCard {
 	constructor () {
 		super();
 		this.setApp(Apps.TIMECONTROL);
-		this.id = CONSTANT.TIMECONTROL;
+		const id = this.id || `${CONSTANT.TIMECONTROL}-${generateSimpleUUID()}`;
+    	this.id = id;
 		this.message = MSG.TIMECONTROL;
 		this.classList.add(CSS.AON_DASHBOARD_CARD);
 	}

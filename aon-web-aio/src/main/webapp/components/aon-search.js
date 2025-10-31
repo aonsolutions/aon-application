@@ -71,7 +71,8 @@ export class AonSearch extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || CONSTANT.AON_SEARCH;
+		const id = this.id || `${CONSTANT.AON_SEARCH}-${generateSimpleUUID()}`;
+		this.id = id;
 		this.SEARCH_BUTTON = this.id + CONSTANT.SEARCH_BUTTON.initCap();
 		this.SEARCH_INPUT = this.id + CONSTANT.SEARCH_INPUT.initCap();
 		this.ADVANCED_BUTTON = this.id + CONSTANT.ADVANCED_BUTTON.initCap();

@@ -40,7 +40,8 @@ export class AonMenuButton extends AonElement {
     }
 
     initialize() {
-        this.id      = 'aon-menu-button';
+        const id = this.id || `aonMenuButton-${generateSimpleUUID()}`;
+        this.id = id;
         this.BUTTON  = this.id + '-button';
         this.CONTENT = this.id + '-content';
         this.LIST    = this.id + '-list';

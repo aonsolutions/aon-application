@@ -39,7 +39,8 @@ export class AonMobileList extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonMobileList";
+    const id = this.id || `aonMobileList-${generateSimpleUUID()}`;
+    this.id = id;
     this.UL = this.id + "UL";
   }
 

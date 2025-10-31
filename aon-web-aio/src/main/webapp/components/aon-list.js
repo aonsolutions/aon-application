@@ -38,7 +38,8 @@ export class AonList extends AonElement {
     }
 
     initialize() {
-        this.id = this.id || 'aonObjectList';
+        const id = this.id || `aonObjectList-${generateSimpleUUID()}`;
+        this.id = id;
 		this.TABLE = this.id + CONSTANT.TABLE.initCap();
         this.filter = this.filter || {
             page:1,

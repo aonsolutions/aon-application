@@ -47,7 +47,8 @@ export class AonDialogMobile extends AonElement {
 	}
 
 	initialize() {
-		this.DIALOG = (this.id || Math.random().toString(36).substring(7)) + 'Dialog';
+		const id = this.id || `aonDialogMobile-${generateSimpleUUID()}`;
+		this.DIALOG = id;
 		this.CONTENT = this.DIALOG + 'Content';
 		this.BODY = this.DIALOG + 'Body';
 		this.HEADER = this.DIALOG + 'Header';

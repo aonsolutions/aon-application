@@ -76,7 +76,8 @@ export class AonDomainCustomer extends AonElement {
 	}
 
   async initialize() {
-    this.id = this.id || 'aonDomainCustomer';
+    const id = this.id || `aonDomainCustomerLink-${generateSimpleUUID()}`;
+    this.id = id;
     this.customerListScrollListener = () => {};
   }
   

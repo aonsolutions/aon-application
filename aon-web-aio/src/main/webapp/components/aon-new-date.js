@@ -32,7 +32,8 @@ export class AonNewDate extends AonNewInput {
 
   initialize() {
     super.initialize();
-    this.id = this.id || 'aonDate';
+    const id = this.id || `aonNewDate-${generateSimpleUUID()}`;
+    this.id = id;
     this.DATEPICKER = this.id + 'Datepicker';
     this.SPAN = this.DATEPICKER + 'Span';
     this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';

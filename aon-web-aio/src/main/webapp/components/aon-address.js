@@ -67,7 +67,8 @@ export class AonAddress extends AonElement {
 	}
 
   initialize() {
-    this.id = this.id || 'aonAddress';
+    const id = this.id || `aonAddress-${generateSimpleUUID()}`;
+    this.id = id;
     this.STREET_TYPE = this.id + 'StreetType';
     this.ADDRESS = this.id + 'Address';
     this.ADDRESS2 = this.id + 'Address2';

@@ -97,7 +97,8 @@ export class AonNewSuggestion extends AonNewInput {
 
   initialize() {
     super.initialize();
-    this.id = this.id || 'aonSuggestion';
+    const id = this.id || `aonSuggestion-${generateSimpleUUID()}`;
+    this.id = id;
     this.OPTIONS = this.id + 'Options';
     this.OPTIONS_UL = this.OPTIONS + 'Ul';
     this.OPTIONS_LI = this.OPTIONS + 'Li';

@@ -15,7 +15,8 @@ export class AonToast extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || 'aonToast';
+    const id = this.id || `aonToast-${generateSimpleUUID()}`;
+    this.id = id;
     this.DIV = this.id + 'Div';
   }
 

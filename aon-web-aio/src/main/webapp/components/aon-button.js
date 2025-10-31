@@ -56,7 +56,8 @@ export class AonButton extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || 'aonButton';
+    const id = this.id || `aonButton-${generateSimpleUUID()}`;
+    this.id = id;
     this.BUTTON = this.id + CONSTANT.BUTTON.initCap();
     this.ICON = this.BUTTON + CONSTANT.ICON.initCap();
     this.TEXT = this.BUTTON + CONSTANT.TEXT.initCap();

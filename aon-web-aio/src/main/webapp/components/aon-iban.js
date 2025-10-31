@@ -54,7 +54,8 @@ export class AonIban extends AonElement {
 	}
 
   initialize() {
-    this.id = this.id || 'aonAddress';
+    const id = this.id || `aonAddress-${generateSimpleUUID()}`;
+    this.id = id;
     this.EDIT = this.id + 'Edit';
     this.INPUT = this.id + 'Input';
     this.IBAN = this.id + 'Iban';

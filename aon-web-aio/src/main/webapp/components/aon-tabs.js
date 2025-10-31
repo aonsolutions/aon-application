@@ -27,7 +27,8 @@ export class AonTabs extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonTabs";
+    const id = this.id || `aonTabs-${generateSimpleUUID()}`;
+    this.id = id;
     this.DIV_ICON = this.id + "DivIcon";
     this.ACTIVE_CLASS = "active";
     this.POSITION = 0;

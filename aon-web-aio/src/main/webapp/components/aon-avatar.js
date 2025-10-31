@@ -41,7 +41,8 @@ export class AonAvatar extends AonElement {
     }
 
     initialize(){
-        this.id = this.id || Math.random().toString(36).substring(7);
+        const id = this.id || `aonAvatar-${generateSimpleUUID()}`;
+        this.id = id;
         this.IMAGE = this.id+"Img";
     }
  

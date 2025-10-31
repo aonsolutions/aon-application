@@ -99,7 +99,8 @@ export class AonDate extends AonElement {
 	}
 
   initialize() {
-    this.id = this.id || 'aonDate';
+    const id = this.id || `aonDate-${generateSimpleUUID()}`;
+    this.id = id;
     this.INPUT = this.id + 'Input';
     this.DATEPICKER = this.id + 'Datepicker';
     this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';

@@ -145,7 +145,8 @@ export class AonSwitch extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || 'aonSwitch';
+    const id = this.id || `aonSwitch-${generateSimpleUUID()}`;
+    this.id = id;
     this.INPUT = this.id + CONSTANT.INPUT.initCap();
     this.LABEL = this.id + "Label";
     this.TITLE = this.id + CONSTANT.TITLE.initCap();

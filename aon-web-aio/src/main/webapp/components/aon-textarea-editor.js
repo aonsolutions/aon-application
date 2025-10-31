@@ -386,7 +386,8 @@ export class AonTextareaEditor extends AonElement {
         resizeObserver.observe(this.textBoxEnvelope);
 
         if (!this.id) {
-            this.id = Math.random().toString(36).substring(7);
+            const id = this.id || `aonTextareaEditor-${generateSimpleUUID()}`;
+            this.id = id;
         }
         setTimeout(() => {
             this.resizeBar();

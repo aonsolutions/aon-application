@@ -34,7 +34,8 @@ export class AonMap extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonMap";
+    const id = this.id || `aonMap-${generateSimpleUUID()}`;
+    this.id = id;
     this.ZOOM = this.ZOOM || 16;
   }
 

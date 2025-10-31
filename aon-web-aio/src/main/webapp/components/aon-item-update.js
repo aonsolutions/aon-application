@@ -27,7 +27,8 @@ export class AonItemUpdate extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonItemUpdate";
+    const id = this.id || `aonItemUpdate-${generateSimpleUUID()}`;
+    this.id = id;
   }
 
   build() {

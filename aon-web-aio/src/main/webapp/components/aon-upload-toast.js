@@ -29,7 +29,8 @@ export class AonUploadToast extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || 'aonUploadToast';
+		const id = this.id || `aonUploadToast-${generateSimpleUUID()}`;
+    	this.id = id;
 		this.JOB_ID = generateJobId();
 	}
 

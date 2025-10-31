@@ -48,7 +48,8 @@ export class AonNewUpload extends AonElement {
 	}
 
     initialize() {
-        this.id = this.id || 'aonUpload';
+        const id = this.id || `aonNewUpload-${generateSimpleUUID()}`;
+        this.id = id;
         this.DIV = this.id + 'Div';
         this.INPUT = this.id + 'Input';
         this.LABEL = this.id + 'Label';

@@ -24,7 +24,8 @@ export class AonIframe extends AonElement {
   }
 
   initialize() {
-    this.id  = this.id || "aonIframe";
+    const id = this.id || `aonIframe-${generateSimpleUUID()}`;
+    this.id = id;
     this.DOC = this.DOC || null;
     this.WD  = this.WD || null;
   }

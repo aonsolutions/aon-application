@@ -56,7 +56,8 @@ export class AonRegistry extends AonElement {
 	}
 
   initialize() {
-    this.id = this.id || 'aonRegistry';
+    const id = this.id || `aonRegistry-${generateSimpleUUID()}`;
+    this.id = id;
     this.OPTIONS = this.id + 'Options';
     this.OPTIONS_UL = this.OPTIONS + 'Ul';
     this.OPTIONS_LI = this.OPTIONS + 'Li';
