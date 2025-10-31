@@ -7,6 +7,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
@@ -195,6 +196,8 @@ public class AccountingOperationNewDAO {
 		,ACCOUNT.CODE
 		,REGISTRY.DOCUMENT
 		,REGISTRY.NAME
+		,FINANCE.RDOCUMENT
+		,FINANCE.RNAME
 	};
 	
 	private AccountingOperationNewDAO() {
@@ -281,10 +284,10 @@ public class AccountingOperationNewDAO {
 		
 	}
 
-	// Obtener ajuste de la prorrata del modelo 303 del ultimo periodo, si estamos obteniendo los datos hasta final del ejercicio, solo libro de IVA y Libro Unificado
+	// Obtener ajuste de la prorrata del modelo 303 del ultimo periodo, si estamos obteniendo los datos hasta final del ejercicio, solo libro de IVA y Libro Unificado y solo en compras y gastos
 	private static Stream<OperationBreakdownNew> getProrateAdjustment(AONContext ctx, OperationParamsNew params) {
 		
-		if (params.getBookType() != 1 && params.getToDate().equals(AonDateUtils.getYearLastDay(params.getToDate()))) {
+		if (params.getBookType() != 1 && params.getTabType() == 1 && params.getToDate().equals(AonDateUtils.getYearLastDay(params.getToDate()))) {
 
 			Record rec = ctx.getDslContext()
 					   .select(FS_MODEL_DETAIL.AMOUNT, IAE.EPIGRAPH, IAE.SECTION)
@@ -465,6 +468,14 @@ public class AccountingOperationNewDAO {
 //			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE_ACTIVITY.ENTERPRISE))
 			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.equal(ACCOUNT_ENTRY_DETAIL.DOMAIN))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE.REGISTRY))
+			
+			.leftOuterJoin(ACCOUNT_ENTRY_FINANCE_TRACKING).on(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))
+			.leftOuterJoin(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
+			
+//			INNER JOIN account_entry_finance_tracking ON account_entry_finance_tracking.account_entry = account_entry.id
+//			INNER JOIN finance_tracking ON finance_tracking.id=account_entry_finance_tracking.finance_tracking
+//			INNER JOIN finance ON finance.id=finance_tracking.finance
 			;
 	}
 
@@ -1051,12 +1062,20 @@ public class AccountingOperationNewDAO {
 			// CALIFICADOR DE LA OPERACION Y OPERACION EXENTA NO PUEDEN ESTAR VACIOS LOS DOS (LE PONGO EXENTA E6)
 			String exemptOperation = isIncomes ? "E6" : "";
 			
-			// Para determinados conceptos es obligatorio poner el identificador del destinatario/expedidor, en tal caso se pone el NIF y Nombre de la empresa
+			// Para determinados conceptos es obligatorio poner el identificador del destinatario/expedidor
+			// Ver si el asiento está unido a un vencimiento, de donde se pueda obtener la identificación del destinatario/expedidor
+			// si no, se pone el NIF y Nombre de la empresa
 			String document = "";
 			String name = "";
 			if (Arrays.asList(REQUIRED_CONCEPTS).contains(conceptCode)) {
-				document = rec.getValue(REGISTRY.DOCUMENT);
-				name = rec.getValue(REGISTRY.NAME);
+				// Se intenta obtener primero de finance
+				document = rec.getValue(FINANCE.RDOCUMENT);
+				name = rec.getValue(FINANCE.RNAME);
+				// Si no está en finance, se ponen los datos de la empresa
+				if (AonStringUtils.isBlank(document)) {
+					document = rec.getValue(REGISTRY.DOCUMENT);
+					name = rec.getValue(REGISTRY.NAME);
+				}
 			}
 			
 			// LA FECHA DE RECEPCION EN LOS GASTOS ES OBLIGATORIA AUNQUE SEA EXCLUSIVA DEL LIBRO DE IVA (LE PONGO LA FECHA DEL ASIENTO)
