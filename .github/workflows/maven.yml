@@ -183,7 +183,7 @@ jobs:
 
     - name: Setup context for Docker
       run: |
-       [[ -f pool/target/pool-9.23-SNAPSHOT.jar ]] || mvn -pl pool  &>/dev/null
+       [[ -f pool/target/pool-9.23-SNAPSHOT.jar ]] || mvn -pl pool package  &>/dev/null
        [[ -f aon-jaas/target/aon.jaas-9.23-SNAPSHOT.jar ]] || mvn -pl aon-jaas package  &>/dev/null
        [[ -f aon-common-resources/target/aon-common-resources-9.23-SNAPSHOT-templates.jar ]]  || mvn -pl aon-common-resources package  &>/dev/null
 
