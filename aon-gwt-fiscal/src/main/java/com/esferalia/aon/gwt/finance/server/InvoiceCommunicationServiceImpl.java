@@ -283,6 +283,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		icc.setCertificate(cert);
+		invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
 		if(invoice.isSales()) {
 		    LROE140_1_1 lroe = new LROE140_1_1();
 		    return lroe.consulta(icc, person, invoice);
@@ -303,7 +304,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		icc.setCertificate(cert);
-
+		invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
 		if(invoice.isSales()) {
 		    LROE240_1_1 lroe = new LROE240_1_1();
 	        return lroe.consulta(icc, company, invoice);  

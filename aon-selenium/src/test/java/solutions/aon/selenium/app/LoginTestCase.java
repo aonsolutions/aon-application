@@ -24,15 +24,15 @@ public class LoginTestCase extends AppBaseTestCase {
 	
 	@ParameterizedTest
 	@CsvSource({
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,admin,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
-		"http://inactiva-payroll-test.aonsolutions.org:8080/?jaas,inactivo@payroll-test.aonsolutions.org,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,inactivo,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,admin,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
+		"http://inactiva-payroll-test.aonsolutions.org:8080/,inactivo@payroll-test.aonsolutions.org,org,Domain inactiva-payroll-test.aonsolutions.org is currently inactive",
 		
-		"http://inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
-		"http://default-inactive-test.aonsolutions.org:8080/?jaas,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
+		"http://inactive-test.aonsolutions.org:8080/,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
+		"http://default-inactive-test.aonsolutions.org:8080/,inactive@test-aonsolutions.org,org,Domain inactive-test.aonsolutions.org is currently inactive",
 
-		"http://expired-multi-test.aonsolutions.org:8080/?jaas,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
-		"http://expired-multi-test.aonsolutions.org:8080/?jaas,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		"http://expired-multi-test.aonsolutions.org:8080/,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
+		"http://expired-multi-test.aonsolutions.org:8080/,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
 		
 		"http://multi-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive.",
 		//"http://factory-inactive-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive."
@@ -190,6 +190,74 @@ public class LoginTestCase extends AppBaseTestCase {
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
+	@Test
+	@Order(7)
+	public void testLoginFactoryUser() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://multi-test.aonsolutions.org:8080/?jaas");
+		String email = System.getProperty("integration.test.env.app.auth", "factory@multi-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
+			
+			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+			webDriver.switchTo().frame(aonJsfAppFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:offerList")));
+			
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
+	@Test
+	@Order(7)
+	public void testLoginParentInactiveChild() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
+		String email = System.getProperty("integration.test.env.app.auth", "admin");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonCompanyTabFilter-inactive"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
+
+			WebElement aonJsfAccountingGraphFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAccountingGraphFrame")));
+			webDriver.switchTo().frame(aonJsfAccountingGraphFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("graphForm:accountColumnChartDiv")));
+			
 			
 			
 		} catch (Exception e) {

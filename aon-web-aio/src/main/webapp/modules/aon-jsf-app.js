@@ -81,11 +81,6 @@ export class AonJsfApp extends AonElement {
 		domainNameInput.value = LS.getDomainName();
 		form.appendChild(domainNameInput);
 
-		let jaasDomainInput = this.createElement(TAG.INPUT);
-		jaasDomainInput.type = 'hidden';
-		jaasDomainInput.name = 'com.code.aon.jaas.domain';
-		jaasDomainInput.value = this.getJaasDomain();
-		form.appendChild(jaasDomainInput);
 
 		let languageInput = this.createElement(TAG.INPUT);
 		languageInput.type = 'hidden';
@@ -111,12 +106,20 @@ export class AonJsfApp extends AonElement {
 		readonlyInput.value = isReadOnly();
 		form.appendChild(readonlyInput);
 		
-
+		let jaasDomainInput = this.createElement(TAG.INPUT);
+		jaasDomainInput.type = 'hidden';
+		jaasDomainInput.name = 'com.code.aon.jaas.domain';
+		form.appendChild(jaasDomainInput);
+		
 		this.appendChild(form);
 
-		form.submit();
+		this.setJaasDomain( jaasDomainInput )
+		.then( () => {
+			form.submit();
+			this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }))
+		} );
+		
 
-		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }))
 
 
 	}
@@ -163,10 +166,24 @@ export class AonJsfApp extends AonElement {
 
 	}
 
-	getJaasDomain() {
+	getJaasDomain(dur) {
+		if ( dur?.user?.domain == dur?.domain?.id ) 
+			return dur?.domain?.name;
+		if ( dur?.user?.domain == dur?.parentDomain?.id ) 
+			return dur?.parentDomain?.name;
+		
 		let domainName = LS.getDomainName();
 		let hostName = window?.location?.hostname;
 		return domainName?.includes(hostName) ? hostName : domainName;
+	}
+
+	setJaasDomain(jaasDomainInput) {
+		return new Promise( (resolve, reject) => {
+			this.buildDur()
+			.then( dur => jaasDomainInput.value = this.getJaasDomain(dur))
+			.catch( () => jaasDomainInput.value = LS.getDomainName()  )
+			.finally( () => resolve() );
+	    });
 	}
 
 
