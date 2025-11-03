@@ -66,6 +66,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
@@ -497,10 +498,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(new IMPROVEMENTContractPayment(payment), start, end, amount);
 			}
 
+			if ( isFixBaseCgcMinPayment(payment) ){
+				return new GeneralQuote(expressionContext, start, end).quote(payment, start, end, amount);
+			}
+
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				//|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isPPE(payment) 
-				|| isFixBaseCgcMinPayment(payment) 
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
@@ -509,6 +513,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| ContextVariable.LACK_PERIOD.getName().equals(payment.getName())) {
 					return delegate.quote(payment, start, end, amount);
 			}
+
 
 			if ( !type.isBBCCIncluded() 
 				&& type.isBBCCExcluded() ) {
@@ -1617,7 +1622,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					, extraPayment.getExtraId() 				//extraQuote
 					, AonDateUtils.get(issueDate, YEAR)			//year
 					, issueDate									//chargeDate
-					, criteria);
+					, criteria) {
+				@Override
+				protected Collection<IContractPayment> getMonthlyQuotedPayments(
+						Collection<IContractPayment> payments) throws AonException {
+							return payments.stream().filter(this::isNotSalaryMonth).toList();
+				}
+				
+				private boolean isNotSalaryMonth(IContractPayment p) {
+					return AonDateUtils.get(ctx.getStartDate(), Calendar.MONTH) != AonDateUtils.get(p.getStartDate(), Calendar.MONTH);
+				}
+			};
 			
 
 			if ( !extraCtx.next() )
