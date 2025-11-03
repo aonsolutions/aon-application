@@ -315,12 +315,14 @@ export class AonComunicaUtils extends AonElement {
 
   fixTableHeaderBackgroundColor(){
     let application = this.getApplication();
+    if(application){
     let iframe = document.querySelector(`#${application.CONTENT} iframe`);
-    let iframeContent = iframe.contentWindow.document;
-
-    let tableHeaders = iframeContent.body.querySelectorAll(`div.aon_custom_table_header`);
-    if(tableHeaders) tableHeaders.forEach(tableHeader => tableHeader.style.backgroundColor = "#fafafa");
-    
+      if(iframe){
+          let iframeContent = iframe.contentWindow.document;
+          let tableHeaders = iframeContent.body.querySelectorAll(`div.aon_custom_table_header`);
+          if(tableHeaders) tableHeaders.forEach(tableHeader => tableHeader.style.backgroundColor = "#fafafa");
+      }
+    }
     // waitEl(`div.aon_custom_table_header`).finally(() => {
     //   let tableHeader = iframeContent.body.querySelector(`div.aon_custom_table_header`);
     //   tableHeader.style.backgroundColor = "#fafafa";
