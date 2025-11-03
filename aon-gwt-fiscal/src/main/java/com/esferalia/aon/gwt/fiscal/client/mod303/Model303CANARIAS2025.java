@@ -34,8 +34,6 @@ class Model303CANARIAS2025 extends Model303Base {
 
 	protected AonTextBox receiptBox;
 
-	// FALTA - ULTIMO PERIODO (MODELO 417)
-	
 	private ScrollPanel lastPeriodPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -71,33 +69,12 @@ class Model303CANARIAS2025 extends Model303Base {
 			paintLastPeriodInformationTab(tabPanel); // Ultimo periodo Modelo 417
 		}
 		paintAdministrationTab(tabPanel);
-//		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
 		Scheduler.get().scheduleDeferred(this::selectDefaultTab);
 	}
 	
 	private void selectDefaultTab() {
 		tabPanel.selectTab(LIQUIDATION_TAB);
 	}
-	
-//	private void beforeSelectTab(BeforeSelectionEvent<Integer> event) {
-//		double aa02 = getModel().getAmount(Mod303Key.CT_A02);
-//		if (event.getItem() == GENERAL_REGIME_TAB && aa02 == 0) {
-//			event.cancel();
-//			AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
-//		}
-//		if (event.getItem() == SIMPLIFIED_REGIME_TAB && aa02 == 2) {
-//			event.cancel();
-//			AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
-//		}
-		// FALTA - ULTIMO PERIODO SOLO MODELO 417 
-//		if (getModel().isLastPeriod()) {
-//			double aa11 = getModel().getAmount(Mod303Key.CT_A11);
-//			if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && aa11 == 0) {
-//				event.cancel();
-//				AonMessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
-//			}
-//		}
-//	}
 	
 	private void paintLiquidationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
@@ -492,7 +469,7 @@ class Model303CANARIAS2025 extends Model303Base {
 		int row = tab.getRowCount();
 		
 		// CNAE
-		// FALTA - EN EL PROGRAMA DE AYUDA EL CNAE ES DE 3 DIGITOS, SE GRABARA COMPLETO PARA APROVECHAR LA TABLA QUE HAY AHORA Y LUEGO AL CREAR EL ARCHIVO SE PONDRAN SOLO 3 
+		// EN EL PROGRAMA DE AYUDA EL CNAE ES DE 3 DIGITOS, SE GRABARA COMPLETO PARA APROVECHAR LA TABLA QUE HAY AHORA Y LUEGO AL CREAR EL ARCHIVO SE PONDRAN SOLO 3 
 		
 		AonTextBox cnae = new AonTextBox();
 		cnae.setVisibleLength(4);

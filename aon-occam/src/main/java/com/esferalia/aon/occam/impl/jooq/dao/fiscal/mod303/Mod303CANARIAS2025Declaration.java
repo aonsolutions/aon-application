@@ -503,38 +503,12 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 				&& vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 
-//	private static boolean adqIntracomunitariasFilter(VatContext vat, Mod303 mod) {
-//		return !vat.isVatSurchargeRegime() && (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {
-//		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterNoRECT(VatContext vat, Mod303 mod) {
-//		return !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && vat.isIntracommunityPurchase()
-//				&& !vat.isService();
-//	}
-//
-//	private static boolean entregasActivosFijosFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && vat.isSales() && vat.isInvestment();
-//	}
-
 	private static boolean operacionesISPFilter(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime()
 				&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
 						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
 						|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
-
-//	private static boolean operacionesISPFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && (operacionesISPFilter(vat, mod)
-//				|| vat.isIntracommunityExpenses() || (vat.isService() && vat.isIntracommunityPurchase()));
-//	}
 
 	private static boolean operacionesISPFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && operacionesISPFilter(vat, mod);
@@ -584,14 +558,6 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		return false;
 	}
 
-//	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat, Mod303 mod) {
-//		return !vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasInversionFilter(VatContext vat, Mod303 mod) {
-//		return vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-
 	private static boolean rectificacionDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
 				&& (vat.isPurchase() || vat.isExpenses());
@@ -605,10 +571,6 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 				&& (vat.isNationalPurchase() || vat.isNationalExpenses());
 	}
 
-//	public static boolean  ventasIntracomunitarias(VatContext vat, Mod303 mod) {
-//		return !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();
-//	}
-	
 	public static boolean ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()) && !vat.isSalesOSS();
 	}
