@@ -94,6 +94,12 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			}
 
 		},
+		L02{
+			@Override
+			<T> T visit(TypeVisitor<T> v) {
+				return v.visitL02();
+			}
+		},
 		L03{
 			@Override
 			<T> T visit(TypeVisitor<T> v) {
@@ -125,6 +131,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 	private static interface TypeVisitor<T> {
 		T visitL00();
+		T visitL02();
 		T visitL03();
 		T visitL13();
 		T visitL90();
@@ -307,6 +314,16 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			}
 
 			@Override
+			public Void visitL02() {
+				setVisibleTo(false);
+				setVisibleFrom(false);
+				setVisibleCtrl(false);
+				setVisibleMonth(true);
+				onMonthsChanged(null);
+				return null;
+			}
+
+			@Override
 			public Void visitL03() {
 				setVisibleTo(true);
 				setVisibleFrom(true);
@@ -364,6 +381,11 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			@Override
 			public Date visitL00() {
 				return toMonthListBox.getSelected();
+			}
+			
+			@Override
+			public Date visitL02() {
+				return monthListBox.getSelected();
 			}
 
 			@Override

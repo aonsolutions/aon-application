@@ -909,7 +909,7 @@ public class JooqPayrollBuilder {
 			
 			contractDataTmp.getOrDefault("DIAS_FESTIVOS", Collections.emptyList()).stream()
 			.filter(d -> AonNumberUtils.todouble(d.getExpression()) <= 0.00 )
-			.flatMap(d -> new Period(d.getStartDate(), d.getEndDate()).daysStream() )
+			.flatMap(d -> new Period(d.getStartDate(), Period.min(d.getEndDate(), salaryEnd)).daysStream() )
 			.map(Calendar::getTime).forEach( festiveList::remove );
 
 			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));

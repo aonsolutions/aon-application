@@ -62,6 +62,7 @@ public class InvoiceInfo implements Serializable {
 		this.status = status;
 		return this;
 	}
+	public boolean isPending() 				{ return getStatus() == null || (getStatus() != null && getStatus().isPending());}
 	public boolean isAccepted() 			{ return getStatus() != null && getStatus().isAccepted();}
 	public boolean isAcceptedWithErrors() 	{ return getStatus() != null && getStatus().isAcceptedWithErrors();}
 	public boolean isWrong() 				{ return getStatus() != null && getStatus().isWrong();}

@@ -136,6 +136,7 @@ public class Period implements Comparable<Period> {
 	}
 
 	public Stream<Calendar> daysStream() {
+		Objects.requireNonNull(end);		
 		Stream.Builder<Calendar> builder = Stream.builder();
 		forEachDay(builder);
 		return builder.build();
