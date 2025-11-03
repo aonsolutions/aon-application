@@ -3,7 +3,7 @@ const MiniCssExtractPlugin      = require('mini-css-extract-plugin');
 const CssMinimizerPlugin        = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin         = require('html-webpack-plugin');
 const CopyWebpackPlugin         = require('copy-webpack-plugin');
-const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
+const RemoveEmptyScriptsPlugin  = require('webpack-remove-empty-scripts');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
