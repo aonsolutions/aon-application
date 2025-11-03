@@ -619,13 +619,26 @@ export const OFFICE = {
   symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: MSG.OFFICE,
   description: MSG.OFFICE,
-  // color: "var(--aonTopMenuSpecial)",
   color: "var(--aonTopMenuSpecial)",
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'sidenavHover',
   domainType: true,
+  access: [
+    {
+      value: "Asesor",
+      name: "Asesor",
+    },
+    {
+      value: "Empresa",
+      name: "Empresa",
+    },
+  ],
+  price: " ",
   is: (dur) => new DomainUserRoles(dur).isOffice(),
-  has: (dur) => new DomainUserRoles(dur).hasOffice(),
+  has: (dur) => {
+	let d = new DomainUserRoles(dur);
+	return !d.isEmployee() && !d.isEnterprise();
+  },
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -710,7 +723,7 @@ export const EmployeeAonApps = [
   TIMECONTROL,
   PAYROLL,
   MESSENGER,
-  INVOICE,
+  INVOICE
 ];
 
 export const EmployeeApps = [
@@ -737,7 +750,8 @@ export const EnterpriseAonApps = [
   BIDOQ,
   SELFCONTA,
   AON_SALTRA,
-  BANK
+  BANK,
+  OFFICE
 ];
 
 export const EnterpriseApps = [
@@ -1009,7 +1023,8 @@ export const AllAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA];
+  AON_SALTRA,
+  OFFICE];
   
 export const AllApps = {
   ACCOUNTING,
