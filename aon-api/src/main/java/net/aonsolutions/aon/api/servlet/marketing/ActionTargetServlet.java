@@ -1177,7 +1177,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		ApplicationParameter trailParam = new ApplicationParameter()
 				.setDomain(newDomain.getId())
 				.setName(AppParam.TRIAL)
-				.setValue("25");
+				.setValue("50");
 		
 		AppParamDAO.insertApplicationParameter(ctx, trailParam);
 	}
