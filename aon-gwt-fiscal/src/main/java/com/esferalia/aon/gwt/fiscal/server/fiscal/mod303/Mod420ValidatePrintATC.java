@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.impl.jooq.dao.mod417_2025.Mod417ToDEC;
 import com.esferalia.aon.occam.impl.jooq.dao.mod420_2025.Mod420ToDEC;
 
 import jakarta.servlet.ServletException;
@@ -34,7 +35,7 @@ public class Mod420ValidatePrintATC extends HttpServlet {
 			System.out.println("PASO 1");
 			
 			// Obtener el XML
-			String xml = Mod420ToDEC.getDeclaration(mod303);
+			String xml = mod303.isMonthPeriod() ? Mod417ToDEC.getDeclaration(mod303) : Mod420ToDEC.getDeclaration(mod303);
 			
 			System.out.println("PASO 2. xml="+xml);
 			
