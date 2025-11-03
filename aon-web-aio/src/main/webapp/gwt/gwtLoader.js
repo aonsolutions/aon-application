@@ -133,7 +133,7 @@
 			
 			let iframe = window.document.createElement(TAG.IFRAME)
 			iframe.style.width = '100%';
-			iframe.style.height = '100vh';
+			iframe.style.height = '100%';
 			iframe.style.border = 'none';
 			iframe.style.inset = 'none';
 			iframe.src = 'about_blank';
