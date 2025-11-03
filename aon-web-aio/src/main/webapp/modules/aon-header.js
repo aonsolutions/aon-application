@@ -238,6 +238,7 @@ export class AonHeader extends AonElement {
 						return; // No cerramos, el clic fue dentro del menú
 					}
 					// Cerramos si pierde el focus el input
+					aonHeaderSearchBox.hideInput();
 					aonHeaderSearchDialogMenu.close();
 				});
 			});
@@ -968,7 +969,10 @@ export class AonHeader extends AonElement {
 					icon: aonHeader.getIcon(company),
 					name: `<span>${companyName}</span><span class="company-document">${companyDocument}<aon-icon id="Company${company.id}Copy" style="display: none;" icon="${MATERIAL_ICONS.CONTENT_COPY}">${MATERIAL_ICONS.CONTENT_COPY}</aon-icon></span>`,
 					title: `${company.domain}`,
-					fn: () => { aonHeader.companySelection(company); }
+					fn: () => { 
+						aonHeaderSearchBox.hideInput();
+						aonHeader.companySelection(company); 
+					}
 				});
 			});
 			
@@ -1015,6 +1019,7 @@ export class AonHeader extends AonElement {
 						icon : MATERIAL_ICONS.PERSON,
 						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractIdentifier}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
+							aonHeaderSearchBox.hideInput();
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name});} );
 						}
 					});

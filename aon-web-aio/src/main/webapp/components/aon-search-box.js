@@ -104,9 +104,14 @@ export class AonSearchBox extends AonElement {
 		let search = document.getElementById('aon-search-button');
 		search.addEventListener('click', () => {
 			this.classList.toggle('open')
+			input.focus();
 		});
 
 		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { el: this }));
+	}
+
+	hideInput(){
+		this.classList.remove('open');
 	}
 }
 if(!window.customElements.get('aon-search-box')){
