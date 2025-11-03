@@ -925,7 +925,7 @@ public class PropertiesDAO {
 		
 		@Override public Property<String> getPersonNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getPersonDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
-		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
 	}
 	
 	protected static class ContractDocPropertiesDAO implements ContractDocProperties{

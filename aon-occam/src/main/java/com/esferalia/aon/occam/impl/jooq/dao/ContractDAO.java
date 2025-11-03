@@ -128,7 +128,7 @@ public class ContractDAO {
 				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
 				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 				.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
-				.where(allConditions)
+				.having(allConditions)
 				.limit(limit).offset(0)
 				.fetch().stream().map(new ContractExtendedDataFiller());
 		
