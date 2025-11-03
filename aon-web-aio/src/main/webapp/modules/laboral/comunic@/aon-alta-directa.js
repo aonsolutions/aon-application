@@ -836,14 +836,14 @@ export class AonAltaDirecta extends AonElement {
     openDialogReports(ev){
         ev.preventDefault();
         let rect = ev.target.getBoundingClientRect();
-        let x = ev.clientX - rect.left + 180;
+        let x = ev.clientX - rect.left;
         let y = ev.clientY - rect.top;
 
         const top  = rect.top + y;
         const left = rect.left + x;
 
         let d = this.getApplication().getOptionDialog();
-        d.getContent().style.width = "133px";
+        // d.getContent().style.width = "133px";
         let moreActions = [];
 
         //---IDC
