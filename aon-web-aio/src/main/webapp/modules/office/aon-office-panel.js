@@ -192,13 +192,15 @@ export class AonOfficePanel extends AonElement {
 		}
 		
 		// AUTOBOOKING
-		let autoBookingOptions = [];
+		if(this.dur.isOfficeManager()){
+			let autoBookingOptions = [];
 		
-		let service = ServiceOptions.AON_SERVICE;
-		service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
-		autoBookingOptions.push(service);
-
-		application.addSidenavOptions('Auto Contratación', autoBookingOptions);
+			let service = ServiceOptions.AON_SERVICE;
+			service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
+			autoBookingOptions.push(service);
+	
+			application.addSidenavOptions('Auto Contratación', autoBookingOptions);	
+		}
 
 		// OFFICE
 		let officeOptions = [];

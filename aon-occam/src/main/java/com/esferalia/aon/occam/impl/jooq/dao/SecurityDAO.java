@@ -70,6 +70,7 @@ import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -95,6 +96,7 @@ import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -342,6 +344,26 @@ public class SecurityDAO {
 			.execute();
 		
 		return userAppRole.setId(id);
+	}
+	
+	public static void saveUserAppRoles(AONContext ctx, User user, List<UserAppRole> userAppRoles){
+		LinkedList<AonRole> currentUserRoles = getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(user.getId())).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		LinkedList<AonRole> newUserRoles = userAppRoles.stream().map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		AonRole.stream().forEach(role -> {	
+			if(currentUserRoles.contains(role) && !newUserRoles.contains(role)) {
+				deleteUserAppRole(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getRoleProperty().eq(role.value())));
+			}
+			
+			if(!currentUserRoles.contains(role) && newUserRoles.contains(role)) {
+				insertUserAppRole(ctx, new UserAppRole()
+						.setApp(null)
+						.setDomain(user.getDomain().getId())
+						.setRole(role)
+						.setUser(user.getId()));
+			}
+		});
 	}
 	
 	public static UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole) {

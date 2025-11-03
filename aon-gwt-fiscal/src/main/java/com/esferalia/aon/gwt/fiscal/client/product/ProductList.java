@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductPanel.AonProductPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
@@ -83,7 +84,8 @@ public abstract class ProductList extends AonCustomDockLayout {
 		, CAT(AON.MSG.category()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("Estado"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PCK("Tipo"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
-		, COM("Compuesto"							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
+		, AOC("Serv. Aon"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
+		, COM("Serv. Despacho"						,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 		
@@ -246,7 +248,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 			.setDomainName(options.getDomainName())
 			.setDomain(options.getDomain())
 			.setUser(options.getUser())
-			.setType(ProductType.AUXILIARY)
+//			.setType(ProductType.AUXILIARY)
 			.setDescription(getSearchTextBox().getValue())
 			.setProductComposition(AonStringUtils.isBlank(type.getValue()) ? null : Boolean.parseBoolean(type.getValue()))
 			.setStatus(AonStringUtils.isBlank(status.getValue()) ? null : ProductStatus.safeValueOf(Byte.parseByte(status.getValue())))
@@ -324,7 +326,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 		getList(products -> {
 			boolean something = false;
 			
-			for(Product product : products) {
+			for(ProductBooking product : products) {
 				something = true;
 				paintRow(product);
 			}
@@ -349,7 +351,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 		});
 	}
 	
-	private void paintRow(Product product) {
+	private void paintRow(ProductBooking product) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
@@ -391,18 +393,20 @@ public abstract class ProductList extends AonCustomDockLayout {
 		
 		tab.addRow(row, new Label(null == product.getStatus() ? "" : product.getStatus().getDescription()), COLS.STA.getColWidth());
 		
-		tab.addRow(row, new Label(product.isManufactured() ? "Pack" : "Servicio"), COLS.PCK.getColWidth());
+		tab.addRow(row, new Label(product.getBookingType().getDescription()), COLS.PCK.getColWidth());
 		
-		tab.addRow(row, new Label(product.isComposition() ? "Si" : "No"), COLS.COM.getColWidth());
+		tab.addRow(row, new Label(product.isBookingComposition() ? "Compuesto" : "Simple"), COLS.AOC.getColWidth());
+		
+		tab.addRow(row, new Label(product.isComposition() ? "Compuesto" : "Simple"), COLS.COM.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 	
-	private void getList(Consumer<List<Product>> success) {
-		COMMON_SERVICE.getProducts(params, new AsyncCallback<List<Product>>() {
+	private void getList(Consumer<List<ProductBooking>> success) {
+		COMMON_SERVICE.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
 			
 			@Override
-			public void onSuccess(List<Product> products) {
+			public void onSuccess(List<ProductBooking> products) {
 				success.accept(products);
 			}
 			
