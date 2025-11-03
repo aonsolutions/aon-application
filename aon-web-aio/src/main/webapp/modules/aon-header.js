@@ -216,15 +216,17 @@ export class AonHeader extends AonElement {
 			aonHeaderSearchBox.addEventListener(EVENT.BUILD, () => {
 				const input = aonHeaderSearchBox.input;
 				input.addEventListener(EVENT.KEYUP, () => {
-					if(input.value.length > 0)
-						this.search(this);
-					else
+					if(input.value.length > 0){
+						clearTimeout(this.searchTimeoutId);
+						this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
+					} else
 						aonHeaderSearchDialogMenu.close();
 				});
 				input.addEventListener(EVENT.FOCUSIN, () => {
-					if(input.value.length > 0)
-						this.showSearch(this)
-					else
+					if(input.value.length > 0){
+						clearTimeout(this.searchTimeoutId);
+						this.searchTimeoutId = setTimeout( () => this.showSearch(this) , 300 );
+					} else
 						aonHeaderSearchDialogMenu.close();
 				});
 				aonHeaderSearchDialogMenu.addEventListener('mousedown', () => {
