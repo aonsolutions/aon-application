@@ -532,12 +532,25 @@ export class AonReg extends AonElement {
 
 			if((this.isCustomer() && pmType === 'BANK_TRANSFER') || (!this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT')) {
 				getCompanyBanks().then(banks => {
-					bankSelect.setOptions(banks.map(b => {
-						b.fullName = b.bank_account + ' - ' + b.alias;
-						return b;
+					const mainBank = this.registry?.paymethod?.bank;
+
+					const mappedBanks = banks.map(b => ({
+						...b,
+						fullName: `${b.bank_account} - ${b.alias || ''}`
 					}));
-					bankSelect.value = this.registry.getPaymethod().getBank().id;
-				});		
+					
+					bankSelect.setOptions(mappedBanks);
+
+					// Buscar coincidencia por ID si trae o por bank_account (IBAN)
+					const found = mappedBanks.find(b =>
+						b.id === mainBank?.id || 
+						b.bank_account === mainBank?.bank_account
+					);
+
+					if (found) {
+						bankSelect.value = found.id;
+					}
+				});
 			} else if((this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pmType === 'BANK_TRANSFER')){
 				bankSelect.setOptions(this.registry.getBanks());
 				bankSelect.value = this.registry.getPaymethod().getBank().id;
@@ -782,6 +795,7 @@ export class AonReg extends AonElement {
 		table.addCell(addBank);
 	}
 
+	//llamada inicial en informacion general desde configuracion, en paymethod parece que viene el banco principal
 	buildBank(table, bank, i) {
 		if(!bank.isRemoved()){
 			let rowNum = table.addRow();
