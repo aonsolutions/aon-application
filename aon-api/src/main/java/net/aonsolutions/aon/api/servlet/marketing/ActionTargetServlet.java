@@ -387,7 +387,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			context.put("document", actionTarget.getTarget().getDocument());
 			context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
-			Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial.vm");
+			Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_ayudat.vm");
 
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
@@ -405,11 +405,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		SESMessage msg = new SESMessage()
 				.setAlias(actionTarget.getTarget().getName())
 				.setFrom(from)
-				.setReplyTo(from)
+				.setReplyTo(from)			
 				.setTo(actionTarget.getTarget().getEmail())
 				.setBcc(bcc)
-				.setSubject(actionTarget.getTarget().getName() + " (TRIAL)").setBody(body);
-
+				.setSubject("Confirma tu registro y empieza a facturar")
+				.setBody(body)
+				;
 		SES.sendEmail(msg);
 	}
 
@@ -1267,7 +1268,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		
 		String logoUrl = getLogoUrl(api, ctx);
 
-		String from = getFromMessage(api, ctx, parent);
+//		String from = getFromMessage(api, ctx, parent);
+		String from = getFromMessage(api);
 		
 		if(AonStringUtils.isBlank(from))
 			throw new AonApiException("No existe email definido en el entorno para la creaci\u00f3n de empresas");
@@ -1293,8 +1295,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setTo(targetEmailOpt.get().getValue())
 				.setBcc(bcc)
 				.setReplyTo(from)
-//				.setAlias(name)
-				.setSubject("Empresa " + name)
+				.setSubject("Ya puedes empezar a usar tu cuenta de facturaci\u00f3n")
 				.setBody(createEnterpriseCreatedBody(logoUrl, newDomain, from, name, parent.getDescription()));
 
 		SES.sendEmail(msg);
@@ -1373,7 +1374,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		context.put("password", passwordMail);
 		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
-		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created.vm");
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created_ayudat.vm");
 
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
@@ -1779,7 +1780,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		context.put("mail", userMail);
 
 		Template template = engine
-				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_created_response.vm");
+				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_created_response_ayudat.vm");
 
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
