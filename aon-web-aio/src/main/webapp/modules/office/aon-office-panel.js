@@ -713,7 +713,7 @@ export class AonOfficePanel extends AonElement {
 
 		// Clean sidenav		
 		let rightSidenav = this.getApplication().getRightSidenav();
-		rightSidenav.style.flexBasis = "0px";
+		// rightSidenav.style.flexBasis = "0px";
 		this.clearElement(rightSidenav);
 
 		// Clean isSig LS
