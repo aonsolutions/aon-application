@@ -4,7 +4,7 @@ import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
-import { title } from "../../css/aon-customView.js";
+// import { title } from "../../css/aon-customView.js";
 //import '../../css/aon-grid.css';
 //import '../../css/aon-css-utils.css';
 
@@ -34,7 +34,7 @@ export const createBajaDialogContent = () =>{
         attributes:{
             name:"dayVacation",
             id: "dayVacation", 
-            description:"Días de vacaciones (Opcional)"
+            title:"Días de vacaciones (Opcional)"
         }
     }, div);
  

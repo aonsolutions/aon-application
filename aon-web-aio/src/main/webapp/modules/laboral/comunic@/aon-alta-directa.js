@@ -626,14 +626,15 @@ export class AonAltaDirecta extends AonElement {
     async baja(){
         this.getApplication().startLoading();
         try {
-            const fechaBajaEl = this.getElement("fechaBaja");
-            const codBajaEl = this.getElement("codBaja");
-            const frv = this.getElement("frv");
+            const fechaBajaEl  = this.getElement("fechaBaja");
+            const codBajaEl    = this.getElement("codBaja");
+            const frv          = this.getElement("frv");
             const asociativeSA = this.getElement("asociativeSA");
             const params = {
                 ...this.data, 
-                fechaBaja: fechaBajaEl.value, 
+                fechaBaja: fechaBajaEl.getValue(), 
                 situation: codBajaEl.value, 
+                // dayVacation: dayVacation.value ? dayVacation.value : 0,
                 frv: frv.value ? frv.value : undefined, 
                 asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
             };
@@ -759,17 +760,16 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-
     openDialogBaja(){
         let application = this.getApplication();
 
         const dialog = application.getDialog();
         dialog.clear();
-        if(this.isMobile()){
-            dialog.type = "fullscreen";
-        } else {
-            dialog.width = '40%';
-        }
+        // if(this.isMobile()){
+        //     dialog.type = "fullscreen";
+        // } else {
+        //     dialog.width = '40%';
+        // }
   
         dialog.setTitle("Datos de Baja");
     
@@ -778,8 +778,7 @@ export class AonAltaDirecta extends AonElement {
         
         const button = dialog.addSendAction(()=>{
             this.ACTION = "BAJA";
-            this.baja()
-            .then(s=>{
+            this.baja().then(s=>{
                 if(s){
                     dialog.close();
                 }
