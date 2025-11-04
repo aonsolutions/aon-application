@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -36,12 +37,16 @@ public interface IProduct2 {
 	// PRODUCT
 	
 	public Product getProduct(AONContext ctx, ProductFilter filter);
+	public ProductBooking getProductBooking(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductParams params);
+	public LinkedList<ProductBooking> getProductBookingList(CloseableAONContext ctx, ProductParams params);
 	public Product saveProduct(AONContext ctx, Product product);
+	public ProductBooking saveProductBooking(AONContext ctx, ProductBooking product);
 	public Product createProduct(AONContext ctx, Product product, List<ProductTag> productTags, Item item);
+	public ProductBooking createProductBooking(AONContext ctx, ProductBooking product, List<ProductTag> productTags, Item item);
 	public void deleteProduct(AONContext ctx, Integer id);
 
 	// ITEM

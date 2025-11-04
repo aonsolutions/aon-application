@@ -53,6 +53,15 @@ public enum DomainType {
 		return null;
 	}
 	
+	public static DomainType getByName( String name ) {
+		if(AonStringUtils.isBlank(name)) return null;
+		for (DomainType rs : values()) {
+			if(name.equalsIgnoreCase(rs.getName()))
+				return rs;
+		}
+		return null;
+	}
+	
 	public static String getName( DomainType type) {
 		if (type == null) return null;
 		return type.getName();
