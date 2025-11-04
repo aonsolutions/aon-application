@@ -141,9 +141,9 @@ export class AonNewInput extends AonElement {
 		input.addEventListener(EVENT.BLUR, this.onBlur);
 		input.addEventListener(EVENT.INPUT, this.onInput);
 		input.addEventListener(EVENT.KEYUP, () => {
-		     if (input.type !== "time") this.value = input.value;
-		     this.dispatchEvent(new Event(EVENT.KEYUP));
-		   });
+		if (input.type !== "time") this.value = input.value;
+			this.dispatchEvent(new Event(EVENT.KEYUP));
+		});
 
 		input.placeholder = this.getTitle();
 		label.appendChild(input);
@@ -158,12 +158,12 @@ export class AonNewInput extends AonElement {
 		label.appendChild(span);
 
 		if (this.isPassword()) {
-          this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
-            const iconButton = this.getElement(this.ICON_BUTTON);
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            iconButton.setIcon(type === 'password' ? 'visibility' : 'visibility_off');
-            input.type = type;
-          });
+			this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
+				const iconButton = this.getElement(this.ICON_BUTTON);
+				const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+				iconButton.setIcon(type === 'password' ? 'visibility' : 'visibility_off');
+				input.type = type;
+			});
 		}
 	}
 	
@@ -237,9 +237,9 @@ export class AonNewInput extends AonElement {
 		aonIconButton.id = this.ICON_BUTTON;
 		aonIconButton.icon = icon;
 		aonIconButton.noHover = "true";
-        if (typeof fn === 'function') {
-          aonIconButton.addEventListener(EVENT.CLICK, fn);
-        }
+		if (typeof fn === 'function') {
+			aonIconButton.addEventListener(EVENT.CLICK, fn);
+		}
 		iconLabel.appendChild(aonIconButton);
 
 		if (color) iconLabel.color = color;
@@ -247,11 +247,17 @@ export class AonNewInput extends AonElement {
 	}
 	
 	addLoader() {
-		const loader = document.createElement("div");
-		loader.id = this.LOADER;
-		loader.className = "aon-spinner-input-loading"
-		let icon = this.getElement(this.ICON_BUTTON);
-		icon.appendChild(loader);
+    // Buscamos el elemento con el ID ICON_BUTTON
+    let icon = this.getElement(this.ICON_BUTTON);
+    
+    // Si el icono no existe, lo creamos
+    if (icon) {
+			const loader = document.createElement("div");
+			loader.id = this.LOADER;
+			loader.className = "aon-spinner-input-loading";
+			
+			icon.appendChild(loader);
+    }
 	}
 	
 	removeLoader() {

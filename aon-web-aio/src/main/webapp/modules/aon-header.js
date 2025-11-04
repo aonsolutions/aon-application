@@ -215,9 +215,14 @@ export class AonHeader extends AonElement {
 			aonHeaderSearchBox.newTheme = this.newTheme;
 			aonHeaderSearchBox.addEventListener(EVENT.BUILD, () => {
 				const input = aonHeaderSearchBox.input;
+// console.log('cargando agregado')
 				input.addEventListener(EVENT.KEYUP, () => {
 					if(input.value.length > 0){
 						clearTimeout(this.searchTimeoutId);
+
+// console.log('cargando no sale???')
+
+						input.addIcon(loading); // que se muestre el loader
 						this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
 					} else
 						aonHeaderSearchDialogMenu.close();
@@ -233,7 +238,7 @@ export class AonHeader extends AonElement {
 					clickEnMenu = true;
 				});
 				input.addEventListener(EVENT.BLUR, (ev) => {
-					 if (clickEnMenu) {
+					if (clickEnMenu) {
 						clickEnMenu = false;
 						return; // No cerramos, el clic fue dentro del menú
 					}
@@ -945,6 +950,10 @@ export class AonHeader extends AonElement {
 		let aonHeaderSearchBoxValue = aonHeaderSearchBox.value;
 		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
 		
+
+		// console.log('datos.. supuestamente')
+		// console.log(aonHeaderSearchBox.input)
+
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
 				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);

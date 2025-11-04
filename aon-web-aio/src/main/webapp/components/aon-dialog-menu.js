@@ -367,7 +367,7 @@ export class AonDialogMenu extends AonElement {
 			}
 		li.appendChild(span);
 		if (item.fn && typeof item.fn === 'function') {
-			console.log(item.fn)
+			// console.log(item.fn)
 			// li.addEventListener(EVENT.CLICK, (ev) => {
 			li.addEventListener("click", (ev) => {
 				item.fn(ev);
