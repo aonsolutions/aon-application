@@ -27,11 +27,11 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryRelationshipDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
@@ -499,6 +500,12 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp) {
 		ctx.getDslContext().transaction(configuration -> SecurityDAO.deleteDomainApp(ctx, aonApp));
+	}
+
+	@Override
+	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId) {
+		return  ctx.getDslContext().transactionResult(
+	            configuration -> RegistryRelationshipDAO.getRegistryRelationships(ctx, domainId));
 	}
 	
 }

@@ -1233,6 +1233,42 @@
     min-height: 6.5rem;    
 }
 
+.aon_custom_rich_text{
+	gap: 0;
+	width: 100%;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
+  	
+  	flex: 1;               
+    display: flex;
+    flex-direction: column;
+    min-height: 6.5rem;    
+}
+
+.aon_custom_rich_text .gwt-RichTextToolbar{
+	background: #f9f6f6;
+	padding: .5rem;
+}
+
+.aon_custom_rich_text .gwt-ToggleButton.gwt-ToggleButton-up,
+.aon_custom_rich_text .gwt-ToggleButton.gwt-ToggleButton-down,
+.aon_custom_rich_text .gwt-PushButton,gwt-PushButton-up,
+.aon_custom_rich_text .gwt-PushButton,gwt-PushButton-down,
+.aon_custom_rich_text .gwt-ToggleButton.gwt-ToggleButton-up-hovering,
+.aon_custom_rich_text .gwt-ToggleButton.gwt-ToggleButton-down-hovering,
+.aon_custom_rich_text .gwt-PushButton,gwt-PushButton-up-hovering,
+.aon_custom_rich_text .gwt-PushButton,gwt-PushButton-down-hovering
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+}
+
+.aon_custom_rich_text .gwt-ToggleButton.gwt-ToggleButton-down {
+	background-color: #eee;
+}
+
 .aon_custom_text_box_no_border{
 	gap: 0;
 	width: 100%;
@@ -1319,7 +1355,8 @@
 }
 
 .aon_custom_text_box:hover > .aon_custom_text_box_title,
-.aon_custom_text_area:hover > .aon_custom_text_box_title{
+.aon_custom_text_area:hover > .aon_custom_text_box_title,
+.aon_custom_rich_text:hover > .aon_custom_text_box_title{
 	color: #2152a5;
 }
 

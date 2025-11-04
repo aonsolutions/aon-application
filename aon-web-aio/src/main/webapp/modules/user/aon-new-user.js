@@ -15,7 +15,7 @@ import { AonScopeSimpleList } from '../scope/aon-scope-simple-list.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { AonIcon } from '../../components/aon-icon';
 import { AonDialog } from '../../components/aon-dialog.js';
-import { AonSelect } from '../../components/aon-select.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 
 export class AonNewUser extends AonElement {
 
@@ -389,7 +389,7 @@ export class AonNewUser extends AonElement {
 
 	addUserScope(parent) {
 		getCompanyScopes().then( scopes => {
-			let scopeSelect = new AonSelect();
+			let scopeSelect = new AonNewSelect();
 	    	scopeSelect.title = MSG.SCOPES;
 	    	scopeSelect.id = "userScopesSelect";
 	   	 	scopeSelect.autocomplete = true;

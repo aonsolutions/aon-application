@@ -734,4 +734,14 @@ public class DomainUserRoles implements Serializable {
 				||hasOldRole(OldAonRole.CALL_CENTER)
 				|| hasOldRole(OldAonRole.CALL_CENTER_MANAGER));
 	}
+	
+	// OFFICE
+	
+	public boolean isOffice() {
+		return hasRole(AonRole.OFFICE);
+	}
+	
+	public boolean isOfficeManager() {
+		return hasRole(AonRole.OFFICE_MANAGER);
+	}
 }

@@ -16,6 +16,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -114,7 +116,8 @@ public class TariffCatalogueList extends HTMLPanel {
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "15rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.description(), "-moz-available" , "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Tipo" , "5rem" , ""));
-		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Compuesto" , "6rem" , ""));
+		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Serv. Aon" , "7rem" , ""));
+		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Serv. Despacho" , "7rem" , ""));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Precio" , "5rem" , ""));
 		tariffs.sort(Comparator.comparing(Tariff::getCode));
 		tariffs.forEach(tariff -> initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(tariff.getCode(), "5rem" , "")));
@@ -138,9 +141,9 @@ public class TariffCatalogueList extends HTMLPanel {
 		});
 	}
 	
-	private void paintRow(List<Product> products, int index) {
+	private void paintRow(List<ProductBooking> products, int index) {
 		if(index < products.size()) {
-			Product product = products.get(index);
+			ProductBooking product = products.get(index);
 			
 			getItemTariff(product.getItem().getId(), itemTariffs -> {
 				HTMLPanel row = tab.createRow();
@@ -159,9 +162,11 @@ public class TariffCatalogueList extends HTMLPanel {
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
 						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-						tab.addRow(row, new Label(product.isManufactured() ? "Pack" : "Servicio"), col.getWidth());
-					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Compuesto")){
-						tab.addRow(row, new Label(product.isComposition() ? "Si" : "No"), col.getWidth());
+						tab.addRow(row, new Label(product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio"), col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Aon")){
+						tab.addRow(row, new Label(product.isBookingComposition() ? "Compuesto" : "Simple"), col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Despacho")){
+						tab.addRow(row, new Label(product.isComposition() ? "Compuesto" : "Simple"), col.getWidth());
 					}else {
 						Optional<ItemTariff> itemTariffOpt = itemTariffs.stream().filter(itemTariff -> itemTariff.getItem().equals(product.getItem().getId()) && AonStringUtils.equalsIgnoreCase(itemTariff.getTariff().getCode(), col.getDescription())).findFirst();
 						Tariff tariffObj = tariffs.stream().filter(tariffIt -> AonStringUtils.equalsIgnoreCase(tariffIt.getCode(), col.getDescription())).findFirst().get();
@@ -188,7 +193,7 @@ public class TariffCatalogueList extends HTMLPanel {
         return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart /*+ " \u20ac"*/;
     }
 	
-	private void getList(Consumer<List<Product>> success) {
+	private void getList(Consumer<List<ProductBooking>> success) {
 		ProductParams params = new ProductParams()
 				.setDomainName(options.getDomainName())
 				.setDomain(options.getDomain())
@@ -199,10 +204,10 @@ public class TariffCatalogueList extends HTMLPanel {
 				.setLimit(Integer.MAX_VALUE)
 				;
 		
-		COMMON_SERVICE.getProducts(params, new AsyncCallback<List<Product>>() {
+		COMMON_SERVICE.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
 			
 			@Override
-			public void onSuccess(List<Product> products) {
+			public void onSuccess(List<ProductBooking> products) {
 				products.sort(Comparator.comparing(Product::isComposition).reversed());
 				success.accept(products);
 			}

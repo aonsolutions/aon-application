@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -316,10 +317,14 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getProducts(ProductParams params, AsyncCallback<List<Product>> asyncCallback) throws AonCoreException;
+	void getProductsBooking(ProductParams params, AsyncCallback<List<ProductBooking>> asyncCallback) throws AonCoreException;
 	void getProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void getProductBooking(String domainName, Integer domain, String user, Integer id, AsyncCallback<ProductBooking> asyncCallback) throws AonCoreException;
 	void deleteProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveProduct(String domainName, Integer domain, String user, Product product, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void saveProductBooking(String domainName, Integer domain, String user, ProductBooking product, AsyncCallback<ProductBooking> asyncCallback) throws AonCoreException;
 	void createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void createProductBooking(String domainName, Integer domain, String user, ProductBooking product, List<ProductTag> productTags, Item item, AsyncCallback<ProductBooking> asyncCallback) throws AonCoreException;
 	void getItem(String domainName, Integer domain, String user, Integer productId, AsyncCallback<Item> asyncCallback) throws AonCoreException;
 	void saveItem(String domainName, int domain, String user, Item item, AsyncCallback<Item> asyncCallback) throws AonCoreException;
 	void getProductCategories(String domainName, Integer domain, String user, AsyncCallback<List<ProductCategory>> asyncCallback) throws AonCoreException;
@@ -482,12 +487,14 @@ public interface CommonServiceAsync {
 	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
-	void updateBookingFee(String domainName, int domain, String user, Fee fee, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-	void createBookingFee(String domainName, int domain, String user, Product product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, ProductBooking product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> asyncCallback) throws AonCoreException;
 	void saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod, AsyncCallback<RegistryPayMethod> asyncCallback) throws AonCoreException;
 	void getRegistryRelationshipsByRelated(String domainName, Integer domainId, String user, Integer customerRelatedRegistry, AsyncCallback<List<RegistryRelationship>> asyncCallback) throws AonCoreException;
 	void saveCustomer(String domainName, Integer domainId, String user, Customer customer, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
+	
+	void getRegistryRelationships(String domainName, int domain, String user, AsyncCallback<List<RegistryRelationship>> asyncCallback) throws AonCoreException;
 	
 }

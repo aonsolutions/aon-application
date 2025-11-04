@@ -391,7 +391,7 @@ export class AonParent extends AonElement {
 		filterInput.title 		= 'Filtrar';
 		filterInput.className = 'aonCompanyFilterInput';
 
-		companyDiv.appendChild(filterInput);
+		// companyDiv.appendChild(filterInput); // hasta que no filtre correctamente
 		companyDiv.appendChild(ul);
 		
 		// Evento de filtrado

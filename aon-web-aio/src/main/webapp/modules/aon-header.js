@@ -215,27 +215,35 @@ export class AonHeader extends AonElement {
 			aonHeaderSearchBox.newTheme = this.newTheme;
 			aonHeaderSearchBox.addEventListener(EVENT.BUILD, () => {
 				const input = aonHeaderSearchBox.input;
+// console.log('cargando agregado')
 				input.addEventListener(EVENT.KEYUP, () => {
-					if(input.value.length > 0)
-						this.search(this);
-					else
+					if(input.value.length > 0){
+						clearTimeout(this.searchTimeoutId);
+
+// console.log('cargando no sale???')
+
+						input.addIcon(loading); // que se muestre el loader
+						this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
+					} else
 						aonHeaderSearchDialogMenu.close();
 				});
 				input.addEventListener(EVENT.FOCUSIN, () => {
-					if(input.value.length > 0)
-						this.showSearch(this)
-					else
+					if(input.value.length > 0){
+						clearTimeout(this.searchTimeoutId);
+						this.searchTimeoutId = setTimeout( () => this.showSearch(this) , 300 );
+					} else
 						aonHeaderSearchDialogMenu.close();
 				});
 				aonHeaderSearchDialogMenu.addEventListener('mousedown', () => {
 					clickEnMenu = true;
 				});
 				input.addEventListener(EVENT.BLUR, (ev) => {
-					 if (clickEnMenu) {
+					if (clickEnMenu) {
 						clickEnMenu = false;
 						return; // No cerramos, el clic fue dentro del menú
 					}
 					// Cerramos si pierde el focus el input
+					aonHeaderSearchBox.hideInput();
 					aonHeaderSearchDialogMenu.close();
 				});
 			});
@@ -942,6 +950,10 @@ export class AonHeader extends AonElement {
 		let aonHeaderSearchBoxValue = aonHeaderSearchBox.value;
 		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
 		
+
+		// console.log('datos.. supuestamente')
+		// console.log(aonHeaderSearchBox.input)
+
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
 				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
@@ -966,7 +978,10 @@ export class AonHeader extends AonElement {
 					icon: aonHeader.getIcon(company),
 					name: `<span>${companyName}</span><span class="company-document">${companyDocument}<aon-icon id="Company${company.id}Copy" style="display: none;" icon="${MATERIAL_ICONS.CONTENT_COPY}">${MATERIAL_ICONS.CONTENT_COPY}</aon-icon></span>`,
 					title: `${company.domain}`,
-					fn: () => { aonHeader.companySelection(company); }
+					fn: () => { 
+						aonHeaderSearchBox.hideInput();
+						aonHeader.companySelection(company); 
+					}
 				});
 			});
 			
@@ -1013,6 +1028,7 @@ export class AonHeader extends AonElement {
 						icon : MATERIAL_ICONS.PERSON,
 						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractIdentifier}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
+							aonHeaderSearchBox.hideInput();
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name});} );
 						}
 					});
