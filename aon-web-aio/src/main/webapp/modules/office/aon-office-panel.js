@@ -3,10 +3,7 @@ import { AonApplication } from "../../components/aon-application.js";
 import { OfficeEnums } from "./OfficeEnums.js";
 import { EVENT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import {
-	deleteActivityType,
-	getActivitiesType,
-	getProjectTypes,
-	saveProject,
+	deleteActivityType, getActivitiesType, getProjectTypes, saveProject
 } from "../../services/projectService.js";
 import { DocumentalSidenav } from "../documental/DocumentalEnums.js";
 import { AonCustomer } from "../registry/customer/aon-customer.js";
@@ -190,13 +187,15 @@ export class AonOfficePanel extends AonElement {
 		}
 		
 		// AUTOBOOKING
-		let autoBookingOptions = [];
+		if(this.dur.isOfficeManager()){
+			let autoBookingOptions = [];
 		
-		let service = ServiceOptions.AON_SERVICE;
-		service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
-		autoBookingOptions.push(service);
-
-		application.addSidenavOptions('Auto Contratación', autoBookingOptions);
+			let service = ServiceOptions.AON_SERVICE;
+			service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
+			autoBookingOptions.push(service);
+	
+			application.addSidenavOptions('Auto Contratación', autoBookingOptions);	
+		}
 
 		// OFFICE
 		let officeOptions = [];
@@ -714,7 +713,7 @@ export class AonOfficePanel extends AonElement {
 
 		// Clean sidenav		
 		let rightSidenav = this.getApplication().getRightSidenav();
-		rightSidenav.style.flexBasis = "0px";
+		// rightSidenav.style.flexBasis = "0px";
 		this.clearElement(rightSidenav);
 
 		// Clean isSig LS

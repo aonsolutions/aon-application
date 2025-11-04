@@ -63,7 +63,8 @@ public enum AonRole  implements Serializable {
 	INVOFOX,			// 50 -
 	SERES,				// 51 - 
 	FACTURAE,			// 52 -
-	OFFICE				// 53 - 
+	OFFICE,				// 53 - ACCESO A DESPACHO
+	OFFICE_MANAGER,		// 54 - ACCESO A DESPACHO -  MODO ASESOR
 	;
 	
 	public Byte value(){

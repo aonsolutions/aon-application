@@ -42,7 +42,6 @@ const getThemeClass = (isDark) => {
   return isDark ? 'theme-dark' : 'theme-light';
 };
 
-
 const clearThemeClasses = () => {
   [...root.classList].filter(cls => cls.startsWith('theme-')).forEach(cls => root.classList.remove(cls));
 };
@@ -73,7 +72,6 @@ const setFavicon = (url) => {
   }
   link.href = `${url}?v=${Date.now()}`;
 };
-
 
 export const applyTitle = (themeClass, title = "") => {
   if (!title) {
@@ -138,6 +136,7 @@ const applyTheme = () => {
 
   clearThemeClasses();
   root.classList.add(themeClass);
+/*
   getCustomViewConfiguration().then(res => {
     if(Object.keys(res).length > 0){
       favicon = isDark ? res.images?.["favicon-darksvg"] : res.images?.["faviconsvg"];
@@ -156,6 +155,8 @@ const applyTheme = () => {
     // Aplicamos el estilo sin el custom, por si no devuelve nada
     applyCustomTheme(themeClass, themeData);
   });
+*/
+  applyCustomTheme(themeClass, themeData);
 };
 
 // Aplicar los elementos

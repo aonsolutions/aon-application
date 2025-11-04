@@ -40,10 +40,12 @@ export class AonInvoiceRecord extends AonElement {
 
     build() {
         this.buildTabs();
+		this.style.height = "100%";
 
         let div = this.createElement(TAG.DIV);
 		div.id = this.DIV;
 		div.style.width = "100%";
+		div.style.height = "100%";
         div.style.marginTop = '1px';
 		this.appendChild(div);
 

@@ -791,7 +791,11 @@ export class DomainUserRoles {
 	}
 
 	isOffice() {
-		return this.hasOffice() && this.hasRole(Role.OFFICE);
+		return this.hasOffice() || this.hasRole(Role.OFFICE);
+	}
+	
+	isOfficeManager() {
+		return this.hasOffice() && this.hasRole(Role.OFFICE_MANAGER);
 	}
 
 	// GARAGE

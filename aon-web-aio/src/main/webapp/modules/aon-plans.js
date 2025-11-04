@@ -2,7 +2,7 @@ import {AonElement} from '../components/AonElement.js';
 import { MSG, EVENT, TAG } from '../environments/environments.js';
 import { AonCard } from '../components/aon-card';
 import { AonApplication } from '../components/aon-application.js';
-import { getDomainUserRoles, sendFormData } from '../services/companyService.js';
+import { getContratado, getDomainUserRoles, sendFormData } from '../services/companyService.js';
 import { getAuth } from '../services/authService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import * as GWT from '../gwt/gwt.js';
@@ -82,13 +82,13 @@ export class AonPlans extends AonElement {
       // Contenedor de las 4 cards
       const plansGrid = this.createElement(TAG.DIV);
       plansGrid.classList.add("plansGrid");
-      // getContratado({}).then(response => {
-      //     const userLevel = this.getUserPlanLevel(response);
-      //     this.plans.forEach((plan, index) => {
-      //       this.buildPlanCard(plan, index, userLevel, plansGrid);
-      //     });
-      // });
-      // this.applicationEl.addContent(plansGrid);
+      getContratado({}).then(response => {
+        const userLevel = this.getUserPlanLevel(response);
+        this.plans.forEach((plan, index) => {
+          this.buildPlanCard(plan, index, userLevel, plansGrid);
+        });
+      });
+      this.applicationEl.addContent(plansGrid);
   
       // Contenedor de la card de usuarios
       const cardAddUsers      = new AonCard;

@@ -181,6 +181,13 @@ jobs:
     - name: Build with Maven
       run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --resume-from ${RESUME_FROM} clean install
 
+    - name: Setup context for Docker
+      run: |
+       [[ -f pool/target/pool-9.23-SNAPSHOT.jar ]] || mvn -pl pool package  &>/dev/null
+       [[ -f aon-jaas/target/aon.jaas-9.23-SNAPSHOT.jar ]] || mvn -pl aon-jaas package  &>/dev/null
+       [[ -f aon-db-up2date/target/aon.db.up2date-9.23-SNAPSHOT.jar ]]  || mvn -pl aon-db-up2date package  &>/dev/null
+       [[ -f aon-common-resources/target/aon-common-resources-9.23-SNAPSHOT-templates.jar ]]  || mvn -pl aon-common-resources package  &>/dev/null
+
     - name: Build Docker aon-application image
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       uses: docker/build-push-action@v6
