@@ -543,7 +543,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					AonDialog errorDialog = new AonDialog("Error direcci\u00f3n", new HTMLPanel(caught.getMessage()));
+					AonDialog errorDialog = new AonDialog("Error datos bancarios", new HTMLPanel(caught.getMessage()));
 					errorDialog.info();
 				}
 				

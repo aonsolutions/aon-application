@@ -12,48 +12,50 @@ public enum AonApp implements Serializable {
 	/**
 	 * FACTURA Y GESTIÓN - INVOICE & MANAGEMENT
 	 */
-	INVOICE(getEmptyModules(), "Facturas"), 
-	DOCUMENTAL(getDocumentalModules(), "Documental"),
-	MESSENGER(getMessengerModules(), "Mensajer\u00eda"),
-	ACCOUNTING(getAccountingModules(), "Contabilidad"),
-	FISCAL(getFiscalModules(), "Fiscal"),
-	PAYROLL(getPayrollModules(), "Laboral"),
-	OCR(getEmptyModules(), "OCR"),
-	AIO(getEmptyModules(), "AIO"),
-	ALMA(getEmptyModules(), "Alma"),
-	COMUNICA(getEmptyModules(), "Comunica"),
-	BIDOQ(getEmptyModules(), "Bidoq"),
-	CONVENIOS(getEmptyModules(), "Convenios"),
-	BANK(getEmptyModules(), "Bancos"),
-	TIMECONTROL(getEmptyModules(), "Control Horario"),
-	MANAGEMENT(getManagementModules(), "Gesti\u00f3n"),
-	PACK_SUITE(getEmptyModules(), "Suite Completa"),
-	PACK_PORTAL(getEmptyModules(), "Pack Portal"),
-	PACK_PAYROLL(getEmptyModules(), "Pack Cotizaci\u00f3n"),
-	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributaci\u00f3n"),
-	SELFCONTA(getEmptyModules(), "Selfconta"),
-	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),
-	AULA(getEmptyModules(), "Aula"),
-	NOTES(getEmptyModules(), "Notas"),
-	SALTRA(getEmptyModules(), "Saltra"),
-	BASIC_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n B\u00e1sica"),
-	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gesti\u00f3n Est\u00e1ndar"),
-	PROFESSIONAL_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n Profesional"),
+	INVOICE(getEmptyModules(), "Facturas"), 											// 0
+	DOCUMENTAL(getDocumentalModules(), "Documental"),									// 1
+	MESSENGER(getMessengerModules(), "Mensajer\u00eda"),								// 2
+	ACCOUNTING(getAccountingModules(), "Contabilidad"),									// 3
+	FISCAL(getFiscalModules(), "Fiscal"),												// 4
+	PAYROLL(getPayrollModules(), "Laboral"),											// 5
+	OCR(getEmptyModules(), "OCR"),														// 6
+	AIO(getEmptyModules(), "AIO"),														// 7
+	ALMA(getEmptyModules(), "Alma"),													// 8
+	COMUNICA(getEmptyModules(), "Comunica"),											// 9
+	BIDOQ(getEmptyModules(), "Bidoq"),													// 10
+	CONVENIOS(getEmptyModules(), "Convenios"),											// 11
+	BANK(getEmptyModules(), "Bancos"),													// 12
+	TIMECONTROL(getEmptyModules(), "Control Horario"),									// 13
+	MANAGEMENT(getManagementModules(), "Gesti\u00f3n"),									// 14
+	PACK_SUITE(getEmptyModules(), "Suite Completa"),									// 15
+	PACK_PORTAL(getEmptyModules(), "Pack Portal"),										// 16
+	PACK_PAYROLL(getEmptyModules(), "Pack Cotizaci\u00f3n"),							// 17
+	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributaci\u00f3n"),					// 18
+	SELFCONTA(getEmptyModules(), "Selfconta"),											// 19
+	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),								// 20
+	AULA(getEmptyModules(), "Aula"),													// 21
+	NOTES(getEmptyModules(), "Notas"),													// 22
+	SALTRA(getEmptyModules(), "Saltra"),												// 23
+	BASIC_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n B\u00e1sica"),					// 24
+	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gesti\u00f3n Est\u00e1ndar"),	// 25
+	PROFESSIONAL_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n Profesional"),				// 26
 	@Deprecated
-	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
+	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),					// 27
 	@Deprecated
-	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
+	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),						// 28
 	@Deprecated
-	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
-	API_SERVICE(getEmptyModules(), "Servicio API"),
-	WAREHOUSE(getWarehouseModules(), "Almac\u00e9n"),
-	COMMERCIAL(getCommercialModules(), "Comercial"),
-	MARKETING(getMarketingModules(), "Marketing"),
-	TREASURY(getTreasuryModules(), "Tesorer\u00eda"),
-	GROUPWARE(getGroupwareModules(), "Expedientes"),
-	INVOFOX(getEmptyModules(), "OCR Invofox"),
-	SERES(getEmptyModules(), "Seres"),
-	FACTURAE(getEmptyModules(), "Factura Electr\u00f3nica")
+	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),						// 29
+	API_SERVICE(getEmptyModules(), "Servicio API"),										// 30
+	WAREHOUSE(getWarehouseModules(), "Almac\u00e9n"),									// 31
+	COMMERCIAL(getCommercialModules(), "Comercial"),									// 32
+	MARKETING(getMarketingModules(), "Marketing"),										// 33
+	TREASURY(getTreasuryModules(), "Tesorer\u00eda"),									// 34
+	GROUPWARE(getGroupwareModules(), "Expedientes"),									// 35
+	INVOFOX(getEmptyModules(), "OCR Invofox"),											// 36
+	SERES(getEmptyModules(), "Seres"),													// 37
+	FACTURAE(getEmptyModules(), "Factura Electr\u00f3nica"),							// 38
+	CAU(getEmptyModules(), "Soporte"),													// 39
+	CAU_ADVANCE(getEmptyModules(), "Soporte Avanzado")									// 40
 	;
 	
 	LinkedList<Module> modules;
@@ -92,6 +94,16 @@ public enum AonApp implements Serializable {
 		if(AonStringUtils.isBlank(i)) return null;
 		for (AonApp rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
+	
+
+	public static AonApp getByDescription(String selectedAonApp) {
+		if(AonStringUtils.isBlank(selectedAonApp)) return null;
+		for (AonApp rs : values()) {
+			if(selectedAonApp.equalsIgnoreCase(rs.getDescription()))
 				return rs;
 		}
 		return null;
