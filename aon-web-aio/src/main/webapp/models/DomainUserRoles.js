@@ -792,8 +792,12 @@ export class DomainUserRoles {
 
 	// OFFICE
 	
+	isOfficeDomain(){
+		return this.getDomain().getDomainType() == 'OFFICE';
+	}
+	
 	hasOfficeRole() {
-		return this.getDomain().getDomainType() == 'OFFICE' || this.getDomain().getDomainType() == 'CONSULTANCY' || this.getParentDomain().getDomainType() == 'CONSULTANCY';
+		return this.getDomain().getDomainType() == 'OFFICE' || this.getDomain().getDomainType() == 'CONSULTANCY';
 	}
 	
 
@@ -802,7 +806,7 @@ export class DomainUserRoles {
 	}
 	
 	isOffice() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER));
+		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER || this.isAdmin()));
 			//&& (this.isAdmin() || this.hasRole(Role.OFFICE));
 	}
 
@@ -816,7 +820,7 @@ export class DomainUserRoles {
 	}
 
 	isOfficeManager() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE_MANAGER) || this.hasParentRole(Role.OFFICE_MANAGER));
+		return this.hasRole(Role.OFFICE_MANAGER) || this.hasParentRole(Role.OFFICE_MANAGER) || this.isAdmin();
 			//&& (this.isAdmin() || this.hasRole(Role.OFFICE_MANAGER));
 	}
 
