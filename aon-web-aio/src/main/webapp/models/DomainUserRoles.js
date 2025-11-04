@@ -798,7 +798,7 @@ export class DomainUserRoles {
 	
 
 	hasOffice() {
-		return this.getDomain().getDomainType() == 'OFFICE';
+		return this.getDomain().getDomainType() == 'OFFICE' && (this.isOfficeUser() || this.isOfficePortal() || this.isOfficeManager());
 	}
 	
 	isOffice() {
