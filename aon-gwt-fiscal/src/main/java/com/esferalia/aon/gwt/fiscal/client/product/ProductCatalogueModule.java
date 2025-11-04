@@ -16,20 +16,27 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 
 public class ProductCatalogueModule  implements EntryPoint {
 	
@@ -73,8 +80,19 @@ public class ProductCatalogueModule  implements EntryPoint {
 		currentDomainOptions.setUser(getCurrentUser());
 		
 		officeDomainOptions = new RegistryModuleOptions();
+
+		initializeCommonService();
 		
-		moduleLoad();
+		getDomainRelationships(rrelationships -> {
+			getAviableProductBooking(products -> {
+				if(products.isEmpty())
+					Window.alert("moduleLoadSig");
+					//moduleLoadSig();
+				else
+					moduleLoad();
+			});
+		});
+		
 	}
 	
 	public void moduleLoad() {
@@ -89,8 +107,6 @@ public class ProductCatalogueModule  implements EntryPoint {
 				
 			}
 		};
-		
-		initializeCommonService();
 		
 		getTariffs(tariffsDb -> {
 			this.tariffs = tariffsDb;
@@ -122,7 +138,7 @@ public class ProductCatalogueModule  implements EntryPoint {
 			
 			@Override
 			public void onSuccess(AonConfiguration config) {
-				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany(), config.getWorkplaces());
+				productCatalogue = new ProductCatalogueBooking(currentDomainOptions, officeDomainOptions, config.getCompany());
 				productCatalogue.setHeight("100%");
 				
 				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
@@ -166,6 +182,102 @@ public class ProductCatalogueModule  implements EntryPoint {
 				AonMessagePanel.showError(messagePanel, "Error config: " + caught.getMessage());
 			}
 		});
+	}
+	
+	private void getAviableProductBooking(Consumer<List<ProductBooking>> success) {
+		commonService.getAonConfiguration(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<AonConfiguration>() {
+			
+			@Override
+			public void onSuccess(AonConfiguration config) {
+				commonService.getOfficeSibling(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<Domain>() {
+
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, "Error obteniendo despacho: " + error.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Domain officeDomain) {
+						officeDomainOptions.setDomainName(officeDomain.getName());
+						officeDomainOptions.setDomain(officeDomain.getId());
+						
+						ProductParams params = new ProductParams()
+								.setDomainName(officeDomainOptions.getDomainName())
+								.setDomain(officeDomainOptions.getDomain())
+								.setUser(officeDomainOptions.getUser())
+								.setType(ProductType.AUXILIARY)
+								.setDomainType(DomainType.ENTERPRISE)
+								.setOffset(0)
+								.setLimit(Integer.MAX_VALUE)
+								;
+						
+						commonService.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
+							
+							@Override
+							public void onSuccess(List<ProductBooking> productsDB) {
+								success.accept(productsDB);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error productos: " + caught.getMessage());
+							}
+						});
+						
+					}});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error config: " + caught.getMessage());
+			}
+		});
+		
+	}
+	
+	private void getDomainRelationships(Consumer<List<RegistryRelationship>> success) {
+		commonService.getRegistryRelationships(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), new AsyncCallback<List<RegistryRelationship>>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				noRelationshipMessage();
+			}
+
+			@Override
+			public void onSuccess(List<RegistryRelationship> registryRelationships) {
+				success.accept(registryRelationships);
+			}
+		});
+	}
+	
+	private void noRelationshipMessage() {
+		AON.ensureInjected();
+		ensureGwtSelector();
+		
+		HTMLPanel content = new HTMLPanel("");
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		content.setWidth("100%");
+		content.setHeight("100%");
+		
+		Label title = new Label("Dominio sin vinculaci\u00f3n");
+		title.addStyleName(AON.CSS.aonMessageTitle());
+		title.getElement().getStyle().setProperty("font-size", "1rem");
+
+		HTMLPanel dialogContent = new HTMLPanel("");
+		dialogContent.addStyleName(AON.CSS.aonItemFlex());
+		dialogContent.getElement().getStyle().setProperty("padding", "1rem");
+		
+		AonTableButton info = new AonTableButton("Sin vinculaci\u00f3n", AON.CSS.aonIconWarning());
+		HTMLPanel message = new HTMLPanel("El dominio del cliente no est\u00e1 vinculado al despacho. No se puede mostrar los planes.");
+		
+		dialogContent.add(info);
+		dialogContent.add(message);
+		
+		content.add(title);
+		content.add(dialogContent);
+		
+		currentDomainOptions.getParentWidget().add(content);
 	}
 	
 	private void ensureGwtSelector() {

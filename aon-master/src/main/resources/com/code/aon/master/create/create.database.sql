@@ -5536,6 +5536,7 @@ CREATE TABLE `mk_action` (
   `expense` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Inversion/gasto de la accion',
   `workgroup` int(11) DEFAULT NULL COMMENT 'Grupo de trabajo de la accion',
   `task_holder` int(11) DEFAULT NULL COMMENT 'Entidad susceptible de recibir tareas de la accion',
+  `product` int DEFAULT NULL COMMENT 'Producto base contratacion de la accion',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_ACTION_MK_CAMPAIGN` (`campaign`),
   KEY `IDX_MK_ACTION_SURVEY` (`survey`),
@@ -5545,10 +5546,12 @@ CREATE TABLE `mk_action` (
   KEY `IDX_MK_ACTION_WORKGROUP` (`workgroup`),
   KEY `IDX_MK_ACTION_TASK_HOLDER` (`task_holder`),
   KEY `IDX_MK_ACTION_TAG` (`tag`),
+  KEY `IDX_MK_ACTION_PRODUCT` (`product`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
+  CONSTRAINT `FK_MK_ACTION_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
   CONSTRAINT `FK_MK_ACTION_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_MK_ACTION_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
@@ -6411,6 +6414,32 @@ CREATE TABLE `product` (
   CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
   CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
+
+#
+# Table structure for table `product_booking`
+#
+
+CREATE TABLE `product_booking` (
+  `product` int NOT NULL DEFAULT '0' COMMENT 'Identificador unico del producto',
+  `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de producto (pack, servicio, ...)',
+  `pos` int(11) DEFAULT '0' COMMENT 'Orden para mostrar lista',
+  `json` text DEFAULT NULL COLLATE latin1_spanish_ci COMMENT 'Informacion relativa al producto en formato JSON',
+  `workgroup` int DEFAULT NULL COMMENT 'Grupo trabajo asociado al producto',
+  `task_holder` int DEFAULT NULL COMMENT 'Operario asociado al producto',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`product`),
+  KEY `IDX_PRODCUT_BOOKING_DOMAIN` (`domain`),
+  KEY `IDX_PRODCUT_BOOKING_WORKGROUP` (`workgroup`),
+  KEY `IDX_PRODCUT_BOOKING_TASK_HOLDER` (`task_holder`),
+  CONSTRAINT `FK_PRODCUT_BOOKING_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
+  CONSTRAINT `FK_PRODCUT_BOOKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PRODCUT_BOOKING_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
+  CONSTRAINT `FK_PRODCUT_BOOKING_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos contratacion';
 
 #
 # Table structure for table `product_tag`

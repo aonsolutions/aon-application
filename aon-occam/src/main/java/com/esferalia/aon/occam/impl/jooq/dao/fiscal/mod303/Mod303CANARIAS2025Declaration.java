@@ -254,7 +254,119 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 			, null, null, null, null)
 		,CA_C051(Mod303Key.CA_C051 , (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
 			, null, null, null, null)
-
+		
+		// ---------------------------------------------------------------
+		// ------------------------- EXONERADOS RESUMEN ANUAL (MODELO 417)
+		// ---------------------------------------------------------------
+		
+		// Modelo 417: Datos estadísticos (actividades)
+		,CA_U1D(Mod303Key.CA_U1D)	
+		,CA_U1C(Mod303Key.CA_U1C)
+		,CA_U1E(Mod303Key.CA_U1E)
+		,CA_U1R(Mod303Key.CA_U1R) 
+		,CA_U2D(Mod303Key.CA_U2D)
+		,CA_U2C(Mod303Key.CA_U2C)
+		,CA_U2E(Mod303Key.CA_U2E)
+		,CA_U2R(Mod303Key.CA_U2R)
+		,CA_U3D(Mod303Key.CA_U3D)
+		,CA_U3C(Mod303Key.CA_U3C)
+		,CA_U3E(Mod303Key.CA_U3E)
+		,CA_U3R(Mod303Key.CA_U3R)
+		,CA_U4D(Mod303Key.CA_U4D)
+		,CA_U4C(Mod303Key.CA_U4C)
+		,CA_U4E(Mod303Key.CA_U4E)
+		,CA_U4R(Mod303Key.CA_U4R)
+		,CA_U5D(Mod303Key.CA_U5D)
+		,CA_U5C(Mod303Key.CA_U5C)
+		,CA_U5E(Mod303Key.CA_U5E)
+		,CA_U5R(Mod303Key.CA_U5R)
+		
+		// Modelo 417: Operaciones realizadas en el ejercicio (Modelo 417)
+		,CA_C052(Mod303Key.CA_C052)
+		,CA_C053(Mod303Key.CA_C053)
+		,CA_C054(Mod303Key.CA_C054)
+		,CA_C055(Mod303Key.CA_C055)
+		,CA_C056(Mod303Key.CA_C056)
+		,CA_C057(Mod303Key.CA_C057)
+		,CA_C058(Mod303Key.CA_C058)
+		,CA_C059(Mod303Key.CA_C059)
+		,CA_C060(Mod303Key.CA_C060)
+		,CA_C061(Mod303Key.CA_C061)
+		,CA_C062(Mod303Key.CA_C062)
+		,CA_C063(Mod303Key.CA_C063)
+		,CA_C064(Mod303Key.CA_C064)
+		,CA_C065(Mod303Key.CA_C065, null, null, null, "CA_C052+CA_C053+CA_C054+CA_C055+CA_C056+CA_C057+CA_C058+CA_C059+CA_C060+CA_C061+CA_C062-CA_C063-CA_C064", null) // Total volumen de operaciones
+		
+		// Modelo 417: Prorrata
+		,CA_P1C(Mod303Key.CA_P1C)
+		,CA_P1I(Mod303Key.CA_P1I)
+		,CA_P1D(Mod303Key.CA_P1D)
+		,CA_P1T(Mod303Key.CA_P1T)
+		,CA_P1P(Mod303Key.CA_P1P)
+		,CA_P2C(Mod303Key.CA_P2C)
+		,CA_P2I(Mod303Key.CA_P2I)
+		,CA_P2D(Mod303Key.CA_P2D)
+		,CA_P2T(Mod303Key.CA_P2T)
+		,CA_P2P(Mod303Key.CA_P2P)
+		,CA_P3C(Mod303Key.CA_P3C)
+		,CA_P3I(Mod303Key.CA_P3I)
+		,CA_P3D(Mod303Key.CA_P3D)
+		,CA_P3T(Mod303Key.CA_P3T)
+		,CA_P3P(Mod303Key.CA_P3P)
+		,CA_P4C(Mod303Key.CA_P4C)
+		,CA_P4I(Mod303Key.CA_P4I)
+		,CA_P4D(Mod303Key.CA_P4D)
+		,CA_P4T(Mod303Key.CA_P4T)
+		,CA_P4P(Mod303Key.CA_P4P)
+		,CA_P5C(Mod303Key.CA_P5C)
+		,CA_P5I(Mod303Key.CA_P5I)
+		,CA_P5D(Mod303Key.CA_P5D)
+		,CA_P5T(Mod303Key.CA_P5T)
+		,CA_P5P(Mod303Key.CA_P5P)
+		
+		// Modelo 417: Actividades con regímenes de deducción diferenciados
+		,CA_C200(Mod303Key.CA_C200)
+		,CA_C201(Mod303Key.CA_C201)
+		,CA_C202(Mod303Key.CA_C202)
+		,CA_C203(Mod303Key.CA_C203)
+		,CA_C204(Mod303Key.CA_C204)
+		,CA_C205(Mod303Key.CA_C205)
+		,CA_C206(Mod303Key.CA_C206)
+		,CA_C207(Mod303Key.CA_C207)
+		,CA_C208(Mod303Key.CA_C208)
+		,CA_C209(Mod303Key.CA_C209)
+		,CA_C210(Mod303Key.CA_C210)
+		,CA_C211(Mod303Key.CA_C211)
+		,CA_C212(Mod303Key.CA_C212)
+		,CA_C213(Mod303Key.CA_C213, null, null, null, "CA_C201+CA_C203+CA_C205+CA_C207+CA_C209+CA_C211+CA_C212", null) // Suma de deducciones Grupo 1
+		,CA_C214(Mod303Key.CA_C214)
+		,CA_C215(Mod303Key.CA_C215)
+		,CA_C216(Mod303Key.CA_C216)
+		,CA_C217(Mod303Key.CA_C217)
+		,CA_C218(Mod303Key.CA_C218)
+		,CA_C219(Mod303Key.CA_C219)
+		,CA_C220(Mod303Key.CA_C220)
+		,CA_C221(Mod303Key.CA_C221)
+		,CA_C222(Mod303Key.CA_C222)
+		,CA_C223(Mod303Key.CA_C223)
+		,CA_C224(Mod303Key.CA_C224)
+		,CA_C225(Mod303Key.CA_C225)
+		,CA_C226(Mod303Key.CA_C226)
+		,CA_C227(Mod303Key.CA_C227, null, null, null, "CA_C215+CA_C217+CA_C219+CA_C221+CA_C223+CA_C225+CA_C226", null) // Suma de deducciones Grupo 2
+		,CA_C228(Mod303Key.CA_C228)
+		,CA_C229(Mod303Key.CA_C229)
+		,CA_C230(Mod303Key.CA_C230)
+		,CA_C231(Mod303Key.CA_C231)
+		,CA_C232(Mod303Key.CA_C232)
+		,CA_C233(Mod303Key.CA_C233)
+		,CA_C234(Mod303Key.CA_C234)
+		,CA_C235(Mod303Key.CA_C235)
+		,CA_C236(Mod303Key.CA_C236)
+		,CA_C237(Mod303Key.CA_C237)
+		,CA_C238(Mod303Key.CA_C238)
+		,CA_C239(Mod303Key.CA_C239)
+		,CA_C240(Mod303Key.CA_C240)
+		,CA_C241(Mod303Key.CA_C241, null, null, null, "CA_C229+CA_C231+CA_C233+CA_C235+CA_C237+CA_C239+CA_C240", null) // Suma de deducciones Grupo 3
 		;
 		
 		private Mod303Key key;
@@ -391,38 +503,12 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 				&& vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 
-//	private static boolean adqIntracomunitariasFilter(VatContext vat, Mod303 mod) {
-//		return !vat.isVatSurchargeRegime() && (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {
-//		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterNoRECT(VatContext vat, Mod303 mod) {
-//		return !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && vat.isIntracommunityPurchase()
-//				&& !vat.isService();
-//	}
-//
-//	private static boolean entregasActivosFijosFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && vat.isSales() && vat.isInvestment();
-//	}
-
 	private static boolean operacionesISPFilter(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime()
 				&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
 						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
 						|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
-
-//	private static boolean operacionesISPFilterSimp(VatContext vat, Mod303 mod) {
-//		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && (operacionesISPFilter(vat, mod)
-//				|| vat.isIntracommunityExpenses() || (vat.isService() && vat.isIntracommunityPurchase()));
-//	}
 
 	private static boolean operacionesISPFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && operacionesISPFilter(vat, mod);
@@ -472,14 +558,6 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		return false;
 	}
 
-//	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat, Mod303 mod) {
-//		return !vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-//
-//	private static boolean adqIntracomunitariasInversionFilter(VatContext vat, Mod303 mod) {
-//		return vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
-//	}
-
 	private static boolean rectificacionDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
 				&& (vat.isPurchase() || vat.isExpenses());
@@ -493,10 +571,6 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 				&& (vat.isNationalPurchase() || vat.isNationalExpenses());
 	}
 
-//	public static boolean  ventasIntracomunitarias(VatContext vat, Mod303 mod) {
-//		return !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();
-//	}
-	
 	public static boolean ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()) && !vat.isSalesOSS();
 	}
