@@ -613,16 +613,15 @@ export const CONSOLE = {
 };
 
 export const OFFICE = {
-  app: "office",
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
-  newIcon: AON_ICONS.AON_NEW_OFFICE,
-  symbol:MATERIAL_ICONS.BUSINESS_CENTER,
-  title: MSG.OFFICE,
+  app: 'office',
+  title: MSG.OFFICE, //MSG.INVOICES,
   description: MSG.OFFICE,
+  tag: MSG_ES.OFFICE,
+  symbol: MATERIAL_ICONS.BUSINESS_CENTER,
   color: "var(--aonTopMenuSpecial)",
-  backgroundColor: "rgba(0, 0, 0, .2)",
+  // newColor: "var(--aonInvoice)", 
+  backgroundColor: 'rgba(0, 0, 0, .2)',
   hover: 'sidenavHover',
-  domainType: true,
   access: [
     {
       value: "Asesor",
@@ -632,14 +631,13 @@ export const OFFICE = {
       value: "Empresa",
       name: "Empresa",
     },
+    {
+      value: "Empleado",
+      name: "Empleado",
+    },
   ],
-  price: " ",
-  is: (dur) => new DomainUserRoles(dur).isOffice(),
-  has: (dur) => {
-	let d = new DomainUserRoles(dur);
-	return !d.isEmployee() && !d.isEnterprise();
-  },
-  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+  is: (dur) => new DomainUserRoles(dur).isOfficeUser() || new DomainUserRoles(dur).isOfficePortal() || new DomainUserRoles(dur).isOfficeManager(),
+  has: (dur) => new DomainUserRoles(dur).hasOfficeRole() 
 };
 
 export const API_SERVICE = {
@@ -1003,6 +1001,7 @@ export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllAonApps = [
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -1023,8 +1022,8 @@ export const AllAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA,
-  OFFICE];
+  AON_SALTRA
+  ];
   
 export const AllApps = {
   ACCOUNTING,
