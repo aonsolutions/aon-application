@@ -87,8 +87,9 @@ export const Role = {
 	GROUPWARE: 'GROUPWARE',
 	SERES: 'SERES',
 	FACTURAE: 'FACTURAE',
-	OFFICE: 'OFFICE',							// ACCESO A DESPACHO -  MODO EMPLEADO
-	OFFICE_MANAGER: 'OFFICE_MANAGER'			// ACCESO A DESPACHO -  MODO ASESOR
+	OFFICE: 'OFFICE',			                // ACCESO A DESPACHO - MODO EMPLEADO
+	OFFICE_MANAGER: 'OFFICE_MANAGER',	   		// ACCESO A DESPACHO - MODO ASESOR
+	OFFICE_PORTAL: 'OFFICE_PORTAL',		    	// ACCESO A DESPACHO - MODO PORTAL/EMPRESA
 }
 
 export const Roles = [
@@ -141,7 +142,9 @@ export const Roles = [
 	{ value: Role.GROUPWARE, is: (dur) => new DomainUserRoles(dur).isGroupware()},
 	{ value: Role.SERES, is: (dur) => new DomainUserRoles(dur).isSeres()},
 	{ value: Role.FACTURAE, is: (dur) => new DomainUserRoles(dur).isFacturae()},
-	{ value: Role.OFFICE, is: (dur) => new DomainUserRoles(dur).isOffice()}
+	{ value: Role.OFFICE, is: (dur) => new DomainUserRoles(dur).isOffice()},
+	{ value: Role.OFFICE_MANAGER, is: (dur) => new DomainUserRoles(dur).isOfficeManager()},
+	{ value: Role.OFFICE_PORTAL, is: (dur) => new DomainUserRoles(dur).isOfficePortal()},
 ];
 
 export const OldModule = {
