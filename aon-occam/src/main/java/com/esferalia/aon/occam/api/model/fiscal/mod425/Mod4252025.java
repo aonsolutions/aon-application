@@ -6,7 +6,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod4252025 extends Mod390  {
@@ -29,51 +29,45 @@ public class Mod4252025 extends Mod390  {
 			this.key = key;
 			return this;
 		}
-
-		public int getTaxableBaseBox() {
-			// Unica excepcion en el modelo.	
-//			if (key == Mod4252025DetailKey.C0062) return 639;
-			return (key.getBox() - 1);
-		}
-
 		public double getTaxableBase() {
 			return taxableBase;
 		}
-
 		public Mod425Detail setTaxableBase(double taxableBase) {
 			this.taxableBase = taxableBase;
 			return this;
 		}
-
 		public double getPercent() {
 			return percent;
 		}
-
 		public Mod425Detail setPercent(double percent) {
 			this.percent = percent;
 			return this;
 		}
-
-		public int getBox() {
-			return key.getBox();
-		}
-
 		public double getQuota() {
 			return quota;
 		}
-
 		public Mod425Detail setQuota(double quota) {
 			this.quota = quota;
 			return this;
 		}
+		
+//		public int getTaxableBaseBox() {
+//		// Unica excepcion en el modelo.	
+////		if (key == Mod4252025DetailKey.C0062) return 639;
+//		return (key.getBox() - 1);
+//	}
+
+//		public int getBox() {
+//			return key.getBox();
+//		}
 
 	}
 	
 	private boolean confidential;
-	private boolean taxRefund; // Registro de devolución mensual en algún período del ejercicio
-	private boolean specialRegime; // FALTA - Régimen especial del pequeño empresario o profesional
-	private boolean replacementDueInsolvencyState; // Declaración sustitutiva por rectificación de cuotas en caso de concurso de acreedores
-	private boolean mod347; // Está obligado a presentar el modelo 415 por realizar operaciones con terceras personas por importe superior a 3.005,06 euros
+	private boolean taxRefund;                     	// Registro de devolución mensual en algún período del ejercicio
+	private boolean specialRegime; 					// FALTA - Régimen especial del pequeño empresario o profesional
+	private boolean replacementDueInsolvencyState; 	// Declaración sustitutiva por rectificación de cuotas en caso de concurso de acreedores
+	private boolean mod415; 						// Está obligado a presentar el modelo 415 por realizar operaciones con terceras personas por importe superior a 3.005,06 euros
 	
 //	private boolean insolvencyDeclarations;
 //	private boolean insolvencyStateThisYear;
@@ -87,7 +81,6 @@ public class Mod4252025 extends Mod390  {
 //	private String groupDocument;
 //	private boolean groupDeclarations;
 //	
-	// FALTA - CADA ACTIVIDAD TIENEN MAS DATOS QUE LAS QUE LLEVA EL 390 AEAT
 	private Activity425 mainActivity; // Actividades a las que se refiere la declaración - Actividad principal
 	private Activity425 activity1; // Actividades a las que se refiere la declaración - Otras
 	private Activity425 activity2; // Actividades a las que se refiere la declaración - Otras
@@ -103,24 +96,24 @@ public class Mod4252025 extends Mod390  {
 	private LegalRepresentative legalRepr2; // Datos del representante - Personas jurídicas
 	private LegalRepresentative legalRepr3; // Datos del representante - Personas jurídicas
 	
-	// FALTA - EL MODELO 425 TIENEN OTRAS CLAVES EN LAS CASILLAS
 	private Map<Mod4252025DetailKey,Mod425Detail> generalRegime; // Operaciones realizadas en régimen general
 
-	// FALTA - REVISAR CASILLAS DE CADA ACTIVIDAD EN REGIMEN SIMPLIFICADO TIENEN ALGUNAS DISTINTAS DEL 390 DE LA AEAT
-	private SimpliedRegimeActivity simpRegime1; // Operaciones realizadas en régimen simplificado (1)
-	private SimpliedRegimeActivity simpRegime2; // Operaciones realizadas en régimen simplificado (2)
-	private SimpliedRegimeActivity simpRegime3; // Operaciones realizadas en régimen simplificado (3)
-	private SimpliedRegimeActivity simpRegime4; // Operaciones realizadas en régimen simplificado (4)
-	private SimpliedRegimeActivity simpRegime5; // Operaciones realizadas en régimen simplificado (5)
-	private SimpliedRegimeActivity simpRegime6; // Operaciones realizadas en régimen simplificado (6)
-	private SimpliedRegimeActivity simpRegime7; // Operaciones realizadas en régimen simplificado (7)
+	private SimpliedRegimeActivity425 simpRegime1; // Operaciones realizadas en régimen simplificado (1)
+	private SimpliedRegimeActivity425 simpRegime2; // Operaciones realizadas en régimen simplificado (2)
+	private SimpliedRegimeActivity425 simpRegime3; // Operaciones realizadas en régimen simplificado (3)
+	private SimpliedRegimeActivity425 simpRegime4; // Operaciones realizadas en régimen simplificado (4)
+	private SimpliedRegimeActivity425 simpRegime5; // Operaciones realizadas en régimen simplificado (5)
+	private SimpliedRegimeActivity425 simpRegime6; // Operaciones realizadas en régimen simplificado (6)
+	private SimpliedRegimeActivity425 simpRegime7; // Operaciones realizadas en régimen simplificado (7)
 	
 //	private FarmerRegimeActivity farmerRegime1;
 //	private FarmerRegimeActivity farmerRegime2;
 //	private FarmerRegimeActivity farmerRegime3;
 //	private FarmerRegimeActivity farmerRegime4;
 //	private FarmerRegimeActivity farmerRegime5;
-//	
+	
+	// FALTA - POR QUE ESTAS CASILLAS NO SE PONEN TAMBIEN EN EL MAP DE ARRIBA Y VAN ESPECIFICAMENTE AQUI ?
+	
 	private double box103; // 103 Total cuota anual derivada del régimen simplificado
 
 	private double box104; // 104 Cuotas devengadas por entregas o transmisiones de activos fijos y por inversión del sujeto pasivo
@@ -292,11 +285,11 @@ public class Mod4252025 extends Mod390  {
 //	public void setGroupDeclarations(boolean groupDeclarations) {
 //		this.groupDeclarations = groupDeclarations;
 //	}
-	public boolean isMod347() {
-		return mod347;
+	public boolean isMod415() {
+		return mod415;
 	}
-	public void setMod347(boolean mod347) {
-		this.mod347 = mod347;
+	public void setMod415(boolean mod415) {
+		this.mod415 = mod415;
 	}
 	public String getMergedDeclarationDocument() {
 		return mergedDeclarationDocument;
@@ -392,18 +385,49 @@ public class Mod4252025 extends Mod390  {
 	public void setGeneralRegime(Map<Mod4252025DetailKey, Mod425Detail> generalRegime) {
 		this.generalRegime = generalRegime;
 	}
-	public SimpliedRegimeActivity getSimpRegime1() {
+	public SimpliedRegimeActivity425 getSimpRegime1() {
 		return simpRegime1;
 	}
-	public void setSimpRegime1(SimpliedRegimeActivity simpRegime1) {
+	public void setSimpRegime1(SimpliedRegimeActivity425 simpRegime1) {
 		this.simpRegime1 = simpRegime1;
 	}
-	public SimpliedRegimeActivity getSimpRegime2() {
+	public SimpliedRegimeActivity425 getSimpRegime2() {
 		return simpRegime2;
 	}
-	public void setSimpRegime2(SimpliedRegimeActivity simpRegime2) {
+	public void setSimpRegime2(SimpliedRegimeActivity425 simpRegime2) {
 		this.simpRegime2 = simpRegime2;
 	}
+	public SimpliedRegimeActivity425 getSimpRegime3() {
+		return simpRegime3;
+	}
+	public void setSimpRegime3(SimpliedRegimeActivity425 simpRegime3) {
+		this.simpRegime3 = simpRegime3;
+	}
+	public SimpliedRegimeActivity425 getSimpRegime4() {
+		return simpRegime4;
+	}
+	public void setSimpRegime4(SimpliedRegimeActivity425 simpRegime4) {
+		this.simpRegime4 = simpRegime4;
+	}
+	public SimpliedRegimeActivity425 getSimpRegime5() {
+		return simpRegime5;
+	}
+	public void setSimpRegime5(SimpliedRegimeActivity425 simpRegime5) {
+		this.simpRegime5 = simpRegime5;
+	}
+	public SimpliedRegimeActivity425 getSimpRegime6() {
+		return simpRegime6;
+	}
+	public void setSimpRegime6(SimpliedRegimeActivity425 simpRegime6) {
+		this.simpRegime6 = simpRegime6;
+	}
+	public SimpliedRegimeActivity425 getSimpRegime7() {
+		return simpRegime7;
+	}
+	public void setSimpRegime7(SimpliedRegimeActivity425 simpRegime7) {
+		this.simpRegime7 = simpRegime7;
+	}
+	
 	public boolean isSimplifiedRegime() {
 		return (
 				(getSimpRegime1() != null && AonStringUtils.isNotEmpty(getSimpRegime1().getEpigrafe()))
@@ -415,6 +439,278 @@ public class Mod4252025 extends Mod390  {
 			||  (getSimpRegime7() != null && AonStringUtils.isNotEmpty(getSimpRegime7().getEpigrafe()))
 				); 
 	}
+	
+	public double getBox103() {
+		return box103;
+	}
+	public void setBox103(double box103) {
+		this.box103 = box103;
+	}
+	public double getBox104() {
+		return box104;
+	}
+	public void setBox104(double box104) {
+		this.box104 = box104;
+	}
+	public double getBox105() {
+		return box105;
+	}
+	public void setBox105(double box105) {
+		this.box105 = box105;
+	}
+	public double getBox106() {
+		return box106;
+	}
+	public void setBox106(double box106) {
+		this.box106 = box106;
+	}
+	public double getBox107() {
+		return box107;
+	}
+	public void setBox107(double box107) {
+		this.box107 = box107;
+	}
+	public double getBox108() {
+		return box108;
+	}
+	public void setBox108(double box108) {
+		this.box108 = box108;
+	}
+	public double getBox109() {
+		return box109;
+	}
+	public void setBox109(double box109) {
+		this.box109 = box109;
+	}
+	public double getBox110() {
+		return box110;
+	}
+	public void setBox110(double box110) {
+		this.box110 = box110;
+	}
+	public double getBox111() {
+		return box111;
+	}
+	public void setBox111(double box111) {
+		this.box111 = box111;
+	}
+	public double getBox112() {
+		return box112;
+	}
+	public void setBox112(double box112) {
+		this.box112 = box112;
+	}
+	public double getBox113() {
+		return box113;
+	}
+	public void setBox113(double box113) {
+		this.box113 = box113;
+	}
+	public double getBox114() {
+		return box114;
+	}
+	public void setBox114(double box114) {
+		this.box114 = box114;
+	}
+	public double getBox115() {
+		return box115;
+	}
+	public void setBox115(double box115) {
+		this.box115 = box115;
+	}
+	public double getBox116() {
+		return box116;
+	}
+	public void setBox116(double box116) {
+		this.box116 = box116;
+	}
+	public double getBox117() {
+		return box117;
+	}
+	public void setBox117(double box117) {
+		this.box117 = box117;
+	}
+	public double getBox118() {
+		return box118;
+	}
+	public void setBox118(double box118) {
+		this.box118 = box118;
+	}
+	public double getBox119() {
+		return box119;
+	}
+	public void setBox119(double box119) {
+		this.box119 = box119;
+	}
+	public double getBox120() {
+		return box120;
+	}
+	public void setBox120(double box120) {
+		this.box120 = box120;
+	}
+	public double getBox121() {
+		return box121;
+	}
+	public void setBox121(double box121) {
+		this.box121 = box121;
+	}
+	public double getBox122() {
+		return box122;
+	}
+	public void setBox122(double box122) {
+		this.box122 = box122;
+	}
+	public double getBox123() {
+		return box123;
+	}
+	public void setBox123(double box123) {
+		this.box123 = box123;
+	}
+	public double getBox124() {
+		return box124;
+	}
+	public void setBox124(double box124) {
+		this.box124 = box124;
+	}
+	public double getBox125() {
+		return box125;
+	}
+	public void setBox125(double box125) {
+		this.box125 = box125;
+	}
+	public double getBox126() {
+		return box126;
+	}
+	public void setBox126(double box126) {
+		this.box126 = box126;
+	}
+	public double getBox127() {
+		return box127;
+	}
+	public void setBox127(double box127) {
+		this.box127 = box127;
+	}
+	public double getBox128() {
+		return box128;
+	}
+	public void setBox128(double box128) {
+		this.box128 = box128;
+	}
+	public double getBox129() {
+		return box129;
+	}
+	public void setBox129(double box129) {
+		this.box129 = box129;
+	}
+	public double getBox130() {
+		return box130;
+	}
+	public void setBox130(double box130) {
+		this.box130 = box130;
+	}
+	public double getBox131() {
+		return box131;
+	}
+	public void setBox131(double box131) {
+		this.box131 = box131;
+	}
+	public double getBox132() {
+		return box132;
+	}
+	public void setBox132(double box132) {
+		this.box132 = box132;
+	}
+	public double getBox133() {
+		return box133;
+	}
+	public void setBox133(double box133) {
+		this.box133 = box133;
+	}
+	public double getBox134() {
+		return box134;
+	}
+	public void setBox134(double box134) {
+		this.box134 = box134;
+	}
+	public double getBox135() {
+		return box135;
+	}
+	public void setBox135(double box135) {
+		this.box135 = box135;
+	}
+	public double getBox136() {
+		return box136;
+	}
+	public void setBox136(double box136) {
+		this.box136 = box136;
+	}
+	public double getBox137() {
+		return box137;
+	}
+	public void setBox137(double box137) {
+		this.box137 = box137;
+	}
+	public double getBox138() {
+		return box138;
+	}
+	public void setBox138(double box138) {
+		this.box138 = box138;
+	}
+	public double getBox139() {
+		return box139;
+	}
+	public void setBox139(double box139) {
+		this.box139 = box139;
+	}
+	public double getBox140() {
+		return box140;
+	}
+	public void setBox140(double box140) {
+		this.box140 = box140;
+	}
+	public double getBox141() {
+		return box141;
+	}
+	public void setBox141(double box141) {
+		this.box141 = box141;
+	}
+	public double getBox142() {
+		return box142;
+	}
+	public void setBox142(double box142) {
+		this.box142 = box142;
+	}
+	public double getBox143() {
+		return box143;
+	}
+	public void setBox143(double box143) {
+		this.box143 = box143;
+	}
+	public double getBox144() {
+		return box144;
+	}
+	public void setBox144(double box144) {
+		this.box144 = box144;
+	}
+	public double getBox145() {
+		return box145;
+	}
+	public void setBox145(double box145) {
+		this.box145 = box145;
+	}
+	public double getBox146() {
+		return box146;
+	}
+	public void setBox146(double box146) {
+		this.box146 = box146;
+	}
+	public double getBox147() {
+		return box147;
+	}
+	public void setBox147(double box147) {
+		this.box147 = box147;
+	}	
+	
 //	public FarmerRegimeActivity getFarmerRegime1() {
 //		return farmerRegime1;
 //	}
@@ -972,390 +1268,186 @@ public class Mod4252025 extends Mod390  {
 //		,Mod4252025DetailKey.C0636
 //		,Mod4252025DetailKey.C0638
 //	};	
-//
-//	private static final Mod4252025DetailKey[] C0064_FORMULA = {
-//		 Mod4252025DetailKey.C0049,Mod4252025DetailKey.C0513
-//		,Mod4252025DetailKey.C0051,Mod4252025DetailKey.C0521
-//		,Mod4252025DetailKey.C0053,Mod4252025DetailKey.C0055
-//		,Mod4252025DetailKey.C0057,Mod4252025DetailKey.C0059
-//		,Mod4252025DetailKey.C0598,Mod4252025DetailKey.C0061
-//		,Mod4252025DetailKey.C0661,Mod4252025DetailKey.C0062
-//		,Mod4252025DetailKey.C0652,Mod4252025DetailKey.C0063
-//		,Mod4252025DetailKey.C0522};
-//
-//	public void calculate() {
-//		double k37Quota = 0;
-//		calculate(Mod4252025DetailKey.C0034, C0034_FORMULA);
-//		Mod425Detail k13 = calculate(Mod4252025DetailKey.C0047, C0047_FORMULA);
-//		calculate(Mod4252025DetailKey.C0049, C0049_FORMULA);
-//		calculate(Mod4252025DetailKey.C0513, C0513_FORMULA);
-//		calculate(Mod4252025DetailKey.C0051, C0051_FORMULA);
-//		calculate(Mod4252025DetailKey.C0521, C0521_FORMULA);
-//		calculate(Mod4252025DetailKey.C0053, C0053_FORMULA);
-//		calculate(Mod4252025DetailKey.C0055, C0055_FORMULA);
-//		calculate(Mod4252025DetailKey.C0057, C0057_FORMULA);
-//		calculate(Mod4252025DetailKey.C0059, C0059_FORMULA);
-//		calculate(Mod4252025DetailKey.C0598, C0598_FORMULA);
-//			
-//		Mod425Detail k36 = calculate(Mod4252025DetailKey.C0064, C0064_FORMULA);
-//		Mod425Detail k37 = ensure(Mod4252025DetailKey.C0065);
-//		k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
-//		k37.setQuota( k37Quota );
-//		
-//		if (isSimplifiedRegime()) {
-//			box74 = AonMathUtils.round(
-//					(getSimpRegime1()==null?0:getSimpRegime1().getBoxJ()) 
-//				  + (getSimpRegime2()==null?0:getSimpRegime2().getBoxJ()));
-//			box75 = AonMathUtils.round(
-//					  (getFarmerRegime1()!=null?getFarmerRegime1().getQuota():0)
-//					+ (getFarmerRegime2()!=null?getFarmerRegime2().getQuota():0)
-//					+ (getFarmerRegime3()!=null?getFarmerRegime3().getQuota():0)
-//					+ (getFarmerRegime4()!=null?getFarmerRegime4().getQuota():0)
-//					+ (getFarmerRegime5()!=null?getFarmerRegime5().getQuota():0)
-//					);
-//			box79 = AonMathUtils.round(box74 + box75 + box76 + box77 + box78 );
-//			box82 = AonMathUtils.round(box80 + box81);
-//			box83 = AonMathUtils.round(box79 - box82);
-//		} else {
-//			box74 = 0;
-//			box75 = 0;
-//			box79 = 0;
-//			box82 = 0;
-//			box83 = 0;
-//		}
-//		box84 = AonMathUtils.round(k37Quota + box83);
-//		box86 = AonMathUtils.round(box84 + box659 - box85);
-//		box92 = AonMathUtils.round(box84 * box87 / 100);
-//		box94 = AonMathUtils.round(box92 + box659 - box93);
-//		box108 = AonMathUtils.round(box99+box653+box103+box104+box105
-//				+box110+box125+box126+box127
-//				+box128+box100+box101+box102
-//				+box227+box228-box106-box107);
-//	}
 	
-//	public Mod425Detail ensure(Mod4252025DetailKey key) {
-//		Mod425Detail detail = getGeneralRegime().get(key);
-//		if (detail == null) {
-//			detail = new Mod425Detail();
-//			detail.setKey(key);
-//			detail.setPercent(key.getPercent());
-//			getGeneralRegime().put(key, detail);
-//		}
-//		return detail;
-//	}
+//	Casilla 74 Total bases IGIC: consigne el importe de la operación aritmética para obtener el Total
+//	bases IGIC: 01+04+07+10+13+16+16bis+19+22+25+28+31+34+37+40+43+46+49+52+55+58+
+//	+61+64+64bis+67+70-72.	
+	private static final Mod4252025DetailKey[] C074_FORMULA_ADD = {
+		 Mod4252025DetailKey.C003
+		,Mod4252025DetailKey.C006
+		,Mod4252025DetailKey.C009
+		,Mod4252025DetailKey.C012
+		,Mod4252025DetailKey.C015
+		,Mod4252025DetailKey.C018
+		,Mod4252025DetailKey.C018B
+		,Mod4252025DetailKey.C021
+		,Mod4252025DetailKey.C024
+		,Mod4252025DetailKey.C027
+		,Mod4252025DetailKey.C030
+		,Mod4252025DetailKey.C033
+		,Mod4252025DetailKey.C036
+		,Mod4252025DetailKey.C039
+		,Mod4252025DetailKey.C042
+		,Mod4252025DetailKey.C045
+		,Mod4252025DetailKey.C048
+		,Mod4252025DetailKey.C051
+		,Mod4252025DetailKey.C054
+		,Mod4252025DetailKey.C057
+		,Mod4252025DetailKey.C060
+		,Mod4252025DetailKey.C063
+		,Mod4252025DetailKey.C066
+		,Mod4252025DetailKey.C066B
+		,Mod4252025DetailKey.C069
+		,Mod4252025DetailKey.C071			
+	};
+	private static final Mod4252025DetailKey[] C074_FORMULA_SUBTRACT = {
+		Mod4252025DetailKey.C073			
+	};
 	
-//	private Mod425Detail calculate(Mod4252025DetailKey key, Mod4252025DetailKey ... keys) {
-//		Mod425Detail detail = ensure(key);
-//		detail.setTaxableBase(0.0);
-//		detail.setQuota(0.0);
-//		for (Mod4252025DetailKey k : keys) {
-//			Mod425Detail det = ensure(k);
-//			detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));
-//			detail.setQuota( AonMathUtils.round(detail.getQuota() + det.getQuota()));
-//		}
-//		return detail;
-//	}
+//	Casilla 79 Total cuotas devengadas: consigne el importe de la operación aritmética para obtener
+//	el Total de cuotas devengadas: 03+06+09+12+15+18+18bis+21+24+27+30+33+36+39+42+45+
+//	+48+51+54+57+60+63+66+66bis+69+71-73+76-78
+	private static final Mod4252025DetailKey[] C079_FORMULA_ADD = {
+		 Mod4252025DetailKey.C003
+		,Mod4252025DetailKey.C006
+		,Mod4252025DetailKey.C009
+		,Mod4252025DetailKey.C012
+		,Mod4252025DetailKey.C015
+		,Mod4252025DetailKey.C018
+		,Mod4252025DetailKey.C018B
+		,Mod4252025DetailKey.C021
+		,Mod4252025DetailKey.C024
+		,Mod4252025DetailKey.C027
+		,Mod4252025DetailKey.C030
+		,Mod4252025DetailKey.C033
+		,Mod4252025DetailKey.C036
+		,Mod4252025DetailKey.C039
+		,Mod4252025DetailKey.C042
+		,Mod4252025DetailKey.C045
+		,Mod4252025DetailKey.C048
+		,Mod4252025DetailKey.C051
+		,Mod4252025DetailKey.C054
+		,Mod4252025DetailKey.C057
+		,Mod4252025DetailKey.C060
+		,Mod4252025DetailKey.C063
+		,Mod4252025DetailKey.C066
+		,Mod4252025DetailKey.C066B
+		,Mod4252025DetailKey.C069
+		,Mod4252025DetailKey.C071
+		,Mod4252025DetailKey.C076
+	};
+	private static final Mod4252025DetailKey[] C079_FORMULA_SUBTRACT = {
+		 Mod4252025DetailKey.C073
+		,Mod4252025DetailKey.C078
+	};
 	
-	public SimpliedRegimeActivity getSimpRegime3() {
-		return simpRegime3;
-	}
-	public void setSimpRegime3(SimpliedRegimeActivity simpRegime3) {
-		this.simpRegime3 = simpRegime3;
-	}
-	public SimpliedRegimeActivity getSimpRegime4() {
-		return simpRegime4;
-	}
-	public void setSimpRegime4(SimpliedRegimeActivity simpRegime4) {
-		this.simpRegime4 = simpRegime4;
-	}
-	public SimpliedRegimeActivity getSimpRegime5() {
-		return simpRegime5;
-	}
-	public void setSimpRegime5(SimpliedRegimeActivity simpRegime5) {
-		this.simpRegime5 = simpRegime5;
-	}
-	public SimpliedRegimeActivity getSimpRegime6() {
-		return simpRegime6;
-	}
-	public void setSimpRegime6(SimpliedRegimeActivity simpRegime6) {
-		this.simpRegime6 = simpRegime6;
-	}
-	public SimpliedRegimeActivity getSimpRegime7() {
-		return simpRegime7;
-	}
-	public void setSimpRegime7(SimpliedRegimeActivity simpRegime7) {
-		this.simpRegime7 = simpRegime7;
-	}
-	public double getBox103() {
-		return box103;
-	}
-	public void setBox103(double box103) {
-		this.box103 = box103;
-	}
-	public double getBox104() {
-		return box104;
-	}
-	public void setBox104(double box104) {
-		this.box104 = box104;
-	}
-	public double getBox105() {
-		return box105;
-	}
-	public void setBox105(double box105) {
-		this.box105 = box105;
-	}
-	public double getBox106() {
-		return box106;
-	}
-	public void setBox106(double box106) {
-		this.box106 = box106;
-	}
-	public double getBox107() {
-		return box107;
-	}
-	public void setBox107(double box107) {
-		this.box107 = box107;
-	}
-	public double getBox108() {
-		return box108;
-	}
-	public void setBox108(double box108) {
-		this.box108 = box108;
-	}
-	public double getBox109() {
-		return box109;
-	}
-	public void setBox109(double box109) {
-		this.box109 = box109;
-	}
-	public double getBox110() {
-		return box110;
-	}
-	public void setBox110(double box110) {
-		this.box110 = box110;
-	}
-	public double getBox111() {
-		return box111;
-	}
-	public void setBox111(double box111) {
-		this.box111 = box111;
-	}
-	public double getBox112() {
-		return box112;
-	}
-	public void setBox112(double box112) {
-		this.box112 = box112;
-	}
-	public double getBox113() {
-		return box113;
-	}
-	public void setBox113(double box113) {
-		this.box113 = box113;
-	}
-	public double getBox114() {
-		return box114;
-	}
-	public void setBox114(double box114) {
-		this.box114 = box114;
-	}
-	public double getBox115() {
-		return box115;
-	}
-	public void setBox115(double box115) {
-		this.box115 = box115;
-	}
-	public double getBox116() {
-		return box116;
-	}
-	public void setBox116(double box116) {
-		this.box116 = box116;
-	}
-	public double getBox117() {
-		return box117;
-	}
-	public void setBox117(double box117) {
-		this.box117 = box117;
-	}
-	public double getBox118() {
-		return box118;
-	}
-	public void setBox118(double box118) {
-		this.box118 = box118;
-	}
-	public double getBox119() {
-		return box119;
-	}
-	public void setBox119(double box119) {
-		this.box119 = box119;
-	}
-	public double getBox120() {
-		return box120;
-	}
-	public void setBox120(double box120) {
-		this.box120 = box120;
-	}
-	public double getBox121() {
-		return box121;
-	}
-	public void setBox121(double box121) {
-		this.box121 = box121;
-	}
-	public double getBox122() {
-		return box122;
-	}
-	public void setBox122(double box122) {
-		this.box122 = box122;
-	}
-	public double getBox123() {
-		return box123;
-	}
-	public void setBox123(double box123) {
-		this.box123 = box123;
-	}
-	public double getBox124() {
-		return box124;
-	}
-	public void setBox124(double box124) {
-		this.box124 = box124;
-	}
-	public double getBox125() {
-		return box125;
-	}
-	public void setBox125(double box125) {
-		this.box125 = box125;
-	}
-	public double getBox126() {
-		return box126;
-	}
-	public void setBox126(double box126) {
-		this.box126 = box126;
-	}
-	public double getBox127() {
-		return box127;
-	}
-	public void setBox127(double box127) {
-		this.box127 = box127;
-	}
-	public double getBox128() {
-		return box128;
-	}
-	public void setBox128(double box128) {
-		this.box128 = box128;
-	}
-	public double getBox129() {
-		return box129;
-	}
-	public void setBox129(double box129) {
-		this.box129 = box129;
-	}
-	public double getBox130() {
-		return box130;
-	}
-	public void setBox130(double box130) {
-		this.box130 = box130;
-	}
-	public double getBox131() {
-		return box131;
-	}
-	public void setBox131(double box131) {
-		this.box131 = box131;
-	}
-	public double getBox132() {
-		return box132;
-	}
-	public void setBox132(double box132) {
-		this.box132 = box132;
-	}
-	public double getBox133() {
-		return box133;
-	}
-	public void setBox133(double box133) {
-		this.box133 = box133;
-	}
-	public double getBox134() {
-		return box134;
-	}
-	public void setBox134(double box134) {
-		this.box134 = box134;
-	}
-	public double getBox135() {
-		return box135;
-	}
-	public void setBox135(double box135) {
-		this.box135 = box135;
-	}
-	public double getBox136() {
-		return box136;
-	}
-	public void setBox136(double box136) {
-		this.box136 = box136;
-	}
-	public double getBox137() {
-		return box137;
-	}
-	public void setBox137(double box137) {
-		this.box137 = box137;
-	}
-	public double getBox138() {
-		return box138;
-	}
-	public void setBox138(double box138) {
-		this.box138 = box138;
-	}
-	public double getBox139() {
-		return box139;
-	}
-	public void setBox139(double box139) {
-		this.box139 = box139;
-	}
-	public double getBox140() {
-		return box140;
-	}
-	public void setBox140(double box140) {
-		this.box140 = box140;
-	}
-	public double getBox141() {
-		return box141;
-	}
-	public void setBox141(double box141) {
-		this.box141 = box141;
-	}
-	public double getBox142() {
-		return box142;
-	}
-	public void setBox142(double box142) {
-		this.box142 = box142;
-	}
-	public double getBox143() {
-		return box143;
-	}
-	public void setBox143(double box143) {
-		this.box143 = box143;
-	}
-	public double getBox144() {
-		return box144;
-	}
-	public void setBox144(double box144) {
-		this.box144 = box144;
-	}
-	public double getBox145() {
-		return box145;
-	}
-	public void setBox145(double box145) {
-		this.box145 = box145;
-	}
-	public double getBox146() {
-		return box146;
-	}
-	public void setBox146(double box146) {
-		this.box146 = box146;
-	}
-	public double getBox147() {
-		return box147;
-	}
-	public void setBox147(double box147) {
-		this.box147 = box147;
-	}	
+//	Casilla 94 Total cuotas deducibles: consigne el importe resultante de la siguiente operación
+//	aritmética con los importes de las casillas que se indican: 81+ 83 +85 +87+ 89+ 90+ 91+ 92+ 93
+	private static final Mod4252025DetailKey[] C094_FORMULA_ADD = {
+		 Mod4252025DetailKey.C081
+		,Mod4252025DetailKey.C083
+		,Mod4252025DetailKey.C085
+		,Mod4252025DetailKey.C087
+		,Mod4252025DetailKey.C089
+		,Mod4252025DetailKey.C090
+		,Mod4252025DetailKey.C091
+		,Mod4252025DetailKey.C092
+		,Mod4252025DetailKey.C093
+	};
+	
+//	Casilla 95 Resultado régimen general: consigne, con el signo que proceda, la diferencia entre
+//	el Total cuotas devengadas (casilla 79) y el Total cuotas deducibles (casilla 94), es decir, (79-94).
+	private static final Mod4252025DetailKey[] C095_FORMULA_ADD = {
+		 Mod4252025DetailKey.C079
+	};
+	private static final Mod4252025DetailKey[] C095_FORMULA_SUBTRACT = {		 
+		Mod4252025DetailKey.C094
+	};
+	
+//	Casilla 103 Total cuota anual derivada del régimen simplificado: consigne el importe resultante
+//	de la siguiente operación aritmética para obtener el Total cuota anual derivada del régimen
+//	simplificado: 96+97+98+99+100+101+102.
+	
+//	Casilla 107 Total cuotas: consigne el importe resultante de la siguiente operación aritmética para
+//	obtener el Total de cuotas: 103+104+105+106.	
+	
+//	Casilla 110 Total cuotas deducibles: consigne el importe resultante de la siguiente operación
+//	aritmética para obtener el Total cuotas deducibles: 108+109.
+	
+//	Casilla 111 Resultado régimen simplificado: consigne, con el signo que proceda, el importe
+//	resultante de la siguiente operación aritmética para obtener el Resultado régimen simplificado:
+//	107-110.	
+	
+//	Casilla 113 Suma de resultados: consigne, con el signo que corresponda, el importe resultante de
+//	la siguiente operación aritmética para obtener la Suma de resultados: 95+111.
+	
+//	Casilla 115 Resultado de la liquidación anual: consigne, con el signo que corresponda, el importe
+//	resultante de la siguiente operación aritmética para obtener el Resultado de la liquidación
+//	anual:112+113-114.	
+	
+//	Casilla 134 Total volumen de operaciones: consigne el importe resultante de la siguiente
+//	operación aritmética para obtener el Total volumen de operaciones: 120+121+122+123+124+
+//	125+126+127+128+129+130+131-132-133.	
+	
+//	Casilla 147: Total volumen de operaciones en el REPEP: consigne el importe resultante de la
+//	siguiente operación aritmética para obtener el Total volumen de operaciones en el REPEP:
+//	142+143+144+145+146.
+	
+	
+
+	public void calculate() {
+		calculate(Mod4252025DetailKey.C074, C074_FORMULA_ADD, C074_FORMULA_SUBTRACT);  	// Casilla 74 Total bases IGIC: 01+04+07+10+13+16+16bis+19+22+25+28+31+34+37+40+43+46+49+52+55+58+61+64+64bis+67+70-72.
+		calculate(Mod4252025DetailKey.C079, C079_FORMULA_ADD, C079_FORMULA_SUBTRACT);  	// Casilla 79 Total cuotas devengadas: 03+06+09+12+15+18+18bis+21+24+27+30+33+36+39+42+45+48+51+54+57+60+63+66+66bis+69+71-73+76-78
+		calculate(Mod4252025DetailKey.C094, C094_FORMULA_ADD); 							// Casilla 94 Total cuotas deducibles: 81+ 83 +85 +87+ 89+ 90+ 91+ 92+ 93
+		calculate(Mod4252025DetailKey.C095, C095_FORMULA_ADD, C095_FORMULA_SUBTRACT);	// Casilla 95 Resultado régimen general: 79-94.
+        box103 = calculateRS(simpRegime1, simpRegime2, simpRegime3, simpRegime4, simpRegime5, simpRegime6, simpRegime7);  // Casilla 103 Total cuota anual derivada del régimen simplificado: 96+97+98+99+100+101+102.
+        box107 = AonMathUtils.round(box103+box104+box105+box106);     					// Casilla 107 Total cuotas: 103+104+105+106.	
+        box110 = AonMathUtils.round(box108+box109);  									// Casilla 110 Total cuotas deducibles: 108+109.
+        box111 = AonMathUtils.round(box107-box110); 									// Casilla 111 Resultado régimen simplificado: 107-110.	
+        box113 = AonMathUtils.round(getGeneralRegime().get(Mod4252025DetailKey.C095).getQuota()+box111); // Casilla 113 Suma de resultados: 95+111.
+        box115 = AonMathUtils.round(box112+box113-box114); 								// Casilla 115 Resultado de la liquidación anual: 112+113-114.	
+        box134 = AonMathUtils.round(box120+box121+box122+box123+box124+box125+box126+box127+box128+box129+box130+box131-box132-box133); // Casilla 134 Total volumen de operaciones: 120+121+122+123+124+125+126+127+128+129+130+131-132-133.	
+        box147 = AonMathUtils.round(box142+box143+box144+box145+box146); 				// Casilla 147: Total volumen de operaciones en el REPEP: 142+143+144+145+146.
+	}
+	
+	private double calculateRS(SimpliedRegimeActivity425... simpRegimes) {
+		double total = 0.0;
+		for (SimpliedRegimeActivity425 simpRegime : simpRegimes) {
+			if (simpRegime != null) {
+				total += simpRegime.getBoxG();
+			}
+		}
+		return AonMathUtils.round(total);
+	
+	}
+	public Mod425Detail ensure(Mod4252025DetailKey key) {
+		Mod425Detail detail = getGeneralRegime().get(key);
+		if (detail == null) {
+			detail = new Mod425Detail();
+			detail.setKey(key);
+			detail.setPercent(key.getPercent());
+			getGeneralRegime().put(key, detail);
+		}
+		return detail;
+	}
+	
+	private Mod425Detail calculate(Mod4252025DetailKey key, Mod4252025DetailKey[] addKeys, Mod4252025DetailKey... subtractKeys) {
+		Mod425Detail detail = ensure(key);
+		detail.setTaxableBase(0.0);
+		detail.setQuota(0.0);
+		for (Mod4252025DetailKey k : addKeys) {
+			Mod425Detail det = ensure(k);
+			detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));
+			detail.setQuota( AonMathUtils.round(detail.getQuota() + det.getQuota()));
+		}
+		for (Mod4252025DetailKey k : subtractKeys) {
+			Mod425Detail det = ensure(k);
+			detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() - det.getTaxableBase()));
+			detail.setQuota( AonMathUtils.round(detail.getQuota() - det.getQuota()));
+		}
+		return detail;
+	}
+	
 	
 }
 

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class SimpliedRegimeActivity425 implements Serializable {
 
-//	private static final long serialVersionUID = 6202543820337953651L;
+	private static final long serialVersionUID = 228587060914869702L;
 	
 	private String epigrafe;  // Epígrafe IAE/Código
     private double unit1;     // Unidades módulo (1)
@@ -23,16 +23,18 @@ public class SimpliedRegimeActivity425 implements Serializable {
     private double amount6;
     private double amount7;
 //  private int    moduleIndex3;    
-    private double boxC;
-    private double boxC1;  // Reducción Lorca
-    private double boxC2;  // Reducción DANA 2024
-    private double boxD;
-    private double boxE;
-    private double boxF;
-    private double boxG;
-    private double boxH;
-    private double boxI;
-    private double boxJ;
+    private double boxA; // Cuota anual devengada por operaciones corrientes
+    private double boxB; // Cuotas soportadas por operaciones corrientes
+    private double boxC;  // Indice corrector
+//    private double boxC1;  // Reducción Lorca
+//    private double boxC2;  // Reducción DANA 2024
+    private double boxD; // Diferencia
+    private double boxE; // Porcentaje cuota mínima operaciones corrientes
+    private double boxF; // Cuota mínima    
+    private double boxG; // Cuota anual derivada de régimen simplificado
+//    private double boxH;
+//    private double boxI;
+//    private double boxJ;
     
 	public String getEpigrafe() {
 		return epigrafe;
@@ -74,13 +76,13 @@ public class SimpliedRegimeActivity425 implements Serializable {
 		return this;
 	}
 	
-	public int getModuleIndex3() {
-		return moduleIndex3;
-	}
-	public SimpliedRegimeActivity425 setModuleIndex3(int moduleIndex3) {
-		this.moduleIndex3 = moduleIndex3;
-		return this;
-	}
+//	public int getModuleIndex3() {
+//		return moduleIndex3;
+//	}
+//	public SimpliedRegimeActivity425 setModuleIndex3(int moduleIndex3) {
+//		this.moduleIndex3 = moduleIndex3;
+//		return this;
+//	}
 	
 	public double getUnit3() {
 		return unit3;
@@ -162,6 +164,20 @@ public class SimpliedRegimeActivity425 implements Serializable {
 		return this;
 	}
 	
+	public double getBoxA() {
+		return boxA;
+	}
+	public SimpliedRegimeActivity425 setBoxA(double boxA) {
+		this.boxA = boxA;
+		return this;
+	}
+	public double getBoxB() {
+		return boxB;
+	}
+	public SimpliedRegimeActivity425 setBoxB(double boxB) {
+		this.boxB = boxB;
+		return this;
+	}
 	public double getBoxC() {
 		return boxC;
 	}
@@ -170,13 +186,13 @@ public class SimpliedRegimeActivity425 implements Serializable {
 		return this;
 	}
 	
-	public double getBoxC1() {
-		return boxC1;
-	}
-	public SimpliedRegimeActivity425 setBoxC1(double boxC1) {
-		this.boxC1 = boxC1;
-		return this;
-	}
+//	public double getBoxC1() {
+//		return boxC1;
+//	}
+//	public SimpliedRegimeActivity425 setBoxC1(double boxC1) {
+//		this.boxC1 = boxC1;
+//		return this;
+//	}
 	
 	public double getBoxD() {
 		return boxD;
@@ -210,29 +226,29 @@ public class SimpliedRegimeActivity425 implements Serializable {
 		return this;
 	}
 	
-	public double getBoxH() {
-		return boxH;
-	}
-	public SimpliedRegimeActivity425 setBoxH(double boxH) {
-		this.boxH = boxH;
-		return this;
-	}
-	
-	public double getBoxI() {
-		return boxI;
-	}
-	public SimpliedRegimeActivity425 setBoxI(double boxI) {
-		this.boxI = boxI;
-		return this;
-	}
-	
-	public double getBoxJ() {
-		return boxJ;
-	}
-	public SimpliedRegimeActivity425 setBoxJ(double boxJ) {
-		this.boxJ = boxJ;
-		return this;
-	}
+//	public double getBoxH() {
+//		return boxH;
+//	}
+//	public SimpliedRegimeActivity425 setBoxH(double boxH) {
+//		this.boxH = boxH;
+//		return this;
+//	}
+//	
+//	public double getBoxI() {
+//		return boxI;
+//	}
+//	public SimpliedRegimeActivity425 setBoxI(double boxI) {
+//		this.boxI = boxI;
+//		return this;
+//	}
+//	
+//	public double getBoxJ() {
+//		return boxJ;
+//	}
+//	public SimpliedRegimeActivity425 setBoxJ(double boxJ) {
+//		this.boxJ = boxJ;
+//		return this;
+//	}
 	
 	public SimpliedRegimeActivity425 setUnit(int line, double value) {
 		if (line == 1) setUnit1(value);
@@ -255,11 +271,11 @@ public class SimpliedRegimeActivity425 implements Serializable {
 		return this;
 	}
 	
-	public double getBoxC2() {
-		return boxC2;
-	}
-	public SimpliedRegimeActivity425 setBoxC2(double boxC2) {
-		this.boxC2 = boxC2;
-		return this;
-	}
+//	public double getBoxC2() {
+//		return boxC2;
+//	}
+//	public SimpliedRegimeActivity425 setBoxC2(double boxC2) {
+//		this.boxC2 = boxC2;
+//		return this;
+//	}
 }

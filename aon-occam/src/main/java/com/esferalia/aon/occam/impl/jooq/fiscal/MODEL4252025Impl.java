@@ -42,10 +42,10 @@ public class MODEL4252025Impl implements IMODEL4252025 {
 			configuration -> Mod4252025DAO.changeStatus(ctx, mod425, newStatus));		
 	}
 	
-	@Override
-	public Mod4252025 aeatPresentation(AONContext ctx, Mod4252025 mod, String aeatResponse) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod4252025DAO.aeatPresentation(ctx, mod, aeatResponse));
-	}
+//	@Override
+//	public Mod4252025 aeatPresentation(AONContext ctx, Mod4252025 mod, String aeatResponse) {
+//		return ctx.getDslContext().transactionResult(
+//				configuration -> Mod4252025DAO.aeatPresentation(ctx, mod, aeatResponse));
+//	}
 
 }

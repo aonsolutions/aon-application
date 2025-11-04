@@ -50,10 +50,10 @@ public class MODEL4252025 {
 		}
 	}
 
-	public static Mod4252025 aeatPresentation(Occam occam, Mod4252025 mod, String aeatResponse) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
-		}
-	}
+//	public static Mod4252025 aeatPresentation(Occam occam, Mod4252025 mod, String aeatResponse) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+//			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+//		}
+//	}
 	
 }
