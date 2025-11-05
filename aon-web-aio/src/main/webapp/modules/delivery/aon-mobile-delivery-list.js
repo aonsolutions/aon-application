@@ -65,17 +65,21 @@ export class AonMobileDeliveryList extends AonMobileList {
     }
 
     buildSearch() {
-        const btnSearch = this.getApplication().addSearchOption();
+        const btnSearch = this.getSearchButton();
         let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
         btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
 
         this.getElement('status').setOptions([
-            { name: "-", value: undefined },
-            { name: MSG.PENDING, value: "PENDING" },
-            { name: MSG.INVOICED, value: "INVOICED" },
-            { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" },
+             { name: "-", value: undefined },
+             { name: MSG.PENDING, value: "PENDING" },
+             { name: MSG.INVOICED, value: "INVOICED" },
+             { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" }
         ]);
+    }
+
+    getSearchButton() {
+        return this.getApplication().addSearchOption();
     }
 
     addRow(delivery, i) {
@@ -95,8 +99,12 @@ export class AonMobileDeliveryList extends AonMobileList {
         getDelivery(data).then(r => {
             let aonDelivery = new AonMobileDelivery();
             aonDelivery.setDelivery(r);
-            this.getApplication().setContent(aonDelivery);
+            this.setContent(aonDelivery);
         });
+    }
+
+    setContent = (content) => {
+        this.getApplication().setContent(content);
     }
     
     search(detail) {

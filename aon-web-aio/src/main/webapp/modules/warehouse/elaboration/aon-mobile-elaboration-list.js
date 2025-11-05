@@ -4,6 +4,8 @@ import { elaborationStatuses } from '../../../models/elaboration/elaborationStat
 import { getElaboration, getElaborations, getWarehouses } from '../../../services/warehouseService.js';
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
 
+import '../../../css/paturpat.css';
+
 export class AonMobileElaborationList extends AonMobileList {
 
     more;
@@ -38,7 +40,7 @@ export class AonMobileElaborationList extends AonMobileList {
     }
 
 	buildSearch(){
-		const btnSearch = this.getApplication().addSearchOption();
+		const btnSearch = this.getSearchButton();
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
@@ -76,8 +78,12 @@ export class AonMobileElaborationList extends AonMobileList {
 					}))
 				})
 			}
-			btnSearch.buildOptionsFilter(options);
+            btnSearch.buildOptionsFilter(options);
 		});
+    }
+
+    getSearchButton() {
+        return this.getApplication().addSearchOption();
     }
 
 	search(detail) {
@@ -125,8 +131,12 @@ export class AonMobileElaborationList extends AonMobileList {
         getElaboration(elaboration.id).then(el => {
             let aonElaboration = new AonMobileElaboration();
             aonElaboration.setElaboration(el);
-            this.getApplication().setContent(aonElaboration);
+            this.setContent(aonElaboration);
         });
+    }
+
+    setContent = (content) => {
+        this.getApplication().setContent(content);
     }
 }
 if(!window.customElements.get(TAG.AON_MOBILE_ELABORATION_LIST)){

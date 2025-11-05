@@ -97,10 +97,11 @@ export class AonMobileDelivery extends AonElement {
 		// if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(this.delivery.status == 'IN_PREPARATION') {
 			toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
-			let subtractButton = this.getApplication().addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging());
-			subtractButton.style.left = '0px';
+			let subtractButton = this.addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging())
+			subtractButton.style.left = '20px';
 			subtractButton.style.position = 'fixed';
-			this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging());
+			subtractButton.style.right = 'auto';
+			this.addFloatOption(ACTION.ADD, () => this.addPackaging());
 		}
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		
@@ -123,6 +124,14 @@ export class AonMobileDelivery extends AonElement {
 		this.changeTabs(div, 0);
 	}
 
+	addFloatOption(action, fn) {
+		this.getApplication().addFloatOption(action, fn);
+	}
+
+	removeFloatOption() {
+		this.getApplication().removeFloatOption();
+	}
+
 	changeTabs(parent, position = 0) {
 		parent.innerHTML = "";
 		switch (position) {
@@ -142,6 +151,7 @@ export class AonMobileDelivery extends AonElement {
 
 	buildDeliveryGeneral(parent) {
 		let card = createCard(this.DELIVERY_GENERAL_CARD, 'Datos Albarán', parent);
+		card.style.backgroundColor = 'transparent';
 
 		let div = this.createDiv(this.DELIVERY_GENERAL_CARD + 'Customer');
 		div.innerHTML = this.delivery.customer.name;
@@ -151,6 +161,7 @@ export class AonMobileDelivery extends AonElement {
 
 	buildDeliveryDetail(parent) {
 		let card = createCard(this.DELIVERY_DETAIL_CARD, 'Detalles', parent);
+		card.style.backgroundColor = 'transparent';
 
 		let table = new AonBasicTable();
 		table.id = this.DETAIL_TABLE;
@@ -193,7 +204,7 @@ export class AonMobileDelivery extends AonElement {
 	// ACTIONS
 
 	delete() {
-		let d = this.getApplication().getDialog();
+		let d = this.getDialog();
    	 	d.clear();
     	if(!this.isMobile()) d.width = '400px';
     	d.setTitle(MSG.ACCEPT);
@@ -205,15 +216,25 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	accept() {
-		let d = this.getApplication().getDialog();
+		let d = this.getDialog();
    	 	d.clear();
     	if(!this.isMobile()) d.width = '400px';
     	d.setTitle(MSG.ACCEPT);
    	 	d.setContentHTML(`Estás seguro de finalizar el proceso.`);
     	d.addAcceptAction(() => {
+			d.parentNode.removeChild(d);
 			acceptDeliveryPackaging({id:this.delivery.id}).then(()=> this.back());
     	});
     	d.open();
+	}
+
+	getDialog() {
+		let dialog = new AonDialog();
+		document.appendChild(dialog);
+		dialog.addEventListener(EVENT.CLOSE, () => {
+			dialog.parentNode.removeChild(dialog);
+		});
+		return dialog;
 	}
 
 	back() {
@@ -243,7 +264,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	subtractPackaging() {
-		this.getApplication().removeFloatOption();
+		this.removeFloatOption();
 		this.clear();
 
 		let toolbar = new AonToolbar();
@@ -293,7 +314,7 @@ export class AonMobileDelivery extends AonElement {
 
 	addPackaging() {
 		let pk = this.package;
-		this.getApplication().removeFloatOption();
+		this.removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
 		toolbar.id = this.DELIVERY_TOOLBAR;
