@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "solutions.aon.camara2"
-    compileSdk = 34
+    namespace = "solutions.aon.app"
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "aon.solutions"
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 20010
-        versionName = "2.0.10"
+        minSdk = 23
+        targetSdk = 36
+        versionCode = 20011
+        versionName = "2.0.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
 
     // CameraX dependencies
-    val camerax_version = "1.4.0-alpha04"
+    val camerax_version = "1.6.0-alpha01"
     implementation("androidx.camera:camera-core:${camerax_version}")
     implementation("androidx.camera:camera-camera2:${camerax_version}")
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
@@ -81,7 +81,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     // Barcode
-    implementation("com.google.mlkit:barcode-scanning:17.0.0")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
     // Camera Permission
     implementation("com.google.accompanist:accompanist-permissions:0.19.0")

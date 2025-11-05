@@ -8,6 +8,27 @@
 }
 
 
+.aonMobileRootPanel {
+  top: 80px;
+  bottom: 80px;
+}
+
+.aonMobileHeader {
+  height: 80px;
+}
+
+.aonMobileMenu {
+    height: 80px;
+}
+
+.aonMobileHeaderCompany {
+    top: 45px;
+}
+
+.aonMobileLogo {
+    top: 35px;
+}
+
 .aonLoginForm {
     margin-top: 600px;
 }
