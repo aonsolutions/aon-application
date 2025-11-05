@@ -125,7 +125,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	addFloatOption(action, fn) {
-		this.getApplication().addFloatOption(action, fn);
+		return this.getApplication().addFloatOption(action, fn);
 	}
 
 	removeFloatOption() {
