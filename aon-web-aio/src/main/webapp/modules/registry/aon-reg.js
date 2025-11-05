@@ -497,16 +497,16 @@ export class AonReg extends AonElement {
 		if(typeof this.registry.getPaymethod().getPaymethod() === 'undefined') paymethodSelect.hideLoader();
 
 		let pm = this.registry.getPaymethod().getPaymethod();
-		let banks = (this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')
-			? [] : this.registry.getBanks();
+		// let banks = (this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')
+		// 	? [] : this.registry.getBanks();
 
 		let bankSelect = new AonNewSelect()
 		bankSelect.id = this.PAYMETHOD_BANK;
 		bankSelect.title = MSG.BANK_ACCOUNT;
 		bankSelect.setAlias('id', 'fullName');
 		bankSelect.disabled = pm.type !== 'BANK_TRANSFER' && pm.type !== 'NEGOTIABLE_DOCUMENT'
-		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().getBank().id = bankSelect.value);
 		table.addCell(bankSelect, 4);
+
 		if((this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')) {
 			getCompanyBanks().then(banks => {
 				bankSelect.setOptions(banks.map(b => {
@@ -514,50 +514,52 @@ export class AonReg extends AonElement {
 					return b;
 				}));
 				bankSelect.value = this.registry.getPaymethod().getBank().id;
-			});		
+			}).finally(() => bankSelect.hideLoader());
 		} else if((this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pm.type === 'BANK_TRANSFER')){
 			bankSelect.setOptions(this.registry.getBanks());
-			bankSelect.value = this.registry.getPaymethod().getBank().id;
+			if(typeof this.registry.getBanks() === 'undefined')
+				paymethodSelect.hideLoader();
+				bankSelect.value = this.registry.getPaymethod().getBank().id;
+		}else {
+			bankSelect.hideLoader();
+		} 
+
+		if(bankSelect){
+			bankSelect.addEventListener(EVENT.CHANGE, (e) => {
+				this.registry.getPaymethod().getBank().id = bankSelect.value;
+			});
 		}
-		
+
 		getPaymethods({}).then(paymethods => {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod().id || paymethods[0].id;
 			paymethodSelect.hideLoader();
 		});
-		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
-			this.registry.getPaymethod().getPaymethod().id = paymethodSelect.value;
 
-			let pmType = e.detail.type;
-
-			if((this.isCustomer() && pmType === 'BANK_TRANSFER') || (!this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT')) {
-				getCompanyBanks().then(banks => {
-					const mainBank = this.registry?.paymethod?.bank;
-
-					const mappedBanks = banks.map(b => ({
+		if(paymethodSelect){
+			paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
+				this.registry.getPaymethod().getPaymethod().id = paymethodSelect.value;
+	
+				let pmType = e.detail.type;
+				if((this.isCustomer() && pmType === 'BANK_TRANSFER') || (!this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT')) {
+					getCompanyBanks().then(banks => {
+						const mappedBanks = banks.map(b => ({
+							...b,
+							fullName: `${b.bank_account} - ${b.alias || ''}`
+						}));
+						bankSelect.setOptions(mappedBanks);
+					});
+				} else if((this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pmType === 'BANK_TRANSFER')) {
+					const banks = this.registry.getBanks().map(b => ({
 						...b,
 						fullName: `${b.bank_account} - ${b.alias || ''}`
 					}));
-					
-					bankSelect.setOptions(mappedBanks);
-
-					// Buscar coincidencia por ID si trae o por bank_account (IBAN)
-					const found = mappedBanks.find(b =>
-						b.id === mainBank?.id || 
-						b.bank_account === mainBank?.bank_account
-					);
-
-					if (found) {
-						bankSelect.value = found.id;
-					}
-				});
-			} else if((this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pmType === 'BANK_TRANSFER')){
-				bankSelect.setOptions(this.registry.getBanks());
-				bankSelect.value = this.registry.getPaymethod().getBank().id;
-			} else bankSelect.value = undefined;
-			bankSelect.disabled = pmType !== 'BANK_TRANSFER' && pmType !== 'NEGOTIABLE_DOCUMENT';
-		});
-
+					bankSelect.setOptions(banks);
+				}
+			 else bankSelect.value = undefined;
+				bankSelect.disabled = pmType !== 'BANK_TRANSFER' && pmType !== 'NEGOTIABLE_DOCUMENT';
+			});
+		}
 
 		table.addRow();
 

@@ -851,8 +851,8 @@ export class AonOfficePanel extends AonElement {
 
 				if (data) {
 
-					console.log("---- show view");
-					console.log(data);
+					// console.log("---- show view");
+					// console.log(data);
 
 					if (data.customer) {
 						aonView.setCustomer(data.customer);

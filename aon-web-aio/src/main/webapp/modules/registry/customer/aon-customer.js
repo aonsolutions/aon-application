@@ -70,7 +70,7 @@ export class AonCustomer extends AonReg {
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 			
-			console.log("Registry Company", this.registry.registryCompany);
+			// console.log("Registry Company", this.registry.registryCompany);
 			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
