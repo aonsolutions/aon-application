@@ -5,7 +5,6 @@ import { AonReg } from './aon-reg.js';
 import { AonTable } from '../../components/aon-table.js';
 
 export class AonRegistryList extends AonElement {
-
 	TABLE;
 	more;
 	filter;	
@@ -58,13 +57,11 @@ export class AonRegistryList extends AonElement {
 		this.more = false;
 		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			this.getRegistries(this.filter)
-			.then(registries => {
+			this.getRegistries(this.filter).then(registries => {
 				if(registries.length > 0)
 					this.more = true;
 				
 				registries.forEach((registry) => {
-
 					if(registry.status){
 						registry.statusText = MSG[registry.status];
 					} 
@@ -79,10 +76,8 @@ export class AonRegistryList extends AonElement {
 	init() {
 		if(this.TABLE) {
 			this.TABLE.removeRows();
-			this.getRegistries(this.getFilter())
-			.then(registries => {
+			this.getRegistries(this.getFilter()).then(registries => {
 				registries.forEach((registry) => {
-
 					if(registry.status){
 						registry.statusText = MSG[registry.status];
 					}
