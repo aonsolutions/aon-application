@@ -66,6 +66,7 @@ export const loadModule = () => {
 export const loadTheme = async () => {	
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
+	if(UA.isAndroid35App()) mobileCss = LS.AON_MOBILE_ANDROID_35;
 	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || "/customview" || LS.AON_THEME);
 	return new Promise((resolve, reject) => {
 		try {
