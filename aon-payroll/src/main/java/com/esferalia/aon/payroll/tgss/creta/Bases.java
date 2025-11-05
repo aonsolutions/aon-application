@@ -2550,7 +2550,7 @@ public class Bases {
 				props -> props.getCCCProperty().eq(ccc)
 						.and(props.getEndDateProperty().ge(startDate))
 						.and(props.getStartDateProperty().le(endDate))
-						.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
+						.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L02,L91", tipo)))
 						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
 						.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
 						)

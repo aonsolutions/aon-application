@@ -209,37 +209,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return super.getContractPayments();
 	}
 
-	// -------------------------------------------------------------------------
-	
-	private Collection<IContractPayment> getWarnPayment(Collection<IContractPayment> payments) {
-		
-		SimpleContractPayment warnPayment = new SimpleContractPayment();
-		
-		warnPayment.setStartDate(getStart());
-		warnPayment.setEndDate(getEnd());
-		warnPayment.setDescription("AVISO");
-		warnPayment.setExpression("HIDE(\""
-		+"<div>Atenci&oacute;n, el prorrateo de la paga est&aacute; incompleto."
-		+"No se han emitido las n&oacute;minas de "+ getMissed(payments) + "."
-		+"<div>Por favor revise las n&oacute;minas y paga extra.</div>"
-		+"<div>&nbsp;</div><div class='aon-text-right'>Disculpe las molestias, <span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
-		);
-		warnPayment.setType(PaymentType.CRA_0000);
-		warnPayment.setSalaryType(getSalaryType());
-		int month = CommonUtil.getMonth(getIssueDate());
-		warnPayment.setMonth(Month.getMonthByValue(month));
-		warnPayment.setExpressionScope(ExpressionScope.SYSTEM);
-		
-//		warnPayment.setName("AVISO");
-//		warnPayment.setIrpfExpression("_P");
-//		warnPayment.setQuoteExpression("_P");
-		warnPayment.setId(Integer.MAX_VALUE);
-		
-		return Collections.singleton(warnPayment);
-	}
-
-
-	private Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
+	protected Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
 
 		Collection<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
 		FilterCollection.Filter<IContractPayment> filter = getExtraPaymentFilter();
@@ -302,6 +272,37 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 		return monthlyQuotedPayments;
 	}
+
+	// -------------------------------------------------------------------------
+	
+	private Collection<IContractPayment> getWarnPayment(Collection<IContractPayment> payments) {
+		
+		SimpleContractPayment warnPayment = new SimpleContractPayment();
+		
+		warnPayment.setStartDate(getStart());
+		warnPayment.setEndDate(getEnd());
+		warnPayment.setDescription("AVISO");
+		warnPayment.setExpression("HIDE(\""
+		+"<div>Atenci&oacute;n, el prorrateo de la paga est&aacute; incompleto."
+		+"No se han emitido las n&oacute;minas de "+ getMissed(payments) + "."
+		+"<div>Por favor revise las n&oacute;minas y paga extra.</div>"
+		+"<div>&nbsp;</div><div class='aon-text-right'>Disculpe las molestias, <span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
+		);
+		warnPayment.setType(PaymentType.CRA_0000);
+		warnPayment.setSalaryType(getSalaryType());
+		int month = CommonUtil.getMonth(getIssueDate());
+		warnPayment.setMonth(Month.getMonthByValue(month));
+		warnPayment.setExpressionScope(ExpressionScope.SYSTEM);
+		
+//		warnPayment.setName("AVISO");
+//		warnPayment.setIrpfExpression("_P");
+//		warnPayment.setQuoteExpression("_P");
+		warnPayment.setId(Integer.MAX_VALUE);
+		
+		return Collections.singleton(warnPayment);
+	}
+
+
 	
 	private Collection<IContractPayment> getOverridePayments()  {
 		String overrideVarName = getOverrideVarName();
