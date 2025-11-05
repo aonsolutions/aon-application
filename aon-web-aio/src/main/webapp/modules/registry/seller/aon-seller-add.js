@@ -2,22 +2,22 @@ import { AonElement } from "../../../components/AonElement.js";
 import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { AonNewDate } from "../../../components/aon-new-date.js";
 import { EVENT, MSG } from "../../../environments/environments.js";
-import {
-  getItems,
-  updateRegistryItem,
-} from "../../../services/productService.js";
-import { saveRegistryItem } from "../../../services/productService.js";
+// import {
+//   getItems,
+//   updateRegistryItem,
+// } from "../../../services/productService.js";
+// import { saveRegistryItem } from "../../../services/productService.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { Item } from "../../../models/product/Item.js";
+// import { Item } from "../../../models/product/Item.js";
 import {
-  RegistryItemStatus,
+  // RegistryItemStatus,
   RegistrySellerStatus,
   RegistrySellerType,
 } from "../../../models/enums.js";
 import {
   deleteRegistrySeller,
   getSellers,
-  saveRsellers,
+  // saveRsellers,
   updateRegistrySeller,
 } from "../../../services/commercialService.js";
 
@@ -152,7 +152,7 @@ export class AonSellerAdd extends AonElement {
     this.DIV.style.flexDirection = "column";
     this.appendChild(this.DIV);
 
-	this.buildSelectItem();
+    this.buildSelectItem();
     this.buildSelectType();
     this.buildSelectStatus();
 
@@ -165,12 +165,12 @@ export class AonSellerAdd extends AonElement {
       this.START_DATE_INPUT.setDate(this.getSelectedRSeller().startDate);
       this.setStartDate(this.START_DATE_INPUT.value);
     } else {
-		this.START_DATE_INPUT.setDate(new Date());
-      	this.setStartDate(new Date());
-	}
+      this.START_DATE_INPUT.setDate(new Date());
+      this.setStartDate(new Date());
+    }
 
     this.START_DATE_INPUT.addEventListener("change", (event) => {
-      this.setStartDate(this.START_DATE_INPUT.value);
+      this.setStartDate(this.START_DATE_INPUT.getValue());
     });
 
     this.END_DATE_INPUT = new AonNewDate();
@@ -182,7 +182,7 @@ export class AonSellerAdd extends AonElement {
       this.setEndDate(this.END_DATE_INPUT.value);
     }
     this.END_DATE_INPUT.addEventListener("change", (event) => {
-      this.setEndDate(this.END_DATE_INPUT.value);
+      this.setEndDate(this.END_DATE_INPUT.getValue());
     });
 
     if (this.getSelectedRSeller() && this.getSelectedRSeller().status) {
@@ -229,9 +229,9 @@ export class AonSellerAdd extends AonElement {
 
     buildItems(params);
 
-	this.ITEM_SELECT.addEventListener(EVENT.CHANGE, () => {
-		this.setSeller(this.ITEM_SELECT.value);
-	});
+    this.ITEM_SELECT.addEventListener(EVENT.CHANGE, () => {
+      this.setSeller(this.ITEM_SELECT.value);
+    });
   }
 
   buildSelectStatus() {
@@ -284,25 +284,25 @@ export class AonSellerAdd extends AonElement {
   }
 
   async save() {
-    let error = false;
+    let error  = false;
     let params = {
-	  id: this.getSelectedRSeller().rseller.id,
-      type: this.getType(),
+      id        : this.getSelectedRSeller().rseller.id,
+      type      : this.getType(),
       start_date: this.getStartDate(),
-      end_date: this.getEndDate(),
-	  customer : this.getSelectedRSeller().rseller.registry,
-	  seller : this.getSeller(),
-	  status : this.getStatus()
+      end_date  : this.getEndDate(),
+      customer  : this.getSelectedRSeller().rseller.registry,
+      seller    : this.getSeller(),
+      status    : this.getStatus()
     };
 
-	error = this.checkError(params);
-	if (!error) {
-		await updateRegistrySeller(params);
-		this.showMessage();
-		return true;
-	}
+    error = this.checkError(params);
+    if (!error) {
+      await updateRegistrySeller(params);
+      this.showMessage();
+      return true;
+    }
 
-	return false;
+    return false;
   }
 
   async delete(id) {
