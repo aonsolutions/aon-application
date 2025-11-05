@@ -10,7 +10,6 @@ import { OfficeEnums } from '../../office/OfficeEnums.js';
 import * as LS from '../../../services/localStorageService.js';
 
 export class AonCustomerList extends AonRegistryList {
-
 	parent;
 	office;
 	clientFile;
@@ -50,8 +49,7 @@ export class AonCustomerList extends AonRegistryList {
 	}
 
 	buildRegistry(registry) {
-		this.getCustomerCustom(registry)
-		.then(r => {
+		this.getCustomerCustom(registry).then(r => {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);
@@ -74,7 +72,6 @@ export class AonCustomerList extends AonRegistryList {
 
 	buildSearch(){
 		let timeOut = null;
-
 		let btnSearch = this.getApplication().addSearchOption(true);
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
@@ -122,7 +119,7 @@ export class AonCustomerList extends AonRegistryList {
 		this.setSearchValues();	
     }
 
-    setSearchValues(){
+	setSearchValues(){
 		let searchInput = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchSearchInput");
 		let searchValue = this.filter.value;
 		searchInput.value = searchValue ? searchValue : '';
