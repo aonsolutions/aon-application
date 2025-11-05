@@ -205,20 +205,18 @@ export class AonSellerAdd extends AonElement {
 
     const buildItems = (params) => {
       this.ITEM_SELECT.loading(true);
-      getSellers(params)
-        .then((opts) =>
+      getSellers(params).then((opts) =>
           this.ITEM_SELECT.setOptionsBuild(
             opts.map((p) => ({ ...p, value: p.id }))
           )
-        )
-        .finally(() => {
+        ).finally(() => {
           this.ITEM_SELECT.loading(false);
           if (firstTime) {
             firstTime = false;
             if (
               this.getSelectedRSeller() &&
               this.getSelectedRSeller().rseller &&
-			  this.getSelectedRSeller().rseller.seller &&
+              this.getSelectedRSeller().rseller.seller &&
               this.getSelectedRSeller().rseller.seller.id
             ) {
               this.ITEM_SELECT.value = this.getSelectedRSeller().rseller.seller.id;
