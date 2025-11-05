@@ -180,6 +180,8 @@ export class AonSellerAdd extends AonElement {
     if (this.getSelectedRSeller() && this.getSelectedRSeller().endDate) {
       this.END_DATE_INPUT.setDate(this.getSelectedRSeller().endDate);
       this.setEndDate(this.END_DATE_INPUT.value);
+    } else {
+      this.END_DATE_INPUT.setDate('');
     }
     this.END_DATE_INPUT.addEventListener("change", (event) => {
       this.setEndDate(this.END_DATE_INPUT.getValue());
