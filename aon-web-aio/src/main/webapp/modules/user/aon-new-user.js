@@ -158,6 +158,7 @@ export class AonNewUser extends AonElement {
 				return !d.isEmployee() && !d.isEnterprise() && this.isBeta();
 			}
 		}
+		
 		this.apps = [this.ADMIN_APP, this.DEV_APP].concat(AllAonApps);
 	}
 

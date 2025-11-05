@@ -34,8 +34,10 @@ export class DomainUserRoles {
 		this.parentDomain = new Domain(data.parentDomain);
 		this.user = data.user;
 		this.parentUser = data.parentUser;
+		
 		this.domainApps = data.domainApps;
 		this.parentDomainApps = data.parentDomainApps;
+		
 		this.domainUserRoles = data.domainUserRoles;
 		this.parentDomainUserRoles = data.parentDomainUserRoles;
 
@@ -177,6 +179,10 @@ export class DomainUserRoles {
 /*		return (this.getDomainUserRoles() && this.getDomainUserRoles().includes(aonRole))
 			|| (this.isParentUser() && this.getParentDomainUserRoles() && this.getParentDomainUserRoles().includes(aonRole));
 */	
+	}
+	
+	hasParentRole(aonRole) {
+		return (this.isParentUser() && this.getParentDomainUserRoles() && this.getParentDomainUserRoles().includes(aonRole));
 	}
 
 	isAdmin() {
@@ -785,17 +791,37 @@ export class DomainUserRoles {
 	}
 
 	// OFFICE
-
-	hasOffice() {
+	
+	isOfficeDomain(){
 		return this.getDomain().getDomainType() == 'OFFICE';
 	}
-
-	isOffice() {
-		return this.hasOffice() || this.hasRole(Role.OFFICE);
+	
+	hasOfficeRole() {
+		return this.getDomain().getDomainType() == 'OFFICE' || this.getDomain().getDomainType() == 'CONSULTANCY';
 	}
 	
+
+	hasOffice() {
+		return this.getDomain().getDomainType() == 'OFFICE' && (this.isOfficeUser() || this.isOfficePortal() || this.isOfficeManager());
+	}
+	
+	isOffice() {
+		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER || this.isAdmin()));
+			//&& (this.isAdmin() || this.hasRole(Role.OFFICE));
+	}
+
+	isOfficeUser() {
+		return this.isOffice() && !this.isOfficeManager();
+	}
+
+	isOfficePortal() {
+		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE_PORTAL) || this.hasParentRole(Role.OFFICE_PORTAL));
+			//&& (this.isAdmin() || this.hasRole(Role.OFFICE_PORTAL));
+	}
+
 	isOfficeManager() {
-		return this.hasOffice() && this.hasRole(Role.OFFICE_MANAGER);
+		return this.hasRole(Role.OFFICE_MANAGER) || this.hasParentRole(Role.OFFICE_MANAGER) || this.isAdmin();
+			//&& (this.isAdmin() || this.hasRole(Role.OFFICE_MANAGER));
 	}
 
 	// GARAGE
