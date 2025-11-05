@@ -377,7 +377,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	private class SmartQuoteCalculator extends QuoteCalculator {
 		
 		private QuoteCalculator delegate;
+		private GeneralQuote generalQuote;
 		private ExpressionContext expressionContext;
+		
 		
 		private SmartQuoteCalculator(QuoteCalculator calculator, ExpressionContext expressionContext) {
 			this.delegate = calculator;
@@ -499,12 +501,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 
 			if ( isFixBaseCgcMinPayment(payment) ){
-				return new GeneralQuote(expressionContext, start, end).quote(payment, start, end, amount);
+				if ( delegate instanceof GeneralQuote generalQuote ) {
+					return generalQuote.quote(payment, start, end, amount);
+				} else {
+					return getGeneralQuoteCalculator().quote(payment, start, end, amount);
+				}
 			}
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				//|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isPPE(payment) 
+				|| isFixBaseCgcMinPayment(payment)
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
@@ -583,7 +590,15 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		
 		
-		
+		protected QuoteCalculator getGeneralQuoteCalculator() {
+			if ( generalQuote != null )
+				return generalQuote;
+
+			final Date ctxStartDate = SmartContractSalaryCalculator.this.ctx.getStartDate();
+			final Date ctxEndDate = SmartContractSalaryCalculator.this.ctx.getEndDate();
+			this.generalQuote = new GeneralQuote(expressionContext, ctxStartDate, ctxEndDate);
+			return this.generalQuote;
+		}
 
 	}
 	private static class ExtraBuilder extends SalaryBuilder{
