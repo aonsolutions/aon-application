@@ -25,8 +25,12 @@
     top: 45px;
 }
 
-.aonMobileLogo {
-    top: 35px;
+.aonMobileHeaderButton{
+    top:30px;
+}
+
+.aonMobileHeaderLogo {
+	padding-top: 40px;
 }
 
 .aonLoginForm {
