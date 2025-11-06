@@ -10,13 +10,15 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.Month;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-class FeeBilling implements Serializable {
+public class FeeBilling implements Serializable {
 	
 	private static final long serialVersionUID = 2762563588116230667L;
 	
 	private Integer id;
+	private Integer domain;
 	private Short line;
 	private Customer customer;
 	private FeeBillingInvoicingGroup invoicingGroup;
@@ -32,13 +34,21 @@ class FeeBilling implements Serializable {
 	private double price;
 	private DiscountExpression discountExpression;
 	private Integer workplace;
-	
+	private SecurityLevel securityLevel;
 	
 	public Integer getId() {
 		return id;
 	}
 	public FeeBilling setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Integer getDomain() {
+		return domain;
+	}
+	public FeeBilling setDomain(Integer domain) {
+		this.domain = domain;
 		return this;
 	}
 	
@@ -175,6 +185,7 @@ class FeeBilling implements Serializable {
 	}
 
 	public DiscountExpression getDiscountExpression() {
+		if (discountExpression == null) discountExpression = new DiscountExpression();
 		return discountExpression;
 	}
 	public FeeBilling setDiscountExpression(DiscountExpression discountExpression) {
@@ -187,6 +198,21 @@ class FeeBilling implements Serializable {
 	}
 	public FeeBilling setWorkplace(Integer workplace) {
 		this.workplace = workplace;
+		return this;
+	}
+	
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public FeeBilling setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+		return this;
+	}
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public FeeBilling setConfidential(boolean confidential) {
+		this.securityLevel = confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 		return this;
 	}
 }

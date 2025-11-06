@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.user.client.ui.Widget;
 
 public interface CommonMessages extends Messages {
 	// Á --> \u00C1 á --> \u00E1
@@ -4325,5 +4326,11 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("F. Facturaci\u00f3n")
 	String invoicingDate();
+
+	@DefaultMessage("Datos salvados correctamente")
+	String saveSuccess();
+
+	@DefaultMessage("Datos borrados correctamente")
+	String deleteSuccess();
 }
 

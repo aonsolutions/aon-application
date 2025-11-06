@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -97,6 +98,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Month;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
@@ -116,6 +118,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBilling;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
@@ -848,14 +852,14 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 
-	public static void delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
-		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
+	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
 	}
-	public static void delete(AONContext ctx, Integer id) {
-		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
+	public static Invoice delete(AONContext ctx, Integer id) {
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
 	}
 	
-	private static void delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
+	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1029,6 +1033,7 @@ public class InvoiceDAO {
 			;
 			RawdocDAO.save(ctx, rawdoc);
 		}
+		return invoice;
 	}
 
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
@@ -1674,6 +1679,37 @@ public class InvoiceDAO {
 				throw new AonCoreException("No se ha podido guardar la factura.");
 			}
 		}
+		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+			
+			private static final long serialVersionUID = -9008741708561768671L;
+
+			@Override public void visitSales(InvoiceDetail detail) { /* Nothing */ }
+			@Override public void visitReservation(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitPurchase(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitOffer(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitIncome(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectExpense(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDelivery(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitAccount(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitTedi(InvoiceDetail detail) {/* Nothing */ }
+			
+			@Override public void visitFee(InvoiceDetail detail) {
+				FeeBilling fee = FeeBillingDAO.getFeeBilling(ctx, detail.getSourceId())
+					.orElseThrow(() -> new AonCoreException(AonError.FEE_NOT_FOUND_FOR_INVOICE_DETAIL.format(detail.getSourceId())));
+				
+				// En sourceId, se graba el mes donde se genera la cuota para que, en 
+				// caso de borrado de la factura, se pueda regenerar en el mes correspondiente.
+				// No se puede vincular el ID directamente porque el ID de la cuota puede generar 
+				// muchas líneas a lo largo de su vida.
+				// La fecha de la factura puede no coincidir con el mes que se factura,
+				// Ej. mes de facturación Marzo, factura emitida en Abril.
+				detail.setSourceId((fee.getBillingDateYear() * 100) + fee.getBillingDateMonth().ordinal() + 1);
+				
+				// Se genera una nueva cuota modificando la nueva fecha o se borra si es sin periodo.
+				FeeBillingDAO.updateSource(ctx, fee, detail);
+			}
+		});
 	}
 	
 	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
@@ -1681,15 +1717,15 @@ public class InvoiceDAO {
 			
 			private static final long serialVersionUID = -9008741708561768671L;
 
-			@Override public void visitSales(InvoiceDetail detail) {}
-			@Override public void visitReservation(InvoiceDetail detail) {}
-			@Override public void visitPurchase(InvoiceDetail detail) {}
-			@Override public void visitOffer(InvoiceDetail detail) {}
-			@Override public void visitIncome(InvoiceDetail detail) {}
-			@Override public void visitFee(InvoiceDetail detail) {}
-			@Override public void visitDirectInvoice(InvoiceDetail detail) {}
-			@Override public void visitDirectExpense(InvoiceDetail detail) {}
-			@Override public void visitDelivery(InvoiceDetail detail) {}
+			@Override public void visitSales(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitReservation(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitPurchase(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitOffer(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitIncome(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitFee(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectExpense(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDelivery(InvoiceDetail detail) {/* Nothing */ }
 			
 			@Override public void visitAccount(InvoiceDetail detail) {
 				if (detail.getAccountId() == null) 
@@ -1744,16 +1780,22 @@ public class InvoiceDAO {
 			
 			private static final long serialVersionUID = -715576035920671791L;
 			
-			@Override public void visitSales(InvoiceDetail detail) {}
-			@Override public void visitReservation(InvoiceDetail detail) {}
-			@Override public void visitPurchase(InvoiceDetail detail) {}
-			@Override public void visitOffer(InvoiceDetail detail) {}
-			@Override public void visitIncome(InvoiceDetail detail) {}
-			@Override public void visitFee(InvoiceDetail detail) {}
-			@Override public void visitDirectInvoice(InvoiceDetail detail) {}
-			@Override public void visitDirectExpense(InvoiceDetail detail) {}
-			@Override public void visitDelivery(InvoiceDetail detail) {}
-			@Override public void visitAccount(InvoiceDetail detail) {
+			@Override public void visitSales(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitReservation(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitPurchase(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitOffer(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitIncome(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDirectExpense(InvoiceDetail detail) {/* Nothing */ }
+			@Override public void visitDelivery(InvoiceDetail detail) {/* Nothing */ }
+			
+			@Override 
+			public void visitFee(InvoiceDetail detail) {
+				FeeBillingDAO.invoiceDetailRemoved( ctx, invoice, detail);
+			}
+			
+			@Override 
+			public void visitAccount(InvoiceDetail detail) {
 				int count = ctx.getDslContext()
 					.delete(INVOICE_DETAIL_ACCOUNT)
 					.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
@@ -1775,25 +1817,9 @@ public class InvoiceDAO {
 					});
 			}
 			
-			@Override public void visitTedi(InvoiceDetail detail) {
-				int count = ctx.getDslContext()
-						.delete(INVOICE_DETAIL_ACCOUNT)
-						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
-						.execute();
-					ctx.log().debug("DELETE INVOICE_DETAIL_ACCOUNT ({0} filas.)",count);
-					ctx.getDslContext().select(INVOICE_TAX.ID)
-						.from(INVOICE_TAX)
-						.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
-						.fetch()
-						.stream()
-						.mapToInt(rec -> rec.getValue(INVOICE_TAX.ID))
-						.forEach(id -> {
-							int x = ctx.getDslContext()
-									.delete(INVOICE_TAX_ACCOUNT)
-									.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
-									.execute();
-							ctx.log().debug("DELETE INVOICE_TAX_ACCOUNT ({0} filas.)",x);
-						});
+			@Override 
+			public void visitTedi(InvoiceDetail detail) {
+				visitAccount(detail);
 			}
 			
 		});

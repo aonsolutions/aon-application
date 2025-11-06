@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.fee;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleTextPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeTable.InvoiceFeeTableCallback;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.google.gwt.dom.client.Style.Unit;
@@ -56,9 +55,13 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 		dock.addWest(tab, 500);
 		
 		SimpleLayoutPanel eastPanel = new SimpleLayoutPanel();
+		eastPanel.setStyleName(AON.CSS.aonSelector());
 		dock.add(eastPanel);
 		
-		tab.addSelectionHandler(event -> eastPanel.setWidget( new InvoiceConsoleTextPanel( event.getSelectedItem() ) ));
+		tab.addSelectionHandler(event -> {
+			InvoiceTabLayout invoicePanel = new InvoiceTabLayout(opts, event.getSelectedItem());
+			eastPanel.setWidget( invoicePanel );
+		});
 		
 		tableContainer.setWidget( dock );
 	}

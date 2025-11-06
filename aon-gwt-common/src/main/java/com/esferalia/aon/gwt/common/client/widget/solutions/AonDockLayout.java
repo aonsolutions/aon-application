@@ -7,13 +7,19 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 
 public abstract class AonDockLayout extends DockLayoutPanel {
 
-	// Toolbar
-	private final AonToolbar toolbar;
+	private final String title;
+	private AonToolbar toolbar;
 	
 	protected AonDockLayout(String title) {
 		super(Unit.PX);
 		AON.ensureInjected();
-		toolbar = new AonToolbar(title);
+		this.title = title;
+		resetWidget();
+	}
+	
+	protected void resetWidget() {
+		clear();
+		toolbar = new AonToolbar(this.title);
 		toolbar.addStyleName(AON.CSS.aonNoBorderToolbar());
 		addNorth(toolbar, AonToolbar.HEIGTH);
 	}

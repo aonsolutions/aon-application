@@ -1,21 +1,15 @@
-package com.esferalia.aon.gwt.fiscal.server.console;
+package com.esferalia.aon.gwt.fiscal.server.invoice.fee;
 
 
 import java.util.LinkedList;
-import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
-import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleService;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeService;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.INVOICECONSOLE;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
-import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.Pair;

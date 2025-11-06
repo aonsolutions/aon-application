@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice.fee;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -36,6 +37,7 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.mvel2.templates.TemplateRuntime;
 
@@ -117,17 +119,8 @@ public class FeeBillingDAO {
 	// Impuesto IRPF vinculado al producto de la cuota.
 	public static final com.esferalia.aon.jooq.tables.Tax IRPF = TAX.as("retention");
 
-	public static Stream<Invoice> invoice(AONContext ctx, FeeBillingParams params) {
-		checkParams( params );
-		checkSegments( ctx, params );
-		params.setCompany( CompanyDAO.getByDomain( ctx, params.getDomainId() ) );
-		Condition condition = getCondition(params);
-		
-//		System.out.println( "****************************");
-//		System.out.println( "Condition: " + condition);
-//		System.out.println( "****************************");
-		
-		SelectConditionStep<Record> sentence = ctx.getDslContext()
+	private static SelectOnConditionStep<Record> select(AONContext ctx) {
+		return ctx.getDslContext()
 			.select( )
 			.from( CUSTOMER_FEE )
 			
@@ -144,9 +137,30 @@ public class FeeBillingDAO {
 			.leftOuterJoin(IRPF).on(IRPF.ID.eq(PRODUCT.RETENTION))
 			
 			.leftOuterJoin( PCATEGORY ).on( PCATEGORY.ID.eq( PRODUCT.CATEGORY ))
-			
-			.where( condition )
 		;
+	}
+	
+	public static Optional<FeeBilling> getFeeBilling( AONContext ctx, Integer customerFeeId) {
+		return select(ctx)
+			.where( CUSTOMER_FEE.ID.eq( customerFeeId ) )
+			.fetch()
+			.stream()
+			.map( new FeeBillingFiller() )
+			.findFirst();
+	}
+	
+	public static Stream<Invoice> invoice(AONContext ctx, FeeBillingParams params) {
+		checkParams( params );
+		checkSegments( ctx, params );
+		params.setCompany( CompanyDAO.getByDomain( ctx, params.getDomainId() ) );
+		Condition condition = getCondition(params);
+		
+//		System.out.println( "****************************");
+//		System.out.println( "Condition: " + condition);
+//		System.out.println( "****************************");
+		
+		SelectConditionStep<Record> sentence = select(ctx)
+			.where( condition );
 		
         Map<String, Object> mvelContext = new HashMap<>();
         mvelContext.put("MONTH", params.getMonth().getName());
@@ -191,8 +205,8 @@ public class FeeBillingDAO {
 	   	});
 		return AonCollectionUtils.stream(fullInvoices);
 	}
-	
-	private static void updateSource(AONContext ctx, FeeBilling fee, InvoiceDetail detail) {
+
+	public static void updateSource(AONContext ctx, FeeBilling fee, InvoiceDetail detail) {
 		if (fee.getPeriod() == BillingPeriod.NO_PERIOD) {
 			if (fee.isPrepayment()) {
 				ctx.getDslContext()
@@ -291,16 +305,15 @@ public class FeeBillingDAO {
 	}
 
 	private static InvoiceDetail createInvoiceDetail(AONContext ctx, Invoice invoice, FeeBilling fee, Map<String, Object> mvelContext, FeeBillingParams params) {
-        String resultado = (String) TemplateRuntime.eval(fee.getDescription(), mvelContext);
         short line = (short) (invoice.detailsSize() + 1);
         InvoiceDetail detail = new InvoiceDetail()
     		.setDomain(params.getDomainId())
     		.setLine(line)
 			.setProject(fee.getProject().orElse(null))
 			.setItem(fee.getItem())	
-			.setDescription(resultado)
+			.setDescription( composeDescription(fee, mvelContext) )
 			.setSource( InvoiceSource.FEE )
-			.setSourceId((fee.getBillingDateYear() * 100) + fee.getBillingDateMonth().ordinal() + 1)
+			.setSourceId( fee.getId() )
 			.setQuantity(fee.getQuantity())
 			.setPrice(AonMathUtils.round(fee.getPrice() * calculateCorrectionFactor(fee, params), 4))
 			.setDiscountExpression(fee.getDiscountExpression())
@@ -309,6 +322,14 @@ public class FeeBillingDAO {
 		;
         InvoiceCalculatorDAO.calculate(ctx, detail);
         return addDetail(ctx, invoice, detail);
+	}
+
+	private static String composeDescription(FeeBilling fee, Map<String, Object> mvelContext) {
+        String desc = (String) TemplateRuntime.eval(fee.getDescription(), mvelContext);
+        if ( AonNumberUtils.notEquals(fee.getInvoicingCustomer().getId(), fee.getCustomer().getId())) {
+			desc += " - " + fee.getInvoicingCustomer().getName();
+		};
+		return AonStringUtils.abbreviate(desc, INVOICE_DETAIL.DESCRIPTION.getDataType().length()); 
 	}
 
 	private static double calculateCorrectionFactor(FeeBilling fee, FeeBillingParams params) {
@@ -627,6 +648,7 @@ public class FeeBillingDAO {
 				.setFinalDate( getValue(r, CUSTOMER_FEE.FINAL_DATE))
 				.setBillingDate( getValue(r, CUSTOMER_FEE.BILLING_DATE))
 				.setWorkplace( getValue(r, CUSTOMER_FEE.WORKPLACE))
+				.setSecurityLevel( SecurityLevel.safeValueOf( getValue(r, CUSTOMER_FEE.SECURITY_LEVEL)) )
 			;
 		}
 	}
@@ -733,4 +755,95 @@ public class FeeBillingDAO {
 			&& !invoice.isCanCeuMel()			// y no canCeuMel
 		;
 	}
+	
+	public static FeeBilling invoiceDetailRemoved(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
+		Date feeDate = obtainFeeDate(invoiceDetail);
+		short line = obtainMaxLine(ctx, invoice.getRegistry());
+		FeeBilling savedFee = insert(ctx, 
+			new FeeBilling()
+				.setDomain(invoiceDetail.getDomain() )
+				.setCustomer(new Customer().setId(invoice.getRegistry()))
+				.setLine(++line)
+				.setItem(new Item().setId(invoiceDetail.getItem().getId()))
+				.setDescription(invoiceDetail.getDescription())
+				.setQuantity(invoiceDetail.getQuantity())
+				.setPrice(invoiceDetail.getPrice())
+				.setDiscountExpression(invoiceDetail.getDiscountExpression())
+				.setInitialDate(feeDate)
+				.setFinalDate(feeDate)
+				.setBillingDate(feeDate)
+				.setPeriod(BillingPeriod.NO_PERIOD)
+				.setConfidential(invoiceDetail.getInvoice().isConfidential())
+				.setSeller(invoiceDetail.getSeller() != null ? invoiceDetail.getSeller().getId() : null)
+				.setWorkplace( invoiceDetail.getWorkplace() != null ? invoiceDetail.getWorkplace().getId() : null)
+		);
+		if (invoiceDetail.isPrepayment()) {
+			ctx.getDslContext()
+				.select()
+				.from(PREPAYMENT)
+				.where(PREPAYMENT.COLLECT.eq(PrepaymentCollect.INVOICE_DETAIL.value()))
+				.and(PREPAYMENT.COLLECT_ID.eq(invoiceDetail.getId()))
+				.fetch()
+				.stream()
+				.map( r -> r.getValue( PREPAYMENT.ID ))
+				.forEach( id ->
+					ctx.getDslContext()
+						.update( PREPAYMENT )
+						.set(PREPAYMENT.CUSTOMER, invoice.getRegistry())
+						.set(PREPAYMENT.COLLECT, PrepaymentCollect.FEE.value())
+						.set(PREPAYMENT.COLLECT_ID, savedFee.getId())
+						.where( PREPAYMENT.ID.eq(id) )
+				);
+		}
+		return savedFee;
+	}
+
+	private static FeeBilling insert(AONContext ctx, FeeBilling fee) {
+		Integer id = ctx.getDslContext()
+			.insertInto(CUSTOMER_FEE)
+			.set(CUSTOMER_FEE.DOMAIN, fee.getDomain())  
+			.set(CUSTOMER_FEE.PROJECT, fee.getProject().orElse(null)) 
+			.set(CUSTOMER_FEE.CUSTOMER, fee.getCustomer().getId())
+			.set(CUSTOMER_FEE.LINE, fee.getLine())
+			.set(CUSTOMER_FEE.ITEM, fee.getItem().getId())
+			.set(CUSTOMER_FEE.DESCRIPTION, fee.getDescription()) 
+			.set(CUSTOMER_FEE.QUANTITY, fee.getQuantity()) 
+			.set(CUSTOMER_FEE.PRICE, fee.getPrice())
+			.set(CUSTOMER_FEE.DISCOUNT_EXPR, fee.getDiscountExpression().getDiscountExpr()) 
+			.set(CUSTOMER_FEE.INITIAL_DATE,  AonDateUtils.toSql(fee.getInitialDate()))
+			.set(CUSTOMER_FEE.FINAL_DATE,  AonDateUtils.toSql(fee.getFinalDate()))
+			.set(CUSTOMER_FEE.BILLING_DATE, AonDateUtils.toSql(fee.getBillingDate()))
+			.set(CUSTOMER_FEE.PERIOD, fee.getPeriod().value())
+			.set(CUSTOMER_FEE.SECURITY_LEVEL, fee.getSecurityLevel().value())  
+			.set(CUSTOMER_FEE.INVOICING_GROUP,  fee.getInvoicingGroup().map(ig -> ig.getId()).orElse(null))
+			.set(CUSTOMER_FEE.SELLER, fee.getSeller()) 
+			.set(CUSTOMER_FEE.WORKPLACE, fee.getWorkplace())
+			.returning(CUSTOMER_FEE.ID)
+			.fetchOne()
+			.getValue(CUSTOMER_FEE.ID);
+		return getFeeBilling(ctx, id)
+			.orElseThrow(() -> new AonCoreException("No se ha podido recuperar la cuota recién creada"));
+	}
+
+	private static Date obtainFeeDate(InvoiceDetail invoiceDetail) {
+		if (invoiceDetail.getSourceId() != null) {
+			int year = invoiceDetail.getSourceId() / 100;
+			int month = invoiceDetail.getSourceId() - (year * 100);
+			AonDateUtils.getDate(year, (month-1), 1);
+		}
+		return invoiceDetail.getInvoice().getIssueDate();
+	}
+
+	private static	short obtainMaxLine(AONContext ctx, Integer custoner ) {
+		return ctx.getDslContext()
+			.select(DSL.max(CUSTOMER_FEE.LINE))
+			.from(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.CUSTOMER.eq(custoner))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue( DSL.max(CUSTOMER_FEE.LINE) ))
+			.findFirst()
+			.orElse((short) 0);
+	}
+	
 }
