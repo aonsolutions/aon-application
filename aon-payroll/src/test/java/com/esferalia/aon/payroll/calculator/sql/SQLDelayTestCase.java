@@ -19,6 +19,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static org.junit.Assert.assertEquals;
 
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -601,6 +602,164 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		
 
+	}
+
+	@Test
+	public void testDelaysExtrasInSalary() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "/*PAGA NAVIDAD*/P";
+						this.month = Month.DECEMBER;
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "31/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "/*PAGA VERANO*/P";
+						this.month = Month.JUNE;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "30/06";
+					}
+				}, 
+				},
+				new Payment[] {
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "SALARIO * DIAS_TRABAJADOS/DIAS_MES";
+						}
+					},
+//					new Payment() {
+//						{
+//							this.concept = conceptP.getId();
+//							this.expression = "TRACE('SALARIO:%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
+//						}
+//					}
+				},
+				new HashMap<String,String>(){
+					{
+						put("SALARIO", "1000.00");
+					}
+				});
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {}, 
+				new String[] {}, 
+				category);
+		//@formatter:on
+		
+		
+
+		Date startDate = getFirstDayOfMonth(contract.getStartDate());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, round(2));
+			calculator.setSalaryBuilder(roundSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+			
+		}
+		
+//		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+//		.forEach(salary ->  { 
+//			System.out.println( salary.getStartDate() +" : " + salary.getTotalPayment() +", " + salary.getCommonContingenciesBase() );
+//			salary.getPayments().forEach(payment -> System.out.println( "\t"  + payment.getDescription() + " : " + payment.getAmount() + ", " + payment.getPaymentType() + ", " + payment.getQuote() ));
+//		});
+		
+		setData(aonContext, contract, "SALARIO", "1100.00");
+		
+		
+		Date startJune = add(getFirstDayOfYear(getToday()), Calendar.MONTH, 5 );
+		Date endJune = getLastDayOfMonth(startJune);
+		
+		Salary juneSalary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+				.calculate(getContractSalaryCalculatorContext(connection, startJune, endJune, endJune, contract));
+		System.out.println( juneSalary.getStartDate() +" : " + juneSalary.getTotalPayment() +", " + juneSalary.getCommonBase() );
+		juneSalary.getSalaryPayments().forEach(payment -> System.out.println( "\t"  + payment.getDescription() + " : " + payment.getAmount() + ", " + payment.getPaymentType() + ", " + payment.getQuote() ));
+		assertEquals(1100.00 + 1000.00  + 100/6.00, juneSalary.getTotalPayment(), DELTA);
+		assertEquals(1100.00 + 1100/6.00, juneSalary.getCommonBase(), DELTA);
+		
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contract.getStartDate(), 
+				endJune, 
+				endJune, 
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		};
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), round(2)));
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+//		delay.getSalaryPayments().stream().sorted((p1,p2) -> p1.getDescription().compareTo(p2.getDescription())).forEach(payment -> 
+//			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount() +" , " + payment.getQuote()
+//					+ " (" + payment.getExpression() + ")"));
+		
+		assertEquals(100 * 6 + 100.00, delay.getTotalPayment(), DELTA);
+		assertEquals(100 * 6 + 100.00, delay.getCommonBase(), DELTA );
+		
+		
+		Date endMay = add(startJune, Calendar.DAY_OF_MONTH, -1);
+		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contract.getStartDate(), 
+				endMay, 
+				endMay, 
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		};
+		delayCtx.next();
+		calculateAndSave(connection, delayCtx);
+		
+		// AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getIsDelayProperty().eq(true)))
+		// .forEach(salary ->  { 
+		// 	System.out.println( salary.getStartDate() +" : " + salary.getTotalPayment() +", " + salary.getCommonContingenciesBase() );
+		// 	salary.getPayments().forEach(payment -> System.out.println( "\t"  + payment.getDescription() + " : " + payment.getAmount() + ", " + payment.getPaymentType() + ", " + payment.getQuote() ));
+		// 	salary.getContextData().forEach((name, data) -> {
+		// 		System.out.println( "\t"  + name + " : " );  
+		// 		data.forEach(d -> System.out.println( "\t\t" + d.getExpression() ));	
+		// 	});
+		// });
+
+		juneSalary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+				.calculate(getContractSalaryCalculatorContext(connection, startJune, endJune, endJune, contract));
+		System.out.println( juneSalary.getStartDate() +" : " + juneSalary.getTotalPayment() +", " + juneSalary.getCommonBase() );
+		juneSalary.getSalaryPayments().forEach(payment -> System.out.println( "\t"  + payment.getDescription() + " : " + payment.getAmount() + ", " + payment.getPaymentType() + ", " + payment.getQuote() ));
+		
+		assertEquals(1100.00 + 1100/6.00, juneSalary.getCommonBase(), DELTA);
+		//assertEquals(1100.00 + 1100.00, juneSalary.getTotalPayment(), DELTA);
 	}
 
 	@Test
