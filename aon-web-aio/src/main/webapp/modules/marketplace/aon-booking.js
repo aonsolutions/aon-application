@@ -81,11 +81,6 @@ export class AonBooking extends AonElement {
 				domain_name: this.sessionData.domain_name,
 				domain_id: this.sessionData.domain_id
 			};
-			
-
-			consoleLog("------------------------------------","blue");
-			consoleLog("getSigBookingDomainUserRoles");
-			consoleLog("------------------------------------","blue");
 
 			getSigBookingDomainUserRoles({}, headers).then(r => {
 				this.dur = new DomainUserRoles(r);
@@ -105,11 +100,6 @@ export class AonBooking extends AonElement {
 				this.build();
 			});
 		} else {
-
-			consoleLog("------------------------------------","blue");
-			consoleLog("getBookingDomainUserRoles");
-			consoleLog("------------------------------------","blue");
-
 
 			getBookingDomainUserRoles({}, this.sessionData).then(r => {
 				this.dur = new DomainUserRoles(r);
@@ -186,12 +176,6 @@ export class AonBooking extends AonElement {
 	}
 	
 	buildBooking() {
-
-		consoleLog("------------------------------------","green");
-		consoleLog("buildBooking","green", true);
-		consoleLog("------------------------------------","green");
-
-
 		const dur = this.getDur();
 		let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
@@ -211,21 +195,11 @@ export class AonBooking extends AonElement {
 			trialContent.style.display = 'flex';
 			trialContent.style.flexDirection = 'column';
 			userTrialContent.appendChild(trialContent);
-			
-		consoleLog("------------------------------------","green");
-		consoleLog("LLama a  isTrial()","green", true);
-		consoleLog("------------------------------------","green");
 
 			this.buildTrial(trialContent);
 		}
 		
 		if(this.isSig() && this.fromCustomer){
-
-			
-		consoleLog("------------------------------------","green");
-		consoleLog("LLama a  isSig()","green", true);
-		consoleLog("------------------------------------","green");
-
 			let domainActiveContent = this.createElement(TAG.DIV); 
 			domainActiveContent.style.display = 'flex';
 			domainActiveContent.style.flexDirection = 'column';
@@ -238,11 +212,6 @@ export class AonBooking extends AonElement {
 			this.buildTitle(content, 'Packs');
 			this.buildApps(content, Packs, dur);
 		} else {
-
-		consoleLog("------------------------------------","green");
-		consoleLog("LLama a  buildApps()","green", true);
-		consoleLog("------------------------------------","green");
-
 			this.buildTitle(content,  this.dur.getDomain().isKitDigital() 
 				? 'Kit Digital' : 'Gestión');
 			this.buildApps(content, this.getGestionPacks(), dur);
@@ -523,11 +492,6 @@ export class AonBooking extends AonElement {
  count = 0;
 
 	buildApps(content, apps, dur) {
-
-consoleLog("------------------------------------","reed");
-consoleLog(this.count);
-
-
 		let ul = document.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL, CSS.AON_LIST_GROUP_TOP);
 
@@ -535,15 +499,6 @@ consoleLog(this.count);
 		for (let key in apps){
 			const app = apps[key];
 			let contratado = this.hasApp(dur, app.app.toUpperCase());
-
-if(this.count === 1){
-	consoleLog("-******************************-","purple", true);
-	consoleLog("Apliciones");
-	consoleLog(app);
-	
-	consoleLog("-******************************-","purple", true);
-}
-
 			let li = document.createElement('li');
 		  	li.classList.add(CSS.AON_LIST_GROUP_ITEM, CSS.AON_APP_LI);
 			let span = document.createElement('span');
@@ -644,8 +599,6 @@ if(this.count === 1){
 			ul.appendChild(li);
 		}
 
-this.count++
-consoleLog("------------------------------------","reed");
 	}
 
 	activate(app, contract, text){
@@ -861,8 +814,6 @@ consoleLog("------------------------------------","reed");
 			toast.id = tID;
 			this.appendChild(toast);
 		}
-
-console.log("quiero guardar esta maravilla")
 
 		if(this.definedUsers > this.users) {
 			toast.start({
