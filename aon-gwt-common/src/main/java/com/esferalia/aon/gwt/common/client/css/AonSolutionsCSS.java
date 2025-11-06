@@ -1315,6 +1315,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_toolbar_small_button")
 	String aonToolbarSmallButton();
 
+	@ClassName("aon_toolbar_label")
+	String aonToolbarLabel();
+	
 	@ClassName("aon_ok_button")
 	String aonOkButton();
 	

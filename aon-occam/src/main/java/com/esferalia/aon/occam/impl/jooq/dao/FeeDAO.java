@@ -40,6 +40,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -82,6 +83,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FeeDAO {
 	
@@ -928,7 +930,7 @@ public class FeeDAO {
 		return productTagsSuggestion;
 	}
 
-	public static Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(AONContext ctx, int domainId, String query) {
 		// Condition
 		Condition condition = CUSTOMER.DOMAIN.eq(domainId);
 		if(AonStringUtils.isNotBlank(query)) 
@@ -998,28 +1000,6 @@ public class FeeDAO {
 		});
 		
 		System.out.println("getSellersSuggestion size : " + suggestions.size());
-		
-		return suggestions;
-	}
-	
-	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {
-		Map<String, InvoicingGroup> suggestions = new HashMap<>();
-		
-		// Condition
-		Condition condition = INVOICING_GROUP.DOMAIN.eq(domainId);
-		if(AonStringUtils.isNotBlank(query)) condition = condition.and(INVOICING_GROUP.DESCRIPTION.containsIgnoreCase(query));
-		
-		Result<Record> sellerRecords = ctx.getDslContext()
-				.select().from(INVOICING_GROUP)
-				.where(condition)
-				.fetch();
-
-		sellerRecords.forEach(r -> {
-			InvoicingGroup invoicingGroup = InvoicingGroupFiller.buildInvoicingGroup(r);
-			suggestions.put(r.get(INVOICING_GROUP.DESCRIPTION), invoicingGroup);
-		});
-		
-		System.out.println("getInvoicingGroupsSuggestion size : " + suggestions.size());
 		
 		return suggestions;
 	}
@@ -1202,6 +1182,26 @@ public class FeeDAO {
 		return updateQuery.execute();
 	}
 
+	
+	public static Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId) {
+		AggregateFunction<Integer> maxYear = DSL.max(DSL.year(CUSTOMER_FEE.BILLING_DATE));
+		AggregateFunction<Integer> minYear = DSL.min(DSL.year(CUSTOMER_FEE.BILLING_DATE));
+		return ctx.getDslContext()
+			.select(minYear, maxYear)
+			.from(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+			.fetch()
+			.stream()
+			.map(r -> Pair.of(r.get(minYear), r.get(maxYear)))
+			.findFirst();
+	}
+
+	/**
+	 * No need two selects to get min and max year.
+	 * 
+	 * @deprecated Use {@link #getFeeYearRange(AONContext, Integer)} instead.
+	 */
+	@Deprecated
 	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId) {
 		Date maxDate = (Date) ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
 		Date minDate = (Date) ctx.getDslContext().select(DSL.min(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);

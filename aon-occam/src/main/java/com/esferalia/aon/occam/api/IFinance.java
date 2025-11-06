@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
+import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -43,7 +44,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.Pair;
 
 public interface IFinance {
 	
@@ -106,48 +107,62 @@ public interface IFinance {
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
-	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
-			ItemFilter iFilter);
-	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
-	Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilter filter, IDAOCallback callback);
-	InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
-	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
-	Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
-	Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
+	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter);
+	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
+	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilter filter, IDAOCallback callback);
+	public InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	public InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	public LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
+	public LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
+	public LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	public LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	public Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
+	public Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
+	public Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
 	
-	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
+	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
-	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
+	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
 	
-	InvoiceCounter getInvoiceCounter(AONContext ctx);
+	public InvoiceCounter getInvoiceCounter(AONContext ctx);
 	
 	public InvoiceUserData getInvoiceUserData(AONContext ctx, byte[] auth);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************
-
-	LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter);
-	InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
+	public Stream<InvoicingGroup> getInvoicingGroups(AONContext ctx, Integer domainId);
+	public Stream<InvoicingGroup> getInvoicingGroupsByName(AONContext ctx, Integer domainId, String name);
+	public Stream<InvoicingGroup> getInvoicingGroupsSuggestion(AONContext ctx, Integer domainId, String query);
+	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
 	
+	// 	***********************************************
+	// 	********************************* CUSTOMER ****
+	// 	***********************************************
+	/**
+	 * @deprecated Use {@link #getCustomersSuggestion(AONContext, Integer, String)} instead
+	 * 
+	 */
+	@Deprecated
+	public Map<String, Customer> getFeeCustomersSuggestion(AONContext ctx, int domainId, String query);
+	public Stream<Customer> getCustomersSuggestion(AONContext ctx, Integer domainId, String query);
+
+	// 	***********************************************
+	// 	************************************* ITEM ****
+	// 	***********************************************
+	Stream<Item> getItemsSuggestion(AONContext ctx, Integer domainId, String query);
+
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
 	
 	public Map<String, Workplace> getWorkplacesSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query);
-	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
-	
 	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery);
 	
 	public void reorderCustomerFeeLine(CloseableAONContext ctx, int domainId, Integer customer);
 	
-	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Integer> getProductCategoriesSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Integer> getProductTagsSuggestion(CloseableAONContext ctx, int domainId, String query);
@@ -315,6 +330,13 @@ public interface IFinance {
 	// 	****************************************
 	Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId);	
 	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);
+
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId);
+	Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params);
+	
 	
 }
 	

@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
+import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -48,7 +49,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -85,6 +86,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -95,6 +97,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FinanceImpl implements IFinance {
 
@@ -251,12 +255,34 @@ public class FinanceImpl implements IFinance {
 		return InvoiceDAO.getNextNumber(ctx, types, series);
 	}
 	// ------------------------------------- INVOICING GROUP
+	@Override
+	public Stream<Customer> getCustomersSuggestion(AONContext ctx, Integer domainId, String query) {
+		return CustomerDAO.getStreamSuggestion(ctx, domainId, query);
+	}
+	/**
+	 * @deprecated Use getCustomersSuggestion instead
+	 */
+	@Override
+	@Deprecated
+	public Map<String, Customer> getFeeCustomersSuggestion(AONContext ctx, int domainId, String query) {
+		return FeeDAO.getCustomersSuggestion(ctx, domainId, query);
+	}
+	// ------------------------------------- INVOICING GROUP
 	
 	@Override
-	public LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
-		return InvoicingGroupDAO.getInvoicingGroupList(ctx, filter);
+	public Stream<InvoicingGroup> getInvoicingGroups(AONContext ctx, Integer domainId){
+		return InvoicingGroupDAO.stream(ctx, domainId);
+	}
+	@Override
+	public Stream<InvoicingGroup> getInvoicingGroupsByName(AONContext ctx, Integer domainId, String name){
+		return InvoicingGroupDAO.streamNameEqual(ctx, domainId, name);
 	}
 
+	@Override
+	public Stream<InvoicingGroup> getInvoicingGroupsSuggestion(AONContext ctx, Integer domainId, String query) {
+		return InvoicingGroupDAO.streamNameLike(ctx, domainId, query);
+	}
+	
 	@Override
 	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
 		return ctx.getDslContext().transactionResult(configuration
@@ -291,12 +317,6 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> FeeDAO.getInvoicingGroupsSuggestion(ctx, domainId, query));
-	}
-	
-	@Override
 	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getProjectsSuggestion(ctx, domainId, customerId, query));
@@ -313,12 +333,6 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(configuration -> {
 			FeeDAO.reorderCustomerFeeLine(ctx, domainId, customer);
 		});
-	}
-
-	@Override
-	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
 	}
 
 	@Override
@@ -952,5 +966,26 @@ public class FinanceImpl implements IFinance {
 	public InvoiceBatchDetail saveInvoiceBatchDetail(AONContext ctx, InvoiceBatchDetail invoiceBatchDetail) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceBatchDetailDAO.save(ctx, invoiceBatchDetail));
+	}
+
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	@Override
+	public Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId) {
+		return FeeDAO.getFeeYearRange(ctx, domainId);
+	}
+
+	@Override
+	public Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params) {
+		return FeeBillingDAO.invoice(ctx, params);
+	}
+	
+	// 	***********************************************
+	// 	************************************* ITEM ****
+	// 	***********************************************
+	@Override
+	public Stream<Item> getItemsSuggestion(AONContext ctx, Integer domainId, String query) {
+		return ItemDAO.getStreamSuggestion(ctx, domainId, query);
 	}
 }

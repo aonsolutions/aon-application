@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType.InvoiceTran
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -32,6 +31,11 @@ public class TaxBreakdown implements Serializable {
 	}
 	public Stream<InvoiceBreakdown> stream() {
 		return ibs == null ? Stream.empty() : ibs.stream();
+	}
+	public Stream<InvoiceBreakdown> prepaymentStream() {
+		return ibs.stream()
+			.filter(ib -> ib.isPrepayment() )
+		;
 	}
 	public Stream<InvoiceBreakdown> vatStream() {
 		return ibs.stream()
@@ -92,11 +96,17 @@ public class TaxBreakdown implements Serializable {
 			.findFirst();
 	}
 	
+	public double getBaseTotal() {
+		return AonMathUtils.round( stream().mapToDouble( t -> t.getBase() ).sum() , 4); 
+	}
+	public double getPrepaymentTotal() {
+		return AonMathUtils.round( prepaymentStream().mapToDouble( t -> t.getBase() ).sum() , 2); 
+	}
 	public double getVatBase() {
-		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getBase() ).sum() , 4); 
+		return AonMathUtils.round( vatStream().mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}
 	public double getVatQuota() {
-		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getQuota() ).sum() , 2); 
+		return AonMathUtils.round( vatStream().mapToDouble( t -> t.getQuota() ).sum() , 2); 
 	}
 	public double getRetentionBase() {
 		Optional<InvoiceWithholding> oiw = getInvoiceWithholding();
@@ -115,12 +125,20 @@ public class TaxBreakdown implements Serializable {
 	public double getResult() {
 		return AonMathUtils.round(getVatQuota() - getRetentionQuota());
 	}
-	
+	public double getTotal() {
+		return AonMathUtils.round(
+			getBaseTotal()
+			+ getVatQuota() 
+			- getRetentionQuota()
+		);
+	}
 	public void refresh(Invoice invoice) {
 		ibs = new LinkedList<>();
 		
 		// Se añaden los suplidos como NO SUJETOS
 		invoice.detailStream()
+			// ... que no estén borrados
+			.filter(d -> d.isNotDeleted())
 			// ... que sean suplidos
 			.filter(d -> d.isPrepayment())
 			// ... que tengan base imponible
@@ -135,23 +153,22 @@ public class TaxBreakdown implements Serializable {
 			
 		// Se añaden las líneas de facturas 
 		invoice.detailStream()
+			// ... que no estén borrados
+			.filter(d -> d.isNotDeleted())
 			// ... que no sean suplidos
 			.filter(d -> !d.isPrepayment())
 			// ... que tengan base imponible
 			.filter(d -> AonMathUtils.isNotZero(d.getTaxableBase()))
 			// ... que no tengan impuestos definidos
 			.filter(d -> !d.hasTaxes())
-			.map( d ->  { 
-				InvoiceBreakdown ib = new InvoiceBreakdown()
-					.setTaxType( TaxType.VAT )
-					.setBase(d.getTaxableBase())
-				;
-				return ensureData(invoice,ib, true);
-			})
+			.map( d ->  new InvoiceBreakdown().setTaxType( TaxType.VAT ).setBase(d.getTaxableBase()))
+			.map( ib ->  ensureData(invoice,ib, true) )
 			.forEach( this::add );
 			
 		// Se añaden los invoice_tax "normales" de la factura 
 		invoice.detailStream()
+			// ... que no estén borrados
+			.filter(d -> d.isNotDeleted())
 			// ... que no sean suplidos
 			.filter(d -> !d.isPrepayment())
 			.flatMap(d -> d.taxStream())

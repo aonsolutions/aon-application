@@ -1591,6 +1591,13 @@
 	height: 24px;
 }
 
+.aon_toolbar_label {
+	cursor: pointer;
+	width: 100%;
+	font-size: 1rem;
+	font-weight: bold;
+}
+	
 .aon_toolbar_search_container {
 	display: flex;
 }

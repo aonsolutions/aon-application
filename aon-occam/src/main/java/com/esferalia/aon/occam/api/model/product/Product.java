@@ -12,35 +12,39 @@ public class Product implements Serializable{
 
 	private static final long serialVersionUID = -4677724896967244753L;
 
-	Integer id;
-	Domain domain;
-	String name;
-	String code;
-	Brand brand;
-	ProductCategory category;
-	ProductStatus status;
-	ProductType type;
-	ProductKind kind;
-	Tax vat;
-	Tax retention;
-	boolean inventoriable;
-	boolean serializable;
-	boolean lotable;
-	boolean manufactured;
-	boolean composition;
-	boolean compositionPrice;
-	boolean packaged;
-	boolean perishable;
-	Integer daysToExpire;
-	Account salesAccount;
-	Account purchaseAccount;
+	private Integer id;
+	private Domain domain;
+	private String name;
+	private String code;
+	private Brand brand;
+	private ProductCategory category;
+	private ProductStatus status;
+	private ProductType type;
+	private ProductKind kind;
+	private Tax vat;
+	private Tax retention;
+	private boolean inventoriable;
+	private boolean serializable;
+	private boolean lotable;
+	private boolean manufactured;
+	private boolean composition;
+	private boolean compositionPrice;
+	private boolean packaged;
+	private boolean perishable;
+	private Integer daysToExpire;
+	private Account salesAccount;
+	private Account purchaseAccount;
 
-	String creationUser;
-	Date creationDate;
-	String modificationUser;
-	Date modificationDate;
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
-	Item item;
+	/**
+	 * @deprecated Se debe utilizar el objeto Item y su product, no al revés!!.
+	 */
+	@Deprecated
+	private Item item;
 	
 	public Integer getId() {
 		return id;
@@ -309,10 +313,17 @@ public class Product implements Serializable{
 		return this;
 	}
 
+	/**
+	 * @deprecated Se debe utilizar el objeto Item y su product, no al revés!!.
+	 */
+	@Deprecated
 	public Item getItem() {
 		return item;
 	}
-
+	/**
+	 * @deprecated Se debe utilizar el objeto Item y su product, no al revés!!.
+	 */
+	@Deprecated
 	public Product setItem(Item item) {
 		this.item = item;
 		return this;

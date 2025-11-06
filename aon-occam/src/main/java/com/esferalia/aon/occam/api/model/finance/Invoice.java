@@ -555,6 +555,9 @@ public class Invoice implements Serializable, HasAudit {
 	public Stream<InvoiceDetail> detailStream() {
 		return AonCollectionUtils.stream(this.details);
 	}
+	public int detailsSize() {
+		return (int) detailStream().count();
+	}
 	public boolean hasDetails() {
 		return AonCollectionUtils.isNotEmpty(this.details); 
 	}

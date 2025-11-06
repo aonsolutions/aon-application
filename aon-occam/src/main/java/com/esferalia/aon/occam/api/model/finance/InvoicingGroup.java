@@ -3,58 +3,31 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
-public class InvoicingGroup implements Serializable{
+import com.esferalia.aon.occam.api.model.Customer;
+
+public class InvoicingGroup implements Serializable {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1155988586174019199L;
+	
+	private Integer id;
+	private Integer domain;
+	private Customer customer;
+	private String description;
+	private boolean customerGrouped;
 	
 	private Date creationDate;
 	private String creationUser;
-	private Integer Customer;
-	private Byte customerGrouped;
-	private String description;
-	private Integer domain;
-	private Integer id;
 	private Date modificationDate;
 	private String modificationUser;
 	
-	public Date getCreationDate() {
-		return creationDate;
+	public Integer getId() {
+		return id;
 	}
-	public InvoicingGroup setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public InvoicingGroup setId(Integer id) {
+		this.id = id;
 		return this;
 	}
-	public String getCreationUser() {
-		return creationUser;
-	}
-	public InvoicingGroup setCreationUser(String creationUser) {
-		this.creationUser = creationUser;
-		return this;
-	}
-	public Integer getCustomer() {
-		return Customer;
-	}
-	public InvoicingGroup setCustomer(Integer customer) {
-		Customer = customer;
-		return this;
-	}
-	public Byte getCustomerGrouped() {
-		return customerGrouped;
-	}
-	public InvoicingGroup setCustomerGrouped(Byte customerGrouped) {
-		this.customerGrouped = customerGrouped;
-		return this;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public InvoicingGroup setDescription(String description) {
-		this.description = description;
-		return this;
-	}
+
 	public Integer getDomain() {
 		return domain;
 	}
@@ -62,12 +35,46 @@ public class InvoicingGroup implements Serializable{
 		this.domain = domain;
 		return this;
 	}
-	public Integer getId() {
-		return id;
+
+	public Customer getCustomer() {
+		return customer;
 	}
-	public InvoicingGroup setId(Integer id) {
-		this.id = id;
+	public InvoicingGroup setCustomer(Customer customer) {
+		this.customer = customer;
 		return this;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public InvoicingGroup setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+
+	public boolean isCustomerGrouped() {
+		return customerGrouped;
+	}
+	public InvoicingGroup setCustomerGrouped(boolean customerGrouped) {
+		this.customerGrouped = customerGrouped;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public InvoicingGroup setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public InvoicingGroup setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	
 	}
 	public Date getModificationDate() {
 		return modificationDate;
@@ -76,6 +83,7 @@ public class InvoicingGroup implements Serializable{
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
 	public String getModificationUser() {
 		return modificationUser;
 	}
@@ -83,6 +91,5 @@ public class InvoicingGroup implements Serializable{
 		this.modificationUser = modificationUser;
 		return this;
 	}
-
 
 }

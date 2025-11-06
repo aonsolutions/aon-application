@@ -16,7 +16,7 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 	private AonConfiguration configuration;
 	private boolean advancedMode;
 
-	private HasWidgets parentWidget;
+	private transient HasWidgets parentWidget;
 	
 	public Occam getOccam() {
 		return new Occam()

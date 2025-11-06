@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -101,6 +102,15 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.save(domainName, domain, user, supplierFull, new AsyncCallbackWrapper<SupplierFull>(callback));
 	}
 	
+	// **************************************************
+	// ******************************** [INVOICING GROUP]
+	// **************************************************
+	@Override
+	public void getInvoicingGroups(Occam occam, Integer domain, String query, AsyncCallback<LinkedList<InvoicingGroup>> callback) {
+		AON.start();
+		serviceAsync.getInvoicingGroups(occam, domain, query, new AsyncCallbackWrapper<LinkedList<InvoicingGroup>>(callback));
+	}
+
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************

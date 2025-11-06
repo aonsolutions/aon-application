@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -105,6 +107,16 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public SupplierFull save(String domainName, int domain, String user, SupplierFull supplierFull) throws AonCoreException {
 		return AON.save(domainName, domain,user, supplierFull);
 	}
+	
+	// **************************************************
+	// ******************************** [INVOICING GROUP]
+	// **************************************************
+
+	@Override
+	public LinkedList<InvoicingGroup> getInvoicingGroups(Occam occam, Integer domain, String query) {
+		return AON.getInvoicingGroups(occam, domain, query)
+			.collect(Collectors.toCollection(LinkedList::new));
+	} 
 	
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
@@ -203,7 +215,8 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	
 	@Override
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
-		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query);
+		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query)
+			.collect(HashMap::new, (m, v) -> m.put(v.getDescription(), v), HashMap::putAll);
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -50,6 +51,11 @@ public interface RegistryServiceAsync {
 	void getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Supplier>> asyncCallback);
 	void getSupplierFull(String domainName, int domain, String user, Integer id, AsyncCallback<SupplierFull> callback);
 	void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback);
+	
+	// **************************************************
+	// ******************************** [INVOICING GROUP]
+	// **************************************************
+	void getInvoicingGroups(Occam occam, Integer domain, String query, AsyncCallback<LinkedList<InvoicingGroup>> callback);
 	
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]

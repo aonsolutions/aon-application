@@ -860,6 +860,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
 	
+	@DefaultMessage("Raz\u00F3n social, documento, alias ")
+	String registryPlaceHolder();
+
+	@DefaultMessage("C\u00F3digo, descripci\u00F3n")
+	String itemPlaceHolder();
+
 	@DefaultMessage("Referencia")
 	String reference();
 
@@ -3613,6 +3619,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Producto")
 	String product();
 
+ 	@DefaultMessage("Producto")
+	String item();
+
  	@DefaultMessage("Categor\u00EDa")
 	String category();
  	
@@ -4308,6 +4317,13 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("(*) Por el c\u00F3nyuge y los hijos menores de 18 a\u00F1os que tengan un grado de minusval\u00EDa igual o superior al 33 por 100 se reflejar\u00E1 el 75 por 100 de las horas trabajadas por ellos")
 	String actMsg2();
 
+	@DefaultMessage("Grupo de facturaci\u00F3n")
+	String invoicingGroup();
 	
+	@DefaultMessage("Periodicidad")
+	String periodicity();
+	
+	@DefaultMessage("F. Facturaci\u00f3n")
+	String invoicingDate();
 }
 

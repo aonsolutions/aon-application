@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.ProductType;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -230,6 +228,10 @@ public class FeeImport extends Import {
 	}
 	
 	public static ImportError insertFee(Domain domain, User user, Integer index, Fee fee) {
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain( domain.getId())
+			.setUser( user.getLogin());		
 		ImportError error = new ImportError().setLine(index).setError(true);
 	
 		fee.setDomain(domain);
@@ -307,10 +309,6 @@ public class FeeImport extends Import {
 			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
 			// ¿?¿?¿?¿?¿?¿?¿?¿?¿? 
 			// Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
-			Occam occam = new Occam()
-				.setDomainName(domain.getName())
-				.setDomain( domain.getId())
-				.setUser( user.getLogin());
 			Tax tax = AON.getVatStream(occam,domain.getId())
 				.filter( t -> AonNumberUtils.equals(21.0,t.getPercentage()))
 				.findFirst()
@@ -362,13 +360,15 @@ public class FeeImport extends Import {
 
 		// INVOICING GROUP
 		if(fee.getInvoicingGroup().getDescription() != null) {
-			InvoicingGroup ig = AON.getInvoicingGroup(domain.getName(), domain.getId(), user.getLogin(), f -> invoicingGroupFilter(domain, user, feeCopy, f));
+			InvoicingGroup ig = AON.getInvoicingGroups(occam, domain.getId(), fee.getInvoicingGroup().getDescription())
+				.findFirst()
+				.orElse(new InvoicingGroup());
 			if(ig.getId() == null) {
-				ig = AON.save(domain.getName(), domain.getId(), user.getLogin(), new InvoicingGroup()
-						.setDomain(domain.getId())
-						.setCustomer(fee.getCustomer().getId())
-						.setCustomerGrouped((byte) 1)
-						.setDescription(fee.getInvoicingGroup().getDescription()));
+				ig = AON.save(occam, new InvoicingGroup()
+					.setDomain(domain.getId())
+					.setCustomer(fee.getCustomer())
+					.setCustomerGrouped(true)
+					.setDescription(fee.getInvoicingGroup().getDescription()));
 				error.setTextWarning("Línea " + index + ": El grupo de facturación introducido no existe. Se ha creado un nuevo grupo " + ig.getDescription() + ".");
 			}
 			fee.setInvoicingGroup(ig);
