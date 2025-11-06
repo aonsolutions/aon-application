@@ -5,7 +5,8 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
     entry: {
       app:'./src/main/webapp/index.js',
-	  aio:'./src/main/webapp/aio.js'
+  	  aio:'./src/main/webapp/aio.js',
+      paturpat:'./src/main/webapp/paturpat.js',
     },
     output: {
         filename: '[name].min.js',

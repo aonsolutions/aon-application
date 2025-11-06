@@ -98,11 +98,7 @@ export class AonApps extends AonElement {
 						icon.style.backgroundColor = app.color;
 					icon.style.color = "white";
 					icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
-					icon.style.paddingTop = '5px';
-					icon.style.paddingLeft = '4px';
 					icon.style.borderRadius = "5px";
-					icon.style.width = "32px";
-					icon.style.height = "32px";
 					span.appendChild(icon);
 				}  else if(app.icon) {
 					span.innerHTML = `<aon-icon id="aonMobileSelectionIcon-${app.app}" icon="${app.icon}" color="${app.color}" size="28px"></aon-icon>`;
