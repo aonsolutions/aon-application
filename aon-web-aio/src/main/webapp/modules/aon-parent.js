@@ -91,10 +91,9 @@ export class AonParent extends AonElement {
 					this.companySelection(cps[0], companies.length == 1 );
 				} else if ( LS.getCompany() && !LS.getCompany().domainManagement ) {
 					this.companySelection(LS.getCompany(), companies.length == 1 );
-				} else if(companies.length === 1) {
+				} else if(companies.length === 1 && !companies[0].domainManagement) {
 					this.companySelection(companies[0], true);
 				} else {
-					
 					if ( LS.getCompany() ) {
 						this.getAonHeader().showCompanyOption(LS.getCompany(), false);
 					}
