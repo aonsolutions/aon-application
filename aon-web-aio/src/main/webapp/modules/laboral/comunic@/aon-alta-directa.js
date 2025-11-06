@@ -602,29 +602,11 @@ export class AonAltaDirecta extends AonElement {
         }, MSG.COMMUNICATE);
     }
 
-    sanitizeContractValues(contract) {
-        const updateField = (selectId, fieldName) => {
-            const selectElement = document.getElementById(selectId);
-            if (selectElement && selectElement._selected) {
-                const selectedValue = selectElement._selected.value;
-                contract[fieldName] = selectedValue;
-            }
-        };
-
-        updateField("cno", "cno");
-        updateField("collective", "collective");
-        updateField("gc", "gc");
-        updateField("contract", "contract");
-        updateField("ocup", "ocup");
-
-        return contract;
-    }
-
     async alta() {
         this.getApplication().startLoading();
         try {
            
-            const resp = await sendAlta(this.sanitizeContractValues(this.getContract()));
+            const resp = await sendAlta(this.getContract());
 
             this.getApplicationParent()._movements = [];
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
@@ -690,7 +672,7 @@ export class AonAltaDirecta extends AonElement {
             if (cto_new[property] && (cto_old[property] != cto_new[property])) 
                 cto_new[`${property}_edit`] = true;
         try {
-            const resp = await updateContract(this.sanitizeContractValues(cto_new));
+            const resp = await updateContract(cto_new);
             let message = `No existen cambios en el contrato`;
 
             if( resp.errors && resp.errors.length > 0 )
