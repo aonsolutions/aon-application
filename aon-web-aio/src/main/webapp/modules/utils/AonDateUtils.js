@@ -10,7 +10,7 @@ export const AonDateUtils = {
   */
   formatDate: function (d, format) {
     format = format || 'dd/MM/yyyy';
-    if(d !== undefined){
+    if(d !== undefined && d !== ''){
       const date = new Date(d);
       const day = addZero(date.getDate(), 2);
       const month = addZero(date.getMonth() + 1, 2);

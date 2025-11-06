@@ -38,6 +38,7 @@ export class AonToast extends AonElement {
     toast.innerHTML = message;
     // Componente padre
     this.classList.add("view");
+    toast.classList.remove("hidden");
     // agregamos clase para el tipo de mensaje
     if (type === CONSTANT.ERROR)
       toast.classList.add("error");

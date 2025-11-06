@@ -152,13 +152,13 @@ export class AonNewSelect extends AonNewInput {
       input.addEventListener(EVENT.INPUT, ({target})=>{
         if(this.disableKeyUp) {
           let val = target.value.toUpperCase();
-          let options = this.getOptions();
+          let optios = this.getOptions();
           if (val) {
-            options = this.getOptions().filter(opt => {
+            optios = this.getOptions().filter(opt => {
               return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
             })
           }
-          this.buildOptions(options);
+          this.buildOptions(optios);
         }
       });
                   
@@ -202,7 +202,7 @@ export class AonNewSelect extends AonNewInput {
 	      empty[this.valueAlias] = '';
 	      options.unshift(empty); //EMPTY
 	    }
-
+	
 	    let ul = this.createElement(TAG.UL);
 	    ul.classList.add(CSS.AON_UL);
 	    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
@@ -215,54 +215,57 @@ export class AonNewSelect extends AonNewInput {
       search.title = "Buscar";
       div.appendChild(search);
       
-      div.appendChild(ul);
-  
-      const isMultiple = this.multiple;
-      // Filtra las opciones antes de construir la lista
-      const filteredOptions = options.filter(opt => {
-        return opt[this.nameAlias].toUpperCase().includes(this.valueSearch.toUpperCase()) || this.checkSelectable(opt);
-      });
-      for (const option of filteredOptions) {
-        isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
-      }
-      
-      search.addEventListener(EVENT.INPUT, ({ target }) => {
-        // Actualiza el valor de búsqueda
-        this.valueSearch = target.value;
-        // Filtra las opciones en base al valor de búsqueda
-        const filteredOptions = options.filter(opt => {
-          return opt[this.nameAlias].toUpperCase().includes(this.valueSearch.toUpperCase()) || this.checkSelectable(opt);
-        });
-        ul.replaceChildren();
-        for (const option of filteredOptions) {
-          isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
+	    div.appendChild(ul);
+	
+	    const isMultiple = this.multiple;
+	    for (const option of options) {
+	      isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
+	    }
+		
+      search.addEventListener(EVENT.INPUT, ({target}) => {
+        if(this.disableKeyUp) {
+          let val = target.value.toUpperCase();
+          this.valueSearch = target.value;
+          let optios = this.getOptions();
+          if (val) {
+            optios = this.getOptions().filter(opt => {
+              return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
+            })
+          }
+          const isMultiple = this.multiple;
+          const div = this.getElement(this.OPTIONS);
+          const ul = this.getElement(this.UL);
+          ul.replaceChildren(); 
+          for (const option of optios) {
+            isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
+          }
+          search.removeLabel();
+          search.focus();
         }
-        search.removeLabel();
-        search.focus();
       });
-
-      let keys = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Enter"];
-      search.addEventListener(EVENT.KEYDOWN, (ev) => {
+		  
+		  let keys = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Enter"];
+		  search.addEventListener(EVENT.KEYDOWN, (ev) => {
         let key = ev.key;
         if(keys.includes(key)){
           ev.preventDefault();
           ev.stopPropagation();
           this.keyboardSelected(ev);
         } 
-      });
-
-      document.addEventListener(EVENT.CLICK, (event) => {
-        if (!div.contains(event.target)) {
-          this.value = this._selected ? this._selected[this.nameAlias] : '';
-          const isClickInside = input.contains(event.target);
-          const isClickOnIcon = iconButton && iconButton.contains(event.target);
-          if (!isClickInside && !isClickOnIcon) {
-            if(div.classList.contains('is-visible')){
-              div.classList.remove('is-visible');
-            }
-          }
+		  });
+	
+	    document.addEventListener(EVENT.CLICK, function(event) {
+        if (!div.contains(event.target)) {			
+			    this.value = this._selected ? this._selected[this.nameAlias] : '';
+			    const isClickInside = input.contains(event.target);
+			    const isClickOnIcon = iconButton && iconButton.contains(event.target);
+			    if (!isClickInside && !isClickOnIcon) {
+				    if(div.classList.contains('is-visible')){
+			        	div.classList.remove('is-visible');
+			    	}
+			    }
         }
-      });
+	    });
     }
   }
 
@@ -477,8 +480,8 @@ export class AonNewSelect extends AonNewInput {
 
   showOptions(){
     if(!this.isReadonly() && !this.isDisabled()) {
-      const options = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-      this.buildOptions(options);
+      const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+      this.buildOptions(optios);
       const search = this.getElement(this.SEARCH)
       if(search)
         search.removeLabel();
