@@ -1,7 +1,13 @@
 import {AonElement} from '../../components/AonElement.js';
-import {Apps, ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
-	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getBookingDomainUserRoles, getDomainUserRoles, getSigBookingDomainUserRoles, getSigParentScopes, setDomainApp, setSigDomainApp} from  '../../services/service.js';
+import {
+	Apps, ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, 
+	BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, 
+	KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE
+} from  '../../services/app.js';
+import {
+	getBookingDomainUserRoles, getDomainUserRoles, getSigBookingDomainUserRoles, getSigParentScopes, 
+	setDomainApp, setSigDomainApp
+} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -74,8 +80,13 @@ export class AonBooking extends AonElement {
 			let headers = {
 				domain_name: this.sessionData.domain_name,
 				domain_id: this.sessionData.domain_id
-			}		
+			};
 			
+
+			consoleLog("------------------------------------","blue");
+			consoleLog("getSigBookingDomainUserRoles");
+			consoleLog("------------------------------------","blue");
+
 			getSigBookingDomainUserRoles({}, headers).then(r => {
 				this.dur = new DomainUserRoles(r);
 				this.initialize();
@@ -90,10 +101,16 @@ export class AonBooking extends AonElement {
 				this.domainActive = this.dur.getDomain().isActive();
 				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
 				this.domainScope = this.dur.getDomain().getScope();
-				
-				this.build();			
+
+				this.build();
 			});
-		} else {		
+		} else {
+
+			consoleLog("------------------------------------","blue");
+			consoleLog("getBookingDomainUserRoles");
+			consoleLog("------------------------------------","blue");
+
+
 			getBookingDomainUserRoles({}, this.sessionData).then(r => {
 				this.dur = new DomainUserRoles(r);
 				this.initialize();
@@ -108,11 +125,10 @@ export class AonBooking extends AonElement {
 				this.domainActive = this.dur.getDomain().isActive();
 				this.domainExpirationDate = this.dur.getDomain().getExpirationDate();
 				this.domainScope = this.dur.getDomain().getScope();
-				
-				this.build();			
+
+				this.build();
 			});
 		}
-		
 	}
 
 	completeDomainApps(dur) {
@@ -147,9 +163,9 @@ export class AonBooking extends AonElement {
 	}
 
 	build() {
-		let toolbar = new AonToolbar();
-		toolbar.id = this.TOOLBAR;
-		toolbar.type = ToolbarType.SECONDARY;
+		let toolbar 	= new AonToolbar();
+		toolbar.id 		= this.TOOLBAR;
+		toolbar.type 	= ToolbarType.SECONDARY;
 		toolbar.title = 'CONTRATACIÓN';
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.saveDialog());
@@ -170,6 +186,12 @@ export class AonBooking extends AonElement {
 	}
 	
 	buildBooking() {
+
+		consoleLog("------------------------------------","green");
+		consoleLog("buildBooking","green", true);
+		consoleLog("------------------------------------","green");
+
+
 		const dur = this.getDur();
 		let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
@@ -182,7 +204,6 @@ export class AonBooking extends AonElement {
 		userContent.style.display = 'flex';
 		userContent.style.flexDirection = 'column';
 		userTrialContent.appendChild(userContent);
-		
 		this.buildUser(userContent);
 		
 		if(dur.isTrial()){
@@ -191,10 +212,20 @@ export class AonBooking extends AonElement {
 			trialContent.style.flexDirection = 'column';
 			userTrialContent.appendChild(trialContent);
 			
+		consoleLog("------------------------------------","green");
+		consoleLog("LLama a  isTrial()","green", true);
+		consoleLog("------------------------------------","green");
+
 			this.buildTrial(trialContent);
 		}
 		
 		if(this.isSig() && this.fromCustomer){
+
+			
+		consoleLog("------------------------------------","green");
+		consoleLog("LLama a  isSig()","green", true);
+		consoleLog("------------------------------------","green");
+
 			let domainActiveContent = this.createElement(TAG.DIV); 
 			domainActiveContent.style.display = 'flex';
 			domainActiveContent.style.flexDirection = 'column';
@@ -207,6 +238,11 @@ export class AonBooking extends AonElement {
 			this.buildTitle(content, 'Packs');
 			this.buildApps(content, Packs, dur);
 		} else {
+
+		consoleLog("------------------------------------","green");
+		consoleLog("LLama a  buildApps()","green", true);
+		consoleLog("------------------------------------","green");
+
 			this.buildTitle(content,  this.dur.getDomain().isKitDigital() 
 				? 'Kit Digital' : 'Gestión');
 			this.buildApps(content, this.getGestionPacks(), dur);
@@ -296,7 +332,7 @@ export class AonBooking extends AonElement {
 		else if(this.dur.getDomain().isKitDigital()) 
 			return 'Kit Digital';
 		else 
-          return 'Empresa';
+			return 'Empresa';
 	}
 
 	buildUser(content) {
@@ -318,8 +354,8 @@ export class AonBooking extends AonElement {
 		// content.appendChild(div);
 
 		let div1 = this.createElement(TAG.DIV); 
-//		div1.style.marginLeft = '60px';
-//		div1.style.width = '250px';
+		// div1.style.marginLeft = '60px';
+		// div1.style.width = '250px';
 		div.appendChild(div1);
 
 		let users = createInput('users1', 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')');
@@ -328,7 +364,7 @@ export class AonBooking extends AonElement {
 		users.onChange(() => this.users = users.value);
 		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');
 
-		/*
+	/*
 		if(this.dur.getDomain().isDomainManagement() && this.isBeta()){
 			let div2 = this.createElement(TAG.DIV); 
 			div2.style.marginLeft = '10px';
@@ -344,7 +380,7 @@ export class AonBooking extends AonElement {
 			]);
 			div2.appendChild(companies);
 		}
-		*/
+	*/
 	} 
 	
 	buildTrial(content) {
@@ -484,19 +520,33 @@ export class AonBooking extends AonElement {
 		
 	}
 
+ count = 0;
+
 	buildApps(content, apps, dur) {
+
+consoleLog("------------------------------------","reed");
+consoleLog(this.count);
+
+
 		let ul = document.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL, CSS.AON_LIST_GROUP_TOP);
-//		ul.style.marginLeft = '60px';
-//		ul.style.marginRight = '60px';
+
 		content.appendChild(ul);
 		for (let key in apps){
 			const app = apps[key];
 			let contratado = this.hasApp(dur, app.app.toUpperCase());
+
+if(this.count === 1){
+	consoleLog("-******************************-","purple", true);
+	consoleLog("Apliciones");
+	consoleLog(app);
+	
+	consoleLog("-******************************-","purple", true);
+}
+
 			let li = document.createElement('li');
 		  	li.classList.add(CSS.AON_LIST_GROUP_ITEM, CSS.AON_APP_LI);
 			let span = document.createElement('span');
-//			span.style.margin = '20px';
 
 			let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 			if(app.icon) {
@@ -504,16 +554,11 @@ export class AonBooking extends AonElement {
 			} else if(app.symbol) {
 				let icon = new AonIcon();
 				icon.id = this.APP + app.app + 'Icon';
-				// icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 				icon.icon = app.symbol;
 				icon.color = color;
-				// icon.style.color = color;
-				// icon.style.paddingTop = '5px';
-				// icon.style.paddingLeft = '4px';
 				span.appendChild(icon);
 			} else {
 				let img = document.createElement('img');
-				// img.style.width = '30px';
 				img.src = app.logo;
 				span.appendChild(img);
 			}
@@ -530,32 +575,19 @@ export class AonBooking extends AonElement {
 			if(app.subtitle){
 				let span3 = document.createElement('span');
 				span3.innerHTML = app.subtitle;
-//				span3.style.color = 'gray';
-//				span3.style.fontWeight = '400';
 				span2.appendChild(span3);
 			}
 
 			let buttons = document.createElement('span');
 			buttons.id  = this.APP + app.app + 'Buttons';
 			buttons.classList.add(this.APP + '-buttons');
-//			buttons.style.position = 'absolute';
-//			buttons.style.right = '10px';
-//			buttons.style.top = '20px';
-
-			let price   = document.createElement('span');
-			price.id    = this.APP + app.app + 'Price';
-//			price.style.margin = '10px';
-//			price.style.color = 'gray';
-			price.innerHTML = app.price;
-			buttons.appendChild(price);
-
-			// let parentContract = document.createElement('span');
-			// parentContract.id = this.APP + app.app + 'ParentContract';
-			// parentContract.style.color = '#002469';
-			// parentContract.style.opacity = '0.5';
-			// parentContract.innerHTML = 'Contratado en el entorno';
-			// parentContract.style.display = 'none';
-			// buttons.appendChild(parentContract);
+	
+			if(app.price !== '' && app.price !== undefined){
+				let price   		= document.createElement('span');
+				price.id    		= this.APP + app.app + 'Price';
+				price.innerHTML = app.price;
+				buttons.appendChild(price);
+			}
 
 			let contract = new AonSwitch();
 			contract.id = this.APP + app.app + 'Contract';
@@ -571,18 +603,12 @@ export class AonBooking extends AonElement {
 			contract.checked = contratado;
 			buttons.appendChild(contract);
 
-			// if(this.hasParentApp(dur, app.app.toUpperCase())) {
-			// 	contract.style.display = 'none';
-			// 	parentContract.style.display = 'inline';
-			// } else 
 			if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
 				contract.style.display = 'none';
 				let pack = this.getPack(dur, app.app.toUpperCase());
 				if(pack) {
 					let message = document.createElement('span');
 					message.id = this.APP + app.app + 'Text';
-//					message.style.color = '#002469';
-//					message.style.opacity = '0.5';
 					buttons.appendChild(message);
 					message.innerHTML = 'Incluido en ' + pack.title;
 					message.style.display = 'inline';
@@ -617,6 +643,9 @@ export class AonBooking extends AonElement {
 			li.appendChild(span);
 			ul.appendChild(li);
 		}
+
+this.count++
+consoleLog("------------------------------------","reed");
 	}
 
 	activate(app, contract, text){
@@ -745,22 +774,17 @@ export class AonBooking extends AonElement {
 	saveDialog() {
 		let dialog = this.getElement(this.SAVE_DIALOG);
 		if(!dialog){
-			dialog = new AonDialog();
+			dialog 		= new AonDialog();
 			dialog.id = this.SAVE_DIALOG;
 			this.appendChild(dialog);
 		}
 
 		let div = this.createElement(TAG.DIV);
-		
 		let span = this.createElement(TAG.SPAN);
-//		span.style.fontWeight = 'bold';
-//		span.style.color = 'red';
 		span.innerHTML= 'Los cambios realizados pueden suponer variaciones en la facturación.';
 		div.appendChild(span);
 		
 		let table = new AonBasicTable();
-//		table.style.top = '20px';
-//		table.style.position = 'relative'; 
 		div.appendChild(table);
 
 		dialog.clear();
@@ -775,7 +799,6 @@ export class AonBooking extends AonElement {
 		let checkBox = new AonCheckbox();
 
 		let td = table.addCell(checkBox)
-//		td.style.width = '15px';
 		let span3 = this.createElement(TAG.SPAN);
 		span3.innerHTML = 'He leido las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">condiciones de servicio</a> y estoy de acuerdo con las mismas'
 		table.addCell(span3);
@@ -831,13 +854,15 @@ export class AonBooking extends AonElement {
 	}
 
 	save() {
-		let tID = this.id + 'Toast';
+		let tID 	= this.id + 'Toast';
 		let toast = this.getElement(tID);
 		if(!toast){
 			toast = new AonToast(); 
 			toast.id = tID;
 			this.appendChild(toast);
 		}
+
+console.log("quiero guardar esta maravilla")
 
 		if(this.definedUsers > this.users) {
 			toast.start({
@@ -907,10 +932,6 @@ export class AonBooking extends AonElement {
 	buildTitle(content, title) {
 		let div = document.createElement('div');
 		div.classList.add('booking-title-group')
-//		div.style.color = 'gray';
-//		div.style.paddingTop = '20px';
-//		div.style.paddingBottom = '20px';
-//		div.style.marginLeft = '60px';
 		div.innerHTML = title.toUpperCase();
 		content.appendChild(div);
 	}
