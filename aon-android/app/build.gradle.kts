@@ -11,8 +11,8 @@ android {
         applicationId = "aon.solutions"
         minSdk = 23
         targetSdk = 36
-        versionCode = 20011
-        versionName = "2.0.11"
+        versionCode = 20012
+        versionName = "2.0.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
