@@ -109,7 +109,13 @@ public class ProductCatalogue extends HTMLPanel {
 		subtitle.getElement().getStyle().setProperty("margin-bottom", "1.5rem");
 		cataloguePanel.add(subtitle);
 		
-		List<ProductBooking> packsProducts = products.stream().filter(p -> p.getBookingType().equals(ProductBookingType.PLAN)).collect(Collectors.toList());
+		List<ProductBooking> packsProducts = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
+				.sorted(Comparator.comparing(
+			        ProductBooking::getPosition,
+			        Comparator.nullsLast(Comparator.naturalOrder())
+			    ))
+				.collect(Collectors.toList());
 		if(!packsProducts.isEmpty()) {
 			createPacks(cataloguePanel, packsProducts);
 		}
@@ -119,7 +125,13 @@ public class ProductCatalogue extends HTMLPanel {
 		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
 		cataloguePanel.add(aditional);
 		
-		List<ProductBooking> aonServices = products.stream().filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE)).collect(Collectors.toList());
+		List<ProductBooking> aonServices = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
+				.sorted(Comparator.comparing(
+			        ProductBooking::getPosition,
+			        Comparator.nullsLast(Comparator.naturalOrder())
+			    ))
+				.collect(Collectors.toList());
 		if(!aonServices.isEmpty()) {
 			createServices(cataloguePanel, aonServices);
 		}
@@ -140,10 +152,11 @@ public class ProductCatalogue extends HTMLPanel {
 		
 		getItemTariff(null, itemTariffAll -> {
 			List<ItemTariff> itemTariffs = itemTariffAll.stream().filter(itemTariffIt -> itemTariffIt.getTariff().getId().equals(tariff.getId())).collect(Collectors.toList());
-			packsProducts.sort(Comparator.comparingDouble(p -> { 
-				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
-				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
-			}));
+//			TODO: ordenar por precio una vez aplicada la tarifa
+//			packsProducts.sort(Comparator.comparingDouble(p -> { 
+//				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
+//				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
+//			}));
 			createProductCard(packsCataloguePanel, packsProducts, 0);
 		});
 	}
