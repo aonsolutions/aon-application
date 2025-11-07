@@ -222,7 +222,7 @@ export class AonMobileDelivery extends AonElement {
     	d.setTitle(MSG.ACCEPT);
    	 	d.setContentHTML(`Estás seguro de finalizar el proceso.`);
     	d.addAcceptAction(() => {
-			d.parentNode.removeChild(d);
+			d.remove();
 			acceptDeliveryPackaging({id:this.delivery.id}).then(()=> this.back());
     	});
     	d.open();
@@ -230,9 +230,9 @@ export class AonMobileDelivery extends AonElement {
 
 	getDialog() {
 		let dialog = new AonDialog();
-		document.appendChild(dialog);
+		document.body.appendChild(dialog);
 		dialog.addEventListener(EVENT.CLOSE, () => {
-			dialog.parentNode.removeChild(dialog);
+			dialog.remove();
 		});
 		return dialog;
 	}

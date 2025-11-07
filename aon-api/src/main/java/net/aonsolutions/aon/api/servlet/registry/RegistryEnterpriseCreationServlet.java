@@ -987,6 +987,8 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						new UserAppRole().setApp(null).setDomain(newDomain.getId()).setRole(role).setUser(userId));
 			}
 		});
+		
+		SecurityDAO.insertUserApplicationAio(ctx, newDomain.getId(), userId);
 	}
 
 	private static void createTaskHolder(CloseableAONContext ctx, Domain newDomain, Auth auth, User newUser) {
