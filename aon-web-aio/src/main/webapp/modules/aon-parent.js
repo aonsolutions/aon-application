@@ -67,9 +67,6 @@ export class AonParent extends AonElement {
 	}
 
 	init(filter) {
-
-consoleLog('hola *********************', true)
-
 		this.domainId = parseInt(localStorage.getItem('aon_domain_id'));
 		this.aonApplication = new AonApplication();
 		this.aonApplication.startLoading();
