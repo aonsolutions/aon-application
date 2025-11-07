@@ -613,20 +613,31 @@ export const CONSOLE = {
 };
 
 export const OFFICE = {
-  app: "office",
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
-  newIcon: AON_ICONS.AON_NEW_OFFICE,
-  symbol:MATERIAL_ICONS.BUSINESS_CENTER,
-  title: MSG.OFFICE,
+  app: 'office',
+  title: MSG.OFFICE, //MSG.INVOICES,
   description: MSG.OFFICE,
-  // color: "var(--aonTopMenuSpecial)",
+  tag: MSG_ES.OFFICE,
+  symbol: MATERIAL_ICONS.BUSINESS_CENTER,
   color: "var(--aonTopMenuSpecial)",
-  backgroundColor: "rgba(0, 0, 0, .2)",
+  // newColor: "var(--aonInvoice)", 
+  backgroundColor: 'rgba(0, 0, 0, .2)',
   hover: 'sidenavHover',
-  domainType: true,
-  is: (dur) => new DomainUserRoles(dur).isOffice(),
-  has: (dur) => new DomainUserRoles(dur).hasOffice(),
-  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+  access: [
+    {
+      value: "Asesor",
+      name: "Asesor",
+    },
+    {
+      value: "Empresa",
+      name: "Empresa",
+    },
+    {
+      value: "Empleado",
+      name: "Empleado",
+    },
+  ],
+  is: (dur) => new DomainUserRoles(dur).isOfficeUser() || new DomainUserRoles(dur).isOfficePortal() || new DomainUserRoles(dur).isOfficeManager(),
+  has: (dur) => new DomainUserRoles(dur).hasOfficeRole() 
 };
 
 export const API_SERVICE = {
@@ -710,7 +721,7 @@ export const EmployeeAonApps = [
   TIMECONTROL,
   PAYROLL,
   MESSENGER,
-  INVOICE,
+  INVOICE
 ];
 
 export const EmployeeApps = [
@@ -737,7 +748,8 @@ export const EnterpriseAonApps = [
   BIDOQ,
   SELFCONTA,
   AON_SALTRA,
-  BANK
+  BANK,
+  OFFICE
 ];
 
 export const EnterpriseApps = [
@@ -989,6 +1001,7 @@ export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllAonApps = [
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -1009,7 +1022,8 @@ export const AllAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA];
+  AON_SALTRA
+  ];
   
 export const AllApps = {
   ACCOUNTING,

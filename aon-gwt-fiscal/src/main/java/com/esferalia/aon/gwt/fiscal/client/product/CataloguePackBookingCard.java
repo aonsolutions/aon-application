@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
@@ -26,12 +27,12 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 	private HTMLPanel contentData;
 	private HTMLPanel buttonData;
 	
-	private Product packProduct;
+	private ProductBooking packProduct;
 	private Tariff tariff;
 	private ItemTariff itemTariff;
 	private LinkedList<Fee> customerFees;
 	
-	public CataloguePackBookingCard(Product packProduct, Tariff tariff, LinkedList<Fee> customerFees) {
+	public CataloguePackBookingCard(ProductBooking packProduct, Tariff tariff, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("flex", "1");
@@ -71,7 +72,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		add(content);
 	}
 	
-	public CataloguePackBookingCard(Product packProduct, ItemTariff itemTariff, LinkedList<Fee> customerFees) {
+	public CataloguePackBookingCard(ProductBooking packProduct, ItemTariff itemTariff, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
 		getElement().getStyle().setProperty("flex", "1");
@@ -171,8 +172,9 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		packContent.setWidth("100%");
 		packContent.getElement().getStyle().setProperty("align-items", "start");
 		
-		HTMLPanel include = new HTMLPanel(packProduct.getItem().getDescription());
+		HTMLPanel include = new HTMLPanel(packProduct.getDescriptionTemplate());
 		include.getElement().getStyle().setProperty("padding", ".5rem");
+		include.getElement().getStyle().setProperty("margin", ".5rem 1rem");
 		packContent.add(include);
 		
 		contentData.add(packContent);

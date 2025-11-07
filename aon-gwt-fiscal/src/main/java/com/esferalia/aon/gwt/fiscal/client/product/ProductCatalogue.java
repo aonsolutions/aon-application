@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -47,7 +49,7 @@ public class ProductCatalogue extends HTMLPanel {
 	private DomainType domainType;
 	private Tariff tariff;
 	
-	private List<Product> products;
+	private List<ProductBooking> products;
 	
 	// Constructor
 	public ProductCatalogue(RegistryModuleOptions options) {
@@ -107,7 +109,13 @@ public class ProductCatalogue extends HTMLPanel {
 		subtitle.getElement().getStyle().setProperty("margin-bottom", "1.5rem");
 		cataloguePanel.add(subtitle);
 		
-		List<Product> packsProducts = products.stream().filter(Product::isManufactured).collect(Collectors.toList());
+		List<ProductBooking> packsProducts = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
+				.sorted(Comparator.comparing(
+			        ProductBooking::getPosition,
+			        Comparator.nullsLast(Comparator.naturalOrder())
+			    ))
+				.collect(Collectors.toList());
 		if(!packsProducts.isEmpty()) {
 			createPacks(cataloguePanel, packsProducts);
 		}
@@ -117,7 +125,13 @@ public class ProductCatalogue extends HTMLPanel {
 		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
 		cataloguePanel.add(aditional);
 		
-		List<Product> aonServices = products.stream().filter(product -> !product.isManufactured()).collect(Collectors.toList());
+		List<ProductBooking> aonServices = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
+				.sorted(Comparator.comparing(
+			        ProductBooking::getPosition,
+			        Comparator.nullsLast(Comparator.naturalOrder())
+			    ))
+				.collect(Collectors.toList());
 		if(!aonServices.isEmpty()) {
 			createServices(cataloguePanel, aonServices);
 		}
@@ -126,7 +140,7 @@ public class ProductCatalogue extends HTMLPanel {
 		tableContainer.add(tableScrollPanel);
 	}
 
-	private void createPacks(HTMLPanel cataloguePanel, List<Product> packsProducts) {
+	private void createPacks(HTMLPanel cataloguePanel, List<ProductBooking> packsProducts) {
 		HTMLPanel centerPacksCataloguePanel = new HTMLPanel("");
 		centerPacksCataloguePanel.setWidth("100%");
 		centerPacksCataloguePanel.getElement().getStyle().setProperty("display", "flex");
@@ -138,21 +152,22 @@ public class ProductCatalogue extends HTMLPanel {
 		
 		getItemTariff(null, itemTariffAll -> {
 			List<ItemTariff> itemTariffs = itemTariffAll.stream().filter(itemTariffIt -> itemTariffIt.getTariff().getId().equals(tariff.getId())).collect(Collectors.toList());
-			packsProducts.sort(Comparator.comparingDouble(p -> { 
-				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
-				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
-			}));
+//			TODO: ordenar por precio una vez aplicada la tarifa
+//			packsProducts.sort(Comparator.comparingDouble(p -> { 
+//				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
+//				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
+//			}));
 			createProductCard(packsCataloguePanel, packsProducts, 0);
 		});
 	}
 	
-	private void createProductCard(HTMLPanel packsCataloguePanel, List<Product> packsProducts, int index) {
+	private void createProductCard(HTMLPanel packsCataloguePanel, List<ProductBooking> packsProducts, int index) {
 		if (index >= packsProducts.size()) {
 	        // Terminado
 	        return;
 	    }
 
-	    Product packProduct = packsProducts.get(index);
+		ProductBooking packProduct = packsProducts.get(index);
 //	    getItemCompositions(packProduct.getItem().getId(), itemCompositions -> {
 	        // Crear la carta después de obtener itemCompositions
 	    	
@@ -171,7 +186,7 @@ public class ProductCatalogue extends HTMLPanel {
 //	    });
 	}
 
-	private void createServices(HTMLPanel cataloguePanel, List<Product> aonServices) {
+	private void createServices(HTMLPanel cataloguePanel, List<ProductBooking> aonServices) {
 		HTMLPanel servicesPanel = new HTMLPanel("");
 		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
 		servicesPanel.setWidth("100%");
@@ -196,7 +211,7 @@ public class ProductCatalogue extends HTMLPanel {
 				code.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				codeNamePanel.add(code);
 				
-				Label name = new Label(aonService.getItem().getDescription());
+				HTMLPanel name = new HTMLPanel(aonService.getDescriptionTemplate());
 				name.getElement().getStyle().setProperty("padding", "1rem 2rem 1rem 0");
 				codeNamePanel.add(name);
 				
@@ -282,7 +297,7 @@ public class ProductCatalogue extends HTMLPanel {
         return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart /*+ " \u20ac"*/;
     }
 	
-	private void getList(Consumer<List<Product>> success) {
+	private void getList(Consumer<List<ProductBooking>> success) {
 		ProductParams params = new ProductParams()
 				.setDomainName(options.getDomainName())
 				.setDomain(options.getDomain())
@@ -293,10 +308,10 @@ public class ProductCatalogue extends HTMLPanel {
 				.setLimit(Integer.MAX_VALUE)
 				;
 		
-		COMMON_SERVICE.getProducts(params, new AsyncCallback<List<Product>>() {
+		COMMON_SERVICE.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
 			
 			@Override
-			public void onSuccess(List<Product> productsDB) {
+			public void onSuccess(List<ProductBooking> productsDB) {
 				products = productsDB;
 				success.accept(products);
 			}

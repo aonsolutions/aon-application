@@ -9,13 +9,14 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AccountingReportServiceAsync {
 
 	// ACCOUNT PERIOD
-	void getDomainPeriods(String domainName, int domain, String user, AsyncCallback<LinkedList<AccountPeriod>> callback);
+	void getDomainPeriods(Occam occam, AsyncCallback<LinkedList<AccountPeriod>> callback);
 
 	// ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) throws AonCoreException;

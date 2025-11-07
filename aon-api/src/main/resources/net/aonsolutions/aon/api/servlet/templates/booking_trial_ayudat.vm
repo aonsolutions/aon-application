@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Registro</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <!-- Header con logo -->
+        <tr>
+            <td style="padding: 30px 20px; text-align: center;">
+                <img src="$logo" alt="$parentName" style="max-width: 200px; height: auto; border-radius: 10px; display: block; margin: 0 auto;">
+            </td>
+        </tr>
+        
+        <!-- Contenido principal -->
+        <tr>
+            <td style="padding: 30px; color: #333333; line-height: 1.6; font-size: 16px;">
+                <p style="margin: 0 0 25px 0; font-size: 18px; font-weight: bold;">
+                    Hemos recibido una solicitud de creación del perfil <strong style="color: #007bff; font-weight: bold;">$name</strong> con NIF <strong style="color: #007bff; font-weight: bold;">$document</strong> desde esta cuenta de correo.
+                </p>
+                
+                <p style="margin: 0 0 25px 0; font-size: 16px;">
+                     Si has sido tú, pulsa el siguiente botón para continuar con el registro:
+                </p>
+                
+               <div style="margin: 30px 0;">
+                    <a href="$postUrl" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                        Confirmar registro
+                    </a>
+                </div>
+                
+                 <p style="margin: 20px 0; font-size: 16px;">
+                    En caso contrario, puedes ignorar este mensaje y no realizaremos ninguna acción adicional.
+               </p>
+                
+                <div style="margin: 20px 0;">
+                    <p style="margin: 0 0 10px 0; font-size: 17px; font-weight: bold; color: #555;">
+                        &#x1F680; Si tu negocio crece&#x2026;
+                    </p>
+                    <p style="margin: 0 0 15px 0;">
+                        Al registrarte en nuestro Software de Facturación, podrás crear facturas en segundos, registrar tus gastos y controlar tus cobros y pagos fácilmente.
+                    </p>
+                     <p style="margin: 0 0 15px 0;">
+                        También sabrás cuánto tendrás que pagar en impuestos y tendrás todo tu negocio bajo control, sin complicaciones.
+                    </p>
+                     <p style="margin: 0 0 15px 0;">
+                        Y lo mejor: esto es solo el principio. &#x1F609;
+                    </p>
+                </div>
+              
+              	<p style="margin: 30px 0 0 0;">
+                    Un saludo,<br>
+                    <strong>$parentName</strong>
+                </p>
+            </td>
+        </tr>
+        
+        <!-- Footer opcional -->
+        <tr>
+            <td style="padding: 20px; text-align: center; color: #666666; font-size: 12px;">
+                <p style="margin: 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

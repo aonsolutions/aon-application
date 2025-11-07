@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountingReportServiceAsyncDecorator implements AccountingReportServiceAsync {
@@ -23,9 +24,9 @@ public class AccountingReportServiceAsyncDecorator implements AccountingReportSe
 
 	// ACCOUNT PERIOD
 	@Override
-	public void getDomainPeriods(String domainName, int domain, String user, AsyncCallback<LinkedList<AccountPeriod>> callback) {
+	public void getDomainPeriods(Occam occam, AsyncCallback<LinkedList<AccountPeriod>> callback) {
 		AON.start();
-		fsa.getDomainPeriods(domainName, domain, user, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
+		fsa.getDomainPeriods(occam, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
 	}
 
 	// ACCOUNT STATEMENT

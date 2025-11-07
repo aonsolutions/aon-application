@@ -115,6 +115,9 @@ public enum AonError implements Serializable{
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
 	,ACCOUNT_PERIOD_HAS_ENTRIES("No se puede borrar el ejercicio contable porque existen {0} apuntes vinculados")
+	,ACCOUNT_PERIOD_HAS_PREVIOUS_ENTRIES("No se puede modificar el ejercicio porque existen {0} apuntes anteriores a la fecha de inicio")
+	,ACCOUNT_PERIOD_HAS_LATER_ENTRIES("No se puede modificar el ejercicio porque existen {0} apuntes posteriores a la fecha de inicio")
+	
 	// --------------------------------------------- ACCOUNT_ENTRY
 	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejercicio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vac\u00EDa")

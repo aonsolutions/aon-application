@@ -217,14 +217,10 @@ public class LROE240_1_1 extends LROE240 {
 	private CabeceraFacturaConsultaType buildCabeceraFactura(Invoice invoice) {
 		CabeceraFacturaConsultaType cabecera = new CabeceraFacturaConsultaType();
 		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
-		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(AonDateUtils.addDays(invoice.getIssueDate(), -1), DATE_FORMAT));
+		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
 		
-		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
-		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-	
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 		    cabecera.setSerieFactura(invoice.getSeries());
         cabecera.setNumFactura(Integer.toString(invoice.getNumber()));

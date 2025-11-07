@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -18,7 +19,7 @@ public interface AccountingReportService extends RemoteService {
 
 	// -------------------------------- ------------------------------- ACCOUNT
 	// PERIOD
-	LinkedList<AccountPeriod> getDomainPeriods(String domainName, int domain, String user) throws AonCoreException;
+	LinkedList<AccountPeriod> getDomainPeriods(Occam occam) throws AonCoreException;
 
 	// --------------------------------------------------------------- ACCOUNT
 	// STATEMENT
