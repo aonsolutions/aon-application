@@ -17,7 +17,6 @@ import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 import * as JSF from './aon-jsf-app.js';
 import { initSingletonAccess } from '../js/singletonAccess.js';
 
-
 // Entornos y configuraciones
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
 
@@ -68,6 +67,9 @@ export class AonParent extends AonElement {
 	}
 
 	init(filter) {
+
+consoleLog('hola *********************', true)
+
 		this.domainId = parseInt(localStorage.getItem('aon_domain_id'));
 		this.aonApplication = new AonApplication();
 		this.aonApplication.startLoading();
@@ -313,14 +315,18 @@ export class AonParent extends AonElement {
 		// this.getWelcomeMessage().then( msg => welcomeSpan.innerHTML = msg );
 		// welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
 		// welcomeDiv.appendChild(welcomeSpan);
-				
-		let welcomeImg = this.createElement(TAG.IMG);
-		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
-		// welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
-		this.getWelcomeImage().then( img => welcomeImg.src = img );
-		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
-		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
-		this.getApplication().getRightSidenav().appendChild(welcomeImg);		
+		
+		// Imagen
+		if(!(this.isMobile() || this.isMobileResolution())){
+			let welcomeImg = this.createElement(TAG.IMG);
+			welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
+			// welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
+			this.getWelcomeImage().then( img => welcomeImg.src = img );
+			this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
+			welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
+			this.getApplication().getRightSidenav().appendChild(welcomeImg);
+		}
+
 		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
@@ -557,14 +563,14 @@ export class AonParent extends AonElement {
 		  options: [{
 			    id: CONSTANT.HELP.initCap() + "Notifications",
 			    name: MSG.NOTIFICATIONS,
-				app: Apps.HOME,
+					app: Apps.HOME,
 			    fn: () => this.rootPanel(new JSF.AonJsfHelpNotification())
-			},{
-  			    id: CONSTANT.HELP.initCap() + "ContentIndex",
-  			    name: MSG.CONTENT_INDEX,
+				},{
+					id: CONSTANT.HELP.initCap() + "ContentIndex",
+					name: MSG.CONTENT_INDEX,
   				app: Apps.HOME,
-  			    fn: () => this.rootPanel(new JSF.AonJsfHelpContent())
-			}
+					fn: () => this.rootPanel(new JSF.AonJsfHelpContent())
+				}
 		  ]
 		};
 		
@@ -694,7 +700,7 @@ export class AonParent extends AonElement {
 
 	getCompaniesSchemas(){
 		getCompaniesBySchemas(this.getFilter()).then(console.log);
-		return "Consultando....";
+		return "Consultando...";
 	}
 	
 	getTotalOffsetTop(element) {
@@ -733,7 +739,7 @@ export class AonParent extends AonElement {
 		return new Promise((resolve, reject) => {
         resolve(`${window.location.protocol}//${LS.getCompany()?.domain || window.location.hostname}:${window.location.port}/aonDocuments/company.logo`);
 		});
-    }
+	}
 
 	async getWelcomeMessage(returnHtml = true) {
     const company = LS.getCompany();
