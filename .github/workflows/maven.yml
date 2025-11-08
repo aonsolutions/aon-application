@@ -19,7 +19,12 @@ on:
         description: 'Resume from specified project'
         type: string
         required: true
-        default: '.'
+        default: 'changed'
+      commitBefore:
+        description: 'Before Commit SHA to list cahges'
+        type: string
+        required: false
+        default: 'HEAD^'
       skipUnitTests:
         description: 'Skip unit tests'
         type: boolean
@@ -75,6 +80,7 @@ env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
   RESUME_FROM: ${{ github.event.inputs.resumeFrom || '.' }}
+  COMMIT_BEFORE: ${{ github.event.inputs.commitBefore || 'HEAD' }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
@@ -109,24 +115,43 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+      actions: write
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout HEAD
+      if:  ${{ env.RESUME_FROM != 'changed' }}
+      uses: actions/checkout@v4
 
-    - name: Cache local Maven repository
-      uses: actions/cache@v3
+    - name: Checkout HEAD^
+      if:  ${{ env.RESUME_FROM == 'changed' && env.COMMIT_BEFORE == 'HEAD^' }}
+      uses: actions/checkout@v4
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
-        restore-keys: |
-          ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
+        fetch-depth: 2
+
+    - name: Checkout all history for all tags and branches
+      if:  ${{ env.RESUME_FROM == 'changed' && env.COMMIT_BEFORE != 'HEAD^' }}
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: ${{ env.JAVA_DISTRIBUTION }}
-        cache: maven
+        # cache: maven
+
+    - name: Restore local Maven repository
+      id: cache
+      uses: actions/cache/restore@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
+
+    # - name: Check restored local Maven repository
+    #  if: steps.cache.outputs.cache-hit
+    #  run: |
+    #    find ~/.m2/repository -name "*SNAPSHOT.jar" | xargs md5sum
 
     - name: Set up MySQL
       run: |
@@ -177,6 +202,13 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
+
+    - name: Get changed projects
+      if: ${{ env.RESUME_FROM == 'changed' }}
+      run: |
+        REACTOR_PROJECTS=$(mvn -q --also-make exec:exec -Dexec.executable="pwd"  | while read path; do [[ $path != `pwd` ]] && echo ${path#`pwd`/}; done | sed ':a;N;$!ba;s/\n/|/g')
+        CHANGED_PROJECTS=$(git diff --name-only  ${COMMIT_BEFORE} | cut -d/ -f1 | grep  -E $REACTOR_PROJECTS  | sort -u | sed ':a;N;$!ba;s/\n/,/g' )
+        echo "RESUME_FROM=${CHANGED_PROJECTS:=aon-web-aio}" >> $GITHUB_ENV
 
     - name: Build with Maven
       run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --resume-from ${RESUME_FROM} clean install
@@ -330,6 +362,31 @@ jobs:
         # docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG
         docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
+
+    # Delete the old cache on hit to emulate a cache update. See
+    # https://github.com/actions/cache/issues/342.
+    - name: Delete old cache
+      if: steps.cache.outputs.cache-hit
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Using `--repo` makes it so that this step doesn't require checking out the
+      # repo first.
+      run: gh cache delete --repo ${{ github.repository }} ${{ steps.cache.outputs.cache-primary-key }}
+
+    - name: Save cache
+      uses: actions/cache/save@v4
+      if: always()
+      # Save the cache even if build steps fail.
+      # with:
+      with:
+        path: ~/.m2/repository
+        key: ${{ steps.cache.outputs.cache-primary-key }}
+        # key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
+
+    # - name: Re-check restored local Maven repository
+    #   if: always()
+    #   run: |
+    #     find ~/.m2/repository -name "*SNAPSHOT.jar" | xargs md5sum
 
     # - name: Deploy to Amazon ECS AON 
     #  if: github.ref == 'refs/heads/master'
