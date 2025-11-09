@@ -53,7 +53,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -283,14 +282,13 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		posititon.setValue(product.getPosition());
 		posititon.addValueChangeHandler(e -> {
 			if(null != posititon.getValue()) {
-				Optional<ProductBooking> sameProductPos = products.stream().filter(pb -> null != pb.getPosition() && posititon.getValue().equals(pb.getPosition())).findAny();
 				
-				if(sameProductPos.isEmpty())
-					product.setPosition(posititon.getValue());
-				else {
+				Optional<ProductBooking> sameProductPos = products.stream().filter(pb -> null != pb.getPosition() && posititon.getValue().equals(pb.getPosition())).findAny();
+				if(!sameProductPos.isEmpty())
 					AonMessagePanel.showWarning(messagePanel, "No puede haber dos productos con la misma posici\u00f3n. Actualmente " + sameProductPos.get().getCode() + " tiene la posici\u00f3n " + posititon.getValue());
-					posititon.setValue(null);
-				}
+				
+				product.setPosition(posititon.getValue());
+				
 			} else posititon.setValue(null);
 				
 		});
@@ -318,6 +316,23 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		pvp.setEnable(false);
 		
 		table.add(createRow(posititon, price, iva, pvp));
+		
+		type.clearItems();
+		type.setWidth("20rem");
+		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
+		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
+		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
+		type.setValue(product.getBookingType().name());
+		
+		aonApps.setOptions(AonApp.getValues().stream().map(app -> app.getDescription()).collect(Collectors.toSet()));
+		aonApps.setSelectedOptions(getSelectedAonApps());
+		aonApps.addBlurHandler(e -> createAonApps());
+		
+		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
+		domainType.setSelectedOptions(product.getDomainTypes().stream().map(dt -> dt.getName()).collect(Collectors.toSet()));
+		domainType.addBlurHandler(e -> onDomainTypeChange());
+		
+		table.add(createRow(type, aonApps, domainType));
 		
 		workgroup.clearItems();
 		workgroup.addItem("-", "");
@@ -367,23 +382,6 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		});
 		
 		table.add(createRow(workgroup, taskHolder));
-		
-		type.clearItems();
-		type.setWidth("20rem");
-		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
-		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
-		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
-		type.setValue(product.getBookingType().name());
-		
-		aonApps.setOptions(AonApp.getValues().stream().map(app -> app.getDescription()).collect(Collectors.toSet()));
-		aonApps.setSelectedOptions(getSelectedAonApps());
-		aonApps.addBlurHandler(e -> createAonApps());
-		
-		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
-		domainType.setSelectedOptions(product.getDomainTypes().stream().map(dt -> dt.getName()).collect(Collectors.toSet()));
-		domainType.addBlurHandler(e -> onDomainTypeChange());
-		
-		table.add(createRow(type, aonApps, domainType));
 		
 		category.clearItems();
 		category.addItem("-", "");
