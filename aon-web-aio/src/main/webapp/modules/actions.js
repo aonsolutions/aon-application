@@ -74,7 +74,7 @@ export const ADD_TO_STOCK = {
     id: CONSTANT.ADD_TO_STOCK.initCap(),
     name: MSG.ADD_TO_STOCK,
     title: MSG.ADD_TO_STOCK,
-    icon: MATERIAL_ICONS.BOX_ADD
+    icon: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE
 }
 
 export const MOVE_STOCK = {

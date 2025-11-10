@@ -159,6 +159,9 @@ export class AonWarehouse extends AonElement {
 	}
 
 	buildOtherOptions() {
+		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
+			this.selectedOption = e.detail;
+		});
 		this.getApplication().addSidenavOptions3(WarehouseSidenav.OTHER);
 	}
 
