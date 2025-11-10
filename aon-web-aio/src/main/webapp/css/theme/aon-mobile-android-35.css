@@ -7,27 +7,34 @@
   background-color: #fafafa;
 }
 
-#loginContent{
-  
-  .aonLoginForm {
-    overflow-y: auto;
-    white-space: normal;
-    width: 90vw;
-    height: 100vh;
-    padding-bottom: 10rem;
 
-    #logosMobiles{
-      display: grid;
-      justify-items: center;
-      align-items: center;
-      
-      img{
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-      }
-    }
-  }
+.aonMobileRootPanel {
+  top: 80px;
+  bottom: 80px;
+}
+
+.aonMobileHeader {
+  height: 80px;
+}
+
+.aonMobileMenu {
+    height: 80px;
+}
+
+.aonMobileHeaderCompany {
+    top: 45px;
+}
+
+.aonMobileHeaderButton{
+    top:30px;
+}
+
+.aonMobileHeaderLogo {
+	padding-top: 40px;
+}
+
+.aonLoginForm {
+    margin-top: 600px;
 }
 
 .aonToolbar {
