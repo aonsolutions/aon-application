@@ -7,7 +7,7 @@ export const isMobileResolution = () => {
 
 export const isMobile = () => {
     const reg = new RegExp(/mobile/i);
-    return getPlatform().match(reg) || getUserAgent().match(reg) || isAndroidApp() || isIosApp() || isAppMobile();
+    return getPlatform().match(reg) || getUserAgent().match(reg) || isAndroidApp()  || isAndroid35App() || isIosApp() || isAppMobile();
 }
 
 export const iOS = () => {
@@ -32,6 +32,10 @@ export const windowsPhone = () => {
 
 export const isAndroidApp = () => {
     return getUserAgent() === 'solutions.aon.android';
+}
+
+export const isAndroid35App = () => {
+    return getUserAgent() === 'solutions.aon.android.35';
 }
 
 export const isIosApp = () => {

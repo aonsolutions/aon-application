@@ -74,7 +74,7 @@ export class AonMobileHeader extends AonElement {
 		let logo = this.createElement(TAG.IMG);
 		logo.id = this.LOGO;
 		spanLogo.style.display = this.isParent() ? 'block' : 'none';
-		spanLogo.style.paddingTop = '20px';
+		spanLogo.className = CSS.AON_MOBILE_HEADER_LOGO;
 		spanLogo.appendChild(logo);	
 		div.appendChild(spanLogo);
 

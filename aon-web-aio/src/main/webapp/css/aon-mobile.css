@@ -17,6 +17,10 @@
     overflow: hidden;
 }
 
+.aonMobileHeaderLogo {
+		padding-top: 20px;
+}
+
 .aonMobileLogo {
   position: absolute;
   margin-left: 15%;

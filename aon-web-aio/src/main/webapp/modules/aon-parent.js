@@ -103,13 +103,13 @@ export class AonParent extends AonElement {
 			getCompanies({limit}).then( companies => {
 				let loc = companies.filter(r => this.isLocationCompany(r));
 				let cps = companies.filter(r => r.id == LS.getDomainId());
-				if(loc.length > 0 && !loc[0].parent) {
+				if(loc.length == 1 && !loc[0].parent) {
 					this.companySelection(loc[0], true );
-				}else if(cps.length > 0 && !cps[0].parent) {
+				}else if(cps.length == 1 && !cps[0].parent) {
 					this.companySelection(cps[0], companies.length == 1 );
 				} else if ( LS.getCompany() && !LS.getCompany().domainManagement ) {
-					this.companySelection(LS.getCompany(), companies.length === 1 );
-				} else if(companies.length === 1) {
+					this.companySelection(LS.getCompany(), companies.length == 1 );
+				} else if(companies.length === 1 && !companies[0].domainManagement) {
 					this.companySelection(companies[0], true);
 				} else {
 					if ( LS.getCompany() ) {
@@ -692,6 +692,7 @@ export class AonParent extends AonElement {
 	}
 	
 	companySelection(company, onlyOne) {
+		this.getAonHeader()?.showCompanyOption(company, onlyOne);
 		this.getAonHeader()?.companySelection(company, onlyOne);
 	}
 

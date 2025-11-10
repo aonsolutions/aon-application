@@ -431,6 +431,9 @@ public class ProductDAO {
 	private static ProductBooking insertProductBooking(AONContext ctx, ProductBooking product) {
 		insert(ctx, product);
 		
+		if(null == product.getPosition())
+			getNexProductBookingPos(ctx, product);
+		
 		ctx.getDslContext().insertInto(PRODUCT_BOOKING)
 				.set(PRODUCT_BOOKING.PRODUCT, product.getId())
 				.set(PRODUCT_BOOKING.DOMAIN, product.getDomain().getId())
@@ -450,6 +453,9 @@ public class ProductDAO {
 	private static ProductBooking updateProductBooking(AONContext ctx, ProductBooking product) {
 		update(ctx, product);
 		
+		if(null == product.getPosition())
+			getNexProductBookingPos(ctx, product);
+		
 		ctx.getDslContext().update(PRODUCT_BOOKING)
 			.set(PRODUCT_BOOKING.TYPE, product.getBookingType().value())
 			.set(PRODUCT_BOOKING.POS, product.getPosition())
@@ -465,6 +471,16 @@ public class ProductDAO {
 		return product;
 	}
 	
+	private static void getNexProductBookingPos(AONContext ctx, ProductBooking product) {
+		Integer count = ctx.getDslContext().selectCount().from(PRODUCT_BOOKING)
+			.where(PRODUCT_BOOKING.DOMAIN.eq(product.getDomain().getId()))
+			.and(PRODUCT_BOOKING.TYPE.eq(product.getBookingType().value()))
+			.fetchOne()
+			.value1();
+		
+		product.setPosition(count);
+	}
+
 	private static String getJsonInfo(ProductBooking product) {
 		org.json.JSONObject json = new org.json.JSONObject();
 		

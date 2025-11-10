@@ -105,7 +105,7 @@ public class SES {
 				msg.setFrom(null);
 			}
 
-			message.setFrom(new InternetAddress(msg.getAliasFrom()));
+			message.setFrom(new InternetAddress(msg.getFrom(), msg.getAlias(), "UTF-8"));
 
 			String to = String.join(",", msg.getTo().toArray(String[]::new));
 			message.setRecipients(jakarta.mail.Message.RecipientType.TO, InternetAddress.parse(to));

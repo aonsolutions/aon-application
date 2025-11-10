@@ -1,12 +1,20 @@
 import * as LS from './services/localStorageService.js';
 import * as UA from './services/userAgentService.js';
-import { AonModule } from './modules/aon-module.js';
+import { AonModule } from './modules/paturpat/aon-module.js';
 import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
-import { loadLink } from './css/aon-customView.js';
-import { loadTheme } from './modules/utils/theme';
+import { favicon, title, loadLink } from './css/aon-customView.js';
+
+
+import './css/noto-sans.css';
+import './css/material-symbols-outlined.css';
+import './css/aon-css-utils.css';
+import './css/aon-grid.css';
+import './css/aon-mobile.css';
+import './css/aon-figma.css';
+import './css/aon-singleton-access.css';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM = (token) => {
@@ -23,7 +31,7 @@ window.setResumeApp = (data) =>  {
 };
 
 function loadNew(){
-  loadTheme().then(() => {
+  loadThemeOld().then(() => {
     document.body.appendChild(new AonModule());
   });
 }
@@ -36,10 +44,12 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-
+	LS.set(LS.NEW_THEME, true);
+	
 	loadScripts(); 
 
-	loadTheme()
+
+	loadThemeOld()
 	.finally(loadIsReadOnly)
 	.finally( () =>  {
 		loadModule(); 
@@ -55,9 +65,8 @@ export const loadThemeOld = async () => {
 	// LS.AON_THEME 
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	if(UA.isAndroid35App())
-		mobileCss = LS.AON_MOBILE_ANDROID_35;
-	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || "/customview" || LS.AON_THEME);
+	let themeUrl = UA.isMobile() ? mobileCss : ( paramCss  || "/customview" || LS.AON_THEME );
+
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
@@ -172,7 +181,7 @@ const getParam = (paramName) => {
 const getCookie = (cookieName) => {
 	const cookieValue = decodeURIComponent(document.cookie)
     .split(';')
-		.map((row) => row.trimStart() )
+	.map((row) => row.trimStart() )
     .find((row) => row.startsWith(`${cookieName}=`))
     ?.split('=')[1];
 
