@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class IT implements Serializable {
@@ -41,6 +42,9 @@ public class IT implements Serializable {
 	private String fullName;
 	private Date contractStartDate;
 	private Date contractEndDate;
+	
+	private String employeeCategory;
+	private String employeeWork;
 	
 	private List<ITPart> itParts;
 	
@@ -261,6 +265,22 @@ public class IT implements Serializable {
 
 	public void setDirectPayDate(Date directPayDate) {
 		this.directPayDate = format(directPayDate);
+	}
+
+	public void setEmployeeCategory(String employeeCategory) {
+		this.employeeCategory = employeeCategory;
+	}
+
+	public String getEmployeeCategory() {
+		return this.employeeCategory;
+	}
+
+	public String getEmployeeWork() {
+		return employeeWork;
+	}
+
+	public void setEmployeeWork(String employeeWork) {
+		this.employeeWork = employeeWork;
 	}
 	
 }
