@@ -300,7 +300,7 @@ export class AonNewSelect extends AonNewInput {
           break;
         default:
           console.warn("Tipo no esperado:", typeof optionValue, optionValue);
-          normalizedValue = this.value; // fallback sin conversi�n
+          normalizedValue = this.value; // fallback sin conversion
       }
 
       if (normalizedValue === optionValue) {

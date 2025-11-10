@@ -15,7 +15,7 @@ import { Product } from '../../models/product/Product.js';
 import { AonNewNumber } from '../../components/aon-new-number.js';
 import { Item } from '../../models/product/Item.js';
 import { getProductCategories, saveItem, saveProduct } from '../../services/productService.js';
-import { TaxIVAPercentage, TaxIVAPercentage2, TaxRetentionPercentage, TaxRetentionPercentage2 } from '../invoice/invoiceEnums.js';
+import { TaxIVAPercentage, TaxRetentionPercentage } from '../invoice/invoiceEnums.js';
 import { AonMobileProductList } from './aon-mobile-product-list.js';
 import { AonProductList } from './aon-product-list.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
@@ -64,7 +64,7 @@ export class AonProduct extends AonElement {
 	initialize() {
 		this.id = this.id || 'aonProduct';
 		this.PRODUCT_TOOLBAR = this.id + 'Toolbar';
-        this.PRODUCT_CARD = this.id + 'Card';
+		this.PRODUCT_CARD = this.id + 'Card';
 		this.PRODUCT_TABLE = this.id + 'Table';
 		this.PRODUCT_CODE = this.id + 'Code';
 		this.PRODUCT_NAME = this.id + 'Name';
@@ -82,7 +82,6 @@ export class AonProduct extends AonElement {
 		this.ITEM_PRICE = this.id + 'ItemPrice';
 		this.ITEM_PVP = this.id + 'ItemPvp';
 
-
 		this.product = new Product(this.product);
 		this.item = new Item(this.item);
 		this.expense = this.expense || this.product.getType() === 'EXPENSE';
@@ -93,8 +92,7 @@ export class AonProduct extends AonElement {
 		let toolbar = new AonToolbar();
 		toolbar.id = this.PRODUCT_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
-		toolbar.title = this.product.getId()
-            ? this.product.getName() : newTitle.toUpperCase(); 
+		toolbar.title = this.product.getId() ? this.product.getName() : newTitle.toUpperCase(); 
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
@@ -123,87 +121,110 @@ export class AonProduct extends AonElement {
 		table.addRow();
 
 		let codeInput = this.createInput(this.PRODUCT_CODE, MSG.CODE);
-		codeInput.value = this.product.getCode();
-		codeInput.addEventListener(EVENT.CHANGE, () => this.product.setCode(codeInput.value));
-        let td1 = table.addCell(codeInput);
+		if(codeInput){
+			codeInput.value = this.product.getCode();
+			codeInput.addEventListener(EVENT.CHANGE, () => this.product.setCode(codeInput.getValue()));
+		}
+		let td1 = table.addCell(codeInput);
 		td1.style.width = '25%';
 
 		let nameInput = this.createInput(this.PRODUCT_NAME, MSG.NAME);
-		nameInput.value = this.product.getName();
-		nameInput.addEventListener(EVENT.CHANGE, () => this.product.setName(nameInput.value));
-       	let td2 = table.addCell(nameInput);
+		if(nameInput){
+			nameInput.value = this.product.getName();
+			nameInput.addEventListener(EVENT.CHANGE, () => this.product.setName(nameInput.getValue()));
+		}
+		let td2 = table.addCell(nameInput);
 		td2.style.width = '75%';
 
 		let table2 = new AonBasicTable();
 		table2.id = this.PRODUCT_TABLE + '2';
 		div.appendChild(table2);
+		table2.addRow();
 
-        table2.addRow();
 		if(!this.expense) {
 			let types = [
 				{name: MSG.SERVICE, value: 'SERVICE'},
 				{name: MSG.COMMERCIAL_PRODUCT, value: 'COMMERCIAL_PRODUCT'},
-				{name: MSG.SUPPLIED, value: 'PREPAYMENT'}];
+				{name: MSG.SUPPLIED, value: 'PREPAYMENT'}
+			];
 			let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
-    	    typeSelect.setOptions(types);
-			typeSelect.value = this.expense ? 'EXPENSE' : '';
-			
-			typeSelect.addEventListener(EVENT.CHANGE, (e) => {
-				this.product.setType(typeSelect.getDetail().value);
-				if(typeSelect.getDetail().value === 'PREPAYMENT') {
-					let vat = this.getElement(this.PRODUCT_VAT);
-					vat.value = '';
-					vat.disabled = true;
+			typeSelect.setOptions(types);
+			typeSelect.setValue(this.expense ? 'EXPENSE' : this.product.type);
 
-					let ret = this.getElement(this.PRODUCT_RETENTION);
-					ret.value = '';
-					ret.disabled = true;
-				} else {
-					let vat = this.getElement(this.PRODUCT_VAT);
-					vat.disabled = false;
-
-					let ret = this.getElement(this.PRODUCT_RETENTION);
-					ret.disabled = false;
-				}
-			});
+			if(typeSelect){
+				typeSelect.addEventListener(EVENT.CHANGE, (e) => {
+					this.product.setType(typeSelect.getValue());
+					if(typeSelect.getDetail().value === 'PREPAYMENT') {
+						let vat = this.getElement(this.PRODUCT_VAT);
+						if(vat){
+							vat.setValue('');
+							vat.setDisabled(true);
+						}
+						let ret = this.getElement(this.PRODUCT_RETENTION);
+						if(ret){
+							ret.setValue('');
+							ret.setDisabled(true);
+						}
+					} else {
+						let vat = this.getElement(this.PRODUCT_VAT);
+						if(vat)
+							vat.setDisabled(false);
+						
+						let ret = this.getElement(this.PRODUCT_RETENTION);
+					if(ret)
+							ret.setDisabled(false);
+					}
+				});
+			}
 		
-        	table2.addCell(typeSelect);
+			table2.addCell(typeSelect);
 		} else {
 			this.product.setType('EXPENSE');
 		}
 		let categorySelect = this.createSelect(this.PRODUCT_CATEGORY, MSG.CATEGORY);
-		categorySelect.setAlias('id', 'name');
-		categorySelect.addEventListener(EVENT.CHANGE, (e) =>  {
-			this.product.category = categorySelect.getDetail();
-		});
-
-        getProductCategories({}).then( categories => {
-            categorySelect.setOptions(categories);
-			categorySelect.value = this.product.category.id;
-		});
+		if(categorySelect){
+			getProductCategories({}).then( categories => {
+				let transformedCategories = categories.map(category => ({
+					value: category.id,
+					name: category.name
+				}));
+				categorySelect.setOptions(transformedCategories);
+				categorySelect.setValue(this.product.category.id);
+				categorySelect.addEventListener(EVENT.CHANGE, (e) => {
+					this.product.category = categories.find(category => category.id === Number(categorySelect.getValue()));
+				});
+			});
+		}
 		
-        table2.addCell(categorySelect, this.expense ? 2 : 1);
-
+		table2.addCell(categorySelect, this.expense ? 2 : 1);
 		table2.addRow();
 
 		let vatSelect = this.createSelect(this.PRODUCT_VAT, MSG.VAT);
-		vatSelect.default = true;
-		vatSelect.setOptions(TaxIVAPercentage)
-		vatSelect.value = this.product.vat;
-		vatSelect.addEventListener(EVENT.CHANGE, () => {
-			this.product.setVat(vatSelect.getDetail().value);
-			this.getElement(this.ITEM_PVP).value = this.getPvp();
-		});
-        table2.addCell(vatSelect);
+		if(vatSelect){
+			vatSelect.default = true;
+			vatSelect.setOptions(TaxIVAPercentage)
+			vatSelect.setValue(this.product.vat);
+			vatSelect.addEventListener(EVENT.CHANGE, () => {
+				this.product.setVat(vatSelect.getValue());
+				const itemSelect = this.getElement(this.ITEM_PVP);
+				if(itemSelect)
+					itemSelect.setValue(this.getPvp());
+			});
+		}
+		table2.addCell(vatSelect);
 
 		let retentionSelect = this.createSelect(this.PRODUCT_RETENTION, MSG.IRPF);
-		retentionSelect.default = true;
-		retentionSelect.setOptions(TaxRetentionPercentage);
-		retentionSelect.value = this.product.retention || '';
-		retentionSelect.addEventListener(EVENT.CHANGE, () => {
-			this.product.setRetention(retentionSelect.getDetail().value);
-			this.getElement(this.ITEM_PVP).value = this.getPvp();
-		});
+		if(retentionSelect){
+			retentionSelect.default = true;
+			retentionSelect.setOptions(TaxRetentionPercentage);
+			retentionSelect.setValue(this.product.retention || '');
+			retentionSelect.addEventListener(EVENT.CHANGE, () => {
+				this.product.setRetention(retentionSelect.getValue());
+				const itemSelect = this.getElement(this.ITEM_PVP);
+				if(itemSelect)
+					itemSelect.setValue(this.getPvp());
+			});
+		}
 		table2.addCell(retentionSelect);
  	}
 
@@ -221,63 +242,72 @@ export class AonProduct extends AonElement {
 		table.addRow();
 
 		let barcodeInput = this.createInput(this.ITEM_BARCODE, MSG.BARCODE);
-		barcodeInput.value = this.item.getBarcode();
-		barcodeInput.addEventListener(EVENT.CHANGE, () => this.item.setBarcode(barcodeInput.value));
+		if(barcodeInput){
+			barcodeInput.value = this.item.getBarcode();
+			barcodeInput.addEventListener(EVENT.CHANGE, () => this.item.setBarcode(barcodeInput.getValue()));
+		}
 		table.addCell(barcodeInput, 4);
-
 		table.addRow();
 
 		let descriptionInput = this.createInput(this.ITEM_DESCRIPTION, MSG.DESCRIPTION);
-		descriptionInput.value = this.item.getDescription();
-		descriptionInput.addEventListener(EVENT.CHANGE, () => this.item.setDescription(descriptionInput.value));
-       	table.addCell(descriptionInput, 4);
-
+		if(descriptionInput){
+			descriptionInput.value = this.item.getDescription();
+			descriptionInput.addEventListener(EVENT.CHANGE, () => this.item.setDescription(descriptionInput.getValue()));
+		}
+		table.addCell(descriptionInput, 4);
 	 	table.addRow();
 		
 		let purchasePrice = this.createNumber(this.ITEM_PURCHASE_PRICE, MSG.PURCHASE_PRICE);
-		purchasePrice.value = this.item.getPurchasePrice();
-		purchasePrice.format = CONSTANT.TRUE;
-		purchasePrice.decimals = "2";
-		purchasePrice.addEventListener(EVENT.CHANGE, () => {
-			this.item.setPurchasePrice(purchasePrice.value);
-			this.getElement(this.ITEM_PROFIT_PERCENT).value = this.item.getProfitPercent();
-			this.getElement(this.ITEM_PRICE).value = this.item.getPrice();
-			this.getElement(this.ITEM_PVP).value = this.getPvp();
-		});
+		if(purchasePrice){
+			purchasePrice.value = this.item.getPurchasePrice();
+			purchasePrice.format = CONSTANT.TRUE;
+			purchasePrice.decimals = "2";
+			purchasePrice.addEventListener(EVENT.CHANGE, () => {
+				this.item.setPurchasePrice(purchasePrice.getValue());
+				this.getElement(this.ITEM_PROFIT_PERCENT).value = this.item.getProfitPercent();
+				this.getElement(this.ITEM_PRICE).value = this.item.getPrice();
+				this.getElement(this.ITEM_PVP).value = this.getPvp();
+			});
+		}
 		table.addCell(purchasePrice, 1);
 
 		let profitPercent = this.createNumber(this.ITEM_PROFIT_PERCENT, '% ' + MSG.PROFIT);
-		profitPercent.value = this.item.getProfitPercent();
-		profitPercent.format = CONSTANT.TRUE;
-		profitPercent.decimals = "2";
-		profitPercent.addEventListener(EVENT.CHANGE, () => {
-			this.item.setProfitPercent(profitPercent.value);
-			this.getElement(this.ITEM_PRICE).value = this.item.getPrice();
-			this.getElement(this.ITEM_PVP).value = this.getPvp();
-		});
+		if(profitPercent){
+			profitPercent.value = this.item.getProfitPercent();
+			profitPercent.format = CONSTANT.TRUE;
+			profitPercent.decimals = "2";
+			profitPercent.addEventListener(EVENT.CHANGE, () => {
+				this.item.setProfitPercent(profitPercent.getValue());
+				this.getElement(this.ITEM_PRICE).value = this.item.getPrice();
+				this.getElement(this.ITEM_PVP).value = this.getPvp();
+			});
+		}
 		table.addCell(profitPercent, 1);
 
 		let price = this.createNumber(this.ITEM_PRICE, MSG.PRICE);
-		price.value = this.item.getPrice();
-		price.format = CONSTANT.TRUE;
-		price.decimals = "2";
-		price.addEventListener(EVENT.CHANGE, () => {
-			this.item.setPrice(price.value);
-			this.getElement(this.ITEM_PROFIT_PERCENT).value = this.item.getProfitPercent();
-			this.getElement(this.ITEM_PVP).value = this.getPvp();
-		});
+		if(price){
+			price.value = this.item.getPrice();
+			price.format = CONSTANT.TRUE;
+			price.decimals = "2";
+			price.addEventListener(EVENT.CHANGE, () => {
+				this.item.setPrice(price.getValue());
+				this.getElement(this.ITEM_PROFIT_PERCENT).value = this.item.getProfitPercent();
+				this.getElement(this.ITEM_PVP).value = this.getPvp();
+			});
+		}
 		table.addCell(price, 1);
 
 		let pvp = this.createNumber(this.ITEM_PVP, 'PVP');
-		pvp.value = this.getPvp();
-		pvp.readonly = true;
-		pvp.format = CONSTANT.TRUE;
-		pvp.decimals = "2";
+		if(pvp){
+			pvp.value = this.getPvp();
+			pvp.readonly = true;
+			pvp.format = CONSTANT.TRUE;
+			pvp.decimals = "2";
+		}
 		table.addCell(pvp, 1);
  	}
 	
 	// ACTIONS
-
 	back() {
 		let filter;
 		if(this.getApplication().getParent().selectedOption.id === OPTION.EXPENSES.id){
@@ -306,14 +336,13 @@ export class AonProduct extends AonElement {
 	}
 
 	getPvp() {
-        let pvp = this.item.price;
+		let pvp = this.item.price;
 		if(this.product.vat)
 			pvp = pvp + (this.item.price * this.product.vat / 100);
 		if(this.product.retention)
 			pvp = pvp - (this.item.price * this.product.retention / 100);  
 		return pvp;
-    }
-
+	}
 
 	setProduct(product) {
 		this.product = new Product(product);
@@ -329,7 +358,7 @@ export class AonProduct extends AonElement {
 		let card = new AonCard();
 		card.id = id;
 		card.title = title;
-		card.style.width = '50%';
+		// card.style.width = '50%';
 		return card;
 	}
 
