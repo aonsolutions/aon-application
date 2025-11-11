@@ -4917,8 +4917,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			.setDni(employeeInfo.getDocument())
 			.setStartDate(it.getStartDate()) //FECHA DE BAJA
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
-			.setJob(contractInfo.getAgreementCategory())
-			.setJobDescription("Las propias de " + contractInfo.getAgreementCategory())
+			.setJob(it.getEmployeeCategory())
+			.setJobDescription(it.getEmployeeWork())
 			;
 			
 			if(it.getEndDate()!=null) {				

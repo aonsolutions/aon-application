@@ -108,7 +108,8 @@ public class TariffPanel extends HTMLPanel {
 		
 		status.clearItems();
 		status.addItem("Activo", "1");
-		status.addItem("Inactive", "0");
+		status.addItem("Inactivo", "0");
+		
 		
 		table.add(createRow(status, null));
 		
@@ -156,6 +157,7 @@ public class TariffPanel extends HTMLPanel {
 		tariff.setCode(code.getValue());
 		tariff.setName(name.getValue());
 		tariff.setPurchase(AonStringUtils.equalsIgnoreCase(type.getValue(), "1"));
+		tariff.setActive(AonStringUtils.equalsIgnoreCase(status.getValue(), "1"));
 		
 		AonMessagePanel.showLoading(messagePanel, "Creando Tarifa " + tariff.getName());
 		

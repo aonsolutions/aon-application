@@ -23,7 +23,7 @@
         android:roundIcon="@mipmap/aonicon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Camara2"
-        tools:targetApi="33">
+        tools:targetApi="35">
         <activity
             android:name="solutions.aon.aonapp.MainActivity"
             android:screenOrientation="portrait"

@@ -19,9 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDescriptionFixII;
-import net.aonsolutions.db.up2date.tgss.PrestITDescriptionFix;
+import net.aonsolutions.db.up2date.product.ProductBookingCreation;
 
 public class Up2Date {
 
@@ -576,6 +576,11 @@ public class Up2Date {
 			// ElaborationSourceSourceIdIndex.ELABORATION_SOURCE_SOURCEID_INDEX,
 			// DeliveryCarrierPackingIndex.DELIVERY_CARRIER_PACKING_INDEX,
 			// DataResponseSourceResponseDateIndex.DATA_RESPONSE_SOURCE_RESPONSE_DATE_INDEX,	
+	
+			// ----------------------- ProductBooking alters
+			ProductBookingCreation.PRODUCT_BOOKING_CREATION,
+			AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
+	
 	};
 
 	// ------------------------------------------------------------------------

@@ -67,10 +67,12 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.extension.DSLExtensions;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
+import com.esferalia.aon.jooq.tables.records.DomainApplicationRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -96,6 +98,7 @@ import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -343,6 +346,26 @@ public class SecurityDAO {
 			.execute();
 		
 		return userAppRole.setId(id);
+	}
+	
+	public static void saveUserAppRoles(AONContext ctx, User user, List<UserAppRole> userAppRoles){
+		LinkedList<AonRole> currentUserRoles = getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(user.getId())).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		LinkedList<AonRole> newUserRoles = userAppRoles.stream().map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		AonRole.stream().forEach(role -> {	
+			if(currentUserRoles.contains(role) && !newUserRoles.contains(role)) {
+				deleteUserAppRole(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getRoleProperty().eq(role.value())));
+			}
+			
+			if(!currentUserRoles.contains(role) && newUserRoles.contains(role)) {
+				insertUserAppRole(ctx, new UserAppRole()
+						.setApp(null)
+						.setDomain(user.getDomain().getId())
+						.setRole(role)
+						.setUser(user.getId()));
+			}
+		});
 	}
 	
 	public static UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole) {
@@ -1592,30 +1615,44 @@ public class SecurityDAO {
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
-		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
-				.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
+		
+		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, 
+					f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1))
+				).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
+		
 		LinkedList<AonApp> parentDomainApps = domain.getParentId() != null
-				? getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1)))
-						.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new))
+				? getDomainAppStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1))
+					).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();
 						
-		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> domainUserRoles = 
-			userId != null
-				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId)))
-						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
-				: new LinkedList<>();	
-		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = 
-			userId != null  && domain.getParentId() != null && user.getDomain().getId().equals(domain.getParentId())
-				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
-						.map(r -> r.getRole()).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedList::new))
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> domainUserRoles = userId != null
+				? getUserAppRoleStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId))
+					).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
 				: new LinkedList<>();	
 		
-		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getActiveProperty().eq((byte) 1)).and(f.getSharedProperty().eq((byte)0))).count();
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = userId != null  && domain.getParentId() != null && user.getDomain().getId().equals(domain.getParentId())
+				? getUserAppRoleStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId))
+					).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
+				: new LinkedList<>();	
+		
+		Long userNum = getDomainUserStream(ctx, 
+					f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getEnterpriseProperty().isNull())
+					.and(f.getActiveProperty().eq((byte) 1))
+					.and(f.getSharedProperty().eq((byte)0))
+				).count();
 		domain.setDefinedUsers(userNum.intValue());
 		
-		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getNameProperty().eq(AppParam.TRIAL.name()).and(f.getDomainProperty().eq(ctx.getDomainId()))).findFirst();
+		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, 
+				f -> f.getNameProperty().eq(AppParam.TRIAL.name())
+				.and(f.getDomainProperty().eq(ctx.getDomainId()))
+			).findFirst();
 
 		List<Scope> scopes = getUserScopeList(ctx, user.getId());
+		
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
 				.setOldParentDomainModules(domain.getParentId() != null
@@ -1788,6 +1825,22 @@ public class SecurityDAO {
 				.setUser( checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r) : null )
 				;
 		}		
+	}
+	
+
+
+	public static void insertUserApplicationAio(CloseableAONContext ctx, Integer domainId, Integer userId) {
+		DomainApplicationRecord domainApplication = ctx.getDslContext().selectFrom(DOMAIN_APPLICATION)
+			.where(DOMAIN_APPLICATION.DOMAIN.eq(domainId))
+			.and(DOMAIN_APPLICATION.APPLICATION.eq(28))
+			.fetchOne();
+		
+		ctx.getDslContext().insertInto(APPLICATION_USER)
+			.set(APPLICATION_USER.DOMAIN, domainId)
+			.set(APPLICATION_USER.USER_ID, userId)
+			.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplication.getId())
+			.execute()
+			;
 	}
 	
 }

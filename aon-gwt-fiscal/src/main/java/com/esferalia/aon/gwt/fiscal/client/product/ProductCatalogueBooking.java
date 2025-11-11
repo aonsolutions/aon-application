@@ -20,11 +20,12 @@ import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInfoConfirm;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -62,17 +63,16 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	private RegistryModuleOptions officeDomainOptions;
 	private Integer customerRelatedRegistry;
 	private Company customerCompany;
-	private LinkedList<Workplace> workplaces;
 	
 	private DomainType domainType;
 	private Tariff tariff;
 	
-	private List<Product> products;
+	private List<ProductBooking> products;
 	
 	private LinkedList<Fee> customerFees;
 	
 	// Constructor
-	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Company customerCompany, LinkedList<Workplace> workplaces) {
+	public ProductCatalogueBooking(RegistryModuleOptions currentDomainOptions, RegistryModuleOptions officeDomainOptions, Company customerCompany) {
 		super("");
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -82,7 +82,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		this.currentDomainOptions = currentDomainOptions;
 		this.officeDomainOptions = officeDomainOptions;
 		this.customerCompany = customerCompany;
-		this.workplaces = workplaces;
 		
 		addStyleName(AON.CSS.aonFlexColumn());
 		
@@ -105,17 +104,20 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	
 	private void searchDataList() {
 		getList(products -> {
-			boolean something = products.size() != 0;
 			
-			createCatalogue();
-			
-			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				tableContainer.clear();
-				tableContainer.add(line);
-			}
+			getCustomerFees(fees -> {
+				boolean something = products.size() != 0;
+				
+				createCatalogue();
+				
+				if (!something) {
+					FlowPanel line = new FlowPanel();
+					InlineLabel label = new InlineLabel(AON.MSG.noData());
+					line.add(label);
+					tableContainer.clear();
+					tableContainer.add(line);
+				}
+			});
 			
 		});
 	}
@@ -133,7 +135,14 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		subtitle.getElement().getStyle().setProperty("margin-bottom", "1.5rem");
 		cataloguePanel.add(subtitle);
 		
-		List<Product> packsProducts = products.stream().filter(Product::isManufactured).collect(Collectors.toList());
+		List<ProductBooking> packsProducts = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
+				.sorted(Comparator.comparing(
+			        ProductBooking::getPosition,
+			        Comparator.nullsLast(Comparator.naturalOrder())
+			    ))
+				.collect(Collectors.toList());
+		
 		if(!packsProducts.isEmpty()) {
 			createPacks(cataloguePanel, packsProducts);
 		}
@@ -144,7 +153,14 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			aditional.getElement().getStyle().setProperty("margin", "1rem 0");
 			cataloguePanel.add(aditional);
 			
-			List<Product> aonServices = products.stream().filter(product -> !product.isManufactured()).collect(Collectors.toList());
+			List<ProductBooking> aonServices = products.stream()
+					.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
+					.sorted(Comparator.comparing(
+				        ProductBooking::getPosition,
+				        Comparator.nullsLast(Comparator.naturalOrder())
+				    ))
+					.collect(Collectors.toList());
+			
 			if(!aonServices.isEmpty()) {
 				createServices(cataloguePanel, aonServices);
 			}
@@ -154,7 +170,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		tableContainer.add(tableScrollPanel);
 	}
 
-	private void createPacks(HTMLPanel cataloguePanel, List<Product> packsProducts) {
+	private void createPacks(HTMLPanel cataloguePanel, List<ProductBooking> packsProducts) {
 		HTMLPanel centerPacksCataloguePanel = new HTMLPanel("");
 		centerPacksCataloguePanel.setWidth("100%");
 		centerPacksCataloguePanel.getElement().getStyle().setProperty("display", "flex");
@@ -166,24 +182,23 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		
 		getItemTariff(null, itemTariffAll -> {
 			List<ItemTariff> itemTariffs = itemTariffAll.stream().filter(itemTariffIt -> itemTariffIt.getTariff().getId().equals(tariff.getId())).collect(Collectors.toList());
-			packsProducts.sort(Comparator.comparingDouble(p -> { 
-				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
-				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
-			}));
+//			TODO: ordenar por precio segun tarifa
+//			packsProducts.sort(Comparator.comparingDouble(p -> { 
+//				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
+//				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
+//			}));
 			createProductCard(packsCataloguePanel, packsProducts, 0);
 		});
 	}
 	
-	private void createProductCard(HTMLPanel packsCataloguePanel, List<Product> packsProducts, int index) {
+	private void createProductCard(HTMLPanel packsCataloguePanel, List<ProductBooking> packsProducts, int index) {
 		if (index >= packsProducts.size()) {
 	        // Terminado
 	        return;
 	    }
 
-	    Product packProduct = packsProducts.get(index);
-//	    getItemCompositions(packProduct.getItem().getId(), itemCompositions -> {
-	        // Crear la carta después de obtener itemCompositions
-	    	
+		ProductBooking packProduct = packsProducts.get(index);
+	       
     	getItemTariff(packProduct.getItem().getId(), itemTariff -> {
     		CataloguePackBookingCard card;
     		if(itemTariff.isEmpty())
@@ -233,12 +248,10 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	        // Procesar el siguiente pack
 	        createProductCard(packsCataloguePanel, packsProducts, index + 1);
 		});	
-    	
-//	    });
 	}
 	
-	private void createFee(Product product) {
-		if(product.isManufactured()) {
+	private void createFee(ProductBooking product) {
+		if(product.getBookingType().equals(ProductBookingType.PLAN)) {
 			List<Integer> packItemIds = products.stream().filter(p -> p.isManufactured()).map(p -> p.getItem().getId()).collect(Collectors.toList());
 			Optional<Fee> feeItem = customerFees.stream().filter(cf -> packItemIds.contains(cf.getItem().getId()) && (cf.getEndDate() == null || cf.getEndDate().after(new Date()) || cf.getEndDate().equals(new Date()))).findFirst();
 			
@@ -271,7 +284,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 										.setStartDate(new Date())
 										.setBillingDate(DateUtils.getLastDayOfMonth())
 										.setPeriod(BillingPeriod.MONTHLY)
-										.setWorkplace(workplaces.get(0))
 										;
 											
 									COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
@@ -316,7 +328,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 						.setStartDate(new Date())
 						.setBillingDate(DateUtils.getLastDayOfMonth())
 						.setPeriod(BillingPeriod.MONTHLY)
-						.setWorkplace(workplaces.get(0))
 						;
 							
 					COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
@@ -349,9 +360,9 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		}
 		
 		// Borrar servicio
-		else if(isFeeProduct(product.getItem().getId()) && !product.isManufactured()) {
+		else if(isFeeProduct(product.getItem().getId()) && !product.getBookingType().equals(ProductBookingType.PLAN)) {
 			Optional<Fee> fee = customerFees.stream().filter(feeIt -> feeIt.getItem().getId().equals(product.getItem().getId())).findFirst();
-			if(fee.isPresent())
+			if(fee.isPresent()){
 				COMMON_SERVICE.updateEndDatePackFee(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), fee.get(), new AsyncCallback<Void>() {
 
 					@Override
@@ -379,6 +390,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 					}
 					
 				});
+			}
 		} else {
 			Fee fee = new Fee()
 					.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
@@ -390,7 +402,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 					.setStartDate(new Date())
 					.setBillingDate(DateUtils.getLastDayOfMonth())
 					.setPeriod(BillingPeriod.MONTHLY)
-					.setWorkplace(workplaces.get(0))
 					;
 						
 				COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
@@ -463,7 +474,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		dialog.show();
 	}
 
-	private void createServices(HTMLPanel cataloguePanel, List<Product> aonServices) {
+	private void createServices(HTMLPanel cataloguePanel, List<ProductBooking> aonServices) {
 		HTMLPanel servicesPanel = new HTMLPanel("");
 		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
 		servicesPanel.setWidth("100%");
@@ -492,7 +503,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				code.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				codeNamePanel.add(code);
 				
-				Label name = new Label(aonService.getItem().getDescription());
+				HTMLPanel name = new HTMLPanel(aonService.getDescriptionTemplate());
 				name.getElement().getStyle().setProperty("padding", "1rem 2rem 1rem 0");
 				codeNamePanel.add(name);
 				
@@ -551,7 +562,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		
 	}
 	
-	private Button createServiceButton(Product packProduct) {
+	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
 		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Descontratar" : "Contratar");
 		
@@ -673,7 +684,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
         return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart /*+ " \u20ac"*/;
     }
 	
-	private void getList(Consumer<List<Product>> success) {
+	private void getList(Consumer<List<ProductBooking>> success) {
 		ProductParams params = new ProductParams()
 				.setDomainName(officeDomainOptions.getDomainName())
 				.setDomain(officeDomainOptions.getDomain())
@@ -684,12 +695,12 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				.setLimit(Integer.MAX_VALUE)
 				;
 		
-		COMMON_SERVICE.getProducts(params, new AsyncCallback<List<Product>>() {
+		COMMON_SERVICE.getProductsBooking(params, new AsyncCallback<List<ProductBooking>>() {
 			
 			@Override
-			public void onSuccess(List<Product> productsDB) {
+			public void onSuccess(List<ProductBooking> productsDB) {
 				products = productsDB;
-				getCustomerFees(cfs -> success.accept(products));
+				success.accept(products);
 			}
 			
 			@Override
