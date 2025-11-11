@@ -14,7 +14,8 @@ export class AonNotification extends AonElement {
   }
 
   initialize() {
-    const element = this.isMobile() ?  new AonNotificationMobile() : new AonNotificationDesk();
+    // const element = this.isMobile() ?  new AonNotificationMobile() : new AonNotificationDesk();
+    const element =   new AonNotificationDesk();
  
     this.rootPanel(element);
   }

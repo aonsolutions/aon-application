@@ -66,6 +66,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.extension.DSLExtensions;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
+import com.esferalia.aon.jooq.tables.records.DomainApplicationRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
@@ -1823,6 +1824,22 @@ public class SecurityDAO {
 				.setUser( checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r) : null )
 				;
 		}		
+	}
+	
+
+
+	public static void insertUserApplicationAio(CloseableAONContext ctx, Integer domainId, Integer userId) {
+		DomainApplicationRecord domainApplication = ctx.getDslContext().selectFrom(DOMAIN_APPLICATION)
+			.where(DOMAIN_APPLICATION.DOMAIN.eq(domainId))
+			.and(DOMAIN_APPLICATION.APPLICATION.eq(28))
+			.fetchOne();
+		
+		ctx.getDslContext().insertInto(APPLICATION_USER)
+			.set(APPLICATION_USER.DOMAIN, domainId)
+			.set(APPLICATION_USER.USER_ID, userId)
+			.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplication.getId())
+			.execute()
+			;
 	}
 	
 }

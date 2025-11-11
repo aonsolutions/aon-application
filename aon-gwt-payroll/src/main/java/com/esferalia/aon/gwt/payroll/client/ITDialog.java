@@ -2078,6 +2078,32 @@ public abstract class ITDialog extends AonCustomDialog {
 		quoteDayInput.addChangeHandler(event->{
 			it.setQuoteDays(quoteDayInput.getValue().intValue());
 		});
+		
+		HTMLPanel employeeWorkPanel = new HTMLPanel("");
+		employeeWorkPanel.setStyleName(style.flex());
+		
+		Label categoryLabel = new Label("Puesto");
+		categoryLabel.setStyleName(style.subTitle());
+		employeeWorkPanel.add(categoryLabel);
+		
+		TextBox category = new TextBox();
+		category.setValue(this.itDialogObject.getContractInfo().getAgreementCategory());
+		it.setEmployeeCategory(this.itDialogObject.getContractInfo().getAgreementCategory());
+		category.addValueChangeHandler(e -> it.setEmployeeCategory(e.getValue()));
+		employeeWorkPanel.add(category);
+		
+		Label workLabel = new Label("Funciones");
+		workLabel.setStyleName(style.subTitle());
+		employeeWorkPanel.add(workLabel);
+		
+		TextBox workDescription = new TextBox();
+		workDescription.setWidth("100%");
+		workDescription.setValue("Las propias de " + this.itDialogObject.getContractInfo().getAgreementCategory());
+		it.setEmployeeWork("Las propias de " + this.itDialogObject.getContractInfo().getAgreementCategory());
+		workDescription.addValueChangeHandler(e -> it.setEmployeeWork(e.getValue()));
+		employeeWorkPanel.add(workDescription);
+		
+		flexColumn.add(employeeWorkPanel);
 
 		getTramos();
 	}

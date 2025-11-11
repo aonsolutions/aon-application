@@ -1,7 +1,7 @@
 @use '../variables' as v;
 
 aon-toast {
-  position     : absolute;
+  position     : fixed;
   bottom       : v.$pct-10;
   min-width    : v.$px-250;
   max-width    : v.$px-300;

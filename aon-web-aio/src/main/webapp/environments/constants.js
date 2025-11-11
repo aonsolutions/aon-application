@@ -122,8 +122,7 @@ export const DISABLED = 'disabled';
 export const DIV = 'div';
 export const DRAFT = 'draft';
 export const DOCUMENT = 'document';
-// export const DOCUMENTAL = 'documental';
-export const DOCUMENTAL = 'mi nube'; // De mientras, ya que se tiene que modificar todo
+export const DOCUMENTAL = 'documental'; // No cambiar nombre -- se basa para la contratacion de modulos en este nombre :(
 export const DOMAIN = 'domain';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
@@ -291,6 +290,7 @@ export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 export const PROCESSING = 'processing'
 export const PROFORMA_INVOICES = 'proformaInvoices';
+export const PLACEHOLDER = 'placeholder';
 export const PLANS = 'plans';
 
 // ----- Q

@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import * as LS from '../../../services/localStorageService.js';
@@ -170,7 +170,7 @@ export class AonMobileItemPackage extends AonElement {
 		table.addRow();
 
 		let serialNumber = createInput(this.PACKAGE_SERIAL_NUMBER, "SSCC");
-		serialNumber.value = this.itemPackage.serialNumber;
+		serialNumber.value = this.itemPackage.serialNumber ? this.itemPackage.serialNumber : '';
 		serialNumber.disabled = true;
 		table.addCell(serialNumber);
 
@@ -225,7 +225,7 @@ export class AonMobileItemPackage extends AonElement {
 			table.addRow();
 
 			let aonIconButton = this.createAonElement(new AonIconButton(), 'AddIcon', 'icon'); 
-			aonIconButton.icon = MATERIAL_ICONS.ADD_CIRCLE;
+			aonIconButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;			
 			aonIconButton.addEventListener(EVENT.CLICK, () => {
 				this.addDialog();
 			});

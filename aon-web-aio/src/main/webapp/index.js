@@ -5,18 +5,8 @@ import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
-import { favicon, title, loadLink } from './css/aon-customView.js';
+import { loadLink } from './css/aon-customView.js';
 import { loadTheme } from './modules/utils/theme';
-
-/*
-import './css/noto-sans.css';
-import './css/material-symbols-outlined.css';
-import './css/aon-css-utils.css';
-import './css/aon-grid.css';
-import './css/aon-mobile.css';
-import './css/aon-figma.css';
-import './css/aon-singleton-access.css';
-*/
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM = (token) => {
@@ -43,16 +33,16 @@ const load = () => {
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
 	
-    LS.setAonSolutions(true);
-    // TODO: Skip reload
+	LS.setAonSolutions(true);
+	// TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
 
 	loadScripts(); 
 
-	loadTheme()
+	loadThemeOld()
 	.finally(loadIsReadOnly)
 	.finally( () =>  {
-		loadModule(); 
+		loadModuleOld(); 
 	} ) ;  
 
 	// TODO: loadScriptFirebase();
@@ -61,12 +51,18 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).");
 };
 
+export const loadModuleOld = () => {
+	title();
+	favicon(); 
+	document.body.appendChild(new AonModule()) ;
+}
+
 export const loadThemeOld = async () => {
 	// LS.AON_THEME 
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
-	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	let themeUrl = UA.isMobile() ? mobileCss : ( paramCss  || "/customview" || LS.AON_THEME );
-		
+	let mobileCss = UA.isAndroidOldApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
+	if(UA.isAndroid35App()) mobileCss = LS.AON_MOBILE_ANDROID_35;
+	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || "/customview" || LS.AON_THEME);
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
@@ -181,7 +177,7 @@ const getParam = (paramName) => {
 const getCookie = (cookieName) => {
 	const cookieValue = decodeURIComponent(document.cookie)
     .split(';')
-	.map((row) => row.trimStart() )
+		.map((row) => row.trimStart() )
     .find((row) => row.startsWith(`${cookieName}=`))
     ?.split('=')[1];
 

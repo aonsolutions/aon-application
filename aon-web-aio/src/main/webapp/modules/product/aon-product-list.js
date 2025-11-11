@@ -41,7 +41,11 @@ export class AonProductList extends AonElement {
 	init() {
 		let table = this.getElement(this.TABLE);
 		if(table) {
-			getProducts(this.getFilter()).then(products => {
+			let filter = this.getFilter();
+			if(this.getApplication().getParent() && this.getApplication().getParent().localName === 'aon-warehouse') {
+				filter = {expense: false};
+			}
+			getProducts(filter).then(products => {
 				table.removeRows();
 				products.map(p => {
 					p[CONSTANT.CATEGORY_NAME] = p.category.name || '';
@@ -80,7 +84,7 @@ export class AonProductList extends AonElement {
 	}
 
 	isExpense() {
-		return this.getApplication().getParent().selectedOption.id === OPTION.EXPENSES.id
+		return this.getApplication().getParent().selectedOption && this.getApplication().getParent().selectedOption.id === OPTION.EXPENSES.id
 	}
 }
 window.customElements.define('aon-product-list', AonProductList);

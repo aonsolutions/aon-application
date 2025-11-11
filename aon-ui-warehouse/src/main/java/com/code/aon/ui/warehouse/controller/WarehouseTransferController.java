@@ -13,6 +13,7 @@ import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.AON;
@@ -53,7 +54,8 @@ public class WarehouseTransferController extends HeaderObjectController implemen
 			setWorkplace(null);
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = workplace.getDomain();
-			String login = AonUtil.getRemoteUser();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+
 			LinkedList<Series> seriesList = AON.getSeriesDeliveryList(domainName, domainId, login, workplace.getScope().getId());
 			List<SelectItem> list = new LinkedList<SelectItem>();
 			seriesList.stream().forEach(s -> {
