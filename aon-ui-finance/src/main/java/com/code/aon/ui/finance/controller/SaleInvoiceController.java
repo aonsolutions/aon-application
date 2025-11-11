@@ -499,48 +499,6 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
-	@Deprecated
-	public void onExportUdapaEdiFile(ActionEvent event) {
-		FileOutput output = null;
-		HttpServletResponse response = null;
-		OutputStream out = null;
-		try {
-			Invoice invoice = (Invoice) this.getTo();
-			
-			String customerEdiMainCode = null;
-			String customerEdiOperationCode = null;
-			if(invoice.getRegistryAddress()!=null && invoice.getRegistryAddress().getId()!=null){
-				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.CABECERA);
-				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.FACTURA);
-			}
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-			
-			// writer file
-			UdapaSaleInvoiceWriter writer = new UdapaSaleInvoiceWriter();
-			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
-			
-			// download file
-			String fileName = "inv_" + invoice.getSeries()+"_"+invoice.getNumber();
-			byte[] data = output.getContent();
-			int size = data.length;
-			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, fileName + ".edi", null, size);
-			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
-			IOUtils.copy( fileIn, out );
-			IOUtils.closeQuietly(fileIn);			
-        } catch (IOException e) {
-        	AonUtil.addErrorMessage(e.getMessage());
-        	throw new AbortProcessingException(e.getMessage(), e);
-        } catch (Throwable e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			DownloadUtil.finishDownload(response, out);
-		}
-	}
-
 	@Override
 	public synchronized ITransferObject getTo() {
 		return super.getTo();

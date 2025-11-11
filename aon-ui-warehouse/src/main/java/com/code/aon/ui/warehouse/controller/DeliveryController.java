@@ -925,50 +925,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}
 	
-	@Deprecated
-	public void onExportUdapaEdiFile(ActionEvent event) {
-		FileOutput output = null;
-		HttpServletResponse response = null;
-		OutputStream out = null;
-		try {
-			Delivery delivery = (Delivery) this.getTo();
-			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
-					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
-					IEdiSupport.ALBARANES);
-			CompanyController company = (CompanyController) AonUtil
-					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-
-			// writer file
-			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode);
-
-			// download file
-			String fileName = "alb_" + delivery.getSeries()+"_"+delivery.getNumber();
-			byte[] data = output.getContent();
-			int size = data.length;
-			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, fileName + ".edi",
-					null, size);
-			InputStream fileIn = new BufferedInputStream(
-					new ByteArrayInputStream(data));
-			IOUtils.copy(fileIn, out);
-			IOUtils.closeQuietly(fileIn);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} catch (Throwable e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			DownloadUtil.finishDownload(response, out);
-		}
-	}
-	
 	public String getDeliveryDownloadURL() {
 		Delivery delivery = (Delivery) getTo();
 		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
