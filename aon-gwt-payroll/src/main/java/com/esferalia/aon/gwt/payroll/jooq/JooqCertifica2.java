@@ -166,7 +166,7 @@ public class JooqCertifica2 {
 		fieldMap.put("010", certifica2Info.getGeozone());
 		fieldMap.put("011", certifica2Info.getCnaeCode());
 		fieldMap.put("012", certifica2Info.getCnae());
-		fieldMap.put("014", certifica2Info.getName() + " " + certifica2Info.getSurname());
+		fieldMap.put("014", certifica2Info.getName() + " " + certifica2Info.getSurname() + (AonStringUtils.isBlank(certifica2Info.getSecondSurname()) ? "" : " " + certifica2Info.getSecondSurname()));
 		fieldMap.put("015", certifica2Info.getDocument());
 		fieldMap.put("016", certifica2Info.getSSNumber());
 		fieldMap.put("017", certifica2Info.getQuoteGroup());
@@ -252,7 +252,7 @@ public class JooqCertifica2 {
 		fieldMap.put("010", certifica2Info.getGeozone());
 		fieldMap.put("011", certifica2Info.getCnaeCode());
 		fieldMap.put("012", certifica2Info.getCnae());
-		fieldMap.put("015", certifica2Info.getName() + " " + certifica2Info.getSurname());
+		fieldMap.put("015", certifica2Info.getName() + " " + certifica2Info.getSurname() + (AonStringUtils.isBlank(certifica2Info.getSecondSurname()) ? "" : " " + certifica2Info.getSecondSurname()));
 		fieldMap.put("016", certifica2Info.getDocument());
 		fieldMap.put("017", certifica2Info.getSSNumber());
 		fieldMap.put("018", certifica2Info.getContractType());
