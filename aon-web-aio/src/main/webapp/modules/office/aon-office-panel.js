@@ -736,7 +736,6 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case ServiceOptions.AON_SERVICE.id:
 					this.clearToolbar();
-					application.closeSidenav();
 					GWT.iLoad(GWT.PRODUCT_MODULE, this.getApplication().CONTENT);
 					break;
 				case ServiceOptions.AON_SALES_ENTERPRISE.id:
