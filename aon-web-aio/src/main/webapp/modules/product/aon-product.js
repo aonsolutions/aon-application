@@ -189,7 +189,9 @@ export class AonProduct extends AonElement {
 					name: category.name
 				}));
 				categorySelect.setOptions(transformedCategories);
-				categorySelect.setValue(this.product.category.id);
+				if(this.product.category && this.product.category.id){
+					categorySelect.setValue(this.product.category.id);
+				}
 				categorySelect.addEventListener(EVENT.CHANGE, (e) => {
 					this.product.category = categories.find(category => category.id === Number(categorySelect.getValue()));
 				});
