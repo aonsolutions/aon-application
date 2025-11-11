@@ -33,16 +33,16 @@ const load = () => {
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
 	
-    LS.setAonSolutions(true);
-    // TODO: Skip reload
+	LS.setAonSolutions(true);
+	// TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
 
 	loadScripts(); 
 
-	loadTheme()
+	loadThemeOld()
 	.finally(loadIsReadOnly)
 	.finally( () =>  {
-		loadModule(); 
+		loadModuleOld(); 
 	} ) ;  
 
 	// TODO: loadScriptFirebase();
@@ -51,12 +51,17 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).");
 };
 
+export const loadModuleOld = () => {
+	title();
+	favicon(); 
+	document.body.appendChild(new AonModule()) ;
+}
+
 export const loadThemeOld = async () => {
 	// LS.AON_THEME 
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
-	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	if(UA.isAndroid35App())
-		mobileCss = LS.AON_MOBILE_ANDROID_35;
+	let mobileCss = UA.isAndroidOldApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
+	if(UA.isAndroid35App()) mobileCss = LS.AON_MOBILE_ANDROID_35;
 	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || "/customview" || LS.AON_THEME);
 	return new Promise((resolve, reject) => {
 		try {
