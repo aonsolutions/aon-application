@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -501,6 +502,9 @@ public class ProductDAO {
 		
 		json.put("descriptionTemplate", product.getDescriptionTemplate());
 		
+		if(null != product.getProjectType())
+			json.put("projectType", product.getProjectType().getId());
+		
 		return json.toString();
 	}
 
@@ -761,6 +765,9 @@ public class ProductDAO {
 			
 			if(info.has("descriptionTemplate"))
 				productBooking.setDescriptionTemplate(info.getString("descriptionTemplate"));
+			
+			if(info.has("projectType"))
+				productBooking.setProjectType(new ProjectType().setId( info.getInt("projectType") ));
 		}
 		
 	}

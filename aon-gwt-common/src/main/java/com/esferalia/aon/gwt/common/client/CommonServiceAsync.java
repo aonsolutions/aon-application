@@ -250,6 +250,7 @@ public interface CommonServiceAsync {
 	
 	void getTargetSuggestion(String domainName, int domain, String user, AsyncCallback<List<Target>> asyncCallback) throws AonCoreException;
 	
+	void getAviableProjectTypes(String domainName, int domain, String user, int domainSearch, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
 	void getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
 	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 
@@ -488,7 +489,7 @@ public interface CommonServiceAsync {
 	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-	void createBookingFee(String domainName, int domain, String user, ProductBooking product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void createBookingFee(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> asyncCallback) throws AonCoreException;
 	void saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod, AsyncCallback<RegistryPayMethod> asyncCallback) throws AonCoreException;

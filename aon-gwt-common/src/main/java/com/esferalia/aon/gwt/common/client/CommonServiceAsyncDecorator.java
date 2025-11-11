@@ -541,6 +541,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getAviableProjectTypes(String domainName, int domain, String user, int domainSearch, AsyncCallback<List<ProjectType>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableProjectTypes(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<Workgroup>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getAviableWorkgroups(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
@@ -1446,9 +1452,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void createBookingFee(String domainName, int domain, String user, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
+	public void createBookingFee(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.createBookingFee(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.createBookingFee(domainName, domain, user, customerRelatedRegistry, product, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
