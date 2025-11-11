@@ -19,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
@@ -123,8 +124,10 @@ public class UdapaDeliveryHandler implements Serializable {
 	
 	public void onSincronizeIngenet(ActionEvent event) {
 		try {
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
+			
 			ingenetDeliveries = IngenetDeliveryManager.getInstance().obtainUnreadDeliveries(
-					AonUtil.getDomainName(), AonUtil.getRemoteUser());
+					AonUtil.getDomainName(), user);
 			setModel(new SerializableListDataModel(new ArrayList<Integer>(ingenetDeliveries.keySet())));
 			this.checks.clear();
 			ingenetDeliveries.keySet().forEach(id -> {this.checks.add(id);});
@@ -141,6 +144,8 @@ public class UdapaDeliveryHandler implements Serializable {
 		logPanel.reset();
 
 		try {
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 			// copy delivery to AON
 			Warehouse warehouse = getWarehouse() != null
 					&& getWarehouse().getId() != null ? getWarehouse()
@@ -154,7 +159,7 @@ public class UdapaDeliveryHandler implements Serializable {
 					com.esferalia.aon.occam.api.model.warehouse.Delivery aonDelivery = IngenetDeliveryManager
 							.getInstance().createAonDelivery(
 									AonUtil.getDomainName(),
-									AonUtil.getRemoteUser(),
+									user,
 									DomainManager.getCurrentDomain(),
 									ingenetDeliveryId,
 									warehouse.getWorkPlace().getId(),

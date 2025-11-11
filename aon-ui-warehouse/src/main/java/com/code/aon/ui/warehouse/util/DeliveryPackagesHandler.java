@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
@@ -151,6 +152,8 @@ public class DeliveryPackagesHandler implements Serializable {
 
 	public void onLoadPackages(ActionEvent event) {
 		try {
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 			Delivery delivery = (Delivery) controller.getTo();
 			detailList = delivery.getDetailList();
 			detailList = detailList.stream()
@@ -161,7 +164,7 @@ public class DeliveryPackagesHandler implements Serializable {
 			dataAttach = DeliveryPackages.obtainPackageDataAttach(
 					AonUtil.getDomainName(),
 					delivery.getDomain(),
-					AonUtil.getRemoteUser(), delivery.getId());
+					user, delivery.getId());
 			String data = dataAttach!=null && dataAttach.getData()!=null?new String(dataAttach.getData()):"";
 			Map<Integer, List<Integer>> containerMap = DeliveryPackages.loadContainerMap(data);
 			Map<Integer, List<Integer>> linesMap = DeliveryPackages.loadLinesMap(data);
@@ -207,12 +210,14 @@ public class DeliveryPackagesHandler implements Serializable {
 	
 	public boolean isPackagesDefined() throws ManagerBeanException {
 		showPackages = false;
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 		Delivery delivery = (Delivery) controller.getTo();
 		if (delivery != null && delivery.getId() != null) {
 			Attach attach = AON.getAttach(
 					AonUtil.getDomainName(),
 					delivery.getDomain(),
-					AonUtil.getRemoteUser(),
+					user,
 					f -> f.getDomainProperty()
 							.eq(delivery.getDomain())
 							.and(f.getSourceTypeProperty().eq(
@@ -279,29 +284,31 @@ public class DeliveryPackagesHandler implements Serializable {
 	
 	public void saveOrUpdate() {
 		if(isShowPackages()){
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
 			Delivery delivery = (Delivery) controller.getTo();
 			if(delivery!=null && delivery.getId()!=null){
 				if(dataAttach.getId()==null){
 					AON.insertAttach(AonUtil.getDomainName(), delivery.getDomain(),
-							AonUtil.getRemoteUser(), dataAttach);
+							user, dataAttach);
 				} else {
 					AON.updateAttach(AonUtil.getDomainName(), delivery.getDomain(),
-							AonUtil.getRemoteUser(), dataAttach);
+							user, dataAttach);
 				}
 			}
 		}
 	}
 	
 	public void removePackages() {
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
 		Delivery delivery = (Delivery) controller.getTo();
 		Attach attach = DeliveryPackages.obtainPackageDataAttach(
 				AonUtil.getDomainName(),
 				delivery.getDomain(),
-				AonUtil.getRemoteUser(), delivery.getId());
+				user, delivery.getId());
 		if (delivery != null && delivery.getId() != null) {
 			if (attach != null && attach.getId() != null) {
 				AON.deleteAttach(AonUtil.getDomainName(), delivery.getDomain(),
-						AonUtil.getRemoteUser(),
+						user,
 						f -> f.getIdProperty().eq(attach.getId()),
 						AttachType.DATA);
 			}
