@@ -35,13 +35,19 @@
           .aonLiSpanSubtitle{
             display: flex;
             gap: v.$gap-min;
-            .aonInputBoxLabelSpanWarning{
-              color: orange;
-            }
           }
         }
         .last-icon{
           display: flex;
+        }
+      }
+    }
+    @media (max-width: v.$menu-resolucion-mobile) {
+      .aonRightSidenav{
+        img{
+          &.aonWelcomeLogo {
+            display: none;
+          }
         }
       }
     }

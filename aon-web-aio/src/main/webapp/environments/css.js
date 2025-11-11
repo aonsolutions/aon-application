@@ -196,6 +196,7 @@ export const AON_SLIDER = 'aonSlider';
 export const AON_MOBILE_HEADER = 'aonMobileHeader';
 export const AON_MOBILE_HEADER_COMPANY = 'aonMobileHeaderCompany';
 export const AON_MOBILE_LOGO = 'aonMobileLogo';
+export const AON_MOBILE_HEADER_LOGO = 'aonMobileHeaderLogo';
 export const AON_MOBILE_HEADER_BUTTON = 'aonMobileHeaderButton';
 export const AON_MOBILE_ROOT_PANEL = 'aonMobileRootPanel';
 export const AON_MOBILE_TOOLBAR = 'aonMobileToolbar';

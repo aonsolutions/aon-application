@@ -73,18 +73,18 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
-						<aon:if test="#{domainSwitcher.paturpat}">
-							<aon:menuItem id="purchaseduplicate"
-								value="#{bundle.aon_to_duplicate}"
-								rendered="#{purchaseDetail.model.rowCount > 0}"
-								immediate="#{true}"
-								iconClass="aon-icon-copy"
-								actionListener="#{purchase.onDuplicationShow}"
-								reRender="showDuplicationWindow">
-								<f:setPropertyActionListener target="#{purchase.showDuplicationWindow}"
-									value="#{true}" />
-							</aon:menuItem>
-						</aon:if>
+
+						<aon:menuItem id="purchaseduplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{purchaseDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{purchase.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{purchase.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						
 						<aon:menuItem id="purchaseReturnRequest"
 							value="#{bundle.purchase_return_request}"
 							rendered="#{!purchase.nevv and !purchase.to.itemReturn}"

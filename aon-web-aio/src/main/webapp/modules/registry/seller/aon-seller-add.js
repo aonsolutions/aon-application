@@ -1,28 +1,12 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { AonNewDate } from "../../../components/aon-new-date.js";
-import { EVENT, MSG } from "../../../environments/environments.js";
-// import {
-//   getItems,
-//   updateRegistryItem,
-// } from "../../../services/productService.js";
-// import { saveRegistryItem } from "../../../services/productService.js";
+import { MSG } from "../../../environments/environments.js";
 import { Customer } from "../../../models/registry/Customer.js";
-// import { Item } from "../../../models/product/Item.js";
-import {
-  // RegistryItemStatus,
-  RegistrySellerStatus,
-  RegistrySellerType,
-} from "../../../models/enums.js";
-import {
-  deleteRegistrySeller,
-  getSellers,
-  // saveRsellers,
-  updateRegistrySeller,
-} from "../../../services/commercialService.js";
+import { RegistrySellerStatus, RegistrySellerType } from "../../../models/enums.js";
+import { deleteRegistrySeller, getSellers, updateRegistrySeller } from "../../../services/commercialService.js";
 
 export class AonSellerAdd extends AonElement {
-  DIV;
   ITEM_SELECT;
   STATUS_SELECT;
   TYPE_SELECT;
@@ -147,11 +131,6 @@ export class AonSellerAdd extends AonElement {
   }
 
   build() {
-    this.DIV = document.createElement("div");
-    this.DIV.style.display = "flex";
-    this.DIV.style.flexDirection = "column";
-    this.appendChild(this.DIV);
-
     this.buildSelectItem();
     this.buildSelectType();
     this.buildSelectStatus();
@@ -159,36 +138,25 @@ export class AonSellerAdd extends AonElement {
     this.START_DATE_INPUT = new AonNewDate();
     this.START_DATE_INPUT.id = this.id + "startDateInput";
     this.START_DATE_INPUT.title = MSG.START_DATE;
-    this.DIV.appendChild(this.START_DATE_INPUT);
+    this.appendChild(this.START_DATE_INPUT);
 
-    if (this.getSelectedRSeller() && this.getSelectedRSeller().startDate) {
+    if (this.getSelectedRSeller().startDate) {
       this.START_DATE_INPUT.setDate(this.getSelectedRSeller().startDate);
-      this.setStartDate(this.START_DATE_INPUT.value);
+      this.setStartDate(this.START_DATE_INPUT.getValue());
     } else {
       this.START_DATE_INPUT.setDate(new Date());
       this.setStartDate(new Date());
     }
 
-    this.START_DATE_INPUT.addEventListener("change", (event) => {
-      this.setStartDate(this.START_DATE_INPUT.getValue());
-    });
-
     this.END_DATE_INPUT = new AonNewDate();
     this.END_DATE_INPUT.id = this.id + "endDateInput";
     this.END_DATE_INPUT.title = MSG.END_DATE;
-    this.DIV.appendChild(this.END_DATE_INPUT);
-    if (this.getSelectedRSeller() && this.getSelectedRSeller().endDate) {
+    this.appendChild(this.END_DATE_INPUT);
+    if (this.getSelectedRSeller().endDate) {
       this.END_DATE_INPUT.setDate(this.getSelectedRSeller().endDate);
-      this.setEndDate(this.END_DATE_INPUT.value);
+      this.setEndDate(this.END_DATE_INPUT.getValue());
     } else {
       this.END_DATE_INPUT.setDate('');
-    }
-    this.END_DATE_INPUT.addEventListener("change", (event) => {
-      this.setEndDate(this.END_DATE_INPUT.getValue());
-    });
-
-    if (this.getSelectedRSeller() && this.getSelectedRSeller().status) {
-      this.STATUS_SELECT.value = this.getSelectedRSeller().status;
     }
   }
 
@@ -196,65 +164,26 @@ export class AonSellerAdd extends AonElement {
     this.ITEM_SELECT = new AonNewSelect();
     this.ITEM_SELECT.title = "Agente";
     this.ITEM_SELECT.id = this.id + "seller";
-    this.ITEM_SELECT.autocomplete = true;
-    this.ITEM_SELECT.default = true;
-    this.DIV.appendChild(this.ITEM_SELECT);
+    this.ITEM_SELECT.loading(true);
+    this.appendChild(this.ITEM_SELECT);
 
+    // Por que se limitan los agente????
     const params = { page: 1, perPage: 20 };
     let firstTime = true;
 
-    const buildItems = (params) => {
-      this.ITEM_SELECT.loading(true);
-      getSellers(params).then((opts) =>
-          this.ITEM_SELECT.setOptionsBuild(
-            opts.map((p) => ({ ...p, value: p.id }))
-          )
-        ).finally(() => {
-          this.ITEM_SELECT.loading(false);
-          if (firstTime) {
-            firstTime = false;
-            if (
-              this.getSelectedRSeller() &&
-              this.getSelectedRSeller().rseller &&
-              this.getSelectedRSeller().rseller.seller &&
-              this.getSelectedRSeller().rseller.seller.id
-            ) {
-              this.ITEM_SELECT.value = this.getSelectedRSeller().rseller.seller.id;
-              this.setSeller(this.ITEM_SELECT.value);
-            }
-            this.ITEM_SELECT.closeOptions();
-          }
-        });
-    };
-
-    buildItems(params);
-
-    this.ITEM_SELECT.addEventListener(EVENT.CHANGE, () => {
-      this.setSeller(this.ITEM_SELECT.value);
-    });
-  }
-
-  buildSelectStatus() {
-    this.STATUS_SELECT = new AonNewSelect();
-    this.STATUS_SELECT.title = MSG.STATUS;
-    this.STATUS_SELECT.id = this.id + "status";
-    this.STATUS_SELECT.default = true;
-    this.STATUS_SELECT.autocomplete = true;
-
-    let options = [];
-    for (let status in RegistrySellerStatus) {
-      options.push({ name: RegistrySellerStatus[status], value: status });
-    }
-
-    this.STATUS_SELECT.setOptions(options);
-
-    this.DIV.appendChild(this.STATUS_SELECT);
-    if (this.getSelectedRSeller()) {
-      this.STATUS_SELECT.value = this.getSelectedRSeller().statusText;
-    }
-
-    this.STATUS_SELECT.addEventListener(EVENT.CHANGE, () => {
-      this.setStatus(this.STATUS_SELECT.value);
+    getSellers(params).then((opts) => {
+      this.ITEM_SELECT.setOptions(
+        opts.map((p) => ({ ...p, value: p.id }))
+      )
+      this.ITEM_SELECT.loading(false);
+    }).finally(() => {
+      if (
+          this.getSelectedRSeller().rseller &&
+          this.getSelectedRSeller().rseller.seller &&
+          this.getSelectedRSeller().rseller.seller.id
+      ) {
+        this.ITEM_SELECT.setValue(this.getSelectedRSeller().rseller.seller.id);
+      }
     });
   }
 
@@ -262,38 +191,47 @@ export class AonSellerAdd extends AonElement {
     this.TYPE_SELECT = new AonNewSelect();
     this.TYPE_SELECT.title = MSG.TYPE;
     this.TYPE_SELECT.id = this.id + "TYPE";
-    this.TYPE_SELECT.default = true;
-    this.TYPE_SELECT.autocomplete = true;
+    this.TYPE_SELECT.setOptions(
+      Object.entries(RegistrySellerType).map(
+        ([value, name]) => ({ name, value })
+      )
+    );
 
-    let options = [];
-    for (let type in RegistrySellerType) {
-      options.push({ name: RegistrySellerType[type], value: type });
+    this.appendChild(this.TYPE_SELECT);
+    if (this.getSelectedRSeller().rsellerType) {
+      this.TYPE_SELECT.setValue(this.getSelectedRSeller().rsellerType);
     }
+  }
 
-    this.TYPE_SELECT.setOptions(options);
+  buildSelectStatus() {
+    this.STATUS_SELECT = new AonNewSelect();
+    this.STATUS_SELECT.title = MSG.STATUS;
+    this.STATUS_SELECT.id = this.id + "status";
+    this.STATUS_SELECT.setOptions(
+      Object.entries(RegistrySellerStatus).map(
+        ([value, name]) => ({ name, value })
+      )
+    );
 
-    this.DIV.appendChild(this.TYPE_SELECT);
-    if (this.getSelectedRSeller()) {
-      this.TYPE_SELECT.value = this.getSelectedRSeller().rsellerType;
-	  this.setType(this.getSelectedRSeller().rsellerType);
+    this.appendChild(this.STATUS_SELECT);
+    if (this.getSelectedRSeller().statusText) {
+      this.STATUS_SELECT.setValue(this.getSelectedRSeller().statusText);
     }
-
-    this.TYPE_SELECT.addEventListener(EVENT.CHANGE, () => {
-      this.setType(this.TYPE_SELECT.value);
-    });
   }
 
   async save() {
     let error  = false;
     let params = {
       id        : this.getSelectedRSeller().rseller.id,
-      type      : this.getType(),
-      start_date: this.getStartDate(),
-      end_date  : this.getEndDate(),
+      type      : this.TYPE_SELECT.getValue(),
+      start_date: this.START_DATE_INPUT.getValue(),
+      end_date  : this.END_DATE_INPUT.getValue(),
       customer  : this.getSelectedRSeller().rseller.registry,
-      seller    : this.getSeller(),
-      status    : this.getStatus()
+      seller    : this.ITEM_SELECT.getValue(),
+      status    : this.STATUS_SELECT.getValue()
     };
+
+console.log(params)
 
     error = this.checkError(params);
     if (!error) {
@@ -323,17 +261,16 @@ export class AonSellerAdd extends AonElement {
   }
 
   checkError(params) {
-	if (!params.seller) {
-		this.showMessageError("El campo agente es obligatorio");
-		return true;
-	} else if (!params.type) {
-		this.showMessageError("El campo tipo es obligatorio");
-		return true;
-	} else if (!params.start_date) {
-		this.showMessageError("El campo fecha de inicio es obligatorio");
-		return true;
-	} 
-
+    if (!params.seller) {
+      this.showMessageError("El campo agente es obligatorio");
+      return true;
+    } else if (!params.type) {
+      this.showMessageError("El campo tipo es obligatorio");
+      return true;
+    } else if (!params.start_date) {
+      this.showMessageError("El campo fecha de inicio es obligatorio");
+      return true;
+    }
     return false;
   }
 }

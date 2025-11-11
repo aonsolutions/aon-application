@@ -397,6 +397,7 @@ export class AonNewMenu extends AonElement {
 	 openPlans() {
         const plansPanel = new AonPlans();
         this.rootPanel(plansPanel);
+		this.closeMenuIsMobile();
     }
 
 	buildMenuSidenav() {

@@ -93,6 +93,7 @@ export class AonNewInput extends AonElement {
 	}
 
 	initialize() {
+		this.id = this.id || `aAonNewInput-${generateSimpleUUID()}`;
 		this.ROOT = this.id + CONSTANT.ROOT.initCap();
 		this.BOX = this.id + CONSTANT.BOX.initCap();
 		this.LABEL = this.id + CONSTANT.LABEL.initCap();

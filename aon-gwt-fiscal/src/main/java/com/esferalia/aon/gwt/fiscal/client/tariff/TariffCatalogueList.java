@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -15,7 +16,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -208,8 +208,20 @@ public class TariffCatalogueList extends HTMLPanel {
 			
 			@Override
 			public void onSuccess(List<ProductBooking> products) {
-				products.sort(Comparator.comparing(Product::isComposition).reversed());
-				success.accept(products);
+				List<ProductBooking> packsProducts = products
+					.stream()
+				    .sorted(
+				        Comparator.comparing(
+				                ProductBooking::getBookingType,
+				                Comparator.comparingInt(type -> type == ProductBookingType.PLAN ? 0 : 1)
+				        ).thenComparing(
+				                ProductBooking::getPosition,
+				                Comparator.nullsLast(Comparator.naturalOrder())
+				        )
+				    )
+				    .collect(Collectors.toList());
+				
+				success.accept(packsProducts);
 			}
 			
 			@Override

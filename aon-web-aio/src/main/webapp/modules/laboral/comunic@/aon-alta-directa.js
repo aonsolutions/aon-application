@@ -605,6 +605,7 @@ export class AonAltaDirecta extends AonElement {
     async alta() {
         this.getApplication().startLoading();
         try {
+           
             const resp = await sendAlta(this.getContract());
 
             this.getApplicationParent()._movements = [];
