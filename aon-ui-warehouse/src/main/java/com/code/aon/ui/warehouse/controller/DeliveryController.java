@@ -38,7 +38,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
@@ -60,15 +59,11 @@ import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
-import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -100,7 +95,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryPackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
-import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -433,7 +427,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 
 	public void loadAddresses(Integer id) throws ManagerBeanException {
-		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		List<SelectItem> addresses = new LinkedList<>();
 		this.addressesFilter = null;
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -460,7 +454,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public void loadProjects(Integer id) throws ManagerBeanException {
-		this.projects = new LinkedList<SelectItem>();
+		this.projects = new LinkedList<>();
 		if (id != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
@@ -588,17 +582,17 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 
 	public void obtainListTotals(ActionEvent event) {
-		double listTotal = 0.0; 
+		double total = 0.0; 
 		try {	
 			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
-				listTotal += getDeliveryTotalPrice((Delivery)ito);
+				total += getDeliveryTotalPrice((Delivery)ito);
 			}
 		} catch (ManagerBeanException e) {
 			String message = "Imposible obtener el Total";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
 		}		
-		setListTotal(listTotal);
+		setListTotal(total);
 	}
 
 	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
@@ -870,7 +864,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public List<SelectItem> getHours() {
-		List<SelectItem> hours = new LinkedList<SelectItem>();
+		List<SelectItem> hours = new LinkedList<>();
 		for(int i=0; i<24; i++){
 			SelectItem item = new SelectItem(String.format("%02d", i));
 			hours.add(item);
@@ -879,7 +873,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public List<SelectItem> getMinutes() {
-		List<SelectItem> minutes = new LinkedList<SelectItem>();
+		List<SelectItem> minutes = new LinkedList<>();
 		for(int i=0; i<60; i++){
 			SelectItem item = new SelectItem(String.format("%02d", i));
 			minutes.add(item);
