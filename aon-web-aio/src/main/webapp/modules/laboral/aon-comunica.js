@@ -1,12 +1,10 @@
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
-import Apps, { COMUNICA } from "../../services/app.js";
+import { COMUNICA } from "../../services/app.js";
 import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
-//import 'aoncss';
 
 export class AonComunica extends AonComunicaUtils {
-
   initialize(){
     this.AON_COMUNICA = 'aonComunica';
     this.title = this.title || MSG.PAYROLL;
@@ -25,9 +23,9 @@ export class AonComunica extends AonComunicaUtils {
   }
 
   buildToolbar(){
-    if(this.isMobile()){
-			this.getApplication().addMobileSidenavHeader(Apps.COMUNICA);
-		}
+    // if(this.isMobile()){
+		// 	this.getApplication().addMobileSidenavHeader(Apps.COMUNICA);
+		// }
 
     let options = [];
 
@@ -40,20 +38,20 @@ export class AonComunica extends AonComunicaUtils {
     options.push(movements);
 
     let aon_cta_list = PayrollOptions.AON_CCC;
-      aon_cta_list.fn = () =>{
+    aon_cta_list.fn = () =>{
+      this.getApplication().removeToolbarOptions();
+      this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
+    }
+    options.push(aon_cta_list);
+    // if(!this.isMobile()){
+      let aon_cert = PayrollOptions.AON_CERT;
+      aon_cert.fn = () => {
         this.getApplication().removeToolbarOptions();
-        this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
+        // if(window.innerWidth && window.innerWidth < 900){ this.getApplication().closeSidenav(); }
+        this.showView(PAYROLL_VIEWS.AON_CERT);
       }
-      options.push(aon_cta_list);
-      if(!this.isMobile()){
-        let aon_cert = PayrollOptions.AON_CERT;
-        aon_cert.fn = () => {
-          this.getApplication().removeToolbarOptions();
-          // if(window.innerWidth && window.innerWidth < 900){ this.getApplication().closeSidenav(); }
-          this.showView(PAYROLL_VIEWS.AON_CERT);
-        }
-        options.push(aon_cert);
-      }
+      options.push(aon_cert);
+    // }
     
     let data = {
       id: MSG.COMUNICA,

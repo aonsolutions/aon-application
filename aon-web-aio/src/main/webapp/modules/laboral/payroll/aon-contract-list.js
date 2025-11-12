@@ -3,7 +3,7 @@ import { getContracts, getContractSepe } from "../../../services/service.js";
 import { isEmptyObject, sortBy } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
-import { AonMobileList } from "../../../components/aon-mobile-list.js";
+// import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
@@ -44,7 +44,8 @@ export class AonContractList extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    // let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
@@ -84,14 +85,14 @@ export class AonContractList extends AonElement {
     }]);
   }
 
-
   async getTable(){
     this.getApplication().startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
+    // if (this.isMobile())
+    //   await this.getTableMobile();
+    // else 
+      await this.getTableDesk();
     this.getApplication().stopLoader();
   }
-
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);

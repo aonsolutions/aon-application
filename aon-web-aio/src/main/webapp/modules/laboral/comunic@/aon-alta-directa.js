@@ -71,7 +71,6 @@ export class AonAltaDirecta extends AonElement {
         });
     }
 
-
     paintView() {
         this.getApplication().removeToolbarOptions();
 
@@ -89,14 +88,14 @@ export class AonAltaDirecta extends AonElement {
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
         createContractData(aonContratoCard.getContent(), this.isManager() && !(this.data && this.data.fra) );
 
-        if(!this.isMobile() && this.data && this.data.status) {
+        // if(!this.isMobile() && this.data && this.data.status) {
+        if(this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
             titleRight.innerHTML = this.data.status;
         }
         if(this.data && !this.isAlta()){
             disabledForm(aonContratoCard.id);
         }
-
     }
 
     buildToolbar() {
@@ -107,7 +106,8 @@ export class AonAltaDirecta extends AonElement {
             toolbar.addButton2(ACTION_COMUNICA.DUPLICATE, () => this.duplicateMov());
         }
             
-        if(!this.isMobile() && this.data && this.data.fra){
+        // if(!this.isMobile() && this.data && this.data.fra){
+        if(this.data && this.data.fra){
             toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => this.openDialogReports(ev));
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
