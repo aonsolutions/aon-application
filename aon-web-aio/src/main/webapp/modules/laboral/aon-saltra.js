@@ -1,6 +1,6 @@
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
-import Apps from "../../services/app.js";
+// import Apps from "../../services/app.js";
 import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 //import 'aoncss';
@@ -25,9 +25,9 @@ export class AonSaltra extends AonComunicaUtils {
   }
 
   buildToolbar(){
-    if(this.isMobile()){
-			this.getApplication().addMobileSidenavHeader(Apps.COMUNICA);
-		}
+    // if(this.isMobile()){
+		// 	this.getApplication().addMobileSidenavHeader(Apps.COMUNICA);
+		// }
 
     let options = [];
 
@@ -41,7 +41,7 @@ export class AonSaltra extends AonComunicaUtils {
         this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
       }
       options.push(aon_cta_list);
-      if(!this.isMobile()){
+      // if(!this.isMobile()){
         let aon_cert = PayrollOptions.AON_CERT;
         aon_cert.fn = () => {
           this.getApplication().removeToolbarOptions();
@@ -49,7 +49,7 @@ export class AonSaltra extends AonComunicaUtils {
           this.showView(PAYROLL_VIEWS.AON_CERT);
         }
         options.push(aon_cert);
-      }
+      // }
 
     this.getApplication().addSidenavOptions(MSG.SALTRA, options);
 

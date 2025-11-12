@@ -256,7 +256,6 @@ export const createContractData = (parent, isManager) => {
         }
     }, divC.element);
 
-    dateContract.value = AonDateUtils.formatDateOrigin(new Date());
 }
 
 

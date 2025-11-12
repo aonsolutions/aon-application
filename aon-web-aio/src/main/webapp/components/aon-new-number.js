@@ -84,6 +84,8 @@ export class AonNewNumber extends AonNewInput {
 
     constructor() {
         super();
+        // Usar el onInput de este componente y no el del input
+        this.onInput = AonNewNumber.prototype.onInput;
     }
 
     connectedCallback() {
@@ -170,8 +172,7 @@ export class AonNewNumber extends AonNewInput {
     }
 
     onInput(fn) {
-        let input = this.getElement(this.getAttribute('id') + 'Input');
-        input.addEventListener(EVENT.INPUT, fn);
+        super.addEventListener(EVENT.INPUT, fn);
     }
 
     setAlign(align){

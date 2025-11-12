@@ -5,10 +5,9 @@ import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkpl
 import {  PRESENCE_FILTER } from "../../timecontrol/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
-import { AonMobileList } from "../../../components/aon-mobile-list.js";
+// import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
@@ -64,7 +63,8 @@ export class AonPayrollList extends AonElement {
   }
 
   paintView() {    
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    // let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
@@ -73,7 +73,6 @@ export class AonPayrollList extends AonElement {
     this.getApplication().removeToolbarOptions();
     this.buildToolbarSearch();
   }
-
 
   buildToolbarSearch(){
     const btnSearch = this.getApplication().addSearchOption();
@@ -95,7 +94,6 @@ export class AonPayrollList extends AonElement {
     this.searchValueDefault();
   }
 
-
   async searchValueDefault(){
     // ----------WORKPLACES ------------
     let workplaces = await getWorkplaceCCCs();
@@ -105,7 +103,6 @@ export class AonPayrollList extends AonElement {
       if(detail) this.getEmployees(detail);
     });
     // ----------WORKPLACES END ------------
-
 
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
@@ -126,7 +123,8 @@ export class AonPayrollList extends AonElement {
   async getTable() {
     await waitEl("#aonLaboral");
     this.getApplication().startLoader();
-    this.isMobile() ? await this.getTableMobile() :  this.getTableDesk();
+    // this.isMobile() ? await this.getTableMobile() :  this.getTableDesk();
+    this.getTableDesk();
     this.getApplication().stopLoader();
   }
 

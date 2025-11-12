@@ -3,11 +3,7 @@ import { CONSTANT, MSG, EVENT } from "../../../environments/environments.js";
 import * as GWT from "../../../gwt/gwt.js";
 import * as LS from "../../../services/localStorageService.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
-import {
-  getDomainUserRoles,
-  getIDC, getTA,
-  movDelete
-} from "../../../services/service.js";
+import { getDomainUserRoles, getIDC, getTA, movDelete } from "../../../services/service.js";
 import { setValueName, waitEl } from "../../../services/utils.js";
 import { AonDocumentalList } from "../../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../../documental/aon-mobile-documental-list.js";
@@ -214,13 +210,15 @@ export class AonComunicaUtils extends AonElement {
           aonView = new AonPayrollList();
           break;
         case PAYROLL_VIEWS.AON_SEPA_FILES_LIST:
-          aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonSepaList();
-          if(this.isMobile()) aonView.setFilter({ type: "system" });
+          aonView = new AonSepaList();
+          // aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonSepaList();
+          // if(this.isMobile())
+          //   aonView.setFilter({ type: "system" });
           break;
         case PAYROLL_VIEWS.AON_CONTRACT_LIST:
-          if (this.isMobile()) 
-            aonView = new AonContractList();
-          else 
+          // if (this.isMobile()) 
+          //   aonView = new AonContractList(); 
+          // else 
             this.goContractDesk();
             // this.getApplication().closeSidenav();
           break;
@@ -229,9 +227,9 @@ export class AonComunicaUtils extends AonElement {
           // this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CTA_LIST:
-          if (this.isMobile()) 
-            aonView = new AonCtaList();
-          else 
+          // if (this.isMobile()) 
+          //   aonView = new AonCtaList();
+          // else 
             this.loadGwt(GWT.MAIN_CCC);
             // this.getApplication().closeSidenav();
           break;
@@ -244,7 +242,7 @@ export class AonComunicaUtils extends AonElement {
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
           if(LS.isNewTheme()){
             aonView = new AonCompanyCostsListNew();
-			aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
+            aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
           } else {
             aonView = new AonCompanyCostsList();
           }
@@ -256,9 +254,9 @@ export class AonComunicaUtils extends AonElement {
         if (data) aonView.data = data;
         this.getApplication().setContent(aonView);
         
-        if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
+        // if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
           /*await paintCompanyCostPieChart();*/
-        }
+        // }
       }
       resolve(aonView);
     });

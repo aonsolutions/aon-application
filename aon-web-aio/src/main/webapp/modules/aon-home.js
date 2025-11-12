@@ -299,8 +299,7 @@ export class AonHome extends AonElement {
 	
 	// Cerrar el popup si se hace clic fuera del popup-content
  	closePopupOnOutsideClick(openpBtn, event) {
-        let rightPanelContent = document.querySelector(".rightPanel");
-
+    let rightPanelContent = document.querySelector(".rightPanel");
 		if (!rightPanelContent.contains(event.target) && !openpBtn.contains(event.target)) {
 	       	this.editButton.style.display='none';
 			this.configButton.style.display='none';

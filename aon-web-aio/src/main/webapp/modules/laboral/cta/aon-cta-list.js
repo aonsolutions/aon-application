@@ -10,7 +10,7 @@ import {
 } from "../../../services/service.js";
 import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT } from "../../../environments/environments.js";
-import { AonMobileList } from "../../../components/aon-mobile-list.js";
+// import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
@@ -46,14 +46,17 @@ export class AonCtaList extends AonElement {
   async build() {
     this.paintView();
     this.getApplication().startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
+    // if (this.isMobile()) 
+    //   await this.getTableMobile();
+    // else 
+      await this.getTableDesk();
     this.getApplication().stopLoader();
   }
   
   paintView() {
     this.getApplication().removeToolbarOptions();        
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    // let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }

@@ -5,7 +5,7 @@ import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
 import { CONSTANT,  EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js";
-import { AonMobileList } from "../../../components/aon-mobile-list.js";
+// import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import * as LS from "../../../services/localStorageService.js";
@@ -62,18 +62,19 @@ export class AonMovementsList extends AonElement {
   }
 
   paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    // let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    let aonTable = new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
   }
 
   buildToobar() {
     this.getApplication().removeToolbarOptions();
-    if (this.isMobile()) {
-      this.getApplication().addFloatOption(SigninSidenav.ADD, () => this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA) );
-    } else {
+    // if (this.isMobile()) {
+    //   this.getApplication().addFloatOption(SigninSidenav.ADD, () => this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA) );
+    // } else {
       this.getApplication().addToolbarOption2(SigninSidenav.ADD, () =>  this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
-    }
+    // }
 
     let timeOut = null;
 
@@ -125,8 +126,10 @@ export class AonMovementsList extends AonElement {
 
   async getTable(){
     this.getApplication().startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
+    // if (this.isMobile()) 
+    //   await this.getTableMobile();
+    // else 
+      await this.getTableDesk();
     this.getApplication().stopLoader();
   }
 
@@ -319,9 +322,9 @@ export class AonMovementsList extends AonElement {
         error.message =  EXCEPTION_MESSAGE[error.message];
       }
 
-      if(!this.isMobile()){
+      // if(!this.isMobile()){
         this.getApplicationParent().showView(PAYROLL_VIEWS.AON_CERT);
-      }
+      // }
 
       this.showToast(error);
     }
