@@ -633,9 +633,8 @@ export class AonAltaDirecta extends AonElement {
             const asociativeSA = this.getElement("asociativeSA");
             const params = {
                 ...this.data, 
-                fechaBaja: fechaBajaEl.getValue(), 
+                fechaBaja: fechaBajaEl.getDateValue(), 
                 situation: codBajaEl.value, 
-                // dayVacation: dayVacation.value ? dayVacation.value : 0,
                 frv: frv.value ? frv.value : undefined, 
                 asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
             };
@@ -766,11 +765,6 @@ export class AonAltaDirecta extends AonElement {
 
         const dialog = application.getDialog();
         dialog.clear();
-        // if(this.isMobile()){
-        //     dialog.type = "fullscreen";
-        // } else {
-        //     dialog.width = '40%';
-        // }
   
         dialog.setTitle("Datos de Baja");
     
@@ -807,16 +801,15 @@ export class AonAltaDirecta extends AonElement {
         dayVacation.setAlign('left');
         dayVacation.onInput(({target}) =>{
             let value = target.value;
-            
             if(value && !isNaN(parseInt(value)) ){
                 value = parseInt(value);
-                let fechaBaja = new Date(fechaEl.value);
+                let fechaBaja = new Date(fechaEl.getDateValue());
                 if(fechaEl && fechaBaja.isValid()){
                     frv.setDate( fechaBaja.addDay(value) );
                     createAsociativeSA(true);
                 }
             } else {
-                frv.value = "";
+                frv.setDate("");
                 createAsociativeSA();
             }
         });
