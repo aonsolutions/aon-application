@@ -381,8 +381,8 @@ public class RawdocDAO {
 	}
 	
 	public static RawdocUserData getUserData(AONContext ctx, byte[] auth){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		Domain domain = DOMAIN.as("d");
 		Domain parent = DOMAIN.as("p");

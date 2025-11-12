@@ -83,6 +83,7 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CommercialDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
@@ -919,10 +920,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setDocument(targetOpt.get().getDocument())
 						.setPhone(phone);
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
