@@ -507,15 +507,14 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	        Boolean isChecked = input.isChecked();
 //	        parent.getSend().setVisible(isChecked);
 //	        parent.getBaja().setVisible(isChecked);
+	        selFiles = new LinkedList<>();
 	        for (Invoice element : dataProvider.getList()) {
 	        	selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
 					selFiles.add(element);
 				}
 	        }
-	        if(!isChecked){
-	        	selFiles = new LinkedList<>();
-	        }
+	        select(selFiles);
 	    }
 	}
 
