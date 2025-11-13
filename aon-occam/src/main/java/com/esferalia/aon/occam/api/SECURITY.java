@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
@@ -78,6 +79,12 @@ public class SECURITY {
 		return new JSONObject(jwt.getSubject())
 				.put("expired", jwt.getExpiresAt() != null
 					&& jwt.getExpiresAt().before(currrentDate));
+	}
+	
+	public static Auth saveAuth(Auth auth) {
+		try (CloseableAONContext ctx = AONContext.getGlobalAONContext()){
+			return getSecurity().saveAuth(ctx, auth);
+		}
 	}
 	
 	public static AuthDevice saveAuthDevice(Domain domain, String login, AuthDevice ad) {
