@@ -329,7 +329,6 @@ public class ProductDAO {
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(PRODUCT_BOOKING.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ProductBookingFiller())
 				.findFirst().orElse(new ProductBooking());
 	}

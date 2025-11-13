@@ -251,111 +251,54 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	}
 	
 	private void createFee(ProductBooking product) {
+		Fee newFee = new Fee()
+				.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
+				.setProject(new Project())
+				.setItem(new OldItem().setId(product.getItem().getId()).setBarcode(product.getItem().getBarcode()))
+				.setDescription(product.getName())
+				.setQuantity(1.00)
+				.setPrice(product.getItem().getPrice())
+				.setStartDate(new Date())
+				.setBillingDate(DateUtils.getLastDayOfMonth())
+				.setPeriod(BillingPeriod.MONTHLY)
+				;
+		
 		if(product.getBookingType().equals(ProductBookingType.PLAN)) {
 			List<Integer> packItemIds = products.stream().filter(p -> p.isManufactured()).map(p -> p.getItem().getId()).collect(Collectors.toList());
 			Optional<Fee> feeItem = customerFees.stream().filter(cf -> packItemIds.contains(cf.getItem().getId()) && (cf.getEndDate() == null || cf.getEndDate().after(new Date()) || cf.getEndDate().equals(new Date()))).findFirst();
 			
 			if(feeItem.isPresent()) {
-				COMMON_SERVICE.updateEndDatePackFee(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), feeItem.get(), new AsyncCallback<Void>() {
+				COMMON_SERVICE.updateBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, feeItem.orElse(null), product, newFee, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						AonMessagePanel.showError(messagePanel, "Error contrataci\u00f3n: " + caught.getMessage());
 					}
 
 					@Override
 					public void onSuccess(Void arg0) {
-						COMMON_SERVICE.updateBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), feeItem.get(), product, new AsyncCallback<Void>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(Void arg0) {
-								Fee fee = new Fee()
-										.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
-										.setProject(new Project())
-										.setItem(new OldItem().setId(product.getItem().getId()).setBarcode(product.getItem().getBarcode()))
-										.setDescription(product.getName())
-										.setQuantity(1.00)
-										.setPrice(product.getItem().getPrice())
-										.setStartDate(new Date())
-										.setBillingDate(DateUtils.getLastDayOfMonth())
-										.setPeriod(BillingPeriod.MONTHLY)
-										;
-											
-									COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
-
-										@Override
-										public void onFailure(Throwable caught) {
-											AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
-										}
-
-										@Override
-										public void onSuccess(Void arg0) {
-											COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
-
-												@Override
-												public void onFailure(Throwable caught) {
-													AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
-												}
-
-												@Override
-												public void onSuccess(Void arg0) {
-													onSearch(domainType, tariff);
-													reloadDialog();
-												}
-												
-											});
-										}
-										
-									});
-							}
-							
-						});
+						onSearch(domainType, tariff);
+						reloadDialog();
 					}
 				});
-			} else {
-				Fee fee = new Fee()
-						.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
-						.setProject(new Project())
-						.setItem(new OldItem().setId(product.getItem().getId()).setBarcode(product.getItem().getBarcode()))
-						.setDescription(product.getName())
-						.setQuantity(1.00)
-						.setPrice(product.getItem().getPrice())
-						.setStartDate(new Date())
-						.setBillingDate(DateUtils.getLastDayOfMonth())
-						.setPeriod(BillingPeriod.MONTHLY)
-						;
-							
-					COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
+			} 
+			
+			else {
+				
+				COMMON_SERVICE.createBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, newFee, new AsyncCallback<Void>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
-						}
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error contrataci\u00f3n: " + caught.getMessage());
+					}
 
-						@Override
-						public void onSuccess(Void arg0) {
-							COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
-								}
-
-								@Override
-								public void onSuccess(Void arg0) {
-									onSearch(domainType, tariff);
-									reloadDialog();
-								}
-								
-							});
-						}
-						
-					});
+					@Override
+					public void onSuccess(Void arg0) {
+						onSearch(domainType, tariff);
+						reloadDialog();
+					}
+				});
+				
 			}
 		}
 		
@@ -363,73 +306,36 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		else if(isFeeProduct(product.getItem().getId()) && !product.getBookingType().equals(ProductBookingType.PLAN)) {
 			Optional<Fee> fee = customerFees.stream().filter(feeIt -> feeIt.getItem().getId().equals(product.getItem().getId())).findFirst();
 			if(fee.isPresent()){
-				COMMON_SERVICE.updateEndDatePackFee(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), fee.get(), new AsyncCallback<Void>() {
+				COMMON_SERVICE.removeBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, fee.orElse(null), product, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error borrado cuota: " + caught.getMessage());
+						AonMessagePanel.showError(messagePanel, "Error contrataci\u00f3n: " + caught.getMessage());
 					}
 
 					@Override
 					public void onSuccess(Void arg0) {
-						COMMON_SERVICE.updateBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), fee.get(), product, new AsyncCallback<Void>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(Void arg0) {
-								onSearch(domainType, tariff);
-								reloadDialog();
-								
-							}
-							
-						});
+						onSearch(domainType, tariff);
+						reloadDialog();
 					}
-					
 				});
+				
 			}
 		} else {
-			Fee fee = new Fee()
-					.setDomain(new Domain().setId(officeDomainOptions.getDomain()))
-					.setProject(new Project())
-					.setItem(new OldItem().setId(product.getItem().getId()).setBarcode(product.getItem().getBarcode()))
-					.setDescription(product.getName())
-					.setQuantity(1.00)
-					.setPrice(product.getItem().getPrice())
-					.setStartDate(new Date())
-					.setBillingDate(DateUtils.getLastDayOfMonth())
-					.setPeriod(BillingPeriod.MONTHLY)
-					;
-						
-				COMMON_SERVICE.createFeeRelatedRegistry(officeDomainOptions.getDomainName(), officeDomainOptions.getDomain(), officeDomainOptions.getUser(), customerRelatedRegistry, fee, new AsyncCallback<Void>() {
+			COMMON_SERVICE.createBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, newFee, new AsyncCallback<Void>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
-					}
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error contrataci\u00f3n: " + caught.getMessage());
+				}
 
-					@Override
-					public void onSuccess(Void arg0) {
-						COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Error creando contrataci\u00f3n: " + caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(Void arg0) {
-								onSearch(domainType, tariff);
-								reloadDialog();
-							}
-							
-						});
-					}
-					
-				});
+				@Override
+				public void onSuccess(Void arg0) {
+					onSearch(domainType, tariff);
+					reloadDialog();
+				}
+			});
+			
 		}
 	}
 	
