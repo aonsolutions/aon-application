@@ -295,7 +295,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 										@Override
 										public void onSuccess(Void arg0) {
-											COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), product, new AsyncCallback<Void>() {
+											COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
 
 												@Override
 												public void onFailure(Throwable caught) {
@@ -339,7 +339,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 						@Override
 						public void onSuccess(Void arg0) {
-							COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), product, new AsyncCallback<Void>() {
+							COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -413,7 +413,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 
 					@Override
 					public void onSuccess(Void arg0) {
-						COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), product, new AsyncCallback<Void>() {
+						COMMON_SERVICE.createBookingFee(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, new AsyncCallback<Void>() {
 
 							@Override
 							public void onFailure(Throwable caught) {

@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -26,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementOwner;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
+import com.esferalia.aon.gwt.payroll.shared.DateVariable;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -421,6 +423,7 @@ public abstract class AgreementPreview extends Composite {
 
 	private ListBox tc2ListBox;
 	private ListBox levelListBox;
+	private MonthListBox monthListBox;
 	private TextBox partialTextBox;
 	private ListBox groupListBox;
 	private Label pdfLoaded;
@@ -628,6 +631,14 @@ public abstract class AgreementPreview extends Composite {
 			showSalaryTable();
 		else
 			showLevelTable();
+		
+		
+		List<Date> sortedDates = agreement.getDates().stream().sorted().collect(Collectors.toList());
+		if ( !sortedDates.isEmpty() ) {
+			monthListBox.setFirstMonth(sortedDates.get(0));
+			monthListBox.setHighLightMonths(agreement.getDates());
+			monthListBox.setSelectedMonth(sortedDates.get(sortedDates.size() - 1));
+		}
 		
 		Set<Payment> payments = agreement.getPaymentsAndHides();
 		Set<Payment> paymentsOld = agreement.getOldPaymentsAndHides();
@@ -2833,6 +2844,11 @@ public abstract class AgreementPreview extends Composite {
 		levelListBox.addChangeHandler(e -> printPreview());
 		toolbarSimulator.add(levelListBox);
 
+		monthListBox = new MonthListBox();
+		monthListBox.setHighLightStyles(AON.AON_BOLD);
+		monthListBox.addChangeHandler(e -> printPreview());
+		toolbarSimulator.add(monthListBox);
+		
 		Label partilialityL = new Label("Coef. Part.");
 		partilialityL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		partialTextBox = new TextBox();
@@ -2926,7 +2942,9 @@ public abstract class AgreementPreview extends Composite {
 		context.add(new StringVariable.Builder().setName("TC2").setValue(tc2).create());
 		context.add(new StringVariable.Builder().setName("GRUPO_COTIZACION").setValue(group).create());
 		context.add(new NumberVariable.Builder().setName("COEFICIENTE_PARCIALIDAD").setValue(partial).create());
-
+		if ( monthListBox.getSelectedMonth() != null )
+			context.add(new DateVariable.Builder().setName("MES").setValue(monthListBox.getSelectedMonth()).create());
+		
 		impl.getAgreementDraftReceipt(agreement, context, levelId, "application/pdf", new AsyncCallback<String>() {
 
 			@Override
