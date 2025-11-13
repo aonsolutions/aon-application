@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -781,10 +782,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 //				passwordMail = login;
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
@@ -839,10 +840,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				auth = new Auth().setEmail(email).setPassword(pass).setName(targetOpt.get().getName()).setSurname(null)
 						.setDocument(targetOpt.get().getDocument()).setPhone(phone);
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;

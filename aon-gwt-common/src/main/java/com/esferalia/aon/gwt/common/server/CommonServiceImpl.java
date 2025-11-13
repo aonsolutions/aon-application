@@ -115,6 +115,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -543,6 +544,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getTargetSuggestion(domainName, domain, user);
+	}
+	
+	@Override
+	public List<ProjectType> getAviableProjectTypes(String domainName, int domain, String user, int domainSearch) throws AonCoreException {
+		return AON.getProjectTypeStream(
+				new Domain().setName(domainName).setId(domain), 
+				new User().setLogin(user), 
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1))
+			).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -1719,6 +1729,47 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			fee.setEndDate(yesterday);
 			AON.save(domainName, domainId, user, fee);
 		}
+		
+		closeProductProject(domainName, domainId, user, fee);
+		
+	}
+	
+	private void closeProductProject(String domainName, int domainId, String user, Fee fee) {
+		Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
+		OldItem feeItem = AON.getItem(
+				siblingOffice.getName(), siblingOffice.getId(), user, 
+				f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(fee.getItem().getId()))
+		);
+		ProductBooking feeProductBooking = AON.getProductBooking(
+				new Domain().setName(siblingOffice.getName()).setId(siblingOffice.getId()), 
+				user, 
+				f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(feeItem.getProduct().getId()))
+		);
+		
+		if(null != feeProductBooking.getProjectType())
+			closeProductProject(domainName, domainId, user, fee.getCustomer().getId(), feeProductBooking);
+	}
+	
+	private void closeProductProject(String domainName, int domainId, String user, Integer registryId, ProductBooking product) {
+		Project project = AON.getProjectFull(domainName, domainId, user, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
+		
+		// Inactivar expediente
+		if(null != project && null != project.getId()){
+			
+			project.setActive(false);
+			
+			if(!project.getProjectHolders().isEmpty()) {
+				
+				Optional<ProjectHolder> projectHolderOpt = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
+				
+				if(!projectHolderOpt.isEmpty()) {
+					projectHolderOpt.get().setEndDate(new Date());
+				}
+			}
+			
+			AON.saveProject(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), project);
+				
+		}
 	}
 	
 	@Override
@@ -1737,7 +1788,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		feeProductBooking.getAonApps().forEach(aonApp -> {
 			updateDomainApp(domainName, domainId, user, aonApp, userDb.getId(), fee.getStartDate().after(yesterday));
 		});
-		
 	}
 	
 	private void updateDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId, boolean delete) {
@@ -1767,8 +1817,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public void createBookingFee(String domainName, int domainId, String user, ProductBooking product) throws AonCoreException {
+	public void createBookingFee(String domainName, int domainId, String user, Integer customerRelatedRegistry, ProductBooking product) throws AonCoreException {
 
+		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getRelationshipProperty().eq(-1)));
+		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
+		
 		User userDb = AON.getUser(domainName, domainId, user);
 		
 		// Set Trial false
@@ -1798,8 +1851,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			insertDomainApp(domainName, domainId, user, aonApp, userDb.getId());
 		});
 		
+		if(null != product.getProjectType())
+			createUpdateProductProject(domainName, domainId, user, existRelationShip.get().getRegistry(), product);
+		
 	}
-	
 	private void insertDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId) {
 		try {
 			DomainApp domainApp = new DomainApp()
@@ -1834,6 +1889,60 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			});
 			
 		} 
+	}
+	
+	private void createUpdateProductProject(String domainName, int domainId, String user, Integer registryId, ProductBooking product) {
+		Project project = AON.getProjectFull(domainName, domainId, user, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
+		
+		// Crear expediente
+		if(null == project || null == project.getId()){
+			
+			Project newProject = new Project();
+			newProject.setDomain(product.getDomain());
+			newProject.setType(product.getProjectType());
+			newProject.setRegistry(new Registry().setId(registryId));
+			newProject.setName(product.getCode() + " (AutoContratacion)");
+			newProject.setDate(new Date());
+			newProject.setActive(true);	
+			
+			if(null != product.getWorkgroup() || null != product.getTaskHolder()) {
+				newProject.setProjectHolders(
+						List.of(
+							new ProjectHolder()
+								.setDomain(product.getDomain().getId())
+								.setWorkgroup(product.getWorkgroup())
+								.setTaskHolder(product.getTaskHolder())
+								.setStartDate(new Date())
+						));
+			}
+			
+			AON.saveProject(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), newProject);
+			
+		// Actualizar expediente	
+		} else {
+			
+			project.setActive(true);
+			
+			if(!project.getProjectHolders().isEmpty()) {
+				
+				Optional<ProjectHolder> projectHolderOpt = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
+				
+				if(!projectHolderOpt.isEmpty())
+					projectHolderOpt.get().setEndDate(new Date());
+				
+			}
+			
+			if(null != product.getWorkgroup() || null != product.getTaskHolder())
+				project.getProjectHolders().add(
+						new ProjectHolder()
+							.setDomain(product.getDomain().getId())
+							.setWorkgroup(product.getWorkgroup())
+							.setTaskHolder(product.getTaskHolder())
+							.setStartDate(new Date())
+				);
+				
+			AON.saveProject(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), project);
+		}
 	}
 	
 	@Override
