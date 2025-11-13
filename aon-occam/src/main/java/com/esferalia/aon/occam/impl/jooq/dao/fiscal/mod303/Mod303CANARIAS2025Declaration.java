@@ -295,7 +295,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		,CA_C062(Mod303Key.CA_C062)
 		,CA_C063(Mod303Key.CA_C063)
 		,CA_C064(Mod303Key.CA_C064)
-		,CA_C065(Mod303Key.CA_C065, null, null, null, "CA_C052+CA_C053+CA_C054+CA_C055+CA_C056+CA_C057+CA_C058+CA_C059+CA_C060+CA_C061+CA_C062-CA_C063-CA_C064", null) // Total volumen de operaciones
+		,CA_C065(Mod303Key.CA_C065, null, null, null, "isLastPeriod() ? CA_C052+CA_C053+CA_C054+CA_C055+CA_C056+CA_C057+CA_C058+CA_C059+CA_C060+CA_C061+CA_C062-CA_C063-CA_C064 : 0.0", null) // Total volumen de operaciones
 		
 		// Modelo 417: Prorrata
 		,CA_P1C(Mod303Key.CA_P1C)
@@ -338,7 +338,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		,CA_C210(Mod303Key.CA_C210)
 		,CA_C211(Mod303Key.CA_C211)
 		,CA_C212(Mod303Key.CA_C212)
-		,CA_C213(Mod303Key.CA_C213, null, null, null, "CA_C201+CA_C203+CA_C205+CA_C207+CA_C209+CA_C211+CA_C212", null) // Suma de deducciones Grupo 1
+		,CA_C213(Mod303Key.CA_C213, null, null, null, "isLastPeriod() ? CA_C201+CA_C203+CA_C205+CA_C207+CA_C209+CA_C211+CA_C212 : 0.0", null) // Suma de deducciones Grupo 1
 		,CA_C214(Mod303Key.CA_C214)
 		,CA_C215(Mod303Key.CA_C215)
 		,CA_C216(Mod303Key.CA_C216)
@@ -352,7 +352,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		,CA_C224(Mod303Key.CA_C224)
 		,CA_C225(Mod303Key.CA_C225)
 		,CA_C226(Mod303Key.CA_C226)
-		,CA_C227(Mod303Key.CA_C227, null, null, null, "CA_C215+CA_C217+CA_C219+CA_C221+CA_C223+CA_C225+CA_C226", null) // Suma de deducciones Grupo 2
+		,CA_C227(Mod303Key.CA_C227, null, null, null, "isLastPeriod() ? CA_C215+CA_C217+CA_C219+CA_C221+CA_C223+CA_C225+CA_C226 : 0.0", null) // Suma de deducciones Grupo 2
 		,CA_C228(Mod303Key.CA_C228)
 		,CA_C229(Mod303Key.CA_C229)
 		,CA_C230(Mod303Key.CA_C230)
@@ -366,7 +366,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		,CA_C238(Mod303Key.CA_C238)
 		,CA_C239(Mod303Key.CA_C239)
 		,CA_C240(Mod303Key.CA_C240)
-		,CA_C241(Mod303Key.CA_C241, null, null, null, "CA_C229+CA_C231+CA_C233+CA_C235+CA_C237+CA_C239+CA_C240", null) // Suma de deducciones Grupo 3
+		,CA_C241(Mod303Key.CA_C241, null, null, null, "isLastPeriod() ? CA_C229+CA_C231+CA_C233+CA_C235+CA_C237+CA_C239+CA_C240 : 0.0", null) // Suma de deducciones Grupo 3
 		;
 		
 		private Mod303Key key;
