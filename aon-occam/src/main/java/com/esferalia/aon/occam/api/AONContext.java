@@ -104,7 +104,7 @@ public class AONContext {
 	
 	/**
 	 * @deprecated Usar getAONContext(String domainName, Integer domainId, <b>String user</b>)
-	 *  para obtener el usuario, desde un servlet (parte cliente), se puede llamar al método
+	 *  para obtener el usuario, desde un servlet (parte cliente), se puede llamar al mï¿½todo
 	 *  <code>AonServletUtils.getLoggedUser()<code>
 	 */
 	@Deprecated
@@ -265,7 +265,6 @@ public class AONContext {
 	private DSLContext dslContext;
 	private Connection connection;
 	private String domainName;
-	private int domainId;
 	private String user;
 	
 	private AonConfiguration config;
@@ -289,7 +288,6 @@ public class AONContext {
 		this.user = user;
 		this.connection = connection;
 		this.dslContext = DSL.using(connection,getDefaultSettings());
-		this.domainId = getDomainId(dslContext, domainName);
 	}
 
 	private AONContext(Connection connection, String domainName, Integer domainId, String user) {
@@ -297,14 +295,13 @@ public class AONContext {
 		this.user = user;
 		this.connection = connection;
 		this.dslContext = DSL.using(connection,getDefaultSettings());
-		this.domainId = domainId != null ? domainId : getDomainId(dslContext, domainName);
 	}
 
 	public String getDomainName() {
 		return domainName;
 	}
 	public int getDomainId() {
-		return domainId ;
+		return getDomainId(dslContext, domainName);
 	}
 
 	public DSLContext getDslContext() {
@@ -389,7 +386,7 @@ public class AONContext {
 
 				@Override
 				public void error(String msg) {
-					log.log(Level.SEVERE, ERR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+					log.log(Level.SEVERE, ERR, new Object[]{new Date(), AONContext.this.domainName ,msg});
 				}
 				@Override
 				public void error(String msg, Object ... params) {
@@ -398,7 +395,7 @@ public class AONContext {
 
 				@Override
 				public void warn(String msg) {
-					log.log(Level.WARNING, WAR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+					log.log(Level.WARNING, WAR, new Object[]{new Date(), AONContext.this.domainName ,msg});
 				}
 				@Override
 				public void warn(String msg, Object ... params) {
@@ -407,7 +404,7 @@ public class AONContext {
 
 				@Override
 				public void info(String msg) {
-					log.log(Level.INFO, INF, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+					log.log(Level.INFO, INF, new Object[]{new Date(), AONContext.this.domainName ,msg});
 				}
 				@Override
 				public void info(String msg, Object ... params) {
@@ -416,7 +413,7 @@ public class AONContext {
 
 				@Override
 				public void debug(String msg) {
-					log.log(Level.FINE, DEB, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+					log.log(Level.FINE, DEB, new Object[]{new Date(), AONContext.this.domainName ,msg});
 				}
 				@Override
 				public void debug(String msg, Object ... params) {
