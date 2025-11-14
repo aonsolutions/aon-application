@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,31 +12,56 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
+import net.aonsolutions.aon.api.servlet.Utils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiRelationshipServlet", urlPatterns = {"/ms/api/relationship/*"})
@@ -354,9 +381,220 @@ public class RelationshipServlet extends AonApiHttpServlet {
 						.setUserId(user.getId()));
 				
 			}
+			
+			// Check if user exists
+			try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+				
+				ctx.transaction(t -> {
+					List<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(company.getDomain().getId()), new Options().setFull(true)).collect(Collectors.toList());
+					
+					if(domainUsers.size() == 0) {
+						RegistryMedia emailRegistryMedia = AON.getRegistryMedia(new Domain().setName(api.getDomain().getName()).setId(api.getDomain().getId()), 
+								new User().setLogin(api.getUser().getLogin()), 
+								f -> f.getDomainProperty().eq(company.getDomain().getId()).and(f.getRegistryProperty().eq(company.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))));
+						
+						if(null != emailRegistryMedia && null != emailRegistryMedia.getId()) {
+							
+							String email = emailRegistryMedia.getValue();
+							
+							if (Utils.isEmail(email)) {
+								
+								String login = ramdonLogin();
+								String pass = null;
+								
+								Auth auth = AON_SOLUTIONS.getAuth(email);
+								
+								if (pass == null) pass = Utils.createPasswordHash(email, login);
+								
+								if (auth.getUuid() == null) {
+									auth = new Auth()
+											.setEmail(email)
+											.setPassword(pass)
+											.setName(company.get().getName())
+											.setSurname(null)
+											.setDocument(company.get().getDocument())
+											;
+
+									auth = AuthDAO.insertAuth(ctx, auth);
+								} else {
+									auth.setPassword(pass);
+									auth = AuthDAO.updateAuth(ctx, auth);
+								}
+
+								User newUser = null;
+								if (auth.getAuth() != null) {
+									newUser = createUser(ctx, company.getDomain(), auth, login, company.get().getName());
+									setUserAppRole(ctx, company.getDomain(), newUser);
+
+									if (company.getDomain().isChild() || company.getDomain().isStandalone()) {
+										createTaskHolder(ctx, company.getDomain(), auth, newUser);
+									}
+								}
+								
+							} else {
+								System.err.println("El email (" + email + ") no tiene un formato correcto.");
+							}
+						}
+					}
+				});
+				
+			}
 		}
 		
 		return AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
+	}
+	
+	private static String ramdonLogin() {
+		Random rnd = new Random();
+		Integer i = rnd.nextInt(100000000 - 10000000 + 1) + 10000000;
+		return i.toString();
+	}
+
+	private static User createUser(CloseableAONContext ctx, Domain newDomain, Auth auth, String login, String name) {
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
+
+		User newUser = new User()
+				.setAuth(auth)
+				.setActive(true)
+				.setDomain(newDomain.getId())
+				.setLogin(newCompany.getDocument())
+				.setName(AonStringUtils.isNotBlank(name) ? name : newCompany.getDocument())
+				.setShared(false)
+				.setEnterprise(newCompany.getId())
+				.setToolbar(UserToolbar.GOOGLE);
+
+		
+		newUser = SecurityDAO.save(ctx, newUser);
+
+		SecurityDAO.updateUserPassword(ctx, newUser.getId(), auth.getPassword());
+
+		Scope scope = getScope(ctx, newDomain, newUser);
+
+		if (scope != null) {
+			SecurityDAO.insertUserScope(
+					ctx, 
+					new UserScope()
+					.setDomain(newDomain.getId())
+					.setScope(scope.getId())
+					.setUserId(newUser.getId())
+			);
+		}
+
+		ApplicationParameter appParam = AppParamDAO.fetchOne(ctx, AppParam.AON_PORTAL);
+		
+		if (appParam == null || appParam.getId() == null) {
+			
+			appParam = new ApplicationParameter()
+					.setDomain(newDomain.getId())
+					.setValue("288")
+					.setName(AppParam.AON_PORTAL.getValue());
+			
+			AppParamDAO.insertApplicationParameter(ctx, appParam);
+		}
+
+		return newUser;
+	}
+
+	private static Scope getScope(CloseableAONContext ctx, Domain newDomain, User newUser) {
+
+		Scope s = SecurityDAO.getScopeStream(
+				ctx, 
+				f -> f.getDomainProperty().eq(newDomain.getId())
+					.and(f.getDescriptionProperty().eq("GENERAL"))
+				)
+				.findFirst().orElse(null);
+
+		if (s == null && newDomain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getParentId())
+						.and(f.getDescriptionProperty().eq("GENERAL"))
+					)
+					.findFirst().orElse(null);
+		}
+
+		if (s == null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getId())
+					)
+					.findFirst().orElse(null);
+		}
+
+		if (s == null && newDomain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getParentId())
+					)
+					.findFirst().orElse(null);
+		}
+
+		return s;
+	}
+	
+
+	private static void setUserAppRole(CloseableAONContext ctx, Domain newDomain, User user) {
+		Integer userId = user.getId();
+
+		LinkedList<AonRole> aRoles = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(userId))
+				.map(r -> r.getRole())
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
+		tRoles.add(AonRole.ENTERPRISE);
+		tRoles.add(AonRole.INVOICE_PORTAL);
+		tRoles.add(AonRole.INVOICE);
+
+		AonRole.stream().forEach(role -> {
+			if (aRoles.contains(role) && !tRoles.contains(role)) {
+				SecurityDAO.deleteUserAppRole(ctx, 
+						f -> f.getDomainProperty().eq(newDomain.getId())
+							.and(f.getUserIdProperty().eq(userId))
+							.and(f.getRoleProperty().eq(role.value()))
+				);
+			}
+			
+			if (!aRoles.contains(role) && tRoles.contains(role)) {
+				SecurityDAO.insertUserAppRole(ctx, 
+						new UserAppRole()
+						.setApp(null)
+						.setDomain(newDomain.getId())
+						.setRole(role)
+						.setUser(userId)
+				);
+			}
+		});
+		
+		SecurityDAO.insertUserApplicationAio(ctx, newDomain.getId(), userId);
+	}
+	
+	private static void createTaskHolder(CloseableAONContext ctx, Domain newDomain, Auth auth, User newUser) {
+
+		String alias = AonStringUtils.isBlank(auth.getName())
+				? newUser.getName()
+				: auth.getName().length() > 32 ? auth.getName().substring(0, 31) : auth.getName();
+		
+		Registry newRegistry = RegistryDAO.save(ctx, 
+				new Registry()
+				.setDocument(auth.getDocument())
+				.setName(
+						AonStringUtils.isBlank(auth.getName())
+						? newUser.getName()
+						: auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())) )
+				.setAlias(alias)
+				.setDomain(newDomain)
+		);
+		
+		newUser.setRegistry(newRegistry);
+		newUser = UserDAO.save(ctx, newUser);
+		
+		TaskHolder taskHolder = new TaskHolder()
+				.copy(newRegistry)
+				.setActive(true)
+				.setUserId(newUser.getId());
+		
+		taskHolder = TaskHolderDAO.save(ctx, taskHolder);
+
 	}
 	
 	private static JSONObject deleteRelationship(AonApiData api) {
