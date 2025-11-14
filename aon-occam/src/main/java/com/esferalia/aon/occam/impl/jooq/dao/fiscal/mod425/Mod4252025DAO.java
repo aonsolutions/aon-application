@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,7 +15,6 @@ import java.util.EnumMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.jooq.Condition;
@@ -43,9 +41,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod390DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_2024.AEATIVA2024;
-import com.esferalia.aon.occam.impl.jooq.dao.mod425_2025.ATC4252025toMod425;
-import com.esferalia.aon.occam.impl.jooq.dao.mod425_2025.Mod425toATC4252025;
+import com.esferalia.aon.occam.impl.jooq.dao.mod425_2025.DEC;
+import com.esferalia.aon.occam.impl.jooq.dao.mod425_2025.DECToMod425;
+import com.esferalia.aon.occam.impl.jooq.dao.mod425_2025.Mod425ToDEC;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
@@ -61,25 +59,16 @@ public class Mod4252025DAO {
 	private static final byte ZERO_BYTE = 0;
 	private static final byte ONE_BYTE = 1;
 	
-	
-	public static final double PERCENT0 = 0.0;
-	public static final double PERCENT3 = 2.0;
-	public static final double PERCENT5 = 4.0;
-	public static final double PERCENT7 = 4.0;
-	public static final double PERCENT95 = 5.0;
-	public static final double PERCENT15 = 7.5;
-	public static final double PERCENT20 = 10.0;
-//	public static final double SURCHARGE_PERCENT00 = 0.0;
-//	public static final double SURCHARGE_PERCENT026 = 0.26;
-//	public static final double SURCHARGE_PERCENT05 = 0.5;
-//	public static final double SURCHARGE_PERCENT062 = 0.62;
-//	public static final double SURCHARGE_PERCENT10 = 1.0;
-//	public static final double SURCHARGE_PERCENT14 = 1.4;
-//	public static final double SURCHARGE_PERCENT52 = 5.2;
-//	public static final double SURCHARGE_PERCENT175 = 1.75;
+	private static final double PERCENT0 = 0.0;
+	private static final double PERCENT3 = 3.0;
+	private static final double PERCENT5 = 5.0;
+	private static final double PERCENT7 = 7.0;
+	private static final double PERCENT95 = 9.5;
+	private static final double PERCENT15 = 15.0;
+	private static final double PERCENT20 = 10.0;
 	
 	@FunctionalInterface
-	public static interface IMod425DetailKey {
+	private static interface IMod425DetailKey {
 		boolean accept(Mod4252025 mod,VatContext vc);
 	}
 
@@ -99,15 +88,7 @@ public class Mod4252025DAO {
 		}
 	}
 	
-												//	  C003	(  3,  0.00, true, false)
-												//	 ,C006	(  6,  3.00, true, false)
-												//	 ,C009	(  9,  7.00, true, false)		
-												//	 ,C012	( 12,  9.50, true, false)
-												//	 ,C015	( 15, 15.00, true, false)
-												//	 ,C018	( 18, 20.00, true, false)
-												//	 ,C018B ( 18,  5.00, true, false)
-	
-	public enum Mod4252025DetailKeyDAO implements Serializable {
+	private enum Mod4252025DetailKeyDAO implements Serializable {
 		// BASE IMPONIBLE, TIPOS Y CUOTAS
 	 	// Régimen ordinario
 		  C003  (Mod4252025DetailKey.C003 , (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent0(vc))
@@ -183,75 +164,35 @@ public class Mod4252025DAO {
 
 		 // Operaciones específicas
 		 ,C120 (Mod4252025DetailKey.C120, ((mod, vc) -> (vc.isNationalSales() && !vc.isVatAccrualRegime() && vc.isVatGeneralRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL)))) // Operaciones en régimen general
-		 ,C121 (Mod4252025DetailKey.C121, null) // Se obtiene en getDetails(). Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991	 
+//		 ,C121 (Mod4252025DetailKey.C121, null) // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991	 
 		 ,C122 (Mod4252025DetailKey.C122, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity() && !vc.isService()))) // Exportaciones definitivas y operaciones asimiladas a la exportación
-		 ,C123 (Mod4252025DetailKey.C123, null) // Operaciones relativas a áreas exentas
-		 ,C124 (Mod4252025DetailKey.C124, null) // Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
-		 ,C125 (Mod4252025DetailKey.C125, null) // Otras operaciones exentas con derecho a deducción
+//		 ,C123 (Mod4252025DetailKey.C123, null) // Operaciones relativas a áreas exentas
+//		 ,C124 (Mod4252025DetailKey.C124, null) // Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
+//		 ,C125 (Mod4252025DetailKey.C125, null) // Otras operaciones exentas con derecho a deducción
 		 ,C126 (Mod4252025DetailKey.C126, ((mod, vc) -> ((vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType()) || (vc.isNationalSales() && AonMathUtils.isZero(vc.getPercentage()) && vc.getVatRegime() != null && vc.isActivityVatExempt())))) // Operaciones exentas sin derecho a deducción
-		 ,C127 (Mod4252025DetailKey.C127, null) // Operaciones en régimen simplificado
+//		 ,C127 (Mod4252025DetailKey.C127, null) // Operaciones en régimen simplificado
 		 ,C128 (Mod4252025DetailKey.C128, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isOtherISP() || vc.isCanCeuMel() || (vc.isExtracommunity() && vc.isService()))))) // Operaciones no sujetas por reglas de localización o con inversión del sujeto pasivo
-		 ,C129 (Mod4252025DetailKey.C129, null) // Operaciones en régimen especial de la agricultura, ganadería y pesca
-		 ,C130 (Mod4252025DetailKey.C130, null) // Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
-		 ,C131 (Mod4252025DetailKey.C131, null) // Operaciones en régimen especial de agencias de viajes
-		 ,C132 (Mod4252025DetailKey.C132, null) // Entregas de bienes inmuebles y operaciones financieras no habituales
-		 ,C133 (Mod4252025DetailKey.C133, null) // Entregas de bienes de inversión para el transmitente
-		 ,C134 (Mod4252025DetailKey.C134, null) // Total volumen de operaciones
-		 ,C135 (Mod4252025DetailKey.C135, null) // Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
-		 ,C136 (Mod4252025DetailKey.C136, null) // Cuotas de I.G.I.C. soportado no deducible
-		 ,C137 (Mod4252025DetailKey.C137, null) // Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
+//		 ,C129 (Mod4252025DetailKey.C129, null) // Operaciones en régimen especial de la agricultura, ganadería y pesca
+//		 ,C130 (Mod4252025DetailKey.C130, null) // Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
+//		 ,C131 (Mod4252025DetailKey.C131, null) // Operaciones en régimen especial de agencias de viajes
+//		 ,C132 (Mod4252025DetailKey.C132, null) // Entregas de bienes inmuebles y operaciones financieras no habituales
+//		 ,C133 (Mod4252025DetailKey.C133, null) // Entregas de bienes de inversión para el transmitente
+//		 ,C134 (Mod4252025DetailKey.C134, null) // Total volumen de operaciones
+//		 ,C135 (Mod4252025DetailKey.C135, null) // Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
+//		 ,C136 (Mod4252025DetailKey.C136, null) // Cuotas de I.G.I.C. soportado no deducible
+//		 ,C137 (Mod4252025DetailKey.C137, null) // Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
 		 
 		 // Exclusivamente para aquellos sujetos pasivos acogidos al régimen especial de criterio de caja y para aquellos que sean destinatarios de operaciones afectadas por el mismo
-		 ,C139 (Mod4252025DetailKey.C139, null) //	Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 138
-		 ,C141 (Mod4252025DetailKey.C141, null) //	Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991
+//		 ,C139 (Mod4252025DetailKey.C139, null) //	Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 138
+//		 ,C141 (Mod4252025DetailKey.C141, null) //	Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991
 		
 		 // Declaración informativa del volumen de operaciones en el régimen especial del pequeño empresario o profesional (exclusivamente a cumplimentar por los sujetos pasivos acogidos al REPEP)
-		 ,C142 (Mod4252025DetailKey.C142, null) //	Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
-		 ,C143 (Mod4252025DetailKey.C143, null) //	Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
-		 ,C144 (Mod4252025DetailKey.C144, null) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
-		 ,C145 (Mod4252025DetailKey.C145, null) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
-		 ,C146 (Mod4252025DetailKey.C146, null) //	Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
-		 ,C147 (Mod4252025DetailKey.C147, null) //	Total volumen de operaciones en el REPEP
-		 
-//		 
-//		 // Operaciones en régimen general
-//		 ,C0099	 (Mod4252025DetailKey.C0099, ((mod, vc) -> (vc.isNationalSales() && !vc.isVatAccrualRegime() && vc.isVatGeneralRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL))))
-//		 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
-//		 ,C0653	 (Mod4252025DetailKey.C0653, null) // Se obtiene en getDetails()
-//		 // Entregas intracomunitarias de bienes y servicios
-//		 ,C0103	 (Mod4252025DetailKey.C0103, ((mod, vc) -> ( vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
-//		 // Exportaciones y otras operaciones exentas con derecho a deducción
-//		 ,C0104	 (Mod4252025DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity() && !vc.isService())))
-//		 // Operaciones exentas sin derecho a deducción (Se añaden tambien las ventas nacionales a porcentaje 0% de actividades exentas) 
-//		 ,C0105	 (Mod4252025DetailKey.C0105, ((mod, vc) -> ((vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType()) || (vc.isNationalSales() && AonMathUtils.isZero(vc.getPercentage()) && vc.getVatRegime() != null && vc.isActivityVatExempt()))))
-//		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126) (Se añaden tambien las extracomunitarias de servicios, que se quitan de la 104) (Se quitan las ISP de clientes españoles, que van a la 125)
-//		 ,C0110	 (Mod4252025DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && ((vc.isOtherISP() && !vc.isSpainDocumentCountry()) || vc.isCanCeuMel() || (vc.isExtracommunity() && vc.isService())))))
-//		 // Operaciones sujetas con inversión del sujeto pasivo (Ventas ISP de clientes españoles)
-//		 ,C0125	 (Mod4252025DetailKey.C0125, ((mod, vc) -> vc.isOtherISPSales() && vc.isSpainDocumentCountry()))
-//		 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
-//		 ,C0126	 (Mod4252025DetailKey.C0126, null)
-//		 // Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única
-//		 ,C0127	 (Mod4252025DetailKey.C0127, null)
-//		 // Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA
-//		 ,C0128	 (Mod4252025DetailKey.C0128, null)
-//		 // Operaciones en régimen simplificado
-//		 ,C0100	 (Mod4252025DetailKey.C0100, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSimplifiedRegime())))
-//		 // Operaciones en régimen especial de la agricultura, ganadería y pesca
-//		 ,C0101	 (Mod4252025DetailKey.C0101, null)
-//		 // Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia
-//		 ,C0102	 (Mod4252025DetailKey.C0102, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSurchargeRegime())))
-//		 // Operaciones en Régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección
-//		 ,C0227	 (Mod4252025DetailKey.C0227, null)
-//		 // Operaciones en régimen especial de Agencias de Viajes
-//		 ,C0228	 (Mod4252025DetailKey.C0228, null)
-//		 // Entregas de bienes inmuebles, operaciones financieras y relativas al oro de inversión no habituales
-//		 ,C0106	 (Mod4252025DetailKey.C0106, null)
-//		 // Entregas de bienes de inversión
-//		 ,C0107	 (Mod4252025DetailKey.C0107, ((mod, vc) -> (vc.isNationalSales() && vc.isInvestment())))
-//		 // Total volumen de operaciones 
-//		 ,C0108	 (Mod4252025DetailKey.C0108, null)
-//		 // Operaciones específicas - Adquisiciones interiores de bienes y servicios exentas 
-//		 ,C0230	 (Mod4252025DetailKey.C0230, ((mod, vc) -> operacionesInterioresExentasFilter(vc)))
+//		 ,C142 (Mod4252025DetailKey.C142, null) //	Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
+//		 ,C143 (Mod4252025DetailKey.C143, null) //	Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
+//		 ,C144 (Mod4252025DetailKey.C144, null) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
+//		 ,C145 (Mod4252025DetailKey.C145, null) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
+//		 ,C146 (Mod4252025DetailKey.C146, null) //	Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
+//		 ,C147 (Mod4252025DetailKey.C147, null) //	Total volumen de operaciones en el REPEP
 		 ;		 
 		 
 		private Mod4252025DetailKey key;
@@ -277,27 +218,22 @@ public class Mod4252025DAO {
 			.forEach(key ->  map.put(key, new Mod425Detail().setKey(key).setPercent(key.getPercent())));
 		VATDAO.getVatBreakdown(ctx, mod425)
 			.flatMap(vt -> Arrays.stream( Mod4252025DetailKeyDAO.values() )
-				.filter(key -> key.accept(mod425, vt))
-				
-				.map( key -> new KeyedVatContext(key, vt)))
-			
-			.map( kvt -> checkProrrated(ctx, mod425, kvt))
-			
+			.filter(key -> key.accept(mod425, vt))
+			.map(key -> new KeyedVatContext(key, vt)))
+			.map(kvt -> checkProrrated(ctx, mod425, kvt))
 			.map(kvt -> new Pair<KeyedVatContext,Mod425Detail>(kvt, map.computeIfAbsent(kvt.getKey().getKey(), k -> new Mod425Detail().setKey(k).setPercent(kvt.getVatContext().getPercentage()))))
-			.forEach(Mod4252025DAO::add );
+			.forEach(Mod4252025DAO::add);
 		
 		// Regimen especial de criterio de caja.
 		double vatAccBase = getVatAccrualPaymentOutputBase(ctx, mod425); 
-		map.get(Mod4252025DetailKey.C139).setTaxableBase( vatAccBase );
-//		map.get(Mod4252025DetailKey.C0654).setTaxableBase( vatAccBase );
-		map.get(Mod4252025DetailKey.C139).setQuota( getVatAccrualPaymentOutputQuota(ctx, mod425) );
-		map.get(Mod4252025DetailKey.C141).setTaxableBase( getVatAccrualPaymentInputBase(ctx, mod425) );
-		map.get(Mod4252025DetailKey.C141).setQuota( getVatAccrualPaymentInputQuota(ctx, mod425) );
+		mod425.setBox138(vatAccBase);
+		mod425.setBox139(getVatAccrualPaymentOutputQuota(ctx, mod425));
+		mod425.setBox140(getVatAccrualPaymentInputBase(ctx, mod425));
+		mod425.setBox141(getVatAccrualPaymentInputQuota(ctx, mod425));
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
 		
 		// Si se asigna el valor habría que sumar los declarado en las declaraciones y no sacer los datos de las facturas.
-		
 		
 		Condition cond = FS_MODEL.YEAR.eq(mod425.getYear())
 				.and(FS_MODEL.PERIOD.eq(Period.T4.value()).or(FS_MODEL.PERIOD.eq(Period.M12.value())) );
@@ -315,7 +251,6 @@ public class Mod4252025DAO {
 		KeyedVatContext kvt = pair.getLeft();
 		Mod4252025DetailKey key = kvt.getKey().getKey();
 		Mod425Detail detail = pair.getRight();
-//		double q = key.isSurcharge()?kvt.getVatContext().getSurchargeQuota():kvt.getVatContext().getQuota();
 		double q = kvt.getVatContext().getQuota();
 		if (key.isProrrataEnabled()) {
 			if (kvt.getVatContext().isProrrated())
@@ -348,9 +283,6 @@ public class Mod4252025DAO {
 				if (m303.isFirstPeriod()) {
 					mod425.setBox114( m303.getAmount( Mod303Key.CA_C043) );
 				} 
-//				else if (m303.isLastPeriod()) {
-//					mod425.setBox662(  m303.getAmount( Mod303Key.CT_C87) );
-//				}
 			});
 		
 	}
@@ -369,6 +301,8 @@ public class Mod4252025DAO {
 					String document = rec.getValue(RDIR_STAFF.DOCUMENT);
 					String name = rec.getValue(RDIR_STAFF.NAME);
 					
+					// FALTA - AQUI CREO QUE VAN LOS DATOS DEL DOMICILIO FISCAL					
+					
 					if (mod425.isLegalEntity()) {
 						LegalRepresentative legalRepr = new LegalRepresentative()
 							.setDocument(document)
@@ -385,7 +319,7 @@ public class Mod4252025DAO {
 		}
 	}
 	
-	public static Mod4252025 create(AONContext ctx, Mod390 model) {
+	private static Mod4252025 create(AONContext ctx, Mod390 model) {
 		Mod4252025 mod425 = new Mod4252025();
 		mod425.setId(model.getId());
 		mod425.setDomain(model.getDomain());
@@ -551,16 +485,16 @@ public class Mod4252025DAO {
 		.setComments(rec.getValue(FS_MODEL390.COMMENTS));
 		
 		String model = rec.getValue(FS_MODEL390.MODEL);
-		// FALTA - CAMBIARLO POR LA CONVERSION DESDE EL XML DEL 425
-		if (AonStringUtils.contains(model, "<AEATIVA2024>"))  {
+		// FALTA - CONTROLAR QUE LA CABECERA DEL XML SEA LA CORRECTA - MIRAR TAMBIEN EL AÑO O A PARTIR DE ESE AÑO
+		if (AonStringUtils.contains(model, "<DEC MOD=\"425\" ANY=\""+mod425.getYear()+"\""))  { 
 			StringReader reader = new StringReader(rec.getValue(FS_MODEL390.MODEL));
 			try {
 				if (mod425.getYear() >= 2025) {
-					JAXBContext context = JAXBContext.newInstance(AEATIVA2024.class);
+					JAXBContext context = JAXBContext.newInstance(DEC.class);
 					Unmarshaller um = context.createUnmarshaller();
-					AEATIVA2024 iva = (AEATIVA2024) um.unmarshal(reader);
-					ATC4252025toMod425.populate(mod425, iva);
-					mod425.setXmlFormat("AEAT_2024");
+					DEC dec = (DEC) um.unmarshal(reader);
+					DECToMod425.populate(mod425, dec);
+					mod425.setXmlFormat("DEC_425_2025");
 				} else {
 					throw new IllegalArgumentException("Ejercicio incorrecto.");
 				}
@@ -574,14 +508,13 @@ public class Mod4252025DAO {
 		
 	}
 	
-	public static String getXMLContentById(AONContext ctx, Integer id) {
-		ctx.checkRead();
-		return ctx.getDslContext()
-			.selectFrom(FS_MODEL390)
-			.where(FS_MODEL390.ID.equal(id))
-			.fetchOne(FS_MODEL390.MODEL);
-	}
-
+//	private static String getXMLContentById(AONContext ctx, Integer id) {
+//		ctx.checkRead();
+//		return ctx.getDslContext()
+//			.selectFrom(FS_MODEL390)
+//			.where(FS_MODEL390.ID.equal(id))
+//			.fetchOne(FS_MODEL390.MODEL);
+//	}
 
 	public static Mod4252025 save(AONContext ctx, Mod4252025 mod425)  {
 		if (mod425.getId() == null) {
@@ -591,16 +524,10 @@ public class Mod4252025DAO {
 		}
 	}
 	
-	private static String getXMLModel( Mod4252025 mod425 ) {
+	private static String getXMLModel(Mod4252025 mod425) {
 		try {
 			if (mod425.getYear() >= 2025) {
-				AEATIVA2024 iva = Mod425toATC4252025.getAEATIVA2024(mod425);
-				StringWriter writer = new StringWriter();
-				JAXBContext context = JAXBContext.newInstance(AEATIVA2024.class);
-				Marshaller um = context.createMarshaller();
-				um.setProperty("jaxb.encoding", "ISO-8859-1");
-				um.marshal(iva,writer);
-				return AonStringUtils.trim(writer.toString());
+				return Mod425ToDEC.getDeclaration(mod425); 
 			} else {
 				throw new IllegalArgumentException("Ejercicio incorrecto.");
 			}
@@ -655,7 +582,8 @@ public class Mod4252025DAO {
 		return mod425;
 	}
 
-	// FALTA - AHORA TAMBIEN HAY QUE TENER EN CUENTA LA ADMINISTRACION Y TAMBIEN EN EL MODELO 390 DEL EJERCICIO 2025, PUES PODRIA HABER 2 MODELOS PARA EL MISMO AÑO DE DIFERENTES ADMINISTRACIONES
+	// FALTA - AHORA TAMBIEN HAY QUE TENER EN CUENTA LA ADMINISTRACION Y TAMBIEN EN EL MODELO 390 DEL EJERCICIO 2025,
+	// PUES PODRIA HABER 2 MODELOS PARA EL MISMO AÑO DE DIFERENTES ADMINISTRACIONES
 	private static void validate(AONContext ctx, Mod4252025 mod425) {
 		if (mod425.isReplacement()) {
 			// Se comprueba que exista la declaración sustituida.
@@ -721,67 +649,43 @@ public class Mod4252025DAO {
 		try {
 			Mod425Detail det = null;
 			EnumMap<Mod4252025DetailKey, Mod425Detail> map = getDetails(ctx, mod425);
-//			mod425.setBox99 (map.get(Mod4252025DetailKey.C0099).getTaxableBase());
-//			mod425.setBox100(map.get(Mod4252025DetailKey.C0100).getTaxableBase());
-//			mod425.setBox101(map.get(Mod4252025DetailKey.C0101).getTaxableBase());
-//			mod425.setBox102(map.get(Mod4252025DetailKey.C0102).getTaxableBase());
-//			mod425.setBox103(map.get(Mod4252025DetailKey.C0103).getTaxableBase());
-//			mod425.setBox104(map.get(Mod4252025DetailKey.C0104).getTaxableBase());
-//			mod425.setBox105(map.get(Mod4252025DetailKey.C0105).getTaxableBase());
-//			mod425.setBox106(map.get(Mod4252025DetailKey.C0106).getTaxableBase());
-//			mod425.setBox107(map.get(Mod4252025DetailKey.C0107).getTaxableBase());
-//			mod425.setBox108(map.get(Mod4252025DetailKey.C0108).getTaxableBase());
-//			mod425.setBox110(map.get(Mod4252025DetailKey.C0110).getTaxableBase());
-//			mod425.setBox125(map.get(Mod4252025DetailKey.C0125).getTaxableBase());
-//			mod425.setBox126(map.get(Mod4252025DetailKey.C0126).getTaxableBase());
-//			mod425.setBox127(map.get(Mod4252025DetailKey.C0127).getTaxableBase());
-//			mod425.setBox128(map.get(Mod4252025DetailKey.C0128).getTaxableBase());
-//			mod425.setBox227(map.get(Mod4252025DetailKey.C0227).getTaxableBase());
-//			mod425.setBox228(map.get(Mod4252025DetailKey.C0228).getTaxableBase());
-//			mod425.setBox653(map.get(Mod4252025DetailKey.C0653).getTaxableBase());
-//			mod425.setBox654(map.get(Mod4252025DetailKey.C0654).getTaxableBase());
-//			mod425.setBox655(map.get(Mod4252025DetailKey.C0654).getQuota());
-//			mod425.setAccrualRegime( ( map.get(Mod4252025DetailKey.C0654).getTaxableBase()  != 0 || map.get(Mod4252025DetailKey.C0654).getQuota() != 0 ) );
-//			mod425.setBox656(map.get(Mod4252025DetailKey.C0656).getTaxableBase());
-//			mod425.setBox657(map.get(Mod4252025DetailKey.C0656).getQuota());
-//			mod425.setAccrualRegimeTarget((map.get(Mod4252025DetailKey.C0656).getTaxableBase()  != 0 || map.get(Mod4252025DetailKey.C0656).getQuota() != 0 ));
-//			mod425.setBox230(map.get(Mod4252025DetailKey.C0230).getTaxableBase());
 			
 			// Operaciones esecíficas
 			mod425.setBox120(map.get(Mod4252025DetailKey.C120).getTaxableBase()); // 120 Operaciones en régimen general
-			mod425.setBox121(map.get(Mod4252025DetailKey.C121).getTaxableBase()); // 121 Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991
+//			mod425.setBox121(map.get(Mod4252025DetailKey.C121).getTaxableBase()); // 121 Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991
 			mod425.setBox122(map.get(Mod4252025DetailKey.C122).getTaxableBase()); // 122 Exportaciones definitivas y operaciones asimiladas a la exportación
-			mod425.setBox123(map.get(Mod4252025DetailKey.C123).getTaxableBase()); // 123 Operaciones relativas a áreas exentas
-			mod425.setBox124(map.get(Mod4252025DetailKey.C124).getTaxableBase()); // 124 Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
-			mod425.setBox125(map.get(Mod4252025DetailKey.C125).getTaxableBase()); // 125 Otras operaciones exentas con derecho a deducción
+//			mod425.setBox123(map.get(Mod4252025DetailKey.C123).getTaxableBase()); // 123 Operaciones relativas a áreas exentas
+//			mod425.setBox124(map.get(Mod4252025DetailKey.C124).getTaxableBase()); // 124 Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
+//			mod425.setBox125(map.get(Mod4252025DetailKey.C125).getTaxableBase()); // 125 Otras operaciones exentas con derecho a deducción
 			mod425.setBox126(map.get(Mod4252025DetailKey.C126).getTaxableBase()); // 126 Operaciones exentas sin derecho a deducción
-			mod425.setBox127(map.get(Mod4252025DetailKey.C127).getTaxableBase()); // 127 Operaciones en régimen simplificado
+//			mod425.setBox127(map.get(Mod4252025DetailKey.C127).getTaxableBase()); // 127 Operaciones en régimen simplificado
 			mod425.setBox128(map.get(Mod4252025DetailKey.C128).getTaxableBase()); // 128 Operaciones no sujetas por reglas de localización o con inversión del sujeto pasivo
-			mod425.setBox129(map.get(Mod4252025DetailKey.C129).getTaxableBase()); // 129 Operaciones en régimen especial de la agricultura, ganadería y pesca 
-			mod425.setBox130(map.get(Mod4252025DetailKey.C130).getTaxableBase()); // 130 Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
-			mod425.setBox131(map.get(Mod4252025DetailKey.C131).getTaxableBase()); // 131 Operaciones en régimen especial de agencias de viajes
-			mod425.setBox132(map.get(Mod4252025DetailKey.C132).getTaxableBase()); // 132 Entregas de bienes inmuebles y operaciones financieras no habituales
-			mod425.setBox133(map.get(Mod4252025DetailKey.C133).getTaxableBase()); // 133 Entregas de bienes de inversión para el transmitente
-			mod425.setBox134(map.get(Mod4252025DetailKey.C134).getTaxableBase()); // 134 Total volumen de operaciones
-			mod425.setBox135(map.get(Mod4252025DetailKey.C135).getTaxableBase()); // 135 Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
-			mod425.setBox136(map.get(Mod4252025DetailKey.C136).getTaxableBase()); // 136 Cuotas de I.G.I.C. soportado no deducible
-			mod425.setBox137(map.get(Mod4252025DetailKey.C137).getTaxableBase()); // 137 Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
+//			mod425.setBox129(map.get(Mod4252025DetailKey.C129).getTaxableBase()); // 129 Operaciones en régimen especial de la agricultura, ganadería y pesca 
+//			mod425.setBox130(map.get(Mod4252025DetailKey.C130).getTaxableBase()); // 130 Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
+//			mod425.setBox131(map.get(Mod4252025DetailKey.C131).getTaxableBase()); // 131 Operaciones en régimen especial de agencias de viajes
+//			mod425.setBox132(map.get(Mod4252025DetailKey.C132).getTaxableBase()); // 132 Entregas de bienes inmuebles y operaciones financieras no habituales
+//			mod425.setBox133(map.get(Mod4252025DetailKey.C133).getTaxableBase()); // 133 Entregas de bienes de inversión para el transmitente
+//			mod425.setBox134(map.get(Mod4252025DetailKey.C134).getTaxableBase()); // 134 Total volumen de operaciones
+//			mod425.setBox135(map.get(Mod4252025DetailKey.C135).getTaxableBase()); // 135 Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
+//			mod425.setBox136(map.get(Mod4252025DetailKey.C136).getTaxableBase()); // 136 Cuotas de I.G.I.C. soportado no deducible
+//			mod425.setBox137(map.get(Mod4252025DetailKey.C137).getTaxableBase()); // 137 Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
 			
 			// Exclusivamente para aquellos sujetos pasivos acogidos al régimen especial de criterio de caja y para aquellos	que sean destinatarios de operaciones afectadas por el mismo
-			mod425.setBox138(map.get(Mod4252025DetailKey.C139).getTaxableBase()); // 138 Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
-			mod425.setBox139(map.get(Mod4252025DetailKey.C139).getQuota()); // 139 Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota
-			mod425.setBox140(map.get(Mod4252025DetailKey.C141).getTaxableBase()); // 140 Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
-			mod425.setBox141(map.get(Mod4252025DetailKey.C141).getQuota()); // 141 Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota
+//			mod425.setBox138(map.get(Mod4252025DetailKey.C139).getTaxableBase()); // 138 Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
+//			mod425.setBox139(map.get(Mod4252025DetailKey.C139).getQuota()); // 139 Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota
+//			mod425.setBox140(map.get(Mod4252025DetailKey.C141).getTaxableBase()); // 140 Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
+//			mod425.setBox141(map.get(Mod4252025DetailKey.C141).getQuota()); // 141 Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota
 //			mod425.setAccrualRegime( ( map.get(Mod4252025DetailKey.C139).getTaxableBase()  != 0 || map.get(Mod4252025DetailKey.C139).getQuota() != 0 ) );		
-			mod425.setAccrualRegimeTarget((map.get(Mod4252025DetailKey.C141).getTaxableBase()  != 0 || map.get(Mod4252025DetailKey.C141).getQuota() != 0 ));
+//			mod425.setAccrualRegimeTarget((map.get(Mod4252025DetailKey.C141).getTaxableBase()  != 0 || map.get(Mod4252025DetailKey.C141).getQuota() != 0 ));
+			mod425.setAccrualRegimeTarget(mod425.getBox140() != 0 || mod425.getBox141() != 0);
 
 			// Declaración informativa del volumen de operaciones en el régimen especial del pequeño empresario o profesional
-			mod425.setBox142(map.get(Mod4252025DetailKey.C142).getTaxableBase()); // 142 Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
-			mod425.setBox143(map.get(Mod4252025DetailKey.C143).getTaxableBase()); // 143 Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
-			mod425.setBox144(map.get(Mod4252025DetailKey.C144).getTaxableBase()); // 144 Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
-			mod425.setBox145(map.get(Mod4252025DetailKey.C145).getTaxableBase()); // 145 Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
-			mod425.setBox146(map.get(Mod4252025DetailKey.C146).getTaxableBase()); // 146 Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
-			mod425.setBox147(map.get(Mod4252025DetailKey.C147).getTaxableBase()); // 147 Total volumen de operaciones en el REPEP
+//			mod425.setBox142(map.get(Mod4252025DetailKey.C142).getTaxableBase()); // 142 Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
+//			mod425.setBox143(map.get(Mod4252025DetailKey.C143).getTaxableBase()); // 143 Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
+//			mod425.setBox144(map.get(Mod4252025DetailKey.C144).getTaxableBase()); // 144 Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
+//			mod425.setBox145(map.get(Mod4252025DetailKey.C145).getTaxableBase()); // 145 Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
+//			mod425.setBox146(map.get(Mod4252025DetailKey.C146).getTaxableBase()); // 146 Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
+//			mod425.setBox147(map.get(Mod4252025DetailKey.C147).getTaxableBase()); // 147 Total volumen de operaciones en el REPEP
 			
 			// FALTA - REVISAR SI ESTO DEBE SEGUIR SIENDO ASI
 			// ----------------------------------------------------------------------------
@@ -809,40 +713,40 @@ public class Mod4252025DAO {
 		}
 	}
 
-	static class SimplifedRegimeContext {
-		private Mod303Key key;
-		private String description;
-		private double amount;
-
-		public SimplifedRegimeContext(Mod303Key key,String description,double amount) {
-			this.key = key;
-			this.description = description;
-			this.amount = amount;
-		}
-		public Mod303Key getKey() {
-			return key;
-		}
-		public void setKey(Mod303Key key) {
-			this.key = key;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		public double getAmount() {
-			return amount;
-		}
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
-	}
+//	static class SimplifedRegimeContext {
+//		private Mod303Key key;
+//		private String description;
+//		private double amount;
+//
+//		public SimplifedRegimeContext(Mod303Key key,String description,double amount) {
+//			this.key = key;
+//			this.description = description;
+//			this.amount = amount;
+//		}
+//		public Mod303Key getKey() {
+//			return key;
+//		}
+//		public void setKey(Mod303Key key) {
+//			this.key = key;
+//		}
+//		public String getDescription() {
+//			return description;
+//		}
+//		public void setDescription(String description) {
+//			this.description = description;
+//		}
+//		public double getAmount() {
+//			return amount;
+//		}
+//		public void setAmount(double amount) {
+//			this.amount = amount;
+//		}
+//	}
 	
-	@FunctionalInterface
-	static interface ISimplifiedRegimeFiller {
-		boolean fill(SimplifedRegimeContext src, Mod4252025 mod425);
-	}
+//	@FunctionalInterface
+//	static interface ISimplifiedRegimeFiller {
+//		boolean fill(SimplifedRegimeContext src, Mod4252025 mod425);
+//	}
 
 //	enum SimplifiedRegimeFiller {
 //		
@@ -1079,32 +983,31 @@ public class Mod4252025DAO {
 		}
 	}
 
-	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Mod390 mod425) {
+	private static double getVatAccrualPaymentOutputBase(AONContext ctx, Mod390 mod425) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod425.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod425);
 		return Mod390DAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
 	}
 
-	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Mod390 mod425) {
+	private static double getVatAccrualPaymentOutputQuota(AONContext ctx, Mod390 mod425) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod425.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod425);
 		return Mod390DAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
 	}
 
-	public static double getVatAccrualPaymentInputBase(AONContext ctx, Mod390 mod425) {
+	private static double getVatAccrualPaymentInputBase(AONContext ctx, Mod390 mod425) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod425.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod425);
 		return Mod390DAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
 	}
 
-	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Mod390 mod425) {
+	private static double getVatAccrualPaymentInputQuota(AONContext ctx, Mod390 mod425) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod425.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod425);
 		return Mod390DAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
-	
-	// FALTA - CANARIAS NO TIENE PRESENTACION DIRECTA
+	// CANARIAS NO TIENE PRESENTACION DIRECTA
 //	public static Mod4252025 aeatPresentation(AONContext ctx, Mod4252025 mod, String aeatResponse) {
 //		if (AonStringUtils.isNotBlank(aeatResponse)) {
 //			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
@@ -1147,31 +1050,6 @@ public class Mod4252025DAO {
 		return vat.getPercentage() == PERCENT20;
 	}
 
-//	private static boolean hasSurchargePercent00(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT00;
-//	}
-//	private static boolean hasSurchargePercent026(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT026;
-//	}
-//	private static boolean hasSurchargePercent05(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT05;
-//	}
-//	private static boolean hasSurchargePercent062(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT062;
-//	}
-//	private static boolean hasSurchargePercent10(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT10;
-//	}
-//	private static boolean hasSurchargePercent14(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT14;
-//	}
-//	private static boolean hasSurchargePercent52(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT52;
-//	}
-//	private static boolean hasSurchargePercent175(VatContext vat) {
-//		return vat.getSurchargePercent() == SURCHARGE_PERCENT175;
-//	}
-	
 	private static boolean isCommonNationalSales(VatContext vat, Mod4252025 mod) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime() 
@@ -1179,25 +1057,6 @@ public class Mod4252025DAO {
 			&& vat.isSales() 
 			&& !vat.isRectification();
 	}
-//	private static boolean isCommonNationalSalesRECT(VatContext vat, Mod4252025 mod) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& vat.isNational()
-//			&& vat.isSales() 
-//			&& vat.isRectification();
-//	}
-//	private static boolean isIntracommunityPurchase(VatContext vat, Mod4252025 mod) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& !vat.isRectification() 
-//			&& vat.isIntracommunityPurchase();
-//	}
-//	private static boolean isIntracommunityExpenses(VatContext vat, Mod4252025 mod) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& !vat.isRectification() 
-//			&& vat.isIntracommunityExpenses();
-//	}
 	
 	private static boolean isOperacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
@@ -1253,27 +1112,6 @@ public class Mod4252025DAO {
 		return false;
 	}
 	
-//	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
-//		return !vat.isInvestment() && adqIntracomunitariasFilter(vat);
-//	}
-//	private static boolean adqIntracomunitariasInversionFilter(VatContext vat) {
-//		return vat.isInvestment() && adqIntracomunitariasFilter(vat);
-//	}
-
-//	private static boolean adqIntracomunitariasFilter(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& !vat.isService()
-//			&& !vat.isRectification()
-//			&& vat.isIntracommunityPurchase();
-//	}
-//	private static boolean adqIntracomunitariasServicios(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& !vat.isRectification()
-//			&& (vat.isIntracommunityExpenses() || (vat.isIntracommunityPurchase() && vat.isService()));
-//	}
-
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime() 
@@ -1292,15 +1130,6 @@ public class Mod4252025DAO {
 						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
 						|| (vat.isCanCeuMelPurchase() && vat.isService())));
 	}
-	
-//	private static boolean operacionesInterioresExentasFilter(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
-//			&& !vat.isVatSurchargeRegime() 
-//			&& !vat.isRectification() 
-//			&& !vat.isFarmerRegime()
-//			&& AonMathUtils.isZero(vat.getPercentage())
-//			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
-//	}
 	
 	// Comprobar si la factura esta unida a un modelo 303 con porcentaje de prorrata
 	private static KeyedVatContext checkProrrated(AONContext ctx, Mod390 mod425, KeyedVatContext kvc) {

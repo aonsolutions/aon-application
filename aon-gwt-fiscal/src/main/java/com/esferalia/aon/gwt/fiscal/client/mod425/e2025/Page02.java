@@ -1,3 +1,4 @@
+// DATOS DEL REPRESENTANTE
 package com.esferalia.aon.gwt.fiscal.client.mod425.e2025;
 
 import java.util.Date;
@@ -124,14 +125,14 @@ public class Page02 extends PageAbs {
 		setWidget(scroll);
 		
 		basePanel.add(getTitle(AON.MSG.representativeData()));
-		basePanel.add(getSubtitle(AON.MSG.nonLegalEntities()));
+		basePanel.add(getSubtitle("PERSONAS F\u00CDSICAS Y COMUNIDADES DE BIENES"));
 		
 		AonDisplayTable tab0 = new AonDisplayTable();
 		tab0.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab0.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab0);
 		tab0.addRow()
-			.addCell(new Label(AON.MSG.representativeData()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.document()), AON.CSS.aonWidth150() )
 			.addCell(new Label(AON.MSG.name()));
 		
 		rname.setVisibleLength(42);
@@ -145,9 +146,6 @@ public class Page02 extends PageAbs {
 		tab1.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab1);
 		tab1.addRow()
-			.addCell(new Label(AON.MSG.representativeData()), AON.CSS.aonWidth150() )
-			.addCell(new Label(AON.MSG.name()) );
-		tab1.addRow()
 			.addCell(new Label(AON.MSG.streetType()), AON.CSS.aonWidth80() )
 			.addCell(new Label(AON.MSG.streetName()), AON.CSS.aonWidth150() )
 			.addCell(new Label(AON.MSG.streetNumber()), AON.CSS.aonWidth80() )
@@ -155,8 +153,8 @@ public class Page02 extends PageAbs {
 			.addCell(new Label(AON.MSG.streetFloor()), AON.CSS.aonWidth80() )
 			.addCell(new Label(AON.MSG.streetDoor()), AON.CSS.aonWidth80() )
 			.addCell(new Label(AON.MSG.phone()), AON.CSS.aonWidthAuto() );
-		rstreetType.setVisibleLength(4);
-		rstreetType.setMaxLength(4);
+		rstreetType.setVisibleLength(2);
+		rstreetType.setMaxLength(2);
 		rstreetName.setVisibleLength(30);
 		rstreetName.setMaxLength(30);
 		rstreetNumber.setVisibleLength(5);
@@ -198,18 +196,12 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getSubtitle(AON.MSG.legalEntities()));
 		
-		name1.setVisibleLength(25);
 		name1.setMaxLength(40);
-		name2.setVisibleLength(25);
 		name2.setMaxLength(40);
-		name3.setVisibleLength(25);
 		name3.setMaxLength(40);
 
-		notary1.setVisibleLength(20);
 		notary1.setMaxLength(20);
-		notary2.setVisibleLength(20);
 		notary2.setMaxLength(20);
-		notary3.setVisibleLength(20);
 		notary3.setMaxLength(20);
 		
 		AonDisplayTable tab3 = new AonDisplayTable();
@@ -218,10 +210,11 @@ public class Page02 extends PageAbs {
 		basePanel.add(tab3);
 		tab3.addRow()
 			.addCell(new Label(""), AON.CSS.aonWidth20() )
-			.addCell(new Label("D."), AON.CSS.aonWidth150() )
-			.addCell(new Label("NIF"), AON.CSS.aonWidth150() )
-			.addCell(new Label(AON.MSG.registrationDate()), AON.CSS.aonWidth150() )
-			.addCell(new Label(AON.MSG.notary()), AON.CSS.aonWidthAuto() )
+			.addCell(new Label("Apellidos y nombre"), AON.CSS.aonWidth170() )
+			.addCell(new Label("NIF"), AON.CSS.aonWidth100() )
+			.addCell(new Label(AON.MSG.registrationDate()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.notary()), AON.CSS.aonWidth170() )
+			.addCell(new Label(""), AON.CSS.aonWidthAuto() )
 			;
 		tab3.addRow()
 			.addCell(new Label("(1)"), AON.CSS.aonWidth20() )
@@ -229,6 +222,7 @@ public class Page02 extends PageAbs {
 			.addCell(document1)
 			.addCell(notaryDate1)
 			.addCell(notary1)
+			.addCell(new Label(""), AON.CSS.aonWidthAuto())
 			;
 		tab3.addRow()
 			.addCell(new Label("(2)"), AON.CSS.aonWidth20() )
@@ -236,6 +230,7 @@ public class Page02 extends PageAbs {
 			.addCell(document2)
 			.addCell(notaryDate2)
 			.addCell(notary2)
+			.addCell(new Label(""), AON.CSS.aonWidthAuto())
 			;
 		tab3.addRow()
 			.addCell(new Label("(3)"), AON.CSS.aonWidth20() )
@@ -243,6 +238,7 @@ public class Page02 extends PageAbs {
 			.addCell(document3)
 			.addCell(notaryDate3)
 			.addCell(notary3)
+			.addCell(new Label(""), AON.CSS.aonWidthAuto())
 			;
 		
 		rdocument.addValueChangeHandler( event -> {
@@ -344,5 +340,7 @@ public class Page02 extends PageAbs {
 			getModel().ensureLegalRepr3().setNotaryDate(notaryDate3.getValue());
 			markAsDirty();
 		});
+		
 	}
+	
 }

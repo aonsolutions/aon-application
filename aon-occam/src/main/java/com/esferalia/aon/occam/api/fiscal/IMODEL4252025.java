@@ -9,7 +9,7 @@ public interface IMODEL4252025 {
 
 	public Mod4252025 get(AONContext ctx, Mod390 mod425);
 	public Mod4252025 get(AONContext ctx, Integer id);
-	public String getXML(AONContext aonContext, int id);
+//	public String getXML(AONContext aonContext, int id);
 	public Mod4252025 save(AONContext ctx, Mod4252025 mod425);
 	public void delete(AONContext ctx, Mod4252025 mod425);
 	public Mod4252025 changeStatus(AONContext ctx, Mod4252025 mod, FiscalStatus newStatus);

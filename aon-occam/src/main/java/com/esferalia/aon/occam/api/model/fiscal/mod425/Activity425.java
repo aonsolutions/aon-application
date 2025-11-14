@@ -35,13 +35,6 @@ public class Activity425 implements Serializable {
 		this.key = key;
 		return this;
 	}
-//	public ActivityType getType() {
-//		return type;
-//	}
-//	public Activity425 setType(ActivityType type) {
-//		this.type = type;
-//		return this;
-//	}
 	public String getRegime() {
 		return regime;
 	}

@@ -1,21 +1,24 @@
+// RESULTADO DE LA LIQUIDACIÓN ANUAL Y DE LAS AUTOLIQUIDACIONES
 package com.esferalia.aon.gwt.fiscal.client.mod425.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Model4252025.Model4252025Callback;
+import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025Description;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class Page05 extends PageAbs {
-
-	private AonDoubleBox box658 = new AonDoubleBox();
-	private AonDoubleBox box84 = new AonDoubleBox();
-	private AonDoubleBox box659 = new AonDoubleBox();
-	private AonDoubleBox box85 = new AonDoubleBox();
-	private AonDoubleBox box86 = new AonDoubleBox();
+	
+	private AonDoubleBox box112 = new AonDoubleBox();
+	private AonDoubleBox box113 = new AonDoubleBox();
+	private AonDoubleBox box114 = new AonDoubleBox();
+	private AonDoubleBox box115 = new AonDoubleBox();
+	private AonDoubleBox box116 = new AonDoubleBox();
+	private AonDoubleBox box117 = new AonDoubleBox();
+	private AonDoubleBox box118 = new AonDoubleBox();
+	private AonDoubleBox box119 = new AonDoubleBox();
 	
 	public Page05(Model4252025Callback callback) {
 		super(callback);
@@ -24,11 +27,14 @@ class Page05 extends PageAbs {
 	}
 
 	protected void setValue() {
-		box658.setValue(getModel().getBox658(), false);
-		box84.setValue(getModel().getBox84(), false);
-		box659.setValue(getModel().getBox659(), false);
-		box85.setValue(getModel().getBox85(), false);
-		box86.setValue(getModel().getBox86(), false);
+		box112.setValue(getModel().getBox112(), false);
+		box113.setValue(getModel().getBox113(), false);
+		box114.setValue(getModel().getBox114(), false);
+		box115.setValue(getModel().getBox115(), false);
+		box116.setValue(getModel().getBox116(), false);
+		box117.setValue(getModel().getBox117(), false);
+		box118.setValue(getModel().getBox118(), false);
+		box119.setValue(getModel().getBox119(), false);
 	}
 	
 	private void paint() {
@@ -36,67 +42,65 @@ class Page05 extends PageAbs {
 		FlowPanel basePanel = new FlowPanel();
 		scroll.add(basePanel);
 		setWidget(scroll);
-
-		Label msg = getTitle(AON.MSG.page7HelpText());
-		msg.addStyleName(AON.CSS.aonFontLarger());
-		msg.addStyleName(AON.CSS.aonBackgroundLigthBlue());
-		msg.addStyleName(AON.CSS.aonTextCenter());
-		msg.addStyleName(AON.CSS.aonBorder());
-		basePanel.add(msg);
 		
-		basePanel.add(getTitle(AON.MSG.annualLiquidationResult()));
-
-		AonDisplayTable tab = new AonDisplayTable();
-		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab);
-		
-		box658.addValueChangeHandler(event -> {
-			if (box658.getValue() == null) box658.setValue(0.0,false);
-			getModel().setBox658(box658.getValue());
+		box112.addValueChangeHandler(event -> {
+			if (box112.getValue() == null) box112.setValue(0.0,false);
+			getModel().setBox112(box112.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
-		tab.addRow()
-			.addCell(new Label(AON.MSG.regQuotaArt80()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(658),AON.CSS.aonWidth40())
-			.addCell(box658,AON.CSS.aonWidth120());
-
 		
-		box84.setEnabled(false);
-		tab.addRow()
-			.addCell(new Label(AON.MSG.resultSum()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(84),AON.CSS.aonWidth40())
-			.addCell(box84,AON.CSS.aonWidth120());
-
-		box659.addValueChangeHandler(event -> {
-			if (box659.getValue() == null) box659.setValue(0.0,false);
-			getModel().setBox659(box659.getValue());
+		box114.addValueChangeHandler(event -> {
+			if (box114.getValue() == null) box114.setValue(0.0,false);
+			getModel().setBox114(box114.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
-		tab.addRow()
-			.addCell(new Label(AON.MSG.importIVACustoms()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(659),AON.CSS.aonWidth40())
-			.addCell(box659,AON.CSS.aonWidth120());
 		
-		box85.addValueChangeHandler(event -> {
-			if (box85.getValue() == null) box85.setValue(0.0,false);
-			getModel().setBox85(box85.getValue());
-			calculateAndRefresh();
+		box116.addValueChangeHandler(event -> {
+			if (box116.getValue() == null) box116.setValue(0.0,false);
+			getModel().setBox116(box116.getValue());
 			markAsDirty();
-		});	
-		tab.addRow()
-			.addCell(new Label(AON.MSG.previousYearCompensation()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(85),AON.CSS.aonWidth40())
-			.addCell(box85,AON.CSS.aonWidth120());
-
-		box86.setEnabled(false);
-		tab.addRow()
-			.addCell(new Label(AON.MSG.liquidationResult()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(86),AON.CSS.aonWidth40())
-			.addCell(box86,AON.CSS.aonWidth120());
+		});
 		
+		box117.addValueChangeHandler(event -> {
+			if (box117.getValue() == null) box117.setValue(0.0,false);
+			getModel().setBox117(box117.getValue());
+			markAsDirty();
+		});
+		
+		box118.addValueChangeHandler(event -> {
+			if (box118.getValue() == null) box118.setValue(0.0,false);
+			getModel().setBox118(box118.getValue());
+			markAsDirty();
+		});
+		
+		box119.addValueChangeHandler(event -> {
+			if (box119.getValue() == null) box119.setValue(0.0,false);
+			getModel().setBox119(box119.getValue());
+			markAsDirty();
+		});
+		
+		// Casillas deshabilitadas
+		box113.setEnabled(false);
+		box115.setEnabled(false);
+		
+		// Resultado de la liquidación anual
+
+		AonDisplayTable tab1 = addTable(basePanel, getTitle(AON.MSG.annualLiquidationResult()));
+		addRow(tab1, Mod4252025Description.BOX_112_TEXT, 112, box112);
+		addRow(tab1, Mod4252025Description.BOX_113_TEXT, 113, box113);
+		addRow(tab1, Mod4252025Description.BOX_114_TEXT, 114, box114);
+		addRow(tab1, Mod4252025Description.BOX_115_TEXT, 115, box115);
+		
+		// Resultado de las autoliquidaciones
+		
+		AonDisplayTable tab2 = addTable(basePanel, getTitle("Resultado de las autoliquidaciones"));
+		addRow(tab2, Mod4252025Description.BOX_116_TEXT, 116, box116);
+		addRow(tab2, Mod4252025Description.BOX_117_TEXT, 117, box117);
+		addRow(tab2, Mod4252025Description.BOX_118_TEXT, 118, box118);
+		addRow(tab2, Mod4252025Description.BOX_119_TEXT, 119, box119);
 		
 	}
+	
 }

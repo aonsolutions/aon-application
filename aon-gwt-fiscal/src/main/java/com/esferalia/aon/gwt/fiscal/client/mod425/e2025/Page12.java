@@ -1,3 +1,4 @@
+// INFORMACION AGENCIA TRIBUTARIA CANARIA
 package com.esferalia.aon.gwt.fiscal.client.mod425.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,7 +17,7 @@ class Page12 extends ResizeComposite {
 	
 	FiscalModelAdmonPanel<Mod390, Model390ModuleOptions> admonPanel;
 
-	public Page12(final Model390Callback callback, final Model4252025Callback cbk2024) {
+	public Page12(final Model390Callback callback, final Model4252025Callback cbk2025) {
 		super();
 		
 		IFiscalModelAdmonPanelCallback<Mod390, Model390ModuleOptions> cbk = 
@@ -29,7 +30,7 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public Mod390 getModel() {
-					return cbk2024.getModel();
+					return cbk2025.getModel();
 				}
 
 				@Override
@@ -39,17 +40,17 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public String getValidatePrintAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902024ValidatePrintAEAT";					
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod4252025ValidatePrintAEAT";					
 				}
 
 				@Override
 				public String getDownloadFileAction() {
-					return "/aon_gwt_fiscal/Model3902024File";
+					return "/aon_gwt_fiscal/Model4252025File";
 				}
 
 				@Override
 				public String getSendAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902024SendAEAT";
+					return null;
 				}
 
 				@Override
@@ -60,8 +61,8 @@ class Page12 extends ResizeComposite {
 							if (selected == null) {
 								callback.showError(AON.MSG.unableToFindDeclaration());
 							} else {
-								cbk2024.setModel(selected);
-								cbk2024.refreshDeclarationToolbarPanel();
+								cbk2025.setModel(selected);
+								cbk2025.refreshDeclarationToolbarPanel();
 								admonPanel.manageLinks();								
 							}
 						}
@@ -75,17 +76,17 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public String getCheckAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902024CheckAEAT";
+					return null;
 				}
 
 				@Override
 				public String getCheckDataResponseDataAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902024CheckDataResponseData";
+					return null;
 				}
 
 				@Override
 				public String getModelInformationURL() {
-					return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/G412.shtml";
+					return "https://www3.gobiernodecanarias.org/tributos/atc/w/modelo-425";
 				}
 		};
 		admonPanel = new FiscalModelAdmonPanel<>(cbk);

@@ -26,11 +26,11 @@ public class MODEL4252025 {
 		}
 	}
 
-	public static String getXML(Occam occam, int id) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getXML(ctx, id);
-		}
-	}
+//	public static String getXML(Occam occam, int id) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+//			return getImpl().getXML(ctx, id);
+//		}
+//	}
 
 	public static Mod4252025 save(Occam occam, Mod4252025 mod425) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

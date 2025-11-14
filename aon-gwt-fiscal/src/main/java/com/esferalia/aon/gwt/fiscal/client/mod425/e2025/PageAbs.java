@@ -1,8 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.mod425.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Model4252025.Model4252025Callback;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
@@ -67,6 +72,39 @@ abstract class PageAbs extends SimpleLayoutPanel {
 		return subsubtitle;
 	}
 	
-
 	protected abstract void setValue();
+	
+	protected AonDisplayTable addTable(FlowPanel basePanel) {
+		return addTable(basePanel, null);
+	}
+	
+	protected AonDisplayTable addTable(FlowPanel basePanel, Label title) {
+		if (title != null) {
+			basePanel.add(title);	
+		}
+
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab);
+		
+		return tab;
+	}
+
+	protected void addRow(AonDisplayTable tab, String text, int boxNumber, AonDoubleBox... aonDoubleBoxes) {
+		int boxCount = boxNumber;
+		Label label = new Label(text);
+		AonDisplayTableRow row = tab.addRow()
+			.addCell(label, AON.CSS.aonBorderBottom(), AON.CSS.aonWidthAuto());
+		
+		for (AonDoubleBox aonDoubleBox : aonDoubleBoxes) {
+			row.addCell(new AonBoxLabel(boxCount++), AON.CSS.aonWidth40())
+			   .addCell(aonDoubleBox, AON.CSS.aonWidth120());
+			if (!aonDoubleBox.isEnabled()) {
+				label.addStyleName(AON.CSS.aonBold());
+			}
+		}
+			
+	}
+	
 }

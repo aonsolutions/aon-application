@@ -75,83 +75,39 @@ public enum Mod4252025DetailKey implements Serializable {
 	 // RESULTADO DE LAS AUTOLIQUIDACIONES
 	 ,C095 ( 95, 0.00, false, true ) // Resultado régimen general
 	 
-	 // FALTA - ESTAS TAMBIEN ESTAN EN LA CLASE Mod4252025 COMO boxXXX, ENTONCES POR QUÉ ESTAN AQUI?
+	 // ESTAS CASILLAS SE PONEN AQUI, CON LA UNICA FINALIDAD DE QUE SE CALCULEN AUTOMATICAMENTE CUANDO SE GENERA EL MODELO
 	 
 	 // Operaciones específicas
 	 ,C120 (120, 0.00, false, false) // Operaciones en régimen general
-	 ,C121 (121, 0.00, false, false) // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991	 
+//	 ,C121 (121, 0.00, false, false) // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el artículo 18 Ley 20/1991	 
 	 ,C122 (122, 0.00, false, false) // Exportaciones definitivas y operaciones asimiladas a la exportación
-	 ,C123 (123, 0.00, false, false) // Operaciones relativas a áreas exentas
-	 ,C124 (124, 0.00, false, false) // Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
-	 ,C125 (125, 0.00, false, false) // Otras operaciones exentas con derecho a deducción
+//	 ,C123 (123, 0.00, false, false) // Operaciones relativas a áreas exentas
+//	 ,C124 (124, 0.00, false, false) // Operaciones interiores exentas por el artículo 25 de la Ley 19/1994 realizadas por el sujeto pasivo
+//	 ,C125 (125, 0.00, false, false) // Otras operaciones exentas con derecho a deducción
 	 ,C126 (126, 0.00, false, false) // Operaciones exentas sin derecho a deducción
-	 ,C127 (127, 0.00, false, false) // Operaciones en régimen simplificado
+//	 ,C127 (127, 0.00, false, false) // Operaciones en régimen simplificado
 	 ,C128 (128, 0.00, false, false) // Operaciones no sujetas por reglas de localización o con inversión del sujeto pasivo
-	 ,C129 (129, 0.00, false, false) // Operaciones en régimen especial de la agricultura, ganadería y pesca
-	 ,C130 (130, 0.00, false, false) // Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
-	 ,C131 (131, 0.00, false, false) // Operaciones en régimen especial de agencias de viajes
-	 ,C132 (132, 0.00, false, false) // Entregas de bienes inmuebles y operaciones financieras no habituales
-	 ,C133 (133, 0.00, false, false) // Entregas de bienes de inversión para el transmitente
-	 ,C134 (134, 0.00, false, true ) // Total volumen de operaciones
-	 ,C135 (135, 0.00, false, false) // Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
-	 ,C136 (136, 0.00, false, false) // Cuotas de I.G.I.C. soportado no deducible
-	 ,C137 (137, 0.00, false, false) // Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
+//	 ,C129 (129, 0.00, false, false) // Operaciones en régimen especial de la agricultura, ganadería y pesca
+//	 ,C130 (130, 0.00, false, false) // Operaciones en regímenes especiales de bienes usados, objetos de arte, antigüedades o colección
+//	 ,C131 (131, 0.00, false, false) // Operaciones en régimen especial de agencias de viajes
+//	 ,C132 (132, 0.00, false, false) // Entregas de bienes inmuebles y operaciones financieras no habituales
+//	 ,C133 (133, 0.00, false, false) // Entregas de bienes de inversión para el transmitente
+//	 ,C134 (134, 0.00, false, true ) // Total volumen de operaciones
+//	 ,C135 (135, 0.00, false, false) // Importaciones de bienes de inversión exentos por el artículo 25 de la Ley 19/1994
+//	 ,C136 (136, 0.00, false, false) // Cuotas de I.G.I.C. soportado no deducible
+//	 ,C137 (137, 0.00, false, false) // Otras operaciones no sujetas con derecho a deducción (artículo 29.4.1ªg) Ley 20/1991)
 	 
 	 // Exclusivamente para aquellos sujetos pasivos acogidos al régimen especial de criterio de caja y para aquellos que sean destinatarios de operaciones afectadas por el mismo
-	 ,C139 (139, 0.00, true , false) //	Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 138
-	 ,C141 (141, 0.00, true , false) //	Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991
+//	 ,C139 (139, 0.00, true , false) //	Importes de las entregas de bienes y prestaciones de servicios a las que Base Cuota habiéndoles aplicado el régimen especial de criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 138
+//	 ,C141 (141, 0.00, true , false) //	Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991
 	
 	 // Declaración informativa del volumen de operaciones en el régimen especial del pequeño empresario o profesional (exclusivamente a cumplimentar por los sujetos pasivos acogidos al REPEP)
-	 ,C142 (142, 0.00, false, false) //	Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
-	 ,C143 (143, 0.00, false, false) //	Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
-	 ,C144 (144, 0.00, false, false) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
-	 ,C145 (145, 0.00, false, false) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
-	 ,C146 (146, 0.00, false, false) //	Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
-	 ,C147 (147, 0.00, false, true ) //	Total volumen de operaciones en el REPEP
-	 
-	 // Operaciones en régimen general
-//	 ,C0099	 ( 99,   0.00,true ,false)
-//	 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
-//	 ,C0653	 (653,   0.00,true ,false)
-//	 // Entregas intracomunitarias de bienes y servicios
-//	 ,C0103	 (103,   0.00,true ,false)
-//	 // Exportaciones y otras operaciones exentas con derecho a deducción
-//	 ,C0104	 (104,   0.00,true ,false)
-//	 // Operaciones exentas sin derecho a deducción
-//	 ,C0105	 (105,   0.00,true ,false)
-//	 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
-//	 ,C0110	 (110,   0.00,true ,false)
-//	 // Operaciones sujetas con inversión del sujeto pasivo
-//	 ,C0125	 (125,   0.00,true ,false)
-//	 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
-//	 ,C0126	 (126,   0.00,true ,false)
-//	 // Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única
-//	 ,C0127	 (127,   0.00,true ,false)
-//	 // Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA
-//	 ,C0128	 (128,   0.00,true ,false)
-//	 // Operaciones en régimen simplificado
-//	 ,C0100	 (100,   0.00,true ,false)
-//	 // Operaciones en régimen especial de la agricultura, ganadería y pesca
-//	 ,C0101	 (101,   0.00,true ,false)
-//	 // Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia
-//	 ,C0102	 (102,   0.00,true ,false)
-//	 // Operaciones en Régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección
-//	 ,C0227	 (227,   0.00,true ,false)
-//	 // Operaciones en régimen especial de Agencias de Viajes
-//	 ,C0228	 (228,   0.00,true ,false)
-//	 // Entregas de bienes inmuebles, operaciones financieras y relativas al oro de inversión no habituales
-//	 ,C0106	 (106,   0.00,true ,false)
-//	 // Entregas de bienes de inversión
-//	 ,C0107	 (107,   0.00,true ,false)
-//	 // Total volumen de operaciones 
-//	 ,C0108	 (108,   0.00,true ,false)
-//	 
-//	 // Regimen especial de criterio de caja.
-//	 ,C0654	 (654,   0.00,true ,false)
-//	 ,C0656	 (656,   0.00,true ,false)
-//	 
-//	 // Operaciones especificas, adquisiciones interiores exentas
-//	 ,C0230	 (230,   0.00,true ,false)
+//	 ,C142 (142, 0.00, false, false) //	Importe de operaciones habituales u ocasionales sujetas al IGIC exentas por Régimen especial del pequeño empresario o profesional
+//	 ,C143 (143, 0.00, false, false) //	Importe de operaciones sujetas al IGIC exentas por Régimen especial del comerciante minorista
+//	 ,C144 (144, 0.00, false, false) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a la sede de la actividad económica situada en Canarias
+//	 ,C145 (145, 0.00, false, false) //	Importe de entregas de bienes y prestaciones de servicios no sujetas al IGIC imputables a otras sedes o establecimientos situados fuera de Canarias
+//	 ,C146 (146, 0.00, false, false) //	Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
+//	 ,C147 (147, 0.00, false, true ) //	Total volumen de operaciones en el REPEP
 	 ;
 	 
 	private int box;
@@ -191,20 +147,5 @@ public enum Mod4252025DetailKey implements Serializable {
 	public boolean isProrrataEnabled() {
 		return prorrata;
 	}
-	
-//	public boolean isSurcharge() {
-//		return (this == C0664
-//			|| this == C0692
-//			|| this == C0036 
-//			|| this == C0666
-//			|| this == C0694
-//			|| this == C0600
-//			|| this == C0602 
-//			|| this == C0042
-//			|| this == C0044 
-//			|| this == C0046
-//			|| this == C0102
-//			);
-//	}
 	
 }

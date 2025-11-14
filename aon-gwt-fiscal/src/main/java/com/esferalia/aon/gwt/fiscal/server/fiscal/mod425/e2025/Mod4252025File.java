@@ -27,6 +27,8 @@ public class Mod4252025File extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		// FALTA - HACERLO IGUAL QUE SE HACE PARA EL 420/417, PERO AHORA SE PUEDE LEER DIRECTAMENTE EL XML SI ES NECESARIO
 
 		try {
 			int id = Integer.parseInt(req.getParameter("modelID"));
@@ -47,7 +49,7 @@ public class Mod4252025File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			// FALTA - NO ES NECESARIO WRITER SE PASARA DIRECTAMENTE EL FICHERO GUARDADO AL MODULO DE LA ATC
+			// NO ES NECESARIO WRITER SE PASARA DIRECTAMENTE EL FICHERO GUARDADO AL MODULO DE LA ATC
 //			Mod3902024Writer.fillWriter(mod425, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			

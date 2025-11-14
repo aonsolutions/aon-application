@@ -19,10 +19,10 @@ public class MODEL4252025Impl implements IMODEL4252025 {
 		return Mod4252025DAO.getById(ctx, id);
 	}
 
-	@Override
-	public String getXML(AONContext ctx, int id) {
-		return Mod4252025DAO.getXMLContentById(ctx, id);
-	}
+//	@Override
+//	public String getXML(AONContext ctx, int id) {
+//		return Mod4252025DAO.getXMLContentById(ctx, id);
+//	}
 	
 	@Override
 	public Mod4252025 save(AONContext ctx, Mod4252025 mod425) {

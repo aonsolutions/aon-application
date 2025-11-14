@@ -11,9 +11,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
+//import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+//import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+//import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -349,19 +352,14 @@ public class Model4252025 extends DockLayoutPanel {
 		FlowPanel pageLinks = new FlowPanel();
 		pageLinks.setStyleName(AON.CSS.aonPaddingLeft());
 		
-		AonLink page00Link = new AonLink(AON.MSG.pasiveSubjectAndAccrual());
-		AonLink page01Link = new AonLink(AON.MSG.stadisticalData());
-		AonLink page02Link = new AonLink(AON.MSG.representativeData());
-		AonLink page03Link = new AonLink(AON.MSG.generalRegimeOperations());
-		AonLink page04Link = new AonLink(AON.MSG.simplifiedRegimeOperations());
-		AonLink page05Link = new AonLink(AON.MSG.annualLiquidationResult());
-		AonLink page06Link = new AonLink(AON.MSG.taxByTerritory());
-		AonLink page07Link = new AonLink(AON.MSG.liquidationsResult());
-		AonLink page08Link = new AonLink(AON.MSG.operationsVolume());
-		AonLink page09Link = new AonLink(AON.MSG.specificOperations());
-		AonLink page10Link = new AonLink(AON.MSG.prorrata());
-		AonLink page11Link = new AonLink(AON.MSG.difActivitiesRegime());
-		AonLink page12Link = new AonLink("Agencia Tributaria");
+		AonLink page00Link = new AonLink(AON.MSG.pasiveSubjectAndAccrual());  	// Datos identificativos
+		AonLink page01Link = new AonLink(AON.MSG.stadisticalData());          	// Datos Estadisticos
+		AonLink page02Link = new AonLink(AON.MSG.representativeData()); 	 	// Datos del Representante
+		AonLink page03Link = new AonLink(AON.MSG.generalRegimeOperations()); 	// Operaciones realizadas en el Regimen General
+		AonLink page04Link = new AonLink(AON.MSG.simplifiedRegimeOperations()); // Operaciones realizadas en el Regimen Simplificado
+		AonLink page05Link = new AonLink(AON.MSG.annualLiquidationResult()); 	// Resultado Liquidacion Anual y de las Autoliquidaciones
+		AonLink page09Link = new AonLink(AON.MSG.specificOperations());		   	// Operaciones Especificas, Operaciones RECC, Operaciones REPEP
+		AonLink page12Link = new AonLink("Agencia Tributaria Canaria");;		// Agencia Tributaria Canaria (Información)
 		
 		pageLinks.add(page00Link);
 		pageLinks.add(page01Link);
@@ -369,12 +367,7 @@ public class Model4252025 extends DockLayoutPanel {
 		pageLinks.add(page03Link);
 		pageLinks.add(page04Link);
 		pageLinks.add(page05Link);
-		pageLinks.add(page06Link);
-		pageLinks.add(page07Link);
-		pageLinks.add(page08Link);
 		pageLinks.add(page09Link);
-		pageLinks.add(page10Link);
-		pageLinks.add(page11Link);
 		pageLinks.add(page12Link);
 		
 		Model4252025Callback cbk = new Model4252025Callback();
@@ -384,12 +377,7 @@ public class Model4252025 extends DockLayoutPanel {
 		page03Link.addClickHandler(event -> showContent(pageLinks, 3, new Page03(cbk), false));
 		page04Link.addClickHandler(event -> showContent(pageLinks, 4, new Page04(cbk), false));
 		page05Link.addClickHandler(event -> showContent(pageLinks, 5, new Page05(cbk), false));
-		page06Link.addClickHandler(event -> showContent(pageLinks, 6, new Page06(cbk), false));
-		page07Link.addClickHandler(event -> showContent(pageLinks, 7, new Page07(cbk), false));
-		page08Link.addClickHandler(event -> showContent(pageLinks, 8, new Page08(cbk), false));
 		page09Link.addClickHandler(event -> showContent(pageLinks, 9, new Page09(cbk), false));
-		page10Link.addClickHandler(event -> showContent(pageLinks,10, new Page10(cbk), false));
-		page11Link.addClickHandler(event -> showContent(pageLinks,11, new Page11(cbk), false));
 		page12Link.addClickHandler(event -> showContent(pageLinks,12, new Page12(getCallback(), cbk), false));
 		
 		scrollPanel.add(pageLinks);
@@ -517,9 +505,8 @@ public class Model4252025 extends DockLayoutPanel {
 
 		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
 		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
+		dirtyLabel.addStyleName(AON.CSS.aonMarginLeft()); // FALTA 
 		dirtyLabel.setTitle("Cambios sin guardar");
-//		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
-//		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		styleDirtyLabel();
 		marksPanels.add(dirtyLabel);
 

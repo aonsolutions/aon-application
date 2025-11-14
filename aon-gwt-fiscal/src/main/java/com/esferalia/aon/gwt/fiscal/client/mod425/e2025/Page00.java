@@ -1,38 +1,41 @@
+// DATOS IDENTIFICATIVOS Y DEVENGO
 package com.esferalia.aon.gwt.fiscal.client.mod425.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Model4252025.Model4252025Callback;
+import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class Page00 extends PageAbs {
 
-	private AonDocumentTextBox document = new AonDocumentTextBox(); 
-	private AonTextBox name = new AonTextBox();
-	private AonTextBox firstSurname = new AonTextBox();
-	private AonTextBox secondSurname = new AonTextBox();
-	private AonTextBox phone = new AonTextBox();
-	private CheckBox replacement = new CheckBox( AON.MSG.replacement());
-	private AonTextBox replacedReceipt = new AonTextBox();
-	private CheckBox replacementDueInsolvencyState = new CheckBox( AON.MSG.replacementDueInsolvencyState());
-	private CheckBox taxRefund = new CheckBox( AON.MSG.taxRefund());
-	private CheckBox specialGroupRegime = new CheckBox( AON.MSG.specialGroupRegime());
-	private AonTextBox groupNumber = new AonTextBox();
-	private CheckBox groupDependent = new CheckBox( AON.MSG.groupDependent());
-	private CheckBox groupDeclarations = new CheckBox( AON.MSG.groupDeclarations());
-	private CheckBox insolvencyDeclarations = new CheckBox( AON.MSG.insolvencyDeclarations());
-	private CheckBox groupRegimeType = new CheckBox( AON.MSG.groupRegimeType());
-	private AonDocumentTextBox groupDocument = new AonDocumentTextBox();
-	private CheckBox insolvencyStateThisYear = new CheckBox( AON.MSG.insolvencyStateThisYear());
-	private CheckBox insolvencyStateLastPeriod = new CheckBox( AON.MSG.insolvencyStateLastPeriod());
-	private CheckBox accrualRegime = new CheckBox( AON.MSG.accrualRegime());
-	private CheckBox accrualRegimeTarget = new CheckBox( AON.MSG.accrualRegimeTarget());
-
+	private AonDocumentTextBox document = new AonDocumentTextBox();     // NIF
+	private AonTextBox name = new AonTextBox(); 					    // Apellidos y nombre o Razón Social
+	private AonTextBox streetInitial = new AonTextBox();			    // S.G.
+	private AonTextBox streetName = new AonTextBox();    			    // Nombre de la vía pública
+	private AonTextBox streetNumber = new AonTextBox();  			    // Número  	
+	private AonTextBox streetStair = new AonTextBox();   			    // Esc.
+	private AonTextBox streetFloor = new AonTextBox();   			    // Piso
+	private AonTextBox streetDoor = new AonTextBox(); 				    // Puerta
+	private AonTextBox phone = new AonTextBox(); 					    // Teléfono
+	private ProvinceListBox province = new ProvinceListBox(); 		    // Provincia
+	private AonTextBox town = new AonTextBox(); 			  		    // Municipio
+	private AonTextBox townCode = new AonTextBox(); 				    // Código Municipio
+	private AonTextBox zip = new AonTextBox(); 						    // Código Postal
+	private CheckBox taxRefund = new CheckBox(); 					    // Registro de devolución mensual en algún periodo del ejercicio
+	private CheckBox repep = new CheckBox(); 						    // Régimen especial del pequeño empresario o profesional
+	private CheckBox replacement = new CheckBox(); 					    // Declaración sustitutiva
+	private CheckBox replacementDueInsolvencyState = new CheckBox();	// Declaración sustitutiva por rectificación de cuotas en caso de concurso de acreedores
+	private AonTextBox replacedReceipt = new AonTextBox(); 			    // N.º de justificante de la declaración anterior
+	
 	public Page00(Model4252025Callback callback) {
 		super(callback);
 		paint();
@@ -53,85 +56,177 @@ class Page00 extends PageAbs {
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab);
 		
-		document.setEnabled(false);
+		document.setEnabled(false);		
+		name.setVisibleLength(45);
+		name.setMaxLength(45);
 		
-		name.setVisibleLength(25);
-		firstSurname.setMaxLength(15);
-		firstSurname.setVisibleLength(16); 
-		secondSurname.setMaxLength(15);
-		secondSurname.setVisibleLength(16); 
-		FlowPanel surnames = new FlowPanel(); 
-		surnames.add(firstSurname);
-		surnames.add(secondSurname);
+		tab.addLabelWidgetRow(AON.MSG.document(), document)
+           .addLabelWidgetRow("Apellidos y nombre / Raz\u00F3n social", name);
 		
-		replacedReceipt.setVisibleLength(13);
+		FlowPanel address1 = new FlowPanel();
+		InlineLabel streetTypeLabel = new InlineLabel(AON.MSG.streetType());
+		streetTypeLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address1.add(streetTypeLabel);
+		streetInitial.setVisibleLength(2);
+		streetInitial.setMaxLength(2);
+		address1.add(streetInitial);
+		InlineLabel streetNameLabel = new InlineLabel(AON.MSG.streetName());
+		streetNameLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address1.add(streetNameLabel);
+		streetName.setVisibleLength(30);
+		streetName.setMaxLength(40);
+		address1.add(streetName);
+		tab.addRow()
+			.addCell(new Label("Domicilio"))
+			.addCell(address1);
 		
-		FlowPanel groupPanel1 = new FlowPanel();
-		InlineLabel gpl1 = new InlineLabel(AON.MSG.groupNumber());
-		gpl1.setStyleName(AON.CSS.aonInnerLabel());
-		groupPanel1.add(gpl1);
-		groupNumber.setVisibleLength(5);
-		groupNumber.setMaxLength(5);
-		groupPanel1.add(groupNumber);
-		groupPanel1.add(groupDependent);
+		FlowPanel address2 = new FlowPanel();
+		InlineLabel streetNumberLabel = new InlineLabel(AON.MSG.streetNumber());
+		streetNumberLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address2.add(streetNumberLabel);
+		streetNumber.setVisibleLength(5);
+		streetNumber.setMaxLength(5);
+		address2.add(streetNumber);
+		InlineLabel streetStairLabel = new InlineLabel(AON.MSG.streetStair());
+		streetStairLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address2.add(streetStairLabel);
+		streetStair.setVisibleLength(2);
+		streetStair.setMaxLength(2);
+		address2.add(streetStair);
+		InlineLabel streetFloorLabel = new InlineLabel(AON.MSG.streetFloor());
+		streetFloorLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address2.add(streetFloorLabel);
+		streetFloor.setVisibleLength(2);
+		streetFloor.setMaxLength(2);
+		address2.add(streetFloor);
+		InlineLabel streetDoorLabel = new InlineLabel(AON.MSG.streetDoor());
+		streetDoorLabel.setStyleName(AON.CSS.aonInnerLabel());
+		address2.add(streetDoorLabel);
+		streetDoor.setVisibleLength(2);
+		streetDoor.setMaxLength(2);
+		address2.add(streetDoor);
+		tab.addRow()
+			.addCell(new Label(),AON.CSS.aonTableLabel())
+			.addCell(address2);
 		
-		FlowPanel groupPanel2 = new FlowPanel();
-		groupPanel2.add(groupRegimeType);
-		InlineLabel gpl2 = new InlineLabel(AON.MSG.groupRegimeType());
-		gpl2.setStyleName(AON.CSS.aonInnerLabel());
-		groupPanel2.add(gpl2);
-		groupPanel2.add(groupDocument);
+		town.setVisibleLength(35);
+		town.setMaxLength(35);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.town())) 
+			.addCell(town);
 		
-		tab
-			.addLabelWidgetRow(AON.MSG.document(), document)
-			.addLabelWidgetRow(AON.MSG.name(), name)
-			.addLabelWidgetRow(AON.MSG.surname(), surnames)
-			.addLabelWidgetRow(AON.MSG.phone(), phone)
-			.addLabelWidgetRow("", replacement)
-			.addLabelWidgetRow("", replacementDueInsolvencyState)
-			.addLabelWidgetRow(AON.MSG.replacedReceipt(), replacedReceipt)
-			.addLabelWidgetRow("", taxRefund)
-			.addLabelWidgetRow("", specialGroupRegime)
-			.addLabelWidgetRow("", groupPanel1)
-			.addLabelWidgetRow("", groupPanel2)
-			.addLabelWidgetRow("", groupDeclarations)
-			;
+		townCode.setVisibleLength(5);
+		townCode.setMaxLength(5);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.townCode())) 
+			.addCell(townCode);
+
+		tab.addRow()
+			.addCell(new Label(AON.MSG.province())) 
+			.addCell(province);
+
+		zip.setVisibleLength(5);
+		zip.setMaxLength(5);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.zip())) 
+			.addCell(zip);
 		
-		basePanel.add(getSubtitle(AON.MSG.insolvencyState()));
+		phone.setVisibleLength(9);
+		phone.setMaxLength(9);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.phone())) 
+			.addCell(phone);
 		
 		AonDisplayTable tab1 = new AonDisplayTable();
 		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab1.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab1);
 		
-		tab1.addRow().addCell(insolvencyStateThisYear);
-		tab1.addRow().addCell(insolvencyStateLastPeriod);
+		replacedReceipt.setVisibleLength(13);
+		replacedReceipt.setMaxLength(13);
 		
-		basePanel.add(getSubtitle(AON.MSG.cashAccrualRegime()));
-		
-		AonDisplayTable tab2 = new AonDisplayTable();
-		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab2.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab2);
-		
-		tab2.addRow().addCell(accrualRegime);
-		tab2.addRow().addCell(accrualRegimeTarget);
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.taxRefund()), AON.CSS.aonWidth400())
+		 	.addCell(taxRefund);
+		tab1.addRow()
+			.addCell(new Label("R\u00E9gimen especial del peque\u00F1o empresario o profesional"), AON.CSS.aonWidth400())
+		 	.addCell(repep);
+		tab1.addRow()
+			.addCell(new Label("Declaraci\u00F3n sustitutiva"), AON.CSS.aonWidth400())
+		 	.addCell(replacement);
+		tab1.addRow()
+			.addCell(new Label("Declaraci\u00F3n sustitutiva por rectificaci\u00F3n de cuotas en caso de concurso de acreedores"), AON.CSS.aonWidth400())
+		 	.addCell(replacementDueInsolvencyState);
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.replacedReceipt()), AON.CSS.aonWidth400())
+		 	.addCell(replacedReceipt);
 		
 		name.addValueChangeHandler(event ->{
 			getModel().setName(name.getValue());
 			markAsDirty();
 		});
 		
-		firstSurname.addValueChangeHandler(event ->{
-			getModel().setFirstSurname(firstSurname.getValue());
+		streetInitial.addValueChangeHandler(event -> {
+			getModel().setStreetInitial(streetInitial.getValue());
 			markAsDirty();
 		});
-		secondSurname.addValueChangeHandler(event ->{
-			getModel().setSecondSurname(secondSurname.getValue());
+		
+		streetName.addValueChangeHandler(event -> {
+			getModel().setStreetName(streetName.getValue());
 			markAsDirty();
 		});
+		
+		streetNumber.addValueChangeHandler(event -> {
+			getModel().setStreetNumber(streetNumber.getValue());
+			markAsDirty();
+		});
+		
+		streetStair.addValueChangeHandler(event -> {
+			getModel().setStreetStair(streetStair.getValue());
+			markAsDirty();
+		});
+		
+		streetFloor.addValueChangeHandler(event -> {
+			getModel().setStreetFloor(streetFloor.getValue());
+			markAsDirty();
+		});
+		
+		streetDoor.addValueChangeHandler(event -> {
+			getModel().setStreetDoor(streetDoor.getValue());
+			markAsDirty();
+		});
+		
+		town.addValueChangeHandler(event -> {
+			getModel().setTown(town.getValue());
+			markAsDirty();
+		});
+		
+		province.addChangeHandler(event -> {
+			getModel().setProvinceCode(AonStringUtils.leftPad(Integer.toString(province.getSelectedIndex()), 2, '0')); // Se graba el código de provincia 
+			markAsDirty();
+		});
+		
+		zip.addValueChangeHandler(event -> {
+			getModel().setZip(zip.getValue());
+			markAsDirty();
+		});
+		
+		townCode.addValueChangeHandler(event -> {
+			getModel().setTownCode(townCode.getValue());
+			markAsDirty();
+		});
+		
 		phone.addValueChangeHandler(event ->{
 			getModel().setContactPhone(phone.getValue());
+			markAsDirty();
+		});
+		
+		taxRefund.addClickHandler(event ->{
+			getModel().setTaxRefund(taxRefund.getValue());
+			markAsDirty();
+		});
+		repep.addClickHandler(event ->{
+			getModel().setSpecialRegime(repep.getValue());
 			markAsDirty();
 		});
 		replacement.addClickHandler(event ->{
@@ -146,115 +241,31 @@ class Page00 extends PageAbs {
 			getModel().setReplacedReceipt(replacedReceipt.getValue());
 			markAsDirty();
 		});
-		insolvencyDeclarations.addClickHandler(event ->{
-			getModel().setInsolvencyDeclarations(insolvencyDeclarations.getValue());
-			markAsDirty();
-		});
-		insolvencyStateThisYear.addClickHandler(event ->{
-			getModel().setInsolvencyStateThisYear(insolvencyStateThisYear.getValue());
-			markAsDirty();
-		});
-		insolvencyStateLastPeriod.addClickHandler(event ->{
-			getModel().setInsolvencyStateLastPeriod(insolvencyStateLastPeriod.getValue());
-			markAsDirty();
-		});
-		accrualRegime.addClickHandler(event ->{
-			getModel().setAccrualRegime(accrualRegime.getValue());
-			markAsDirty();
-		});
-		accrualRegimeTarget.addClickHandler(event ->{
-			getModel().setAccrualRegimeTarget(accrualRegimeTarget.getValue());
-			markAsDirty();
-		});
-		taxRefund.addClickHandler(event ->{
-			getModel().setTaxRefund(taxRefund.getValue());
-			markAsDirty();
-		});
-		
-		specialGroupRegime.addClickHandler(event ->{
-			getModel().setSpecialGroupRegime(specialGroupRegime.getValue());
-			onClickSpecialGroupRegime();
-			markAsDirty();
-		});
-		groupNumber.addValueChangeHandler(event ->{
-			getModel().setGroupNumber( groupNumber.getValue());
-			markAsDirty();
-		});
-		groupDependent.addClickHandler(event ->{
-			getModel().setGroupDependent( groupDependent.getValue());
-			markAsDirty();
-		});
-		groupRegimeType.addClickHandler(event ->{
-			getModel().setGroupRegimeType(groupRegimeType.getValue());
-			markAsDirty();
-		});
-		groupDocument.addValueChangeHandler(event ->{
-			getModel().setGroupDocument( groupDocument.getValue());
-			markAsDirty();
-		});
-		groupDeclarations.addValueChangeHandler(event ->{
-			getModel().setGroupDeclarations( groupDeclarations.getValue());
-			markAsDirty();
-		});
 		
 	}
 
 	@Override
 	protected void setValue() {
+		
 		document.setValue(getModel().getDocument(),false);
 		name.setValue(getModel().getName(),false);
-		replacement.setValue(getModel().isReplacement(),false);
-		replacedReceipt.setValue(getModel().getReplacedReceipt(),false);
-		replacementDueInsolvencyState.setValue(getModel().isReplacementDueInsolvencyState(),false);
-		if (getModel().isLegalEntity()) {
-			name.setMaxLength(37);
-			firstSurname.setValue(null,false);
-			secondSurname.setValue(null,false);
-			firstSurname.setEnabled(false);
-			secondSurname.setEnabled(false);
-		} else {
-			name.setMaxLength(15);
-			firstSurname.setValue(getModel().getFirstSurname(),false);
-			secondSurname.setValue(getModel().getSecondSurname(),false);
-			firstSurname.setEnabled(true);
-			secondSurname.setEnabled(true);
-		}
+		streetInitial.setValue(getModel().getStreetInitial(),false);
+		streetName.setValue(getModel().getStreetName(),false);
+		streetNumber.setValue(getModel().getStreetNumber(),false);
+		streetStair.setValue(getModel().getStreetStair(),false);
+		streetFloor.setValue(getModel().getStreetFloor(),false);
+		streetDoor.setValue(getModel().getStreetDoor(),false);
+		town.setValue(getModel().getTown(),false);
+		townCode.setValue(getModel().getTownCode(),false);
+		province.setSelectedIndex(Province.safeValueOf(getModel().getProvinceCode()) == null ? 0 : Province.safeValueOf(getModel().getProvinceCode()).ordinal()); // Código de provincia
+		zip.setValue(getModel().getZip(),false);
 		phone.setValue(getModel().getContactPhone(),false);
 		taxRefund.setValue(getModel().isTaxRefund(),false);
-		groupNumber.setValue(getModel().getGroupNumber(),false);
-		groupDependent.setValue(getModel().isGroupDependent(),false);
-		groupDeclarations.setValue(getModel().isGroupDeclarations(),false);
-		
-		insolvencyStateThisYear.setValue(getModel().isInsolvencyStateThisYear(),false);
-		insolvencyStateLastPeriod.setValue(getModel().isInsolvencyStateLastPeriod(),false);
-		accrualRegime.setValue(getModel().isAccrualRegime(),false);
-		accrualRegimeTarget.setValue(getModel().isAccrualRegimeTarget(),false);
-		groupRegimeType.setValue(getModel().isGroupRegimeType(),false);
-		groupDocument.setValue(getModel().getGroupDocument(),false);
-		groupDeclarations.setValue(getModel().isGroupDeclarations(),false);
-		specialGroupRegime.setValue(getModel().isSpecialGroupRegime(),false);
-		onClickSpecialGroupRegime();
-	}
+		repep.setValue(getModel().isSpecialRegime(),false);
+		replacement.setValue(getModel().isReplacement(),false);
+		replacementDueInsolvencyState.setValue(getModel().isReplacementDueInsolvencyState(),false);
+		replacedReceipt.setValue(getModel().getReplacedReceipt(),false);
 
-	private void onClickSpecialGroupRegime() {
-		groupNumber.setEnabled(specialGroupRegime.getValue());
-		groupDependent.setEnabled(specialGroupRegime.getValue());
-		groupRegimeType.setEnabled(specialGroupRegime.getValue());
-		groupDocument.setEnabled(specialGroupRegime.getValue());
-		groupDeclarations.setEnabled(specialGroupRegime.getValue());
-		
-		if (!specialGroupRegime.getValue().booleanValue()) {
-			groupNumber.setValue(null, false);
-			getModel().setGroupNumber( groupNumber.getValue());
-			groupDependent.setValue(false, false);
-			getModel().setGroupDependent( groupDependent.getValue());
-			groupRegimeType.setValue(false, false);
-			getModel().setGroupRegimeType(groupRegimeType.getValue());
-			groupDocument.setValue(null, false);
-			getModel().setGroupDocument( groupDocument.getValue());
-			groupDeclarations.setValue(false, false);
-			getModel().setGroupDeclarations( groupDeclarations.getValue());
-		}
 	}
 
 }

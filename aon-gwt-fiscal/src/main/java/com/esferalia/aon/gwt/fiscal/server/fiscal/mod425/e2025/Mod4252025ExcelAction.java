@@ -1,33 +1,24 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod425.e2025;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Page03.Mod425DetailKeyGroup;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025;
+import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025Description;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025DetailKey;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025DetailKeyGroup;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -50,17 +41,18 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49), new DefaultIndexedColorMap());
 	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42), new DefaultIndexedColorMap());
 	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195), new DefaultIndexedColorMap());
+	protected static final XSSFColor CANARIAS_BG = new XSSFColor(new java.awt.Color(251, 186, 0), new DefaultIndexedColorMap());
 
-	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
-			AEAT_BG };
+	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG, AEAT_BG, CANARIAS_BG };
 
-	protected  static final String[] IMAGES = new String[] { 
-			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
-	};
+	// FALTA - NO HAY IMAGEN PARA CANARIAS, NO SE PONE LA IMAGEN, SOLO TEXTO
+//	protected  static final String[] IMAGES = new String[] { 
+//			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
+//	};
 	
 	protected Font idFont;
 	protected XSSFCellStyle idCellStyle;
@@ -83,31 +75,31 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 				
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		try {
-			InputStream inputStream = Mod4252025ExcelAction.class.getResourceAsStream(
-					IMAGES[mod425.getAdministration().ordinal()]);
-			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
-			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-			inputStream.close();
-			CreationHelper helper = workbook.getCreationHelper();
-			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-			anchor.setCol1(0);
-			anchor.setRow1(rowCount - 1 );
-			anchor.setDx1(10);
-			anchor.setDy1(10);
-			Picture pict = drawing.createPicture(anchor, pictureureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Sin Imagen,.
-		}
+//		try {
+//			InputStream inputStream = Mod4252025ExcelAction.class.getResourceAsStream(
+//					IMAGES[mod425.getAdministration().ordinal()]);
+//			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
+//			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
+//			inputStream.close();
+//			CreationHelper helper = workbook.getCreationHelper();
+//			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
+//			ClientAnchor anchor = helper.createClientAnchor();
+//			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+//			anchor.setCol1(0);
+//			anchor.setRow1(rowCount - 1 );
+//			anchor.setDx1(10);
+//			anchor.setDy1(10);
+//			Picture pict = drawing.createPicture(anchor, pictureureIdx);
+//			pict.resize();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			// Sin Imagen,.
+//		}
 		CellUtil.createCell(row, 0,"");
 		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 0, 0));
 		
 		// Titulo completo del modelo
-		CellUtil.createCell(row, 1, "Modelo 325. IGIC. Declaración Resumen Anual. Ejercicio " + AonNumberUtils.toString(mod425.getYear()),headerCellStyle);
+		CellUtil.createCell(row, 1, "Modelo 425. IGIC. Declaración Resumen Anual. Ejercicio " + AonNumberUtils.toString(mod425.getYear()),headerCellStyle);
 		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount), 1,4));
 		
 		// NIF y Nombre de la Empresa
@@ -160,93 +152,71 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 	public void accept(Mod4252025 m425) {
 		
 		// Regimen General
-		for (Mod425DetailKeyGroup key : Mod425DetailKeyGroup.values()) {
-			
+		for (Mod4252025DetailKeyGroup key : Mod4252025DetailKeyGroup.values()) {
 			String s = "";
 			if (key.toString().startsWith("DEV")) 
-				s = "IVA DEVENGADO - ";
-			else if (key.toString().startsWith("DED") && key != Mod425DetailKeyGroup.DED_026)
-				s = "IVA DEDUCIBLE - ";
+				s = "IGIC DEVENGADO - ";
+			else if (key.toString().startsWith("DED"))
+				s = "IGIC DEDUCIBLE - ";
 				
 			for (Mod4252025DetailKey key2 : key.getKeys())		
 			  addEnsure("Régimen General", s + key.getLabel(), mod425, key2);
-			
 		}
 		
 		// Régimen Simplificado (Totales)
-		addBox("Régimen Simplificado", "IVA DEVENGADO - Suma de cuotas derivadas régimen simplificado (Actividades no agrícolas)", m425.getBox74());
-		addBox("Régimen Simplificado", "IVA DEVENGADO - Suma de cuotas derivadas régimen simplificado (Actividades agrícolas)", m425.getBox75());
-		addBox("Régimen Simplificado", "IVA DEVENGADO - IVA devengado en adquisiciones intracomunitarias de bienes", m425.getBox76());
-		addBox("Régimen Simplificado", "IVA DEVENGADO - IVA devengado por inversión de sujeto pasivo (adquisiciones intracomunitarias de servicios y otros supuestos)", m425.getBox77());
-		addBox("Régimen Simplificado", "IVA DEVENGADO - IVA devengado en entregas de activos fijos", m425.getBox78());
-		addBox("Régimen Simplificado", "IVA DEVENGADO - Total Cuota Resultante", m425.getBox79());
-		addBox("Régimen Simplificado", "IVA DEDUCIBLE - IVA soportado en adquisición de activos fijos", m425.getBox80());
-		addBox("Régimen Simplificado", "IVA DEDUCIBLE - Regularización de bienes de inversión", m425.getBox81());
-		addBox("Régimen Simplificado", "IVA DEDUCIBLE - Suma de deducciones", m425.getBox82());
-		addBox("Régimen Simplificado", "RESULTADO DEL REGIMEN SIMPLIFICADO", 0.0, m425.getBox83(), true);
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_103_TEXT, m425.getBox103());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_104_TEXT, m425.getBox104());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_105_TEXT, m425.getBox105());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_106_TEXT, m425.getBox106());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_107_TEXT, m425.getBox107(), true);
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_108_TEXT, m425.getBox108());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_109_TEXT, m425.getBox109());
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_110_TEXT, m425.getBox110(), true);
+		addBox("Régimen Simplificado", Mod4252025Description.BOX_111_TEXT.toUpperCase(), m425.getBox111(), true);
 	
 		// Resultado Liquidación Anual
-		addBox("Resultado Liq. Anual", "Regularización cuotas art. 80.Cinco.5º LIVA", m425.getBox658());
-		addBox("Resultado Liq. Anual", "Suma de Resultados", m425.getBox84());
-		addBox("Resultado Liq. Anual", "IVA a la importación liquidado por la Aduana (sólo sujetos pasivos con opción de diferimiento)", m425.getBox659());
-		addBox("Resultado Liq. Anual", "Compensación de cuotas del ejercicio anterior", m425.getBox85());
-		addBox("Resultado Liq. Anual", "RESULTADO DE LA LIQUIDACIÓN", 0.0, m425.getBox86(), true);
+		addBox("Resultado Liquidación Anual", Mod4252025Description.BOX_112_TEXT, m425.getBox112());
+		addBox("Resultado Liquidación Anual", Mod4252025Description.BOX_113_TEXT, m425.getBox113());
+		addBox("Resultado Liquidación Anual", Mod4252025Description.BOX_114_TEXT, m425.getBox114());
+		addBox("Resultado Liquidación Anual", Mod4252025Description.BOX_115_TEXT, m425.getBox115(), true);
 		
-		// Tributación por razón del territorio
-		addBox("Tributación Conjunta", "Regularización cuotas art. 80.Cinco.5º LIVA", m425.getBox658());
-		addBox("Tributación Conjunta", "Suma de Resultados", m425.getBox84());	
-		addBox("Tributación Conjunta", "Territorio Común (%)", m425.getBox87());
-		addBox("Tributación Conjunta", "Araba/Álava (%)", m425.getBox88());
-		addBox("Tributación Conjunta", "Gipuzkoa (%)", m425.getBox89());
-		addBox("Tributación Conjunta", "Bizkaia (%)", m425.getBox90());
-		addBox("Tributación Conjunta", "Navarra (%)", m425.getBox91());
-		addBox("Tributación Conjunta", "Resultado atribuible al territorio común", m425.getBox92());
-		addBox("Tributación Conjunta", "IVA a la importación liquidado por la Aduana (sólo sujetos pasivos con opción de diferimiento)", m425.getBox659());
-		addBox("Tributación Conjunta", "Compensación de cuotas del ejercicio anterior atribuible a territorio común", m425.getBox93());
-		addBox("Tributación Conjunta", "Resultado de la declaración anual atribuible a territorio común".toUpperCase(), 0.0, m425.getBox94(), true);
+		// Resultado de las Autoliquidaciones
+		addBox("Resultado Autoliquidaciones", Mod4252025Description.BOX_116_TEXT, m425.getBox116());
+		addBox("Resultado Autoliquidaciones", Mod4252025Description.BOX_117_TEXT, m425.getBox117());
+		addBox("Resultado Autoliquidaciones", Mod4252025Description.BOX_118_TEXT, m425.getBox118());
+		addBox("Resultado Autoliquidaciones", Mod4252025Description.BOX_119_TEXT, m425.getBox119());
 		
-		// Resultado de las Liquidaciones
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Total resultados a ingresar en las autoliquidaciones de IVA del ejercicio", m425.getBox95());
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Total devoluciones mensuales de IVA solicitadas por sujetos pasivos inscritos en el Registro de devolución mensual", m425.getBox96());
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Total devoluciones solicitadas por cuotas soportadas en la adquisición de elementos de transporte (Art. 30 bis RIVA)", m425.getBox524());
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Resultado de la autoliquidación del último periodo - A compensar", m425.getBox97());
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Resultado de la autoliquidación del último periodo - A devolver", m425.getBox98());
-		addBox("Resultado de las Liquidaciones", "Periodos No Tributan R.E. Grupo Entidades - Cuotas pendientes de compensación al término del ejercicio", m425.getBox662());		
-		addBox("Resultado de las Liquidaciones", "Periodos Tributan R.E. Grupo Entidades - Total resultados positivos autoliquidaciones del ejercicio (modelo 322)", m425.getBox525());
-		addBox("Resultado de las Liquidaciones", "Periodos Tributan R.E. Grupo Entidades - Total resultados negativos autoliquidaciones del ejercicio (modelo 322)", m425.getBox526());
-		
-		// Volumen de Operaciones
-		addBox("Volumen de Operaciones", "Operaciones en régimen general", m425.getBox99());
-		addBox("Volumen de Operaciones", "Operaciones a las que habiéndoles aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art.75 LIVA", m425.getBox653());
-		addBox("Volumen de Operaciones", "Entregas intracomunitarias exentas", m425.getBox103());
-		addBox("Volumen de Operaciones", "Exportaciones y otras operaciones exentas con derecho a deducción", m425.getBox104());
-		addBox("Volumen de Operaciones", "Operaciones exentas sin derecho a deducción", m425.getBox105());
-		addBox("Volumen de Operaciones", "Operaciones no sujetas por reglas de localización o con inversión del sujeto pasivo", m425.getBox110());
-		addBox("Volumen de Operaciones", "Operaciones sujetas con inversión del sujeto pasivo", m425.getBox125());
-		addBox("Volumen de Operaciones", "OSS. Operaciones no sujetas por reglas de localización acogidas a la OSS", m425.getBox126());
-		addBox("Volumen de Operaciones", "OSS. Operaciones sujetas y acogidas a la OSS", m425.getBox127());
-		addBox("Volumen de Operaciones", "Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA", m425.getBox128());
-		addBox("Volumen de Operaciones", "Operaciones en régimen simplificado", m425.getBox100());
-		addBox("Volumen de Operaciones", "Operaciones en régimen especial de la agricultura, ganadería y pesca", m425.getBox101());
-		addBox("Volumen de Operaciones", "Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia", m425.getBox102());
-		addBox("Volumen de Operaciones", "Operaciones en Régimen especial de bienes usados, objetos de arte, antigÃƒÂ¼edades y objetos de colección", m425.getBox227());
-		addBox("Volumen de Operaciones", "Operaciones en régimen especial de Agencias de Viajes", m425.getBox228());
-		addBox("Volumen de Operaciones", "Entregas de bienes inmuebles y operaciones financieras no habituales", m425.getBox106());
-		addBox("Volumen de Operaciones", "Entregas de bienes de inversión", m425.getBox107());
-		addBox("Volumen de Operaciones", "Total volumen de operaciones (Art. 121 Ley IVA)", m425.getBox108());
-		
-		// Operaciones Especificas
-		addBox("Operaciones Especificas", "Adquisiciones interiores exentas", m425.getBox230());
-		addBox("Operaciones Especificas", "Adquisiciones intracomunitarias exentas", m425.getBox109());
-		addBox("Operaciones Especificas", "Importaciones exentas", m425.getBox231());
-		addBox("Operaciones Especificas", "Bases imponibles del IVA soportado no deducible", m425.getBox232());
-		addBox("Operaciones Especificas", "Operaciones sujetas y no exentas que originan el derecho a la devolución mensual", m425.getBox111());
-		addBox("Operaciones Especificas", "Entregas interiores de bienes devengadas por inversión del sujeto pasivo como consecuencia de operaciones triangulares", m425.getBox113());
-		addBox("Operaciones Especificas", "Servicios localizados en el territorio de aplicación del impuesto por inversión de sujeto pasivo", m425.getBox523());		
+		// Operaciones Específicas
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_120_TEXT, m425.getBox120());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_121_TEXT, m425.getBox121());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_122_TEXT, m425.getBox122());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_123_TEXT, m425.getBox123());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_124_TEXT, m425.getBox124());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_125_TEXT, m425.getBox125());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_126_TEXT, m425.getBox126());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_127_TEXT, m425.getBox127());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_128_TEXT, m425.getBox128());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_129_TEXT, m425.getBox129());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_130_TEXT, m425.getBox130());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_131_TEXT, m425.getBox131());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_132_TEXT, m425.getBox132());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_133_TEXT, m425.getBox133());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_134_TEXT, m425.getBox134(),true);
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_135_TEXT, m425.getBox135());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_136_TEXT, m425.getBox136());
+		addBox("Operaciones Específicas", Mod4252025Description.BOX_137_TEXT, m425.getBox137());
 		
 		// Regimen Especial del Criterio de Caja
-		addBox("Régimen Esp. Criterio de Caja", "Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA", m425.getBox654(), m425.getBox655(),false);
-		addBox("Régimen Esp. Criterio de Caja", "Importe de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 75 LIVA", m425.getBox656(), m425.getBox657(),false);
+		addBox("Importes RECC", Mod4252025Description.BOX_138_139_TEXT, m425.getBox138(), m425.getBox139());
+		addBox("Importes RECC", Mod4252025Description.BOX_140_141_TEXT, m425.getBox140(), m425.getBox141());
+		
+		// Régimen especial del pequeño empresario o profesional (REPEP)
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_142_TEXT, m425.getBox142());
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_143_TEXT, m425.getBox143());
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_144_TEXT, m425.getBox144());
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_145_TEXT, m425.getBox145());
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_146_TEXT, m425.getBox146());
+		addBox("Operaciones REPEP", Mod4252025Description.BOX_147_TEXT, m425.getBox147());
 		
 	}
 	
@@ -263,12 +233,12 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 		
 	}
 	
-    private void addEnsure(String s1, String s2, Mod4252025 m425, Mod4252025DetailKey key ) {
+    private void addEnsure(String s1, String s2, Mod4252025 m425, Mod4252025DetailKey key) {
     	
 		row = sheet.createRow(rowCount++);
 		
 		// Algunas lineas van en negrita
-		boolean isBold = (key == Mod4252025DetailKey.C0047 || key == Mod4252025DetailKey.C0064 || key == Mod4252025DetailKey.C0065);
+		boolean isBold = (key == Mod4252025DetailKey.C074 || key == Mod4252025DetailKey.C079 || key == Mod4252025DetailKey.C094 || key == Mod4252025DetailKey.C095);
 		
 		CellStyle style = workbook.createCellStyle();
 		style.setVerticalAlignment(VerticalAlignment.BOTTOM);		
@@ -276,23 +246,27 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 		
 		cellCount = 0;
 		
+		// Apartado y Descripción
 		CellUtil.createCell(row, cellCount++, s1, style);
-		CellUtil.createCell(row, cellCount++, key == Mod4252025DetailKey.C0065 ? s2.toUpperCase() : s2, style);
+		CellUtil.createCell(row, cellCount++, key == Mod4252025DetailKey.C095 ? s2.toUpperCase() : s2, style);
 		
 		// Base - Determinadas casillas solo llevan cuota
-		if (key == Mod4252025DetailKey.C0047 || key == Mod4252025DetailKey.C0063 || key == Mod4252025DetailKey.C0522 || key == Mod4252025DetailKey.C0064 || key == Mod4252025DetailKey.C0065 )
+		if (key == Mod4252025DetailKey.C079 || key == Mod4252025DetailKey.C090 || 
+				key == Mod4252025DetailKey.C091 || 
+				key == Mod4252025DetailKey.C092 || 
+				key == Mod4252025DetailKey.C093 ||
+				key == Mod4252025DetailKey.C094 ||
+				key == Mod4252025DetailKey.C095)
 			CellUtil.createCell(row, cellCount++, "", style);
-		else createAmountCell(m425.ensure(key).getTaxableBase(), isBold);
+		else 
+			createAmountCell(m425.ensure(key).getTaxableBase(), isBold);
 		
-		// Tipo - Determinadas casillas solo llevan base y cuota
+		// Tipo - Determinadas casillas solo llevan base y/o cuota
 		if (m425.ensure(key).getPercent() == 0 &&
-				key != Mod4252025DetailKey.C0701 &&
-				key != Mod4252025DetailKey.C0705 &&
-				key != Mod4252025DetailKey.C0709 &&
-				key != Mod4252025DetailKey.C0713 &&
-				key != Mod4252025DetailKey.C0717 &&
-				key != Mod4252025DetailKey.C0721 &&
-				key != Mod4252025DetailKey.C0664 
+				key != Mod4252025DetailKey.C003 &&
+				key != Mod4252025DetailKey.C021 &&
+				key != Mod4252025DetailKey.C036 &&
+				key != Mod4252025DetailKey.C051 
 				) 
 			CellUtil.createCell(row, cellCount++, "", style);
 		else createAmountCell(m425.ensure(key).getPercent(), isBold);
@@ -305,6 +279,14 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
     private void addBox(String s1, String s2, double amount) {    	
     	addBox(s1, s2, 0.0, amount, false);    	
     }
+    
+    private void addBox(String s1, String s2, double amount, boolean isBold) {
+    	addBox(s1, s2, 0.0, amount, isBold);    	
+    }
+    
+	private void addBox(String s1, String s2, double amount1, double amount2) {
+		addBox(s1, s2, amount1, amount2, false);
+	}
     
 	private void addBox(String s1, String s2, double amount1, double amount2, boolean isBold) {
 		
