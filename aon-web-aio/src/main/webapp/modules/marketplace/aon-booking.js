@@ -218,11 +218,6 @@ export class AonBooking extends AonElement {
 		}
 
 		if(!this.dur.getDomain().isKitDigital()) {
-
-// console.log("Ahora IF   - ", dur.getDomain().isConsultancy());
-// console.log("Ahora ELSE - ", !this.dur.isEnterpriseChild());
-// console.log("BookingApps - ", BookingApps);
-
 			if(dur.getDomain().isConsultancy()) {
 				this.buildTitle(content, MSG.APPLICATIONS);
 				this.buildApps(content, ConsultancyBookingApps, dur);
