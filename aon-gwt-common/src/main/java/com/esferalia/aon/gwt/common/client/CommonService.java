@@ -110,7 +110,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -251,6 +250,7 @@ public interface CommonService extends RemoteService {
 	
 	List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException;
 	
+	List<ProjectType> getAviableProjectTypes(String domainName, int domain, String user, int domainSearch) throws AonCoreException;
 	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
 
@@ -488,11 +488,10 @@ public interface CommonService extends RemoteService {
 	List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException;
 	
 	LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry) throws AonCoreException;
-	void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException;
-	void updateEndDatePackFee(String domainName, int domain, String user, Fee fee) throws AonCoreException;
 	
-	void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product) throws AonCoreException;
-	void createBookingFee(String domainName, int domain, String user, ProductBooking product) throws AonCoreException;
+	void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) throws AonCoreException;
+	void updateBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product, Fee newFee) throws AonCoreException;
+	void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product) throws AonCoreException;
 	
 	List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException;
 	RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String user, RegistryPayMethod registryPayMethod) throws AonCoreException;

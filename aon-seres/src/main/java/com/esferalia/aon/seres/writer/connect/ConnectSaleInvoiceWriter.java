@@ -385,11 +385,18 @@ public class ConnectSaleInvoiceWriter {
 
 	private List<SINCI> createSINCIList(List<TaxBreakDown> taxList, Invoice invoice) {
 		List<SINCI> list = new ArrayList<>();
+		if(taxList.isEmpty()) {
+			TaxBreakDown vatZero = new TaxBreakDown();
+			vatZero.setBase(invoice.getTaxableBase());
+			vatZero.setTaxType(TaxType.VAT);
+			vatZero.setTaxPercent(0.0);
+			vatZero.setTaxQuota(0.0);
+			SINCI sinci = createSINCIRecord(vatZero, 1, invoice);
+			if(sinci != null) list.add(sinci);
+		} 
 		for (TaxBreakDown tax : taxList) {
-			SINCI sinci = createSINCIRecord(tax,
-					list.size()+1, invoice);
-			if(sinci!=null)
-				list.add(sinci);
+			SINCI sinci = createSINCIRecord(tax, list.size()+1, invoice);
+			if(sinci!=null) list.add(sinci);
 		}
 		return list;
 	}

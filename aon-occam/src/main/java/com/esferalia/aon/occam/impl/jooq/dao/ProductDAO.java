@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -328,7 +329,6 @@ public class ProductDAO {
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(PRODUCT_BOOKING.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ProductBookingFiller())
 				.findFirst().orElse(new ProductBooking());
 	}
@@ -500,6 +500,9 @@ public class ProductDAO {
 		}
 		
 		json.put("descriptionTemplate", product.getDescriptionTemplate());
+		
+		if(null != product.getProjectType())
+			json.put("projectType", product.getProjectType().getId());
 		
 		return json.toString();
 	}
@@ -761,6 +764,9 @@ public class ProductDAO {
 			
 			if(info.has("descriptionTemplate"))
 				productBooking.setDescriptionTemplate(info.getString("descriptionTemplate"));
+			
+			if(info.has("projectType"))
+				productBooking.setProjectType(new ProjectType().setId( info.getInt("projectType") ));
 		}
 		
 	}

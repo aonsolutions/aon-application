@@ -1397,8 +1397,8 @@ public class InvoiceDAO {
 	}
 	
 	public static InvoiceUserData getUserData(AONContext ctx, byte[] auth){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");

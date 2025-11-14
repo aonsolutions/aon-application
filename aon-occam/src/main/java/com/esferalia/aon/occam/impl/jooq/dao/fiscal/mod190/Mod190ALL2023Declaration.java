@@ -316,13 +316,22 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 							if (PREST_IT.equals(prest)) {
 								detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
 								detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
-								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
-									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
+//								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+//									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
+								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
+								if (dif > 0) {
+									detail.setInKindOutputDepositIL(AonMathUtils.sum(detail.getInKindOutputDepositIL(), dif));
+								}
 							} else {
 								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
 								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
-								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
-									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
+//								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
+//									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
+								// Cuota repercutida = Cuota total - Cuota empresa
+								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
+								if (dif > 0) {
+									detail.setInKindOutputDeposit(AonMathUtils.sum(detail.getInKindOutputDeposit(), dif));
+								}
 							}
 						}
 					}
