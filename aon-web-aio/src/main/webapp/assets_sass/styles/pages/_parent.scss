@@ -41,6 +41,9 @@
           display: flex;
         }
       }
+      .aonDivNoResults{
+        text-align: center;
+      }
     }
     @media (max-width: v.$menu-resolucion-mobile) {
       .aonRightSidenav{
