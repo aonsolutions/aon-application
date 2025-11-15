@@ -80,6 +80,7 @@ public class AONContext {
 	
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
+	private static final String GLOBAL_SCHEMA = "global-aonsolutions-net";
 	private static Settings SETTINGS = null;
 	
 	private static Settings getDefaultSettings(){
@@ -147,6 +148,14 @@ public class AONContext {
 			settings.setParamType( ParamType.INLINED );
 			return new UnpooledCloseableAONContext( dsUnpooled.getConnection(), settings );
 		} catch (AonConnectionException | ClassNotFoundException | SQLException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
+
+	public static CloseableAONContext getGlobalAONContext() {
+		try {
+			return new CloseableAONContext(AonDataSource.getInstance().getDatabaseConnection(GLOBAL_SCHEMA), GLOBAL_SCHEMA);
+		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
