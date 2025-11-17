@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -102,6 +103,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloq. Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
 	
 	private AonCustomIntegerBox posititon = new AonCustomIntegerBox("Posici\u00f3n");
+	
+	private AonCustomListBox projectType = new AonCustomListBox("T. Expediente");
 	private AonCustomListBox workgroup = new AonCustomListBox("G. Trabajo");
 	private AonCustomListBox taskHolder = new AonCustomListBox("Operario");
 	
@@ -241,8 +244,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		generalCard = new AonCustomCard("Datos Comerciales", status);
 		generalCard.setToolbarWidgetShown();
+		generalCard.setHeight("100%");
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
-		generalCard.getElement().getStyle().setProperty("min-width", "36rem");
+		generalCard.getElement().getStyle().setProperty("min-width", "33rem");
 		generalCard.add(table);
 		
 		code.getTextBox().getElement().getStyle().setProperty("text-transform", "uppercase");
@@ -275,7 +279,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		aditionalCard.setToolbarWidgetShown();
 		aditionalCard.setHeight("100%");
 		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
-		aditionalCard.getElement().getStyle().setProperty("min-width", "36rem");
+		aditionalCard.getElement().getStyle().setProperty("min-width", "33rem");
 		aditionalCard.add(table);
 		
 		posititon.hideNearBy();
@@ -334,6 +338,18 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		table.add(createRow(type, aonApps, domainType));
 		
+		projectType.clearItems();
+		projectType.addItem("-", "");
+		projectType.addChangeHandler(e -> {
+			workgroup.setVisible(AonStringUtils.isNotBlank(projectType.getValue()));
+			taskHolder.setVisible(AonStringUtils.isNotBlank(projectType.getValue()));
+			
+			product.setProjectType(AonStringUtils.isBlank(projectType.getValue())
+					? null
+					: new ProjectType().setId(Integer.parseInt(projectType.getValue()))
+			);
+		});
+		
 		workgroup.clearItems();
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
@@ -364,24 +380,31 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			}
 		});
 		
-		getAviableWorkgroups(workgroups -> {
-			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
-			workgroup.setValue(null != product.getWorkgroup() ? product.getWorkgroup().getId().toString() : null);
+		getAviableProjectTypes(projectTypes -> {
+			projectTypes.forEach(projectTypeIt -> projectType.addItem(projectTypeIt.getDescription(), projectTypeIt.getId().toString()));
+			projectType.setValue(null != product.getProjectType() ? product.getProjectType().getId().toString() : null);
 			
-			if(null != product.getWorkgroup()) {	
-				getAviableTaskHolders(product.getWorkgroup().getId(), taskHolders -> {
-					taskHolder.setVisible(true);
-					taskHolder.clearItems();
-					taskHolder.addItem("-", ""); 
-					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
-					taskHolder.setValue(null != product.getTaskHolder() ? product.getTaskHolder().getRegistry().toString() : null);
-				});
-			} else {
-				taskHolder.setVisible(false);
-			}	
+			workgroup.setVisible(null != product.getProjectType());
+			taskHolder.setVisible(null != product.getProjectType());
+			
+			getAviableWorkgroups(workgroups -> {
+				workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
+				workgroup.setValue(null != product.getProjectType() && null != product.getWorkgroup() ? product.getWorkgroup().getId().toString() : null);
+				
+				if(null != product.getWorkgroup()) {	
+					getAviableTaskHolders(product.getWorkgroup().getId(), taskHolders -> {
+						taskHolder.clearItems();
+						taskHolder.addItem("-", ""); 
+						taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
+						taskHolder.setValue(null != product.getProjectType() && null != product.getTaskHolder() ? product.getTaskHolder().getRegistry().toString() : null);
+					});
+				} else {
+					taskHolder.setVisible(false);
+				}	
+			});
 		});
 		
-		table.add(createRow(workgroup, taskHolder));
+		table.add(createRow(projectType, workgroup, taskHolder));
 		
 		category.clearItems();
 		category.addItem("-", "");
@@ -548,7 +571,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private Widget createTariffCard() {
 		tariffCard = new AonCustomCard("Tarifas");
 		tariffCard.addStyleName(AON.CSS.aonWidthAll());
-		tariffCard.getElement().getStyle().setProperty("min-width", "36rem");
+		tariffCard.getElement().getStyle().setProperty("min-width", "33rem");
 		
 		tariffCenterPanelCard = new SimpleLayoutPanel();
 		
@@ -582,7 +605,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		compositeCard = new AonCustomCard("Pack Productos", addStatusPanel);
 		compositeCard.addStyleName(AON.CSS.aonWidthAll());
-		compositeCard.getElement().getStyle().setProperty("min-width", "36rem");
+		compositeCard.getElement().getStyle().setProperty("min-width", "33rem");
 		compositeCard.setToolbarWidgetShown();
 		
 		compositeItemTable  = new CompositeItemTable(options, product, item) {
@@ -713,6 +736,12 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private void saveProduct() {
 		// Update Status (should use handler for this)
 		product.setStatus(status.getValue());
+		
+		if(AonStringUtils.isBlank(projectType.getValue())) {
+			product.setWorkgroup(null);
+			product.setTaskHolder(null);
+		}
+		
 		item.setStatus(status.getValue());
 		item.setBarcode(null);	
 		
@@ -929,6 +958,21 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error obteniendo item compuesto : " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void getAviableProjectTypes(Consumer<List<ProjectType>> success) {
+		commonService.getAviableProjectTypes(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<List<ProjectType>>() {
+			
+			@Override
+			public void onSuccess(List<ProjectType> projectTypes) {
+				success.accept(projectTypes);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo tipos expedientes: " + caught.getMessage());
 			}
 		});
 	}

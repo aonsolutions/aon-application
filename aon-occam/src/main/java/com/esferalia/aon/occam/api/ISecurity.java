@@ -45,6 +45,7 @@ public interface ISecurity {
 	public Auth getAuthByDocument(AONContext ctx, String document);
 	public Auth getAuth(AONContext ctx, byte[] auth);
 	public byte[] unHexUuid(AONContext ctx, String uuid);
+	public Auth saveAuth(AONContext ctx, Auth auth);
 	public Auth insertAuth(AONContext ctx, Auth auth);
 	public Auth updateAuth(AONContext ctx, Auth auth);
 	public Auth updateAuthPassword(AONContext ctx, Auth auth);

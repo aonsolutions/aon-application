@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
@@ -98,5 +100,9 @@ public interface IProduct2 {
 	public void deleteTariffCatalogue(CloseableAONContext ctx, Integer id);
 	
 	public List<Catalogue> getCatalogueList(CloseableAONContext ctx, CatalogueFilter filter);
+	
+	public void createBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee);
+	public void updateBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee);
+	public void removeBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product);
 	
 }

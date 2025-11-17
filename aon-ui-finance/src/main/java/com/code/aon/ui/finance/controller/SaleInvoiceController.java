@@ -32,7 +32,6 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
@@ -52,12 +51,9 @@ import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.PrintParametersController;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
-import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.file.edi.EdiInvoiceImporterHandler;
 import com.code.aon.ui.finance.file.edi.FtpSaleInvoiceDownloadHandler;
@@ -93,7 +89,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -499,48 +494,6 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
-	@Deprecated
-	public void onExportUdapaEdiFile(ActionEvent event) {
-		FileOutput output = null;
-		HttpServletResponse response = null;
-		OutputStream out = null;
-		try {
-			Invoice invoice = (Invoice) this.getTo();
-			
-			String customerEdiMainCode = null;
-			String customerEdiOperationCode = null;
-			if(invoice.getRegistryAddress()!=null && invoice.getRegistryAddress().getId()!=null){
-				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.CABECERA);
-				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.FACTURA);
-			}
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-			
-			// writer file
-			UdapaSaleInvoiceWriter writer = new UdapaSaleInvoiceWriter();
-			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
-			
-			// download file
-			String fileName = "inv_" + invoice.getSeries()+"_"+invoice.getNumber();
-			byte[] data = output.getContent();
-			int size = data.length;
-			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, fileName + ".edi", null, size);
-			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
-			IOUtils.copy( fileIn, out );
-			IOUtils.closeQuietly(fileIn);			
-        } catch (IOException e) {
-        	AonUtil.addErrorMessage(e.getMessage());
-        	throw new AbortProcessingException(e.getMessage(), e);
-        } catch (Throwable e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			DownloadUtil.finishDownload(response, out);
-		}
-	}
-
 	@Override
 	public synchronized ITransferObject getTo() {
 		return super.getTo();

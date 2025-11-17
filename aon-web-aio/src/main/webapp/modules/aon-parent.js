@@ -131,6 +131,9 @@ export class AonParent extends AonElement {
 					this.cleanCompanies();
 					
 	  				let filteredCompanies = this.filterCompanies(companies, filter);
+					if (filteredCompanies.length === 0) {
+						this.showNoResults(this.filter);
+					}
 					this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 					
 					if ( companies.length == limit ){
@@ -151,6 +154,23 @@ export class AonParent extends AonElement {
 				this.setFilter(filter);
 			}
 		});
+	}
+	
+	showNoResults(filter) {
+		let ulCompanies = this.getElement("UlCompanies");
+		this.cleanCompanies();
+
+		let div = document.createElement("div");
+		div.className = "aonDivNoResults";
+		let mensaje = "No hay resultados";
+		if(filter?.id === 'active') mensaje = "No hay empresas activas";
+		else if(filter?.id === 'inactive') mensaje = "No hay empresas inactivas";
+		else if(filter?.id === 'shared') mensaje = "No hay empresas compartidas";
+		else if(filter?.id === 'consultancy') mensaje = "No hay entornos";
+		else if(filter?.id === 'office') mensaje = "No hay despachos";
+
+		div.innerHTML = mensaje;
+		ulCompanies.appendChild(div);
 	}
 	
 	decorateTabs(companies, filter = {}) {
