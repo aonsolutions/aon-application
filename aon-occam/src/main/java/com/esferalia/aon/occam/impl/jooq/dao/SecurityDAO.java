@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,26 +58,23 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record6;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.extension.DSLExtensions;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
+import com.esferalia.aon.jooq.tables.records.DomainApplicationRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -90,7 +88,6 @@ import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
-import com.esferalia.aon.occam.api.model.Properties.AuthProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -163,119 +160,7 @@ public class SecurityDAO {
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.USER_ID);}
 	}
 	
-	private static final AuthPropertiesDAO AUTH_PROPERTIES = new AuthPropertiesDAO();
-	protected static class AuthPropertiesDAO implements AuthProperties {
-		protected Condition[] getConditions(AuthFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
 
-		@Override public Property<byte[]> getIdProperty() {return new FilterDAO.PropertyDAO<>(AUTH.ID);}
-		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.NAME);}
-		@Override public Property<String> getSurnameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.SURNAME);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
-		@Override public Property<String> getPhoneProperty() {return new FilterDAO.PropertyDAO<>(AUTH.PHONE);}
-	}
-
-	public static Auth getAuth(AONContext ctx, byte[] auth) {
-		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
-			.from(AUTH)
-			.where(AUTH.ID.eq(auth))
-			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
-	}
-
-	public static Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
-		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
-			.from(AUTH)
-			.where(AUTH_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new AuthFiller());
-	}
-	
-	public static Auth getAuth(AONContext ctx, String email) {
-		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
-			.from(AUTH)
-			.where(AUTH.EMAIL.eq(email))
-			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
-	}
-	
-	public static Auth getAuthByDocument(AONContext ctx, String document) {
-		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
-			.from(AUTH)
-			.where(AUTH.DOCUMENT.eq(document))
-			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
-	}
-	
-	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
-		return ctx.getDslContext()
-			.select(USER.DOMAIN)
-			.from(USER)
-			.where(USER.AUTH.eq(auth))
-			.fetch().stream().map(r -> r.getValue(USER.DOMAIN)).toArray(Integer[]::new);
-	}
-
-	public static Integer[] getAuthScopes (AONContext ctx, byte[] auth) {
-		return ctx.getDslContext()
-			.select(USER_SCOPE.SCOPE)
-			.from(USER_SCOPE)
-			.where(USER_SCOPE.USER_ID.in(
-					ctx.getDslContext()
-						.select(USER.ID)
-						.from(USER)
-						.where(USER.AUTH.eq(auth))))
-			.fetch().stream().map(r -> r.getValue(USER_SCOPE.SCOPE)).toArray(Integer[]::new);
-	}
-
-	public static byte[] unHexUuid(AONContext ctx, String uuid) {
-		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
-	}
-	
-	public static Auth insertAuth(AONContext ctx, Auth auth) {
-		String uuid = ctx.getDslContext().fetch("select uuid();").stream().map(r -> r.getValue(0).toString()).findFirst().get().replace("-", "");
-		ctx.getDslContext().insertInto(AUTH)
-			.set(AUTH.ID, unHexUuid(ctx, uuid))
-			.set(AUTH.EMAIL, auth.getEmail())
-			.set(AUTH.PASSWORD, auth.getPassword())
-			.set(AUTH.NAME, auth.getName())
-			.set(AUTH.SURNAME, auth.getSurname())
-			.set(AUTH.DOCUMENT, auth.getDocument())
-			.set(AUTH.PHONE, auth.getPhone())
-			.execute();
-		
-		return getAuth(ctx, auth.getEmail());
-	}
-	
-	public static Auth updateAuth(AONContext ctx, Auth auth) {
-		ctx.getDslContext().update(AUTH)
-			.set(AUTH.NAME, auth.getName())
-			.set(AUTH.SURNAME, auth.getSurname())
-			.set(AUTH.DOCUMENT, auth.getDocument())
-			.set(AUTH.PHONE, auth.getPhone())
-			.where(AUTH.ID.eq(auth.getAuth()))
-			.execute();
-		return auth;
-	}
-	
-	public static Auth updateAuthPassword(AONContext ctx, Auth auth) {
-		ctx.getDslContext().update(AUTH)
-			.set(AUTH.PASSWORD, auth.getPassword())
-			.where(AUTH.ID.eq(auth.getAuth()))
-			.execute();
-		return auth;
-	}
-	
-	public static Auth updateUserPassword(AONContext ctx, Auth auth) {
-		ctx.getDslContext().update(USER)
-			.set(USER.PASSWORD, auth.getPassword())
-			.where(USER.AUTH.eq(auth.getAuth()))
-			.execute();
-		return auth;
-	}
 	
 	
 	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
@@ -565,26 +450,7 @@ public class SecurityDAO {
 		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static class AuthFiller extends Filler implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
 
-		@Override
-		public Auth apply(Record8<byte[], String, String, String, String, String, String, String> r) {
-			return build(r)
-					.setUuid(r.value2());
-		}
-		
-		public static Auth build(Record r) {
-			return new Auth()
-				.setAuth(r.getValue(AUTH.ID))
-				.setEmail(r.getValue(AUTH.EMAIL))
-				.setName(r.getValue(AUTH.NAME))
-				.setSurname(r.getValue(AUTH.SURNAME))
-				.setDocument(r.getValue(AUTH.DOCUMENT))
-				.setPhone(r.getValue(AUTH.PHONE))
-				.setPassword(r.getValue(AUTH.PASSWORD));
-		}
-		
-	}
 	
 	private static Field<?>[] USER_FIELDS = new Field[]{
 			USER.ID, USER.DOMAIN, USER.TYPE, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
@@ -1613,30 +1479,44 @@ public class SecurityDAO {
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
-		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
-				.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
+		
+		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, 
+					f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1))
+				).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
+		
 		LinkedList<AonApp> parentDomainApps = domain.getParentId() != null
-				? getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1)))
-						.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new))
+				? getDomainAppStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1))
+					).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();
 						
-		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> domainUserRoles = 
-			userId != null
-				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId)))
-						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
-				: new LinkedList<>();	
-		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = 
-			userId != null  && domain.getParentId() != null && user.getDomain().getId().equals(domain.getParentId())
-				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
-						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> domainUserRoles = userId != null
+				? getUserAppRoleStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId))
+					).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
 				: new LinkedList<>();	
 		
-		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getActiveProperty().eq((byte) 1)).and(f.getSharedProperty().eq((byte)0))).count();
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = userId != null  && domain.getParentId() != null && user.getDomain().getId().equals(domain.getParentId())
+				? getUserAppRoleStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId))
+					).map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
+				: new LinkedList<>();	
+		
+		Long userNum = getDomainUserStream(ctx, 
+					f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getEnterpriseProperty().isNull())
+					.and(f.getActiveProperty().eq((byte) 1))
+					.and(f.getSharedProperty().eq((byte)0))
+				).count();
 		domain.setDefinedUsers(userNum.intValue());
 		
-		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getNameProperty().eq(AppParam.TRIAL.name()).and(f.getDomainProperty().eq(ctx.getDomainId()))).findFirst();
+		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, 
+				f -> f.getNameProperty().eq(AppParam.TRIAL.name())
+				.and(f.getDomainProperty().eq(ctx.getDomainId()))
+			).findFirst();
 
 		List<Scope> scopes = getUserScopeList(ctx, user.getId());
+		
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
 				.setOldParentDomainModules(domain.getParentId() != null
@@ -1809,6 +1689,22 @@ public class SecurityDAO {
 				.setUser( checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r) : null )
 				;
 		}		
+	}
+	
+
+
+	public static void insertUserApplicationAio(CloseableAONContext ctx, Integer domainId, Integer userId) {
+		DomainApplicationRecord domainApplication = ctx.getDslContext().selectFrom(DOMAIN_APPLICATION)
+			.where(DOMAIN_APPLICATION.DOMAIN.eq(domainId))
+			.and(DOMAIN_APPLICATION.APPLICATION.eq(28))
+			.fetchOne();
+		
+		ctx.getDslContext().insertInto(APPLICATION_USER)
+			.set(APPLICATION_USER.DOMAIN, domainId)
+			.set(APPLICATION_USER.USER_ID, userId)
+			.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplication.getId())
+			.execute()
+			;
 	}
 	
 }

@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -328,7 +329,6 @@ public class ProductDAO {
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(PRODUCT_BOOKING.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ProductBookingFiller())
 				.findFirst().orElse(new ProductBooking());
 	}
@@ -431,6 +431,9 @@ public class ProductDAO {
 	private static ProductBooking insertProductBooking(AONContext ctx, ProductBooking product) {
 		insert(ctx, product);
 		
+		if(null == product.getPosition())
+			getNexProductBookingPos(ctx, product);
+		
 		ctx.getDslContext().insertInto(PRODUCT_BOOKING)
 				.set(PRODUCT_BOOKING.PRODUCT, product.getId())
 				.set(PRODUCT_BOOKING.DOMAIN, product.getDomain().getId())
@@ -450,6 +453,9 @@ public class ProductDAO {
 	private static ProductBooking updateProductBooking(AONContext ctx, ProductBooking product) {
 		update(ctx, product);
 		
+		if(null == product.getPosition())
+			getNexProductBookingPos(ctx, product);
+		
 		ctx.getDslContext().update(PRODUCT_BOOKING)
 			.set(PRODUCT_BOOKING.TYPE, product.getBookingType().value())
 			.set(PRODUCT_BOOKING.POS, product.getPosition())
@@ -465,6 +471,16 @@ public class ProductDAO {
 		return product;
 	}
 	
+	private static void getNexProductBookingPos(AONContext ctx, ProductBooking product) {
+		Integer count = ctx.getDslContext().selectCount().from(PRODUCT_BOOKING)
+			.where(PRODUCT_BOOKING.DOMAIN.eq(product.getDomain().getId()))
+			.and(PRODUCT_BOOKING.TYPE.eq(product.getBookingType().value()))
+			.fetchOne()
+			.value1();
+		
+		product.setPosition(count);
+	}
+
 	private static String getJsonInfo(ProductBooking product) {
 		org.json.JSONObject json = new org.json.JSONObject();
 		
@@ -484,6 +500,9 @@ public class ProductDAO {
 		}
 		
 		json.put("descriptionTemplate", product.getDescriptionTemplate());
+		
+		if(null != product.getProjectType())
+			json.put("projectType", product.getProjectType().getId());
 		
 		return json.toString();
 	}
@@ -745,6 +764,9 @@ public class ProductDAO {
 			
 			if(info.has("descriptionTemplate"))
 				productBooking.setDescriptionTemplate(info.getString("descriptionTemplate"));
+			
+			if(info.has("projectType"))
+				productBooking.setProjectType(new ProjectType().setId( info.getInt("projectType") ));
 		}
 		
 	}

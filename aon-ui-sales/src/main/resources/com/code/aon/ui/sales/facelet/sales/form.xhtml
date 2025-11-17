@@ -104,18 +104,19 @@
 								<f:setPropertyActionListener target="#{sales.showPrepareSaleWindow}"
 									value="#{true}" />
 							 </aon:menuItem>
-							 				
-							<aon:menuItem id="salesduplicate"
-								value="#{bundle.aon_to_duplicate}"
-								rendered="#{salesDetail.model.rowCount > 0}"
-								immediate="#{true}"
-								iconClass="aon-icon-copy"
-								actionListener="#{sales.onDuplicationShow}"
-								reRender="showDuplicationWindow">
-								<f:setPropertyActionListener target="#{sales.showDuplicationWindow}"
-									value="#{true}" />
-							</aon:menuItem>
 						</aon:if>
+						
+						<aon:menuItem id="salesduplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{salesDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{sales.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{sales.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						
 						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="manufacture"
 								value="#{bundle.warehouse_manufacture}"

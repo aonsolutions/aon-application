@@ -213,6 +213,8 @@ public class FtpDeliveryUploadHandler implements Serializable {
 	}
 	
 	public FileOutput exportEdiFile(Delivery delivery) {
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 		FileOutput output = null;
 		try {
 			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
@@ -238,7 +240,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 
 			byte[] attachData = DeliveryPackages.obtainPackageDataAttach(
 					AonUtil.getDomainName(), delivery.getDomain(),
-					AonUtil.getRemoteUser(), delivery.getId()).getData();
+					user, delivery.getId()).getData();
 			if(attachData==null || "".equals(attachData)){
 				String remarks = delivery.getRemarks();
 				if(remarks.replaceAll("\r|\n", "").matches(".*\\[ENV=.*\\].*")){
@@ -255,12 +257,12 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			
 			// write file
 			
-			com.esferalia.aon.occam.api.model.warehouse.Delivery del = AON.getDelivery(AonUtil.getDomainName(), delivery.getDomain(), AonUtil.getRemoteUser(),
+			com.esferalia.aon.occam.api.model.warehouse.Delivery del = AON.getDelivery(AonUtil.getDomainName(), delivery.getDomain(), user,
 					f -> f.getIdProperty().eq(delivery.getId()),
 					new Options().setFull(true));
 
-			EdiCodes codes = SERES.getEdiCodes(AonUtil.getDomainName(), del.getDomain(), AonUtil.getRemoteUser(), del);
-			ConnectDeliveryWriterOccam writer2 = new ConnectDeliveryWriterOccam(AonUtil.getDomainName(), delivery.getDomain(), AonUtil.getRemoteUser());
+			EdiCodes codes = SERES.getEdiCodes(AonUtil.getDomainName(), del.getDomain(), user, del);
+			ConnectDeliveryWriterOccam writer2 = new ConnectDeliveryWriterOccam(AonUtil.getDomainName(), delivery.getDomain(), user);
 			output = writer2.createFile(del, new String(attachData), codes);
 			return output;
 		} catch (IOException e) {

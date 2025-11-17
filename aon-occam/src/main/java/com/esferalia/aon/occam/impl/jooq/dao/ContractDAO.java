@@ -99,8 +99,8 @@ public class ContractDAO {
 	}
 
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, byte[] auth, ContractExtendedDataFilter filter, Integer limit){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		Condition domainsCondition = DOMAIN.ID.in(domains).or(DOMAIN.PARENT.in(domains));
 		Condition userScopesDomain = DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes));
 
@@ -128,7 +128,7 @@ public class ContractDAO {
 				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
 				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 				.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
-				.having(allConditions)
+				.where(allConditions)
 				.limit(limit).offset(0)
 				.fetch().stream().map(new ContractExtendedDataFiller());
 		

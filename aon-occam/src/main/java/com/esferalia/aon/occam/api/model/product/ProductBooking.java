@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -14,9 +15,11 @@ public class ProductBooking extends Product implements Serializable {
 	private static final long serialVersionUID = -1616838783810544813L;
 	
 	private ProductBookingType bookingType;
+	
 	private Integer position;
 	private Workgroup workgroup;
 	private TaskHolder taskHolder;
+	private ProjectType projectType;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -149,5 +152,15 @@ public class ProductBooking extends Product implements Serializable {
 		this.descriptionTemplate = descriptionTemplate;
 		return this;
 	}
+
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+
+	public ProductBooking setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
+		return this;
+	}
+	
 	
 }

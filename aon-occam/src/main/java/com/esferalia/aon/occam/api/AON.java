@@ -9044,4 +9044,22 @@ public class AON {
 		}
 	}
 	
+	public static void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().createBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, product, newFee);
+		}
+	}
+	
+	public static void updateBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().updateBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product, newFee);
+		}
+	}
+	
+	public static void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().removeBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product);
+		}
+	}
+	
 }

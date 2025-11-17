@@ -232,6 +232,10 @@ export const NOTE_STACK = 'note_stack';
 export const NOTIFICATIONS = "notifications";
 export const NOTIFICATION_ADD = "notification_add";
 
+// ----- O
+
+export const ORDERS = 'orders';
+
 // ----- P
 
 export const PALLET = 'pallet';

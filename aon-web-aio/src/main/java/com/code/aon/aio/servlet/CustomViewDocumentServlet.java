@@ -78,7 +78,12 @@ public class CustomViewDocumentServlet extends HttpServlet {
 				p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
 		         .and(p.getTypeProperty().eq((byte) 2))
 		         .and(p.getDescriptionProperty().eq("favicon.svg")), AttachType.REGISTRY);
-			responseFile(resp, faviconAttach);
+			if ( faviconAttach.getData() == null ) {
+				resp.sendRedirect("/favicon.ico");
+				//resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			} else {
+				responseFile(resp, faviconAttach);
+			}
 			break;
 		default:
 			throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());

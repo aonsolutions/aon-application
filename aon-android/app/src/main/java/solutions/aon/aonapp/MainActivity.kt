@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     settings.javaScriptEnabled = true
-                    settings.userAgentString = "solutions.aon.android"
+                    settings.userAgentString = "solutions.aon.android.35"
                     settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                     settings.loadWithOverviewMode = true
                     settings.setSupportZoom(false)

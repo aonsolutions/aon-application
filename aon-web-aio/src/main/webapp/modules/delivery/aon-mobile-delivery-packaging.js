@@ -131,6 +131,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	buildPackageGeneral(parent){
 		let card = createCard(this.PACKAGE_CARD, MSG.PACKAGING, parent);
+		card.style.backgroundColor = 'transparent';
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_HORIZ, false, (e) => this.options(e));
 
 		let table = new AonBasicTable();
@@ -154,7 +155,8 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	buildPackageComposition(parent){
 		let card = createCard(this.COMPOSITION_CARD, MSG.COMPOSITION, parent);
-
+		card.style.backgroundColor = 'transparent';
+		
 		let div = this.createDiv();
 		card.setContent(div);
 

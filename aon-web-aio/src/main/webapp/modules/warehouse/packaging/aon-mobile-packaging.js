@@ -88,8 +88,8 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	build() {
-		this.getApplication().addFloatOption(ACTION.ADD, () => this.resetPackaging());
-		
+		this.addFloatOption(ACTION.ADD, () => this.resetPackaging());
+
 		let toolbar = new AonToolbar();
 		toolbar.id = this.PACKAGING_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
@@ -131,6 +131,10 @@ export class AonMobilePackaging extends AonElement {
 		printButton2.addEventListener(EVENT.CLICK, () => this.print());
 
 		div.appendChild(printButton2);
+	}
+
+	addFloatOption(action, fn) {
+		this.getApplication().addFloatOption(action, fn);
 	}
 
 	resetPackaging() {
