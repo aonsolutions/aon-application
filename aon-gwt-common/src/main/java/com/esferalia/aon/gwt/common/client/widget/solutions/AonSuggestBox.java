@@ -86,7 +86,14 @@ public class AonSuggestBox extends FlowPanel implements Focusable {
 		this.suggestBox.showSuggestionList();
 	}
 
+	/**
+	 * @deprecated use {@link #setEnabled(boolean)} instead
+	 */
+	@Deprecated
 	public void setEnable(boolean enabled) {
+		setEnabled(enabled);
+	}
+	public void setEnabled(boolean enabled) {
 		suggestBox.setEnabled(enabled);
 	}
 	

@@ -72,7 +72,14 @@ public class AonCustomListBox extends HTMLPanel implements Focusable {
 		listBox.addChangeHandler(changeHandler);
 	}
 
+	/**
+	 * @deprecated use {@link #setEnabled(boolean)} instead
+	 */
+	@Deprecated
 	public void setEnable(boolean enabled) {
+		setEnabled(enabled);
+	}
+	public void setEnabled(boolean enabled) {
 		listBox.setEnabled(enabled);
 	}
 	

@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -18,84 +18,91 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 
-public class AonCustomerSuggestBox extends AonSuggestBox implements HasSelectionHandlers<Customer>{
+public class AonSeriesSuggestBox extends AonSuggestBox implements HasSelectionHandlers<Series>{
 
-	private Customer customer;
+	private Series series;
 	
-	public <T> AonCustomerSuggestBox(AonModuleOptions<?> opts) {
-		this(opts, AON.MSG.customer());
+	public <T> AonSeriesSuggestBox(AonModuleOptions<?> opts) {
+		this(opts, AON.MSG.series(),false);
+	}
+
+	public <T> AonSeriesSuggestBox(AonModuleOptions<?> opts, boolean rectifier) {
+		this(opts, AON.MSG.series(),rectifier);
 	}
 	
-	public AonCustomerSuggestBox(AonModuleOptions<?> opts, String title) {
-		super(title, new AonCustomerSuggestOracle(opts) );
+	public AonSeriesSuggestBox(AonModuleOptions<?> opts, String title, boolean rectifier) {
+		super(title, new AonSeriesSuggestOracle(opts,rectifier) );
 		this.setAutoSelectEnabled(false);
 		this.setPlaceHolder(AON.MSG.registryPlaceHolder());
 		getSuggestBox().addSelectionHandler(e -> {
-			CustomerSuggestion selected = (CustomerSuggestion) e.getSelectedItem();
-			setCustomer( selected.getCustomer() );	
+			SeriesSuggestion selected = (SeriesSuggestion) e.getSelectedItem();
+			setSeries( selected.getSeries() );	
 		});
 		getSuggestBox().addSelectionHandler(event -> {
-			CustomerSuggestion selected = (CustomerSuggestion) event.getSelectedItem();
-			setCustomer( selected.getCustomer() );
+			SeriesSuggestion selected = (SeriesSuggestion) event.getSelectedItem();
+			setSeries( selected.getSeries() );
 		});
 		getSuggestBox().addValueChangeHandler( e -> {
 			if ( AonStringUtils.isBlank( getSuggestBox().getValue() )) {
-				setCustomer( null );	
+				setSeries( null );	
 			}
 		});
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Customer> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Series> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
-	public Optional<Customer> getCustomer() {
-		return Optional.ofNullable(customer);
+	public Optional<Series> getSeries() {
+		return Optional.ofNullable(series);
 	}
-	private void setCustomer(Customer customer) {
-		setCustomer(customer, true);
+	private void setSeries(Series series) {
+		setCustomer(series, true);
 	}
-	private void setCustomer(Customer customer, boolean fireEvent) {
-		this.customer = customer;
-		if (fireEvent) SelectionEvent.fire(AonCustomerSuggestBox.this, this.customer );
+	private void setCustomer(Series series, boolean fireEvent) {
+		this.series = series;
+		if (fireEvent) SelectionEvent.fire(AonSeriesSuggestBox.this, this.series );
 	}
 	
-	private static class CustomerSuggestion extends MultiWordSuggestion {
+	private static class SeriesSuggestion extends MultiWordSuggestion {
 		
-		private Customer customer;
+		private Series series;
 		
-		private CustomerSuggestion(Customer customer, String replacementString, String displayString) {
+		private SeriesSuggestion(Series series, String replacementString, String displayString) {
 			super( replacementString, displayString );
-			this.customer = customer;
+			this.series = series;
 		}
 		
-		public Customer getCustomer() {
-			return customer;
+		public Series getSeries() {
+			return series;
 		}
 	}
 	
-	private static class AonCustomerSuggestOracle extends MultiWordSuggestOracle {
+	private static class AonSeriesSuggestOracle extends MultiWordSuggestOracle {
+		
 		private Timer searchTimer;
-		private AonModuleOptions<?> opts;
-		private AonCustomerSuggestOracle(AonModuleOptions<?> opts) {
+		private final AonModuleOptions<?> opts;
+		private final boolean rectifier;
+		
+		private AonSeriesSuggestOracle(AonModuleOptions<?> opts, boolean rectifier) {
 			this.opts = opts;
+			this.rectifier = rectifier ;
 		}
 		@Override
 		public void requestSuggestions(final Request request,final Callback callback) {
-			String query = request.getQuery();
-	        int length = AonStringUtils.length(query);
-	        if (length < MIN_CHARACTERS || length > MAX_CHARACTERS) return;
 	        if (searchTimer != null && searchTimer.isRunning()) {
 	            searchTimer.cancel();
 	        }
 	        searchTimer = new Timer() {
 	        	@Override
 	            public void run() {
-					SERVICE.getCustomers(opts.getOccam(),opts.getDomain(),request.getQuery(),new AsyncCallback<LinkedList<Customer>>() {
-						public void onSuccess(LinkedList<Customer> result) {
+					SERVICE.getSeries(opts.getOccam(),opts.getDomain(),request.getQuery(),new AsyncCallback<LinkedList<Series>>() {
+						public void onSuccess(LinkedList<Series> result) {
 							LinkedList<Suggestion> suggestions = AonCollectionUtils.stream(result)
-								.map( c -> new CustomerSuggestion( c, c.getDisplayName(),decorate(c, request.getQuery())))
+								.filter( s -> s.isInvoice() || s.isRectification() )
+								.filter( s -> rectifier == s.isRectification() )
+								.map( s -> new SeriesSuggestion( s, s.getCode(),decorate(s, request.getQuery())))
 								.collect( Collectors.toCollection(LinkedList::new)); 
 							callback.onSuggestionsReady(request, new Response(suggestions));
 						}
@@ -109,8 +116,8 @@ public class AonCustomerSuggestBox extends AonSuggestBox implements HasSelection
 	        searchTimer.schedule(300);				
 		}
 
-		private static String decorate(Customer customer, String query) {
-			String text = customer.getDisplayName();
+		private static String decorate(Series series, String query) {
+			String text = series.getCode();
 			int index = AonStringUtils.indexOfIgnoreCase(text, query);
 
 			SafeHtmlBuilder builder = new SafeHtmlBuilder()

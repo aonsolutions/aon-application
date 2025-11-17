@@ -4326,11 +4326,21 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("F. Facturaci\u00f3n")
 	String invoicingDate();
+	@DefaultMessage("Mes Fact.")
+	String invoicingMonth();
+	@DefaultMessage("A\u00F1o Fact.")
+	String invoicingYear();
 
 	@DefaultMessage("Datos salvados correctamente")
 	String saveSuccess();
 
 	@DefaultMessage("Datos borrados correctamente")
 	String deleteSuccess();
+
+	@DefaultMessage("Cuotas")
+	String fees();
+
+	@DefaultMessage("Editar B\u00FAsqueda")
+	String editSearch();
 }
 

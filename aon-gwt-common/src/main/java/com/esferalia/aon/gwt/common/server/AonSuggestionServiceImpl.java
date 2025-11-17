@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSuggestionService
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -44,4 +45,12 @@ public class AonSuggestionServiceImpl extends AonStatelessRemoteServiceServlet i
 		return AON.getItemsSuggestion(occam, domainId, query)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	// [SERIES]
+	@Override
+	public LinkedList<Series> getSeries(Occam occam, Integer domainId, String query) throws AonCoreException {
+		return AON.getSeriesSuggestion(occam, domainId, query)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 }

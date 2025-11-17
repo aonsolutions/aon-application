@@ -31,17 +31,14 @@ public class AonItemSuggestBox extends AonSuggestBox implements HasSelectionHand
 		this.setAutoSelectEnabled(false);
 		this.setPlaceHolder(AON.MSG.itemPlaceHolder());
 		getSuggestBox().addSelectionHandler(e -> {
-			hideSuggestionList();
 			ItemSuggestion selected = (ItemSuggestion) e.getSelectedItem();
 			setItem( selected.getItem() );	
 		});
 		getSuggestBox().addSelectionHandler(event -> {
-			hideSuggestionList();
 			ItemSuggestion selected = (ItemSuggestion) event.getSelectedItem();
 			setItem( selected.getItem() );
 		});
 		getSuggestBox().addValueChangeHandler( e -> {
-			hideSuggestionList();
 			if ( AonStringUtils.isBlank( getSuggestBox().getValue() )) {
 				setItem( null );	
 			}

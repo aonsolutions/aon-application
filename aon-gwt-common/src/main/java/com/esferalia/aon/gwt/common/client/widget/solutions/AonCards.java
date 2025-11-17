@@ -82,6 +82,10 @@ public class AonCards extends ScrollPanel {
 		setWidget(container);
 	}
 	
+	public FlowPanel getContainer() {
+		return container;
+	}
+	
 	@Override
 	public void clear() {
 		super.clear();
