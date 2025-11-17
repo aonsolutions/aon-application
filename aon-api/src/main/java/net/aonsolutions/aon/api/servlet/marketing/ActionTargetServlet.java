@@ -565,6 +565,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				System.out.println("----------------------- Project Commercial");
 				
 				updateProjectCommercial(api, ctx);
+				
+				createTaskHolderScope(api, ctx);
 
 				// Send mail
 				sendEnterpriseCreatedMail(api, ctx, newDomain);
@@ -581,6 +583,43 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return MarketingEmailTemplates.getFinishCreationHtml(api, parent, createdDomain, urlMail, userMail);
 	}
 	
+	private static void createTaskHolderScope(AonApiData api, CloseableAONContext ctx) {
+		Integer marketingActionId = JsonUtils.getInteger(api.getData(), "marketingAction");
+		MarketingAction marketingAction = MarketingCampaignDAO.getAction(ctx, marketingActionId);		
+		
+		TaskHolder mkActionTH = marketingAction.getTaskHolder();
+		
+		// Si existe responsable se manda una copia del mail
+		if(null != mkActionTH && null != mkActionTH.getId() && null != mkActionTH.getUser() && null != mkActionTH.getUser().getId()) {
+			
+			Integer registryId = JsonUtils.getInteger(api.getData(), "target");
+			
+			Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(ctx.getDomainId()));
+			Domain parentDomain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(domain.getParentId()));
+
+			Registry registry = RegistryDAO.get(ctx, registryId);
+			
+			Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(parentDomain.getId())));
+
+			Scope scope = null;
+			if (scopes.count() == 0) {
+				Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+				scope = SecurityDAO.insertScope(ctx, newScope);
+			} else scope = scopes.findFirst().get();
+			
+			domain.setScope(scope.getId());
+			DomainDAO.updateDomainScope(ctx, domain);
+			
+			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(mkActionTH.getUser().getId()),
+					new Options().setFull(true));
+			
+			SecurityDAO.insertUserScope(ctx, new UserScope().setDomain(user.getDomain().getId())
+					.setScope(scope.getId()).setUserId(user.getId()));
+			
+		}
+		
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
@@ -708,7 +747,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			.set(ENTERPRISE.SCOPE, enterpriseScope.getId())
 			.execute();
 		
-		createCompanyMedia(api, ctx, newDomain);
+		createCompanyMedia(api, ctx, newDomain, enterpriseScope);
 		
 		return newDomain;
 		
@@ -751,7 +790,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return null;
 	}
 	
-	private static void createCompanyMedia(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
+	private static void createCompanyMedia(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope enterpriseScope) {
 		JSONObject data = api.getData();
 		
 		String streetType = JsonUtils.getString(data, "streetType");
@@ -816,7 +855,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if (null != comapnyRaddressId) {
 			
 			Customer customer = CustomerDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
-			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId(), geozoneCode);
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId(), geozoneCode, enterpriseScope.getId());
 		
 		}
 		
@@ -839,7 +878,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId, String geozoneCode) {
+	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId, String geozoneCode, Integer enterpriseScope) {
 		Workplace workplace = new Workplace()
 				.setActive(true)
 				.setDescription("PRINCIPAL")
@@ -848,6 +887,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setAddress(raddressId)
 				.setCustomer(customerId)
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
+				.setScope(enterpriseScope)
 				;
 
 		WorkplaceDAO.save(ctx, workplace);

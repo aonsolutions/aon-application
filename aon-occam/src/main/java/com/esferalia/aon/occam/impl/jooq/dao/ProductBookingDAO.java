@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
@@ -36,8 +37,10 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -385,6 +388,9 @@ public class ProductBookingDAO {
 								.setTaskHolder(product.getTaskHolder())
 								.setStartDate(new Date())
 						));
+				
+				if(null != product.getTaskHolder() && null != product.getTaskHolder().getId())
+					createTaskHolderUserScope(ctx, registryId, product);
 			}
 			
 			ProjectDAO.save(ctx, newProject);
@@ -403,7 +409,7 @@ public class ProductBookingDAO {
 				
 			}
 			
-			if(null != product.getWorkgroup() || null != product.getTaskHolder())
+			if(null != product.getWorkgroup() || null != product.getTaskHolder()) {
 				project.getProjectHolders().add(
 						new ProjectHolder()
 							.setDomain(product.getDomain().getId())
@@ -412,10 +418,68 @@ public class ProductBookingDAO {
 							.setStartDate(new Date())
 				);
 				
+				if(null != product.getTaskHolder() && null != product.getTaskHolder().getId())
+					createTaskHolderUserScope(ctx, registryId, product);
+			}
+				
 			ProjectDAO.save(ctx, project);
 		}
 	}
 	
+	private static void createTaskHolderUserScope(CloseableAONContext ctx, Integer registryId, ProductBooking product) {
+		Domain domain = product.getDomain();
+		Domain parentDomain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(domain.getParentId()));
+
+		Registry registry = RegistryDAO.get(ctx, registryId);
+		
+		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(parentDomain.getId())));
+
+		Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
+		Optional<ProjectHolder> projectHolder = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
+		if(projectHolder.isPresent()) {
+			TaskHolder taskHolder = projectHolder.get().getTaskHolder();
+			Workgroup workgroup = projectHolder.get().getWorkgroup();
+			
+			if(null != taskHolder && null != taskHolder.getId() && null != taskHolder.getUser() && null != taskHolder.getUser().getId()) {
+				Scope scope = null;
+				if (scopes.count() == 0) {
+					Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+					scope = SecurityDAO.insertScope(ctx, newScope);
+				} else scope = scopes.findFirst().get();
+				
+				User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUser().getId()),
+						new Options().setFull(true));
+				
+				SecurityDAO.insertUserScope(ctx, new UserScope().setDomain(user.getDomain().getId())
+						.setScope(scope.getId()).setUserId(user.getId()));
+			
+			} else if(null != workgroup && null != workgroup.getId()) {
+				List<TaskHolderWorkgroup> taskHolderWorkgroups = TaskHolderWorkgroupDAO.getList(ctx, f -> f.getWorkgroupProperty().eq(workgroup.getId()));
+				taskHolderWorkgroups.forEach(taskHolderWorkgroup -> {
+					
+					TaskHolder taskHolderWG = TaskHolderDAO.get(ctx, taskHolderWorkgroup.getTaskHolder());
+					
+					if(null != taskHolderWG && null != taskHolderWG.getId() && null != taskHolderWG.getUser() && null != taskHolderWG.getUser().getId()) {
+						Scope scope = null;
+						if (scopes.count() == 0) {
+							Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+							scope = SecurityDAO.insertScope(ctx, newScope);
+						} else scope = scopes.findFirst().get();
+						
+						User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolderWG.getUser().getId()),
+								new Options().setFull(true));
+						
+						SecurityDAO.insertUserScope(ctx, new UserScope().setDomain(user.getDomain().getId())
+								.setScope(scope.getId()).setUserId(user.getId()));
+					}
+				});
+			}
+		}
+		
+		
+		
+	}
+
 	private static void sendBookingEmail(CloseableAONContext ctx, Domain siblingOffice, Integer domainId, String login, Integer customerRelatedRegistry, ProductBooking product) {
 		Optional<RegistryRelationship> existRelationShip = RegistryRelationshipDAO.get(ctx,  f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(siblingOffice.getId())).and(f.getRelationshipProperty().eq(-1)));
 		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
@@ -501,9 +565,39 @@ public class ProductBookingDAO {
 		String from = getFromMessage(ctx, parent, domain, userDb);
 		
 		if(!AonStringUtils.isBlank(from)) {
-			String bookingBcc = "booking@aonsolutions.es";
 			List<String> bccs = new ArrayList<String>();
- 			bccs.add(bookingBcc);
+			
+			if(product.getProjectType() != null && null != product.getProjectType().getId()) {
+	 			Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(existRelationShip.get().getRegistry())));
+	 			Optional<ProjectHolder> projectHolder = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
+	 			if(projectHolder.isPresent()) {
+	 				TaskHolder taskHolder = projectHolder.get().getTaskHolder();
+	 				if(null != taskHolder && null != taskHolder.getId()) {
+	 					Stream<RegistryMedia> taskHolderMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(taskHolder.get().getId()));
+	 					Optional<RegistryMedia> taskHolderEmailOpt = taskHolderMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+	 					
+	 					if(taskHolderEmailOpt.isPresent() && AonStringUtils.isNotBlank(taskHolderEmailOpt.get().getValue())) {
+	 						bccs.add(taskHolderEmailOpt.get().getValue());
+	 					}
+	 				}
+	 				
+	 				Workgroup workgroup = projectHolder.get().getWorkgroup();
+	 				if(null != workgroup && null != workgroup.getId() && bccs.isEmpty()) {
+	 					List<TaskHolderWorkgroup> taskHolderWorkgroups = TaskHolderWorkgroupDAO.getList(ctx, f -> f.getWorkgroupProperty().eq(workgroup.getId()));
+	 					taskHolderWorkgroups.forEach(taskHolderWorkgroup -> {
+	 						Stream<RegistryMedia> taskHolderMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(taskHolderWorkgroup.getTaskHolder()));
+	 	 					Optional<RegistryMedia> taskHolderEmailOpt = taskHolderMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+	 	 					
+	 	 					if(taskHolderEmailOpt.isPresent() && AonStringUtils.isNotBlank(taskHolderEmailOpt.get().getValue())) {
+	 	 						bccs.add(taskHolderEmailOpt.get().getValue());
+	 	 					}
+	 					});
+	 				}
+	 			}
+			}
+ 			
+ 			String bookingBcc = "booking@aonsolutions.es";
+			bccs.add(bookingBcc);
 			
 			Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(existRelationShip.get().getRegistry())).findFirst();
 			Stream<RegistryMedia> targetMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(targetOpt.get().getId()));
