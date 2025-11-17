@@ -219,11 +219,11 @@ public class MainContrataContractObject {
 	}
 
 	public boolean isComunica() {
-		return this.domainUserRoles.isComunica();
+		return null != this.domainUserRoles && this.domainUserRoles.isComunica();
 	}
 
 	public boolean hasPayroll() {
-		return this.domainUserRoles.isPayrollManager();
+		return null != this.domainUserRoles && this.domainUserRoles.isPayrollManager();
 	}
 
 	public Pair<String, String> getPrincipalAccount() {
