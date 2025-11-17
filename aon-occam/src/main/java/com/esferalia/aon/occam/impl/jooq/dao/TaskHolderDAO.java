@@ -356,7 +356,6 @@ public class TaskHolderDAO {
 	// ********** FUNCIONES A REVISAR ******************
 	// *************************************************
 	
-	@Deprecated
 	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		SelectConditionStep<Record> r = ctx.getDslContext().select()
 				.from(TASK_HOLDER)

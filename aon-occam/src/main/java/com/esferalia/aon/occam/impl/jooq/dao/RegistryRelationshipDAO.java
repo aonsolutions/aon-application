@@ -2,18 +2,23 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Relationship.RELATIONSHIP;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Properties.RRelationshipProperties;
@@ -116,7 +121,34 @@ public class RegistryRelationshipDAO {
 			.where(RRELATIONSHIP_PROPERTIES.getConditions(filter))
 			.execute();
 		ctx.log().debug("DELETE REGISTRY RRELATIONSHIP: ({0} rows)", count);
-	}	
+	}
+	
+	public static List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId) {
+		System.out.println(ctx.getDslContext().select()
+				.from(RRELATIONSHIP)
+				.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(RRELATIONSHIP.RELATED_REGISTRY))
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(RRELATIONSHIP.DOMAIN))
+				.innerJoin(RELATIONSHIP).on(RELATIONSHIP.ID.eq(RRELATIONSHIP.RELATIONSHIP))
+				.where(ENTERPRISE.DOMAIN.eq(domainId))
+				.and(RRELATIONSHIP.RELATIONSHIP.eq(-1)).getSQL(ParamType.INLINED));
+		
+		List<RegistryRelationship> rrleationships = ctx.getDslContext().select()
+				.from(RRELATIONSHIP)
+				.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(RRELATIONSHIP.RELATED_REGISTRY))
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(RRELATIONSHIP.DOMAIN))
+				.innerJoin(RELATIONSHIP).on(RELATIONSHIP.ID.eq(RRELATIONSHIP.RELATIONSHIP))
+				.where(ENTERPRISE.DOMAIN.eq(domainId))
+				.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
+				.orderBy(RRELATIONSHIP.ID.desc())
+				.fetch()
+				.stream()
+				.map(new RegistryRelationshipFiller())
+				.collect(Collectors.toList());
+		
+		if(rrleationships.isEmpty()) throw new IllegalArgumentException("No existe vinculacion del dominio con el despacho");
+		
+		return rrleationships;
+	}
 	
 	public static class RegistryRelationshipFiller implements Function<Record, RegistryRelationship> {
 		

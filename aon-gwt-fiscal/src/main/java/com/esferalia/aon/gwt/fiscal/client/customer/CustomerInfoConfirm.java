@@ -522,14 +522,11 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 			if(AonStringUtils.isNotBlank(bankAlias) && bankAlias.length() > 25) bankAlias = bankAlias.substring(0, 25);
 			
 			RegistryBank rbank = new RegistryBank()
+					.setDomain(domainId)
+					.setRegistry(registryRelationship.getRegistry())
 					.setBankAccount(new BankAccount(account.getValue()))
 					.setBic(bic.getValue())
 					.setAlias(bankAlias);
-			
-			if(null == registryPayMethod.getId()) {
-				rbank.setDomain(domainId);
-				rbank.setRegistry(registryRelationship.getRegistry());
-			}
 			
 			registryPayMethod.setPayMethod(aonConfiguration.getPayMethods().stream().filter(pm -> pm.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)).findFirst().get());
 			registryPayMethod.setRbank(rbank);
@@ -543,7 +540,7 @@ public abstract class CustomerInfoConfirm extends AonCustomDialog {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					AonDialog errorDialog = new AonDialog("Error direcci\u00f3n", new HTMLPanel(caught.getMessage()));
+					AonDialog errorDialog = new AonDialog("Error datos bancarios", new HTMLPanel(caught.getMessage()));
 					errorDialog.info();
 				}
 				

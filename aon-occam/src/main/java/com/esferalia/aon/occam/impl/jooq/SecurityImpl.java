@@ -27,11 +27,11 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -42,9 +42,11 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryRelationshipDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
@@ -54,55 +56,61 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getAuthStream(ctx, filter));
+				configuration -> AuthDAO.getAuthStream(ctx, filter));
 	}
 	
 	@Override
 	public Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getAuth(ctx, email));
+				configuration -> AuthDAO.getAuth(ctx, email));
 	}
 	
 	@Override
 	public Auth getAuthByDocument(AONContext ctx, String document) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getAuthByDocument(ctx, document));
+				configuration -> AuthDAO.getAuthByDocument(ctx, document));
 	}
 	
 	@Override
 	public Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getAuth(ctx, auth));
+				configuration -> AuthDAO.getAuth(ctx, auth));
 	}
 	
 	@Override
 	public byte[] unHexUuid(AONContext ctx, String uuid) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.unHexUuid(ctx, uuid));
+				configuration -> AuthDAO.unHexUuid(ctx, uuid));
+	}
+
+	@Override
+	public Auth saveAuth(AONContext ctx, Auth auth) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AuthDAO.saveAuth(ctx, auth));
 	}
 	
 	@Override
 	public Auth insertAuth(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.insertAuth(ctx, auth));
+				configuration -> AuthDAO.insertAuth(ctx, auth));
 	}
 	
 	@Override
 	public Auth updateAuth(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.updateAuth(ctx, auth));
+				configuration -> AuthDAO.updateAuth(ctx, auth));
 	}
 	
 	@Override
 	public Auth updateAuthPassword(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.updateAuthPassword(ctx, auth));
+				configuration -> AuthDAO.updateAuthPassword(ctx, auth));
 	}
 	
 	@Override
 	public Auth updateUserPassword(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.updateUserPassword(ctx, auth));
+				configuration -> AuthDAO.updateUserPassword(ctx, auth));
 	}
 	
 
@@ -499,6 +507,12 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp) {
 		ctx.getDslContext().transaction(configuration -> SecurityDAO.deleteDomainApp(ctx, aonApp));
+	}
+
+	@Override
+	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId) {
+		return  ctx.getDslContext().transactionResult(
+	            configuration -> RegistryRelationshipDAO.getRegistryRelationships(ctx, domainId));
 	}
 	
 }

@@ -54,6 +54,16 @@ public class WorkplaceDAO {
 			.map(new WorkplaceFiller());
 	}
 	
+	public static Stream<Workplace> getWorkplacesNoScope(AONContext ctx, Integer domainId){
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+			.from(WORKPLACE)
+			.where(WORKPLACE.DOMAIN.eq(domainId))
+			.fetch()
+			.stream()
+			.map(new WorkplaceFiller());
+	}
+	
 	public static Workplace save(AONContext ctx, Workplace workplace) {
 		ctx.checkWrite();
 		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);

@@ -21,6 +21,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.jaas.auth.session.UserNotFoundLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -101,8 +102,10 @@ public class OpenIDLoginModule extends LoginModule {
 				if ( uuid == null )
 					throw new AuthenticationLoginException( "aon_login_err_6", username);
 			}
-			if ( domainId != null )
-				username = getUserName(domain, domainId, null, token, uuid);
+			if ( domainId != null ) {
+				String domainUserName = getUserName(domain, domainId, null, token, uuid);
+				username = domainUserName != null ? domainUserName : username;
+			}
 		}
 		return super.createIdentity(username);
 	}
@@ -136,6 +139,7 @@ public class OpenIDLoginModule extends LoginModule {
 				try {
 					domainId = getDomainId(domain);
 					password=  getAuthPassword(domain, domainId, info[0]);
+					domainName = domain;
 				} catch (Exception e) {
 				}
 				if(password == null || password.isBlank()) {
@@ -151,7 +155,14 @@ public class OpenIDLoginModule extends LoginModule {
 					}
 				}
 				if ( domainId != null ) {
-					super.getUsersPassword(); // TODO: No comments, only remove it.
+					try {
+						super.getUsersPassword(); 
+					} catch (UserNotFoundLoginException e) {
+						if ( password != null){
+							String uuid = getAuth(domainName, 0, info[0]);
+							((AuthPrincipal) getIdentity()).setUuid(uuid);
+						}						
+					}
 				} else if ( password != null){
 					String uuid = getAuth(domainName, 0, info[0]);
 					((AuthPrincipal) getIdentity()).setUuid(uuid);

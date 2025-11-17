@@ -192,13 +192,15 @@ export class AonOfficePanel extends AonElement {
 		}
 		
 		// AUTOBOOKING
-		let autoBookingOptions = [];
+		if(this.dur.isOfficeManager()){
+			let autoBookingOptions = [];
 		
-		let service = ServiceOptions.AON_SERVICE;
-		service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
-		autoBookingOptions.push(service);
-
-		application.addSidenavOptions('Auto Contratación', autoBookingOptions);
+			let service = ServiceOptions.AON_SERVICE;
+			service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
+			autoBookingOptions.push(service);
+	
+			application.addSidenavOptions('Auto Contratación', autoBookingOptions);	
+		}
 
 		// OFFICE
 		let officeOptions = [];
@@ -734,7 +736,6 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case ServiceOptions.AON_SERVICE.id:
 					this.clearToolbar();
-					application.closeSidenav();
 					GWT.iLoad(GWT.PRODUCT_MODULE, this.getApplication().CONTENT);
 					break;
 				case ServiceOptions.AON_SALES_ENTERPRISE.id:

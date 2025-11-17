@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
@@ -24,7 +23,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -68,22 +70,22 @@ public class ProductPanel extends HTMLPanel {
 	private AonCustomCard generalCard = new AonCustomCard("Informaci\u00f3n General");
 	private ProductStatusSelect status;
 	private AonCustomTextBox code = new AonCustomTextBox("C\u00f3digo");
-	private AonCustomTextBox barcode = new AonCustomTextBox("C\u00f3digo Barras");
+	private AonCustomMultiSelectBox aonApps = new AonCustomMultiSelectBox("Servicios");
 	private AonCustomTextBox name = new AonCustomTextBox("Descripci\u00f3n");
 	private AonCustomNumberBox price = new AonCustomNumberBox("Precio");
 	private AonCustomListBox iva = new AonCustomListBox("IVA");
 	private AonCustomNumberBox pvp = new AonCustomNumberBox("P.V.P.");
 	
 	private AonCustomCard aditionalCard = new AonCustomCard("Informaci\u00f3n Adicional");
-	private AonCustomListBox app = new AonCustomListBox("Servicio");
+	private ProductConsoleSelect console;
+	private AonCustomListBox type = new AonCustomListBox("Tipo");
 	private AonCustomMultiSelectBox domainType = new AonCustomMultiSelectBox("Tipo Dominio");
-	private AonCustomCheckBox console = new AonCustomCheckBox("Console");
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
 	
 	private RegistryModuleOptions options;
 	
-	private Product product;
+	private ProductBooking product;
 	private Item item;
 	private List<Tax> taxes;
 	private List<ProductCategory> productCategories;
@@ -100,12 +102,13 @@ public class ProductPanel extends HTMLPanel {
 		this.options = options;
 		this.callback = callback;
 		
-		this.product = new Product();
+		this.product = new ProductBooking();
 		this.item = new Item();
 		
 		this.product.setDomain(new Domain().setName(options.getDomainName()).setId(options.getDomain()));
 		this.product.setType(ProductType.AUXILIARY);
 		this.product.setKind(ProductKind.SALE);
+		this.product.setBookingType(ProductBookingType.SERVICE);
 		
 		this.item.setDomain(new Domain().setName(options.getDomainName()).setId(options.getDomain()));
 		
@@ -135,14 +138,13 @@ public class ProductPanel extends HTMLPanel {
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
 		generalCard.add(table);
 		
-		code.getTextBox().getElement().getStyle().setProperty("text-transform", "uppercase");
 		code.getTextBox().setMaxLength(15);
 		code.addValueChangeHandler(e -> product.setCode(code.getValue().trim().toUpperCase()));
 		
-		barcode.setEnable(false);
-		barcode.setValue(item.getBarcode());
+		aonApps.setOptions(AonApp.getValues().stream().map(app -> app.getDescription()).collect(Collectors.toSet()));
+		aonApps.addBlurHandler(e -> createAonApps());
 		
-		table.add(createRow(code, barcode));
+		table.add(createRow(code, aonApps));
 		
 		name.addValueChangeHandler(e -> {
 			product.setName(name.getValue());
@@ -150,13 +152,6 @@ public class ProductPanel extends HTMLPanel {
 		});
 		
 		table.add(createRow(name, null));
-		
-		app.clearItems();
-		app.addItem("-", "--");
-		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
-		app.addChangeHandler(e -> createBarCode());
-		
-		table.add(createRow(app, null));
 		
 		price.hideNearBy();
 		price.addValueChangeHandler(e -> {
@@ -182,31 +177,37 @@ public class ProductPanel extends HTMLPanel {
 		
 		return generalCard;
 	}
+	
+	private void createAonApps() {
+		Set<String> selectedAonApps = aonApps.getSelectedOptions();
+		List<AonApp> aonApps = new ArrayList<AonApp>();
+		
+		selectedAonApps.forEach(selectedAonApp -> aonApps.add(AonApp.getByDescription(selectedAonApp)));
+		product.setAonApps(aonApps);
+		product.setBookingComposition(aonApps.size() > 1);
+	}
 
 	private AonCustomCard createAditionalCard() {
 		FlowPanel table = createFlexColumnPanel();
 		
-		aditionalCard = new AonCustomCard("Informaci\u00f3n Adicional");
+		console = new ProductConsoleSelect(product.isConsole() ? ProductConsole.CONSOLE : ProductConsole.SELF_CONTRACT);
+		console.addBlurHandler(e -> onConsoleChange());
+		
+		aditionalCard = new AonCustomCard("Informaci\u00f3n Adicional", console);
+		aditionalCard.setToolbarWidgetShown();
 		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
+		aditionalCard.getElement().getStyle().setProperty("min-width", "30rem");
 		aditionalCard.add(table);
 		
+		type.clearItems();
+		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
+		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
+		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
+		
 		domainType.setOptions(DomainType.getValues().stream().map(domainType -> domainType.getName()).collect(Collectors.toSet()));
-		domainType.addBlurHandler(e -> createBarCode());
+		domainType.addBlurHandler(e -> onDomainTypesChange());
 		
-		table.add(createRow(domainType, null));
-		
-		console.addValueChangeHandler(e -> {
-			if(!console.getValue() && domainType.getSelectedOptions().contains("Administraci\u00F3n")) {
-				Set<String> selectedOptions = domainType.getSelectedOptions();
-				selectedOptions.remove("Administraci\u00F3n");
-				domainType.setSelectedOptions(selectedOptions);
-			} else if(console.getValue() && !domainType.getSelectedOptions().contains("Administraci\u00F3n")) {
-				Set<String> selectedOptions = domainType.getSelectedOptions();
-				selectedOptions.add("Administraci\u00F3n");
-				domainType.setSelectedOptions(selectedOptions);
-			}
-			createBarCode();
-		});
+		table.add(createRow(type, domainType));
 		
 		category.clearItems();
 		category.addItem("-", "");
@@ -218,11 +219,21 @@ public class ProductPanel extends HTMLPanel {
 		// TAGS
 		getTags(aviableTags -> tags.setOptions(aviableTags.stream().map(aviableTag -> aviableTag.getName()).collect(Collectors.toSet())) );
 		
-		table.add(createRow(console, category, tags));
+		table.add(createRow(category, tags));
 		
 		return aditionalCard;
 	}
 	
+	private void onDomainTypesChange() {
+		List<DomainType> selectedDomainTypes = new ArrayList<DomainType>();
+		domainType.getSelectedOptions().forEach(dt -> selectedDomainTypes.add(DomainType.getByName(dt)));
+		product.setDomainTypes(selectedDomainTypes);
+	}
+	
+	private void onConsoleChange() {
+		product.setConsole(console.getValue().equals(ProductConsole.CONSOLE));
+	}
+
 	private Widget createButtons() {
 		Button acceptDialog = new Button();
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
@@ -244,26 +255,6 @@ public class ProductPanel extends HTMLPanel {
 	private double getVatPercentage() {
 		Optional<Tax> taxOpt = taxes.stream().filter(tax -> AonStringUtils.equalsIgnoreCase(tax.getId().toString(), iva.getValue())).findFirst();
 		return taxOpt.isEmpty() ? 0.00 : taxOpt.get().getPercentage();
-	}
-
-	private String createBarCode() {
-		String barCode = app.getValue();
-	
-		barCode += domainType.getSelectedOptions().contains("Empresa") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Asesor\u00EDa") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Garaje") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Academ\u00EDa") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Hotel") ? "1" : "0";
-		barCode += console.getValue() || domainType.getSelectedOptions().contains("Administraci\u00F3n") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Despacho") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Gen\u00E9rico") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Comercio") ? "1" : "0";
-		barCode += domainType.getSelectedOptions().contains("Kit Digital") ? "1" : "0";
-		
-		barcode.setValue(barCode);
-		item.setBarcode(barCode);
-		
-		return barCode;
 	}
 
 	private FlowPanel createFlexColumnPanel() {
@@ -325,10 +316,10 @@ public class ProductPanel extends HTMLPanel {
 		
 		AonMessagePanel.showLoading(messagePanel, "Creando producto " + product.getName());
 		
-		commonService.createProduct(options.getDomainName(), options.getDomain(), options.getUser(), product, getProductTags(), item, new AsyncCallback<Product>() {
+		commonService.createProductBooking(options.getDomainName(), options.getDomain(), options.getUser(), product, getProductTags(), item, new AsyncCallback<ProductBooking>() {
 			
 			@Override
-			public void onSuccess(Product productDB) {
+			public void onSuccess(ProductBooking productDB) {
 				product = productDB;
 				
 				AonMessagePanel.showSuccess(messagePanel, "Producto " + product.getName()+ " creado correctamente");

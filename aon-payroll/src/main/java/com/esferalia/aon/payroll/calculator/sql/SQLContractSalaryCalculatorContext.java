@@ -5968,6 +5968,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				dataEnd = (dataEnd != null && dataEnd.equals(dbContractEndDate)) ? null : dataEnd;
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
+				
+				if (Period.compare(end, start) < 0) {
+					continue;
+				}
 
 				if (isLazyExpression(expr)) {
 					ctx.addLazyExpression(expr, start, end);

@@ -158,6 +158,7 @@ import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -191,6 +192,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
@@ -1489,6 +1491,12 @@ public class AON {
 		}
 	}
 	
+	public static ProductBooking getProductBooking(Domain domain, String login, ProductFilter filter) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductBooking(ctx, filter);
+		}
+	}
+	
 	public static Stream<Product> getProductStream(Domain domain, String login, ProductFilter filter) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().getProductStream(ctx, filter);
@@ -1507,9 +1515,21 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<ProductBooking> getProductBookingList(Domain domain, String login, ProductParams params) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductBookingList(ctx, params);
+		}
+	}
+	
 	public static Product saveProduct(Domain domain, String login, Product product) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().saveProduct(ctx, product);
+		}
+	}
+	
+	public static ProductBooking saveProductBooking(Domain domain, String login, ProductBooking product) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveProductBooking(ctx, product);
 		}
 	}
 	
@@ -1522,6 +1542,12 @@ public class AON {
 	public static Product createProduct(Domain domain, String login, Product product, List<ProductTag> productTags, Item item) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().createProduct(ctx, product, productTags, item);
+		}
+	}
+	
+	public static ProductBooking createProductBooking(Domain domain, String login, ProductBooking product, List<ProductTag> productTags, Item item) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().createProductBooking(ctx, product, productTags, item);
 		}
 	}
 	
@@ -9009,6 +9035,30 @@ public class AON {
 	public static void createBookingApp(String domainName, int domainId, String login, DomainApp aonApp) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getSecurity().saveBookingApp(ctx, aonApp, true);
+		}
+	}
+	
+	public static List<RegistryRelationship> getRegistryRelationships(String domainName, int domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSecurity().getRegistryRelationships(ctx, domainId);
+		}
+	}
+	
+	public static void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().createBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, product, newFee);
+		}
+	}
+	
+	public static void updateBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().updateBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product, newFee);
+		}
+	}
+	
+	public static void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().removeBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product);
 		}
 	}
 	

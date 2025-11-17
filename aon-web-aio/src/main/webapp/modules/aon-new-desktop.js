@@ -8,6 +8,7 @@ import { getContratado, getDomainUserRoles, sendFormData } from '../services/com
 import { getAuth } from '../services/authService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import * as GWT from '../gwt/gwt.js';
+import { getRelationShipCompany } from '../services/registryService.js';
 
 export class AonNewDesktop extends AonElement {
 	
@@ -49,8 +50,20 @@ export class AonNewDesktop extends AonElement {
 		let div = this.createDiv();	
 		div.style.padding = "2rem";
 		
-		if(this.getDur().isTrial() || this.getDur().hasBeenTrial())
-			div.appendChild(this.buildPlanApps());
+		// Ficha Cliente
+		let company = LS.getCompany();
+		if(company && company.registry){
+			getRelationShipCompany({
+				url: company.domain,
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
+				
+				if (relationshipCompany.rrelationship) {
+					div.prepend(this.buildPlanApps());
+				}
+				
+			});
+		}
 			
 		div.appendChild(this.buildPortalApps());
 		

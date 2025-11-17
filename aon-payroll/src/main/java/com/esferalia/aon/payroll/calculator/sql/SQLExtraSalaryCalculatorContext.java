@@ -172,6 +172,11 @@ public class SQLExtraSalaryCalculatorContext implements
 			}
 			
 			@Override
+			protected Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
+				return SQLExtraSalaryCalculatorContext.this.getMonthlyQuotedPayments(super.getMonthlyQuotedPayments());
+			}
+			
+			@Override
 			protected Collection<IContractPayment> getExtraContractPayments() throws AonException {
 				return new DelegateCollection<IContractPayment>(super.getExtraContractPayments()) {
 					@Override
@@ -418,6 +423,9 @@ public class SQLExtraSalaryCalculatorContext implements
 	
 	// ------------------------------------------------------------------------
 	
+	protected Collection<IContractPayment> getMonthlyQuotedPayments(Collection<IContractPayment> payments) throws AonException {
+		return payments;
+	}
 	
 	
 	// ------------------------------------------------------------------------

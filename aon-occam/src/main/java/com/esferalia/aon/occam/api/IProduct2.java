@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -19,10 +20,12 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -36,12 +39,16 @@ public interface IProduct2 {
 	// PRODUCT
 	
 	public Product getProduct(AONContext ctx, ProductFilter filter);
+	public ProductBooking getProductBooking(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductParams params);
+	public LinkedList<ProductBooking> getProductBookingList(CloseableAONContext ctx, ProductParams params);
 	public Product saveProduct(AONContext ctx, Product product);
+	public ProductBooking saveProductBooking(AONContext ctx, ProductBooking product);
 	public Product createProduct(AONContext ctx, Product product, List<ProductTag> productTags, Item item);
+	public ProductBooking createProductBooking(AONContext ctx, ProductBooking product, List<ProductTag> productTags, Item item);
 	public void deleteProduct(AONContext ctx, Integer id);
 
 	// ITEM
@@ -93,5 +100,9 @@ public interface IProduct2 {
 	public void deleteTariffCatalogue(CloseableAONContext ctx, Integer id);
 	
 	public List<Catalogue> getCatalogueList(CloseableAONContext ctx, CatalogueFilter filter);
+	
+	public void createBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee);
+	public void updateBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee);
+	public void removeBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product);
 	
 }

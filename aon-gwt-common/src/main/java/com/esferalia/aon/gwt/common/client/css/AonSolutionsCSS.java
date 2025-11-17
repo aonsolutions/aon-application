@@ -946,6 +946,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_text_area")
 	String aonCustomTextArea();
 	
+	@ClassName("aon_custom_rich_text")
+	String aonCustomRichText();
+	
 	@ClassName("aon_custom_text_box_no_border")
 	String aonCustomTextBoxNoBorder();
 	
