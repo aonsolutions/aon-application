@@ -474,6 +474,16 @@
 .aon_icon_check_circle_green { background-image: iconCheckCircleGreen;}
 @url iconErrorExclamation aonIconErrorExclamation;
 .aon_icon_error_exclamation { background-image: iconErrorExclamation;}
+@url iconQrCode aonIconQrCode;
+.aon_icon_qr_code { background-image: iconQrCode;}
+@url iconQrCodeBlack aonIconQrCodeBlack;
+.aon_icon_qr_code_black { background-image: iconQrCodeBlack;}
+@url iconQrCodeGreen aonIconQrCodeGreen;
+.aon_icon_qr_code_green { background-image: iconQrCodeGreen;} 
+@url iconQrCodeOrange aonIconQrCodeOrange;
+.aon_icon_qr_code_orange { background-image: iconQrCodeOrange;}
+@url iconQrCodeRed aonIconQrCodeRed;
+.aon_icon_qr_code_red { background-image: iconQrCodeRed;}
 
 
 /* BASICS */
@@ -579,6 +589,9 @@
 }
 .aon_display_grid_row:hover {
 	background-color: #edf0ff;	
+}
+.aon_display_grid_row_selected {
+	background-color: #D5E2FF !important;
 }
 
 .aon_display_grid_header_row {

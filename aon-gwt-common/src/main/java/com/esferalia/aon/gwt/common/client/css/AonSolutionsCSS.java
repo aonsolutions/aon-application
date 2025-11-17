@@ -672,6 +672,21 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_bullet")
 	String aonIconBullet();
 	
+	@ClassName("aon_icon_qr_code")
+	String aonIconQrCode();
+	
+	@ClassName("aon_icon_qr_code_black")
+	String aonIconQrCodeBlack();
+	
+	@ClassName("aon_icon_qr_code_green")
+	String aonIconQrCodeGreen();
+	
+	@ClassName("aon_icon_qr_code_orange")
+	String aonIconQrCodeOrange();
+	
+	@ClassName("aon_icon_qr_code_red")
+	String aonIconQrCodeRed();
+	
 /* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -732,6 +747,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_display_grid_row")
 	String aonDisplayGridRow();
+	
+	@ClassName("aon_display_grid_row_selected")
+	String aonDisplayGridRowSelected();
 	
 	@ClassName("aon_display_grid_header_row")
 	String aonDisplayGridHeaderRow();

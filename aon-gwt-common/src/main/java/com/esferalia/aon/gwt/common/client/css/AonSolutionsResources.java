@@ -911,5 +911,27 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-error-exclamation.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconErrorExclamation();
+	
+	@Source("icons/aon-icon-qr-code.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCode();
+	
+	@Source("icons/aon-icon-qr-code-black.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCodeBlack();
+	
+	@Source("icons/aon-icon-qr-code-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCodeGreen();
+	
+	@Source("icons/aon-icon-qr-code-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCodeOrange();
+	
+	@Source("icons/aon-icon-qr-code-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCodeRed();
+	
 }
+
 
