@@ -20,6 +20,13 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class InvoicePanel extends AonDockLayout {
 	
+	public interface InvoicePanelCallback {
+		Invoice getInvoice();
+		void onSave( Invoice invoice );
+		void onDelete( Invoice invoice );
+		void onError( String message);
+	}
+
 	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
@@ -32,16 +39,19 @@ public class InvoicePanel extends AonDockLayout {
 	
 	private FlowPanel messagePanel = new FlowPanel();
 	
-	public InvoicePanel(InvoiceModuleOptions options, Invoice invoice) {
+//	public InvoicePanel(InvoiceModuleOptions options, Invoice invoice) {
+//		this(options, invoice, null);
+//	}
+	public InvoicePanel(InvoiceModuleOptions options, Invoice invoice, InvoicePanelCallback callback) {
 		super( AON.MSG.invoice() );
 		if (options.getConfiguration() != null) {
-			load(options, invoice);
+			load(options, invoice, callback);
 		} else {
 			SERVICE.getAonConfiguration(options.getOccam(), new AsyncCallback<AonConfiguration>() {
 				@Override
 				public void onSuccess(AonConfiguration result) {
 					options.setConfiguration(result);
-					load(options, invoice);
+					load(options, invoice, callback);
 				}
 				@Override
 				public void onFailure(Throwable caught) {
@@ -69,19 +79,19 @@ public class InvoicePanel extends AonDockLayout {
 		return true;
 	}
 	
-	private void load(InvoiceModuleOptions options, Invoice invoice) {
+	private void load(InvoiceModuleOptions options, Invoice invoice, InvoicePanelCallback callback) {
 		if (checkLoad(options, invoice)) {
-			paint(options, invoice);
+			paint(options, invoice, callback);
 		}
 	}
 
-	private void paint(InvoiceModuleOptions options, Invoice invoice) {
+	private void paint(InvoiceModuleOptions options, Invoice invoice, InvoicePanelCallback callback) {
 		resetWidget();
-		fillTooolbar(options, invoice);
+		fillTooolbar(options, invoice, callback);
 		fillContent(options, invoice);
 	}
 
-	private void fillTooolbar(InvoiceModuleOptions options, Invoice invoice) {
+	private void fillTooolbar(InvoiceModuleOptions options, Invoice invoice, InvoicePanelCallback callback) {
 		// -----------------------------------------------------------------
 		// ------------------------------------------------- Save button ---
 		// -----------------------------------------------------------------
@@ -92,7 +102,10 @@ public class InvoicePanel extends AonDockLayout {
 				@Override
 				public void onSuccess(Invoice invoice) {
 					finalizeAction(saveButton, AON.MSG.saveSuccess());
-					paint(options, invoice);
+					paint(options, invoice, callback);
+					if (callback != null) {
+						callback.onSave( invoice );
+					}
 				}
 				@Override
 				public void onFailure(Throwable caught) {
@@ -104,27 +117,44 @@ public class InvoicePanel extends AonDockLayout {
 		this.getToolbar().add(saveButton);
 		
 		// -----------------------------------------------------------------
-		// ----------------------------------------------- Delete button ---
+		// ------------------------------------------ Real Delete button ---
 		// -----------------------------------------------------------------
-		AonToolbarButton deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
-		deleteButton.addClickHandler(e -> {
-			startAction(deleteButton);
-			SERVICE.save( options.getOccam(), invoice, new AsyncCallback<Invoice>() {
-				@Override
-				public void onSuccess(Invoice invoice) {
-					finalizeAction(deleteButton, AON.MSG.deleteSuccess());
-					resetWidget();
-				}
-				@Override
-				public void onFailure(Throwable caught) {
-					finalizeAction(deleteButton, caught);
-				}
-			});
-		});
-		
 		if (invoice.getId() != null) {
+			AonToolbarButton deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+			deleteButton.addClickHandler(e -> {
+				startAction(deleteButton);
+				SERVICE.save( options.getOccam(), invoice, new AsyncCallback<Invoice>() {
+					@Override
+					public void onSuccess(Invoice invoice) {
+						finalizeAction(deleteButton, AON.MSG.deleteSuccess());
+						resetWidget();
+						if (callback != null) {
+							callback.onDelete( invoice );
+						}
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						finalizeAction(deleteButton, caught);
+					}
+				});
+			});
 			this.getToolbar().add(deleteButton);
 		}
+		
+		// -----------------------------------------------------------------
+		// ----------------------------------------- Logic Delete button ---
+		// -----------------------------------------------------------------
+		if (invoice.getId() == null) {
+			AonToolbarButton deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+			deleteButton.addClickHandler(e -> {
+				resetWidget();
+				if (callback != null) {
+					callback.onDelete( invoice );
+				}
+			});
+			this.getToolbar().add(deleteButton);
+		}
+		
 	}
 	
 	private void startAction(AonToolbarButton button) {

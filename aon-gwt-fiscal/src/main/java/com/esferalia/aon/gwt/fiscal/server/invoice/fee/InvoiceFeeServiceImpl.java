@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.INVOICE;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
@@ -39,20 +40,16 @@ public class InvoiceFeeServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 
 	// **************************************************
-	// ***************************************** [SEARCH]
-	// **************************************************
-	@Override
-	public LinkedList<Item> getProductsSuggestion(Occam occam, Integer searchDomain, String productQuery) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	// **************************************************
 	// ************************************** [INVOICING]
 	// **************************************************
 	@Override
 	public LinkedList<Invoice> getInvoices(Occam occam, FeeBillingParams params) {
 		return AON.feeInvoicing(occam, params);
+	}
+
+	@Override
+	public Invoice saveInvoice(Occam occam, Invoice invoice) {
+		return INVOICE.save(occam, invoice);
 	}
 
 }

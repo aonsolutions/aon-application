@@ -275,6 +275,7 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -9074,6 +9075,12 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getFinance().feeInvoicing(ctx, params)
 				.collect(Collectors.toCollection(LinkedList::new));
+		}
+	}
+
+	public static Stream<Series> getSeriesSuggestion(Occam occam, Integer domainId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getSeriesSuggestion(ctx, domainId, query);
 		}
 	}
 

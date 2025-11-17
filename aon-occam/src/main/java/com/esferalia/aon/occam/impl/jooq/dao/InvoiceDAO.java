@@ -70,7 +70,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
-import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -98,7 +98,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.Month;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
@@ -674,10 +673,46 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
+	public static Invoice saveInvoiceAndFinances(AONContext ctx, Invoice invoice) {
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		return saveInvoiceAndFinances(ctx, config, invoice);
+	}
+	public static Invoice saveInvoiceAndFinances(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		InvoiceDAO.save(ctx, config, invoice);
+		invoice.financeStream()
+			// ** If finance is full pending, must be saved/deleted
+			.filter(Finance::isFullPending)
+			// ** If finance is dirty, must be saved/deleted
+			.filter(Finance::isDirty)
+			// ** If finance is new and marked to delete, skip it
+			.filter(f -> !(f.getId() == null && f.isRemoved()))	
+			.forEach(f -> {
+				if (f.getId() != null && f.isRemoved()) {
+					ctx.log().debug("** FINANCE MARKED TO DELETE");
+					FinanceDAO.delete(ctx, f.getId());
+					return;
+				}
+				if ( AonMathUtils.isNotZero(f.getAmount()) ) {
+					ctx.log().debug("** FINANCE READY TO SAVE");
+					f.setInvoice(invoice);
+					Integer financeId = FinanceDAO.save(ctx, f);
+					f.setId(financeId);
+				} else {
+					ctx.log().debug("** FINANCE NOT SAVED [AMOUNT 0]");
+				}
+			}
+		);	
+		return getFullInvoice(ctx, invoice.getId());
+	}
+	
 	public static Invoice save(AONContext ctx, Invoice invoice) {
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		return save(ctx, config, invoice);
+	}
+	public static Invoice save(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		invoice = invoice.getId() != null
-			? update(ctx, invoice)
-			: insert(ctx, invoice);
+			? update(ctx, config, invoice)
+			: insert(ctx, config, invoice);
 		invoice.setDetails(InvoiceDetailDAO.save(ctx, invoice.getDetails()));
 		return invoice;
 	}

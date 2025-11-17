@@ -7,34 +7,47 @@ import java.util.stream.IntStream;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.event.AonErrorEvent;
 import com.esferalia.aon.gwt.common.client.widget.event.AonErrorHandler;
+import com.esferalia.aon.gwt.common.client.widget.event.AonResetEvent;
+import com.esferalia.aon.gwt.common.client.widget.event.AonResetHandler;
+import com.esferalia.aon.gwt.common.client.widget.event.AonSearchEvent;
+import com.esferalia.aon.gwt.common.client.widget.event.AonSearchHandler;
 import com.esferalia.aon.gwt.common.client.widget.event.HasAonErrorHandlers;
+import com.esferalia.aon.gwt.common.client.widget.event.HasAonResetHandlers;
+import com.esferalia.aon.gwt.common.client.widget.event.HasAonSearchHandlers;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvoicingGroupSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonItemSuggestBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchFilter;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.Month;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, Focusable {
+class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonSearchHandlers, HasAonResetHandlers, Focusable {
 	
-	private AonCustomListBox monthListBox = new AonCustomListBox(AON.MSG.invoicingDate());
-	private AonCustomListBox yearListBox = new AonCustomListBox("");
+	private AonCustomListBox monthListBox = new AonCustomListBox(AON.MSG.invoicingMonth());
+	private AonCustomListBox yearListBox = new AonCustomListBox(AON.MSG.invoicingYear());
+	private AonCustomListBox confidentialListBox = new AonCustomListBox(AON.MSG.confidential());
 	private AonCustomListBox periocityListBox = new AonCustomListBox(AON.MSG.periodicity());
 	private AonInvoicingGroupSuggestBox invoicingGroupBox;
 	private AonCustomerSuggestBox customerBox;
 	private AonItemSuggestBox itemBox;
+	private AonSearchPanelButton searchButton;
+	private AonSearchPanelButton editButton;
 	
 //	private AonCustomListBox segmentListBox;
 //	private AonCustomSuggestBox conceptSuggestBox;
@@ -52,25 +65,61 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 	
 	
 	public InvoiceFeeFilter(InvoiceFeeModuleOptions opts) {
-		super(false , true); 
-		// Period
-		FlowPanel periodItemPanel = new FlowPanel();
-		periodItemPanel.addStyleName(AON.CSS.aonItemFlex());
-		periodItemPanel.add( createMonthListBox( ));
-		periodItemPanel.add( createYearListBox ( opts ));
-		addFilterWidget(periodItemPanel);
+		setStyleName(AON.CSS.aonWidthAlmostAll());
+		addStyleName(AON.CSS.aonBlockCenter());
 		
-		// Periodicity
-		addFilterWidget(createPeriodicityListBox( ));
+		createMonthListBox();
+		createYearListBox ( opts );
+		createPeriodicityListBox( );
+		createInvoicingGroupBox( opts );
+		createCustomerBox( opts );
+		createItemBox( opts );
+        
+		FlowPanel mainTab = new FlowPanel();
+		mainTab.addStyleName(AON.CSS.aonBlockCenter());
+		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		mainTab.addStyleName(AON.CSS.aonDisplayFlex());
+		mainTab.addStyleName(AON.CSS.aonAlignItemsCenter());
+		
+		mainTab.add(monthListBox);
+		mainTab.add(yearListBox);
+		if (opts.getConfiguration().getUser().hasConfidentialityRole()) {
+			createConfidentialListBox();
+			mainTab.add(confidentialListBox);
+		}
+		mainTab.add(periocityListBox);
+		mainTab.add(invoicingGroupBox);
+		mainTab.add(customerBox);
+		mainTab.add(itemBox);
+		
+		Label growLabel = new Label();
+		growLabel.setStyleName(AON.CSS.aonFlexGrow1());
+		mainTab.add(growLabel);
 
-		// InvoicingGroup
-		addFilterWidget(createInvoicingGroupBox( opts ));
+        FlowPanel buttonPanel = new FlowPanel();
+        buttonPanel.setWidth("80px");
+        buttonPanel.addStyleName(AON.CSS.aonAlignItemsCenter());
+        buttonPanel.getElement().getStyle().setProperty("justify-content", "flex-end");
 
-		// Customer
-		addFilterWidget(createCustomerBox( opts ));
+        searchButton = new AonSearchPanelButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
+        searchButton.addStyleName(AON.CSS.aonMarginRight());		
+        searchButton.addDomHandler(e -> fireSearch(), ClickEvent.getType()); 
+        buttonPanel.add(searchButton);
+		mainTab.add(buttonPanel);
+		
+		editButton = new AonSearchPanelButton(AON.MSG.editSearch(),AON.CSS.aonIconEdit());
+        editButton.setEnabled(false);
+        editButton.setVisible(false);
+        editButton.addStyleName(AON.CSS.aonMarginRight());		
+        editButton.addDomHandler(e -> fireReset(), ClickEvent.getType()); 
+        buttonPanel.add(editButton);
 
-		// Item
-		addFilterWidget(createItemBox( opts ));
+
+        ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
+		scrollPanel.setWidget(mainTab);
+		this.add( scrollPanel );
+		
 //		
 //		// Product Category
 //		createProductCategorySuggestBox();
@@ -80,21 +129,6 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 //		createProductTagSuggestBox();
 //		feeDockLayout.addFilterWidget(productTagSuggestBox);
 //		
-//		// Quantity
-//		quantityTextBox = new AonCustomTextBox("Cantidad");
-//		quantityTextBox.addValueChangeHandler(e -> onSearch());
-//		feeDockLayout.addFilterWidget(quantityTextBox);
-//
-//		// Price
-//		priceTextBox = new AonCustomTextBox("Precio");
-//		priceTextBox.addValueChangeHandler(e -> onSearch());
-//		feeDockLayout.addFilterWidget(priceTextBox);
-//		
-//		// Discount
-//		discountTextBox = new AonCustomTextBox("Descuento");
-//		discountTextBox.addValueChangeHandler(e -> onSearch());
-//		feeDockLayout.addFilterWidget(discountTextBox);
-//		
 //		// Seller
 //		createSellerSuggestBox();
 //		feeDockLayout.addFilterWidget(sellerSuggestBox);
@@ -102,10 +136,6 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 //		// Workplace
 //		createWorkplaceSuggestBox();
 //		feeDockLayout.addFilterWidget(workplaceSuggestBox);
-//		
-//		// Invoicing Group
-//		createInvoicingGroupSuggestBox();
-//		feeDockLayout.addFilterWidget(invoicingGroupSuggestBox);
 //		
 //		// Project
 //		createProjectSuggestBox();
@@ -136,27 +166,14 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 //		
 //		feeDockLayout.addSortWidget(sort);
 //		feeDockLayout.addSortWidget(asc);
+
 	}
 
-	protected void resetFilter() {
-		monthListBox.setValue("");
-		yearListBox.setValue("");
-		periocityListBox.setValue("");
-		invoicingGroupBox.setValue(null, false);
-		customerBox.setValue(null, false);
-		itemBox.setValue(null, false);
-		
-//		conceptSuggestBox.setValue(null);
-//		productCategorySuggestBox.setValue(null);
-//		sellerSuggestBox.setValue(null);
-//		workplaceSuggestBox.setValue(null);
-//		projectSuggestBox.setValue(null);
-//		if(null != segmentListBox)
-//			segmentListBox.setValue("");
-		fireSearch();
-	}
-	
 	FeeBillingParams getWidgetParams(InvoiceFeeModuleOptions opts) {
+		SecurityLevel securityLevel = SecurityLevel.OFFICIAL;
+		if (opts.getConfiguration().getUser().hasConfidentialityRole()) {
+			securityLevel = SecurityLevel.safeValueOf( AonNumberUtils.toInteger(confidentialListBox.getValue()));
+		}
 		return new FeeBillingParams()
 			.setDomainId(opts.getDomain())
 			.setMonth( Month.safeValueOf( AonNumberUtils.toInteger( monthListBox.getValue() )).orElse(null) )
@@ -165,6 +182,8 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 			.setInvoicingGroup( invoicingGroupBox.getInvoicingGroup().map(InvoicingGroup::getId).orElse(null) )
 			.setCustomer( customerBox.getCustomer().map(Registry::getId).orElse(null) )
 			.setItem( itemBox.getItem().map(Item::getId).orElse(null) )
+			.setSecurityLevel(securityLevel)
+			.setDryRun(true)
 		;
 		
 //		params.setProductCategory(null != productCategorySuggestions.get(productCategorySuggestBox.getValue()) ? productCategorySuggestions.get(productCategorySuggestBox.getValue()) : null);
@@ -177,25 +196,63 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 //		params.setOffset(offset.getValue());
 	}
 	
-	public void fireError(String message) {
-		AonErrorEvent.fire( InvoiceFeeFilter.this, message );
-	}
-
 	@Override
 	public HandlerRegistration addAonErrorHandler(AonErrorHandler handler) {
 		return super.addHandler(handler, AonErrorEvent.getType());
 	}
+	public void fireError(String message) {
+		
+		AonErrorEvent.fire( InvoiceFeeFilter.this, message );
+	}
 	
+	@Override
+	public HandlerRegistration addAonSearchHandler(AonSearchHandler handler) {
+		return super.addHandler(handler, AonSearchEvent.getType());
+	}
+
+	protected void fireSearch() {
+		manageWidgtes( false );
+		AonSearchEvent.fire( InvoiceFeeFilter.this ); 
+	}
+
+	@Override
+	public HandlerRegistration addAonResetHandler(AonResetHandler handler) {
+		return super.addHandler(handler, AonResetEvent.getType());
+	}
+	
+	protected void fireReset() {
+		manageWidgtes( true );
+		AonResetEvent.fire( InvoiceFeeFilter.this );
+	}
+
+	private void manageWidgtes(boolean editing) {
+		monthListBox.setEnabled(editing);
+		yearListBox.setEnabled(editing);
+		periocityListBox.setEnabled(editing);
+		confidentialListBox.setEnabled(editing);
+		invoicingGroupBox.setEnabled(editing);
+		customerBox.setEnabled(editing);
+		itemBox.setEnabled(editing);
+		searchButton.setEnabled(editing);
+		searchButton.setVisible(editing);
+		editButton.setEnabled(!editing);
+		editButton.setVisible(!editing);
+	}
+
 	private AonCustomListBox createMonthListBox() {
+		monthListBox.addStyleName(AON.CSS.aonAlignItemsCenter());
+		monthListBox.setWidth("150px");
 		monthListBox.addItem("-", "");
 		AonCollectionUtils.stream(Month.values())
 			.forEach(month -> monthListBox.addItem(month.getName(), AonNumberUtils.toString(month.ordinal())));
-		monthListBox.addChangeHandler(e -> fireSearch());
 		return monthListBox;
 	}
 
 	private AonCustomListBox createYearListBox( InvoiceFeeModuleOptions opts ) {
-		yearListBox.addItem("-", "");
+		yearListBox.addStyleName(AON.CSS.aonAlignItemsCenter());
+		yearListBox.addStyleName(AON.CSS.aonNowrap());
+		yearListBox.setWidth("80px");
+		yearListBox.addItem("-----", "");
 		InvoiceFeeModule.SERVICE.getFeeYearRange(opts.getOccam(), opts.getDomain(), new AsyncCallback<Pair<Integer, Integer>>() {
 	
 			@Override
@@ -214,32 +271,47 @@ class InvoiceFeeFilter extends AonSearchFilter implements HasAonErrorHandlers, F
 				fireError("Error al calcular el rango de a\u00F1os: " + caught.getMessage());
 			}
 		});
-		yearListBox.addChangeHandler(e -> fireSearch());
 		return yearListBox;
 	}
 	
 	private AonCustomListBox createPeriodicityListBox() {
-		periocityListBox.addItem("-", "");
+		periocityListBox.addStyleName(AON.CSS.aonAlignItemsCenter());
+		periocityListBox.setWidth("100px");
+		periocityListBox.addItem("-----", "");
 		AonCollectionUtils.stream(BillingPeriod.values())
 			.forEach(bp-> periocityListBox.addItem(bp.getDescription(), AonNumberUtils.toString(bp.ordinal())));
-		periocityListBox.addChangeHandler(e -> fireSearch());
 		return periocityListBox;
+	}
+
+	private AonCustomListBox createConfidentialListBox() {
+		confidentialListBox.addStyleName(AON.CSS.aonAlignItemsCenter());
+		confidentialListBox.setWidth("100px");
+		AonCollectionUtils.stream(SecurityLevel.values())
+			.forEach(sl-> confidentialListBox.addItem(sl.getName(), AonNumberUtils.toString(sl.ordinal())));
+		confidentialListBox.getListBox().setSelectedIndex(0);
+		return confidentialListBox;
 	}
 
 	private AonInvoicingGroupSuggestBox createInvoicingGroupBox(InvoiceFeeModuleOptions opts) {
 		invoicingGroupBox = new AonInvoicingGroupSuggestBox(opts);
-		invoicingGroupBox.addSelectionHandler(e -> fireSearch());
+		invoicingGroupBox.setWidth("200px");
+		invoicingGroupBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		return invoicingGroupBox;
 	}
 	
 	private AonCustomerSuggestBox createCustomerBox(InvoiceFeeModuleOptions opts) {
 		customerBox = new AonCustomerSuggestBox(opts);
-		customerBox.addSelectionHandler(e -> fireSearch());
+		customerBox.setWidth("200px");
+		customerBox.addStyleName(AON.CSS.aonWidth300());
+		customerBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		return customerBox;
 	}
-
+	
 	private AonItemSuggestBox createItemBox(InvoiceFeeModuleOptions opts) {
 		itemBox = new AonItemSuggestBox(opts);
+		itemBox.setWidth("200px");
+		itemBox.addStyleName(AON.CSS.aonWidth300());
+		itemBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		itemBox.addSelectionHandler(e -> fireSearch());
 		return itemBox;
 	}

@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -37,15 +36,6 @@ public class InvoiceFeeServiceAsyncDecorator implements InvoiceFeeServiceAsync {
 		AON.start();
 		serviceAsync.getFeeYearRange(occam, domainId, new AsyncCallbackWrapper<>(callback));
 	}
-			
-	// **************************************************
-	// ***************************************** [SEARCH]
-	// **************************************************
-	@Override
-	public void getProductsSuggestion(Occam occam, Integer searchDomain, String productQuery, AsyncCallback<LinkedList<Item>> asyncCallback) {
-		AON.start();
-		serviceAsync.getProductsSuggestion(occam, searchDomain, productQuery, new AsyncCallbackWrapper<>(asyncCallback));
-	}
 	
 	// **************************************************
 	// ************************************** [INVOICING]
@@ -54,6 +44,11 @@ public class InvoiceFeeServiceAsyncDecorator implements InvoiceFeeServiceAsync {
 	public void getInvoices(Occam occam, FeeBillingParams params, AsyncCallback<LinkedList<Invoice>> callback) {
 		AON.start();
 		serviceAsync.getInvoices(occam, params, new AsyncCallbackWrapper<>(callback));
+	}
+	@Override
+	public void saveInvoice(Occam occam, Invoice invoice, AsyncCallback<Invoice> callback) {
+		AON.start();
+		serviceAsync.saveInvoice(occam, invoice, new AsyncCallbackWrapper<>(callback));
 	}
 				
 			

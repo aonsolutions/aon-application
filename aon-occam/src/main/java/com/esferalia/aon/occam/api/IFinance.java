@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -336,6 +337,11 @@ public interface IFinance {
 	// ********************************************
 	Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId);
 	Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params);
+	
+	// ********************************************
+	// ********************************** SERIES **
+	// ********************************************
+	Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query);
 	
 	
 }

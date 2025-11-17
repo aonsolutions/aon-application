@@ -16,7 +16,7 @@ public class InvoiceCalculatorDAO {
 		
 	}
 	
-	public static void calculate(AONContext ctx, Invoice i) {
+	public static Invoice calculate(AONContext ctx, Invoice i) {
 		i.detailStream().forEach(d -> calculate(ctx, d));
 		i.refreshTaxBreakdown();
 		i.getTaxBreakdown().
@@ -26,8 +26,8 @@ public class InvoiceCalculatorDAO {
 				i.setRetentionQuota( tb.getRetentionQuota() );
 				i.setTotal( tb.getTotal() );
 			})
-		;		
-		
+		;
+		return i;
 	}
 
 	public static InvoiceDetail calculate(AONContext ctx, InvoiceDetail detail) {

@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -90,6 +91,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
@@ -978,7 +980,8 @@ public class FinanceImpl implements IFinance {
 
 	@Override
 	public Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params) {
-		return FeeBillingDAO.invoice(ctx, params);
+		return ctx.getDslContext().transactionResult(
+			configuration -> FeeBillingDAO.invoice(ctx, params));
 	}
 	
 	// 	***********************************************
@@ -988,4 +991,14 @@ public class FinanceImpl implements IFinance {
 	public Stream<Item> getItemsSuggestion(AONContext ctx, Integer domainId, String query) {
 		return ItemDAO.getStreamSuggestion(ctx, domainId, query);
 	}
+	
+	// ********************************************
+	// ********************************** SERIES **
+	// ********************************************
+
+	@Override
+	public Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query) {
+		return SeriesDAO.getStreamSuggestion(ctx, domainId, query);
+	}
+			
 }

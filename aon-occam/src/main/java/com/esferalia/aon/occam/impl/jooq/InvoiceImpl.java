@@ -10,7 +10,7 @@ public class InvoiceImpl implements IInvoice {
 	@Override
 	public Invoice save(AONContext ctx, Invoice invoice){
 		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceDAO.save(ctx, invoice));
+			configuration -> InvoiceDAO.saveInvoiceAndFinances(ctx, invoice));
 	}
 	
 	@Override

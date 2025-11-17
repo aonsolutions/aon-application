@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceToString;
 import com.esferalia.aon.occam.api.model.type.Month;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -56,9 +57,8 @@ public class FeeBillingDAOTests {
 				// .setCustomer( 115848 )
 				.setInvoiceActivity(4717)
 				.setInvoiceSeries("NEW25")
-				.setInvoiceNumber( 0 )
 				.setInvoiceDate( AonDateUtils.getMonthLastDay( new Date() ) )
-				.setConfidential( false )
+				.setSecurityLevel( SecurityLevel.OFFICIAL)
 				.setDryRun( false )
 			;
 			

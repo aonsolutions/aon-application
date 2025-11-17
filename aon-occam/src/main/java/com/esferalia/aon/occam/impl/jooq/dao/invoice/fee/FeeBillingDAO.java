@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -43,6 +43,7 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -67,7 +68,6 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.Month;
 import com.esferalia.aon.occam.api.model.type.PrepaymentCollect;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -91,19 +92,11 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeBillingDAO {
-
+	
+	private static final Logger LOGGER = Logger.getLogger(FeeBillingDAO.class.getName());
+	
 	private FeeBillingDAO() {
 	}
-	
-	public static FeeBillingParams initializeParams() {
-		Calendar calendar = Calendar.getInstance();
-		return new FeeBillingParams()
-			.setMonth(Month.safeValueOf(calendar.get(Calendar.MONTH)).orElse(null))
-			.setYear(calendar.get(Calendar.YEAR))
-			.setConfidential(false);
-		
-	}
-	
 	
 	// Cliente y registry vinculado a la cuota.
 	protected static final com.esferalia.aon.jooq.tables.Customer FEECUST = com.esferalia.aon.jooq.tables.Customer.CUSTOMER.as("FEECUST") ;
@@ -154,11 +147,12 @@ public class FeeBillingDAO {
 		checkSegments( ctx, params );
 		params.setCompany( CompanyDAO.getByDomain( ctx, params.getDomainId() ) );
 		Condition condition = getCondition(params);
-		
-//		System.out.println( "****************************");
-//		System.out.println( "Condition: " + condition);
-//		System.out.println( "****************************");
-		
+		AonConfiguration tmpConfig = null;
+		if (params.isNotDryRun()) {
+			tmpConfig = ConfigurationDAO.getConfiguration( ctx, params.getInvoiceDate() );
+		}
+		AonConfiguration config = tmpConfig; 
+		log("Condition: " + condition);
 		SelectConditionStep<Record> sentence = select(ctx)
 			.where( condition );
 		
@@ -166,7 +160,12 @@ public class FeeBillingDAO {
         mvelContext.put("MONTH", params.getMonth().getName());
         mvelContext.put("YEAR", params.getYear());
 		
-        AtomicInteger invoiceNumber = new AtomicInteger( AonNumberUtils.zeroIfNull(params.getInvoiceNumber()) );
+        int minNumber = InvoiceDAO.getMinNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
+        if (minNumber >= 0) minNumber = -1;
+        log("Min invoice Number: " + minNumber);
+        
+        AtomicInteger invoiceNumber = new AtomicInteger( minNumber );
+        AtomicInteger counter = new AtomicInteger( 1 );
         MutableObject<FeeBilling> lastFee = new MutableObject<>( null );
         // Collector que acumula bloques de FeeBilling según breakInvoice
         List<Invoice> fullInvoices = sentence
@@ -180,30 +179,38 @@ public class FeeBillingDAO {
 					Invoice lastInvoice = AonCollectionUtils.stream(invoices).reduce((f, s) -> s).orElse(null);
 					if (breakInvoice(fee, lastFee.getValue())) {
 						// Nuevo bloque --> nueva factura
-						lastInvoice = createInvoice(ctx, fee, invoiceNumber.getAndIncrement(), params);
+						lastInvoice = createInvoice(ctx, fee, invoiceNumber.getAndDecrement(), params);
 						invoices.add(lastInvoice);
+						log("Invoice Added: " + counter.getAndIncrement() + " " + lastInvoice.flat());
 					}
 					InvoiceDetail detail = createInvoiceDetail(ctx, lastInvoice, fee, mvelContext, params);
                     lastInvoice.addDetail(detail);
-                    if (params.isNotDryRun()) {
-                    	updateSource(ctx, fee, detail);
-                    }
                     lastFee.setValue( fee );
 				}
 				,(left, right) -> { left.addAll(right); return left; }
 			))
 		;
+        
         AonCollectionUtils.stream(fullInvoices)
-	    	.forEach( i -> {
+	    	.forEach(i -> {
+	        	// Se calculan los datos de la factura
+	    		log("\t Calculando invoice: " + i.flat());
 	    		InvoiceCalculatorDAO.calculate( ctx, i);
-	    		FinanceDAO.getFinancesForInvoiceStream( ctx, i)
-	    			.forEach( i::addFinance);
-	            if (params.isNotDryRun()) {
-	                InvoiceDAO.save(ctx, i);
-	                FinanceDAO.insertFinancesForInvoice(ctx, i.getId());
+	    		// Se Añaden los vencimientos según la configuración del cliente
+	    		log("\t Generando vencimientos invoice: " + i.flat());
+	    		FinanceDAO.getFinancesForInvoiceStream( ctx, i).forEach(i::addFinance);  
+	    		// En su caso, Se guardan las facturas y sus vencimientos
+	    		log("\t" + ( params.isDryRun() ? "NO SE GRABA" : "Grabando invoice: " + i.flat()) );
+	            if (params.isDryRun()) {
+	            	log("\t" + "NO SE GRABA " + i.flat());
+	            } else {
+	            	log("\t" + "Grabando invoice: " + i.flat());
+	            	InvoiceDAO.saveInvoiceAndFinances(ctx, config, i);
 	            }
-	   	});
-		return AonCollectionUtils.stream(fullInvoices);
+	    	});
+    	log("\t Fin del proceso: " );
+    	// No devolver el stream anterior, asegurar la finalización.
+        return AonCollectionUtils.stream(fullInvoices);
 	}
 
 	public static void updateSource(AONContext ctx, FeeBilling fee, InvoiceDetail detail) {
@@ -280,11 +287,12 @@ public class FeeBillingDAO {
 			.setType(InvoiceType.SALES)
 			.setActivity(activity)
 			.setIssueDate(params.getInvoiceDate())
+			.setTaxDate(params.getInvoiceDate())
 			.setScope(cus.getRegistry().getScope())
-			.setConfidential(params.isConfidential())
+			.setSecurityLevel(params.getSecurityLevel())
 			.setProject(fee.getProject().orElse(null))
 			.setSeries(params.getInvoiceSeries())
-			.setNumber(calculateNextNumber(params.getInvoiceSeries(), number))
+			.setNumber(number)
 			.setRegistry(cus.getId())
 			.setRegistryDocument(cus.getRegistry().getDocument())
 			.setRegistryDocumentType(cus.getRegistry().getDocumentType())
@@ -300,10 +308,6 @@ public class FeeBillingDAO {
 		;
 	}
 	
-	private static int calculateNextNumber(String invoiceSeries, int number) {
-		return number + 1;
-	}
-
 	private static InvoiceDetail createInvoiceDetail(AONContext ctx, Invoice invoice, FeeBilling fee, Map<String, Object> mvelContext, FeeBillingParams params) {
         short line = (short) (invoice.detailsSize() + 1);
         InvoiceDetail detail = new InvoiceDetail()
@@ -319,6 +323,7 @@ public class FeeBillingDAO {
 			.setDiscountExpression(fee.getDiscountExpression())
 			.setSeller(new Seller().setId(fee.getSeller()))
 			.setWorkplace(new Workplace().setId(fee.getWorkplace()))
+			.setPrepayment(fee.isPrepayment())
 		;
         InvoiceCalculatorDAO.calculate(ctx, detail);
         return addDetail(ctx, invoice, detail);
@@ -328,16 +333,16 @@ public class FeeBillingDAO {
         String desc = (String) TemplateRuntime.eval(fee.getDescription(), mvelContext);
         if ( AonNumberUtils.notEquals(fee.getInvoicingCustomer().getId(), fee.getCustomer().getId())) {
 			desc += " - " + fee.getInvoicingCustomer().getName();
-		};
+		}
 		return AonStringUtils.abbreviate(desc, INVOICE_DETAIL.DESCRIPTION.getDataType().length()); 
 	}
 
 	private static double calculateCorrectionFactor(FeeBilling fee, FeeBillingParams params) {
 		if (fee.getPeriod() == BillingPeriod.NO_PERIOD) return 1;
-		Date fromDate = DateUtils.truncate(new Date(), Calendar.YEAR);
-		fromDate = DateUtils.setYears(fromDate, params.getYear());
-		fromDate = DateUtils.setMonths(fromDate, params.getMonth().ordinal());
-		Date toDate = DateUtils.addDays(DateUtils.addMonths(fromDate, fee.getPeriod().getValue()), -1);
+		Date fromDate = AonDateUtils.truncate(new Date(), Calendar.YEAR);
+		fromDate = AonDateUtils.setYears(fromDate, params.getYear());
+		fromDate = AonDateUtils.setMonths(fromDate, params.getMonth().ordinal());
+		Date toDate = AonDateUtils.addDays(AonDateUtils.addMonths(fromDate, fee.getPeriod().getValue()), -1);
 		Date iniFee = (fee.getInitialDate().before(fromDate)) ? fromDate : fee.getInitialDate();
 		Date endFee = (fee.getFinalDate() == null || fee.getFinalDate().after(toDate)) ? toDate : fee.getFinalDate();
 		return (double) AonDateUtils.getDaysBetweenDates(iniFee, endFee) / (double) AonDateUtils.getDaysBetweenDates(fromDate, toDate);
@@ -374,8 +379,14 @@ public class FeeBillingDAO {
 		if (params.getDomainId() == null) throw new AonCoreException( "No se han indicado el dominio para la facturación");
 		if (params.getYear() == null) throw new AonCoreException( "No se ha indicado el año a facturar");
 		if (params.getMonth() == null) throw new AonCoreException( "No se ha indicado el mes a facturar");
-		if (params.getInvoiceDate() == null) params.setInvoiceDate(new Date());
+		if (params.isNotDryRun()) {
+			if (params.getInvoiceDate() == null) throw new AonCoreException( "No se ha indicado la fecha de las facturas");
+			if (AonStringUtils.isBlank(params.getInvoiceSeries())) throw new AonCoreException( "No se ha indicado la serie de las facturas");
+		} else {
+			if (params.getInvoiceDate() == null) params.setInvoiceDate( new Date() );
+		}
 	}
+	
 	private static void checkSegments(AONContext ctx, FeeBillingParams params) {
 		if (AonCollectionUtils.isNotEmpty( params.getSegments() ) ) {
 			String msg = "[Cliente: {0} - Segmento: {1} - {2} veces]";
@@ -412,13 +423,9 @@ public class FeeBillingDAO {
 		calendar.add(Calendar.SECOND, -1);
 		java.sql.Date to = AonDateUtils.toSql(calendar.getTime());
 		
-		byte securityLevel = ( params.isConfidential()
-			? SecurityLevel.CONFIDENTIAL.value() 
-			: SecurityLevel.OFFICIAL.value() );
-		
 		Condition c = CUSTOMER_FEE.DOMAIN.eq(params.getDomainId())
 			.and(FEECUST.STATUS.eq( RegistryStatus.ACTIVE.value() ))
-			.and(CUSTOMER_FEE.SECURITY_LEVEL.eq( securityLevel ))
+			.and(CUSTOMER_FEE.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ))
 			.and(CUSTOMER_FEE.BILLING_DATE.between(from, to) )
 			.and(CUSTOMER_FEE.INITIAL_DATE.le(to))
 			.and(CUSTOMER_FEE.FINAL_DATE.ge(from).or(CUSTOMER_FEE.FINAL_DATE.isNull()))
@@ -844,6 +851,11 @@ public class FeeBillingDAO {
 			.map( r -> r.getValue( DSL.max(CUSTOMER_FEE.LINE) ))
 			.findFirst()
 			.orElse((short) 0);
+	}
+	
+	private static void log( String message ) {
+		LOGGER.fine(message);
+		System.out.println( message );
 	}
 	
 }
