@@ -13,7 +13,10 @@ public enum TaskSource implements IResourceable {
 	CAU,
 	GITHUB,
 	QUERY,
-	REQUEST;
+	REQUEST,
+	GROUPED,
+	TASK,
+	EMAIL;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_task_source_";
 
