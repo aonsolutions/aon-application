@@ -680,12 +680,6 @@ public class UserServlet extends AonApiHttpServlet {
 					.setScope(s.getId())
 					.setUserId(user.getId()));
 		}
-		if(api.getDomain().getScope() != null) {
-			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
-					.setDomain(api.getDomain().getId())
-					.setScope(api.getDomain().getScope())
-					.setUserId(user.getId()));
-		}
 		
 		ApplicationParameter a = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.AON_PORTAL);
 		ApplicationParameter appParam = new ApplicationParameter()
@@ -867,9 +861,9 @@ public class UserServlet extends AonApiHttpServlet {
 		Scope s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDescriptionProperty().eq("GENERAL")))
 				.findFirst().orElse(null);
-		if(s == null && api.getDomain().getParentId() != null) {
-			s =   AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getDomainProperty().eq(api.getDomain().getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+		if(s== null){
+			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDescriptionProperty().eq("EMPRESA")))
 					.findFirst().orElse(null);
 		}
 		
@@ -878,11 +872,7 @@ public class UserServlet extends AonApiHttpServlet {
 					f -> f.getDomainProperty().eq(api.getDomain().getId()))
 					.findFirst().orElse(null);
 		}
-		if(s == null && api.getDomain().getParentId() != null) {
-			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
-					.findFirst().orElse(null);
-		}
+		
 		return s;
 	}
 
