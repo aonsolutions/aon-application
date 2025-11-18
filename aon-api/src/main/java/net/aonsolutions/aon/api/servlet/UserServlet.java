@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -152,6 +153,9 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/email":
 				response(req, resp, sendAuthInfoMail(api));
 				break;
+			case "/bookingUser":
+				response(req, resp, bookingUser(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -159,7 +163,7 @@ public class UserServlet extends AonApiHttpServlet {
 			error(req, resp, e);
 		}
 	}
-	
+
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
@@ -504,6 +508,23 @@ public class UserServlet extends AonApiHttpServlet {
 			user = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
 		}
 		return UserJSON.toJSON(user);
+	}
+	
+	private JSONObject bookingUser(AonApiData api) throws Exception {
+		setUser(api);
+		
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+					
+			ctx.transaction(t -> {
+				
+				Domain currentDomain =  DomainDAO.getDomain(ctx, api.getDomain().getId());
+				Integer maxDefinedUsers = currentDomain.getMaxDefinedUsers();
+				maxDefinedUsers++;
+				SecurityDAO.saveDomainMaxDefinedUser(ctx, maxDefinedUsers);
+			});
+		}
+		
+		return null;
 	}
 	
 	private JSONObject setUser(AonApiData api) throws Exception {

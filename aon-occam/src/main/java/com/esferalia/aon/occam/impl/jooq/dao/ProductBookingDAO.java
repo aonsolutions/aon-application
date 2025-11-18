@@ -64,14 +64,14 @@ public class ProductBookingDAO {
 	public static void updateBookingProduct(CloseableAONContext ctx, String domainName, Integer domainId, String login, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee) {
 		Domain siblingOffice = getOfficeSibling(ctx, customerRelatedRegistry);
 		
+		ProductBooking feeProductBooking = null;
 		if(oldFee.isPresent()) {
 			Item feeItem = ItemDAO.getFull(ctx, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(oldFee.get().getItem().getId())));
-			ProductBooking feeProductBooking =  ProductDAO.getBooking(ctx, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(feeItem.getProduct().getId())));
+			feeProductBooking =  ProductDAO.getBooking(ctx, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(feeItem.getProduct().getId())));
 			
 			updateBookingProduct(ctx, domainId, login, siblingOffice, oldFee.get());
 			updateEndDatePackFee(ctx, siblingOffice, oldFee.get());
 			
-			sendUnBookingEmail(ctx, siblingOffice, domainId, login, customerRelatedRegistry, feeProductBooking);
 		}
 		
 		createFeeRelatedRegistry(ctx, login, siblingOffice, customerRelatedRegistry, newFee);
@@ -83,6 +83,9 @@ public class ProductBookingDAO {
 			
 			createUpdateProductProject(ctx, existRelationShip.get().getRegistry(), product);
 		}
+		
+		if(null != feeProductBooking)
+			sendUnBookingEmail(ctx, siblingOffice, domainId, login, customerRelatedRegistry, feeProductBooking);
 		
 		sendBookingEmail(ctx, siblingOffice, domainId, login, customerRelatedRegistry, product);
 
@@ -196,7 +199,7 @@ public class ProductBookingDAO {
 		Optional<DomainApp> domainApp = domainApps.filter(da -> da.getApp().equals(aonApp)).findFirst();
 		
 		if(domainApp.isPresent())
-			SecurityDAO.saveDomainApp(ctx, domainApp.get(), delete);
+			SecurityDAO.saveDomainApp(ctx, domainApp.get(), false);
 		
 		updateUserAppRole(ctx, domainId, userId, aonApp);
 	}
@@ -308,6 +311,20 @@ public class ProductBookingDAO {
 			AppParamDAO.updateApplicationParameter(ctx, trialAppParam, f -> f.getIdProperty().eq(trialAppParam.getId()).and(f.getDomainProperty().eq(trialAppParam.getDomain())));
 		}
 		
+		// If plan check exist or create admin role
+		if(product.getBookingType().equals(ProductBookingType.PLAN)) {
+			Optional<UserAppRole> adminUserRole = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(userDb.getId())).filter(r -> r.getRole().equals(AonRole.ADMIN)).findAny();
+			if(adminUserRole.isEmpty()) {
+				UserAppRole newUserAppRole = new UserAppRole()
+						.setDomain(userDb.getDomain().getId())
+						.setApp(null)
+						.setUser(userDb.getId())
+						.setRole(AonRole.ADMIN);
+				
+				SecurityDAO.insertUserAppRole(ctx, newUserAppRole);
+			}
+		}
+		
 		// Set User normal
 		if(!userDb.getType().equals(UserType.NORMAL) || null != userDb.getEnterprise()) {
 			userDb.setType(UserType.NORMAL);
@@ -338,7 +355,7 @@ public class ProductBookingDAO {
 				.setApp(aonApp)
 				;
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp, true);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		insertUserAppRole(ctx, user, aonApp);
 	}
@@ -432,7 +449,7 @@ public class ProductBookingDAO {
 
 		Registry registry = RegistryDAO.get(ctx, registryId);
 		
-		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(parentDomain.getId())));
+		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId())));
 
 		Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
 		Optional<ProjectHolder> projectHolder = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
@@ -443,7 +460,7 @@ public class ProductBookingDAO {
 			if(null != taskHolder && null != taskHolder.getId() && null != taskHolder.getUser() && null != taskHolder.getUser().getId()) {
 				Scope scope = null;
 				if (scopes.count() == 0) {
-					Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+					Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 					scope = SecurityDAO.insertScope(ctx, newScope);
 				} else scope = scopes.findFirst().get();
 				
@@ -462,7 +479,7 @@ public class ProductBookingDAO {
 					if(null != taskHolderWG && null != taskHolderWG.getId() && null != taskHolderWG.getUser() && null != taskHolderWG.getUser().getId()) {
 						Scope scope = null;
 						if (scopes.count() == 0) {
-							Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+							Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 							scope = SecurityDAO.insertScope(ctx, newScope);
 						} else scope = scopes.findFirst().get();
 						

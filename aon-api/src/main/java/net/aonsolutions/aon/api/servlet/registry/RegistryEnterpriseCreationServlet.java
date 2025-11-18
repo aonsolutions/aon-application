@@ -1063,15 +1063,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		DomainApp domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.INVOICE).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 
 		domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.DOCUMENTAL).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 
 		domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.MESSENGER).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 	}
 
 	private static void insertAccountPeriod(CloseableAONContext ctx, Domain newDomain) {
