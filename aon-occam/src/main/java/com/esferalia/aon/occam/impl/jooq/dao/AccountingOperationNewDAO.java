@@ -295,7 +295,10 @@ public class AccountingOperationNewDAO {
 					   .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
 					   .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.DOMAIN.eq(ctx.getDomainId()).and(ENTERPRISE_ACTIVITY.PRINCIPAL.eq((byte) 1)))
 					   .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-					   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL.YEAR.eq(AonDateUtils.getYear(params.getToDate()))).and(FS_MODEL.PERIOD.eq(Period.M12.value()).or(FS_MODEL.PERIOD.eq(Period.T4.value()))).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CT_C44.getValue()))
+					   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId()))
+					   	 .and(FS_MODEL.YEAR.eq(AonDateUtils.getYear(params.getToDate())))
+					   	 .and(FS_MODEL.PERIOD.eq(Period.M12.value()).or(FS_MODEL.PERIOD.eq(Period.T4.value())))
+					   	 .and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CT_C44.getValue()).or(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.BZ_C029.getValue()).or(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.NF_450.getValue()).or(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CA_C039.getValue())))))
 					   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
 					   .fetchAny();
 			
@@ -303,6 +306,10 @@ public class AccountingOperationNewDAO {
 				return Stream.empty();
 			} else {
 				Double prorateAmount = rec.getValue(FS_MODEL_DETAIL.AMOUNT);
+				
+				if (AonMathUtils.isZero(prorateAmount)) {
+					return Stream.empty();
+				}
 				
 				// Se ponen los datos de la actividad principal en esta línea del ajuste de la prorrata
 				String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";

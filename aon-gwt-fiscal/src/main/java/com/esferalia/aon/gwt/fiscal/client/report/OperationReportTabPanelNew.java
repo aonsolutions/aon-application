@@ -66,6 +66,12 @@ class OperationReportTabPanelNew extends ScrollPanel{
 	}
 	
 	private void showEntry(OperationReportModuleOptionsNew options, Integer entryId) {
+		
+		// Si no hay entryId, o es cero, no hacemos nada
+		if (entryId == null || entryId.intValue() == 0) {
+			return;
+		}		
+		
 		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
