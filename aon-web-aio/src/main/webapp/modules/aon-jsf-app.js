@@ -300,13 +300,14 @@ export class AonJsfInvoicePrint extends AonJsfApp {
 	}
 }
 
-export class AonJsfInvoiceRemove extends AonJsfApp {
+// NO USAR EL BORRADO DE FACTURAS - ACTIVAR EN CASO NECESARIO.
+// export class AonJsfInvoiceRemove extends AonJsfApp {
 
-	constructor() {
-		super();
-		this.setViewId('/facelet/app/invoiceRemove.xhtml');
-	}
-}
+// 	constructor() {
+// 		super();
+// 		this.setViewId('/facelet/app/invoiceRemove.xhtml');
+// 	}
+// }
 
 export class AonJsfInvoiceDelivery extends AonJsfApp {
 
