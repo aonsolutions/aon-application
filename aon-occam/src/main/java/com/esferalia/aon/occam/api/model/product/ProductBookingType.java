@@ -5,7 +5,10 @@ import java.io.Serializable;
 public enum ProductBookingType implements Serializable {
 	
 	PLAN("Plan"),
-    SERVICE("Servicio");
+    SERVICE("Servicio"),
+    USER("Usuario"),
+    CONSULTANCY("Asesoria")
+    ;
 	
 	private String description;
 	
