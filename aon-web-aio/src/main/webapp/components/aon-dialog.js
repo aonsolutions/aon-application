@@ -13,8 +13,10 @@ export class AonDialog extends AonElement {
 	ACTION;
 	CANCEL;
 	ACCEPT;
+	DESCRIPTION;
 	BUTTON_LEFT;
 	BUTTON_RIGHT;
+	BUTTON_CLOSE;
 
 	static get observedAttributes() {
 		return ['width', 'autoclose', 'type'];
@@ -93,21 +95,25 @@ export class AonDialog extends AonElement {
 	initialize() {
 		this.DIALOG = this.id + 'Dialog';
 		this.MAIN = this.DIALOG + 'Main';
-		this.TITLE = this.DIALOG + CONSTANT.TITLE;
+		this.TITLE = this.DIALOG + 'Title';
 		this.CONTENT = this.DIALOG + 'Content';
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
+		this.DESCRIPTION = this.DIALOG + 'Description';
+		this.BUTTON_CLOSE = this.DIALOG + 'CloseDesktop'
 		this.BUTTON_LEFT = this.DIALOG + 'DivButtonsLeft';
 		this.BUTTON_RIGHT = this.DIALOG + 'DivButtonsRight'; 
 		this.autoclose = this.autoclose || true;
 	}
 
 	clear() {
-		const title = this.getElement(this.TITLE);
 		const content = this.getContent();
+		const title = this.getElement(this.TITLE);
+		const description = this.getElement(this.DESCRIPTION);
 		if(title) title.innerHTML = '';
 		if(content) content.innerHTML = '';
+		if(description) description.innerHTML = '';
 		// const action = this.getElement(this.ACTION)
 		// if(action) action.innerHTML = '';
 	}
@@ -153,6 +159,7 @@ export class AonDialog extends AonElement {
 
 
 		let closeDesktop = this.createElement(TAG.LABEL);
+		closeDesktop.id = this.BUTTON_CLOSE;
 		closeDesktop.title = MSG.CLOSE;
 		closeDesktop.innerHTML = "×";
 		closeDesktop.onclick = () => this.close();
@@ -174,6 +181,13 @@ export class AonDialog extends AonElement {
 		title.style.marginBottom = '10px';
 		title.id = this.TITLE;
 		main.appendChild(title);
+
+		let description = this.createElement(TAG.DIV);
+		description.style.fontSize = "15px";
+		description.style.fontWeight = "normal";
+		description.style.marginBottom = '10px';
+		description.id = this.DESCRIPTION;
+		main.appendChild(description);
 
 		let content = this.createElement(TAG.DIV);
 		content.id = this.CONTENT;
@@ -333,6 +347,10 @@ export class AonDialog extends AonElement {
 	getMain(){
 		return this.getElement(this.MAIN);
 	}
+	
+	getCloseDesktop(){
+		return this.getElement(this.DIALOG + 'CloseDesktop');
+	}
 
 	setContent(widget, top, left, width) {
 		let content = this.getContent();
@@ -399,7 +417,11 @@ export class AonDialog extends AonElement {
 		if(title) this.getElement(this.TITLE).innerHTML = title;
 	}
 
-	getButtonLeft(){
+	setDescription(description) {
+		if(description) this.getElement(this.DESCRIPTION).innerHTML = description;
+	}
+
+		getButtonLeft(){
 		return this.getElement(this.BUTTON_LEFT);
 	}
 

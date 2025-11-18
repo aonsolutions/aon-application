@@ -87,6 +87,12 @@ public class SECURITY {
 		}
 	}
 	
+	public static Auth saveAuth(Domain domain, String login, Auth  auth) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getSecurity().saveAuth(ctx, auth);
+		}
+	}
+
 	public static AuthDevice saveAuthDevice(Domain domain, String login, AuthDevice ad) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().saveAuthDevice(ctx, ad);

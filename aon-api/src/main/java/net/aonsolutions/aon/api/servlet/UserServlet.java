@@ -166,6 +166,9 @@ public class UserServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
+			case "/auth":
+				response(req, resp, setUserAuth(api));
+				break;
 			case "/workgroup":
 				response(req, resp, insertUserWorkgroup(api));
 				break;
@@ -222,6 +225,18 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	// USER AUTH
+
+	private JSONObject setUserAuth(AonApiData api) {
+		Integer userId = api.getData().getInt(IJsonNames.USER);
+		String email = api.getData().getString(IJsonNames.EMAIL);
+		Auth auth = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), email);
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(userId));
+		user.setAuth(auth);
+		user = AON.saveUser(api.getDomain(), api.getUser().getLogin(), user);
+		return UserJSON.toJSON(user);
+	}
+
 	// USER WORKGROUP
 	
 	private JSONObject insertUserWorkgroup(AonApiData api) {
