@@ -22,7 +22,7 @@ aon-home{
   flex-direction : column;
   overflow       : auto;
   margin-top     : v.$menu-top-height; // para que salga el contenido debajo del menu
-  padding        : v.$padding;
+  padding        : v.$padding v.$padding calc(v.$padding * 6) v.$padding;
   &.hidden-top {
     margin-top   : 0; // No tinee menu arriba
   }
