@@ -278,7 +278,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				.setQuantity(1.00)
 				.setPrice(product.getItem().getPrice())
 				.setStartDate(new Date())
-				.setBillingDate(DateUtils.getLastDayOfMonth())
+				.setBillingDate(DateUtils.getFirstDayOfMonth())
 				.setPeriod(BillingPeriod.MONTHLY)
 				;
 		

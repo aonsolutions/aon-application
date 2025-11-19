@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -94,8 +95,12 @@ public class ProductBookingDAO {
 	public static void createBookingProduct(CloseableAONContext ctx, String domainName, Integer domainId, String login, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) {
 		Domain siblingOffice = getOfficeSibling(ctx, customerRelatedRegistry);
 		
-		createFeeRelatedRegistry(ctx, login, siblingOffice, customerRelatedRegistry, newFee);
-		createBookingFee(ctx, login, siblingOffice, customerRelatedRegistry, product);
+		if(product.getBookingType().equals(ProductBookingType.USER))
+			createUserFeeRelatedRegistry(ctx, login, siblingOffice, customerRelatedRegistry, newFee);
+		else {
+			createFeeRelatedRegistry(ctx, login, siblingOffice, customerRelatedRegistry, newFee);
+			createBookingFee(ctx, login, siblingOffice, customerRelatedRegistry, product);
+		}
 		
 		if(null != product.getProjectType()) {
 			Optional<RegistryRelationship> existRelationShip = RegistryRelationshipDAO.get(ctx,  f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(siblingOffice.getId())).and(f.getRelationshipProperty().eq(-1)));
@@ -104,7 +109,7 @@ public class ProductBookingDAO {
 			createUpdateProductProject(ctx, existRelationShip.get().getRegistry(), product);
 		}
 
-		sendBookingEmail(ctx, siblingOffice, domainId, login, customerRelatedRegistry, product);
+//		sendBookingEmail(ctx, siblingOffice, domainId, login, customerRelatedRegistry, product);
 	}
 	
 	public static void removeBookingProduct(CloseableAONContext ctx, String domainName, Integer domainId, String login, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product) {
@@ -240,6 +245,70 @@ public class ProductBookingDAO {
 		FeeDAO.save(ctx, fee);
 	}
 	
+	private static void createUserFeeRelatedRegistry(CloseableAONContext ctx, String login, Domain siblingOffice, Integer customerRelatedRegistry, Fee fee) throws AonCoreException {
+		Optional<RegistryRelationship> existRelationShip = RegistryRelationshipDAO.get(ctx,  f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(siblingOffice.getId())).and(f.getRelationshipProperty().eq(-1)));
+		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
+		
+		Workplace workplace = WorkplaceDAO.getWorkplacesNoScope(ctx, siblingOffice.getId())
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("Este cliente ya no está vinculado al dominio"));
+		
+		fee.setCustomer(new Customer().setId(existRelationShip.get().getRegistry()));
+		fee.setWorkplace(workplace);
+		
+		// Existing fee
+		Fee existingUserFee = FeeDAO.getFeeStream(ctx, 
+				f -> f.getDomainProperty().eq(siblingOffice.getId())
+				.and(f.getCustomerProperty().eq(existRelationShip.get().getRegistry()))
+				.and(f.getItemProperty().eq(fee.getItem().getId()))
+			).findFirst().orElse(null);
+		
+		// Existe cuota
+		if(null != existingUserFee && null != existingUserFee.getId()) {
+			Date firstDayOfMonth = AonDateUtils.getMonthFirstDay(new Date());
+			
+			Date existFeeBillingDate = existingUserFee.getBillingDate();
+			if(existFeeBillingDate.equals(firstDayOfMonth)) {
+				
+				fee.setStartDate(existingUserFee.getStartDate());
+				fee.setQuantity(existingUserFee.getQuantity() + 1.00);
+				fee.setBillingDate(getNewBillingDate(existingUserFee.getBillingDate(), existingUserFee.getPeriod()));
+				FeeDAO.save(ctx, fee);
+				
+				existingUserFee.setEndDate(AonDateUtils.getMonthLastDay(existingUserFee.getBillingDate()));
+				FeeDAO.save(ctx, existingUserFee);
+				
+			} else {
+				existingUserFee.setQuantity(existingUserFee.getQuantity() + 1.00);
+				FeeDAO.save(ctx, existingUserFee);
+			}
+			
+		} 
+		// No existe cuota
+		else {
+			FeeDAO.save(ctx, fee);
+		}
+	}
+	
+	private static Date getNewBillingDate(Date billingDate, BillingPeriod period) {
+		switch (period) {
+		case MONTHLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(billingDate, 1) );
+		case BI_MONTHLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(billingDate, 2) );
+		case THREE_MONTHLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(billingDate, 3) );
+		case FOUR_MONTHLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(billingDate, 4) );
+		case SIX_MONTHLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(billingDate, 6) );
+		case YEARLY:
+			return AonDateUtils.getMonthLastDay( AonDateUtils.addYears(billingDate, 1) );
+		default:
+			return AonDateUtils.getMonthLastDay( billingDate );
+		}
+	}
+
 	private static Project createUpdateProductProject(CloseableAONContext ctx, Domain siblingOffice, Integer registryId, ProductBooking product) {
 		Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
 		// Crear expediente
@@ -725,7 +794,7 @@ public class ProductBookingDAO {
 				+ "                <!-- Datos de acceso -->"
 				+ "                <div style=\"border-left: 4px solid #007bff; padding: 20px; margin: 25px 0; border-radius: 4px;\">"
 				+ "                    <h3 style=\"margin: 0 0 15px 0; color: #007bff; font-size: 18px;\">" + (product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio") + " contratado</h3>"
-				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Prodcuto:</strong>" + product.getCode() + "</p>"
+				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Producto: </strong>" + product.getCode() + "</p>"
 				+ "                </div>"
 				+ "                "
 				+ "                <h3 style=\"margin: 20px; color: #333333; font-size: 18px; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;\">"
@@ -788,7 +857,7 @@ public class ProductBookingDAO {
 				+ "                <!-- Datos de acceso -->"
 				+ "                <div style=\"border-left: 4px solid #007bff; padding: 20px; margin: 25px 0; border-radius: 4px;\">"
 				+ "                    <h3 style=\"margin: 0 0 15px 0; color: #007bff; font-size: 18px;\">" + (product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio") + " descontratado</h3>"
-				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Prodcuto:</strong>" + product.getCode() + "</p>"
+				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Producto: </strong>" + product.getCode() + "</p>"
 				+ "                </div>"
 				+ "                <p style=\"margin: 30px 0 0 0;\">"
 				+ "                    Un saludo,<br>"
