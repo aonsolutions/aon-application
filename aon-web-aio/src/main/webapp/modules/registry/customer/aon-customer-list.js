@@ -19,7 +19,10 @@ export class AonCustomerList extends AonRegistryList {
 		this.parent = parent;
 	}
 
-	build(){
+	build() {
+		if (this._built) return;
+		this._built = true;
+
 		this.buildDur().then(() => {
 			super.build();
 		});
