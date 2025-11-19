@@ -8,7 +8,7 @@ import {AonElement} from '../../components/AonElement.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
 import { MSG, CONSTANT, TAG, CSS, EVENT } from '../../environments/environments.js';
 import { ToolbarType } from '../../models/enums.js';
-import { changePassword, checkVerification, getAuth, sendVerification } from '../../services/authService.js';
+import { changePassword, checkVerification, getAuth, saveAuth, sendVerification } from '../../services/authService.js';
 import * as ACTION from '../actions.js';
 
 export class AonAuth extends AonElement {
@@ -53,7 +53,7 @@ export class AonAuth extends AonElement {
 
 		toolbar.removeButtons();
 		toolbar.addButton2(ACTION.CHANGE_PASSWORD, () => this.changePasswordDialog());
-        toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.SAVE, () => this.save().then(( auth ) => this.dispatchEvent(new CustomEvent(EVENT.CLOSE, { detail: auth }))).catch(() => {}));
 	}
 
     buildContent() {
@@ -76,7 +76,7 @@ export class AonAuth extends AonElement {
 		card.setContent(div);
 
 		let email = createInput('aonConfigurationUserCardEmail', MSG.EMAIL);
-		email.value = this.auth.email;
+		email.value = this.auth?.email || '';
 		div.appendChild(email);
 		email.addEventListener(EVENT.CHANGE , () => {
 			this.auth.email = email.value;
@@ -85,7 +85,7 @@ export class AonAuth extends AonElement {
 		let name = createInput('aonConfigurationUserCardName', MSG.NAME);
 		name.className = CSS.AON_WIDTH_25;
 		name.description = MSG.NAME;
-		name.value = this.auth.email;
+		name.value = this.auth?.name || '';
 		name.style.marginRight = '2px';
 		div.appendChild(name);
 		name.addEventListener(EVENT.CHANGE , () => {
@@ -95,7 +95,7 @@ export class AonAuth extends AonElement {
 		let surname = createInput('aonConfigurationUserCardSurname', MSG.SURNAME);
 		surname.className = CSS.AON_WIDTH_75;
 		surname.description = MSG.SURNAME;
-		surname.value = this.auth.surname;
+		surname.value = this.auth?.surname || '';
 		div.appendChild(surname);
 		surname.addEventListener(EVENT.CHANGE , () => {
 			this.auth.surname = surname.value;
@@ -104,7 +104,7 @@ export class AonAuth extends AonElement {
 		let document = createInput('aonConfigurationUserCardDocument', MSG.DOCUMENT);
 		document.className = CSS.AON_WIDTH_50;
 		document.description = MSG.DOCUMENT;
-		document.value = this.auth.document;
+		document.value = this.auth?.document || '';
 		document.style.marginRight = '2px';
 		div.appendChild(document);
 		document.addEventListener(EVENT.CHANGE , () => {
@@ -114,7 +114,7 @@ export class AonAuth extends AonElement {
 		let phone = createInput('aonConfigurationUserCardPhone', MSG.PHONE);
 		phone.className = CSS.AON_WIDTH_50;
 		phone.description = MSG.PHONE;
-		phone.value = this.auth.phone;
+		phone.value = this.auth?.phone || '';
 		div.appendChild(phone);
 		phone.addEventListener(EVENT.CHANGE , () => {
 			this.auth.phone = phone.value;
@@ -129,11 +129,13 @@ export class AonAuth extends AonElement {
 				}).catch(e=>this.showError(e)));
     }
 
-    save() {
-        this.verification(() => {
-			saveAuth(this.auth);
-        });
-    }
+	save() {
+		return new Promise((resolve, reject) => {
+			this.verification(() => {
+				saveAuth(this.auth).then((auth) => resolve(auth) ).catch(reject);
+			});
+		});
+	}
 
 
     verification(fn) {
@@ -153,6 +155,7 @@ export class AonAuth extends AonElement {
             dialog.width = '400px';
         }
         dialog.setTitle(MSG.EMAIL_VERIFICATION);
+		dialog.setDescription(MSG.EMAIL_VERIFICATION_DESCRIPTION);
 
         let div = this.createElement(TAG.DIV);
 		div.style.marginTop = '20px';
@@ -236,6 +239,11 @@ export class AonAuth extends AonElement {
 		}
         toast.start(obj);   
 	}
+	
+	onclose(fn) {
+        this.addEventListener(EVENT.CLOSE, fn);
+		return this;
+    }
 }
 if(!window.customElements.get(TAG.AON_AUTH)){
 	window.customElements.define(TAG.AON_AUTH, AonAuth);

@@ -157,6 +157,10 @@ public class JsonUtils {
 		return d;
 	}
 	
+	public static Optional<Date> optDate(JSONObject json, String key ) {
+		return Optional.ofNullable( getDate(json, key) );
+	}
+	
 	public static Date getDateFormat(JSONObject json, String key, String format ) {
 		if(json == null) return null;
 		String date = json.optString(key, null);
