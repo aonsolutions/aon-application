@@ -14,7 +14,6 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
@@ -90,27 +89,23 @@ class ScopeIntegrityConsoleUtility extends AbstractConsoleUtility {
 		if (domainParams != null && domainParams.getParent() != null) {
 			cond = cond.and( DOMAIN.PARENT.eq(domainParams.getParent()) );
 		}
-		SelectConditionStep<Record> select = ctx.getDslContext()
+		
+		MutableBoolean found = new MutableBoolean(false);
+		ctx.getDslContext()
 			.select()
 			.from(DOMAIN)
-			.where(cond);
-		
-		if (select.limit(1)
-			.fetch()
-			.stream()
-			.findAny()
-			.isEmpty()) {
-			
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId
-				, "No se encontraron dominios que cumplan las condiciones: " + cond.toString() ));
-			
-		} else {
-			select
+			.where(cond)
 			.fetch()
 			.stream()
 			.map( new DomainFiller() )
-			.forEach( d -> checkTables(ctx,processId, params, d))
-			;
+			.forEach( d -> {
+				checkTables(ctx,processId, params, d);
+				found.setValue(true);
+			});
+		
+		if (found.isFalse()) {
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId
+					, "No se encontraron dominios que cumplan las condiciones: " + cond.toString() ));
 		}
 			
 	}
