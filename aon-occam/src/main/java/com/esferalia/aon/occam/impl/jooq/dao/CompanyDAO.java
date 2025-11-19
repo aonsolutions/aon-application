@@ -381,8 +381,8 @@ public class CompanyDAO {
 	}
 	
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
@@ -421,8 +421,8 @@ public class CompanyDAO {
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
 		
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		SelectSeekStep1<Record, String> query = ctx.getDslContext()
 		.select(COMPANY.fields())

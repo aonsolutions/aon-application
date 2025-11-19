@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet.registry;
 
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 
@@ -79,6 +80,7 @@ import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -305,7 +307,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 					System.out.println("----------------------- Create Auth / User");
 
-					createDefaultUser(api, ctx, newDomain, newScope);
+					createDefaultUser(api, ctx, newDomain);
 
 					System.out.println("----------------------- Create User Scope (supportSeller / api.getUser)");
 
@@ -466,7 +468,20 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setParentId(parentDomain.getId()).setActive(true).setDomainType(DomainType.ENTERPRISE)
 				.setEnableHeredity(true).setDomainManagement(false).setScope(newScope.getId());
 
-		newDomain = DomainDAO.insertDomain(ctx, newDomain, company);
+		newDomain = DomainDAO.insertDomainWithoutEnterprise(ctx, newDomain, company);
+		
+		Domain createdDomain = newDomain;
+		
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(createdDomain.getId())).findFirst().get();
+		
+		Scope enterpriseScope = SecurityDAO.insertScope(ctx, new Scope().setDomain(newDomain.getId()).setDescription("GENERAL"));
+		
+		ctx.getDslContext()
+			.insertInto(ENTERPRISE)
+			.set(ENTERPRISE.REGISTRY, newCompany.getId())
+			.set(ENTERPRISE.DOMAIN, newDomain.getId())
+			.set(ENTERPRISE.SCOPE, enterpriseScope.getId())
+			.execute();
 
 		createCompanyMedia(api, ctx, newDomain);
 
@@ -513,15 +528,14 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setEnableHeredity(false).setDomainManagement(false).setAonCustomer(customerId);
 
 		newDomain = DomainDAO.insertDomainStandalone(ctx, newDomain, company, schema, document);
-
+		
 		createCompanyMedia(api, ctx, newDomain);
 
 		return newDomain;
 
 	}
 
-	private static Scope updateDomainScopeStandalone(AonApiData api, Domain newDomain, CloseableAONContext ctx)
-			throws Exception {
+	private static Scope updateDomainScopeStandalone(AonApiData api, Domain newDomain, CloseableAONContext ctx) throws Exception {
 
 		JSONObject data = api.getData();
 
@@ -592,6 +606,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()))
 				.findFirst().get();
+		
+		Optional<Scope> enterpriseScope = SecurityDAO.getScopeStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()).and(f.getDescriptionProperty().eq("GENERAL"))).findFirst();
+		if(enterpriseScope.isEmpty())
+			enterpriseScope = Optional.of(SecurityDAO.insertScope(ctx, new Scope().setDomain(newDomain.getId()).setDescription("GENERAL")));
 
 		Integer comapnyRaddressId = null;
 
@@ -620,7 +638,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.EMAIL, email, comapnyRaddressId);
 
 		if (null != comapnyRaddressId)
-			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, geozoneCode);
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, geozoneCode, enterpriseScope);
 
 	}
 
@@ -635,10 +653,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	}
 
 	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId,
-			Integer raddressId, String geozoneCode) {
-		Workplace workplace = new Workplace().setActive(true).setDescription("PRINCIPAL").setDomain(newDomain.getId())
-				.setEnterprise(companyId).setAddress(raddressId)
-				.setEconomicAgreement(getEconomicAgreement(geozoneCode));
+			Integer raddressId, String geozoneCode, Optional<Scope> enterpriseScope) {
+		Workplace workplace = new Workplace().setActive(true)
+				.setDescription("PRINCIPAL")
+				.setDomain(newDomain.getId())
+				.setEnterprise(companyId)
+				.setAddress(raddressId)
+				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
+				.setScope(enterpriseScope.isEmpty() ? null : enterpriseScope.get().getId())
+				;
 
 		WorkplaceDAO.save(ctx, workplace);
 	}
@@ -752,7 +775,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		RegistryRelationshipDAO.save(ctx, rrelationship);
 	}
 
-	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope) {
+	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
 		JSONObject data = api.getData();
 
 		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
@@ -781,15 +804,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 //				passwordMail = login;
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
 			if (auth.getAuth() != null) {
-				user = createUser(api, ctx, newDomain, newScope, auth, login, targetOpt.get().getName());
+				user = createUser(api, ctx, newDomain, auth, login, targetOpt.get().getName());
 				setUserAppRole(ctx, newDomain, user);
 
 				if (newDomain.isChild() || newDomain.isStandalone()) {
@@ -839,10 +862,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				auth = new Auth().setEmail(email).setPassword(pass).setName(targetOpt.get().getName()).setSurname(null)
 						.setDocument(targetOpt.get().getDocument()).setPhone(phone);
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
@@ -871,7 +894,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		return i.toString();
 	}
 
-	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope, Auth auth,
+	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Auth auth,
 			String login, String name) {
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()))
 				.findFirst().get();

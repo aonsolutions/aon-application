@@ -51,7 +51,7 @@ public class Task extends TaskDB {
 	}
 	@Transient
 	public boolean isExpired() {
-		if (this.getStatus() != TaskStatus.FINISHED && this.getStatus() != TaskStatus.DELETED) {
+		if (this.getDueDate() != null && this.getStatus() != TaskStatus.FINISHED && this.getStatus() != TaskStatus.DELETED) {
 			Date date = new Date();
 			Calendar c = Calendar.getInstance();
 			c.setTime(date);

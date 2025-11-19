@@ -72,3 +72,7 @@ export const changePassword = (data) => post(`${API_URL}/auth/password`, data);
 export const registerUser = (data) => post(`${API_URL}/register`, data);
 
 export const insertAvatar = (data) => post(`${API_URL}/auth/avatar`, data);
+
+export const sendVerification = (data) => post(`${API_URL}/verification/send`, data);
+export const checkVerification = (data) => post(`${API_URL}/verification/check`, data);
+export const saveAuth = (data) => put(`${API_URL}/auth`, data);

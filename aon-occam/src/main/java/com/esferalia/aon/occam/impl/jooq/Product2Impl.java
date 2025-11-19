@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
@@ -39,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemAddInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemTariffDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductBookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetItemDAO;
@@ -342,6 +345,27 @@ public class Product2Impl implements IProduct2{
 	@Override
 	public List<Catalogue> getCatalogueList(CloseableAONContext ctx, CatalogueFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> CatalogueDAO.getStream(ctx, filter).collect(Collectors.toList()));
+	}
+
+	@Override
+	public void createBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) {
+		ctx.getDslContext().transaction(currentTrans -> {
+			ProductBookingDAO.createBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, product, newFee);
+		});
+	}
+
+	@Override
+	public void updateBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee) {
+		ctx.getDslContext().transaction(currentTrans -> {
+			ProductBookingDAO.updateBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product, newFee);
+		});
+	}
+
+	@Override
+	public void removeBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product) {
+		ctx.getDslContext().transaction(currentTrans -> {
+			ProductBookingDAO.removeBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product);
+		});
 	}
 
 }

@@ -97,13 +97,6 @@
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator id="ediMenuSeparator" />
 							<aon:menuItem iconClass="aon-icon-file-download">
-								<aon:htmlCommandLink id="delivery-udapaEdi" 
-									value="#{bundle.aon_edi}" target="_blank"
-									title="#{bundle.webmail_download}"
-									actionListener="#{delivery.onExportUdapaEdiFile}">
-								</aon:htmlCommandLink>
-							</aon:menuItem>
-							<aon:menuItem iconClass="aon-icon-file-download">
 								<aon:htmlCommandLink id="delivery-edi" 
 									value="#{bundle.aon_edi} (CONNECT)" target="_blank"
 									title="#{bundle.webmail_download}"
