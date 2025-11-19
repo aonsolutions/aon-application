@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,8 +37,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonDomainBox extends ResizeComposite implements HasValue<String>
-	, Focusable, HasSelectionHandlers<Domain>, HasAllFocusHandlers
+class AonConsoleDomainBox extends ResizeComposite implements HasValue<String>
+	, Focusable, HasSelectionHandlers<ConsoleDomain>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
 	protected static final String BEGIN_STRONG = "<strong>";
@@ -49,7 +48,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 	private static final int MAX_CHARACTERS = 15;
 
 	private String schema;
-	private Domain domain;
+	private ConsoleDomain domain;
 	
 	private FlowPanel rootPanel; 
 	private SuggestBox domainBox;
@@ -107,23 +106,23 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 	
 	private static class DomainSuggestion extends MultiWordSuggestion {
 		
-		private Domain domain;
+		private ConsoleDomain domain;
 		
-		private DomainSuggestion(Domain domain, String replacementString, String displayString) {
+		private DomainSuggestion(ConsoleDomain domain, String replacementString, String displayString) {
 			super( replacementString, displayString );
 			this.domain = domain;
 		}
 		
-		public Domain getDomain() {
+		public ConsoleDomain getDomain() {
 			return domain;
 		}
 		
 	}
-	public AonDomainBox(final Occam occam) {
+	public AonConsoleDomainBox(final Occam occam) {
 		this(occam, false);
 	}
 	
-	public AonDomainBox(final Occam occam, boolean onlyParents) {
+	public AonConsoleDomainBox(final Occam occam, boolean onlyParents) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -147,7 +146,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 							LinkedList<Suggestion> suggestions = new LinkedList<>();
 							if (result != null) {
 								
-								for (final Domain dom : result) {
+								for (final ConsoleDomain dom : result) {
 									SafeHtmlBuilder bld = new SafeHtmlBuilder();
 									String ds = dom.getDescription() + " (" + dom.getName() + ")";
 									int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
@@ -181,7 +180,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 		domainTextBox.setStyleName(AON.CSS.aonInputText());
 		domainTextBox.setVisibleLength(25);
 		domainTextBox.setMaxLength(50);
-		domainBox.addSelectionHandler(event -> select( ((DomainSuggestion)event.getSelectedItem()).getDomain() ));
+		domainBox.addSelectionHandler(event -> select( ((DomainSuggestion) event.getSelectedItem()).getDomain() ));
 		domainBox.addValueChangeHandler(event -> {
 			if ( AonStringUtils.isBlank(domainTextBox.getValue())) {
 				select(null);
@@ -202,20 +201,20 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 		this.schema = schema;
 	}
 	
-	private void select(Domain domain) {
+	private void select(ConsoleDomain domain) {
 		this.domain = domain;
-		SelectionEvent.fire(AonDomainBox.this, this.domain);
+		SelectionEvent.fire(AonConsoleDomainBox.this, this.domain);
 	}
 	
 	private void reset() {
 		domain = null;
 	}
 
-	public Domain getDomain() {
+	public ConsoleDomain getDomain() {
 		return this.domain;
 	}
 
-	public void setDomain(Domain domain) {
+	public void setDomain(ConsoleDomain domain) {
 		select(domain);
 	}
 
@@ -279,7 +278,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Domain> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<ConsoleDomain> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
