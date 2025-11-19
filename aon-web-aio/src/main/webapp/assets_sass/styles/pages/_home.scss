@@ -12,6 +12,16 @@ aon-home{
     height         : v.$vh-100;
     flex-direction : row;
     overflow       : hidden;
+    &:has(#rootPanel > iframe) {
+      overflow: unset;
+      padding-bottom: 100px;
+      #rootPanel {
+        iframe{
+          // height: auto !important;
+          // min-height: 125rem;
+        }
+      }
+    }
   }
 }
 // Esta fuera para que cargue en las vista JAVA
@@ -22,7 +32,7 @@ aon-home{
   flex-direction : column;
   overflow       : auto;
   margin-top     : v.$menu-top-height; // para que salga el contenido debajo del menu
-  padding        : v.$padding v.$padding calc(v.$padding * 6) v.$padding;
+  padding        : v.$padding;
   &.hidden-top {
     margin-top   : 0; // No tinee menu arriba
   }
