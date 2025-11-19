@@ -1537,9 +1537,9 @@ if (!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
 }
 
-if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
-	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
-}
+// if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
+// 	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
+// }
 
 if (!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_DELIVERY, AonJsfInvoiceDelivery);
