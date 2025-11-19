@@ -325,6 +325,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		type.setWidth("20rem");
 		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
 		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
+		type.addItem(ProductBookingType.USER.getDescription(), ProductBookingType.USER.name());
 		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
 		type.setValue(product.getBookingType().name());
 		

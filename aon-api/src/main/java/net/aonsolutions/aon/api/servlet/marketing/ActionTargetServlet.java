@@ -594,16 +594,16 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			
 			Integer registryId = JsonUtils.getInteger(api.getData(), "target");
 			
-			Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(ctx.getDomainId()));
+			Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(marketingAction.getDomain()));
 			Domain parentDomain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(domain.getParentId()));
 
 			Registry registry = RegistryDAO.get(ctx, registryId);
 			
-			Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(parentDomain.getId())));
+			Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId())));
 
 			Scope scope = null;
 			if (scopes.count() == 0) {
-				Scope newScope = new Scope().setDomain(parentDomain.getId()).setDescription(registry.getDocument());
+				Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 				scope = SecurityDAO.insertScope(ctx, newScope);
 			} else scope = scopes.findFirst().get();
 			
@@ -1147,21 +1147,21 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setApp(AonApp.INVOICE)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		domainApp = new DomainApp()
 				.setDomain(newDomain.getId())
 				.setApp(AonApp.DOCUMENTAL)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		domainApp = new DomainApp()
 				.setDomain(newDomain.getId())
 				.setApp(AonApp.MESSENGER)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		ApplicationParameter trailParam = new ApplicationParameter()
 				.setDomain(newDomain.getId())

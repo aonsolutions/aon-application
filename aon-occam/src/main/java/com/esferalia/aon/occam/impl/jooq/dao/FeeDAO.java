@@ -652,7 +652,7 @@ public class FeeDAO {
 	public static Fee save(AONContext ctx, Fee fee) {
 		ctx.checkWrite();
 		FeeValidation.validate(ctx, fee);
-		if(fee.getLine() != null) {
+		if(fee.getLine() != null && fee.getId() == null) {
 			Fee uf = getFee(ctx, f -> f.getDomainProperty().eq(fee.getDomain().getId())
 				.and(f.getCustomerProperty().eq(fee.getCustomer().getId()))
 				.and(f.getLineProperty().eq(fee.getLine())));
@@ -660,7 +660,7 @@ public class FeeDAO {
 		} else {
 			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
 					.from(CUSTOMER_FEE)
-					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
+					.where(CUSTOMER_FEE.DOMAIN.eq(fee.getDomain().getId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
 			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
 		}
 		return fee.getId() != null ? update(ctx, fee) : insert(ctx, fee);

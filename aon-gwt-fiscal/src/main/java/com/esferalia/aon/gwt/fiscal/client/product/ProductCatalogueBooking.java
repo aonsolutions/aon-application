@@ -148,10 +148,23 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		}
 		
 		if(!customerFees.isEmpty()) {
-			Label aditional = new Label("Adicional");
-			aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
-			aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-			cataloguePanel.add(aditional);
+			
+			List<ProductBooking> aonUsers = products.stream()
+					.filter(p -> p.getBookingType().equals(ProductBookingType.USER))
+					.sorted(Comparator.comparing(
+				        ProductBooking::getPosition,
+				        Comparator.nullsLast(Comparator.naturalOrder())
+				    ))
+					.collect(Collectors.toList());
+			
+			if(!aonUsers.isEmpty()) {
+				Label users = new Label("Usuarios");
+				users.getElement().getStyle().setProperty("font-size", "1.2rem");
+				users.getElement().getStyle().setProperty("margin", "1rem 0");
+				cataloguePanel.add(users);
+				
+				createUsers(cataloguePanel, aonUsers);
+			}
 			
 			List<ProductBooking> aonServices = products.stream()
 					.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
@@ -162,8 +175,14 @@ public class ProductCatalogueBooking extends HTMLPanel {
 					.collect(Collectors.toList());
 			
 			if(!aonServices.isEmpty()) {
+				Label aditional = new Label("Adicional");
+				aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
+				aditional.getElement().getStyle().setProperty("margin", "1rem 0");
+				cataloguePanel.add(aditional);
+				
 				createServices(cataloguePanel, aonServices);
 			}
+			
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);
@@ -259,7 +278,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				.setQuantity(1.00)
 				.setPrice(product.getItem().getPrice())
 				.setStartDate(new Date())
-				.setBillingDate(DateUtils.getLastDayOfMonth())
+				.setBillingDate(DateUtils.getFirstDayOfMonth())
 				.setPeriod(BillingPeriod.MONTHLY)
 				;
 		
@@ -468,6 +487,129 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		
 	}
 	
+	private void createUsers(HTMLPanel cataloguePanel, List<ProductBooking> aonUsers) {
+		HTMLPanel servicesPanel = new HTMLPanel("");
+		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
+		servicesPanel.setWidth("100%");
+		servicesPanel.getElement().getStyle().setProperty("max-width", "70rem");
+		
+		aonUsers.forEach(aonService -> {
+			getItemTariff(aonService.getItem().getId(), itemTariff -> {
+				HTMLPanel servicePanel = new HTMLPanel("");
+				servicePanel.addStyleName(AON.CSS.aonItemFlex());
+				servicePanel.setWidth("100%");
+				servicePanel.getElement().getStyle().setProperty("justify-content", "space-between");
+				servicePanel.getElement().getStyle().setProperty("padding", "1rem");
+				servicePanel.getElement().getStyle().setProperty("border", "1px solid #ebebeb");
+				servicePanel.getElement().getStyle().setProperty("border-radius", "0.5rem");
+				servicePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
+				
+				HTMLPanel codeNamePanel = new HTMLPanel("");
+				codeNamePanel.addStyleName(AON.CSS.aonFlexColumn());
+				
+				Label code = new Label(aonService.getCode());
+				code.setWidth("10rem");
+				code.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				codeNamePanel.add(code);
+				
+				HTMLPanel name = new HTMLPanel(aonService.getDescriptionTemplate());
+				name.getElement().getStyle().setProperty("padding", "1rem 2rem 1rem 0");
+				codeNamePanel.add(name);
+				
+				servicePanel.add(codeNamePanel);
+				
+				HTMLPanel pricePanel = new HTMLPanel("");
+				pricePanel.addStyleName(AON.CSS.aonFlexColumn());
+				pricePanel.setHeight("100%");
+				pricePanel.getElement().getStyle().setProperty("align-items", "center");
+				
+				String priceValue = formaDouble(aonService.getItem().getPrice());
+				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "<small> \u20ac" + " al mes *");
+				price.getElement().getStyle().setProperty("text-align", "center");
+				price.getElement().getStyle().setProperty("width", "8rem");
+				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "#002469");
+							
+				if(itemTariff.isEmpty()) {
+					if(tariff.getDiscount() != 0.00) {
+						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), tariff.getDiscount());
+						Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : (formaDouble(tariffPrice) + " \u20ac"));
+						newPrice.getElement().getStyle().setProperty("font-size", "1rem");
+						newPrice.getElement().getStyle().setColor("#0ea90e");
+						pricePanel.add(newPrice);
+						
+						price.getElement().getStyle().setColor("#848484");
+						price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+					} else {
+						price.getElement().getStyle().setProperty("font-size", ".9rem");
+					}
+				} else {
+					if(itemTariff.get().getProfitPercent() != 0.00) {
+						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), itemTariff.get().getProfitPercent());
+						Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : (formaDouble(tariffPrice) + " \u20ac"));
+						newPrice.getElement().getStyle().setProperty("font-size", "1rem");
+						newPrice.getElement().getStyle().setColor("#0ea90e");
+						pricePanel.add(newPrice);
+						
+						price.getElement().getStyle().setColor("#848484");
+						price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+					} else {
+						price.getElement().getStyle().setProperty("font-size", ".9rem");
+					}
+				}
+				
+				
+				pricePanel.add(price);
+				pricePanel.add(createUserButton(aonService));
+				
+				servicePanel.add(pricePanel);
+				
+				servicesPanel.add(servicePanel);
+			});
+		});
+		
+		cataloguePanel.add(servicesPanel);
+		
+	}
+	
+	private HTMLPanel createUserButton(ProductBooking aonService) {
+		HTMLPanel buttonPanel = new HTMLPanel("");
+		buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonPanel.getElement().getStyle().setProperty("gap", "1rem");
+		
+		Label activeUsers = new Label("Usr. Activos (" + this.customerCompany.getDomain().getMaxDefinedUsers() + ")");
+		activeUsers.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		Button bookBtn = new Button();
+		bookBtn.setText("+");
+		
+		bookBtn.getElement().getStyle().setProperty("background", "none");
+		bookBtn.getElement().getStyle().setProperty("color", "white");
+		bookBtn.getElement().getStyle().setProperty("background-color", "#ff8f00");
+		bookBtn.getElement().getStyle().setProperty("width", "3rem");
+		bookBtn.getElement().getStyle().setProperty("height", "2.5rem");
+		bookBtn.getElement().getStyle().setProperty("border-radius", "5px");
+		bookBtn.getElement().getStyle().setProperty("border", "none");
+		
+		bookBtn.addClickHandler(e -> {
+			new UserCreationDialog(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), officeDomainOptions.getDomain(), customerRelatedRegistry, aonService) {
+				
+				@Override
+				protected void onEnd() {
+					reloadParent();
+				}
+				
+				@Override
+				protected void onCancel() {}
+				
+			};
+		});
+		
+		buttonPanel.add(activeUsers);
+		buttonPanel.add(bookBtn);
+		
+		return buttonPanel;
+	}
+	
 	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
 		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Descontratar" : "Contratar");
@@ -605,7 +747,26 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			
 			@Override
 			public void onSuccess(List<ProductBooking> productsDB) {
-				products = productsDB;
+				products = productsDB.stream()
+					    .sorted(
+						        Comparator.comparing(
+						                ProductBooking::getBookingType,
+						                Comparator.comparingInt(type -> {
+						                    switch (type) {
+						                        case PLAN:         return 0;
+						                        case SERVICE:      return 2;
+						                        case USER:         return 1;
+						                        case CONSULTANCY:  return 3;
+						                        default:           return Integer.MAX_VALUE;
+						                    }
+						                })
+						        ).thenComparing(
+						                ProductBooking::getPosition,
+						                Comparator.nullsLast(Comparator.naturalOrder())
+						        )
+						    )
+						    .collect(Collectors.toList());
+				
 				success.accept(products);
 			}
 			
