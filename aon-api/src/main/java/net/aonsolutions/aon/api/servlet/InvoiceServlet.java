@@ -849,10 +849,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return InvoiceSeriesJSON.to(FINANCE.getInvoiceSalesSeries(api.getOccam(), api.getDomain().getId()));	
 	}
 	
-	private JSONObject fixInvoice(AonApiData api) {
-		AON_SOLUTIONS.fixInvoice(api.getOccam());
-		return new JSONObject();
-	}
+//	private JSONObject fixInvoice(AonApiData api) {
+//		AON_SOLUTIONS.fixInvoice(api.getOccam());
+//		return new JSONObject();
+//	}
 	
 	// ************************************************************
 	// ******************************* [ACCEPT AND COMMUNICATE] ***
