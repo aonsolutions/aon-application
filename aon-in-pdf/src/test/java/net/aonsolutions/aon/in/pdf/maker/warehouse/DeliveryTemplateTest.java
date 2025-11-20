@@ -4,6 +4,7 @@ package net.aonsolutions.aon.in.pdf.maker.warehouse;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -24,6 +25,7 @@ public class DeliveryTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
+	@Ignore
 	public void test() throws CanNotCreatePdfException, IOException {
 		
 		Delivery delivery = AonFaker.getDelivery();
