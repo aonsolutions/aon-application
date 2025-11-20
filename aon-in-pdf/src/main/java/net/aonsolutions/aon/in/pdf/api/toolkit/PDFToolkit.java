@@ -794,39 +794,29 @@ public class PDFToolkit {
 		return Optional.empty();
 	}
 
-	public static void drawResizedLogo(PDDocument doc, PDPage page, PDPageContentStream contents, byte[] logo, float x, float y, float maxHeight, float maxWidth, String externalLink) throws IOException {
-		float logoHeigth = 0;
-		float logoWidth = 0;
-		
-		if (logo != null) {
-			BufferedImage bufferedImage = null;
-			bufferedImage = ImageIO.read(new ByteArrayInputStream(logo));
-			logoHeigth = bufferedImage.getHeight();
-			logoWidth = bufferedImage.getWidth();
-			float proportion = logoHeigth/logoWidth;
+	public static void drawImage(PDDocument doc, PDPageContentStream contents, PDFImage image) throws IOException {
+		drawImage(doc, contents, image.getData(), image.getX(), image.getY(), image.getWidth(), image.getHeight());
+	}
+	
+	public static void drawImage(PDDocument doc, PDPage page, PDPageContentStream contents, PDFImage image, String externalLink) throws IOException {
+		drawImage(doc, contents, image);
 			
-			if (logoHeigth > maxHeight) {
-				logoHeigth = maxHeight;
-				logoWidth = logoHeigth / proportion;
-			}
-			if (logoWidth > maxWidth) {
-				logoWidth = maxWidth;
-				logoHeigth = logoWidth * proportion;
-			}
-			
-			drawImage(doc, contents, logo, x, y, logoWidth, logoHeigth);
-			
-			if (externalLink != null) {
-				PDRectangle rectangle = new PDRectangle(x, y, logoWidth, logoHeigth);
-				PDAnnotationLink txtLink = new PDAnnotationLink();
-				PDActionURI action = new PDActionURI();
-				action.setURI(externalLink);
-				txtLink.setAction(action);
-				txtLink.setHidden(true);
-				txtLink.setRectangle(rectangle);
-				page.getAnnotations().add(txtLink);
-			}
+		if (externalLink != null) {
+			PDRectangle rectangle = new PDRectangle(image.getX(), image.getY(), image.getWidth(), image.getHeight());
+			PDAnnotationLink txtLink = new PDAnnotationLink();
+			PDActionURI action = new PDActionURI();
+			action.setURI(externalLink);
+			txtLink.setAction(action);
+			txtLink.setHidden(true);
+			txtLink.setRectangle(rectangle);
+			page.getAnnotations().add(txtLink);
 		}
+	}
+	
+	@Deprecated
+	public static void drawResizedLogo(PDDocument doc, PDPage page, PDPageContentStream contents, byte[] logo, float x, float y, float maxHeight, float maxWidth, String externalLink) throws IOException {
+		PDFImage image = new PDFImage(logo, x, y, maxWidth, maxHeight);
+		drawImage(doc,  page,  contents, image, externalLink);
 	}
 	
 	public static void drawResizedCenteredLogo(PDDocument doc, PDPage page, PDPageContentStream contents, byte[] logo, float x, float y, float maxHeight, float maxWidth, String externalLink) throws IOException {
