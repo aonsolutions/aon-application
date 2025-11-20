@@ -1,0 +1,331 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	
+	
+<style>
+	@font-face {
+	  font-family:"Inter-regular";
+	  src: url(/fonts/Inter-Regular.woff) format("woff");
+	  font-weight:400;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-medium";
+	  src: url(/fonts/Inter-Medium.woff) format("woff");
+	  font-weight:500;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-semibold";
+	  src: url(/fonts/Inter-Semibold.woff) format("woff");
+	  font-weight:600;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-bold";
+	  src: url(/fonts/Inter-Bold.woff) format("woff");
+	  font-weight:700;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-extrabold";
+	  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+	  font-weight:800;
+	  font-style:normal;
+	}
+	
+
+	:root{
+	    --colorNeutralBackground: #ffffff;
+	    --aonFontFamily: "Inter-medium", sans-serif;
+	}
+	
+	body {
+		
+		font-family: var(--aonFontFamily) ;
+		background-color: var(--colorNeutralBackground, #fff)
+	}
+	
+	table td {
+		font-size: .8125rem !important;
+		font-family: var(--aonFontFamily) !important;
+	}
+	
+	.aon-finding-title-toolbar>table {
+		border-bottom: none;
+	}
+	
+	#aonContent\:contentScrollDiv{
+        height: 100vh;
+	}
+
+	#rootPanel > div, 
+	#aonContent\:contentScrollDiv > div,
+	#aonContent\:contentScrollDiv > table,
+	#aonContent\:contentScrollDiv > form:not([id*='aonContent:mainForm']) > *{
+		background-color: var(--colorNeutralBackground,#fff) !important;
+	}
+	
+	.aon-menuBar {
+        border-collapse: collapse;
+	}
+	
+	.aon-header-search {
+		background: transparent url(#{aonResource.resolve['/icons/search.svg']}) no-repeat scroll center center;
+	}
+
+	.aon-direct-access-list-element {
+    	padding: 5px 12px;
+	}
+	
+	.aon-finding-toolbar{
+    	background: none;
+		min-height: 2.5rem;
+	}
+
+	.aon-finding-filter-input {
+		height: 2.5rem;
+  		border-radius: .375rem;
+  		box-sizing: border-box;		
+  		background-position-y: center;
+		border: .0625rem solid #cbd5e1;
+  		padding: .5rem .75rem .5rem .75rem;
+    	padding-left: 1.75rem;
+	}
+	
+	.aon-finding-filter-toolbar{
+		height: 2.5rem;
+	}
+	
+	.aon-dataScroller {
+    	background-color: #fff;
+    	border: #fff 1px solid;
+	}
+	
+	.aon-table-row-hover ,
+	.aon-dataTable-row-odd1:hover,
+	.aon-dataTable-row-even1:hover {
+		background-color: #fff !important;
+	}
+
+	.aon-toolbar {
+    	background-color: #fff;
+	}
+	
+	.aon-editDataTable-footer {
+    	background-color: #fff;
+	}
+	
+	.rich-mpnl-content {
+		background-color: #fff;
+	}
+
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-collapse: separate;
+		border-spacing: 0 1rem;
+	}
+
+	.aon-dataTable > tbody > tr > td,
+	.aon-dataTable > th,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
+	 {
+		color: #64748b;
+	}	
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td {
+		border-top: .0625rem solid #e2e8f0;    	
+		border-bottom: .0625rem solid #e2e8f0;
+	}
+	
+	.aon-dataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tfoot > tr > td:first-child {
+		border-left: .0625rem solid #e2e8f0;
+	}
+	
+	.aon-dataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tfoot > tr > td:last-child{
+		border-right: .0625rem solid #e2e8f0;    	
+	}
+	
+	.aon-dataTable > th,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
+   		background-color: #e2e8f0;	
+		border-bottom: 1px solid #e2e8f0 !important;
+	}
+	
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-bottom: none;
+		background-color: #fff;
+	}
+
+	.rich-table-thead {
+		background-color: #e2e8f0;
+	}
+	
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
+		color: #1e293b;
+	 	font-family: "Inter-bold", sans-serif;
+    }	
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td {
+		color: #5f6368;
+		font-family: "Inter-regular", sans-serif;
+	}
+
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
+	 {
+	 	height: 3.625rem;
+		font-size: .875rem;
+	}	
+	
+	.aon-dataTable-header,
+	.aon-editDataTable-header {
+    	font-size: .8125rem;
+		font-family: "Inter-bold", sans-serif;
+	}
+
+	.aon-icon-pdf{
+		background-image:  url(#{aonResource.resolve['/icons/file-pdf.svg']});
+	}
+
+	.aon-icon-page{
+		background-image: url(#{aonResource.resolve['/icons/file.svg']});
+	}
+	
+	.aon-icon-shield {
+		background: url(#{aonResource.resolve['/icons/shield.svg']}) -0px -0px  no-repeat; 
+	}
+
+	.aon-icon-new,
+	.aon-icon-reset{
+		background-image: url(#{aonResource.resolve['/icons/plus.svg']}) ;
+	}
+	
+	.aon-icon-accept{
+		background-image: url(#{aonResource.resolve['/icons/save.svg']}) ;
+	}
+
+	.aon-icon-excel,
+	.aon-icon-import-excel-trans,
+	.aon-icon-export-excel-trans{
+		background-image: url(#{aonResource.resolve['/icons/file-spreadsheet.svg']}) ;
+	}
+	
+	.aon-icon-cancel{
+		background-image: url(#{aonResource.resolve['/icons/arrow-left.svg']}) ;
+	}
+
+	.aon-icon-search{
+		background-image: url(#{aonResource.resolve['/icons/search.svg']});
+	}
+
+	.aon-icon-rubber{
+		background-image: url(#{aonResource.resolve['/icons/eraser.svg']}) ;
+	}
+
+	.aon-icon-delete{
+		background-image: url(#{aonResource.resolve['/icons/trash-2.svg']}) ;
+	}
+
+	.aon-icon-email{
+		background-image: url(#{aonResource.resolve['/icons/mail.svg']});
+	}
+
+	.aon-icon-info{
+		background-image: url(#{aonResource.resolve['/icons/info.svg']}) ;
+	}
+
+	.aon-icon-big-info {
+		background-image: url(#{aonResource.resolve['/icons/info.svg']}) ;
+	}
+
+	.aon-dataScroller-button-last,
+	.aon-dataScroller-button-fastForward,
+	.aon-dataScroller-button-last-disabled,
+	.aon-dataScroller-button-fastForward-disabled
+	{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-last.svg']}) ;
+	}
+	.aon-dataScroller-button-next,
+	.aon-dataScroller-button-next-disabled{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-right.svg']}) ;
+	}
+	.aon-dataScroller-button-first,
+	.aon-dataScroller-button-fastRewind,
+	.aon-dataScroller-button-first-disabled,
+	.aon-dataScroller-button-fastRewind-disabled
+	{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-first.svg']}) ;
+	}
+	.aon-dataScroller-button-previous,
+	.aon-dataScroller-button-previous-disabled{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-left.svg']}) ;
+	}
+
+	div[id$='aonContentPopup'] .aon-rigth-menu {
+		text-align:left;
+		padding-left: 8px;
+        display: flex;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
+		border-bottom: #e2e8f0 1px solid;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
+		background-color: #e2e8f0;
+	}
+
+	.aon-inputText,
+	.aon-inputTextarea,
+	.aon-form select, 
+	.aon-selectOneMenu,
+	.aon-lookupInputText,
+	.aon-lookupSuggestText,
+	.aon-selectInputDate-inputClass
+	{
+		height: 2.5rem;
+		padding: .5rem .75rem .5rem .75rem;
+		border-radius: .375rem;
+		box-sizing: border-box;
+		border: .0625rem solid #cbd5e1;
+  		background-color: #fff;
+  		color: #1e293b;
+    }
+
+	.aon-finding-toolbar-item.aon-icon-search {	
+		background-image: url(#{aonResource.resolve['/icons/file-search.svg']}) !important; 
+	}
+
+</style>
+
+		
+</ui:composition>
