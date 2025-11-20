@@ -21,6 +21,8 @@ public class ProductBooking extends Product implements Serializable {
 	private TaskHolder taskHolder;
 	private ProjectType projectType;
 	
+	private Boolean noBooking;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -159,6 +161,15 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setProjectType(ProjectType projectType) {
 		this.projectType = projectType;
+		return this;
+	}
+
+	public Boolean isNoBooking() {
+		return noBooking;
+	}
+
+	public ProductBooking setNoBooking(Boolean noBooking) {
+		this.noBooking = noBooking;
 		return this;
 	}
 	

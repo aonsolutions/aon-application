@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -416,9 +415,9 @@ public abstract class ProductList extends AonCustomDockLayout {
 				                Comparator.comparingInt(type -> {
 				                    switch (type) {
 				                        case PLAN:         return 0;
-				                        case SERVICE:      return 2;
-				                        case USER:         return 1;
-				                        case CONSULTANCY:  return 3;
+				                        case CONSULTANCY:  return 1;
+				                        case USER:         return 2;
+				                        case SERVICE:      return 3;
 				                        default:           return Integer.MAX_VALUE;
 				                    }
 				                })

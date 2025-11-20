@@ -110,11 +110,22 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.add(subtitle);
 		
 		List<ProductBooking> packsProducts = products.stream()
-				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
-				.sorted(Comparator.comparing(
-			        ProductBooking::getPosition,
-			        Comparator.nullsLast(Comparator.naturalOrder())
-			    ))
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || p.getBookingType().equals(ProductBookingType.CONSULTANCY))
+				.sorted(
+			        Comparator.comparing(
+			                ProductBooking::getBookingType,
+			                Comparator.comparingInt(type -> {
+			                    switch (type) {
+			                        case PLAN:         return 0;
+			                        case CONSULTANCY:  return 1;
+			                        default:           return Integer.MAX_VALUE;
+			                    }
+			                })
+			        ).thenComparing(
+			                ProductBooking::getPosition,
+			                Comparator.nullsLast(Comparator.naturalOrder())
+			        )
+			    )
 				.collect(Collectors.toList());
 		
 		if(!packsProducts.isEmpty()) {
@@ -286,9 +297,9 @@ public class ProductCatalogue extends HTMLPanel {
 		
 	}
 	
-	private Button createServiceButton(Product packProduct) {
+	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText("Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

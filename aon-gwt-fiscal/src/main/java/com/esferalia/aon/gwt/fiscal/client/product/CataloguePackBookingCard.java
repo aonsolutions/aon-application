@@ -45,7 +45,6 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		if(isFeeProduct(packProduct.getItem().getId()))
 			getElement().getStyle().setProperty("background-color", "#eee");
 			
-		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonFlexColumn());
 		content.getElement().getStyle().setProperty("justify-content", "space-between");
@@ -81,6 +80,9 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		this.packProduct = packProduct;
 		this.itemTariff = itemTariff;
 		this.customerFees = customerFees;
+		
+		if(isFeeProduct(packProduct.getItem().getId()))
+			getElement().getStyle().setProperty("background-color", "#eee");
 		
 		content = new HTMLPanel(EMPTY_STRING);
 		content.addStyleName(AON.CSS.aonFlexColumn());
@@ -181,9 +183,9 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		
 	}
 	
-	private void createButton(Product packProduct) {
+	private void createButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Ya Contratado" : "Contratar");
+		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Ya Contratado" : (packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar"));
 		bookBtn.setEnabled(!isFeeProduct(packProduct.getItem().getId()));
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
@@ -193,6 +195,14 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		bookBtn.getElement().getStyle().setProperty("height", "2.5rem");
 		bookBtn.getElement().getStyle().setProperty("border-radius", "5px");
 		bookBtn.getElement().getStyle().setProperty("border", "none");
+		
+		ProductBooking consultancyProduct = getConsultancyProduct();
+		if(null != consultancyProduct && isFeeProduct(consultancyProduct.getItem().getId()) && !packProduct.getItem().getId().equals(consultancyProduct.getItem().getId())) {
+			bookBtn.setText("Bloqueado");
+			bookBtn.setEnabled(false);
+			bookBtn.getElement().getStyle().setProperty("background-color", "rgb(207, 207, 207)");
+			bookBtn.getElement().getStyle().setProperty("color", "black");
+		}
 		
 		bookBtn.addClickHandler(e -> {
 			
@@ -272,8 +282,6 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 	private boolean isFeeProduct(Integer itemId) {
 		return customerFees.stream().filter(fee -> fee.getItem().getId().equals(itemId) && (fee.getEndDate() == null || (fee.getEndDate().equals(new Date()) || fee.getEndDate().after(new Date()) ))).findAny().isPresent();
 	}
-	
-	protected abstract void onCreateCustomerFeeByItem(Product product);
 
 	private double getTariffPrice(double price, double discount) {
 		return price - (price * discount / 100);
@@ -288,5 +296,8 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
         // Format the result
         return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart /*+ " \u20ac"*/;
     }
+	
+	protected abstract void onCreateCustomerFeeByItem(Product product);
+	protected abstract ProductBooking getConsultancyProduct();
 
 }
