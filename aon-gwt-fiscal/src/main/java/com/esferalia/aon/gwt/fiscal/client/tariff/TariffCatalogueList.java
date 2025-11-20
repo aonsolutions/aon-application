@@ -216,9 +216,9 @@ public class TariffCatalogueList extends HTMLPanel {
 				                Comparator.comparingInt(type -> {
 				                    switch (type) {
 				                        case PLAN:         return 0;
-				                        case SERVICE:      return 2;
-				                        case USER:         return 1;
-				                        case CONSULTANCY:  return 3;
+				                        case CONSULTANCY:  return 1;
+				                        case USER:         return 2;
+				                        case SERVICE:      return 3;
 				                        default:           return Integer.MAX_VALUE;
 				                    }
 				                })

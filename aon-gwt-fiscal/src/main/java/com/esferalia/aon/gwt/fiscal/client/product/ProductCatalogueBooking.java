@@ -136,11 +136,22 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		cataloguePanel.add(subtitle);
 		
 		List<ProductBooking> packsProducts = products.stream()
-				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
-				.sorted(Comparator.comparing(
-			        ProductBooking::getPosition,
-			        Comparator.nullsLast(Comparator.naturalOrder())
-			    ))
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || p.getBookingType().equals(ProductBookingType.CONSULTANCY))
+				.sorted(
+			        Comparator.comparing(
+			                ProductBooking::getBookingType,
+			                Comparator.comparingInt(type -> {
+			                    switch (type) {
+			                        case PLAN:         return 0;
+			                        case CONSULTANCY:  return 1;
+			                        default:           return Integer.MAX_VALUE;
+			                    }
+			                })
+			        ).thenComparing(
+			                ProductBooking::getPosition,
+			                Comparator.nullsLast(Comparator.naturalOrder())
+			        )
+			    )
 				.collect(Collectors.toList());
 		
 		if(!packsProducts.isEmpty()) {
@@ -240,7 +251,14 @@ public class ProductCatalogueBooking extends HTMLPanel {
 						} else
 							createFee(packProduct);
 							
-					}};
+					}
+
+					@Override
+					protected ProductBooking getConsultancyProduct() {
+						return packsProducts.stream().filter(p -> p.getBookingType().equals(ProductBookingType.CONSULTANCY)).findFirst().orElse(null);
+					}
+					
+				};
     		else
     			card = new CataloguePackBookingCard(packProduct, itemTariff.get(), customerFees) {
 
@@ -260,7 +278,14 @@ public class ProductCatalogueBooking extends HTMLPanel {
 							};
 						} else
 							createFee(packProduct);
-					}};
+					}
+
+					@Override
+					protected ProductBooking getConsultancyProduct() {
+						return packsProducts.stream().filter(p -> p.getBookingType().equals(ProductBookingType.CONSULTANCY)).findFirst().orElse(null);
+					}
+					
+				};
 	       
     		packsCataloguePanel.add(card);
 
@@ -282,7 +307,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				.setPeriod(BillingPeriod.MONTHLY)
 				;
 		
-		if(product.getBookingType().equals(ProductBookingType.PLAN)) {
+		if(product.getBookingType().equals(ProductBookingType.PLAN) || product.getBookingType().equals(ProductBookingType.CONSULTANCY)) {
 			List<Integer> packItemIds = products.stream().filter(p -> p.isManufactured()).map(p -> p.getItem().getId()).collect(Collectors.toList());
 			Optional<Fee> feeItem = customerFees.stream().filter(cf -> packItemIds.contains(cf.getItem().getId()) && (cf.getEndDate() == null || cf.getEndDate().after(new Date()) || cf.getEndDate().equals(new Date()))).findFirst();
 			
@@ -301,7 +326,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 					}
 				});
 			} 
-			
 			else {
 				
 				COMMON_SERVICE.createBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, product, newFee, new AsyncCallback<Void>() {
@@ -322,7 +346,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		}
 		
 		// Borrar servicio
-		else if(isFeeProduct(product.getItem().getId()) && !product.getBookingType().equals(ProductBookingType.PLAN)) {
+		else if(isFeeProduct(product.getItem().getId()) && !product.getBookingType().equals(ProductBookingType.PLAN)  && !product.getBookingType().equals(ProductBookingType.CONSULTANCY)) {
 			Optional<Fee> fee = customerFees.stream().filter(feeIt -> feeIt.getItem().getId().equals(product.getItem().getId())).findFirst();
 			if(fee.isPresent()){
 				COMMON_SERVICE.removeBookingProduct(currentDomainOptions.getDomainName(), currentDomainOptions.getDomain(), currentDomainOptions.getUser(), customerRelatedRegistry, fee.orElse(null), product, new AsyncCallback<Void>() {
@@ -612,7 +636,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 	
 	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Descontratar" : "Contratar");
+		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? (packProduct.isNoBooking() ? "Solicitar Baja" : "Descontratar") : (packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar"));
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "#d56060" : "white");

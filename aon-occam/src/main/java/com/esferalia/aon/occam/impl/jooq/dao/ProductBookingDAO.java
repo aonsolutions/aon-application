@@ -381,7 +381,7 @@ public class ProductBookingDAO {
 		}
 		
 		// If plan check exist or create admin role
-		if(product.getBookingType().equals(ProductBookingType.PLAN)) {
+		if(product.getBookingType().equals(ProductBookingType.PLAN) || product.getBookingType().equals(ProductBookingType.CONSULTANCY)) {
 			Optional<UserAppRole> adminUserRole = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(userDb.getId())).filter(r -> r.getRole().equals(AonRole.ADMIN)).findAny();
 			if(adminUserRole.isEmpty()) {
 				UserAppRole newUserAppRole = new UserAppRole()

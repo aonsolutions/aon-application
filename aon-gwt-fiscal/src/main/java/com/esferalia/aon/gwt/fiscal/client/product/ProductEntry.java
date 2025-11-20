@@ -101,6 +101,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomIntegerBox trial = new AonCustomIntegerBox("D\u00edas Prueba"); // TRIAL_LIMIT_DAYS
 	private AonCustomDateBox trialLimit = new AonCustomDateBox("Fecha L\u00edmite Prueba"); // TRIAL_LIMIT_DATE
 	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloq. Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
+	private AonCustomCheckBox noBooking = new AonCustomCheckBox("No Contratable");
 	
 	private AonCustomIntegerBox posititon = new AonCustomIntegerBox("Posici\u00f3n");
 	
@@ -326,6 +327,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
 		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
 		type.addItem(ProductBookingType.USER.getDescription(), ProductBookingType.USER.name());
+		type.addItem(ProductBookingType.CONSULTANCY.getDescription(), ProductBookingType.CONSULTANCY.name());
 		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
 		type.setValue(product.getBookingType().name());
 		
@@ -447,7 +449,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_MAX")).findFirst();
 		limit.setValue(limitOpt.isEmpty() ? null : Integer.parseInt(limitOpt.get().getValue()));
 		
-		limitOverflow.setWidth("10rem");
+		limitOverflow.setWidth("11rem");
 		limitOverflow.addValueChangeHandler(e -> {
 			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 			if(itemAddInfoOpt.isEmpty()) {
@@ -465,7 +467,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOverflowOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 		limitOverflow.setValue(limitOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(limitOverflowOpt.get().getValue()));
 		
-		table.add(createRow(limitOverflow, limit));
+		noBooking.setWidth("10rem");
+		noBooking.setValue(product.isNoBooking());
+		noBooking.addValueChangeHandler(e -> product.setNoBooking(e.getValue()));
+		
+		table.add(createRow(limitOverflow, limit, noBooking));
 		
 		// TRIAL
 		trial.hideNearBy();
