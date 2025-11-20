@@ -1403,7 +1403,10 @@ public class InvoiceTemplate {
 		}
 
 		float left = 100; 
-		drawCompanyInfo(ctx, x, y);
+	
+		if(ctx.getConfig().isCompany())
+			drawCompanyInfo(ctx, x, y);
+		
 		y -= 20;
 		
 		String number = ctx.getMsg().invoiceNumber();
