@@ -36,7 +36,7 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 	private Seller seller;
 	private Month billingDateMonth;
 	private Integer billingDateYear;
-	private Boolean anual;
+	private boolean anual;
 	private WorkPlace workPlace;
 	private BillingPeriod period;
 	private CustomerStatus status;
@@ -44,11 +44,15 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 	
 	FeeExportGwtController feeGwtExport;
 	
-	public Boolean getAnual() {
+	public boolean getAnual() {
+		return anual;
+	}
+	
+	public boolean isAnual() {
 		return anual;
 	}
 
-	public void setAnual(Boolean anual) {
+	public void setAnual(boolean anual) {
 		this.anual = anual;
 	}
 
@@ -251,26 +255,15 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 	}
 
 	private Date obtainToDate() {
-		if(!anual){
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(obtainFromDate());
-			calendar.add(Calendar.MONTH, 1);
-			calendar.add(Calendar.DATE, -1);
-			calendar.set(Calendar.HOUR_OF_DAY, 23);
-			calendar.set(Calendar.MINUTE, 59);
-			calendar.set(Calendar.SECOND, 59);
-			return calendar.getTime();
-		}else {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(obtainFromDate());
-			calendar.add(Calendar.YEAR, 1);
-			calendar.add(Calendar.DATE, -1);
-			calendar.set(Calendar.HOUR_OF_DAY, 23);
-			calendar.set(Calendar.MINUTE, 59);
-			calendar.set(Calendar.SECOND, 59);
-			return calendar.getTime();
-			
-		}
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(obtainFromDate());
+		if(isAnual()) calendar.add(Calendar.YEAR, 1);
+		else calendar.add(Calendar.MONTH, 1);
+		calendar.add(Calendar.DATE, -1);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		return calendar.getTime();
 	}
 
 	private void checkGwtExport() {
