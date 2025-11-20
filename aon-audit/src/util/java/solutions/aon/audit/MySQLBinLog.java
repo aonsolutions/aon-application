@@ -3,24 +3,25 @@ package solutions.aon.audit;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.jooq.DDLExportConfiguration;
-import org.jooq.DDLFlag;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Queries;
 import org.jooq.SQLDialect;
 import org.jooq.Schema;
-import org.jooq.Table;
 import org.jooq.conf.ParamType;
+import org.jooq.conf.RenderQuotedNames;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import solutions.aon.audit.MySQLBinLog.StmtState.EventType;
 
 public class MySQLBinLog {
 	
@@ -30,8 +31,8 @@ public class MySQLBinLog {
 		
 		ParserState state ;
 		
-		Parser(Schema schema) {
-			this.state = new MainState(schema);
+		Parser(Schema schema, String ...databases) {
+			this.state = new MainState(schema, databases);
 		}
 		
 		String parse(String line) {
@@ -48,20 +49,19 @@ public class MySQLBinLog {
 		boolean accept(String line);
 		String parse(String line, Parser parser);
 	}
-
+	
 	static class MainState implements ParserState {
 		
 		Schema schema;
 		
 		ParserState [] states ;
 		
-		
-		public MainState(Schema schema) {
+		public MainState(Schema schema, String ...databases) {
 			this.schema = schema;
 			states = new ParserState[] {
-					new InsertState(this),
-					new UpdateState(this),
-					new DeleteState(this)
+					new InsertState(this, databases),
+					new UpdateState(this, databases),
+					new DeleteState(this, databases)
 			};		}
 		
 		public Schema getSchema() {
@@ -84,20 +84,31 @@ public class MySQLBinLog {
 						return parser.state.parse(line, parser);
 					}
 				}
-				throw new IllegalStateException("No state found for line: " + line);
+				return null; // skip line
+				//throw new IllegalStateException("No state found for line: " + line);
 			}
 		}
 		
 	}
-
+	
+	
 	static abstract class StmtState implements ParserState {
-
+		
+		enum EventType {
+			INSERT,
+			UPDATE,
+			DELETE
+		}
+		
 		String table;
 		String database;
 		
+		String databases[];
+		
 		MainState mainState;
 		
-		public StmtState(MainState mainState) {
+		public StmtState(MainState mainState, String ...databases) {
+			this.databases = databases;
 			this.mainState = mainState;
 		}
 		
@@ -123,12 +134,18 @@ public class MySQLBinLog {
 			return this;
 		}
 		
-
 		@Override
 		public String parse(String line, Parser parser) {
 			parser.setState(new ColumsState(this));
-			return String.format("INSERT IGNORE INTO `%s`;", table);
+			return null; //String.format("INSERT IGNORE INTO `%s`", table);
 		}
+		
+		public boolean checkDatabase() {
+			return Arrays.stream(databases)
+					.anyMatch(db -> database.matches(db));
+		}
+		
+		abstract EventType getEventType();
 
 	}
 
@@ -137,8 +154,8 @@ public class MySQLBinLog {
 		static final Pattern INSERT_PATTERN = Pattern
 				.compile("###\\s+INSERT\\s+INTO\\s+`(?<schema>.*)`\\.`(?<table>.*)`.*");
 		
-		private InsertState(MainState mainState) {
-			super(mainState);
+		private InsertState(MainState mainState, String ...databases) {
+			super(mainState, databases);
 		}
 
 		@Override
@@ -147,12 +164,15 @@ public class MySQLBinLog {
 			if (matcher.matches()) {
 				this.table = matcher.group("table");
 				this.database = matcher.group("schema");
-				return true;
+				return checkDatabase();
 			} else {
 				return false;
 			}
 		}
-
+		
+		EventType getEventType() {
+			return EventType.INSERT;
+		}
 	}
 
 	static class UpdateState extends StmtState {
@@ -160,8 +180,8 @@ public class MySQLBinLog {
 		static final Pattern UPDATE_PATTERN = Pattern
 				.compile("###\\s+UPDATE\\s+`(?<schema>.*)`\\.`(?<table>.*)`.*");
 		
-		private UpdateState(MainState mainState) {
-			super(mainState);
+		private UpdateState(MainState mainState, String ...databases) {
+			super(mainState, databases);
 		}
 		
 		@Override
@@ -170,10 +190,14 @@ public class MySQLBinLog {
 			if (matcher.matches()) {
 				this.table = matcher.group("table");
 				this.database = matcher.group("schema");
-				return true;
+				return checkDatabase();
 			} else {
 				return false;
 			}
+		}
+		
+		EventType getEventType() {
+			return EventType.UPDATE;
 		}
 
 	}
@@ -183,8 +207,8 @@ public class MySQLBinLog {
 		static final Pattern UPDATE_PATTERN = Pattern
 				.compile("###\\s+DELETE\\s*FROM\\s+`(?<schema>.*)`\\.`(?<table>.*)`.*");
 		
-		private DeleteState(MainState mainState) {
-			super(mainState);
+		private DeleteState(MainState mainState, String ...databases) {
+			super(mainState, databases);
 		}
 
 		@Override
@@ -193,21 +217,35 @@ public class MySQLBinLog {
 			if (matcher.matches()) {
 				this.table = matcher.group("table");
 				this.database = matcher.group("schema");
-				return true;
+				return checkDatabase();
 			} else {
 				return false;
 			}
+		}
+		
+		EventType getEventType() {
+			return EventType.DELETE;
 		}
 
 	}
 
 	static class ColumsState implements ParserState {
 
+		static final Pattern SET_PATTERN = Pattern
+				.compile("^###\\s*(SET).*");
+
 		static final Pattern ACCEPT_PATTERN = Pattern
 				.compile("^###\\s*(@|SET|WHERE).*");
 
 		static final Pattern COLUMN_VALUE_PATTERN = Pattern
-				.compile("###\\s+@(?<column>\\d+)\\s*=\\s*(?<value>.*)");
+				.compile("###\\s+@(?<column>\\d+)\\s*=\\s*(?<value>.*)", 
+						Pattern.DOTALL 
+						| Pattern.MULTILINE 
+						| Pattern.CASE_INSENSITIVE 
+						| Pattern.UNICODE_CHARACTER_CLASS);
+
+		static final Pattern NEGATIVE_VALUE_PATTERN = Pattern
+				.compile("(?<value>-\\d+)\\s*\\(\\d+\\)");
 
 		StmtState stmtState;
 		
@@ -224,7 +262,9 @@ public class MySQLBinLog {
 		public String parse(String line, Parser parser) {
 			if ( !accept(line)) {
 				parser.setState(stmtState.getMainState());
-				return parser.state.parse(line, parser);
+				String binlogCols = getBinlogFieds();
+				String parsedLine = parser.state.parse(line, parser);
+				return String.format("%s;%n%s", binlogCols, parsedLine != null ? parsedLine : "");
 			} else {
 				Matcher matcher = COLUMN_VALUE_PATTERN.matcher(line);
 				if (matcher.matches()) {
@@ -232,56 +272,63 @@ public class MySQLBinLog {
 					String column = matcher.group("column");
 					Field<?> field = getField(Integer.parseInt(column));
 					if ( field == null ) {
-						throw new IllegalStateException("No field found for column index: " + column + " in table: " + stmtState.getTable());
+						System.err.println("No field found for column index: " + column + " in table: " + stmtState.getTable());
+						return null;
+						//throw new IllegalStateException("No field found for column index: " + column + " in table: " + stmtState.getTable());
 					}
-					return String.format("SET `%s` = %s,", field.getName(), value);
+					return String.format("%s,", formatSET(field, value));
 				} else  {
-					return "";
+					StringBuilder stringBuilder = new StringBuilder();
+					if ( is(EventType.UPDATE) && SET_PATTERN.matcher(line).find() ) {
+						stringBuilder.append(String.format("%s;%n", getBinlogFieds() ));
+					} 
+					stringBuilder.append(String.format("INSERT IGNORE INTO `%s`%nSET", stmtState.getTable()));
+					return stringBuilder.toString();
 				} 
 			} 
+		}
+
+		protected boolean is(EventType eventType) {
+			return stmtState.getEventType() == eventType;
+		}
+		
+		
+		protected <T> String formatSET(Field<T> field, String value) {
+			Matcher negativeMatcher = NEGATIVE_VALUE_PATTERN.matcher(value);
+			if ( negativeMatcher.matches() ) {
+				value = negativeMatcher.group("value");
+			}
+			return String.format("`%s` = %s", field.getName(), value);
 		}
 		
 		private Field<?> getField(int columnIndex) {
 			return stmtState.getMainState().getSchema().getTable(stmtState.getTable()).field(columnIndex -1);
 		}
 		
-
-	}
-
-	static Table<?>[] getAuditTables4(Schema schema) {
-		return schema.getTables().stream()
-				.map(AuditTable::new)
-				.toArray(Table<?>[]::new);
-	}
-	
-	static Queries getDDL(DSLContext dslContext,Schema schema) {
-		Table<?>[] auditTables = getAuditTables4(schema);
-		DDLExportConfiguration config = 
-				new DDLExportConfiguration()
-				
-				.respectColumnOrder(true)
-				.respectCatalogOrder(true)
-
-				.createTableIfNotExists(true)
-				.createSchemaIfNotExists(true)
-				
-				.flags(DDLFlag.TABLE, DDLFlag.INDEX)
-				;
-		return dslContext.ddl(auditTables, config);
-	} 
-	
-	
-	static Stream<String> parse(InputStream is, String database) {
+		private String getBinlogFieds() {
+			String binlogTime = formatSET(AuditTable.AuditFields.BINLOG_TIME, "NOW()");
+			String binlogSchema = formatSET(AuditTable.AuditFields.BINLOG_SCHEMA, String.format("'%s'",stmtState.getDatabase()));
+			String binlogEvent = formatSET(AuditTable.AuditFields.BINLOG_EVENT, Integer.toString(stmtState.getEventType().ordinal()));
+			return String.format("%s,%n%s,%n%s", binlogTime, binlogSchema, binlogEvent);
+		}
 		
-		Parser parser = new Parser(AonMaster.AON_MASTER);
+
+	}
+
+	static Stream<String> parse(InputStream is, String ...databases) {
+		
 		InputStreamReader reader = new InputStreamReader(is);
 		LineNumberReader lineReader = new LineNumberReader(reader);
+		Parser parser = new Parser(AonMaster.AON_MASTER, databases);
 		
 		return
 		lineReader.lines()
 		.filter(AonStringUtils::isNotBlank)
 		.filter(MySQLBinLog::isNotCommentLine)
-		.map(parser::parse);
+		.filter(MySQLBinLog::isNotDDLStatement)
+		.filter(MySQLBinLog::isNotSetSessionGtidNext)
+		.map(parser::parse)
+		.filter(Objects::nonNull);
 		
 	}
 	
@@ -290,20 +337,35 @@ public class MySQLBinLog {
 				|| AonStringUtils.startsWith(line, "###");
 	}
 	
+	static boolean isDDLStatement(String line) {
+		return  AonStringUtils.startsWith(line, "use ") 
+				|| AonStringUtils.startsWith(line, "DROP")
+				|| AonStringUtils.startsWith(line, "ALTER")
+				|| AonStringUtils.startsWith(line, "CREATE")
+				;
+	}
 	
+	static boolean isNotDDLStatement(String line) {
+		return  !isDDLStatement(line);
+	}
+	
+	static boolean isNotSetSessionGtidNext(String line) {
+		return !AonStringUtils.startsWith(line, "SET @@SESSION.GTID_NEXT=");
+	}
+
 	public static void main(String[] args) {
 		
-		String database = args[0];
+		String [] databases = args;
 		
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
+		settings.setRenderFormatted(true);
 		settings.setParamType(ParamType.INLINED);
+		settings.setRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED);
 		DSLContext dslContext = DSL.using(SQLDialect.MYSQL, settings);
 		
-		parse(System.in, database).forEach(System.out::println);
+		parse(System.in, databases).forEach(System.out::println);
 		
-		//System.out.println(dslContext.createDatabaseIfNotExists("Hola").getSQL());
-		//System.out.println(getDDL(dslContext, AonMaster.AON_MASTER).getSQL());
 	}
 	
 	
