@@ -329,7 +329,6 @@ public class ProductDAO {
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(PRODUCT_BOOKING.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ProductBookingFiller())
 				.findFirst().orElse(new ProductBooking());
 	}
@@ -488,13 +487,13 @@ public class ProductDAO {
 		json.put("isBookingComposition", product.isBookingComposition());
 		json.put("isConsole", product.isConsole());
 		
-		if(!product.getAonApps().isEmpty()) {
+		if(null != product.getAonApps() && !product.getAonApps().isEmpty()) {
 			org.json.JSONArray aonAppsArr = new org.json.JSONArray();
 			product.getAonApps().forEach(app -> aonAppsArr.put(app.name()));
 			json.put("aonApps", aonAppsArr);
 		}
 		
-		if(!product.getDomainTypes().isEmpty()) {
+		if(null != product.getDomainTypes() && !product.getDomainTypes().isEmpty()) {
 			org.json.JSONArray domainTypesArr = new org.json.JSONArray();
 			product.getDomainTypes().forEach(domainType -> domainTypesArr.put(domainType.name()));
 			json.put("domainTypes", domainTypesArr);

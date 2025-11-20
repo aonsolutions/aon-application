@@ -2375,6 +2375,17 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("JARDINES_HASTA_200_METROS_MENSUAL", "JARD_200M_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_A_PARTIR_SEGUNDA_HORA_MENSUAL", "P_NOCT_2HORA_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_PRIMERA_HORA_MENSUAL", "P_NOCT_1HORA_M");
+		
+		// Act. 13/11/25
+		variablesMap.put("CENTROS_MINEROS_MENSUAL", "CENTROS_MINEROS_M");
+		variablesMap.put("PLUS_CENTROS_COMERCIALES_HORAS", "P_CENTROS_COM_H");
+		variablesMap.put("PLUS_FERIAS_HORAS", "P_FERIAS_H");
+		variablesMap.put("PLUS_PERMANENCIA_HORAS", "P_PERMANENCIA_H");
+		variablesMap.put("PLUS_RESIDENCIA_DIARIO", "P_RESIDENCIA_D");
+		variablesMap.put("REVISION_MENSUAL", "REVISION_M");
+		variablesMap.put("SERVICIOS_COMPLEMENTARIOS_MENSUAL", "SERV_COMPLEM_M");
+		variablesMap.put("MERCANCIAS_PELIGROSAS_DIARIO", "MERC_PELIGROSAS_D");
+		
 
 		
 	}

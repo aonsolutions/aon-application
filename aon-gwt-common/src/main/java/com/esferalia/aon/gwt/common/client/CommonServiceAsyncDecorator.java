@@ -1434,30 +1434,6 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void createFeeRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee fee, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.createFeeRelatedRegistry(domainName, domain, user, customerRelatedRegistry, fee, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void updateEndDatePackFee(String domainName, int domain, String user, Fee fee,AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.updateEndDatePackFee(domainName, domain, user, fee, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void updateBookingFee(String domainName, int domain, String user, Fee fee, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.updateBookingFee(domainName, domain, user, fee, product, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void createBookingFee(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.createBookingFee(domainName, domain, user, customerRelatedRegistry, product, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<RegistryPayMethod>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getRegistryPayMethods(domainName, domainId, user, registry, new AsyncCallbackWrapper<>(callback));
@@ -1485,6 +1461,24 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getRegistryRelationships(String domainName, int domain, String user, AsyncCallback<List<RegistryRelationship>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getRegistryRelationships(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createBookingProduct(domainName, domain, user, customerRelatedRegistry, product, newFee, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void updateBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee feeItem, ProductBooking product, Fee newFee, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.updateBookingProduct(domainName, domain, user, customerRelatedRegistry, feeItem, product, newFee, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.removeBookingProduct(domainName, domain, user, customerRelatedRegistry, oldFee, product, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

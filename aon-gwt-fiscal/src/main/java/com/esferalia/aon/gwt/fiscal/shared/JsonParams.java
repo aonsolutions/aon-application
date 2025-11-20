@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -242,6 +243,18 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.IRPF			,new JSONNumber( params.isIrpf()?1:0));
 		json.put(IRequestParamsNames.AEAT_BOOK		,new JSONNumber( params.getAeatBook()?1:0));
 		json.put(IRequestParamsNames.UNIFIED_BOOK	,new JSONNumber( params.getUnifiedBook()?1:0));
+		return json.toString();
+	}
+	
+	public static String convert(OperationParamsNew params) {		
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 	== null? JSON_NULL : new JSONNumber( params.getActivity()));
+		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate() 	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
+		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
+		json.put(IRequestParamsNames.BOOK_TYPE		,new JSONNumber(params.getBookType()));
+		json.put(IRequestParamsNames.TAB_TYPE		,new JSONNumber(params.getTabType()));
 		return json.toString();
 	}
 	

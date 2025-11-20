@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.report;
+package com.esferalia.aon.gwt.fiscal.client.report.old;
 
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.ModuleOptions;
