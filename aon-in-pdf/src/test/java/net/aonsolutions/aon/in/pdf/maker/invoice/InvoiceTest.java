@@ -715,9 +715,9 @@ public class InvoiceTest {
 			config.setBackground(attach);
 			config.setDetailed(true);
 			config.setAdjustImage(true);
-			config.setHeader(50);
+			config.setHeader(0);
 			config.setFooter(0);
-			config.setCompany(true);
+			config.setCompany(false);
 			config.setBorder(2);
 			config.setContactData(true);
 			config.setRecordData(true);
@@ -830,11 +830,11 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplateContext context = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplateContext context = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			InvoiceTemplate invoiceTemplate = new InvoiceTemplate(context);
 			invoiceTemplate.print(context, os);
 			
-			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			invoiceTemplate = new InvoiceTemplate(context2);
 			invoiceTemplate.print(context2, dos);
 			
@@ -1605,9 +1605,9 @@ public class InvoiceTest {
 			config.setBackground(attach);
 			config.setDetailed(true);
 			config.setAdjustImage(true);
-			config.setHeader(50);
+			config.setHeader(0);
 			config.setFooter(0);
-			config.setCompany(true);
+			config.setCompany(false);
 			config.setBorder(2);
 			config.setContactData(true);
 			config.setRecordData(true);
@@ -1725,11 +1725,11 @@ public class InvoiceTest {
 			iList.add(null);
 			iList.add(invoice2);
 			
-			InvoiceTemplateContext context = new InvoiceTemplateContext(company, iList, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplateContext context = new InvoiceTemplateContext(company, iList, config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			InvoiceTemplate invoiceTemplate = new InvoiceTemplate(context);
 			invoiceTemplate.print(context, os);
 			
-			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, iList, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, iList, config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			invoiceTemplate = new InvoiceTemplate(context2);
 			invoiceTemplate.print(context2, dos);
 			
