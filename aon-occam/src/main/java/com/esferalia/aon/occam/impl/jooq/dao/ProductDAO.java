@@ -487,13 +487,16 @@ public class ProductDAO {
 		json.put("isBookingComposition", product.isBookingComposition());
 		json.put("isConsole", product.isConsole());
 		
-		if(!product.getAonApps().isEmpty()) {
+		if(null != product.isNoBooking())
+			json.put("noBooking", product.isNoBooking());
+		
+		if(null != product.getAonApps() && !product.getAonApps().isEmpty()) {
 			org.json.JSONArray aonAppsArr = new org.json.JSONArray();
 			product.getAonApps().forEach(app -> aonAppsArr.put(app.name()));
 			json.put("aonApps", aonAppsArr);
 		}
 		
-		if(!product.getDomainTypes().isEmpty()) {
+		if(null != product.getDomainTypes() && !product.getDomainTypes().isEmpty()) {
 			org.json.JSONArray domainTypesArr = new org.json.JSONArray();
 			product.getDomainTypes().forEach(domainType -> domainTypesArr.put(domainType.name()));
 			json.put("domainTypes", domainTypesArr);
@@ -741,6 +744,7 @@ public class ProductDAO {
 			
 			productBooking.setBookingComposition(info.has("isBookingComposition") && info.getBoolean("isBookingComposition"));
 			productBooking.setConsole(info.has("isConsole") && info.getBoolean("isConsole"));
+			productBooking.setNoBooking(info.has("noBooking") && info.getBoolean("noBooking"));
 			
 			List<AonApp> aonApps = new ArrayList<AonApp>();
 			if(info.has("aonApps")) {

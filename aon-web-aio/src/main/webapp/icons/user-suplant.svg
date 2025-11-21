@@ -1,0 +1,15 @@
+<svg width="48" height="24" viewBox="0 0 48 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Usuario izquierdo -->
+  <circle cx="8" cy="12" r="6" stroke="black" stroke-width="2"/>
+  <path d="M2 21C2 17 14 17 14 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Usuario derecho -->
+  <circle cx="40" cy="12" r="6" stroke="black" stroke-width="2"/>
+  <path d="M34 21C34 17 46 17 46 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Flecha bidireccional entre usuarios (sin tocar círculos) -->
+  <line x1="16" y1="12" x2="32" y2="12" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 10 L32 12 L30 14" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  <path d="M18 10 L16 12 L18 14" stroke="black" stroke-width="2" stroke-linecap="round"/>
+</svg>
+

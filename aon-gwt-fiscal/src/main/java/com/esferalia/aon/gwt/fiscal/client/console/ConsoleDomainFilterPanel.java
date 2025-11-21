@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -43,7 +44,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private ListBox schemaBox;
 	private AonIntegerBox idBox;
 	private AonTextBox queryBox;
-	private AonDomainBox parentBox;
+	private AonConsoleDomainBox parentBox;
 	private ListBox orphanBox;
 	private AonDomainTypeBox typeBox;
 	private ListBox activeBox;
@@ -142,8 +143,19 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		typeBox = new AonDomainTypeBox() ;
 		typeBox.addChangeHandler(e -> fire(opt));
 		
-		parentBox = new AonDomainBox(opt.getOccam(), true);
-		parentBox.addSelectionHandler(e -> fire(opt));
+		parentBox = new AonConsoleDomainBox(opt.getOccam(), true);
+		parentBox.addSelectionHandler(e -> {
+			if (schemaBox.getSelectedIndex() <= 0) {
+				ConsoleDomain d = e.getSelectedItem();
+				if ( d != null ) {
+					ConsoleSchema.safeValueOf( d.getSchema() )
+						.ifPresent( cs -> {
+							schemaBox.setSelectedIndex( cs.ordinal() + 1 );				
+						});
+				}
+			};
+			fire(opt);	
+		});
 
 		orphanBox = new ListBox();
 		orphanBox.addItem(ALL);

@@ -210,6 +210,7 @@ export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
 export const FROM = 'Desde';
 export const FRENCH = 'Français';
+export const FUTURE = 'À venir...';
 
 // ----- G
 

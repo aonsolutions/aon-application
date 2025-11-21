@@ -1,6 +1,7 @@
 package solutions.aon.audit;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1524,10 +1525,11 @@ public class AuditTable<R extends Record> implements Table<R> {
 	public static class AuditFields implements Fields {
 
 
-		private static final Field<?> [] BIN_LOG_FIELDS = { 
-				DSL.field(DSL.name("binlog_time"),SQLDataType.TIMESTAMP.nullable(false)),  
-				DSL.field(DSL.name("binlog_event"),SQLDataType.TINYINT.nullable(false))
-				};
+		public static final Field<Byte> BINLOG_EVENT = DSL.field(DSL.name("binlog_event"),SQLDataType.TINYINT.nullable(false));
+		public static final Field<String> BINLOG_SCHEMA =  DSL.field(DSL.name("binlog_schema"),SQLDataType.CHAR(64).nullable(false));  
+		public static final Field<Timestamp> BINLOG_TIME = DSL.field(DSL.name("binlog_time"),SQLDataType.TIMESTAMP.nullable(false));  
+
+		public static final Field<?> [] BIN_LOG_FIELDS = { BINLOG_TIME, BINLOG_EVENT, BINLOG_SCHEMA  };
 
 		private Fields delegate;
 
@@ -1658,7 +1660,6 @@ public class AuditTable<R extends Record> implements Table<R> {
 
 	public AuditTable(Table<R> table) {
 		this.delegate = table;
-		DSL.field(DSL.name("binlog_event"), SQLDataType.TINYINT, DSL.comment("Tipo de evento en el binlog"));
 	}
 
 	public Package getPackage() {

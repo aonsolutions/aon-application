@@ -229,7 +229,7 @@ class InvoiceJSONV1 {
 				.filter(i -> i != null)
 				.distinct()
 				.limit(2)
-			    .reduce((a, b) -> null) 
+			    .findFirst() 
 			    .orElse(null);
 			json.put(IJsonNames.WORKPLACE, workplace);
 		}

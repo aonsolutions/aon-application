@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -95,7 +96,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")))
 		.where(dateField.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+//		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+		.and(IRPFDAO.getEconomicAgreementCondition(mod190))
 		.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 		.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
@@ -627,7 +629,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				.where(dateField.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(SALARY.EMPLOYEE_DOCUMENT.eq(detail.getDocument()))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+//				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+				.and(IRPFDAO.getEconomicAgreementCondition(mod190))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
@@ -738,7 +741,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				.and(SALARY.EMPLOYEE_DOCUMENT.eq(detail.getDocument()))
 				.and(accrualCondition)
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+//				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+				.and(IRPFDAO.getEconomicAgreementCondition(mod190))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()

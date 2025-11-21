@@ -1097,25 +1097,24 @@
 }
 
 .aon_packs_catalogue_panel{
-	/* 
-	
-	-- Horizontal Scroll
+	 
 	
 	display: flex;
   	overflow-x: auto; 
   	scroll-snap-type: x mandatory;
   	-webkit-overflow-scrolling: touch;
   	gap: 1rem;
-  	justify-content: start; // IMPORTANTE: Mantiene el desbordamiento horizontal //
+  	justify-content: start;
   	align-items: start;
   	
-  	*/
   	
+  	/*
   	display: flex;
   	gap: 1rem;
   	justify-content: center;
   	align-items: start;
   	flex-wrap: wrap;
+  	*/
 }
 
 .aon_packs_catalogue_panel > * {

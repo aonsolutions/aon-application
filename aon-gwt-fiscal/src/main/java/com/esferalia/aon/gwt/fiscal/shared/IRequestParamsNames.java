@@ -21,14 +21,15 @@ public interface IRequestParamsNames {
 	String ACTIVE = "active";
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
-	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT
-	String AEAT_PARAMS = "aeatParams";  // Libro Registro AEAT
+	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT (OLD)
+	String AEAT_PARAMS = "aeatParams";  
 	String ALIAS = "document";
 	String AMOUNT = "amount";
 	String BALANCE_TYPE = "balanceType";
 	String BALANCING_ACCOUNT = "balancingAccount";
 	String BATCHED = "batched";
 	String BLOCKED = "blocked";
+	String BOOK_TYPE = "bookType";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
 	String BY_MONTH = "byMonth";
@@ -150,6 +151,7 @@ public interface IRequestParamsNames {
 	String SUBJECT = "subject";
 	String SURCHARGE = "surcharge";
 	String SURCHARGE_PERCENT = "surchargePercent";
+	String TAB_TYPE = "tabType";
 	String TEST = "test";
 	String TITLE = "title";
 	String TO_DATE = "toDate";
@@ -160,7 +162,7 @@ public interface IRequestParamsNames {
 	String TO_LAST_ACCESS_DATE = "toLastAccessDate";
 	String TO_USER = "toUser";
 	String TYPE = "type";
-	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
+	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF) (OLD)
 	String USER = "user";
 	String VALIDATE = "validate";
 	String VAT_PARAMS = "vatParams";

@@ -107,6 +107,12 @@ public class SQLContractDelayCalculatorContext extends
 		}
 		
 		@Override
+		public Object getBr(Date... dates) throws ExpressionException, SQLException, SalaryException {
+			Date date = Arrays.stream(dates).findFirst().orElseThrow(() -> new UndefinedVariablesException(ContextVariable.BR));
+			return br(date);
+		}
+		
+		@Override
 		protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(Connection conn, Date startDate,
 				Date endDate, Date issueDate, Criteria criteria, int start, int end) {
 			SQLNoItContractSalaryCalculatorContext ctx =  (SQLNoItContractSalaryCalculatorContext) super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
