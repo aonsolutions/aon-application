@@ -207,6 +207,7 @@ export const FISCAL = 'Finanzielle';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
 export const FRENCH = 'Französisch';
+export const FUTURE = 'Kommt bald...';
 
 // ----- G
 

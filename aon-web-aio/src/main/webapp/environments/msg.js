@@ -325,6 +325,7 @@ export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 export const FROM = MSG.FROM;
 export const FRENCH = MSG.FRENCH;
+export const FUTURE = MSG.FUTURE;
 
 // ----- G
 
