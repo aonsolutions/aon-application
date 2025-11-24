@@ -43,6 +43,7 @@
 	--aonInvoice: none;
 	--aonDocumental: none;
 	--aonTimecontrol: none;
+	--aonMessenger: none;
 }
 
 .aonBody{
@@ -158,6 +159,7 @@
 #aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-messenger,
 #aonMenuListAppImgTop-aonApplication,
 #aonMenuListAppImgTop-managementMenu,
 #aonMenuListAppImgTop-accountingMenu,
@@ -261,6 +263,10 @@
 #aonMenuListAppImgTop-timecontrol {
     mask-image: url('/icons/clock.svg') ;
 }
+
+#aonMenuListAppImgTop-messenger{
+    mask-image: url('/icons/subtitles.svg') ;
+ }
 
 #aonMenuListAppImgTop-aonApplication{
 	visibility: hidden;
@@ -413,7 +419,9 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 #aonSignin .aonContentBeta,
 #aonDocumental .aonContentBeta,
 #aonInvoice .aonContentBeta,
-#aonWarehouse .aonContentBeta {
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta {
 	border-radius: .375rem;
 	margin: 1rem 0.5rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
@@ -421,12 +429,15 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 
 #aonSignin .aonContentBeta,
 #aonDocumental .aonContentBeta,
-#aonInvoice .aonContentBeta {
+#aonInvoice .aonContentBeta,
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta {
 	padding: 1.25rem;
 }
 
 .aonRightSidenav {
-    flex-basis: 225px !important;	
+    /* flex-basis: 225px !important; */	
 	background-color: var(--aonBackgroundColor2);	
 }
 
@@ -819,6 +830,8 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 
 /* ========================== Invoice Styles  ========================== */
 .aonContentBeta{
+	min-width: 0;
+	flex-grow: 1;
 	border-radius: .375rem;
 	background-color: var(--aonBackgroundColor2);
 }
