@@ -95,9 +95,15 @@ public class TaxBreakdown implements Serializable {
 	public double getVatBase() {
 		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}
+
 	public double getVatQuota() {
 		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getQuota() ).sum() , 2); 
 	}
+	
+	public double getSurchargeQuota() {
+		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getSurchargeQuota() ).sum() , 2); 
+	}
+	
 	public double getRetentionBase() {
 		Optional<InvoiceWithholding> oiw = getInvoiceWithholding();
 		if (oiw.isPresent()) {
