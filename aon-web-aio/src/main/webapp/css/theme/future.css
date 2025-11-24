@@ -42,6 +42,7 @@
 	--aonNote: none;
 	--aonInvoice: none;
 	--aonDocumental: none;
+	--aonTimecontrol: none;
 }
 
 .aonBody{
@@ -50,13 +51,10 @@
 }
 
 .rootPanel{
-	border-color: var(--aonBackgroundColor);
+	border-color: var(--aonBackgroundColor2);
 	background-color: var(--aonBackgroundColor2);
 }
 
-.aonContentBeta{
-    background-color: var(--aonBackgroundColor2);
-}
 
 .aonNewLogo{
  	background-image: url("../../assets/aon-white-logo.svg");  
@@ -79,6 +77,7 @@
 }
 
 .aonNewMenuSideNavUl{
+	padding-top: 15.25px;
     background-color: var(--aonWhite);
 }
 
@@ -91,6 +90,21 @@
 #applications .material-symbols-outlined, 
 .aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
 	color: var(--aonWhite);
+}
+
+.aonHeaderAppDiv * {
+	display: none;
+}
+
+.aonHeaderAppDiv {
+   background-image: url("../../assets/aon-white-logo.svg");
+	background-position: 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	height: 40px;
+	padding: 0 0 0 68px;
+	position: relative;
+	width: 160px;
 }
 
 #uploads{
@@ -147,6 +161,7 @@
 #aonMenuListAppImgTop-aonApplication,
 #aonMenuListAppImgTop-managementMenu,
 #aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-timecontrol,
 #aonMenuListAppImgTop-fiscalMenu,
 #aonMenuListAppImgTop-payrollMenu,
 #aonMenuListAppImgTop-configurationMenu,
@@ -238,6 +253,10 @@
 	mask-image: url('/icons/bookmark.svg') ;
 }
 
+#aonMenuListAppImgTop-timecontrol {
+    mask-image: url('/icons/clock.svg') ;
+}
+
 #aonMenuListAppImgTop-aonApplication{
 	visibility: hidden;
 }
@@ -253,7 +272,8 @@
 #aonHeaderHelpButtonIcon,
 #aonHeaderConfigButtonIcon,
 #aonHeaderNotificationButtonIcon,
-#aonHeaderUserButtonIcon {
+#aonHeaderUserButtonIcon
+ {
 	width: 25.5px;
 	height: 25.5px;
 	background-color: white;
@@ -286,6 +306,18 @@
 #aonHeaderUserButtonIcon{
     mask-image: url('/icons/user.svg') ;
 }
+
+
+i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
+	width: 24px;
+	height: 24px;
+	background-color: var(--aonTopAppTextColor);
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+    mask-image: url('/icons/chevron-down.svg') ;
+}
+
 
 
 #aonMenuList-new {
@@ -333,13 +365,13 @@
 /* ========================== Sidenav Menu Styles  ========================== */
 
 #rootPanel {
-  margin-left: 13.75rem !important;
+  margin-left: 237px !important; /*13.75rem; !important;*/
 }
 
 #aonMenu #aonMenuSidenav  {
-	width: 13.75rem;
-	min-width: 13.75rem;
-	max-width: 13.75rem;
+	width: 237px; /*13.75rem;*/
+	min-width: 237px; /*13.75rem;*/
+	max-width: 237px; /*13.75rem;*/
 	height: calc(100vh - 3.75rem);
 	overflow-y: auto;
 	box-sizing: border-box;
@@ -368,5 +400,664 @@
 }
 
 
+/* ========================== App Styles  ========================== */
+
+.aonSidenav,
+.aonToolbar,
+#aonParent .aonContentBeta,
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonInvoice .aonContentBeta,
+#aonWarehouse .aonContentBeta {
+	border-radius: .375rem;
+	margin: 1rem 0.5rem 0rem 1rem;
+	background-color: var(--aonBackgroundColor);	
+}
+
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonInvoice .aonContentBeta {
+	padding: 1.25rem;
+}
+
+.aonRightSidenav {
+	background-color: var(--aonBackgroundColor2);	
+}
+
+.aonSidenav {
+  white-space:nowrap;
+}
+
+.aonSidenav *,
+.aonToolbarTitle {
+	color: #1e293b;
+	font-size: 0.875rem;
+}
+
+.aonSidenav i.material-icons {
+	display: none;
+}
+
+.aonToolbarTitle,
+.aonSidenav .aonMenuItemSpan {
+	font-family: "Inter-medium", sans-serif;
+}
+
+.aonSidenav .aonAppMenuSidenavList{
+	padding: .625rem 1.25rem .625rem 2.5rem;	
+	
+}
+
+.aonSidenav .aonSidenavTitle {
+	padding: 0 1.25rem;
+	padding-top: 0px;
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+	cursor: pointer;
+}
+
+.aonSidenav .aonSidenavTitleArrow {
+	border:none;
+	min-width: 24px;
+	min-height: 24px;
+	visibility: visible;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+}
+
+.aonSidenav .aonAppMenuSidenavList:hover,
+.aonSidenav .aonAppMenuSidenavListSelected {
+	border-radius: 0px;
+    background-color: var(--aonBackgroundColor2);
+}
+
+.aonSidenav .aonSidenavTitle span {
+    letter-spacing: -0.005rem;
+	text-transform: uppercase;
+    font-family: "Inter-bold", sans-serif;
+}
+
+.aonUpload {
+	border:none;
+	color: #fff;
+	align-items: flex-start;
+	margin-top: 0.5rem; /*Warn*/
+	transition: background .3s ease;
+	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+}
+
+.aonUpload:hover {
+    background: #004bfb;
+}
+.aonNewUploadLabel{
+	color: #fff;
+	font-size: 1rem;
+	
+}
+
+.aonDashboardButton {
+    border: 0;
+}
+	
+/* ========================== Buttons Styles  ========================== */
+.aonButton {
+	background-color: #0f172a;
+	color: #fff;
+	border: 0;
+}
+
+.aonTimeControlButton {
+	text-transform: lowercase;
+	background-color: #0f172a !important;
+}
+
 /* ========================== Companies Styles  ========================== */
+
+.aonWelcomeDiv {
+	display: none;	
+}
+
+.aonWelcomeLogo{
+	margin-top: 1rem; /*Warn*/
+}
+
+.aonCompanyDiv {
+	margin: 2rem 0px 0px 2rem; ;
+}
+
+#aonCompanySpanTitle {
+	color: #1e293b;
+	font-size: 1rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+
+/* ========================== Tabs Styles  ========================== */
+
+.aonTab {
+	padding: .625rem;
+	display: flex;
+	align-content: center;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	gap: .5rem;
+	border-radius: .375rem;
+	background-color: var(--aonBackgroundColor2);
+}
+
+#aonCompanyTabFilter{
+	width:auto;
+}
+
+.aonTab .aonTabItemText {
+	padding: .625rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	font-size: .875rem;
+	
+}
+
+.aonTab .aonTabItemTextSelected {
+	border-bottom: none;
+	background-color: var(--aonBackgroundColor);
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aonCompanyDiv{
+	width: 96%;
+}
+
+#UlCompanies {
+  list-style: none;
+  padding: .625rem 0 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+
+#UlCompanies .aonLiBeta {
+	min-height: 78px;
+}
+
+#UlCompanies li {
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+	border-radius: .375rem;
+	padding: 11px; /*.625rem;*/
+	cursor: pointer;
+	border: .0625rem solid #e2e8f0;
+	color: #64748b;
+}
+
+#UlCompanies li:hover {
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+	background-color: #64748b;
+	color: #fff;
+}
+
+#UlCompanies li:hover * {
+	color: #fff;
+}
+
+#UlCompanies li:hover .aonLiSpan .material-icons {
+    background-color:#fff;
+}
+
+#UlCompanies li .aonLiSpan > span:not(.aonLiSpanSubtitle) {
+	font-size: 0.875rem;
+	font-family: "Inter-semibold", sans-serif;
+}
+
+#UlCompanies .aonLiSpan .material-icons {
+	width: 25.5px;
+	height: 25.5px;
+	border-radius: 0;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color:#64748b;
+    mask-image: url('/icons/building.svg') ;
+}
+
+/* ========================== Login Styles  ========================== */
+#aonLogin {
+	font-size: 17px;
+	font-family: var(--aonFontFamily);
+}
+
+#loginContent {
+	background-color: var(--aonBackgroundColor);
+}
+
+.aonLoginTitle {
+	display: none;
+}
+
+.aonLoginSubTitle {
+	font-size: 17px;
+	padding: 1.25rem 1.25rem 0rem 1.25;
+}
+
+.aonLoginLogo {
+	background-image: url("../../assets/aon-white-logo.svg");
+}
+
+#aonLogin .aonToolbar2 {
+	height: 68px; /*4rem;*/
+	min-height: 68px; /*4rem;*/
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+#aonLogin button {
+	height: 42.5px; /*2.5rem;*/
+	padding: .5rem 1rem;
+	border-radius: .375rem;
+	cursor: pointer;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+	text-transform: lowercase;
+	font-size: 1rem;
+}
+
+.aonLoginButton {
+	border: none;
+     background-color: #0f172a;
+ 	border-radius: 4px;
+	color: var(--aonWhite);
+	cursor: pointer;
+	font-family: var(--aonFontFamily);
+	height: 3rem;
+	letter-spacing: .75px;
+	margin-top: 1rem;
+	width: 100%;
+}
+
+.aonLoginButton  {
+	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+	background-position-x: 0%;
+	background-position-y: 0%;
+	background-size: auto;
+	background-size: 300% 100%;
+	background-position: 0 0;
+	transition: background .3s ease;
+}
+.aonLoginButton:hover {
+	background-position: 100% 0;
+}
+
+.aonLoginForm {
+	height: fit-content;
+	border-radius: .375rem;
+	width: 425px; /*25rem;*/
+	background-color: #fff;
+	border: .0625rem solid #e2e8f0;
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aonInputBoxLabelInputError {
+	border: 1px solid #d2d2d6 !important;
+}
+
+.aonLoginFormContent {
+	border: none;
+}
+
+#aonLogin .aonToolbar2 * {
+	color: #fff;
+}
+
+.aonInputBoxLabel {
+	display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  max-width: 100%;
+  gap: .375rem;
+  box-sizing: border-box;
+  overflow: hidden;	
+}
+
+.aonInputBoxLabel > span{
+	position: inherit;
+}
+#aonLoginUserTitle,
+#aonLoginPasswordTitle {
+	font-family: "Inter-regular", sans-serif;
+	font-size: 17px; /*1rem;*/
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}
+
+.aonInputBoxLabelSpanError {
+  color: #0f172a;
+}
+
+#aonLoginUserInput::placeholder,
+#aonLoginPasswordInput::placeholder{
+  font-size: .875rem;
+  letter-spacing: 0;
+  font-family: "Inter-regular", sans-serif;
+}
+
+#aonLoginUserInput,
+#aonLoginPasswordInput{
+	color: #1e293b;
+	background-color: #fff;
+	border: .0625rem solid #cbd5e1;
+
+	height: 2.5rem;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	padding: .5rem .75rem .5rem .75rem;
+}
+
+.aonInputMsgError {
+  font-family: "Inter-semibold", sans-serif;
+  font-size: .875rem;
+}
+
+.aonDividerSpan {
+	color: #1e293b;
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#divTitleForm {
+	margin-bottom: 0 !important;
+}
+
+.aonDividerButtons{
+	border-bottom: none;
+}
+
+#aonLoginPasswordIconButtonIconButton {
+	top: 26px;
+	right: 12px;
+	position: relative;
+}
+
+/* ========================== Card Styles  ========================== */	
+
+.aonCard {
+	border:none;
+}
+
+.aonCardTitle{
+	border-bottom: .1rem solid #cbd5e1;
+}
+
+.aonCardTitleSection *:not(.material-icons) {
+	font-size: 1.25rem;
+	line-height: 1.75rem;
+	gap: .5rem;
+	padding: .75rem 1.25rem;
+	letter-spacing: -0.005rem;
+	font-family: "Inter-semibold", sans-serif;
+}
+
+
+.aonDashboardButton span {
+  letter-spacing: 0;
+  line-height: 1.5rem;
+  font-size: .875rem;
+  text-transform: lowercase;
+  font-family: "Inter-medium", sans-serif;
+}
+
+/* ========================== Invoice Styles  ========================== */
+.aonContentBeta{
+	border-radius: .375rem;
+	background-color: var(--aonBackgroundColor2);
+}
+
+#aonInvoiceHomeNewIncomeButton,
+#aonInvoiceHomeNewExpenseButton{
+	display: none;	
+}
+
+
+#aonInvoiceHomeCardPanel {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#aonInvoiceHomeCardPanel aon-card {
+  width: 32%;
+  min-width: 18.75rem;
+}
+
+#aonInvoiceHomeFastPanel aon-dashboard-button {
+  width: 32%;
+  min-width: 18.75rem;
+}
+
+#aonInvoiceHomeNewIssuedInvoiceButtonIcon,
+#aonInvoiceHomeNewReceivedInvoiceButtonIcon,
+#aonInvoiceHomeNewTicketInvoiceButtonIcon { 
+	width: 25.5px;
+	height: 25.5px;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color: #1e293b;
+}
+ 
+#aonInvoiceHomeNewIssuedInvoiceButtonIcon{
+    mask-image: url('/icons/file-up.svg') ;
+}
+
+#aonInvoiceHomeNewReceivedInvoiceButtonIcon{
+    mask-image: url('/icons/file-down.svg') ;
+}
+
+#aonInvoiceHomeNewTicketInvoiceButtonIcon{
+    mask-image: url('/icons/sticker.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"],
+i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
+i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"], 
+i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"]{
+	width: 25.5px;
+	height: 25.5px;
+	background-color: var(--aonTopAppTextColor);
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+}
+
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"] {
+    mask-image: url('/icons/upload-cloud.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"] {
+    mask-image: url('/icons/rotate-cw.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
+i[id$="ToolbarHeaderToolSectionaddButtonIcon"] {
+    mask-image: url('/icons/plus.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"] {
+    mask-image: url('/icons/search.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"] {
+    mask-image: url('/icons/more-vertical.svg') ;
+}
+
+/* ========================== Table Styles  ========================== */
+
+.aonTable th {
+	border: none
+ }
+
+.aonTable thead {
+  background-color: #e2e8f0;
+}
+
+.aonTable thead th {
+	height: 63.63px; /*3.75rem;*/
+	font-family: "Inter-bold", sans-serif;
+	font-size: .875rem;
+	color: #1e293b;
+	border-radius: .375rem;
+	vertical-align: middle;
+}
+
+.aonTable tbody {
+	padding-left: 0px !important;
+	padding-rigth: 0px !important;
+
+}
+
+.aonTable tbody tr {
+	font-family: "Inter-regular", sans-serif;
+	font-size: .875rem;
+	color: #1e293b;
+	border-radius: .375rem;
+	border: .0625rem solid #e2e8f0 !important;
+	margin-top: 17px !important; /* 1rem;*/
+}
+
+.aonTable tbody tr td {
+	color: #64748b;
+	height: 63.63px; /*3.625rem;*/
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 9.375rem;
+}
+
+.aonTable tbody tr:hover, .aonTableTrChecked {
+  background-color: inherit;
+}
+
+/* ========================== TimeControl Styles  ========================== */
+
+.profile-letters {
+  border: none;
+  border-radius: 0px;
+}
+
+
+
+
+.aonCheckbox >span::before {
+	width: 14px;
+	height: 14px;
+	border: 1px solid;
+}
+
+/*=========================== Right Panel Styles  ========================== */
+
+aon-right-panel {
+  background: #f8fafc;
+}
+.rightPanel  {
+	top: 68px;
+	border:none;
+	margin-top: 0px !important;
+}
+
+.rightPanel #aonRightPanelContent {
+	padding: 1.25rem 1.25rem 5rem 1.25rem;
+}
+
+.rightPanel span:not(.material-icons) {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0;
+  font-family: "Inter-medium";
+}
+
+.rightPanel aon-card{
+	width: 100%;
+}
+
+.rightPanel aon-card .aonCard{
+	margin: 0px;
+	padding: 0px;;
+}
+
+.rightPanel .helpCardText,
+.rightPanel .configCardText{
+	border: none;
+	background-color: #0f172a;
+	border-radius: 4px;
+	color: var(--aonWhite);
+	cursor: pointer;
+	font-family: var(--aonFontFamily);
+	height: 2.5rem;
+	letter-spacing: .75px;
+	margin-top: 0px;
+	width: 100%;
+}
+
+.rightPanel .helpCardText *,
+.rightPanel .configCardText *{
+	color: #fff;	
+}
+
+
+.rightPanel div[id$="CardContent"]{
+	padding: 1.25rem;
+}
+
+.rightPanel div[id$="CardContent"] *:not(.material-icons) {
+	color: #64748b;
+}
+
+.rightPanel .toolbarSidenavPanel{
+	color: #fff;
+	background: #475569;
+	padding: 1rem 1.25rem;
+}
+
+.rightPanel .toolbarSidenavPanel * {
+	color: #fff;	
+}
+
+.rightPanel .toolbarSidenavPanel *:not(.material-icons) {
+	font-size: 1.25rem !important;
+}
+
+.rightPanel .toolbarSidenavPanel #aonRightPanelConfigButton,
+.rightPanel .toolbarSidenavPanel #aonRightPanelHelpButton {
+	display: none !important;
+}
+
+.rightPanel .helpversionCardText {
+	display: none;
+}
+
+.rightPanel i[class~="configPanelLanguageI"]{
+	width: 24px;
+	height: 24px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+}
+
+#aonConfigThemesCardCard i[class~="configPanelLanguageI"]{
+    mask-image: url('/icons/palette.svg') ;
+}
+
+#aonConfigHelpLangCardContent i[class~="configPanelLanguageI"]{
+    mask-image: url('/icons/globe.svg') ;
+}
+
 
