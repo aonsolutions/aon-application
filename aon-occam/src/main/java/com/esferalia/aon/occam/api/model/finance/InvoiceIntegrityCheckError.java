@@ -13,7 +13,8 @@ public enum InvoiceIntegrityCheckError implements Serializable{
 	REGISTRY_DOCUMENT_DIFFERENT("El NIF de la ficha de ClI/PRO/ACR no coincide con el NIF de la factura", false),
 	ACCOUNT_ENTRY_SUM_VS_INVOICE_TOTAL("El Total del apunte no coincide con el total factura", false),
 	ACCOUNT_ENTRY_VAT_VS_INVOICE_TAX("El Sumatorio IVA del apunte (472 y/o 477) no coincide con el total IVA de la factura", false),
-	INVOICE_TAX_DUPLICATE("El valor de 'invoice_tax' está duplicado.", true);
+	INVOICE_TAX_DUPLICATE("El valor de 'invoice_tax' está duplicado.", true),
+	INVOICE_TAXABLE_BASE0("El valor de 'taxable_base' en la cabecera de 'invoice' es 0.", true);
 	
 	String message;
 	boolean fix;

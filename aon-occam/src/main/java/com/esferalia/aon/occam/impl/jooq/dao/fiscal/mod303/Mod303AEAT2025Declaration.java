@@ -2623,7 +2623,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 
 	private static boolean rectificacionDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
-				&& (vat.isPurchase() || vat.isExpenses());
+				&& (vat.isPurchase() || vat.isExpenses())
+				&& AonMathUtils.isNotZero(vat.getPercentage()); // FALTA - NO INCLUIR LAS QUE SEAN DEL TIPO 0%
 	}
 
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat, Mod303 mod) {

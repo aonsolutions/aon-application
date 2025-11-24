@@ -34,7 +34,7 @@ public class LoginTestCase extends AppBaseTestCase {
 		"http://expired-multi-test.aonsolutions.org:8080/,86359314,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
 		"http://expired-multi-test.aonsolutions.org:8080/,asesor@multi-test.aonsolutions.org,org,The trial period/booking of the domain expired-multi-test.aonsolutions.org has expired. Contact your sales or support assigned for more information.",
 		
-		"http://multi-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive.",
+		"http://multi-test.aonsolutions.org:8080/,inactive,org,User inactive is currently inactive.",
 		//"http://factory-inactive-test.aonsolutions.org:8080/?jaas,inactive,org,User inactive is currently inactive."
 		
 	})
@@ -63,7 +63,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(2)
 	public void testLoginIllegalMixOfCollations() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/?jaas");
+				"http://payroll-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "ñacurutú");
 		String password = System.getProperty("integration.test.env.app.password", "ñacurutú");
 
@@ -90,7 +90,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(3)
 	public void testEnableSupport() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/?jaas");
+				"http://payroll-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "admin");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -123,7 +123,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(4)
 	public void testLoginSupport() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/?jaas");
+				"http://payroll-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "admin=ñacurutú");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -150,7 +150,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(5)
 	public void testLoginEnterpriseWithShared() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://general-payroll-test.aonsolutions.org:8080/?jaas");
+				"http://general-payroll-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "admin");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -178,7 +178,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(6)
 	public void testLoginEnterprisePayer() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payer-inactive-test.aonsolutions.org:8080/?jaas");
+				"http://payer-inactive-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "pagador@inactive-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -206,7 +206,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(7)
 	public void testLoginFactoryUser() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://multi-test.aonsolutions.org:8080/?jaas");
+				"http://multi-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "factory@multi-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -240,7 +240,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	@Order(7)
 	public void testLoginParentInactiveChild() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://payroll-test.aonsolutions.org:8080/?jaas");
+				"http://payroll-test.aonsolutions.org:8080/");
 		String email = System.getProperty("integration.test.env.app.auth", "admin");
 		String password = System.getProperty("integration.test.env.app.password", "org");
 
@@ -269,4 +269,33 @@ public class LoginTestCase extends AppBaseTestCase {
 			}
 		}
 	}
+
+	@Test
+	@Order(8)
+	public void testAuthEmailDialog() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/");
+		String email = System.getProperty("integration.test.env.app.auth", "expired");
+		String password = System.getProperty("integration.test.env.app.password", "expired");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonConfigurationUserCardEmail")));
+			
+			
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
 }

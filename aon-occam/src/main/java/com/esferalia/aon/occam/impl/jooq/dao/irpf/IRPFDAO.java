@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.fiscal.ISalaryFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
@@ -550,7 +551,8 @@ public class IRPFDAO {
 					.and(getSalaryDateField(fm).ge(getYearFirstDay(fm)))
 					.and(getSalaryDateField(fm).lt(getStartDate(fm)))
 					.and(SALARY.IRPF_BASE.ne( 0.0 ))
-					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+					.and(getEconomicAgreementCondition(fm))
 					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 					.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
@@ -576,7 +578,8 @@ public class IRPFDAO {
 					.and(getSalaryDateField(fm).ge(getStartDate(fm)))
 					.and(getSalaryDateField(fm).le(getEndDate(fm)))
 					.and(SALARY.IRPF_BASE.ne( 0.0 ))
-					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+					.and(getEconomicAgreementCondition(fm))
 					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 					.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
@@ -601,7 +604,8 @@ public class IRPFDAO {
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 				.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
 				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+				.and(getEconomicAgreementCondition(fm))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 				.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
@@ -610,6 +614,7 @@ public class IRPFDAO {
 			.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
 			.flatMap(List::stream);
 	}
+	
 	
 	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm, InvoiceFilter invoiceFilter) {
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
@@ -629,7 +634,8 @@ public class IRPFDAO {
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 			.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
 			.and(SALARY.IRPF_BASE.ne( 0.0 ))
-			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+			.and(getEconomicAgreementCondition(fm))
 			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 			.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 			.and(condition)
@@ -681,7 +687,8 @@ public class IRPFDAO {
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 			.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
 			.and(SALARY.IRPF_BASE.ne( 0.0 ))
-			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+			.and(getEconomicAgreementCondition(fm))
 			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 			.and(SALARY.ID.isNotNull())
 			.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
@@ -697,7 +704,8 @@ public class IRPFDAO {
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 				.and(ALCATRAZ.FS_MODEL.eq(fm.getId()))
 				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+				.and(getEconomicAgreementCondition(fm))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_NAME)
 			.fetch()
@@ -838,6 +846,14 @@ public class IRPFDAO {
 		}
 		return filter;
 	}
+	
+	// Administración del centro de trabajo igual que la del modelo o, si la del modelo es AEAT, tambien Canarias
+	public static Condition getEconomicAgreementCondition(IFiscalModel fm) {
+		Condition condition = WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value());
+		if (fm.isAEAT()) {
+			condition = condition.or(WORKPLACE.ECONOMICAGREEMENT.equal(Administration.CANARIAS.value()));
+		}
+		return condition;
+	}
+	
 }
-
-

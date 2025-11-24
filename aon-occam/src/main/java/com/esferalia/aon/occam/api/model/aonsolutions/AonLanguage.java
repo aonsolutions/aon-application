@@ -45,4 +45,35 @@ public enum AonLanguage implements Serializable{
 		}
 		return SPANISH;
 	}
+	
+	public boolean isBasque() {
+		return this == BASQUE;
+	}
+	
+	public boolean isCatalan() {
+		return this == CATALAN;
+	}
+	
+	public boolean isValencian() {
+		return this == VALENCIAN;
+	}
+	
+	public boolean isDeutsch() {
+		return this == DEUTSCH;
+	}
+	
+	public boolean isEnglish() {
+		return this == ENGLISH;
+	}
+	
+	public boolean isGalician() {
+		return this == GALICIAN;
+	}
+	
+	public boolean isSpanish() {
+		return this == SPANISH;
+	}
+	
+	
+	
 }

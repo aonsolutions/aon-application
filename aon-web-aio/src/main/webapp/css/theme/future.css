@@ -1,0 +1,294 @@
+@font-face {
+  font-family:"Inter-regular";
+  src: url(/fonts/Inter-Regular.woff) format("woff");
+  font-weight:400;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-medium";
+  src: url(/fonts/Inter-Medium.woff) format("woff");
+  font-weight:500;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-semibold";
+  src: url(/fonts/Inter-SemiBold.woff) format("woff");
+  font-weight:600;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-bold";
+  src: url(/fonts/Inter-Bold.woff) format("woff");
+  font-weight:700;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-extrabold";
+  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+  font-weight:800;
+  font-style:normal;
+}
+
+
+:root {
+	--aonTopMenuSpecial: transparent;
+	
+	--aonBackgroundColor: #ffffff;
+	--aonBackgroundColor2: #f1f5f9;
+	--colorNeutralBackground2: #ffffff;
+	--aonHeaderBackgroundColor: #0f172a;
+	--aonFontFamily: 'Inter-regular', sans-serif;
+}
+
+.aonBody{
+	font-size: 0.875rem;
+	background-color: var(--aonBackgroundColor2);
+}
+
+.rootPanel{
+	border-color: var(--aonBackgroundColor);
+	background-color: var(--aonBackgroundColor2);
+}
+
+.aonContentBeta{
+    background-color: var(--aonBackgroundColor2);
+}
+
+.aonNewLogo{
+ 	background-image: url("../../assets/aon-white-logo.svg");  
+}
+
+.aonHeader{
+	height: 4rem;
+	min-height: 4rem;
+}
+
+.aonMenuTopnav {
+	top: 4rem;
+    border-color: var(--aonBackgroundColor);
+    background-color: var(--aonBackgroundColor);
+}
+
+.aonMenuSideNav {
+	top: 4rem;
+    background-color: #f8fafc;
+}
+
+.aonNewMenuSideNavUl{
+    background-color: var(--aonWhite);
+}
+
+.aonHeader #aonHeaderCompanyName {
+    font-family: 'Inter-medium', sans-serif;
+}
+
+.aonHeader .material-icons, 
+.aonHeader #aonHeaderCompanyName,
+#applications .material-symbols-outlined, 
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--aonWhite);
+}
+
+#uploads{
+	display:none;
+}
+
+#new:hover,
+#home:hover,
+#topMenuHome:hover,
+#apps:hover,
+#invoice:hover,
+#comunica:hover,
+#documental:hover,
+#accounting:hover,
+#fiscal:hover,
+#payroll:hover,
+#timecontrol:hover,
+#note:hover,
+#messenger:hover,
+#warehouse:hover,
+#office:hover,
+#garage:hover,
+#academy:hover,
+#commerce:hover,
+#console:hover,
+#comercialMenu:hover,
+#commerceMenu:hover,
+#managementMenu:hover,
+#treasuryMenu:hover,
+#warehouseMenu:hover,
+#groupwareMenu:hover,
+#accountingMenu:hover,
+#fiscalMenu:hover,
+#payrollMenu:hover,
+#marketingMenu:hover,
+#configurationMenu:hover,
+#enterpriseMenu:hover,
+#consoleMenu:hover,
+#aonApplication:hover,
+#Superset:hover{
+  background-color:inherit;
+  
+}
+.aonNewMenuAppSpan {
+	line-height: 1.5rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#aonMenuListAppImgTop-office,
+#aonMenuListAppImgTop-managementMenu,
+#aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-fiscalMenu,
+#aonMenuListAppImgTop-payrollMenu,
+#aonMenuListAppImgTop-configurationMenu,
+#aonMenuListAppImgTop-enterpriseMenu,
+#aonMenuListAppImgTop-comercialMenu,
+#aonMenuListAppImgTop-treasuryMenu,
+#aonMenuListAppImgTop-groupwareMenu,
+#aonMenuListAppImgTop-marketingMenu {
+	width: 25.5px;
+	height: 25.5px;
+	mask-size: contain;
+	mask-position: center;
+    mask-repeat: no-repeat;
+	background-color: var(--aonTopAppTextColor);
+} 
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div i {
+  transition:transform .2s ease
+}
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div span {
+  transition:transform .2s ease;
+  font-size:.625rem
+}
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a:hover>div i {
+  transform:scale(1.4)
+}
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a:hover>div span {
+  transform:scale(1.2)
+}
+
+#aonMenuListAppImgTop-office {
+	mask-image: url('/icons/briefcase.svg');
+}
+
+#aonMenuListAppImgTop-managementMenu {
+    mask-image: url('/icons/file-bar-chart.svg') ;
+}
+
+#aonMenuListAppImgTop-accountingMenu {
+    mask-image: url('/icons/calculator.svg') ;
+}
+
+#aonMenuListAppImgTop-fiscalMenu {
+    mask-image: url('/icons/building-2.svg') ;
+}
+
+#aonMenuListAppImgTop-payrollMenu {
+    mask-image: url('/icons/users.svg') ;
+}
+
+#aonMenuListAppImgTop-configurationMenu {
+    mask-image: url('/icons/settings-2.svg') ;
+}
+
+#aonMenuListAppImgTop-enterpriseMenu {
+    mask-image: url('/icons/building.svg') ;
+}
+
+#aonMenuListAppImgTop-comercialMenu {
+    mask-image: url('/icons/heart-handshake.svg') ;
+}
+
+#aonMenuListAppImgTop-treasuryMenu {
+    mask-image: url('/icons/euro.svg') ;
+}
+
+#aonMenuListAppImgTop-groupwareMenu {
+    mask-image: url('/icons/files.svg') ;
+}
+
+#aonMenuListAppImgTop-marketingMenu{	
+    mask-image: url('/icons/target.svg') ;
+}
+
+#aonHeaderHomeButtonIcon,
+#aonHeaderCompanyListButtonIcon,
+#aonHeaderHelpButtonIcon,
+#aonHeaderConfigButtonIcon,
+#aonHeaderNotificationButtonIcon,
+#aonHeaderUserButtonIcon {
+	width: 25.5px;
+	height: 25.5px;
+	background-color: white;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+} 
+
+#aonHeaderHomeButtonIcon {
+	mask-image: url('/icons/home.svg') ;
+}
+
+#aonHeaderCompanyListButtonIcon{
+    mask-image: url('/icons/building.svg') ;
+}
+
+#aonHeaderHelpButtonIcon {	
+    mask-image: url('/icons/help-circle.svg') ;
+}
+	
+#aonHeaderConfigButtonIcon{
+    mask-image: url('/icons/settings.svg') ;
+	
+}
+
+#aonHeaderNotificationButtonIcon {
+    mask-image: url('/icons/bell.svg') ;
+}
+
+#aonHeaderUserButtonIcon{
+    mask-image: url('/icons/user.svg') ;
+}
+
+#aonMenuList-new {
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	position: relative;
+}
+
+.suiteMenuContent{
+	background-color: var(--aonBackgroundColor2);	
+}
+
+.aonSidenavTitle {
+  font-family: "Inter-semibold";
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  letter-spacing: -0.0075rem;
+}
+
+
+.suiteMenuContent aon-card {
+	display: block;
+	border-radius: .375rem;
+	width: calc(33.33% - 1rem);
+	min-width: 29rem;
+	box-sizing: border-box;
+}
+
+
+
+aon-card .aonCardTitleSection * {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  letter-spacing: -0.005rem;
+  font-family: "Inter-semibold", sans-serif;
+}
+
+aon-card .aonCardText {
+	font-size: 17px;
+}

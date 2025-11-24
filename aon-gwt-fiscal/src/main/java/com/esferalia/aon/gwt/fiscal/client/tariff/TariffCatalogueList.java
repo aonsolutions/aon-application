@@ -162,7 +162,7 @@ public class TariffCatalogueList extends HTMLPanel {
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
 						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-						tab.addRow(row, new Label(product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio"), col.getWidth());
+						tab.addRow(row, new Label(product.getBookingType().getDescription()), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Aon")){
 						tab.addRow(row, new Label(product.isBookingComposition() ? "Compuesto" : "Simple"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Despacho")){
@@ -213,7 +213,15 @@ public class TariffCatalogueList extends HTMLPanel {
 				    .sorted(
 				        Comparator.comparing(
 				                ProductBooking::getBookingType,
-				                Comparator.comparingInt(type -> type == ProductBookingType.PLAN ? 0 : 1)
+				                Comparator.comparingInt(type -> {
+				                    switch (type) {
+				                        case PLAN:         return 0;
+				                        case CONSULTANCY:  return 1;
+				                        case USER:         return 2;
+				                        case SERVICE:      return 3;
+				                        default:           return Integer.MAX_VALUE;
+				                    }
+				                })
 				        ).thenComparing(
 				                ProductBooking::getPosition,
 				                Comparator.nullsLast(Comparator.naturalOrder())
