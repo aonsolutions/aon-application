@@ -616,19 +616,23 @@ export class AonNewMenu extends AonElement {
 		a.appendChild(hoverDiv);
 		let div = this.createElement(TAG.DIV);
 		div.id = app.app;
-		// div.classList.add("aonNewMenuAppDiv");
-		div.style.padding = '1px';
-		div.style.display = 'flex';
-		div.style.alignItems = 'center';
-		div.style.justifyContent = 'center';
-		div.title = app.title;
-		div.style.height = style?.height || '56px';
-		div.style.flexDirection = style?.flexDirection || 'column';
-		div.style.transition = 'background-color 0.2s';
-		div.style.cursor = "pointer";
+		div.classList.add("aonNewMenuAppDiv");
 		// if (!LS.isLeftMenu()) {
 		// 	div.style.marginTop = "0px";
 		// }
+		//div.style.padding = '1px';
+		//div.style.display = 'flex';
+		//div.style.cursor = "pointer";
+		//div.style.alignItems = 'center';
+		//div.style.justifyContent = 'center';
+		//div.style.transition = 'background-color 0.2s';
+		div.title = app.title;
+		if (style?.height) {
+			div.style.height = style.height ;
+		}
+		if (style?.flexDirection){
+			div.style.flexDirection = style?.flexDirection;
+		}
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");

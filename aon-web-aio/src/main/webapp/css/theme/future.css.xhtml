@@ -24,7 +24,7 @@
 	}
 	@font-face {
 	  font-family:"Inter-semibold";
-	  src: url(/fonts/Inter-Semibold.woff) format("woff");
+	  src: url(/fonts/Inter-SemiBold.woff) format("woff");
 	  font-weight:600;
 	  font-style:normal;
 	}
@@ -43,6 +43,7 @@
 	
 
 	:root{
+		--aonBackgroundColor2: #f1f5f9;
 	    --colorNeutralBackground: #ffffff;
 	    --aonFontFamily: "Inter-medium", sans-serif;
 	}
@@ -50,11 +51,11 @@
 	body {
 		
 		font-family: var(--aonFontFamily) ;
-		background-color: var(--colorNeutralBackground, #fff)
+		background-color: var(--aonBackgroundColor2, #fff)
 	}
 	
 	table td {
-		font-size: .8125rem !important;
+		font-size: 14.875px /*.8125rem*/ !important;
 		font-family: var(--aonFontFamily) !important;
 	}
 	
@@ -199,12 +200,12 @@
 	.aon-editDataTable-header > th
 	 {
 	 	height: 3.625rem;
-		font-size: .875rem;
+		font-size: 14.875px; /*.875rem;*/
 	}	
 	
 	.aon-dataTable-header,
 	.aon-editDataTable-header {
-    	font-size: .8125rem;
+    	font-size: 14.875px; /*.8125rem;*/
 		font-family: "Inter-bold", sans-serif;
 	}
 
@@ -219,6 +220,9 @@
 	.aon-icon-shield {
 		background: url(#{aonResource.resolve['/icons/shield.svg']}) -0px -0px  no-repeat; 
 	}
+	.aon-icon16.aon-icon-shield {
+        background-size: 24px 14px;
+    }
 
 	.aon-icon-new,
 	.aon-icon-reset{
@@ -242,6 +246,11 @@
 	.aon-icon-search{
 		background-image: url(#{aonResource.resolve['/icons/search.svg']});
 	}
+	
+	input.aon-icon-search {
+  		background-position-x: 4px;
+		padding-left: 32px !important;
+  	}
 
 	.aon-icon-rubber{
 		background-image: url(#{aonResource.resolve['/icons/eraser.svg']}) ;
@@ -324,6 +333,321 @@
 	.aon-finding-toolbar-item.aon-icon-search {	
 		background-image: url(#{aonResource.resolve['/icons/file-search.svg']}) !important; 
 	}
+	
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"]) > * {
+	  background-color: var(--aonBackgroundColor2,#fff) !important;
+	}    
+	
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"])  .aon-finding-title-toolbar {
+  		margin-bottom: 1rem;
+  		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground) !important;
+
+		min-height: 48px;
+		padding-top: 8px;	
+		padding-bottom: 0px;
+	}
+		
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"])  .aon-scroll-area {
+  		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground) !important;
+	}
+	
+	.aonCard,
+	.aon-group,
+	.aon-panelGrid,
+	.aonCards .aonCard{
+		border:none;
+	}
+	.aon-group-title{
+		border-bottom: .1rem solid #cbd5e1;
+	}
+	
+	
+	.aon-group-title *,
+	.aon-portlet-title {
+		font-family: "Inter-semibold";
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+		letter-spacing: -0.005rem;	
+	}	
+	
+	.aon-portlet-title {
+		border: 0;
+		margin: 10px;
+		color: #1e293b;
+		padding: 15px 22px;
+		border-bottom: .1rem solid #cbd5e1;
+    }
+	
+	.rich-stglpanel-header{
+		background-color: #fff;
+	}
+
+	.aon-inputText-disabled{
+		background-color: var(--aonBackgroundColor2,#f2f2f2) !important;
+	}
+
+	.aon-panelTabSet {
+/* 		padding: .625rem;
+		display: flex;
+		align-content: center;
+		flex-wrap: wrap;
+		box-sizing: border-box;
+		gap: .5rem;
+		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground);
+		width: 100%;
+ */	}
+ 
+	.rich-tabpanel-content{
+	    background-color: var(--colorNeutralBackground);
+	}
+	
+	.rich-tab-active{
+		padding: 10.625px; /*.625rem;*/
+	}
+	
+	.rich-tab-active,
+	.rich-tabhdr-cell-active{ 
+		border: none;
+		border-radius: .375rem;
+		box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+		background-color: var(--colorNeutralBackground);
+	}
+
+	.rich-tab-inactive,
+	.rich-tabhdr-cell-inactive{ 
+		border:none;
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aon-panelTabSet-headerClass > table {
+		padding: 10.625px; /*.625rem;*/
+		cursor: pointer;
+		border-radius: .375rem;
+		font-size: 14.875px; /*.875rem;*/
+
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aon-note-new{
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aonDataScroller .aon-dataScroller-buttons tr td {
+        background-color: var(--aonBackgroundColor2);
+	}
+	
+	.rich-menu-list-border{
+	}
+	
+	
+	.aon-button-goto{
+  		width: 24px ;
+  		height: 2.5rem ;	
+		padding: 13px !important;
+		background-size: inherit;
+        background-image: url(#{aonResource.resolve['/icons/external-link.svg']});
+	}
+
+	.aon-icon-exception{
+		padding: 13px;
+		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: red;
+		background-image: none;
+    	mask-image: url(#{aonResource.resolve['/icons/alert-triangle.svg']});		
+	}
+
+	.aon-icon-predetermine{
+		padding: 13px;
+		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: blue;
+		background-image: none;
+        mask-image: url(#{aonResource.resolve['/icons/check.svg']});
+	}
+	
+	.aon-lookupButton-new{
+  		width: 24px;
+  		height: 2.5rem;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/plus.svg']});
+	}
+	
+	.aon-lookupButton, .aon-lookupButtonPopup{
+  		width: 24px;
+  		height: 2.5rem;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/search.svg']});
+  	}
+  	
+  	.aon-lookupButton-clear{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/refresh-cw.svg']});
+  	}
+  	
+  	div[id$="LookupButtons"] .aon-icon-reset {
+  		border:none !important; /*at element*/
+	    background-image: url(#{aonResource.resolve['/icons/plus.svg']});
+  	}	
+  	
+  	.rich-calendar-button {
+  	    margin-left: 6px !important;
+  		background-size: 24px;
+        background-image: url(#{aonResource.resolve['/icons/calendar.svg']});
+  	}
+ 
+   	aon-selectInputDate-buttonClass.rich-calendar-button{
+  		padding-left: 6px !important;
+  	}
+  	
+  	.aon-icon-ambito{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+        background-image: url(#{aonResource.resolve['/icons/shield.svg']});
+  	}
+  	
+  	.aon-icon-edit-add-simple{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+  		margin-right: 0px !important;
+        background-image: url(#{aonResource.resolve['/icons/pencil.svg']});
+  	}
+	
+	.aon-finding-toolbar-item.aon-icon-new:hover, 
+	.aon-finding-toolbar-item.aon-icon-csv:hover, 
+	.aon-finding-toolbar-item.aon-icon-pdf:hover, 
+	.aon-finding-toolbar-item.aon-icon-info:hover, 
+	.aon-finding-toolbar-item.aon-icon-excel:hover, 
+	.aon-finding-toolbar-item.aon-icon-audit:hover, 
+	.aon-finding-toolbar-item.aon-icon-reset:hover, 
+	.aon-finding-toolbar-item.aon-icon-accept:hover, 
+	.aon-finding-toolbar-item.aon-icon-cancel:hover, 
+	.aon-finding-toolbar-item.aon-icon-rubber:hover, 
+	.aon-finding-toolbar-item.aon-icon-search:hover, 
+	.aon-finding-toolbar-item.aon-icon-delete:hover, 
+	.aon-finding-toolbar-item.aon-icon-invoice:hover, 
+	.aon-finding-toolbar-item.aon-icon-webmail2:hover, 
+	.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover, 
+	.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover, 
+	.aon-finding-toolbar-item.rich-fileupload-ico-add:hover, 
+	.aon-finding-toolbar-item.aon-icon-filter:hover, 
+	.aon-finding-toolbar-item.aon-icon-filter-off:hover, 
+	.aon-finding-toolbar-item.aon-icon-attach-file:hover, 
+	.aon-finding-toolbar-item.aon-icon-task-assume:hover, 
+	.aon-finding-toolbar-item.aon-icon-task-liberate:hover, 
+	.aon-finding-toolbar-item.aon-icon-close:hover, 
+	.aon-finding-toolbar-item.aon-lookupButton-clear:hover, 
+	.aon-finding-toolbar-item.aon-event-repeat:hover, 
+	.aon-finding-toolbar-item.aon-icon-clear:hover, 
+	.aon-finding-toolbar-item.aon-icon-visibility-off:hover, 
+	.aon-finding-toolbar-item.aon-icon-add-task:hover, 
+	.aon-finding-toolbar-item.aon-icon-ink-selection:hover, 
+	.aon-finding-toolbar-item.aon-icon-remove-selection:hover, 
+	.aon-finding-toolbar-item.aon-icon-done-all:hover, 
+	.aon-finding-toolbar-item.aon-icon-remove-done:hover,
+	.aon-finding-toolbar-item.aon-dropDownMenu:hover {
+  		background-color: inherit;
+	}
+	
+	.rich-menu-list-border{
+		min-width: 12.5rem;
+  		height: auto;
+  		border-radius: .375rem;
+		background-color: #fff;
+	  	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	}
+	
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-new,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-csv,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-pdf,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-info,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-excel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-audit,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-reset,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-accept,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-cancel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-rubber, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-search, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-delete, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-invoice, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-webmail2, 
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-statistics, 
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans {
+		height: 42px;
+		width: 100%;
+		
+		line-height: 42px;
+		border-radius: 0px;
+		display: inline-block;
+		
+		background-size: 24px;
+		background-position: left;
+		
+		padding: 0px 0px 0px 32px;
+/* 		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: #1e293b;
+ */
+ 		background-color: transparent;
+ 				
+		color: #1e293b;
+		font-size: 14.725px;
+		font-family: "Inter-medium", sans-serif;
+	}	
+	
+	.rich-menu-item:hover, 
+	.aon-menuItem-selectClass {
+	  color: #fff;
+	  border:none;		
+	  font-size: 14.725px;
+	  background-color:#64748b;
+	}
+		
+	.rich-menu-item:hover *, 
+	.aon-menuItem-selectClass * {
+	    color: #fff !important;
+	}
+	
+	.aon-panelGrid-search .rich-stglpanel-header{
+	    background-color: transparent;
+	}
+	
+	.aon-search-lookup-button {
+		border: none;
+	    background-color: #0f172a;
+	 	border-radius: 4px;
+		color: #fff;
+		cursor: pointer;
+		font-family: var(--aonFontFamily);
+		height: 3rem;
+		letter-spacing: .75px;
+		margin-top: 1rem;
+		padding: 0 !important;
+    }
+    
+    .aon-panelGrid-search{
+        border:none;
+    }
+    
+    .aon-panelGrid-search-info-internal{
+    	font-size: 14.875px; /*.875rem;*/
+    	font-family: "Inter-regular", sans-serif;
+    }
+	
+}
+	
 
 </style>
 
