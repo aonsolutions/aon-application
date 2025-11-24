@@ -221,6 +221,7 @@ export const FISCAL_PANEL = 'Panel Fiskala';
 export const FOOTER = 'Oina';
 export const FROM = 'Noiztik';
 export const FRENCH = 'Frantsesa';
+export const FUTURE = 'Laster...';
 
 // ----- G
 

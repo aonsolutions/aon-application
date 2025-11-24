@@ -32,3 +32,5 @@ export const generateToken = (data) => open(`${API_URL}/generate_token?json=${da
 export const generateTokenJson = (data, sessionData) => get(`${API_URL}/generate_token/json`, data, sessionData);
 
 export const generateTokenSig = (data) => get(`${API_URL}/generate_token/sig`, data);
+
+export const assignUserAuth = (data, sessionData) => put(`${API_URL}/user/auth`, data, sessionData);

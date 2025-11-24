@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
@@ -9,11 +9,13 @@ export class AonDialog extends AonElement {
   TITLE;
   CONTENT;
   ACTION;
+	DESCRIPTION;
   CANCEL;
   ACCEPT;
   BUTTON_LEFT;
   BUTTON_RIGHT;
   OUTSIDE_CLICK_CANCEL;
+	BUTTON_CLOSE;
 
   static get observedAttributes() {
     return ['width', 'autoclose', 'type'];
@@ -102,7 +104,7 @@ export class AonDialog extends AonElement {
     this.classList.add('aon-dialog-hidden');
     this.DIALOG       = this.id     + 'Dialog';
     this.MAIN         = this.DIALOG + 'Main';
-    this.TITLE        = this.DIALOG + CONSTANT.TITLE;
+    this.TITLE 				= this.DIALOG + 'Title';
     this.CONTENT      = this.DIALOG + 'Content';
     this.ACTION       = this.DIALOG + 'Action';
     this.CANCEL       = this.ACTION + 'Cancel';

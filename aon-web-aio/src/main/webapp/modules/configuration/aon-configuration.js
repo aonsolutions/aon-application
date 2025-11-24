@@ -104,7 +104,7 @@ export class AonConfiguration extends AonElement {
 		// Ficha Cliente
 		let company = LS.getCompany();
 		
-		if (this.dur.isAdmin() && company && company.registry && company.type !== "OFFICE") {
+		if (/*this.dur.isAdmin()*/ this.dur.isParentUser() && company && company.registry && company.type !== "OFFICE") {
 			getRelationShipCompany({
 				url: company.domain,
 				relatedRegistry: company.registry
@@ -213,12 +213,12 @@ export class AonConfiguration extends AonElement {
 					});
 				}
 
-//				if (!this.isMobile()) {
+				if (!this.isMobile() && ( (!this.dur.isTrial() && !this.dur.hasBeenTrial()) || this.dur.isParentUser()) ) {
 					companyOptions.push({
 						name: MSG.HIRING,
 						fn: () => this.buildStore(),
 					});
-//				}
+				}
 			}
 			
 			if(this.dur.isTrial() || this.dur.hasBeenTrial()){

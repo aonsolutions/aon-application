@@ -73,7 +73,7 @@ export class AonConfig extends AonElement {
             this.rootPanel(aonConfiguration);
             let rightPanel = document.querySelector('aon-right-panel');
             if (rightPanel) {
-               rightPanel.close();
+              rightPanel.close();
             }
         });
       } else {

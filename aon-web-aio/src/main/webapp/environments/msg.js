@@ -297,7 +297,10 @@ export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const ELABORATION = "Elaboración"
 export const ELABORATIONS = "Elaboraciones"
 export const EMAIL = MSG.EMAIL;
-export const EMAIL_VERIFICATION = 'Verificación de Email';
+export const EMAIL_ADD = 'Asignar dirección de correo electrónico';
+export const EMAIL_VERIFICATION = 'Verificación dirección de correo electrónico';
+export const EMAIL_ADD_DESCRIPTION = 'Es necesario asignar una dirección de correo electrónico a una cuenta para poder recuperar la contraseña, recibir notificaciones y confirmaciones, y para la seguridad de la cuenta'
+export const EMAIL_VERIFICATION_DESCRIPTION = '*Introduzca el código de verificación que hemos enviado a su dirección de correo electrónico';
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const EMPLOYEES = MSG.EMPLOYEES;
 export const END_DATE = MSG.END_DATE;
@@ -342,6 +345,7 @@ export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 export const FROM = MSG.FROM;
 export const FRENCH = MSG.FRENCH;
+export const FUTURE = MSG.FUTURE;
 
 // ----- G
 

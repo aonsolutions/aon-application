@@ -151,6 +151,7 @@ export const DELETE = 'Esborrar';
 export const DELETE_BACKGROUND_CONFIRM = "Estàs segur d'eliminar el fons";
 export const DELETE_CATEGORY = 'Esborrar Categoria';
 export const DELETE_CONFIRM = "Estàs segur d'eliminar";
+
 export const DELETE_FILE = 'Esborrar Fitxer';
 export const DELETE_FILE_CONFIRM = "Estàs segur d'eliminar el fitxer";
 export const DELETE_FOREVER = 'Esborrar Definitivament';
@@ -219,8 +220,10 @@ export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
 export const FISCAL = 'Fiscal';
 export const FISCAL_PANEL = 'Panell Fiscal';
 export const FOOTER = 'Peu';
-export const FROM = 'Des'
+export const FROM = 'Des';
 export const FRENCH = 'Francès';
+export const FUTURE = 'Molt aviat...';
+
 // ----- G
 
 export const GALICIAN = 'Gallec';

@@ -40,6 +40,10 @@ public class UserJSON {
 
 		List<OldAonRole> roles = OldAonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.ROLES));
 		user.setRoles(roles.toArray(OldAonRole[]::new));
+		
+		JsonUtils.optDate(json, IJsonNames.EXPIRATION_DATE)
+		.ifPresent(user::setExpirationDate);
+		
 		return user;
 	}
 	
@@ -58,6 +62,8 @@ public class UserJSON {
 				? AuthJSON.toJSON(user.getAuth())
 				: new JSONObject();
 		
+		JsonUtils.putDate(json, IJsonNames.EXPIRATION_DATE, user.getExpirationDate());
+		
 		return json
 			.put(IJsonNames.ID, user.getId())
 			.put(IJsonNames.DOMAIN, user.getDomain().getId())
@@ -69,6 +75,7 @@ public class UserJSON {
 			.put(IJsonNames.SHARED, user.isShared())
 			.put(IJsonNames.LOGIN, user.getLogin())
 			.put(IJsonNames.ACTIVE, user.isActive())
+			.put(IJsonNames.UUID, user.getAuth().getUuid())
 			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()))
 			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(user.getRegistry()))
 			.put(IJsonNames.ROLES, OldAonRoleJSON.toJSON(user.getUserRoles()));

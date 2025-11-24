@@ -110,20 +110,44 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.add(subtitle);
 		
 		List<ProductBooking> packsProducts = products.stream()
-				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || p.getBookingType().equals(ProductBookingType.CONSULTANCY))
+				.sorted(
+			        Comparator.comparing(
+			                ProductBooking::getBookingType,
+			                Comparator.comparingInt(type -> {
+			                    switch (type) {
+			                        case PLAN:         return 0;
+			                        case CONSULTANCY:  return 1;
+			                        default:           return Integer.MAX_VALUE;
+			                    }
+			                })
+			        ).thenComparing(
+			                ProductBooking::getPosition,
+			                Comparator.nullsLast(Comparator.naturalOrder())
+			        )
+			    )
+				.collect(Collectors.toList());
+		
+		if(!packsProducts.isEmpty()) {
+			createPacks(cataloguePanel, packsProducts);
+		}
+		
+		List<ProductBooking> aonUsers = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.USER))
 				.sorted(Comparator.comparing(
 			        ProductBooking::getPosition,
 			        Comparator.nullsLast(Comparator.naturalOrder())
 			    ))
 				.collect(Collectors.toList());
-		if(!packsProducts.isEmpty()) {
-			createPacks(cataloguePanel, packsProducts);
-		}
 		
-		Label aditional = new Label("Adicional");
-		aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
-		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-		cataloguePanel.add(aditional);
+		if(!aonUsers.isEmpty()) {
+			Label users = new Label("Usuarios");
+			users.getElement().getStyle().setProperty("font-size", "1.2rem");
+			users.getElement().getStyle().setProperty("margin", "1rem 0");
+			cataloguePanel.add(users);
+			
+			createServices(cataloguePanel, aonUsers);
+		}
 		
 		List<ProductBooking> aonServices = products.stream()
 				.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
@@ -133,6 +157,11 @@ public class ProductCatalogue extends HTMLPanel {
 			    ))
 				.collect(Collectors.toList());
 		if(!aonServices.isEmpty()) {
+			Label aditional = new Label("Adicional");
+			aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
+			aditional.getElement().getStyle().setProperty("margin", "1rem 0");
+			cataloguePanel.add(aditional);
+			
 			createServices(cataloguePanel, aonServices);
 		}
 		
@@ -268,9 +297,9 @@ public class ProductCatalogue extends HTMLPanel {
 		
 	}
 	
-	private Button createServiceButton(Product packProduct) {
+	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText("Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

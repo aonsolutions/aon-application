@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -379,6 +380,12 @@ public class SistemaRED2AON {
 
 								Date l13startDate = null;
 								if (salary.getSalaryType() == SalaryType.L13) {
+									Date calcsStart = calcs.keySet().stream().filter(Objects::nonNull)
+											.map(Period::getStartDate).sorted().findFirst().orElse(null);
+									if (calcsStart != null && employee.getStartDate().after(calcsStart)) {
+										return;
+									}
+									
 									l13startDate = salary.getStartDate();
 									salary.setStartDate(employee.getStartDate());
 									salary.setIssueDate(min(salary.getEndDate(), endDate));

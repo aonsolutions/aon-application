@@ -8,24 +8,16 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
-import net.aonsolutions.aon.in.pdf.maker.warehouse.WarehouseSaleTemplate;
-import net.aonsolutions.aon.in.pdf.maker.warehouse.WarehouseTemplate;
 
 public class WarehouseTest {
 
@@ -63,49 +55,6 @@ public class WarehouseTest {
 		
 		
 	}
-	
-	@Test
-	@Ignore
-	public void test2() throws CanNotCreatePdfException, IOException {
-		Registry registry = new Registry()
-			.setName("CONSERVAS LA BRÚJULA S.L.")
-			.setDocument("B02546521");
-		
-		Registry registry2 = new Registry()
-				.setName("PAQUETES OREKA S.L.")
-				.setDocument("B21321234");
-		
-		RegistryAddress address = new RegistryAddress();
-		address.setAddress("Rúa Central, 8 P.I. Do Salnés");
-		address.setAddress2("Puerta 288");
-		address.setAddress3("Hemisferio sur");
-		address.setCity("Ribadumia");
-		address.setZip("36636");
-		address.setCountry(Country.ES);
-		address.setProvince("Pontevedra");
-		address.setMain(true);
-		
-		Customer customer = new Customer()
-				.copy(registry);
-		
-		Carrier carrier = new Carrier()
-				.copy(registry2);
-		
-		
-		Sales sales = new Sales()
-				.setId(12315)
-				.setDomain(8786)
-				.setCarrier(carrier)
-				.setCustomer(customer)
-				.setShippingAddress(address)
-				.setPurchaseReference("01187051")
-				.setDeliveryDate(new Date());
-		
-		try (WarehouseSaleTemplate wt = new WarehouseSaleTemplate(sales, new Delivery())) {
-			wt.save(new FileOutputStream("./WarehouseSalesTest.pdf"));
-		}		
-	}
-	
 	
 	@Test
 	public void fakerTest() throws CanNotCreatePdfException, IOException {
@@ -147,6 +96,7 @@ public class WarehouseTest {
 		String sscc = possibleNull(faker.idNumber().valid(), 30);
 		String ean128 = possibleNull(faker.idNumber().valid(), 30);
 		String barcode = possibleNull(faker.idNumber().valid(), 30);
+		
 		try (WarehouseTemplate wt = new WarehouseTemplate(company, item, logo, barcode, quantity, ean128, sscc)) {
 			wt.save(/*new FileOutputStream("./WarehouseRandomTest.pdf")*/OutputStream.nullOutputStream());
 		}

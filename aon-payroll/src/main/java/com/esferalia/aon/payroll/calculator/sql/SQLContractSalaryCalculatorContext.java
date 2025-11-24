@@ -3982,10 +3982,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( (leaveType == LeaveType.MATERNITY ||
 				leaveType == LeaveType.PATERNITY)
 			&& isPartialTime()) {
-			return this.getBr(add(date, Calendar.MONTH, -1), leaveType);
+			return this.getBr(leaveType, add(date, Calendar.MONTH, -1), date);
 		} else if ( leaveType == LeaveType.MATERNITY ||
 				leaveType == LeaveType.PATERNITY ) {
-			return this.br(add(date, Calendar.MONTH, -1));
+			//return this.br(add(date, Calendar.MONTH, -1));
+			return this.getBr(add(date, Calendar.MONTH, -1), date);
 		} else if ( isPartialTime() && Period.compare(date,getVariable(BOE_A_2024_26917_START, Date.class)) > 0 ) {
 			return this.br(add(date, Calendar.MONTH, -1));
 		} else {
@@ -4007,6 +4008,37 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		// No salaries are present.
 		return calculateBr(date.before(contractStartDate) ? contractStartDate : date);
+	}
+
+	public Object getBr(Date ...dates) throws ExpressionException, SQLException, SalaryException {
+		for ( Date date : dates) { 
+			double br = getSavedBr(date, null);
+			if (br > 0.00)
+				return br;
+			br = getL00Br(date);
+			if (br > 0.00)
+				return br;
+		}
+
+		// No salaries are present.
+		return calculateBr(dates[0].before(contractStartDate) ? contractStartDate : dates[0]);
+	}
+
+	public Object getBr(LeaveType leaveType, Date ...dates) throws ExpressionException, SQLException, SalaryException {
+		
+		for ( Date date : dates) { 
+			double br = getSavedBr(date, leaveType);
+			if (br > 0.00)
+				return br;
+			br = getL00Br(date);
+			if (br > 0.00)
+				return br;
+		}
+		
+		Date date = Arrays.stream(dates).findFirst()
+				.orElseThrow(() -> new UndefinedVariablesException(ContextVariable.BR));
+		return calculateBr(date.before(contractStartDate) ? contractStartDate : date);
+		
 	}
 
 	public Object getBr(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {

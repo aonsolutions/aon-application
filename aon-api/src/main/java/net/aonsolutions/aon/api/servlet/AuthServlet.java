@@ -114,8 +114,8 @@ public class AuthServlet extends AonApiHttpServlet{
 	
 	private static JSONObject saveAuth(AonApiData api) {
 	    Auth auth = AuthJSON.fromJSON(api.getData());
-	    SECURITY.saveAuth(auth);
-	    return new JSONObject();
+	    auth = SECURITY.saveAuth(api.getDomain(), api.getUser().getLogin(), auth);
+	    return AuthJSON.toJSON(auth);
     }
 
 	

@@ -173,9 +173,9 @@ public class CataloguePackCard extends HTMLPanel {
 		
 	}
 
-	private void createButton(Product packProduct) {
+	private void createButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText("Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

@@ -45,6 +45,7 @@ import jakarta.servlet.http.HttpSession;
 public class JsfAppServlet extends HttpServlet {
 
 	private static final String TOKEN = "token";
+	private static final String THEME = "theme";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
 	private static final String READ_ONLY = "readOnly";
@@ -102,6 +103,7 @@ public class JsfAppServlet extends HttpServlet {
 
 	private void initDesktopController(HttpServletRequest req) {
 		AppController appController =  (AppController) AonUtil.getRegisteredBean(AppController.CONTROLLER_NAME);
+		appController.setTheme(req.getParameter(THEME));
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));

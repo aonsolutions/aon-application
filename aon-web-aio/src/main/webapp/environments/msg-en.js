@@ -224,6 +224,7 @@ export const FISCAL_PANEL = 'Fiscal Panel';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
 export const FRENCH = 'French';
+export const FUTURE = 'Coming soon...';
 
 // ----- G
 

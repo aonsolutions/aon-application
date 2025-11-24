@@ -223,6 +223,7 @@ export const FISCAL_PANEL = 'Panel Fiscal';
 export const FOOTER = 'Pé';
 export const FROM = 'Desde';
 export const FRENCH = 'Francés'
+export const FUTURE = 'Próximamente...';
 
 // ----- G
 
