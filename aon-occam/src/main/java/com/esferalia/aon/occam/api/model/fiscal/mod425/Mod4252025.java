@@ -110,7 +110,7 @@ public class Mod4252025 extends Mod390  {
 	private Activity425 activity2; 		// Actividades a las que se refiere la declaración - Otras (2)
 	private Activity425 activity3; 		// Actividades a las que se refiere la declaración - Otras (3) 	 
 	private Activity425 activity4; 		// Actividades a las que se refiere la declaración - Otras (4)
-	private Activity425 activity5; 		// Actividades a las que se refiere la declaración - Otras (5) // FALTA - ESTA NO ESTA EN EL IMPRESO PERO IGUAL LA SOPORTA EL FICHERO
+	private Activity425 activity5; 		// Actividades a las que se refiere la declaración - Otras (5)
 	private String mergedDeclarationDocument; 	// Declaración de sujeto pasivo incluido en autoliquidaciones conjuntas - NIF
 	private String mergedDeclarationName; 		// Declaración de sujeto pasivo incluido en autoliquidaciones conjuntas - Razón social
 	
@@ -122,7 +122,7 @@ public class Mod4252025 extends Mod390  {
 	
 	private Map<Mod4252025DetailKey,Mod425Detail> generalRegime; // Operaciones realizadas en régimen general
 	
-	// FALTA - POR AHORA SOLO VOY A PONER 2 IGUAL QUE ESTA EN EL 390 DE LA AEAT
+	// POR AHORA SOLO VOY A PONER 2 IGUAL QUE ESTA EN EL 390 DE LA AEAT
 	private SimpliedRegimeActivity425 simpRegime1; // Operaciones realizadas en régimen simplificado (1)
 	private SimpliedRegimeActivity425 simpRegime2; // Operaciones realizadas en régimen simplificado (2)
 //	private SimpliedRegimeActivity425 simpRegime3; // Operaciones realizadas en régimen simplificado (3)

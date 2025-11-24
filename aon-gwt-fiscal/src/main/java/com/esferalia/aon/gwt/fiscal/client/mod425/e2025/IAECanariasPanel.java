@@ -68,30 +68,9 @@ public class IAECanariasPanel extends AonCustomDialog implements HasSelectionHan
 		descTable.addLabelWidgetRow(AON.MSG.activityDescription(),description);
 		descPanel.add(descTable);
 		
-		// FALTA - NO SE MUY BIEN QUE PINTA AQUI ESTE BOTON
-//		FlowPanel buttonPanel = new FlowPanel();
-//		buttonPanel.setStyleName(AON.CSS.aonTextCenter());
-//    	final Button okButton = new Button();
-//    	okButton.setStyleName(AON.CSS.aonOkButton());
-//    	okButton.setText( AON.MSG.accept());
-//    	okButton.addClickHandler(event -> {
-//			okButton.setEnabled(false);
-//			hide();
-//			String activityType = activityTypeBox.getSelectedValue();
-//			SelectionEvent.fire(IAECanariasPanel.this, 
-//				new Activity425()
-//		      		.setDescription(description.getValue())
-//		      		.setEpigraph(null)
-//		      		.setKey(activityType==null?null:activityType.toString()));
-//		});
-//    	buttonPanel.add(okButton);
-//		descPanel.add(buttonPanel);
-		
 		descriptionPanel.add(descPanel);
-		
 		deckPanel.add(tablePanel);
 		deckPanel.add(descriptionPanel);
-		
 		dockPanel.add(deckPanel);
 		add(dockPanel);
 		dockPanel.forceLayout();

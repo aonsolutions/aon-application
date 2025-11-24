@@ -45,7 +45,6 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG, AEAT_BG, CANARIAS_BG };
 
-	// FALTA - NO HAY IMAGEN PARA CANARIAS, NO SE PONE LA IMAGEN, SOLO TEXTO
 //	protected  static final String[] IMAGES = new String[] { 
 //			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
 //			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
@@ -68,7 +67,8 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
 		headerFont.setColor(IndexedColors.WHITE.index);
-		headerFont.setFontHeightInPoints((short) 10);
+//		headerFont.setFontHeightInPoints((short) 10);
+		headerFont.setFontHeightInPoints((short) 14);
 		
 		headerCellStyle.setFont(headerFont);
 		headerCellStyle.setFillForegroundColor(COLORS[mod425.getAdministration().ordinal()]);
@@ -95,12 +95,21 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 //			e.printStackTrace();
 //			// Sin Imagen,.
 //		}
-		CellUtil.createCell(row, 0,"");
+		
+		// Modelo
+//		CellUtil.createCell(row, 0, "");
+		CellUtil.createCell(row, 0, FiscalModelUtils.getModelName(mod425), headerCellStyle);
 		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 0, 0));
 		
-		// Titulo completo del modelo
-		CellUtil.createCell(row, 1, "Modelo 425. IGIC. Declaración Resumen Anual. Ejercicio " + AonNumberUtils.toString(mod425.getYear()),headerCellStyle);
-		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount), 1,4));
+		// Descripción
+//		CellUtil.createCell(row, 1, "Modelo 425. IGIC. Declaración Resumen Anual. Ejercicio " + AonNumberUtils.toString(mod425.getYear()),headerCellStyle);
+//		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount), 1,4));
+		CellUtil.createCell(row, 1, FiscalModelUtils.getModelDescription(mod425), headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 1, 3));
+		
+		// Ejercicio
+		CellUtil.createCell(row, 4, AonNumberUtils.toString(mod425.getYear()), headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 4, 4));
 		
 		// NIF y Nombre de la Empresa
 		row = sheet.createRow(rowCount++);
@@ -271,8 +280,9 @@ public class Mod4252025ExcelAction extends AbsExcelAction {
 			CellUtil.createCell(row, cellCount++, "", style);
 		else createAmountCell(m425.ensure(key).getPercent(), isBold);
 		
-		// Cuota
-		createAmountCell(m425.ensure(key).getQuota(), isBold);
+		// Cuota - Alguna casilla no lleva cuota
+		if (key != Mod4252025DetailKey.C074)
+			createAmountCell(m425.ensure(key).getQuota(), isBold);
     	
     }
     

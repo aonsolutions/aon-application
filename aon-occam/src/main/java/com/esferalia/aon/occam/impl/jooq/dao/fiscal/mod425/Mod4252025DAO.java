@@ -23,19 +23,20 @@ import org.jooq.exception.DataAccessException;
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-//import com.esferalia.aon.occam.api.model.fiscal.mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025.Mod425Detail;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025DetailKey;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
@@ -290,6 +291,10 @@ public class Mod4252025DAO {
 	private static void fillFromConfiguration(AONContext ctx, Mod4252025 mod425) {
 		Company company = CompanyDAO.getCompany(ctx, mod425.getDomain());
 		if (company != null) {
+			
+			initializeIdentificationData(ctx, mod425);
+			
+			// Representantes
 			ctx.getDslContext().select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME)
 				.from(RDIR_STAFF)
 				.where(RDIR_STAFF.DOMAIN.eq(mod425.getDomain()))
@@ -299,10 +304,7 @@ public class Mod4252025DAO {
 				.stream()
 				.forEach( rec -> {
 					String document = rec.getValue(RDIR_STAFF.DOCUMENT);
-					String name = rec.getValue(RDIR_STAFF.NAME);
-					
-					// FALTA - AQUI CREO QUE VAN LOS DATOS DEL DOMICILIO FISCAL					
-					
+					String name = rec.getValue(RDIR_STAFF.NAME);					
 					if (mod425.isLegalEntity()) {
 						LegalRepresentative legalRepr = new LegalRepresentative()
 							.setDocument(document)
@@ -435,10 +437,12 @@ public class Mod4252025DAO {
 			fillFromConfiguration(ctx, mod425);	
 		}
 		
-		fillSimplifedRegimeData(ctx, mod425);
+		// FALTA - REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
+//		fillSimplifedRegimeData(ctx, mod425);
 		fillGeneralRegimeData(ctx, mod425);
 		if (mod425.isSimplifiedRegime()) {
-			fillSimplifiedDeclarationResults(ctx, mod425);
+			// FALTA - REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
+//			fillSimplifiedDeclarationResults(ctx, mod425);
 		} else {
 			fillGeneralDeclarationResults(ctx, mod425);
 		}
@@ -484,8 +488,8 @@ public class Mod4252025DAO {
 		.setReplacedReceipt(rec.getValue(FS_MODEL390.REPLACED_RECEIPT))
 		.setComments(rec.getValue(FS_MODEL390.COMMENTS));
 		
+		// Cargar resto de los dato del modelo desde el XML. Se controla que la cabecera del XML sea la correcta
 		String model = rec.getValue(FS_MODEL390.MODEL);
-		// FALTA - CONTROLAR QUE LA CABECERA DEL XML SEA LA CORRECTA - MIRAR TAMBIEN EL AÑO O A PARTIR DE ESE AÑO
 		if (AonStringUtils.contains(model, "<DEC MOD=\"425\" ANY=\""+mod425.getYear()+"\""))  { 
 			StringReader reader = new StringReader(rec.getValue(FS_MODEL390.MODEL));
 			try {
@@ -782,7 +786,6 @@ public class Mod4252025DAO {
 ////		CAG4_V6  (Mod303Key.CT_SA4A,(src,mod425) -> {mod425.getFarmerRegime4().setInputQuotas(src.getAmount());return true;}),
 ////		CAG4_V7  (Mod303Key.CT_SA48,(src,mod425) -> {mod425.getFarmerRegime4().setQuota(src.getAmount());return true;}),
 //		
-//		// FALTA - ESTO SE HACE EN BASE AL MODELO 303 RS, EN CANARIAS AUN NO ESTA HECHO EL MODELO 421, QUE ES EL REGIMEN SIMPLIFICADO
 //		CAC1     (Mod303Key.CT_S101,(src,mod425) -> {mod425.getSimpRegime1().setEpigrafe(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-")));return true;}),
 //		CAC1_M1U (Mod303Key.CT_S11I, (src,mod425) -> {mod425.getSimpRegime1().setUnit1(src.getAmount());return true;}),
 //		CAC1_M1I (Mod303Key.CT_S11R, (src,mod425) -> {mod425.getSimpRegime1().setAmount1(src.getAmount());return true;}),
@@ -908,8 +911,7 @@ public class Mod4252025DAO {
 //		
 //	}	
 
-	// FALTA - RFEGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
-	private static Mod4252025 fillSimplifedRegimeData(AONContext ctx, Mod4252025 mod425) {
+//	private static Mod4252025 fillSimplifedRegimeData(AONContext ctx, Mod4252025 mod425) {
 //		mod425.setSimpRegime1(new SimpliedRegimeActivity425());
 //		mod425.setSimpRegime2(new SimpliedRegimeActivity425());
 ////		mod425.setFarmerRegime1(new FarmerRegimeActivity());
@@ -937,11 +939,10 @@ public class Mod4252025DAO {
 //			SimplifiedRegimeFiller.fill(src,mod425);
 //			}
 //		);
-		return mod425;
-	}
+//		return mod425;
+//	}
 	
-	// FALTA - RFEGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
-	private static void fillSimplifiedDeclarationResults(AONContext ctx, Mod4252025 mod425) {
+//	private static void fillSimplifiedDeclarationResults(AONContext ctx, Mod4252025 mod425) {
 //		mod425.setBox97( AonMathUtils.round(mod425.getBox97() * -1));
 //		mod425.setBox98( AonMathUtils.round(mod425.getBox98() * -1));
 //		if (mod425.getBox98() > 0) {
@@ -963,7 +964,7 @@ public class Mod4252025DAO {
 //				mod425.setBox95( quota.doubleValue());
 //			}
 //		}
-	}
+//	}
 
 	public static Mod4252025 changeStatus(AONContext ctx, Mod4252025 mod425, FiscalStatus newStatus) {
 		try {
@@ -1152,6 +1153,23 @@ public class Mod4252025DAO {
 		}
 		return kvc;
 		
-	}	
+	}
+
+	// Inicializar los datos del domicilio del declarante
+	private static void initializeIdentificationData(AONContext ctx, Mod4252025 fm) {
+		Company company = CompanyDAO.getCompany(ctx, fm.getDomain());
+		Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId() );
+		if (enterprise != null) {
+			fm.setStreetInitial(enterprise.getStreetType() == null ? null : enterprise.getStreetType().getAeatCode());
+			fm.setStreetName(enterprise.getAddress());
+			fm.setStreetNumber(enterprise.getNumber());
+			fm.setTown(enterprise.getCity());
+			fm.setTownCode(enterprise.getTown());
+			fm.setProvinceCode(Integer.toString(Province.safeValue( enterprise.getProvince())));
+			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
+			fm.setContactPhone(enterprise.getPhone());
+		}
+		
+	}
 
 }

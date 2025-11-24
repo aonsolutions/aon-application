@@ -149,10 +149,8 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		epigrafe.setVisibleLength(7);
 		epigrafe.setMaxLength(5);
 		tab0.addRow()
-			// FALTA - LA PARTE DE LA DESCRIPCION ESTABA CON 150, ESO ESTA BIEN SI PONEMOS LA DESCRIPCION COMPLETA, LA CAMBIO A 60
 //			.addCell(new Label(""), AON.CSS.aonWidth150())
 			.addCell(new Label(AON.MSG.epigraph()), AON.CSS.aonWidth60())
-//			.addCell(new AonBoxLabel(66), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
 			.addCell(epigrafe, AON.CSS.aonWidth80())
 			.addCell(new Label(""), AON.CSS.aonWidthAuto(), AON.CSS.aonTextCenter());
 		

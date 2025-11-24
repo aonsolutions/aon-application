@@ -1711,21 +1711,13 @@ public class ModelAdmonUtils {
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}
 
-	// Llamada a función lambda AWS donde está el modulo de impresión de la Agencia Tributaria Canaria
-	// Para obtener el fichero para la presentación o el borrador PDF
-	public static void callAtcAwsFunction(String xml, Mod303 mod303, boolean isBorrador, HttpServletResponse resp) throws IOException {
-		
+	// Llamada a función lambda AWS donde están los módulos de impresión de la Agencia Tributaria Canaria
+	// para obtener el fichero para la presentación o el borrador PDF
+	public static void callAtcAwsFunction(String xml, IFiscalModel model, boolean isBorrador, HttpServletResponse resp) throws IOException {
+
 		JSONObject params = new JSONObject();
-//		params.put("modelo", mod303.isMonthPeriod()?"417":"420");
-//		params.put("ejercicio", AonNumberUtils.toString(mod303.getYear()));
 		params.put("declaracion", Base64.getEncoder().encodeToString(xml.getBytes()));
 		params.put("borrador", isBorrador);
-		
-//		String payload =
-//		String.format("{"
-//		+ "\"declaracion\":\"%s\" "
-//		+ "}"
-//		, Base64.getEncoder().encodeToString(xml.getBytes()));
 		
 		String payload = params.toString();
 		
@@ -1754,7 +1746,7 @@ public class ModelAdmonUtils {
 				if (isBorrador) {
 					giveBase64Back(resp, json.getString("resultado").getBytes(StandardCharsets.ISO_8859_1), MimeType.PDF);
 				} else {
-				    String fileName = AonFiscalFileUtils.getFileName(mod303);
+				    String fileName = AonFiscalFileUtils.getFileName(model);
 				    resp.setCharacterEncoding("ISO-8859-1");
 					resp.setContentType(MimeType.TXT.getName());
 					resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");

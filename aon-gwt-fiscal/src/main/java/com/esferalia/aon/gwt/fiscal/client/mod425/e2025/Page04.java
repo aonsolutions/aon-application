@@ -66,7 +66,7 @@ class Page04 extends PageAbs {
 			markAsDirty();
 		});
 		
-		// FALTA - POR AHORA SE PONEN SOLO 2 ACTIVIDADES, AL IGUAL QUE ESTA EN EL MODELO 390
+		// POR AHORA SE PONEN SOLO 2 ACTIVIDADES PARA EL REGIMEN SIMPLIFICADO, AL IGUAL QUE ESTA EN EL MODELO 390
 
 		AonDisplayTable tab0 = new AonDisplayTable();
 		tab0.addStyleName(AON.CSS.aonWidthAlmostAll());

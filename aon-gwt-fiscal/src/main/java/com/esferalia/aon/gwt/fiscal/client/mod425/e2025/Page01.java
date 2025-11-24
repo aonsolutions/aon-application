@@ -303,24 +303,6 @@ class Page01 extends PageAbs {
 					activity.setDescription(act.getDescription());
 					activity.setKey(act.getKey());
 					activity.setEpigraph(act.getEpigraph());
-					
-					// FALTA - PRUEBA VER PROPIEDADES
-//					activityTypeBox.getElement().getOffsetWidth()
-//					activityTypeBox.getElement().getScrollWidth()
-//					Window.alert("Ancho client: " + activityTypeBox.getElement().getClientWidth() + " - Ancho scroll: " + activityTypeBox.getElement().getScrollWidth());
-//					Window.alert("Ancho client: " + activityDescriptionBox.getElement().getClientWidth() + " - Ancho scroll: " + activityDescriptionBox.getElement().getScrollWidth());
-					// Comprobar si el texto cabe en el control y si no cabe ponerlo en el title
-//					if (activityTypeBox.getElement().getScrollWidth() > activityTypeBox.getElement().getClientWidth()) {
-//						activityTypeBox.setTitle(activityTypeBox.getSelectedItemText());
-//					} else {
-//						activityTypeBox.setTitle("");
-//					}
-					// Comprobar si el texto cabe en activityDescriptionBox y si no cabe ponerlo en el title
-//					if (activityDescriptionBox.getElement().getScrollWidth() > activityDescriptionBox.getElement().getClientWidth()) {
-//						activityDescriptionBox.setTitle(activityDescriptionBox.getValue());
-//					} else {
-//						activityDescriptionBox.setTitle("");
-//					}
 					markAsDirty();
 			});
 			activityPanel.center();
@@ -344,7 +326,7 @@ class Page01 extends PageAbs {
 			.addCell(provisionalProrateBox, AON.CSS.aonWidth60())
 			.addCell(finalProrateBox, AON.CSS.aonWidth60())
 			.addCell(specialProrateBox, AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
-			.addCell(deleteButton, AON.CSS.aonWidth20());	
+			.addCell(deleteButton, AON.CSS.aonWidth20());
 		
 	}
 	

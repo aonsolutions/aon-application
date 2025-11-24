@@ -75,7 +75,8 @@ public class Mod425ToDEC {
 		dec.setAUT(getAut(mod)); // Resultado de las autoliquidaciones
 		dec.setOPE(getOpe(mod)); // Operaciones especificas
 		dec.setRCC(getRcc(mod)); // Régimen especial del criterio de caja
-		dec.setRPE(getRpe(mod)); // Régimen especial del pequeño empresario o profesional
+		if (mod.isSpecialRegime())
+			dec.setRPE(getRpe(mod)); // Régimen especial del pequeño empresario o profesional
 	
 		return dec;
 		
@@ -179,9 +180,9 @@ public class Mod425ToDEC {
 			dir.setPUE(changeCharacters(address.getRstreetDoor()));      // Puerta
 			dir.setLOC(changeCharacters(address.getRtown()));            // Localidad
 			dir.setPOP(AonFiscalFileUtils.unsigned(address.getRprovince(), 2)); // Código de provincia
-//			dir.setCMU(mod.getAddress().getRtownCode());                        // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO	
+			dir.setCMU(address.getRtownCode());                          // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO	
 			dir.setCP(address.getRzip());                                // Código Postal
-			dir.setTEL(address.getRphone());       	                     // Teléfono  )
+			dir.setTEL(address.getRphone());       	                     // Teléfono  
 			
 			TPERSONA per = new TPERSONA();
 			per.setPER(dp);

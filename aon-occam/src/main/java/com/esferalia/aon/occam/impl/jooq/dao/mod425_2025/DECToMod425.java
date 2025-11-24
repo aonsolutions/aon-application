@@ -26,7 +26,7 @@ public class DECToMod425 {
 	
 	public static void populate(Mod4252025 mod, DEC dec) throws ParseException {
 		
-		// FALTA - ESTOS DATOS YA VIENEN DEL MODELO PUES ESTAN EN CAMPOS DE LA BASE DE DATOS
+		// ESTOS DATOS YA VIENEN DEL MODELO PUES ESTAN EN CAMPOS DE LA BASE DE DATOS
 //		dec.setMOD("425");  // Identificador del modelo                                  
 //		dec.setANY(AonNumberUtils.toString(mod.getYear())); // Ejercicio al que se refiere la autoliquidación
 //		dec.setPER("0A");   // Período al que se refiere la autoliquidación: "0A" Anual
@@ -134,10 +134,10 @@ public class DECToMod425 {
 						address.setRstreetFloor(dir.getPIS());     // Piso
 						address.setRstreetDoor(dir.getPUE());      // Puerta
 						address.setRtown(dir.getLOC());            // Localidad
-						address.setRprovince(AonNumberUtils.toint(dir.getPOP())); // Código de provincia // FALTA - SE GUARDA EL CODIGO O SE GUARDA EL NOMBRE DE LA PROVINCIA
-//						address.setRtownCode(dir.getCMU());                        // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO	
-						address.setRzip(dir.getCP());                                // Código Postal
-						address.setRphone(dir.getTEL());       	                     // Teléfono  )
+						address.setRprovince(AonNumberUtils.toint(dir.getPOP())); // Código de provincia 
+						address.setRtownCode(dir.getCMU());                       // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO, SI QUE ES OBLIGATORIO	
+						address.setRzip(dir.getCP());                             // Código Postal
+						address.setRphone(dir.getTEL());       	                  // Teléfono  
 					}
 				}
 				mod.setAddress(address);
@@ -274,7 +274,7 @@ public class DECToMod425 {
 				simpRegime.setUnit6(getAmount(module.getMOD6())); // Módulo 6
 				simpRegime.setUnit7(getAmount(module.getMOD7())); // Módulo 7
 				// FALTA - SI PONEMOS TAMBIEN LOS IMPORTES POR UNIDAD DE MEDIDA Y TOTAL POR MODULO, HABRIA QUE CALCULARLO AQUI SACANDOLO DE ALGUN SITIO
-				simpRegime.setBoxA(getAmount(module.getCASA()));   // Cuota anual devengada por operaciones corrientes
+				simpRegime.setBoxA(getAmount(module.getCASA()));  // Cuota anual devengada por operaciones corrientes
 				simpRegime.setBoxB(getAmount(module.getCASB()));  // Cuotas soportadas por operaciones corrientes
 				simpRegime.setBoxC(getAmount(module.getCASC()));  // Índice corrector
 				simpRegime.setBoxD(getAmount(module.getCASD()));  // Diferencia

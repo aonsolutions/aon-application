@@ -26,6 +26,7 @@ public class Page02 extends PageAbs {
 	AonTextBox rstreetDoor = new AonTextBox();
 	AonTextBox rphone = new AonTextBox();
 	AonTextBox rtown = new AonTextBox();
+	AonTextBox rtownCode = new AonTextBox(); 				    
 	ProvinceListBox rprovince = new ProvinceListBox();
 	AonTextBox rzip = new AonTextBox();
 	
@@ -63,6 +64,7 @@ public class Page02 extends PageAbs {
 			rstreetDoor.setValue(getModel().getAddress().getRstreetDoor(),false);
 			rphone.setValue(getModel().getAddress().getRphone(),false);
 			rtown.setValue(getModel().getAddress().getRtown(),false);
+			rtownCode.setValue(getModel().getAddress().getRtownCode(),false);
 			rprovince.setSelectedIndex(getModel().getAddress().getRprovince());
 			rzip.setValue(getModel().getAddress().getRzip(),false);
 		} else {
@@ -76,6 +78,7 @@ public class Page02 extends PageAbs {
 			rstreetDoor.setValue(null,false);
 			rphone.setValue(null,false);
 			rtown.setValue(null,false);
+			rtownCode.setValue(null,false);
 			rprovince.setSelectedIndex(0);
 			rzip.setValue(null,false);
 		}
@@ -182,15 +185,18 @@ public class Page02 extends PageAbs {
 		basePanel.add(tab2);
 		tab2.addRow()
 			.addCell(new Label(AON.MSG.town()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.townCode()), AON.CSS.aonWidth80() )
 			.addCell(new Label(AON.MSG.province()), AON.CSS.aonWidth150() )
 			.addCell(new Label(AON.MSG.zip()), AON.CSS.aonWidthAuto() )
 			;
 		rtown.setVisibleLength(30);
 		rtown.setMaxLength(30);
+		rtownCode.setMaxLength(5);
 		rzip.setVisibleLength(5);
 		rzip.setMaxLength(5);
 		tab2.addRow()
 			.addCell(rtown)
+			.addCell(rtownCode)
 			.addCell(rprovince )
 			.addCell(rzip);
 		
@@ -279,6 +285,10 @@ public class Page02 extends PageAbs {
 		});
 		rtown.addValueChangeHandler( event -> {
 			getModel().ensureAddress().setRtown(rtown.getValue());
+			markAsDirty();
+		});
+		rtownCode.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRtownCode(rtownCode.getValue());
 			markAsDirty();
 		});
 		rprovince.addChangeHandler( event -> {
