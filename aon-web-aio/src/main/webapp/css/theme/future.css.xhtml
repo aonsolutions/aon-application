@@ -1,0 +1,655 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	
+	
+<style>
+	@font-face {
+	  font-family:"Inter-regular";
+	  src: url(/fonts/Inter-Regular.woff) format("woff");
+	  font-weight:400;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-medium";
+	  src: url(/fonts/Inter-Medium.woff) format("woff");
+	  font-weight:500;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-semibold";
+	  src: url(/fonts/Inter-SemiBold.woff) format("woff");
+	  font-weight:600;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-bold";
+	  src: url(/fonts/Inter-Bold.woff) format("woff");
+	  font-weight:700;
+	  font-style:normal;
+	}
+	@font-face {
+	  font-family:"Inter-extrabold";
+	  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+	  font-weight:800;
+	  font-style:normal;
+	}
+	
+
+	:root{
+		--aonBackgroundColor2: #f1f5f9;
+	    --colorNeutralBackground: #ffffff;
+	    --aonFontFamily: "Inter-medium", sans-serif;
+	}
+	
+	body {
+		
+		font-family: var(--aonFontFamily) ;
+		background-color: var(--aonBackgroundColor2, #fff)
+	}
+	
+	table td {
+		font-size: 14.875px /*.8125rem*/ !important;
+		font-family: var(--aonFontFamily) !important;
+	}
+	
+	.aon-finding-title-toolbar>table {
+		border-bottom: none;
+	}
+	
+	#aonContent\:contentScrollDiv{
+        height: 100vh;
+	}
+
+	#rootPanel > div, 
+	#aonContent\:contentScrollDiv > div,
+	#aonContent\:contentScrollDiv > table,
+	#aonContent\:contentScrollDiv > form:not([id*='aonContent:mainForm']) > *{
+		background-color: var(--colorNeutralBackground,#fff) !important;
+	}
+	
+	.aon-menuBar {
+        border-collapse: collapse;
+	}
+	
+	.aon-header-search {
+		background: transparent url(#{aonResource.resolve['/icons/search.svg']}) no-repeat scroll center center;
+	}
+
+	.aon-direct-access-list-element {
+    	padding: 5px 12px;
+	}
+	
+	.aon-finding-toolbar{
+    	background: none;
+		min-height: 2.5rem;
+	}
+
+	.aon-finding-filter-input {
+		height: 2.5rem;
+  		border-radius: .375rem;
+  		box-sizing: border-box;		
+  		background-position-y: center;
+		border: .0625rem solid #cbd5e1;
+  		padding: .5rem .75rem .5rem .75rem;
+    	padding-left: 1.75rem;
+	}
+	
+	.aon-finding-filter-toolbar{
+		height: 2.5rem;
+	}
+	
+	.aon-dataScroller {
+    	background-color: #fff;
+    	border: #fff 1px solid;
+	}
+	
+	.aon-table-row-hover ,
+	.aon-dataTable-row-odd1:hover,
+	.aon-dataTable-row-even1:hover {
+		background-color: #fff !important;
+	}
+
+	.aon-toolbar {
+    	background-color: #fff;
+	}
+	
+	.aon-editDataTable-footer {
+    	background-color: #fff;
+	}
+	
+	.rich-mpnl-content {
+		background-color: #fff;
+	}
+
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-collapse: separate;
+		border-spacing: 0 1rem;
+	}
+
+	.aon-dataTable > tbody > tr > td,
+	.aon-dataTable > th,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
+	 {
+		color: #64748b;
+	}	
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td {
+		border-top: .0625rem solid #e2e8f0;    	
+		border-bottom: .0625rem solid #e2e8f0;
+	}
+	
+	.aon-dataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tfoot > tr > td:first-child {
+		border-left: .0625rem solid #e2e8f0;
+	}
+	
+	.aon-dataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tfoot > tr > td:last-child{
+		border-right: .0625rem solid #e2e8f0;    	
+	}
+	
+	.aon-dataTable > th,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
+   		background-color: #e2e8f0;	
+		border-bottom: 1px solid #e2e8f0 !important;
+	}
+	
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-bottom: none;
+		background-color: #fff;
+	}
+
+	.rich-table-thead {
+		background-color: #e2e8f0;
+	}
+	
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
+		color: #1e293b;
+	 	font-family: "Inter-bold", sans-serif;
+    }	
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td {
+		color: #5f6368;
+		font-family: "Inter-regular", sans-serif;
+	}
+
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
+	 {
+	 	height: 3.625rem;
+		font-size: 14.875px; /*.875rem;*/
+	}	
+	
+	.aon-dataTable-header,
+	.aon-editDataTable-header {
+    	font-size: 14.875px; /*.8125rem;*/
+		font-family: "Inter-bold", sans-serif;
+	}
+
+	.aon-icon-pdf{
+		background-image:  url(#{aonResource.resolve['/icons/file-pdf.svg']});
+	}
+
+	.aon-icon-page{
+		background-image: url(#{aonResource.resolve['/icons/file.svg']});
+	}
+	
+	.aon-icon-shield {
+		background: url(#{aonResource.resolve['/icons/shield.svg']}) -0px -0px  no-repeat; 
+	}
+	.aon-icon16.aon-icon-shield {
+        background-size: 24px 14px;
+    }
+
+	.aon-icon-new,
+	.aon-icon-reset{
+		background-image: url(#{aonResource.resolve['/icons/plus.svg']}) ;
+	}
+	
+	.aon-icon-accept{
+		background-image: url(#{aonResource.resolve['/icons/save.svg']}) ;
+	}
+
+	.aon-icon-excel,
+	.aon-icon-import-excel-trans,
+	.aon-icon-export-excel-trans{
+		background-image: url(#{aonResource.resolve['/icons/file-spreadsheet.svg']}) ;
+	}
+	
+	.aon-icon-cancel{
+		background-image: url(#{aonResource.resolve['/icons/arrow-left.svg']}) ;
+	}
+
+	.aon-icon-search{
+		background-image: url(#{aonResource.resolve['/icons/search.svg']});
+	}
+	
+	input.aon-icon-search {
+  		background-position-x: 4px;
+		padding-left: 32px !important;
+  	}
+
+	.aon-icon-rubber{
+		background-image: url(#{aonResource.resolve['/icons/eraser.svg']}) ;
+	}
+
+	.aon-icon-delete{
+		background-image: url(#{aonResource.resolve['/icons/trash-2.svg']}) ;
+	}
+
+	.aon-icon-email{
+		background-image: url(#{aonResource.resolve['/icons/mail.svg']});
+	}
+
+	.aon-icon-info{
+		background-image: url(#{aonResource.resolve['/icons/info.svg']}) ;
+	}
+
+	.aon-icon-big-info {
+		background-image: url(#{aonResource.resolve['/icons/info.svg']}) ;
+	}
+
+	.aon-dataScroller-button-last,
+	.aon-dataScroller-button-fastForward,
+	.aon-dataScroller-button-last-disabled,
+	.aon-dataScroller-button-fastForward-disabled
+	{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-last.svg']}) ;
+	}
+	.aon-dataScroller-button-next,
+	.aon-dataScroller-button-next-disabled{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-right.svg']}) ;
+	}
+	.aon-dataScroller-button-first,
+	.aon-dataScroller-button-fastRewind,
+	.aon-dataScroller-button-first-disabled,
+	.aon-dataScroller-button-fastRewind-disabled
+	{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-first.svg']}) ;
+	}
+	.aon-dataScroller-button-previous,
+	.aon-dataScroller-button-previous-disabled{
+		background-size : 24px;
+		background-image: url(#{aonResource.resolve['/icons/chevron-left.svg']}) ;
+	}
+
+	div[id$='aonContentPopup'] .aon-rigth-menu {
+		text-align:left;
+		padding-left: 8px;
+        display: flex;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
+		border-bottom: #e2e8f0 1px solid;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
+		background-color: #e2e8f0;
+	}
+
+	.aon-inputText,
+	.aon-inputTextarea,
+	.aon-form select, 
+	.aon-selectOneMenu,
+	.aon-lookupInputText,
+	.aon-lookupSuggestText,
+	.aon-selectInputDate-inputClass
+	{
+		height: 2.5rem;
+		padding: .5rem .75rem .5rem .75rem;
+		border-radius: .375rem;
+		box-sizing: border-box;
+		border: .0625rem solid #cbd5e1;
+  		background-color: #fff;
+  		color: #1e293b;
+    }
+
+	.aon-finding-toolbar-item.aon-icon-search {	
+		background-image: url(#{aonResource.resolve['/icons/file-search.svg']}) !important; 
+	}
+	
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"]) > * {
+	  background-color: var(--aonBackgroundColor2,#fff) !important;
+	}    
+	
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"])  .aon-finding-title-toolbar {
+  		margin-bottom: 1rem;
+  		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground) !important;
+
+		min-height: 48px;
+		padding-top: 8px;	
+		padding-bottom: 0px;
+	}
+		
+	#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"])  .aon-scroll-area {
+  		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground) !important;
+	}
+	
+	.aonCard,
+	.aon-group,
+	.aon-panelGrid,
+	.aonCards .aonCard{
+		border:none;
+	}
+	.aon-group-title{
+		border-bottom: .1rem solid #cbd5e1;
+	}
+	
+	
+	.aon-group-title *,
+	.aon-portlet-title {
+		font-family: "Inter-semibold";
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+		letter-spacing: -0.005rem;	
+	}	
+	
+	.aon-portlet-title {
+		border: 0;
+		margin: 10px;
+		color: #1e293b;
+		padding: 15px 22px;
+		border-bottom: .1rem solid #cbd5e1;
+    }
+	
+	.rich-stglpanel-header{
+		background-color: #fff;
+	}
+
+	.aon-inputText-disabled{
+		background-color: var(--aonBackgroundColor2,#f2f2f2) !important;
+	}
+
+	.aon-panelTabSet {
+/* 		padding: .625rem;
+		display: flex;
+		align-content: center;
+		flex-wrap: wrap;
+		box-sizing: border-box;
+		gap: .5rem;
+		border-radius: .375rem;
+		background-color: var(--colorNeutralBackground);
+		width: 100%;
+ */	}
+ 
+	.rich-tabpanel-content{
+	    background-color: var(--colorNeutralBackground);
+	}
+	
+	.rich-tab-active{
+		padding: 10.625px; /*.625rem;*/
+	}
+	
+	.rich-tab-active,
+	.rich-tabhdr-cell-active{ 
+		border: none;
+		border-radius: .375rem;
+		box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+		background-color: var(--colorNeutralBackground);
+	}
+
+	.rich-tab-inactive,
+	.rich-tabhdr-cell-inactive{ 
+		border:none;
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aon-panelTabSet-headerClass > table {
+		padding: 10.625px; /*.625rem;*/
+		cursor: pointer;
+		border-radius: .375rem;
+		font-size: 14.875px; /*.875rem;*/
+
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aon-note-new{
+		background-color: var(--aonBackgroundColor2);
+	}
+	
+	.aonDataScroller .aon-dataScroller-buttons tr td {
+        background-color: var(--aonBackgroundColor2);
+	}
+	
+	.rich-menu-list-border{
+	}
+	
+	
+	.aon-button-goto{
+  		width: 24px ;
+  		height: 2.5rem ;	
+		padding: 13px !important;
+		background-size: inherit;
+        background-image: url(#{aonResource.resolve['/icons/external-link.svg']});
+	}
+
+	.aon-icon-exception{
+		padding: 13px;
+		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: red;
+		background-image: none;
+    	mask-image: url(#{aonResource.resolve['/icons/alert-triangle.svg']});		
+	}
+
+	.aon-icon-predetermine{
+		padding: 13px;
+		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: blue;
+		background-image: none;
+        mask-image: url(#{aonResource.resolve['/icons/check.svg']});
+	}
+	
+	.aon-lookupButton-new{
+  		width: 24px;
+  		height: 2.5rem;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/plus.svg']});
+	}
+	
+	.aon-lookupButton, .aon-lookupButtonPopup{
+  		width: 24px;
+  		height: 2.5rem;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/search.svg']});
+  	}
+  	
+  	.aon-lookupButton-clear{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+	    background-image: url(#{aonResource.resolve['/icons/refresh-cw.svg']});
+  	}
+  	
+  	div[id$="LookupButtons"] .aon-icon-reset {
+  		border:none !important; /*at element*/
+	    background-image: url(#{aonResource.resolve['/icons/plus.svg']});
+  	}	
+  	
+  	.rich-calendar-button {
+  	    margin-left: 6px !important;
+  		background-size: 24px;
+        background-image: url(#{aonResource.resolve['/icons/calendar.svg']});
+  	}
+ 
+   	aon-selectInputDate-buttonClass.rich-calendar-button{
+  		padding-left: 6px !important;
+  	}
+  	
+  	.aon-icon-ambito{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+        background-image: url(#{aonResource.resolve['/icons/shield.svg']});
+  	}
+  	
+  	.aon-icon-edit-add-simple{
+  		width: 24px ;
+  		height: 2.5rem ;	
+  		background-size: 24px;
+  		margin-right: 0px !important;
+        background-image: url(#{aonResource.resolve['/icons/pencil.svg']});
+  	}
+	
+	.aon-finding-toolbar-item.aon-icon-new:hover, 
+	.aon-finding-toolbar-item.aon-icon-csv:hover, 
+	.aon-finding-toolbar-item.aon-icon-pdf:hover, 
+	.aon-finding-toolbar-item.aon-icon-info:hover, 
+	.aon-finding-toolbar-item.aon-icon-excel:hover, 
+	.aon-finding-toolbar-item.aon-icon-audit:hover, 
+	.aon-finding-toolbar-item.aon-icon-reset:hover, 
+	.aon-finding-toolbar-item.aon-icon-accept:hover, 
+	.aon-finding-toolbar-item.aon-icon-cancel:hover, 
+	.aon-finding-toolbar-item.aon-icon-rubber:hover, 
+	.aon-finding-toolbar-item.aon-icon-search:hover, 
+	.aon-finding-toolbar-item.aon-icon-delete:hover, 
+	.aon-finding-toolbar-item.aon-icon-invoice:hover, 
+	.aon-finding-toolbar-item.aon-icon-webmail2:hover, 
+	.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover, 
+	.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover, 
+	.aon-finding-toolbar-item.rich-fileupload-ico-add:hover, 
+	.aon-finding-toolbar-item.aon-icon-filter:hover, 
+	.aon-finding-toolbar-item.aon-icon-filter-off:hover, 
+	.aon-finding-toolbar-item.aon-icon-attach-file:hover, 
+	.aon-finding-toolbar-item.aon-icon-task-assume:hover, 
+	.aon-finding-toolbar-item.aon-icon-task-liberate:hover, 
+	.aon-finding-toolbar-item.aon-icon-close:hover, 
+	.aon-finding-toolbar-item.aon-lookupButton-clear:hover, 
+	.aon-finding-toolbar-item.aon-event-repeat:hover, 
+	.aon-finding-toolbar-item.aon-icon-clear:hover, 
+	.aon-finding-toolbar-item.aon-icon-visibility-off:hover, 
+	.aon-finding-toolbar-item.aon-icon-add-task:hover, 
+	.aon-finding-toolbar-item.aon-icon-ink-selection:hover, 
+	.aon-finding-toolbar-item.aon-icon-remove-selection:hover, 
+	.aon-finding-toolbar-item.aon-icon-done-all:hover, 
+	.aon-finding-toolbar-item.aon-icon-remove-done:hover,
+	.aon-finding-toolbar-item.aon-dropDownMenu:hover {
+  		background-color: inherit;
+	}
+	
+	.rich-menu-list-border{
+		min-width: 12.5rem;
+  		height: auto;
+  		border-radius: .375rem;
+		background-color: #fff;
+	  	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	}
+	
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-new,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-csv,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-pdf,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-info,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-excel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-audit,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-reset,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-accept,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-cancel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-rubber, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-search, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-delete, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-invoice, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-webmail2, 
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-statistics, 
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans {
+		height: 42px;
+		width: 100%;
+		
+		line-height: 42px;
+		border-radius: 0px;
+		display: inline-block;
+		
+		background-size: 24px;
+		background-position: left;
+		
+		padding: 0px 0px 0px 32px;
+/* 		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+		background-color: #1e293b;
+ */
+ 		background-color: transparent;
+ 				
+		color: #1e293b;
+		font-size: 14.725px;
+		font-family: "Inter-medium", sans-serif;
+	}	
+	
+	.rich-menu-item:hover, 
+	.aon-menuItem-selectClass {
+	  color: #fff;
+	  border:none;		
+	  font-size: 14.725px;
+	  background-color:#64748b;
+	}
+		
+	.rich-menu-item:hover *, 
+	.aon-menuItem-selectClass * {
+	    color: #fff !important;
+	}
+	
+	.aon-panelGrid-search .rich-stglpanel-header{
+	    background-color: transparent;
+	}
+	
+	.aon-search-lookup-button {
+		border: none;
+	    background-color: #0f172a;
+	 	border-radius: 4px;
+		color: #fff;
+		cursor: pointer;
+		font-family: var(--aonFontFamily);
+		height: 3rem;
+		letter-spacing: .75px;
+		margin-top: 1rem;
+		padding: 0 !important;
+    }
+    
+    .aon-panelGrid-search{
+        border:none;
+    }
+    
+    .aon-panelGrid-search-info-internal{
+    	font-size: 14.875px; /*.875rem;*/
+    	font-family: "Inter-regular", sans-serif;
+    }
+	
+}
+	
+
+</style>
+
+		
+</ui:composition>

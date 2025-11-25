@@ -6,6 +6,8 @@ import java.util.Objects;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import com.code.aon.ui.util.AonUtil;
+
 import jakarta.el.ELContext;
 import jakarta.el.ExpressionFactory;
 import jakarta.el.ValueExpression;
@@ -17,6 +19,7 @@ public class AppController implements Serializable {
 	public final static String STANDALONE_APP_ID = "standAloneApp";
 	
 	
+	private String theme  = null;
 	private String viewId  = null;
 	private String action  = null;
 	private boolean readOnly  = false;
@@ -47,6 +50,10 @@ public class AppController implements Serializable {
 		return readOnly;
 	}
 	
+	public String getTheme() {
+		return theme;
+	}
+	
 	public String getSuiteAppId(){
 		return SUITE_APP_ID;
 	}
@@ -61,6 +68,10 @@ public class AppController implements Serializable {
 	
 	public void setAction(String action) {
 		this.action = action;
+	}
+	
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 	
 	public void setReadOnly(boolean readOnly) {

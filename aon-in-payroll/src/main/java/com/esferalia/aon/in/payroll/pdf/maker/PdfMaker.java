@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -13,86 +12,17 @@ import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.warehouse.DeliveryTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.warehouse.MultipleWarehouseTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.warehouse.PackagingTag;
-import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseSaleTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseTemplate;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class PdfMaker {
-	
-	public static void printDelivery(OutputStream out, CompanyFull company, Delivery delivery, Warehouse warehouse, byte[] logo) {
-		try (DeliveryTemplate template = new DeliveryTemplate(delivery, warehouse, company, logo)) {
-			template.save(out);
-		} catch (CanNotCreatePdfException | IOException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	/**
-	 * CREATE INVOICE PDF
-	 * 
-	 * @param out
-	 * @param invoice, Invoice Object
-	 * @param config, print invoice configuration
-	 */
-	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
-		try {
-			InvoiceTemplate template = new InvoiceTemplate(company, invoice, config, qrUrl, logo, tbaiId);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
-		try {
-			InvoiceTemplate template = new InvoiceTemplate(company, invoices, config, qrUrl, logo, tbaiId);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void printPackaging(OutputStream out, CompanyFull company, Item item, byte[] logo, String barcode, Double quantity, String ean128, String sscc) {
-		try {
-			WarehouseTemplate template = new WarehouseTemplate(company, item, logo, barcode, quantity, ean128, sscc);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void printMultiplePackaging(OutputStream out, PackagingTag packagingTag) {
-		try {
-			MultipleWarehouseTemplate template = new MultipleWarehouseTemplate(packagingTag);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void printSalesPackaging(OutputStream out, Sales sales, Delivery delivery) {
-		try {
-			WarehouseSaleTemplate template = new WarehouseSaleTemplate(sales, delivery);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
+
+	private PdfMaker() {
+
 	}
 
 	/**
