@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -137,7 +138,6 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 		financesPanel = new SplitLayoutPanel();
 		financesPanel.setHeight("100%");
-//		financesPanel.setHeight((Window.getClientHeight() - 75) + "px");
 		
 		fBatchPaymentAviableList = new FBatchPaymentAviableList(opt, fbatchType, fBatch) {
 			
@@ -175,6 +175,17 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		container.add(financesPanel);
 
 		dockLayoutPanel.add(container);
+		
+		Timer timer = new Timer() {
+			
+			@Override
+			public void run() {
+				if(!fBatch.isAccounted() || !fBatch.isGenerated())
+					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado" + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
+			}
+		};
+		
+		timer.schedule(1500);
 	}
 
 	// -------------------------------------------------------------------
@@ -210,7 +221,6 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		
 		sepaButton = new AonToolbarButton("Crear fichero SEPA", AON.CSS.aonIconXml());
 		sepaButton.addClickHandler(e -> createSepaFile());
-		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0 && this.fBatch.getRbank() != null);
 		toolbar.add(sepaButton);
 
 		downloadButton = new AonToolbarButton(AON.MSG.download() + " fichero SEPA", AON.CSS.aonIconDownload());
@@ -225,12 +235,10 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 			diskForm.submit();
 		});
-		downloadButton.setVisible(this.fBatch.getRattach() != null);
 		toolbar.add(downloadButton);
 
 		deleteFileButton = new AonToolbarButton(AON.MSG.deleteAction() + " fichero SEPA", AON.CSS.aonIconDeleteFile());
 		deleteFileButton.addClickHandler(e -> deleteSepaFile());
-		deleteFileButton.setVisible(this.fBatch.getRattach() != null);
 		toolbar.add(deleteFileButton);
 		
 		excelButton = new AonToolbarButton("Relaci\u00f3n Remesa Bacaria", AON.CSS.aonIconExcel());
@@ -247,8 +255,17 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			diskForm.submit();
 		});
 		toolbar.add(excelButton);
+		
+		showHideToolbarButtons();
 
 		return toolbar;
+	}
+	
+	private void showHideToolbarButtons(){
+		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0 && this.fBatch.getRbank() != null);
+		downloadButton.setVisible(this.fBatch.getRattach() != null);
+		deleteFileButton.setVisible(this.fBatch.getRattach() != null);
+		excelButton.setVisible(this.fBatch.getRattach() != null);
 	}
 	
 	private String getToolbarTitle() {
@@ -272,7 +289,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 				fBatchPaymentAviableList.setFBatch(fBatch);
 				fBatchPaymentBatchedList.setFBatch(fBatch);
 				
-				sepaButton.setVisible(!fBatch.getBatchDetails().isEmpty() && fBatch.getType() != (byte)0 && fBatch.getRbank() != null);
+				showHideToolbarButtons();
 
 				AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("La remesa '<b>" + fBatch.getDescription() + "</b>' ha sido guarda correctamente."));
 			}
@@ -297,9 +314,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 				fBatch.setRattach(rattachId);
 				fBatch.setStatus(FBatchStatus.GENERATED);
 				
-				sepaButton.setVisible(false);
-				downloadButton.setVisible(true);
-				deleteFileButton.setVisible(true);
+				showHideToolbarButtons();
 
 				FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch, new AsyncCallback<FBatch>() {
 
@@ -339,8 +354,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 				fBatch.setRattach(null);
 				fBatch.setStatus(FBatchStatus.PENDING);
 				
-				deleteFileButton.setVisible(false);
-				downloadButton.setVisible(false);
+				showHideToolbarButtons();
 
 				FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch, new AsyncCallback<FBatch>() {
 

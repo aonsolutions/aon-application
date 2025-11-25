@@ -101,7 +101,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		, CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, FAC("N. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
@@ -210,9 +210,11 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 
 	private void addButtonsToolbar() {
 		checkAll = new AonTableButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
 		checkAll.addClickHandler(e -> checkAllAviable( true ));
 		
 		uncheckAll = new AonTableButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
 		uncheckAll.addClickHandler(e -> checkAllAviable( false ));
 		
 		HTMLPanel checksPanel = new HTMLPanel(AonStringUtils.EMPTY);
@@ -248,7 +250,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		}
 
 		selectedCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-		addSelectedButton.setEnabled(selectedFinances.size() > 0);
+		addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isAccounted());
 	}
 	
 	private void createBatchContainer() {
@@ -332,10 +334,10 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		description.setEnable(!fbatch.isAccounted());
 		
 		issueDate.setValue(fbatch.getIssueDate());
-		issueDate.setEnable(!fbatch.isAccounted());
+		issueDate.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
 		
 		type.setValue(null != fbatch.getType() ? fbatch.getType().toString() : null);
-		type.setEnable(fbatch.getBatchDetails().isEmpty() || !fbatch.isAccounted());
+		type.setEnable(fbatch.getBatchDetails().isEmpty() || (!fbatch.isGenerated() && !fbatch.isAccounted()));
 		
 		status.setValue(null == fbatch.getStatus() ? "" : fbatch.getStatus().getDescription());
 		status.setEnable(false);
@@ -374,11 +376,11 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		
 		getEnterpriseBanks(companyBanks -> {
 			bank.setValue(null != fbatch.getRbank() ? fbatch.getRbank().getId().toString() : "");
-			bank.setEnable(!fbatch.isAccounted());
+			bank.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
 		});
 		
 		confidential.setValue(fbatch.isConfidential());
-		confidential.setEnable(!fbatch.isAccounted());
+		confidential.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
 		
 		String amountSum = null == fbatch.getBatchDetails() || fbatch.getBatchDetails().isEmpty() ? "0.00 \u20ac"
 				: AON.FMT.format(fbatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount())
@@ -405,7 +407,6 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addSelectedButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardDoubleArrowLeft());
-		addSelectedButton.setVisible(!fbatch.isAccounted());
 		addSelectedButton.setEnabled(false);
 		addSelectedButton.addClickHandler(e -> {
 			addSelectedButton.setEnabled(false);
@@ -470,6 +471,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton removeButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardArrowLeft());
+		removeButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
 		removeButton.addClickHandler(e -> {
 			removeButton.setEnabled(false);
 			Optional<FBatchDetail> fbatchDetail = this.fbatch.getBatchDetails().stream()
@@ -485,6 +487,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		tab.addRow(row, finance.isPending() || finance.isBatched() ? removeButton : new Label(), COLS.ACT.getColWidth());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
+		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -501,7 +504,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 				}
 
 				selectedCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-				addSelectedButton.setEnabled(selectedFinances.size() > 0);
+				addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isAccounted() && !fbatch.isGenerated());
 			}
 		});
 		tab.addRow(row, finance.isPending() || finance.isBatched() || finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label(), COLS.CHK.getColWidth());
