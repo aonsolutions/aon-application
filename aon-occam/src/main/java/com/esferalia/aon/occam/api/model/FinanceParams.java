@@ -46,6 +46,9 @@ public class FinanceParams implements Serializable{
 	
 	private boolean isPayroll;
 	
+	private String backRef;
+	private boolean includeCharges = false;
+	
 	public int getDomain() {
 		return domain;
 	}
@@ -250,6 +253,20 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setIsPayroll(boolean isPayroll) {
 		this.isPayroll = isPayroll;
+		return this;
+	}
+	public String getBackRef() {
+		return backRef;
+	}
+	public FinanceParams setBackRef(String backRef) {
+		this.backRef = backRef;
+		return this;
+	}
+	public boolean isIncludeCharges() {
+		return includeCharges;
+	}
+	public FinanceParams setIncludeCharges(boolean includeCharges) {
+		this.includeCharges = includeCharges;
 		return this;
 	}
 	
