@@ -564,7 +564,7 @@ export class AonDesktop extends AonElement {
 			let accountingGraphCard = new AonCard();
 			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			accountingGraphCard.id = "accountingGraphCard";
-			accountingGraphCard.message = ``;
+			accountingGraphCard.message = "Apuntes Contables";
 			accountingGraphCard.setApp(Apps.ACCOUNTING);
 			cardsPanel.appendChild(accountingGraphCard);
 			accountingGraphCard.getCardTitle1().style.cursor = 'pointer';
@@ -617,7 +617,7 @@ export class AonDesktop extends AonElement {
 			let payrollGraphCard = new AonCard();
 			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollGraphCard.id = "payrollGraphCard";
-			payrollGraphCard.message = ``;
+			payrollGraphCard.message = "Nóminas"; //MSG.SALARIES;
 			payrollGraphCard.setApp(Apps.PAYROLL);
 			cardsPanel.appendChild(payrollGraphCard);
 			payrollGraphCard.getCardTitle1().style.cursor = 'pointer';
@@ -645,7 +645,7 @@ export class AonDesktop extends AonElement {
 		
 			contractGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			contractGraphCard.id = "contractGraphCard";
-			contractGraphCard.message = ``;
+			contractGraphCard.message = `Contratos`; //MSG.CONTRACTS;
 			contractGraphCard.setApp(Apps.PAYROLL);
 			cardsPanel.appendChild(contractGraphCard);
 			contractGraphCard.getCardTitle1().style.cursor = 'pointer';

@@ -92,6 +92,7 @@ import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.Task2Impl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix.InvoiceDuplicateFixDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -1236,6 +1237,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static void invoiceTaxableBase0Fix(Occam occam, Integer invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){		
+			InvoiceFixDAO.invoiceTaxableBase0Fix(ctx, invoice);
+		}
+	}
+	
 	// S3 DOCUMENTAL
 	
 	public static Stream<S3Document> getS3DocumentStream(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
@@ -1310,4 +1317,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	// public static void fixInvoice(Occam occam) {
+	// 	try (CloseableAONContext ctx = AONContext.getAONContext(occam)){		
+	// 		getFinance().fixInvoice(ctx, occam.getDomain());
+	// 	}
+	// }
 }
