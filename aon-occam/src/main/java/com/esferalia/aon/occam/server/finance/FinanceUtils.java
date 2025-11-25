@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -32,16 +33,38 @@ public class FinanceUtils {
 
 	public static Filter getFilter(FinanceProperties p, FinanceParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		
 		if (params.isPayroll()) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( true )));
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( true )));
-		} else if (params.getPayment() != null) {
+		} else if (params.getPayment() != null && params.isIncludeCharges() ) {
+			prop = prop.and(
+					(
+						p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()))
+						.and(p.getPayMethodTypeProperty().eq(PayMethodType.BANK_TRANSFER.value()))	
+					)
+					.or(
+						p.getPaymentProperty().eq(AonEnumUtils.getByte(false)) // Cobro
+						.and(p.getPayMethodTypeProperty().eq(PayMethodType.NEGOTIABLE_DOCUMENT.value())) // Cobro)
+						.and(p.getAmountProperty().lt(0.00))
+					)
+			);
+			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
+		} else if (params.getPayment() != null ) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
 		}
 		
+		if(AonStringUtils.isNotBlank(params.getBackRef()))
+			prop = prop.and(p.getBankAccountProperty().like("%" + params.getBackRef() + "%"));
+		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
-			prop = prop.and(p.getRegistryNameProperty().like("%" + params.getDescription() + "%").or(p.getConceptNameProperty().like("%" + params.getDescription() + "%")));
+			prop = prop.and(
+					p.getRegistryNameProperty().like("%" + params.getDescription() + "%")
+					.or(p.getConceptNameProperty().like("%" + params.getDescription() + "%"))
+					.or(p.getConceptProperty().like("%" + params.getDescription() + "%"))
+					.or(p.getInvoiceReferenceCodeProperty().like("%" + params.getDescription() + "%"))
+				);
 			
 		
 		if (params.getFromInvoiceDate() != null) {
@@ -112,9 +135,10 @@ public class FinanceUtils {
 		if (params.getPayMethod() != null) {
 			prop = prop.and(p.getPayMethodProperty().eq(params.getPayMethod()));
 		}
-		if (params.getPayMethodType() != null) {
+		if (!params.isIncludeCharges() && params.getPayMethodType() != null) {
 			prop = prop.and(p.getPayMethodTypeProperty().eq((byte)params.getPayMethodType().ordinal()));
 		}
+		
 		return prop;
 	}
 
