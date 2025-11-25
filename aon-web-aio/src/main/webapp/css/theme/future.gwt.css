@@ -1,0 +1,179 @@
+@font-face {
+  font-family:"Inter-regular";
+  src: url(/fonts/Inter-Regular.woff) format("woff");
+  font-weight:400;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-medium";
+  src: url(/fonts/Inter-Medium.woff) format("woff");
+  font-weight:500;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-semibold";
+  src: url(/fonts/Inter-SemiBold.woff) format("woff");
+  font-weight:600;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-bold";
+  src: url(/fonts/Inter-Bold.woff) format("woff");
+  font-weight:700;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-extrabold";
+  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+  font-weight:800;
+  font-style:normal;
+}
+
+body,
+#rootPanel > div {
+    margin: 0px;
+    border-radius: 0px;
+	background-color: #f1f5f9 !important;	
+}
+
+.aon-MainAgreement-ToolBar, 
+.aon-MainAgreement-Agreements,
+.aon-EmployeeTree,
+.aon-EmployeeTree-Employees, 
+.aon-MainCreta-Enterprises,
+.aon-MainCreta-Details
+{
+	border-radius: .375rem;
+	background-color: #fff !important;
+}
+
+.aon-ConfigContent, 
+.aon-Model-Detail, 
+.aon-MainTrash-Detail, 
+.aon-MainCreta-Details, 
+.aon-MainAgreement-Detail, 
+.aon-EmployeeTree-EmployeeDetail,
+.aon-MainCreta-Enterprises .gwt-MenuBar-horizontal,
+.aon-EmployeeTree-EmployeeDetail .aon-finding-title-toolbar 
+ 
+{
+  background-color: #fff !important;
+}
+
+.aon-MainCreta-Details{
+    margin: 1rem 0.5rem 1rem 0.2rem;	
+}
+
+.aon-EmployeeTree,
+.aon-MainAgreement-Detail {
+	margin: 1rem 1rem 1rem 0.5rem;	
+}
+
+
+.aon-MainCreta-Enterprises{
+	margin: 1rem 0.2rem 1rem 1rem;	
+	
+}
+
+.aon-EmployeeTree-Employees,
+.aon-MainAgreement-Agreements {
+	margin: 1rem 0.5rem 1rem 1rem;	
+}
+
+.aon-MainAgreement-ToolBar{
+		margin: 1rem 1rem 1rem 1rem;	
+	
+}
+
+.aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
+.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+    background-color: #fff !important;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected, 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected, 
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem-selected), 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem-selected) {
+  font-weight: 700;
+  background-color: #f1f5f9 !important;
+  border-left: none !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem):hover
+	{
+  background-color: #f1f5f9 !important;
+}
+
+
+input, select, textarea,
+.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem{
+	color: #1e293b;
+  	font-family: "Inter-regular", sans-serif !important;
+}
+
+.aon-Model, 
+.aon-Model .gwt-SplitLayoutPanel-VDragger, 
+.aon-ConfigPanel, 
+.aon-ConfigPanel .rich-panelbar-interior, 
+.aon-MainTrash, 
+.aon-MainTrash-Stack, 
+.aon-MainTrash .gwt-SplitLayoutPanel-HDragger, 
+.aon-MainTrash .gwt-SplitLayoutPanel-VDragger, 
+.aon-MainTrash-Stack .gwt-MenuBar-horizontal, 
+.aon-MainCreta, 
+.aon-MainCreta .gwt-SplitLayoutPanel-HDragger, 
+.aon-MainCreta .gwt-SplitLayoutPanel-VDragger, 
+.aon-MainCreta-Events .gwt-MenuBar-horizontal, 
+.aon-MainAgreement, 
+.aon-EmployeeTree .gwt-SplitLayoutPanel-HDragger, 
+.aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger, 
+.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
+.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
+  background-color: #f1f5f9 !important;
+}
+
+.gwt-Selector .aon-dataTable-row-odd:hover,
+.gwt-Selector .aon-dataTable-row-even:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.dataGridWidget {
+	margin: 1rem ;
+}
+
+.aon_scroll_area{
+	padding: 0px 1.5em 1.5em 1.5em;	
+}
+
+.aon_display_grid_header_row ,
+.dataGridWidget > div:first-child {
+  top: 0px;
+  height: 3.625rem;
+  font-size: 14.875px;
+  padding-top: 8px;
+  position: sticky;
+  background-clip: padding-box;
+  background-color: #e2e8f0;
+}
+
+.aon_display_grid_header_cell{
+	padding: 2px 6px;	
+}
+
+.dataGridHeader {
+  border-bottom: none;
+}
+
+.dataGridCell, .aon_display_grid_cell  {
+	color: #64748b;
+	min-height: 68px;
+	border-top: .0625rem solid #e2e8f0;
+	border-bottom: .0625rem solid #e2e8f0;
+}
+  
+.gwt-Selector .aon-MainCreta-Enterprises {
+	width: auto;
+}

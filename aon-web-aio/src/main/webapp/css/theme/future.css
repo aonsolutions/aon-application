@@ -52,6 +52,8 @@
 }
 
 .rootPanel{
+	border-top: none ;
+	border-left: none;
 	border-color: var(--aonBackgroundColor2);
 	background-color: var(--aonBackgroundColor2) !important;
 }
@@ -341,6 +343,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 /* ========================== Suite Menu Styles ========================== */
 
 .suiteMenuContent{
+	padding-left: 1.5rem;
 	background-color: var(--aonBackgroundColor2);	
 }
 
@@ -354,10 +357,16 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 
 .suiteMenuContent aon-card {
 	display: block;
-	border-radius: .375rem;
 	width: calc(33.33% - 1rem);
 	min-width: 29rem;
 	box-sizing: border-box;
+
+	margin-left: 0px;
+	max-width: none;
+	max-height: none;
+
+	border-radius: .375rem;
+	background-color: #fff;
 }
 
 
@@ -371,6 +380,43 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 
 .suiteMenuContent  .aonCardText {
 	font-size: 17px;
+	color: #64748b;
+	text-decoration: none;
+}
+
+.suiteMenuContent  .aonCard {
+	padding: 0px;
+	margin: 0px;
+}
+
+
+.suiteMenuCardDataDiv {
+	margin-top: 0px;
+	padding: 10px 15px 10px 15px;
+}
+.suiteMenuCardDataDiv:hover {
+	background-color: #f1f5f9;
+}
+
+.suiteMenuContent  .aonCard > div[id$="Title"]{
+	padding: 6px 0px;
+}
+
+.suiteMenuContent  .aonCard > div[id$="Content"] {
+	padding: 0px 0px 30px 0px;
+}
+
+.aonSidenavTitle{
+	margin-bottom: 20px;
+}
+
+aon-fiscal-menu .suiteMenuContent,
+aon-payroll-menu .suiteMenuContent ,
+aon-accounting-menu .suiteMenuContent,
+aon-configuration-menu .suiteMenuContent  {
+	background-color: #fff;
+	border-radius: .375rem;
+  	margin: 1rem 1rem 0rem 0.5rem;	
 }
 
 /* ========================== Sidenav Menu Styles  ========================== */
@@ -423,7 +469,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta {
 	border-radius: .375rem;
-	margin: 1rem 0.5rem 0rem 1rem;
+	margin: 1rem 1rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
 }
 
@@ -502,6 +548,10 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 	transition: background .3s ease;
 	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 }
+
+.aonUpload * {
+	color: #fff;
+}	
 
 .aonUpload:hover {
     background: #004bfb;
