@@ -52,6 +52,8 @@
 }
 
 .rootPanel{
+	border-top: none ;
+	border-left: none;
 	border-color: var(--aonBackgroundColor2);
 	background-color: var(--aonBackgroundColor2) !important;
 }
@@ -546,6 +548,10 @@ aon-configuration-menu .suiteMenuContent  {
 	transition: background .3s ease;
 	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 }
+
+.aonUpload * {
+	color: #fff;
+}	
 
 .aonUpload:hover {
     background: #004bfb;
