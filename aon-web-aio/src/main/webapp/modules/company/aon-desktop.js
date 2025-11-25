@@ -204,6 +204,7 @@ export class AonDesktop extends AonElement {
 			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			accountingGraphCard.id = "accountingGraphCard";
 			accountingGraphCard.title = "Contabilidad";
+			accountingGraphCard.message = "Apuntes Contables";
 			accountingGraphCard.setApp(Apps.ACCOUNTING);
 			cardsPanel.appendChild(accountingGraphCard);
 
@@ -245,6 +246,7 @@ export class AonDesktop extends AonElement {
 			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollGraphCard.id = "payrollGraphCard";
 			payrollGraphCard.title = "Nominas";
+			payrollGraphCard.message = "Nóminas"; //MSG.SALARIES;
 			payrollGraphCard.setApp(Apps.PAYROLL);
 			cardsPanel.appendChild(payrollGraphCard);
 
@@ -268,6 +270,7 @@ export class AonDesktop extends AonElement {
 			contractGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			contractGraphCard.id = "contractGraphCard";
 			contractGraphCard.title = "Contratos";
+			contractGraphCard.message = `Contratos`; //MSG.CONTRACTS;
 			contractGraphCard.setApp(Apps.PAYROLL);
 			cardsPanel.appendChild(contractGraphCard);
 		} if ( this.getDur().isPayrollManager() ){
