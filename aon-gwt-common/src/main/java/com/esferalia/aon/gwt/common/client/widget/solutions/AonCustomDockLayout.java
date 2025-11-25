@@ -126,6 +126,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		searchFilterComponent.insertWidgetAfterSearchButton(widget);
 	}
 	
+	public void insertWidgetAfterSearchButton(Widget widget, boolean showSearchBox) {
+		searchFilterComponent.insertWidgetAfterSearchButton(widget, showSearchBox);
+	}
+	
 	public void addFilterWidget(Widget widget) {
 		searchFilterComponent.addFilterWidget(widget);
 	}
