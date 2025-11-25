@@ -38,6 +38,7 @@ import org.jooq.Path;
 import org.jooq.QualifiedAsterisk;
 import org.jooq.QuantifiedSelect;
 import org.jooq.QueryPart;
+import org.jooq.QueryPartInternal;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.RecordType;
@@ -68,6 +69,7 @@ import org.jooq.impl.SQLDataType;
 @SuppressWarnings("serial")
 public class AuditTable<R extends Record> implements Table<R> {
 
+	
 	public static class AuditField<T> implements Field<T> {
 		public Condition notEqual(T arg2) {
 			return delegate.notEqual(arg2);
@@ -1525,11 +1527,12 @@ public class AuditTable<R extends Record> implements Table<R> {
 	public static class AuditFields implements Fields {
 
 
-		public static final Field<Byte> BINLOG_EVENT = DSL.field(DSL.name("binlog_event"),SQLDataType.TINYINT.nullable(false));
-		public static final Field<String> BINLOG_SCHEMA =  DSL.field(DSL.name("binlog_schema"),SQLDataType.CHAR(64).nullable(false));  
-		public static final Field<Timestamp> BINLOG_TIME = DSL.field(DSL.name("binlog_time"),SQLDataType.TIMESTAMP.nullable(false));  
+		public static final Field<String> AUDIT_MD5 = DSL.field(DSL.name("audit_md5"),SQLDataType.CHAR(64).nullable(false));
+		public static final Field<Byte> AUDIT_EVENT = DSL.field(DSL.name("audit_event"),SQLDataType.TINYINT.nullable(false));
+		public static final Field<String> AUDIT_SCHEMA =  DSL.field(DSL.name("audit_schema"),SQLDataType.CHAR(64).nullable(false));  
+		public static final Field<Timestamp> AUDIT_TIMESTAMP = DSL.field(DSL.name("audit_timestamp"),SQLDataType.TIMESTAMP.nullable(false));  
 
-		public static final Field<?> [] BIN_LOG_FIELDS = { BINLOG_TIME, BINLOG_EVENT, BINLOG_SCHEMA  };
+		protected static final Field<?> [] AUDIT_FIELDS = { AUDIT_TIMESTAMP, AUDIT_EVENT, AUDIT_SCHEMA, AUDIT_MD5  };
 
 		private Fields delegate;
 
@@ -1542,7 +1545,7 @@ public class AuditTable<R extends Record> implements Table<R> {
 		}
 
 		public Field<?>[] fields() {
-			return Stream.concat(Arrays.stream(delegate.fields()), Arrays.stream(BIN_LOG_FIELDS))
+			return Stream.concat(Arrays.stream(delegate.fields()), Arrays.stream(AUDIT_FIELDS))
 					.map(f -> new AuditField<>(f)).toArray(Field<?>[]::new);
 		}
 
@@ -1660,6 +1663,10 @@ public class AuditTable<R extends Record> implements Table<R> {
 
 	public AuditTable(Table<R> table) {
 		this.delegate = table;
+	}
+
+	public Table<R> getDelegate() {
+		return delegate;
 	}
 
 	public Package getPackage() {
@@ -2618,7 +2625,7 @@ public class AuditTable<R extends Record> implements Table<R> {
 	}
 
 	public List<Index> getIndexes() {
-		return Collections.emptyList();// delegate.getIndexes();
+		return Collections.emptyList(); // delegate.getIndexes();
 	}
 
 	public List<UniqueKey<R>> getKeys() {
@@ -2644,4 +2651,6 @@ public class AuditTable<R extends Record> implements Table<R> {
 	public Fields fieldsIncludingHidden() {
 		return new AuditFields(delegate.fieldsIncludingHidden()); // delegate.fieldsIncludingHidden()
 	}
+	
+	
 }
