@@ -54,6 +54,7 @@ export class AonNewDate extends AonNewInput {
 				this.date = parsedDate;
 			}
 		}
+		return this.date;
 		// Si no hay atributo date o está vacío, this.date quedará undefined
 		// No asignar this.today automáticamente
 	}
@@ -392,6 +393,8 @@ export class AonNewDate extends AonNewInput {
 			this.month = this.date.getMonth();
 			this.year = this.date.getFullYear();
 
+			this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+			this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
 		} else {
 			// Si no hay fecha -> reseteamos
 			this.date = null;
@@ -401,7 +404,11 @@ export class AonNewDate extends AonNewInput {
 			this.day = this.today.getDate();
 			this.month = this.today.getMonth();
 			this.year = this.today.getFullYear();
+		
+			this.getElement(this.DATEPICKER_MONTH).innerHTML = this.getMonthName();
+			this.getElement(this.DATEPICKER_YEAR).innerHTML = this.year;
 		}
+
 
 		let datepickerDays = this.getElement(this.DATEPICKER_DAYS);
 		if (datepickerDays)
