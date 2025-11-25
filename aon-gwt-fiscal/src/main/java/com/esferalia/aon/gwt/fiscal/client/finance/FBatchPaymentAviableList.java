@@ -29,7 +29,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -104,7 +103,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		  CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, FAC("N. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
@@ -249,10 +248,12 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		addToolbarButton(resetSearchButton);
 		
 		checkAll = new AonTableButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
 		checkAll.addClickHandler(e -> checkAllAviable( true ));
 		addToolbarButton(checkAll);
 		
 		uncheckAll = new AonTableButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
 		uncheckAll.addClickHandler(e -> checkAllAviable( false ));
 		addToolbarButton(uncheckAll);
 		
@@ -289,7 +290,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		}
 
 		aviableCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-		addAviableButton.setEnabled(selectedFinances.size() > 0);
+		addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isAccounted());
 	}
 	
 	public boolean isSearchEnabled() {
@@ -366,7 +367,6 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addAviableButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardDoubleArrowRight());
-		addAviableButton.setVisible(!fbatch.isAccounted());
 		addAviableButton.setEnabled(false);
 		addAviableButton.addClickHandler(e -> {
 			addAviableButton.setEnabled(false);
@@ -449,6 +449,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
+		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -465,7 +466,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 				}
 
 				aviableCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-				addAviableButton.setEnabled(selectedFinances.size() > 0);
+				addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isAccounted() && !fbatch.isGenerated());
 			}
 		});
 		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
@@ -533,6 +534,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		}
 
 		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardArrowRight());
+		addButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
 		addButton.addClickHandler(e -> {
 			addButton.setEnabled(false);
 			

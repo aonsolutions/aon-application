@@ -328,7 +328,7 @@ public class SettleSalariesDAO {
 			
 			xmlData += "<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl><CtgyPurp><Cd>SALA</Cd></CtgyPurp></PmtTpInf>";
 			
-			xmlData += "<Amt><InstdAmt Ccy=\"EUR\">" + formatDouble(fbatchDetail.get(FINANCE.AMOUNT)) + "</InstdAmt></Amt>";
+			xmlData += "<Amt><InstdAmt Ccy=\"EUR\">" + formatDouble(fbatchDetail.get(FBATCH_DETAIL.AMOUNT)) + "</InstdAmt></Amt>";
 			
 			xmlData += "<ChrgBr>SLEV</ChrgBr>";
 			
