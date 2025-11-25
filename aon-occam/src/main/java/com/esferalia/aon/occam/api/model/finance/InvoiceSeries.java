@@ -11,6 +11,7 @@ public class InvoiceSeries implements Serializable {
 	private int fromNumber;
 	private int toNumber;
 	private int count;
+	private int scope;
 
 	public String getDescription() {
 		return description;
@@ -27,6 +28,16 @@ public class InvoiceSeries implements Serializable {
 		this.sales = sales;
 		return this;
 	}
+	
+	public int getScope() {
+		return scope;
+	}
+	
+	public InvoiceSeries setScope(int scope) {
+		this.scope = scope;
+		return this;
+	}
+	
 	public int getFromNumber() {
 		return fromNumber;
 	}

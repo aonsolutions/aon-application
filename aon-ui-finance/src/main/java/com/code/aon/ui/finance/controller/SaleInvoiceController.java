@@ -667,7 +667,7 @@ public class SaleInvoiceController extends InvoiceController {
 					.setDomain(inv.getDomain())
 					.setUser(login);
 				InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-				if (config.isVerifactu()) {
+				if (config.hasVerifactu()) {
 					communicateInvoice(occam, config, company, invoice, getCertificate());
 					return;
 				}
