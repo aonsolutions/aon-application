@@ -473,7 +473,7 @@ public class InvoiceTemplate {
 			float tempY = height - MIN_HEADER_FOR_LOGO;
 
 			byte[] qrCode = createQR(ctx.getQrUrl(), 300, 300);
-			drawImage(ctx.getDocument(), ctx.getContents(), qrCode, x + 390, tempY - 35, 120, 120);
+			drawImage(ctx.getDocument(), ctx.getContents(), qrCode, x + 390, tempY - 40, 120, 120);
 			drawText(ctx.getContents(), "Veri*Factu", x + 440, tempY + 72, Color.BLACK, FONT, 5);
 		}
 		drawTopInfo(ctx);
