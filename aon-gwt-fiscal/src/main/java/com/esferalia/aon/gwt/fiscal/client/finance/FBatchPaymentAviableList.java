@@ -4,8 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
@@ -19,6 +22,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -228,6 +232,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
 	        	getSearchTextBox().setFocus(true);
+	        	getSearchInfo();
 	        }
 	    });		
 	}
@@ -449,7 +454,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
-		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
+		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated() && !(notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary()));
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -531,6 +536,14 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			issueDate.setTitle(infoTitle);
 			titular.setTitle(infoTitle);
 			amount.setTitle(infoTitle);
+		} else if(finance.isReturned()) {
+			issueDate.addStyleName(AON.CSS.aonColorRed());
+			titular.addStyleName(AON.CSS.aonColorRed());
+			amount.addStyleName(AON.CSS.aonColorRed());
+
+			issueDate.setTitle(infoTitle);
+			titular.setTitle(infoTitle);
+			amount.setTitle(infoTitle);
 		}
 
 		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardArrowRight());
@@ -567,7 +580,10 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		else if (!finance.hasSalary()) return "Este vencimiento tiene asociada una nomina inexistente";
 		else if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid())
 			return "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
-		else return AonStringUtils.EMPTY;
+		else if(finance.isReturned()) 
+			return "El vencimiento es una devoluci\u00f3n";
+		else
+			return AonStringUtils.EMPTY;
 	}
 	
 	private boolean notValidAccountBic(Finance finance) {
@@ -606,6 +622,40 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 					@Override
 					public void onSuccess(LinkedList<Finance> result) {
 						success.accept(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showError(caught.getMessage());
+					}
+				});
+		
+	}
+	
+	private void getSearchInfo() {
+		FinanceParams params = searchPanel.getParams();
+		params.setDescription(getSearchTextBox().getValue());
+
+		FINANCE_SERVICE.getFinances(options.getDomainName(), options.getDomain(), options.getUser(), params, 0, Integer.MAX_VALUE,
+				new AsyncCallback<LinkedList<Finance>>() {
+
+					@Override
+					public void onSuccess(LinkedList<Finance> result) {
+						Set<PayMethodType> payMethods = result.stream()
+								.filter(f -> null != f.getPayMethodType())
+						        .map(Finance::getPayMethodType)
+						        .collect(Collectors.toSet());
+						
+						Map<String, String> accountAliasMap = result.stream()
+								.filter(f -> null != f.getBankAccount() && AonStringUtils.isNotBlank(f.getBankAccount().getBban1()) && AonStringUtils.isNotBlank(f.getBankAlias()))
+						        .collect(Collectors.toMap(
+						                f -> f.getBankAccount().getBban1(),
+						                Finance::getBankAlias,
+						                (v1, v2) -> v1   // Resolver conflictos si hay duplicados
+						        ));
+						
+						searchPanel.setPaymethods(payMethods);
+						searchPanel.setBankAccounts(accountAliasMap);
 					}
 
 					@Override
