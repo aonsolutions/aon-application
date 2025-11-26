@@ -32,28 +32,28 @@ export class AonLoader extends AonElement {
 	}
 
 	start() {
-		const progressElements = this.querySelectorAll(`.${this.PROGRESS}`);
+		const progressElements = this.querySelectorAll(`.aonProgress`);
     progressElements.forEach(element => {
       element.style.setProperty('display', 'flex', 'important');
     });
 	}
 
 	stop() {
-		const progressElements = this.querySelectorAll(`.${this.PROGRESS}`);
+		const progressElements = this.querySelectorAll(`.aonProgress`);
     progressElements.forEach(element => {
       element.style.display = 'none';
     });
 	}
 
 	startLoading() {
-    const loadingElements = this.querySelectorAll(`.${this.LOADING}`);
+    const loadingElements = this.querySelectorAll(`.aonLoading`);
     loadingElements.forEach(element => {
       element.style.display = 'block';
     });
 	}
 
 	stopLoading() {
-    const loadingElements = this.querySelectorAll(`.${this.LOADING}`);
+    const loadingElements = this.querySelectorAll(`.aonLoading`);
     loadingElements.forEach(element => {
       element.style.display = 'none';
     });

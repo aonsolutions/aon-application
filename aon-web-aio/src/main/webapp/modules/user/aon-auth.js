@@ -1,7 +1,4 @@
-import { AonCard } from '../../components/aon-card.js';
 import { AonDialog } from '../../components/aon-dialog.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonToast } from '../../components/aon-toast.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import {AonElement} from '../../components/AonElement.js';
@@ -40,7 +37,7 @@ export class AonAuth extends AonElement {
     }
 
     build() {
-        this.buildToolbar();
+//        this.buildToolbar();
         this.buildContent();
     }
 
@@ -52,28 +49,29 @@ export class AonAuth extends AonElement {
 		this.appendChild(toolbar);
 
 		toolbar.removeButtons();
-		toolbar.addButton2(ACTION.CHANGE_PASSWORD, () => this.changePasswordDialog());
+//		toolbar.addButton2(ACTION.CHANGE_PASSWORD, () => this.changePasswordDialog());
 		toolbar.addButton2(ACTION.SAVE, () => this.save().then(( auth ) => this.dispatchEvent(new CustomEvent(EVENT.CLOSE, { detail: auth }))).catch(() => {}));
 	}
 
     buildContent() {
 		let div = this.createElement(TAG.DIV);
-		div.className = this.isMobile() 
-            ? CSS.AON_MOBILE_SUB_CONTENT 
-            : CSS.AON_SUB_CONTENT;
+//		div.className = this.isMobile() 
+//            ? CSS.AON_MOBILE_SUB_CONTENT 
+//            : CSS.AON_SUB_CONTENT;
 		div.style.display = 'flex';
 		div.style.width	= '100%';
+		div.style.flexDirection	= 'column';
 		this.appendChild(div);
 
-        let authCard = createCard("aonConfigurationUserCard", MSG.USER);
-		authCard.style.width = this.isMobile() ? '100%' : '50%';
-		div.appendChild(authCard);
-        this.buildAuthContent(authCard);
+//        let authCard = createCard("aonConfigurationUserCard", MSG.USER);
+//		authCard.style.width = this.isMobile() ? '100%' : '50%';
+//		div.appendChild(authCard);
+        this.buildAuthContent(div);
     }
 
-    buildAuthContent(card) {
-		let div = this.createElement(TAG.DIV);
-		card.setContent(div);
+    buildAuthContent(div) {
+//		let div = this.createElement(TAG.DIV);
+//		card.setContent(div);
 
 		let email = createInput('aonConfigurationUserCardEmail', MSG.EMAIL);
 		email.value = this.auth?.email || '';
@@ -130,6 +128,18 @@ export class AonAuth extends AonElement {
     }
 
 	save() {
+		console.log(this.auth);
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if(!regex.test(this.auth.email) || this.auth.email == ''){
+			this.getApplication().showMessageError("Email no válido");
+			this.getApplication().stopLoading();
+			return;
+		}
+		if(this.auth.name == '' || this.auth.phone == '' || this.auth.document == '' || this.auth.surname == ''){
+			this.getApplication().showMessageError("Hay campos vacíos");
+			this.getApplication().stopLoading();
+			return;
+		}
 		return new Promise((resolve, reject) => {
 			this.verification(() => {
 				saveAuth(this.auth).then((auth) => resolve(auth) ).catch(reject);
@@ -141,9 +151,13 @@ export class AonAuth extends AonElement {
     verification(fn) {
 		getAuth().then(auth => {
 			sendVerification(auth).then(r => {
+				this.getApplication().stopLoading();
 				this.verificationDialog(r, fn);
+			}).catch(() => {
+				this.getApplication().stopLoading();
+				this.getApplication().showMessageError("Error al enviar los datos");
 			});
-		});
+		})
     }
 
     verificationDialog(data, fn) {
@@ -214,7 +228,7 @@ export class AonAuth extends AonElement {
 				this.showToast({message:'Las contraseñas no coinciden.', type:CONSTANT.ERROR});
 			}
 		});
-		d.open();
+		dialog.open();
 	}
 
 	getDialog() {

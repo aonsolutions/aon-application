@@ -9,6 +9,7 @@ import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonEmail } from "../../components/aon-email.js";
+import { AonDialog } from "../../components/aon-dialog.js"; 
 // import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
@@ -508,15 +509,24 @@ export class AonNewLogin extends AonElement {
 						  dialog.setDescription(MSG.EMAIL_ADD_DESCRIPTION);
 						  dialog.close = () =>{ /* do nothing*/ };
 						  dialog.hideElement(dialog.BUTTON_CLOSE);
-
-						  let aonAuth = new AonAuth()
-							  .onclose((event) => assignUserAuth({ email: event?.detail?.email, user: dur?.user?.id }).then(() => {
-								dialog.remove(); 
-								this.relogin(username, password); 
-							}))
+						  let aonAuth = new AonAuth();
+//							  .onclose((event) => assignUserAuth({ email: event?.detail?.email, user: dur?.user?.id }).then(() => {
+//								dialog.remove(); 
+//								this.relogin(username, password); 
+//							}))
 						  dialog.setContent(aonAuth);
+						  dialog.addAcceptAction(() => {
+							this.getApplication().startLoading();
+							aonAuth.save().then((e) => {
+								assignUserAuth({ email: e?.email, user: dur?.user?.id }).then(() => {
+									dialog.remove();
+									this.relogin(username, password); 
+								})
+							}).catch((e) => {
+								console.log(e)
+							})
+						  })
 						  dialog.open();
-
 						  //this.rootPanel(new AonAuth().onclose((event) => assignUserAuth({ email: event?.detail?.email, user: dur?.user?.id }).then(() => { this.relogin(username, password); })));
 					  }
 				  });

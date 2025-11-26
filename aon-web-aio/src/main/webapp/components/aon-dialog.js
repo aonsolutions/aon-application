@@ -104,13 +104,15 @@ export class AonDialog extends AonElement {
     this.classList.add('aon-dialog-hidden');
     this.DIALOG       = this.id     + 'Dialog';
     this.MAIN         = this.DIALOG + 'Main';
-    this.TITLE 				= this.DIALOG + 'Title';
+    this.TITLE 		  = this.DIALOG + 'Title';
     this.CONTENT      = this.DIALOG + 'Content';
     this.ACTION       = this.DIALOG + 'Action';
     this.CANCEL       = this.ACTION + 'Cancel';
     this.ACCEPT       = this.ACTION + 'Accept';
     this.BUTTON_LEFT  = this.DIALOG + 'DivButtonsLeft';
     this.BUTTON_RIGHT = this.DIALOG + 'DivButtonsRight';
+	this.DESCRIPTION = this.DIALOG + 'Description';
+	this.BUTTON_CLOSE = this.DIALOG + 'CloseDesktop';
     this.autoclose    = this.autoclose || true;
 	this.OUTSIDE_CLICK_CANCEL = (e) => {
       const dialog = this.getDialog();
@@ -124,7 +126,8 @@ export class AonDialog extends AonElement {
     [
       this.getElement(this.TITLE),
       this.getContent(),
-      this.getElement(this.ACTION)
+      this.getElement(this.ACTION),
+	  this.getElement(this.DESCRIPTION),
     ].forEach(el => el && (el.innerHTML = ''));
   }
 
@@ -243,8 +246,8 @@ export class AonDialog extends AonElement {
     title.className = "dialog-title";
     head.appendChild(title);
     // Boton de cerrar
-    const closeDesktop     = new AonIconButton(); 
-    closeDesktop.id        = this.id + "dialog-head-close";
+    const closeDesktop     = new AonIconButton();
+    closeDesktop.id        = this.BUTTON_CLOSE;
     closeDesktop.className = "dialog-head-close";
     closeDesktop.title     = MSG.CLOSE;
     closeDesktop.icon      = 'close';
@@ -253,7 +256,7 @@ export class AonDialog extends AonElement {
   }
   
   deleteHeadClose(){
-	const close = this.getElement(this.id + "dialog-head-close");
+	const close = this.getElement(this.BUTTON_CLOSE);
 	close.remove();
   }
 
@@ -271,6 +274,9 @@ export class AonDialog extends AonElement {
     content.id        = this.CONTENT;
     content.className = "dialog-body-content";
     body.appendChild(content);
+	let description = this.createElement(TAG.DIV);
+	description.id = this.DESCRIPTION;
+	body.appendChild(description);
     return body;
   }
 
@@ -346,6 +352,10 @@ export class AonDialog extends AonElement {
 //    });
   }
   
+  getCloseDesktop(){
+  	return this.getElement(this.DIALOG + 'CloseDesktop');
+  }
+  
   removeCliclOutsideDialogClose(){
 	this.removeEventListener('click', this.OUTSIDE_CLICK_CANCEL);
   }
@@ -413,6 +423,10 @@ export class AonDialog extends AonElement {
         item.fn();
       });
     });
+  }
+  
+  setDescription(description) {
+	if(description) this.getElement(this.DESCRIPTION).innerHTML = description;
   }
 
   getButtonLeft() {
