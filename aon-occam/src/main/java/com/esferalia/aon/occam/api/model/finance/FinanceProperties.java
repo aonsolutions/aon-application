@@ -23,7 +23,9 @@ public interface FinanceProperties {
 	Property<Byte> getPayrollProperty();
 	
 	Property<String> getRegistryNameProperty();
+	Property<String> getRegistryDocumentProperty();
 	Property<String> getConceptNameProperty();
 	Property<String> getBankAccountProperty();
+	Property<String> getBankAliasProperty();
 
 }

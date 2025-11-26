@@ -201,7 +201,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				// Get / Save Target
 				
 				Optional<Target> targetOpt = TargetDAO.getStream(ctx, 
-						f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument())
+						f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument().toUpperCase())
 							.and(f.getDomainProperty().eq(api.getDomain().getId()))
 						).findFirst(); 
 
@@ -254,7 +254,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setName(actionTarget.getTarget().getName())
 						.setDocumentType(DocumentType.identify(actionTarget.getTarget().getDocument()))
 						.setDocumentCountry(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
-						.setDocument(actionTarget.getTarget().getDocument())
+						.setDocument(actionTarget.getTarget().getDocument().toUpperCase())
 						.setNationality(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
 
 				).setScope(actionTarget.getMarketingAction().getMarketingCampaign().getScope());
@@ -368,7 +368,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			try {
 				postUrl += 
 						"?name=" + URLEncoder.encode(actionTarget.getTarget().getName(), "UTF-8") + 
-						"&document=" + actionTarget.getTarget().getDocument() + 
+						"&document=" + actionTarget.getTarget().getDocument().toUpperCase() + 
 						"&streetType=" + actionTarget.getTarget().getStreetType() + 
 						"&address=" + URLEncoder.encode(actionTarget.getTarget().getAddress(), "UTF-8") + 
 						"&number=" + actionTarget.getTarget().getNumber() + 
@@ -410,7 +410,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			context.put("logo", logoUrl);
 			context.put("parentName", parent.getDescription());
 			context.put("name", actionTarget.getTarget().getName());
-			context.put("document", actionTarget.getTarget().getDocument());
+			context.put("document", actionTarget.getTarget().getDocument().toUpperCase());
 			context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
 			Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_ayudat.vm");
@@ -566,7 +566,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
 				updateProjectCommercial(api, ctx);
 				
-				createTaskHolderScope(api, ctx);
+				createTaskHolderScope(api, ctx, newDomain);
 
 				// Send mail
 				sendEnterpriseCreatedMail(api, ctx, newDomain);
@@ -583,7 +583,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return MarketingEmailTemplates.getFinishCreationHtml(api, parent, createdDomain, urlMail, userMail);
 	}
 	
-	private static void createTaskHolderScope(AonApiData api, CloseableAONContext ctx) {
+	private static void createTaskHolderScope(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
 		Integer marketingActionId = JsonUtils.getInteger(api.getData(), "marketingAction");
 		MarketingAction marketingAction = MarketingCampaignDAO.getAction(ctx, marketingActionId);		
 		
@@ -607,8 +607,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				scope = SecurityDAO.insertScope(ctx, newScope);
 			} else scope = scopes.findFirst().get();
 			
-			domain.setScope(scope.getId());
-			DomainDAO.updateDomainScope(ctx, domain);
+			newDomain.setScope(scope.getId());
+			DomainDAO.updateDomainScope(ctx, newDomain);
 			
 			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(mkActionTH.getUser().getId()),
 					new Options().setFull(true));
@@ -686,7 +686,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		Company company = new Company();
 		company.setName(name);
-		company.setDocument(document);
+		company.setDocument(document.toUpperCase());
 		company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
 
 		checkCompany(company);
@@ -719,7 +719,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(AonStringUtils.isBlank(owner))
 			throw new AonApiException("No existe email como owner para la creaci\u00f3n de la empresa");
 		
-		String domainNewName = company.getDocument() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
+		String domainNewName = company.getDocument().toLowerCase() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
 		
 		Domain newDomain = new Domain()
 				.setName(domainNewName.toLowerCase())
@@ -1590,7 +1590,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if (null != parentDomain && null != parentDomain.getId()) {
 			
 			Domain existDomain = DomainDAO.getDomain(ctx, 
-					f -> f.getNameProperty().like("%" + document + "%").and(f.getParentProperty().eq(parentDomain.getId())));
+					f -> f.getNameProperty().like("%" + document.toLowerCase() + "%").and(f.getParentProperty().eq(parentDomain.getId())));
 			
 			if (null != existDomain && null != existDomain.getId()) {
 				String logoUrl = MarketingEmailTemplates.getLogoUrl(parentDomain, api.getUser());

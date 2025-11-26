@@ -15,13 +15,25 @@ public class FinanceParams implements Serializable{
 	
 	private String description;
 	
-	private Date fromInvoiceDate;
-	private Date toInvoiceDate;
 	private Date fromDueDate;
 	private Date toDueDate;
+	
+	private Double amount;
+	private boolean nearbyNumbers;
+	private double factor = 5;
+	
+	private boolean betweenNumbers = false;
+	private Double gtamount;
+	private Double ltamount;
+	
+	private Date fromInvoiceDate;
+	private Date toInvoiceDate;
 	private SecurityLevel securityLevel; 
 	private boolean hasConfidentialityRole;
+	
 	private Boolean payment;
+	private Boolean charge;
+	private Boolean paymentCharge;
 	
 	private boolean pending;
 	private boolean batched;
@@ -30,24 +42,18 @@ public class FinanceParams implements Serializable{
 	private boolean settled;
 	
 	private Integer registry;
-	private Double amount;
 	
-	private boolean betweenNumbers = false;
-	private Double gtamount;
-	private Double ltamount;
-	
-	private boolean nearbyNumbers;
-	private double factor = 5;
 	private String concept;
 	private String referenceCode;
+	
 	private Integer payMethod;
 	private PayMethodType payMethodType;
+	
 	private int order;
 	
 	private boolean isPayroll;
 	
-	private String backRef;
-	private boolean includeCharges = false;
+	private String bankAlias;
 	
 	public int getDomain() {
 		return domain;
@@ -255,20 +261,28 @@ public class FinanceParams implements Serializable{
 		this.isPayroll = isPayroll;
 		return this;
 	}
-	public String getBackRef() {
-		return backRef;
+	public Boolean getCharge() {
+		return charge;
 	}
-	public FinanceParams setBackRef(String backRef) {
-		this.backRef = backRef;
+	public FinanceParams setCharge(Boolean charge) {
+		this.charge = charge;
 		return this;
 	}
-	public boolean isIncludeCharges() {
-		return includeCharges;
+	public Boolean getPaymentCharge() {
+		return paymentCharge;
 	}
-	public FinanceParams setIncludeCharges(boolean includeCharges) {
-		this.includeCharges = includeCharges;
+	public FinanceParams setPaymentCharge(Boolean paymentCharge) {
+		this.paymentCharge = paymentCharge;
 		return this;
 	}
+	public String getBankAlias() {
+		return bankAlias;
+	}
+	public FinanceParams setBankAlias(String bankAlias) {
+		this.bankAlias = bankAlias;
+		return this;
+	}
+	
 	
 	
 }
