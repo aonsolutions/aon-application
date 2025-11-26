@@ -24,5 +24,6 @@ public interface FinanceProperties {
 	
 	Property<String> getRegistryNameProperty();
 	Property<String> getConceptNameProperty();
+	Property<String> getBankAccountProperty();
 
 }

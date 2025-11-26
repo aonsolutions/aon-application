@@ -34,6 +34,7 @@ import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
 // import { AonIcon } from '../../components/aon-icon.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonInvoice extends AonElement {
 	invoice;
@@ -280,6 +281,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
+		this.checkConfiguration();
 		this.clear();
 		this.buildInputFile();
 		this.buildToolbar();
@@ -292,6 +294,13 @@ export class AonInvoice extends AonElement {
 		let toolbar = this.getElement("aonInvoiceToolbar");
 		if(toolbar) toolbar.removeButtons();
 	}
+
+
+	checkConfiguration() {		
+		if(!this.getDur().hasScopes()) {
+			this.getApplication().showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+		}
+	}	
 
 	resize() {
 		// if(!this.isMobile()){
@@ -1404,8 +1413,16 @@ export class AonInvoice extends AonElement {
 		table.addCell(div, '4');
 
 		// ----- SERIE
+		
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
+
+		// let serie = createSelect(this.SERIE, MSG.SERIE);
+		// serie.options = JSON.stringify(this.configuration.series);
+		// serie.value = this.invoice.series;
+		// serieSpan.appendChild(serie);
+		// serie.readonly = this.invoice.isReadonly();
+		// serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
 		let serie = createSuggestion(this.SERIE, MSG.SERIE);
 		serie.setMaxlength(5);
@@ -2763,6 +2780,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	save(msg) {
+		let ok = this.checkConfiguration();
+		if(!ok) return;
 		msg = msg || MSG.SAVED_DATA;
 		insertInvoice(this.getInvoice()).then(r => {
 			if(!this.getInvoice().id) 
@@ -2892,15 +2911,22 @@ export class AonInvoice extends AonElement {
 		return this.configuration
 			&& this.configuration.communication
 			&& (this.configuration.communication.tbai
-			 || this.configuration.communication.verifactu
+			 || this.hasVerifactu()
 		);
 	}
-	isVerifactuTest() {
+
+	hasVerifactu() {
 		return this.configuration
 			&& this.configuration.communication
 			&& this.configuration.communication.verifactu
-			&& this.configuration.communication.verifactuTest
+			&& (!this.configuration.communication.verifactuIncludeDate
+				|| AonDateUtils.isAfterOrEqual(new Date(), AonDateUtils.parse(this.configuration.communication.verifactuIncludeDate)))	
 		;
+	}
+
+	isVerifactuTest() {
+		return this.hasVerifactu()
+			&& this.configuration.communication.verifactuTest;
 	}
 	isTbaiTest() {
 		return this.configuration
@@ -2910,6 +2936,8 @@ export class AonInvoice extends AonElement {
 		;
 	}
 	acceptInvoice() {
+		let ok = this.checkConfiguration();
+		if(!ok) return;
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
 		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
 			let d = this.getApplication().getDialog();

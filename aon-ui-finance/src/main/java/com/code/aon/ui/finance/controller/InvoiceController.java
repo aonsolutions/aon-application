@@ -2194,7 +2194,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isVerifactu() {
-		return getInvoiceCommunicationConfiguration().isVerifactu();
+		return getInvoiceCommunicationConfiguration().hasVerifactu();
 	}
 	
 	public boolean isAraba() {
