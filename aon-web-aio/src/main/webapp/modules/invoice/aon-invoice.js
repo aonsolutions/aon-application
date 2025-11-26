@@ -298,8 +298,9 @@ export class AonInvoice extends AonElement {
 
 	checkConfiguration() {		
 		if(!this.getDur().hasScopes()) {
-			this.getApplication().showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+			this.showError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
 		}
+		return true;
 	}	
 
 	resize() {
