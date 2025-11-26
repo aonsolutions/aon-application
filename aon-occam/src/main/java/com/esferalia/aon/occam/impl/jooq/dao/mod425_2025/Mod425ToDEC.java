@@ -180,7 +180,7 @@ public class Mod425ToDEC {
 			dir.setPUE(changeCharacters(address.getRstreetDoor()));      // Puerta
 			dir.setLOC(changeCharacters(address.getRtown()));            // Localidad
 			dir.setPOP(AonFiscalFileUtils.unsigned(address.getRprovince(), 2)); // Código de provincia
-			dir.setCMU(address.getRtownCode());                          // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO	
+			dir.setCMU(address.getRtownCode());                          // Código de municipio	
 			dir.setCP(address.getRzip());                                // Código Postal
 			dir.setTEL(address.getRphone());       	                     // Teléfono  
 			
@@ -316,7 +316,8 @@ public class Mod425ToDEC {
 		if (simpRegime != null && AonStringUtils.isNotBlank(simpRegime.getEpigrafe())) {
 			TMODULO module = new TMODULO();
 			module.setEPI(simpRegime.getEpigrafe());          // Código del epígrafe
-			//module.setSEC(simpRegime1.getSection());        // Sección del epígrafe // FALTA - VER SI ES NECESARIO
+			if (AonStringUtils.isNotBlank(simpRegime.getSector()))
+				module.setSEC(simpRegime.getSector());        // Sector 
 			module.setMOD1(getAmount(simpRegime.getUnit1())); // Módulo 1
 			module.setMOD2(getAmount(simpRegime.getUnit2())); // Módulo 2
 			module.setMOD3(getAmount(simpRegime.getUnit3())); // Módulo 3

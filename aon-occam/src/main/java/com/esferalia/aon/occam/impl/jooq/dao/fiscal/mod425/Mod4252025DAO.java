@@ -437,11 +437,11 @@ public class Mod4252025DAO {
 			fillFromConfiguration(ctx, mod425);	
 		}
 		
-		// FALTA - REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
+		// REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
 //		fillSimplifedRegimeData(ctx, mod425);
 		fillGeneralRegimeData(ctx, mod425);
 		if (mod425.isSimplifiedRegime()) {
-			// FALTA - REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
+			// REGIMEN SIMPLIFICADO CUANDO SE HAGA EL MODELO 421
 //			fillSimplifiedDeclarationResults(ctx, mod425);
 		} else {
 			fillGeneralDeclarationResults(ctx, mod425);
@@ -586,8 +586,6 @@ public class Mod4252025DAO {
 		return mod425;
 	}
 
-	// FALTA - AHORA TAMBIEN HAY QUE TENER EN CUENTA LA ADMINISTRACION Y TAMBIEN EN EL MODELO 390 DEL EJERCICIO 2025,
-	// PUES PODRIA HABER 2 MODELOS PARA EL MISMO AÑO DE DIFERENTES ADMINISTRACIONES
 	private static void validate(AONContext ctx, Mod4252025 mod425) {
 		if (mod425.isReplacement()) {
 			// Se comprueba que exista la declaración sustituida.
@@ -651,7 +649,7 @@ public class Mod4252025DAO {
 	
 	private static Mod4252025 fillGeneralRegimeData(AONContext ctx, Mod4252025 mod425) {
 		try {
-			Mod425Detail det = null;
+//			Mod425Detail det = null;
 			EnumMap<Mod4252025DetailKey, Mod425Detail> map = getDetails(ctx, mod425);
 			
 			// Operaciones esecíficas
@@ -691,22 +689,22 @@ public class Mod4252025DAO {
 //			mod425.setBox146(map.get(Mod4252025DetailKey.C146).getTaxableBase()); // 146 Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
 //			mod425.setBox147(map.get(Mod4252025DetailKey.C147).getTaxableBase()); // 147 Total volumen de operaciones en el REPEP
 			
-			// FALTA - REVISAR SI ESTO DEBE SEGUIR SIENDO ASI
+			// RS - ESTO CREO QUE NO DEBE HACERSE PUES PUEDE TENER A LA VEZ REGIMEN GENERAL Y REGIMEN SIMPLIFICADO
 			// ----------------------------------------------------------------------------
 			// En el caso de que el declarante este acogido al regimen simplificado
 			// Se utiliza toda la funcionalidad del regimen general (lectura de facturas)
-			// para rellenar los campos anteriores, del 120 al 147. Sin embargo la 
+			// para rellenar los campos anteriores. Sin embargo la 
 			// página 2 del modelo, o sea la del regimen general debe ir vacia, por lo 
 			// que se incializa el mapa.
-			if (mod425.isSimplifiedRegime()) {
-				map = new EnumMap<>(Mod4252025DetailKey.class);
-				for (Mod4252025DetailKey key : Mod4252025DetailKey.values() ) {
-					det = new Mod425Detail();
-					det.setKey(key);
-					det.setPercent(key.getPercent());
-					map.put(key, det);
-				}
-			}
+//			if (mod425.isSimplifiedRegime()) {
+//				map = new EnumMap<>(Mod4252025DetailKey.class);
+//				for (Mod4252025DetailKey key : Mod4252025DetailKey.values() ) {
+//					det = new Mod425Detail();
+//					det.setKey(key);
+//					det.setPercent(key.getPercent());
+//					map.put(key, det);
+//				}
+//			}
 			// ----------------------------------------------------------------------------
 			
 			mod425.setGeneralRegime(map);

@@ -122,8 +122,8 @@ public class DECToMod425 {
 				if (per != null) {
 					TDATOSPERSONALES dp = per.getPER();
 					if (dp != null) {
-						address.setRdocument(dp.getNIF());                // Nif de la persona
-						address.setRname(dp.getNRS());  // Nombre o razón social
+						address.setRdocument(dp.getNIF());  // Nif de la persona
+						address.setRname(dp.getNRS());  	// Nombre o razón social
 					}
 					TDIRECCION dir = per.getDIR();
 					if (dir != null) {
@@ -135,7 +135,7 @@ public class DECToMod425 {
 						address.setRstreetDoor(dir.getPUE());      // Puerta
 						address.setRtown(dir.getLOC());            // Localidad
 						address.setRprovince(AonNumberUtils.toint(dir.getPOP())); // Código de provincia 
-						address.setRtownCode(dir.getCMU());                       // Código de municipio // FALTA - NO LO TENGO EN ESTE MOMENTO, VER SI ES NECESARIO, SI QUE ES OBLIGATORIO	
+						address.setRtownCode(dir.getCMU());                       // Código de municipio	
 						address.setRzip(dir.getCP());                             // Código Postal
 						address.setRphone(dir.getTEL());       	                  // Teléfono  
 					}
@@ -265,7 +265,8 @@ public class DECToMod425 {
 		for (TMODULO module : modList) {			
 			if (module != null && AonStringUtils.isNotBlank(module.getEPI())) {
 				SimpliedRegimeActivity425 simpRegime = new SimpliedRegimeActivity425();
-				simpRegime.setEpigrafe(module.getEPI()); // Código del epígrafe
+				simpRegime.setEpigrafe(module.getEPI());          // Código del epígrafe
+				simpRegime.setSector(module.getSEC());            // Sector (para los epígrafes 722 y 691.9)				
 				simpRegime.setUnit1(getAmount(module.getMOD1())); // Módulo 1
 				simpRegime.setUnit2(getAmount(module.getMOD2())); // Módulo 2
 				simpRegime.setUnit3(getAmount(module.getMOD3())); // Módulo 3
@@ -273,7 +274,6 @@ public class DECToMod425 {
 				simpRegime.setUnit5(getAmount(module.getMOD5())); // Módulo 5
 				simpRegime.setUnit6(getAmount(module.getMOD6())); // Módulo 6
 				simpRegime.setUnit7(getAmount(module.getMOD7())); // Módulo 7
-				// FALTA - SI PONEMOS TAMBIEN LOS IMPORTES POR UNIDAD DE MEDIDA Y TOTAL POR MODULO, HABRIA QUE CALCULARLO AQUI SACANDOLO DE ALGUN SITIO
 				simpRegime.setBoxA(getAmount(module.getCASA()));  // Cuota anual devengada por operaciones corrientes
 				simpRegime.setBoxB(getAmount(module.getCASB()));  // Cuotas soportadas por operaciones corrientes
 				simpRegime.setBoxC(getAmount(module.getCASC()));  // Índice corrector

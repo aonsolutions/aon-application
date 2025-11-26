@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHandlers<SimpliedRegimeActivity425> {
 
 	private AonTextBox epigrafe = new AonTextBox();
+	private AonTextBox sector = new AonTextBox();
 	
 	private AonDoubleBox unit1 = new AonDoubleBox();
 	private AonDoubleBox unit2 = new AonDoubleBox();
@@ -25,15 +26,6 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	private AonDoubleBox unit5 = new AonDoubleBox();
 	private AonDoubleBox unit6 = new AonDoubleBox();
 	private AonDoubleBox unit7 = new AonDoubleBox();
-	
-	// FALTA - POR AHORA SOLO LAS UNIDADES, QUE ES LO UNICO QUE VA EN EL XML
-//	private AonDoubleBox amount1 = new AonDoubleBox();
-//	private AonDoubleBox amount2 = new AonDoubleBox();
-//	private AonDoubleBox amount3 = new AonDoubleBox();
-//	private AonDoubleBox amount4 = new AonDoubleBox();
-//	private AonDoubleBox amount5 = new AonDoubleBox();
-//	private AonDoubleBox amount6 = new AonDoubleBox();
-//	private AonDoubleBox amount7 = new AonDoubleBox();
 	
 	private AonDoubleBox boxA = new AonDoubleBox(); // Cuota anual devengada por operaciones corrientes
 	private AonDoubleBox boxB = new AonDoubleBox(); // Cuotas soportadas por operaciones corrientes 
@@ -48,12 +40,15 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		setValue(regime);
 	}
 
-	private void setValue(SimpliedRegimeActivity425 regime) {
+	public void setValue(SimpliedRegimeActivity425 regime) {
 		if (regime == null) {
 			empty();
 			return;
 		}
+		
 	    epigrafe.setValue(regime.getEpigrafe(),false);
+	    sector.setValue(regime.getSector(),false);
+	    
 	    unit1.setValue(regime.getUnit1(),false);
 	    unit2.setValue(regime.getUnit2(),false);
 	    unit3.setValue(regime.getUnit3(),false);
@@ -61,14 +56,6 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    unit5.setValue(regime.getUnit5(),false);
 	    unit6.setValue(regime.getUnit6(),false);
 	    unit7.setValue(regime.getUnit7(),false);
-	    // FALTA - POR AHORA SOLO LAS UNIDADES
-//	    amount1.setValue(regime.getAmount1(),false);
-//	    amount2.setValue(regime.getAmount2(),false);
-//	    amount3.setValue(regime.getAmount3(),false);
-//	    amount4.setValue(regime.getAmount4(),false);
-//	    amount5.setValue(regime.getAmount5(),false);
-//	    amount6.setValue(regime.getAmount6(),false);
-//	    amount7.setValue(regime.getAmount7(),false);
 	    
 	    boxA.setValue(regime.getBoxA(),false);
 	    boxB.setValue(regime.getBoxB(),false);
@@ -79,40 +66,36 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		boxG.setValue(regime.getBoxG(),false);
 	}
 
-	public void fire() {
+	private void fire() {
 		SimpliedRegimeActivity425 reg = null;
 		if (!AonStringUtils.isBlank(epigrafe.getValue())) {
 			reg = new SimpliedRegimeActivity425();
+			
 		    reg.setEpigrafe(epigrafe.getValue());
-		    reg.setUnit1(unit1.getValue());
-		    reg.setUnit2(unit2.getValue());
-		    reg.setUnit3(unit3.getValue());
-		    reg.setUnit4(unit4.getValue());
-		    reg.setUnit5(unit5.getValue());
-		    reg.setUnit6(unit6.getValue());
-		    reg.setUnit7(unit7.getValue());
-		    // FALTA - POR AHORA SOLO LAS UNIDADES
-//		    reg.setAmount1(amount1.getValue());
-//		    reg.setAmount2(amount2.getValue());
-//		    reg.setAmount3(amount3.getValue());
-//		    reg.setAmount4(amount4.getValue());
-//		    reg.setAmount5(amount5.getValue());
-//		    reg.setAmount6(amount6.getValue());
-//		    reg.setAmount7(amount7.getValue());
+		    reg.setSector(sector.getValue());
 		    
-		    reg.setBoxA(boxA.getValue());
-		    reg.setBoxB(boxB.getValue());
-		    reg.setBoxC(boxC.getValue());
-		    reg.setBoxD(boxD.getValue());
-			reg.setBoxE(boxE.getValue());
-			reg.setBoxF(boxF.getValue());
-			reg.setBoxG(boxG.getValue());
+		    reg.setUnit1(unit1.getValue() == null ? 0.0 : unit1.getValue());
+		    reg.setUnit2(unit2.getValue() == null ? 0.0 : unit2.getValue());
+		    reg.setUnit3(unit3.getValue() == null ? 0.0 : unit3.getValue());
+		    reg.setUnit4(unit4.getValue() == null ? 0.0 : unit4.getValue());
+		    reg.setUnit5(unit5.getValue() == null ? 0.0 : unit5.getValue());
+		    reg.setUnit6(unit6.getValue() == null ? 0.0 : unit6.getValue());
+		    reg.setUnit7(unit7.getValue() == null ? 0.0 : unit7.getValue());
+		    
+		    reg.setBoxA(boxA.getValue() == null ? 0.0 : boxA.getValue());
+		    reg.setBoxB(boxB.getValue() == null ? 0.0 : boxB.getValue());
+		    reg.setBoxC(boxC.getValue() == null ? 0.0 : boxC.getValue());
+		    reg.setBoxD(boxD.getValue() == null ? 0.0 : boxD.getValue());
+			reg.setBoxE(boxE.getValue() == null ? 0.0 : boxE.getValue());
+			reg.setBoxF(boxF.getValue() == null ? 0.0 : boxF.getValue());
+			reg.setBoxG(boxG.getValue() == null ? 0.0 : boxG.getValue());
 		}
 		ValueChangeEvent.fire(SimplifiedRegimePanel.this,reg);
 	}
 
 	private void empty() {
 	    epigrafe.setValue(null,false);
+	    sector.setValue(null,false);
 
 	    unit1.setValue(0.0,false);
 	    unit2.setValue(0.0,false);
@@ -121,14 +104,6 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    unit5.setValue(0.0,false);
 	    unit6.setValue(0.0,false);
 	    unit7.setValue(0.0,false);
-	    // FALTA - POR AHORA SOLO LAS UNIDADES
-//	    amount1.setValue(0.0,false);
-//	    amount2.setValue(0.0,false);
-//	    amount3.setValue(0.0,false);
-//	    amount4.setValue(0.0,false);
-//	    amount5.setValue(0.0,false);
-//	    amount6.setValue(0.0,false);
-//	    amount7.setValue(0.0,false);
 	    
 	    boxA.setValue(0.0,false);
 	    boxB.setValue(0.0,false);
@@ -149,14 +124,14 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		epigrafe.setVisibleLength(7);
 		epigrafe.setMaxLength(5);
 		tab0.addRow()
-//			.addCell(new Label(""), AON.CSS.aonWidth150())
 			.addCell(new Label(AON.MSG.epigraph()), AON.CSS.aonWidth60())
 			.addCell(epigrafe, AON.CSS.aonWidth80())
 			.addCell(new Label(""), AON.CSS.aonWidthAuto(), AON.CSS.aonTextCenter());
 		
+		sector.setVisibleLength(7);
 		tab0.addRow()
-			.addCell(new Label(""), AON.CSS.aonWidth60(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
-			.addCell(new Label("Unidades"), AON.CSS.aonWidth80(), AON.CSS.aonTextCenter(), AON.CSS.aonFontSmaller())
+			.addCell(new Label("Sector"), AON.CSS.aonWidth60())
+			.addCell(sector, AON.CSS.aonWidth80())
 			.addCell(new Label(""), AON.CSS.aonWidthAuto(), AON.CSS.aonTextCenter());
 		
 		unit1.setVisibleLength(7);
@@ -166,6 +141,11 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		unit5.setVisibleLength(7);
 		unit6.setVisibleLength(7);
 		unit7.setVisibleLength(7);
+		
+		tab0.addRow()
+			.addCell(new Label(""), AON.CSS.aonWidth60(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(new Label("Unidades"), AON.CSS.aonWidth80(), AON.CSS.aonTextCenter(), AON.CSS.aonFontSmaller())
+			.addCell(new Label(""), AON.CSS.aonWidthAuto(), AON.CSS.aonTextCenter());
 		
 		tab0.addRow()
 			.addCell(new Label(AON.MSG.module() + "1"), AON.CSS.aonWidth60(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
@@ -242,6 +222,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 			.addCell(boxG, AON.CSS.aonWidth120());
 		
 	    epigrafe.addValueChangeHandler(event -> fire());
+	    sector.addValueChangeHandler(event -> fire());
 	    
 	    unit1.addValueChangeHandler(event -> fire());
 	    unit2.addValueChangeHandler(event -> fire());
@@ -250,22 +231,11 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    unit5.addValueChangeHandler(event -> fire());
 	    unit6.addValueChangeHandler(event -> fire());
 	    unit7.addValueChangeHandler(event -> fire());
-	    // FALTA - POR AHORA SOLO LAS UNIDADES
-//	    amount1.addValueChangeHandler(event -> fire());
-//	    amount2.addValueChangeHandler(event -> fire());
-//	    amount3.addValueChangeHandler(event -> fire());
-//	    amount4.addValueChangeHandler(event -> fire());
-//	    amount5.addValueChangeHandler(event -> fire());
-//	    amount6.addValueChangeHandler(event -> fire());
-//	    amount7.addValueChangeHandler(event -> fire());
 	    
 	    boxA.addValueChangeHandler(event -> fire());
 	    boxB.addValueChangeHandler(event -> fire());
 	    boxC.addValueChangeHandler(event -> fire());
-//	    boxD.addValueChangeHandler(event -> fire());
 		boxE.addValueChangeHandler(event -> fire());
-//		boxF.addValueChangeHandler(event -> fire());
-//		boxG.addValueChangeHandler(event -> fire());
 		
 	}
 

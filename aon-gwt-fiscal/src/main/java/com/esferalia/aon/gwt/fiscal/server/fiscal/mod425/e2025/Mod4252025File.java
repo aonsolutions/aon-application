@@ -40,9 +40,8 @@ public class Mod4252025File extends HttpServlet {
 			
 			System.out.println("PASO 2. xml="+xml);
 			
-			// FALTA - TENGO QUE MODIFICAR LA FUNCION AWS PARA QUE ACEPTE EL MOD4252025
 			// Pasarlo al modulo de impresión para obtener el fichero para la presentación 
-//			ModelAdmonUtils.callAtcAwsFunction(xml, mod425, false, resp);
+			ModelAdmonUtils.callAtcAwsFunction(xml, mod425, false, resp);
 			
 			System.out.println("PASO 3. OK");
 			

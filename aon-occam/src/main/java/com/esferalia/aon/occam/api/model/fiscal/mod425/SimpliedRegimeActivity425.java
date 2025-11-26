@@ -8,6 +8,7 @@ public class SimpliedRegimeActivity425 implements Serializable {
 	private static final long serialVersionUID = 228587060914869702L;
 	
 	private String epigrafe;  // Epígrafe IAE/Código
+	private String sector;    // Sector (para los epígrafes 722 y 691.9 
     private double unit1;     // Unidades módulo (1)
     private double unit2;     // Unidades módulo (2)
     private double unit3;     // Unidades módulo (3)
@@ -16,9 +17,9 @@ public class SimpliedRegimeActivity425 implements Serializable {
     private double unit6;     // Unidades módulo (6)
     private double unit7;     // Unidades módulo (7)
     
-    // FALTA - EN EL XML SOLO SE PONEN LAS UNIDADES, EN PANTALLA SE PODRIA MOSTRAR IMPORTE/UNITARIO Y TOTAL, 
-    // PERO HABRIA QUE TENER EN ALGUN SITIO LOS IMPORTES UNITARIOS DE CADA ACTIVIDAD
-    // POR AHORA SE PONEN SOLO LAS UNIDADES
+    // EN EL XML SOLO SE PONEN LAS UNIDADES, EN PANTALLA SE PODRIA MOSTRAR IMPORTE/UNITARIO Y TOTAL, 
+    // PERO HABRIA QUE TENER EN ALGUN SITIO LOS IMPORTES UNITARIOS DE CADA ACTIVIDAD Y HACER LOS CALCULOS
+    // POR AHORA SE PONEN SOLO LAS UNIDADES, PUES EN EL MODELO 390 AEAT ES COMPLETAMENTE MANUAL
 //    private double amount1;    
 //    private double amount2;
 //    private double amount3;
@@ -40,6 +41,14 @@ public class SimpliedRegimeActivity425 implements Serializable {
 	}
 	public SimpliedRegimeActivity425 setEpigrafe(String epigrafe) {
 		this.epigrafe = epigrafe;
+		return this;
+	}
+	
+	public String getSector() {
+		return sector;
+	}
+	public SimpliedRegimeActivity425 setSector(String sector) {
+		this.sector = sector;
 		return this;
 	}
 	

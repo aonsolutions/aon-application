@@ -185,12 +185,13 @@ public class Page02 extends PageAbs {
 		basePanel.add(tab2);
 		tab2.addRow()
 			.addCell(new Label(AON.MSG.town()), AON.CSS.aonWidth150() )
-			.addCell(new Label(AON.MSG.townCode()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.townCode()), AON.CSS.aonWidth120() )
 			.addCell(new Label(AON.MSG.province()), AON.CSS.aonWidth150() )
 			.addCell(new Label(AON.MSG.zip()), AON.CSS.aonWidthAuto() )
 			;
 		rtown.setVisibleLength(30);
 		rtown.setMaxLength(30);
+		rtownCode.setVisibleLength(5);
 		rtownCode.setMaxLength(5);
 		rzip.setVisibleLength(5);
 		rzip.setMaxLength(5);

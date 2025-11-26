@@ -10,7 +10,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class Page04 extends PageAbs {
-	
+
+	private SimplifiedRegimePanel activity1;
+	private SimplifiedRegimePanel activity2;
 	private AonDoubleBox box103 = new AonDoubleBox(); // Total cuota anual derivada del régimen simplificado
 	private AonDoubleBox box104 = new AonDoubleBox(); // Cuotas devengadas por entregas o transmisiones de activos fijos y por inversión del sujeto pasivo
 	private AonDoubleBox box105 = new AonDoubleBox(); // Cuotas devengadas por arrendamientos de bienes inmuebles
@@ -30,6 +32,8 @@ class Page04 extends PageAbs {
 	@Override
 	protected void setValue() {
 		
+		activity1.setValue(getModel().getSimpRegime1());
+		activity2.setValue(getModel().getSimpRegime2());		
 		box103.setValue(getModel().getBox103(),false);
 		box104.setValue(getModel().getBox104(),false);
 		box105.setValue(getModel().getBox105(),false);
@@ -52,16 +56,47 @@ class Page04 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.simplifiedRegimeOperations()));
 		basePanel.add(getSubtitle("CUOTAS DEL I.G.I.C. DERIVADAS DEL R\u00C9GIMEN SIMPLIFICADO Y DEVENGADAS POR OTRAS OPERACIONES"));
 		
-		SimplifiedRegimePanel activity1 = new SimplifiedRegimePanel(getModel().getSimpRegime1());
+		activity1 = new SimplifiedRegimePanel(getModel().getSimpRegime1());
 		activity1.addValueChangeHandler(event -> {
 			getModel().setSimpRegime1(event.getValue());
-			calculateAndRefresh();
+			calculateAndRefresh(); 
 			markAsDirty();
 		});
 		
-		SimplifiedRegimePanel activity2 = new SimplifiedRegimePanel(getModel().getSimpRegime2());
+		activity2 = new SimplifiedRegimePanel(getModel().getSimpRegime2());
 		activity2.addValueChangeHandler(event -> {
 			getModel().setSimpRegime2(event.getValue());
+			calculateAndRefresh(); 
+			markAsDirty();
+		});
+		
+		box104.addValueChangeHandler(event -> {
+			if (box104.getValue() == null) box104.setValue(0.0, false);
+			getModel().setBox104(box104.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box105.addValueChangeHandler(event -> {
+			if (box105.getValue() == null) box105.setValue(0.0, false);			
+			getModel().setBox105(box105.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box106.addValueChangeHandler(event -> {
+			if (box106.getValue() == null) box106.setValue(0.0, false);
+			getModel().setBox106(box106.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box108.addValueChangeHandler(event -> {
+			if (box108.getValue() == null) box108.setValue(0.0, false);
+			getModel().setBox108(box108.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box109.addValueChangeHandler(event -> {
+			if (box109.getValue() == null) box109.setValue(0.0, false);
+			getModel().setBox109(box109.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
@@ -95,34 +130,6 @@ class Page04 extends PageAbs {
 		
 		AonDisplayTable tab4 = addTable(basePanel, getSubsubtitle("RESULTADO DE LAS AUTOLIQUIDACIONES"));
 		addRow(tab4, Mod4252025Description.BOX_111_TEXT, 111, box111);
-		
-		// Handlers
-
-		box104.addValueChangeHandler(event -> {
-			getModel().setBox104(box104.getValue());
-			calculateAndRefresh();
-			markAsDirty();
-		});
-		box105.addValueChangeHandler(event -> {
-			getModel().setBox105(box105.getValue());
-			calculateAndRefresh();
-			markAsDirty();
-		});
-		box106.addValueChangeHandler(event -> {
-			getModel().setBox106(box106.getValue());
-			calculateAndRefresh();
-			markAsDirty();
-		});
-		box108.addValueChangeHandler(event -> {
-			getModel().setBox108(box108.getValue());
-			calculateAndRefresh();
-			markAsDirty();
-		});
-		box109.addValueChangeHandler(event -> {
-			getModel().setBox109(box109.getValue());
-			calculateAndRefresh();
-			markAsDirty();
-		});
 		
 	}
 	

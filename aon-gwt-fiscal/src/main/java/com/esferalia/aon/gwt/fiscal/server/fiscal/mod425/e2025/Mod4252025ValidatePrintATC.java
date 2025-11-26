@@ -43,9 +43,8 @@ public class Mod4252025ValidatePrintATC extends HttpServlet {
 			
 			System.out.println("PASO 2. xml="+xml);
 			
-			// FALTA - TENGO QUE MODIFICAR LA FUNCION AWS PARA QUE ACEPTE EL MOD4252025
 			// Pasarlo al modulo de impresión para obtener el borrador pdf
-//			ModelAdmonUtils.callAtcAwsFunction(xml, mod425, true, resp);
+			ModelAdmonUtils.callAtcAwsFunction(xml, mod425, true, resp);
 			
 			System.out.println("PASO 3. OK");
 			

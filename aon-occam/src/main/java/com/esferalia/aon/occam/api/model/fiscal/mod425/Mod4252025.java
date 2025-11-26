@@ -818,7 +818,6 @@ public class Mod4252025 extends Mod390  {
 		calculate(Mod4252025DetailKey.C079, C079_FORMULA_ADD, C079_FORMULA_SUBTRACT);  	// Casilla 79 Total cuotas devengadas: 03+06+09+12+15+18+18bis+21+24+27+30+33+36+39+42+45+48+51+54+57+60+63+66+66bis+69+71-73+76-78
 		calculate(Mod4252025DetailKey.C094, C094_FORMULA_ADD); 							// Casilla 94 Total cuotas deducibles: 81+ 83 +85 +87+ 89+ 90+ 91+ 92+ 93
 		calculate(Mod4252025DetailKey.C095, C095_FORMULA_ADD, C095_FORMULA_SUBTRACT);	// Casilla 95 Resultado régimen general: 79-94.
-        //box103 = calculateRS(simpRegime1, simpRegime2, simpRegime3, simpRegime4, simpRegime5, simpRegime6, simpRegime7);  // Casilla 103 Total cuota anual derivada del régimen simplificado: 96+97+98+99+100+101+102.
 		box103 = calculateRS(simpRegime1, simpRegime2);  								// Casilla 103 Total cuota anual derivada del régimen simplificado: 96+97+98+99+100+101+102.
         box107 = AonMathUtils.round(box103+box104+box105+box106);     					// Casilla 107 Total cuotas: 103+104+105+106.	
         box110 = AonMathUtils.round(box108+box109);  									// Casilla 110 Total cuotas deducibles: 108+109.
