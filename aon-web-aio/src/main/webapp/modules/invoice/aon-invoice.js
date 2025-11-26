@@ -2958,7 +2958,6 @@ export class AonInvoice extends AonElement {
 	}
 
 	hasVerifactu() {
-		AonDateUtils.parse(this.configuration.communication.verifactuIncludeDate);	
 		return this.configuration
 			&& this.configuration.communication
 			&& this.configuration.communication.verifactu

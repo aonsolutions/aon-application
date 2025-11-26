@@ -9,29 +9,37 @@ export const isValid = (document, country) => {
         return isValidCIF(document) || isValidDni(document) || isValidNie(document);
     } else return true;
 }
-
-export const isValidCIF = (cif) =>  {
-    if(!cif) return false;
+export const isValidCIF = (cif) => {
+    if(!cif || !/^[ABCDEFGHJKLMNPQRSUVW]\d{7}[0-9A-J]$/i.test(cif)) return false;
     cif = cif.toUpperCase();
-    if (!/^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$/i.test(cif)) return false;
-    const letrasControl = 'JABCDEFGHI';
-    const letraInicial = cif[0];
-    const numeros = cif.slice(1, 8).split('').map(Number);
+
+    const letrasControl = "JABCDEFGHI";
+    const letra = cif[0];
+    const cuerpo = cif.slice(1, 8);
     const digitoControl = cif[8];
+    let sumaPares = 0;
+    let sumaImpares = 0;
 
-    const sumaPar = numeros[1] + numeros[3] + numeros[5];
-    let sumaImpar = numeros[0] + numeros[2] + numeros[4] + numeros[6];
-    sumaImpar *= 2;
-    sumaImpar = String(sumaImpar).split('').reduce((a, b) => a + Number(b), 0);
-    const total = sumaPar + sumaImpar;
-    const control = (10 - (total % 10)) % 10;
+    for(let i = 0; i < cuerpo.length; i++) {
+        const n = parseInt(cuerpo[i], 10);
+        if(i % 2 === 0) {
+            let doble = n * 2;
+            sumaImpares += Math.floor(doble / 10) + (doble % 10);
+        } else {
+            sumaPares += n;
+        }
+    }
 
-    if ('ABEH'.includes(letraInicial)) {
-        return digitoControl == control;
-    } else if ('KPQS'.includes(letraInicial)) {
-        return digitoControl == letrasControl[control];
+    const sumaTotal = sumaPares + sumaImpares;
+    const unidad = sumaTotal % 10;
+    const complemento = (10 - unidad) % 10;
+
+    if("ABEH".includes(letra)) {
+        return digitoControl === complemento.toString();
+    } else if("KPQS".includes(letra)) {
+        return digitoControl === letrasControl[complemento];
     } else {
-        return digitoControl == control || digitoControl == letrasControl[control];
+        return digitoControl === complemento.toString() || digitoControl === letrasControl[complemento];
     }
 }
 
