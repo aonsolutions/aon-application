@@ -92,6 +92,9 @@ export class AonParent extends AonElement {
 				// Quitamos el cargando global
 				this.aonApplication.stopLoading();
 			});
+		}).finally(() => {
+		// Quitamos el cargando global
+			this.aonApplication.stopLoading();
 		});
 	}
 
