@@ -67,6 +67,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -1217,9 +1218,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
-				dates.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
 				int type = salaryRs.getInt(SalaryColumns.TYPE);
-				if ( type == 1)  {
+				if (type == SalaryType.SALARY.ordinal() 
+					|| type == SalaryType.M190.ordinal()) {
+					dates.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
+				}else if ( type == SalaryType.EXTRA.ordinal() ) {
 					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);
 				}
 			}

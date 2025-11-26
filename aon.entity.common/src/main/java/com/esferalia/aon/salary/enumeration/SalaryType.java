@@ -58,6 +58,13 @@ public enum SalaryType implements IResourceable {
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
+	},
+	M190 
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitM190(this);
+		}
 	}
 	;
 	
