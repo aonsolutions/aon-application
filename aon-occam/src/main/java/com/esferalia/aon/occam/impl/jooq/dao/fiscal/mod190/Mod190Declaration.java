@@ -11,11 +11,24 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public abstract class Mod190Declaration {
 	private enum Declarations {
+		MOD190_GENERIC_2025 {
+			
+			@Override
+			boolean accept(Mod190 mod) {
+				return mod.getYear() >= 2025;
+			}
+
+			@Override
+			Mod190Declaration get() {
+				return new Mod190ALL2025Declaration();
+			}
+		}
+		,
 		MOD190_GENERIC_2023 {
 			
 			@Override
 			boolean accept(Mod190 mod) {
-				return mod.getYear() >= 2023;
+				return mod.getYear() == 2023 || mod.getYear() == 2024;
 			}
 
 			@Override
