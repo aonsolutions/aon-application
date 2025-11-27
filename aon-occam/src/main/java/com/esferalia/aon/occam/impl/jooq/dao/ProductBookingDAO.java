@@ -750,7 +750,7 @@ public class ProductBookingDAO {
 			}
  			
  			String bookingBcc = "booking@aonsolutions.es";
-//			productTaskHolders.add(bookingBcc);
+			productTaskHolders.add(bookingBcc);
  			
  			if(!productTaskHolders.isEmpty()) {
 				SESMessage msg = new SESMessage()
