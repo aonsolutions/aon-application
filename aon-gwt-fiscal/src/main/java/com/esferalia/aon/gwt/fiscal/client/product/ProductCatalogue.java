@@ -295,7 +295,7 @@ public class ProductCatalogue extends HTMLPanel {
 	
 	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

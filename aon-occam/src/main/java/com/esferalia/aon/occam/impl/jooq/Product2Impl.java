@@ -368,4 +368,11 @@ public class Product2Impl implements IProduct2{
 		});
 	}
 
+	@Override
+	public void requestBookingInfo(CloseableAONContext ctx, String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) {
+		ctx.getDslContext().transaction(currentTrans -> {
+			ProductBookingDAO.requestBookingInfo(ctx, domain, user, product, customerRegistry);
+		});
+	}
+
 }
