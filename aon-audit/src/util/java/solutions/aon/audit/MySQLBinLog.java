@@ -4,9 +4,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.DSLContext;
@@ -19,8 +22,10 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.AonMaster;
+import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import solutions.aon.audit.AuditTable;
 import solutions.aon.audit.MySQLBinLog.StmtState.EventType;
 
 public class MySQLBinLog {
@@ -248,9 +253,11 @@ public class MySQLBinLog {
 				.compile("(?<value>-\\d+)\\s*\\(\\d+\\)");
 
 		StmtState stmtState;
+		Map<Integer, String> values;
 		
 		private ColumsState(StmtState stmtState) {
 			this.stmtState = stmtState;
+			this.values = new HashMap<>();
 		}
 
 		@Override
@@ -263,6 +270,7 @@ public class MySQLBinLog {
 			if ( !accept(line)) {
 				parser.setState(stmtState.getMainState());
 				String binlogCols = getBinlogFieds();
+				resetValues();
 				String parsedLine = parser.state.parse(line, parser);
 				return String.format("%s;%n%s", binlogCols, parsedLine != null ? parsedLine : "");
 			} else {
@@ -270,17 +278,21 @@ public class MySQLBinLog {
 				if (matcher.matches()) {
 					String value = matcher.group("value");
 					String column = matcher.group("column");
-					Field<?> field = getField(Integer.parseInt(column));
+					Integer columnIndex = Integer.parseInt(column);
+					Field<?> field = getField(columnIndex);
 					if ( field == null ) {
 						System.err.println("No field found for column index: " + column + " in table: " + stmtState.getTable());
 						return null;
 						//throw new IllegalStateException("No field found for column index: " + column + " in table: " + stmtState.getTable());
 					}
+					value = checkValue(value);
+					values.put(columnIndex, value);
 					return String.format("%s,", formatSET(field, value));
 				} else  {
 					StringBuilder stringBuilder = new StringBuilder();
 					if ( is(EventType.UPDATE) && SET_PATTERN.matcher(line).find() ) {
 						stringBuilder.append(String.format("%s;%n", getBinlogFieds() ));
+						resetValues();
 					} 
 					stringBuilder.append(String.format("INSERT IGNORE INTO `%s`%nSET", stmtState.getTable()));
 					return stringBuilder.toString();
@@ -292,12 +304,15 @@ public class MySQLBinLog {
 			return stmtState.getEventType() == eventType;
 		}
 		
-		
-		protected <T> String formatSET(Field<T> field, String value) {
+		protected String checkValue(String value) {
 			Matcher negativeMatcher = NEGATIVE_VALUE_PATTERN.matcher(value);
 			if ( negativeMatcher.matches() ) {
-				value = negativeMatcher.group("value");
+				return negativeMatcher.group("value");
 			}
+			return value;
+		}
+		
+		protected <T> String formatSET(Field<T> field, String value) {
 			return String.format("`%s` = %s", field.getName(), value);
 		}
 		
@@ -306,15 +321,27 @@ public class MySQLBinLog {
 		}
 		
 		private String getBinlogFieds() {
-			String binlogTime = formatSET(AuditTable.AuditFields.BINLOG_TIME, "NOW()");
-			String binlogSchema = formatSET(AuditTable.AuditFields.BINLOG_SCHEMA, String.format("'%s'",stmtState.getDatabase()));
-			String binlogEvent = formatSET(AuditTable.AuditFields.BINLOG_EVENT, Integer.toString(stmtState.getEventType().ordinal()));
-			return String.format("%s,%n%s,%n%s", binlogTime, binlogSchema, binlogEvent);
+			String binlogTime = formatSET(AuditTable.AuditFields.AUDIT_TIMESTAMP, "NOW()");
+			String binlogSchema = formatSET(AuditTable.AuditFields.AUDIT_SCHEMA, String.format("'%s'",stmtState.getDatabase()));
+			String binlogEvent = formatSET(AuditTable.AuditFields.AUDIT_EVENT, Integer.toString(stmtState.getEventType().ordinal()));
+			String md5 = formatSET(AuditTable.AuditFields.AUDIT_MD5, String.format("'%s'",getMd5()));
+			return String.format("%s,%n%s,%n%s,%n%s", binlogTime, binlogSchema, binlogEvent, md5);
 		}
 		
-
+		private void resetValues() {
+			values.clear();
+		}
+		
+		private String getMd5() {
+			StringBuilder sb = new StringBuilder();
+			values.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).forEach(sb::append);
+			sb.append(stmtState.getDatabase());
+			sb.append(stmtState.getEventType() == EventType.DELETE ? "Ezabatu" : "Idatzi");
+			//System.err.println("MD5 SOURCE: " + stmtState.getTable() + ", " + sb.toString() + "[" + AonDigestUtils.md5Hex(sb.toString())+"]" );
+			return AonDigestUtils.md5Hex(sb.toString());
+		}
 	}
-
+	
 	static Stream<String> parse(InputStream is, String ...databases) {
 		
 		InputStreamReader reader = new InputStreamReader(is);

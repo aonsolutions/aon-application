@@ -434,7 +434,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		Company company = new Company();
 		company.setName(name);
-		company.setDocument(document);
+		company.setDocument(document.toUpperCase());
 		company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
 
 		checkCompany(company);
@@ -459,7 +459,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (sellerSupportEmailOpt.isEmpty())
 			throw new AonApiException("No existe email para el agente de soporte seleccionado");
 
-		String domainNewName = company.getDocument() + "-"
+		String domainNewName = company.getDocument().toLowerCase() + "-"
 				+ (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName()
 						: parentDomain.getSubDomainSuffix());
 
@@ -520,7 +520,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (sellerSupportEmailOpt.isEmpty())
 			throw new AonApiException("No existe email para el agente de soporte seleccionado");
 
-		String domainNewName = AonStringUtils.isBlank(url) ? company.getDocument() + "-aonsolutions.org" : url;
+		String domainNewName = AonStringUtils.isBlank(url) ? company.getDocument().toLowerCase() + "-aonsolutions.org" : url;
 
 		Domain newDomain = new Domain().setName(domainNewName.toLowerCase()).setDescription(company.getName())
 				.setOwner(sellerSupportEmailOpt.get().getValue()).setActive(true)

@@ -37,8 +37,10 @@ public class FinanceUtils {
 		if (params.isPayroll()) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( true )));
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( true )));
-		} else if (params.getPayment() != null && params.isIncludeCharges() ) {
-			prop = prop.and(
+		} else if (null != params.getPaymentCharge() && params.getPaymentCharge()) {
+			prop = prop
+					.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )))
+					.and(
 					(
 						p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()))
 						.and(p.getPayMethodTypeProperty().eq(PayMethodType.BANK_TRANSFER.value()))	
@@ -49,42 +51,67 @@ public class FinanceUtils {
 						.and(p.getAmountProperty().lt(0.00))
 					)
 			);
-			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
+		} else if (null != params.getCharge() && params.getCharge()) {
+			prop = prop
+					.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )))
+					.and(
+						p.getPaymentProperty().eq(AonEnumUtils.getByte(false)) // Cobro
+						.and(p.getPayMethodTypeProperty().eq(PayMethodType.NEGOTIABLE_DOCUMENT.value())) // Cobro)
+						.and(p.getAmountProperty().lt(0.00))
+					);
 		} else if (params.getPayment() != null ) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
 		}
 		
-		if(AonStringUtils.isNotBlank(params.getBackRef()))
-			prop = prop.and(p.getBankAccountProperty().like("%" + params.getBackRef() + "%"));
+		if (params.getFromDueDate() != null) {
+			prop = prop.and(p.getDueDateProperty().ge(params.getFromDueDate()));
+		}
+		
+		if (params.getToDueDate() != null) {
+			prop = prop.and(p.getDueDateProperty().le(params.getToDueDate()));
+		}
+		
+		if (params.getGTAmount() != null && params.getGTAmount() != 0.00) {
+			prop = prop.and(p.getAmountProperty().ge(params.getGTAmount()));
+		}
+		
+		if (params.getLTAmount() != null && params.getLTAmount() != 0.00) {
+			prop = prop.and(p.getAmountProperty().le(params.getLTAmount()));
+		}
+		
+		if (params.getFromInvoiceDate() != null) {
+			prop = prop.and(p.getInvoiceDateProperty().ge(params.getFromInvoiceDate()));
+		}
+		
+		if (params.getToInvoiceDate() != null) {
+			prop = prop.and(p.getInvoiceDateProperty().le(params.getToInvoiceDate()));
+		}
+		
+		if (!params.hasConfidentialityRole()) {
+			prop = prop.and(p.getConfidentialProperty().eq(SecurityLevel.OFFICIAL.value()));
+		} else if (params.getSecurityLevel() != null) {
+			prop = prop.and(p.getConfidentialProperty().eq(params.getSecurityLevel().value()));
+		}
+		
+		if(AonStringUtils.isNotBlank(params.getBankAlias()))
+			prop = prop.and(p.getBankAliasProperty().eq(params.getBankAlias()));
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			prop = prop.and(
 					p.getRegistryNameProperty().like("%" + params.getDescription() + "%")
+					.or(p.getRegistryDocumentProperty().like("%" + params.getDescription() + "%"))
 					.or(p.getConceptNameProperty().like("%" + params.getDescription() + "%"))
 					.or(p.getConceptProperty().like("%" + params.getDescription() + "%"))
 					.or(p.getInvoiceReferenceCodeProperty().like("%" + params.getDescription() + "%"))
 				);
 			
 		
-		if (params.getFromInvoiceDate() != null) {
-			prop = prop.and(p.getInvoiceDateProperty().ge(params.getFromInvoiceDate()));
-		}
-		if (params.getToInvoiceDate() != null) {
-			prop = prop.and(p.getInvoiceDateProperty().le(params.getToInvoiceDate()));
-		}
-		if (params.getFromDueDate() != null) {
-			prop = prop.and(p.getDueDateProperty().ge(params.getFromDueDate()));
-		}
-		if (params.getToDueDate() != null) {
-			prop = prop.and(p.getDueDateProperty().le(params.getToDueDate()));
-		}
 		if (params.getRegistry() != null) {
 			prop = prop.and(p.getRegistryProperty().eq(params.getRegistry()));
 		}
 		if (AonStringUtils.isNotEmpty(params.getConcept())) {
-			prop = prop.and(p.getConceptProperty().like(
-					AonStringUtils.SQLlike(params.getConcept())));
+			prop = prop.and(p.getConceptProperty().like(AonStringUtils.SQLlike(params.getConcept())));
 		}
 		if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
 			prop = prop.and(p.getInvoiceReferenceCodeProperty().like(AonStringUtils.SQLlike(params.getReferenceCode())));
@@ -114,29 +141,25 @@ public class FinanceUtils {
 			(params.isPaid()?p.getStatusProperty().eq(FinanceStatus.PAID.value()):null),
 			(params.isSettled()?p.getStatusProperty().eq(FinanceStatus.SETTLED.value()):null)
 		}; 
+		
 		Filter statusFilter = null;
+		
 		for (Filter f : statusFilters) {
 			if (f != null) {
 				statusFilter = (statusFilter == null) ? f : statusFilter.or(f);
 			}
 		}
+		
 		if (statusFilter != null) {
 			prop = prop.and(statusFilter);
 		}
-
-		if (!params.hasConfidentialityRole()) {
-			prop = prop.and(p.getConfidentialProperty().eq(
-					SecurityLevel.OFFICIAL.value()));
-		} else {
-			if (params.getSecurityLevel() != null) {
-				prop = prop.and(p.getConfidentialProperty().eq(params.getSecurityLevel().value()));
-			}
-		}
+		
 		if (params.getPayMethod() != null) {
 			prop = prop.and(p.getPayMethodProperty().eq(params.getPayMethod()));
 		}
-		if (!params.isIncludeCharges() && params.getPayMethodType() != null) {
-			prop = prop.and(p.getPayMethodTypeProperty().eq((byte)params.getPayMethodType().ordinal()));
+		
+		if (params.getPayMethodType() != null) {
+			prop = prop.and(p.getPayMethodTypeProperty().eq(params.getPayMethodType().value()));
 		}
 		
 		return prop;

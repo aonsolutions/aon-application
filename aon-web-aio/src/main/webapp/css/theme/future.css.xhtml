@@ -131,7 +131,7 @@
 	.aon-dataTable,
 	.aon-editDataTable {
 		border-collapse: separate;
-		border-spacing: 0 1rem;
+		border-spacing: 0 0.5rem;
 	}
 
 	.aon-dataTable > tbody > tr > td,
@@ -191,7 +191,7 @@
 	.aon-dataTable > tbody > tr > td,
 	.aon-editDataTable > tbody > tr > td {
 		color: #5f6368;
-		font-family: "Inter-regular", sans-serif;
+		font-family: "Inter-regular", sans-serif !important;
 	}
 
 	.aon-dataTable > tbody > tr > td,
@@ -199,8 +199,10 @@
 	.aon-dataTable-header > th,
 	.aon-editDataTable-header > th
 	 {
-	 	height: 3.625rem;
-		font-size: 14.875px; /*.875rem;*/
+	 	color: #64748b;
+	 	height: 42px !important; /*3.625rem;*/
+		font-size: 14.0px !important; /*.875rem;*/
+		font-family: "Inter-regular", sans-serif !important;
 	}	
 	
 	.aon-dataTable-header,

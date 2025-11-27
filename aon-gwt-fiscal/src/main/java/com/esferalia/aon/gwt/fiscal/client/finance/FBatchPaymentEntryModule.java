@@ -181,7 +181,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			@Override
 			public void run() {
 				if(!fBatch.isAccounted() || !fBatch.isGenerated())
-					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado" + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
+					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado " + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
 			}
 		};
 		

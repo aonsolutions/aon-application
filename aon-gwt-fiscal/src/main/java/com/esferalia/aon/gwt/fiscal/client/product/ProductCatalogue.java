@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -131,7 +130,7 @@ public class ProductCatalogue extends HTMLPanel {
 		if(!packsProducts.isEmpty()) {
 			createPacks(cataloguePanel, packsProducts);
 		}
-		
+	
 		List<ProductBooking> aonUsers = products.stream()
 				.filter(p -> p.getBookingType().equals(ProductBookingType.USER))
 				.sorted(Comparator.comparing(
@@ -140,15 +139,6 @@ public class ProductCatalogue extends HTMLPanel {
 			    ))
 				.collect(Collectors.toList());
 		
-		if(!aonUsers.isEmpty()) {
-			Label users = new Label("Usuarios");
-			users.getElement().getStyle().setProperty("font-size", "1.2rem");
-			users.getElement().getStyle().setProperty("margin", "1rem 0");
-			cataloguePanel.add(users);
-			
-			createServices(cataloguePanel, aonUsers);
-		}
-		
 		List<ProductBooking> aonServices = products.stream()
 				.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
 				.sorted(Comparator.comparing(
@@ -156,13 +146,19 @@ public class ProductCatalogue extends HTMLPanel {
 			        Comparator.nullsLast(Comparator.naturalOrder())
 			    ))
 				.collect(Collectors.toList());
-		if(!aonServices.isEmpty()) {
-			Label aditional = new Label("Adicional");
-			aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
-			aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-			cataloguePanel.add(aditional);
+		
+		if(!aonUsers.isEmpty() || !aonServices.isEmpty()) {
+			Label users = new Label("Mejora tu plan");
+			users.getElement().getStyle().setProperty("font-size", "1.3rem");
+			users.getElement().getStyle().setProperty("margin", "1rem 0");
+			cataloguePanel.add(users);
 			
-			createServices(cataloguePanel, aonServices);
+			if(!aonUsers.isEmpty())
+				createServices(cataloguePanel, aonUsers);
+			
+			if(!aonServices.isEmpty())
+				createServices(cataloguePanel, aonServices);
+			
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);

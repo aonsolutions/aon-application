@@ -144,6 +144,10 @@ input, select, textarea,
 	margin: 1rem ;
 }
 
+.dataGridHoveredRow{
+	background:initial ;
+}
+
 .aon_scroll_area{
 	padding: 0px 1.5em 1.5em 1.5em;	
 }
@@ -176,4 +180,80 @@ input, select, textarea,
   
 .gwt-Selector .aon-MainCreta-Enterprises {
 	width: auto;
+}
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+	display: flex;
+	gap: .5rem;
+	flex-wrap: wrap;
+	align-content: center;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	background-color: #f1f5f9;
+	
+	margin-left: .3rem;
+	padding-bottom: 2px;
+	padding-right: .3rem;
+	width: fit-content !important;
+	
+}
+
+.gwt-Selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs) {
+    height: 40px !important;
+}
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected{
+	border-bottom: none;
+	background-color: #fff;
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aon_custom_card {
+	border: none;
+}
+.aon_custom_card > div:first-child {
+	border-bottom: .1rem solid #cbd5e1;
+}
+
+.aon_custom_row:hover, 
+.aon_utility_option:hover, 
+.aon_custom_text_box:hover, 
+.aon_custom_text_area:hover {
+  background-color:inherit ;
+}	
+
+.aon_custom_text_box {
+	gap: 2px;
+	height: 3.0rem;
+	margin-bottom: 0.5rem;
+	border-bottom: none;
+}
+
+.aon_between_input, 
+.aon_custom_text_box_input {
+	height: 2.5rem;
+  	color: #1e293b;  
+	border-radius: .375rem;
+	box-sizing: border-box;
+	padding: .75rem !important;
+	border: .0625rem solid #cbd5e1;
+}
+
+.aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
+  	border-color: initial; ;
+    border-bottom-color:initial; 
+  	background-color:initial ;
+}
+
+
+.aon_custom_warning .aon_between_input, 
+.aon_custom_warning .aon_custom_text_box_input {
+	border-color: orange ;
+	background-color: rgba(255, 165, 0, 0.27);
+}
+
+.aon_custom_text_box_input_no_border:focus, 
+.aon_custom_text_area_input:focus, 
+.aon_custom_text_box_input:focus {
+  border: .0625rem solid #cbd5e1 !important;
 }
