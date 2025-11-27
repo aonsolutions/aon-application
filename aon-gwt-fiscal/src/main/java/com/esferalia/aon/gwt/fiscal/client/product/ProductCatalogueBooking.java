@@ -158,7 +158,10 @@ public class ProductCatalogueBooking extends HTMLPanel {
 			createPacks(cataloguePanel, packsProducts);
 		}
 		
-		if(!customerFees.isEmpty()) {
+		Optional<ProductBooking> consultancyProduct = packsProducts.stream().filter(p -> p.getBookingType().equals(ProductBookingType.CONSULTANCY)).findFirst();
+		boolean consultancyProductFee = consultancyProduct.isEmpty() ? false : isFeeProduct(consultancyProduct.get().getItem().getId());
+		
+		if(!customerFees.isEmpty() && !consultancyProductFee) {
 			
 			List<ProductBooking> aonUsers = products.stream()
 					.filter(p -> p.getBookingType().equals(ProductBookingType.USER))
@@ -168,15 +171,6 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				    ))
 					.collect(Collectors.toList());
 			
-			if(!aonUsers.isEmpty()) {
-				Label users = new Label("Usuarios");
-				users.getElement().getStyle().setProperty("font-size", "1.2rem");
-				users.getElement().getStyle().setProperty("margin", "1rem 0");
-				cataloguePanel.add(users);
-				
-				createUsers(cataloguePanel, aonUsers);
-			}
-			
 			List<ProductBooking> aonServices = products.stream()
 					.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
 					.sorted(Comparator.comparing(
@@ -185,13 +179,18 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				    ))
 					.collect(Collectors.toList());
 			
-			if(!aonServices.isEmpty()) {
-				Label aditional = new Label("Adicional");
-				aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
-				aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-				cataloguePanel.add(aditional);
+			if(!aonUsers.isEmpty() || !aonServices.isEmpty()) {
+				Label users = new Label("Mejora tu plan");
+				users.getElement().getStyle().setProperty("font-size", "1.3rem");
+				users.getElement().getStyle().setProperty("margin", "1rem 0");
+				cataloguePanel.add(users);
 				
-				createServices(cataloguePanel, aonServices);
+				if(!aonUsers.isEmpty())
+					createUsers(cataloguePanel, aonUsers);
+				
+				if(!aonServices.isEmpty())
+					createServices(cataloguePanel, aonServices);
+				
 			}
 			
 		}

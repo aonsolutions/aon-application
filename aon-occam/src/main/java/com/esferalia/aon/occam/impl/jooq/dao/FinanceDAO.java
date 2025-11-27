@@ -92,7 +92,10 @@ public class FinanceDAO {
 		@Override public Property<Byte> getPayrollProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAYROLL);}
 		
 		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 		@Override public Property<String> getConceptNameProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.CONCEPT);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.BANK_ALIAS);}
 	}
 	
 	// ---------------------------------------------------------- ORDER

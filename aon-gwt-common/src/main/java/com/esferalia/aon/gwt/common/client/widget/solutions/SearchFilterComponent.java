@@ -252,6 +252,19 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	
 	public void insertWidgetAfterSearchButton(Widget newWidget) {
 		searchTextBox.setVisible(false);
+		searchButton.setVisible(false);
+		
+	    // Obtener el contenedor DOM del HTMLPanel
+	    Element parentElement = this.getElement();
+	    this.insert(newWidget, parentElement,  getWidgetIndex(filterButton), true);
+
+	    // Opcional: Ajustar estilos del contenedor
+	    this.getElement().getStyle().setProperty("border", "none");
+	}
+	
+	public void insertWidgetAfterSearchButton(Widget newWidget, boolean showSearchBox) {
+		searchTextBox.setVisible(showSearchBox);
+		searchButton.setVisible(showSearchBox);
 		
 	    // Obtener el contenedor DOM del HTMLPanel
 	    Element parentElement = this.getElement();

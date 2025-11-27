@@ -848,7 +848,7 @@ public class InvoiceImport extends ImportUtils{
 		InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
 	
 		InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
-		if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+		if((icConfig.isTbai() || icConfig.hasVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
 			throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
 					+ " está activado, no se pueden importar facturas emitidas");
 		}
@@ -956,7 +956,7 @@ public class InvoiceImport extends ImportUtils{
 			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
 		
 			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
-			if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+			if((icConfig.isTbai() || icConfig.hasVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
 				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
 					+ " está activado, no se pueden importar facturas emitidas");
 			}

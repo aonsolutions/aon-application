@@ -134,6 +134,8 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	build() {
+		this.checkConfiguration();
+
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
@@ -159,6 +161,14 @@ export class AonInvoicePanel extends AonElement {
 
 		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
 	}
+
+	checkConfiguration() {		
+		if(!this.getDur().hasScopes()) {
+			this.getApplication().showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+			return false;
+		}
+		return true;
+	}	
 
 	buildEmptyToolbarOptions() {
 		this.clearToolbar();
@@ -416,6 +426,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	downloadInvoiceExcel() {
+		if(!this.checkConfiguration()) return;
 		let aonInvoiceTable = document.getElementById("aonInvoiceTable");
 
 		let data = {
@@ -611,11 +622,13 @@ export class AonInvoicePanel extends AonElement {
 
 
 	aonInvoiceProcessing() {
+		if(!this.checkConfiguration()) return;
 		this.getApplication().setContent(new AonInvoiceProcessing());
 	}
 
 
 	aonInvoiceList(filter, invofoxFilter) {
+		if(!this.checkConfiguration()) return;
 		this.filter = filter;
 		this.invofoxFilter = invofoxFilter;
 		let table = this.isMobile()
@@ -629,16 +642,19 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonIncome() {
+		if(!this.checkConfiguration()) return;
 		let table = new AonIncomeList();
 		this.getApplication().setContent(table);
 	}
 
 	aonExpense() {
+		if(!this.checkConfiguration()) return;
 		let table = new AonExpenseList();
 		this.getApplication().setContent(table);
 	}
 
 	aonCustomerList(filter) {
+		if(!this.checkConfiguration()) return;
 		let customerList = this.getElement(this.CUSTOMER_LIST);
 		if (customerList) {
 			customerList.setFilter(filter);
@@ -653,6 +669,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonSupplierList(filter) {
+		if(!this.checkConfiguration()) return;
 		let supplierList = this.getElement(this.SUPPLIER_LIST);
 		if (supplierList) {
 			supplierList.setFilter(filter);
@@ -667,6 +684,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonCreditorList(filter) {
+		if(!this.checkConfiguration()) return;
 		let creditorList = this.getElement(this.CREDITOR_LIST);
 		if (creditorList) {
 			creditorList.setFilter(filter);
@@ -681,6 +699,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonProductList(filter) {
+		if(!this.checkConfiguration()) return;
 		let productList = this.getElement(this.PRODUCT_LIST);
 		if (productList) {
 			productList.setFilter(filter);
@@ -695,6 +714,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvestList(filter) {
+		if(!this.checkConfiguration()) return;
 		let investList = this.getElement(this.INVEST_LIST);
 		if (investList) {
 			investList.setFilter(filter);
@@ -713,12 +733,14 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addCustomer() {
+		if(!this.checkConfiguration()) return;
 		let aonCustomer = new AonCustomer();
 		aonCustomer.id = this.id + "Customer";
 		this.getApplication().setContent(aonCustomer);
 	}
 
 	addSupplier() {
+		if(!this.checkConfiguration()) return;
 		let aonSupplier = new AonSupplier();
 		aonSupplier.id = this.id + "Supplier";
 		aonSupplier.setSupplier();
@@ -726,6 +748,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addCreditor() {
+		if(!this.checkConfiguration()) return;
 		let aonCreditor = new AonCreditor();
 		aonCreditor.id = this.id + "Creditor";
 		aonCreditor.setCreditor();
@@ -733,12 +756,14 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addProduct() {
+		if(!this.checkConfiguration()) return;
 		let aonProduct = new AonProduct();
 		aonProduct.id = this.id + "Product";
 		this.getApplication().setContent(aonProduct);
 	}
 
 	addExpense() {
+		if(!this.checkConfiguration()) return;
 		let aonProduct = new AonProduct();
 		aonProduct.id = this.id + "Expense";
 		aonProduct.expense = true;
@@ -746,12 +771,14 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvest() {
+		if(!this.checkConfiguration()) return;
 		let aonInvest = new AonInvest();
 		aonInvest.id = this.id + "Invest";
 		this.getApplication().setContent(aonInvest);
 	}
 
 	async addInvoice() {
+		if(!this.checkConfiguration()) return;
 		// Check trial limit
 		if (this.getDur().isTrial()) {
 			const result = await getInvoiceCount();
@@ -990,6 +1017,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoiceFile() {
+		if(!this.checkConfiguration()) return;
 		this.getElement(this.INPUT_FILE).click();
 	}
 
@@ -1053,6 +1081,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	downloadRegistryExcel(type) {
+		if(!this.checkConfiguration()) return;
 		let data = {
 			domainId: LS.getDomainId(),
 			domainName: LS.getDomainName(),
@@ -1082,6 +1111,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoice(type, invoice) {
+		if(!this.checkConfiguration()) return;
 		let aonInvoice = this.getApplication();
 		if (this.isMobile() && aonInvoice.TOOLBAR) {
 			let toolbar = this.getElement(aonInvoice.TOOLBAR);
@@ -1099,11 +1129,13 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoiceHome() {
+		if(!this.checkConfiguration()) return;
 		this.getApplication().setContent(new AonInvoiceHome());
 		this.getApplication().buildDragAndDrop(false);
 	}
 
 	aonInvoiceById(id) {
+		if(!this.checkConfiguration()) return;
 		getInvoice(id)
 			.then((invoice) => this.aonInvoice(invoice.type, invoice))
 			.catch((error) => this.showToast(error));

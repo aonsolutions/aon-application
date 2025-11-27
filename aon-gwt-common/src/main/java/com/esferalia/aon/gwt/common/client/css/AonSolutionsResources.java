@@ -932,6 +932,21 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconQrCodeRed();
 	
+	@Source("icons/aon-icon-keyboard-double-arrow-right.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconKeyboardDoubleArrowRight();
+	
+	@Source("icons/aon-icon-keyboard-double-arrow-left.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconKeyboardDoubleArrowLeft();
+	
+	@Source("icons/aon-icon-keyboard-arrow-right.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconKeyboardArrowRight();
+	
+	@Source("icons/aon-icon-keyboard-arrow-left.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconKeyboardArrowLeft();
 }
 
 

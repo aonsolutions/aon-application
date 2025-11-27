@@ -484,7 +484,14 @@
 .aon_icon_qr_code_orange { background-image: iconQrCodeOrange;}
 @url iconQrCodeRed aonIconQrCodeRed;
 .aon_icon_qr_code_red { background-image: iconQrCodeRed;}
-
+@url iconKeyboardDoubleArrowRight aonIconKeyboardDoubleArrowRight;
+.aon_icon_keyboard_double_arrow_right { background-image: iconKeyboardDoubleArrowRight;}
+@url iconKeyboardDoubleArrowLeft aonIconKeyboardDoubleArrowLeft;
+.aon_icon_keyboard_double_arrow_left { background-image: iconKeyboardDoubleArrowLeft;}
+@url iconKeyboardArrowRight aonIconKeyboardArrowRight;
+.aon_icon_keyboard_arrow_right { background-image: iconKeyboardArrowRight;}
+@url iconKeyboardArrowLeft aonIconKeyboardArrowLeft;
+.aon_icon_keyboard_arrow_left { background-image: iconKeyboardArrowLeft;}
 
 /* BASICS */
 .aon_selector {
@@ -1139,7 +1146,7 @@
     align-items: center;
     gap: 0.5rem;
     border-bottom: 1px solid #b9b8b8;
-    width: 300px;
+    /*width: 300px;*/
     justify-content: end;
 }
 
