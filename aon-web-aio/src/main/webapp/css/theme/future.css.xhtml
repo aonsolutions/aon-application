@@ -325,6 +325,7 @@
 	.aon-selectOneMenu,
 	.aon-lookupInputText,
 	.aon-lookupSuggestText,
+	.aon-form input[type="text"],
 	.aon-selectInputDate-inputClass,
 	.rich-inslider-field
 	{
@@ -341,15 +342,26 @@
 	.aon-selectOneMenu,
 	.aon-lookupInputText,
 	.aon-lookupSuggestText,
-	.aon-form input[tye="text"],
+	.aon-form input[type="text"],
 	.aon-selectInputDate-inputClass{
 		height: 2.5rem;
 	}
+	
 
 	.aon-inputTextarea {
 		height: 5rem;
 	}
 	
+	.richfacesSkin table.mceLayout{
+		border-radius: .375rem;
+		border: .0625rem solid #cbd5e1;
+	}
+	
+	.richfacesSkin table.mceLayout tr.mceFirst td,
+	.richfacesSkin table.mceLayout tr.mceLast td{
+		border:none;
+	}	
+
 	.aon-icon-calendar-green{
 		padding: 13px ;
 		background-image: url(#{aonResource.resolve['/icons/calendar-check.svg']}) !important; 
@@ -579,7 +591,7 @@
         background-image: url(#{aonResource.resolve['/icons/pencil.svg']});
   	}
   	
-  	..aon-icon-edit-end-simple{
+  	.aon-icon-edit-end-simple{
   	    padding: 24px ;
   		background-size: 24px;
   		margin-right: 0px !important;
@@ -592,7 +604,28 @@
   		margin-right: 0px !important;
         background-image: url(#{aonResource.resolve['/icons/file-input.svg']});
   	}
+  	
+  	.aon-icon-lock {
+  	    padding: 24px ;
+  		background-size: 24px;
+  		margin-right: 0px !important;
+        background-image: url(#{aonResource.resolve['/icons/lock.svg']});
+  	}
+  	
+  	.aon-icon-unlock{
+  	    padding: 24px ;
+  		background-size: 24px;
+  		margin-right: 0px !important;
+        background-image: url(#{aonResource.resolve['/icons/unlock.svg']});
+  	}
 	
+	.aon-inputText + .aon-icon-edit-add-simple, 
+	.aon-inputText + .aon-icon-edit-end-simple{
+	    padding: 9px !important;
+	    margin-left: 13px !important;
+	    vertical-align: middle !important;
+    }
+
 	.aon-finding-toolbar-item.aon-icon-new:hover, 
 	.aon-finding-toolbar-item.aon-icon-csv:hover, 
 	.aon-finding-toolbar-item.aon-icon-pdf:hover, 
@@ -794,6 +827,43 @@
   		background-size: inherit;	  
   		background-image: url(#{aonResource.resolve['/icons/volume-2.svg']}) ;
     }
+    
+    .aon-icon-map-point{
+        padding: 13px !important;
+  		background-size: inherit;
+  	    background-image: url(#{aonResource.resolve['/icons/map-pin.svg']}) ;
+    }
+    
+    .aon-icon-company {
+		padding: 13px !important;
+		background-size: inherit;
+		background-image: url(#{aonResource.resolve['/icons/home.svg']}) ;	
+	}
+	
+    .aon-icon-commercial {
+		padding: 13px !important;
+		background-size: inherit;
+		background-image: url(#{aonResource.resolve['/icons/briefcase.svg']}) ;	
+	}
+	
+    .aon-icon-confidential {
+		padding: 13px !important;
+		background-size: inherit;
+		background-image: url(#{aonResource.resolve['/icons/user.svg']}) ;	
+	}
+	
+	
+    .aon-icon-globe {
+		padding: 13px !important;
+		background-size: inherit;
+		background-image: url(#{aonResource.resolve['/icons/globe-2.svg']}) ;	
+	}
+
+    .aon-icon-exclude {
+		padding: 13px !important;
+		background-size: inherit;
+		background-image: url(#{aonResource.resolve['/icons/x.svg']}) ;	
+	}
 
 	.rich-inslider{
 		height: 2.5rem
