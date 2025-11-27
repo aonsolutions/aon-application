@@ -36,7 +36,7 @@ body,
 	background-color: #f1f5f9 !important;	
 }
 
-.aon_toolbar_inner,
+.aon_toolbar,
 .aon-MainAgreement-ToolBar, 
 .aon-MainAgreement-Agreements,
 .aon-EmployeeTree,
@@ -86,8 +86,12 @@ body,
 	
 }
 .aon_toolbar{
-	margin: 0.5rem 0rem 0rem 0rem;
+	margin: 1rem 1rem 1rem 1rem;
 }
+
+.aon_toolbar_inner{
+ 	border-bottom: none;
+ }
 
 .aon_flex_column{
 	border-radius: .375rem;
@@ -163,6 +167,7 @@ input, select, textarea,
 }
 
 .aon_custom_table_header,
+.aon_custom_table_footer,
 .aon_display_grid_header_row ,
 .dataGridWidget > div:first-child {
   top: 0px;
@@ -172,6 +177,10 @@ input, select, textarea,
   position: sticky;
   background-clip: padding-box;
   background-color: #e2e8f0;
+}
+
+.aon_custom_table_footer {
+	border: none;	
 }
 
 .aon_display_grid_header_cell{

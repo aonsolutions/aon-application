@@ -257,6 +257,10 @@
 	.aon-icon-rubber{
 		background-image: url(#{aonResource.resolve['/icons/eraser.svg']}) ;
 	}
+	
+	.aon-icon-printer{
+        background-image: url(#{aonResource.resolve['/icons/printer.svg']}) ;
+    }
 
 	.aon-icon-delete{
 		background-image: url(#{aonResource.resolve['/icons/trash-2.svg']}) ;
@@ -599,6 +603,7 @@
 	.aon-finding-toolbar-item.aon-icon-accept:hover, 
 	.aon-finding-toolbar-item.aon-icon-cancel:hover, 
 	.aon-finding-toolbar-item.aon-icon-rubber:hover, 
+	.aon-finding-toolbar-item.aon-icon-printer:hover, 
 	.aon-finding-toolbar-item.aon-icon-search:hover, 
 	.aon-finding-toolbar-item.aon-icon-delete:hover, 
 	.aon-finding-toolbar-item.aon-icon-invoice:hover, 
@@ -691,7 +696,8 @@
 	    background-color: transparent;
 	}
 	
-	.aon-search-lookup-button {
+	.aon-search-lookup-button,
+	.rich-modalpanel .aon-commandButton {
 		border: none;
 	    background-color: #0f172a;
 	 	border-radius: 4px;
@@ -701,9 +707,21 @@
 		height: 3rem;
 		letter-spacing: .75px;
 		margin-top: 1rem;
-		padding: 0 !important;
+		width:fit-content;
     }
     
+    .rich-mpnl-content{
+        height: auto !important;
+        border-radius: .375rem;
+    	border-color: #fff !important;
+    }
+
+	.aon-popupWindow-title, 
+	.gwt-Selector .gwt-PopupPanel .custom-dialog-header .custom-dialog-title {
+	  color: #4b4b4b;
+	  border-color: #fff;
+	  background-color: #fff;
+	}    
     .aon-panelGrid-search{
         border:none;
     }
@@ -812,6 +830,14 @@
 	    border-color: #cbd5e1;
 	    background-color: var(--aonBackgroundColor2);
 	}
+
+	input[type="button"]:focus {
+		outline: none;
+		border: none !important;
+		box-shadow: none !important;
+	}
+	
+
 }
 	
 
