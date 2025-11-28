@@ -148,7 +148,7 @@ public class ProductCatalogue extends HTMLPanel {
 				.collect(Collectors.toList());
 		
 		if(!aonUsers.isEmpty() || !aonServices.isEmpty()) {
-			Label users = new Label("Mejora tu plan");
+			Label users = new Label("Completa tu plan");
 			users.getElement().getStyle().setProperty("font-size", "1.3rem");
 			users.getElement().getStyle().setProperty("margin", "1rem 0");
 			cataloguePanel.add(users);
@@ -295,7 +295,7 @@ public class ProductCatalogue extends HTMLPanel {
 	
 	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");
