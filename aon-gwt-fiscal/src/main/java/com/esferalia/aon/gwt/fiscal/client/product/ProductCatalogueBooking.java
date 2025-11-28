@@ -320,7 +320,7 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				;
 		
 		if(product.getBookingType().equals(ProductBookingType.PLAN) || product.getBookingType().equals(ProductBookingType.CONSULTANCY)) {
-			List<Integer> packItemIds = products.stream().filter(p -> p.isManufactured()).map(p -> p.getItem().getId()).collect(Collectors.toList());
+			List<Integer> packItemIds = products.stream().filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || product.getBookingType().equals(ProductBookingType.CONSULTANCY)).map(p -> p.getItem().getId()).collect(Collectors.toList());
 			Optional<Fee> feeItem = customerFees.stream().filter(cf -> packItemIds.contains(cf.getItem().getId()) && (cf.getEndDate() == null || cf.getEndDate().after(new Date()) || cf.getEndDate().equals(new Date()))).findFirst();
 			
 			if(feeItem.isPresent()) {
@@ -480,7 +480,26 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				price.getElement().getStyle().setProperty("text-align", "center");
 				price.getElement().getStyle().setProperty("width", "8rem");
 				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "#002469");
-							
+				
+				switch (aonService.getBookingPriceType()) {
+					case PLAN:
+						priceValue = formaDouble(getBookedPlanPrice());
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case FROM:
+						price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case HIDE:
+						price = new HTMLPanel("");
+						break;
+					default:
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+				}
+				
+				if(aonService.getItem().getPrice() == 0.00)
+					price = new HTMLPanel("");
+				
 				if(itemTariff.isEmpty()) {
 					if(tariff.getDiscount() != 0.00) {
 						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), tariff.getDiscount());
@@ -523,6 +542,23 @@ public class ProductCatalogueBooking extends HTMLPanel {
 		
 	}
 	
+	private double getBookedPlanPrice() {
+		List<ProductBooking> packsProducts = products.stream()
+			.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || p.getBookingType().equals(ProductBookingType.CONSULTANCY))
+			.collect(Collectors.toList());
+		
+		ProductBooking bookedPlan = null;
+		
+		for(ProductBooking productBooking : packsProducts) {
+			if(isFeeProduct(productBooking.getItem().getId())) {
+				bookedPlan = productBooking;
+				break;
+			}
+		}
+		
+		return null == bookedPlan ? 0.00 : bookedPlan.getItem().getPrice();
+	}
+
 	private void createUsers(HTMLPanel cataloguePanel, List<ProductBooking> aonUsers) {
 		HTMLPanel servicesPanel = new HTMLPanel("");
 		servicesPanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -565,6 +601,25 @@ public class ProductCatalogueBooking extends HTMLPanel {
 				price.getElement().getStyle().setProperty("width", "8rem");
 				price.getElement().getStyle().setProperty("color", isFeeProduct(aonService.getItem().getId()) ? "black" : "#002469");
 							
+				switch (aonService.getBookingPriceType()) {
+					case PLAN:
+						priceValue = formaDouble(getBookedPlanPrice());
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case FROM:
+						price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case HIDE:
+						price = new HTMLPanel("");
+						break;
+					default:
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+				}
+				
+				if(aonService.getItem().getPrice() == 0.00)
+					price = new HTMLPanel("");
+				
 				if(itemTariff.isEmpty()) {
 					if(tariff.getDiscount() != 0.00) {
 						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), tariff.getDiscount());

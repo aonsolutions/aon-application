@@ -132,6 +132,25 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "</small> \u20ac" + " al mes *");
 		price.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "black" : "#002469");
 		
+		switch (packProduct.getBookingPriceType()) {
+			case PLAN:
+				priceValue = formaDouble(getBookedPlanPrice());
+				price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+			case FROM:
+				price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+			case HIDE:
+				price = new HTMLPanel("");
+				break;
+			default:
+				price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+		}
+		
+		if(packProduct.getItem().getPrice() == 0.00)
+			price = new HTMLPanel("");
+		
 		if(null != tariff) {
 			if(tariff.getDiscount() != 0.00) {
 				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount());
@@ -166,6 +185,16 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		pricePanel.add(price);
 		
 		buttonData.add(pricePanel);
+	}
+	
+	private double getBookedPlanPrice() {
+		ProductBooking bookedPlan = null;
+		
+		if(isFeeProduct(packProduct.getItem().getId())) {
+			bookedPlan = packProduct;
+		}
+		
+		return null == bookedPlan ? 0.00 : bookedPlan.getItem().getPrice();
 	}
 
 	private void createPackContent() {
