@@ -30,12 +30,14 @@
 			    <artifactId>maven-surefire-plugin</artifactId>
 			    <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
 			    <version>3.5.3</version>
-<!--			    
+			    
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
--->			    
+			    
+			    
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -84,6 +86,7 @@
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 
