@@ -19,7 +19,7 @@ public class InvoiceFixDAO {
 	
 	public static void invoiceTaxableBase0Fix(AONContext ctx, int invoiceId) {
 		Invoice invoice = InvoiceDAO.getFullInvoice(ctx, invoiceId);
-		if(invoice.getTaxableBase() == 0.0) {
+		if(invoice.getTaxableBase() == 0.0 || (invoice.getVatQuota() == 0.0 && invoice.getTotal() != invoice.getTaxableBase())) {
 			invoice.refreshTaxBreakdown();
 			invoice.getTaxBreakdown().ifPresent( tb -> {
 				invoice.setTaxableBase(tb.getVatBase());

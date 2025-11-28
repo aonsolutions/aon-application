@@ -3342,7 +3342,7 @@ export class AonInvoice extends AonElement {
 		});
 		if(this.invoice.isEmitida()) {
 			getCustomerEmails(this.invoice.getRegistry()).then(emails => {
-				mail.value = emails[0] || ''; 
+				mail.setValue(emails[0] || '');
 			});
 		}
 		d.open();
