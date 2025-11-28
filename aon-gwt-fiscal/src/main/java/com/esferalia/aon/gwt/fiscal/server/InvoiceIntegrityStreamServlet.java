@@ -345,7 +345,9 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 			Stream<JSONObject> stream(AONContext ctx, Condition basicCondition, int offset, int limit) {
 				return getInvoices(
 						 () -> basicSelect(ctx)
-						,() -> basicCondition.and(INVOICE.TAXABLE_BASE.eq(0.0))
+						,() -> basicCondition.and(INVOICE.TAXABLE_BASE.eq(0.0).or(  
+									INVOICE.VAT_QUOTA.eq(0.0).and(INVOICE.TOTAL.ne(INVOICE.TAXABLE_BASE))
+							))
 						, offset, limit )
 						.map( json -> {
 							json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.INVOICE_TAXABLE_BASE0.name());
