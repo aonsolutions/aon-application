@@ -1122,7 +1122,7 @@ public class MainCRA extends MainEntryPoint {
 						@Override
 						public void onAccept() {
 							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccs, p -> {
-								createNewCRA(cccsSelected, cccs, cccId);
+								createNewCRARectificative(cccsSelected, cccs, cccId);
 							}, noSalariesMessage -> {
 								
 								AonDialog dialog = new AonDialog("AVISO: CRA",
