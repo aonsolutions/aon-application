@@ -117,6 +117,7 @@
 	}
 
 	.aon-toolbar {
+		border: none;
     	background-color: #fff;
 	}
 	
@@ -502,9 +503,10 @@
 	
 	.aon-button-goto{
   		width: 24px ;
-  		height: 2.5rem ;	
-		padding: 13px !important;
+  		height: 2.5rem ;
 		background-size: inherit;
+  		vertical-align: middle !important;	
+		padding: 13px 13px 13px 25px !important;
         background-image: url(#{aonResource.resolve['/icons/external-link.svg']});
 	}
 
@@ -591,6 +593,7 @@
         background-image: url(#{aonResource.resolve['/icons/pencil.svg']});
   	}
   	
+  	.aon-icon-edit-end,
   	.aon-icon-edit-end-simple{
   	    padding: 24px ;
   		background-size: 24px;
@@ -730,7 +733,9 @@
 	}
 	
 	.aon-search-lookup-button,
-	.rich-modalpanel .aon-commandButton {
+	.rich-modalpanel .aon-commandButton
+	{
+        padding: 0 1.5rem;
 		border: none;
 	    background-color: #0f172a;
 	 	border-radius: 4px;
@@ -740,6 +745,44 @@
 		height: 3rem;
 		letter-spacing: .75px;
 		margin-top: 1rem;
+		width:fit-content;
+    }
+    
+    .aon-search-commandButton-right{
+    	background-image: none;
+    }
+    
+/*     .aon-search-commandButton-right a {
+        padding: 0 1.5rem;
+		border: none;
+	    background-color: #0f172a;
+	 	border-radius: 4px;
+		color: #fff;
+		cursor: pointer;
+		font-family: var(--aonFontFamily);
+		height: 3rem;
+		letter-spacing: .75px;
+		margin-top: 1rem;
+		width:fit-content;
+    }
+ */    
+    .aon-search-commandButton-left {
+    	margin: 0;
+    	padding: 0;
+    	background: none;
+    }
+    
+    input[type="button"][class*="aon-commandButton"] {
+        padding: 0 1.5rem;
+		border: none;
+	    background-color: #0f172a;
+	 	border-radius: 4px;
+		color: #fff;
+		cursor: pointer;
+		font-family: var(--aonFontFamily);
+		height: 2.5rem;
+		letter-spacing: .75px;
+		margin: auto 6px;
 		width:fit-content;
     }
     
@@ -768,24 +811,45 @@
     .aon-scroll-area:has(.aon-panelGrid) {
     	position: relative;
     }
+    
+	.aon-popupWindow-content .aon-scroll-area {
+        max-height: calc(66vh);
+	}
+
+    .aon-popupWindow-content .aon-toolbar + div:not(.aon-scroll-area):has(.aon-panelGrid){
+    	position: relative;
+		overflow-y: scroll;
+        max-height: calc(66vh);
+		padding: 0px 1.5em 1.5em 1.5em;
+    }
 	
 	.aon-scroll-area,
 	.aon-finding-title-toolbar + .aon-scroll-area {
 		height: calc( 100vh - 90px);
 	}
-
+	
+	
+	.aon-panelGrid .tbl-tab-search-odd,
     .aon-panelGrid .aon-panelGrid-odd,
     .aon-scroll-area .aon-panelGrid-odd{
+		text-align: left;
         position: absolute;
         padding-top: 0px !important;
         padding-bottom: 0px !important;
     }
+    
+    .aon-panelGrid .tbl-tab-search-even,
     .aon-panelGrid .aon-panelGrid-even,
     .aon-scroll-area .aon-panelGrid-even {
         padding-top: 20px !important;
         padding-bottom: 2px !important;
     }
-	
+    
+    .aon-panelGrid .tbl-tab-search-odd label,
+    .aon-panelGrid .tbl-tab-search-odd span {
+        white-space: nowrap;
+    }
+    
 	/* Tale/Grid icons */
 	
 	
@@ -864,6 +928,37 @@
 		background-size: inherit;
 		background-image: url(#{aonResource.resolve['/icons/x.svg']}) ;	
 	}
+	
+    .aon-icon-refresh {
+    	border:none !important;
+		background-size: inherit;
+		padding: 13px 13px 13px 25px !important;
+		background-image: url(#{aonResource.resolve['/icons/refresh-cw.svg']}) ;	
+	}
+	
+    .aon-editDataTable .aon-icon-reset {
+    	border:none !important;
+		background-size: inherit;
+		padding: 13px 13px 13px 25px !important;
+		background-image: url(#{aonResource.resolve['/icons/plus.svg']}) ;	
+	}
+	
+	.aon-icon-filter{
+		background-image: url(#{aonResource.resolve['/icons/filter.svg']}) ;
+	}
+
+	.aon-icon-filter-off{
+		background-image: url(#{aonResource.resolve['/icons/filter-off.svg']}) ;
+	}
+	
+	.aon-icon-attach-file{
+	    background-image: url(#{aonResource.resolve['/icons/paperclip.svg']}) ;
+    }
+	
+	input.aon-finding-toolbar-item.aon-icon-attach-file  {
+		width: 140px ;
+	    padding-left: 24px !important;
+	}
 
 	.rich-inslider{
 		height: 2.5rem
@@ -907,9 +1002,30 @@
 		box-shadow: none !important;
 	}
 	
-
-}
+	.aon-inputText.aon-width-40 {
+		min-width: fit-content;
+	}
 	
+	.aon-icon-ccc {
+		height: 2.5rem ;
+	}
+	
+	.aon-icon-ccc::after {
+        color: #1e293b;
+        content: "CCC";
+        font-family: "Inter-medium", sans-serif;
+        font-size: 14.0px !important; /*.875rem;*/
+	}
+	
+	.rich-mpnl-mask-div-opaque {
+  		background-color: var(--aonBackgroundColor2);	
+	}
+
+/* 	.aon-search-content-width {
+		display: grid !important;
+		grid-template-columns: repeat(3,minmax(0,1fr));
+	}
+ */	
 
 </style>
 
