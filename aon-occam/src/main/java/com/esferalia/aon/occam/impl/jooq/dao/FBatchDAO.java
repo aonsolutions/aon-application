@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
-import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
@@ -24,7 +22,6 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.FBatchProperties;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -206,21 +203,11 @@ public class FBatchDAO {
 	}
 
 	private static void removeFBatchDetails(AONContext ctx, FBatch fbatch) {
-		fbatch.getBatchDetails().forEach(fbatchDetail -> {
-			if(fbatchDetail.getFinance() != null)
-				ctx.getDslContext().update(FINANCE)
-					.set(FINANCE.STATUS, (byte)FinanceStatus.PENDING.ordinal())
-					.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
-					.execute();
-		});
-		
-		ctx.getDslContext()
-			.delete(FBATCH_DETAIL)
-			.where(FBATCH_DETAIL.FBATCH.eq(fbatch.getId()))
-			.execute();
+		fbatch.getBatchDetails().forEach(fbatchDetail ->  
+			FBatchDetailDAO.delete(ctx, fbatchDetail.getId())	
+		);
 		
 		ctx.log().debug("DELETE FBATCH_DETAILS, FBATCH ID: " + fbatch.getId());
-		
 	}
 	
 	// ---------------------------------------------------------- MAP
