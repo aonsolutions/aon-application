@@ -281,19 +281,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************** [INVOICE]
 	// **************************************************
 	@Override
-	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String user, String query)
-			throws AonCoreException {
-		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
-				:(query);
-		return AON.getInvoiceRegistries(domainName, domain,user,
-				p -> p.getDocumentProperty().like(q)
-					 .or(p.getNameProperty().like(q))
-					 .or(p.getAliasProperty().like(q))
-				).collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	@Override
 	public LinkedList<OldProduct> getInvoiceProducts(String domainName, int domain, String user, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))

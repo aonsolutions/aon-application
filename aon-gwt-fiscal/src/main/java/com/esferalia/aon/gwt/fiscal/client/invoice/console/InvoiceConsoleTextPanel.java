@@ -132,7 +132,7 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.spaces(8));
+		buf.append(AonStringUtils.center(invoice.getId() == null?"<NO ID>":AON.FMT_INT.format(invoice.getId()), 8));
 		buf.append(VERTICAL_BAR);
 		buf.append(" Total : ");
 		buf.append(AonStringUtils.rightPad(AON.FMT.format(invoice.getTotal()), 16));

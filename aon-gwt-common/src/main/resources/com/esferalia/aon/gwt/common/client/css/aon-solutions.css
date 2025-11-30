@@ -513,6 +513,11 @@
 .aon_input_text {
 	border: 1px solid #808080;
 }
+.aon_check_box {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
 .aon_scroll_area {
 	padding: 8px 1.5em 1.5em 1.5em;
 }
@@ -557,6 +562,13 @@
 .aon_display_flex_end {
 	display: flex;	
 	justify-content: flex-end;
+	align-items: center;
+	gap: .5rem;
+}
+
+.aon_display_flex_start {
+	display: flex;	
+	justify-content: flex-start;
 	align-items: center;
 	gap: .5rem;
 }

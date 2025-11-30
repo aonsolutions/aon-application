@@ -66,7 +66,7 @@ class Invoice2VerifactuAlta {
 
 		alta.setCupon(CuponType.N);
 
-		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
+		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> b.getVatQuota(invoice)).orElse(0.0)));
 		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal()));
 		
 		alta.setDesglose(getDesglose(vc, invoice));

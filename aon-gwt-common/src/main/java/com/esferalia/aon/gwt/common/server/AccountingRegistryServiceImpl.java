@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.common.server;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.client.AccountingRegistryService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -13,10 +11,11 @@ import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Aon Accounting Registry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/AccountingRegistry", "/aon_gwt_aio/ms/AccountingRegistry"})
 public class AccountingRegistryServiceImpl extends AonStatelessRemoteServiceServlet implements AccountingRegistryService {
@@ -161,19 +160,6 @@ public class AccountingRegistryServiceImpl extends AonStatelessRemoteServiceServ
 	@Override
 	public AccountingRegistry update(String domainName, int domain, String user, AccountingRegistry reg) throws AonCoreException {
 		return ACCOUNTING.update(domainName, domain,user, reg);
-	}
-	
-	@Override
-	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String user, String query)
-			throws AonCoreException {
-		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
-				:(query);
-		return AON.getInvoiceRegistries(domainName, domain,user,
-				p -> p.getDocumentProperty().like(q)
-					 .or(p.getNameProperty().like(q))
-					 .or(p.getAliasProperty().like(q))
-				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override

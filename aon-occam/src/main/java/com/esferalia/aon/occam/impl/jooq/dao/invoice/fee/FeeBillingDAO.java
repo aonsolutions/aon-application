@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -160,11 +161,17 @@ public class FeeBillingDAO {
         mvelContext.put("MONTH", params.getMonth().getName());
         mvelContext.put("YEAR", params.getYear());
 		
-        int minNumber = InvoiceDAO.getMinNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
-        if (minNumber >= 0) minNumber = -1;
-        log("Min invoice Number: " + minNumber);
-        
-        AtomicInteger invoiceNumber = new AtomicInteger( minNumber );
+        AtomicInteger invoiceNumber = new AtomicInteger( );
+        if (params.isDryRun() || params.mustSaveAsProforma() || params.isCommunicable() ) {
+        	int minNumber = InvoiceDAO.getMinNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
+        	if (minNumber >= 0) minNumber = -1;
+        	log("Min invoice Number: " + minNumber);
+        	invoiceNumber.set(minNumber );
+        } else {
+        	int nextNumber = InvoiceDAO.getNextNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
+        	log("Next invoice Number: " + nextNumber);
+        	invoiceNumber.set( nextNumber );
+        }
         AtomicInteger counter = new AtomicInteger( 1 );
         MutableObject<FeeBilling> lastFee = new MutableObject<>( null );
         // Collector que acumula bloques de FeeBilling según breakInvoice
@@ -179,7 +186,11 @@ public class FeeBillingDAO {
 					Invoice lastInvoice = AonCollectionUtils.stream(invoices).reduce((f, s) -> s).orElse(null);
 					if (breakInvoice(fee, lastFee.getValue())) {
 						// Nuevo bloque --> nueva factura
-						lastInvoice = createInvoice(ctx, fee, invoiceNumber.getAndDecrement(), params);
+						int invNumber = (params.mustSaveAsProforma() || params.isCommunicable() )
+							?invoiceNumber.getAndDecrement()
+							:invoiceNumber.getAndIncrement();
+						lastInvoice = createInvoice(ctx, fee, invNumber, params);
+						log(" Generando ..: " + FinanceUtil.getDocumentNumber(lastInvoice));
 						invoices.add(lastInvoice);
 						log("Invoice Added: " + counter.getAndIncrement() + " " + lastInvoice.flat());
 					}
@@ -855,7 +866,6 @@ public class FeeBillingDAO {
 	
 	private static void log( String message ) {
 		LOGGER.fine(message);
-		System.out.println( message );
 	}
 	
 }

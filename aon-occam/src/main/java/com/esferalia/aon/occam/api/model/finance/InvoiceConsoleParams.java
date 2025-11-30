@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
@@ -17,19 +19,28 @@ public class InvoiceConsoleParams implements Serializable {
 	private Date toDate;
 	private Integer activity;
 	
+	private String series;
+	private Integer fromNumber;
+	private Integer toNumber;
+	private String referenceCode;
+	
 	private Integer registry;
 	private Boolean output;
-	private VatSummaryType vatSummaryType;
+	private InvoiceTransactionType transactionType;
 	private RectificationType rectified;
 	private Boolean surcharge;
 	private Boolean farmerRegime;
 	private Boolean accrualRegime;
 	private Boolean investment;
+	private Boolean withholding;
 	private Boolean service;
 	private Boolean recorded;
 	private InvoiceSource source;
 
 	private SecurityLevel securityLevel;
+	
+	private InvoiceCommunicationType communicationType;
+	private InvoiceCommunicationStatus communicationStatus;
 	
 	private int offset;
 	private int limit;
@@ -66,6 +77,38 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 	
+	public String getSeries() {
+		return series;
+	}
+	public InvoiceConsoleParams setSeries(String series) {
+		this.series = series;
+		return this;
+	}
+	
+	public Integer getFromNumber() {
+		return fromNumber;
+	}
+	public InvoiceConsoleParams setFromNumber(Integer fromNumber) {
+		this.fromNumber = fromNumber;
+		return this;
+	}
+	
+	public Integer getToNumber() {
+		return toNumber;
+	}
+	public InvoiceConsoleParams setToNumber(Integer toNumber) {
+		this.toNumber = toNumber;
+		return this;
+	}
+	
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+	public InvoiceConsoleParams setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
+		return this;
+	}
+	
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -96,11 +139,11 @@ public class InvoiceConsoleParams implements Serializable {
 		return output != null && !output.booleanValue();
 	}
 	
-	public VatSummaryType getVatSummaryType() {
-		return vatSummaryType;
+	public InvoiceTransactionType getTransactionType() {
+		return transactionType;
 	}
-	public InvoiceConsoleParams setVatSummaryType(VatSummaryType vatSummaryType) {
-		this.vatSummaryType = vatSummaryType;
+	public InvoiceConsoleParams setTransactionType(InvoiceTransactionType transactionType) {
+		this.transactionType = transactionType;
 		return this;
 	}
 	
@@ -136,6 +179,14 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 	
+	public Boolean getWithholding() {
+		return withholding;
+	}
+	public InvoiceConsoleParams setWithholding(Boolean withholding) {
+		this.withholding = withholding;
+		return this;
+	}
+	
 	public Boolean getInvestment() {
 		return investment;
 	}
@@ -165,6 +216,22 @@ public class InvoiceConsoleParams implements Serializable {
 	}
 	public InvoiceConsoleParams setSource(InvoiceSource source) {
 		this.source = source;
+		return this;
+	}
+
+	public InvoiceCommunicationType getCommunicationType() {
+		return communicationType;
+	}
+	public InvoiceConsoleParams setCommunicationType(InvoiceCommunicationType communicationType) {
+		this.communicationType = communicationType;
+		return this;
+	}
+	
+	public InvoiceCommunicationStatus getCommunicationStatus() {
+		return communicationStatus;
+	}
+	public InvoiceConsoleParams setCommunicationStatus(InvoiceCommunicationStatus communicationStatus) {
+		this.communicationStatus = communicationStatus;
 		return this;
 	}
 	

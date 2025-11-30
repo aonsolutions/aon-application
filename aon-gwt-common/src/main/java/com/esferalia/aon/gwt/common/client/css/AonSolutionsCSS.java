@@ -724,6 +724,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_flex_end")
 	String aonDisplayFlexEnd();
 	
+	@ClassName("aon_display_flex_start")
+	String aonDisplayFlexStart();
+	
 	@ClassName("aon_button_icon_text")
 	String aonButtonIconText();
 	
@@ -768,6 +771,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_input_text")
 	String aonInputText();
+	
+	@ClassName("aon_check_box")
+	String aonCheckBox();
 	
 	@ClassName("aon_input_text_error")
 	String aonInputTextError();

@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -114,11 +115,7 @@ public class InvoiceAutoComplete {
 				inv.setNumber(number);
 			}
 			if (AonStringUtils.isBlank(inv.getReferenceCode())) {
-				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
-				if (!AonStringUtils.isBlank(inv.getSeries())) {
-					referenceCode = inv.getSeries() + "/" + referenceCode;
-				}
-				inv.setReferenceCode(referenceCode);
+				inv.setReferenceCode(FinanceUtil.getSalesReferenceCode(inv) );
 			}
 		} 
 	};

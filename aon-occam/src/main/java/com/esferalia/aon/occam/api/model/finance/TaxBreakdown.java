@@ -106,12 +106,18 @@ public class TaxBreakdown implements Serializable {
 		return AonMathUtils.round( vatStream().mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}
 
-	public double getVatQuota() {
-		return AonMathUtils.round( vatStream().mapToDouble( t -> t.getQuota() ).sum() , 2); 
+	public double getVatQuota(Invoice invoice) {
+		if (invoice.isVatEnabled()) {
+			return AonMathUtils.round( vatStream().mapToDouble( t -> t.getQuota() ).sum() , 2); 
+		}
+		return 0.0;
 	}
 	
-	public double getSurchargeQuota() {
-		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getSurchargeQuota() ).sum() , 2); 
+	public double getSurchargeQuota(Invoice invoice) {
+		if (invoice.isVatEnabled()) {
+			return AonMathUtils.round( vatStream().mapToDouble( t -> t.getSurchargeQuota() ).sum() , 2); 
+		}
+		return 0.0;
 	}
 	
 	public double getRetentionBase() {
@@ -128,13 +134,13 @@ public class TaxBreakdown implements Serializable {
 		}
 		return 0.0;
 	}
-	public double getResult() {
-		return AonMathUtils.round(getVatQuota() - getRetentionQuota());
+	public double getResult(Invoice invoice) {
+		return AonMathUtils.round(getVatQuota(invoice) - getRetentionQuota());
 	}
-	public double getTotal() {
+	public double getTotal(Invoice invoice) {
 		return AonMathUtils.round(
 			getBaseTotal()
-			+ getVatQuota() 
+			+ getVatQuota(invoice) 
 			- getRetentionQuota()
 		);
 	}

@@ -22,9 +22,9 @@ public class InvoiceCalculatorDAO {
 		i.getTaxBreakdown().
 			ifPresent( tb -> {
 				i.setTaxableBase( AonMathUtils.round(tb.getVatBase()) );
-				i.setVatQuota( tb.getVatQuota() );
+				i.setVatQuota( tb.getVatQuota(i) );
 				i.setRetentionQuota( tb.getRetentionQuota() );
-				i.setTotal( tb.getTotal() );
+				i.setTotal( tb.getTotal(i) );
 			})
 		;
 		return i;

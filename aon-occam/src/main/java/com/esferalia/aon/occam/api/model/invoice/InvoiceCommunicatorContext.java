@@ -19,7 +19,8 @@ public class InvoiceCommunicatorContext {
 	private Company company;
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
-	
+	private boolean failOnWrongValidation = true;
+
 //	private boolean error;
 //	private String errorMessage;
 
@@ -76,6 +77,14 @@ public class InvoiceCommunicatorContext {
 		return this;
 	}
 
+	public boolean isFailOnWrongValidation() {
+		return failOnWrongValidation;
+	}
+	public InvoiceCommunicatorContext setFailOnWrongValidation(boolean failOnWrongValidation) {
+		this.failOnWrongValidation = failOnWrongValidation;
+		return this;
+	}
+	
 //	public boolean isError() {
 //		return error;
 //	}

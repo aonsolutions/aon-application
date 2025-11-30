@@ -35,11 +35,18 @@ class VerifactuTestsUtils {
 		return series(ctx, true);
 	}
 	static String series(AONContext ctx, boolean rectifier) {
-		char prefix = (onGitHubActions()) 
-			? (rectifier ? 'r' : 'a')
-			: (rectifier ? 'R' : 'A')
-		;
-		return series( ctx, rectifier, prefix);
+		return series( ctx, rectifier, false);
+	}
+	static String series(AONContext ctx, boolean rectifier, boolean cancel) {
+	    char prefix = switch ((cancel ? 2 : 0) | (rectifier ? 1 : 0)) {
+	        case 3 -> 'T'; // cancel + rectifier
+	        case 2 -> 'C'; // cancel + !rectifier
+	        case 1 -> 'R'; // !cancel + rectifier
+	        case 0 -> 'A'; // !cancel + !rectifier
+	        default -> 'X';
+	    };
+	    prefix = onGitHubActions() ? Character.toLowerCase(prefix) : prefix; 
+	    return series(ctx, rectifier, prefix);
 	}
 	
 	static boolean onGitHubActions(){
@@ -51,6 +58,7 @@ class VerifactuTestsUtils {
 	private static String series(AONContext ctx, boolean rectifier, char prefix) {
 		Series series = SeriesDAO.stream(ctx, ctx.getDomainId())
 			.filter( Series::isActive )
+			.filter( s -> AonStringUtils.startsWith(s.getCode(), Character.toString(prefix)))
 			.filter( s -> (!rectifier && !s.isRectification() && s.isInvoice()) 
 					   || (rectifier && s.isRectification() && !s.isInvoice()))
 			.findFirst()

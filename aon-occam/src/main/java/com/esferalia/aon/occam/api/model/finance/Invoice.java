@@ -634,6 +634,11 @@ public class Invoice implements Serializable, HasAudit {
 	    return this;
 	}
 	
+	public boolean hasERRMessages() {
+		return getMoreSeriousLevel()
+			.filter( e -> e == InvoiceErrorLevel.ERR)
+			.isPresent(); 
+	}
 	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
 		if (!hasMessages()) return Optional.empty();
 		return messageStream()
@@ -719,7 +724,9 @@ public class Invoice implements Serializable, HasAudit {
 			|| (isExpenses() && isExtracommunity())					// Gasto extracomunitario
 			|| (isExpenses() && isCanCeuMel());						// Gasto Canarias
 	}
-	
+	public boolean isVatEnabled() {
+		return isOutputVatEnabled() != isInputVatEnabled();
+	}
 	public boolean isOutputVatEnabled() {
 		return !isUndeductible() && (
 			(isSales() && isNational())				// Venta Nacional
@@ -812,6 +819,10 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public Map<InvoiceCommunicationType, InvoiceInfo> getCommunicationInfo() {
 		return communicationInfo;
+	}
+	public Invoice reloadCommunicationInfo(Map<InvoiceCommunicationType, InvoiceInfo> map) {
+		this.communicationInfo.clear();
+		return addCommunicationInfo(map);
 	}
 	public Invoice addCommunicationInfo(Map<InvoiceCommunicationType, InvoiceInfo> map) {
 		if (map != null) this.communicationInfo.putAll(map);

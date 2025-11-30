@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
@@ -28,7 +27,6 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
-import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -189,7 +187,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************************** INVOICE REGISTRY ***
 	// 	***********************************************
-	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter);
+	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, Integer domainId, String query);
 	public Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter);
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId);
 	
@@ -336,7 +334,6 @@ public interface IFinance {
 	// ***************************** INVOICE FEE **
 	// ********************************************
 	Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId);
-	Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params);
 	
 	// ********************************************
 	// ********************************** SERIES **

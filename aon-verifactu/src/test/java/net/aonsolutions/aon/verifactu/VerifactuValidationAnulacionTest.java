@@ -46,7 +46,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 		if (completeIcc != null) {
 			completeIcc.complete(icc);
 		}
-		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(ctx,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		RegistroFacturaType fraType = fras.getRegistroFactura().get(0);
 		RegistroFacturacionAnulacionType anulacion = fraType.getRegistroAnulacion();
 		if (complete != null) {

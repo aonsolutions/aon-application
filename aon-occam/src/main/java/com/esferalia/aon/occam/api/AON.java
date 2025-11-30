@@ -7182,6 +7182,13 @@ public class AON {
 	
 	// ------------------- CERTIFICATES
 	
+	public static LinkedList<Certificate> getAEATCertificates(Occam occam) throws IllegalArgumentException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getAEATCertificates(ctx, occam.getDomain(), occam.getUser())
+				.collect(Collectors.toCollection(LinkedList::new));
+		}
+	}
+	
 	public static List<Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificates(ctx, domainId, userId);
@@ -7367,17 +7374,16 @@ public class AON {
 		}
 	}
 
-	public static Stream<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String loggedUser,
-			RegistryFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
-			return getFinance().getInvoiceRegistries(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
+//	public static Stream<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String loggedUser, RegistryFilter filter) {
+//		CloseableAONContext ctx = null;
+//		try {
+//			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
+//			return getFinance().getInvoiceRegistries(ctx, filter);
+//		} finally {
+//			if (ctx != null)
+//				ctx.close();
+//		}
+//	}
 
 	public static Stream<OldProduct> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
 		CloseableAONContext ctx = null;
@@ -9045,6 +9051,11 @@ public class AON {
 			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
 		}
 	}
+	public static Stream<InvoiceRegistry> getInvoiceRegistriesSuggestion(Occam occam, Integer domainId, String query) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoiceRegistries(ctx, domainId, query);
+		}
+	}
 	
 	/**
 	 * @deprecated use {@link #getInvoicingGroupsSuggestion(Occam, Integer, String)}
@@ -9068,13 +9079,6 @@ public class AON {
 	public static Optional<Pair<Integer, Integer>> getFeeYearRange(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getFinance().getFeeYearRange(ctx, domainId);
-		}
-	}
-
-	public static LinkedList<Invoice> feeInvoicing(Occam occam, FeeBillingParams params) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getFinance().feeInvoicing(ctx, params)
-				.collect(Collectors.toCollection(LinkedList::new));
 		}
 	}
 

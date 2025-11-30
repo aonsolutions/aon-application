@@ -1,13 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.fee;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -41,7 +40,7 @@ public class InvoiceFeeServiceAsyncDecorator implements InvoiceFeeServiceAsync {
 	// ************************************** [INVOICING]
 	// **************************************************
 	@Override
-	public void getInvoices(Occam occam, FeeBillingParams params, AsyncCallback<LinkedList<Invoice>> callback) {
+	public void getInvoices(Occam occam, FeeBillingParams params, AsyncCallback<InvoiceProcessOutput> callback) {
 		AON.start();
 		serviceAsync.getInvoices(occam, params, new AsyncCallbackWrapper<>(callback));
 	}

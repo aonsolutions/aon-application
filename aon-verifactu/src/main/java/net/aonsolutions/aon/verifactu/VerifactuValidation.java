@@ -172,7 +172,8 @@ public class VerifactuValidation {
 	// *********************************************************
 	private static record AltaContext(ValidatorContext vc, RegistroFacturacionAltaType fra) {}
 	public static void validateAlta(ValidatorContext vc, RegistroFacturacionAltaType alta) {
-			ALTA_FRA_NIF
+			ALTA_FRA_REF_EXTERNA
+			.andThen(ALTA_FRA_NIF)
 			.andThen(ALTA_FRA_FECHA)
 			.andThen(ALTA_FRA_FECHA_EXP)
 			.andThen(ALTA_FRA_NUM_SERIE)
@@ -199,6 +200,17 @@ public class VerifactuValidation {
 			.andThen(ALTA_FRA_SISTEMA_INFORMATICO_OTHERS)
 		.accept(new AltaContext(vc,alta));
 	}
+
+	/**
+	 * 0. RegistroFacturacionAltaType
+	 * 
+	 * 	 - El campo RefExterna es obligatorio.
+	 */
+	private static final Consumer<AltaContext> ALTA_FRA_REF_EXTERNA = a -> {
+		if (AonStringUtils.isBlank(a.fra.getRefExterna())) {
+			a.vc.addError(InvoiceCommunicationError.VERIFACTU_1253);
+		}
+	};
 	
 	/**
 	 * 1. Agrupación IDFactura

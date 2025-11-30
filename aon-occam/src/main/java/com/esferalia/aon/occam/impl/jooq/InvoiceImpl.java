@@ -18,4 +18,5 @@ public class InvoiceImpl implements IInvoice {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceDAO.delete(ctx, invoiceId));
 	}
+	
 }

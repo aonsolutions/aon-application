@@ -236,7 +236,12 @@ public class AonStringUtils {
 
 	// SQL like 
 	public static String SQLlike(final String str) {
-		return isEmpty(str)?null:PERCENT + trim(str) + PERCENT;
+		if (isEmpty(str)) return PERCENT;
+		String pattern = str;
+		if (!AonStringUtils.contains(str,PERCENT) && !AonStringUtils.contains(str,UNDERSCORE)) {
+		    pattern = PERCENT + trim(pattern) + PERCENT;
+		}
+		return pattern;
 	}
 
 	// Empty checks

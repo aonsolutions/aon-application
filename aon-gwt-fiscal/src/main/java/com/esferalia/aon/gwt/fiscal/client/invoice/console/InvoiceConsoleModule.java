@@ -1,6 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
@@ -8,19 +13,16 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-
-
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
 
 public class InvoiceConsoleModule  implements EntryPoint {
 	
@@ -35,6 +37,7 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		InvoiceConsoleServiceAsync fiscalServiceRaw = GWT.create(InvoiceConsoleService.class);
 		INVOICE_SERVICE = new InvoiceConsoleAsyncDecorator(fiscalServiceRaw);
 	}
+	private static final int FILTER_HEIGHT = 120;
 
 	private SimpleLayoutPanel content;
 
@@ -72,7 +75,29 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		aonLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		InvoiceConsoleFilter filterPanel = new InvoiceConsoleFilter(opts);
 		filterPanel.addValueChangeHandler(e -> search(opts, e.getValue()) );
-		aonLayoutPanel.addNorth(filterPanel, 70);
+		aonLayoutPanel.addNorth(filterPanel, FILTER_HEIGHT);
+		
+		AonToolbarButton showFilter = new AonToolbarButton(AON.MSG.showFilter(), AON.CSS.aonIconFilterOn());
+		showFilter.setVisible(false);
+		AonToolbarButton hideFilter = new AonToolbarButton(AON.MSG.hideFilter(), AON.CSS.aonIconFilterOff());
+		hideFilter.setVisible(true);
+		
+		showFilter.addClickHandler(e -> {
+			hideFilter.setVisible(true);
+			showFilter.setVisible(false);
+			aonLayoutPanel.setWidgetHidden(filterPanel, false);
+			aonLayoutPanel.setWidgetSize(filterPanel, FILTER_HEIGHT);
+			aonLayoutPanel.animate(200); 
+		});
+		
+		hideFilter.addClickHandler(e -> {
+			hideFilter.setVisible(false);
+			showFilter.setVisible(true);
+			aonLayoutPanel.setWidgetSize(filterPanel, 0);
+			aonLayoutPanel.animate(200);
+		});
+		toolbar.add(showFilter);
+		toolbar.add(hideFilter);
 		
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());

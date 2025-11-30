@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -87,8 +88,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -501,7 +500,7 @@ public class InvoiceDAO {
 				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
 	}
 	
-	private static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
 		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}
 	
@@ -1112,40 +1111,40 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	public static Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
-		return 	ctx.getDslContext().select(
-				 INVOICE.TYPE
-				,INVOICE.REGISTRY
-				,INVOICE.SCOPE
-				,REGISTRY.ALIAS
-				,REGISTRY.DOCUMENT
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.NAME
-				
-			)
-			.from(INVOICE)
-			.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
-			.where(REGISTRY_PROPERTIES.getConditions(filter))
-			.and(INVOICE.DOMAIN.eq(ctx.getDomainId())
-			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE)))
-			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
-			.groupBy(INVOICE.TYPE,INVOICE.REGISTRY)
-			.orderBy(REGISTRY.NAME)
-			.limit(30)
-			.fetch()
-			.stream()
-			.map(rec -> new InvoiceRegistry()
-					.setId( rec.getValue(INVOICE.REGISTRY) )
-					.setScope(rec.getValue(INVOICE.SCOPE))
-					.setAlias(rec.getValue(REGISTRY.ALIAS))
-					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-					.setDocumentType(DocumentType.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_TYPE)))
-					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-					.setName(rec.getValue(REGISTRY.NAME))
-					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
-					);			
-	}
+//	public static Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
+//		return 	ctx.getDslContext().select(
+//				 INVOICE.TYPE
+//				,INVOICE.REGISTRY
+//				,INVOICE.SCOPE
+//				,REGISTRY.ALIAS
+//				,REGISTRY.DOCUMENT
+//				,REGISTRY.DOCUMENT_TYPE
+//				,REGISTRY.DOCUMENT_COUNTRY
+//				,REGISTRY.NAME
+//				
+//			)
+//			.from(INVOICE)
+//			.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
+//			.where(REGISTRY_PROPERTIES.getConditions(filter))
+//			.and(INVOICE.DOMAIN.eq(ctx.getDomainId())
+//			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE)))
+//			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
+//			.groupBy(INVOICE.TYPE,INVOICE.REGISTRY)
+//			.orderBy(REGISTRY.NAME)
+//			.limit(30)
+//			.fetch()
+//			.stream()
+//			.map(rec -> new InvoiceRegistry()
+//					.setId( rec.getValue(INVOICE.REGISTRY) )
+//					.setScope(rec.getValue(INVOICE.SCOPE))
+//					.setAlias(rec.getValue(REGISTRY.ALIAS))
+//					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+//					.setDocumentType(DocumentType.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_TYPE)))
+//					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+//					.setName(rec.getValue(REGISTRY.NAME))
+//					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
+//					);			
+//	}
 	
 	public static void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
 		Project project = new Project()
@@ -1875,11 +1874,7 @@ public class InvoiceDAO {
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			Integer number = getNextNumber(ctx, types, invoice.getSeries());
 			invoice.setNumber(number);
-			String referenceCode = AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
-			if (!AonStringUtils.isBlank(invoice.getSeries())) {
-				referenceCode = invoice.getSeries() + "/" + referenceCode;
-			}
-			invoice.setReferenceCode(referenceCode);
+			invoice.setReferenceCode(FinanceUtil.getSalesReferenceCode(invoice));
 		}		
 		return invoice;
 	}
@@ -1900,6 +1895,7 @@ public class InvoiceDAO {
 				.set(FINANCE.CONCEPT, invoice.getDocumentNumber())
 			.where(FINANCE.INVOICE.eq(invoice.getId()))
 			.execute();
+		invoice.financeStream().forEach(fin -> fin.setConcept( invoice.getDocumentNumber()).setDirty(false) );
 		ctx.log().info("ISSUE INVOICE finances: {0} ({1} rows)",invoice.getId(),f);
 		return invoice;
 	}

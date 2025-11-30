@@ -2261,7 +2261,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				.findFirst()
 				.orElse(new LinkedList<>())
 			;
-		} catch (InvoiceCommunicationException e) {
+		} catch (Exception e) {
 			throw new AbortProcessingException(e);
 		}
 	}

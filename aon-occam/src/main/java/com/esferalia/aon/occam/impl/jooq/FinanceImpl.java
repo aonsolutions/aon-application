@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailExtendedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
@@ -471,9 +472,8 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoiceRegistries(ctx, filter));
+	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, Integer domainId, String query) {
+		return InvoiceRegistryDAO.getInvoiceRegistriesSuggestion(ctx, domainId, query);
 	}
 
 	@Override
@@ -978,12 +978,6 @@ public class FinanceImpl implements IFinance {
 		return FeeDAO.getFeeYearRange(ctx, domainId);
 	}
 
-	@Override
-	public Stream<Invoice> feeInvoicing(AONContext ctx, FeeBillingParams params) {
-		return ctx.getDslContext().transactionResult(
-			configuration -> FeeBillingDAO.invoice(ctx, params));
-	}
-	
 	// 	***********************************************
 	// 	************************************* ITEM ****
 	// 	***********************************************

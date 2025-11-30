@@ -14,35 +14,32 @@ public class InvoiceMessagesLabel extends AonTableButton {
 	
 	public InvoiceMessagesLabel( Invoice invoice ) {
 		super( "" );
-		if ( !invoice.isRecorded()) {
-			addStyleName(AON.CSS.aonClickableLabel());
-			if ( invoice.hasMessages()) {
-				invoice.getMoreSeriousLevel()
-					.map( l -> { setTitle( l.getLabel() );return l;} ) 
-					.map( l -> l.visit(new BackgroundErrorLevelVisitor()) )
-					.ifPresent(s -> addStyleName(s))
-				;
-				addClickHandler(event -> {
-					final AonCustomPopup infoPanel = new AonCustomPopup();
-					infoPanel.setAutoHideEnabled( true );
-					infoPanel.setWidth( "600px");
-					infoPanel.setHeight("400px");
-					infoPanel.add(new InvoiceRecorderMessagesPanel( invoice ));
-					infoPanel.center();
-					infoPanel.show();
-					event.stopPropagation();
-				});
-			} else {
-				addStyleName(AON.CSS.aonIconCircleGreen());
-			}
-		} else {
-		}
+		addStyleName(AON.CSS.aonClickableLabel());
+		invoice.getMoreSeriousLevel()
+			.map( l -> { setTitle( l.getLabel() );return l;} ) 
+			.map( l -> l.visit(new BackgroundErrorLevelVisitor()) )
+			.ifPresentOrElse(
+				s -> {
+					addStyleName(s);
+					addClickHandler(event -> {
+						final AonCustomPopup infoPanel = new AonCustomPopup();
+						infoPanel.setAutoHideEnabled( true );
+						infoPanel.setWidth( "600px");
+						infoPanel.setHeight("400px");
+						infoPanel.add(new InvoiceRecorderMessagesPanel( invoice ));
+						infoPanel.center();
+						infoPanel.show();
+						event.stopPropagation();
+					});
+				}
+				,() -> addStyleName(AON.CSS.aonIconBullet())
+			);
 	}
 
 	private static class BackgroundErrorLevelVisitor implements InvoiceErrorLevelVisitor<String> {
 		@Override public String visitINF() {return AON.CSS.aonIconCircleYellow();}
 		@Override public String visitWRN() {return AON.CSS.aonIconCircleOrange();}
-		@Override public String visitERR() {return AON.CSS.aonIconCircleRed();}
+		@Override public String visitERR() {return AON.CSS.aonIconBullet();}
 	}		
 
 	private static class InvoiceRecorderMessagesPanel extends FlowPanel {

@@ -35,7 +35,10 @@ public class FeeBillingParams implements Serializable {
 	
 	private Integer domainId;
 	private boolean notDryRun;
+	private boolean saveAsProforma;
+	private boolean communicable;
 	private Company company;
+	private Integer certId;
 	
 	private Integer invoicingGroup;
 	private Integer customer;
@@ -74,11 +77,35 @@ public class FeeBillingParams implements Serializable {
 		return this;
 	}
 	
+	public boolean mustSaveAsProforma() {
+		return saveAsProforma;
+	}
+	public FeeBillingParams setSaveAsProforma(boolean saveAsProforma) {
+		this.saveAsProforma = saveAsProforma;
+		return this;
+	}
+	
+	public boolean isCommunicable() {
+		return communicable;
+	}
+	public FeeBillingParams setCommunicable(boolean communicable) {
+		this.communicable = communicable;
+		return this;
+	}
+	
 	public Company getCompany() {
 		return company;
 	}
 	public FeeBillingParams setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+	
+	public Integer getCertId() {
+		return certId;
+	}
+	public FeeBillingParams setCertId(Integer certId) {
+		this.certId = certId;
 		return this;
 	}
 	

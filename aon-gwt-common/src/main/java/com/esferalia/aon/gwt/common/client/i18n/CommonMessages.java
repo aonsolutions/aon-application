@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.user.client.ui.Widget;
 
 public interface CommonMessages extends Messages {
 	// Á --> \u00C1 á --> \u00E1
@@ -582,6 +581,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Comunicaci\u00F3n AEAT")
 	String communicationAeat();
+
+	@DefaultMessage("Comunicadas a ")
+	String communicated();
+
+	@DefaultMessage("con estado")
+	String withStatus();
+	
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
@@ -4342,5 +4348,24 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Editar B\u00FAsqueda")
 	String editSearch();
+
+	@DefaultMessage("Proforma")
+	String proforma();
+
+	@DefaultMessage("Destinatario")
+	String recipient();
+
+	@DefaultMessage("Generar facturas proforma")
+	String saveAsProformas();
+
+	@DefaultMessage("Comunicar facturas")
+	String communicateInvoices();
+
+	@DefaultMessage("Mostrar filtro")
+	String  showFilter();
+	
+	@DefaultMessage("Ocultar filtro")
+	String  hideFilter();
+	
 }
 

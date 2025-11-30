@@ -216,7 +216,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 		icc.setConfig(configWithCertificate());
 		VerifactuContext vc = new VerifactuContext(icc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));

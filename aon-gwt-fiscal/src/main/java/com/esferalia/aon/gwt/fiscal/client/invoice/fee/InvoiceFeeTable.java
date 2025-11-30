@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.fee;
 
-import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -9,9 +9,14 @@ import com.esferalia.aon.gwt.common.client.widget.event.AonErrorHandler;
 import com.esferalia.aon.gwt.common.client.widget.event.HasAonErrorHandlers;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoicePanel.InvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -19,12 +24,13 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSelectionHandlers<Invoice> {
 	
@@ -48,30 +54,24 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 	
 	private void onSearch(InvoiceFeeModuleOptions opts, FeeBillingParams params, InvoiceFeeTableCallback callback) {
 		callback.onSearchStart();
-		InvoiceFeeModule.SERVICE.getInvoices(opts.getOccam(), params, new AsyncCallback<LinkedList<Invoice>>() {
+		tableInfo.clear();
+		InvoiceFeeModule.SERVICE.getInvoices(opts.getOccam(), params, new AsyncCallback<InvoiceProcessOutput>() {
 	
 				@Override
-				public void onSuccess(LinkedList<Invoice> feeList) {
-					if (AonCollectionUtils.isEmpty(feeList)) {
-						showNoDataPanel();
-					}
-					AonCollectionUtils.stream(feeList)
+				public void onSuccess(InvoiceProcessOutput output) {
+					tableInfo.setErrorLevel( output.getProcessErrorLevel().orElse(null) );
+					tableInfo.setMessage( output.getProcessMessage() );
+					MutableBoolean hasData = new MutableBoolean(false);
+					output.invoiceStream()
 						.forEach( inv -> {
-							paintRow(callback, inv, grid.addRow());
+							paintRow(opts, callback, inv, grid.addRow());
 							refreshInfoPanel(tableInfo, inv, null);
+							hasData.setValue(true);
 						}
 					);
 					callback.onSearchEnd( tableInfo );
 				}
 				
-				private void showNoDataPanel() {
-					FlowPanel line = new FlowPanel();
-					InlineLabel label = new InlineLabel(AON.MSG.noData());
-					line.add(label);
-					container.clear();
-					container.add(line);
-				}
-
 				@Override
 				public void onFailure(Throwable caught) {
 					callback.onEditSearch();
@@ -81,62 +81,6 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		);
 	}
 
-//	private void showInfoPanel() {
-//		infoPanel.clear();
-//		
-//		AonDisplayTable infoTab = new AonDisplayTable();
-//		infoTab.addStyleName(AON.CSS.aonBlockCenter());
-//		infoTab.addStyleName(AON.CSS.aonDisplayGridRowSelected() );
-//		
-//		Label totalCountLabel = new Label( AON.FMT_INT.format(totalCount.getValue() ));
-//		totalCountLabel.setStyleName(AON.CSS.aonMarginRight());
-//		totalCountLabel.addStyleName(AON.CSS.aonMarginLeft());
-//		totalCountLabel.addStyleName(AON.CSS.aonBold());
-//		totalCountLabel.addStyleName(AON.CSS.aonTextRight());
-//		totalCountLabel.addStyleName(AON.CSS.aonValueChanged());
-//		
-//		Label totalVATLabel = new Label( AON.FMT.format(totalVAT.getValue()));   
-//		totalVATLabel.setStyleName(AON.CSS.aonMarginRight());
-//		totalVATLabel.addStyleName(AON.CSS.aonMarginLeft());
-//		totalVATLabel.addStyleName(AON.CSS.aonBold());
-//		totalVATLabel.addStyleName(AON.CSS.aonTextRight());
-//		totalVATLabel.addStyleName(AON.CSS.aonValueChanged());
-//
-//		Label totalRetentionLabel = new Label( AON.FMT.format(totalRetention.getValue()));   
-//		totalRetentionLabel.setStyleName(AON.CSS.aonMarginRight());
-//		totalRetentionLabel.addStyleName(AON.CSS.aonMarginLeft());
-//		totalRetentionLabel.addStyleName(AON.CSS.aonBold());
-//		totalRetentionLabel.addStyleName(AON.CSS.aonTextRight());
-//		totalRetentionLabel.addStyleName(AON.CSS.aonValueChanged());
-//
-//		Label totalAmountLabel = new Label( AON.FMT.format(totalAmount.getValue()));
-//		totalAmountLabel.setStyleName(AON.CSS.aonMarginRight());
-//		totalAmountLabel.addStyleName(AON.CSS.aonMarginLeft());
-//		totalAmountLabel.addStyleName(AON.CSS.aonBold());
-//		totalAmountLabel.addStyleName(AON.CSS.aonTextRight());
-//		totalAmountLabel.addStyleName(AON.CSS.aonValueChanged());
-//
-//		infoTab
-//			.addLabelWidgetRow("Total facturas:", totalCountLabel)
-//			.addLabelWidgetRow("Total IVA:", totalVATLabel)
-//			.addLabelWidgetRow("Total Retenci\u00F3n:", totalRetentionLabel)
-//			.addLabelWidgetRow("Importe total:", totalAmountLabel)
-//		;
-//		infoPanel.add(infoTab);
-//		
-//		new Timer() {
-//			@Override
-//			public void run() {
-//				totalCountLabel.removeStyleName(AON.CSS.aonValueChanged());
-//				totalAmountLabel.removeStyleName(AON.CSS.aonValueChanged());
-//				totalVATLabel.removeStyleName(AON.CSS.aonValueChanged());
-//				totalRetentionLabel.removeStyleName(AON.CSS.aonValueChanged());
-//				infoTab.removeStyleName(AON.CSS.aonDisplayGridRowSelected() );
-//			}
-//		}.schedule(3000);
-//		
-//	}
-	
 	private void paintHeader() {
 		grid.addHeaderRow()
 			.addCell(new Label(""),AON.CSS.aonWidth20())
@@ -162,31 +106,16 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
-	private void paintRow(InvoiceFeeTableCallback callback, Invoice inv, AonDisplayGridRow row) {
+	private void paintRow(InvoiceFeeModuleOptions opts, InvoiceFeeTableCallback callback, Invoice inv, AonDisplayGridRow row) {
 		CheckBox checkBox = new CheckBox();
 		checkBox.addClickHandler(e -> {
 			callback.onCheck(checkBox.getValue().booleanValue(), inv);
 			e.stopPropagation();
 		});
-		Label statusLabel = new Label();
-		statusLabel.setStyleName(AON.CSS.aonIconLabel());
-		if (inv.getId() == null) {
-			statusLabel.addStyleName(AON.CSS.aonIconQrCodeOrange());
-			statusLabel.setTitle("Factura pendiente");
-		} else {
-			statusLabel.addStyleName(AON.CSS.aonIconQrCodeGreen());
-			statusLabel.setTitle("Factura grabada");
-		}
-		Label prepaymentLabel = new Label();
-		if (inv.hasPrepayments()) {
-			prepaymentLabel.setStyleName(AON.CSS.aonIconLetterS());
-			prepaymentLabel.addStyleName(AON.CSS.aonIconLabel());
-			prepaymentLabel.setTitle("Factura con Suplidos");
-		}
 		row
 			.addCell(checkBox)
-			.addCell(statusLabel)
-			.addCell(prepaymentLabel)
+			.addCell(getStatusLabel( opts, inv ))
+			.addCell(getWarningLabel( opts, inv ))
 			.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(inv.getIssueDate(), () -> AON.DATE_FORMAT.format(inv.getIssueDate()), AonStringUtils.EMPTY)))
@@ -199,11 +128,11 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 			}
 			row.addStyleName(AON.CSS.aonDisplayGridRowSelected());
 			selectedRow = row;
-			callback.onSelect( inv, new InvoicePanelCallback() {
+			callback.onSelect( inv, new InvoiceDockPanelCallback() {
 				@Override
 				public void onSave(Invoice invoice) {
 					row.clear();
-					paintRow(callback, invoice, row);
+					paintRow(opts, callback, invoice, row);
 					refreshInfoPanel(tableInfo, invoice, inv);
 				}
 				@Override
@@ -224,6 +153,158 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		
 	}
 	
+	private Widget getWarningLabel(InvoiceFeeModuleOptions opts, Invoice inv) {
+		FlowPanel warningContainer = new FlowPanel();
+		warningContainer.setStyleName(AON.CSS.aonNowrap());
+		warningContainer.addStyleName(AON.CSS.aonFlexBetween());
+		
+		if (inv.hasPrepayments()) {
+			Label prepaymentLabel = getIconLabel();
+			prepaymentLabel.addStyleName(AON.CSS.aonIconLetterS());
+			prepaymentLabel.setTitle("Factura con Suplidos");
+			warningContainer.add(prepaymentLabel);
+		}
+		
+		if (inv.hasMessages() ) {
+			inv.getMoreSeriousLevel()
+				.ifPresent( 
+					level -> {
+						Label label = level.visit(new InvoiceErrorLevelVisitor<Label>() {
+							@Override
+							public Label visitINF() {
+								Label levelLabel = getIconLabel();
+								levelLabel.addStyleName(AON.CSS.aonIconCircleBlue());
+								levelLabel.setTitle(level.getLabel());
+								return levelLabel;
+							}
+							@Override
+							public Label visitWRN() {
+								Label levelLabel = getIconLabel();
+								levelLabel.addStyleName(AON.CSS.aonIconCircleOrange());
+								levelLabel.setTitle(level.getLabel());
+								return levelLabel;
+							}
+							@Override
+							public Label visitERR() {
+								Label levelLabel = getIconLabel();
+								levelLabel.addStyleName(AON.CSS.aonIconCircleRed());
+								levelLabel.setTitle(level.getLabel());
+								return levelLabel;
+							}
+						});
+						warningContainer.add(label);
+					}
+				);
+		} else if (!inv.hasPrepayments()) {
+			Label levelLabel = getIconLabel();
+			levelLabel.addStyleName(AON.CSS.aonIconCircleGreen());
+			levelLabel.setTitle("Sin avisos");
+			warningContainer.add(levelLabel);
+		}
+		return warningContainer;
+	}
+
+	private Label getIconLabel() {
+		Label iconLabel = new Label();
+		iconLabel.setStyleName(AON.CSS.aonIconLabel());
+		return iconLabel;
+	}
+	
+	private FlowPanel getStatusLabel(InvoiceFeeModuleOptions opts, Invoice inv) {
+		FlowPanel statusContainer = new FlowPanel();
+		statusContainer.setStyleName(AON.CSS.aonNowrap());
+		statusContainer.addStyleName(AON.CSS.aonFlexBetween());
+		
+		boolean hasCommunication = opts.getConfiguration() != null
+			&& opts.getConfiguration().getCommunicationConfig() != null
+			&& opts.getConfiguration().getCommunicationConfig().hasCommunication();
+		
+		
+		if (!hasCommunication) {
+			if (inv.getId() == null) {
+				Label statusLabel = getIconLabel();
+				statusLabel.addStyleName(AON.CSS.aonIconUnknown());
+				statusLabel.setTitle("Factura simulada");
+				statusContainer.add(statusLabel);
+			} else if (inv.isProforma()) {
+				Label statusLabel = getIconLabel();
+				statusLabel.addStyleName(AON.CSS.aonIconAddTask());
+				statusLabel.setTitle("Factura proforma - Pendiente");
+				statusContainer.add(statusLabel);
+			} else {
+				Label statusLabel = getIconLabel();
+				statusLabel.addStyleName(AON.CSS.aonIconValid());
+				statusLabel.setTitle("Factura grabada");
+				statusContainer.add(statusLabel);
+			}
+			
+		}
+		
+		if (hasCommunication) {
+			if (inv.getId() == null) {
+				Label statusLabel = getIconLabel();
+				statusLabel.addStyleName(AON.CSS.aonIconUnknown());
+				statusLabel.setTitle("Factura simulada");
+				statusContainer.add(statusLabel);
+			} else if (inv.isProforma()) {
+				Label statusLabel = getIconLabel();				
+				statusLabel.addStyleName(AON.CSS.aonIconQrCodeOrange());
+				statusLabel.setTitle("Factura proforma - Pendiente");
+				statusContainer.add(statusLabel);
+			} else {
+				AonCollectionUtils.keysStream( inv.getCommunicationInfo() )
+					.map(key -> inv.getCommunicationInfo().get(key))
+					.filter( Objects::nonNull )
+					.filter( info -> info.getStatus() != null )
+					.forEach(info -> {
+						info.getStatus().accept(new InvoiceCommunicationStatusVisitor() {
+	
+							@Override
+							public void visitPending() {
+								Label statusLabel = getIconLabel();
+								statusLabel.addStyleName(AON.CSS.aonIconQrCodeOrange());
+								statusLabel.setTitle("Factura pendiente de comunicaci\u00f3n");
+								statusContainer.add(statusLabel);
+							}
+	
+							@Override
+							public void visitAccepted() {
+								Label statusLabel = getIconLabel();
+								statusLabel.addStyleName(AON.CSS.aonIconQrCodeGreen());
+								statusLabel.setTitle("Factura comunicada correctamente");
+								statusContainer.add(statusLabel);
+							}
+	
+							@Override
+							public void visitAcceptedWithErrors() {
+								Label statusLabel = getIconLabel();
+								statusLabel.addStyleName(AON.CSS.aonIconQrCodeGreen());
+								statusLabel.setTitle("Factura comunicada con errores");
+								statusContainer.add(statusLabel);
+							}
+	
+							@Override
+							public void visitWrong() {
+								Label statusLabel = getIconLabel();
+								statusLabel.addStyleName(AON.CSS.aonIconQrCodeRed());
+								statusLabel.setTitle("Factura comunicaci\u00f3n rechazada");
+								statusContainer.add(statusLabel);
+							}
+	
+							@Override
+							public void visitCancelled() {
+								Label statusLabel = getIconLabel();
+								statusLabel.addStyleName(AON.CSS.aonIconClose());
+								statusLabel.setTitle("Factura anulada");
+								statusContainer.add(statusLabel);
+							}
+						});
+					});
+			}
+		}
+		return statusContainer;
+	}
+
 	private <T> T ensure(Object nullable, Supplier<T>  supplier, T defaultValue) {
 		return (nullable == null) 
 			? defaultValue
@@ -231,6 +312,9 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 	}
 
 	static class InvoiceFeeTableInfo {
+		
+		private String message;
+		private InvoiceErrorLevel errorLevel;
 		private int totalCount;
 		private double totalAmount;
 		private double totalVAT;
@@ -241,6 +325,32 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 			
 		}
 		
+		public void clear() {
+			this.message = null;
+			this.errorLevel = null;
+			this.totalCount = 0;
+			this.totalAmount = 0.0;
+			this.totalVAT = 0.0;
+			this.totalRetention = 0.0;
+			this.totalPrepaymentCount = 0;
+		}
+
+		public String getMessage() {
+			return this.message;
+		}
+		public InvoiceFeeTableInfo setMessage(String message) {
+			this.message = message;
+			return this;
+		}
+		public InvoiceErrorLevel getErrorLevel() {
+			return this.errorLevel;
+		}
+		
+		public InvoiceFeeTableInfo setErrorLevel(InvoiceErrorLevel errorLevel) {
+			this.errorLevel = errorLevel;
+			return this;
+		}
+
 		int getTotalCount() {
 			return totalCount;
 		}
@@ -345,7 +455,7 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 	}
 
 	public interface InvoiceFeeTableCallback {
-		void onSelect( Invoice invoice, InvoicePanelCallback callback);
+		void onSelect( Invoice invoice, InvoiceDockPanelCallback callback);
 		void onEditSearch();
 		void onSearchStart();
 		void onSearchEnd(InvoiceFeeTableInfo info);

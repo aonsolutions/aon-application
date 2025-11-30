@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -32,6 +33,8 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -41,7 +44,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
-
 
 public abstract class AbstractVerifactuTest {
 	
@@ -64,6 +66,32 @@ public abstract class AbstractVerifactuTest {
 	
 	private Date testDate; 
 	
+	protected static final InvoiceCommunicationPhaseListener EMPTY_VERIFACTU_PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		
+		@Override public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		@Override public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException {
+			// TRACE _-- borrar
+			String s = "MSG Inv: [{0}]: {1} - {2} {3} - {4}";
+			invoice.messageStream()
+				.forEach( m -> 
+					System.out.println( MessageFormat.format( s,
+						invoice.getId(),
+						invoice.getDocumentNumber(),
+						m.getLevel(),
+						m.getCode(),
+						m.getMessage()
+					 ))
+				);
+			// ----------------
+		}
+		
+	};
+
 	protected static Occam getOccam() {
 		return new Occam()
 			.setDomainName(DOMAIN_NAME)

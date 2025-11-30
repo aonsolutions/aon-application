@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoicePanel.InvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeTable.InvoiceFeeTableCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeTable.InvoiceFeeTableInfo;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
@@ -61,11 +61,13 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 		});
 		container.add(invoiceFeeFilter);
 		
-		dockPanel.addNorth( container, 100 );		
+		dockPanel.addNorth( container, 80 );		
 		
 		tableContainer = new SimpleLayoutPanel();
 		
 		FlowPanel lineContainer = new FlowPanel();
+		lineContainer.setWidth("80%");
+		lineContainer.setStyleName(AON.CSS.aonBlockCenter());
 		FlowPanel line = new FlowPanel();
 		line.setStyleName(AON.CSS.aonMessageInfo());
 		Label messageLabel = new Label("Seleccione Mes/A\u00F1o y las opciones que desee "
@@ -104,9 +106,19 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 				,new InvoiceFeeInvoicingPanel.InvoiceFeeInvoicingPanelCallback() {
 					@Override
 					public void onAccept(FeeBillingParams params) {
+						String action;
+						if (params.isCommunicable()) {
+						    action = "la grabaci\u00f3n y comunicaci\u00f3n de facturas";
+						} else if (params.mustSaveAsProforma()) {
+						    action = "la grabaci\u00f3n de facturas proforma";
+						} else {
+						    action = "la grabaci\u00f3n de facturas";
+						}
+						String msg = "Se va a realizar " + action + ". \u00BFEst\u00e1 seguro que desea continuar con la facturaci\u00f3n?";
+						
 						AonConfirmDialog.showConfirm(
 							"Confirmar facturaci\u00f3n"
-							,"Se va a realizar la grabaci\u00f3n de facturas. \u00BFEst\u00e1 seguro que desea continuar con la facturaci\u00f3n?"
+							,msg
 							,new AonConfirmDialogCallback() {
 							
 								@Override
@@ -114,11 +126,11 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 									popup.hide();
 									invoiceAllButton.setEnabled( false );
 									params.setDryRun( false );
+									params.setSaveAsProforma( true );
 									onSearch(opts, params);
 								}
 								@Override
 								public void onCancel() {
-									popup.hide();
 									invoiceAllButton.setEnabled( false );
 								}
 						});
@@ -159,7 +171,7 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 		
 		InvoiceFeeTable tab = new InvoiceFeeTable(opts, params, new InvoiceFeeTableCallback() {
 			@Override
-			public void onSelect( Invoice invoice, InvoicePanelCallback callback ) {
+			public void onSelect( Invoice invoice, InvoiceDockPanelCallback callback ) {
 				InvoiceTabLayout invoicePanel = new InvoiceTabLayout(opts, invoice, callback);
 				eastContainer.setWidget( invoicePanel );
 			}

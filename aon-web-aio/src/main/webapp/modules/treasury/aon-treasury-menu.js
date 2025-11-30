@@ -149,6 +149,10 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 description: "Nuevo Panel Facturación de Cuotas",
                 title: "Nuevo Panel Facturación de Cuotas",
                 action: () => GWT.iLoad(GWT.INVOICE_FEE)
+            }, {
+                description: "Consola de facturación",
+                title: "Consola de facturación",
+                action: () => GWT.iLoad(GWT.INVOICE_CONSOLE)
             }
             ]
         }, {

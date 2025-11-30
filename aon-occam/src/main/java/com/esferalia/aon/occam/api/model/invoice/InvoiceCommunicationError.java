@@ -251,7 +251,7 @@ public enum InvoiceCommunicationError {
 	VERIFACTU_1250("1250", "El valor de fecha desde debe ser menor que el valor de fecha hasta en RangoFechaExpedicion."),
 	VERIFACTU_1251("1251", "El valor del campo IdVersion tiene un valor incorrecto"),
 		VERIFACTU_1252("1252", "Si ClaveRegimen es 08 el campo CalificacionOperacion tiene que ser N2 e ir siempre informado."),
-	VERIFACTU_1253("1253", "El valor del campo RefExterna tiene un valor incorrecto."),
+		VERIFACTU_1253("1253", "El valor del campo RefExterna tiene un valor incorrecto."),
 	VERIFACTU_1254("1254", "Si FechaOperacion (FechaExpedicionFactura si no se informa FechaOperacion) es anterior a 01/01/2021 no se permite el valor 'XI' para Identificaciones NIF-IVA"),
 	VERIFACTU_1255("1255", "Si FechaOperacion (FechaExpedicionFactura si no se informa FechaOperacion) es mayor o igual que 01/02/2021 no se permite el valor 'GB' para Identificaciones NIF-IVA"),
 	VERIFACTU_1256("1256", "Error t\u00E9cnico al obtener el l\u00EDmite de la fecha de expedici\u00F3n."),

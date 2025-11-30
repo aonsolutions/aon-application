@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.server.invoice.fee;
 
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeService;
 import com.esferalia.aon.occam.api.AON;
@@ -11,11 +9,12 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.Pair;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 
 @WebServlet(name = "Aon MS Invoice Fee Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/InvoiceFee" })
 public class InvoiceFeeServiceImpl extends AonStatelessRemoteServiceServlet implements InvoiceFeeService {
@@ -43,8 +42,8 @@ public class InvoiceFeeServiceImpl extends AonStatelessRemoteServiceServlet impl
 	// ************************************** [INVOICING]
 	// **************************************************
 	@Override
-	public LinkedList<Invoice> getInvoices(Occam occam, FeeBillingParams params) {
-		return AON.feeInvoicing(occam, params);
+	public InvoiceProcessOutput getInvoices(Occam occam, FeeBillingParams params) {
+		return InvoiceCommunicator.feeInvoicing(occam, params);
 	}
 
 	@Override

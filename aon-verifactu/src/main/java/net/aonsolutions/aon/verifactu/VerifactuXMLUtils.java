@@ -205,7 +205,7 @@ class VerifactuXMLUtils {
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
             
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
             // Set trust all certificates context to HttpsURLConnection
