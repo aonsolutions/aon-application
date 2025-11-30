@@ -1026,6 +1026,27 @@
 		grid-template-columns: repeat(3,minmax(0,1fr));
 	}
  */	
+ 
+	.aon-ConfigPanel,
+ 	.aon-ConfigContent,
+ 	.aon-ConfigContent .aon-finding-title-toolbar{
+ 	        background-color: var(--aonBackgroundColor2) !important;
+ 	}
+ 
+	.aon-ConfigPanel .rich-panelbar,
+	.aon-ConfigContent .aon-finding-title,
+	.aon-ConfigContent .aon-finding-toolbar,
+	.aon-ConfigContent .aon-scroll-area,
+	.aon-ConfigContent tr:has(> .aon-finding-title){
+		border-radius: .375rem;
+		background-color: #fff !important;
+	}
+	
+	[id*="globalConfig"] .aon-panelGrid-odd, [id*="globalConfig"] .aon-panelGrid-even {
+  		border-color: #fff;
+  		background-color: #fff;
+	}
+	
 
 </style>
 
