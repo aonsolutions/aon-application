@@ -15,6 +15,7 @@ public class ProductBooking extends Product implements Serializable {
 	private static final long serialVersionUID = -1616838783810544813L;
 	
 	private ProductBookingType bookingType;
+	private ProductBookingPriceType bookingPriceType;
 	
 	private Integer position;
 	private Workgroup workgroup;
@@ -44,6 +45,15 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setBookingType(ProductBookingType bookingType) {
 		this.bookingType = bookingType;
+		return this;
+	}
+
+	public ProductBookingPriceType getBookingPriceType() {
+		return bookingPriceType;
+	}
+
+	public ProductBooking setBookingPriceType(ProductBookingPriceType bookingPriceType) {
+		this.bookingPriceType = bookingPriceType;
 		return this;
 	}
 
