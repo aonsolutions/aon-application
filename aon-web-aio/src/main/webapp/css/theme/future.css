@@ -44,6 +44,7 @@
 	--aonDocumental: none;
 	--aonTimecontrol: none;
 	--aonMessenger: none;
+	--aonPayroll: none;
 }
 
 .aonBody{
@@ -162,6 +163,7 @@
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
 #aonMenuListAppImgTop-messenger,
+#aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-aonApplication,
 #aonMenuListAppImgTop-managementMenu,
 #aonMenuListAppImgTop-accountingMenu,
@@ -221,6 +223,7 @@
     mask-image: url('/icons/building-2.svg') ;
 }
 
+#aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-payrollMenu {
     mask-image: url('/icons/users.svg') ;
 }
@@ -464,6 +467,7 @@ aon-configuration-menu .suiteMenuContent  {
 #aonParent .aonContentBeta,
 #aonSignin .aonContentBeta,
 #aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
@@ -475,6 +479,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonSignin .aonContentBeta,
 #aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
