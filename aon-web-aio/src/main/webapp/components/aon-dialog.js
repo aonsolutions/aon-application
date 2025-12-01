@@ -86,14 +86,14 @@ export class AonDialog extends AonElement {
   }
 
   buildByType() {
-//    if (this.isTypeBlank())
-//      this.buildBlank();
-//    else if (this.isTypeMenu())
-//      this.buildMenu();
-//    else if (this.isTypeFullScreen())
-//      this.buildFullScreen();
-//    else
-//      this.build();
+  //  if (this.isTypeBlank())
+  //    this.buildBlank();
+  //  else if (this.isTypeMenu())
+  //    this.buildMenu();
+  //  else if (this.isTypeFullScreen())
+  //    this.buildFullScreen();
+  //  else
+  //    this.build();
     if (this.isTypeMenu())
       this.buildMenu();
     else
@@ -104,17 +104,17 @@ export class AonDialog extends AonElement {
     this.classList.add('aon-dialog-hidden');
     this.DIALOG       = this.id     + 'Dialog';
     this.MAIN         = this.DIALOG + 'Main';
-    this.TITLE 		  = this.DIALOG + 'Title';
+    this.TITLE 		    = this.DIALOG + 'Title';
     this.CONTENT      = this.DIALOG + 'Content';
     this.ACTION       = this.DIALOG + 'Action';
     this.CANCEL       = this.ACTION + 'Cancel';
     this.ACCEPT       = this.ACTION + 'Accept';
     this.BUTTON_LEFT  = this.DIALOG + 'DivButtonsLeft';
     this.BUTTON_RIGHT = this.DIALOG + 'DivButtonsRight';
-	this.DESCRIPTION = this.DIALOG + 'Description';
-	this.BUTTON_CLOSE = this.DIALOG + 'CloseDesktop';
+    this.DESCRIPTION  = this.DIALOG + 'Description';
+    this.BUTTON_CLOSE = this.DIALOG + 'CloseDesktop';
     this.autoclose    = this.autoclose || true;
-	this.OUTSIDE_CLICK_CANCEL = (e) => {
+    this.OUTSIDE_CLICK_CANCEL = (e) => {
       const dialog = this.getDialog();
       if (dialog && !dialog.contains(e.target)) {
         this.close();
@@ -127,7 +127,7 @@ export class AonDialog extends AonElement {
       this.getElement(this.TITLE),
       this.getContent(),
       this.getElement(this.ACTION),
-	  this.getElement(this.DESCRIPTION),
+      this.getElement(this.DESCRIPTION),
     ].forEach(el => el && (el.innerHTML = ''));
   }
 
@@ -274,9 +274,9 @@ export class AonDialog extends AonElement {
     content.id        = this.CONTENT;
     content.className = "dialog-body-content";
     body.appendChild(content);
-	let description = this.createElement(TAG.DIV);
-	description.id = this.DESCRIPTION;
-	body.appendChild(description);
+    let description = this.createElement(TAG.DIV);
+    description.id = this.DESCRIPTION;
+    body.appendChild(description);
     return body;
   }
 
@@ -343,13 +343,13 @@ export class AonDialog extends AonElement {
 
   clickOutsideDialogClose(){
     // Se hace click en la zona gris cerrar OUTSIDE_CLICK_CANCEL
-	this.addEventListener('click', this.OUTSIDE_CLICK_CANCEL);
-//    this.addEventListener('click', (e) => {
-//      const dialog = this.getDialog();
-//      if (dialog && !dialog.contains(e.target)) {
-//        this.close();
-//      }
-//    });
+    this.addEventListener('click', this.OUTSIDE_CLICK_CANCEL);
+    //  this.addEventListener('click', (e) => {
+    //    const dialog = this.getDialog();
+    //    if (dialog && !dialog.contains(e.target)) {
+    //      this.close();
+    //    }
+    //  });
   }
   
   getCloseDesktop(){
@@ -426,7 +426,7 @@ export class AonDialog extends AonElement {
   }
   
   setDescription(description) {
-	if(description) this.getElement(this.DESCRIPTION).innerHTML = description;
+    if(description) this.getElement(this.DESCRIPTION).innerHTML = description;
   }
 
   getButtonLeft() {
@@ -513,14 +513,14 @@ export class AonDialog extends AonElement {
 
   createButtonAccept(title = undefined, fn = undefined) {
     let btn = undefined;
-//    if (this.isTypeFullScreen()) {
-//      btn = this.addAction({
-//        id: this.ACCEPT,
-//        title: title || MSG.ACCEPT,
-//        icon: MATERIAL_ICONS.DONE,
-//        position: "right"
-//      });
-//    } else {
+  //  if (this.isTypeFullScreen()) {
+  //    btn = this.addAction({
+  //      id: this.ACCEPT,
+  //      title: title || MSG.ACCEPT,
+  //      icon: MATERIAL_ICONS.DONE,
+  //      position: "right"
+  //    });
+  //  } else {
       btn = this.getElement(this.ACCEPT);
       if (btn)
         btn.remove();
@@ -536,8 +536,7 @@ export class AonDialog extends AonElement {
 		      fn(ev);
 		  });
       divAction.appendChild(btn);
-//    }
-
+  //  }
     return btn;
   }
 

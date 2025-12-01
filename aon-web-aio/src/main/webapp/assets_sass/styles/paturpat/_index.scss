@@ -1,0 +1,90 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+aon-new-login{
+  width          : v.$pct-100;
+  height         : v.$pct-100;
+  display        : flex;
+  flex-direction : column;
+  #logoContent{
+    display         : flex;
+    justify-content : center;
+    flex-grow       : v.$num-1;
+    align-items     : flex-end;
+    #logoSVG{
+      background-size     : contain;
+      background-repeat   : no-repeat;
+      background-position : center;
+    }
+  }
+  #loginContent, #magicLinkContent{
+    flex-grow       : v.$num-2; /* Hace que este div ocupe el espacio restante */
+    overflow        : auto;
+    display         : flex;
+    padding-top     : v.$px-58;
+    justify-content : center;
+    aon-loader{
+      // Barra de progreso
+      .aonProgress {
+        border-radius : v.$pct-100;
+        &:before {
+          border-radius : v.$pct-100;
+        }
+      }
+    }
+    .aonLoginForm{
+      width         : v.$px-400;
+      height        : fit-content;
+      border-radius : v.$px-6;
+      .aonLoginTitle{
+        display         : flex;
+        justify-content : center;
+        padding         : v.$padding;
+      }
+      .aonLoginFormContent{
+        display : grid;
+        gap     : v.$gap;
+        padding : v.$px-0 v.$padding v.$padding v.$padding;
+        border  : none !important;
+        .aonDividerSpan{
+          display         : flex;
+          justify-content : center;
+        }
+      }
+    }
+    #logosMobiles{
+      display         : none;
+      justify-content : center;
+      gap             : v.$px-25;
+      img {
+        width     : v.$px-160;
+        max-width : v.$pct-100;
+        height    : auto;
+        display   : block;
+      }
+    }
+  }
+}
+// Tablet para abajo
+@include mixin.respond("md") {
+  aon-new-login{
+    #loginContent, #magicLinkContent{
+      #logosMobiles{
+        display : flex;
+      }
+    }
+  }
+}
+// Si no tenemos mucha altura ocultamos el logo
+@media (max-height: 650px) {
+  aon-new-login{
+    #logoContent {
+      display : none;
+    }
+    #loginContent, #magicLinkContent{
+      flex-grow   : v.$num-1;
+      align-items : center;
+      padding-top : v.$px-0;
+    }
+  }
+}

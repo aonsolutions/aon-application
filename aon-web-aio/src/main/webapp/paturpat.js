@@ -1,12 +1,11 @@
 import * as LS from './services/localStorageService.js';
-import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/paturpat/aon-module.js';
 import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
-import { favicon, title, loadLink } from './css/aon-customView.js';
-
+import { loadLink } from './css/aon-customView.js';
+import { loadTheme } from './modules/utils/theme';
 
 import './css/noto-sans.css';
 import './css/material-symbols-outlined.css';
@@ -31,35 +30,10 @@ window.setResumeApp = (data) =>  {
 };
 
 function loadNew(){
-  loadThemeOld().then(() => {
+  loadTheme().then(() => {
     document.body.appendChild(new AonModule());
   });
 }
-
-const load = () => {
-	console.debug("Start loading aonSolutions.");
-	console.debug("Keep your fingers crossed!" );
-	console.debug("We need all the luck we can get.");
-	
-    LS.setAonSolutions(true);
-    // TODO: Skip reload
-	LS.set(LS.NEW_THEME, true);
-	LS.set(LS.NEW_THEME, true);
-	
-	loadScripts(); 
-
-
-	loadThemeOld()
-	.finally(loadIsReadOnly)
-	.finally( () =>  {
-		loadModule(); 
-	} ) ;  
-
-	// TODO: loadScriptFirebase();
-    window.loadScripts = () => loadScripts();
-
-	console.debug("Fantastic aonSolutions loaded :-).");
-};
 
 export const loadThemeOld = async () => {
 	// LS.AON_THEME 

@@ -125,11 +125,12 @@ export class AonPaturpatApps extends AonElement {
     build() {
         let ul = this.createElement(TAG.UL);
         ul.id = "aonMobileAppSelection";
-        ul.style.listStyleType = 'none';
+        ul.style.listStyle = 'none';
         ul.style.display = 'grid';
-        ul.style.gridTemplateColumns = 'repeat(3,1fr)';
-        ul.style.padding = '0px';
-        ul.style.marginTop = '20px';
+        ul.style.gridTemplateColumns = 'repeat(auto-fit, minmax(12.4rem, 1fr))';
+        ul.style.gap = '1rem';
+        ul.style.padding = '0';
+        ul.style.marginTop = '1rem';
         
         for (let app of this.apps) {
             let li = this.createElement(TAG.LI);
@@ -140,13 +141,11 @@ export class AonPaturpatApps extends AonElement {
             li.style.borderRight = '0px';
             li.style.borderLeft = '0px';
             li.style.cursor = 'pointer';
-            li.style.textAlign = 'center';
-            li.style.margin = '10px';
+            // li.style.textAlign = 'center';
+            // li.style.margin = '10px';
             // ONLY IN OLD VERSION
             li.style.display = 'ruby';
             li.addEventListener('click', () => app.fn());
-
-
 
             let icon = this.createDiv();
             icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);

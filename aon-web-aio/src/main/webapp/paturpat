@@ -10,6 +10,7 @@
 
     <!-- CSS: -->
     <link href="dist/paturpat.min.css" rel="stylesheet" as="style">
+    <link href="dist/sassPaturpat.min.css" rel="stylesheet" as="style">
     <!-- JS: -->
     <script src="dist/paturpat.min.js" defer></script>
   </head>

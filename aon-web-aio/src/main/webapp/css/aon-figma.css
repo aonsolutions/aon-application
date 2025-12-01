@@ -15,7 +15,7 @@
   max-width: 35rem;
 }
 
-.aonLoginTitle {
+/* .aonLoginTitle {
   font-family: "Noto Sans", sans-serif;
   color: var(--gray-90);
   font-size: 2rem;
@@ -25,7 +25,7 @@
   letter-spacing: 0.44px;
   text-align: center;
   width: 100%;
-}
+} */
 
 .aonLoginFormContent {
   display: flex;

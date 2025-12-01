@@ -10,9 +10,7 @@ import * as LS from '../../services/localStorageService.js';
 import { initSingletonAccess } from '../../js/singletonAccess.js';
 import { AonPaturpat } from './aon-paturpat.js';
  
-
 export class AonModule extends AonElement {
-
     AON_LOGIN;
     AON_HOME;
     AON_MODULE_LOADER;
@@ -49,7 +47,6 @@ export class AonModule extends AonElement {
         let loader = new AonLoader();
         loader.id = this.AON_MODULE_LOADER;
         this.appendChild(loader);
-        
     }
 
     startLoading() {
@@ -127,7 +124,6 @@ export class AonModule extends AonElement {
         divCompanyLogo.appendChild(imgCompanyLogo);
         return divCompanyLogo;
     }
-
 }
 
 if (!window.customElements.get(TAG.AON_MODULE)) {

@@ -1,0 +1,6 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+#mobileRootPanel{
+  padding: v.$padding;
+}
