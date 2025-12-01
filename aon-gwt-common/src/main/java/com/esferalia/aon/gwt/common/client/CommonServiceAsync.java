@@ -496,5 +496,6 @@ public interface CommonServiceAsync {
 	void saveCustomer(String domainName, Integer domainId, String user, Customer customer, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
 	
 	void getRegistryRelationships(String domainName, int domain, String user, AsyncCallback<List<RegistryRelationship>> asyncCallback) throws AonCoreException;
+	void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 }

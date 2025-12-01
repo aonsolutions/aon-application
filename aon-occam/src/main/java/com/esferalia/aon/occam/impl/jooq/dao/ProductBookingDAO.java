@@ -127,6 +127,12 @@ public class ProductBookingDAO {
 
 	}
 
+	public static void requestBookingInfo(CloseableAONContext ctx, int domainId, String login, ProductBooking product, Integer customerRegistry) {
+		Domain officeDomain = DomainDAO.getDomain(ctx, domainId);
+		Customer customer = CustomerDAO.get(ctx, customerRegistry);
+		sendRequestBookingInfogEmail(ctx, officeDomain, login, customer, product);
+	}
+
 	private static Domain getOfficeSibling(CloseableAONContext ctx, Integer customerRelatedRegistry) {
 		Optional<RegistryRelationship> rrletationShip = RegistryRelationshipDAO.get(ctx,  f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getRelationshipProperty().eq(-1)));
 		
@@ -518,7 +524,7 @@ public class ProductBookingDAO {
 
 		Registry registry = RegistryDAO.get(ctx, registryId);
 		
-		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId())));
+		List<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()))).collect(Collectors.toList());
 
 		Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
 		Optional<ProjectHolder> projectHolder = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
@@ -528,10 +534,10 @@ public class ProductBookingDAO {
 			
 			if(null != taskHolder && null != taskHolder.getId() && null != taskHolder.getUser() && null != taskHolder.getUser().getId()) {
 				Scope scope = null;
-				if (scopes.count() == 0) {
+				if (scopes.size() == 0) {
 					Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 					scope = SecurityDAO.insertScope(ctx, newScope);
-				} else scope = scopes.findFirst().get();
+				} else scope = scopes.stream().findFirst().get();
 				
 				User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUser().getId()),
 						new Options().setFull(true));
@@ -547,10 +553,10 @@ public class ProductBookingDAO {
 					
 					if(null != taskHolderWG && null != taskHolderWG.getId() && null != taskHolderWG.getUser() && null != taskHolderWG.getUser().getId()) {
 						Scope scope = null;
-						if (scopes.count() == 0) {
+						if (scopes.size() == 0) {
 							Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 							scope = SecurityDAO.insertScope(ctx, newScope);
-						} else scope = scopes.findFirst().get();
+						} else scope = scopes.stream().findFirst().get();
 						
 						User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolderWG.getUser().getId()),
 								new Options().setFull(true));
@@ -708,6 +714,61 @@ public class ProductBookingDAO {
 			
 	}
 	
+	private static void sendRequestBookingInfogEmail(CloseableAONContext ctx, Domain officeDomain, String login, Customer customer, ProductBooking product) {
+		Domain parent = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(officeDomain.getParentId()));
+		
+		User userDb = SecurityDAO.getUser(ctx, login);
+		
+		String logoUrl = getLogoUrl(ctx, parent, userDb);
+
+		String from = getFromMessage(ctx, parent, officeDomain, userDb);
+		
+		if(!AonStringUtils.isBlank(from)) {
+			List<String> productTaskHolders = new ArrayList<String>();
+			
+			TaskHolder taskHolder = product.getTaskHolder();
+			if(null != taskHolder && null != taskHolder.getId()) {
+				Stream<RegistryMedia> taskHolderMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(taskHolder.get().getId()));
+				Optional<RegistryMedia> taskHolderEmailOpt = taskHolderMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+				
+				if(taskHolderEmailOpt.isPresent() && AonStringUtils.isNotBlank(taskHolderEmailOpt.get().getValue())) {
+					productTaskHolders.add(taskHolderEmailOpt.get().getValue());
+				}
+			}
+			
+			Workgroup workgroup = product.getWorkgroup();
+			if(null != workgroup && null != workgroup.getId() && productTaskHolders.isEmpty()) {
+				List<TaskHolderWorkgroup> taskHolderWorkgroups = TaskHolderWorkgroupDAO.getList(ctx, f -> f.getWorkgroupProperty().eq(workgroup.getId()));
+				taskHolderWorkgroups.forEach(taskHolderWorkgroup -> {
+					Stream<RegistryMedia> taskHolderMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(taskHolderWorkgroup.getTaskHolder()));
+ 					Optional<RegistryMedia> taskHolderEmailOpt = taskHolderMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+ 					
+ 					if(taskHolderEmailOpt.isPresent() && AonStringUtils.isNotBlank(taskHolderEmailOpt.get().getValue())) {
+ 						productTaskHolders.add(taskHolderEmailOpt.get().getValue());
+ 					}
+				});
+			}
+ 			
+ 			String bookingBcc = "booking@aonsolutions.es";
+			productTaskHolders.add(bookingBcc);
+ 			
+ 			if(!productTaskHolders.isEmpty()) {
+				SESMessage msg = new SESMessage()
+				.setAlias(parent.getDescription())
+				.setFrom(from)
+				.setTo(productTaskHolders)
+				.setReplyTo(from)
+				.setSubject("Solicitud de informaci\u00f3n contrataci\u00f3n")
+				.setBody(getRequestBookingInfoTemplate(parent, logoUrl, product, customer.getName()))
+				;
+
+				SES.sendEmail(msg);
+ 			} else 
+ 				throw new AonCoreException("No existe agente de soporte para este producto");
+			
+		}
+	}
+	
 	public static String getLogoUrl(CloseableAONContext ctx, Domain parentDomain, User user) {
 		String logoUrl = null;
 		
@@ -860,6 +921,68 @@ public class ProductBookingDAO {
 				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Producto: </strong>" + product.getCode() + "</p>"
 				+ "                </div>"
 				+ "                <p style=\"margin: 30px 0 0 0;\">"
+				+ "                    Un saludo,<br>"
+				+ "                    <strong>" +  parent.getDescription() + "</strong>"
+				+ "                </p>"
+				+ "            </td>"
+				+ "        </tr>"
+				+ "        "
+				+ "        <!-- Footer opcional -->"
+				+ "        <tr>"
+				+ "            <td style=\"padding: 20px; text-align: center; color: #666666; font-size: 12px;\">"
+				+ "                <p style=\"margin: 0;\">Este es un correo automático, por favor no respondas a este mensaje.</p>"
+				+ "            </td>"
+				+ "        </tr>"
+				+ "    </table>"
+				+ "</body>"
+				+ "</html>";
+		
+		return template;
+	}
+	
+	private static String getRequestBookingInfoTemplate(Domain parent, String logoUrl, ProductBooking product, String customerName) {
+		String template = "";
+		
+		template += 
+				  "<!DOCTYPE html>"
+				+ "<html lang=\"es\">"
+				+ "<head>"
+				+ "    <meta charset=\"UTF-8\">"
+				+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+				+ "    <title>Solicitud - Información de la contratación</title>"
+				+ "</head>"
+				+ "<body style=\"margin: 0; padding: 0; font-family: Arial, sans-serif;\">"
+				+ "    <table role=\"presentation\" style=\"width: 100%; border-collapse: collapse;\">"
+				+ "        <!-- Header con logo -->"
+				+ "        <tr>"
+				+ "            <td style=\"padding: 30px 20px; text-align: center;\">"
+				+ "                <img src=\"" + logoUrl + "\" alt=\"" + parent.getDescription() + "\" style=\"max-width: 200px; height: auto; border-radius: 10px; display: block; margin: 0 auto;\">"
+				+ "            </td>"
+				+ "        </tr>"
+				+ "        "
+				+ "        <!-- Contenido principal -->"
+				+ "        <tr>"
+				+ "            <td style=\"padding: 30px; color: #333333; line-height: 1.6; font-size: 16px;\">"
+				+ "                <p style=\"margin: 0 0 25px 0; font-size: 18px; font-weight: bold;\">"
+				+ "                    El cliente <b>" + customerName + "</b> acaba de solicitar informaci\u00f3n relativa a una nueva contrataci\u00f3n."
+				+ "                </p>"
+				+ "                "
+				+ "                <!-- Datos de acceso -->"
+				+ "                <div style=\"border-left: 4px solid #007bff; padding: 20px; margin: 25px 0; border-radius: 4px;\">"
+				+ "                    <h3 style=\"margin: 0 0 15px 0; color: #007bff; font-size: 18px;\">" + (product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio") + " solicitado</h3>"
+				+ "                    <p style=\"margin: 8px 0; color: #007bff; text-decoration: none;\"><strong>Producto: </strong>" + product.getCode() + "</p>"
+				+ "                </div>"
+				+ "                <h3 style=\"margin: 20px; color: #333333; font-size: 18px; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;\">"
+				+ "                    Guía rápida con todo lo que puedes hacer"
+				+ "                </h3>"
+				+ "                "
+				+ "                <!-- Primer inicio de sesión -->"
+				+ "                <div style=\"margin: 20px 0;\">";
+		
+		template += product.getDescriptionTemplate();
+		
+		template += 
+				"                  <p style=\"margin: 30px 0 0 0;\">"
 				+ "                    Un saludo,<br>"
 				+ "                    <strong>" +  parent.getDescription() + "</strong>"
 				+ "                </p>"

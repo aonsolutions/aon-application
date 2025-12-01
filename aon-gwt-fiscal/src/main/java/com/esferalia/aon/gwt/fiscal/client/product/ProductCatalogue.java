@@ -148,7 +148,7 @@ public class ProductCatalogue extends HTMLPanel {
 				.collect(Collectors.toList());
 		
 		if(!aonUsers.isEmpty() || !aonServices.isEmpty()) {
-			Label users = new Label("Mejora tu plan");
+			Label users = new Label("Completa tu plan");
 			users.getElement().getStyle().setProperty("font-size", "1.3rem");
 			users.getElement().getStyle().setProperty("margin", "1rem 0");
 			cataloguePanel.add(users);
@@ -251,6 +251,24 @@ public class ProductCatalogue extends HTMLPanel {
 				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
 				price.getElement().getStyle().setProperty("text-align", "center");
 				price.getElement().getStyle().setProperty("width", "8rem");
+				
+				switch (aonService.getBookingPriceType()) {
+					case PLAN:
+						price = new HTMLPanel("Pecio plan contratado");
+						break;
+					case FROM:
+						price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case HIDE:
+						price = new HTMLPanel("");
+						break;
+					default:
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+				}
+				
+				if(aonService.getItem().getPrice() == 0.00)
+					price = new HTMLPanel("");
 							
 				if(itemTariff.isEmpty()) {
 					if(tariff.getDiscount() != 0.00) {
@@ -292,10 +310,10 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.add(servicesPanel);
 		
 	}
-	
+
 	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");
