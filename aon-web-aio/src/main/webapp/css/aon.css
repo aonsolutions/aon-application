@@ -2614,6 +2614,8 @@ size: 32px;
     display: flex;
     padding-top: 10px;
     padding-bottom: 10px;
+    gap: 1rem;
+  	margin-left: 1rem;
 }
 
 .aonTabItem {
