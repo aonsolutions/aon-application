@@ -59,6 +59,7 @@ public class Mod193Detail implements Serializable {
 	private String previousPayerDocument;  	// NIF pagador anterior
 	private Date accrualDate; 				// Fecha de devengo
 	private String marketKey; 				// Clave de mercado (A, B, C o D)
+	private String isin; 					// Código ISIN
 	
 	private boolean dirty;
 	private boolean deleted;
@@ -452,6 +453,15 @@ public class Mod193Detail implements Serializable {
 
 	public Mod193Detail setMarketKey(String marketKey) {
 		this.marketKey = marketKey;
+		return this;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public Mod193Detail setIsin(String isin) {
+		this.isin = isin;
 		return this;
 	}
 
