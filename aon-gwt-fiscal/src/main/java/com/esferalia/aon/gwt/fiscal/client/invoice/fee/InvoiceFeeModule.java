@@ -10,6 +10,7 @@ import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeOfficeDo
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -28,7 +29,7 @@ public class InvoiceFeeModule implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		InvoiceFeeModuleOptions options = new InvoiceFeeModuleOptions();
+		InvoiceModuleOptions options = new InvoiceModuleOptions();
 		options.setParentWidget(root);
 		options.setDomainName(getCurrentDomainName());
 		options.setDomain(getCurrentDomain());
@@ -39,7 +40,7 @@ public class InvoiceFeeModule implements EntryPoint {
 		this.onModuleLoad(options);
 	}
 
-	public void onModuleLoad(final InvoiceFeeModuleOptions opts) {
+	public void onModuleLoad(final InvoiceModuleOptions opts) {
 		AON.ensureInjected();
 		
 		if (opts.getConfiguration() == null) {
@@ -60,7 +61,7 @@ public class InvoiceFeeModule implements EntryPoint {
 		}
 	}
 	
-	private void loadModule(final InvoiceFeeModuleOptions opts) {
+	private void loadModule(final InvoiceModuleOptions opts) {
 		opts.getParentWidget().add(new InvoiceFeeDockPanel(opts));
 	}
 

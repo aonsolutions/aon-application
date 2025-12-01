@@ -10,15 +10,19 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleTable;
 import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeTable.InvoiceFeeTableCallback;
-import com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeTable.InvoiceFeeTableInfo;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -38,7 +42,7 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 	private AonToolbarButton invoiceSomeButton;
 	private HandlerRegistration infoButtonClickHandler;
 	
-	public InvoiceFeeDockPanel(final InvoiceFeeModuleOptions opts) {
+	public InvoiceFeeDockPanel(final InvoiceModuleOptions opts) {
 		super( "Panel Facturaci\u00f3n de Cuotas" );
 		
 		paintToolbar( opts );
@@ -85,7 +89,7 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 	}
 	
 
-	private void paintToolbar(InvoiceFeeModuleOptions opts) {
+	private void paintToolbar(InvoiceModuleOptions opts) {
 		infoButton = new AonToolbarButton( AON.MSG.information(), AON.CSS.aonIconInfo() );
 		infoButton.setEnabled( false );
 		infoButton.setVisible( false );
@@ -163,8 +167,40 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 		
 
 	}
+	
+	private void onSearch(InvoiceModuleOptions opts, FeeBillingParams params) {
+		if (params.isDryRun()) {
+			onSimulate(opts, params);
+		} else {
+			onInvoice(opts, params);
+		}
+	}
 
-	private void onSearch(InvoiceFeeModuleOptions opts, FeeBillingParams params) {
+		
+	private void onInvoice(InvoiceModuleOptions opts, FeeBillingParams params) {
+		InvoiceFeeModule.SERVICE.getInvoices(opts.getOccam(), params, new AsyncCallback<InvoiceProcessOutput>() {
+			@Override
+			public void onSuccess(InvoiceProcessOutput result) {
+				tableContainer.clear();
+				DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+				InvoiceConsoleParams p = new InvoiceConsoleParams()
+					.setDomain(params.getDomainId())
+					.setFromId(result.getFromId())
+					.setToId(result.getToId());
+				InvoiceConsoleTable tab = new InvoiceConsoleTable(opts, p);
+				dock.add(tab);
+				tableContainer.setWidget( dock );
+				checkedInvoices = new LinkedList<>();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, caught.getMessage() );
+			}
+		});
+	}
+
+	private void onSimulate(InvoiceModuleOptions opts, FeeBillingParams params) {
 		tableContainer.clear();
 		
 		DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
@@ -185,7 +221,7 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 				AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ..."); 
 			}
 			@Override 
-			public void onSearchEnd(InvoiceFeeTableInfo info) { 
+			public void onSearchEnd(InvoiceProcessOutput info) { 
 				AonMessagePanel.hideMessage(messagePanel);
 				onInfoSelected( info );
 				manageButtons();
@@ -199,12 +235,12 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 				manageCheckedInvoice(checked, invoice); 
 			}
 			@Override 
-			public void onInfoSelected( InvoiceFeeTableInfo info ) {
-				showInfoPanel( info );
+			public void onInfoSelected( InvoiceProcessOutput output ) {
+				showInfoPanel( output );
 				if (infoButtonClickHandler != null) {
 					infoButtonClickHandler.removeHandler();
 				}
-				infoButtonClickHandler = infoButton.addClickHandler(e -> showInfoPanel( info ) );
+				infoButtonClickHandler = infoButton.addClickHandler(e -> showInfoPanel( output ) );
 				infoButton.setEnabled( true );
 				infoButton.setVisible( true );
 			}
@@ -221,8 +257,8 @@ public class InvoiceFeeDockPanel extends AonDockLayout {
 		checkedInvoices = new LinkedList<>();
 	}
 	
-	private void showInfoPanel( InvoiceFeeTableInfo info ) {
-		eastContainer.setWidget( new InvoiceFeeInfoPanel(info) );
+	private void showInfoPanel( InvoiceProcessOutput output ) {
+		eastContainer.setWidget( new InvoiceProcessOutputPanel(output) );
 	}
 
 	private void manageCheckedInvoice(boolean checked, Invoice invoice) {

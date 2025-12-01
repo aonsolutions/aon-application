@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerSuggestBo
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvoicingGroupSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonItemSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -64,7 +65,7 @@ class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonS
 //	private AonCustomListBox asc = new AonCustomListBox("Orden");
 	
 	
-	public InvoiceFeeFilter(InvoiceFeeModuleOptions opts) {
+	public InvoiceFeeFilter(InvoiceModuleOptions opts) {
 		setStyleName(AON.CSS.aonWidthAlmostAll());
 		addStyleName(AON.CSS.aonBlockCenter());
 		
@@ -169,7 +170,7 @@ class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonS
 
 	}
 
-	FeeBillingParams getWidgetParams(InvoiceFeeModuleOptions opts) {
+	FeeBillingParams getWidgetParams(InvoiceModuleOptions opts) {
 		SecurityLevel securityLevel = SecurityLevel.OFFICIAL;
 		if (opts.getConfiguration().getUser().hasConfidentialityRole()) {
 			securityLevel = SecurityLevel.safeValueOf( AonNumberUtils.toInteger(confidentialListBox.getValue()));
@@ -248,7 +249,7 @@ class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonS
 		return monthListBox;
 	}
 
-	private AonCustomListBox createYearListBox( InvoiceFeeModuleOptions opts ) {
+	private AonCustomListBox createYearListBox( InvoiceModuleOptions opts ) {
 		yearListBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		yearListBox.addStyleName(AON.CSS.aonNowrap());
 		yearListBox.setWidth("80px");
@@ -292,14 +293,14 @@ class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonS
 		return confidentialListBox;
 	}
 
-	private AonInvoicingGroupSuggestBox createInvoicingGroupBox(InvoiceFeeModuleOptions opts) {
+	private AonInvoicingGroupSuggestBox createInvoicingGroupBox(InvoiceModuleOptions opts) {
 		invoicingGroupBox = new AonInvoicingGroupSuggestBox(opts);
 		invoicingGroupBox.setWidth("200px");
 		invoicingGroupBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		return invoicingGroupBox;
 	}
 	
-	private AonCustomerSuggestBox createCustomerBox(InvoiceFeeModuleOptions opts) {
+	private AonCustomerSuggestBox createCustomerBox(InvoiceModuleOptions opts) {
 		customerBox = new AonCustomerSuggestBox(opts);
 		customerBox.setWidth("200px");
 		customerBox.addStyleName(AON.CSS.aonWidth300());
@@ -307,7 +308,7 @@ class InvoiceFeeFilter extends FlowPanel implements HasAonErrorHandlers, HasAonS
 		return customerBox;
 	}
 	
-	private AonItemSuggestBox createItemBox(InvoiceFeeModuleOptions opts) {
+	private AonItemSuggestBox createItemBox(InvoiceModuleOptions opts) {
 		itemBox = new AonItemSuggestBox(opts);
 		itemBox.setWidth("200px");
 		itemBox.addStyleName(AON.CSS.aonWidth300());

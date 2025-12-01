@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvoiceSeriesListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.Button;
@@ -25,11 +26,11 @@ class InvoiceFeeInvoicingPanel extends SimplePanel implements Focusable {
 	private AonInvoiceSeriesListBox seriesBox;
 	private AonDateBox issueDateBox;
 	private TextArea commentsBox;
-	private CheckBox communicateBox;
-	private CheckBox saveAsProformaBox;
+	private CheckBox communicateBox = new CheckBox(AON.MSG.communicateInvoices());
+	private CheckBox saveAsProformaBox = new CheckBox(AON.MSG.saveAsProformas());
 	private AonCertificateListBox certificateBox;
 	
-	InvoiceFeeInvoicingPanel( InvoiceFeeModuleOptions opts, FeeBillingParams params ,InvoiceFeeInvoicingPanelCallback callback) {
+	InvoiceFeeInvoicingPanel( InvoiceModuleOptions opts, FeeBillingParams params ,InvoiceFeeInvoicingPanelCallback callback) {
 		
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.setStyleName(AON.CSS.aonPadding());
@@ -51,7 +52,6 @@ class InvoiceFeeInvoicingPanel extends SimplePanel implements Focusable {
 			certificateBox = new AonCertificateListBox(opts);
 			certificateBox.addSelectionHandler(e -> params.setCertId(certificateBox.getCertificateId().orElse(null)));
 			
-			communicateBox = new CheckBox(AON.MSG.communicateInvoices());
 			communicateBox.getElement().getStyle().setProperty("align-items", "baseline");
 			communicateBox.setValue(true);
 			params.setCommunicable( true );
@@ -62,7 +62,6 @@ class InvoiceFeeInvoicingPanel extends SimplePanel implements Focusable {
 				saveAsProformaBox.setEnabled( !communicateBox.getValue() );
 			});
 		} else {
-			saveAsProformaBox = new CheckBox(AON.MSG.saveAsProformas());
 			saveAsProformaBox.getElement().getStyle().setProperty("align-items", "baseline");
 			saveAsProformaBox.setValue(false);
 			params.setSaveAsProforma( false);
@@ -114,14 +113,14 @@ class InvoiceFeeInvoicingPanel extends SimplePanel implements Focusable {
     	mainPanel.add(buttonsPanel);
 	}
 
-	private boolean hasCommunication(InvoiceFeeModuleOptions opts) {
+	private boolean hasCommunication(InvoiceModuleOptions opts) {
 		return (opts != null 
 			&& opts.getConfiguration() != null 
 			&& opts.getConfiguration().getCommunicationConfig() != null
 			&& opts.getConfiguration().getCommunicationConfig().hasCommunication());
 	}
 
-	private boolean validate(InvoiceFeeModuleOptions opts, FeeBillingParams params) {
+	private boolean validate(InvoiceModuleOptions opts, FeeBillingParams params) {
 		if (AonStringUtils.isBlank(params.getInvoiceSeries())) {
 			AonMessagePanel.showError(messagePanel, "La series de facturaci\u00F3 no puede estar vac\u00EDa.");
 			seriesBox.setFocus(true);

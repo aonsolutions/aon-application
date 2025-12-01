@@ -8,14 +8,10 @@ import com.google.gwt.user.client.ui.ListBox;
 public class InvoiceCommunicationStatusBox extends ListBox {
 
 	public InvoiceCommunicationStatusBox() {
-		this("------", false);
+		this("------");
 	}	
 
 	public InvoiceCommunicationStatusBox(String firstItemLabel) {
-		this(firstItemLabel, false);
-	}
-	
-	public InvoiceCommunicationStatusBox(String firstItemLabel, boolean forCanarias) {
 		setWidth("120px");
 		addItem(AonStringUtils.defaultIfBlank(firstItemLabel),"");
 		for (InvoiceCommunicationStatus d : InvoiceCommunicationStatus.values()) {

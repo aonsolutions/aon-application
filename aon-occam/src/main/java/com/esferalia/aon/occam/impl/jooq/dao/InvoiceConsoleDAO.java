@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy.InvoiceConsoleParamsOrderVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -48,6 +50,13 @@ public class InvoiceConsoleDAO {
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
+//		System.out.println(
+//			select(ctx)
+//				.where(getWhere(ctx, params))
+//				.orderBy(getOrderBy(params))
+//				.limit(params.getOffset() , params.getLimit())
+//				.getSQL(ParamType.INLINED)
+//		);
 		return select(ctx)
 			.where(getWhere(ctx, params))
 			.orderBy(getOrderBy(params))
@@ -107,6 +116,13 @@ public class InvoiceConsoleDAO {
 	public static Condition getWhere(AONContext ctx, InvoiceConsoleParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		
+		if (params.getFromId() != null) {
+			condition = condition.and( INVOICE.ID.ge( params.getFromId() ));
+		}
+		if (params.getToId() != null) {
+			condition = condition.and( INVOICE.ID.le( params.getToId() ));
+		}
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -207,59 +223,70 @@ public class InvoiceConsoleDAO {
 					.limit(1)
 				);
 		}
+		
+		if ( params.getSource() != null) {
+			condition = condition.andExists( 
+				ctx.getDslContext().selectFrom( INVOICE_DETAIL )
+					.where( INVOICE_DETAIL.INVOICE.equal( INVOICE.ID )
+						.and( INVOICE_DETAIL.SOURCE.equal( params.getSource().value() ))
+					)
+					.limit(1)
+				);
+		}
 		return condition;
 	}
 	
-//	public static boolean mustReadDetails(InvoiceConsoleParams params) {
-//		return ( params.getSource() != null);
-//	}
-//	
-//	public static Condition getDetailWhere(InvoiceConsoleParams params) {
-//		Condition condition = INVOICE_DETAIL.DOMAIN.equal( params.getDomain() );
-//		if ( params.getSource() != null) {
-//			params.getSource().visit(null, new IInvoiceSourceVisitor() {
-//
-//				private static final long serialVersionUID = 5981585563515519217L;
-//
-//				private void visitManagement(InvoiceDetail detail) {
-//					condition
-//						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value()))
-//						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value()));
-//				}
-//
-//				@Override public void visitDirectExpense(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitPurchase(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitSales(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitDelivery(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitIncome(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitFee(InvoiceDetail detail) {visitManagement(detail); }
-//				@Override public void visitDirectInvoice(InvoiceDetail detail) { visitManagement(detail); }
-//				@Override public void visitOffer(InvoiceDetail detail) {  visitManagement(detail); }
-//				@Override public void visitReservation(InvoiceDetail detail) { visitManagement(detail); }
-//				
-//				@Override 
-//				public void visitAccount(InvoiceDetail detail) {
-//					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.ACCOUNT.value() ) );
-//				}
-//				@Override 
-//				public void visitTedi(InvoiceDetail detail) {
-//					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.TEDI.value() ) );
-//				}
-//				
-//			});
-//		}
-//		return condition;
-//	}
-
-	
 	private static OrderField<?>[] getOrderBy(InvoiceConsoleParams params) {
-		// implementar order field in params and ask user.
-		return new OrderField<?>[] {
-			 InvoiceDAO.getOrderedType()
-			,INVOICE.TYPE
-			,INVOICE.ISSUE_DATE.desc()
-			,INVOICE.REFERENCE_CODE
-		};
+		if (params.getOrderBy() == null) {
+			return new OrderField<?>[] {
+				 InvoiceDAO.getOrderedType()
+				,INVOICE.ISSUE_DATE.desc()
+				,INVOICE.REFERENCE_CODE
+			};
+		}
+		return params.getOrderBy().visit( new InvoiceConsoleParamsOrderVisitor<OrderField<?>[]>() {
+			private OrderField<?> field(Field<?> field) {
+				return params.isDescending() ? field.desc() : field ;
+			}
+
+			@Override
+			public OrderField<?>[] issueDate() {
+				return new OrderField<?>[] {
+					field( INVOICE.ISSUE_DATE )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] registry() {
+				return new OrderField<?>[] {
+					field( INVOICE.RNAME )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] seriesNumber() {
+				return new OrderField<?>[] {
+					 InvoiceDAO.getOrderedType()
+					,field( INVOICE.SERIES )
+					,field( INVOICE.NUMBER )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] referenceCode() {
+				return new OrderField<?>[] {
+					 InvoiceDAO.getOrderedType()
+					,field( INVOICE.REFERENCE_CODE )
+				};
+			}
+			@Override
+			public OrderField<?>[] id() {
+				return new OrderField<?>[] {
+					field( INVOICE.ID )
+				};
+			}
+		});
+		
 	}
 	
 }

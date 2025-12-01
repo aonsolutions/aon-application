@@ -384,7 +384,6 @@ public class InvoiceCommunicator {
 				log( "---> INVOICES MUST NOT BE COMMUNICATED!");
 				return ctx.getDslContext().transactionResult(configuration ->
 					FeeBillingDAO.invoice(ctx, params)
-						.collect(InvoiceProcessOutput.collector())
 				);
 			}
 		} catch (Exception e) {
@@ -435,8 +434,8 @@ public class InvoiceCommunicator {
 			
 		return ctx.getDslContext().transactionResult(conf -> {
 			
-			List<Invoice> invoices = FeeBillingDAO.invoice(ctx, params)
-				.collect(Collectors.toCollection(LinkedList::new));
+			InvoiceProcessOutput output = FeeBillingDAO.invoice(ctx, params);
+			List<Invoice> invoices = output.invoiceStream().collect(Collectors.toCollection(LinkedList::new));
 			
 			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, certId, invoices)
 				.setConfig(icc)

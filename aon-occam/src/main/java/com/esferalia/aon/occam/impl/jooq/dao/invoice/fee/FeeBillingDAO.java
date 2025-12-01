@@ -31,7 +31,6 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -53,6 +52,7 @@ import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -143,7 +143,7 @@ public class FeeBillingDAO {
 			.findFirst();
 	}
 	
-	public static Stream<Invoice> invoice(AONContext ctx, FeeBillingParams params) {
+	public static InvoiceProcessOutput invoice(AONContext ctx, FeeBillingParams params) {
 		checkParams( params );
 		checkSegments( ctx, params );
 		params.setCompany( CompanyDAO.getByDomain( ctx, params.getDomainId() ) );
@@ -220,8 +220,9 @@ public class FeeBillingDAO {
 	            }
 	    	});
     	log("\t Fin del proceso: " );
-    	// No devolver el stream anterior, asegurar la finalización.
-        return AonCollectionUtils.stream(fullInvoices);
+    	
+    	return AonCollectionUtils.stream(fullInvoices)
+    		.collect(InvoiceProcessOutput.collector());
 	}
 
 	public static void updateSource(AONContext ctx, FeeBilling fee, InvoiceDetail detail) {

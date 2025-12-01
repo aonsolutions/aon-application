@@ -15,12 +15,11 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
-import com.esferalia.aon.occam.api.model.finance.InvoiceToString;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.type.Month;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonChronometer;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -62,21 +61,17 @@ public class FeeBillingDAOTests {
 				.setDryRun( false )
 			;
 			
-			MutableInt fullInvoices = new MutableInt(1);
-			ctx.transaction(trx -> {
-				FeeBillingDAO.invoice(ctx, params)
-					.forEach( i -> {
-						fullInvoices.increment();
-						System.out.println( InvoiceToString.print( i ).toString() );
-					}
-				);
-			});
+			InvoiceProcessOutput result = ctx.getDslContext().transactionResult(trx -> 
+				FeeBillingDAO.invoice(ctx, params));
 			// ******
 			// ******
 			// ******
 			cr.stop();
 			System.out.println();
-			System.out.println( cr.getSeconds() + " segundos al buscar, ordenar y generar " + ( fullInvoices.getValue() - 1 ) + " facturas" );
+			System.out.println( cr.getSeconds() 
+				+ " segundos al buscar, ordenar y generar " 
+				+ result.getTotalCount() 
+				+ " facturas" );
 			System.out.println();
 			// ******
 			// ******

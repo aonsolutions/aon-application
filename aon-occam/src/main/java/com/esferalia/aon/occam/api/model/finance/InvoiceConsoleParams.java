@@ -12,8 +12,38 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class InvoiceConsoleParams implements Serializable {
 	
+	public static enum OrderBy {
+		 ISSUE_DATE("Fecha de emisi\u00F3n") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.issueDate();}}
+		,REGISTRY("Raz\u00F3n Social") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.registry();}}
+		,SERIES_NUMBER("Serie/N\u00FAmero") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.seriesNumber();}}
+		,REFERENCE_CODE("C\u00F3digo de referencia") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.referenceCode();}}
+		,ID("ID") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.id();}}
+		;
+		
+		private String label;
+
+		private OrderBy(String label) {
+			this.label = label;
+		}
+		public String getLabel() {
+			return label;
+		}
+
+		public abstract <T> T visit( InvoiceConsoleParamsOrderVisitor<T> visitor);
+		
+		public interface InvoiceConsoleParamsOrderVisitor<T> {
+			T issueDate();
+			T registry();
+			T seriesNumber();
+			T referenceCode();
+			T id();
+		}
+	}
+	
 	private static final long serialVersionUID = 2683060057390169937L;
 	
+	private Integer fromId;
+	private Integer toId;
 	private Integer domain;
 	private Date fromDate;
 	private Date toDate;
@@ -42,9 +72,28 @@ public class InvoiceConsoleParams implements Serializable {
 	private InvoiceCommunicationType communicationType;
 	private InvoiceCommunicationStatus communicationStatus;
 	
+	private OrderBy orderBy;
+	private boolean descending = true;
+
 	private int offset;
 	private int limit;
 
+	public Integer getFromId() {
+		return fromId;
+	}
+	public InvoiceConsoleParams setFromId(Integer fromId) {
+		this.fromId = fromId;
+		return this;
+	}
+	
+	public Integer getToId() {
+		return toId;
+	}
+	public InvoiceConsoleParams setToId(Integer toId) {
+		this.toId = toId;
+		return this;
+	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
@@ -235,6 +284,22 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 	
+	public OrderBy getOrderBy() {
+		return orderBy;
+	}
+	public InvoiceConsoleParams setOrderBy(OrderBy orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	
+	public boolean isDescending() {
+		return descending;
+	}
+	public InvoiceConsoleParams setDescending(boolean descending) {
+		this.descending = descending;
+		return this;
+	}
+	
 	public int getOffset() {
 		return offset;
 	}
@@ -250,4 +315,5 @@ public class InvoiceConsoleParams implements Serializable {
 		this.limit = limit;
 		return this;
 	}
+	
 }

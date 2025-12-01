@@ -10,21 +10,19 @@ import com.esferalia.aon.gwt.common.client.widget.event.HasAonErrorHandlers;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -38,9 +36,8 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 	
 	private AonDisplayGrid grid;
 	private AonDisplayGridRow selectedRow;
-	private InvoiceFeeTableInfo tableInfo = new InvoiceFeeTableInfo();
 	
-	InvoiceFeeTable(InvoiceFeeModuleOptions opts, FeeBillingParams params, InvoiceFeeTableCallback callback){
+	InvoiceFeeTable(InvoiceModuleOptions opts, FeeBillingParams params, InvoiceFeeTableCallback callback){
 		container = new FlowPanel();
 		this.setWidget(container);
 		
@@ -52,24 +49,20 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		onSearch( opts, params, callback );
 	}
 	
-	private void onSearch(InvoiceFeeModuleOptions opts, FeeBillingParams params, InvoiceFeeTableCallback callback) {
+	private void onSearch(InvoiceModuleOptions opts, FeeBillingParams params, InvoiceFeeTableCallback callback) {
 		callback.onSearchStart();
-		tableInfo.clear();
 		InvoiceFeeModule.SERVICE.getInvoices(opts.getOccam(), params, new AsyncCallback<InvoiceProcessOutput>() {
 	
 				@Override
 				public void onSuccess(InvoiceProcessOutput output) {
-					tableInfo.setErrorLevel( output.getProcessErrorLevel().orElse(null) );
-					tableInfo.setMessage( output.getProcessMessage() );
 					MutableBoolean hasData = new MutableBoolean(false);
 					output.invoiceStream()
 						.forEach( inv -> {
 							paintRow(opts, callback, inv, grid.addRow());
-							refreshInfoPanel(tableInfo, inv, null);
 							hasData.setValue(true);
 						}
 					);
-					callback.onSearchEnd( tableInfo );
+					callback.onSearchEnd( output );
 				}
 				
 				@Override
@@ -106,7 +99,7 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
-	private void paintRow(InvoiceFeeModuleOptions opts, InvoiceFeeTableCallback callback, Invoice inv, AonDisplayGridRow row) {
+	private void paintRow(InvoiceModuleOptions opts, InvoiceFeeTableCallback callback, Invoice inv, AonDisplayGridRow row) {
 		CheckBox checkBox = new CheckBox();
 		checkBox.addClickHandler(e -> {
 			callback.onCheck(checkBox.getValue().booleanValue(), inv);
@@ -133,12 +126,10 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 				public void onSave(Invoice invoice) {
 					row.clear();
 					paintRow(opts, callback, invoice, row);
-					refreshInfoPanel(tableInfo, invoice, inv);
 				}
 				@Override
 				public void onDelete(Invoice invoice) {
 					row.clear();
-					refreshInfoPanel(tableInfo, null, inv);
 				}
 				@Override
 				public Invoice getInvoice() {
@@ -153,7 +144,7 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		
 	}
 	
-	private Widget getWarningLabel(InvoiceFeeModuleOptions opts, Invoice inv) {
+	private Widget getWarningLabel(InvoiceModuleOptions opts, Invoice inv) {
 		FlowPanel warningContainer = new FlowPanel();
 		warningContainer.setStyleName(AON.CSS.aonNowrap());
 		warningContainer.addStyleName(AON.CSS.aonFlexBetween());
@@ -210,7 +201,7 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 		return iconLabel;
 	}
 	
-	private FlowPanel getStatusLabel(InvoiceFeeModuleOptions opts, Invoice inv) {
+	private FlowPanel getStatusLabel(InvoiceModuleOptions opts, Invoice inv) {
 		FlowPanel statusContainer = new FlowPanel();
 		statusContainer.setStyleName(AON.CSS.aonNowrap());
 		statusContainer.addStyleName(AON.CSS.aonFlexBetween());
@@ -311,156 +302,13 @@ class InvoiceFeeTable extends ScrollPanel implements HasAonErrorHandlers, HasSel
 			: supplier.get();
 	}
 
-	static class InvoiceFeeTableInfo {
-		
-		private String message;
-		private InvoiceErrorLevel errorLevel;
-		private int totalCount;
-		private double totalAmount;
-		private double totalVAT;
-		private double totalRetention;
-		private int totalPrepaymentCount;
-		
-		InvoiceFeeTableInfo() {
-			
-		}
-		
-		public void clear() {
-			this.message = null;
-			this.errorLevel = null;
-			this.totalCount = 0;
-			this.totalAmount = 0.0;
-			this.totalVAT = 0.0;
-			this.totalRetention = 0.0;
-			this.totalPrepaymentCount = 0;
-		}
-
-		public String getMessage() {
-			return this.message;
-		}
-		public InvoiceFeeTableInfo setMessage(String message) {
-			this.message = message;
-			return this;
-		}
-		public InvoiceErrorLevel getErrorLevel() {
-			return this.errorLevel;
-		}
-		
-		public InvoiceFeeTableInfo setErrorLevel(InvoiceErrorLevel errorLevel) {
-			this.errorLevel = errorLevel;
-			return this;
-		}
-
-		int getTotalCount() {
-			return totalCount;
-		}
-		InvoiceFeeTableInfo setTotalCount(int totalCount) {
-			this.totalCount = totalCount;
-			return this;
-		}
-		InvoiceFeeTableInfo addTotalCount() {
-			this.totalCount++;
-			return this;
-		}
-		InvoiceFeeTableInfo substractTotalCount() {
-			this.totalCount--;
-			return this;
-		}
-
-		double getTotalAmount() {
-			return totalAmount;
-		}
-		InvoiceFeeTableInfo setTotalAmount(double totalAmount) {
-			this.totalAmount = totalAmount;
-			return this;
-		}
-		InvoiceFeeTableInfo addTotalAmount(double amount) {
-			this.totalAmount = AonMathUtils.round( this.totalAmount + amount);
-			return this;
-		}
-		InvoiceFeeTableInfo substractTotalAmount(double amount) {
-			this.totalAmount = AonMathUtils.round( this.totalAmount - amount);
-			return this;
-		}
-
-		double getTotalVAT() {
-			return totalVAT;
-		}
-		InvoiceFeeTableInfo setTotalVAT(double totalVAT) {
-			this.totalVAT = totalVAT;
-			return this;
-		}
-		InvoiceFeeTableInfo addTotalVAT(double vat) {
-			this.totalVAT = AonMathUtils.round( this.totalVAT + vat);
-			return this;
-		}
-		InvoiceFeeTableInfo substractTotalVAT(double vat) {
-			this.totalVAT = AonMathUtils.round( this.totalVAT - vat);
-			return this;
-		}
-
-		double getTotalRetention() {
-			return totalRetention;
-		}
-		InvoiceFeeTableInfo setTotalRetention(double totalRetention) {
-			this.totalRetention = totalRetention;
-			return this;
-		}
-		InvoiceFeeTableInfo addTotalRetention(double retention) {
-			this.totalRetention = AonMathUtils.round( this.totalRetention + retention);
-			return this;
-		}
-		InvoiceFeeTableInfo substractTotalRetention(double retention) {
-			this.totalRetention = AonMathUtils.round( this.totalRetention - retention);
-			return this;
-		}
-		
-		int getTotalPrepaymentCount() {
-			return totalPrepaymentCount;
-		}
-		InvoiceFeeTableInfo setTotalPrepaymentCount(int totalPrepaymentCount) {
-			this.totalPrepaymentCount = totalPrepaymentCount;
-			return this;
-		}
-		InvoiceFeeTableInfo addPrepaymentCount(boolean hasPrepayments) {
-			totalPrepaymentCount += hasPrepayments ? 1 : 0;
-			return this;
-		}
-		InvoiceFeeTableInfo substractPrepaymentCount(boolean hasPrepayments) {
-			totalPrepaymentCount -= hasPrepayments ? 1 : 0;
-			return this;
-		}
-		
-	}
-
-	private void refreshInfoPanel(InvoiceFeeTableInfo tableInfo, Invoice toAdd, Invoice toSubstract) {
-		if ( toAdd != null ) {
-			tableInfo.addTotalCount();
-			tableInfo.addTotalAmount( toAdd.getTotal() );
-			tableInfo.addTotalVAT( toAdd.getVatQuota() );
-			tableInfo.addTotalRetention( toAdd.getRetentionQuota() );
-			tableInfo.addPrepaymentCount(toAdd.hasPrepayments());
-		}
-		if ( toSubstract != null ) {
-			tableInfo.substractTotalCount( );
-			tableInfo.substractTotalAmount( toSubstract.getTotal() );
-			tableInfo.substractTotalVAT( toSubstract.getVatQuota() );
-			tableInfo.substractTotalRetention( toSubstract.getRetentionQuota() );
-			if ( toSubstract.hasPrepayments() ) {
-				tableInfo.substractPrepaymentCount( toSubstract.hasPrepayments() );
-			}
-		}
-		// Total suplidos.-
-		// Total Advances.-
-	}
-
 	public interface InvoiceFeeTableCallback {
 		void onSelect( Invoice invoice, InvoiceDockPanelCallback callback);
 		void onEditSearch();
 		void onSearchStart();
-		void onSearchEnd(InvoiceFeeTableInfo info);
+		void onSearchEnd(InvoiceProcessOutput output);
 		void onError( String message);
 		void onCheck( boolean checked, Invoice invoice );
-		void onInfoSelected( InvoiceFeeTableInfo info );
+		void onInfoSelected( InvoiceProcessOutput output );
 	}
 }

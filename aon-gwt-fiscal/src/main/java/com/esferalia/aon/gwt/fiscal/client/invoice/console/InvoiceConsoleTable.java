@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-class InvoiceConsoleTable extends ScrollPanel{
+public class InvoiceConsoleTable extends ScrollPanel{
 
 	FlowPanel containerPanel = new FlowPanel();
 	AonDisplayGrid grid = new AonDisplayGrid();
@@ -44,7 +44,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 	private final MutableBoolean searchEnabled = new MutableBoolean( true );
 	private int lastScrollPos = 0;	
 	
-	InvoiceConsoleTable(InvoiceConsoleModuleOptions opts, InvoiceConsoleParams params) {
+	public InvoiceConsoleTable(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
 		setStyleName(AON.CSS.aonScrollArea());
 		
 		setWidget(containerPanel);
@@ -112,7 +112,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 		;
 	}
 
-	private void onSearch(InvoiceConsoleModuleOptions opts, InvoiceConsoleParams params) {
+	private void onSearch(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
 		if (!isMoreData()) return;
 		params.setOffset( offset.getValue() );
 		params.setLimit( LIMIT );
@@ -231,7 +231,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 		});
 	}
 
-	private void showEntry(InvoiceConsoleModuleOptions opts,Integer invoiceId) {
+	private void showEntry(InvoiceModuleOptions opts,Integer invoiceId) {
 		InvoiceConsoleModule.INVOICE_SERVICE.getAccountingInvoice(opts.getOccam(), opts.getDomain(), invoiceId
 				, new AsyncCallback<AccountingInvoice>() {
 
@@ -325,7 +325,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 //		dialog.show();
 //	}
 	
-	private void debugInvoice(InvoiceConsoleModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback invoiceCallback) {
+	private void debugInvoice(InvoiceModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback invoiceCallback) {
 		AonCustomPopup dialog = new AonCustomPopup();
 		dialog.setWidth((Window.getClientWidth() - 100) + "px");
 		dialog.setHeight((Window.getClientHeight() - 100) + "px");

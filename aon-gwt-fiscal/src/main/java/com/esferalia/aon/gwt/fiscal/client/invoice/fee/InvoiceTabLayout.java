@@ -13,7 +13,7 @@ import com.google.gwt.dom.client.Style.Unit;
 
 class InvoiceTabLayout extends AonTabLayoutPanel {
 	
-	InvoiceTabLayout(InvoiceFeeModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback callback) {
+	InvoiceTabLayout(InvoiceModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback callback) {
 		super(26, Unit.PX);
 		this.setWidth("100%");
 		

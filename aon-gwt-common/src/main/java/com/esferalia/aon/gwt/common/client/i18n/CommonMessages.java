@@ -652,6 +652,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ordenar por")
 	String orderBy();
 
+	@DefaultMessage("Orden")
+	String order();
+	
+	@DefaultMessage("Ascendente")
+	String ascendingOrder();
+	
+	@DefaultMessage("Descendente")
+	String descendingOrder();
+	
+	
 	// ---------------------------------------------------------Common Messages
 	@DefaultMessage("Declaraci\u00F3n")
 	String declaration();
@@ -4366,6 +4376,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Ocultar filtro")
 	String  hideFilter();
-	
+
+	@DefaultMessage("Origen")
+	String source();
+
 }
 
