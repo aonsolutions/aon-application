@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingPriceType;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductComposition;
@@ -104,6 +105,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomCheckBox noBooking = new AonCustomCheckBox("No Contratable");
 	
 	private AonCustomIntegerBox posititon = new AonCustomIntegerBox("Posici\u00f3n");
+	private AonCustomListBox priceType = new AonCustomListBox("T. Precio");
 	
 	private AonCustomListBox projectType = new AonCustomListBox("T. Expediente");
 	private AonCustomListBox workgroup = new AonCustomListBox("G. Trabajo");
@@ -283,6 +285,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		aditionalCard.getElement().getStyle().setProperty("min-width", "33rem");
 		aditionalCard.add(table);
 		
+		posititon.setWidth("3rem");
 		posititon.hideNearBy();
 		posititon.setValue(product.getPosition());
 		posititon.addValueChangeHandler(e -> {
@@ -296,6 +299,16 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 				
 			} else posititon.setValue(null);
 				
+		});
+		
+		priceType.clearItems();
+		priceType.addItem(ProductBookingPriceType.PVP.getDescription(), Byte.toString(ProductBookingPriceType.PVP.value()));
+		priceType.addItem(ProductBookingPriceType.PLAN.getDescription(), Byte.toString(ProductBookingPriceType.PLAN.value()));
+		priceType.addItem(ProductBookingPriceType.FROM.getDescription(), Byte.toString(ProductBookingPriceType.FROM.value()));
+		priceType.addItem(ProductBookingPriceType.HIDE.getDescription(), Byte.toString(ProductBookingPriceType.HIDE.value()));
+		priceType.setValue(Byte.toString(product.getBookingPriceType().value()));
+		priceType.addChangeHandler(e -> {
+			product.setBookingPriceType(ProductBookingPriceType.safeValueOf(Byte.parseByte(priceType.getValue())));
 		});
 		
 		price.hideNearBy();
@@ -320,7 +333,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		pvp.hideNearBy();
 		pvp.setEnable(false);
 		
-		table.add(createRow(posititon, price, iva, pvp));
+		table.add(createRow(posititon, priceType, price, iva, pvp));
 		
 		type.clearItems();
 		type.setWidth("20rem");

@@ -255,7 +255,7 @@ public class AonRandom {
 	}
 
 	public static Registry getRegistry(AONContext ctx) {
-		return getRegistry(ctx,null);
+		return getRegistry(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()) );
 	}
 	public static Registry getRegistry(AONContext ctx, RegistryFilter filter) {
 		return RegistryDAO.getRandom(ctx,filter);
@@ -270,21 +270,21 @@ public class AonRandom {
 	}
 
 	public static Customer getCustomer(AONContext ctx) {
-		return getCustomer(ctx,null);	
+		return getCustomer(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()) );	
 	}
 	public static Customer getCustomer(AONContext ctx, CustomerFilter filter) {
 		return CustomerDAO.getRandom(ctx, filter);
 	}
 
 	public static Creditor getCreditor(AONContext ctx) {
-		return getCreditor(ctx,null);	
+		return getCreditor(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()) );	
 	}
 	public static Creditor getCreditor(AONContext ctx, CreditorFilter filter) {
 		return CreditorDAO.getRandom(ctx, filter);
 	}
 
 	public static Supplier getSupplier(AONContext ctx) {
-		return getSupplier(ctx,null);	
+		return getSupplier(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()) );	
 	}
 	public static Supplier getSupplier(AONContext ctx, SupplierFilter filter) {
 		return SupplierDAO.getRandom(ctx, filter);
