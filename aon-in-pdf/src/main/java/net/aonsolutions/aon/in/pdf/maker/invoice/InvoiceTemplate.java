@@ -1384,9 +1384,16 @@ public class InvoiceTemplate {
 		float logoX = x;
 		float logoY = height - MIN_HEADER_FOR_LOGO + 10;
 
+		if(ctx.isVerifactuTest()) {
+			drawText(ctx.getContents(), "FACTURA NO VÁLIDA", x , (float) 450, Color.LIGHT_GRAY, BOLD_FONT, 40);
+			drawText(ctx.getContents(), "ENTORNO DE PRUEBAS", x , (float) 400, Color.LIGHT_GRAY, BOLD_FONT, 40);
+		}
+		
 		drawText(ctx.getContents(), ctx.getInvoiceTitle(), x + 255, tempY + 20, config.getTheme().getTitleTextColor(), BOLD_FONT, 14);
-		if(ctx.isVerifactu() || ctx.isTbai())
-			drawText(ctx.getContents(), "Verificable en la sede electrónica de Hacienda", x + 255, tempY + 10, config.getTheme().getTitleTextColor(), FONT, 6);
+		if(ctx.isVerifactu() || ctx.isTbai()) {
+			drawText(ctx.getContents(), "Comunicada a " + (ctx.isTbai() ? "TicketBAI" : "Veri*factu"), x + 255, tempY + 10, config.getTheme().getTitleTextColor(), FONT, 6);
+			drawText(ctx.getContents(), "Verificable en la sede electrónica de Hacienda", x + 255, tempY, config.getTheme().getTitleTextColor(), FONT, 6);
+		}
 				
 		if (ctx.getLogo() != null) {				
 			try {
@@ -1425,80 +1432,80 @@ public class InvoiceTemplate {
 		drawText(contents, formatDate(expDate, STANDARD_DATE_FORMAT).orElse(""), x + left, y, config.getTheme().getTextColor(), FONT, 11 , INVOICE_DATE);			
 		
 		y -= 15;
-		String nif = ctx.getMsg().customerNif(); 
-		drawText(contents, nif + ":", x, y, config.getTheme().getTitleTextColor(), BOLD_FONT, 11, NIF);
-		
-		String countryCode = "";
-		if (invoice.getRegistryDocumentCountry() != null) {			
-			countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
-		}
-		drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + left, y, config.getTheme().getTextColor(), FONT, 11, NIF);
-		
-		y -= 10;
-		x += 250;
+		if(!ctx.getInvoice().isSimplified()) {
+			String nif = ctx.getMsg().customerNif(); 
+			drawText(contents, nif + ":", x, y, config.getTheme().getTitleTextColor(), BOLD_FONT, 11, NIF);
+			
+			String countryCode = "";
+			if (invoice.getRegistryDocumentCountry() != null) {			
+				countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
+			}
+			drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + left, y, config.getTheme().getTextColor(), FONT, 11, NIF);		
 
-		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor(), opacity);
-		x += 10;
+			y -= 10;
+			x += 250;
+
+			drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor(), opacity);
+			x += 10;
 		
-		float boxY = y + 65;
-		String str = safeString(invoice.getRegistryName())
+			float boxY = y + 65;
+			String str = safeString(invoice.getRegistryName())
 				.replace("\t", " ");
 		
-		List<String> nameLines = PDFToolkit.getLines(str, 230, BOLD_FONT, 10);
+			List<String> nameLines = PDFToolkit.getLines(str, 230, BOLD_FONT, 10);
 		
-		if (nameLines != null) {
-			String line1 = nameLines.get(0).trim();
-			String line2 = null;
-			if (nameLines.size() > 1) {
-				line2 = nameLines.get(1).trim();
-			}
+			if (nameLines != null) {
+				String line1 = nameLines.get(0).trim();
+				String line2 = null;
+				if (nameLines.size() > 1) {
+					line2 = nameLines.get(1).trim();
+				}
 			
-			if (line1 != null) {
-				System.out.println("Y DELregistry name" + y);
-				drawText(contents, line1, x, boxY, config.getTheme().getTextColor(), BOLD_FONT, 10, REGISTRY_NAME);
+				if (line1 != null) {
+					drawText(contents, line1, x, boxY, config.getTheme().getTextColor(), BOLD_FONT, 10, REGISTRY_NAME);
+					boxY -= 10;
+				}
+				if (line2 != null) {
+					drawText(contents, line2, x, boxY, config.getTheme().getTextColor(), BOLD_FONT, 10, REGISTRY_NAME);				
+				}
+			}
+			boxY -= 15;
+		
+			String fullAddress = "";
+			String zipCity = "";
+			String province = "";
+		
+			if (invoice.getAddress() != null && !invoice.getAddress().isEmpty()) {
+				RegistryAddress address = invoice.getAddress();
+				fullAddress = safeString(address.getFullAddress(ctx.getAddressLanguage()));
+				boolean isProvince = address.getProvince() != null && !address.getProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(address.getProvince(), address.getCity());
+				if (isProvince) {
+					province = "(" + address.getProvince().trim() + ") ";
+				}
+				zipCity =  safeString(address.getZip()) + " "+  safeString(address.getCity());
+			
+				if (address.getCountry() != null) {
+					float textWidth = PDFToolkit.fontWidth(province + address.getCountry().getName(), 9, FONT);
+					province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();	
+				}		
+			}
+		
+			List<String> addressLines = PDFToolkit.getLines(fullAddress, 230, FONT, 9);
+		
+			if (addressLines != null && !addressLines.isEmpty()) {
+				drawText(contents,  addressLines.get(0).trim(), x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS);
 				boxY -= 10;
+				if (addressLines.size() > 1) {
+					String line2 = croppedString(addressLines.get(1), 230, FONT, 9);
+					drawText(contents,  line2, x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS);
+					boxY -= 12.5;
+				}	
 			}
-			if (line2 != null) {
-				drawText(contents, line2, x, boxY, config.getTheme().getTextColor(), BOLD_FONT, 10, REGISTRY_NAME);				
-			}
-		}
-		boxY -= 15;
 		
-		String fullAddress = "";
-		String zipCity = "";
-		String province = "";
-		
-		if (invoice.getAddress() != null && !invoice.getAddress().isEmpty()) {
-			RegistryAddress address = invoice.getAddress();
-			fullAddress = safeString(address.getFullAddress(ctx.getAddressLanguage()));
-			boolean isProvince = address.getProvince() != null && !address.getProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(address.getProvince(), address.getCity());
-			if (isProvince) {
-				province = "(" + address.getProvince().trim() + ") ";
-			}
-			zipCity =  safeString(address.getZip()) + " "+  safeString(address.getCity());
-			
-			if (address.getCountry() != null) {
-				float textWidth = PDFToolkit.fontWidth(province + address.getCountry().getName(), 9, FONT);
-				province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();	
-			}		
-		}
-		
-		List<String> addressLines = PDFToolkit.getLines(fullAddress, 230, FONT, 9);
-		
-		if (addressLines != null && !addressLines.isEmpty()) {
-			drawText(contents,  addressLines.get(0).trim(), x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS);
+			drawText(contents, zipCity.trim(), x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS_LINE_TWO);
 			boxY -= 10;
-			if (addressLines.size() > 1) {
-				String line2 = croppedString(addressLines.get(1), 230, FONT, 9);
-				drawText(contents,  line2, x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS);
-				boxY -= 12.5;
-			}
-			
+			drawText(contents, province, x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS_LINE_TWO);
 		}
-		
-		drawText(contents, zipCity.trim(), x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS_LINE_TWO);
-		boxY -= 10;
-		drawText(contents, province, x, boxY, config.getTheme().getTextColor(), FONT, 9, ADDRESS_LINE_TWO);
 	}
 	
 	// draw company info

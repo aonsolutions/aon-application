@@ -80,9 +80,9 @@ public abstract class ProductList extends AonCustomDockLayout {
 	private boolean fetchingData = false;
 	
 	private static enum COLS {
-		  COD(AON.MSG.code()						,"15rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  COD(AON.MSG.code()						,"10rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CAT(AON.MSG.category()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CAT(AON.MSG.category()					,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("Estado"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PCK("Tipo"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, AOC("Serv. Aon"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio

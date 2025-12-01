@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.product;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -122,6 +121,24 @@ public class CataloguePackCard extends HTMLPanel {
 		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
 		price.getElement().getStyle().setProperty("color", "black");
 		
+		switch (packProduct.getBookingPriceType()) {
+			case PLAN:
+				price = new HTMLPanel("Pecio plan contratado");
+				break;
+			case FROM:
+				price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+			case HIDE:
+				price = new HTMLPanel("");
+				break;
+			default:
+				price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+		}
+		
+		if(packProduct.getItem().getPrice() == 0.00)
+			price = new HTMLPanel("");
+		
 		if(null != tariff) {
 			if(tariff.getDiscount() != 0.00) {
 				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount());
@@ -175,7 +192,7 @@ public class CataloguePackCard extends HTMLPanel {
 
 	private void createButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

@@ -132,6 +132,25 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>.<small>" + priceValue.split("\\.")[1] + "</small> \u20ac" + " al mes *");
 		price.getElement().getStyle().setProperty("color", isFeeProduct(packProduct.getItem().getId()) ? "black" : "#002469");
 		
+		switch (packProduct.getBookingPriceType()) {
+			case PLAN:
+				priceValue = formaDouble(getBookedPlanPrice());
+				price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+			case FROM:
+				price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+			case HIDE:
+				price = new HTMLPanel("");
+				break;
+			default:
+				price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+				break;
+		}
+		
+		if(packProduct.getItem().getPrice() == 0.00)
+			price = new HTMLPanel("");
+		
 		if(null != tariff) {
 			if(tariff.getDiscount() != 0.00) {
 				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount());
@@ -167,6 +186,16 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		
 		buttonData.add(pricePanel);
 	}
+	
+	private double getBookedPlanPrice() {
+		ProductBooking bookedPlan = null;
+		
+		if(isFeeProduct(packProduct.getItem().getId())) {
+			bookedPlan = packProduct;
+		}
+		
+		return null == bookedPlan ? 0.00 : bookedPlan.getItem().getPrice();
+	}
 
 	private void createPackContent() {
 		HTMLPanel packContent = new HTMLPanel(EMPTY_STRING);
@@ -185,7 +214,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 	
 	private void createButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Ya Contratado" : (packProduct.isNoBooking() ? "Solicitar Alta" : "Contratar"));
+		bookBtn.setText(isFeeProduct(packProduct.getItem().getId()) ? "Ya Contratado" : (packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar"));
 		bookBtn.setEnabled(!isFeeProduct(packProduct.getItem().getId()));
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
@@ -205,80 +234,83 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 		}
 		
 		bookBtn.addClickHandler(e -> {
-			
-			AonCustomDialog dialog = new AonCustomDialog();
-			
-			HTMLPanel dialogContent = new HTMLPanel("");
-			dialogContent.addStyleName(AON.CSS.aonFlexColumn());
-			dialogContent.getElement().getStyle().setProperty("padding", "1rem");
-			
-			HTMLPanel messageDialogPanel = new HTMLPanel("");
-			dialogContent.add(messageDialogPanel);
-			
-			HTMLPanel buttonsPanel = new HTMLPanel("");
-			buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
-			buttonsPanel.getElement().getStyle().setProperty("justify-content", "center");
-			buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
-			buttonsPanel.setWidth("100%");
-			
-			Button closeBtnDialog = new Button();
-			closeBtnDialog.setStyleName(AON.CSS.aonCancelButton());
-			closeBtnDialog.setText(AON.MSG.cancelAction());
-			closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
-			closeBtnDialog.addClickHandler(ev -> dialog.hide());
-			buttonsPanel.add(closeBtnDialog);
-			
-			Button acceptBtnDialog = new Button();
-			acceptBtnDialog.setStyleName(AON.CSS.aonOkButton());
-			acceptBtnDialog.setText("Contratar");
-			acceptBtnDialog.getElement().getStyle().setProperty("background-color", "#eee");
-			acceptBtnDialog.setEnabled(false);
-			buttonsPanel.add(acceptBtnDialog);
-			
-			HTMLPanel message = new HTMLPanel(!isFeeProduct(packProduct.getItem().getId()) 
-					? "Se va a proceder con la contrataci\u00f3n del producto <b>" + packProduct.getName() + "</b>" 
-					: "Se va a proceder a descontratar el producto <b>" + packProduct.getName() + "</b>" 
-					);
-			dialogContent.add(message);
-			
-			HTMLPanel terms = new HTMLPanel("");
-			terms.addStyleName(AON.CSS.aonItemFlex());
-			
-			CheckBox acceptTerms = new CheckBox();
-			acceptTerms.addValueChangeHandler(ev -> {
-				acceptBtnDialog.setEnabled(acceptTerms.getValue());
-				acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
-			});
-			Label temrsMessage = new Label("He leido y acepto los ");
-			Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://ayudatpymes.com/aviso-legal/terminos-condiciones/", "_blank");
-			termsAnchor.getElement().getStyle().setProperty("color", "#002469");
-			Label temrsMessage_2 = new Label(" de contrataci\u00f3n de Aon");
-					
-			terms.add(acceptTerms);
-			terms.add(temrsMessage);
-			terms.add(termsAnchor);
-			terms.add(temrsMessage_2);
-			dialogContent.add(terms);
-			
-			acceptBtnDialog.addClickHandler(ev -> {
-				if(acceptTerms.getValue()) {
-					onCreateCustomerFeeByItem(packProduct);
-					dialog.hide();
-				} else
-					AonMessagePanel.showError(messageDialogPanel, "Debe aceptar los terminos y condiciones para poder aceptar");
-			});
-			
-			dialogContent.add(buttonsPanel);
-			
-			dialog.setCaption(packProduct.getName());
-			dialog.add(dialogContent);
-			dialog.center();
-			dialog.show();
+			if(packProduct.isNoBooking()) 
+				requestProductBooking(packProduct);
+			else {
+				AonCustomDialog dialog = new AonCustomDialog();
+				
+				HTMLPanel dialogContent = new HTMLPanel("");
+				dialogContent.addStyleName(AON.CSS.aonFlexColumn());
+				dialogContent.getElement().getStyle().setProperty("padding", "1rem");
+				
+				HTMLPanel messageDialogPanel = new HTMLPanel("");
+				dialogContent.add(messageDialogPanel);
+				
+				HTMLPanel buttonsPanel = new HTMLPanel("");
+				buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
+				buttonsPanel.getElement().getStyle().setProperty("justify-content", "center");
+				buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
+				buttonsPanel.setWidth("100%");
+				
+				Button closeBtnDialog = new Button();
+				closeBtnDialog.setStyleName(AON.CSS.aonCancelButton());
+				closeBtnDialog.setText(AON.MSG.cancelAction());
+				closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+				closeBtnDialog.addClickHandler(ev -> dialog.hide());
+				buttonsPanel.add(closeBtnDialog);
+				
+				Button acceptBtnDialog = new Button();
+				acceptBtnDialog.setStyleName(AON.CSS.aonOkButton());
+				acceptBtnDialog.setText("Contratar");
+				acceptBtnDialog.getElement().getStyle().setProperty("background-color", "#eee");
+				acceptBtnDialog.setEnabled(false);
+				buttonsPanel.add(acceptBtnDialog);
+				
+				HTMLPanel message = new HTMLPanel(!isFeeProduct(packProduct.getItem().getId()) 
+						? "Se va a proceder con la contrataci\u00f3n del producto <b>" + packProduct.getName() + "</b>" 
+						: "Se va a proceder a descontratar el producto <b>" + packProduct.getName() + "</b>" 
+						);
+				dialogContent.add(message);
+				
+				HTMLPanel terms = new HTMLPanel("");
+				terms.addStyleName(AON.CSS.aonItemFlex());
+				
+				CheckBox acceptTerms = new CheckBox();
+				acceptTerms.addValueChangeHandler(ev -> {
+					acceptBtnDialog.setEnabled(acceptTerms.getValue());
+					acceptBtnDialog.getElement().getStyle().setProperty("background-color", acceptTerms.getValue() ? "transparent" : "#eee");
+				});
+				Label temrsMessage = new Label("He leido y acepto los ");
+				Anchor termsAnchor = new Anchor("Terminos y Condiciones", "https://ayudatpymes.com/aviso-legal/terminos-condiciones/", "_blank");
+				termsAnchor.getElement().getStyle().setProperty("color", "#002469");
+				Label temrsMessage_2 = new Label(" de contrataci\u00f3n de Aon");
+						
+				terms.add(acceptTerms);
+				terms.add(temrsMessage);
+				terms.add(termsAnchor);
+				terms.add(temrsMessage_2);
+				dialogContent.add(terms);
+				
+				acceptBtnDialog.addClickHandler(ev -> {
+					if(acceptTerms.getValue()) {
+						onCreateCustomerFeeByItem(packProduct);
+						dialog.hide();
+					} else
+						AonMessagePanel.showError(messageDialogPanel, "Debe aceptar los terminos y condiciones para poder aceptar");
+				});
+				
+				dialogContent.add(buttonsPanel);
+				
+				dialog.setCaption(packProduct.getName());
+				dialog.add(dialogContent);
+				dialog.center();
+				dialog.show();
+			}
 		});
 		
 		buttonData.add(bookBtn);
 	}
-	
+
 	private boolean isFeeProduct(Integer itemId) {
 		return customerFees.stream().filter(fee -> fee.getItem().getId().equals(itemId) && (fee.getEndDate() == null || (fee.getEndDate().equals(new Date()) || fee.getEndDate().after(new Date()) ))).findAny().isPresent();
 	}
@@ -298,6 +330,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
     }
 	
 	protected abstract void onCreateCustomerFeeByItem(Product product);
+	protected abstract void requestProductBooking(ProductBooking packProduct);
 	protected abstract ProductBooking getConsultancyProduct();
 
 }

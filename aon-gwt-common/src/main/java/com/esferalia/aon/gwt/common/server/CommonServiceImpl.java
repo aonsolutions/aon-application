@@ -1707,6 +1707,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) throws AonCoreException {
+		AON.requestBookingInfo(domainName, domain, user, product, customerRegistry);
+	}
+	
+	@Override
 	public List<RegistryPayMethod> getRegistryPayMethods(String domainName, Integer domainId, String user, Integer registry) throws AonCoreException {
 		List<RegistryPayMethod> registryPayMethods = AON.getRegistryPayMethodStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registry))).collect(Collectors.toList());
 		registryPayMethods.forEach(rp -> {
