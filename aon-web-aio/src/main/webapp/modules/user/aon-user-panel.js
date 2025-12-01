@@ -8,7 +8,7 @@ import '../../components/aon-new-input.js';
 import {AonUserList} from '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import { MSG } from '../../environments/environments.js';
-import { AonUser } from '../user/aon-user.js';
+import { AonNewUser } from './aon-new-user.js';
 //import 'aoncss';
 
 export class AonUserPanel extends AonElement {
@@ -90,7 +90,7 @@ export class AonUserPanel extends AonElement {
 	}
 
 	buildCreateUser(share) {
-		let aonUser = new AonUser();
+		let aonUser = new AonNewUser();
 		aonUser.id = 'aonUserCreate';
 		aonUser.setShowApps(true);
 		aonUser.setShowToolbar(true);

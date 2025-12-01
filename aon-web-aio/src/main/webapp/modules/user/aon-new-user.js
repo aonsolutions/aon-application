@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { saveUser, deleteUser, changePassword, getAuth, sendUserInfoEmail, updateDurDefinedUsers, getUserRoles, getBookingDomainUserRoles, getUserDomainUserRoles, deleteUserScope, getScopes, getCompanyScopes, addUserScopes } from  '../../services/service.js';
-import { AllAonApps, EnterpriseAonApps, EmployeeAonApps } from  '../../services/app.js';
+import { AllAonApps, EnterpriseAonApps, EmployeeAonApps, EnterpriseApps, AllApps } from  '../../services/app.js';
 import { Role, Roles, ToolbarType } from '../../models/enums.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS, COLORS, EVENT } from '../../environments/environments.js';
@@ -195,11 +195,24 @@ export class AonNewUser extends AonElement {
 
 		if(!this.hasAttribute('showToolbar')) toolbar.style.display = 'none';
 		toolbar.removeButtons();
-		if(!this.isOnlyAuth() && getUsers().length > 1) {
-			toolbar.addButton2(ACTION.NEXT, () => this.next());
-			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
+
+		const users = getUsers();
+		const index = users.findIndex(u => u.id === this.user.id);
+
+		let prevBtn, nextBtn;
+
+		if(!this.isOnlyAuth() && users.length > 1) {
+			nextBtn = toolbar.addButton2(ACTION.NEXT, () => this.next());
+			prevBtn = toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 			toolbar.addSeparator();
 		}
+
+		if (prevBtn && index === 0)
+			prevBtn.disabled = true;
+
+		if (nextBtn && index === users.length - 1)
+			nextBtn.disabled = true;
+
 		if(!this.isOnlyAuth() && this.user && this.user.uuid)
 			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
@@ -221,7 +234,6 @@ export class AonNewUser extends AonElement {
 		content.appendChild(div);
 
 		this.buildUserCard(div)
-
 		if(this.hasSecurity()) {
 			this.buildSecurity(content);
 		}
@@ -264,7 +276,7 @@ export class AonNewUser extends AonElement {
 						this.user.surname = auth.surname || '';
 						this.user.document = auth.document || '';
 						this.user.phone = auth.phone || '';
-						this.initUser();
+						// this.initUser();
 					}
 				});
 			}
@@ -444,7 +456,6 @@ export class AonNewUser extends AonElement {
 		this.apps = this.apps.filter(app => app.has(this.userDur));
 		
 		let table = this.getElement(this.SECURITY_TABLE);
-		
 		table.removeRows();
 	
 		this.apps.forEach((app, i) => {
@@ -467,8 +478,6 @@ export class AonNewUser extends AonElement {
 		let active = createSwitch(this.SECURITY_TABLE_ACTIVE + i);
 		active.checked = app.is(this.userDur);
 		active.disabled = "admin" != app.app && this.userDur.isAdmin() && active.isChecked();
-		// active.style.paddingRight = '10px';
-		
 		active.addEventListener(EVENT.CHANGE, () => {
 			this.activeAction(app, active.isChecked());
 		});
@@ -549,7 +558,7 @@ export class AonNewUser extends AonElement {
 				fn:()=> {
 					this.user.active = true;
 					this.buildStatus(card);
-					this.save();
+					// this.save();
 				}
 			},
 			{ 
@@ -559,7 +568,7 @@ export class AonNewUser extends AonElement {
 				fn:()=> {
 					this.user.active = false;
 					this.buildStatus(card);
-					this.save();
+					// this.save();
 				}
 			}
 		];
@@ -658,16 +667,22 @@ export class AonNewUser extends AonElement {
 		d.open();
 	}
 
-	save() {	
-		if(!this.isOnlyAuth())
+	save() {
+		if(!this.isOnlyAuth()){
 			updateUser(this.user);
-		if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {
+		}
+		const newUser = !this.user.id;
+		//comentado porque no estaba entrando ya que user.roles nunca llegaba vacio, por lo que no se guardaba el rol
+		// if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {
+		if(!this.user.portal && newUser) {
 			this.user.portal = true;
 			this.user.roles = [Role.ENTERPRISE];
 		}
-		
+
 		saveUser(this.user, this.sessionData).then(r => {
+			this.user = r.user ? r.user : r;
 			this.showMessage(MSG.SAVED_DATA);
+			this.changeUser(this.user);
 		}).catch(e => this.showError(e));
 	}
 
@@ -680,7 +695,6 @@ export class AonNewUser extends AonElement {
     	d.addAcceptAction(() => {
 			let data = { user: this.user.id};
 			deleteUser(data, this.sessionData).then(() => {
-				deleteUserCache();
 				this.back()
 			});
     	});
@@ -694,7 +708,7 @@ export class AonNewUser extends AonElement {
 			let aonUserList = new AonUserList();
 			aonUserList.sessionData = this.sessionData;
 			aonUserList.parent = this.parent;
-			aonUserList.setBack(true);
+			aonUserList.setBack(false);
 			if(this.parent) {
 				this.parent.innerHTML = '';
 				this.parent.appendChild(aonUserList);
@@ -703,11 +717,15 @@ export class AonNewUser extends AonElement {
 	}
 
 	next() {
-		this.changeUser(getNextUser());
+		let user = getNextUser();
+		if (user === false) return;  
+		this.changeUser(user);
 	}
 
 	previous() {
-		this.changeUser(getPreviousUser());
+		let user = getPreviousUser();
+		if (user === false) return;
+		this.changeUser(user);
 	}
 
 	changeUser(user) {
@@ -759,7 +777,6 @@ export class AonNewUser extends AonElement {
 			let rolePortal = app.app.toUpperCase() + '_PORTAL';
 			roles.push(this.createRole(app, rolePortal, active));
 		}
-
 		this.updateRoles(roles);
 	}
 

@@ -752,7 +752,7 @@ export const EnterpriseAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA,
+  // AON_SALTRA,
   BANK,
   OFFICE
 ];
@@ -1025,7 +1025,7 @@ export const AllAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA
+  // AON_SALTRA
 ];
   
 export const AllApps = {
