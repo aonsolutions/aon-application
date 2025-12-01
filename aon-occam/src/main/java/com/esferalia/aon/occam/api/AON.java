@@ -9061,5 +9061,11 @@ public class AON {
 			getNewProduct().removeBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, oldFee, product);
 		}
 	}
+
+	public static void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().requestBookingInfo(ctx, domainName, domain, user, product, customerRegistry);
+		}
+	}
 	
 }
