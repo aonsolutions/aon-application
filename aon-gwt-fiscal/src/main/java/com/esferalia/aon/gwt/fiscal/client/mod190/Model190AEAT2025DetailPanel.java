@@ -172,12 +172,11 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(4, 2, accrualYear);
 		
-		// Ceuta o Melilla / Isla de la Palma // FALTA - VER SI AL FINAL SE QUITA O NO ISLA DE LA PALMA	
 		ListBox ceutaMelillaPalma = new ListBox();
 		ceutaMelillaPalma.setWidth("140px");
 		ceutaMelillaPalma.addItem("-");
 		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
-		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma"); // FALTA - VER SI AL FINAL SE QUITA O NO ISLA DE LA PALMA
 		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
 		ceutaMelillaPalma.addChangeHandler( event -> {
 			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
@@ -186,6 +185,7 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab1.setWidget(4, 3, ceutaMelillaPalma);
 		
 		// Tipos de prestaciones de la clave B.01 satisfechas en el ejercicio
+		
 		FlexTable tab12 = new FlexTable();
 		panel.add(tab12);
 		tab12.getColumnFormatter().setWidth(0, "80px");
@@ -261,79 +261,6 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.getFlexCellFormatter().setColSpan(0, 0, 5);
 		tab2.setWidget(0, 0, new InlineLabel("Percepciones no derivadas de incapacidad laboral"));
 		
-//		FlexTable tab2 = new FlexTable();
-//		panel.add(tab2);
-//		tab2.getColumnFormatter().setWidth(0, "40px");
-//		tab2.getColumnFormatter().setWidth(1, "40px");
-//		tab2.getColumnFormatter().setWidth(2, "40px");
-//		tab2.getColumnFormatter().setWidth(3, "40px");
-//		tab2.getColumnFormatter().setWidth(4, "90px");
-//		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
-//		tab2.getColumnFormatter().setWidth(6, WIDTH_150PX);
-//		tab2.getColumnFormatter().setWidth(7, WIDTH_150PX);
-//		tab2.getColumnFormatter().setWidth(8, "90px");
-//		tab2.getColumnFormatter().setWidth(9, "auto");
-//
-//		tab2.setStyleName(AON.CSS.aonWidthAll());
-//		tab2.addStyleName(AON.CSS.aonNowrap());
-
-//		tab2.setWidget(0, 0, new Model190SmallerLabel(AON.MSG.key()));
-//		tab2.getFlexCellFormatter().setRowSpan(0, 0, 4);
-
-//		final ListBox subkey = new ListBox();
-//		subkey.setWidth("45px");
-//
-//		final ListBox key = new ListBox();
-//		key.setWidth("40px");
-//		for (Mod1902025Key k : Mod1902025Key.values()) {
-//			key.addItem(k.getDescription(), k.getValue());
-//		}
-//
-//		Model190AEAT2025DetailPanel.setValue(key, subkey, detail);
-//
-//		key.addChangeHandler(event -> {
-//			subkey.clear();
-//			Mod1902025Key keyEnum = Mod1902025Key.values()[key.getSelectedIndex()];
-//			detail.setKey(keyEnum.toString());
-//			if (keyEnum.hasSubkeys()) {
-//				subkey.setEnabled(true);
-//				for (int i = 0; i < keyEnum.getSubKeys().length; i++) {
-//					subkey.addItem(keyEnum.getSubKeys()[i]);
-//				}
-//				detail.setSubKey(keyEnum.getSubKeys()[0]);
-//			} else {
-//				subkey.setEnabled(false);
-//				detail.setSubKey(null);
-//			}
-//			Model190AEAT2025DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-//			Model190AEAT2025DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-//			Model190AEAT2025DetailPanel.enableOrDisableAdditionalDataPanel2(key, subkey, additionalDataPanel2);
-//			Model190AEAT2025DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
-//			callback.onValueChanged(detail);
-//		});
-//		tab2.setWidget(0, 1, key);
-//		tab2.getFlexCellFormatter().setRowSpan(0, 1, 4);
-//
-//		subkey.addChangeHandler(event -> {
-//			Mod1902025Key keyEnum = Mod1902025Key.values()[key.getSelectedIndex()];
-//			if (keyEnum.hasSubkeys()) {
-//				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
-//				detail.setSubKey(keyEnum.getSubKeys()[idx]);
-//			} else {
-//				subkey.setEnabled(false);
-//				detail.setSubKey(null);
-//			}
-//			Model190AEAT2025DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-//			Model190AEAT2025DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-//			Model190AEAT2025DetailPanel.enableOrDisableAdditionalDataPanel2(key, subkey, additionalDataPanel2);
-//			callback.onValueChanged(detail);
-//		});
-//		tab2.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.subkey()));
-//		tab2.getFlexCellFormatter().setRowSpan(0, 2, 4);
-//
-//		tab2.setWidget(0, 3, subkey);
-//		tab2.getFlexCellFormatter().setRowSpan(0, 3, 4);
-
 		tab2.setWidget(1, 0, new Label());
 		tab2.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perception()));
 		tab2.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.retention()));
@@ -367,29 +294,6 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 4, entrepreneurship);
-
-//		AonIntegerBox accrualYear = new AonIntegerBox();
-//		accrualYear.setMaxLength(4);
-//		accrualYear.setVisibleLength(4);
-//		accrualYear.setValue(detail.getAccrualYear());
-//		accrualYear.addValueChangeHandler(event -> {
-//			detail.setAccrualYear(accrualYear.getValue());
-//			callback.onValueChanged(detail);
-//		});
-//		tab2.setWidget(1, 3, accrualYear);
-//		
-//		// Ceuta o Melilla
-//		ListBox ceutaMelillaPalma = new ListBox();
-//		ceutaMelillaPalma.setWidth("140px");
-//		ceutaMelillaPalma.addItem("-");
-//		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
-////		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
-//		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
-//		ceutaMelillaPalma.addChangeHandler( event -> {
-//			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
-//			callback.onValueChanged(detail);
-//		});
-//		tab2.setWidget(1, 4, ceutaMelillaPalma);
 
 		tab2.setWidget(3, 0, new Label());
 		tab2.setWidget(3, 1, new Model190SmallerLabel(AON.MSG.inKindPerception()));
@@ -430,7 +334,6 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(4, 4, excesses);
-//		tab2.getFlexCellFormatter().setColSpan(3, 3, 2);
 		
 		// Percepciones derivadas de incapacidad laboral (sólo para clave A y B.01)
 
@@ -455,7 +358,6 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.setWidget(1, 4, new Label());
 
 		tab3.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.money()));
-//		tab3.getCellFormatter().addStyleName(2, 0, AON.CSS.aonTextRight());
 
 		AonDoubleBox perceptionIL = new AonDoubleBox();
 		perceptionIL.setValue(detail.getPerceptionIL());
@@ -474,7 +376,6 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.setWidget(2, 2, retentionIL);
 
 		tab3.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.inKind()));
-//		tab3.getCellFormatter().addStyleName(3, 0, AON.CSS.aonTextRight());
 
 		AonDoubleBox inKindPerceptionIL = new AonDoubleBox();
 		inKindPerceptionIL.setValue(detail.getInKindPerceptionIL());
@@ -503,6 +404,8 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		Model190AEAT2025DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
 		ilPanel.add(tab3);
 		panel.add(ilPanel);
+		
+		// Retenciones e ingresos a cuenta ingresados en el Estado, en las Diputaciones Forales del País Vasco y en la Comunidad Foral de Navarra (sólo en percepciones de la clave E)
 
 		FlexTable tab31 = new FlexTable();
 		tab31.getColumnFormatter().setWidth(0, WIDTH_200PX);
@@ -574,6 +477,8 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		Model190AEAT2025DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
 		administrationPanel.add(tab31);
 		panel.add(administrationPanel);
+		
+		// Datos adicionales
 
 		FlexTable tab4 = new FlexTable();
 		tab4.getColumnFormatter().setWidth(0, "110px");
@@ -816,8 +721,8 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab6.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.remainder()));
 		tab6.getCellFormatter().setStyleName(1, 3, AON.CSS.aonTextRight());
 		AonIntegerBox otherDescendent = new AonIntegerBox();
-		otherDescendent.setMaxLength(1);
-		otherDescendent.setVisibleLength(1);
+		otherDescendent.setMaxLength(2);
+		otherDescendent.setVisibleLength(2);
 		otherDescendent.setValue(detail.getOtherDescendent());
 		otherDescendent.addValueChangeHandler(event -> {
 			detail.setOtherDescendent(AonNumberUtils.toByte(otherDescendent.getValue()));
@@ -826,8 +731,8 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab6.setWidget(1, 4, otherDescendent);
 
 		AonIntegerBox otherDescendentRatio = new AonIntegerBox();
-		otherDescendentRatio.setMaxLength(1);
-		otherDescendentRatio.setVisibleLength(1);
+		otherDescendentRatio.setMaxLength(2);
+		otherDescendentRatio.setVisibleLength(2);
 		otherDescendentRatio.setValue(detail.getOtherDescendentRatio());
 		otherDescendentRatio.addValueChangeHandler(event -> {
 			detail.setOtherDescendentRatio(AonNumberUtils.toByte(otherDescendentRatio.getValue()));
