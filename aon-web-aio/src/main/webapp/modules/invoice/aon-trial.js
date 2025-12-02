@@ -1,4 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
+import { AonIcon } from "../../components/aon-icon.js";
 import { EVENT, TAG } from "../../environments/environments.js";
 import { getTrailData } from "../../services/invoiceService.js";
 
@@ -182,16 +183,18 @@ export class AonTrial extends AonElement {
        	GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
     });
 
-    let bookingButton = this.createElement(TAG.I);
-    bookingButton.classList.add("material-icons");
+    // let bookingButton = this.createElement(TAG.I);
+    let bookingButton = new AonIcon();
+    // bookingButton.classList.add("material-icons");
     bookingButton.style.fontSize = "2.7rem";
-    bookingButton.innerHTML = "contract_edit";
+    bookingButton.style.width = "100%";
+    bookingButton.icon = "contract_edit";
     bookingDiv.appendChild(bookingButton);
 
     let bookingTextDiv = this.createElement(TAG.DIV);
     bookingTextDiv.classList.add("aonInvoiceHomeRejectedName");
     bookingTextDiv.style.color = "white";
-    bookingTextDiv.innerHTML = "Ampliar Contratación";
+    bookingTextDiv.innerHTML = "Ampliar Plan";
 
     bookingDiv.appendChild(bookingTextDiv);
 
