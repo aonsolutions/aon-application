@@ -1,7 +1,8 @@
+import { AonBasicTable } from "../../../components/aon-basic-table";
 import { AonDialog } from "../../../components/aon-dialog";
 import { AonElement } from "../../../components/AonElement";
-import { createInput } from "../../../components/CreateComponent";
-import { CONSTANT, TAG, MATERIAL_ICONS, EVENT } from "../../../environments/environments";
+import { createInput, createQuantity } from "../../../components/CreateComponent";
+import { CONSTANT, TAG, MATERIAL_ICONS, EVENT, MSG } from "../../../environments/environments";
 import { getPackage } from "../../../services/productService";
 import { saveInventoryDetails } from "../../../services/warehouseService";
 
@@ -56,7 +57,6 @@ export class AonMobileInventory extends AonElement {
  addInventoryDetail() {
     let scanner = this.getElement(this.SCANNER);
     let sscc = scanner.getValue();
-    alert('Añadir detalle de inventario con SSCC: ' + sscc);
     let data = {sscc, full:true};
     getPackage(data).then(itemPackage => {
         if(itemPackage.delivery) {
@@ -64,24 +64,24 @@ export class AonMobileInventory extends AonElement {
         } else {
             let data = {
                 inventory: this.inventory.id,
-                itemPackage: itemPackage.id,
+                itemPackage,
                 details: []
             }
-            if(this.inventory.details.filter(f => f.item == itemPackage.id).length > 0) {
+            if(this.inventory.details.filter(f => f.item.id == itemPackage.id).length > 0) {
                 this.showMessageError("El envase ya está incluido en el inventario.");
             } else {
                 itemPackage.itemComposition.forEach(element => {
-
-                    this.inventory.details.filter(f => f.item == element.composition.id).forEach(d => {
+                    this.inventory.details.filter(f => f.item.id == element.composition.id).forEach(d => {
                         let detail = {
                             detail: d.id,
                             itemPackage: itemPackage.id,
-                            item: element.composition.id,
+                            item: element.composition,
                             quantity: element.quantity
                         };
                         data.details.push(detail);
                     });
                 });
+
                 if(data.details.length == 0) {
                     this.showMessageError("El envase no contiene ningún artículo incluido en el inventario.");
                 } else this.buildInventoryDialog(data);
@@ -94,21 +94,13 @@ export class AonMobileInventory extends AonElement {
 
  buildInventoryDialog(data) {
     let div = this.createDiv();
-    data.details.forEach(detail => {
-        let detailDiv = this.createDiv();
-        detailDiv.style.borderBottom = '1px solid #ccc';
-        detailDiv.style.padding = '10px 0';
 
-        let itemSpan = this.createSpan();
-        itemSpan.innerHTML = `Item: ${detail.item}`;
-        detailDiv.appendChild(itemSpan);
-        
-        let quantitySpan = this.createSpan();
-        quantitySpan.innerHTML = `Cantidad: ${detail.quantity}`;
-        detailDiv.appendChild(quantitySpan);
+    let table = new AonBasicTable();
+    table.id = this.id + 'DialogTable';
+    div.appendChild(table);
+    this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
+    
 
-        div.appendChild(detailDiv);
-    });
   
     let d = this.getDialog();
     d.clear();
@@ -121,14 +113,46 @@ export class AonMobileInventory extends AonElement {
         this.resetScanner();
         // AÑADIR DETALLES AL INVENTARIO
     });
+    
+    data.details.forEach(detail => {
+        table.addRow();
+
+        let itemSpan = this.createSpan();
+        itemSpan.innerHTML = `${detail.item.name} #${detail.item.serialNumber}`;
+        table.addCell(itemSpan);
+        
+        let qId = this.id + 'Quantity' + detail.item.id;
+        let quantityBox = createQuantity(qId, MSG.QUANTITY);
+        quantityBox.addEventListener(EVENT.CHANGE, () => {
+            if(quantityBox.getQuantity() <= 0) {
+                this.showMessageError("La cantidad debe ser mayor que cero.");
+                quantityBox.setQuantity(detail.quantity);
+            } else {
+                quantityBox.setQuantityFormat(quantityBox.value);
+                detail.quantity = quantityBox.getQuantity();
+            }
+        });
+        table.addCell(quantityBox);
+        quantityBox.setTags(detail.item);
+        quantityBox.setQuantity(detail.quantity);
+    });
+
     d.open();
  }
 
  saveInventoryDetails(data) {    
-    saveInventoryDetails(data).then(() => {
+    let object = {
+        inventory: data.inventory,
+        itemPackage: data.itemPackage.id,
+        details: data.details.map(detail => {
+            detail.item = detail.item.id;
+            return detail;
+        })
+    };
+    saveInventoryDetails(object).then(() => {
         this.showMessage("Detalles de inventario actualizados.");
         
-        if(this.inventory.details.filter(f => f.item == data.itemPackage).length == 0) {
+        if(this.inventory.details.filter(f => f.item.id == data.itemPackage).length == 0) {
             this.inventory.details.push({
                 actualQuantity:1,
                 realQuantity:1,
@@ -183,22 +207,24 @@ resetScanner() {
         parent.appendChild(div);
     }
 
+     
+    let table = new AonBasicTable();
+    table.id = this.DETAIL_TABLE;
+    div.appendChild(table);
+    this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
+
     this.inventory.details.forEach(detail => {
-        let detailDiv = this.createDiv();
-        detailDiv.style.borderBottom = '1px solid #ccc';
-        detailDiv.style.padding = '10px 0';
-
-        let itemSpan = this.createSpan();
-        itemSpan.innerHTML = `Item: ${detail.item}`;
-        detailDiv.appendChild(itemSpan);
+        table.addRow();
         
-        let quantitySpan = this.createSpan();
-        quantitySpan.innerHTML = `Cantidad: ${detail.realQuantity}`;
-        detailDiv.appendChild(quantitySpan);
+        let itemSpan = this.createSpan();
+        itemSpan.innerHTML = `${detail.item.name} #${detail.item.serialNumber}`;
+        table.addCell(itemSpan);
 
-        div.appendChild(detailDiv);
+        let quantitySpan = this.createSpan();
+        quantitySpan.innerHTML = `${detail.realQuantity}`;
+        table.addCell(quantitySpan);
     }); 
- }
+}
 
  setInventory(inventory) {
       this.inventory = inventory;

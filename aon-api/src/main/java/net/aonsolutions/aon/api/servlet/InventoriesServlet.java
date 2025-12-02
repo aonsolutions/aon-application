@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryStatus;
@@ -138,31 +138,38 @@ public class InventoriesServlet extends AonApiHttpServlet {
 	public static JSONObject saveInventoryDetail(AonApiData api) {
 		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
 		Integer inventoryId = vars.getInt(IJsonNames.ID);
-		
 		Integer itemPackage = JsonUtils.getInteger(api.getData(), IJsonNames.ITEM_PACKAGE);
+	
+		// TODO Pasarlo al DAO.
+		Item pack = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(itemPackage), new Options().setFull(true));
 		InventoryDetail packageInventoryDetail = new InventoryDetail()
 				.setInventory(new Inventory().setId(inventoryId))
 				.setDomain(api.getDomain().getId())
 				.setCost(0.0)
 				.setActualQuantity(1.0)
 				.setRealQuantity(1.0)
-				.setItem(new OldItem().setId(itemPackage));
-
+				.setItem(new Item().setId(itemPackage));
 		AON.saveInventoryDetail(api.getOccam(), packageInventoryDetail);
+		
 		JSONArray details = JsonUtils.getJSONArray(api.getData(), IJsonNames.DETAILS);
 		for(Integer i = 0; i < details.length(); i++) {
 			JSONObject detail = details.getJSONObject(i);
 			Integer id = JsonUtils.getInteger(detail, IJsonNames.DETAIL);
-			Integer item = JsonUtils.getInteger(detail, IJsonNames.ITEM);
+			Integer itemId = JsonUtils.getInteger(detail, IJsonNames.ITEM);
+			// Integer itemPackageId = JsonUtils.getInteger(detail, IJsonNames.ITEM_PACKAGE);
 			double quantity = JsonUtils.getdouble(detail, IJsonNames.QUANTITY);
 			
 			InventoryDetail itemInventoryDetail = AON.getInventoryDetail(api.getOccam(), api.getDomain().getId(), id);
 			itemInventoryDetail.setRealQuantity(itemInventoryDetail.getRealQuantity() + quantity);
 			
 			AON.saveInventoryDetail(api.getOccam(), itemInventoryDetail);
+			pack.getItemComposition().stream().filter(it -> it.getComposition().getId().equals(itemId)).forEach(c -> {
+				if(c.getQuantity() != quantity) {
+					c.setQuantity(quantity);
+					AON.saveItemComposition(api.getDomain(), api.getUser().getLogin(), c);
+				}
+			});
 		}
-
 		return new JSONObject();
 	}
-
 }

@@ -17,7 +17,6 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
-import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
@@ -102,8 +101,6 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
-import com.esferalia.aon.occam.api.model.warehouse.Inventory;
-import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -684,75 +681,6 @@ public class FillerDAO {
 							.setDescription(null == getValue(r, AGREEMENT_LEVEL.DESCRIPTION) ? null : getValue(r, AGREEMENT_LEVEL.DESCRIPTION))
 					);
 		}
-	}
-	
-	public static class InventoryDetailFiller extends Filler implements Function<Record, InventoryDetail> {
-		
-		@Override
-		public InventoryDetail apply(Record r) {
-			return new InventoryDetail()
-					.setId(getValue(r, INVENTORY_DETAIL.ID))
-					.setInventory(new Inventory().setId(getValue(r, INVENTORY_DETAIL.INVENTORY)).setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN)))
-					.setCost(getValue(r, INVENTORY_DETAIL.COST))
-					.setActualQuantity(getValue(r, INVENTORY_DETAIL.ACTUAL_QUANTITY))
-					.setCreationDate(getValue(r, INVENTORY_DETAIL.CREATION_DATE))
-					.setCreationUser(getValue(r, INVENTORY_DETAIL.CREATION_USER))
-					.setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN))
-					.setItem(
-						new OldItem().setId(getValue(r, ITEM.ID))
-							.setBarcode(getValue(r, ITEM.BARCODE))
-							.setCreationDate(getValue(r, ITEM.CREATION_DATE))
-							.setCreationUser(getValue(r, ITEM.CREATION_USER))
-							.setDescription(getValue(r, ITEM.DESCRIPTION))
-							.setDetail(getValue(r, ITEM.DETAIL))
-							.setDetail2(getValue(r, ITEM.DETAIL2))
-							.setDetail3(getValue(r, ITEM.DETAIL3))
-							.setDomain(getValue(r, ITEM.DOMAIN))
-							.setExpensesFixed(getValue(r, ITEM.EXPENSES_FIXED))
-							.setExpensesPercent(getValue(r, ITEM.EXPENSES_PERCENT))
-							.setInternet(getValue(r, ITEM.INTERNET) == 1)
-							.setModificationDate(getValue(r, ITEM.MODIFICATION_DATE))
-							.setModificationUser(getValue(r, ITEM.MODIFICATION_USER))
-							.setPackMeasurement(getValue(r, ITEM.PACK_MEASUREMENT))
-							.setPackUnits(getValue(r, ITEM.PACK_UNITS).doubleValue())
-							.setPrice(getValue(r, ITEM.PRICE))
-							.setProduct( 
-									new OldProduct().setId(getValue(r, PRODUCT.ID))
-									.setName(getValue(r, PRODUCT.NAME))
-									.setDomain(getValue(r, PRODUCT.DOMAIN))
-									.setCode(getValue(r, PRODUCT.CODE))
-									.setComposition(getValue(r, PRODUCT.COMPOSITION) == 1)
-									.setComposition(getValue(r, PRODUCT.COMPOSITION))
-									.setCompositionPrice(getValue(r, PRODUCT.COMPOSITION_PRICE) == 1)
-									.setCompositionPrice(getValue(r, PRODUCT.COMPOSITION_PRICE))
-									.setInventoriable(getValue(r, PRODUCT.INVENTORIABLE) == 1)
-									.setInventoriable(getValue(r, PRODUCT.INVENTORIABLE) )
-									.setKind(getValue(r, PRODUCT.KIND) )
-									.setLotable(getValue(r, PRODUCT.LOTABLE)  == 1)
-									.setLotable(getValue(r, PRODUCT.LOTABLE) )
-									.setManufactured(getValue(r, PRODUCT.MANUFACTURED) )
-									.setPackaged(getValue(r, PRODUCT.PACKAGED)  == 1)
-									.setPurchaseAccount(getValue(r, PRODUCT.PURCHASE_ACCOUNT) )
-									.setRetention(getValue(r, PRODUCT.RETENTION) )
-									.setSalesAccount(getValue(r, PRODUCT.SALES_ACCOUNT) )
-									.setSerializable(getValue(r, PRODUCT.SERIALIZABLE) == 1)
-									.setSerializable(getValue(r, PRODUCT.SERIALIZABLE))
-									.setStatus(getValue(r, PRODUCT.STATUS))
-									.setType(getValue(r, PRODUCT.TYPE))
-									.setVat(getValue(r, PRODUCT.VAT))
-							)
-							.setProductId(getValue(r, ITEM.PRODUCT))
-							.setProfitPercent(getValue(r, ITEM.PROFIT_PERCENT))
-							.setPurchasePrice(getValue(r, ITEM.PURCHASE_PRICE))
-							.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
-							.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
-							.setStatus(getValue(r, ITEM.STATUS))
-					)
-					.setModificationDate(getValue(r, INVENTORY_DETAIL.MODIFICATION_DATE))
-					.setModificationUser(getValue(r, INVENTORY_DETAIL.MODIFICATION_USER))
-					.setRealQuantity(getValue(r, INVENTORY_DETAIL.REAL_QUANTITY));
-		}
-
 	}
 
 	// ---------- COMMISSION

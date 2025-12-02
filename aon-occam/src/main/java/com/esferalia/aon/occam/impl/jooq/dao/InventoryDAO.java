@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.Tables.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -22,8 +22,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InventoryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InventoryPropertiesDAO;
 
@@ -67,21 +69,16 @@ public class InventoryDAO {
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.where(INVENTORY_DETAIL_PROPERTIES.getConditions(filter))
 			.fetch()
-			.stream().map(new com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.InventoryDetailFiller());
+			.stream().map(new InventoryDetailFiller());
 	}
 
-	public static InventoryDetail getInventoryDetail(AONContext ctx, Integer domain, Integer id){
+	public static InventoryDetail getInventoryDetail(AONContext ctx, Integer domain, Integer id) {
 		return getInventoryDetailStream(ctx, f -> f.getDomainProperty().eq(domain).and(f.getIdProperty().eq(id)))
 				.findFirst().orElse(null);	
 	}
 	
 	public static LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId){		
-		return ctx.getDslContext()
-				.select()
-				.from(INVENTORY_DETAIL)
-				.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId))
-				.fetchInto(INVENTORY_DETAIL)
-				.stream().map(new InventoryDetailFiller(ctx))
+		return getInventoryDetailStream(ctx, f -> f.getInventoryProperty().eq(inventoryId))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -170,25 +167,30 @@ public class InventoryDAO {
 		ctx.getDslContext().delete(INVENTORY_DETAIL).where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).execute();
 	}
 	
-	private static class InventoryDetailFiller implements Function<InventoryDetailRecord, InventoryDetail> {
-		AONContext ctx;
-		public InventoryDetailFiller(AONContext ctx) {
-			this.ctx = ctx;
-		}
+	private static class InventoryDetailFiller extends Filler implements Function<Record, InventoryDetail> {
 		
 		@Override
-		public InventoryDetail apply(InventoryDetailRecord r) {
-			return new InventoryDetail().setId(r.getId())
-					.setInventory(new Inventory().setId(r.getInventory()).setDomain(r.getDomain()))
-					.setCost(r.getCost())
-					.setActualQuantity(r.getActualQuantity())
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setDomain(r.getDomain())
-					.setItem(AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getItem()))
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser())
-					.setRealQuantity(r.getRealQuantity());
+		public InventoryDetail apply(Record r) {
+			return build(r);
+		}
+		
+		public static InventoryDetail build(Record r) {
+			return new InventoryDetail()
+				.setId(getValue(r, INVENTORY_DETAIL.ID))
+				.setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN))
+				.setInventory(checkField(r, INVENTORY.ID) 
+					? InventoryFiller.build(r) 
+					: new Inventory()
+						.setId(getValue(r, INVENTORY_DETAIL.INVENTORY))
+						.setDomain(getValue(r, INVENTORY_DETAIL.DOMAIN)))
+				.setItem(checkField(r, ITEM.ID) ? ItemFiller.build(r) : new Item().setId(getValue(r, INVENTORY_DETAIL.ITEM)))
+				.setCost(getValue(r, INVENTORY_DETAIL.COST))
+				.setActualQuantity(getValue(r, INVENTORY_DETAIL.ACTUAL_QUANTITY))
+				.setRealQuantity(getValue(r, INVENTORY_DETAIL.REAL_QUANTITY))	
+				.setCreationDate(getValue(r, INVENTORY_DETAIL.CREATION_DATE))
+				.setCreationUser(getValue(r, INVENTORY_DETAIL.CREATION_USER))
+				.setModificationDate(getValue(r, INVENTORY_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, INVENTORY_DETAIL.MODIFICATION_USER));
 		}
 
 	}
@@ -197,6 +199,10 @@ public class InventoryDAO {
 		
 		@Override
 		public Inventory apply(Record r) {
+			return build(r);
+		}
+		
+		public static Inventory build(Record r) {
 			return new Inventory()
 				.setId(getValue(r, INVENTORY.ID))
 				.setDomain(getValue(r, INVENTORY.DOMAIN))

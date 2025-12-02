@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 
@@ -39,7 +38,7 @@ public class InventoryDetailJSON {
 				.setId(JsonUtils.getInteger( json, IJsonNames.ID ))
 				.setDomain(JsonUtils.getInteger( json, IJsonNames.DOMAIN ))
 				.setInventory(new Inventory().setId(JsonUtils.getInteger(json, IJsonNames.INVENTORY)))
-				.setItem(new OldItem().setId(JsonUtils.getInteger(json, IJsonNames.ITEM)))
+				.setItem(ItemJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ITEM)))
 				.setRealQuantity(JsonUtils.getdouble(json, IJsonNames.REAL_QUANTITY))
 				.setActualQuantity(JsonUtils.getdouble(json, IJsonNames.ACTUAL_QUANTITY))
 				.setCost(JsonUtils.getdouble(json, IJsonNames.COST))
@@ -72,7 +71,7 @@ public class InventoryDetailJSON {
 				.put(IJsonNames.ID, detail.getId())
 				.put(IJsonNames.DOMAIN, detail.getDomain())
 				.put(IJsonNames.INVENTORY, detail.getInventory().getId())
-				.put(IJsonNames.ITEM, detail.getItem().getId())
+				.put(IJsonNames.ITEM, ItemJSON.toJSON(detail.getItem()))
 				.put(IJsonNames.REAL_QUANTITY, detail.getRealQuantity())
 				.put(IJsonNames.ACTUAL_QUANTITY, detail.getActualQuantity())
 				.put(IJsonNames.COST, detail.getCost())
