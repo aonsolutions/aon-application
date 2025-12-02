@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
-import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -113,7 +112,7 @@ public class TariffCatalogueList extends HTMLPanel {
 	
 	private void paintHeader() {
 		initializeTariffCatalogueColumns.clear();
-		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "15rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
+		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "10rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.description(), "-moz-available" , "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Tipo" , "5rem" , ""));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Serv. Aon" , "7rem" , ""));
