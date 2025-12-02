@@ -3881,6 +3881,18 @@ public class AON {
 		}
 	}
 	
+	public static InventoryDetail getInventoryDetail(Occam occam, Integer domain, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().getInventoryDetail(ctx, domain, id);
+		}
+	}
+	
+	public static InventoryDetail saveInventoryDetail(Occam occam, InventoryDetail inventoryDetail) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveInventoryDetail(ctx, inventoryDetail);
+		}
+	}
+	
 	public static Stream<InventoryDetail> getInventoryDetailStream(String domainName, Integer domainId, String login, InventoryDetailFilter filter){
 		CloseableAONContext ctx = null;
 		try {
@@ -3905,16 +3917,16 @@ public class AON {
 		}
 	}
 
-	public static LinkedList<Inventory> getInventoryList(String domainName,
-			Integer domainId, String login, Date startDate, Date endDate) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getInventoryList(ctx, startDate, endDate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static Inventory getInventory(Occam occam, Integer domain, Integer id, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().getInventory(ctx, domain, id, options);
+		}	
+	}
+	
+	public static List<Inventory> getInventoryList(Occam occam, InventoryFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getWarehouse().getInventoryList(ctx, filter, options);
+		}	
 	}
 
 	public static void updateInventoryDetail(String domainName,
@@ -4077,7 +4089,8 @@ public class AON {
 	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter, Integer page, Integer perPage){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getProject().getProjectStream(ctx, filter, page, perPage);
-		}	}
+		}	
+	}
 	
 	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
 		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);

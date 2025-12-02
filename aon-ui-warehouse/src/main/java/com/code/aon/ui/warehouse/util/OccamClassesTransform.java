@@ -6,10 +6,70 @@ import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 
 public class OccamClassesTransform {
-
+	
+	public static Item getItemNew(com.code.aon.product.Item item){
+		Item i = new Item();
+		i.setId(item.getId());
+		i.setDomain(new Domain().setId(item.getDomain()));
+		if(item.getProduct() != null)
+			i.setProduct(new com.esferalia.aon.occam.api.model.product.Product()
+				.setId(item.getProduct().getId()));
+		i.setDetail(item.getDetail());
+		i.setDetail2(item.getDetail2());
+		i.setDetail3(item.getDetail3());
+		i.setDescription(item.getDescription());
+		i.setSerialNumber(item.getSerialNumber());
+		i.setPrice(item.getPrice());
+		if(item.getStatus() != null) 
+			i.setStatus(com.esferalia.aon.occam.api.model.product.ProductStatus.safeValueOf(item.getStatus().ordinal()));
+		i.setExpensesFixed(item.getExpensesFixed());
+		i.setProfitPercent(item.getProfitPercent());
+		i.setPurchasePrice(item.getPurchasePrice());
+		i.setInternet(item.isInternet());
+		i.setBarcode(item.getBarcode());
+		if(item.getCreationDate() != null) 
+			i.setCreationDate(new Timestamp(item.getCreationDate().getTime()));
+		i.setCreationUser(item.getCreationUser());
+		if(item.getModificationDate() != null)
+			i.setModificationDate(new Timestamp(item.getModificationDate().getTime()));
+		i.setModificationUser(item.getModificationUser());
+		
+		return i;
+	}
+	
+	public static com.code.aon.product.Item getItemNew(Item item){
+		com.code.aon.product.Item i = new com.code.aon.product.Item();
+		i.setId(item.getId());
+		i.setDomain(item.getDomain().getId());
+		Product product = new Product();
+		product.setId(item.getProduct().getId());
+		i.setProduct(product);
+		i.setDetail(item.getDetail());
+		i.setDetail2(item.getDetail2());
+		i.setDetail3(item.getDetail3());
+		i.setDescription(item.getDescription());
+		i.setSerialNumber(item.getSerialNumber());
+		i.setPrice(item.getPrice());
+		if(item.getStatus() != null) i.setStatus(ProductStatus.values()[item.getStatus().value()]);
+		i.setExpensesFixed(item.getExpensesFixed());
+		i.setProfitPercent(item.getProfitPercent());
+		i.setPurchasePrice(item.getPurchasePrice());
+		i.setInternet(item.isInternet());
+		i.setBarcode(item.getBarcode());
+		if(item.getCreationDate() != null) i.setCreationDate(new Timestamp(item.getCreationDate().getTime()));
+		i.setCreationUser(item.getCreationUser());
+		if(item.getModificationDate() != null) i.setModificationDate(new Timestamp(item.getModificationDate().getTime()));
+		i.setModificationUser(item.getModificationUser());
+		
+		return i;
+	}
+	
+	@Deprecated
 	public static OldItem getItem(com.code.aon.product.Item item){
 		OldItem i = new OldItem();
 		i.setId(item.getId());
@@ -35,6 +95,7 @@ public class OccamClassesTransform {
 		return i;
 	}
 	
+	@Deprecated
 	public static com.code.aon.product.Item getItem(OldItem item){
 		com.code.aon.product.Item i = new com.code.aon.product.Item();
 		i.setId(item.getId());
@@ -74,7 +135,7 @@ public class OccamClassesTransform {
 		Inventory inventory = new Inventory();
 		inventory.setId(id.getInventory().getId());
 		inventoryDetail.setInventory(inventory);
-		inventoryDetail.setItem(getItem(id.getItem()));
+		inventoryDetail.setItem(getItemNew(id.getItem()));
 		inventoryDetail.setModificationDate(id.getModificationDate());
 		inventoryDetail.setModificationUser(id.getModificationUser());
 		inventoryDetail.setRealQuantity(id.getRealQuantity());

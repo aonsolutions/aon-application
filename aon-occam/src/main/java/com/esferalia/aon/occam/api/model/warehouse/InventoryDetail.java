@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 
 public class InventoryDetail implements Serializable {
 
@@ -15,7 +15,7 @@ public class InventoryDetail implements Serializable {
 	
 	private Double actualQuantity;
 	private Double cost;
-	private OldItem item;
+	private Item item;
 	private Double realQuantity;
 	
 	private Date creationDate;
@@ -37,10 +37,10 @@ public class InventoryDetail implements Serializable {
 		this.domain = domain;
 		return this;
 	}
-	public OldItem getItem() {
+	public Item getItem() {
 		return item;
 	}
-	public InventoryDetail setItem(OldItem item) {
+	public InventoryDetail setItem(Item item) {
 		this.item = item;
 		return this;
 	}

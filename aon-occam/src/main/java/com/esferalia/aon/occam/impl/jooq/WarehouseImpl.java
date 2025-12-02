@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
@@ -62,7 +63,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.StockDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.delivery.DeliveryInfoDAO;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class WarehouseImpl implements IWarehouse {
 
@@ -70,13 +70,13 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-				WarehouseDAO.getWarehouseStream(ctx, filter));
+				WarehouseDAO.getStream(ctx, filter));
 	}
 	
 	@Override
 	public Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-				WarehouseDAO.getWarehouse(ctx, filter));
+				WarehouseDAO.get(ctx, filter));
 	}
 
 	@Override
@@ -121,6 +121,16 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
 		return IncomeDAO.getIncomeDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+	}
+	
+	@Override
+	public InventoryDetail getInventoryDetail(AONContext ctx, Integer domain, Integer id) {
+		return InventoryDAO.getInventoryDetail(ctx, domain, id);
+	}
+	
+	@Override
+	public InventoryDetail saveInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail) {
+		return InventoryDAO.saveInventoryDetail(ctx, inventoryDetail);
 	}
 	
 	@Override
@@ -186,11 +196,17 @@ public class WarehouseImpl implements IWarehouse {
 		ctx.getDslContext().transaction(configuration -> 
 			WarehouseDAO.deleteWarehouseTransfer(ctx, filter));		
 	}
+
+	@Override
+	public Inventory getInventory(AONContext ctx, Integer domain, Integer id, Options...options){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				InventoryDAO.get(ctx, domain, id, options));
+	}
 	
 	@Override
-	public LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate){
+	public List<Inventory> getInventoryList(AONContext ctx, InventoryFilter filter, Options...options){
 		return ctx.getDslContext().transactionResult(configuration -> 
-				InventoryDAO.getInventoryList(ctx, AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate)));
+				InventoryDAO.getList(ctx, filter, options));
 	}
 
 	@Override

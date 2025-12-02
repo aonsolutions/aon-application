@@ -517,7 +517,7 @@ public class PackagingDAO {
 						.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
 			}
 			if(warehouse == null) {
-				warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
+				warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
 			}
 		
 			// AÑADIR STOCK
@@ -613,7 +613,7 @@ public class PackagingDAO {
 						.and(f.getItemProperty().eq(composition.getCompositionItemId()))).getWarehouse();
 			}
 			if(warehouse == null) {
-				warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
+				warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())).getId();
 			}
 		
 			// AÑADIR STOCK
