@@ -524,7 +524,7 @@ public class ProductBookingDAO {
 
 		Registry registry = RegistryDAO.get(ctx, registryId);
 		
-		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId())));
+		List<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()))).collect(Collectors.toList());
 
 		Project project = ProjectDAO.getFull(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getProjectTypeProperty().eq(product.getProjectType().getId())).and(f.getRegistryProperty().eq(registryId)));
 		Optional<ProjectHolder> projectHolder = project.getProjectHolders().stream().filter(ph -> null == ph.getEndDate()).findFirst();
@@ -534,10 +534,10 @@ public class ProductBookingDAO {
 			
 			if(null != taskHolder && null != taskHolder.getId() && null != taskHolder.getUser() && null != taskHolder.getUser().getId()) {
 				Scope scope = null;
-				if (scopes.count() == 0) {
+				if (scopes.size() == 0) {
 					Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 					scope = SecurityDAO.insertScope(ctx, newScope);
-				} else scope = scopes.findFirst().get();
+				} else scope = scopes.stream().findFirst().get();
 				
 				User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUser().getId()),
 						new Options().setFull(true));
@@ -553,10 +553,10 @@ public class ProductBookingDAO {
 					
 					if(null != taskHolderWG && null != taskHolderWG.getId() && null != taskHolderWG.getUser() && null != taskHolderWG.getUser().getId()) {
 						Scope scope = null;
-						if (scopes.count() == 0) {
+						if (scopes.size() == 0) {
 							Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
 							scope = SecurityDAO.insertScope(ctx, newScope);
-						} else scope = scopes.findFirst().get();
+						} else scope = scopes.stream().findFirst().get();
 						
 						User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolderWG.getUser().getId()),
 								new Options().setFull(true));

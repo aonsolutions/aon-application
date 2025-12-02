@@ -10,7 +10,6 @@ import { getReader } from '../../services/utils.js';
 // import { AonDialog } from '../../components/aon-dialog.js';
 import {closeSession } from  '../../services/service.js';
 
-
 export class AonMobileProfile extends AonElement {
 
     INPUT_FILE;

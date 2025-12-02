@@ -12,12 +12,13 @@ module.exports = {
 //    errorDetails: true
 //  },
   entry: {
-    // app         : './src/main/webapp/index.js',                       // Para usar en el BETA
-    aio         : './src/main/webapp/aio.js',
-    appSass     : './src/main/webapp/index.js',                       // Para usar en el NEW
-    sass        : './src/main/webapp/assets_sass/styles/main.scss',   // Para usar en el NEW
-    sassIframe  : './src/main/webapp/assets_sass/styles/iframe.scss', // Para usar en el NEW - IFRAME
-    paturpat    : './src/main/webapp/paturpat.js'
+    // app           : './src/main/webapp/index.js',                           // Para usar en el BETA
+    aio           : './src/main/webapp/aio.js',
+    appSass       : './src/main/webapp/index.js',                         // Para usar en el NEW
+    sass          : './src/main/webapp/assets_sass/styles/main.scss',     // Para usar en el NEW
+    sassIframe    : './src/main/webapp/assets_sass/styles/iframe.scss',   // Para usar en el NEW - IFRAME
+    sassPaturpat  : './src/main/webapp/assets_sass/styles/paturpat.scss', // Para usar en el NEW - Paturpat
+    paturpat      : './src/main/webapp/paturpat.js'
   },
   output: {
     // Hash solo para appSass.js y sass.css
@@ -88,7 +89,7 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      // new CssMinimizerPlugin(), '...'
+      new CssMinimizerPlugin(), '...'
     ]
   },
   resolve: {

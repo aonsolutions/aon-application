@@ -1,0 +1,18 @@
+// Confi Global
+@use './base-global' as global;
+
+// Importamos layouts
+@use './layouts/globalLayout' as globalLayout;
+@use './layouts/header' as header;
+@use './layouts/rightPanel' as rightPanel;
+@use './layouts/rightPanelConfig' as rightPanelConfig;
+@use './layouts/rightPanelUser' as rightPanelUser;
+@use './layouts/rightPanelHelp' as rightPanelHelp;
+@use './layouts/rightPanelNotif' as rightPanelNotif;
+
+// Importamos vistas
+@use './paturpat/index'   as index;   // login
+@use './paturpat/general' as general; // toda las vistas
+
+// Temas y Resoluciones
+@use './theme-base' as themeBase;

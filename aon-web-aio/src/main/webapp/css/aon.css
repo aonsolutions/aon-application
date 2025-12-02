@@ -355,7 +355,7 @@ color: var(--aonSearchButton);
   text-decoration: none !important;
 }
 
-.aonButton {
+/* .aonButton {
   display: inline-block;
   border: none;
   padding: 1rem 2rem;
@@ -383,7 +383,7 @@ color: var(--aonSearchButton);
 .aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
   background-color: #cccccc !important;
-}
+} */
 
 .aonTimeControlButton {
   padding: .5rem 1rem;
@@ -491,7 +491,7 @@ color: var(--aonSearchButton);
   border-top: 1px solid rgba(0,0,0,0.1);
 }
 
-.rightPanel {
+/* .rightPanel {
     width: 360px;
     background-color: var(--aonRightPanelColor);
     top: 48px;
@@ -503,7 +503,7 @@ color: var(--aonSearchButton);
     border: 1px solid rgba(0,0,0,0.1);
     border-top: 0px;
     overflow-y: auto;
-}
+} */
 
 .toolbarSidenavPanel{
 	display: flex;
@@ -531,7 +531,7 @@ h1 {
 }
 
 .aonIconButton {
-  border-radius: 50%;
+  /* border-radius: 50%;
   font-size: 24px;
   height: 40px;
   margin: 0;
@@ -545,7 +545,7 @@ h1 {
   border: none;
   position: relative;
   display: inline-block;
-  outline: none !important;
+  outline: none !important; */
   cursor: pointer;
 }
 
@@ -846,7 +846,7 @@ color: #5f6368;
   justify-content: flex-end;
 }
 
-.aonSecondaryToolbar {
+/* .aonSecondaryToolbar {
   display: flex;
   height: 40px;
   border-bottom: 1px solid #ddd;
@@ -861,7 +861,7 @@ color: #5f6368;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}
+} */
 
 .aonTable {
   width: 100%;
@@ -1386,7 +1386,7 @@ margin-top: 20px;
   cursor: pointer;
 }
 
-.aonCard {
+/* .aonCard {
   border: 1px solid #ebebeb;
   border-radius: 5px;
   margin: 10px;
@@ -1394,13 +1394,12 @@ margin-top: 20px;
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: var(--aonCardColor);
-}
+} */
 
 .aonAppsDiv .aonCard{
 	border: none;
 	background-color: transparent;
 }
-
 
 .aonCardFlex{
   position: relative;
@@ -1494,7 +1493,7 @@ margin-top: 20px;
   color: var(--aonAccounting);
 }
 
-.aonDialog {
+/* .aonDialog {
   display: none;
   position: fixed;
   z-index: 4;
@@ -1522,10 +1521,10 @@ margin-top: 20px;
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
-  /* box-shadow: 2px 2px 5px 1px #ddd; */
-}
+  //box-shadow: 2px 2px 5px 1px #ddd;
+} */
 
-.aonDialogMenuAppsOption {
+/* .aonDialogMenuAppsOption {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
@@ -1534,7 +1533,7 @@ margin-top: 20px;
 	width: 400px;
 	height: 300px;
 	overflow-y: scroll;  
-}
+} */
 
 
 .aonProgress,
@@ -1588,7 +1587,7 @@ margin-top: 20px;
     margin-right: 0;
   }
 }
-
+/* 
 .aonDatepickerDaysTitle {
   color: lightgray;
 }
@@ -1628,7 +1627,7 @@ margin-top: 20px;
   right:0;
   top  :0;
   bottom:0;
-}
+} */
 
 .aonSeparator {
   height: 20px;
@@ -4214,7 +4213,7 @@ font-size: 11px;
     font-size: 16px;
 font-weight: 600;
 }
-
+/* 
 .aonLoginTitle {
   font-family: var(--aonFontFamily);
   color: var(--gray-90);
@@ -4223,7 +4222,7 @@ font-weight: 600;
   margin-top: 0;
   font-weight: 600;
   letter-spacing: 0.44px;
-}
+} */
 
 .aonSideNavFiscalCircle{
   width: 25px;

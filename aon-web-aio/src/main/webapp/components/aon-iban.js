@@ -9,7 +9,7 @@ export class AonIban extends AonElement {
   IBAN;
   BANK;
   BIC;
-
+  editDisabled;
   bank;
 
 	get id() {
@@ -42,6 +42,14 @@ export class AonIban extends AonElement {
 
   set readonly(readonly) {
     this.setAttribute(CONSTANT.READONLY, readonly);
+  }
+  
+  setEditDisabled(editDisabled) {
+	this.editDisabled = editDisabled;
+  }
+  
+  getEditDisabled() {
+	return this.editDisabled;
   }
 
 	constructor() {
@@ -77,16 +85,17 @@ export class AonIban extends AonElement {
     aonInput.addIconWithRemove(MATERIAL_ICONS.ACCOUNT_BALANCE, undefined, () => this.dispatchEvent(new Event(EVENT.DELETE)));
 
     this.getElement(aonInput.INPUT).style.cursor = 'pointer';
-    aonInput.addEventListener(EVENT.CLICK, () => {
-      if (!this.isReadonly()) {
-        let divEdit = this.getElement(this.EDIT);
-        if (divEdit.style.display === "block") {
-          divEdit.style.display = "none";
-        } else {
-          divEdit.style.display = "block";
-        }
-      }
-    });
+	if(!this.editDisabled ||  (this.editDisabled && !this.editDisabled) )
+	    aonInput.addEventListener(EVENT.CLICK, () => {
+	      if (!this.isReadonly()) {
+	        let divEdit = this.getElement(this.EDIT);
+	        if (divEdit.style.display === "block") {
+	          divEdit.style.display = "none";
+	        } else {
+	          divEdit.style.display = "block";
+	        }
+	      }
+	    });
   }
 
   buildBank() {

@@ -259,21 +259,25 @@ public class RegistryBankDAO {
 		return rbank;
 	}
 	private static RegistryBank update(AONContext ctx, RegistryBank rbank){
-		int count = ctx.getDslContext().update(RBANK)
-				.set(RBANK.DOMAIN,rbank.getDomain())
-				.set(RBANK.REGISTRY,rbank.getRegistry())
-				.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount().getIban())
-				.set(RBANK.BIC, rbank.getBic())
-				.set(RBANK.SUFIX, rbank.getSuffix())
-				.set(RBANK.ALIAS, rbank.getAlias())
-				.set(RBANK.REQUISITION, rbank.getRequisition())
-				.set(RBANK.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
-				.set(RBANK.ACTIVE, rbank.getActive())
-				.set(RBANK.ACCOUNT, rbank.getAccount().getId())
-				.set(RBANK.AGREEMENT, rbank.getAgreement())
-			.where(RBANK.ID.eq(rbank.getId()))
-			.execute();
-		ctx.log().debug("UPDATE REGISTRY BANK ( registry: {0}) id: {1}. ({2} rows)", rbank.getRegistry(), rbank.getId(),count);
+		int count = 0;
+		// No se puede actualizar si ha sido o esta vinculado en Nordigen
+		if(get(ctx, f -> f.getIdProperty().eq(rbank.getId())).getBalanceDate() != null) {
+			count = ctx.getDslContext().update(RBANK)
+					.set(RBANK.DOMAIN,rbank.getDomain())
+					.set(RBANK.REGISTRY,rbank.getRegistry())
+					.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount().getIban())
+					.set(RBANK.BIC, rbank.getBic())
+					.set(RBANK.SUFIX, rbank.getSuffix())
+					.set(RBANK.ALIAS, rbank.getAlias())
+					.set(RBANK.REQUISITION, rbank.getRequisition())
+					.set(RBANK.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
+					.set(RBANK.ACTIVE, rbank.getActive())
+					.set(RBANK.ACCOUNT, rbank.getAccount().getId())
+					.set(RBANK.AGREEMENT, rbank.getAgreement())
+					.where(RBANK.ID.eq(rbank.getId()))
+					.execute();
+			ctx.log().debug("UPDATE REGISTRY BANK ( registry: {0}) id: {1}. ({2} rows)", rbank.getRegistry(), rbank.getId(),count);			
+		}
 		rbank.setDirty(false);
 		return rbank;
 	}
