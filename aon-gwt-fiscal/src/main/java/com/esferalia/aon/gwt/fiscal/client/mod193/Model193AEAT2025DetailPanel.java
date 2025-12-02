@@ -155,7 +155,7 @@ public class Model193AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(1, 5, new Model193SmallerLabel(AON.MSG.issuingCode()));
 		tab2.setWidget(1, 6, new Model193SmallerLabel("C\u00F3digo ISIN"));
 		tab2.setWidget(1, 7, new Model193SmallerLabel(AON.MSG.accrualYear()));
-		tab2.setWidget(1, 8, new Model193SmallerLabel("Ceuta o Melilla"));
+		tab2.setWidget(1, 8, new Model193SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
 		// Clave percepción / Naturaleza
 		final ListBox nature = new ListBox();
@@ -263,12 +263,12 @@ public class Model193AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 7, accrualYear);
 		
-		// Ceuta o Melilla
+		// Ceuta o Melilla / Isla de la Palma
 		ListBox ceutaMelillaPalma = new ListBox();
 		ceutaMelillaPalma.setWidth("140px");
 		ceutaMelillaPalma.addItem("-");
 		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
-//		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma"); // FALTA - VER SI AL FINAL QUITAN O NO ISLA DE LA PALMA
 		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
 		ceutaMelillaPalma.addChangeHandler( event -> {
 			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());

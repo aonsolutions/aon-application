@@ -228,7 +228,8 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.ARABA_RETENTION,
 								FS_MODEL190_DETAIL.BIZKAIA_RETENTION,
 								FS_MODEL190_DETAIL.GIPUZKOA_RETENTION,
-								FS_MODEL190_DETAIL.EXCESSES								
+								FS_MODEL190_DETAIL.EXCESSES	
+								// FALTA - CAMPOS NUEVOS 2025
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -303,6 +304,7 @@ public class Mod190DAO {
 					, detail.getBizkaiaRetention()
 					, detail.getGipuzkoaRetention()
 					, AonEnumUtils.getByte(detail.isExcesses())
+					// FALTA - CAMPOS NUEVOS 2025
 					);
 		}
 		batch.execute();
@@ -393,6 +395,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
+				// FALTA - CAMPOS NUEVOS 2025
 				;
 	}
 
@@ -465,6 +468,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
+				// FALTA - CAMPOS NUEVOS 2025
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -715,6 +719,7 @@ public class Mod190DAO {
 				.setBizkaiaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.BIZKAIA_RETENTION)))
 				.setGipuzkoaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION)))
 				.setExcesses(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.EXCESSES)))
+				// FALTA - CAMPOS NUEVOS 2025
 				;
 		}
 	}

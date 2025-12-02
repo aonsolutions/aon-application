@@ -120,10 +120,12 @@ public class Model190AEAT extends Model190Base {
 			setDetailManager( new Model190AEATDetail2022( getCallback() , getModel(), selectedIndex ));
 		} else if ( getModel().getYear() == 2023) {
 			setDetailManager( new Model190AEATDetail2023( getCallback() , getModel(), selectedIndex ));
-		} else {
+		} else if ( getModel().getYear() == 2024) {
 			setDetailManager( new Model190AEATDetail2024( getCallback() , getModel(), selectedIndex ));
+		} else{
+			setDetailManager( new Model190AEATDetail2025( getCallback() , getModel(), selectedIndex ));
 		}
-		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList() );
+		tabPanel.add( (Widget) getDetailManager(), AON.MSG.receiverList() );
 	}
 	
 }
