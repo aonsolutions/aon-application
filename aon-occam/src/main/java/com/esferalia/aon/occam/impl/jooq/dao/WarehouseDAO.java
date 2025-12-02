@@ -31,7 +31,6 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep8;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -158,19 +157,19 @@ public class WarehouseDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(DEPARTMENT.NAME);}
 	}
 	
-	public static Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter){
-		return ctx.getDslContext().select()
-				.from(WAREHOUSE)
-				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new WarehouseFiller());
-	}
-	
-	public static Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
+	public static Warehouse get(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().select()
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new WarehouseFiller())
 				.findFirst().orElse(new Warehouse());
+	}
+	
+	public static Stream<Warehouse> getStream(AONContext ctx, WarehouseFilter filter){
+		return ctx.getDslContext().select()
+				.from(WAREHOUSE)
+				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new WarehouseFiller());
 	}
 	
 	public static Warehouse save(AONContext ctx, Warehouse warehouse) {
@@ -182,7 +181,7 @@ public class WarehouseDAO {
 			: insert(ctx, warehouse);
 	}
 	
-	public static Warehouse update(AONContext ctx, Warehouse warehouse) {
+	private static Warehouse update(AONContext ctx, Warehouse warehouse) {
 		ctx.getDslContext().update(WAREHOUSE)
 		.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
 		.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
@@ -194,7 +193,7 @@ public class WarehouseDAO {
 		return warehouse;
 	}
 	
-	public static Warehouse insert(AONContext ctx, Warehouse warehouse) {
+	private static Warehouse insert(AONContext ctx, Warehouse warehouse) {
 		Integer id = ctx.getDslContext().insertInto(WAREHOUSE)
 				.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
 				.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
