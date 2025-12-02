@@ -588,6 +588,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("con estado")
 	String withStatus();
 	
+	@DefaultMessage("Comunicaci\u00F3n")
+	String communication();
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
@@ -4379,6 +4381,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Origen")
 	String source();
+
+	@DefaultMessage("Mostrar petici\u00F3n")
+	String  viewRequest();
+	
+	@DefaultMessage("Mostrar respuesta")
+	String  viewResponse();
 
 }
 

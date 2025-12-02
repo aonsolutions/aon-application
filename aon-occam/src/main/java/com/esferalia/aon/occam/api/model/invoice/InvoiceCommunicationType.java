@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -22,6 +25,12 @@ public enum InvoiceCommunicationType implements Serializable{
 	
 	public Byte value(){
 		return (byte) ordinal();
+	}
+	
+	public Optional<Administration> defaultAdministration() {
+		if ( this == VERIFACTU || this == SII) return Optional.of( Administration.COMMON_TERRITORY );
+		if ( this == LROE ) return Optional.of( Administration.BIZKAIA );
+		return Optional.empty();
 	}
 	
 	public static String name( InvoiceCommunicationType i ) {
@@ -68,6 +77,42 @@ public enum InvoiceCommunicationType implements Serializable{
 		return VERIFACTU.equals(this);
 	}
 	
+	public boolean mustApplyToInputInvoices() {
+		MutableBoolean ret = new MutableBoolean(false);
+		try {
+			visit(new InvoiceCommunicationTypeVisitor() {
+				@Override public void visitSII() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitTBAI() throws InvoiceCommunicationException {ret.setValue(false);}
+				@Override public void visitLROE() throws InvoiceCommunicationException {ret.setValue(false);}
+				@Override public void visitSERES() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitEMAIL() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitCLOSING() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitVERIFACTU() throws InvoiceCommunicationException {ret.setValue(false);}
+			});
+		} catch (Exception e) {
+			ret.setValue(false);
+		}
+		return ret.getValue();
+	}
+	
+	public boolean mustApplyToOutputInvoices() {
+		MutableBoolean ret = new MutableBoolean(false);
+		try {
+			visit(new InvoiceCommunicationTypeVisitor() {
+				@Override public void visitSII() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitTBAI() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitLROE() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitSERES() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitEMAIL() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitCLOSING() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitVERIFACTU() throws InvoiceCommunicationException {ret.setValue(true);}
+			});
+		} catch (Exception e) {
+			ret.setValue(false);
+		}
+		return ret.getValue();
+	}
+
 	public abstract void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception;
 	
 	public static interface InvoiceCommunicationTypeVisitor {

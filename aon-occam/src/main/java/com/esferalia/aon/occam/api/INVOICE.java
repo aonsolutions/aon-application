@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.InvoiceImpl;
 
@@ -51,4 +54,5 @@ public class INVOICE {
 			return getInvoice().delete(ctx, invoiceId);
 		}
 	}
+	
 }

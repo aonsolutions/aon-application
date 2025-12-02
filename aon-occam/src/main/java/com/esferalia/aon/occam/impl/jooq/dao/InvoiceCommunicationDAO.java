@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -412,7 +411,7 @@ public class InvoiceCommunicationDAO {
 	// ************************** [HISTORY] ************************
 	// *************************************************************
 	
-	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor) {
+	public static LinkedList<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, LinkedList<String>> messagesExtractor) {
 		return ctx.getDslContext().select(
 				INVOICE_BATCH.DATE,
 				INVOICE_BATCH.TYPE,

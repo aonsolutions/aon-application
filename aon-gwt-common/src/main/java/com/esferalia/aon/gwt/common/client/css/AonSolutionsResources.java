@@ -756,6 +756,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatBw();
 
+	@Source("icons/aon-icon-aeat-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatGreen();
+
+	@Source("icons/aon-icon-aeat-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatOrange();
+
+	@Source("icons/aon-icon-aeat-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatRed();
+
 	@Source("icons/aon-icon-canarias.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconCanarias();
@@ -771,7 +783,19 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-araba-bw.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconArabaBw();
-
+	
+	@Source("icons/aon-icon-araba-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconArabaGreen();
+	
+	@Source("icons/aon-icon-araba-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconArabaOrange();
+	
+	@Source("icons/aon-icon-araba-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconArabaRed();
+	
 	@Source("icons/aon-icon-bizkaia.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaia();
@@ -780,6 +804,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaiaBw();
 
+	@Source("icons/aon-icon-bizkaia-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBizkaiaGreen();
+	
+	@Source("icons/aon-icon-bizkaia-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBizkaiaOrange();
+	
+	@Source("icons/aon-icon-bizkaia-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBizkaiaRed();
+	
 	@Source("icons/aon-icon-gipuzkoa.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGipuzkoa();
@@ -787,6 +823,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-gipuzkoa-bw.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGipuzkoaBw();
+
+	@Source("icons/aon-icon-gipuzkoa-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoaGreen();
+	
+	@Source("icons/aon-icon-gipuzkoa-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoaOrange();
+	
+	@Source("icons/aon-icon-gipuzkoa-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoaRed();
 
 	@Source("icons/aon-icon-navarra.svg")
 	@MimeType("image/svg+xml")

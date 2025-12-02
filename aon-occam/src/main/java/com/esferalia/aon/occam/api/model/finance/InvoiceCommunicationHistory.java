@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -21,7 +21,7 @@ public class InvoiceCommunicationHistory implements Serializable {
 	private String requestUrl;
 	private String responseUrl;
 	private byte[] responseData;
-	private List<String> responseMessages;
+	private LinkedList<String> responseMessages;
 	
 	public Integer getInvoiceId() {
 		return invoiceId;
@@ -108,10 +108,10 @@ public class InvoiceCommunicationHistory implements Serializable {
 		return this;
 	}
 	
-	public List<String> getResponseMessages() {
+	public LinkedList<String> getResponseMessages() {
 		return responseMessages;
 	}
-	public InvoiceCommunicationHistory setResponseMessages(List<String> messages) {
+	public InvoiceCommunicationHistory setResponseMessages(LinkedList<String> messages) {
 		this.responseMessages = messages;
 		return this;
 	}

@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
@@ -207,7 +208,7 @@ public class InvoiceConsoleTable extends ScrollPanel{
 					.addCell(creationDateLabel)
 					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() )
 					.addCellIfElse(inv.isRecorded(), showEntry, recordInvoice)
-					.addCell(new InvoiceCommunicationWidget( inv ), AON.CSS.aonTextRight() )
+					.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() )
 				;
 			}
 

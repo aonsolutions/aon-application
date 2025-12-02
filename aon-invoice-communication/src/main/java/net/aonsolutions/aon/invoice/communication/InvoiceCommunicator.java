@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,13 +106,13 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [HISTORY] *******
 	// *************************************************************
-	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) {
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return history(ctx, occam.getDomain(), invoiceId);
 		}
 	}
 	
-	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
 		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(ctx, invoiceId, t -> {
 			try {
 				t.getType().visit( new InvoiceCommunicationTypeVisitor() {
@@ -131,12 +131,15 @@ public class InvoiceCommunicator {
 					}
 				});
 			} catch (Exception e) {
-				return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );						
+				e.printStackTrace();
+				LinkedList<String> errorMessages = new LinkedList<>();
+				errorMessages.add("Error al interpretar la respuesta: " + e.getMessage() );
+				return errorMessages;						
 			}
 			return t.getResponseMessages();
 		});
 		
-		EnumMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new EnumMap<>(InvoiceCommunicationType.class);
+		HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new HashMap<>();
 		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, domainId, invoiceId).orElse(null) )
 			.forEach( e -> map.put(e.getKey(), new InvoiceCommunicationHistoryMapValue().setInfo(e.getValue())));
 		AonCollectionUtils.stream(history)
@@ -162,7 +165,7 @@ public class InvoiceCommunicator {
 			TbaiData.getInstance(config).get(ctx, domainId, invoiceId)
 				.ifPresent(tbaiInfo -> addTBAI(ctx, map, tbaiInfo, domainId, invoiceId));
 		}  
-		return map;
+		return map; 
 	}
 	
 	public static Optional<JSONObject> historyToJSON(Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history) {

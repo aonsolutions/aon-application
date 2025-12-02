@@ -3,6 +3,7 @@ package net.aonsolutions.aon.verifactu;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.soap.SOAPMessage;
@@ -310,11 +311,13 @@ public class VERIFACTU {
 			.setHuella(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_HUELLA));
 	}
 
-	public static List<String> history(byte[] responseData, Integer invoiceId) {
+	public static LinkedList<String> history(byte[] responseData, Integer invoiceId) {
 		try {
 			return VerifactuXMLUtils.parseHistory(responseData, invoiceId);
 		} catch (InvoiceCommunicationException e) {
-			return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );
+			LinkedList<String> messages = new LinkedList<>();
+			messages.add("Error al interpretar la respuesta: " + e.getMessage() );
+			return messages;
 		}
 	}
 	

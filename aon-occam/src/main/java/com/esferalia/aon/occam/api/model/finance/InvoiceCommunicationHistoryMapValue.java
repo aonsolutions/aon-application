@@ -9,7 +9,7 @@ public class InvoiceCommunicationHistoryMapValue implements Serializable {
 	private static final long serialVersionUID = 2396504472810555938L;
 	
 	private InvoiceInfo info;
-	private List<InvoiceCommunicationHistory> history;
+	private List<InvoiceCommunicationHistory> history = new LinkedList<>();
 	
 	public InvoiceInfo getInfo() {
 		return info;
@@ -22,12 +22,8 @@ public class InvoiceCommunicationHistoryMapValue implements Serializable {
 	public List<InvoiceCommunicationHistory> getHistory() {
 		return history;
 	}
-	public InvoiceCommunicationHistoryMapValue setHistory(List<InvoiceCommunicationHistory> history) {
-		this.history = history;
-		return this;
-	}
+
 	public InvoiceCommunicationHistoryMapValue add(InvoiceCommunicationHistory t) {
-		if ( getHistory() == null) setHistory(new LinkedList<>());
 		getHistory().add(t);
 		return this;
 	}

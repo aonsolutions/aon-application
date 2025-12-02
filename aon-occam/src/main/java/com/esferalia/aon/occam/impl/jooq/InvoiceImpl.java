@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 public class InvoiceImpl implements IInvoice {
 
+	// ***************************** [INVOICE] **
 	@Override
 	public Invoice save(AONContext ctx, Invoice invoice){
 		return ctx.getDslContext().transactionResult(

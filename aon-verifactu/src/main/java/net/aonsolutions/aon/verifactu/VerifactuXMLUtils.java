@@ -17,7 +17,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -245,9 +244,9 @@ class VerifactuXMLUtils {
 		}
 	}
 
-	static List<String> parseHistory(byte[] xmlBytes, Integer invoiceId) throws InvoiceCommunicationException {
+	static LinkedList<String> parseHistory(byte[] xmlBytes, Integer invoiceId) throws InvoiceCommunicationException {
 		try {
-			List<String> messages = new LinkedList<>();
+			LinkedList<String> messages = new LinkedList<>();
 			ByteArrayInputStream bais = new ByteArrayInputStream(xmlBytes);
 	        MessageFactory messageFactory = MessageFactory.newInstance();
 	        SOAPMessage soapResponse = messageFactory.createMessage(null, bais);
