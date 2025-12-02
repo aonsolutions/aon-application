@@ -282,6 +282,7 @@ export const IS_REQUIRED = 'es obligatorio';
 export const IS_NOT_VALID_EMAIL = 'no es un email válido';
 export const ISSUED = 'Émis';
 export const ISSUEDS = 'Émis';
+export const ISSU = 'Émettre';
 
 // ----- J
 

@@ -499,9 +499,11 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			// invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			invoiceToolbar.addButton3(MATERIAL_ICONS.CHECK, MSG.ISSU, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
-				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
+				// invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
+				invoiceToolbar.addButton3(MATERIAL_ICONS.SAVE, MSG.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
@@ -3168,9 +3170,9 @@ export class AonInvoice extends AonElement {
 		}, {
 			name: 'Recibida',
 			value: 'recibida',
-		}, {
-			name: 'Ticket',
-			value: 'ticket',
+		// }, {
+		// 	name: 'Ticket',
+		// 	value: 'ticket',
 		}];
 
 		let type = createSelect(this.TYPE, MSG.TYPE);

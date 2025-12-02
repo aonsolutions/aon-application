@@ -280,6 +280,7 @@ export const IS_REQUIRED = 'é obrigatorio';
 export const IS_NOT_VALID_EMAIL = 'non é un correo electrónico válido';
 export const ISSUED = 'Emitido';
 export const ISSUEDS = 'Emitido';
+export const ISSU = 'Problema';
 
 
 // ----- J

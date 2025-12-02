@@ -278,6 +278,7 @@ export const IS_REQUIRED = 'derrigorrezkoa da';
 export const IS_NOT_VALID_EMAIL = 'ez da baliozko posta elektronikoa';
 export const ISSUED = 'Igorritakoa';
 export const ISSUEDS = 'Igorritakoak';
+export const ISSU = 'Jaulkitu';
 
 // ----- J
 

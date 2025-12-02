@@ -456,6 +456,7 @@ export const ISSUED_BY_THIRD_PART = "Emitida por terceros";
 export const ISSUED_INVOICES = "Facturas Emitidas";
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
+export const ISSU = MSG.ISSU;
 
 // ----- J
 
