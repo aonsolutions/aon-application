@@ -281,6 +281,7 @@ export const IS_REQUIRED = 'is required';
 export const IS_NOT_VALID_EMAIL = 'is not a valid email';
 export const ISSUED = 'Issued';
 export const ISSUEDS = 'Issued';
+export const ISSU = 'Issue';
 
 // ----- J
 

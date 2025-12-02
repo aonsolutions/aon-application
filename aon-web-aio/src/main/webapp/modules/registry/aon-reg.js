@@ -776,7 +776,6 @@ export class AonReg extends AonElement {
 		let table = new AonBasicTable();
 		table.id = this.BANK_TABLE;
 		parent.appendChild(table);
-
 		if(!this.registry.getBanks() || this.registry.getBanks().length <= 0)
 			this.buildEmptyBank(table);
 		else this.registry.getBanks().forEach((bank, i) => this.buildBank(table, bank, i));
@@ -805,14 +804,16 @@ export class AonReg extends AonElement {
 			let aonBank = new AonIban();
 			aonBank.id = 'aonConfigurationGeneralBank' + i;
 			aonBank.title = MSG.BANK_ACCOUNT;
+			if(bank.balanceDate != null) {aonBank.setEditDisabled(true);console.log("setting true", bank)}
 			aonBank.setBank(bank);
 			aonBank.addEventListener(EVENT.CHANGE, () => {
 				this.registry.banks[i] = aonBank.getBank();
 				this.getElement(this.PAYMETHOD_BANK).setOptions(this.registry.getBanks().filter(f => !f.isRemoved()));
 			});
+			
 			let td = table.addCell(aonBank);
 			td.style.width = '100%';
-
+			
 			let addBank = new AonIconButton();
 			addBank.id = this.BANK_ADD + i;
 			addBank.title = MSG.ADD;
@@ -826,7 +827,7 @@ export class AonReg extends AonElement {
 				this.buildBank(table, aux, number);
 			});
 			table.addCell(addBank);
-
+			
 			aonBank.addEventListener(EVENT.DELETE, () => {
 				if(table.getRowsCount() === 1) {
 					this.registry.setBanks([]);

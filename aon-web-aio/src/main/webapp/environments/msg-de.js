@@ -279,6 +279,7 @@ export const IS_REQUIRED = 'ist erforderlich';
 export const IS_NOT_VALID_EMAIL = 'ist keine gültige email';
 export const ISSUED = 'Ausgegeben';
 export const ISSUEDS = 'Ausgegeben';
+export const ISSU = 'Ausgabe';
 
 // ----- J
 

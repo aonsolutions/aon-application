@@ -38,6 +38,7 @@ export class Bank {
            this.dirty = bank.dirty || false;
            this.removed = bank.removed || false;
            this.fullName = this.formatIban() + ' - ' + this.bank;
+		   this.balanceDate = bank.balanceDate ? bank.balanceDate : null;
         } else {
             this.domain = LS.getDomainId();
             this.bankAccount = new BankAccount();

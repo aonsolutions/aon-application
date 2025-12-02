@@ -3,6 +3,7 @@ import {ToolbarType} from '../models/enums.js';
 import { AonSearch } from './aon-search.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
+import { AonIcon } from './aon-icon.js';
 import * as LS from '../services/localStorageService.js';
 
 export class AonToolbar extends AonElement {
@@ -247,6 +248,28 @@ export class AonToolbar extends AonElement {
           toolSection.appendChild(aib);
       }
       return aib;
+	}
+
+	addButton3(icon, value, fn){
+		let button = this.createElement(TAG.BUTTON);
+		let i   = new AonIcon();
+		i.id  = this.TOOL_SECTION + value + 'Button';
+		if(!this.getElement(i.id)){
+			let toolSection = this.getElement(this.TOOL_SECTION);
+
+			i.title = value;
+			i.icon  = icon;
+			button.appendChild(i);
+			button.innerHTML += value;
+			button.addEventListener(EVENT.CLICK, fn);
+
+			if(toolSection.children.length > 0) {
+				toolSection.insertBefore(button, toolSection.children[0]);
+			} else 
+				toolSection.appendChild(button);
+		}
+      return button;
+		
 	}
 
 	addButton2End(action, fn) {
