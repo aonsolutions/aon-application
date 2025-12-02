@@ -162,35 +162,9 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 			Integer customerId = api.getData().getInt("customer");
 			Customer customer = CustomerDAO.get(ctx, customerId);
 			
-			List<Domain> domains = DomainDAO.getCompanyDomains(ctx, customer.getDocument());
-			// Filter active domains
-			domains = domains.stream().filter(d -> d.isActive()).collect(Collectors.toList());
+			Integer domainId = api.getData().optIntegerObject("domain");
 			
-			if(domains.isEmpty())
-				return new JSONObject()
-						.put("customerId", customerId.toString())
-						.put("customerName", customer.getName())
-						.put("customerDocument", customer.getDocument())
-						.put("enterpriseId", "")
-						.put("enterpriseName", "")
-						.put("enterpriseDocument", "")
-						.put("messageType", "error")
-						.put("message", "El cliente no tiene ningun dominio con el mismo documento para vincularse")
-						;
-						
-			else if(domains.size() > 1) 
-				return new JSONObject()
-						.put("customerId", customerId.toString())
-						.put("customerName", customer.getName())
-						.put("customerDocument", customer.getDocument())
-						.put("enterpriseId", "")
-						.put("enterpriseName", "")
-						.put("enterpriseDocument", "")
-						.put("messageType", "warning")
-						.put("message", "El cliente tiene mas de un dominio con el mismo documento para vincularse")
-						;
-			else {
-				Integer domainId = domains.get(0).getId();
+			if(null != domainId) {
 				Company company = CompanyDAO.getCompany(ctx, domainId);
 				
 				Optional<RegistryRelationship> existRRelationshipforCustomer = RegistryRelationshipDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
@@ -220,17 +194,17 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 								.put("message", "La empresa ya se encuentra vinculada con un cliente")
 								;
 					else {
-						RegistryRelationship rrelationship = new RegistryRelationship();
-						rrelationship.setDomain(customer.getDomain());
-						rrelationship.setRegistry(customer.getId());
-						rrelationship.setRelatedRegistry(company.getId());
-						rrelationship.setComments(company.getDomain().getName());
-
-						RegistryRelationshipDAO.save(ctx, rrelationship);
-						
 						List<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(company.getDomain().getId()), new Options().setFull(false)).collect(Collectors.toList());
 						
 						if(!domainUsers.isEmpty()) {
+							
+							RegistryRelationship rrelationship = new RegistryRelationship();
+							rrelationship.setDomain(customer.getDomain());
+							rrelationship.setRegistry(customer.getId());
+							rrelationship.setRelatedRegistry(company.getId());
+							rrelationship.setComments(company.getDomain().getName());
+
+							RegistryRelationshipDAO.save(ctx, rrelationship);
 							
 							sendEnterpriseSyncMail(api, ctx, customer);
 							
@@ -253,20 +227,104 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 							Optional<RegistryMedia> companyEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(company.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
 							
 							String email = null;
-							if(customerEmail.isPresent() && AonStringUtils.isNotBlank(customerEmail.get().getValue()))
-								email = customerEmail.get().getValue();
-							else if(companyEmail.isPresent() && AonStringUtils.isNotBlank(companyEmail.get().getValue()))
+							if(companyEmail.isPresent() && AonStringUtils.isNotBlank(companyEmail.get().getValue()))
 								email = companyEmail.get().getValue();
-							else 
-								email = company.getName() + "@aonsolutions.es";
+							else if(customerEmail.isPresent() && AonStringUtils.isNotBlank(customerEmail.get().getValue()))
+								email = customerEmail.get().getValue();
 							
-							createUserAuth(ctx, company, customer, email);
+							if(AonStringUtils.isBlank(email)) {
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "warning")
+										.put("message", "No existe usuario en el dominio al que se quiere vincular, ni email en el cliente ni en la empresa para poder crear uno por defecto")
+										;
+								
+							} else {
+								
+								RegistryRelationship rrelationship = new RegistryRelationship();
+								rrelationship.setDomain(customer.getDomain());
+								rrelationship.setRegistry(customer.getId());
+								rrelationship.setRelatedRegistry(company.getId());
+								rrelationship.setComments(company.getDomain().getName());
 
-							urlMail = company.getDomain().getName();
-							userMail = email;
+								RegistryRelationshipDAO.save(ctx, rrelationship);
+								
+								
+								createUserAuth(ctx, company, customer, email);
+
+								urlMail = company.getDomain().getName();
+								userMail = email;
+								
+								sendEnterpriseSyncUserMail(api, ctx, email, customer);
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "success")
+										.put("message", "El cliente se ha vinculado al dominio. Y se ha creado un usuario para el dominio con el mail" + email)
+										;
+							}
+						}
+					}
+				}
+			} else {
+				List<Domain> domains = DomainDAO.getCompanyDomains(ctx, customer.getDocument());
+				// Filter active domains
+				domains = domains.stream().filter(d -> d.isActive()).collect(Collectors.toList());
+				
+				if(domains.isEmpty())
+					return new JSONObject()
+							.put("customerId", customerId.toString())
+							.put("customerName", customer.getName())
+							.put("customerDocument", customer.getDocument())
+							.put("enterpriseId", "")
+							.put("enterpriseName", "")
+							.put("enterpriseDocument", "")
+							.put("messageType", "error")
+							.put("message", "El cliente no tiene ningun dominio con el mismo documento para vincularse")
+							;
 							
-							sendEnterpriseSyncUserMail(api, ctx, email, customer);
-							
+				else if(domains.size() > 1) 
+					return new JSONObject()
+							.put("customerId", customerId.toString())
+							.put("customerName", customer.getName())
+							.put("customerDocument", customer.getDocument())
+							.put("enterpriseId", "")
+							.put("enterpriseName", "")
+							.put("enterpriseDocument", "")
+							.put("messageType", "warning")
+							.put("message", "El cliente tiene mas de un dominio con el mismo documento para vincularse")
+							;
+				else {
+					domainId = domains.get(0).getId();
+					Company company = CompanyDAO.getCompany(ctx, domainId);
+					
+					Optional<RegistryRelationship> existRRelationshipforCustomer = RegistryRelationshipDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+					if(existRRelationshipforCustomer.isPresent())
+						return new JSONObject()
+								.put("customerId", customerId.toString())
+								.put("customerName", customer.getName())
+								.put("customerDocument", customer.getDocument())
+								.put("enterpriseId", "")
+								.put("enterpriseName", "")
+								.put("enterpriseDocument", "")
+								.put("messageType", "warning")
+								.put("message", "El cliente tiene ya se encuentra vinculado con una empresa")
+								;
+					else {
+						Optional<RegistryRelationship> existRRelationshipforCompany = RegistryRelationshipDAO.get(ctx, f -> f.getRelatedRegistryProperty().eq(company.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+						
+						if(existRRelationshipforCompany.isPresent())
 							return new JSONObject()
 									.put("customerId", customerId.toString())
 									.put("customerName", customer.getName())
@@ -274,15 +332,98 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 									.put("enterpriseId", company.getId().toString())
 									.put("enterpriseName", company.getName())
 									.put("enterpriseDocument", company.getDocument())
-									.put("messageType", "success")
-									.put("message", "El cliente se ha vinculado al dominio. Y se ha creado un usuario para el dominio con el mail" + email)
+									.put("messageType", "warning")
+									.put("message", "La empresa ya se encuentra vinculada con un cliente")
 									;
+						else {
+							List<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(company.getDomain().getId()), new Options().setFull(false)).collect(Collectors.toList());
 							
+							if(!domainUsers.isEmpty()) {
+								
+								RegistryRelationship rrelationship = new RegistryRelationship();
+								rrelationship.setDomain(customer.getDomain());
+								rrelationship.setRegistry(customer.getId());
+								rrelationship.setRelatedRegistry(company.getId());
+								rrelationship.setComments(company.getDomain().getName());
+
+								RegistryRelationshipDAO.save(ctx, rrelationship);
+								
+								sendEnterpriseSyncMail(api, ctx, customer);
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "success")
+										.put("message", "El cliente se ha vinculado al dominio")
+										;
+							
+							} else {
+								
+								// Get enterprise
+								Optional<RegistryMedia> customerEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(customerId).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+								
+								Optional<RegistryMedia> companyEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(company.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+								
+								String email = null;
+								if(companyEmail.isPresent() && AonStringUtils.isNotBlank(companyEmail.get().getValue()))
+									email = companyEmail.get().getValue();
+								else if(customerEmail.isPresent() && AonStringUtils.isNotBlank(customerEmail.get().getValue()))
+									email = customerEmail.get().getValue();
+								
+								if(AonStringUtils.isBlank(email)) {
+									
+									return new JSONObject()
+											.put("customerId", customerId.toString())
+											.put("customerName", customer.getName())
+											.put("customerDocument", customer.getDocument())
+											.put("enterpriseId", company.getId().toString())
+											.put("enterpriseName", company.getName())
+											.put("enterpriseDocument", company.getDocument())
+											.put("messageType", "warning")
+											.put("message", "No existe usuario en el dominio al que se quiere vincular, ni email en el cliente ni en la empresa para poder crear uno por defecto")
+											;
+									
+								} else {
+									
+									RegistryRelationship rrelationship = new RegistryRelationship();
+									rrelationship.setDomain(customer.getDomain());
+									rrelationship.setRegistry(customer.getId());
+									rrelationship.setRelatedRegistry(company.getId());
+									rrelationship.setComments(company.getDomain().getName());
+
+									RegistryRelationshipDAO.save(ctx, rrelationship);
+									
+									
+									createUserAuth(ctx, company, customer, email);
+
+									urlMail = company.getDomain().getName();
+									userMail = email;
+									
+									sendEnterpriseSyncUserMail(api, ctx, email, customer);
+									
+									return new JSONObject()
+											.put("customerId", customerId.toString())
+											.put("customerName", customer.getName())
+											.put("customerDocument", customer.getDocument())
+											.put("enterpriseId", company.getId().toString())
+											.put("enterpriseName", company.getName())
+											.put("enterpriseDocument", company.getDocument())
+											.put("messageType", "success")
+											.put("message", "El cliente se ha vinculado al dominio. Y se ha creado un usuario para el dominio con el mail" + email)
+											;
+								}
+							}
 						}
 					}
-				}
+				
+				}	
+			}
 			
-			}	
+			
 			
 		} catch (Exception e) {
 			return new JSONObject().put("error", e.getMessage());

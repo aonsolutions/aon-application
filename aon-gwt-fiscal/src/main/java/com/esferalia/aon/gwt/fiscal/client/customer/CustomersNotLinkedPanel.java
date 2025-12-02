@@ -101,7 +101,7 @@ public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 	}
 
 	private void createToolbar() {
-		AonToolbarButton syncMassive = new AonToolbarButton("Vinculaci\u00f3n Masiva", AON.CSS.aonIconSync());
+		AonToolbarButton syncMassive = new AonToolbarButton("Vinculaci\u00f3n Masiva", AON.CSS.aonIconCloudSync());
 		syncMassive.addClickHandler(e -> {
 			AonDialog dialog = new AonDialog("Vinculaci\u00f3n Masiva Cliente / Dominio", new Label("Desea lanzar la vinculaci\u00f3n masiva de los clientes sin dominio asociado?"));
 			dialog.confirm(new AonAcceptDialogCallback() {

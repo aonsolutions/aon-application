@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.DomainLinked;
@@ -9065,6 +9066,12 @@ public class AON {
 	public static void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			getNewProduct().requestBookingInfo(ctx, domainName, domain, user, product, customerRegistry);
+		}
+	}
+
+	public static Stream<DomainCompany> getAviableDomainsForSync(String domainName, Integer domain, String user, boolean isSig, DomainFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getSecurity().getAviableDomainsForSync(ctx, isSig, filter);
 		}
 	}
 	
