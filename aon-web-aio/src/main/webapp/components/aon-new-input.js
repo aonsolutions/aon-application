@@ -222,7 +222,7 @@ export class AonNewInput extends AonElement {
 			div.appendChild(iconLabel);
 		}
 		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-		iconLabel.style.top = '5px';
+		//iconLabel.style.top = '5px';
 		iconLabel.id = this.ICON;
 		iconLabel.setAttribute("for", this.INPUT);
 		let aonIconButton = new AonIconButton();
@@ -244,7 +244,7 @@ export class AonNewInput extends AonElement {
 			div.appendChild(iconLabel);
 		}
 		iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-		iconLabel.style.top = '5px';
+		//iconLabel.style.top = '5px';
 		iconLabel.id = this.ICON;
 		iconLabel.setAttribute("for", this.INPUT);
 		let aonIconButton = new AonIconButton();

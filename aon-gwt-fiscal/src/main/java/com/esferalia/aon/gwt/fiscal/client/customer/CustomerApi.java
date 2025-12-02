@@ -7,6 +7,8 @@ import com.esferalia.aon.gwt.common.client.json.ActivitySummaryJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.model.customer.CustomerSyncLog;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -227,5 +229,57 @@ public class CustomerApi {
 		} catch (RequestException exception) {
 			callback.onFailure(exception);
 		}
+	}
+	
+	public void syncCustomerDomain(String host, String endPoint, HashMap<String, String> headers, JSONObject body, AsyncCallback<CustomerSyncLog> callback) {
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", sessionId);
+		
+		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		        	if (response.getStatusCode() == 200) {
+		            	String responseBody = response.getText();
+		                JSONObject json = JSONParser.parseStrict(responseBody).isObject();
+		                
+		                CustomerSyncLog log = new CustomerSyncLog()
+		                		.setCustomerId(cleanQuotes(json.get("customerId").toString()))
+		                		.setCustomerName(cleanQuotes(json.get("customerName").toString()))
+		                		.setCustomerDocument(cleanQuotes(json.get("customerDocument").toString()))
+		                		.setEnterpriseId(cleanQuotes(json.get("enterpriseId").toString()))
+		                		.setEnterpriseName(cleanQuotes(json.get("enterpriseName").toString()))
+		                		.setEnterpriseDocument(cleanQuotes(json.get("enterpriseDocument").toString()))
+		                		.setMessageType(cleanQuotes(json.get("messageType").toString()))
+		                		.setMessage(cleanQuotes(json.get("message").toString()))
+		                		;
+		                
+//		                Window.alert(json.get("customerId").toString() + "\n" + json.get("customerName").toString() + "\n" + json.get("customerDocument").toString() + "\n" + json.get("enterpriseId").toString() + "\n" +  json.get("enterpriseName").toString() + "\n" + json.get("enterpriseDocument").toString() + "\n" + json.get("messageType").toString() + "\n" + json.get("message").toString());
+		                
+		                callback.onSuccess(log);
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					callback.onFailure(exception);
+		        }
+		    });
+		    
+		} catch (Exception exception) {
+			callback.onFailure(exception);
+		}
+	}
+	
+	private String cleanQuotes(String text) {
+	    return AonStringUtils.isNotBlank(text) ? text.replaceAll("\"", "").trim() : "";
 	}
 }

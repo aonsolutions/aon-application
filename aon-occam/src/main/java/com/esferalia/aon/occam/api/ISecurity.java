@@ -8,11 +8,13 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
@@ -155,5 +157,7 @@ public interface ISecurity {
 	public void deleteBookingApp(CloseableAONContext ctx, DomainApp aonApp);
 	
 	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId);
+	
+	public Stream<DomainCompany> getAviableDomainsForSync(CloseableAONContext ctx, boolean isSig, DomainFilter filter);
 
 }

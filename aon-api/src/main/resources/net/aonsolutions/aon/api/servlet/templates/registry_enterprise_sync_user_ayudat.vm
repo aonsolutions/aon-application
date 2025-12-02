@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida - Datos de Acceso</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <!-- Header con logo -->
+        <tr>
+            <td style="padding: 30px 20px; text-align: center;">
+                <img src="$logo" alt="$parentName" style="max-width: 200px; height: auto; border-radius: 10px; display: block; margin: 0 auto;">
+            </td>
+        </tr>
+        
+        <!-- Contenido principal -->
+        <tr>
+            <td style="padding: 30px; color: #333333; line-height: 1.6; font-size: 16px;">
+                <p style="margin: 0 0 25px 0; font-size: 18px; font-weight: bold;">
+                    &#x00A1;Enhorabuena! Acabamos de vincular al cliente con su empresa existente. Aquí te dejamos toda la informacion:
+                </p>
+                
+                <!-- Datos de acceso -->
+                <div style="border-left: 4px solid #007bff; padding: 20px; margin: 25px 0; border-radius: 4px;">
+                    <h3 style="margin: 0 0 15px 0; color: #007bff; font-size: 18px;">Datos de acceso</h3>
+                    <p style="margin: 8px 0;"><strong>Link de acceso:</strong> <a href="$url" style="color: #007bff; text-decoration: none;">$url</a></p>
+                    <p style="margin: 8px 0;"><strong>Usuario:</strong> <span style="color: #007bff; font-weight: bold;">$user</span></p>
+                    <p style="margin: 8px 0;"><strong>Contraseña:</strong> <span style="color: #007bff; font-weight: bold;">$password</span></p>
+                </div>
+                
+                <!-- Si tu negocio crece -->
+                <div style="margin: 20px 0;">
+                    <p style="margin: 0 0 10px 0; font-size: 17px; font-weight: bold; color: #555;">
+                        &#x1F680; Si tu negocio crece&#x2026;
+                    </p>
+                    <p style="margin: 0 0 15px 0;">
+                        Cuando necesites más capacidad o herramientas avanzadas, podrás ampliar tu plan para facturar sin límites o gestionar todo de la forma más completa.
+                    </p>
+                </div>
+                
+                <p style="margin: 30px 0 0 0;">
+                    Un saludo,<br>
+                    <strong>$parentName</strong>
+                </p>
+            </td>
+        </tr>
+        
+        <!-- Footer opcional -->
+        <tr>
+            <td style="padding: 20px; text-align: center; color: #666666; font-size: 12px;">
+                <p style="margin: 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
