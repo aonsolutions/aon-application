@@ -123,6 +123,19 @@ public class DomainDAO {
 			.fetch().stream().map(new DomainFiller()).findFirst().orElse(new Domain());
 	}
 	
+	public static List<Domain> getCompanyDomains(AONContext ctx, String document){
+		return ctx.getDslContext()
+				.select()
+				.from(DOMAIN)
+				.join(REGISTRY).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
+				.join(COMPANY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+				.leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
+				.leftOuterJoin(PAYER).on(DOMAIN.ID.eq(PAYER.DOMAIN).and(PAYER.NAME.eq(AON_DOMAIN_PAYER.getValue())))
+				.where(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId())))
+				.and(REGISTRY.DOCUMENT.eq(document))
+			.fetch().stream().map(new DomainFiller()).collect(Collectors.toList());
+	}
+	
 	public static Domain getDomain(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext()
 			.select()

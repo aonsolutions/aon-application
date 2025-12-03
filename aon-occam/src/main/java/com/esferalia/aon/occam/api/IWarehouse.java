@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
@@ -94,6 +95,9 @@ public interface IWarehouse {
 	// 	************************** INVENTORY DETAIL ***
 	// 	***********************************************
 	
+	InventoryDetail getInventoryDetail(AONContext ctx, Integer domain, Integer id);
+	InventoryDetail saveInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail);
+	
 	Stream<InventoryDetail> getInventoryDetailStream(AONContext ctx, InventoryDetailFilter filter);
 	LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId);
 	void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail);
@@ -103,7 +107,9 @@ public interface IWarehouse {
 	// 	********************************* INVENTORY ***
 	// 	***********************************************
 	
-	LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate);
+	Inventory getInventory(AONContext ctx, Integer domain, Integer id, Options...options);
+	List<Inventory> getInventoryList(AONContext ctx, InventoryFilter filter, Options...options);
+	
 	LinkedList<Inventory> getTwoLastInventory(AONContext ctx, Integer warehouseID);
 	void updateInventory(AONContext ctx, Inventory inventory);
 	void deleteInventory(AONContext ctx, Integer inventoryId);

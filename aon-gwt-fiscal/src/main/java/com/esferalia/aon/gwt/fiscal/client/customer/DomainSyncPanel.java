@@ -121,6 +121,16 @@ public abstract class DomainSyncPanel extends AonCustomDockLayout {
 				onEndSuccessSync();
 			}
 
+			@Override
+			protected void onShowWarningMessage(String warningMessage) {
+				AonMessagePanel.showWarning(messagePanel, warningMessage);
+			}
+
+			@Override
+			protected void onShowSuccessMessage(String successMessage) {
+				AonMessagePanel.showSuccess(messagePanel, successMessage);
+			}
+
 		};
 
 		centerPanel.setWidget(domainSyncTable);

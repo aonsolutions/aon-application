@@ -84,7 +84,7 @@ public class DomainCustomerDAO {
 						.and(DSL.trim(APP_PARAM.VALUE).ne(""))
 				)
 				.leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.RELATED_REGISTRY.eq(REGISTRY.ID))
-				.where(allConditions)
+				.where(DOMAIN_PROPERTIES.getConditions(filter))
 				.and(RRELATIONSHIP.RELATED_REGISTRY.isNull())
 				.fetch()
 				.stream()

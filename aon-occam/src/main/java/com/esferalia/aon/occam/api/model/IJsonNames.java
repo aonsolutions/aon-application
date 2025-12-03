@@ -30,6 +30,7 @@ public final class IJsonNames {
 	public static final String ACTIVITY_TYPE = "activity_type";
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
 	public static final String ACTIVITY_NAME = "activityName";
+	public static final String ACTUAL_QUANTITY = "actualQuantity";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
 	public static final String ADDRESS3 = "address3";
@@ -156,6 +157,7 @@ public final class IJsonNames {
 	public static final String CONTENT_TYPE = "contentType";
 	public static final String CONTEXT = "context";
 	public static final String COPIES = "copies";
+	public static final String COST = "cost";
 	public static final String COST_CENTER = "costCenter";
 	public static final String COST_CENTERS = "costCenters";
 	public static final String COUNT = "count";
@@ -337,6 +339,7 @@ public final class IJsonNames {
 	public static final String INTERVAL = "interval";
 	public static final String INTERVALS = "intervals";
 	public static final String INVENTORIABLE = "inventoriable";
+	public static final String INVENTORY = "inventory";
 	public static final String INVEST_ASSET = "investAsset";
 	public static final String INVESTMENT = "investment";
 	public static final String INVOFOX = "invofox";
@@ -365,6 +368,7 @@ public final class IJsonNames {
 	public static final String IT_MATERNITY_COUNT = "it_maternity_count";
 	public static final String IT_OTHER_COUNT = "it_other_count";
 	public static final String ITEM = "item";
+	public static final String ITEM_PACKAGE = "itemPackage";
 	public static final String ITEMS = "items";
 	public static final String ITEM_COMPOSITION = "itemComposition";
 	public static final String IS_PAYROLL = "isPayroll";
@@ -560,6 +564,7 @@ public final class IJsonNames {
 	public static final String RATTACH = "rattach";
 	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
+	public static final String REAL_QUANTITY = "realQuantity";
 	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
