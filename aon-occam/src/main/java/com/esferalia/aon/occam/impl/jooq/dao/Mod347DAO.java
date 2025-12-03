@@ -444,7 +444,9 @@ public class Mod347DAO {
 				.setVatAccrual(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL)))
 				.setIsp(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.ISP)))
 				.setDepositRegime(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.DEPOSIT_REGIME)))
-				.setVatAccrualAmount(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT));
+				.setVatAccrualAmount(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT))
+//				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS)) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
+				;
 		}
 	}
 
@@ -500,6 +502,7 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
+//			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
 			.execute();
 		
 	}
@@ -536,6 +539,7 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
+//			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
 			.where(FS_MOD347_DETAIL.ID.equal(declared.getId()))
 			.execute();
 	}
@@ -828,7 +832,7 @@ public class Mod347DAO {
 							
 							// Factura Criterio de Caja
 												
-							// Acumular el importe segÃºn RECC (La base y las cuotas tienen lo declarado segÃºn los cobros/pagos realizados)
+							// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
 							if (!vat.isFinancePending()) {
 								declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
 							}
