@@ -1527,12 +1527,12 @@ public class AuditTable<R extends Record> implements Table<R> {
 	public static class AuditFields implements Fields {
 
 
-		public static final Field<String> AUDIT_MD5 = DSL.field(DSL.name("audit_md5"),SQLDataType.CHAR(64).nullable(false));
+		public static final Field<String> AUDIT_DIGEST = DSL.field(DSL.name("audit_digest"),SQLDataType.CHAR(64).nullable(false));
 		public static final Field<Byte> AUDIT_EVENT = DSL.field(DSL.name("audit_event"),SQLDataType.TINYINT.nullable(false));
 		public static final Field<String> AUDIT_SCHEMA =  DSL.field(DSL.name("audit_schema"),SQLDataType.CHAR(64).nullable(false));  
-		public static final Field<Timestamp> AUDIT_TIMESTAMP = DSL.field(DSL.name("audit_timestamp"),SQLDataType.TIMESTAMP.nullable(false));  
+		public static final Field<Long> AUDIT_TIMESTAMP = DSL.field(DSL.name("audit_timestamp"),SQLDataType.BIGINT.nullable(false));  
 
-		protected static final Field<?> [] AUDIT_FIELDS = { AUDIT_TIMESTAMP, AUDIT_EVENT, AUDIT_SCHEMA, AUDIT_MD5  };
+		protected static final Field<?> [] AUDIT_FIELDS = { AUDIT_TIMESTAMP, AUDIT_EVENT, AUDIT_SCHEMA, AUDIT_DIGEST  };
 
 		private Fields delegate;
 
