@@ -337,7 +337,7 @@ public class InvoiceValidation {
 	 */
 	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
 		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
-		if(config.isVerifactu()) {
+		if(config.hasVerifactu()) {
 			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
 				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
 				.filter( Objects::nonNull )

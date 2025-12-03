@@ -34,6 +34,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -77,6 +78,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryController.class.getName());
 	
 	private Warehouse warehouse; 
+	private Product product;
 	private boolean initStock;
 	private boolean showInventoryAdjustmentWindow;
 	private boolean showAuditInfoWindow;
@@ -94,6 +96,14 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.warehouse = warehouse;
 	}
 
+	public Product getProduct() {
+		return product;
+	}
+	
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	
 	public boolean isInitStock() {
 		return initStock;
 	}
@@ -162,6 +172,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 	public void onStartClosing(ActionEvent event) throws Exception {
 		this.initStock = false;
 		this.warehouse = null;
+		setProduct((Product)BeanManager.getManagerBean(Product.class).createNewTo());
 		super.onReset(event);
 	}
 
@@ -257,6 +268,9 @@ public class InventoryController extends BasicController implements IAuditableCo
 
 				Criteria c = new Criteria();
 				c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
+				if(getProduct() != null && getProduct().getId() != null) {
+					c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_PRODUCT_ID), getProduct().getId());
+				}
 				Iterator<?> initStockListIter = stockBean.getList(c).iterator();
 				while (initStockListIter.hasNext()){
 					Stock initStock = (Stock) initStockListIter.next();
@@ -277,13 +291,18 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 			
-	        Query q = session.createQuery(
+			String productQuery = "";
+			if(getProduct() != null && getProduct().getId() != null) {
+				productQuery = "and (item.product.id = " + getProduct().getId() + ") "; 
+			}
+			Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
 	                " from Item as item, Stock as stock " +
 	                " where stock.item=item.id " +
 	                " and stock.warehouse=" + warehouse.getId() +
 	                " and " + DomainManager.getSQLWhereClause("stock.domain") +
 	                " and (item.product.serializable = 0 or item.serialNumber is not null) " +
+	                productQuery +
 	                " group by item.id " +
 	                " order by item.detail");
 			Iterator<?> iter = q.list().iterator();

@@ -35,7 +35,7 @@ public class DeliveryDetailValidation {
 
 	public static final BiConsumer<AONContext, DeliveryDetail> COMPLETE_WAREHOUSE = (ctx, deliveryDetail) -> {
 		if(deliveryDetail.getWarehouse() == null) {
-			Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+			Warehouse warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 			deliveryDetail.setWarehouse(warehouse.getId());
 		}
 	};

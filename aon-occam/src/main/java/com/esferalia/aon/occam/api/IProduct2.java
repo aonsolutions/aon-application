@@ -104,5 +104,6 @@ public interface IProduct2 {
 	public void createBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee);
 	public void updateBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product, Fee newFee);
 	public void removeBookingProduct(CloseableAONContext ctx, String domainName, int domain, String user, Integer customerRelatedRegistry, Optional<Fee> oldFee, ProductBooking product);
+	public void requestBookingInfo(CloseableAONContext ctx, String domainName, int domain, String user, ProductBooking product, Integer customerRegistry);
 	
 }

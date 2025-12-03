@@ -15,11 +15,14 @@ public class ProductBooking extends Product implements Serializable {
 	private static final long serialVersionUID = -1616838783810544813L;
 	
 	private ProductBookingType bookingType;
+	private ProductBookingPriceType bookingPriceType;
 	
 	private Integer position;
 	private Workgroup workgroup;
 	private TaskHolder taskHolder;
 	private ProjectType projectType;
+	
+	private Boolean noBooking;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -42,6 +45,15 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setBookingType(ProductBookingType bookingType) {
 		this.bookingType = bookingType;
+		return this;
+	}
+
+	public ProductBookingPriceType getBookingPriceType() {
+		return bookingPriceType;
+	}
+
+	public ProductBooking setBookingPriceType(ProductBookingPriceType bookingPriceType) {
+		this.bookingPriceType = bookingPriceType;
 		return this;
 	}
 
@@ -159,6 +171,15 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setProjectType(ProjectType projectType) {
 		this.projectType = projectType;
+		return this;
+	}
+
+	public Boolean isNoBooking() {
+		return noBooking;
+	}
+
+	public ProductBooking setNoBooking(Boolean noBooking) {
+		this.noBooking = noBooking;
 		return this;
 	}
 	

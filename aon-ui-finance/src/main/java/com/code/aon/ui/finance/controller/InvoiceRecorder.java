@@ -192,7 +192,7 @@ public class InvoiceRecorder implements ITransferObject {
 	
 	private void refreshFlags() {
 		setMessages(null);
-		setRecordable(true);
+		setRecordable(getInvoice().getNumber() > 0); 
 		if (InvoiceStatus.PENDING.equals(getInvoice().getStatus())) {
 			try {
 				checkFinanceInaccuracyPresent();

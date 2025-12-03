@@ -367,6 +367,7 @@ public class InvoiceCommunicationDAO {
 			.from(INVOICE)
 			.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
 			.where(getFilter(params))
+			.and(INVOICE.NUMBER.gt(0))
 			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(params.getSafePerPage())
 			.offset(params.getOffset())

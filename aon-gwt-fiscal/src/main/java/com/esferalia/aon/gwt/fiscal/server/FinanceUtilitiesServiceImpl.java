@@ -88,6 +88,10 @@ public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServle
 		if(InvoiceIntegrityCheckError.INVOICE_TAX_DUPLICATE.equals(error)) {
 			AON_SOLUTIONS.invoiceTaxDuplicateFix(occam, invoiceId);
 		}
+		
+		if(InvoiceIntegrityCheckError.INVOICE_TAXABLE_BASE0.equals(error)) {
+			AON_SOLUTIONS.invoiceTaxableBase0Fix(occam, invoiceId);
+		}
 	}
 	
 }

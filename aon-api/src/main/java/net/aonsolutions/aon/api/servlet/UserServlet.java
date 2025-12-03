@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -60,7 +61,15 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -152,6 +161,9 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/email":
 				response(req, resp, sendAuthInfoMail(api));
 				break;
+			case "/bookingUser":
+				response(req, resp, bookingUser(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -159,7 +171,7 @@ public class UserServlet extends AonApiHttpServlet {
 			error(req, resp, e);
 		}
 	}
-	
+
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
@@ -478,6 +490,37 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	private JSONObject setUserAppRole(CloseableAONContext ctx, Domain domain, User userServlet, JSONObject data, User user){
+		String login = userServlet.getLogin();
+		Integer userId = user != null && user.getId() != null ? user.getId() : JsonUtils.getInteger(data, IJsonNames.ID);
+
+		LinkedList<AonRole> aRoles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(userId))
+				.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		JSONArray roles = JsonUtils.getJSONArray(data, "roles");
+		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
+		for(Integer i = 0; i < roles.length(); i++) {
+			tRoles.add(AonRole.safeValueOf(roles.optString(i)));
+		}
+
+		AonRole.stream().forEach(role -> {	
+			if(aRoles.contains(role) && !tRoles.contains(role)) {
+				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getUserIdProperty().eq(userId))
+					.and(f.getRoleProperty().eq(role.value())));
+			}
+			if(!aRoles.contains(role) && tRoles.contains(role)) {
+				SecurityDAO.insertUserAppRole(ctx, new UserAppRole()
+						.setApp(null)
+						.setDomain(domain.getId())
+						.setRole(role)
+						.setUser(userId));
+			}
+		});
+		return new JSONObject();
+	}
+	
 	private JSONObject saveTaskHolder(AonApiData api, User user) {
 		Integer userId = user != null && user.getId() != null 
 				? user.getId() : JsonUtils.getInteger(api.getData(), IJsonNames.ID);
@@ -519,6 +562,163 @@ public class UserServlet extends AonApiHttpServlet {
 			user = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
 		}
 		return UserJSON.toJSON(user);
+	}
+	
+	private JSONObject saveTaskHolder(CloseableAONContext ctx, Domain domain, User userServlet, JSONObject data, User user) {
+		Integer userId = user != null && user.getId() != null  ? user.getId() : JsonUtils.getInteger(data, IJsonNames.ID);
+		
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId)), new Options());
+		if(th == null || th.getId() == null) {
+			User u = UserDAO.get(ctx,  f -> f.getIdProperty().eq(userId), new Options());
+			Auth a = AuthDAO.getAuth(ctx, u.getAuth().getAuth());
+
+			Registry r = null;
+			if(!AonStringUtils.isBlank(a.getDocument())) {
+				r =  RegistryOldDAO.getRegistry(ctx, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getDocumentProperty().eq(a.getDocument())));
+			}
+			if(r == null || r.getId() == null) {
+				r = RegistryDAO.save(ctx,  new Registry()
+						.setDocument(a.getDocument())
+						.setName(a.getName()+ " "+ a.getSurname())
+						.setAlias(a.getName())
+						.setDomain(domain));
+			}
+			Integer registryId = r.getId();
+			th = TaskHolderDAO.get(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(registryId)), new Options());
+			if(th != null && th.getId() != null) {
+				th.setActive(true);
+				if(th.getUserId() == null)  
+					th.setUserId(userId);
+			} else {
+				th = new TaskHolder().copy(r)
+					.setActive(true)
+					.setUserId(userId);
+			}
+		} else if(!th.isActive()) {
+			th.setActive(true);
+		}
+		
+		th = TaskHolderDAO.save(ctx, th);
+		if(user != null && th != null && th.getId() != null) {
+			user.setRegistry(new Registry().setId(th.getId()));
+			user = UserDAO.save(ctx, user);
+		}
+		return UserJSON.toJSON(user);
+	}
+	
+	
+	private JSONObject bookingUser(AonApiData api) throws Exception {
+		setUser(api);
+		
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+					
+			ctx.transaction(t -> {
+				
+//				setBookingUser(ctx, api.getDomain(), api.getUser(), api.getData(), AuthJSON.fromJSON(api.getData()));
+				
+				Domain currentDomain =  DomainDAO.getDomain(ctx, api.getDomain().getId());
+				Integer maxDefinedUsers = currentDomain.getMaxDefinedUsers();
+				maxDefinedUsers++;
+				SecurityDAO.saveDomainMaxDefinedUser(ctx, maxDefinedUsers);
+			});
+		}
+		
+		return null;
+	}
+	
+	private JSONObject setBookingUser(CloseableAONContext ctx, Domain domain, User userServlet, JSONObject data, Auth  authx) throws Exception {
+		JSONObject js = new JSONObject();
+		String email = data.optString("email");
+		
+		if(Utils.isEmail(email)) {
+			
+			Object userIdObj = data.opt("id");
+			Object activeObj = data.opt("active");
+			Boolean active = data.optBoolean("active");
+			boolean portal = data.optBoolean("portal");
+			
+			User usr = userIdObj != null 
+					? UserDAO.get(ctx, f -> f.getIdProperty().eq(data.optInt("id")), new Options())
+					: new User();
+			
+			if(activeObj != null) {
+				usr.setActive(active);
+				UserDAO.save(ctx, usr);
+			}
+			
+			String login = ramdonLogin();
+			String pass = null;
+			
+			if(usr != null && usr.getId() != null)
+				login = usr.getLogin();
+			
+			if(!AonStringUtils.isBlank(authx.getDocument())) {
+				for (Auth r : AON_SOLUTIONS.getAuths(f -> f.getDocumentProperty().eq(authx.getDocument()))) {
+					
+					User user = SecurityDAO.getDomainUserStream(ctx, f -> f.getAuthProperty().eq(r.getAuth())).findFirst().orElse(new User());
+					
+					if((user == null || user.getId() == null) && userIdObj != null) {
+						user = UserDAO.get(ctx, f -> f.getIdProperty().eq(data.optInt("id")), new Options());
+					} 
+					
+					if(user != null && user.getId() != null && !user.getId().equals(data.optInt("id"))){
+						throw new Exception("El documento introducido ya está asociado a otro usuario.");
+					}
+				}
+			}
+			
+			Auth auth = AON_SOLUTIONS.getAuth(email);
+			
+			if(auth.getUuid() == null)
+				auth = createAuth(domain, data, login, pass);
+			else 
+				updateAuth(auth, data);
+			
+			byte[] a = auth.getAuth();
+			
+			User user = SecurityDAO.getDomainUserStream(ctx, f -> f.getAuthProperty().eq(a)).findFirst().orElse(new User());
+					
+			if((user == null || user.getId() == null) && userIdObj != null) {
+				user = UserDAO.get(ctx, f -> f.getIdProperty().eq(data.optInt("id")), new Options());
+			} 
+			if(user != null && user.getId() != null && !user.getId().equals(data.optInt("id"))){
+				throw new Exception("El mail introducido ya está asociado a otro usuario.");
+			}
+			
+			if(auth.getAuth() != null) {
+				if(user == null || user.getId() == null) {
+					user = createUser(ctx, domain, userServlet, data, login, auth);
+				} else {
+					
+					Company cp = CompanyDAO.getStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Company());
+					user.setEnterprise(portal ? cp.getId() : null);
+					user.setAuth(auth);
+					SecurityDAO.save(ctx, user);
+					SecurityDAO.assignAuthToUser(ctx, user, auth.getAuth());
+				}
+				
+				setUserAppRole(ctx, domain, userServlet, data, user);
+				if(domain.isChild() || domain.isStandalone()) {
+					saveTaskHolder(ctx, domain, userServlet, data, user);
+				}
+				
+				Integer userId = user.getId();
+				
+				return UserJSON.toJSON(
+					SecurityDAO.getDomainUserStream(ctx, f -> f.getIdProperty().eq(userId))
+						.map(r -> 
+								!r.getAuth().isEmpty() && r.getAuth().getEmail() == null
+									? r.setAuth(AON_SOLUTIONS.getAuth(r.getAuth().getAuth()))
+									: r
+						).findAny().get()
+				);
+			}
+		} else {
+			throw new Exception("El email no es correcto.");
+		}
+		return js;
 	}
 	
 	private JSONObject setUser(AonApiData api) throws Exception {
@@ -653,6 +853,74 @@ public class UserServlet extends AonApiHttpServlet {
 		return AON_SOLUTIONS.updateAuth(auth);
 	}
 	
+	private User createUser(CloseableAONContext ctx, Domain domain, User userServlet, JSONObject json, String login, Auth auth) {
+		Company cp = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Company());
+		
+		User user = new User()
+			.setAuth(auth)
+			.setActive(true)
+			.setDomain(domain.getId())
+			.setLogin(login)
+			.setName(json.opt("name") != null ? json.getString("name") : login)
+			.setShared(json.optBoolean("shared"))
+			.setEnterprise(cp.getId())
+			.setToolbar(UserToolbar.GOOGLE);
+		
+		if(json.opt("document") != null) {
+			String document = json.optString("document");
+			if(!AonStringUtils.isBlank(document) && AonDocumentUtil.isValid(document)) {
+				Integer registryId = null;
+				Optional<Person> p =  RegistryOldDAO.getPersonStream(ctx, 
+						f -> f.getDomainProperty().eq(domain.getId())
+							.and(f.getDocumentProperty().eq(document))
+						).findFirst();
+				
+				if(p.isPresent() && p.get().getId() != null)
+					registryId = p.get().getId();
+				
+				if(registryId == null) {
+					Registry r = RegistryOldDAO.getRegistry(ctx, f -> 
+						f.getDomainProperty().eq(domain.getId())
+						.and(f.getDocumentProperty().eq(document)));
+					registryId = r.getId();
+				}
+				
+				user.setRegistry(new Registry().setId(registryId));
+			}
+		}	
+		user = AON.save(domain.getName(), domain.getId(), "", user);
+		AON.updateUserPassword(domain.getName(), domain.getId(), userServlet.getLogin(), user.getId(), auth.getPassword());
+		
+		Scope s = getScope(ctx, domain);
+		
+		if(s != null) {
+			SecurityDAO.insertUserScope(ctx,  new UserScope()
+					.setDomain(domain.getId())
+					.setScope(s.getId())
+					.setUserId(user.getId()));
+		}
+		
+		if(domain.getScope() != null) {
+			SecurityDAO.insertUserScope(ctx,  new UserScope()
+					.setDomain(domain.getId())
+					.setScope(domain.getScope())
+					.setUserId(user.getId()));
+		}
+		
+		ApplicationParameter a = AppParamDAO.fetchOne(ctx, AppParam.AON_PORTAL.getValue());
+		ApplicationParameter appParam = new ApplicationParameter()
+				.setDomain(domain.getId())
+				.setValue("288")
+				.setName(AppParam.AON_PORTAL.getValue());
+
+		if(a == null || a.getId() == null)
+			AppParamDAO.insertApplicationParameter(ctx, appParam);
+	
+		SecurityDAO.saveUserFinancePortal(ctx, user.getId());
+		
+		return user;
+	}
+	
 	private User createUser(AonApiData api, Domain domain, JSONObject json, String login, Auth auth) {
 		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		
@@ -693,12 +961,6 @@ public class UserServlet extends AonApiHttpServlet {
 			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
 					.setDomain(api.getDomain().getId())
 					.setScope(s.getId())
-					.setUserId(user.getId()));
-		}
-		if(api.getDomain().getScope() != null) {
-			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
-					.setDomain(api.getDomain().getId())
-					.setScope(api.getDomain().getScope())
 					.setUserId(user.getId()));
 		}
 		
@@ -882,9 +1144,9 @@ public class UserServlet extends AonApiHttpServlet {
 		Scope s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDescriptionProperty().eq("GENERAL")))
 				.findFirst().orElse(null);
-		if(s == null && api.getDomain().getParentId() != null) {
-			s =   AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getDomainProperty().eq(api.getDomain().getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+		if(s== null){
+			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDescriptionProperty().eq("EMPRESA")))
 					.findFirst().orElse(null);
 		}
 		
@@ -893,10 +1155,33 @@ public class UserServlet extends AonApiHttpServlet {
 					f -> f.getDomainProperty().eq(api.getDomain().getId()))
 					.findFirst().orElse(null);
 		}
-		if(s == null && api.getDomain().getParentId() != null) {
-			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
-					.findFirst().orElse(null);
+		
+		return s;
+	}
+	
+	private Scope getScope(CloseableAONContext ctx, Domain domain) {
+		Scope s =  SecurityDAO.getScopeStream(ctx, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getDescriptionProperty().eq("GENERAL"))
+			).findFirst().orElse(null);
+		
+		if(s == null && domain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(ctx, f -> 
+					f.getDomainProperty().eq(domain.getParentId())
+					.and(f.getDescriptionProperty().eq("GENERAL"))
+				).findFirst().orElse(null);
+		}
+		
+		if(s== null){
+			s = SecurityDAO.getScopeStream(ctx, f -> 
+					f.getDomainProperty().eq(domain.getId())
+				).findFirst().orElse(null);
+		}
+		
+		if(s == null && domain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(ctx, f -> 
+					f.getDomainProperty().eq(domain.getParentId())
+				).findFirst().orElse(null);
 		}
 		return s;
 	}

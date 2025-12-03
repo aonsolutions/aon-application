@@ -267,8 +267,10 @@ export class AonApplication extends AonElement {
       let sidenav = this.getElement(this.SIDENAV);
       if (sidenav.style.flexBasis === "0px") {
         sidenav.style.flexBasis = this.getSidenavWidth();
+        sidenav.classList.remove("closeSidenav");
       } else {
         sidenav.style.flexBasis = "0px";
+        sidenav.classList.add("closeSidenav");
       }
     }
   }
@@ -276,6 +278,7 @@ export class AonApplication extends AonElement {
   closeSidenav() {
     let sidenav = this.getElement(this.SIDENAV);
     sidenav.style.flexBasis = "0px";
+    sidenav.classList.add("closeSidenav");
   }
 
   toogleRightSidenav() {

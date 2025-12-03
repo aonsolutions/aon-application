@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -110,20 +109,35 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.add(subtitle);
 		
 		List<ProductBooking> packsProducts = products.stream()
-				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN))
+				.filter(p -> p.getBookingType().equals(ProductBookingType.PLAN) || p.getBookingType().equals(ProductBookingType.CONSULTANCY))
+				.sorted(
+			        Comparator.comparing(
+			                ProductBooking::getBookingType,
+			                Comparator.comparingInt(type -> {
+			                    switch (type) {
+			                        case PLAN:         return 0;
+			                        case CONSULTANCY:  return 1;
+			                        default:           return Integer.MAX_VALUE;
+			                    }
+			                })
+			        ).thenComparing(
+			                ProductBooking::getPosition,
+			                Comparator.nullsLast(Comparator.naturalOrder())
+			        )
+			    )
+				.collect(Collectors.toList());
+		
+		if(!packsProducts.isEmpty()) {
+			createPacks(cataloguePanel, packsProducts);
+		}
+	
+		List<ProductBooking> aonUsers = products.stream()
+				.filter(p -> p.getBookingType().equals(ProductBookingType.USER))
 				.sorted(Comparator.comparing(
 			        ProductBooking::getPosition,
 			        Comparator.nullsLast(Comparator.naturalOrder())
 			    ))
 				.collect(Collectors.toList());
-		if(!packsProducts.isEmpty()) {
-			createPacks(cataloguePanel, packsProducts);
-		}
-		
-		Label aditional = new Label("Adicional");
-		aditional.getElement().getStyle().setProperty("font-size", "1.2rem");
-		aditional.getElement().getStyle().setProperty("margin", "1rem 0");
-		cataloguePanel.add(aditional);
 		
 		List<ProductBooking> aonServices = products.stream()
 				.filter(p -> p.getBookingType().equals(ProductBookingType.SERVICE))
@@ -132,8 +146,19 @@ public class ProductCatalogue extends HTMLPanel {
 			        Comparator.nullsLast(Comparator.naturalOrder())
 			    ))
 				.collect(Collectors.toList());
-		if(!aonServices.isEmpty()) {
-			createServices(cataloguePanel, aonServices);
+		
+		if(!aonUsers.isEmpty() || !aonServices.isEmpty()) {
+			Label users = new Label("Completa tu plan");
+			users.getElement().getStyle().setProperty("font-size", "1.3rem");
+			users.getElement().getStyle().setProperty("margin", "1rem 0");
+			cataloguePanel.add(users);
+			
+			if(!aonUsers.isEmpty())
+				createServices(cataloguePanel, aonUsers);
+			
+			if(!aonServices.isEmpty())
+				createServices(cataloguePanel, aonServices);
+			
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);
@@ -226,6 +251,24 @@ public class ProductCatalogue extends HTMLPanel {
 				HTMLPanel price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
 				price.getElement().getStyle().setProperty("text-align", "center");
 				price.getElement().getStyle().setProperty("width", "8rem");
+				
+				switch (aonService.getBookingPriceType()) {
+					case PLAN:
+						price = new HTMLPanel("Pecio plan contratado");
+						break;
+					case FROM:
+						price = new HTMLPanel("Desde <b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+					case HIDE:
+						price = new HTMLPanel("");
+						break;
+					default:
+						price = new HTMLPanel("<b>" + priceValue.split("\\.")[0] + "</b>." + priceValue.split("\\.")[1] + "<b> \u20ac </b>" + " al mes *");
+						break;
+				}
+				
+				if(aonService.getItem().getPrice() == 0.00)
+					price = new HTMLPanel("");
 							
 				if(itemTariff.isEmpty()) {
 					if(tariff.getDiscount() != 0.00) {
@@ -267,10 +310,10 @@ public class ProductCatalogue extends HTMLPanel {
 		cataloguePanel.add(servicesPanel);
 		
 	}
-	
-	private Button createServiceButton(Product packProduct) {
+
+	private Button createServiceButton(ProductBooking packProduct) {
 		Button bookBtn = new Button();
-		bookBtn.setText("Contratar");
+		bookBtn.setText(packProduct.isNoBooking() ? "Solicitar Informaci\u00f3n" : "Contratar");
 		
 		bookBtn.getElement().getStyle().setProperty("background", "none");
 		bookBtn.getElement().getStyle().setProperty("color", "white");

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -34,6 +33,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
+import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 
@@ -109,7 +109,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
-			} else if(icc.isVerifactu()) {
+			} else if(icc.hasVerifactu()) {
 				if (invoice.getCommunicationInfo() != null) {
 					InvoiceInfo info = invoice.getCommunicationInfo().get(InvoiceCommunicationType.VERIFACTU);
 					if (info != null) {

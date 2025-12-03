@@ -306,13 +306,14 @@ export class AonJsfInvoicePrint extends AonJsfApp {
 	}
 }
 
-export class AonJsfInvoiceRemove extends AonJsfApp {
+// NO USAR EL BORRADO DE FACTURAS - ACTIVAR EN CASO NECESARIO.
+// export class AonJsfInvoiceRemove extends AonJsfApp {
 
-	constructor() {
-		super();
-		this.setViewId('/facelet/app/invoiceRemove.xhtml');
-	}
-}
+// 	constructor() {
+// 		super();
+// 		this.setViewId('/facelet/app/invoiceRemove.xhtml');
+// 	}
+// }
 
 export class AonJsfInvoiceDelivery extends AonJsfApp {
 
@@ -1550,9 +1551,9 @@ if (!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
 }
 
-if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
-	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
-}
+// if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
+// 	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
+// }
 
 if (!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_DELIVERY, AonJsfInvoiceDelivery);

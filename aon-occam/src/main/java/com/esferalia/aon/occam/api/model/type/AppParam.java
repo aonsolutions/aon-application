@@ -288,6 +288,8 @@ public enum AppParam {
 	, SIG_DOMAIN_ID
 	, SIG_LOGIN
 	, TRIAL
+	
+	, INVOICE_FIX_SERIES
 	;
 	
 	public String getValue() {

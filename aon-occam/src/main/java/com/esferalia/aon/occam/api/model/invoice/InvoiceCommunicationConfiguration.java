@@ -70,9 +70,14 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 	
+	public boolean hasVerifactu() {
+		return isVerifactu() && getVerifactuIncludeDate() != null && getVerifactuIncludeDate().before(new Date());
+	}
+	
 	public boolean isVerifactu() {
 		return verifactu;
 	}
+	
 	public InvoiceCommunicationConfiguration setVerifactu(boolean verifactu) {
 		this.verifactu = verifactu;
 		return this;
@@ -81,6 +86,7 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isVerifactuTest() {
 		return verifactuTest;
 	}
+	
 	public InvoiceCommunicationConfiguration setVerifactuTest(boolean verifactuTest) {
 		this.verifactuTest = verifactuTest;
 		return this;
@@ -201,7 +207,7 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 			types.add(InvoiceCommunicationType.TBAI);
 		} else if(isTbai() && getAdministration().isBizkaia()) {
 			types.add(InvoiceCommunicationType.LROE);
-		} else if(isVerifactu() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
+		} else if(hasVerifactu() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
 			types.add(InvoiceCommunicationType.VERIFACTU);
 		} else if(isSii() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
 			types.add(InvoiceCommunicationType.SII);

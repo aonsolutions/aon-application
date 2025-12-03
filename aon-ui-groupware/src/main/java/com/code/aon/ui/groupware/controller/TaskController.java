@@ -473,10 +473,13 @@ public class TaskController extends BasicController {
 
 	public void saveTask(ActionEvent event) {
 		try {
+			Task task = (Task) getTo();
+			if(task.getEndDate() == null) {
+				task.setEndDate(task.getDueDate() != null ? task.getDueDate() : task.getStartDate());
+			}
 			if (!isAllMembers()) {
 				super.accept(event);
 			} else {
-				Task task = (Task) getTo();
 				prepareForInsert(task);
 				forAllMembers(task);
 				onSearch(event);
@@ -492,7 +495,8 @@ public class TaskController extends BasicController {
 		try {
 			Criteria criteria = new Criteria();
 			IManagerBean managerBean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
-			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), task.getWorkGroup().getId());
+			if(task.getWorkGroup() != null && task.getWorkGroup().getId() != null)
+				criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), task.getWorkGroup().getId());
 			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ACTIVE), true);
 			List<ITransferObject> list = managerBean.getList(criteria);
 			int i = 0;

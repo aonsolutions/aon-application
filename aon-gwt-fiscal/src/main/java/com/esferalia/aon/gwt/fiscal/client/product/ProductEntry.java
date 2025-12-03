@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingPriceType;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductComposition;
@@ -101,8 +102,10 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomIntegerBox trial = new AonCustomIntegerBox("D\u00edas Prueba"); // TRIAL_LIMIT_DAYS
 	private AonCustomDateBox trialLimit = new AonCustomDateBox("Fecha L\u00edmite Prueba"); // TRIAL_LIMIT_DATE
 	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloq. Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
+	private AonCustomCheckBox noBooking = new AonCustomCheckBox("No Contratable");
 	
 	private AonCustomIntegerBox posititon = new AonCustomIntegerBox("Posici\u00f3n");
+	private AonCustomListBox priceType = new AonCustomListBox("T. Precio");
 	
 	private AonCustomListBox projectType = new AonCustomListBox("T. Expediente");
 	private AonCustomListBox workgroup = new AonCustomListBox("G. Trabajo");
@@ -282,6 +285,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		aditionalCard.getElement().getStyle().setProperty("min-width", "33rem");
 		aditionalCard.add(table);
 		
+		posititon.setWidth("3rem");
 		posititon.hideNearBy();
 		posititon.setValue(product.getPosition());
 		posititon.addValueChangeHandler(e -> {
@@ -295,6 +299,16 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 				
 			} else posititon.setValue(null);
 				
+		});
+		
+		priceType.clearItems();
+		priceType.addItem(ProductBookingPriceType.PVP.getDescription(), Byte.toString(ProductBookingPriceType.PVP.value()));
+		priceType.addItem(ProductBookingPriceType.PLAN.getDescription(), Byte.toString(ProductBookingPriceType.PLAN.value()));
+		priceType.addItem(ProductBookingPriceType.FROM.getDescription(), Byte.toString(ProductBookingPriceType.FROM.value()));
+		priceType.addItem(ProductBookingPriceType.HIDE.getDescription(), Byte.toString(ProductBookingPriceType.HIDE.value()));
+		priceType.setValue(Byte.toString(product.getBookingPriceType().value()));
+		priceType.addChangeHandler(e -> {
+			product.setBookingPriceType(ProductBookingPriceType.safeValueOf(Byte.parseByte(priceType.getValue())));
 		});
 		
 		price.hideNearBy();
@@ -319,12 +333,14 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		pvp.hideNearBy();
 		pvp.setEnable(false);
 		
-		table.add(createRow(posititon, price, iva, pvp));
+		table.add(createRow(posititon, priceType, price, iva, pvp));
 		
 		type.clearItems();
 		type.setWidth("20rem");
 		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
 		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
+		type.addItem(ProductBookingType.USER.getDescription(), ProductBookingType.USER.name());
+		type.addItem(ProductBookingType.CONSULTANCY.getDescription(), ProductBookingType.CONSULTANCY.name());
 		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
 		type.setValue(product.getBookingType().name());
 		
@@ -446,7 +462,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_MAX")).findFirst();
 		limit.setValue(limitOpt.isEmpty() ? null : Integer.parseInt(limitOpt.get().getValue()));
 		
-		limitOverflow.setWidth("10rem");
+		limitOverflow.setWidth("11rem");
 		limitOverflow.addValueChangeHandler(e -> {
 			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 			if(itemAddInfoOpt.isEmpty()) {
@@ -464,7 +480,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOverflowOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 		limitOverflow.setValue(limitOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(limitOverflowOpt.get().getValue()));
 		
-		table.add(createRow(limitOverflow, limit));
+		noBooking.setWidth("10rem");
+		noBooking.setValue(product.isNoBooking());
+		noBooking.addValueChangeHandler(e -> product.setNoBooking(e.getValue()));
+		
+		table.add(createRow(limitOverflow, limit, noBooking));
 		
 		// TRIAL
 		trial.hideNearBy();

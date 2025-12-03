@@ -1,20 +1,10 @@
 package net.aonsolutions.aon.api.servlet.marketing;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
-import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribution;
-import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.MarketingActionTarget;
-import com.esferalia.aon.occam.api.model.MarketingCampaign;
-import com.esferalia.aon.occam.api.model.Survey;
-import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.MarketingAction;
 
 public class ActionTarget implements Serializable {
 	
@@ -165,27 +155,6 @@ public class ActionTarget implements Serializable {
 		
 	}
 	
-	class MarketingAction extends com.esferalia.aon.occam.api.model.MarketingAction implements Serializable {
-		
-		private static final long serialVersionUID = 1L;
-		
-		private Integer seller;
-		
-		public MarketingAction() {
-			super();
-		}
-		
-		public Integer getSeller() {
-			return seller;
-		}
-
-		public MarketingAction setSeller(Integer seller) {
-			this.seller = seller;
-			return this;
-		}
-		
-	}
-	
 	// Variables
 	
 	private Target target;
@@ -205,19 +174,10 @@ public class ActionTarget implements Serializable {
 		
 		// Marketing Action Target
 		Integer actionId = Integer.parseInt(marketingActionJson.getString("id"));
-		Integer sellerDistribution =  Integer.parseInt(marketingActionJson.getString("sellerDistribution"));
-		Integer workgroup = JsonUtils.getInteger(marketingActionJson, "workgroup");
-		Integer seller = JsonUtils.getInteger(marketingActionJson, "seller");
 		
 		marketingAction = new MarketingAction()
-				.setSeller(seller);
-		
-		marketingAction.setId(actionId);
-		marketingAction.setWorkgroup(new Workgroup().setId(workgroup));
-		marketingAction.setSellerDistribution(
-				null == sellerDistribution
-				? MarketingSellerDistribution.MANUAL 
-				: MarketingSellerDistribution.getSellerDistribution(sellerDistribution));
+				.setId(actionId)
+				;
 		
 		// Target
 		String name = targetJson.getString("name");
@@ -281,28 +241,5 @@ public class ActionTarget implements Serializable {
 		this.trial = trial;
 		return this;
 	}
-
-	public void setMarketingAction(com.esferalia.aon.occam.api.model.MarketingAction marketingAction) {
-		this.marketingAction.setId(marketingAction.getId());
-		this.marketingAction.setDomain(marketingAction.getDomain());
-		this.marketingAction.setMarketingCampaign(marketingAction.getMarketingCampaign());
-		this.marketingAction.setMediaType(marketingAction.getMediaType());
-		this.marketingAction.setTag(marketingAction.getTag());
-		this.marketingAction.setStartDate(marketingAction.getStartDate());
-		this.marketingAction.setEndDate(marketingAction.getEndDate());
-		this.marketingAction.setDescription(marketingAction.getDescription());
-		this.marketingAction.setBudget(marketingAction.getBudget());
-		this.marketingAction.setExpense(marketingAction.getExpense());
-		this.marketingAction.setWorkgroup(marketingAction.getWorkgroup());
-		this.marketingAction.setTaskHolder(marketingAction.getTaskHolder());
-		this.marketingAction.setSurvey(marketingAction.getSurvey());
-		this.marketingAction.setNewsletter(marketingAction.getNewsletter());
-		this.marketingAction.setNews(marketingAction.getNews());
-		
-		this.marketingAction.setSellerDistribution(marketingAction.getSellerDistribution());
-		this.marketingAction.setTargets(marketingAction.getTargets());
-		this.marketingAction.setDeleted(marketingAction.isDeleted());
-	}
-	
 	
 }

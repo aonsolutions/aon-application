@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -149,6 +148,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 
 @WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common", "/aon_gwt_marketing/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
@@ -1601,12 +1601,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException {
-		return CONSOLE.getAviableDomainsForSync(
-				new Domain().setName(paramsDomains.getDomainName()).setId(paramsDomains.getDomainId()), 
-				new User().setLogin(paramsDomains.getUser()), 
-				f -> f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
+		Domain currentDomain = AON.getDomain(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser());
+		
+		return AON.getAviableDomainsForSync(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), false, 
+				f -> f.getParentProperty().eq(currentDomain.getParentId() == null ? currentDomain.getId() : currentDomain.getParentId())
+				.and(
+					f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
 					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
-				).collect(Collectors.toList());
+				)).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -1704,6 +1706,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product) throws AonCoreException {
 		AON.removeBookingProduct(domainName, domain, user, customerRelatedRegistry, Optional.of(oldFee), product);
+	}
+	
+	@Override
+	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) throws AonCoreException {
+		AON.requestBookingInfo(domainName, domain, user, product, customerRegistry);
 	}
 	
 	@Override

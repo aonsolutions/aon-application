@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -103,6 +102,7 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
+import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.CRC8;
@@ -278,7 +278,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
 		if (invoice.isSales()) {
 			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-			if (config.isVerifactu()) {
+			if (config.hasVerifactu()) {
 				if (InvoiceCommunicator.mustBeAnnulled(api.getOccam(), invoice, InvoiceCommunicationType.VERIFACTU)) {
 					cancelAndCommunicateInvoice(api, config, company, invoice);
 					return new JSONObject();
@@ -483,7 +483,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			
 			// ***********************************
 			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-			if (icc.isVerifactu()) {
+			if (icc.hasVerifactu()) {
 				return acceptAndCommunicateInvoice(api, icc, company);	
 			}
 			// ***********************************
@@ -848,6 +848,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONArray getInvoiceSeries(AonApiData api) {
 		return InvoiceSeriesJSON.to(FINANCE.getInvoiceSalesSeries(api.getOccam(), api.getDomain().getId()));	
 	}
+	
+//	private JSONObject fixInvoice(AonApiData api) {
+//		AON_SOLUTIONS.fixInvoice(api.getOccam());
+//		return new JSONObject();
+//	}
 	
 	// ************************************************************
 	// ******************************* [ACCEPT AND COMMUNICATE] ***

@@ -616,13 +616,13 @@
 											actionListener="#{deliveryInvoicing.onInitialize}"
 											value="#{bundle.finance_delivery_invoicing_module}"/>
 									</aon:div>									
-									<aon:div styleClass="aon-direct-access-list-element">
+									<!-- <aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoiceRemover-myAon"
 											rendered="#{actionDenied.renderedOption('invoiceRemover_search-myAon')}"
 											action="invoiceRemover_search-myAon"
 											actionListener="#{invoiceRemover.onEditSearch}"
 											value="#{bundle.finance_invoice_removing_module}"/>
-									</aon:div>
+									</aon:div> -->
 									<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="saleInvoiceSigner-myAon"

@@ -487,6 +487,11 @@ aon-configuration-menu .suiteMenuContent  {
 	padding: 1.25rem;
 }
 
+.closeSidenav {
+	margin: 0;
+	flex-basis: 0;
+}
+
 .aonRightSidenav {
     /* flex-basis: 225px !important; */	
 	background-color: var(--aonBackgroundColor2);	
@@ -615,6 +620,7 @@ aon-configuration-menu .suiteMenuContent  {
 	gap: .5rem;
 	border-radius: .375rem;
 	background-color: var(--aonBackgroundColor2);
+	margin-left: 0;
 }
 
 #aonCompanyTabFilter{
@@ -630,6 +636,11 @@ aon-configuration-menu .suiteMenuContent  {
 	border-radius: .375rem;
 	font-size: .875rem;
 	
+}
+
+.aonTab .aonTabItemText:hover{
+	background-color: var(--aonBackgroundColor);
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
 }
 
 .aonTab .aonTabItemTextSelected {
@@ -874,6 +885,46 @@ aon-configuration-menu .suiteMenuContent  {
 	font-family: "Inter-semibold", sans-serif;
 }
 
+.aonCardTitleSection #enterpriseLinked,
+.aonCardTitleSection #statusDiv,
+.aonCardTitleSection #enterpriseLinked > div > *:not(.material-icons),
+.aonCardTitleSection #statusDiv > *:not(.material-icons) {
+	padding: 0;
+}
+
+.aonCardTitleSection #enterpriseLinked > div,
+.aonCardTitleSection #statusDiv {
+	align-items: center;
+}
+
+.aonInputGroup input {
+	text-overflow: ellipsis;
+	font-size: 14px;
+	border: .0625rem solid #cbd5e1;
+	background-color: #fff;
+	color: #1e293b;
+	padding: 0;
+	margin-top: 1.5rem;
+	height: 2.5rem;
+	padding: .5rem .75rem .5rem .75rem;
+	border-radius: .375rem;
+	box-sizing: border-box;
+}
+
+#aonCustomerOfficeGeneralCardTableRow1 {
+	font-size: .7rem;
+}
+
+.aonInputLabel{
+	font-family: "Inter-medium";
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}
+
+.aonInputIconLabel{
+	top: 25px;
+}
 
 .aonDashboardButton span {
   letter-spacing: 0;
@@ -1152,4 +1203,15 @@ aon-right-panel {
 	position: initial;
 }
 
+/* ========================== Header Customer Styles  ========================== */
 
+.aonSecondaryToolbar{
+	border: none;
+}
+
+.aonSecondaryToolbarTitle{
+	font-family: "Inter-medium";
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}

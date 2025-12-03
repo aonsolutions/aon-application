@@ -772,13 +772,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			ocrRegistry.ifPresent(c -> {
 				c.getName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
 				c.getTaxId().ifPresent(taxId -> taxId.getValue().ifPresent(r -> {
-					Country country = Country.safeValueOf(r.substring(0, 2));
-					if(country != null) {
-						registry.setDocumentCountry(country);
-						registry.setDocument(r.substring(2));
-					} else {
-						registry.setDocument(r);
-					}
+					if(AonStringUtils.isNotBlank(r) && r.length() > 2) {
+						Country country = Country.safeValueOf(r.substring(0, 2));
+						if(country != null) {
+							registry.setDocumentCountry(country);
+							registry.setDocument(r.substring(2));
+						} else registry.setDocument(r);				
+					} else registry.setDocument(r);
 				}));
 				c.getCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf).ifPresent(registry::setNationality));
 				c.getAddress().ifPresent(address -> {

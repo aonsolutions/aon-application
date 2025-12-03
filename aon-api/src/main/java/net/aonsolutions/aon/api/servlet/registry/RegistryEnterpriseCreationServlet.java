@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet.registry;
 
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 
@@ -120,6 +121,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER = Logger.getLogger(RegistryEnterpriseCreationServlet.class.getName());
 
 	public static final String CREATE_ENTERPRISE = "/";
+	public static final String SYNC_MASSIVE_CUSTOMER_DOMAIN = "/syncMassiveCustomerDomain";
 
 	// Mail
 	private static String urlMail;
@@ -139,6 +141,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 			AonApiData api = initialize(req, false);
 			Object object = new AonRouting(api)
+					.addRoute(SYNC_MASSIVE_CUSTOMER_DOMAIN, RegistryEnterpriseCreationServlet::syncMassiveCustomerDomain)
 					.addRoute(CREATE_ENTERPRISE, RegistryEnterpriseCreationServlet::createEnterprise).apply();
 
 			response(req, resp, object);
@@ -146,6 +149,395 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	// ---------------------------------------------------------------------------------------------
+	// CREATE ENTERPRISE
+	// ---------------------------------------------------------------------------------------------
+
+	public static JSONObject syncMassiveCustomerDomain(AonApiData api) {
+		
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+			
+			Integer customerId = api.getData().getInt("customer");
+			Customer customer = CustomerDAO.get(ctx, customerId);
+			
+			Integer domainId = api.getData().optIntegerObject("domain");
+			
+			if(null != domainId) {
+				Company company = CompanyDAO.getCompany(ctx, domainId);
+				
+				Optional<RegistryRelationship> existRRelationshipforCustomer = RegistryRelationshipDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+				if(existRRelationshipforCustomer.isPresent())
+					return new JSONObject()
+							.put("customerId", customerId.toString())
+							.put("customerName", customer.getName())
+							.put("customerDocument", customer.getDocument())
+							.put("enterpriseId", "")
+							.put("enterpriseName", "")
+							.put("enterpriseDocument", "")
+							.put("messageType", "warning")
+							.put("message", "El cliente tiene ya se encuentra vinculado con una empresa")
+							;
+				else {
+					Optional<RegistryRelationship> existRRelationshipforCompany = RegistryRelationshipDAO.get(ctx, f -> f.getRelatedRegistryProperty().eq(company.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+					
+					if(existRRelationshipforCompany.isPresent())
+						return new JSONObject()
+								.put("customerId", customerId.toString())
+								.put("customerName", customer.getName())
+								.put("customerDocument", customer.getDocument())
+								.put("enterpriseId", company.getId().toString())
+								.put("enterpriseName", company.getName())
+								.put("enterpriseDocument", company.getDocument())
+								.put("messageType", "warning")
+								.put("message", "La empresa ya se encuentra vinculada con un cliente")
+								;
+					else {
+						List<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(company.getDomain().getId()), new Options().setFull(false)).collect(Collectors.toList());
+						
+						if(!domainUsers.isEmpty()) {
+							
+							RegistryRelationship rrelationship = new RegistryRelationship();
+							rrelationship.setDomain(customer.getDomain());
+							rrelationship.setRegistry(customer.getId());
+							rrelationship.setRelatedRegistry(company.getId());
+							rrelationship.setComments(company.getDomain().getName());
+
+							RegistryRelationshipDAO.save(ctx, rrelationship);
+							
+							sendEnterpriseSyncMail(api, ctx, customer);
+							
+							return new JSONObject()
+									.put("customerId", customerId.toString())
+									.put("customerName", customer.getName())
+									.put("customerDocument", customer.getDocument())
+									.put("enterpriseId", company.getId().toString())
+									.put("enterpriseName", company.getName())
+									.put("enterpriseDocument", company.getDocument())
+									.put("messageType", "success")
+									.put("message", "El cliente se ha vinculado al dominio")
+									;
+						
+						} else {
+							
+							// Get enterprise
+							Optional<RegistryMedia> customerEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(customerId).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+							
+							Optional<RegistryMedia> companyEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(company.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+							
+							String email = null;
+							if(companyEmail.isPresent() && AonStringUtils.isNotBlank(companyEmail.get().getValue()))
+								email = companyEmail.get().getValue();
+							else if(customerEmail.isPresent() && AonStringUtils.isNotBlank(customerEmail.get().getValue()))
+								email = customerEmail.get().getValue();
+							
+							if(AonStringUtils.isBlank(email)) {
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "warning")
+										.put("message", "No existe usuario en el dominio al que se quiere vincular, ni email en el cliente ni en la empresa para poder crear uno por defecto")
+										;
+								
+							} else {
+								
+								RegistryRelationship rrelationship = new RegistryRelationship();
+								rrelationship.setDomain(customer.getDomain());
+								rrelationship.setRegistry(customer.getId());
+								rrelationship.setRelatedRegistry(company.getId());
+								rrelationship.setComments(company.getDomain().getName());
+
+								RegistryRelationshipDAO.save(ctx, rrelationship);
+								
+								
+								createUserAuth(ctx, company, customer, email);
+
+								urlMail = company.getDomain().getName();
+								userMail = email;
+								
+								sendEnterpriseSyncUserMail(api, ctx, email, customer);
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "success")
+										.put("message", "El cliente se ha vinculado al dominio. Y se ha creado un usuario para el dominio con el mail" + email)
+										;
+							}
+						}
+					}
+				}
+			} else {
+				List<Domain> domains = DomainDAO.getCompanyDomains(ctx, customer.getDocument());
+				// Filter active domains
+				domains = domains.stream().filter(d -> d.isActive()).collect(Collectors.toList());
+				
+				if(domains.isEmpty())
+					return new JSONObject()
+							.put("customerId", customerId.toString())
+							.put("customerName", customer.getName())
+							.put("customerDocument", customer.getDocument())
+							.put("enterpriseId", "")
+							.put("enterpriseName", "")
+							.put("enterpriseDocument", "")
+							.put("messageType", "error")
+							.put("message", "El cliente no tiene ningun dominio con el mismo documento para vincularse")
+							;
+							
+				else if(domains.size() > 1) 
+					return new JSONObject()
+							.put("customerId", customerId.toString())
+							.put("customerName", customer.getName())
+							.put("customerDocument", customer.getDocument())
+							.put("enterpriseId", "")
+							.put("enterpriseName", "")
+							.put("enterpriseDocument", "")
+							.put("messageType", "warning")
+							.put("message", "El cliente tiene mas de un dominio con el mismo documento para vincularse")
+							;
+				else {
+					domainId = domains.get(0).getId();
+					Company company = CompanyDAO.getCompany(ctx, domainId);
+					
+					Optional<RegistryRelationship> existRRelationshipforCustomer = RegistryRelationshipDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+					if(existRRelationshipforCustomer.isPresent())
+						return new JSONObject()
+								.put("customerId", customerId.toString())
+								.put("customerName", customer.getName())
+								.put("customerDocument", customer.getDocument())
+								.put("enterpriseId", "")
+								.put("enterpriseName", "")
+								.put("enterpriseDocument", "")
+								.put("messageType", "warning")
+								.put("message", "El cliente tiene ya se encuentra vinculado con una empresa")
+								;
+					else {
+						Optional<RegistryRelationship> existRRelationshipforCompany = RegistryRelationshipDAO.get(ctx, f -> f.getRelatedRegistryProperty().eq(company.getId()).and(f.getDomainProperty().eq(customer.getDomain().getId())));
+						
+						if(existRRelationshipforCompany.isPresent())
+							return new JSONObject()
+									.put("customerId", customerId.toString())
+									.put("customerName", customer.getName())
+									.put("customerDocument", customer.getDocument())
+									.put("enterpriseId", company.getId().toString())
+									.put("enterpriseName", company.getName())
+									.put("enterpriseDocument", company.getDocument())
+									.put("messageType", "warning")
+									.put("message", "La empresa ya se encuentra vinculada con un cliente")
+									;
+						else {
+							List<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(company.getDomain().getId()), new Options().setFull(false)).collect(Collectors.toList());
+							
+							if(!domainUsers.isEmpty()) {
+								
+								RegistryRelationship rrelationship = new RegistryRelationship();
+								rrelationship.setDomain(customer.getDomain());
+								rrelationship.setRegistry(customer.getId());
+								rrelationship.setRelatedRegistry(company.getId());
+								rrelationship.setComments(company.getDomain().getName());
+
+								RegistryRelationshipDAO.save(ctx, rrelationship);
+								
+								sendEnterpriseSyncMail(api, ctx, customer);
+								
+								return new JSONObject()
+										.put("customerId", customerId.toString())
+										.put("customerName", customer.getName())
+										.put("customerDocument", customer.getDocument())
+										.put("enterpriseId", company.getId().toString())
+										.put("enterpriseName", company.getName())
+										.put("enterpriseDocument", company.getDocument())
+										.put("messageType", "success")
+										.put("message", "El cliente se ha vinculado al dominio")
+										;
+							
+							} else {
+								
+								// Get enterprise
+								Optional<RegistryMedia> customerEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(customerId).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+								
+								Optional<RegistryMedia> companyEmail = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(company.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).findFirst();
+								
+								String email = null;
+								if(companyEmail.isPresent() && AonStringUtils.isNotBlank(companyEmail.get().getValue()))
+									email = companyEmail.get().getValue();
+								else if(customerEmail.isPresent() && AonStringUtils.isNotBlank(customerEmail.get().getValue()))
+									email = customerEmail.get().getValue();
+								
+								if(AonStringUtils.isBlank(email)) {
+									
+									return new JSONObject()
+											.put("customerId", customerId.toString())
+											.put("customerName", customer.getName())
+											.put("customerDocument", customer.getDocument())
+											.put("enterpriseId", company.getId().toString())
+											.put("enterpriseName", company.getName())
+											.put("enterpriseDocument", company.getDocument())
+											.put("messageType", "warning")
+											.put("message", "No existe usuario en el dominio al que se quiere vincular, ni email en el cliente ni en la empresa para poder crear uno por defecto")
+											;
+									
+								} else {
+									
+									RegistryRelationship rrelationship = new RegistryRelationship();
+									rrelationship.setDomain(customer.getDomain());
+									rrelationship.setRegistry(customer.getId());
+									rrelationship.setRelatedRegistry(company.getId());
+									rrelationship.setComments(company.getDomain().getName());
+
+									RegistryRelationshipDAO.save(ctx, rrelationship);
+									
+									
+									createUserAuth(ctx, company, customer, email);
+
+									urlMail = company.getDomain().getName();
+									userMail = email;
+									
+									sendEnterpriseSyncUserMail(api, ctx, email, customer);
+									
+									return new JSONObject()
+											.put("customerId", customerId.toString())
+											.put("customerName", customer.getName())
+											.put("customerDocument", customer.getDocument())
+											.put("enterpriseId", company.getId().toString())
+											.put("enterpriseName", company.getName())
+											.put("enterpriseDocument", company.getDocument())
+											.put("messageType", "success")
+											.put("message", "El cliente se ha vinculado al dominio. Y se ha creado un usuario para el dominio con el mail" + email)
+											;
+								}
+							}
+						}
+					}
+				
+				}	
+			}
+			
+			
+			
+		} catch (Exception e) {
+			return new JSONObject().put("error", e.getMessage());
+		}
+	}
+	
+	private static void createUserAuth(CloseableAONContext ctx, Company company, Customer customer, String email) {
+		String login = ramdonLogin();
+		String pass = null;
+
+		Auth auth = AON_SOLUTIONS.getAuth(email);
+
+		if (pass == null)
+			pass = Utils.createPasswordHash(email, login);
+
+		passwordMail = login;
+		
+		if (auth.getUuid() == null) {
+			auth = new Auth()
+					.setEmail(email)
+					.setPassword(pass)
+					.setName(customer.getName())
+					.setSurname(null)
+					.setDocument(customer.getDocument())
+					;
+
+			auth = AuthDAO.insertAuth(ctx, auth);
+		} else {
+			auth.setPassword(pass);
+			auth = AuthDAO.updateAuth(ctx, auth);
+		}
+
+		if (auth.getAuth() != null) {
+			User user = new User().setAuth(auth).setActive(true)
+					.setDomain(company.getDomain().getId())
+					.setLogin(company.getDocument())
+					.setName(company.getDocument())
+					.setShared(false)
+					.setEnterprise(company.getId())
+					.setToolbar(UserToolbar.GOOGLE)
+					;
+
+			user = SecurityDAO.save(ctx, user);
+
+			SecurityDAO.updateUserPassword(ctx, user.getId(), auth.getPassword());
+
+			Scope scope = getScope(ctx, company.getDomain(), user);
+
+			if (scope != null) {
+				SecurityDAO.insertUserScope(ctx,
+						new UserScope().setDomain(company.getDomain().getId()).setScope(scope.getId()).setUserId(user.getId()));
+			}
+
+			ApplicationParameter appParam = AppParamDAO.fetchOne(ctx, AppParam.AON_PORTAL);
+
+			if (appParam == null || appParam.getId() == null) {
+
+				appParam = new ApplicationParameter()
+						.setDomain(company.getDomain().getId())
+						.setValue("288")
+						.setName(AppParam.AON_PORTAL.getValue());
+
+				AppParamDAO.insertApplicationParameter(ctx, appParam);
+			}
+			
+			setUserAppRole(ctx, company.getDomain(), user);
+
+			if (company.getDomain().isChild() || company.getDomain().isStandalone())
+				createTaskHolder(ctx, company.getDomain(), auth, user);
+
+		}
+	}
+	
+	private static void sendEnterpriseSyncMail(AonApiData api, CloseableAONContext ctx, Customer customer) {
+		Domain parent = api.getDomain().isParent() ? api.getDomain()
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+
+		String logoUrl = getLogoUrl(api, ctx);
+
+		String from = getFromMessage(api, ctx, parent);
+
+		if (AonStringUtils.isBlank(from))
+			throw new AonApiException("No existe email definido en el entorno para la creaci\u00f3n de empresas");
+
+		SESMessage msg = new SESMessage().setFrom(from)
+				.setTo(from)
+				.setReplyTo(from)
+				.setSubject("Vinculaci\u00f3n Empresa " + customer.getName())
+				.setBody(createEnterpriseSyncBody(logoUrl, parent, from, customer.getName()));
+
+		SES.sendEmail(msg);
+	}
+	
+	private static void sendEnterpriseSyncUserMail(AonApiData api, CloseableAONContext ctx, String email, Customer customer) {
+		Domain parent = api.getDomain().isParent() ? api.getDomain()
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+
+		String logoUrl = getLogoUrl(api, ctx);
+
+		String from = getFromMessage(api, ctx, parent);
+
+		if (AonStringUtils.isBlank(from))
+			throw new AonApiException("No existe email definido en el entorno para la creaci\u00f3n de empresas");
+
+		List<String> bcc = List.of(from);
+
+		SESMessage msg = new SESMessage().setFrom(from)
+				.setTo(email)
+				.setBcc(bcc)
+				.setReplyTo(from)
+				.setSubject("Vinculaci\u00f3n Empresa " + customer.getName())
+				.setBody(createEnterpriseSyncUserBody(logoUrl, parent, from, customer.getName()));
+
+		SES.sendEmail(msg);
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -306,7 +698,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 					System.out.println("----------------------- Create Auth / User");
 
-					createDefaultUser(api, ctx, newDomain, newScope);
+					createDefaultUser(api, ctx, newDomain);
 
 					System.out.println("----------------------- Create User Scope (supportSeller / api.getUser)");
 
@@ -433,7 +825,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		Company company = new Company();
 		company.setName(name);
-		company.setDocument(document);
+		company.setDocument(document.toUpperCase());
 		company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
 
 		checkCompany(company);
@@ -458,7 +850,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (sellerSupportEmailOpt.isEmpty())
 			throw new AonApiException("No existe email para el agente de soporte seleccionado");
 
-		String domainNewName = company.getDocument() + "-"
+		String domainNewName = company.getDocument().toLowerCase() + "-"
 				+ (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName()
 						: parentDomain.getSubDomainSuffix());
 
@@ -467,7 +859,20 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setParentId(parentDomain.getId()).setActive(true).setDomainType(DomainType.ENTERPRISE)
 				.setEnableHeredity(true).setDomainManagement(false).setScope(newScope.getId());
 
-		newDomain = DomainDAO.insertDomain(ctx, newDomain, company);
+		newDomain = DomainDAO.insertDomainWithoutEnterprise(ctx, newDomain, company);
+		
+		Domain createdDomain = newDomain;
+		
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(createdDomain.getId())).findFirst().get();
+		
+		Scope enterpriseScope = SecurityDAO.insertScope(ctx, new Scope().setDomain(newDomain.getId()).setDescription("GENERAL"));
+		
+		ctx.getDslContext()
+			.insertInto(ENTERPRISE)
+			.set(ENTERPRISE.REGISTRY, newCompany.getId())
+			.set(ENTERPRISE.DOMAIN, newDomain.getId())
+			.set(ENTERPRISE.SCOPE, enterpriseScope.getId())
+			.execute();
 
 		createCompanyMedia(api, ctx, newDomain);
 
@@ -506,7 +911,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (sellerSupportEmailOpt.isEmpty())
 			throw new AonApiException("No existe email para el agente de soporte seleccionado");
 
-		String domainNewName = AonStringUtils.isBlank(url) ? company.getDocument() + "-aonsolutions.org" : url;
+		String domainNewName = AonStringUtils.isBlank(url) ? company.getDocument().toLowerCase() + "-aonsolutions.org" : url;
 
 		Domain newDomain = new Domain().setName(domainNewName.toLowerCase()).setDescription(company.getName())
 				.setOwner(sellerSupportEmailOpt.get().getValue()).setActive(true)
@@ -514,15 +919,14 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setEnableHeredity(false).setDomainManagement(false).setAonCustomer(customerId);
 
 		newDomain = DomainDAO.insertDomainStandalone(ctx, newDomain, company, schema, document);
-
+		
 		createCompanyMedia(api, ctx, newDomain);
 
 		return newDomain;
 
 	}
 
-	private static Scope updateDomainScopeStandalone(AonApiData api, Domain newDomain, CloseableAONContext ctx)
-			throws Exception {
+	private static Scope updateDomainScopeStandalone(AonApiData api, Domain newDomain, CloseableAONContext ctx) throws Exception {
 
 		JSONObject data = api.getData();
 
@@ -593,6 +997,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()))
 				.findFirst().get();
+		
+		Optional<Scope> enterpriseScope = SecurityDAO.getScopeStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()).and(f.getDescriptionProperty().eq("GENERAL"))).findFirst();
+		if(enterpriseScope.isEmpty())
+			enterpriseScope = Optional.of(SecurityDAO.insertScope(ctx, new Scope().setDomain(newDomain.getId()).setDescription("GENERAL")));
 
 		Integer comapnyRaddressId = null;
 
@@ -621,7 +1029,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.EMAIL, email, comapnyRaddressId);
 
 		if (null != comapnyRaddressId)
-			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, geozoneCode);
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, geozoneCode, enterpriseScope);
 
 	}
 
@@ -636,10 +1044,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	}
 
 	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId,
-			Integer raddressId, String geozoneCode) {
-		Workplace workplace = new Workplace().setActive(true).setDescription("PRINCIPAL").setDomain(newDomain.getId())
-				.setEnterprise(companyId).setAddress(raddressId)
-				.setEconomicAgreement(getEconomicAgreement(geozoneCode));
+			Integer raddressId, String geozoneCode, Optional<Scope> enterpriseScope) {
+		Workplace workplace = new Workplace().setActive(true)
+				.setDescription("PRINCIPAL")
+				.setDomain(newDomain.getId())
+				.setEnterprise(companyId)
+				.setAddress(raddressId)
+				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
+				.setScope(enterpriseScope.isEmpty() ? null : enterpriseScope.get().getId())
+				;
 
 		WorkplaceDAO.save(ctx, workplace);
 	}
@@ -753,7 +1166,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		RegistryRelationshipDAO.save(ctx, rrelationship);
 	}
 
-	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope) {
+	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
 		JSONObject data = api.getData();
 
 		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
@@ -790,7 +1203,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 			User user = null;
 			if (auth.getAuth() != null) {
-				user = createUser(api, ctx, newDomain, newScope, auth, login, targetOpt.get().getName());
+				user = createUser(api, ctx, newDomain, auth, login, targetOpt.get().getName());
 				setUserAppRole(ctx, newDomain, user);
 
 				if (newDomain.isChild() || newDomain.isStandalone()) {
@@ -872,7 +1285,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		return i.toString();
 	}
 
-	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope, Auth auth,
+	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Auth auth,
 			String login, String name) {
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId()))
 				.findFirst().get();
@@ -1041,15 +1454,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		DomainApp domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.INVOICE).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 
 		domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.DOCUMENTAL).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 
 		domainApp = new DomainApp().setDomain(newDomain.getId()).setApp(AonApp.MESSENGER).setActive(true);
 
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 	}
 
 	private static void insertAccountPeriod(CloseableAONContext ctx, Domain newDomain) {
@@ -1313,6 +1726,58 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
 		Template template = engine
 				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private static String createEnterpriseSyncBody(String logoUrl, Domain parentDomain, String from, String name) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "") + "/app";
+
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", parentDomain.getDescription());
+		context.put("name", name);
+		context.put("url", url);
+		context.put("domainName", urlMail);
+		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+
+		Template template = engine
+				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_sync_ayudat.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private static String createEnterpriseSyncUserBody(String logoUrl, Domain parentDomain, String from, String name) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "") + "/app";
+
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", parentDomain.getDescription());
+		context.put("name", name);
+		context.put("url", url);
+		context.put("domainName", urlMail);
+		context.put("user", userMail);
+		context.put("password", passwordMail);
+		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+
+		Template template = engine
+				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_sync_user_ayudat.vm");
 
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
