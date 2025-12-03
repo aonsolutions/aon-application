@@ -158,8 +158,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			}
 			
 		};
-
-		financesPanel.addWest(fBatchPaymentAviableList, fBatch.isAccounted() ? 0 : Window.getClientWidth() / 2);
+		financesPanel.addWest(fBatchPaymentAviableList, fBatch.isGenerated() || fBatch.isAccounted() ? 0 : Window.getClientWidth() / 2);
 		
 		fBatchPaymentBatchedList = new FBatchPaymentBatchedList(opt, fbatchType, fBatch) {
 			
@@ -180,7 +179,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			
 			@Override
 			public void run() {
-				if(!fBatch.isAccounted() || !fBatch.isGenerated())
+				if(fBatch.isAccounted() || fBatch.isGenerated())
 					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado " + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
 			}
 		};
