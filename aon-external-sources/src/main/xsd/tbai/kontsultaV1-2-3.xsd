@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:TB="urn:ticketbai:emision" xmlns:T="urn:ticketbai:kontsulta" targetNamespace="urn:ticketbai:kontsulta">
+	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2-2.xsd" />
+	<element name="KontsultaTicketBAI">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="T:CabeceraConsultaType" />
+				<element name="FiltroConsulta" type="T:FiltroConsultaType" minOccurs="0" />
+			</sequence>
+		</complexType>
+	</element>
+	<complexType name="CabeceraConsultaType">
+		<sequence>
+			<element name="IDVersion" type="T:IDVersionEnum" />
+			<element name="Ejercicio" type="T:YearType" />
+			<element name="Periodo" type="T:PeriodoEnum"/>
+			<element name="NifEmisor" type="TB:NIFType" />
+		</sequence>
+	</complexType>
+	<complexType name="FiltroConsultaType">
+		<sequence>
+			<element name="CabeceraFactura" type="T:CabeceraConsultaFacturaType" minOccurs="0" />
+			<element name="EstadoEnvio" type="T:EstadoEnvioConsultaEnum" minOccurs="0" />
+			<element name="EstadoRegistro" type="T:EstadoRegistroConsultaEnum" minOccurs="0" />
+			<element name="MostrarErrores" type="TB:SiNoType" minOccurs="0" />
+			<element name="NumPaginaConsulta" type="T:intPositiveType" />
+		</sequence>
+	</complexType>
+	<complexType name="CabeceraConsultaFacturaType">
+		<sequence>
+			<element name="SerieFactura" type="TB:TextMax20Type" minOccurs="0" />
+			<element name="NumFactura" type="TB:TextMax20Type" minOccurs="0" />
+			<element name="FechaHoraExpedicionFactura" type="T:FechaHoraDesdeHastaType" minOccurs="0" />
+			<element name="FechaOperacionFactura" type="T:FechaDesdeHastaType" minOccurs="0" />
+			<element name="FechaHoraPresentacionFactura" type="T:FechaHoraDesdeHastaType" minOccurs="0" />
+		</sequence>
+	</complexType>
+	<simpleType name="IDVersionEnum">
+		<restriction base="string">
+			<enumeration value="1.0" />
+		</restriction>
+	</simpleType>
+	<simpleType name="EstadoEnvioConsultaEnum">
+		<restriction base="string">
+			<enumeration value="3">
+				<annotation>
+					<documentation>Onartua - Aceptado</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="2">
+				<annotation>
+					<documentation>Erroreekin onartua - Aceptado con errores</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="EstadoRegistroConsultaEnum">
+		<restriction base="string">
+			<enumeration value="C">
+				<annotation>
+					<documentation>Zuzena - Correcto</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="A">
+				<annotation>
+					<documentation>Baliogabetua - Anulada</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="R">
+				<annotation>
+					<documentation>Baztertua - Rechazada</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="Z">
+				<annotation>
+					<documentation>Zuzendua - Rectificada</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="S">
+				<annotation>
+					<documentation>Ordezkatua - Sustituida</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<complexType name="NifIDOtroDestinatarioType">
+		<sequence>
+			<choice>
+				<element name="NIF" type="TB:NIFType"/>
+				<element name="IDOtro" type="TB:IDOtro"/>
+			</choice>
+		</sequence>
+	</complexType>
+	<complexType name="FechaDesdeHastaType">
+		<sequence>
+			<element name="DesdeFecha" type="TB:FechaType" minOccurs="0" />
+			<element name="HastaFecha" type="TB:FechaType" minOccurs="0" />
+		</sequence>
+	</complexType>
+	<complexType name="FechaHoraDesdeHastaType">
+		<sequence>
+			<element name="DesdeFechaHora" type="T:FechaHoraType" minOccurs="0" />
+			<element name="HastaFechaHora" type="T:FechaHoraType" minOccurs="0" />
+		</sequence>
+	</complexType>
+	<simpleType name="intPositiveType">
+		<restriction base="int">
+			<minInclusive value="0" />
+		</restriction>
+	</simpleType>
+	<simpleType name="YearType">
+		<annotation>
+			<documentation> Urtea YYYY formatuan - Año en formato YYYY</documentation>
+		</annotation>
+		<restriction base="int">
+			<pattern value="[1,2]\d{3}" />
+		</restriction>
+	</simpleType>
+	<simpleType name="PeriodoEnum">
+		<restriction base="string">
+			<enumeration value="01">
+				<annotation>
+					<documentation>Enero</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="02">
+				<annotation>
+					<documentation>Febrero</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="03">
+				<annotation>
+					<documentation>Marzo</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="04">
+				<annotation>
+					<documentation>Abril</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="05">
+				<annotation>
+					<documentation>Mayo</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="06">
+				<annotation>
+					<documentation>Junio</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="07">
+				<annotation>
+					<documentation>Julio</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="08">
+				<annotation>
+					<documentation>Agosto</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="09">
+				<annotation>
+					<documentation>Septiembre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="10">
+				<annotation>
+					<documentation>Octubre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="11">
+				<annotation>
+					<documentation>Noviembre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="12">
+				<annotation>
+					<documentation>Diciembre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="0A">
+				<annotation>
+					<documentation>Anual</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="1T">
+				<annotation>
+					<documentation>1.º Trimestre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="2T">
+				<annotation>
+					<documentation>2.º Trimestre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="3T">
+				<annotation>
+					<documentation>3.º Trimestre</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="4T">
+				<annotation>
+					<documentation>4.º Trimestre</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="FechaHoraType">
+		<restriction base="string">
+			<pattern value="(\d{2,2}-\d{2,2}-\d{4,4})(\s\d{2,2}:\d{2,2}:\d{2,2})?" />
+		</restriction>
+	</simpleType>
+</schema>
