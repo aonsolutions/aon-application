@@ -21,6 +21,7 @@ import org.apache.commons.cli.PosixParser;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -245,12 +246,18 @@ public class CalculatePurchasePrice {
 		}
 		for (String domainName : domains){
 			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), login);
+			Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
 			//LOGGER.info("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
 			System.out.println("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
 			AON.updateZeroInventoryDetail(domainName, domain.getId(), login);
-			Date start = AonDateUtils.getDate(getYear(startDate), getMonth(startDate), getDay(startDate));
-			Date end = AonDateUtils.getDate(getYear(endDate), getMonth(endDate), getDay(endDate));
-			LinkedList<Inventory> inventoryList = AON.getInventoryList(domain.getName(), domain.getId(), login, start, end);
+			
+			java.sql.Date start = AonDateUtils.getSqlDate(getYear(startDate), getMonth(startDate), getDay(startDate));
+			java.sql.Date end = AonDateUtils.getSqlDate(getYear(endDate), getMonth(endDate), getDay(endDate));
+			
+			List<Inventory> inventoryList = AON.getInventoryList(occam, f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getInventoryDateProperty().between(start, end)));
+			
 			Collections.sort(inventoryList, (Inventory s1, Inventory s2) -> s1.getInventoryDate().compareTo(s1.getInventoryDate()));
 			for (Inventory inventory : inventoryList) {
 				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login,

@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingPriceType;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
@@ -507,6 +508,11 @@ public class ProductDAO {
 		if(null != product.getProjectType())
 			json.put("projectType", product.getProjectType().getId());
 		
+		if(null != product.getBookingPriceType())
+			json.put("bookingPriceType", product.getBookingPriceType().name());
+		else
+			json.put("bookingPriceType", ProductBookingPriceType.PVP.name());
+		
 		return json.toString();
 	}
 
@@ -771,6 +777,11 @@ public class ProductDAO {
 			
 			if(info.has("projectType"))
 				productBooking.setProjectType(new ProjectType().setId( info.getInt("projectType") ));
+			
+			if(info.has("bookingPriceType"))
+				productBooking.setBookingPriceType(ProductBookingPriceType.safeValueOf(info.getString("bookingPriceType")));
+			else
+				productBooking.setBookingPriceType(ProductBookingPriceType.PVP);
 		}
 		
 	}

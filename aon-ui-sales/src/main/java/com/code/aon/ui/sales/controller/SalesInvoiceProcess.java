@@ -25,7 +25,7 @@ public class SalesInvoiceProcess implements ILongProcess {
 		Sales to = (Sales)salesController.getTo();
 		try {
 			InvoiceCommunicationConfiguration config = salesController.getInvoiceCommunicationConfiguration();
-			boolean communication = config.isTbai() || config.isVerifactu();
+			boolean communication = config.isTbai() || config.hasVerifactu();
 		    if(communication) {
 		        String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();

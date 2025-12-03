@@ -5,7 +5,9 @@ import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -15,11 +17,14 @@ import org.jooq.Record;
 import com.esferalia.aon.jooq.tables.records.FbatchDetailRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetailFilter;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetailProperties;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 
 public class FBatchDetailDAO {
 
@@ -98,11 +103,25 @@ public class FBatchDetailDAO {
 		
 		ctx.log().debug("INSERT FBATCH_DETAIL ID: " + record.getValue(FBATCH.ID));
 		
-		if(fbatchDetail.getFinance() != null)
+		if(fbatchDetail.getFinance() != null) {
+			FBatch fbatch = FBatchDAO.get(ctx, fbatchDetail.getFbatch());
+			
+			FinanceTrackingDAO.insert(ctx, 
+					new FinanceTracking()
+						.setDomain(fbatchDetail.getFinance().getDomain())
+						.setFinance(fbatchDetail.getFinance())
+						.setTrackingDate(new Date())
+						.setType(FinanceTrackingType.BATCHED)
+						.setDescription("Remesa : " + fbatch.getId() + " - " + fbatch.getDescription())
+						.setAmount(fbatchDetail.getAmount())
+			);
+			
+			
 			ctx.getDslContext().update(FINANCE)
 				.set(FINANCE.STATUS, (byte)FinanceStatus.BATCHED.ordinal())
 				.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
 				.execute();
+		}
 		
 		return new FBatchDetailFiller().apply(record); 
 	}
@@ -110,16 +129,30 @@ public class FBatchDetailDAO {
 	private static FBatchDetail update(AONContext ctx, FBatchDetail fbatchDetail) {
 		ctx.checkWrite();
 		if(fbatchDetail.isRemoved()) {
+			
+			if(fbatchDetail.getFinance() != null) {
+				FinanceTracking lastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.getFinance().getId());
+				if(lastTracking.getType().equals(FinanceTrackingType.BATCHED))
+					FinanceTrackingDAO.delete(ctx, lastTracking);
+				
+				FinanceTracking previusLastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.getFinance().getId());
+				FinanceStatus newFinanceStatus = FinanceStatus.PENDING;
+				
+				if(null != previusLastTracking && null != previusLastTracking.getId()) {
+					FinanceTrackingType type = previusLastTracking.getType();
+					newFinanceStatus = type.getFinanceStatus();
+				} 
+				
+				ctx.getDslContext().update(FINANCE)
+					.set(FINANCE.STATUS, newFinanceStatus.value())
+					.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
+					.execute();
+			}
+			
 			ctx.getDslContext().deleteFrom(FBATCH_DETAIL)
 				.where(FBATCH_DETAIL.ID.equal(fbatchDetail.getId()))
 				.execute();
 			
-			if(fbatchDetail.getFinance() != null)
-				ctx.getDslContext().update(FINANCE)
-					.set(FINANCE.STATUS, (byte)FinanceStatus.PENDING.ordinal())
-					.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
-					.execute();
-		
 			ctx.log().debug("DELETE FBATCH_DETAIL ID: " + fbatchDetail.getId());
 		
 		} else {
@@ -144,16 +177,28 @@ public class FBatchDetailDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		
-		FbatchDetailRecord fbatchDetail = ctx.getDslContext()
-			.selectFrom(FBATCH_DETAIL)
-			.where(FBATCH_DETAIL.ID.equal(id))
-			.fetchOne();
+		Optional<FBatchDetail> fbatchDetail = getList(ctx, f -> f.getIdProperty().eq(id)).stream().findFirst();
 		
-		if(fbatchDetail.getFinance() != null)
-			ctx.getDslContext().update(FINANCE)
-				.set(FINANCE.STATUS, (byte)FinanceStatus.PENDING.ordinal())
-				.where(FINANCE.ID.eq(fbatchDetail.getFinance()))
-				.execute();
+		if(fbatchDetail.isPresent()) {
+			if(fbatchDetail.get().getFinance() != null) {
+				FinanceTracking lastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.get().getFinance().getId());
+				if(lastTracking.getType().equals(FinanceTrackingType.BATCHED))
+					FinanceTrackingDAO.delete(ctx, lastTracking);
+				
+				FinanceTracking previusLastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.get().getFinance().getId());
+				FinanceStatus newFinanceStatus = FinanceStatus.PENDING;
+				
+				if(null != previusLastTracking && null != previusLastTracking.getId()) {
+					FinanceTrackingType type = previusLastTracking.getType();
+					newFinanceStatus = type.getFinanceStatus();
+				} 
+				
+				ctx.getDslContext().update(FINANCE)
+					.set(FINANCE.STATUS, newFinanceStatus.value())
+					.where(FINANCE.ID.eq(fbatchDetail.get().getFinance().getId()))
+					.execute();
+			}
+		}
 		
 		ctx.getDslContext()
 			.delete(FBATCH_DETAIL)

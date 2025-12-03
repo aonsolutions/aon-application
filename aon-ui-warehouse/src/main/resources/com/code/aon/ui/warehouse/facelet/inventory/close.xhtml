@@ -42,13 +42,20 @@
 			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
-
 					<aon:outputLabel for="Inventory_warehouse"
 						value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Inventory_warehouse" 
 						value="#{inventory.warehouse}">
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
+				
+					<aon:if test="#{domainSwitcher.paturpat}">
+						<ui:include src="/com/code/aon/ui/product/facelet/product/lookup.xhtml">
+							<ui:param name="lookupBean" value="#{saleProductLookup}" />
+							<ui:param name="lookupTo" value="#{inventory.product}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+					</aon:if>
 
 					<aon:outputLabel for="Inventory_inventory_date"
 						value="#{bundle.aon_date}" />

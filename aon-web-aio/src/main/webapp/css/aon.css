@@ -2614,6 +2614,8 @@ size: 32px;
     display: flex;
     padding-top: 10px;
     padding-bottom: 10px;
+    gap: 1rem;
+  	margin-left: 1rem;
 }
 
 .aonTabItem {
@@ -4073,15 +4075,20 @@ background-color: transparent;
   background-color: transparent;
 }
 
-.aonNewMenuAppDiv{
-  padding: 1px;
-display: flex;
-align-items: center;
-justify-content: center;
-  height: 56px;
-flex-direction: column;
-  transition: background-color 0.2s;
+.aonNewMenuAppDiv {
+	height: 56px;
+	padding: 1px;
+	cursor:pointer;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+
+	transition: background-color 0.2s;
 }
+
+
 
 .aonNewMenuAppIcon{
   padding: 4px;

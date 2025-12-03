@@ -872,4 +872,7 @@ export class DomainUserRoles {
 	
 	// ------------------------------------------------------------------------
 
+	hasScopes() {
+		return this.isParentUser() || (this.scopes && this.scopes.length > 0);
+	}
 }

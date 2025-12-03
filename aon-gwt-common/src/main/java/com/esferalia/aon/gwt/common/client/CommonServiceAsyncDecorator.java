@@ -1481,4 +1481,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.removeBookingProduct(domainName, domain, user, customerRelatedRegistry, oldFee, product, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.requestBookingInfo(domainName, domain, user, product, customerRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+
 }

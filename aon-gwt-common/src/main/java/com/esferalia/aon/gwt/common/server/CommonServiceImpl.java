@@ -1601,12 +1601,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException {
-		return CONSOLE.getAviableDomainsForSync(
-				new Domain().setName(paramsDomains.getDomainName()).setId(paramsDomains.getDomainId()), 
-				new User().setLogin(paramsDomains.getUser()), 
-				f -> f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
+		Domain currentDomain = AON.getDomain(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser());
+		
+		return AON.getAviableDomainsForSync(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), false, 
+				f -> f.getParentProperty().eq(currentDomain.getParentId() == null ? currentDomain.getId() : currentDomain.getParentId())
+				.and(
+					f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
 					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
-				).collect(Collectors.toList());
+				)).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -1704,6 +1706,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product) throws AonCoreException {
 		AON.removeBookingProduct(domainName, domain, user, customerRelatedRegistry, Optional.of(oldFee), product);
+	}
+	
+	@Override
+	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) throws AonCoreException {
+		AON.requestBookingInfo(domainName, domain, user, product, customerRegistry);
 	}
 	
 	@Override

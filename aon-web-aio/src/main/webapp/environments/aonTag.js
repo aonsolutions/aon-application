@@ -105,6 +105,10 @@ export const AON_LIST = 'aon-list';
 
 export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 
+
+export const AON_MOBILE_INVENTORY_LIST = 'aon-mobile-inventory-list';
+export const AON_MOBILE_INVENTORY = 'aon-mobile-inventory';
+
 // MODULES - EXAMPLE
 
 export const AON_EXAMPLE = 'aon-example';

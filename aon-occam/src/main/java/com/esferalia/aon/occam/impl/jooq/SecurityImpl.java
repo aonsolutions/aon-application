@@ -10,11 +10,13 @@ import com.esferalia.aon.occam.api.ISecurity;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainCustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryRelationshipDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -513,6 +516,12 @@ public class SecurityImpl implements ISecurity {
 	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId) {
 		return  ctx.getDslContext().transactionResult(
 	            configuration -> RegistryRelationshipDAO.getRegistryRelationships(ctx, domainId));
+	}
+
+	@Override
+	public Stream<DomainCompany> getAviableDomainsForSync(CloseableAONContext ctx, boolean isSig, DomainFilter filter) {
+		return  ctx.getDslContext().transactionResult(
+	            configuration -> DomainCustomerDAO.getAviableDomainsForSync(ctx, isSig, filter));
 	}
 	
 }

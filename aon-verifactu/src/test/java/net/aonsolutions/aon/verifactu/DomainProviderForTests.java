@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -328,6 +329,17 @@ class DomainProviderForTests {
 			context.log().info("App Param VERIFACTU_TEST set to TRUE");
 		}
 		
+		ApplicationParameter verifactuIncludeDateParam = AppParamDAO.fetchOne(context, AppParam.VERIFACTU_INCLUDE_DATE.toString());
+		if (verifactuIncludeDateParam == null || verifactuIncludeDateParam.getId() == null) {
+			String date = AonDateUtils.format(new Date(), "yyyy-MM-dd");
+			context.getDslContext().insertInto(APP_PARAM)
+				.set(APP_PARAM.DOMAIN, context.getDomainId())
+				.set(APP_PARAM.NAME, AppParam.VERIFACTU_INCLUDE_DATE.toString())
+				.set(APP_PARAM.VALUE, date)
+			.execute();
+			context.log().info("App Param VERIFACTU_INCLUDE_DATE set to " + date);
+		}
+
 		Creditor defaultFiscalCreditor = new Creditor();
 		defaultFiscalCreditor.setDomain(domain);
 		defaultFiscalCreditor.setDocumentCountry(Country.ES);

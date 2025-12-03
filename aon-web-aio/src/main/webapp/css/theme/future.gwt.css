@@ -1,0 +1,489 @@
+@font-face {
+  font-family:"Inter-regular";
+  src: url(/fonts/Inter-Regular.woff) format("woff");
+  font-weight:400;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-medium";
+  src: url(/fonts/Inter-Medium.woff) format("woff");
+  font-weight:500;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-semibold";
+  src: url(/fonts/Inter-SemiBold.woff) format("woff");
+  font-weight:600;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-bold";
+  src: url(/fonts/Inter-Bold.woff) format("woff");
+  font-weight:700;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-extrabold";
+  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+  font-weight:800;
+  font-style:normal;
+}
+
+body,
+#rootPanel > div {
+    margin: 0px;
+    border-radius: 0px;
+	background-color: #f1f5f9 !important;	
+}
+
+.aon_toolbar,
+.aon-MainAgreement-ToolBar, 
+.aon-MainAgreement-Agreements,
+.aon-EmployeeTree,
+.aon-EmployeeTree-Employees, 
+.aon-MainCreta-Enterprises,
+.aon-MainCreta-Details
+{
+	border-radius: .375rem;
+	background-color: #fff !important;
+}
+
+.aon_flex_column,
+.aon-ConfigContent, 
+.aon-Model-Detail, 
+.aon-MainTrash-Detail, 
+.aon-MainCreta-Details, 
+.aon-MainAgreement-Detail, 
+.aon-EmployeeTree-EmployeeDetail,
+.aon-MainCreta-Enterprises .gwt-MenuBar-horizontal,
+.aon-EmployeeTree-EmployeeDetail .aon_fleinding-title-toolbar 
+ 
+{
+  background-color: #fff !important;
+}
+
+.aon-MainCreta-Details{
+    margin: 1rem 0.5rem 1rem 0.2rem;	
+}
+
+.aon-EmployeeTree,
+.aon-MainAgreement-Detail {
+	margin: 1rem 1rem 1rem 0.5rem;	
+}
+
+.aon-MainCreta-Enterprises{
+	margin: 1rem 0.2rem 1rem 1rem;	
+	
+}
+
+.aon-EmployeeTree-Employees,
+.aon-MainAgreement-Agreements {
+	margin: 1rem 0.5rem 1rem 1rem;	
+}
+
+.aon-MainAgreement-ToolBar{
+	margin: 1rem 1rem 1rem 1rem;	
+	
+}
+.aon_toolbar {
+	width:auto ;
+	height: 38px;
+	margin: 1rem 1rem 1rem 1rem;
+}
+
+.aon_toolbar_inner{
+ 	border-bottom: none;
+ }
+
+.aon_flex_column{
+	border-radius: .375rem;
+	margin: 1rem 1rem 1rem 1rem;
+}
+
+
+.aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
+.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+    background-color: #fff !important;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected, 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected, 
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem-selected), 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem-selected) {
+  font-weight: 700;
+  background-color: #f1f5f9 !important;
+  border-left: none !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem):hover
+	{
+  background-color: #f1f5f9 !important;
+}
+
+
+input, select, textarea,
+.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem{
+	color: #1e293b;
+  	font-family: "Inter-regular", sans-serif !important;
+}
+
+.aon-Model, 
+.aon-Model .gwt-SplitLayoutPanel-VDragger, 
+.aon-ConfigPanel, 
+.aon-ConfigPanel .rich-panelbar-interior, 
+.aon-MainTrash, 
+.aon-MainTrash-Stack, 
+.aon-MainTrash .gwt-SplitLayoutPanel-HDragger, 
+.aon-MainTrash .gwt-SplitLayoutPanel-VDragger, 
+.aon-MainTrash-Stack .gwt-MenuBar-horizontal, 
+.aon-MainCreta, 
+.aon-MainCreta .gwt-SplitLayoutPanel-HDragger, 
+.aon-MainCreta .gwt-SplitLayoutPanel-VDragger, 
+.aon-MainCreta-Events .gwt-MenuBar-horizontal, 
+.aon-MainAgreement, 
+.aon-EmployeeTree .gwt-SplitLayoutPanel-HDragger, 
+.aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger, 
+.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
+.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
+  background-color: #f1f5f9 !important;
+}
+
+.gwt-Selector .aon-dataTable-row-odd:hover,
+.gwt-Selector .aon-dataTable-row-even:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.dataGridWidget {
+	margin: 1rem ;
+}
+
+.dataGridHoveredRow{
+	background:initial ;
+}
+
+.aon_scroll_area{
+	padding: 0px 1.5em 1.5em 1.5em;	
+}
+
+.aon_custom_table_header,
+.aon_custom_table_footer,
+.aon_display_grid_header_row ,
+.dataGridWidget > div:first-child {
+  top: 0px;
+  height: 3.625rem;
+  font-size: 14.875px;
+  padding-top: 8px;
+  position: sticky;
+  background-clip: padding-box;
+  background-color: #e2e8f0;
+}
+
+.aon_custom_table_footer {
+	border: none;	
+}
+
+.aon_display_grid_header_cell{
+	padding: 2px 6px;	
+}
+
+.dataGridHeader {
+  border-bottom: none;
+}
+
+.dataGridCell, .aon_display_grid_cell  {
+	color: #64748b;
+	min-height: 68px;
+	border-top: .0625rem solid #e2e8f0;
+	border-bottom: .0625rem solid #e2e8f0;
+}
+.aon_custom_row {
+    border: .0625rem solid #e2e8f0;
+}
+
+	
+
+  
+.gwt-Selector .aon-MainCreta-Enterprises {
+	width: auto;
+}
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+	display: flex;
+	gap: .5rem;
+	flex-wrap: wrap;
+	align-content: center;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	background-color: #f1f5f9;
+	
+	margin-left: .3rem;
+	padding-bottom: 2px;
+	padding-right: .3rem;
+	width: fit-content !important;
+	
+}
+
+.gwt-Selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs) {
+    margin-top: 6px;
+	height: 40px !important;
+}
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected{
+	border-bottom: none;
+	background-color: #fff;
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aon_custom_card {
+	border: none;
+}
+.aon_custom_card > div:first-child {
+	border-bottom: .1rem solid #cbd5e1;
+}
+
+.aon_custom_row:hover, 
+.aon_utility_option:hover, 
+.aon_custom_text_box:hover, 
+.aon_custom_text_area:hover {
+  background-color:inherit ;
+}	
+
+.aon_custom_text_box {
+	gap: 2px;
+	height: 3.0rem;
+	margin-bottom: 0.5rem;
+	border-bottom: none;
+}
+
+.aon_between_input, 
+.aon_custom_text_box_input {
+	height: 2.5rem;
+  	color: #1e293b;  
+	border-radius: .375rem;
+	box-sizing: border-box;
+	padding: .75rem !important;
+	border: .0625rem solid #cbd5e1;
+}
+
+.aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
+  	border-color: initial;
+    border-bottom-color:initial; 
+  	background-color:initial ;
+}
+
+
+.aon_custom_warning .aon_between_input, 
+.aon_custom_warning .aon_custom_text_box_input {
+	border-color: orange ;
+	background-color: rgba(255, 165, 0, 0.27);
+}
+
+.aon_custom_text_box_input_no_border:focus, 
+.aon_custom_text_area_input:focus, 
+.aon_custom_text_box_input:focus {
+  border: .0625rem solid #cbd5e1 !important;
+}
+
+
+ .aon_button:hover {
+	background-color:transparent ;
+}
+
+.aon_icon_excel, .aon-icon-excel, .aon-icon-import-excel-trans, .aon-icon-export-excel-trans {
+    background-image: url(/icons/file-x.svg);		
+}
+
+.aon_icon_info{
+    background-image: url(/icons/info.svg);		
+}
+
+.aon_icon_visibility{
+    background-image: url(/icons/eye.svg);		
+}
+
+.aon_icon_fx{
+    background-image: url(/icons/function-square.svg);		
+}
+
+.aon_icon_pdf{
+    background-image: url(/icons/file-pdf.svg);		
+}
+
+.aon_icon_emit{
+    background-image: url(/icons/file-check.svg);		
+}
+
+.aon_icon_save {
+	background-image: url(/icons/save.svg);		
+}
+
+.aon_icon_undo{
+	background-image: url(/icons/undo-2.svg);	
+}
+
+.aon_icon_redo{
+	background-image: url(/icons/redo-2.svg);	
+}
+
+.aon_icon_undo_all{
+	background-image: url(/icons/reply-all.svg);	
+}
+
+.aon_icon_redo_all{
+	transform: scaleX(-1);
+	background-image: url(/icons/reply-all.svg);	
+}
+
+.aon_icon_add, .aon-icon-new, .aon-icon-reset {
+    background-image: url(/icons/plus.svg);		
+}
+
+.aon_icon_delete, .aon-icon-delete {
+    background-image: url(/icons/trash-2.svg);		
+}
+
+.dataGridCell .aon_icon_delete, 
+.dataGridCell.aon-icon-delete ,
+.aon_custom_row .aon_icon_delete,
+.aon_custom_row .aon-icon-delete
+{
+    height: 25px !important;		
+}
+
+.aon_icon_list, .aon-icon-list {
+    background-image: url(/icons/list.svg);		
+}		
+
+.aon-icon-close, .aon-icon-file-exit-cancel {
+    background-image: url(/icons/x.svg);		
+}
+
+.aon_icon_download, .aon-icon-download {
+    background-image: url(/icons/download.svg);		
+}
+
+.aon_icon_email, .aon-icon-email {
+    background-image: url(/icons/mail.svg);		
+}
+
+.aon-icon-config, .aon_icon_settings {
+    background-image: url(/icons/settings.svg);		
+}
+
+.aon_icon_edit_calendar, .aon-icon-edit-calendar {
+    background-image: url(/icons/calendar.svg);		
+}
+
+.aon_icon_add_block, .aon-icon-add-block {
+    background-image: url(/icons/list-plus.svg);		
+}
+
+.aon_icon_search, 
+.aon-icon-search,
+.aon_icon_menu_collapse {
+	width: 24px;
+	height: 24px;
+	mask-size: contain;
+	mask-position: center;
+	background-image:none ;
+	mask-repeat: no-repeat;
+	background-color: black;
+}
+
+.aon_icon_search, 
+.aon-icon-search {
+	mask-image: url('/icons/search.svg');
+}
+
+.aon_icon_menu_collapse {
+	mask-image: url('/icons/chevron-down.svg');	
+}	
+
+.aon-EmployeeTree-EmployeeDetail .aon-finding-title-toolbar {
+	background-color: transparent ;
+}
+
+.aon-EmployeeTree-EmployeeDetail .aon-finding-title-toolbar:first-child {
+    padding-top: 6px;
+}	 
+
+.aon_search_filter .aon_custom_text_box_title {
+    display: none;
+}
+
+.aon_custom_text_box_title:has( + .gwt-CheckBox) {
+	white-space: nowrap;
+}
+
+.aon_search_filter .aon_custom_text_box {
+	margin: 0px;
+	padding: 0px;
+	height: 1.50rem;
+}
+
+.aon_search_filter .aon_custom_text_box .aon_custom_text_box_input {
+  height: 1.50rem;
+  padding: 0px !important;
+}
+
+.aon_search_filter {
+	padding: .15rem .75rem .15rem .75rem;
+	border-radius: .375rem;
+	box-sizing: border-box;
+	border: .0625rem solid #cbd5e1;
+	background-color: #fff;
+	color: #1e293b;
+}
+.aon_search_filter input[type="text"]:focus {
+	border: none !important;	
+}
+
+.aon_custom_dialog_glass,
+.gwt-Selector .gwt-PopupPanelGlass {
+	background-color:#f1f5f9 ;
+}
+
+
+.gwt-Selector .gwt-PopupPanel .gwt-Button:first-child,
+.gwt-Selector .gwt-PopupPanel .gwt-Button:last-child, .gwt-Selector .gwt-PopupPanel .gwt-Button:nth-child(2) {
+	padding: 0.5rem 1rem ;
+	background: none;
+	background-color: #0f172a;
+}
+
+.gwt-Selector .popupContent .aon_ok_button_small,
+.gwt-Selector .popupContent .aon_cancel_button_small,
+.gwt-Selector .gwt-PopupPanel .gwt-Button {
+	border: none;
+	background-color: #0f172a;
+	border-radius: 4px;
+	color: #fff;
+	cursor: pointer;
+	font-family: var(--aonFontFamily);
+	height: 2.5rem;
+	letter-spacing: .75px;
+	margin: auto 6px;
+	width: fit-content;
+	padding: 0.5rem 1rem ;
+	text-transform: lowercase;
+	background-image: none;
+}
+
+.gwt-Selector div:has( > .aon_toolbar) {
+    height: 55px !important;
+}
+
+.gwt-TabLayoutPanel{
+	margin-left: 0.65rem !important;	
+	margin-right: 0.65rem !important;	
+}
+
+.gwt-TabLayoutPanelContentContainer{
+	border-radius: .375rem ;
+	background-color: #fff ;
+	margin: 1rem 0.5rem 1rem 0.5rem ;
+}
+
