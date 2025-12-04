@@ -210,6 +210,7 @@ input, select, textarea,
 	width: auto;
 }
 
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs ,
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 	display: flex;
 	gap: .5rem;
@@ -226,15 +227,22 @@ input, select, textarea,
 	
 }
 
+.aon_selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs), 
 .gwt-Selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs) {
     margin-top: 6px;
 	height: 40px !important;
 }
 
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected,
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected{
 	border-bottom: none;
 	background-color: #fff;
 	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected{
+	margin-bottom: 4px;
 }
 
 .aon_custom_card {
@@ -338,6 +346,7 @@ input, select, textarea,
 }
 
 .aon_icon_add, .aon-icon-new, .aon-icon-reset {
+	min-width: 24px;
     background-image: url(/icons/plus.svg);		
 }
 
@@ -472,7 +481,7 @@ input, select, textarea,
 	background-image: none;
 }
 
-.gwt-Selector div:has( > .aon_toolbar) {
+.gwt-Selector div:has( > .aon_no_border_toolbar) {
     height: 55px !important;
 }
 
@@ -486,4 +495,96 @@ input, select, textarea,
 	background-color: #fff ;
 	margin: 1rem 0.5rem 1rem 0.5rem ;
 }
+
+/*Fix Matenimiento de Apuntes */ 
+div.aon_flex_block.aon_scroll_area {
+	position: initial !important;	
+}
+
+#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) {
+	margin: 1rem;
+	border-radius: .375rem;
+	background-color: #fff;
+}
+	
+.gwt-SplitLayoutPanel-VDragger {
+	cursor: row-resize;
+	background-color: #f1f5f9 !important;
+}	
+
+.gwt-SplitLayoutPanel-HDragger {
+	cursor: col-resize;
+	background-color: #f1f5f9 !important;
+}	
+
+.aon-panelGrid-search {
+	border-radius: .375rem;
+}
+
+.aon-inputText,
+.aon_input_text,
+.aon-group,
+.aon-selectOneMenu,
+.gwt-ListBox,
+.gwt-TextBox,
+.gwt-SuggestBox{
+	padding: .25rem !important;
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 !important;
+}
+
+.aon-panelGrid-search-info,
+.aon-finding-title-toolbar, 
+.gwt-Selector .gwt-MenuBar-horizontal, 
+.gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+   border-bottom: .0625rem solid  #cbd5e1 !important;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus  {
+	outline: none;
+	box-shadow: none !important;
+	border: .0625rem solid #cbd5e1 !important;
+}
+.dataGridHoveredRow, 
+.aon_display_grid_row:hover  {
+	cursor: pointer;
+	background-color: inherit;
+}
+
+.aon_display_grid_cell .aon_icon_delete{
+	background-size: 20px;	
+}
+
+.aonCard, 
+.aonEmployeeCard, 
+.aonEnterpriseCard, 
+.aonCCCCard, 
+.aonActivityCard, 
+.aonMod145Card, 
+.aonSEPECard, 
+.aon_search_panel {
+  border: none;
+}
+
+.aon_block_info_message{
+	border: none;
+	border-radius: 0.375rem;
+	background-color: #f1f5f9;
+}
+
+/* Fix Scroll Area for Contabilidad -> [ Clientes, Proveedores, Acreedores ]  */
+div#rootPanel div div div div div.gwt-SplitLayoutPanel div div div div.aon_scroll_area.aon_margin_bottom {
+	margin: 1rem;
+	padding-top: 1rem;
+	border-radius: 0.375rem;
+	background-color: #fff;
+}
+
+.aon_filter_panel  {
+	border: none;
+	background-color: #fff;
+}
+
 

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.warehouse;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Inventory implements Serializable {
 	
@@ -19,6 +21,8 @@ public class Inventory implements Serializable {
 	private String creationUser;
 	private Date modificationDate;
 	private String modificationUser;
+	
+	private List<InventoryDetail> details;
 	
 	public Integer getId() {
 		return id;
@@ -92,6 +96,23 @@ public class Inventory implements Serializable {
 	public Inventory setStatus(Integer status) {
 		this.status = status;
 		return this;
+	}
+	
+	public List<InventoryDetail> getDetails() {
+		if(details == null) {
+			details = new LinkedList<>();
+		}
+		return details;
+	}
+	
+	public Inventory setDetails(List<InventoryDetail> details) {
+		this.details = details;
+		return this;
+	}
+	
+	public List<InventoryDetail> addDetail(InventoryDetail detail) {
+		getDetails().add(detail);
+		return getDetails();
 	}
 	
 }

@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -475,6 +476,15 @@ public class Asserts {
 		assertEquals("salesAccount", expected.getSalesAccount().getId(), actual.getSalesAccount().getId());
 		assertEquals("purchaseAccount", expected.getPurchaseAccount().getId(), actual.getPurchaseAccount().getId());		
 		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+
+	public static void assertEqualsWarehouse(Warehouse expected, Warehouse actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Department", expected.getDepartment(), actual.getDepartment());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("Workplace", expected.getWorkplace(), actual.getWorkplace());
+		assertEquals("Active", expected.isActive(), actual.isActive());
 	}
 	
 	public static void assertEqualsWorkgroup(Workgroup expected, Workgroup actual) {

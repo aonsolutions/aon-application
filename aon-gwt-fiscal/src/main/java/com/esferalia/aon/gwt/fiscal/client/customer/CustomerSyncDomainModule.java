@@ -81,7 +81,6 @@ public class CustomerSyncDomainModule  implements EntryPoint {
 
 		DomainSyncPanel domainSyncPanel = new DomainSyncPanel(customer, paramsDomains) {
 			@Override protected void onEndSuccessSync() { 
-				dialog.hide(); 
 				customersNotLinkedPanel.onSearch();
 			}
 		};

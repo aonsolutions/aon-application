@@ -16,16 +16,17 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.customer.CustomerSyncLog;
 import com.esferalia.aon.occam.api.model.customer.CustomersDomainSyncParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -301,45 +302,92 @@ public abstract class DomainSyncTable extends ScrollPanel {
 	private void onSyncDomain(DomainCompany domainCompany) {
 		onShowELoadingMessage("Vinculando cliente con dominio...");
 		
-		COMMON_SERVICE.syncCustomer(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), this.customer.getId(), domainCompany, paramsDomains.isSig(), new AsyncCallback<Void>() {
-
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/registry-creation-enterprise/syncMassiveCustomerDomain";
+		
+		JSONObject body = new JSONObject();
+		body.put("customer", new JSONString(customer.getId().toString()));
+		body.put("domain", new JSONString(domainCompany.getDomain().getId().toString()));
+		
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", paramsDomains.getDomainName());
+		headers.put("domain_id", paramsDomains.getDomainId().toString());
+		headers.put("domain_login", paramsDomains.getUser());
+		
+		customerApi.syncCustomerDomain(host, endPoint, headers, body, new AsyncCallback<CustomerSyncLog>() {
+			
+			@Override
+			public void onSuccess(CustomerSyncLog result) {
+				String messageType = result.getMessageType();
+				String messageValue = result.getMessage();
+				
+				switch (messageType) {
+					case "error":
+						onShowErrorMessage("Vinculaci\u00f3n cliente/dominio : " + messageValue);
+						break;
+					case "warning":
+						onShowWarningMessage("Vinculaci\u00f3n cliente/dominio : " + messageValue);
+						break;
+					case "success":
+						onShowSuccessMessage("Vinculaci\u00f3n cliente/dominio : " + messageValue);
+						break;
+					default:
+						onShowErrorMessage("Error no tipificado : " + messageValue);
+				}
+				
+				onEndSync();
+			}
+			
 			@Override
 			public void onFailure(Throwable caught) {
-				onShowErrorMessage("Error vinculando cliente : " + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				if(paramsDomains.isSig()) {
-					String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-					String endPoint = "/ms/api/domain/sync-aon-customer";
-					
-					JSONObject body = new JSONObject();
-					body.put("customer", new JSONString(customer.getId().toString()));
-					body.put("domain_name", new JSONString(domainCompany.getDomain().getName()));
-					body.put("domain_id", new JSONNumber(domainCompany.getDomain().getId()));
-					body.put("user", new JSONString(""));
-					
-					customerApi.syncAonCustomerDomain(host, endPoint, body, new AsyncCallback<Void>() {
-						
-						@Override
-						public void onSuccess(Void result) {
-							onHideMessage();
-							onEndSync();
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							onShowErrorMessage("Error actualizando aonCustomer del dominio vinculado : " + caught.getMessage());
-						}
-					});
-					
-				} else onHideMessage();
+				onShowErrorMessage("Error vinculando cliente/dominio : " + caught.getMessage());
+				onEndSync();
 			}
 		});
+		
+//		COMMON_SERVICE.syncCustomer(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), this.customer.getId(), domainCompany, paramsDomains.isSig(), new AsyncCallback<Void>() {
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				onShowErrorMessage("Error vinculando cliente : " + caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(Void result) {
+//				if(paramsDomains.isSig()) {
+//					String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+//					String endPoint = "/ms/api/domain/sync-aon-customer";
+//					
+//					JSONObject body = new JSONObject();
+//					body.put("customer", new JSONString(customer.getId().toString()));
+//					body.put("domain_name", new JSONString(domainCompany.getDomain().getName()));
+//					body.put("domain_id", new JSONNumber(domainCompany.getDomain().getId()));
+//					body.put("user", new JSONString(""));
+//					
+//					customerApi.syncAonCustomerDomain(host, endPoint, body, new AsyncCallback<Void>() {
+//						
+//						@Override
+//						public void onSuccess(Void result) {
+//							onHideMessage();
+//							onEndSync();
+//						}
+//						
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							onShowErrorMessage("Error actualizando aonCustomer del dominio vinculado : " + caught.getMessage());
+//						}
+//					});
+//					
+//				} else onHideMessage();
+//			}
+//		});
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
+	
+	protected abstract void onShowWarningMessage(String warningMessage);
+	
+	protected abstract void onShowSuccessMessage(String warningMessage);
 
 	protected abstract void onShowELoadingMessage(String loadingMessage);
 

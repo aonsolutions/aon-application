@@ -32,10 +32,11 @@ export class AonTab extends AonElement {
     build() {
         let div = this.createElement(TAG.DIV);
         div.id = this.DIV;
-        div.style.height = '40px';
-        div.style.marginLeft = '20px';
-        div.style.marginRight = '20px'
-        div.style.paddingTop = '15px';
+        div.classList.add("aonTab");
+        //div.style.height = '40px';
+        //div.style.marginLeft = '20px';
+        //div.style.marginRight = '20px'
+        //div.style.paddingTop = '15px';
         this.appendChild(div);
         if(!this.options) 
             this.options = [];
@@ -49,22 +50,26 @@ export class AonTab extends AonElement {
         let span = this.createElement(TAG.SPAN);
         span.id = option.id || this.SPAN + i;
         span.innerHTML = option.title;
-        span.style.padding = '10px';
-        span.style.paddingBottom = '5px';
+        //span.style.padding = '10px';
+        //span.style.paddingBottom = '5px';
         span.style.cursor = 'pointer';
+        span.classList.add("aonTabItemText");
         if(option.dataset){
             setDataset(span, option.dataset);
         }
         span.addEventListener(EVENT.CLICK, () => {
             this.querySelectorAll(TAG.SPAN).forEach(sp => {
-                sp.style.borderBottom = 'none';
+                //sp.style.borderBottom = 'none';
+                sp.classList.remove("aonTabItemTextSelected");
             });
             this.selected = i;
-            span.style.borderBottom = '2px solid #002469';
+            span.classList.add("aonTabItemTextSelected");
+            //span.style.borderBottom = '2px solid #002469';
         });
         span.addEventListener(EVENT.CLICK, option.fn);
         if(this.selected === i) {
-            span.style.borderBottom = '2px solid #002469';
+			span.classList.add("aonTabItemTextSelected");
+            //span.style.borderBottom = '2px solid #002469';
         }
         this.getElement(this.DIV).appendChild(span);
         return span;
