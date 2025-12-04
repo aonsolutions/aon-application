@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:TB="urn:ticketbai:emision" xmlns:TK="urn:ticketbai:kontsulta" xmlns:T="urn:ticketbai:contsultaRespuesta" targetNamespace="urn:ticketbai:contsultaRespuesta">
+	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2-2.xsd" />
+	<import namespace="urn:ticketbai:kontsulta" schemaLocation="kontsultaV1-2-3.xsd" />
+
+	<element name="KontsultaTicketBAIResponse">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="T:CabeceraConsultaResponseType" minOccurs="0" />
+				<element name="ResultadoConsulta" type="T:ResultadoConsultaType" />
+				<element name="FacturasEmitidas" type="T:FacturasEmitidasResponseType" minOccurs="0" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="CabeceraConsultaResponseType">
+		<sequence>
+			<element name="Ejercicio" type="TK:YearType" />
+			<element name="Periodo" type="TK:PeriodoEnum" minOccurs="0" />
+			<element name="Emisor" type="T:EmisorCabecera" />
+		</sequence>
+	</complexType>
+
+	<complexType name="ResultadoConsultaType">
+		<sequence>
+			<element name="FechaHoraConsulta" type="TK:FechaHoraType" />
+			<element name="NumPaginaConsulta" type="TK:intPositiveType" />
+			<element name="ExistenRegistros" type="TB:SiNoType" />
+			<element name="Paginacion" type="T:PaginacionRespuestaType" />
+			<element name="Error" type="T:ErrorKontsultaType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="FacturasEmitidasResponseType">
+		<sequence>
+			<element name="Factura" type="T:DetalleFacturasEmitidasResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="DetalleFacturasEmitidasResponseType">
+		<sequence>
+			<element name="DatosFactura" type="T:FacturaConsultaType" />
+			<element name="TipoDesglose" type="TB:TipoDesgloseType" minOccurs="0" />
+			<element name="DatosPresentacion" type="T:DatosPresentacionConsultaType" />
+			<element name="SituacionRegistro" type="T:SituacionRegistroConsultaType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="FacturaConsultaType">
+		<sequence>
+			<element name="CabeceraFactura" type="T:CabeceraFacturaConsultaType" />
+			<element name="Sujetos" type="TB:Sujetos" />
+			<element name="ImporteTotalFactura" type="TB:ImporteSgn12.2Type" />
+			<element name="RetencionSoportada" type="TB:ImporteSgn12.2Type" minOccurs="0"/>
+			<element name="IdentificadorTBAI" type="T:IdentificadorTBAIType" />
+			<element name="SignatureValue" type="TB:TextMax100ObligatorioType" />
+			<element name="FacturasRectificadasSustituidas" type="TB:FacturasRectificadasSustituidasType" minOccurs="0" />
+			<element name="FacturaRectificativa" type="TB:FacturaRectificativaType" minOccurs="0"/>
+			<element name="Claves" type="TB:ClavesType"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="CabeceraFacturaConsultaType">
+		<sequence>
+			<element name="SerieFactura" type="TB:TextMax20Type" minOccurs="0"/>
+			<element name="NumFactura" type="TB:TextMax20Type"/>
+			<element name="FechaHoraExpedicionFactura" type="TK:FechaHoraType"/>            
+			<element name="FechaOperacionFactura" type="TB:FechaType"/>
+			<element name="FacturaSimplificada" type="TB:SiNoType" minOccurs="0"/>
+			<element name="FacturaEmitidaSustitucionSimplificada" type="TB:SiNoType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="DatosPresentacionConsultaType">
+		<sequence>
+			<element name="NIFPresentadorUltModificacion" type="TB:NIFType" minOccurs="0" />
+			<element name="FechaHoraPresentacionUltModificacion" type="TK:FechaHoraType" minOccurs="0" />
+			<element name="ModoPresentacionUltModificacion" type="TB:TextMax20Type" minOccurs="0" />
+		</sequence>
+	</complexType>
+
+	<complexType name="SituacionRegistroConsultaType">
+		<sequence>
+			<element name="Estado" type="TK:EstadoRegistroConsultaEnum" />
+			<element name="ResultadosValidacion" type="T:ResultadosValidacionRespuestaType" minOccurs="0" />
+		</sequence>
+	</complexType>
+
+	<complexType name="PaginacionRespuestaType">
+		<sequence>
+			<element name="NumPaginasTotales" type="TK:intPositiveType" />
+			<element name="ExistenMasRegistros" type="TB:SiNoType" />
+			<element name="NumRegistrosTotales" type="TK:intPositiveType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="ResultadosValidacionRespuestaType">
+		<sequence>
+			<element name="CodigosErrorTicketBAI" type="T:ResultadosValidacionTBAIRespuestaType" minOccurs="0" />
+			<element name="CodigosErrorSII" type="T:ResultadosValidacionSIIRespuestaType" minOccurs="0" />
+		</sequence>
+	</complexType>
+
+	<complexType name="ResultadosValidacionTBAIRespuestaType">
+		<sequence>
+			<element name="CodigoError" type="T:CodigoErrorType" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ResultadosValidacionSIIRespuestaType">
+		<sequence>
+			<element name="CodigoError" type="T:CodigoErrorType" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
+    <complexType name="ErrorKontsultaType">
+        <sequence>
+            <element name="Descripcion" type="TB:TextMax250Type" minOccurs="1" />
+            <element name="Azalpena" type="TB:TextMax250Type" minOccurs="1" />
+        </sequence>
+    </complexType>
+
+	<simpleType name="CodigoErrorType">
+		<restriction base="string">
+			<pattern value="([0-9]*){3,4}"></pattern>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="IdentificadorTBAIType">
+		<restriction base="string">
+			<length value="39" />
+		</restriction>
+	</simpleType>
+	
+	<complexType name="EmisorCabecera">
+		<sequence>		
+			<element name="NIF" type="TB:NIFType"/>
+			<element name="ApellidosNombreRazonSocial" type="TB:TextMax120Type" minOccurs="0"/>
+		</sequence>
+	</complexType>
+
+</schema>

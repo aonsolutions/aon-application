@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:lroe-pj-subvenciones-entidades-publicas:alta-modif-peticion"
+	xmlns:lrpjsepamp="urn:lroe-pj-subvenciones-entidades-publicas:alta-modif-peticion"
+	xmlns:tiposcomplejos="https://www.batuz.eus/fitxategiak/batuz/LROE/esquemas/batuz_TiposComplejos.xsd">
+
+	<import namespace="https://www.batuz.eus/fitxategiak/batuz/LROE/esquemas/batuz_TiposComplejos.xsd" schemaLocation="batuz_TiposComplejos.xsd"/>
+
+	<element name="LROEPJ240SubvencionesEntidadesPublicasAltaModifPeticion">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="tiposcomplejos:Cabecera240Type"/>
+				<element name="SubvencionesEntidadesPublicas" type="tiposcomplejos:SubvencionesEntidadesPublicasType"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

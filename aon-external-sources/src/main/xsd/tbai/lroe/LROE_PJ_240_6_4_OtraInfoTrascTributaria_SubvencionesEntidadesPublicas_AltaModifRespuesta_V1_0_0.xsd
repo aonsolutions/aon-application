@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:lroe-pj-subvenciones-entidades-publicas:alta-modif-respuesta"
+	xmlns:lrpjsepamr="urn:lroe-pj-subvenciones-entidades-publicas:alta-modif-respuesta"
+	xmlns:tiposcomplejos="https://www.batuz.eus/fitxategiak/batuz/LROE/esquemas/batuz_TiposComplejos.xsd">
+
+	<import namespace="https://www.batuz.eus/fitxategiak/batuz/LROE/esquemas/batuz_TiposComplejos.xsd" schemaLocation="batuz_TiposComplejos.xsd"/>
+
+	<element name="LROEPJ240SubvencionesEntidadesPublicasAltaModifRespuesta">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="tiposcomplejos:Cabecera240Type" minOccurs="0"/>
+				<element name="DatosPresentacion" type="tiposcomplejos:DatosPresentacionType" minOccurs="0"/>
+				<element name="Registros" type="tiposcomplejos:RegistrosSubvencionEntidadPublicaType" minOccurs="0"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

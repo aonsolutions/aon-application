@@ -138,7 +138,7 @@
 			</enumeration>
 			<enumeration value="IE">
 				<annotation>
-					<documentation>No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPS/IGIC o IVA de otro estado miembro UE</documentation>
+					<documentation>No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPSI/IGIC o IVA de otro estado miembro UE</documentation>
 				</annotation>
 			</enumeration>
 		</restriction>
@@ -389,6 +389,11 @@
 			<enumeration value="6.3">
 				<annotation>
 					<documentation>Agencias de viajes</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="6.4">
+				<annotation>
+					<documentation>Subvenciones satisfechas por entidades públicas</documentation>
 				</annotation>
 			</enumeration>
 		</restriction>
