@@ -345,7 +345,7 @@
 	.aon-lookupSuggestText,
 	.aon-form input[type="text"],
 	.aon-selectInputDate-inputClass{
-		height: 2.5rem;
+		height: 2.15rem;
 	}
 	
 
@@ -1047,6 +1047,30 @@
   		background-color: #fff;
 	}
 	
+	input:focus, 
+	select:focus, 
+	textarea:focus {
+	  outline: none;
+	  box-shadow: none !important;
+	  border: .0625rem solid #cbd5e1 !important;
+	}
+	
+	.rich-spinner-c:has(.rich-spinner-input-container) {	
+		border-radius: .375rem;
+		box-sizing: border-box;
+		border: .0625rem solid #cbd5e1;
+      }
+
+	.rich-spinner-c .rich-spinner-buttons ,
+	.rich-spinner-c .rich-spinner-input-container{
+		border: none;
+		background-image: none;	
+		background-color: #fff;
+	}
+	
+	.rich-spinner-c .rich-spinner-input-container .rich-spinner-input{
+		border: none;
+	}
 
 </style>
 
