@@ -1388,20 +1388,19 @@ export class AonNewMenu extends AonElement {
 	
 	async exceedTrailInvoinces(){
 		// Check trial limit
-		if (this.getDur().isTrial()) {
-			const result = await getInvoiceCount();
+		const result = await getInvoiceCount();
 			
-			if (result.invoiceCount >= this.getDur().getTrialValue()) {
-				this.getApplication().confirmDialog(
-					"Límite alcanzado",
-					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
-					async () => {
-						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
-					}
-				);
-				return true;
-			}
+		if (this.getDur().isTrial() && result.invoiceCount >= this.getDur().getTrialValue()) {
+			this.getApplication().confirmDialog(
+				"Límite alcanzado",
+				"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+				async () => {
+					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+				}
+			);
+			return true;
 		}
+		
 		return false;
 	}
 	
