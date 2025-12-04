@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -13,6 +14,7 @@ public class InvoiceCommunicatorContext {
 	
 	private final Domain domain; 
 	private final User user;
+	private ConsoleLogger logger;
 	private final Integer certificateId;
 	private final List<Invoice> invoices;
 	private InvoiceCommunicationConfiguration config;
@@ -20,6 +22,18 @@ public class InvoiceCommunicatorContext {
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
 	private boolean failOnWrongValidation = true;
+	
+	private static final ConsoleLogger VOID_CONSOLE_LOOGER = new ConsoleLogger() {
+
+		@Override public void title(String id, String msg) {/* Nothing */}
+		@Override public void subtitle(String id, String msg) {/* Nothing */}
+		@Override public void ok(String id, String msg) {/* Nothing */}
+		@Override public void error(String id, String msg) {/* Nothing */}
+		@Override public void warning(String id, String msg) {/* Nothing */}
+		@Override public void message(String id, String msg) {/* Nothing */}
+		@Override public void progress(String id, int count, int progress, String msg) {/* Nothing */}
+		@Override public void progress(String id, int count, int progress) {/* Nothing */}
+	};
 
 //	private boolean error;
 //	private String errorMessage;
@@ -84,6 +98,15 @@ public class InvoiceCommunicatorContext {
 		this.failOnWrongValidation = failOnWrongValidation;
 		return this;
 	}
+
+	public ConsoleLogger getLogger() {
+		return logger==null?VOID_CONSOLE_LOOGER:logger;
+	}
+	public InvoiceCommunicatorContext setLogger(ConsoleLogger logger) {
+		this.logger = logger;
+		return this;
+	}
+	
 	
 //	public boolean isError() {
 //		return error;

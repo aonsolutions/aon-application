@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
@@ -21,13 +22,14 @@ import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 
 public class JsonParams extends JSONObject {
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
-	 
+	private static final JSONNull JSON_NULL = JSONNull.getInstance();
+	
 	public static String convert(RegistryParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
@@ -48,7 +50,6 @@ public class JsonParams extends JSONObject {
 
 	public static String convert(AccountParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
@@ -66,7 +67,6 @@ public class JsonParams extends JSONObject {
 
 	public static String convert(IRPFParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		 ,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.REGISTRY 		 ,params.getRegistry() 			== null? JSON_NULL : new JSONNumber( params.getRegistry()));
 		json.put(IRequestParamsNames.ACTIVITY 		 ,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));
@@ -88,7 +88,6 @@ public class JsonParams extends JSONObject {
 	
 	public static String convert(AEATParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
 		json.put(IRequestParamsNames.DOMAIN_ID 		,new JSONNumber( params.getDomainId()));
 		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
@@ -119,7 +118,6 @@ public class JsonParams extends JSONObject {
 	
 	public static String convert(AccountEntryParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		 ,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.PERIOD   		 ,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
 		json.put(IRequestParamsNames.FROM_DATE 		 ,params.getFromDate() 		== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
@@ -151,7 +149,6 @@ public class JsonParams extends JSONObject {
 	
 	public static String convert(AccountingReportParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN,new JSONNumber( params.getDomain()));
 		if (params.getDomains() != null && params.getDomains().size() > 0) {
 			JSONArray domains = new JSONArray();
@@ -233,7 +230,6 @@ public class JsonParams extends JSONObject {
 
 	public static String convert(OperationParams params) {		
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 	== null? JSON_NULL : new JSONNumber( params.getActivity()));
 		json.put(IRequestParamsNames.ACTIVITY_DESCRIPTION, params.getActivityDescription()== null? JSON_NULL : new JSONString( params.getActivityDescription()));		
@@ -248,7 +244,6 @@ public class JsonParams extends JSONObject {
 	
 	public static String convert(OperationParamsNew params) {		
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 	== null? JSON_NULL : new JSONNumber( params.getActivity()));
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate() 	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
@@ -260,7 +255,6 @@ public class JsonParams extends JSONObject {
 	
 	public static String convert(FinanceParams params) {		
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromInvoiceDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromInvoiceDate())));
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToInvoiceDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToInvoiceDate())));
@@ -287,7 +281,6 @@ public class JsonParams extends JSONObject {
 	
 	public static JSONObject convert2Object(DomainParams params) {
 		JSONObject json = new JSONObject();
-		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.SCHEMA	,AonStringUtils.isBlank(params.getDbSchema())? JSON_NULL : new JSONString( params.getDbSchema()));
 		json.put(IRequestParamsNames.ID		,params.getId()	== null? JSON_NULL : new JSONNumber( params.getId()));
 		json.put(IRequestParamsNames.QUERY	,AonStringUtils.isBlank(params.getQuery())? JSON_NULL : new JSONString( params.getQuery()));
@@ -319,5 +312,32 @@ public class JsonParams extends JSONObject {
 
 	public static String convert(DomainParams params) {
 		return convert2Object(params).toString();
+	}
+
+	public static String convert(FeeBillingParams params) {
+		JSONObject json = new JSONObject();
+		json.put(IRequestParamsNames.DOMAIN_ID, new JSONNumber( params.getDomainId()));
+		json.put(IRequestParamsNames.DRY_RUN ,new JSONNumber( params.isDryRun()?1:0));		
+		json.put(IRequestParamsNames.SAVE_AS_PROFORMA ,new JSONNumber( params.mustSaveAsProforma()?1:0));		
+		json.put(IRequestParamsNames.COMMUNICABLE ,new JSONNumber( params.isCommunicable()?1:0));		
+		json.put(IRequestParamsNames.CERTIFICATE_ID, new JSONNumber( params.getCertId()));
+		json.put(IRequestParamsNames.INVOICING_GROUP, jsonNumber(params.getInvoicingGroup()));
+		json.put(IRequestParamsNames.CUSTOMER, jsonNumber(params.getCustomer()));
+		json.put(IRequestParamsNames.ITEM, jsonNumber(params.getItem()));
+		json.put(IRequestParamsNames.PRODUCT_CATEGORY, jsonNumber( params.getProductCategory()));
+		json.put(IRequestParamsNames.MONTH,params.getMonth() == null?JSON_NULL :new JSONNumber( params.getMonth().value()));
+		json.put(IRequestParamsNames.YEAR, new JSONNumber( params.getYear()));
+		json.put(IRequestParamsNames.SECURITY_LEVEL ,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		json.put(IRequestParamsNames.BILLING_PERIOD ,params.getPeriod() == null?JSON_NULL :new JSONNumber( params.getPeriod().value()));
+		json.put(IRequestParamsNames.INVOICE_ACTIVITY, jsonNumber( params.getInvoiceActivity()));
+		json.put(IRequestParamsNames.INVOICE_SERIES	,AonStringUtils.isBlank(params.getInvoiceSeries())? JSON_NULL : new JSONString( params.getInvoiceSeries()));
+		json.put(IRequestParamsNames.INVOICE_DATE,params.getInvoiceDate() 	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getInvoiceDate())));
+		json.put(IRequestParamsNames.INVOICE_COMMENTS,AonStringUtils.isBlank(params.getInvoiceComments())? JSON_NULL : new JSONString( params.getInvoiceComments()));
+		return json.toString();
+	}
+
+	private static JSONValue jsonNumber(Integer i) {
+		if (i == null) return JSON_NULL;
+		return new JSONNumber( i );
 	}
 }

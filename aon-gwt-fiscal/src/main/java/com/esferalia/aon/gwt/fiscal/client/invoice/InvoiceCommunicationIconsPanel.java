@@ -15,11 +15,11 @@ public class InvoiceCommunicationIconsPanel extends FlowPanel {
 	public InvoiceCommunicationIconsPanel(InvoiceModuleOptions options,  Invoice invoice ) {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
-		boolean hasAdminitration = (options.getConfiguration() == null 
+		boolean hasAdministration = (options.getConfiguration() == null 
 			|| options.getConfiguration().getCommunicationConfig()==null
-			|| options.getConfiguration().getCommunicationConfig().getAdministration()==null
+			|| options.getConfiguration().getCommunicationConfig().getAdministration()!=null
 		);
-		Administration admon = hasAdminitration 
+		Administration admon = hasAdministration 
 			? options.getConfiguration().getCommunicationConfig().getAdministration() 
 			: Administration.COMMON_TERRITORY;
 		AonCollectionUtils.valuesStream(invoice.getCommunicationInfo())

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.INVOICE;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
@@ -43,7 +44,7 @@ public class InvoiceFeeServiceImpl extends AonStatelessRemoteServiceServlet impl
 	// **************************************************
 	@Override
 	public InvoiceProcessOutput getInvoices(Occam occam, FeeBillingParams params) {
-		return InvoiceCommunicator.feeInvoicing(occam, params);
+		return InvoiceCommunicator.feeInvoicing(occam, params, new SysoutConsoleLogger());
 	}
 
 	@Override
@@ -51,4 +52,15 @@ public class InvoiceFeeServiceImpl extends AonStatelessRemoteServiceServlet impl
 		return INVOICE.save(occam, invoice);
 	}
 
+	public static class SysoutConsoleLogger implements ConsoleLogger {
+		private void l(String msg) { System.out.println( msg ); }
+		@Override public void warning(String id, String msg) { l(msg); }
+		@Override public void title(String id, String msg) { l(msg); }
+		@Override public void subtitle(String id, String msg) { l(msg); }
+		@Override public void progress(String id, int count, int progress) { l("progress"); }
+		@Override public void progress(String id, int count, int progress, String msg) { l(msg); }
+		@Override public void ok(String id, String msg) { l(msg); }
+		@Override public void message(String id, String msg) { l(msg); }
+		@Override public void error(String id, String msg) { l(msg); }
+	}
 }

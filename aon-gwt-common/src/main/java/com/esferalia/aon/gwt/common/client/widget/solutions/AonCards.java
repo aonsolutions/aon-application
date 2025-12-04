@@ -107,4 +107,9 @@ public class AonCards extends ScrollPanel {
 		return card;
 	}
 	
+	public void breakRow() {
+		FlowPanel breakPanel = new FlowPanel();
+		breakPanel.getElement().getStyle().setProperty("flex-basis", "100%" );
+		container.add( breakPanel );
+	}
 }

@@ -295,6 +295,7 @@ public final class IJsonNames {
 	public static final String FROM = "from";
 	public static final String FROM_DATE = "fromDate";
 	public static final String FROM_DUE_DATE = "fromDueDate";
+	public static final String FROM_ID = "fromId";
 	public static final String FROM_SALARY = "fromSalary";
 	public static final String FROM_NUMBER = "fromNumber";
 	public static final String FULL = "full";
@@ -347,11 +348,16 @@ public final class IJsonNames {
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
 	public static final String INVOICE_BREAKDOWN = "invoiceBreakdown";;
+	public static final String INVOICE_COUNT = "invoiceCount";
 	public static final String INVOICE_DETAIL = "invoiceDetail";
 	public static final String INVOICE_DOC = "invoiceDoc";
 	public static final String INVOICE_FISCAL = "invoiceFiscal";
 	public static final String INVOICE_INFO = "invoiceInfo";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
+	public static final String INVOICE_TOTAL_AMOUNT = "invoiceTotalAmount";
+	public static final String INVOICE_TOTAL_PREPAYMENT_COUNT = "invoiceTotalPrepaymentCount";
+	public static final String INVOICE_TOTAL_RETENTION = "invoiceTotalRetention";
+	public static final String INVOICE_TOTAL_VAT = "invoiceTotalVAT";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	public static final String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
@@ -742,6 +748,7 @@ public final class IJsonNames {
 	public static final String TO = "to";
 	public static final String TO_DATE = "toDate";
 	public static final String TO_DUE_DATE = "toDueDate";
+	public static final String TO_ID = "toId";
 	public static final String TO_NUMBER = "toNumber";
 	public static final String TOKEN = "token";
 	public static final String TOOLBAR = "toolbar";
@@ -812,6 +819,5 @@ public final class IJsonNames {
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
-	
 
 }

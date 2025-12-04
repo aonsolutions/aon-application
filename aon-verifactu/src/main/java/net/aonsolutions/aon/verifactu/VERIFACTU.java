@@ -52,6 +52,8 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 public class VERIFACTU {
 
+	private static final String VF = "VF";
+
 	private VERIFACTU() {
 		
 	}
@@ -69,15 +71,21 @@ public class VERIFACTU {
 	}
 	
 	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
+		vc.getLogger().subtitle(VF, "Comunicación VERIFACTU de " + vc.invoiceCount() + " factura(s).");		
 		check(vc);
+		vc.getLogger().message(VF, "Construyendo mensaje para VERIFACTU");
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, vc, phase );
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		vc.getLogger().message(VF, "Enviando mensaje a VERIFACTU");
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
 		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
+		vc.getLogger().message(VF, "Procesando respuesta de VERIFACTU");
 		vc.setResponse( dataResponse );
-		return saveAccept( ctx, vc );
+		saveAccept( ctx, vc );
+		vc.getLogger().message(VF, "Almacenando respuesta de VERIFACTU");
+		return vc; 
 	}
 	
 

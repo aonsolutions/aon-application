@@ -4388,5 +4388,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Mostrar respuesta")
 	String  viewResponse();
 
+	@DefaultMessage("Generaci\u00F3n de facturas")
+	String generateInvoices();
+
 }
 

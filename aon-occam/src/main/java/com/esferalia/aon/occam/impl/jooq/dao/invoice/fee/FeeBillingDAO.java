@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -48,6 +47,7 @@ import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -94,7 +94,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeBillingDAO {
 	
-	private static final Logger LOGGER = Logger.getLogger(FeeBillingDAO.class.getName());
+	private static final String LOG_ID = "FEE_BILLING";
+	private static final String IS = "INVOICE_SAVE";
 	
 	private FeeBillingDAO() {
 	}
@@ -143,7 +144,8 @@ public class FeeBillingDAO {
 			.findFirst();
 	}
 	
-	public static InvoiceProcessOutput invoice(AONContext ctx, FeeBillingParams params) {
+	public static InvoiceProcessOutput invoice(AONContext ctx, FeeBillingParams params, ConsoleLogger logger) {
+		logger.subtitle(LOG_ID, "Inicio del proceso de facturación de cuotas");
 		checkParams( params );
 		checkSegments( ctx, params );
 		params.setCompany( CompanyDAO.getByDomain( ctx, params.getDomainId() ) );
@@ -153,28 +155,29 @@ public class FeeBillingDAO {
 			tmpConfig = ConfigurationDAO.getConfiguration( ctx, params.getInvoiceDate() );
 		}
 		AonConfiguration config = tmpConfig; 
-		log("Condition: " + condition);
 		SelectConditionStep<Record> sentence = select(ctx)
 			.where( condition );
 		
         Map<String, Object> mvelContext = new HashMap<>();
         mvelContext.put("MONTH", params.getMonth().getName());
         mvelContext.put("YEAR", params.getYear());
+        logger.message(LOG_ID, "Mes seleccionado: " + params.getMonth().getName() + " " + params.getYear());
 		
         AtomicInteger invoiceNumber = new AtomicInteger( );
         if (params.isDryRun() || params.mustSaveAsProforma() || params.isCommunicable() ) {
         	int minNumber = InvoiceDAO.getMinNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
         	if (minNumber >= 0) minNumber = -1;
-        	log("Min invoice Number: " + minNumber);
+        	logger.message(LOG_ID, "M\u00EDnimo n\u00FAmero de factura: " + minNumber);
         	invoiceNumber.set(minNumber );
         } else {
         	int nextNumber = InvoiceDAO.getNextNumber(ctx, InvoiceType.SALES, params.getInvoiceSeries());
-        	log("Next invoice Number: " + nextNumber);
+        	logger.message(LOG_ID, "Siguiente n\u00FAmero de factura: " + nextNumber);
         	invoiceNumber.set( nextNumber );
         }
-        AtomicInteger counter = new AtomicInteger( 1 );
+        
         MutableObject<FeeBilling> lastFee = new MutableObject<>( null );
         // Collector que acumula bloques de FeeBilling según breakInvoice
+        logger.message(LOG_ID, "Inicio b\u00FAsqueda de cuotas a facturar...");
         List<Invoice> fullInvoices = sentence
         	.fetch()
         	.stream()
@@ -190,9 +193,8 @@ public class FeeBillingDAO {
 							?invoiceNumber.getAndDecrement()
 							:invoiceNumber.getAndIncrement();
 						lastInvoice = createInvoice(ctx, fee, invNumber, params);
-						log(" Generando ..: " + FinanceUtil.getDocumentNumber(lastInvoice));
 						invoices.add(lastInvoice);
-						log("Invoice Added: " + counter.getAndIncrement() + " " + lastInvoice.flat());
+						logger.message(LOG_ID, "Factura añadida ..: " + FinanceUtil.getDocumentNumber(lastInvoice));
 					}
 					InvoiceDetail detail = createInvoiceDetail(ctx, lastInvoice, fee, mvelContext, params);
                     lastInvoice.addDetail(detail);
@@ -201,26 +203,21 @@ public class FeeBillingDAO {
 				,(left, right) -> { left.addAll(right); return left; }
 			))
 		;
-        
+        AtomicInteger progress = new AtomicInteger(0);
+        int count = fullInvoices.size();
+        logger.progress(IS, count, 0);
         AonCollectionUtils.stream(fullInvoices)
 	    	.forEach(i -> {
 	        	// Se calculan los datos de la factura
-	    		log("\t Calculando invoice: " + i.flat());
 	    		InvoiceCalculatorDAO.calculate( ctx, i);
-	    		// Se Añaden los vencimientos según la configuración del cliente
-	    		log("\t Generando vencimientos invoice: " + i.flat());
 	    		FinanceDAO.getFinancesForInvoiceStream( ctx, i).forEach(i::addFinance);  
 	    		// En su caso, Se guardan las facturas y sus vencimientos
-	    		log("\t" + ( params.isDryRun() ? "NO SE GRABA" : "Grabando invoice: " + i.flat()) );
-	            if (params.isDryRun()) {
-	            	log("\t" + "NO SE GRABA " + i.flat());
-	            } else {
-	            	log("\t" + "Grabando invoice: " + i.flat());
+	            if (params.isNotDryRun()) {
 	            	InvoiceDAO.saveInvoiceAndFinances(ctx, config, i);
-	            }
+	            	logger.progress(IS, count, progress.incrementAndGet(), "Grabando factura: " + i.getDocumentNumber() + " para " + i.getRegistryName() );
+            	}
 	    	});
-    	log("\t Fin del proceso: " );
-    	
+		logger.message(LOG_ID, "Fin del proceso de facturación" );
     	return AonCollectionUtils.stream(fullInvoices)
     		.collect(InvoiceProcessOutput.collector());
 	}
@@ -863,10 +860,6 @@ public class FeeBillingDAO {
 			.map( r -> r.getValue( DSL.max(CUSTOMER_FEE.LINE) ))
 			.findFirst()
 			.orElse((short) 0);
-	}
-	
-	private static void log( String message ) {
-		LOGGER.fine(message);
 	}
 	
 }

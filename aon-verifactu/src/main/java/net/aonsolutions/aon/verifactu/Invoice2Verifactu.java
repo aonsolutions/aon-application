@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
-import java.text.MessageFormat;
 import java.util.GregorianCalendar;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -13,8 +13,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
@@ -27,6 +25,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class Invoice2Verifactu {
 
+	private static final String VFM = "VFM";
 	static final String VERSION  = "1.0";
 	static final String SERVICE_DESCRIPTION = "Prestacion de servicios";
 	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderias";
@@ -41,7 +40,8 @@ class Invoice2Verifactu {
 			regFactu.setCabecera(getCabecera(vc));
 			VerifactuValidation.validateHeader(regFactu);
 			boolean phaseEnabled = phase != null && !vc.isAnnulment();
-			
+			AtomicInteger progress = new AtomicInteger(0);
+			int count = vc.invoiceCount();
 			vc.invoiceStream()
 				.forEach(invoice -> {
 					try {
@@ -60,6 +60,7 @@ class Invoice2Verifactu {
 							if (phaseEnabled) {
 								phase.afterRightInvoice(ctx, vc.getInvoiceCommunicatorContext(), invoice);
 							}
+							vc.getLogger().progress(VFM, count, progress.incrementAndGet() ,"Agregando factura a lote de VERIFACTU: " + invoice.getDocumentNumber() );
 							regFactu.getRegistroFactura().add(factura);
 							vc.setBlockchain( newBlockchain( factura) );
 						}

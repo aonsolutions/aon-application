@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.mutable.MutableObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 class InvoiceCommunicationIcon extends InlineLabel {

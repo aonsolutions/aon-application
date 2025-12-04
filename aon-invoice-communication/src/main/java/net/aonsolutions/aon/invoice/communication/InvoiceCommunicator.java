@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -74,6 +75,7 @@ import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 public class InvoiceCommunicator {
 	
+	private static final String IC = "IC";
 	private static final Logger LOGGER = Logger.getLogger(InvoiceCommunicator.class.getName());
 	
 	private InvoiceCommunicator() {
@@ -356,37 +358,35 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ************************************* [FEE INVOICING] *******
 	// *************************************************************
-	public static InvoiceProcessOutput feeInvoicing(Occam occam, FeeBillingParams params) {
+	public static InvoiceProcessOutput feeInvoicing(Occam occam, FeeBillingParams params, ConsoleLogger logger) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomainId() );
-			log( "HAS COMMUNICATION? > " + icc.hasCommunication());
-			log( "IS DRY RUN? > " + params.isDryRun());
-			log( "IS COMMUNICABLE? > " + params.isCommunicable());
-			log( "MUST SAVE AS PROFORMA? > " + params.mustSaveAsProforma());
+			logger.message( IC, "\u00BFLas facturas se deben comunicar? " + (icc.hasCommunication() && params.isCommunicable()));
+			logger.message( IC, "\u00BFLa operaci\u00F3n es una simulaci\u00F3n? " + params.isDryRun());
+			logger.message( IC, "\u00BFLas facturas se deben guardar como proforma? " + params.mustSaveAsProforma());
 			if (icc.hasCommunication() && params.isNotDryRun() && params.isCommunicable()) {
-				log( "---> INVOICES MUST BE COMMUNICATED!");
 				InvoiceProcessOutput output = new InvoiceProcessOutput();
 				try {
-					feeInvoicing(ctx, icc, params)
+					feeInvoicing(ctx, icc, params, logger)
 						.invoiceStream()
 						.forEach(output::addInvoice);
+					logger.ok(IC, "Fin del proceso" );
 				} catch (Throwable e) {
-					System.out.println( "******* [ InvoiceCommunicator.feeInvoicing ] ********");
 					e.printStackTrace();
 					output.setProcessErrorLevel(InvoiceErrorLevel.ERR);
 					output.setProcessMessage(e.getMessage());
+					logger.error(IC, "Error en la comunicaci\u00F3n de las facturas: " + e.getMessage());
 					if (e instanceof InvoiceCommunicatorContextError icce) {
 						icce.getInvoiceCommunicatorContext()
 							.invoiceStream()
 							.forEach(output::addInvoice);
 					}
-					System.out.println("***************");
 				}
 				return output;
 			} else {
 				log( "---> INVOICES MUST NOT BE COMMUNICATED!");
 				return ctx.getDslContext().transactionResult(configuration ->
-					FeeBillingDAO.invoice(ctx, params)
+					FeeBillingDAO.invoice(ctx, params, logger)
 				);
 			}
 		} catch (Exception e) {
@@ -413,10 +413,7 @@ public class InvoiceCommunicator {
 		}
 	}
 	
-	private static InvoiceCommunicatorContext feeInvoicing(AONContext ctx, InvoiceCommunicationConfiguration icc, FeeBillingParams params) throws InvoiceCommunicationException {
-		System.out.println( " icc.hasCommunication() ..: " + icc.hasCommunication());
-		System.out.println( " params.isDryRun() .........: " + params.isDryRun());
-		System.out.println( " params.isCommunicable() ...: " + params.isCommunicable());
+	private static InvoiceCommunicatorContext feeInvoicing(AONContext ctx, InvoiceCommunicationConfiguration icc, FeeBillingParams params, ConsoleLogger logger) throws InvoiceCommunicationException {
 		if (!icc.hasCommunication()) throw new AonCoreException("Si no hay comunicación, no se debe llamar a este método.");
 		if (params.isDryRun()) throw new AonCoreException("Si es una simulación, no se debe llamar a este método.");
 		if (!params.isCommunicable()) throw new AonCoreException("Si no se debe comunicar, no se debe llamar a este método.");
@@ -437,12 +434,13 @@ public class InvoiceCommunicator {
 			
 		return ctx.getDslContext().transactionResult(conf -> {
 			
-			InvoiceProcessOutput output = FeeBillingDAO.invoice(ctx, params);
+			InvoiceProcessOutput output = FeeBillingDAO.invoice(ctx, params, logger);
 			List<Invoice> invoices = output.invoiceStream().collect(Collectors.toCollection(LinkedList::new));
 			
 			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, certId, invoices)
-				.setConfig(icc)
-				.setCompany(company)
+				.setConfig( icc )
+				.setCompany( company )
+				.setLogger( logger )
 				.setFailOnWrongValidation( AonCollectionUtils.size(invoices) == 1 );
 			
 			try {
@@ -463,6 +461,7 @@ public class InvoiceCommunicator {
 								.filter(invoice -> !invoice.hasInvoiceInfo(InvoiceCommunicationType.VERIFACTU))
 								.forEach( invoice -> invoice.reloadCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice.getDomain(), invoice.getId()).orElse(null)))
 							;
+							logger.message(IC, "Fin del proceso comunicación VERIFACTU" );
 						}
 					});
 				}
@@ -734,5 +733,6 @@ public class InvoiceCommunicator {
 				);
 		});		
 	}
+	
 }
 

@@ -60,8 +60,17 @@ public class InvoiceProcessOutput implements java.io.Serializable {
 	public Integer getFromId() {
 		return this.fromId;
 	}
+	public InvoiceProcessOutput setFromId(Integer fromId) {
+		this.fromId = fromId;
+		return this;
+	}
+	
 	public Integer getToId() {
 		return this.toId;
+	}
+	public InvoiceProcessOutput setToId(Integer toId) {
+		this.toId = toId;
+		return this;
 	}
 	
 	public int getTotalCount() {

@@ -28,6 +28,7 @@ public interface IRequestParamsNames {
 	String BALANCE_TYPE = "balanceType";
 	String BALANCING_ACCOUNT = "balancingAccount";
 	String BATCHED = "batched";
+	String BILLING_PERIOD = "billingPeriod";
 	String BLOCKED = "blocked";
 	String BOOK_TYPE = "bookType";
 	String BRAND_IDS = "brandIds";
@@ -38,6 +39,7 @@ public interface IRequestParamsNames {
 	String CERTIFICATE_ID = "certificate_id";
 	String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	String COMMENTS = "comments";
+	String COMMUNICABLE = "communicable";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
 	String CONSOLE_UTILITY = "consoleUtility";
@@ -45,6 +47,7 @@ public interface IRequestParamsNames {
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String CREDIT = "credit";
+	String CUSTOMER = "customer";
 	String DEBIT = "debit";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
@@ -58,9 +61,11 @@ public interface IRequestParamsNames {
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_PARAMS = "domainParams";
 	String DOMAINS = "domains";
+	String DRY_RUN = "dryRun";
 	String ENABLE_HEREDITY = "enableHeredity";
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";
+	String FEE_BILLING_PARAMS = "feeBillingParams";
 	String FILE_DATA = "fileData";
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
@@ -79,13 +84,19 @@ public interface IRequestParamsNames {
 	String ID = "id";
 	String INACTIVE = "inactive";
 	String INVESTMENT = "investment";
+	String INVOICE_ACTIVITY = "invoiceActivity";
+	String INVOICE_COMMENTS = "invoiceComments"; 
+	String INVOICE_DATE = "invoiceDate";
+	String INVOICE_SERIES = "invoiceSeries";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPES = "invoiceTypes";
 	String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
+	String INVOICING_GROUP = "invoicingGroup";
 	String IRPF = "irpf";
 	String IRPF_PARAMS = "irpfParams";
+	String ITEM= "item";
 	String JOURNAL = "journal";
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
@@ -94,6 +105,7 @@ public interface IRequestParamsNames {
 	String LIMIT = "limit";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	String MOD = "mod";
+	String MONTH = "month";
 	String MUST_FLATTEN = "mustFlatten";
 	String NAME = "name";
 	String NEARBY_NUMBERS = "nearbyNumbers";
@@ -131,6 +143,7 @@ public interface IRequestParamsNames {
 	String PERIOD = "period";
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRODUCT_ID = "productId";
+	String PRODUCT_CATEGORY = "productCategory";
 	String QUERY = "query";
 	String RECTIFICATION = "rectification";
 	String REFERENCE_CODE = "referenceCode";
@@ -139,6 +152,7 @@ public interface IRequestParamsNames {
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
 	String RETURNED = "returned";
+	String SAVE_AS_PROFORMA = "saveAsProforma";
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
 	String SECURITY_LEVEL = "securityLevel";
@@ -170,5 +184,6 @@ public interface IRequestParamsNames {
 	String WITHHOLDING_TYPE = "withholdingType";
 	String WITHHOLDING_TYPE_GROUP = "withholdingTypeGroup";
 	String WORKPLACE_IDS = "workplaceIds";
-	
+	String YEAR = "year";
+
 }

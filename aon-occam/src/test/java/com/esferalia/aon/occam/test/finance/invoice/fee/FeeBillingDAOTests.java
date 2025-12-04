@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.type.Month;
@@ -62,7 +63,8 @@ public class FeeBillingDAOTests {
 			;
 			
 			InvoiceProcessOutput result = ctx.getDslContext().transactionResult(trx -> 
-				FeeBillingDAO.invoice(ctx, params));
+				FeeBillingDAO.invoice(ctx, params, new SysoutConsoleLogger() )
+			);
 			// ******
 			// ******
 			// ******
@@ -194,5 +196,17 @@ public class FeeBillingDAOTests {
 			.filter(f -> f != INVOICE_TAX.INVOICE_DETAIL)
 			.peek( f -> System.out.println( "\t\t\tChecking " + AonStringUtils.upperCase(f.getName()) ))
 			.forEach(f -> assertEquals("Field " + AonStringUtils.upperCase(f.getName()), r1.getValue(f), r2.getValue(f)));
+	}
+
+	public static class SysoutConsoleLogger implements ConsoleLogger {
+		private void l(String msg) { System.out.println( msg ); }
+		@Override public void warning(String id, String msg) { l(msg); }
+		@Override public void title(String id, String msg) { l(msg); }
+		@Override public void subtitle(String id, String msg) { l(msg); }
+		@Override public void progress(String id, int count, int progress) { l("progress"); }
+		@Override public void progress(String id, int count, int progress, String msg) { l(msg); }
+		@Override public void ok(String id, String msg) { l(msg); }
+		@Override public void message(String id, String msg) { l(msg); }
+		@Override public void error(String id, String msg) { l(msg); }
 	}
 }
