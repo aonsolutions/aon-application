@@ -224,9 +224,9 @@ public class LroeModel240 extends DockLayoutPanel {
 					@Override
 					public void select(LinkedList<Invoice> selFiles) {
 						selectedInvoices = selFiles;
-						boolean visible = !selFiles.isEmpty() && !getFilterParams().getType().contains(InvoiceType.SALES);
+						boolean visible = !selFiles.isEmpty();
 						sendButton.setVisible(visible);
-						bajaButton.setVisible(visible);
+						bajaButton.setVisible(visible && !getFilterParams().getType().contains(InvoiceType.SALES));
 						bajaButton.setEnabled(false);
 						
 						refreshButton.setVisible(selFiles.size() == 1
