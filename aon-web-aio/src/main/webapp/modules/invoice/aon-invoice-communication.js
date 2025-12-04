@@ -246,6 +246,7 @@ export class AonInvoiceCommunication extends AonElement {
         }
         if(this.configuration.communication.verifactuIncludeDate) {
             verifactuIncludeDate.setDate(this.configuration.communication.verifactuIncludeDate);
+            verifactuIncludeDate.disabled = true;
         }
         verifactuIncludeDate.addEventListener(EVENT.CHANGE, () => {
             if(this.checkVerifactuDate(verifactuIncludeDate))
