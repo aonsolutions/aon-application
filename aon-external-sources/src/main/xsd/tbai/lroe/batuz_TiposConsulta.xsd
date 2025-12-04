@@ -517,7 +517,7 @@
 	
 	<complexType name="VariacionesExistenciasConsultaRespuestaType">
 		<sequence>
-			<element name="VariacionExistencias" type="tiposconsulta:VariacionExistenciaConsultaRespuestaType" minOccurs="1" maxOccurs="10"/>
+			<element name="VariacionExistencias" type="tiposconsulta:VariacionExistenciaConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -531,7 +531,7 @@
 
 	<complexType name="ArrendamientosLocalesNegociosConsultaRespuestaType">
 		<sequence>
-			<element name="ArrendamientoLocalNegocio" type="tiposconsulta:ArrendamientoLocalNegocioConsultaRespuestaType" minOccurs="1" maxOccurs="100"/>
+			<element name="ArrendamientoLocalNegocio" type="tiposconsulta:ArrendamientoLocalNegocioConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -545,7 +545,7 @@
 
 	<complexType name="TransmisionesInmueblesConsultaRespuestaType">
 		<sequence>
-			<element name="TransmisionInmueble" type="tiposconsulta:TransmisionInmuebleConsultaRespuestaType" minOccurs="1" maxOccurs="100"/>
+			<element name="TransmisionInmueble" type="tiposconsulta:TransmisionInmuebleConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -559,7 +559,7 @@
 
 	<complexType name="ImportesPercibidosMetalicoPFConsultaRespuestaType">
 		<sequence>
-			<element name="ImportePercibidoMetalico" type="tiposconsulta:ImportePercibidoMetalicoPFConsultaRespuestaType" minOccurs="1" maxOccurs="100"/>
+			<element name="ImportePercibidoMetalico" type="tiposconsulta:ImportePercibidoMetalicoPFConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -742,7 +742,7 @@
 	
 	<complexType name="AgenciasViajesConsultaRespuestaType">
 		<sequence>
-			<element name="AgenciaViaje" type="tiposconsulta:AgenciaViajeConsultaRespuestaType" minOccurs="1" maxOccurs="100"/>
+			<element name="AgenciaViaje" type="tiposconsulta:AgenciaViajeConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -810,7 +810,8 @@
 			<element name="Emisor" type="tiposcomplejos:NIFPersonaType"/>
 			<element name="Destinatarios" type="tiposcomplejos:DestinatariosType" minOccurs="0"/>
 			<element name="VariosDestinatarios" type="enum:SiNoEnum" minOccurs="0"/>
-			<element name="EmitidaPorTercerosODestinatario" type="enum:EmitidaPorTercerosEnum" minOccurs="0"/>		</sequence>
+			<element name="EmitidaPorTercerosODestinatario" type="enum:EmitidaPorTercerosEnum" minOccurs="0"/>
+		</sequence>
 	</complexType>	
 	
 	<complexType name="FacturaTBAIType">
@@ -873,6 +874,28 @@
 		<sequence>
 			<element name="Desde" type="tiposbasicos:FechaType" minOccurs="0"/>
 			<element name="Hasta" type="tiposbasicos:FechaType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="FiltroConsultaSubvencionesEntidadesPublicasType">
+		<sequence>
+			<element name="Declarado" type="tiposcomplejos:DocumentoType" minOccurs="0"/>
+			<element name="Estado" type="enum:EstadoRegistroConsultaEnum" minOccurs="0"/>
+			<element name="NumPaginaConsulta" type="tiposbasicos:intPositiveType"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SubvencionesEntidadesPublicasConsultaRespuestaType">
+		<sequence>
+			<element name="SubvencionEntidadPublica" type="tiposconsulta:SubvencionEntidadPublicaConsultaRespuestaType" minOccurs="1" maxOccurs="10000"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="SubvencionEntidadPublicaConsultaRespuestaType">
+		<sequence>
+			<element name="DatosSubvencionEntidadPublica" type="tiposcomplejos:SubvencionEntidadPublicaType"/>
+			<element name="DatosPresentacion" type="tiposconsulta:DatosPresentacionConsultaType"/>
+			<element name="SituacionRegistro" type="tiposconsulta:SituacionRegistroConsultaType"/>
 		</sequence>
 	</complexType>
 </schema>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:TB="urn:ticketbai:emision" xmlns:T="urn:ticketbai:kontsultaultima" targetNamespace="urn:ticketbai:kontsultaultima">
+	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2-2.xsd" />
+	<element name="KontsultaUltimoTicketBAI">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="T:CabeceraConsultaType" />
+			</sequence>
+		</complexType>
+	</element>
+	<complexType name="CabeceraConsultaType">
+		<sequence>
+			<element name="IDVersion" type="T:IDVersionEnum" />
+			<element name="NifEmisor" type="TB:NIFType" />
+		</sequence>
+	</complexType>
+	<simpleType name="IDVersionEnum">
+		<restriction base="string">
+			<enumeration value="1.0" />
+		</restriction>
+	</simpleType>
+</schema>

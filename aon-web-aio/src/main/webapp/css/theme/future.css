@@ -1118,6 +1118,7 @@ aon-right-panel {
 	padding: 0px;;
 }
 
+.rightPanel .divLogout,
 .rightPanel .helpCardText,
 .rightPanel .configCardText{
 	border: none;
@@ -1132,11 +1133,19 @@ aon-right-panel {
 	width: 100%;
 }
 
+.rightPanel .divLogout *,
 .rightPanel .helpCardText *,
 .rightPanel .configCardText *{
 	color: #fff;	
 }
 
+#loginContent > div {
+	flex-direction: column;
+}
+
+.rightPanel .divLogout {
+	margin-top: 2rem;
+}
 
 .rightPanel div[id$="CardContent"]{
 	padding: 1.25rem;
@@ -1184,6 +1193,14 @@ aon-right-panel {
 
 #aonConfigHelpLangCardContent i[class~="configPanelLanguageI"]{
     mask-image: url('/icons/globe.svg') ;
+}
+
+.rightPanel.hiddenSidenav.open {
+	height: 100% !important;
+}
+
+.divLogout{
+	position: initial;
 }
 
 /* ========================== Header Customer Styles  ========================== */
