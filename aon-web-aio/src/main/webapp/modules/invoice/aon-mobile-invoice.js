@@ -246,20 +246,21 @@ export class AonMobileInvoice extends AonInvoice {
 		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
-
-		let category = createSelect(this.CATEGORY, MSG.CATEGORY);
-		category.autocomplete = true;
-		category.readonly = this.invoice.isReadonly();
-		category.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setCategory(category.value);
-			if(this.autosave) this.save();
-		});
-		table.addCell(category, '2');
-		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-			category.options = JSON.stringify(accs);
-			category.value = this.invoice.getCategory();
-		});
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = createSelect(this.CATEGORY, MSG.CATEGORY);
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				this.invoice.setCategory(category.value);
+				if(this.autosave) this.save();
+			});
+			table.addCell(category, '2');
+			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
+				let accs = accounts.map(acc => {return {name: acc.description, value: acc.code};});
+				category.options = JSON.stringify(accs);
+				category.value = this.invoice.getCategory();
+			});
+		}
 
 		table.addRow(); // ----- ROW 4 
 

@@ -1767,35 +1767,18 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			List<InvoiceDetail> prepayments = ctx.getInvoice().detailStream().filter(f -> f.isPrepayment()).toList();
-
-			for (Integer j = 0; j < prepayments.size(); j++) {
-				try {
-					InvoiceDetail detail = prepayments.get(j);
-					String total = (detail.getQuantity() != 0 && detail.getPrice() != 0 && detail.getTaxableBase() != 0) ? toLatinNumber(detail.getTaxableBase()) : "";
-					
-					x = 180;
-					x += 80;
-
-					x += 80;
-					
-					
-					drawTextCenter(ctx.getContents(), new PDRectangle(x, y, 59, 15), "Suplidos", ctx.getTheme().getTextColor(), FONT, 7, -12, j + TAX_TYPE);
-					x += 60;
-					
-					drawTextRight(ctx.getContents(), new PDRectangle(x, y, 49, 15), total, ctx.getTheme().getTextColor(), FONT, 7, 5, -12, j + TAX_QUOTE);
-					x += 50;
-					
-					y	-= 10;
-					
-					j++;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			double totalPrepayment = ctx.getInvoice().detailStream().filter(f -> f.isPrepayment()).mapToDouble(InvoiceDetail::getTaxableBase).sum();
+			if(totalPrepayment != 0.0) {
+				x = 340;
+				drawTextCenter(ctx.getContents(), new PDRectangle(x, y, 59, 15), "Suplidos", ctx.getTheme().getTextColor(), FONT, 7, -12, 0 + TAX_TYPE);
+				x += 60;
+				drawTextRight(ctx.getContents(), new PDRectangle(x, y, 49, 15), toLatinNumber(totalPrepayment), ctx.getTheme().getTextColor(), FONT, 7, 5, -12, 0 + TAX_QUOTE);
+				x += 50;
+				y -= 10;				
 			}
 		
-			if ((ctx.getInvoice().getBreakdown() != null && (!ctx.getInvoice().getBreakdown().isEmpty() || !prepayments.isEmpty()))) {
-				int totalThings = ctx.getInvoice().getBreakdown().size() + prepayments.size();
+			if ((ctx.getInvoice().getBreakdown() != null && (!ctx.getInvoice().getBreakdown().isEmpty()))) {
+				int totalThings = ctx.getInvoice().getBreakdown().size() + (totalPrepayment != 0.0 ? 1 : 0);
 				float middle = /*(totalThings % 2 != 0 ? totalThings / 2f -0.5f: totalThings / 2f - 0.5f)*/(totalThings / 2f -0.5f) * 10;
 				middle = initiaruY - middle;
 				drawTextRight(ctx.getContents(), new PDRectangle(x, middle, 99, 8), toLatinNumber(ctx.getInvoice().getTotal()) + " \u20AC", ctx.getTheme().getTextColor(), BOLD_FONT, 8, 5, -.5f, INVOICE_TOTAL);

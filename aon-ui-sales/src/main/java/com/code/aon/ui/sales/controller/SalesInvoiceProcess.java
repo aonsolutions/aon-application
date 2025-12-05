@@ -31,7 +31,7 @@ public class SalesInvoiceProcess implements ILongProcess {
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, salesController.getInvoiceSeries());
 				if(number >= 0) number = -1; 
-				salesController.setInvoiceNumber(number);
+				salesController.setInvoiceNumber(number < 0 ? number : -1);
 	        }
 			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
 			invoicingManager.setProgression(salesController.getProgressionState());
