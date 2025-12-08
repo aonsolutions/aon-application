@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,36 +40,36 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
 		post(req, resp);
 	}
     
-    
-    	private void get(HttpServletRequest req, HttpServletResponse resp) {
-    		try {
-    			AonApiData api = initialize(req);
-    			
-    			switch (api.getPath()) {
-    			case "/apps":
-    				response(req, resp, getContractedApps(api));
-    				break;	
-    			default:
-    				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-    			}
-    		} catch (Exception e) {
-    			error(req, resp, e);
-    		}	
-    	}
-    
-    
-    	private void post(HttpServletRequest req, HttpServletResponse resp) {
-    		try {
-    			AonApiData api = initialize(req);
-    			switch(api.getPath()) {
-    				case "/callForm":
-    					response(req, resp, callFormService(api));
-    					break;
-    			}
-    		} catch (Exception e) {
-    			error(req, resp, e);
-    		}
-    	}
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		try {
+			AonApiData api = initialize(req);
+			
+			switch (api.getPath()) {
+			case "/apps":
+				response(req, resp, getContractedApps(api));
+				break;	
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}	
+	}
+
+
+	private void post(HttpServletRequest req, HttpServletResponse resp) {
+		try {
+			AonApiData api = initialize(req);
+			switch(api.getPath()) {
+				case "/callForm":
+					response(req, resp, callFormService(api));
+					break;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(req, resp, e);
+		}
+	}
 
     private JSONObject callFormService(AonApiData api) throws IOException {
     	String url = "https://formsservice-pro.up.railway.app/api/form-request";
@@ -78,11 +79,15 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
         String surname = api.getData().getString(IJsonNames.SURNAME);
         String phone = api.getData().getString(IJsonNames.PHONE);
         String userFullName = name + " " + surname;
-        String companyData = api.getData().getString("companyData");
         String plan = api.getData().getString("plan");
         String domainurl = api.getData().getString("domainUrl");
         
-        JSONObject company = new JSONObject(companyData);
+        String chanel = api.getData().getString("chanel");
+        chanel = AonStringUtils.isBlank(chanel) ? "Conect@ aon" : chanel;
+        
+        String serviceId = api.getData().getString("serviceId");
+        
+       JSONObject company = api.getData().getJSONObject("companyData");
         String companyName = company.getString("name");
         String companyDocument = company.getString("document");
         String consulta = "El usuario : " + userFullName + " solicita el plan : " + plan + " Documento de la empresa : " + companyDocument;
@@ -91,7 +96,7 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
             .put("email", email)
             .put("name", companyName) 
             .put("phone", phone)
-            .put("canal", "Conect@ aon")
+            .put("canal", chanel)
             .put("url", domainurl)
             .put("consulta", consulta) // plan solicitado + usuario que lo solicita
             .put("idEnterprise", 19)
@@ -99,7 +104,8 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
             .put("gclid", "")
             .put("source", "")
             .put("way", "")
-            .put("campaign", "");
+            .put("campaign", "")
+            .put("id", serviceId);
 			       
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(url);
