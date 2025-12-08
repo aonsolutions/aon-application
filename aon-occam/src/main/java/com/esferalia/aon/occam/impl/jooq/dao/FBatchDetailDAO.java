@@ -132,7 +132,7 @@ public class FBatchDetailDAO {
 			
 			if(fbatchDetail.getFinance() != null) {
 				FinanceTracking lastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.getFinance().getId());
-				if(lastTracking.getType().equals(FinanceTrackingType.BATCHED))
+				if(null != lastTracking && lastTracking.getType().equals(FinanceTrackingType.BATCHED))
 					FinanceTrackingDAO.delete(ctx, lastTracking);
 				
 				FinanceTracking previusLastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.getFinance().getId());

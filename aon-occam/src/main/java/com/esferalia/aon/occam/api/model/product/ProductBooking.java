@@ -24,6 +24,9 @@ public class ProductBooking extends Product implements Serializable {
 	
 	private Boolean noBooking;
 	
+	private Boolean webhook;
+	private String webhookProductId;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -182,6 +185,23 @@ public class ProductBooking extends Product implements Serializable {
 		this.noBooking = noBooking;
 		return this;
 	}
-	
+
+	public Boolean isWebhook() {
+		return webhook;
+	}
+
+	public ProductBooking setWebhook(Boolean webhook) {
+		this.webhook = webhook;
+		return this;
+	}
+
+	public String getWebhookProductId() {
+		return webhookProductId;
+	}
+
+	public ProductBooking setWebhookProductId(String webhookProductId) {
+		this.webhookProductId = webhookProductId;
+		return this;
+	}
 	
 }

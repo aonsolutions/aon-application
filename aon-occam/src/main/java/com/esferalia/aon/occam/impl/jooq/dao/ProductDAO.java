@@ -491,6 +491,11 @@ public class ProductDAO {
 		if(null != product.isNoBooking())
 			json.put("noBooking", product.isNoBooking());
 		
+		if(null != product.isWebhook()) {
+			json.put("webhook", product.isWebhook());
+			json.put("webhookProductId", product.getWebhookProductId());
+		}
+		
 		if(null != product.getAonApps() && !product.getAonApps().isEmpty()) {
 			org.json.JSONArray aonAppsArr = new org.json.JSONArray();
 			product.getAonApps().forEach(app -> aonAppsArr.put(app.name()));
@@ -751,6 +756,9 @@ public class ProductDAO {
 			productBooking.setBookingComposition(info.has("isBookingComposition") && info.getBoolean("isBookingComposition"));
 			productBooking.setConsole(info.has("isConsole") && info.getBoolean("isConsole"));
 			productBooking.setNoBooking(info.has("noBooking") && info.getBoolean("noBooking"));
+			productBooking.setWebhook(info.has("webhook") && info.getBoolean("webhook"));
+			if(productBooking.isWebhook())
+				productBooking.setWebhookProductId(info.getString("webhookProductId"));
 			
 			List<AonApp> aonApps = new ArrayList<AonApp>();
 			if(info.has("aonApps")) {
