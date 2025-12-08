@@ -265,6 +265,8 @@ export class AonApplication extends AonElement {
       this.closeSidenav();
     } else {
       let sidenav = this.getElement(this.SIDENAV);
+      let toolbar = this.getElement(this.TOOLBAR);
+      
       if (sidenav.style.flexBasis === "0px") {
         sidenav.style.flexBasis = this.getSidenavWidth();
         sidenav.classList.remove("closeSidenav");
@@ -272,6 +274,8 @@ export class AonApplication extends AonElement {
         sidenav.style.flexBasis = "0px";
         sidenav.classList.add("closeSidenav");
       }
+      
+      toolbar.toogleClose();
     }
   }
 
@@ -279,6 +283,9 @@ export class AonApplication extends AonElement {
     let sidenav = this.getElement(this.SIDENAV);
     sidenav.style.flexBasis = "0px";
     sidenav.classList.add("closeSidenav");
+    
+	let toolbar = this.getElement(this.TOOLBAR);
+	toolbar.toogleClose();
   }
 
   toogleRightSidenav() {
@@ -446,6 +453,7 @@ export class AonApplication extends AonElement {
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
       const ul = div.querySelector("ul");
       if(ul){
+		arrowTitleSpan.classList.toggle("closeIcon");
         ul.classList.toggle(CSS.ELEMENT_HIDDEN);
         if(ul.classList.contains(CSS.ELEMENT_HIDDEN)){
           arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
@@ -545,6 +553,10 @@ export class AonApplication extends AonElement {
       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
 
         const elements = div.children;
+        
+        if(elements.length > 0) 
+			arrowTitleSpan.classList.toggle("closeIcon");
+			
         for (let i = 1; i < elements.length; i++) {
             elements[i].classList.toggle(CSS.ELEMENT_HIDDEN);
 
@@ -684,12 +696,16 @@ export class AonApplication extends AonElement {
       li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
       ul.appendChild(li);
       if(option.options) {
-        li.style.paddingLeft = '6px';
+		li.classList.add("aonSubMenuOptions");
+        //li.style.paddingLeft = '6px';
         let arrow = this.createElement(TAG.I);
         arrow.className = "material-icons aonVerticalMiddle";
         arrow.innerHTML = option.opened
           ? MATERIAL_ICONS.ARROW_DROP_DOWN 
           : MATERIAL_ICONS.ARROW_RIGHT;
+        
+        arrow.classList.add(option.opened ? 'chevronDowm' : 'chevronRight');
+        
         li.appendChild(arrow);
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
@@ -701,11 +717,19 @@ export class AonApplication extends AonElement {
           arrow.addEventListener(EVENT.CLICK, (e => {
             e.preventDefault();
             arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+            
+            arrow.classList.toggle('chevronRight');
+            arrow.classList.toggle('chevronDowm');
+           
             this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
           }));
         } else {
           li.addEventListener(EVENT.CLICK,() => {
             arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+            
+            arrow.classList.toggle('chevronRight');
+            arrow.classList.toggle('chevronDowm');
+            
             this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
           });
         } 

@@ -334,6 +334,9 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
     mask-image: url('/icons/chevron-down.svg') ;
 }
 
+i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
+	mask-image: url('/icons/chevron-right.svg') ;
+}
 
 
 #_aonMenuList-new {
@@ -507,6 +510,28 @@ aon-configuration-menu .suiteMenuContent  {
 	font-size: 0.875rem;
 }
 
+.aonSubMenuOptions .chevronDowm{
+	display: inline-block !important;
+	width: 18px;
+	height: 18px;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-down.svg');
+}
+
+.aonSubMenuOptions .chevronRight{
+	display: inline-block !important;
+	width: 18px;
+	height: 18px;
+	background: url('/icons/chevron-right.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-right.svg');
+}
+
 .aonSidenav i.material-icons {
 	display: none;
 }
@@ -517,8 +542,11 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;	
-	
+	padding: .625rem 1.25rem .625rem 2.5rem;		
+}
+
+.aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
+	padding: .625rem 1.25rem .625rem 1.5rem;
 }
 
 .aonSidenav .aonSidenavTitle {
@@ -536,6 +564,10 @@ aon-configuration-menu .suiteMenuContent  {
 	min-height: 24px;
 	visibility: visible;
 	background: url('/icons/chevron-down.svg') no-repeat center;
+}
+
+.aonSidenav .aonSidenavTitleArrow.closeIcon {
+	background: url('/icons/chevron-right.svg') no-repeat center;
 }
 
 .aonSidenav .aonAppMenuSidenavList:hover,
