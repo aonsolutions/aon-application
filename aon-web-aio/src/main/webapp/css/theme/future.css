@@ -1247,3 +1247,8 @@ aon-right-panel {
 	line-height: 1.5rem;
 	letter-spacing: 0;
 }
+
+.aonInputBoxLabel > input {
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 ;
+}
