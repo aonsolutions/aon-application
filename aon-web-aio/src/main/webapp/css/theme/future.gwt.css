@@ -665,3 +665,24 @@ div#rootPanel div div div div div.gwt-SplitLayoutPanel div div div div.aon_scrol
 	background-size: 16px ;
 }
 
+.aon_card{
+	box-shadow: none !important;
+	border: .0625rem solid #cbd5e1 !important;
+}
+
+.aon_border_left {
+	border-left: #cbd5e1 1px solid;
+}
+
+.aon_border_bottom {
+	border-bottom: .0625rem solid #cbd5e1 !important;
+}
+
+
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+	background-color: #f1f5f9 !important;
+}
+
+div[style*='height:55px'] > .aon_toolbar {
+    min-height: 55px ;
+}
