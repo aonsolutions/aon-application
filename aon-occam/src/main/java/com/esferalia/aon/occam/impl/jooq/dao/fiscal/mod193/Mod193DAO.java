@@ -558,10 +558,6 @@ public class Mod193DAO {
 			for (Mod193Detail detail : original.getDetails()) {
 				detail.setId(null);
 				detail.setMod193(mod193.getId());
-				// En 2025 se quita Isla de la Palma, controlar que no estaba indicado así en original
-				if (mod193.getYear() >= 2025 && detail.getCeutaMelillaPalma() == 2) {
-					detail.setCeutaMelillaPalma((byte) 0);
-				}
 				saveDetail(ctx,mod193,detail);
 			}
 		}
