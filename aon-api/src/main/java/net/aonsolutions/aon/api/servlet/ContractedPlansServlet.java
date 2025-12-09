@@ -86,8 +86,10 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
         chanel = AonStringUtils.isBlank(chanel) ? "Conect@ aon" : chanel;
         
         String serviceId = api.getData().getString("serviceId");
+        Integer id = AonStringUtils.isBlank(serviceId) ? 19 : Integer.parseInt(serviceId);
         
-       JSONObject company = api.getData().getJSONObject("companyData");
+        
+        JSONObject company = api.getData().getJSONObject("companyData");
         String companyName = company.getString("name");
         String companyDocument = company.getString("document");
         String consulta = "El usuario : " + userFullName + " solicita el plan : " + plan + " Documento de la empresa : " + companyDocument;
@@ -99,13 +101,13 @@ public class ContractedPlansServlet extends AonApiHttpServlet {
             .put("canal", chanel)
             .put("url", domainurl)
             .put("consulta", consulta) // plan solicitado + usuario que lo solicita
-            .put("idEnterprise", 19)
+            .put("idEnterprise", id)
             .put("idAnalytics", "")
             .put("gclid", "")
             .put("source", "")
             .put("way", "")
             .put("campaign", "")
-            .put("id", serviceId);
+            ;
 			       
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(url);

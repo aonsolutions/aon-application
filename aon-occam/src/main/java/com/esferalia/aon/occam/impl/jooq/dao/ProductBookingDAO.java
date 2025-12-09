@@ -137,12 +137,12 @@ public class ProductBookingDAO {
 		Domain officeDomain = DomainDAO.getDomain(ctx, domainId);
 		Customer customer = CustomerDAO.get(ctx, customerRegistry);
 		
-//		if(product.isWebhook() && null != product.getWebhookProductId())
-//			try {
-//				fireWebhook(ctx, officeDomain, login, product, customer);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
+		if(product.isWebhook() && null != product.getWebhookProductId())
+			try {
+				fireWebhook(ctx, officeDomain, login, product, customer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		
 		sendRequestBookingInfogEmail(ctx, officeDomain, login, customer, product);
 	}
@@ -157,9 +157,8 @@ public class ProductBookingDAO {
 		
 		String targetURL =  "https://" + domain.getName() + "/ms/api/contracted_plans_servlet/callForm";
 
-		//		LOCAL
-//		String targetURL =  "http://" + domain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
-
+		// LOCAL
+		// String targetURL =  "http://" + domain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
 		
 		 JSONObject companyData = new JSONObject()
 				 .put("name", customer.getName()) 
