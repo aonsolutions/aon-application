@@ -177,7 +177,7 @@ public class Diary2Template {
 				
 				Object apunte = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.APUNTE)));
 				if (apunte == null)
-					break;
+					continue;
 
 
 				XSSFRow aonDiaryXSSFSheetRow = aonDiaryXSSFSheet.createRow(aonRow++);
