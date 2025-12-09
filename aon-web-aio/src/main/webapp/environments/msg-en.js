@@ -37,6 +37,7 @@ export const ALL1= 'All';
 export const ALL2 = 'All';
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
+export const AMORTIZATION = 'Amortization';
 export const ANNUAL_VIEW = "Annual view";
 export const AON_SERVICES = 'Aon Services';
 export const API_DOCUMENTATION = 'API Documentation';

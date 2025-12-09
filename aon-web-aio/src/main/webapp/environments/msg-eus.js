@@ -37,6 +37,7 @@ export const ALL1 = 'Guztiak';
 export const ALL2 = 'Guztiak';
 export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
+export const AMORTIZATION = 'Amortizazioa';
 export const ANNUAL_VIEW = 'Urteko ikuspegia';
 export const AON_SERVICES = 'Aon Zerbitzuak';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
