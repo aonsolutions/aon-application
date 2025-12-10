@@ -372,8 +372,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			registry = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getId();
 		}
 		ArrayList<Integer> tags = new ArrayList<Integer>();
-		if(api.getData().has(IJsonNames.TAG)) {			
-			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
+		if(api.getData().has(IJsonNames.TAGS)) {			
+			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAGS);
 			if(tagsArray.length() > 0) {
 				for(int i = 0; i < tagsArray.length(); i++)
 					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));
@@ -415,6 +415,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));
 			}
 		}
+
 		S3Document rdoc = new S3Document()
 				.setId(json.getInt(IJsonNames.ID))
 				.setCategory(JsonUtils.getInteger(json, IJsonNames.CATEGORY))
