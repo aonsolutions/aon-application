@@ -221,15 +221,22 @@ export class AonConfiguration extends AonElement {
 				}
 			}
 			
-			if(this.dur.isTrial() || this.dur.hasBeenTrial()){
-				companyOptions.push({
-					name: MSG.HIRING + ' (Planes)',
-					icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
-					fn: () => this.buildPlans(),
-				});
-			}
-			
-			aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+			getRelationShipCompany({
+				url: company.domain,
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
+				
+					if (relationshipCompany.rrelationship) {
+						companyOptions.push({
+						name: MSG.HIRING + ' (Planes)',
+						icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+						fn: () => this.buildPlans(),
+					});
+					
+					aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+				}
+				
+			});
 		}
 
 		if (localStorage.getItem("aon_domain_id")) {
@@ -495,22 +502,6 @@ export class AonConfiguration extends AonElement {
 	
 	buildPlans() {
 		GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
-		
-		/*
-		TODO: pintar en el content de aonConfigurations
-		
-		console.log("buildPlans start");
-		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-		aonConfiguration.removeToolbarOptions();
-		
-		let aonConfigurationContent = this.getElement("aonConfigurationContent");
-		if(aonConfigurationContent){
-			console.log("Load Catalogue");
-			
-		}
-		
-		console.log("buildPlans end");
-		*/
 	}
 
 	buildGroups() {

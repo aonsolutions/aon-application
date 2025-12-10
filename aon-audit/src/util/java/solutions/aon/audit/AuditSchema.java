@@ -50,7 +50,7 @@ public class AuditSchema {
 	static Stream<CreateIndexIncludeStep> getUniqueIndexes(DSLContext dslContext, Schema schema, Field<?> field) {
 		AuditTable<?>[] auditTables = getAuditTables4(schema);
 		return Arrays.stream(auditTables)
-		.map(table -> dslContext.createUniqueIndex( String.format("IDX_%s_%s", table.getName().toUpperCase(), field.getName().toUpperCase()) ).on(table.getDelegate(), AuditTable.AuditFields.AUDIT_MD5))
+		.map(table -> dslContext.createUniqueIndex( String.format("IDX_%s_%s", table.getName().toUpperCase(), field.getName().toUpperCase()) ).on(table.getDelegate(), AuditTable.AuditFields.AUDIT_DIGEST))
 		//.toArray(CreateIndexIncludeStep[]::new)
 		;
 	}
@@ -68,7 +68,7 @@ public class AuditSchema {
 		System.out.println(dslContext.createDatabaseIfNotExists(database).getSQL()+";");
 		System.out.printf("use `%s`;%n", database);
 		System.out.println(getDDL(dslContext, AonMaster.AON_MASTER).getSQL());
-		System.out.println(getUniqueIndexes(dslContext, AonMaster.AON_MASTER, AuditTable.AuditFields.AUDIT_MD5).map(CreateIndexIncludeStep::getSQL).collect(Collectors.joining(";\n")));
+		System.out.println(getUniqueIndexes(dslContext, AonMaster.AON_MASTER, AuditTable.AuditFields.AUDIT_DIGEST).map(CreateIndexIncludeStep::getSQL).collect(Collectors.joining(";\n")));
 	}
 
 }

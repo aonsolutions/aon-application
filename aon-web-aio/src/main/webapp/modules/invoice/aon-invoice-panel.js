@@ -804,21 +804,19 @@ export class AonInvoicePanel extends AonElement {
 	async addInvoice() {
 		if(!this.checkConfiguration()) return;
 		// Check trial limit
-		if (this.getDur().isTrial()) {
-			const result = await getInvoiceCount();
-			
-			if (result.invoiceCount >= this.getDur().getTrialValue()) {
-				this.getApplication().confirmDialog(
-					"Límite alcanzado",
-					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
-					async () => {
-						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
-					}
-				);
-				return;
-			}
+		const result = await getInvoiceCount();
+		
+		if (this.getDur().isTrial() && result.invoiceCount >= this.getDur().getTrialValue()) {
+			this.getApplication().confirmDialog(
+				"Límite alcanzado",
+				"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+				async () => {
+					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+				}
+			);
+			return;
 		}
-
+		
 		let ayudat = this.getDur().isSelfconta();
 		let aonInvoice = this.getApplication();
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);

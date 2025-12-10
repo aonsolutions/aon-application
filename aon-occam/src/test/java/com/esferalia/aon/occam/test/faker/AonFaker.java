@@ -610,7 +610,7 @@ public class AonFaker {
 		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(item == null || item.getId() == null) item = ItemDAO.save(ctx, getItem(ctx));
 		
-		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		Warehouse warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(warehouse == null || warehouse.getId() == null) warehouse = WarehouseDAO.save(ctx, getWarehouse(ctx));
 		
 		SalesDetail salesDetail = SalesDetailDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));

@@ -1241,16 +1241,18 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		.forEach(detail -> {
 			if(!getPrepareSaleProcess().isPartialPreparation() || (getPrepareSaleProcess().isPartialPreparation() && getPrepareSaleProcess().getSalesDetailsChecks().contains(detail.getId()))) {
 				if(!detail.getItem().getProduct().isSerializable() && detail.getItem().getProduct().getType().isService()) {
-					com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail dd = new com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail()
-							.setDomain(detail.getDomain())
-							.setDelivery(new com.esferalia.aon.occam.api.model.warehouse.Delivery().setId(deliveryIdAux))
-							.setItem(detail.getItem())
-							.setLine(detail.getLine())
-							.setDescription(detail.getDescription())
-							.setQuantity(detail.getQuantity())
-							.setPrice(detail.getPrice())
-							.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr())
-							.setSalesDetail(detail.getId());
+					com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail dd = AON.getDeliveryDetail(domainName, to.getDomain(), login, f -> f.getDelivery().eq(deliveryIdAux)
+							.and(f.getItem().eq(detail.getItem().getId())));
+					if(dd == null) dd = new com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail();						
+					dd.setDomain(detail.getDomain())
+						.setDelivery(new com.esferalia.aon.occam.api.model.warehouse.Delivery().setId(deliveryIdAux))
+						.setItem(detail.getItem())
+						.setLine(detail.getLine())
+						.setDescription(detail.getDescription())
+						.setQuantity(detail.getQuantity())
+						.setPrice(detail.getPrice())
+						.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr())
+						.setSalesDetail(detail.getId());
 					AON.saveDeliveryDetail(occam, dd);
 					detail.setDelivered(detail.getQuantity());
 					detail.setStatus(com.esferalia.aon.occam.api.model.type.SalesDetailStatus.SETTLED);

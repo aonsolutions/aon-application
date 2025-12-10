@@ -470,7 +470,7 @@ public class DeliveryCreatorFactory implements Serializable {
 		if(albaran.getLINEASENVASES()!=null){
 			lineasEnvase = albaran.getLINEASENVASES().getDATOSLINEAENVASE();
 		}
-		Warehouse warehouse = WarehouseDAO.getWarehouse(
+		Warehouse warehouse = WarehouseDAO.get(
 				ctx,
 				f -> f.getDomainProperty()
 				.eq(ctx.getDomainId())
@@ -478,7 +478,7 @@ public class DeliveryCreatorFactory implements Serializable {
 				.and(f.getWorkplaceProperty().eq(
 						delivery.getWorkplace().getId())));
 		if(warehouse.isEmpty()) {
-            warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1)));
+            warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1)));
         }
         Integer warehouseId = warehouse.getId();
 		if (lineasAlbaran != null && lineasAlbaran.size() > 0) {

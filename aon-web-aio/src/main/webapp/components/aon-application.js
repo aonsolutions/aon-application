@@ -510,6 +510,10 @@ export class AonApplication extends AonElement {
 
       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
         const elements = div.children;
+        
+        if(elements.length > 0) 
+			arrowTitleSpan.classList.toggle("closeIcon");
+			
         for (let i = 1; i < elements.length; i++) {
             elements[i].classList.toggle(CSS.ELEMENT_HIDDEN);
 

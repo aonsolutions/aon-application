@@ -149,7 +149,9 @@ export class AonBooking extends AonElement {
 				{ title: MSG.BOOKING_RESUME, fn: () => this.buildBookingResume()},
 				{ title: MSG.INVOICES, fn: () => this.buildInvoices()}
 			];
-		} else this.options = [{ title: MSG.BOOKING, fn: () => this.buildBooking()}];
+		} else this.options = [
+			{ title: MSG.BOOKING, fn: () => this.buildBooking()},
+			{ title: "Planes", fn: () => this.buildPlans()}];
 	}
 
 	build() {
@@ -173,6 +175,16 @@ export class AonBooking extends AonElement {
 		tab.id = this.TABS;
 		tab.setOptions(this.options);
 		this.appendChild(tab);
+	}
+	
+	buildPlans() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+		
+		localStorage.setItem("booking_domain_id", this.sessionData.domain_id);
+		localStorage.setItem("booking_domain_name", this.sessionData.domain_name);
+		
+		GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE, this.getApplication().CONTENT);
 	}
 	
 	buildBooking() {

@@ -26,3 +26,8 @@ export const addPackageStock = (data) => put(`${API.PACKAGE}/stock/add`, data);
 export const movePackageStock = (data) => put(`${API.PACKAGE}/stock/move`, data);
 
 export const getItemStock = (itemId) => get(`${API.STOCK}/item/${itemId}`, {itemId});
+
+
+export const getInventories = (data) => get(API.INVENTORIES, data);
+export const getInventory = (id) => get(API.INVENTORIES + '/' + id, {id});
+export const saveInventoryDetails = (data) => put(`${API.INVENTORIES}/${data.inventory}/detail`, data);

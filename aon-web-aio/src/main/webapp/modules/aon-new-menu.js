@@ -1320,6 +1320,25 @@ export class AonNewMenu extends AonElement {
 		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
 	}
+	
+	async exceedTrailInvoinces(){
+		// Check trial limit
+		const result = await getInvoiceCount();
+			
+		if (this.getDur().isTrial() && result.invoiceCount >= this.getDur().getTrialValue()) {
+			this.getApplication().confirmDialog(
+				"Límite alcanzado",
+				"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+				async () => {
+					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+				}
+			);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	setSelectedMenuSidenav(app) {
 		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);

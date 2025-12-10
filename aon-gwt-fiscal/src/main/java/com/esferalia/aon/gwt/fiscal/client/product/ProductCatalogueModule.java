@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getBookingDomainId;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getBookingDomainName;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeBookingDomainId;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeBookingDomainName;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -74,10 +78,16 @@ public class ProductCatalogueModule  implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
 		currentDomainOptions = new RegistryModuleOptions();
+		
+		String bookingDomainName = getBookingDomainName();
+		
 		currentDomainOptions.setParentWidget(root);
-		currentDomainOptions.setDomainName(getCurrentDomainName());
-		currentDomainOptions.setDomain(getCurrentDomain());
+		currentDomainOptions.setDomainName(AonStringUtils.isNotBlank(bookingDomainName) ? bookingDomainName : getCurrentDomainName());
+		currentDomainOptions.setDomain(getBookingDomainId() > 0 ? getBookingDomainId() : getCurrentDomain());
 		currentDomainOptions.setUser(getCurrentUser());
+		
+		removeBookingDomainId();
+		removeBookingDomainName();
 		
 		officeDomainOptions = new RegistryModuleOptions();
 

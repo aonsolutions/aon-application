@@ -100,11 +100,11 @@ export class AonInvoiceList extends AonElement {
 				this.addInvoiceActions();
 				if(this.getDur().isInvofox()) {
 					this.rp = true;
-					aonInvoice.addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing());
+					// aonInvoice.addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing());
 				}
 			} else if(aonInvoiceTable.selected.length === 0){
 				this.removeInvoiceActions();
-			} else aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+			} // else aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 		});	
 	}
 
@@ -564,7 +564,7 @@ export class AonInvoiceList extends AonElement {
 			aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
 			aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
 			aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
-			aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+			// aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 		}
 	}
 

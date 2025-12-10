@@ -3,7 +3,7 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING, DELIVERY, TAGS, CARRIER, PRODUCT, PACKAGE } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER, PRODUCT, PACKAGE, INVENTORY } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../../services/warehouseService.js';
@@ -21,6 +21,7 @@ import { createInput, createSelect } from '../../components/CreateComponent.js';
 import { AonPackageList } from './package/aon-package-list.js';
 import { AonMobilePackageSearch } from './package/aon-mobile-package-search.js';
 import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
+import { AonMobileInventoryList } from './inventory/aon-mobile-inventory-list.js';
 
 export class AonWarehouse extends AonElement {
 	WAREHOUSE;
@@ -171,6 +172,9 @@ export class AonWarehouse extends AonElement {
 		case ELABORATION.id:
 			this.aonElaboration();
 			break;
+		case INVENTORY.id:
+			this.aonInventory();
+			break;
 		case PACKAGING.id:
 			this.aonPackaging();
 			break;
@@ -211,6 +215,12 @@ export class AonWarehouse extends AonElement {
 		);
 	}
 	
+	aonInventory() {
+		this.getApplication().getToolbar().option = MSG.INVENTORIES;
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(new AonMobileInventoryList());
+	}
+
 	addElaboration(){
 		let d = this.getApplication().getDialog();
 		d.clear();

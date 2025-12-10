@@ -71,7 +71,7 @@
 										</div>
     								</td>	
     								<td>
-										<a href="$document.getUrl()" target="_blank" alt="AON SOLUTIONS"><img style="margin-top: 10px;" src="https://www.materialui.co/materialIcons/file/file_download_black_144x144.png" style="cursor: pointer;" width="40px"></a>
+										<a href="$document.getUrl()" target="_blank" alt="AON SOLUTIONS"><img style="margin-top: 10px;" src="https://cdn.icon-icons.com/icons2/1369/PNG/512/-file-download_90117.png" style="cursor: pointer;" width="40px"></a>
     								<td>
     							<tr>
 	    					</table>    					
