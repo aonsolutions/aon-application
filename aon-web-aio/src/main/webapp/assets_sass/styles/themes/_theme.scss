@@ -411,6 +411,10 @@
           }
         }
       }
+      // Si tenemos un ifram
+      over-iframe{
+        opacity: 0.5;
+      }
       // Abierto
       &[opened="true"]{
         background-color: $color-dialog-alpha;
@@ -821,7 +825,7 @@
     // Upload
     aon-new-upload{
       .upload-component{
-        color             : $color-text-button;
+        color                 : $color-text-button;
         background            : $loginbutton-background;
         background-size       : $loginbutton-background-size;
         // background-position   : $loginbutton-backgorund-position;
@@ -850,6 +854,11 @@
             background-color  : $color-900;
             color             : $color-text-button;
             border            : $button-border;
+            aon-icon {
+              &::after {
+                background-color: $color-text-button;
+              }
+            }
             &:hover{
               background-color : $color-500;
             }
