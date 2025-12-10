@@ -155,6 +155,7 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 					,Checks.ACCOUNT_ENTRY_SUM_VS_INVOICE_TOTAL.stream( ctx, basicCondition, offset , limit )
 					,Checks.ACCOUNT_ENTRY_VAT_VS_INVOICE_TAX.stream( ctx, basicCondition, offset , limit )
 					, Checks.INVOICE_TAX_DUPLICATE.stream(ctx, basicCondition, offset, limit)
+					, Checks.INVOICE_TAXABLE_BASE0.stream(ctx, basicCondition, offset, limit)
 				)
 				.flatMap( s -> s)
 				.forEach( js -> writer.print( js.toString() ))
@@ -338,6 +339,20 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 						json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.INVOICE_TAX_DUPLICATE.name());
 						return json;
 					}); 
+			}
+		}, INVOICE_TAXABLE_BASE0 {
+			@Override
+			Stream<JSONObject> stream(AONContext ctx, Condition basicCondition, int offset, int limit) {
+				return getInvoices(
+						 () -> basicSelect(ctx)
+						,() -> basicCondition.and(INVOICE.TAXABLE_BASE.eq(0.0).or(  
+									INVOICE.VAT_QUOTA.eq(0.0).and(INVOICE.TOTAL.ne(INVOICE.TAXABLE_BASE))
+							))
+						, offset, limit )
+						.map( json -> {
+							json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.INVOICE_TAXABLE_BASE0.name());
+							return json;
+						}); 
 			}
 		}
 		;

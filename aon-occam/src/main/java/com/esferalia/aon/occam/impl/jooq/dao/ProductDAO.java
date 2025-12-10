@@ -41,12 +41,14 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingPriceType;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -328,7 +330,6 @@ public class ProductDAO {
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(PRODUCT_BOOKING.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ProductBookingFiller())
 				.findFirst().orElse(new ProductBooking());
 	}
@@ -487,19 +488,35 @@ public class ProductDAO {
 		json.put("isBookingComposition", product.isBookingComposition());
 		json.put("isConsole", product.isConsole());
 		
-		if(!product.getAonApps().isEmpty()) {
+		if(null != product.isNoBooking())
+			json.put("noBooking", product.isNoBooking());
+		
+		if(null != product.isWebhook()) {
+			json.put("webhook", product.isWebhook());
+			json.put("webhookProductId", product.getWebhookProductId());
+		}
+		
+		if(null != product.getAonApps() && !product.getAonApps().isEmpty()) {
 			org.json.JSONArray aonAppsArr = new org.json.JSONArray();
 			product.getAonApps().forEach(app -> aonAppsArr.put(app.name()));
 			json.put("aonApps", aonAppsArr);
 		}
 		
-		if(!product.getDomainTypes().isEmpty()) {
+		if(null != product.getDomainTypes() && !product.getDomainTypes().isEmpty()) {
 			org.json.JSONArray domainTypesArr = new org.json.JSONArray();
 			product.getDomainTypes().forEach(domainType -> domainTypesArr.put(domainType.name()));
 			json.put("domainTypes", domainTypesArr);
 		}
 		
 		json.put("descriptionTemplate", product.getDescriptionTemplate());
+		
+		if(null != product.getProjectType())
+			json.put("projectType", product.getProjectType().getId());
+		
+		if(null != product.getBookingPriceType())
+			json.put("bookingPriceType", product.getBookingPriceType().name());
+		else
+			json.put("bookingPriceType", ProductBookingPriceType.PVP.name());
 		
 		return json.toString();
 	}
@@ -738,6 +755,10 @@ public class ProductDAO {
 			
 			productBooking.setBookingComposition(info.has("isBookingComposition") && info.getBoolean("isBookingComposition"));
 			productBooking.setConsole(info.has("isConsole") && info.getBoolean("isConsole"));
+			productBooking.setNoBooking(info.has("noBooking") && info.getBoolean("noBooking"));
+			productBooking.setWebhook(info.has("webhook") && info.getBoolean("webhook"));
+			if(productBooking.isWebhook())
+				productBooking.setWebhookProductId(info.getString("webhookProductId"));
 			
 			List<AonApp> aonApps = new ArrayList<AonApp>();
 			if(info.has("aonApps")) {
@@ -761,6 +782,14 @@ public class ProductDAO {
 			
 			if(info.has("descriptionTemplate"))
 				productBooking.setDescriptionTemplate(info.getString("descriptionTemplate"));
+			
+			if(info.has("projectType"))
+				productBooking.setProjectType(new ProjectType().setId( info.getInt("projectType") ));
+			
+			if(info.has("bookingPriceType"))
+				productBooking.setBookingPriceType(ProductBookingPriceType.safeValueOf(info.getString("bookingPriceType")));
+			else
+				productBooking.setBookingPriceType(ProductBookingPriceType.PVP);
 		}
 		
 	}

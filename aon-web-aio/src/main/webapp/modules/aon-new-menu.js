@@ -616,19 +616,23 @@ export class AonNewMenu extends AonElement {
 		a.appendChild(hoverDiv);
 		let div = this.createElement(TAG.DIV);
 		div.id = app.app;
-		// div.classList.add("aonNewMenuAppDiv");
-		div.style.padding = '1px';
-		div.style.display = 'flex';
-		div.style.alignItems = 'center';
-		div.style.justifyContent = 'center';
-		div.title = app.title;
-		div.style.height = style?.height || '56px';
-		div.style.flexDirection = style?.flexDirection || 'column';
-		div.style.transition = 'background-color 0.2s';
-		div.style.cursor = "pointer";
+		div.classList.add("aonNewMenuAppDiv");
 		// if (!LS.isLeftMenu()) {
 		// 	div.style.marginTop = "0px";
 		// }
+		//div.style.padding = '1px';
+		//div.style.display = 'flex';
+		//div.style.cursor = "pointer";
+		//div.style.alignItems = 'center';
+		//div.style.justifyContent = 'center';
+		//div.style.transition = 'background-color 0.2s';
+		div.title = app.title;
+		if (style?.height) {
+			div.style.height = style.height ;
+		}
+		if (style?.flexDirection){
+			div.style.flexDirection = style?.flexDirection;
+		}
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
@@ -1384,20 +1388,19 @@ export class AonNewMenu extends AonElement {
 	
 	async exceedTrailInvoinces(){
 		// Check trial limit
-		if (this.getDur().isTrial()) {
-			const result = await getInvoiceCount();
+		const result = await getInvoiceCount();
 			
-			if (result.invoiceCount >= this.getDur().getTrialValue()) {
-				this.getApplication().confirmDialog(
-					"Límite alcanzado",
-					"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
-					async () => {
-						GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
-					}
-				);
-				return true;
-			}
+		if (this.getDur().isTrial() && result.invoiceCount >= this.getDur().getTrialValue()) {
+			this.getApplication().confirmDialog(
+				"Límite alcanzado",
+				"Ha alcanzado el límite de prueba del módulo de facturación. Para poder registrar nuevas facturas debe ampliar su plan actual. ¿Desea navegar a los planes disponibles?",
+				async () => {
+					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+				}
+			);
+			return true;
 		}
+		
 		return false;
 	}
 	

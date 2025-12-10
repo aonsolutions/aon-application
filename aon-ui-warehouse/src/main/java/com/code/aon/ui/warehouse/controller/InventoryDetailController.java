@@ -27,6 +27,7 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -124,7 +125,8 @@ public class InventoryDetailController extends LinesController implements IColle
 		
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 
 		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);

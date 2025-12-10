@@ -1,8 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { createCard, createDate, createInput, createSelect, createSwitch } from "../../components/CreateComponent.js";
+import { isPersonaFisica, isValid } from "../../services/documentUtils.js";
+import { AonToast } from "../../components/aon-toast.js";
 
 export class AonInvoiceCommunication extends AonElement {
     
@@ -123,10 +125,13 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildTicketBai(table) {
+        if(!isValid(this.configuration.company.document)) {
+            this.showError('No es posible activar Ticket Bai. El documento de la empresa no es válido.');
+        }
         let active = createSwitch(this.TBAI_ACTIVE, MSG.TICKETBAI);
         active.checked = this.configuration.communication.tbai;
         if(!this.isConsole())
-            active.disabled = this.configuration.communication.tbai;
+            active.disabled = this.configuration.communication.tbai || !isValid(this.configuration.company.document);
         active.addEventListener(EVENT.CHANGE, () => {
             if(active.isChecked()) {
                 if(this.configuration.administration === 'BIZKAIA' && !this.configuration.company.legalPerson){
@@ -197,18 +202,24 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildVerifactu(table) {
+        if(!isValid(this.configuration.company.document)) {
+            this.showError('No es posible activar Verifactu. El documento de la empresa no es válido.');
+        }
         let active = createSwitch(this.VERIFACTU_ACTIVE, MSG.VERIFACTU);
         active.checked = this.configuration.communication.verifactu;
-        active.disabled = !this.isConsole(); 
+        if(!this.isConsole())
+            active.disabled = this.configuration.communication.verifactu || !isValid(this.configuration.company.document); 
         active.addEventListener(EVENT.CHANGE, () => {
             if(active.isChecked()) {
-                this.getElement(this.VERIFACTU_TEST).classList.remove(CSS.AON_NONE);
-                this.getElement(this.VERIFACTU_INCLUDE_DATE).classList.remove(CSS.AON_NONE);
-                this.getElement(this.VERIFACTU_REGISTRY_DATE).classList.remove(CSS.AON_NONE);
+                // this.getElement(this.VERIFACTU_TEST).classList.remove(CSS.AON_NONE);
+                const date = this.getVerifactuDate();
+                this.configuration.communication.verifactuIncludeDate = date;
+                let verifactuIncludeDate = this.getElement(this.VERIFACTU_INCLUDE_DATE);
+                verifactuIncludeDate.setDate(date);
+                verifactuIncludeDate.classList.remove(CSS.AON_NONE);
             } else {
-                this.getElement(this.VERIFACTU_TEST).classList.add(CSS.AON_NONE);
+                // this.getElement(this.VERIFACTU_TEST).classList.add(CSS.AON_NONE);
                 this.getElement(this.VERIFACTU_INCLUDE_DATE).classList.add(CSS.AON_NONE);
-                this.getElement(this.VERIFACTU_REGISTRY_DATE).classList.add(CSS.AON_NONE);
             }
       	    this.configuration.communication.verifactu = active.isChecked();
 
@@ -217,24 +228,80 @@ export class AonInvoiceCommunication extends AonElement {
     	table.addCell(active, 1).style.height = '50px';
         active.setWidth('110px');
 
-        let test = createSwitch(this.VERIFACTU_TEST, MSG.TEST_ENVIRONMENT);
-        test.checked = this.configuration.communication.verifactuTest;
-        test.disabled = !this.isConsole() || !this.configuration.communication.verifactuTest;
+        // let test = createSwitch(this.VERIFACTU_TEST, MSG.TEST_ENVIRONMENT);
+        // test.checked = this.configuration.communication.verifactuTest;
+        // test.disabled = !this.isConsole() || !this.configuration.communication.verifactuTest;
+        // if(!this.configuration.communication.verifactu) {
+        //     test.classList.add(CSS.AON_NONE);
+        // }
+        // test.addEventListener(EVENT.CHANGE, () => {
+		//     this.configuration.communication.verifactuTest = test.isChecked();
+        //     this.dispatchEvent(new Event(EVENT.CHANGE));
+		// });
+        // table.addCell(test, 1).style.height = '50px';
+
+        let verifactuIncludeDate = createDate(this.VERIFACTU_INCLUDE_DATE, 'Fecha Inclusión Verifactu');
         if(!this.configuration.communication.verifactu) {
-            test.classList.add(CSS.AON_NONE);
+            verifactuIncludeDate.classList.add(CSS.AON_NONE);
         }
-        test.addEventListener(EVENT.CHANGE, () => {
-		    this.configuration.communication.verifactuTest = test.isChecked();
+        if(this.configuration.communication.verifactuIncludeDate) {
+            verifactuIncludeDate.setDate(this.configuration.communication.verifactuIncludeDate);
+            verifactuIncludeDate.disabled = true;
+        }
+        verifactuIncludeDate.addEventListener(EVENT.CHANGE, () => {
+            if(this.checkVerifactuDate(verifactuIncludeDate))
+                this.configuration.communication.verifactuIncludeDate = verifactuIncludeDate.getDateValue();
             this.dispatchEvent(new Event(EVENT.CHANGE));
-		});
-        table.addCell(test, 1).style.height = '50px';
+        });
+
+        table.addCell(verifactuIncludeDate, 1).style.height = '50px';
     
         table.addRow();
     }
 
+    checkVerifactuDate(verifactuIncludeDate) {
+        const selectedDate = verifactuIncludeDate.getDate();
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const maxDate = isPersonaFisica(this.configuration.company.document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
+        const minDate = new Date(2025, 11, 1);
+
+        if(selectedDate < minDate) {
+            this.showError('La fecha es anterior al 1 de Diciembre de 2025.');
+            verifactuIncludeDate.setDate(this.getVerifactuDate());
+            return false;
+        }
+
+        if(now < maxDate && selectedDate > maxDate) {
+            this.showError(isPersonaFisica(this.configuration.company.document) 
+                ? 'La fecha es posterior al 1 de Julio de 2026.'
+                : 'La fecha es posterior al 1 de Enero de 2026.');
+            verifactuIncludeDate.setDate(this.getVerifactuDate());
+            return false;
+        }
+        if(selectedDate < nowDate) {
+            this.showError('La fecha seleccionada no puede ser anterior a la fecha actual.');
+            verifactuIncludeDate.setDate(this.getVerifactuDate());
+            return false;
+        }
+        return true;
+    }
+    
+    getVerifactuDate () {
+        const now = new Date();
+        const date = new Date(2026, 0, 1);
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return date > nowDate ? date : nowDate;
+    }
+
     buildSii(table) {
+        if(!isValid(this.configuration.company.document)) {
+            this.showError('No es posible activar SII. El documento de la empresa no es válido.');
+        }
         let siiActive = createSwitch(this.SII_ACTIVE, MSG.SII);
         siiActive.checked = this.configuration.communication.sii;
+        if(!this.isConsole())
+            siiActive.disabled = !this.configuration.communication.sii && !isValid(this.configuration.company.document);
         siiActive.addEventListener(EVENT.CHANGE, () => {
             if(siiActive.isChecked()) {
                 this.getElement(this.SII_TEST).classList.remove(CSS.AON_NONE);
@@ -310,6 +377,23 @@ export class AonInvoiceCommunication extends AonElement {
         siiAutosend.setWidth('230px');
     }
 
+    showError(error) {
+        this.showToast({
+            type: CONSTANT.ERROR,
+            message: error
+        });
+    }
+
+    showToast(object) {
+        let toast = this.getElement(this.id + 'Toast');
+        if(!toast){
+            toast = new AonToast();
+            toast.id = this.id + 'Toast';
+            this.appendChild(toast);
+        }
+        toast.start(object);
+    }
+ 
     isTicketBai() {
         return this.configuration.administration === 'ALAVA'
             || this.configuration.administration === 'BIZKAIA'

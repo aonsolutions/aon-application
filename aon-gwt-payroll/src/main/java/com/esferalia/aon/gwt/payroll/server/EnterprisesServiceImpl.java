@@ -121,6 +121,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
+import com.esferalia.aon.gwt.payroll.shared.DateVariable;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -4477,8 +4478,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			final AgreementInfo agreement, int levelId, Map<String, Object> data)
 			throws ExpressionException, SQLException {
 
-		TreeSet<java.util.Date> sortedDates = new TreeSet<java.util.Date>(agreement.getDates());
-		java.util.Date startDate = sortedDates.last();
+		TreeSet<java.util.Date> sortedDates = new TreeSet<>(agreement.getDates());
+
+		java.util.Date month =  (java.util.Date) data.getOrDefault(ContextVariable.MONTH.getName(), sortedDates.last());
+		
+		java.util.Date startDate = DateUtils.getFirstDayOfMonth(month);
 		java.util.Date endDate = DateUtils.getLastDayOfMonth(startDate);
 
 		SQLAgreementSalaryCalculatorContext sqlAgreementSalaryCalculatorContext = new SQLAgreementSalaryCalculatorContext(
@@ -4917,8 +4921,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			.setDni(employeeInfo.getDocument())
 			.setStartDate(it.getStartDate()) //FECHA DE BAJA
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
-			.setJob(contractInfo.getAgreementCategory())
-			.setJobDescription("Las propias de " + contractInfo.getAgreementCategory())
+			.setJob(it.getEmployeeCategory())
+			.setJobDescription(it.getEmployeeWork())
 			;
 			
 			if(it.getEndDate()!=null) {				

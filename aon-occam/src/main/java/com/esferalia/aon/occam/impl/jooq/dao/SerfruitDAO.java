@@ -277,7 +277,7 @@ public class SerfruitDAO {
 	}
 	
 	private static Warehouse getWarehouse(AONContext ctx, Delivery delivery) {
-		Warehouse warehouse = WarehouseDAO.getWarehouse(
+		Warehouse warehouse = WarehouseDAO.get(
 				ctx,
 				f -> f.getDomainProperty()
 				.eq(ctx.getDomainId())
@@ -286,7 +286,7 @@ public class SerfruitDAO {
 						delivery.getWorkplace().getId())));
 		
 		if(warehouse.isEmpty()) {
-		    warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1)));
+		    warehouse = WarehouseDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1)));
 		}
 		return warehouse;
 	}

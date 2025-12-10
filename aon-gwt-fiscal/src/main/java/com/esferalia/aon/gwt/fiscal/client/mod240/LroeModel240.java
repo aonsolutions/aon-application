@@ -226,7 +226,7 @@ public class LroeModel240 extends DockLayoutPanel {
 						selectedInvoices = selFiles;
 						boolean visible = !selFiles.isEmpty();
 						sendButton.setVisible(visible);
-						bajaButton.setVisible(visible);
+						bajaButton.setVisible(visible && !getFilterParams().getType().contains(InvoiceType.SALES));
 						bajaButton.setEnabled(false);
 						
 						refreshButton.setVisible(selFiles.size() == 1

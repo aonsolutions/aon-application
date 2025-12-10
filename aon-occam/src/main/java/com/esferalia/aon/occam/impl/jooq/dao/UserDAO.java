@@ -28,10 +28,10 @@ import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO.AuthFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.UserValidation;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 

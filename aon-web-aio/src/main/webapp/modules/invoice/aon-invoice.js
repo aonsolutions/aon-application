@@ -31,7 +31,8 @@ import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
-import { AonIcon } from '../../components/aon-icon.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonInvoice extends AonElement {
 
@@ -113,6 +114,7 @@ export class AonInvoice extends AonElement {
 		this.CONTENT = this.id + 'Content';
 		this.DATA = this.id + 'Data';
 		this.COMMUNICATION = this.id + 'Communication';
+		this.AMORTIZATION = this.id + 'Amortization';
 		this.COMMUNICATION_CARD = this.COMMUNICATION + CONSTANT.CARD.initCap();
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
@@ -130,8 +132,12 @@ export class AonInvoice extends AonElement {
 		this.invoice = this.invoice || new Invoice().setType(this.type);
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildInvoiceContent()},
-			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
+			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()},
+			
 		];
+		if (this.getInvoice()?.isInvestment()) {
+			this.options.push({ title: MSG.AMORTIZATION, fn: () => this.buildAmortization()});
+		}
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -283,6 +289,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
+		this.checkConfiguration();
 		this.clear();
 		this.buildInputFile();
 		this.buildToolbar();
@@ -293,6 +300,14 @@ export class AonInvoice extends AonElement {
 			this.resize();
 		});
 	}
+
+
+	checkConfiguration() {		
+		if(!this.getDur().hasScopes()) {
+			this.showError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+		}
+		return true;
+	}	
 
 	resize() {
 		if(!this.isMobile()){
@@ -618,6 +633,20 @@ export class AonInvoice extends AonElement {
 		if ( LS.isNewTheme() ) { 
 			this.showFieldsMessages(content);
 		}
+	}
+
+	buildAmortization() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+
+		let amortization = this.createElement(TAG.DIV);
+		amortization.id = this.AMORTIZATION;
+		amortization.className = CSS.AON_BLOCK;
+		let jsfInvoiceAmortization = new JSF.AonJsfInvoiceAmortization();
+		jsfInvoiceAmortization.setElExpression(`expenseInvoice.select(null, (${this.invoice.id}).intValue() )`);
+		amortization.appendChild(jsfInvoiceAmortization);
+		content.appendChild(amortization);
+		
 	}
 
 	buildCommunication() {
@@ -1402,8 +1431,16 @@ export class AonInvoice extends AonElement {
 		table.addCell(div, '4');
 
 		// ----- SERIE
+		
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
+
+		// let serie = createSelect(this.SERIE, MSG.SERIE);
+		// serie.options = JSON.stringify(this.configuration.series);
+		// serie.value = this.invoice.series;
+		// serieSpan.appendChild(serie);
+		// serie.readonly = this.invoice.isReadonly();
+		// serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
 		let serie = createSuggestion(this.SERIE, MSG.SERIE);
 		serie.setMaxlength(5);
@@ -2805,6 +2842,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	save(msg) {
+		let ok = this.checkConfiguration();
+		if(!ok) return;
 		msg = msg || MSG.SAVED_DATA;
 		insertInvoice(this.getInvoice()).then(r => {
 			if(!this.getInvoice().id) 
@@ -2934,15 +2973,22 @@ export class AonInvoice extends AonElement {
 		return this.configuration
 			&& this.configuration.communication
 			&& (this.configuration.communication.tbai
-			 || this.configuration.communication.verifactu
+			 || this.hasVerifactu()
 		);
 	}
-	isVerifactuTest() {
+
+	hasVerifactu() {
 		return this.configuration
 			&& this.configuration.communication
 			&& this.configuration.communication.verifactu
-			&& this.configuration.communication.verifactuTest
+			&& (!this.configuration.communication.verifactuIncludeDate
+				|| AonDateUtils.isAfterOrEqual(new Date(), AonDateUtils.parse(this.configuration.communication.verifactuIncludeDate)))	
 		;
+	}
+
+	isVerifactuTest() {
+		return this.hasVerifactu()
+			&& this.configuration.communication.verifactuTest;
 	}
 	isTbaiTest() {
 		return this.configuration
@@ -2952,6 +2998,8 @@ export class AonInvoice extends AonElement {
 		;
 	}
 	acceptInvoice() {
+		let ok = this.checkConfiguration();
+		if(!ok) return;
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
 		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
 			let d = this.getApplication().getDialog();
@@ -3364,7 +3412,7 @@ export class AonInvoice extends AonElement {
 		});
 		if(this.invoice.isEmitida()) {
 			getCustomerEmails(this.invoice.getRegistry()).then(emails => {
-				mail.value = emails[0] || ''; 
+				mail.setValue(emails[0] || '');
 			});
 		}
 		d.open();

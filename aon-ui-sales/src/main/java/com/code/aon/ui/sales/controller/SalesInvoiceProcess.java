@@ -25,13 +25,13 @@ public class SalesInvoiceProcess implements ILongProcess {
 		Sales to = (Sales)salesController.getTo();
 		try {
 			InvoiceCommunicationConfiguration config = salesController.getInvoiceCommunicationConfiguration();
-			boolean communication = config.isTbai() || config.isVerifactu();
+			boolean communication = config.isTbai() || config.hasVerifactu();
 		    if(communication) {
 		        String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, salesController.getInvoiceSeries());
 				if(number >= 0) number = -1; 
-				salesController.setInvoiceNumber(number);
+				salesController.setInvoiceNumber(number < 0 ? number : -1);
 	        }
 			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
 			invoicingManager.setProgression(salesController.getProgressionState());

@@ -21,6 +21,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 
 import com.code.aon.aio.controller.AppController;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
@@ -33,6 +34,9 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.gob.afirma.core.misc.http.HttpError;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.faces.view.facelets.Facelet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -45,6 +49,7 @@ import jakarta.servlet.http.HttpSession;
 public class JsfAppServlet extends HttpServlet {
 
 	private static final String TOKEN = "token";
+	private static final String THEME = "theme";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
 	private static final String READ_ONLY = "readOnly";
@@ -52,6 +57,7 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String DOMAIN_NAME = "domainName";
 	private static final String LANGUAGE = "language";
 	private static final String REDIRECT_URL = "redirectUrl";
+	private static final String EL_EXPRESSION = "elExpression";
 	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
 
@@ -70,6 +76,7 @@ public class JsfAppServlet extends HttpServlet {
 			initDesktopController(req);
 			initConfigurationController(req);
 			initLoggedUser(req);
+			initElExpression(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -102,6 +109,7 @@ public class JsfAppServlet extends HttpServlet {
 
 	private void initDesktopController(HttpServletRequest req) {
 		AppController appController =  (AppController) AonUtil.getRegisteredBean(AppController.CONTROLLER_NAME);
+		appController.setTheme(req.getParameter(THEME));
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
@@ -113,6 +121,18 @@ public class JsfAppServlet extends HttpServlet {
 		//This is the way to init logged user, AON way :-(  
 		UserUtils.getInstance().getLoggedUser();
 	}
+	
+	private void initElExpression(HttpServletRequest req) {
+		String elExpression = req.getParameter(EL_EXPRESSION);
+		try {
+			if ( AonStringUtils.isNotBlank(elExpression) ) {
+				evaluate("#{"+elExpression+"}");
+			}
+		} catch (Exception e) {
+			// Do nothing
+		}
+	}
+	
 	
 	protected void doLogin(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
@@ -213,5 +233,10 @@ public class JsfAppServlet extends HttpServlet {
 		}
 	}
 	
+	private void evaluate (String elExpression) {
+		ELContext elContext = FacesContext.getCurrentInstance().getELContext();
+		ExpressionFactory expressionFactory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
+		expressionFactory.createValueExpression(elContext, elExpression, Object.class).getValue(elContext);
+	}
 	
 }

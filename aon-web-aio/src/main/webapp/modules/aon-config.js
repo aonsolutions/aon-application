@@ -139,9 +139,8 @@ export class AonConfig extends AonElement {
         let themesDiv = this.createDiv();
         themesDiv.appendChild(this.buildThemeData(MSG.STANDARD, '/css/theme/aon.css'));
         themesDiv.appendChild(this.buildThemeData(MSG.CLASSIC,'/css/theme/classic.css'));
-        //themesDiv.appendChild(this.buildThemeData(MSG.MODERN,'/css/theme/modern.css'));
         themesDiv.appendChild(this.buildThemeData(MSG.DARK,'/css/theme/dark.css'));
-        //themesDiv.appendChild(this.buildThemeData("Oscuro (Beta)",'/css/theme/darkBeta.css'));
+		themesDiv.appendChild(this.buildThemeData(MSG.FUTURE,'/css/theme/future.css'));
         themesCard.setContent(themesDiv);
 
         let langCard = new AonCard();

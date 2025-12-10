@@ -45,11 +45,12 @@ public class Mod190InsertTest extends AbstractOccamTest {
 		assertNotNull("Declaracion NAVARRA Nula",navarra);
 		assertNotNull("Declaracion NAVARRA Nula",navarra.getId());
 		
-		Asserts.assertEqualsCollection("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), araba.getDetails());
-		Asserts.assertEqualsCollection("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), araba.getDetails());
-		Asserts.assertEqualsCollection("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), bizkaia.getDetails());
-		Asserts.assertEqualsCollection("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), gipuzkoa.getDetails());
-		Asserts.assertEqualsCollection("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), navarra.getDetails());
+		// AHORA NO TIENEN PORQUE SER IGUALES LAS DE DISTINTAS ADMINISTRACIONES
+//		Asserts.assertEqualsCollection("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), araba.getDetails());
+//		Asserts.assertEqualsCollection("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), araba.getDetails());
+//		Asserts.assertEqualsCollection("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), bizkaia.getDetails());
+//		Asserts.assertEqualsCollection("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), gipuzkoa.getDetails());
+//		Asserts.assertEqualsCollection("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), navarra.getDetails());
 	}
 
 	private Mod190 insertModel( Administration admon, Date date) {

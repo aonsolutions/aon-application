@@ -539,7 +539,7 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-		if((comConfig.isVerifactu() || ( comConfig.isTbai() && !comConfig.isSkipTracking() ) ) 
+		if((comConfig.hasVerifactu() || ( comConfig.isTbai() && !comConfig.isSkipTracking() ) ) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
@@ -1007,7 +1007,7 @@ public class InvoiceDAO {
 		// ONLY IF IS TICKET BAI.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-			if((icc.isVerifactu() || icc.isTbai())) {
+			if((icc.hasVerifactu() || icc.isTbai())) {
 				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
 		}
@@ -1372,7 +1372,7 @@ public class InvoiceDAO {
 			:DSL.trueCondition();
 		
 		return ctx.getDslContext()
-			.select(orderedType,INVOICE.SERIES,min,max,records)
+			.select(orderedType, INVOICE.SERIES, INVOICE.SCOPE, min, max, records)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(domain))
 			.and( fromCondition )
@@ -1384,6 +1384,7 @@ public class InvoiceDAO {
 			.map(rec -> new InvoiceSeries()
 				.setSales(rec.getValue(orderedType) == 1)
 				.setDescription(rec.getValue(INVOICE.SERIES))
+				.setScope(rec.getValue(INVOICE.SCOPE))
 				.setFromNumber(rec.getValue(min))
 				.setToNumber(rec.getValue(max))
 				.setCount(rec.getValue(records))
@@ -1392,8 +1393,8 @@ public class InvoiceDAO {
 	}
 	
 	public static InvoiceUserData getUserData(AONContext ctx, byte[] auth){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
@@ -1804,7 +1805,7 @@ public class InvoiceDAO {
 		if (invoice == null) throw new AonCoreException("Factura NULA");
 		Invoice inv = getFullInvoice(ctx, invoice.getId());
 		if (inv == null || inv.getId() == null) throw new AonCoreException("Factura no encontrada");
-		if (!inv.isSales()) throw new AonCoreException("Sólo se pueden emitir facturas de venta");
+		if (!inv.isSales()) throw new AonCoreException("Sï¿½lo se pueden emitir facturas de venta");
 		if ( AonObjectUtils.notEquals(inv.getSeries(),invoice.getSeries())
 				|| AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
 			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	
@@ -1850,7 +1851,7 @@ public class InvoiceDAO {
 	}
 	public static Invoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data, boolean save) {
 		if ( invoiceId == null ) throw new AonCoreException("ID es un dato requerido");
-		if ( data == null ) throw new AonCoreException("La información para la rectificación es un dato requerido");
+		if ( data == null ) throw new AonCoreException("La informaciï¿½n para la rectificaciï¿½n es un dato requerido");
 		Invoice source = getFullInvoice(ctx, invoiceId);
 		if ( source == null ) throw new AonCoreException("Factura no encontrada");
 		if ( source.getNumber() < 0) throw new AonCoreException("No se puede rectificar una fatura proforma");

@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,7 +43,6 @@ import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribu
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.Options;
-import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
@@ -64,7 +62,6 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
@@ -83,6 +80,7 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CommercialDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
@@ -114,6 +112,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
 import net.aonsolutions.aon.api.servlet.Utils;
+import net.aonsolutions.aon.api.utils.EmailFromToType;
+import net.aonsolutions.aon.api.utils.EmailFromToUtils;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
@@ -135,6 +135,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	
 	private static Domain createdDomain = null;
 	private static Domain parent = null;
+	
+	private static EmailFromToUtils emailFromToUtils;
+	private static String bookingEmail = "booking@aonsolutions.es";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -189,6 +192,11 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
 				MarketingAction ma = MarketingCampaignDAO.getAction(ctx, actionTarget.getMarketingAction().getId());				
 				actionTarget.setMarketingAction(ma);
+				
+				// EmailFromToUtils
+				
+				emailFromToUtils = new EmailFromToUtils(ctx);
+				emailFromToUtils.setMarketingAction(ma);
 
 				// Ceck Exist Domain
 				
@@ -200,7 +208,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				// Get / Save Target
 				
 				Optional<Target> targetOpt = TargetDAO.getStream(ctx, 
-						f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument())
+						f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument().toUpperCase())
 							.and(f.getDomainProperty().eq(api.getDomain().getId()))
 						).findFirst(); 
 
@@ -253,7 +261,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setName(actionTarget.getTarget().getName())
 						.setDocumentType(DocumentType.identify(actionTarget.getTarget().getDocument()))
 						.setDocumentCountry(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
-						.setDocument(actionTarget.getTarget().getDocument())
+						.setDocument(actionTarget.getTarget().getDocument().toUpperCase())
 						.setNationality(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
 
 				).setScope(actionTarget.getMarketingAction().getMarketingCampaign().getScope());
@@ -367,7 +375,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			try {
 				postUrl += 
 						"?name=" + URLEncoder.encode(actionTarget.getTarget().getName(), "UTF-8") + 
-						"&document=" + actionTarget.getTarget().getDocument() + 
+						"&document=" + actionTarget.getTarget().getDocument().toUpperCase() + 
 						"&streetType=" + actionTarget.getTarget().getStreetType() + 
 						"&address=" + URLEncoder.encode(actionTarget.getTarget().getAddress(), "UTF-8") + 
 						"&number=" + actionTarget.getTarget().getNumber() + 
@@ -409,23 +417,23 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			context.put("logo", logoUrl);
 			context.put("parentName", parent.getDescription());
 			context.put("name", actionTarget.getTarget().getName());
-			context.put("document", actionTarget.getTarget().getDocument());
-			context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+			context.put("document", actionTarget.getTarget().getDocument().toUpperCase());
+			context.put("contact", AonStringUtils.isBlank(from) ? bookingEmail : from);
 
 			Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_ayudat.vm");
 
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 
-			sendTrailEnterpriseMail(api, parent, actionTarget, from, writer.toString());
+			sendTrailEnterpriseMail(ctx, parent, actionTarget, from, writer.toString());
 
 		}
 	}
 
-	private static void sendTrailEnterpriseMail(AonApiData api, Domain parent, ActionTarget actionTarget, String from, String body) {
-		String bookingBcc = "booking@aonsolutions.es";
+	private static void sendTrailEnterpriseMail(CloseableAONContext ctx, Domain parent, ActionTarget actionTarget, String from, String body) {
+		String bookingBcc = bookingEmail;
 		
-		List<String> bccs = getBCCMkAction(api, actionTarget.getMarketingAction());
+		List<String> bccs = emailFromToUtils.getEmails(EmailFromToType.MARKETING_ACTION_EMAILS);
 		bccs.add(bookingBcc);
 
 		SESMessage msg = new SESMessage()
@@ -439,58 +447,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				;
 		
 		SES.sendEmail(msg);
-	}
-
-	private static List<String> getBCCMkAction(AonApiData api, MarketingAction marketingAction) {
-		List<String> emails = new ArrayList<String>();
-		
-		TaskHolder mkActionTH = marketingAction.getTaskHolder();
-		Workgroup mkActionWG = marketingAction.getWorkgroup();
-		
-		// Si existe responsable se manda una copia del mail
-		if(null != mkActionTH && null != mkActionTH.getId()) {
-			RegistryMedia sellerSupportMedia = AON.getRegistryMedia(
-					new Domain().setName(api.getDomain().getName()).setId(api.getDomain().getId()), 
-					new User().setLogin(api.getUser().getLogin()), 
-					f -> f.getRegistryProperty().eq(mkActionTH.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-			
-			if(null != sellerSupportMedia.getId() && AonStringUtils.isNotBlank(sellerSupportMedia.getValue()))
-				emails.add(sellerSupportMedia.getValue());
-		
-		// Si no existe responsable se manda una copia a TODOS los integrantes del GT
-		} else if(null != mkActionWG && null != mkActionWG.getId()){ 
-			
-			List<TaskHolderWorkgroup> workgroupTHs = AON.getTaskHolderWorkgroupsList(
-					new Domain().setName(api.getDomain().getName()).setId(api.getDomain().getId()), 
-					new User().setLogin(api.getUser().getLogin()), 
-					f -> f.getWorkgroupProperty().eq(mkActionWG.getId())
-					);
-			
-			workgroupTHs.forEach(workgroupTH -> {
-				RegistryMedia sellerSupportMedia = AON.getRegistryMedia(
-						new Domain().setName(api.getDomain().getName()).setId(api.getDomain().getId()), 
-						new User().setLogin(api.getUser().getLogin()), 
-						f -> f.getRegistryProperty().eq(workgroupTH.getTaskHolder()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-				
-				if(null != sellerSupportMedia.getId() && AonStringUtils.isNotBlank(sellerSupportMedia.getValue()))
-					emails.add(sellerSupportMedia.getValue());
-			});
-			
-		// Si no existe email ni TH ni WG se intenta mandar al seller que nos han mandado
-		} else if(emails.isEmpty()) {
-			JSONObject marketingActionJson = api.getData().optJSONObject("marketingAction");
-			Integer seller = JsonUtils.getInteger(marketingActionJson, "seller");
-					
-			RegistryMedia sellerSupportMedia = AON.getRegistryMedia(
-					new Domain().setName(api.getDomain().getName()).setId(api.getDomain().getId()), 
-					new User().setLogin(api.getUser().getLogin()), 
-					f -> f.getRegistryProperty().eq(seller).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-			
-			if(null != sellerSupportMedia.getId() && AonStringUtils.isNotBlank(sellerSupportMedia.getValue()))
-				emails.add(sellerSupportMedia.getValue());
-		}
-		
-		return emails;
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -564,6 +520,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				System.out.println("----------------------- Project Commercial");
 				
 				updateProjectCommercial(api, ctx);
+				
+				createTaskHolderScope(api, ctx, newDomain);
 
 				// Send mail
 				sendEnterpriseCreatedMail(api, ctx, newDomain);
@@ -580,6 +538,43 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return MarketingEmailTemplates.getFinishCreationHtml(api, parent, createdDomain, urlMail, userMail);
 	}
 	
+	private static void createTaskHolderScope(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
+		Integer marketingActionId = JsonUtils.getInteger(api.getData(), "marketingAction");
+		MarketingAction marketingAction = MarketingCampaignDAO.getAction(ctx, marketingActionId);		
+		
+		TaskHolder mkActionTH = marketingAction.getTaskHolder();
+		
+		// Si existe responsable se manda una copia del mail
+		if(null != mkActionTH && null != mkActionTH.getId() && null != mkActionTH.getUser() && null != mkActionTH.getUser().getId()) {
+			
+			Integer registryId = JsonUtils.getInteger(api.getData(), "target");
+			
+			Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(marketingAction.getDomain()));
+			Domain parentDomain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(domain.getParentId()));
+
+			Registry registry = RegistryDAO.get(ctx, registryId);
+			
+			Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(registry.getDocument()).and(f.getDomainProperty().eq(null == parentDomain.getId() ? domain.getId() : parentDomain.getId())));
+
+			Scope scope = null;
+			if (scopes.count() == 0) {
+				Scope newScope = new Scope().setDomain(null == parentDomain.getId() ? domain.getId() : parentDomain.getId()).setDescription(registry.getDocument());
+				scope = SecurityDAO.insertScope(ctx, newScope);
+			} else scope = scopes.findFirst().get();
+			
+			newDomain.setScope(scope.getId());
+			DomainDAO.updateDomainScope(ctx, newDomain);
+			
+			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(mkActionTH.getUser().getId()),
+					new Options().setFull(true));
+			
+			SecurityDAO.insertUserScope(ctx, new UserScope().setDomain(user.getDomain().getId())
+					.setScope(scope.getId()).setUserId(user.getId()));
+			
+		}
+		
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
@@ -646,7 +641,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		Company company = new Company();
 		company.setName(name);
-		company.setDocument(document);
+		company.setDocument(document.toUpperCase());
 		company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
 
 		checkCompany(company);
@@ -679,7 +674,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(AonStringUtils.isBlank(owner))
 			throw new AonApiException("No existe email como owner para la creaci\u00f3n de la empresa");
 		
-		String domainNewName = company.getDocument() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
+		String domainNewName = company.getDocument().toLowerCase() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
 		
 		Domain newDomain = new Domain()
 				.setName(domainNewName.toLowerCase())
@@ -707,7 +702,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			.set(ENTERPRISE.SCOPE, enterpriseScope.getId())
 			.execute();
 		
-		createCompanyMedia(api, ctx, newDomain);
+		createCompanyMedia(api, ctx, newDomain, enterpriseScope);
 		
 		return newDomain;
 		
@@ -750,7 +745,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return null;
 	}
 	
-	private static void createCompanyMedia(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
+	private static void createCompanyMedia(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope enterpriseScope) {
 		JSONObject data = api.getData();
 		
 		String streetType = JsonUtils.getString(data, "streetType");
@@ -815,7 +810,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if (null != comapnyRaddressId) {
 			
 			Customer customer = CustomerDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
-			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId(), geozoneCode);
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId(), geozoneCode, enterpriseScope.getId());
 		
 		}
 		
@@ -838,7 +833,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId, String geozoneCode) {
+	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId, String geozoneCode, Integer enterpriseScope) {
 		Workplace workplace = new Workplace()
 				.setActive(true)
 				.setDescription("PRINCIPAL")
@@ -847,6 +842,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setAddress(raddressId)
 				.setCustomer(customerId)
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
+				.setScope(enterpriseScope)
 				;
 
 		WorkplaceDAO.save(ctx, workplace);
@@ -919,10 +915,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setDocument(targetOpt.get().getDocument())
 						.setPhone(phone);
 
-				auth = SecurityDAO.insertAuth(ctx, auth);
+				auth = AuthDAO.insertAuth(ctx, auth);
 			} else {
 				auth.setPassword(pass);
-				auth = SecurityDAO.updateAuth(ctx, auth);
+				auth = AuthDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
@@ -1106,21 +1102,21 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setApp(AonApp.INVOICE)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		domainApp = new DomainApp()
 				.setDomain(newDomain.getId())
 				.setApp(AonApp.DOCUMENTAL)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		domainApp = new DomainApp()
 				.setDomain(newDomain.getId())
 				.setApp(AonApp.MESSENGER)
 				.setActive(true);
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp);
+		SecurityDAO.saveDomainApp(ctx, domainApp, false);
 		
 		ApplicationParameter trailParam = new ApplicationParameter()
 				.setDomain(newDomain.getId())
@@ -1147,55 +1143,49 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		Integer target = JsonUtils.getInteger(data, "target");
 		Integer marketingActionId = JsonUtils.getInteger(data, "marketingAction");
 		
-		MarketingAction mkAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(),
-				api.getUser().getLogin(), marketingActionId);
-		Domain officeDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
-				api.getUser().getLogin(), f -> f.getIdProperty().eq(mkAction.getDomain()));
+		MarketingAction mkAction = MarketingCampaignDAO.getAction(ctx, marketingActionId);
+		Domain officeDomain = DomainDAO.getDomain(ctx, mkAction.getDomain());
 
 		// Update autoregistro status
-		CommercialActivity commercialActivityAutoRegister = AON.getCommercialActivity(api.getDomain().getName(),
-				api.getDomain().getId(), api.getUser().getLogin(),
-				f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getNameProperty().like("%AUTOREGISTRO%")));
+		CommercialActivity commercialActivityAutoRegister = CommercialDAO.getCommercialActivity(ctx, f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getNameProperty().like("%AUTOREGISTRO%")));
 		if (null == commercialActivityAutoRegister) {
 			CommercialActivity ca = new CommercialActivity().setDomain(api.getDomain().getId()).setName("AUTOREGISTRO");
 
-			commercialActivityAutoRegister = AON.save(api.getDomain().getName(), api.getDomain().getId(),
-					api.getUser().getLogin(), ca);
+			commercialActivityAutoRegister = CommercialDAO.save(ctx, ca);
 		}
+		
+		ProjectDAO.getProjectCommercialStream(ctx, f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getTargetProperty().eq(target))).findFirst().orElse(new ProjectCommercial());
 
-		ProjectCommercial projectCommercial = AON.getProjectCommercial(officeDomain.getName(), officeDomain.getId(),
-				api.getUser().getLogin(),
-				f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getTargetProperty().eq(target)));
+		ProjectCommercial projectCommercial = ProjectDAO.getProjectCommercialStream(ctx, f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getTargetProperty().eq(target))).findFirst().orElse(new ProjectCommercial());
 
 		Integer commercialActivityAutoRegisterId = commercialActivityAutoRegister.getId();
 
 		if(projectCommercial  != null && null != projectCommercial.getId()) {
 			// Cerrar antiguo autoregistro tracking
-			LinkedList<CommercialTracking> verificationCommercialTrackingList = AON.getCommercialTrackingList(
-					api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+			
+			LinkedList<CommercialTracking> verificationCommercialTrackingList = CommercialDAO.getCommercialTrackingStream(ctx, 
 					f -> f.getProjectCommercialProperty().eq(projectCommercial.getId())
-							.and(f.getActivityProperty().eq(commercialActivityAutoRegisterId)));
+						.and(f.getActivityProperty().eq(commercialActivityAutoRegisterId)))
+					.collect(Collectors.toCollection(LinkedList::new));
 			
 			verificationCommercialTrackingList.forEach(verificationCommercialTracking -> {
 				verificationCommercialTracking.setStatus((byte) 1);
 				verificationCommercialTracking.setDate(new Date());
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-						verificationCommercialTracking);
+				
+				CommercialDAO.save(ctx, verificationCommercialTracking);
 
 			});
 
 			projectCommercial.setStatus((byte) 3);
 			projectCommercial.setStatusDate(new Date());
 			
-			AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					projectCommercial);
+			ProjectDAO.saveProjectCommercial(ctx, projectCommercial);
 		}
 
 		Optional<MarketingActionTarget> mkActionTarget = mkAction.getTargets().stream()
 				.filter(mkTarget -> mkTarget.getId().equals(target)).findFirst();
 		if (mkActionTarget.isPresent())
-			AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					mkActionTarget.get().setActionTargetStatus((byte) 5)); // Finalizado
+			MarketingCampaignDAO.saveActionTarget(ctx, mkActionTarget.get().setActionTargetStatus((byte) 5)); // Finalizado
 	}
 	
 	// ---------------------------------------------------------------------------------------------
@@ -1209,7 +1199,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		Integer marketingActionId = JsonUtils.getInteger(data, "marketingAction");
 		
-		MarketingAction ma = MarketingCampaignDAO.getAction(ctx, marketingActionId);		
+		MarketingAction ma = MarketingCampaignDAO.getAction(ctx, marketingActionId);
+		
+		// EmailFromToUtils
+		
+		emailFromToUtils = new EmailFromToUtils(ctx);
+		emailFromToUtils.setMarketingAction(ma);
 		
 		Domain parent = getParentDomain(ctx, api);
 		
@@ -1220,8 +1215,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(AonStringUtils.isBlank(from))
 			throw new AonApiException("No existe email definido en el entorno para la creaci\u00f3n de empresas");
 
-		String bookingBcc = "booking@aonsolutions.es";
-		List<String> bccs = getBCCMkAction(api, ma);
+		String bookingBcc = bookingEmail;
+		List<String> bccs = emailFromToUtils.getEmails(EmailFromToType.MARKETING_ACTION_EMAILS);
 		bccs.add(bookingBcc);
 		
 		Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst();
@@ -1260,7 +1255,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		context.put("domainName", urlMail);
 		context.put("user", userMail);
 		context.put("password", passwordMail);
-		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+		context.put("contact", AonStringUtils.isBlank(from) ? bookingEmail : from);
 
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created_ayudat.vm");
 
@@ -1400,7 +1395,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 			projectCommercial = null;
 
-			if (actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.MANUAL && null != actionTarget.getMarketingAction().getSeller()) {
+			if (actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.MANUAL && null != actionTarget.getMarketingAction().getTaskHolder().getId()) {
+				
+				Seller seller = SellerDAO.get(ctx, f -> f.getDomainProperty().eq(target.getDomain().getId()).and(f.getTaskHolderProperty().eq(actionTarget.getMarketingAction().getTaskHolder().getId())));
+				
 				// Create
 				projectCommercial = new ProjectCommercial()
 						.copy(
@@ -1413,7 +1411,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 								.setReservation(false)
 								.setActive(true))
 						.setTarget(target.getId())
-						.setSeller(actionTarget.getMarketingAction().getSeller())
+						.setSeller(seller.getId())
 						.setComments(actionTarget.getTarget().getComments())
 						.setSource((byte) 8) // Marketing
 						.setStatus((byte) 0)
@@ -1549,7 +1547,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if (null != parentDomain && null != parentDomain.getId()) {
 			
 			Domain existDomain = DomainDAO.getDomain(ctx, 
-					f -> f.getNameProperty().like("%" + document + "%").and(f.getParentProperty().eq(parentDomain.getId())));
+					f -> f.getNameProperty().like("%" + document.toLowerCase() + "%").and(f.getParentProperty().eq(parentDomain.getId())));
 			
 			if (null != existDomain && null != existDomain.getId()) {
 				String logoUrl = MarketingEmailTemplates.getLogoUrl(parentDomain, api.getUser());
@@ -1563,7 +1561,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 	private static void sendDomainExistsMail(CloseableAONContext ctx, AonApiData api, Domain domain, Domain parentDomain, String logoUrl, String targetEmail) {
 		String from = MarketingEmailTemplates.getFromMessage(ctx, api, parentDomain);
-		String bcc = "booking@aonsolutions.es";
+		String bcc = bookingEmail;
 
 		SESMessage msg = new SESMessage()
 				.setAlias(parentDomain.getDescription())
@@ -1597,7 +1595,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		context.put("parentName", parentDomain.getDescription());
 		context.put("name", domain.getDescription());
 		context.put("url", url);
-		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+		context.put("contact", AonStringUtils.isBlank(from) ? bookingEmail : from);
 
 		Template template = engine
 				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_duplicate.vm");

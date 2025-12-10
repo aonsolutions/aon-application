@@ -1,16 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, signin, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
+import { signin, getManifest, magicLink, getCompanies, getUser, MOBILE_ACTION, assignUserAuth, clearCompanyService } from "../../services/service.js";
 
-import "../../components/aon-input.js";
-import "../../components/aon-loader.js";
-import "../../components/aon-dialog.js";
-import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
-import { webkitRequestMobile } from "../../services/request.js";
-import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonDialog } from "../../components/aon-dialog.js";
@@ -27,10 +21,10 @@ import { changeUrl } from '../../services/actionService.js';
 
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";
-import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
 import { AonDesktop } from "../company/aon-desktop.js";
 
 import * as GWT from '../../gwt/gwt.js';
+import { AonAuth } from '../user/aon-auth.js';
 
 
 export class AonNewLogin extends AonElement {
@@ -500,44 +494,72 @@ export class AonNewLogin extends AonElement {
   }
 
   login() {
-    const username = this.getElement("aonLoginUser").value;
-    const password = this.getElement("aonLoginPassword").value;
-    const data = {
-      username: username,
-      password: password,
-    };
+	  const username = this.getElement("aonLoginUser").value;
+	  const password = this.getElement("aonLoginPassword").value;
+	  const data = {
+		  username: username,
+		  password: password,
+	  };
 
-    let loader = this.getElement("aonLoginLoader");
-    loader.style.display = "";
-    loader.start();
-    signin(data)
-      .then(() => {
-        // document.body.style.background = 'transparent';
-        loader.stop();
+	  let loader = this.getElement("aonLoginLoader");
+	  loader.style.display = "";
+	  loader.start();
+	  signin(data)
+		  .then((token) => {
+			  loader.stop();
 
-        LS.removeDomain();
-        this.getModule().buildHome();
-        this.getModule().startLoading();
-        let limit = 100;
-        getCompanies({ limit }).then((companies) => {
-          this.getModule().stopLoading();
-		  if (companies.length === 1) {
-            this.companySelection(companies[0], true);
-          } else {
-            this.getElement("aonHome").showMenu(false);
-            this.rootPanel(
-              this.isMobile() ? new AonMobileParent() : new AonParent()
-            );
-          }
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-        loader.stop();
-        let error = JSON.parse(e);
-        let toast = this.getElement("aonLoginToast");
-        toast.start(error);
-      });
+			  LS.removeDomain();
+			  this.getModule().buildHome();
+			  this.getModule().startLoading();
+			  let limit = 100;
+			  getCompanies({ limit }).then((companies) => {
+				  this.getModule().stopLoading();
+
+				  if (companies.length === 1) {
+					  this.companySelection(companies[0], true);
+				  } else {
+					  this.getElement("aonHome").showMenu(false);
+					  this.rootPanel(
+						  this.isMobile() ? new AonMobileParent() : new AonParent()
+					  );
+				  }
+
+				  LS.setDomainLogin(username);
+				  this.buildDur().then(dur => {
+					  if ( this.isUser(dur) && !this.hasAuth(dur)) {
+						  LS.setDomainLogin(dur.getUser().login);
+						  LS.setDomainId(dur.getDomain().getId());
+						  LS.setDomainName(dur.getDomain().getName());
+
+						  let dialog = new AonDialog();
+						  dialog.id = "aonAuthDialog" ;
+						  document.body.appendChild(dialog);
+						  dialog.setTitle(MSG.EMAIL_ADD);
+						  dialog.setDescription(MSG.EMAIL_ADD_DESCRIPTION);
+						  dialog.close = () =>{ /* do nothing*/ };
+						  dialog.hideElement(dialog.BUTTON_CLOSE);
+
+						  let aonAuth = new AonAuth()
+							  .onclose((event) => assignUserAuth({ email: event?.detail?.email, user: dur?.user?.id }).then(() => {
+								dialog.remove(); 
+								this.relogin(username, password); 
+							}))
+						  dialog.setContent(aonAuth);
+						  dialog.getContent().style.height = '80%';
+						  dialog.open();
+
+						  //this.rootPanel(new AonAuth().onclose((event) => assignUserAuth({ email: event?.detail?.email, user: dur?.user?.id }).then(() => { this.relogin(username, password); })));
+					  }
+				  });
+			  });
+		  })
+		  .catch((e) => {
+			  console.log(e);
+			  loader.stop();
+			  let error = JSON.parse(e);
+			  let toast = this.getElement("aonLoginToast");
+			  toast.start(error);
+		  });
   }
   
   signin() {
@@ -581,7 +603,34 @@ export class AonNewLogin extends AonElement {
       });
   }
 
-  companySelection(company, onlyOne) {
+  relogin(username, password) {
+	
+	clearCompanyService();
+	
+    signin({username, password})
+      .then(() => {
+		
+		  getCompanies({ limit: 100 }).then((companies) => {
+
+			  if (companies.length === 1) {
+				  this.companySelection(companies[0], true);
+			  } else {
+				  this.getElement("aonHome").showMenu(false);
+				  this.rootPanel(
+					  this.isMobile() ? new AonMobileParent() : new AonParent()
+				  );
+			  }
+		  });
+      })
+      .catch((e) => {
+        console.log(e);
+        let error = JSON.parse(e);
+        let toast = this.getElement("aonLoginToast");
+        toast.start(error);
+      });
+  }
+
+   companySelection(company, onlyOne) {
     localStorage.setItem("company", JSON.stringify(company));
     localStorage.setItem("aon_domain_id", company.id);
     localStorage.setItem("aon_domain_name", company.domain);
@@ -614,9 +663,29 @@ export class AonNewLogin extends AonElement {
     });
   }
   
+	useJaas() {
+		const queryString = window.location.search;
+		const searchParams = new URLSearchParams(queryString);
+		return searchParams.get('jaas') != null;
+	
+	}
+	
+	isUser(dur) {
+		return dur?.user?.id || dur?.user?.login;
+	}
+
+	hasAuth(dur) {
+		return dur?.user?.uuid && dur.user.uuid.length > 0;
+	}
+
 	isConsole(company) {
 		return company.type == 'ADMIN' && company.id === 0;
 	}
+	
+	isPasswordExpired(dur) {
+        return dur?.user?.expirationDate && new Date(dur.user.expirationDate) < new Date();
+    }
+	
   
 
 }

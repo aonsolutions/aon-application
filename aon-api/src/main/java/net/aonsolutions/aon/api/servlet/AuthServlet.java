@@ -3,10 +3,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -24,7 +20,9 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.api.error.AonApiError;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -34,6 +32,10 @@ public class AuthServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(AuthServlet.class.getName());
 
+	public static final String ROOT = "/";
+	public static final String PASSWORD = "/password";
+    public static final String AVATAR = "/avatar";
+    
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON AUTH SERVLET - GET METHOD");
@@ -92,25 +94,32 @@ public class AuthServlet extends AonApiHttpServlet{
 		put(req, resp);
 	}
 	
-	private void put(HttpServletRequest req, HttpServletResponse resp) {
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/password":
-				response(req, resp, changePassword(api));
-				break;
-			case "/avatar":
-				response(req, resp, saveAvatar(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
-	}
 	
-	private JSONObject changePassword(AonApiData api) throws AonApiException {
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+        LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+        try {
+            AonApiData api = initialize(req);
+            
+            Object object = new AonRouting(api)
+                .addRoute(ROOT, AuthServlet::saveAuth)
+                .addRoute(PASSWORD, AuthServlet::changePassword)
+                .addRoute(AVATAR, AuthServlet::saveAvatar)
+                .apply();
+            
+            response(req, resp, object);
+        } catch (Exception e) {
+            error(req, resp, e);
+        }
+    }
+	
+	private static JSONObject saveAuth(AonApiData api) {
+	    Auth auth = AuthJSON.fromJSON(api.getData());
+	    auth = SECURITY.saveAuth(api.getDomain(), api.getUser().getLogin(), auth);
+	    return AuthJSON.toJSON(auth);
+    }
+
+	
+	private static JSONObject changePassword(AonApiData api) throws AonApiException {
 		
 		JSONObject params = api.getData();
 		
@@ -145,7 +154,7 @@ public class AuthServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private JSONObject saveAvatar(AonApiData api) {
+	private static JSONObject saveAvatar(AonApiData api) {
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
 
 		Auth auth = !AonStringUtils.isBlank(aonToken.getSchemaFirstDomain()) 

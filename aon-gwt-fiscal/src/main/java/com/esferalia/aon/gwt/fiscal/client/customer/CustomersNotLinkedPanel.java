@@ -6,9 +6,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -16,6 +20,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -77,6 +82,8 @@ public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 		customerStatus.setSelectedOptions(selectedOptions);
 
 		addFilterWidget(customerStatus);
+		
+		createToolbar();
 
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -91,6 +98,46 @@ public abstract class CustomersNotLinkedPanel extends AonCustomDockLayout {
 
 		add(container);
 		onSearch();
+	}
+
+	private void createToolbar() {
+		AonToolbarButton syncMassive = new AonToolbarButton("Vinculaci\u00f3n Masiva", AON.CSS.aonIconCloudSync());
+		syncMassive.addClickHandler(e -> {
+			AonDialog dialog = new AonDialog("Vinculaci\u00f3n Masiva Cliente / Dominio", new Label("Desea lanzar la vinculaci\u00f3n masiva de los clientes sin dominio asociado?"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {}
+
+				@Override
+				public void onAccept() {
+					SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
+					centerPanel.setHeight("20rem");
+					centerPanel.getElement().getStyle().setProperty("margin", "1rem");
+					
+					AonCustomDialog dialog = new AonCustomDialog();
+					dialog.showCloseButton(true);
+					dialog.setCaption("Vinculaci\u00f3n Masiva Clientes");
+					dialog.setHeight("25rem");
+					dialog.setWidth("55rem");
+
+					MassiveCustomerDomainSyncPanel domainSyncPanel = new MassiveCustomerDomainSyncPanel(params) {
+						
+						@Override protected void onEndSuccessSync() { 
+							onSearch();
+						}
+						
+					};
+					
+					centerPanel.setWidget(domainSyncPanel);
+					
+					dialog.add(centerPanel);
+					dialog.showLoaded();
+				}
+
+			});
+		});
+		addToolbarButton(syncMassive);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ export class AonJsfApp extends AonElement {
 	viewId = '';
 	action = '';
 	redirectUrl = '';
+	elExpression = '';
 	actionListener = '';
 	expireSession = 'true';
 
@@ -111,6 +112,18 @@ export class AonJsfApp extends AonElement {
 		jaasDomainInput.name = 'com.code.aon.jaas.domain';
 		form.appendChild(jaasDomainInput);
 		
+		let themeInput = this.createElement(TAG.INPUT);
+		themeInput.type = 'hidden';
+		themeInput.name = 'theme';
+		themeInput.value = LS.getTheme();
+		form.appendChild(themeInput);
+
+		let elExpressionInput = this.createElement(TAG.INPUT);
+		elExpressionInput.type = 'hidden';
+		elExpressionInput.name = 'elExpression';
+		elExpressionInput.value = this.elExpression;
+		form.appendChild(elExpressionInput);
+
 		this.appendChild(form);
 
 		this.setJaasDomain( jaasDomainInput )
@@ -146,6 +159,10 @@ export class AonJsfApp extends AonElement {
 
 	setRedirectUrl(redirectUrl) {
 		this.redirectUrl = redirectUrl;
+	}
+	
+	setElExpression(elExpression) {
+		this.elExpression = elExpression;
 	}
 
 	isLoaded() {
@@ -300,13 +317,14 @@ export class AonJsfInvoicePrint extends AonJsfApp {
 	}
 }
 
-export class AonJsfInvoiceRemove extends AonJsfApp {
+// NO USAR EL BORRADO DE FACTURAS - ACTIVAR EN CASO NECESARIO.
+// export class AonJsfInvoiceRemove extends AonJsfApp {
 
-	constructor() {
-		super();
-		this.setViewId('/facelet/app/invoiceRemove.xhtml');
-	}
-}
+// 	constructor() {
+// 		super();
+// 		this.setViewId('/facelet/app/invoiceRemove.xhtml');
+// 	}
+// }
 
 export class AonJsfInvoiceDelivery extends AonJsfApp {
 
@@ -1100,6 +1118,14 @@ export class AonJsfInvoiceRecorder extends AonJsfApp {
 	}
 }
 
+export class AonJsfInvoiceAmortization extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceAmortization.xhtml');
+	}
+}
+
 export class AonJsfFinanceTrackingEntry extends AonJsfApp {
 
 	constructor() {
@@ -1485,6 +1511,14 @@ export class AonJsfItemTagPrint extends AonJsfApp {
 	}
 }
 
+export class AonJsfExpiredPassword extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml');
+	}
+}
+
 if (!window.customElements.get(TAG.AON_JSF_APP)) {
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1536,9 +1570,9 @@ if (!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
 }
 
-if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
-	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
-}
+// if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
+// 	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
+// }
 
 if (!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_DELIVERY, AonJsfInvoiceDelivery);
@@ -1917,6 +1951,10 @@ if (!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_RECORDER, AonJsfInvoiceRecorder);
 }
 
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_AMORTIZATION)) {
+	window.customElements.define(TAG.AON_JSF_INVOICE_AMORTIZATION, AonJsfInvoiceAmortization);
+}
+
 if (!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_TRACKING_ENTRY, AonJsfFinanceTrackingEntry);
 }
@@ -2101,3 +2139,6 @@ if (!window.customElements.get(TAG.AON_JSF_ITEM_TAG_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_ITEM_TAG_PRINT, AonJsfItemTagPrint);
 }
 
+if (!window.customElements.get(TAG.AON_JSF_EXPIRED_PASSWORD)) {
+	window.customElements.define(TAG.AON_JSF_EXPIRED_PASSWORD, AonJsfExpiredPassword);
+}

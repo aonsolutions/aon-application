@@ -177,8 +177,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Panel de Control de IRPF",
 				action: () => GWT.iLoad(GWT.IRPF_REPORT)
 			},{
-				description: "Panel de Compras y Gastos/ Ventas e Ingresos",
-				title: "Panel de Compras y Gastos/ Ventas e Ingresos",
+				description: "Libros Registro AEAT",
+				title: "Libros Registro AEAT",
 				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_REPORT)
 			},{
 				description: "Listado de Excel de Impuestos aplicados en Facturas",

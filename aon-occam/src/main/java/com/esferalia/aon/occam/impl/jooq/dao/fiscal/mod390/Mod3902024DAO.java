@@ -281,7 +281,7 @@ public class Mod3902024DAO {
 		 // Cuotas deducibles en virtud de resolución administrativa o sentencia firmes con tipos no vigentes
 		 ,C0661	(Mod3902024DetailKey.C0661, null)
 		 // Rectificación de deducciones
-		 ,C0062	(Mod3902024DetailKey.C0062, ((mod, vc) -> vc.isRectification() && (vc.isPurchase() || vc.isExpenses() )))
+		 ,C0062	(Mod3902024DetailKey.C0062, ((mod, vc) -> vc.isRectification() && (vc.isPurchase() || vc.isExpenses()) && AonMathUtils.isNotZero(vc.getPercentage())))
 		 // Rectificación de deducciones por operaciones intragrupo
 		 ,C0652	(Mod3902024DetailKey.C0652, null)
 		 // Regularización de bienes de inversión

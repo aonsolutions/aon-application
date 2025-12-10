@@ -34,12 +34,14 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -76,6 +78,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryController.class.getName());
 	
 	private Warehouse warehouse; 
+	private Product product;
 	private boolean initStock;
 	private boolean showInventoryAdjustmentWindow;
 	private boolean showAuditInfoWindow;
@@ -93,6 +96,14 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.warehouse = warehouse;
 	}
 
+	public Product getProduct() {
+		return product;
+	}
+	
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	
 	public boolean isInitStock() {
 		return initStock;
 	}
@@ -161,20 +172,19 @@ public class InventoryController extends BasicController implements IAuditableCo
 	public void onStartClosing(ActionEvent event) throws Exception {
 		this.initStock = false;
 		this.warehouse = null;
+		setProduct((Product)BeanManager.getManagerBean(Product.class).createNewTo());
 		super.onReset(event);
 	}
 
 	public boolean isOneSeries2(){
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
-		if(user.contains("=")){
-			Integer index = user.indexOf("=");
-			user = user.substring(index + 1);
-		}
-		Integer userId = AON.getUser(domainName, domainId, user).getId();
-		Integer[] array = AON.getUserScopes(domainName, domainId, user, userId);
-		LinkedList<Series> list = AON.getSeriesList(domainName, domainId, user,
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+
+		Integer userId = AON.getUser(domainName, domainId, login).getId();
+		if(userId == null) return false;
+		Integer[] array = AON.getUserScopes(domainName, domainId, login, userId);
+		LinkedList<Series> list = AON.getSeriesList(domainName, domainId, login,
 				f -> f.getActiveProperty().eq((byte) 1)
 				.and(f.getDeliveryProperty().eq((byte)1))
 				.and(f.getScopeProperty().in(array)));
@@ -250,14 +260,17 @@ public class InventoryController extends BasicController implements IAuditableCo
 			com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer wt = null;
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
-			String user = AonUtil.getRemoteUser();
-			
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+
 			Session session = HibernateUtil.getSession(sessionName);
 			if (initStock){
-				wt = createWarehouseTransfer(domainName, domainId, user, warehouse.getId());
+				wt = createWarehouseTransfer(domainName, domainId, login, warehouse.getId());
 
 				Criteria c = new Criteria();
 				c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
+				if(getProduct() != null && getProduct().getId() != null) {
+					c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_PRODUCT_ID), getProduct().getId());
+				}
 				Iterator<?> initStockListIter = stockBean.getList(c).iterator();
 				while (initStockListIter.hasNext()){
 					Stock initStock = (Stock) initStockListIter.next();
@@ -276,15 +289,20 @@ public class InventoryController extends BasicController implements IAuditableCo
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
 			
-			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 			
-	        Query q = session.createQuery(
+			String productQuery = "";
+			if(getProduct() != null && getProduct().getId() != null) {
+				productQuery = "and (item.product.id = " + getProduct().getId() + ") "; 
+			}
+			Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
 	                " from Item as item, Stock as stock " +
 	                " where stock.item=item.id " +
 	                " and stock.warehouse=" + warehouse.getId() +
 	                " and " + DomainManager.getSQLWhereClause("stock.domain") +
 	                " and (item.product.serializable = 0 or item.serialNumber is not null) " +
+	                productQuery +
 	                " group by item.id " +
 	                " order by item.detail");
 			Iterator<?> iter = q.list().iterator();
@@ -309,7 +327,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			this.onSearch(null);
 			this.getModel().setRowIndex(0);
 			this.onSelect(null);
-			if(initStock) AON.updateWarehouseTransfer(domainName, domainId, user, 
+			if(initStock) AON.updateWarehouseTransfer(domainName, domainId, login, 
 					wt.setSource(WarehouseTransferSource.INVENTORY_INIT_STOCK.value()).setSourceId(inventory.getId()).setInventory(
 					new com.esferalia.aon.occam.api.model.warehouse.Inventory().setId(inventory.getId())));
 
@@ -414,10 +432,11 @@ public class InventoryController extends BasicController implements IAuditableCo
 			Integer wtId = newElements ? wt.getTargetWarehouse().getId() : wt.getSourceWarehouse().getId();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
-			String user = AonUtil.getRemoteUser();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+
 			CloseableAONContext ctx = null;
 			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
+				ctx = AONContext.getAONContext(domainName, domainId, login);
 				
 				updateWT = null;
 				LinkedList<Integer> idList = new LinkedList<>();
@@ -431,12 +450,13 @@ public class InventoryController extends BasicController implements IAuditableCo
 					
 					if(ProductStatus.DISCONTINUED.equals(d.getItem().getProduct().getStatus())
 							&& dMap.get(d.getItem().getId()) > 0) {
-						activeProduct(domainName, domainId, user, d.getItem().getProduct().getId());
+						activeProduct(domainName, domainId, login, d.getItem().getProduct().getId());
 					}
 				});
 				
 				dMap.keySet().stream().forEach(i -> {
-					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(wtId)
+					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, login, 
+							f -> f.getWarehouseProperty().eq(wtId)
 							.and(f.getItemProperty().eq(i))).findFirst();
 					if(stock.isPresent()) {
 						idList.add(stock.get().getId());
@@ -468,7 +488,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			}finally {
 				if(ctx != null) ctx.close();
 			}
-			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
+			AON.insertWarehouseTransferDetail(domainName, domainId, login, 
 				details.stream().map(detail -> {
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
@@ -486,7 +506,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Inventory inventory = (Inventory) getTo();
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 
 		updateID = null;
 		LinkedList<Integer> idList = new LinkedList<>();
@@ -532,7 +553,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Inventory inventory = (Inventory) getTo();
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
+
 	
 		LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
 		
@@ -563,7 +585,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			Inventory inventory = (Inventory) getTo();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
-			String user = AonUtil.getRemoteUser();
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
 			
 			AON.deleteWarehouseTransfer(domainName, domainId, user,
 					f -> f.getInventoryProperty().eq(inventory.getId())
@@ -592,10 +614,11 @@ public class InventoryController extends BasicController implements IAuditableCo
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate, com.esferalia.aon.occam.api.model.ApplicationParameter ap){
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
 		if(ap != null && ap.getValue() != null && !"0".equals(ap.getValue())) {
-			if("1".equals(ap.getValue())) return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
-			else if("2".equals(ap.getValue())) return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
-			else if("3".equals(ap.getValue())) return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
+			if("1".equals(ap.getValue())) return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), user, workplaceId,warehouseId, inventoryDate);
+			else if("2".equals(ap.getValue())) return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), user, workplaceId,warehouseId, inventoryDate);
+			else if("3".equals(ap.getValue())) return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), user, workplaceId,warehouseId, inventoryDate);
 		} 
 		return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
 	}
@@ -748,7 +771,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Inventory inventory = (Inventory) getTo();
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
+		String user = UserUtils.getInstance().getLoggedUser().getLogin();
 		
 		AON.deleteWarehouseTransfer(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()));
 		

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -24,7 +26,6 @@ import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -79,9 +80,9 @@ public abstract class ProductList extends AonCustomDockLayout {
 	private boolean fetchingData = false;
 	
 	private static enum COLS {
-		  COD(AON.MSG.code()						,"15rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  COD(AON.MSG.code()						,"10rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CAT(AON.MSG.category()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CAT(AON.MSG.category()					,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("Estado"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PCK("Tipo"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, AOC("Serv. Aon"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
@@ -407,7 +408,27 @@ public abstract class ProductList extends AonCustomDockLayout {
 			
 			@Override
 			public void onSuccess(List<ProductBooking> products) {
-				success.accept(products);
+				List<ProductBooking> orderedProducts = products.stream()
+				    .sorted(
+				        Comparator.comparing(
+				                ProductBooking::getBookingType,
+				                Comparator.comparingInt(type -> {
+				                    switch (type) {
+				                        case PLAN:         return 0;
+				                        case CONSULTANCY:  return 1;
+				                        case USER:         return 2;
+				                        case SERVICE:      return 3;
+				                        default:           return Integer.MAX_VALUE;
+				                    }
+				                })
+				        ).thenComparing(
+				                ProductBooking::getPosition,
+				                Comparator.nullsLast(Comparator.naturalOrder())
+				        )
+				    )
+				    .collect(Collectors.toList());
+				
+				success.accept(orderedProducts);
 			}
 			
 			@Override

@@ -38,6 +38,7 @@ export const ALL1 = 'Todos';
 export const ALL2 = 'Todas';
 export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
+export const AMORTIZATION = 'Amortización';
 export const ANNUAL_VIEW = "Venta anual";
 export const AON_SERVICES = 'Servicios Aon';
 export const API_DOCUMENTATION = 'Documentación API';
@@ -213,6 +214,7 @@ export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
 export const FROM = 'Desde';
 export const FRENCH = 'Francés';
+export const FUTURE = 'Muy pronto...';
 
 // ----- G
 
@@ -254,6 +256,8 @@ export const INFORMATION = 'Información';
 export const INFO_INCOMES = "Información Apartado de Ingresos";
 export const INFO_EXPENSES = "Información Apartado de Gastos";
 export const INFO_PENDING = "Información Apartado de Pendientes";
+export const INVENTORIES = 'Inventarios';
+export const INVENTORY = 'Inventario';
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
@@ -358,9 +362,10 @@ export const ONLY_PORTAL = 'Solo Portal';
 export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';
+export const OPENED = 'Abierto';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opciones';
-export const OR_ACCESS = 'o ACCEDE';
+export const OR_ACCESS = 'O si prefieres, inicia sesión sin contraseña';
 export const OTHER_SERVICES = 'Otros Servicios';
 export const ONE = 'Una';
 
@@ -389,6 +394,7 @@ export const PREVIOUS = 'Anterior';
 export const PRICE = 'Precio';
 export const PRINT = 'Imprimir';
 export const PRINT_INVOICE = 'Imprimir Factura';
+export const PROCESSED = 'Procesado';
 export const PROCESSED_MOVEMENT = "El alta se ha procesado correctamente";
 export const PRODUCT = 'Producto';
 export const PRODUCT_NOT_EMPTY = "El producto no puede estar vacío";

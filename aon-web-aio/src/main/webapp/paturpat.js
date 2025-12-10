@@ -63,10 +63,7 @@ const load = () => {
 
 export const loadThemeOld = async () => {
 	// LS.AON_THEME 
-	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
-	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	let themeUrl = UA.isMobile() ? mobileCss : ( paramCss  || "/customview" || LS.AON_THEME );
-
+	let themeUrl = LS.AON_MOBILE_ANDROID_35;
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);

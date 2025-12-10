@@ -1472,7 +1472,82 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testMaternityII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
 
+		//@formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		Date contractStartDate = add( getFirstDayOfYear(getToday()), Calendar.DAY_OF_MONTH, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				contractStartDate,
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
+				new String[] {
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"25.00 * DIAS_EFECTIVOS "
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * 0.00/100" }, null);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(add(contract.getStartDate() ,Calendar.MONTH, 1 ));
+		
+		Date startITDate = add(startDate , Calendar.DAY_OF_MONTH, 10 );
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				null, null);
+		
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( Date date = contract.getStartDate(); date.before(startDate); date = add(date, Calendar.MONTH, 1)) {
+			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+				connection, getFirstDayOfMonth(date), getLastDayOfMonth(date), getLastDayOfMonth(date), contract));
+		}
+		
+		com.esferalia.aon.occam.api.model.Salary salary = AON.getSalaries(aonContext, f -> f.getContractProperty().eq(contract.getId())).findFirst().orElseThrow();
+		
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		double br = salary.getCommonContingenciesBase() / salary.getSalaryDays();
+
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		
+
+	}
+	
 	@Test
 	public void testBRFijoDiscontinuoPeriods() throws ExpressionException, SQLException,
 			SalaryException {

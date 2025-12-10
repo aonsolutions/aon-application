@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -68,10 +67,6 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
-import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -95,7 +90,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
@@ -137,7 +131,6 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
-import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -145,7 +138,6 @@ import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -156,6 +148,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 
 @WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common", "/aon_gwt_marketing/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
@@ -543,6 +536,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getTargetSuggestion(domainName, domain, user);
+	}
+	
+	@Override
+	public List<ProjectType> getAviableProjectTypes(String domainName, int domain, String user, int domainSearch) throws AonCoreException {
+		return AON.getProjectTypeStream(
+				new Domain().setName(domainName).setId(domain), 
+				new User().setLogin(user), 
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1))
+			).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -1599,12 +1601,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException {
-		return CONSOLE.getAviableDomainsForSync(
-				new Domain().setName(paramsDomains.getDomainName()).setId(paramsDomains.getDomainId()), 
-				new User().setLogin(paramsDomains.getUser()), 
-				f -> f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
+		Domain currentDomain = AON.getDomain(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser());
+		
+		return AON.getAviableDomainsForSync(paramsDomains.getDomainName(), paramsDomains.getDomainId(), paramsDomains.getUser(), false, 
+				f -> f.getParentProperty().eq(currentDomain.getParentId() == null ? currentDomain.getId() : currentDomain.getParentId())
+				.and(
+					f.getNameProperty().like("%" + paramsDomains.getQuery() + "%")
 					.or(f.getDescriptionProperty().like("%" + paramsDomains.getQuery() + "%"))
-				).collect(Collectors.toList());
+				)).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -1688,152 +1692,25 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return fees;
 	}
 	
-	@Override
-	public void createFeeRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, Fee fee) throws AonCoreException {
-		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));
-		if(!existRelationShip.isPresent()) throw new IllegalArgumentException("Este cliente ya no está vinculado al dominio");
-		
-		Workplace workplace = AON.getWorkplaces(
-			    new Occam()
-			        .setDomainName(domainName)
-			        .setDomain(domainId)
-			        .setUser(user),
-			    domainId
-			)
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Este cliente ya no está vinculado al dominio"));
-		
-		fee.setCustomer(new Customer().setId(existRelationShip.get().getRegistry()));
-		fee.setWorkplace(workplace);
-		
-		AON.save(domainName, domainId, user, fee);
-	}
-	
-	@Override
-	public void updateEndDatePackFee(String domainName, int domainId, String user, Fee fee) throws AonCoreException {
-		Date currentDate = new Date();
-		Date yesterday = AonDateUtils.addDays(currentDate, -1);
-		if(fee.getStartDate().after(yesterday)) {
-			AON.deleteFee(domainName, domainId, user, Stream.of(fee));
-		} else {
-			fee.setEndDate(yesterday);
-			AON.save(domainName, domainId, user, fee);
-		}
-	}
-	
-	@Override
-	public void updateBookingFee(String domainName, int domainId, String user, Fee fee, ProductBooking product) {
-		Date currentDate = new Date();
-		Date yesterday = AonDateUtils.addDays(currentDate, -1);
-		
-		User userDb = AON.getUser(domainName, domainId, user);
-		
-		Domain siblingOffice = getOfficeSibling(domainName, domainId, user);
-		
-		OldItem feeItem = AON.getItem(siblingOffice.getName(), siblingOffice.getId(), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(fee.getItem().getId())));
-		
-		ProductBooking feeProductBooking = AON.getProductBooking(new Domain().setName(siblingOffice.getName()).setId(siblingOffice.getId()), user, f -> f.getDomainProperty().eq(siblingOffice.getId()).and(f.getIdProperty().eq(feeItem.getProduct().getId())));
-		
-		feeProductBooking.getAonApps().forEach(aonApp -> {
-			updateDomainApp(domainName, domainId, user, aonApp, userDb.getId(), fee.getStartDate().after(yesterday));
-		});
-		
-	}
-	
-	private void updateDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId, boolean delete) {
-		try {
-			Stream<DomainApp> domainApps = AON_SOLUTIONS.getDomainApp(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId));
-			Optional<DomainApp> domainApp = domainApps.filter(da -> da.getApp().equals(aonApp)).findFirst();
-			
-			if(domainApp.isPresent())
-				AON.saveBookingApp(domainName, domainId, user, domainApp.get(), delete);
-			
-			updateUserAppRole(domainName, domainId, user, userId, aonApp);
-			
-		} catch (Exception e) {}
-	}
-	
-	private void updateUserAppRole(String domainName, int domainId, String user, Integer userId, AonApp aonApp) {
-		List<AonRole> aonRoles = AonApp.getPortalAonRole(aonApp);
-		Byte[] arrayAonRoles = aonRoles.stream()
-			    .map(ar -> ar.value())
-			    .toArray(Byte[]::new);
-		
-		List<UserAppRole> userAppRoles = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
-		
-		if(!userAppRoles.isEmpty()) {
-			userAppRoles.forEach(userAppRole -> AON_SOLUTIONS.deleteUserAppRole(domainName, domainId, user, f -> f.getIdProperty().eq(userAppRole.getId()).and(f.getDomainProperty().eq(domainId))));
-		}
-	}
-	
-	@Override
-	public void createBookingFee(String domainName, int domainId, String user, ProductBooking product) throws AonCoreException {
 
-		User userDb = AON.getUser(domainName, domainId, user);
-		
-		// Set Trial false
-		ApplicationParameter trialAppParam = AON.getApplicationParameter(domainName, domainId, user, AppParam.TRIAL);
-		if(null != trialAppParam.getId()) {
-			trialAppParam.setValue("-1");
-			AON.updateApplicationParameter(domainName, domainId, user, trialAppParam, f -> f.getIdProperty().eq(trialAppParam.getId()).and(f.getDomainProperty().eq(domainId)));
-		}
-		
-		// Set User normal
-		if(!userDb.getType().equals(UserType.NORMAL) || null != userDb.getEnterprise()) {
-			userDb.setType(UserType.NORMAL);
-			userDb.setEnterprise(null);
-			AON.saveUser(new Domain().setName(domainName).setId(domainId), user, userDb);
-			
-			List<AonRole> aonUserAppRoles = List.of(AonRole.ENTERPRISE, AonRole.EMPLOYEE);
-			Byte[] arrayAonRoles = aonUserAppRoles.stream()
-				    .map(ar -> ar.value())
-				    .toArray(Byte[]::new);
-			
-			List<UserAppRole> userAppRoles = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userDb.getId()).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
-			userAppRoles.forEach(userAppRole -> AON_SOLUTIONS.deleteUserAppRole(domainName, domainId, user, f -> f.getIdProperty().eq(userAppRole.getId()).and(f.getDomainProperty().eq(domainId))));
-			
-		}
-		
-		product.getAonApps().forEach(aonApp -> {
-			insertDomainApp(domainName, domainId, user, aonApp, userDb.getId());
-		});
-		
+	@Override
+	public void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) throws AonCoreException {
+		AON.createBookingProduct(domainName, domain, user, customerRelatedRegistry, product, newFee);
 	}
 	
-	private void insertDomainApp(String domainName, int domainId, String user, AonApp aonApp, Integer userId) {
-		try {
-			DomainApp domainApp = new DomainApp()
-					.setDomain(domainId)
-					.setActive(true)
-					.setApp(aonApp)
-					;
-			AON.createBookingApp(domainName, domainId, user, domainApp);
-			
-			insertUserAppRole(domainName, domainId, user,userId, aonApp);
-			
-		} catch (Exception e) {}
+	@Override
+	public void updateBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product, Fee newFee) throws AonCoreException {
+		AON.updateBookingProduct(domainName, domain, user, customerRelatedRegistry, Optional.of(oldFee), product, newFee);
 	}
 	
-	private void insertUserAppRole(String domainName, int domainId, String user, Integer userId, AonApp aonApp) {
-		List<AonRole> aonRoles = AonApp.getPortalAonRole(aonApp);
-		Byte[] arrayAonRoles = aonRoles.stream()
-			    .map(ar -> ar.value())
-			    .toArray(Byte[]::new);
-		
-		List<UserAppRole> userAppRole = AON_SOLUTIONS.getUserAppRole(domainName, domainId, user, f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
-		
-		if(userAppRole.isEmpty()) {
-			aonRoles.forEach(aonRole -> {
-				UserAppRole newUserAppRole = new UserAppRole()
-						.setDomain(domainId)
-						.setApp(null)
-						.setUser(userId)
-						.setRole(aonRole);
-				
-				AON_SOLUTIONS.insertUserAppRole(domainName, domainId, user, newUserAppRole);
-			});
-			
-		} 
+	@Override
+	public void removeBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, Fee oldFee, ProductBooking product) throws AonCoreException {
+		AON.removeBookingProduct(domainName, domain, user, customerRelatedRegistry, Optional.of(oldFee), product);
+	}
+	
+	@Override
+	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) throws AonCoreException {
+		AON.requestBookingInfo(domainName, domain, user, product, customerRegistry);
 	}
 	
 	@Override

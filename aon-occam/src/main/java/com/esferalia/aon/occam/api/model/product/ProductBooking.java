@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -14,9 +15,17 @@ public class ProductBooking extends Product implements Serializable {
 	private static final long serialVersionUID = -1616838783810544813L;
 	
 	private ProductBookingType bookingType;
+	private ProductBookingPriceType bookingPriceType;
+	
 	private Integer position;
 	private Workgroup workgroup;
 	private TaskHolder taskHolder;
+	private ProjectType projectType;
+	
+	private Boolean noBooking;
+	
+	private Boolean webhook;
+	private String webhookProductId;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -39,6 +48,15 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setBookingType(ProductBookingType bookingType) {
 		this.bookingType = bookingType;
+		return this;
+	}
+
+	public ProductBookingPriceType getBookingPriceType() {
+		return bookingPriceType;
+	}
+
+	public ProductBooking setBookingPriceType(ProductBookingPriceType bookingPriceType) {
+		this.bookingPriceType = bookingPriceType;
 		return this;
 	}
 
@@ -147,6 +165,42 @@ public class ProductBooking extends Product implements Serializable {
 
 	public ProductBooking setDescriptionTemplate(String descriptionTemplate) {
 		this.descriptionTemplate = descriptionTemplate;
+		return this;
+	}
+
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+
+	public ProductBooking setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
+		return this;
+	}
+
+	public Boolean isNoBooking() {
+		return noBooking;
+	}
+
+	public ProductBooking setNoBooking(Boolean noBooking) {
+		this.noBooking = noBooking;
+		return this;
+	}
+
+	public Boolean isWebhook() {
+		return webhook;
+	}
+
+	public ProductBooking setWebhook(Boolean webhook) {
+		this.webhook = webhook;
+		return this;
+	}
+
+	public String getWebhookProductId() {
+		return webhookProductId;
+	}
+
+	public ProductBooking setWebhookProductId(String webhookProductId) {
+		this.webhookProductId = webhookProductId;
 		return this;
 	}
 	

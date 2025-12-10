@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingPriceType;
 import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductComposition;
@@ -45,20 +46,24 @@ import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ProductEntry extends AonCustomDockLayout {
@@ -84,6 +89,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
+	private TabLayoutPanel tablayoutPanel;
+	
 	private AonCustomCard generalCard = new AonCustomCard("Datos Comerciales");
 	private ProductStatusSelect status;
 	private AonCustomTextBox code = new AonCustomTextBox("C\u00f3digo Comercial");
@@ -97,12 +104,19 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomMultiSelectBox domainType = new AonCustomMultiSelectBox("Tipo Dominio");
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
+	private AonCustomCheckBox webhook = new AonCustomCheckBox("CRM (Webhook)");
+	private AonCustomTextBox webhookProductId = new AonCustomTextBox("ID Servicio");
+	
 	private AonCustomCheckBox composite = new AonCustomCheckBox("Compuesto");
 	private AonCustomIntegerBox trial = new AonCustomIntegerBox("D\u00edas Prueba"); // TRIAL_LIMIT_DAYS
 	private AonCustomDateBox trialLimit = new AonCustomDateBox("Fecha L\u00edmite Prueba"); // TRIAL_LIMIT_DATE
 	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloq. Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
+	private AonCustomCheckBox noBooking = new AonCustomCheckBox("No Contratable");
 	
 	private AonCustomIntegerBox posititon = new AonCustomIntegerBox("Posici\u00f3n");
+	private AonCustomListBox priceType = new AonCustomListBox("T. Precio");
+	
+	private AonCustomListBox projectType = new AonCustomListBox("T. Expediente");
 	private AonCustomListBox workgroup = new AonCustomListBox("G. Trabajo");
 	private AonCustomListBox taskHolder = new AonCustomListBox("Operario");
 	
@@ -154,6 +168,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		container.add(messagePanel);
 		
+		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
+		tablayoutPanel.setHeight("100%");
+		tablayoutPanel.setWidth("100%");
+		container.add(tablayoutPanel);
+		
 		add(container);
 	}
 	
@@ -196,38 +215,42 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		getProducts(productList -> {
 			getProduct(productId, dbProduct -> {
 				
-				remove(container);
-				
 				tariffRow.clear();
 				if(tariffRow.getWidgetCount() > 1) tariffRow.remove(1);
 				
-				container = new HTMLPanel(EMPTY_STRING);
-				container.addStyleName(AON.CSS.aonItemFlex());
-				container.addStyleName(AON.CSS.aonFlexColumn());
-				container.getElement().getStyle().setProperty("padding", "0 1rem");
-				
-				messagePanel.addStyleName(AON.CSS.aonWidthAll());
-				
+				container.clear();
 				container.add(messagePanel);
 				
-				FlowPanel cardsRow = createRow(createGeneralCard(), createAditionalCard());
-				cardsRow.getElement().getStyle().setProperty("align-items", "start");
+				tablayoutPanel.clear();
+				container.add(tablayoutPanel);
 				
-				tariffRow = createRow(createTariffCard(), product.isComposition() ? createCompositeCard() : null);
-				tariffRow.getElement().getStyle().setProperty("align-items", "start");
+				ScrollPanel generalDataScroll = new ScrollPanel(createGeneralCard());
+				generalDataScroll.setHeight("100%");
 				
-				container.add(cardsRow);
-				container.add(tariffRow);
+				tablayoutPanel.add(generalDataScroll, "Datos Generales");
+				
+				ScrollPanel aditionalScroll = new ScrollPanel(createAditionalCard());
+				aditionalScroll.setHeight("100%");
+				aditionalScroll.getElement().getStyle().setProperty("margin-top", "1rem");
+				
+				tablayoutPanel.add(aditionalScroll, "Datos Adicionales");
+				
+				getTariffs(tariffs -> {
+					if(!tariffs.isEmpty()) {
+						tariffRow = createRow(createTariffCard(), product.isComposition() ? createCompositeCard() : null);
+						tariffRow.getElement().getStyle().setProperty("align-items", "start");
+						
+						tablayoutPanel.add(tariffRow, "Tarifas");
+					}
+				});
+				
+				container.add(tablayoutPanel);
 				
 				add(container);
 				
 				Scheduler.get().scheduleDeferred(new Command() {
 			        public void execute() {
 			        	name.setFocus(true);
-			        	
-//			        	int alturaRestante = calcularAlturaRestante(tariffCenterPanelCard);
-//			        	tariffCenterPanelCard.setHeight(alturaRestante + "px");
-//			        	compositeCenterPanelCard.setHeight(alturaRestante + "px");
 			        }
 			    });
 				
@@ -242,9 +265,19 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		generalCard = new AonCustomCard("Datos Comerciales", status);
 		generalCard.setToolbarWidgetShown();
+		generalCard.setHeight("100%");
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
-		generalCard.getElement().getStyle().setProperty("min-width", "36rem");
+		generalCard.getElement().getStyle().setProperty("min-width", "33rem");
 		generalCard.add(table);
+		
+		type.clearItems();
+		type.setWidth("20rem");
+		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
+		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
+		type.addItem(ProductBookingType.USER.getDescription(), ProductBookingType.USER.name());
+		type.addItem(ProductBookingType.CONSULTANCY.getDescription(), ProductBookingType.CONSULTANCY.name());
+		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
+		type.setValue(product.getBookingType().name());
 		
 		code.getTextBox().getElement().getStyle().setProperty("text-transform", "uppercase");
 		code.getTextBox().setMaxLength(15);
@@ -257,42 +290,32 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			item.setDescription(name.getValue());
 		});
 		
-		table.add(createRow(code, name));
+		table.add(createRow(type, code, name));
 		
-		comercialDescription.setValue(product.getDescriptionTemplate());
-		comercialDescription.addBlurHandler(e -> product.setDescriptionTemplate(comercialDescription.getValue()));
-		table.add(createRow(comercialDescription));
-		
-		return generalCard;
-	}
-
-	private AonCustomCard createAditionalCard() {
-		FlowPanel table = createFlexColumnPanel();
-		
-		console = new ProductConsoleSelect(product.isConsole() ? ProductConsole.CONSOLE : ProductConsole.SELF_CONTRACT);
-		console.addBlurHandler(e -> onConsoleChange());
-		
-		aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n", console);
-		aditionalCard.setToolbarWidgetShown();
-		aditionalCard.setHeight("100%");
-		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
-		aditionalCard.getElement().getStyle().setProperty("min-width", "36rem");
-		aditionalCard.add(table);
-		
+		posititon.setWidth("3rem");
 		posititon.hideNearBy();
 		posititon.setValue(product.getPosition());
 		posititon.addValueChangeHandler(e -> {
 			if(null != posititon.getValue()) {
-				Optional<ProductBooking> sameProductPos = products.stream().filter(pb -> null != pb.getPosition() && posititon.getValue().equals(pb.getPosition())).findAny();
 				
-				if(sameProductPos.isEmpty())
-					product.setPosition(posititon.getValue());
-				else {
+				Optional<ProductBooking> sameProductPos = products.stream().filter(pb -> null != pb.getPosition() && posititon.getValue().equals(pb.getPosition())).findAny();
+				if(!sameProductPos.isEmpty())
 					AonMessagePanel.showWarning(messagePanel, "No puede haber dos productos con la misma posici\u00f3n. Actualmente " + sameProductPos.get().getCode() + " tiene la posici\u00f3n " + posititon.getValue());
-					posititon.setValue(null);
-				}
+				
+				product.setPosition(posititon.getValue());
+				
 			} else posititon.setValue(null);
 				
+		});
+		
+		priceType.clearItems();
+		priceType.addItem(ProductBookingPriceType.PVP.getDescription(), Byte.toString(ProductBookingPriceType.PVP.value()));
+		priceType.addItem(ProductBookingPriceType.PLAN.getDescription(), Byte.toString(ProductBookingPriceType.PLAN.value()));
+		priceType.addItem(ProductBookingPriceType.FROM.getDescription(), Byte.toString(ProductBookingPriceType.FROM.value()));
+		priceType.addItem(ProductBookingPriceType.HIDE.getDescription(), Byte.toString(ProductBookingPriceType.HIDE.value()));
+		priceType.setValue(Byte.toString(product.getBookingPriceType().value()));
+		priceType.addChangeHandler(e -> {
+			product.setBookingPriceType(ProductBookingPriceType.safeValueOf(Byte.parseByte(priceType.getValue())));
 		});
 		
 		price.hideNearBy();
@@ -317,7 +340,50 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		pvp.hideNearBy();
 		pvp.setEnable(false);
 		
-		table.add(createRow(posititon, price, iva, pvp));
+		table.add(createRow(posititon, priceType, price, iva, pvp));
+		
+		comercialDescription.setMinHeight("15rem");
+		comercialDescription.setValue(product.getDescriptionTemplate());
+		comercialDescription.addBlurHandler(e -> product.setDescriptionTemplate(comercialDescription.getValue()));
+		table.add(createRow(comercialDescription));
+		
+		return generalCard;
+	}
+
+	private AonCustomCard createAditionalCard() {
+		FlowPanel table = createFlexColumnPanel();
+		
+		console = new ProductConsoleSelect(product.isConsole() ? ProductConsole.CONSOLE : ProductConsole.SELF_CONTRACT);
+		console.addBlurHandler(e -> onConsoleChange());
+		
+		aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n", console);
+		aditionalCard.setToolbarWidgetShown();
+		aditionalCard.setHeight("100%");
+		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
+		aditionalCard.getElement().getStyle().setProperty("min-width", "33rem");
+		aditionalCard.add(table);
+		
+		aonApps.setOptions(AonApp.getValues().stream().map(app -> app.getDescription()).collect(Collectors.toSet()));
+		aonApps.setSelectedOptions(getSelectedAonApps());
+		aonApps.addBlurHandler(e -> createAonApps());
+		
+		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
+		domainType.setSelectedOptions(product.getDomainTypes().stream().map(dt -> dt.getName()).collect(Collectors.toSet()));
+		domainType.addBlurHandler(e -> onDomainTypeChange());
+		
+		table.add(createRow(aonApps, domainType));
+		
+		projectType.clearItems();
+		projectType.addItem("-", "");
+		projectType.addChangeHandler(e -> {
+			workgroup.setVisible(AonStringUtils.isNotBlank(projectType.getValue()));
+			taskHolder.setVisible(AonStringUtils.isNotBlank(projectType.getValue()));
+			
+			product.setProjectType(AonStringUtils.isBlank(projectType.getValue())
+					? null
+					: new ProjectType().setId(Integer.parseInt(projectType.getValue()))
+			);
+		});
 		
 		workgroup.clearItems();
 		workgroup.addItem("-", "");
@@ -349,41 +415,31 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			}
 		});
 		
-		getAviableWorkgroups(workgroups -> {
-			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
-			workgroup.setValue(null != product.getWorkgroup() ? product.getWorkgroup().getId().toString() : null);
+		getAviableProjectTypes(projectTypes -> {
+			projectTypes.forEach(projectTypeIt -> projectType.addItem(projectTypeIt.getDescription(), projectTypeIt.getId().toString()));
+			projectType.setValue(null != product.getProjectType() ? product.getProjectType().getId().toString() : null);
 			
-			if(null != product.getWorkgroup()) {	
-				getAviableTaskHolders(product.getWorkgroup().getId(), taskHolders -> {
-					taskHolder.setVisible(true);
-					taskHolder.clearItems();
-					taskHolder.addItem("-", ""); 
-					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
-					taskHolder.setValue(null != product.getTaskHolder() ? product.getTaskHolder().getRegistry().toString() : null);
-				});
-			} else {
-				taskHolder.setVisible(false);
-			}	
+			workgroup.setVisible(null != product.getProjectType());
+			taskHolder.setVisible(null != product.getProjectType());
+			
+			getAviableWorkgroups(workgroups -> {
+				workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
+				workgroup.setValue(null != product.getProjectType() && null != product.getWorkgroup() ? product.getWorkgroup().getId().toString() : null);
+				
+				if(null != product.getWorkgroup()) {	
+					getAviableTaskHolders(product.getWorkgroup().getId(), taskHolders -> {
+						taskHolder.clearItems();
+						taskHolder.addItem("-", ""); 
+						taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
+						taskHolder.setValue(null != product.getProjectType() && null != product.getTaskHolder() ? product.getTaskHolder().getRegistry().toString() : null);
+					});
+				} else {
+					taskHolder.setVisible(false);
+				}	
+			});
 		});
 		
-		table.add(createRow(workgroup, taskHolder));
-		
-		type.clearItems();
-		type.setWidth("20rem");
-		type.addItem(ProductBookingType.SERVICE.getDescription(), ProductBookingType.SERVICE.name());
-		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
-		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
-		type.setValue(product.getBookingType().name());
-		
-		aonApps.setOptions(AonApp.getValues().stream().map(app -> app.getDescription()).collect(Collectors.toSet()));
-		aonApps.setSelectedOptions(getSelectedAonApps());
-		aonApps.addBlurHandler(e -> createAonApps());
-		
-		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
-		domainType.setSelectedOptions(product.getDomainTypes().stream().map(dt -> dt.getName()).collect(Collectors.toSet()));
-		domainType.addBlurHandler(e -> onDomainTypeChange());
-		
-		table.add(createRow(type, aonApps, domainType));
+		table.add(createRow(projectType, workgroup, taskHolder));
 		
 		category.clearItems();
 		category.addItem("-", "");
@@ -404,7 +460,24 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			});
 		});
 		
-		table.add(createRow(category, tags));
+		webhook.setWidth("17rem");
+		webhook.setValue(product.isWebhook());
+		webhook.addValueChangeHandler(e -> {
+			product.setWebhook(e.getValue());
+			webhookProductId.setVisible(product.isWebhook());
+			if(!product.isWebhook()) {
+				webhookProductId.setValue(null);
+				product.setWebhookProductId(null);
+				webhook.setWidth("17rem");
+			} else webhook.setWidth("21rem");
+		});
+		
+		webhookProductId.setWidth("7rem");
+		webhookProductId.setVisible(product.isWebhook());
+		webhookProductId.setValue(product.getWebhookProductId());
+		webhookProductId.addValueChangeHandler(e -> product.setWebhookProductId(webhookProductId.getValue()));
+		
+		table.add(createRow(category, tags, webhook, webhookProductId));
 		
 		// LIMITS
 		limit.hideNearBy();
@@ -425,7 +498,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_MAX")).findFirst();
 		limit.setValue(limitOpt.isEmpty() ? null : Integer.parseInt(limitOpt.get().getValue()));
 		
-		limitOverflow.setWidth("10rem");
+		limitOverflow.setWidth("12rem");
 		limitOverflow.addValueChangeHandler(e -> {
 			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 			if(itemAddInfoOpt.isEmpty()) {
@@ -443,7 +516,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		Optional<ItemAddInfo> limitOverflowOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
 		limitOverflow.setValue(limitOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(limitOverflowOpt.get().getValue()));
 		
-		table.add(createRow(limitOverflow, limit));
+		noBooking.setWidth("11rem");
+		noBooking.setValue(product.isNoBooking());
+		noBooking.addValueChangeHandler(e -> product.setNoBooking(e.getValue()));
+		
+		table.add(createRow(limitOverflow, limit, noBooking));
 		
 		// TRIAL
 		trial.hideNearBy();
@@ -500,7 +577,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		trialOverflow.setValue(trialOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(trialOverflowOpt.get().getValue()));
 		
 		composite = new AonCustomCheckBox("Compuesto");
-		composite.setWidth("5rem");
+		composite.setWidth("22rem");
 		composite.setValue(product.isComposition());
 		composite.addValueChangeHandler(e -> {
 			product.setComposition(composite.getValue());
@@ -550,10 +627,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private Widget createTariffCard() {
 		tariffCard = new AonCustomCard("Tarifas");
 		tariffCard.addStyleName(AON.CSS.aonWidthAll());
-		tariffCard.getElement().getStyle().setProperty("min-width", "36rem");
+		tariffCard.getElement().getStyle().setProperty("min-width", "33rem");
 		
 		tariffCenterPanelCard = new SimpleLayoutPanel();
-		
 		itemTariffTable  = new ItemTariffTable(options, product, item) {
 			
 			@Override
@@ -584,7 +660,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		compositeCard = new AonCustomCard("Pack Productos", addStatusPanel);
 		compositeCard.addStyleName(AON.CSS.aonWidthAll());
-		compositeCard.getElement().getStyle().setProperty("min-width", "36rem");
+		compositeCard.getElement().getStyle().setProperty("min-width", "33rem");
 		compositeCard.setToolbarWidgetShown();
 		
 		compositeItemTable  = new CompositeItemTable(options, product, item) {
@@ -715,8 +791,19 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private void saveProduct() {
 		// Update Status (should use handler for this)
 		product.setStatus(status.getValue());
+		
+		if(AonStringUtils.isBlank(projectType.getValue())) {
+			product.setWorkgroup(null);
+			product.setTaskHolder(null);
+		}
+		
 		item.setStatus(status.getValue());
 		item.setBarcode(null);	
+		
+		if(product.isWebhook() && AonStringUtils.isBlank(product.getWebhookProductId())) {
+			AonMessagePanel.showWarning(messagePanel, "Si la notificaci\u00f3n al CRM esta activo es obligatorio indicar el ID Servicio");
+			return;
+		}
 		
 		AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
 		
@@ -935,6 +1022,21 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		});
 	}
 	
+	private void getAviableProjectTypes(Consumer<List<ProjectType>> success) {
+		commonService.getAviableProjectTypes(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<List<ProjectType>>() {
+			
+			@Override
+			public void onSuccess(List<ProjectType> projectTypes) {
+				success.accept(projectTypes);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo tipos expedientes: " + caught.getMessage());
+			}
+		});
+	}
+	
 	private void getAviableWorkgroups(Consumer<List<Workgroup>> success) {
 		commonService.getAviableWorkgroups(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<List<Workgroup>>() {
 			
@@ -985,6 +1087,23 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error productos: " + caught.getMessage());
+			}
+		});
+	}
+	
+
+
+	private void getTariffs(Consumer<List<Tariff>> success) {
+		commonService.getTariffs(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<Tariff>>() {
+			
+			@Override
+			public void onSuccess(List<Tariff> tariffsDb) {
+				success.accept(tariffsDb);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo tarifas: " + caught.getMessage());
 			}
 		});
 	}

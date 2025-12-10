@@ -21,7 +21,6 @@ public class AuthJSON {
 	public static JSONObject toJSON(Auth auth) {
 		return new JSONObject()
 				.put(IJsonNames.EMAIL, auth.getEmail())
-				.put(IJsonNames.UUID, auth.getUuid())
 				.put(IJsonNames.NAME, auth.getName() != null ? auth.getName() : "")
 				.put(IJsonNames.SURNAME, auth.getSurname() != null ? auth.getSurname() : "")
 				.put(IJsonNames.DOCUMENT, auth.getDocument() != null ? auth.getDocument() : "")

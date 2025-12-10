@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
-import com.esferalia.aon.occam.api.model.product.ProductBookingType;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -113,7 +112,7 @@ public class TariffCatalogueList extends HTMLPanel {
 	
 	private void paintHeader() {
 		initializeTariffCatalogueColumns.clear();
-		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "15rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
+		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.code(), "10rem" , "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.description(), "-moz-available" , "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Tipo" , "5rem" , ""));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Serv. Aon" , "7rem" , ""));
@@ -162,7 +161,7 @@ public class TariffCatalogueList extends HTMLPanel {
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
 						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-						tab.addRow(row, new Label(product.getBookingType().equals(ProductBookingType.PLAN) ? "Plan" : "Servicio"), col.getWidth());
+						tab.addRow(row, new Label(product.getBookingType().getDescription()), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Aon")){
 						tab.addRow(row, new Label(product.isBookingComposition() ? "Compuesto" : "Simple"), col.getWidth());
 					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Serv. Despacho")){
@@ -213,7 +212,15 @@ public class TariffCatalogueList extends HTMLPanel {
 				    .sorted(
 				        Comparator.comparing(
 				                ProductBooking::getBookingType,
-				                Comparator.comparingInt(type -> type == ProductBookingType.PLAN ? 0 : 1)
+				                Comparator.comparingInt(type -> {
+				                    switch (type) {
+				                        case PLAN:         return 0;
+				                        case CONSULTANCY:  return 1;
+				                        case USER:         return 2;
+				                        case SERVICE:      return 3;
+				                        default:           return Integer.MAX_VALUE;
+				                    }
+				                })
 				        ).thenComparing(
 				                ProductBooking::getPosition,
 				                Comparator.nullsLast(Comparator.naturalOrder())
