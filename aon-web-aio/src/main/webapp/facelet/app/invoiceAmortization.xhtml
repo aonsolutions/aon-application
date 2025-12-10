@@ -7,6 +7,12 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich">
 	
+	<style>
+		input[id$="amortizationToolbar-back"] {
+	        display: none;
+		}
+	</style>
+	
 	<aon:valueParam name="invoiceController" default="#{expenseInvoice}" />
 	
 	
@@ -24,9 +30,26 @@
 				<aon:commandButton 
 					id="appButton" 
 					style="display: none; "
-					action="#{invoiceController.showAmortization}"		
+					action="#{invoiceController.showAmortization}"
+					oncomplete="hideAmortizationToolbarBackButton()"		
 				>
 				</aon:commandButton>
+				<script type="text/javascript">
+				//<![CDATA[
+					function hideAmortizationToolbarBackButton() {
+                        var css = '#aonContent\\:amortizationForm\\:amortizationToolbar-back { display: none; }';
+                        var style = document.createElement('style');
+                        if (style.styleSheet) {
+                        	 // IE only
+                            style.styleSheet.cssText = css;
+                        } else {
+                        	// Other browsers
+                            style.appendChild(document.createTextNode(css));
+                        }
+                        document.head.appendChild(style);
+                    }
+				//]]>
+				</script>
 			</aon:if>
 		</aon:form>
 		<script type="text/javascript">
