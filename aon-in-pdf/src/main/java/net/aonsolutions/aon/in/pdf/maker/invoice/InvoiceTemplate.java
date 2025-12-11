@@ -1678,7 +1678,7 @@ public class InvoiceTemplate {
 		x = 50;
 		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
 		y = bottom + 10 + bottomExtra + legalSize;
-		if(ctx.isTbai() && ctx.getQrUrl() != null && !ctx.getInvoice().isProforma()) {
+		if(!ctx.isVerifactu() && ctx.getQrUrl() != null && !ctx.getInvoice().isProforma()) {
 			byte[] qrCode = createQR(ctx.getQrUrl(), 300, 300);
 			drawImage(ctx.getDocument(), ctx.getContents(), qrCode, x, y, 120, 120);
 			if(ctx.getTbaiId() != null)
