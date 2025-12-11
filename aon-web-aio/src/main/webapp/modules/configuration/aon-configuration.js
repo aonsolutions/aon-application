@@ -104,7 +104,7 @@ export class AonConfiguration extends AonElement {
 		// Ficha Cliente
 		let company = LS.getCompany();
 		
-		if (/*this.dur.isAdmin()*/ this.dur.isParentUser() && company && company.registry && company.type !== "OFFICE") {
+		if (this.dur.isParentUser() && company && company.registry && company.type !== "OFFICE") {
 			getRelationShipCompany({
 				url: company.domain,
 				relatedRegistry: company.registry
