@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, PLAN_APPS} from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
@@ -295,6 +295,7 @@ export class AonNewMenu extends AonElement {
 			}
 			
 		}
+		
 		if(app.app != "new"){
 			let appsDiv = this.getElement("aonMenuLeftop-applications");
 			appsDiv.style.removeProperty('background-color'); 
@@ -343,24 +344,25 @@ export class AonNewMenu extends AonElement {
 		case CONSOLE_MENU.app:
 			return new AonConsoleMenu();
 		default : 
-		return new AonSuiteMenu();
+			return new AonSuiteMenu();
 		}
 	}
 
 	build() {
-		//let aonMenuLefttop = this.createElement(TAG.DIV);
-		//aonMenuLefttop.id = this.AON_MENU_LEFTOP;
-		//aonMenuLefttop.className = CSS.AON_MENU_LEFTOP;
-		//aonMenuLefttop.classList.add("aonNewMenuLeftTop");
-		//aonMenuLefttop.style.visibility = "visible";
-		//this.appendChild(aonMenuLefttop);
-		
 		this.buildMenuLeftop();
 
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
 		aonMenuSidenav.classList.add("hiddenMenuLeft");
+		
+		// Set default close/open status
+		let aonMenuAnchor = this.getElement("aonMenuAnchor");
+		if(aonMenuAnchor.classList.contains("close"))
+			aonMenuSidenav.classList.add("close");
+		else
+			aonMenuSidenav.classList.remove("close");
+			
 		this.appendChild(aonMenuSidenav);
 		aonMenuSidenav.classList.add("aonNewMenuSideNav");
 		this.getRootPanel().style.marginLeft = '0px';
@@ -411,7 +413,7 @@ export class AonNewMenu extends AonElement {
 		if (index !== -1) {
 			MENU_APPS[index] = newApps;  // Reemplazamos el valor segun donde estemos
 		}
-
+		
 		for (let item in MENU_APPS) {
 			if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
@@ -483,7 +485,6 @@ export class AonNewMenu extends AonElement {
 		if ( aonTopMenuDiv.childElementCount === 0 ){
 			this.hideTopNav();	
 		}
-
 	}
 
 	reloadTopNav() {
@@ -550,12 +551,12 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.transition = 'margin-left 0.3s ease';
 		// aonlogo.style.transition = 'left 0.3s ease';
 	
-		sidenav.style.width = '68px';
-		sidenav.style.display = "";  
+		//sidenav.style.width = '68px';
+		//sidenav.style.display = "";  
 		// sidenav.style.marginTop = "6px";
 		// apps.style.marginTop = "6px";
 	
-		menulist.style.visibility = "visible";
+		//menulist.style.visibility = "visible";
 	
 		// aonlogo.style.left = '60px';
 		// aonlogo.style.position = 'relative';
@@ -576,7 +577,7 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.transition = 'margin-left 0.3s ease';
 		// aonlogo.style.transition = 'left 0.3s ease';
 	
-		sidenav.style.width = '0px';
+		//sidenav.style.width = '0px';
 	
 		// setTimeout(() => {
 		// 	sidenav.style.display = "none";
@@ -589,14 +590,16 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.marginLeft = '0px';
 	}
 	
-
+	/*
 	showMenuButton() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		if (this.getAttribute('opened')) {
+			aonMenuSidenav.classList.add('opened');
 			aonMenuSidenav.style.width = '68px';
 			this.getRootPanel().style.marginLeft = '68px';
 		}
 	}
+	*/
 
 	buildApp(app, style, id) {
 
@@ -851,61 +854,6 @@ export class AonNewMenu extends AonElement {
 		});
 	}
 
-	buildNoteMenu(app) {
-		this.CLOSE = false;
-		let rootPanel = this.getRootPanel();
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		aonMenuSidenav.classList.add("aonNewMenuNoteMenuSideNav");
-		if (rootPanel) rootPanel.style.marginLeft = '250px';
-		aonMenuSidenav.innerHTML = '';
-
-		let div = this.createElement(TAG.DIV);
-		div.className = 'aonMenuSidenavAppToolbar';
-		div.style.backgroundColor = this.getAppToolbarBackgroundColor(app);
-		aonMenuSidenav.appendChild(div);
-
-		let span = this.createElement(TAG.SPAN);
-		span.className = 'aonTitle';
-		span.innerHTML = app.title;
-
-		let span2 = this.createElement(TAG.SPAN);
-		span2.className = 'aonRight40';
-		let aibS = new AonIconButton();
-		aibS.id = "aon-menu-sidenav-app-launch-button";
-		aibS.icon = "add";
-		aibS.color = "white";
-		aibS.noHover = "true";
-		span2.appendChild(aibS);
-
-		let span3 = this.createElement(TAG.SPAN);
-		span3.className = 'aonRight0';
-		let aibC = new AonIconButton();
-		aibC.id = "aon-menu-sidenav-app-close-button";
-		aibC.icon = "close";
-		aibC.color = "white";
-		aibC.noHover = "true";
-		span3.appendChild(aibC);
-		div.appendChild(span);
-		div.appendChild(span2);
-		div.appendChild(span3);
-
-		aibC.addEventListener(EVENT.CLICK, () => {
-			aonMenuSidenav.style.width = '68px';
-			if (rootPanel) rootPanel.style.marginLeft = '68px';
-			this.buildMenu();
-		});
-
-		let div2 = this.createElement(TAG.DIV);
-		aonMenuSidenav.appendChild(div2);
-
-		let aonNote = new AonNote();
-		div2.appendChild(aonNote);
-
-		aibS.addEventListener(EVENT.CLICK, () => {
-			aonNote.addNote();
-		});
-	}
-
 	development(title) {
 		let aonApplication = this.getApplication();
 		aonApplication.development(title);
@@ -950,7 +898,7 @@ export class AonNewMenu extends AonElement {
 				aonMenuSidenav.style.width = '68px';
 				this.getRootPanel().style.marginLeft = '68px';
 			} else {
-				aonMenuSidenav.style.width = '0px';
+				//aonMenuSidenav.style.width = '0px';
 				this.getRootPanel().style.marginLeft = '0px';
 			}
 			this.buildMenu();
@@ -1124,8 +1072,8 @@ export class AonNewMenu extends AonElement {
 		} 
 		if (MenuApps.CONSOLE.app === app.app)
 			return this.getDur().isConsole();
-		else 
-			return false;
+		 
+		return false;
 	}
 	
 	isSidenavApp(app) {

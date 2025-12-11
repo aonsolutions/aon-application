@@ -1,6 +1,6 @@
 import { AonElement } from '../components/AonElement.js';
 import { AonHeader } from '../modules/aon-header.js';
-import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG, MATERIAL_ICONS } from '../environments/environments.js'; 
 import * as LS from '../services/localStorageService.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
@@ -270,6 +270,56 @@ export class AonHome extends AonElement {
 				}
 			});
 		}
+		
+		// Menu button collapse
+		let aonMenuButton = this.createMenuButton();
+		this.appendChild(aonMenuButton);
+	}
+	
+	createMenuButton(){
+		let menuAnchor = this.createElement(TAG.A);
+		menuAnchor.id = "aonMenuAnchor";
+		menuAnchor.addEventListener(EVENT.CLICK, () => {
+			this.collapseSidenavMenu();
+		});
+		
+		let div = this.createElement(TAG.DIV);
+		div.id = "aonMenuAnchorDiv";
+		div.classList.add("aonMenuAnchorDiv");
+		
+		let icon = this.createElement(TAG.SPAN);
+		icon.id = "aonMenuAnchorDivIcon";
+		icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
+		icon.innerHTML = MATERIAL_ICONS.ARROW_CIRCLE_LEFT;
+		icon.classList.add("aonNewMenuAppIcon");
+		div.appendChild(icon);
+		
+		let span = this.createElement(TAG.SPAN);
+		span.classList.add("aonMenuAnchorDivSpan");
+		span.innerHTML = 'Menu'; 
+		div.appendChild(span);
+		
+		menuAnchor.appendChild(div);
+		
+		return menuAnchor;
+	}
+	
+	collapseSidenavMenu(){
+		let menuAnchor = this.getElement("aonMenuAnchor");
+		menuAnchor.classList.toggle("close");
+		
+		let aonMenuSidenav = this.getElement("aonMenuSidenav");
+		aonMenuSidenav.classList.toggle("close");
+		
+		let rootPanel = this.getElement("rootPanel");
+		rootPanel.classList.toggle("closeSidenav");
+		
+		let menuAnchorIcon = this.getElement("aonMenuAnchorDivIcon");
+		menuAnchorIcon.innerHTML = menuAnchor.classList.contains('close')
+			? MATERIAL_ICONS.ARROW_CIRCLE_RIGHT
+			: MATERIAL_ICONS.ARROW_CIRCLE_LEFT;
+		
 	}
 	
 	closeRightPanel(){
