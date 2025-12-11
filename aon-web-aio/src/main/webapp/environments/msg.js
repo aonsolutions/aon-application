@@ -79,6 +79,7 @@ export const ALL1 = MSG.ALL1;
 export const ALL2 = MSG.ALL2;
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
+export const AMORTIZATION = MSG.AMORTIZATION;
 export const ANNUAL_VIEW = MSG.ANNUAL_VIEW;
 export const AON_BLUE = 'Azul Aon';
 export const AON_SERVICES = MSG.AON_SERVICES;
