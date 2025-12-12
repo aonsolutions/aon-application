@@ -9,7 +9,6 @@ import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
 import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
-import { clearAuth } from '../services/service.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
