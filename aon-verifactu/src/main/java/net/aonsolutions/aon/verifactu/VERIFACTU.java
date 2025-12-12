@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.soap.SOAPMessage;
 
 import org.w3c.dom.Document;
@@ -40,6 +41,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ConsultaFactuSistemaFacturacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ObjectFactory;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
@@ -54,7 +57,30 @@ public class VERIFACTU {
 		
 	}
 
+	// **************************************************************
+	// ************************************************ [QUERY] *****
+	// **************************************************************
+	public static VerifactuContext query(InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+			.setOperation(InvoiceCommunicationOperation.CONSULTATION);
+		return query(vc);
+	}
 	
+	private static VerifactuContext query(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkQuery(vc);
+		ConsultaFactuSistemaFacturacionType request = Query2Verifactu.build(vc);
+		vc.setQueryRequest( request );
+		ObjectFactory of = new ObjectFactory();
+		JAXBElement<ConsultaFactuSistemaFacturacionType> jaxbElement = of.createConsultaFactuSistemaFacturacion(request);
+		Document document = VerifactuXMLUtils.toDocument(jaxbElement, ConsultaFactuSistemaFacturacionType.class);
+		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		System.out.println( "VERIFACTU QUERY Request: \n" + new String( vc.getRequestBytes() ) );
+		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
+		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
+		vc.setResponse( dataResponse );
+		return vc;
+	}
+
 	// **************************************************************
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
@@ -181,7 +207,27 @@ public class VERIFACTU {
 		saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);					
 	}
 	
+	private static void checkQuery(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkCompany(vc);
+		checkConfig(vc);
+		if (vc.getInvoiceCommunicationQuery() == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028);
+		}
+		if (vc.getInvoiceCommunicationQuery().getYear().isEmpty() ) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029);
+		}
+		if (vc.getInvoiceCommunicationQuery().getMonth().isEmpty() ) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);
+		}
+	}
+	
 	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkCompany(vc);
+		checkConfig(vc);
+		checkInvoices(vc);
+	}
+	
+	private static void checkCompany(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0001);
 		}
@@ -193,14 +239,20 @@ public class VERIFACTU {
 			|| AonStringUtils.isBlank( vc.getCompany().getDomain().getName())) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0003);
 		}
-		if (vc.invoiceCount() == 0) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
-		}
+	}
+	
+	private static void checkConfig(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc.getConfig() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
 		}
 		if (vc.getConfig().getCertificate() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0007);
+		}
+	}
+	
+	private static void checkInvoices(VerifactuContext vc) throws InvoiceCommunicationException {
+		if (vc.invoiceCount() == 0) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
 		}
 	}
 	

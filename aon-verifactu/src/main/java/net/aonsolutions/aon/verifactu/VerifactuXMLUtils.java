@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.MessageFactory;
@@ -86,6 +87,23 @@ class VerifactuXMLUtils {
 		    transformer.transform(new DOMSource(document), new StreamResult(outputStream));
 		    return outputStream.toByteArray();
 		} catch (TransformerException | TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
+		}
+	}
+	
+	static <T> Document toDocument(JAXBElement<T> data, Class<T> clazz) throws InvoiceCommunicationException {
+		try {
+			JAXBContext context = JAXBContext.newInstance(clazz);
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			// dbf.setNamespaceAware(true);
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.newDocument();
+			marshaller.marshal(data, document);
+			return document;
+		} catch (JAXBException | ParserConfigurationException e) {
 			e.printStackTrace();
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
 		}
