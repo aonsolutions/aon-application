@@ -96,7 +96,7 @@
 	
 	<complexType name="AnulacionesVentasBienesEnConsignaPFType">
 		<sequence>
-			<element name="VentaEnConsigna" type="tiposanulacion:AnulacionVentaEnConsignaType" minOccurs="1" maxOccurs="1000"/>
+			<element name="VentaEnConsigna" type="tiposanulacion:AnulacionVentaEnConsignaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -132,7 +132,7 @@
 
 	<complexType name="AnulacionesVariacionesExistenciasType">
 		<sequence>
-			<element name="VariacionExistencias" type="tiposanulacion:AnulacionVariacionExistenciasType" minOccurs="1" maxOccurs="10"/>
+			<element name="VariacionExistencias" type="tiposanulacion:AnulacionVariacionExistenciasType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -144,7 +144,7 @@
 	
 	<complexType name="AnulacionesArrendamientosLocalesNegociosType">
 		<sequence>
-			<element name="ArrendamientoLocalNegocio" type="tiposanulacion:AnulacionArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="100"/>
+			<element name="ArrendamientoLocalNegocio" type="tiposanulacion:AnulacionArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -156,7 +156,7 @@
 
 	<complexType name="AnulacionesTransmisionesInmueblesType">
 		<sequence>
-			<element name="TransmisionInmueble" type="tiposanulacion:AnulacionTransmisionInmuebleType" minOccurs="1" maxOccurs="100"/>
+			<element name="TransmisionInmueble" type="tiposanulacion:AnulacionTransmisionInmuebleType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -168,7 +168,7 @@
 
 	<complexType name="AnulacionesImportesPercibidosMetalicoPFType">
 		<sequence>
-			<element name="ImportePercibidoMetalico" type="tiposanulacion:AnulacionImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="100"/>
+			<element name="ImportePercibidoMetalico" type="tiposanulacion:AnulacionImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -246,7 +246,7 @@
 	
 	<complexType name="AnulacionesVentasBienesEnConsignaPJType">
 		<sequence>
-			<element name="VentaEnConsigna" type="tiposanulacion:AnulacionVentaEnConsignaType" minOccurs="1" maxOccurs="1000"/>
+			<element name="VentaEnConsigna" type="tiposanulacion:AnulacionVentaEnConsignaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -276,7 +276,7 @@
 	
 	<complexType name="AnulacionesImportesPercibidosMetalicoPJType">
 		<sequence>
-			<element name="ImportePercibidoMetalico" type="tiposanulacion:AnulacionImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="100"/>
+			<element name="ImportePercibidoMetalico" type="tiposanulacion:AnulacionImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -288,7 +288,7 @@
 
 	<complexType name="AnulacionesOperacionesSegurosType">
 		<sequence>
-			<element name="OperacionSeguro" type="tiposanulacion:AnulacionOperacionSeguroType" minOccurs="1" maxOccurs="100"/>
+			<element name="OperacionSeguro" type="tiposanulacion:AnulacionOperacionSeguroType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -300,7 +300,7 @@
 	
 	<complexType name="AnulacionesAgenciasViajesType">
 		<sequence>
-			<element name="AgenciaViaje" type="tiposanulacion:AnulacionAgenciaViajeType" minOccurs="1" maxOccurs="100"/>
+			<element name="AgenciaViaje" type="tiposanulacion:AnulacionAgenciaViajeType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -343,4 +343,17 @@
 			</choice>
 		</sequence>
 	</complexType>
+	
+	<complexType name="AnulacionesSubvencionesEntidadesPublicasType">
+		<sequence>
+			<element name="SubvencionEntidadPublica" type="tiposanulacion:AnulacionSubvencionEntidadPublicaType" minOccurs="1" maxOccurs="10000"/>
+		</sequence>	
+	</complexType>
+	
+	<complexType name="AnulacionSubvencionEntidadPublicaType">
+		<sequence>
+			<element name="IDSubvencionEntidadPublica" type="tiposcomplejos:IDSubvencionEntidadPublicaType"/>
+		</sequence>	
+	</complexType>	
+	
 </schema>

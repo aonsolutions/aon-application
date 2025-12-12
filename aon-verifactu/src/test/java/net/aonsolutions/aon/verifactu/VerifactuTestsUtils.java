@@ -185,5 +185,15 @@ class VerifactuTestsUtils {
 			.findFirst()
 			.orElseThrow(() -> new AonCoreException("No encuentro el cliente con documento " + document));
 	}
+
+	public static Invoice toFacesInvoice(Invoice invoice) {
+		invoice.detailStream()
+			.flatMap( d -> d.taxStream() )
+			.forEach( t -> {
+				t.setQuota( 0.0);
+				t.setSurchargeQuota( 0.0);
+			});
+		return invoice;
+	}
 	
 }

@@ -320,6 +320,7 @@
 			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COPIA_BASICA" type="DATOS_COPIABASICATYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>

@@ -719,7 +719,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	        	String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getInvoiceSeries());
-	        	setInvoiceNumber(number);
+	        	setInvoiceNumber(number < 0 ? number : -1);
 	        }
 			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), communication);
 			onLoadInvoice(event);

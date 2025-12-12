@@ -278,6 +278,7 @@ public class JooqContrata {
 		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), contractSpecificData);
 		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), contractSpecificData);
 		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), contractSpecificData);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), contractSpecificData);
 	}
 	
 	private static void readContract403(CONTRATO403TYPE o, ContractSpecificData contractSpecificData) {
@@ -1523,6 +1524,7 @@ public class JooqContrata {
 			c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
 //			c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
 //			c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
+			c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
 			return c;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
