@@ -286,7 +286,8 @@
 		}		
 		
 		.aon-content-scroll-panel{
-			padding-right: 30px
+			padding-right: 30px;
+			--height-adjust: -25;
 		}
 
 		@external gwt-ListBox;
@@ -342,10 +343,10 @@
 	
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
-	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel" styleName="salaryDraft" debugId="dockLayoutPanel">
 		<g:north size="68">
 
-			<g:FlowPanel ui:field="toolbar">
+			<g:FlowPanel ui:field="toolbar" styleName="salaryDraftToolbar">
     			
 				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
 					<g:HorizontalPanel styleName="aon-width-all">
@@ -450,7 +451,7 @@
 								<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
 								<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
 								
-								<g:Grid styleName="aon-dataTable" ui:field="headerGrid" >
+								<g:Grid styleName="aon-dataTable salaryDraftHeader" ui:field="headerGrid" >
 									<g:row styleName="aon-dataTable-row-even">
 										<g:customCell  styleName="{style.span-cell}" >
 											<g:Grid styleName="{style.span-cell-table}">
@@ -585,7 +586,7 @@
 										</g:customCell>
 									</g:row>
 								</g:Grid>
-								<g:ScrollPanel ui:field="contentScrollPanel" styleName="aon-width-all {style.aon-content-scroll-panel}" >
+								<g:ScrollPanel ui:field="contentScrollPanel" styleName="aon-width-all {style.aon-content-scroll-panel} salaryDraftContent" >
 									<g:VerticalPanel styleName="aon-width-all" >
 										<g:HTML styleName="{style.vertical-space}" />
 										<g:FlexTable ui:field="contextTable"
@@ -603,7 +604,7 @@
 										<g:HTML styleName="{style.vertical-space}" />
 									</g:VerticalPanel>
 								</g:ScrollPanel>
-								<g:HorizontalPanel styleName="aon-width-all" ui:field="footerHorizontalPanel">
+								<g:HorizontalPanel styleName="aon-width-all salaryDraftFooter" ui:field="footerHorizontalPanel">
 	
 									<g:Grid ui:field="basesTable" styleName="aon-dataTable">
 										<g:row styleName="aon-dataTable-row-odd">
