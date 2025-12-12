@@ -491,6 +491,11 @@ color: var(--aonSearchButton);
   border-top: 1px solid rgba(0,0,0,0.1);
 }
 
+#rootPanel.closeSidenav {
+  margin-left: 0px !important; /*13.75rem; !important;*/
+  padding-left: 10px;
+}
+
 .rightPanel {
     width: 360px;
     background-color: var(--aonRightPanelColor);
@@ -936,7 +941,7 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuSidenav {
-  width: 5rem;
+  width: 4.4rem;
   left: 0px;
   font-size: 10px;
   background-color: var(--aonHeaderBackgroundColor);
@@ -948,6 +953,51 @@ background-color: var(--aonLightGray);
   /* border: 1px solid rgba(0,0,0,0.1); */
   overflow-y: auto;
   z-index: 1;
+}
+
+/*
+ ------------------ Menu Collapse Button
+*/
+
+#aonMenuAnchor {
+	position: absolute;
+	left: 20px;
+	top: 53px;
+	z-index: 3;
+	cursor: pointer;
+	transition: all .5s;
+}
+
+#aonMenuAnchor.close {
+	background-color: #eee;
+	left: -10px;
+	top: 55px;
+	border-radius: 10px;
+	padding-left: 5px;
+}
+
+#aonMenuAnchor.close .aonMenuAnchorDivSpan {
+	display: none;
+}
+
+#aonMenuAnchorDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.aonMenuAnchorDivSpan {
+	font-size: 10px;
+}
+
+#aonMenuSidenav > ul {
+	margin-top: 68px;
+}
+
+#aonMenuSidenav.close {
+	width: 0px !important; /*13.75rem;*/
+	min-width: 0 !important; /*13.75rem;*/
+	justify-content: center;
 }
 
 .aonMenuLeftop  {
@@ -4019,7 +4069,7 @@ color: var(--aonWhite);
 }
 
 .aonNewMenuSideNav{
-  width: 0px;
+  width: 68px;
 }
 
 .aonNewMenuTopNav{

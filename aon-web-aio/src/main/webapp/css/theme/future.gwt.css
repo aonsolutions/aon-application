@@ -758,7 +758,20 @@ div[style*='height:55px'] > .aon_toolbar {
   background-color: #fff !important;
 }
 
-
 .aon-Salary-DraftPanel tr:last-child td {
 	padding-bottom: 0px !important;
+}
+
+.aon_customer_notes_content {
+	padding: 1rem !important;
+}
+
+.aon_customer_card_observation {
+	background-color: #f1f5f9 !important;
+	border: 1px solid #f1f5f9 !important;
+}
+
+.aon_customer_card_content {
+	background-color: transparent !important;
+	border-radius: .375rem !important;
 }
