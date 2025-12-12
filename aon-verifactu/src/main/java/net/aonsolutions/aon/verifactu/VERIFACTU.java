@@ -76,7 +76,7 @@ public class VERIFACTU {
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
 		System.out.println( "VERIFACTU QUERY Request: \n" + new String( vc.getRequestBytes() ) );
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
+		VerifactuResponse dataResponse = VerifactuXMLUtils.postQuery(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
 		vc.setResponse( dataResponse );
 		return vc;
 	}

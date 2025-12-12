@@ -133,6 +133,7 @@ public abstract class AbstractVerifactuTest {
 		properties.setProperty("password", dbPasswd);
 		properties.setProperty("useSSL", dbUseSSL);
 		properties.setProperty("serverTimezone", dbTimeZone);
+		properties.setProperty("allowPublicKeyRetrieval", "true");
 		String url = String.format("jdbc:mysql://%s:%s?allowMultiQueries=true", dbHost, dbPort);
 		Connection connection = DriverManager.getConnection(url, properties);
 
@@ -168,6 +169,10 @@ public abstract class AbstractVerifactuTest {
 	protected User user() {
 		return UserDAO.get(ctx, DOMAIN_ID, USER)
 			.orElseThrow( () -> new IllegalStateException("User " + USER + " not found in domain " + DOMAIN_ID) );
+	}
+	
+	protected InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate() {
+		return getInvoiceCommunicatorContextWithCertificate(null);		
 	}
 	
 	protected InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {

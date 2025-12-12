@@ -2,6 +2,7 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -62,6 +63,10 @@ class QueryTest extends AbstractVerifactuTest {
 		AonIOUtils.write(vc.getResponse().getBytes(), System.out);
 		System.out.println();
 		System.out.println("---------------------------------------------------------");
+		assertNotNull(vc);
+		assertNotNull(vc.getResponse());
+		assertNull(vc.getResponse().getResponse());
+		assertNotNull(vc.getResponse().getQueryResponse());
 		
 	}
 	

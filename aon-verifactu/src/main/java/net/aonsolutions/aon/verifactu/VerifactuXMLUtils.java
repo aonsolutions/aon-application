@@ -64,6 +64,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestaconsultalr.RespuestaConsultaFactuSistemaFacturacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
 class VerifactuXMLUtils {
@@ -73,6 +74,11 @@ class VerifactuXMLUtils {
 	private static final String FAULT_ELEMENT = "Fault";
 	private static final String FAULTSTRING2_ELEMENT = "faultstring";
 	private static final Pattern FAULT_STRING = Pattern.compile("Codigo\\[(\\d+)\\]");
+	
+	@FunctionalInterface
+	private interface SOAPResponseHandler {
+	    void handle(VerifactuResponse vr, Document doc) throws InvoiceCommunicationException;
+	}
 	
 	private VerifactuXMLUtils() {
 		
@@ -144,8 +150,40 @@ class VerifactuXMLUtils {
 		}
 			
 	}
-
+	
+	static VerifactuResponse postQuery(Certificate cert, String uri, SOAPMessage soapMessage) throws InvoiceCommunicationException {
+		return post(cert, uri, soapMessage
+			, (vr, doc) -> {
+	        	// SOAP Response to RespuestaRegFactuSistemaFacturacionType
+				try {
+					JAXBContext jc = JAXBContext.newInstance(RespuestaConsultaFactuSistemaFacturacionType.class.getPackage().getName());
+					Unmarshaller um = jc.createUnmarshaller();
+					JAXBElement<RespuestaConsultaFactuSistemaFacturacionType> o = um.unmarshal(doc, RespuestaConsultaFactuSistemaFacturacionType.class);
+					vr.setQueryResponse(o.getValue());
+				} catch (JAXBException e) {
+					e.printStackTrace();
+					throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
+				}
+		});
+	}
+	
 	static VerifactuResponse post(Certificate cert, String uri, SOAPMessage soapMessage) throws InvoiceCommunicationException {
+		return post(cert, uri, soapMessage
+			, (vr, doc) -> {
+	        	// SOAP Response to RespuestaRegFactuSistemaFacturacionType
+				try {
+					JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
+					Unmarshaller um = jc.createUnmarshaller();
+					JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(doc, RespuestaRegFactuSistemaFacturacionType.class);
+					vr.setResponse(o.getValue());
+				} catch (JAXBException e) {
+					e.printStackTrace();
+					throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
+				}
+		});
+	}
+	
+	static VerifactuResponse post(Certificate cert, String uri, SOAPMessage soapMessage, SOAPResponseHandler responseHandler) throws InvoiceCommunicationException {
 		try {
 			if (cert == null || cert.getData() == null || cert.getData().length == 0) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
@@ -193,15 +231,11 @@ class VerifactuXMLUtils {
 	                if (e != null) throw e;
 	            }	            
 	            throw new InvoiceCommunicationException( faultString );
-	        } else {	        
-	        	// SOAP Response to RespuestaRegFactuSistemaFacturacionType
-	        	JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
-	        	Unmarshaller um = jc.createUnmarshaller();
-	        	JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(bodyDoc, RespuestaRegFactuSistemaFacturacionType.class);
-	        	vr.setResponse(o.getValue());
+	        } else {
+	        	responseHandler.handle( vr, bodyDoc );
 	        }
 			return vr.setBytes( stringResp.getBytes() );
-		} catch (SOAPException | JAXBException | IOException e) {
+		} catch (SOAPException | IOException e) {
 			e.printStackTrace();
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9004 ,e);
 		} catch (SOAPFaultException e) {
