@@ -1327,6 +1327,8 @@ export class AonInvoice extends AonElement {
 		let dn = "";
 		if (!this.isInvofoxInvoice() && !this.invoice.isRawdoc() ) {
 			dn = MSG.INVOICE_DATA + " (" + getDocumentNumber(this.invoice) + ")";
+		} else if (this.getInvoice().isTicket() | this.getInvoice().isRecibida()) {
+			dn = MSG.DOCUMENT_CREDITOR_SUPPLIER;
 		} else {
 			dn = MSG.DOCUMENT_CLIENT;
 		}
