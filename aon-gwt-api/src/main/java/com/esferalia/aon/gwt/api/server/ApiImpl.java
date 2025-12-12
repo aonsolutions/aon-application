@@ -6,7 +6,7 @@ import java.util.Base64;
 import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.api.client.IApi;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 
 @WebServlet(name = "ApiGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_api",
 													"/aon_gwt_fiscal/gwt_api"})

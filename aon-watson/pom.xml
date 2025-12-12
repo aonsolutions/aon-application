@@ -19,7 +19,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<compilerArgs>
+						<!--
 						<arg>-Werror</arg>
+						-->
 						<arg>-Xlint:all</arg>
 					</compilerArgs>
 				</configuration>

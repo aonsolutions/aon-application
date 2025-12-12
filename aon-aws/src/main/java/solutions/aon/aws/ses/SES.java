@@ -11,9 +11,9 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
