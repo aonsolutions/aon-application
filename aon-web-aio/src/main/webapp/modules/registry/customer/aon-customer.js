@@ -149,7 +149,9 @@ export class AonCustomer extends AonReg {
 		parent.style.display = "flex";
 		this.clearElement(parent);
 
-		this.buildGeneralCard(parent);
+		let generalCard = this.buildGeneralCard(parent);
+		generalCard.classList.add('customerGeneralCard');
+		
 		this.buildMediaCard(parent);
 		this.buildGeneralInformation(parent);
 		this.buildSellerCard(parent);
