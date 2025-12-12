@@ -5032,8 +5032,6 @@ public class SalaryDraft extends ResizeComposite
 		console.log(msg);
 	}-*/;
 	
-
-
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
 		dumpItem(item, row, iconStyleName, handler, isDeduction, null, null, true);
@@ -7423,7 +7421,10 @@ public class SalaryDraft extends ResizeComposite
 				- footerHorizontalPanel.getOffsetHeight()
 				;
 		
-		height -= 25 ;
+		String heightAdjust = Wnd.getCSSVariable(contentScrollPanel.getElement()
+				, "height-adjust"); 
+		heightAdjust = AonStringUtils.defaultIfBlank(heightAdjust, "-25");
+		height +=  AonNumberUtils.toint(heightAdjust) ;
 		
 		contentScrollPanel.setHeight(Integer.toString(height)+"px");
 		//LOGGER.info("contentScrollPanel : " + height );
