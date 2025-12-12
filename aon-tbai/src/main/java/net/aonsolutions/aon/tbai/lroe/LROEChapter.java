@@ -28,23 +28,27 @@ public class LROEChapter {
 	
 	public boolean isAccepted() {
 		boolean alta = getRequests().stream().filter(f ->
-			f.getInfo().isAlta() && f.getResponse().isOk())
+			f.getInfo() != null && f.getInfo().isAlta() 
+			&& f.getResponse() != null && f.getResponse().isOk())
 			.count() > 0;
 		boolean anulacion =getRequests().stream().filter(f -> 
-			f.getInfo().isAnulacion() && f.getResponse().isOk())
+			f.getInfo() != null && f.getInfo().isAnulacion() 
+			&& f.getResponse() != null && f.getResponse().isOk())
 			.count() > 0;
 		return alta && !anulacion;
 	}
 	
 	public boolean isTbaiError() {
 		boolean alta = getRequests().stream().filter(f ->
-			f.getInfo().isAlta() && f.getResponse().isOk())
+			f.getInfo() != null && f.getInfo().isAlta() 
+			&& f.getResponse() != null && f.getResponse().isOk())
 			.count() > 0;
 		boolean anulacion =getRequests().stream().filter(f -> 
-			f.getInfo().isAnulacion() && f.getResponse().isOk())
+			f.getInfo() != null && f.getInfo().isAnulacion() 
+			&& f.getResponse() != null && f.getResponse().isOk())
 			.count() > 0;
 		boolean err = getRequests().stream().filter(f ->
-			f.getInfo().isAlta() 
+			f.getInfo() != null && f.getInfo().isAlta() && f.getResponse() != null
 			&& JsonUtils.optString(f.getResponse().getJson(), "errorMessage").contains("B4_2000001")).count() > 0;
 			
 		return !alta && !anulacion && err;
