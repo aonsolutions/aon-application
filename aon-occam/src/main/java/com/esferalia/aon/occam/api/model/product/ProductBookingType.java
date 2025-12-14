@@ -7,7 +7,8 @@ public enum ProductBookingType implements Serializable {
 	PLAN("Plan"),
     SERVICE("Servicio"),
     USER("Usuario"),
-    CONSULTANCY("Asesoria")
+    CONSULTANCY("Asesoria"),
+    DEFAULT("Inicial")
     ;
 	
 	private String description;
