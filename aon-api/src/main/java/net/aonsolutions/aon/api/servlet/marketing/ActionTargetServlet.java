@@ -1176,10 +1176,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		RegistryMedia customerEmail = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 		RegistryMedia customerPhone = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.CELLULAR.value())));
 		
-		//String targetURL =  "https://" + officeDomain.getName() + "/ms/api/contracted_plans_servlet/callForm";
+		String targetURL =  "https://" + officeDomain.getName() + "/ms/api/contracted_plans_servlet/callForm";
 
 		// LOCAL
-		String targetURL =  "http://" + officeDomain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
+		//String targetURL =  "http://" + officeDomain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
 		
 		 JSONObject companyData = new JSONObject()
 				 .put("name", customer.getName()) 
