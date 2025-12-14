@@ -2,7 +2,7 @@ package net.aonsolutions.aon.gwt.warehouse.server;
 
 import jakarta.servlet.annotation.WebServlet;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.warehouse.client.IWarehouse;
 import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
