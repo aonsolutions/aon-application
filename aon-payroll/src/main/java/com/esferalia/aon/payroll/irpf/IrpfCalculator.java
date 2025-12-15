@@ -2446,7 +2446,7 @@ public class IrpfCalculator {
 				} 
 
 				try {
-				    return ServicioCalculo.procesarFicheroXML(entrada2025);
+				    return ServicioCalculo.procesarFicheroXML(entrada2025, fecha);
 				} catch ( IrpfCalculateException e) {
 				    throw e;
 				} catch ( Exception e ) {
