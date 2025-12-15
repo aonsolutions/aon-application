@@ -41,6 +41,7 @@ class ServicioCalculo {
 	
 	public static final Date FEBRUARY_2023 = AonDateUtils.getDate(2023, Calendar.FEBRUARY , 1);
 	public static final Date FEBRUARY_2024 = AonDateUtils.getDate(2024, Calendar.FEBRUARY , 8);
+	public static final Date NOVEMBER_2025 = AonDateUtils.getDate(2025, Calendar.NOVEMBER , 27);
 
     // Al servicio se le pasará por el método POST del protocolo http una cadena de
     // caracteres encapsulada como si fuese desde un formulario. Las variables irán
@@ -195,13 +196,13 @@ class ServicioCalculo {
 	    }
     }
 
-    public static  AEATRetencionesSalida2025 procesarFicheroXML(AEATRetencionesEntrada2025 entrada2025) throws JAXBException, IrpfCalculateException, IOException {
+    public static  AEATRetencionesSalida2025 procesarFicheroXML(AEATRetencionesEntrada2025 entrada2025, Date fecha) throws JAXBException, IrpfCalculateException, IOException {
 	    Marshaller marshaller = JAXBContext.newInstance(
 		    AEATRetencionesEntrada2025.class).createMarshaller();
 	    StringWriter writer = new StringWriter();
 	    marshaller.marshal(entrada2025, writer);
 	    
-	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2025, 0 );
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2025, fecha.before(NOVEMBER_2025) ? 0 : 1 );
 	    
 	    try {
 		    StringReader reader = new StringReader(str);
@@ -259,6 +260,7 @@ class ServicioCalculo {
 //	    AEATRetencionesSalida2025 salida2025 = procesarFicheroXML(entrada2025);
 //	    JAXBContext.newInstance(AEATRetencionesSalida2025.class).createMarshaller().marshal(salida2025, System.out);
 //	}
+
     }
     
     private static final String EJEMPLOENTRADA2022 = 
