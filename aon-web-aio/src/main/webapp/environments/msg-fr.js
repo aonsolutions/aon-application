@@ -37,6 +37,7 @@ export const ALL1 = 'Todos';
 export const ALL2 = "Tous";
 export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
+export const AMORTIZATION = 'Amortissement';
 export const ANNUAL_VIEW = 'Vue annuelle';
 export const AON_SERVICES = 'Servicios Aon';
 export const API_DOCUMENTATION = 'Documentación API';

@@ -843,7 +843,7 @@
 
 	<complexType name="ImportesPercibidosMetalicoPFType">
 		<sequence>
-			<element name="ImportePercibidoMetalico" type="tiposcomplejos:ImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="100"/>
+			<element name="ImportePercibidoMetalico" type="tiposcomplejos:ImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -977,7 +977,7 @@
 	
 	<complexType name="RegistrosVentaBienEnConsignaPJType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroVentaBienEnConsignaPJType" minOccurs="1" maxOccurs="1000"/>								
+			<element name="Registro" type="tiposcomplejos:RegistroVentaBienEnConsignaPJType" minOccurs="1" maxOccurs="10000"/>								
 		</sequence>	
 	</complexType>
 	
@@ -1100,7 +1100,7 @@
 	
 	<complexType name="VentasBienesEnConsignaPFType">
 		<sequence>
-			<element name="VentaEnConsigna" type="tiposcomplejos:VentaBienEnConsignaPFType" minOccurs="1" maxOccurs="1000"/>
+			<element name="VentaEnConsigna" type="tiposcomplejos:VentaBienEnConsignaPFType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -1293,7 +1293,7 @@
 	
 	<complexType name="VariacionesExistenciasType">
 		<sequence>
-			<element name="VariacionExistencias" type="tiposcomplejos:VariacionExistenciasType" minOccurs="1" maxOccurs="10"/>
+			<element name="VariacionExistencias" type="tiposcomplejos:VariacionExistenciasType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 	
@@ -1308,7 +1308,7 @@
 
 	<complexType name="ArrendamientosLocalesNegociosType">
 		<sequence>
-			<element name="ArrendamientoLocalNegocio" type="tiposcomplejos:ArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="100"/>
+			<element name="ArrendamientoLocalNegocio" type="tiposcomplejos:ArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1341,7 +1341,7 @@
 
 	<complexType name="TransmisionesInmueblesType">
 		<sequence>
-			<element name="TransmisionInmueble" type="tiposcomplejos:TransmisionInmuebleType" minOccurs="1" maxOccurs="100"/>
+			<element name="TransmisionInmueble" type="tiposcomplejos:TransmisionInmuebleType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1354,7 +1354,7 @@
 
 	<complexType name="ImportesPercibidosMetalicoPJType">
 		<sequence>
-			<element name="ImportePercibidoMetalico" type="tiposcomplejos:ImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="100"/>
+			<element name="ImportePercibidoMetalico" type="tiposcomplejos:ImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1375,7 +1375,7 @@
 	
 	<complexType name="OperacionesSegurosType">
 		<sequence>
-			<element name="OperacionSeguro" type="tiposcomplejos:OperacionSeguroType" minOccurs="1" maxOccurs="100"/>
+			<element name="OperacionSeguro" type="tiposcomplejos:OperacionSeguroType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1390,7 +1390,7 @@
 
 	<complexType name="AgenciasViajesType">
 		<sequence>
-			<element name="AgenciaViaje" type="tiposcomplejos:AgenciaViajeType" minOccurs="1" maxOccurs="100"/>
+			<element name="AgenciaViaje" type="tiposcomplejos:AgenciaViajeType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1470,7 +1470,7 @@
 	
 	<complexType name="VentasBienesEnConsignaPJType">
 		<sequence>
-			<element name="VentaEnConsigna" type="tiposcomplejos:VentaBienEnConsignaPJType" minOccurs="1" maxOccurs="1000"/>
+			<element name="VentaEnConsigna" type="tiposcomplejos:VentaBienEnConsignaPJType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>
 	</complexType>
 
@@ -1527,7 +1527,7 @@
 
 	<complexType name="RegistrosVentaBienEnConsignaPFType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroVentaBienEnConsignaType" minOccurs="1" maxOccurs="1000"/>
+			<element name="Registro" type="tiposcomplejos:RegistroVentaBienEnConsignaType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1601,7 +1601,7 @@
 
 	<complexType name="RegistrosVariacionExistenciasType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroVariacionExistenciasType" minOccurs="1" maxOccurs="10"/>
+			<element name="Registro" type="tiposcomplejos:RegistroVariacionExistenciasType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1621,7 +1621,7 @@
 
 	<complexType name="RegistrosArrendamientoLocalNegocioType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroArrendamientoLocalNegocioType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1641,7 +1641,7 @@
 
 	<complexType name="RegistrosTransmisionInmuebleType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroTransmisionInmuebleType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroTransmisionInmuebleType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1660,7 +1660,7 @@
 
 	<complexType name="RegistrosImportePercibidoMetalicoPFType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroImportePercibidoMetalicoPFType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1772,7 +1772,7 @@
 	
 	<complexType name="RegistrosImportePercibidoMetalicoPJType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroImportePercibidoMetalicoPJType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1791,7 +1791,7 @@
 
 	<complexType name="RegistrosOperacionSeguroType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroOperacionSeguroType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroOperacionSeguroType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1811,7 +1811,7 @@
 
 	<complexType name="RegistrosAgenciaViajeType">
 		<sequence>
-			<element name="Registro" type="tiposcomplejos:RegistroAgenciaViajeType" minOccurs="1" maxOccurs="100"/>
+			<element name="Registro" type="tiposcomplejos:RegistroAgenciaViajeType" minOccurs="1" maxOccurs="10000"/>
 		</sequence>	
 	</complexType>
 	
@@ -1827,4 +1827,36 @@
 			<element name="Declarado" type="tiposcomplejos:DocumentoType"/>
 		</sequence>
 	</complexType>
+
+	<complexType name="SubvencionesEntidadesPublicasType">
+		<sequence>
+			<element name="SubvencionEntidadPublica" type="tiposcomplejos:SubvencionEntidadPublicaType" minOccurs="1" maxOccurs="10000"/>
+		</sequence>	
+	</complexType>
+	
+	<complexType name="SubvencionEntidadPublicaType">
+		<sequence>
+			<element name="Declarado" type="tiposcomplejos:DocumentoPersonaType"/>
+			<element name="ImporteTotal" type="tiposbasicos:ImporteSgn12.2Type"/>
+		</sequence>
+	</complexType>
+	<complexType name="RegistrosSubvencionEntidadPublicaType">
+		<sequence>
+			<element name="Registro" type="tiposcomplejos:RegistroSubvencionEntidadPublicaType" minOccurs="1" maxOccurs="10000"/>
+		</sequence>	
+	</complexType>
+	
+	<complexType name="RegistroSubvencionEntidadPublicaType">
+		<sequence>
+			<element name="IDSubvencionEntidadPublica" type="tiposcomplejos:IDSubvencionEntidadPublicaType"/>
+			<element name="SituacionRegistro" type="tiposcomplejos:SituacionRegistroType"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="IDSubvencionEntidadPublicaType">
+		<sequence>
+			<element name="Declarado" type="tiposcomplejos:DocumentoType"/>
+		</sequence>
+	</complexType>
+	
 </schema>

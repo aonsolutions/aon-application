@@ -431,7 +431,7 @@ class PECListener  implements IdcParserListener {
 		if ( hasBenefitsLoss( nss, ccc, code, quota))
 		    return;
 		
-		Date pecEnd = Objects.equals(end, contractEnd) ? null : end;
+		Date pecEnd = end; //Objects.equals(end, contractEnd) ? null : end;
 		
 		if ( PEC_BONUS_MAP.containsKey(code )) {
 			try {

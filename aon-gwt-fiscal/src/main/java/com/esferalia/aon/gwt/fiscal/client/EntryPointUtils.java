@@ -65,6 +65,26 @@ public class EntryPointUtils {
 		return $wnd.localStorage.getItem("isSig");
 	}-*/;
 	
+	public static native int getBookingDomainId()
+	/*-{
+		return $wnd.localStorage.getItem("booking_domain_id");
+	}-*/;
+	
+	public static native String getBookingDomainName()
+	/*-{
+		return $wnd.localStorage.getItem("booking_domain_name");
+	}-*/;
+	
+	public static native int removeBookingDomainId()
+	/*-{
+		return $wnd.localStorage.removeItem("booking_domain_id");
+	}-*/;
+	
+	public static native String removeBookingDomainName()
+	/*-{
+		return $wnd.localStorage.removeItem("booking_domain_name");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

@@ -67,6 +67,12 @@ export class AonToolbar extends AonElement {
 		let menu = this.getElement(this.TITLE_SECTION_MENU);
 		if(menu) menu.addEventListener(EVENT.CLICK, fn);
 	}
+	
+	toogleClose(){
+		let titleSectionMenu = this.getElement(this.TITLE_SECTION_MENU);
+		let titleSectionMenuIcon = titleSectionMenu.querySelector('i');
+		titleSectionMenuIcon.classList.toggle("closeIcon");
+	}
 
 	connectedCallback () {
 		this.initialize();

@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<style>
+		input[id$="amortizationToolbar-back"] {
+	        display: none;
+		}
+	</style>
+	
+	<aon:valueParam name="invoiceController" default="#{expenseInvoice}" />
+	
+	
+	<aon:if test="#{!invoiceController.showAmortizationWindow}">
+		<aon:form id="appForm" >
+			<aon:if test="#{!invoiceController.amortizationForm}" >
+				<aon:commandButton 
+					id="appButton" 
+					style="display: none; "
+					actionListener="#{invoiceController.onShowAmortizationPanel}"		
+				>
+				</aon:commandButton>
+			</aon:if>
+			<aon:if test="#{invoiceController.amortizationForm}" >
+				<aon:commandButton 
+					id="appButton" 
+					style="display: none; "
+					action="#{invoiceController.showAmortization}"
+					oncomplete="hideAmortizationToolbarBackButton()"		
+				>
+				</aon:commandButton>
+				<script type="text/javascript">
+				//<![CDATA[
+					function hideAmortizationToolbarBackButton() {
+                        var css = '#aonContent\\:amortizationForm\\:amortizationToolbar-back { display: none; }';
+                        var style = document.createElement('style');
+                        if (style.styleSheet) {
+                        	 // IE only
+                            style.styleSheet.cssText = css;
+                        } else {
+                        	// Other browsers
+                            style.appendChild(document.createTextNode(css));
+                        }
+                        document.head.appendChild(style);
+                    }
+				//]]>
+				</script>
+			</aon:if>
+		</aon:form>
+		<script type="text/javascript">
+		//<![CDATA[
+			#{rich:element('appButton')}.click();	
+		//]]>
+		</script>
+	</aon:if>
+	
+	<aon:if test="#{invoiceController.showAmortizationWindow}">
+		<aon:form id="amortizationForm">
+			<aon:div style="width:100%">
+				<aon:div style="width:99%">
+					<aon:div styleClass="aon-toolbar" style="margin: 1rem; padding: 0;" >
+						<aon:commandButton id="amortization-accept"
+							value="#{bundle.aon_accept}"
+							actionListener="#{invoiceController.acceptAmortization}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<rich:componentControl for="amortizationModalPanel"
+								event="onclick" operation="hide"/>																					
+							<f:setPropertyActionListener
+								target="#{invoiceController.showAmortizationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:div>
+					
+					<aon:div styleClass="aon-scroll-area" style="margin: 1rem; padding: 0;">
+						<h:panelGrid id="AmortizationData" columns="1" style="width: 100%;">
+							<ui:include src="/com/code/aon/ui/accounting/facelet/amortization/formContent.xhtml" />
+						</h:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</aon:if>
+
+				
+</ui:composition>

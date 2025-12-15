@@ -81,8 +81,9 @@
 }
 
 .aonNewMenuSideNavUl{
-	padding-top: 15.25px;
+	/* padding-top: 15.25px; */
     background-color: var(--aonWhite);
+    height: 100%;
 }
 
 .aonHeader #aonHeaderCompanyName {
@@ -148,7 +149,7 @@
 #enterpriseMenu:hover,
 #consoleMenu:hover,
 #aonApplication:hover,
-#Superset:hover{
+#Superset:hover {
   background-color:inherit;
   
 }
@@ -156,6 +157,7 @@
 	line-height: 1.5rem;
 	font-family: "Inter-medium", sans-serif;
 }
+
 #aonMenuListAppImgTop-new,
 #aonMenuListAppImgTop-note,
 #aonMenuListAppImgTop-office,
@@ -334,6 +336,9 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
     mask-image: url('/icons/chevron-down.svg') ;
 }
 
+i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
+	mask-image: url('/icons/chevron-right.svg') ;
+}
 
 
 #_aonMenuList-new {
@@ -428,6 +433,11 @@ aon-configuration-menu .suiteMenuContent  {
   margin-left: 237px !important; /*13.75rem; !important;*/
 }
 
+#rootPanel.closeSidenav {
+  margin-left: 68px !important; /*13.75rem; !important;*/
+  padding-left: 0px;
+}
+
 #aonMenu #aonMenuSidenav  {
 	width: 237px; /*13.75rem;*/
 	min-width: 237px; /*13.75rem;*/
@@ -436,6 +446,72 @@ aon-configuration-menu .suiteMenuContent  {
 	overflow-y: auto;
 	box-sizing: border-box;
 	background-color: var(--aonBackgroundColor2);
+}
+
+#aonMenuList-new,
+#aonMenuList{
+	margin-top: 0;
+}
+
+/*
+ ------------------ Menu Collapse Button
+*/
+
+#aonMenuAnchor {
+	background-color: white;
+	left: 0;
+	top: 68;
+	padding-left: 0;
+	height: 68px;
+	width: 237px;
+	transition: width 0.3s;
+}
+
+#aonMenuAnchor.close {
+	width: 68px;
+	background-color: white;
+	left: 0;
+	top: 68;
+	transition: width .2s;
+	border-radius: 0px;
+	transition: width 0.3s;
+}
+
+#aonMenuAnchorDiv {
+	flex-direction: row;
+	gap: 1.25rem;
+	height: 100%;
+	justify-content: start;
+	padding: 0 1.25rem;
+}
+
+#aonMenuAnchor.close #aonMenuAnchorDiv {
+	justify-content: center;
+	padding: 0 1.25rem;
+}
+
+#aonMenuAnchorDivIcon {
+	background: url('/icons/arrow-left-circle.svg') no-repeat center;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/arrow-left-circle.svg');
+}
+
+#aonMenuAnchor.close #aonMenuAnchorDivIcon {
+	background: url('/icons/arrow-right-circle.svg') no-repeat center;
+	mask-image: url('/icons/arrow-right-circle.svg');
+}
+
+.aonMenuAnchorDivSpan {
+	font-size: 1rem;
+	line-height: 1.5rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#aonMenuSidenav.close {
+	width: 68px !important; /*13.75rem;*/
+	min-width: 0 !important; /*13.75rem;*/
+	justify-content: center;
 }
 
 #aonMenu #aonMenuSidenav #nevv,
@@ -457,6 +533,11 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonMenu #aonMenuSidenav .aonNewMenuAppSpan {
 	font-size: 1rem;
+}
+
+#aonMenuSidenav  {
+	width: 68px; /*13.75rem;*/
+	min-width: 0; /*13.75rem;*/
 }
 
 
@@ -507,6 +588,28 @@ aon-configuration-menu .suiteMenuContent  {
 	font-size: 0.875rem;
 }
 
+.aonSubMenuOptions .chevronDowm{
+	display: inline-block !important;
+	width: 18px;
+	height: 18px;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-down.svg');
+}
+
+.aonSubMenuOptions .chevronRight{
+	display: inline-block !important;
+	width: 18px;
+	height: 18px;
+	background: url('/icons/chevron-right.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-right.svg');
+}
+
 .aonSidenav i.material-icons {
 	display: none;
 }
@@ -517,8 +620,11 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;	
-	
+	padding: .625rem 1.25rem .625rem 2.5rem;		
+}
+
+.aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
+	padding: .625rem 1.25rem .625rem 1.5rem;
 }
 
 .aonSidenav .aonSidenavTitle {
@@ -535,7 +641,11 @@ aon-configuration-menu .suiteMenuContent  {
 	min-width: 24px;
 	min-height: 24px;
 	visibility: visible;
-	background: url('/icons/chevron-down.svg') no-repeat center;
+	background: url('/icons/chevron-left-circle.svg') no-repeat center;
+}
+
+.aonSidenav .aonSidenavTitleArrow.closeIcon {
+	background: url('/icons/chevron-right-circle.svg') no-repeat center;
 }
 
 .aonSidenav .aonAppMenuSidenavList:hover,
@@ -1118,6 +1228,7 @@ aon-right-panel {
 	padding: 0px;;
 }
 
+.rightPanel .divLogout,
 .rightPanel .helpCardText,
 .rightPanel .configCardText{
 	border: none;
@@ -1132,11 +1243,19 @@ aon-right-panel {
 	width: 100%;
 }
 
+.rightPanel .divLogout *,
 .rightPanel .helpCardText *,
 .rightPanel .configCardText *{
 	color: #fff;	
 }
 
+#loginContent > div {
+	flex-direction: column;
+}
+
+.rightPanel .divLogout {
+	margin-top: 2rem;
+}
 
 .rightPanel div[id$="CardContent"]{
 	padding: 1.25rem;
@@ -1186,6 +1305,14 @@ aon-right-panel {
     mask-image: url('/icons/globe.svg') ;
 }
 
+.rightPanel.hiddenSidenav.open {
+	height: 100% !important;
+}
+
+.divLogout{
+	position: initial;
+}
+
 /* ========================== Header Customer Styles  ========================== */
 
 .aonSecondaryToolbar{
@@ -1197,4 +1324,13 @@ aon-right-panel {
 	font-size: .875rem;
 	line-height: 1.5rem;
 	letter-spacing: 0;
+}
+
+.customerGeneralCard {
+	width: auto !important;
+}
+
+.aonInputBoxLabel > input {
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 ;
 }

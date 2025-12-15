@@ -1,4 +1,4 @@
-FROM tomcat:11.0.1-jdk21-temurin-noble
+FROM tomcat:11.0.11-jdk25-temurin-noble
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -42,6 +42,7 @@ ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20250107/json-20250107
 
 RUN set -eux; \
 	apt-get update; \
+	apt-get install -y --no-install-recommends wget; \
 	apt-get install -y --no-install-recommends unzip; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*;

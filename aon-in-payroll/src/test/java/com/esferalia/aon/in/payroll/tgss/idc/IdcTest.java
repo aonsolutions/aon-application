@@ -2661,7 +2661,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	@Test
 	public void testIdcXXIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
-			ExpressionException, SalaryException, SQLException {
+			ExpressionException, SalaryException, SQLException, ParseException {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXIII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
@@ -2680,8 +2680,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date march11 = calendar.getTime();
 
 			ssPecs.stream().forEach(pec -> Assert.assertEquals(march11, pec.getStartDate()));
-
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			
+			
+			Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse("31-05-2022");
+			ssPecs.stream().forEach(pec -> Assert.assertEquals(endDate, pec.getEndDate()));
 
 		}
 	}
@@ -7271,6 +7273,37 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(cgpBase  * ( 1.42 + 0.60 + 0.20 + 6.70 ) / 100.00 , salary.getTotalEnterprise(), DELTA);
 		}
 	}
+
+	@Test
+	public void testIdcEND() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcEND.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 09 EXCLUSIONES			100,00	53 PF DES FOG FP -C.TOT		01-07-2025	29-08-2025
+			// 03 RED.CUOTA SS-PORCENT	 95,00	43 C.COMUN.-CUOTA TOTAL		01-07-2025	29-08-2025			
+			
+			ssPECs.stream().forEach( pec -> System.out.println("PEC: " + pec.getName() + " [" + pec.getStartDate() + " .. " + pec.getEndDate() + "]" ));
+			
+			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+
+			Date startDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-07-2025");
+			Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse("29-08-2025");
+			
+			ssPECs.stream().forEach(pec -> {
+				Assert.assertEquals(toSQL(startDate), pec.getStartDate());
+				Assert.assertEquals(toSQL(endDate), pec.getEndDate());
+			});
+			
+			ssData.values().stream().forEach(data -> {
+				Assert.assertEquals(toSQL(startDate), data.startDate());
+				Assert.assertEquals(toSQL(endDate), data.endDate());
+			});
+		}
+	}
+
 
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
