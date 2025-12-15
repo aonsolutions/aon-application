@@ -92,28 +92,22 @@ export class AonConfiguration extends AonElement {
 		this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
 	}
 
+
 	build() {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-
-//		if (this.isMobile()) {
-//			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
-//		}
-
 		let officeOptions = [];
 
 		// Ficha Cliente
-		let company = LS.getCompany();
-		
-		if (/*this.dur.isAdmin()*/ this.dur.isParentUser() && company && company.registry && company.type !== "OFFICE") {
+		if (this.dur.isParentUser() && this.company && this.company.registry && this.company.type !== "OFFICE") {
 			getRelationShipCompany({
-				url: company.domain,
-				relatedRegistry: company.registry
+				url: this.company.domain,
+				relatedRegistry: this.company.registry
 			}).then(relationshipCompany => {
 				
 				if (relationshipCompany.rrelationship) {
 					officeOptions.push({
 						name: MSG.CLIENT_FILE,
-						// icon: MATERIAL_ICONS.CONTACTS,
+						icon: MATERIAL_ICONS.CONTACTS,
 						fn: () => this.buildCustomerList(),
 					});
 					
@@ -125,125 +119,79 @@ export class AonConfiguration extends AonElement {
 				
 			});
 		}
-			
-			/*
-		  getSiblingsOffice({
-					domain: company.id
-			  }).then(siblings => {
-				  if(
-						company && company.registry && company.type !== "OFFICE" && 
-					  siblings.siblingsOffice && siblings.siblingsOffice.length > 0 &&
-					  this.dur.user.domain === this.dur.domain.parentId
-				  ){
-					  getRelationShipCompany({
-							url: company.domain,
-						relatedRegistry: company.registry
-				  }).then(relationshipCompany => {
-						  if(relationshipCompany.rrelationship){
-							  officeOptions.push({
-								  name: MSG.CLIENT_FILE,
-								  icon: MATERIAL_ICONS.CONTACTS,
-								  fn: () => this.buildCustomerList(),
-							  });
-					} else {
-							  officeOptions.push({
-								  name: MSG.NO_LINK_CLIENT,
-								  icon: MATERIAL_ICONS.INFO,
-								  //fn: () => {},
-							  });
-					  
-					  officeOptions.push({
-								  name: MSG.LINK_CLIENT,
-								  icon: MATERIAL_ICONS.DATASET_LINKED,
-								  fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
-								});
-							  
-					}
-					    
-					aonConfiguration.addSidenavOptionsFirst(
-						  MSG.OFFICE.toUpperCase(),
-						  officeOptions
-						);
-				  });
-				}
-			});
-			
-			*/
 
-		if (localStorage.getItem("aon_domain_id")) {
+		let companyOptions = [];
 
-			let companyOptions = [];
-
-			if (this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())) {
-				companyOptions.push({
-					name: MSG.GENERAL_INFORMATION,
-					fn: () => this.buildGeneral(),
-				});
-			}
-
-			/*if(this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())){
-			  companyOptions.push({
-				name: MSG.GLOBAL_CONFIGURATION,
-				icon: MATERIAL_ICONS.BUSINESS,
-				action: () => this.rootPanel(new JSF.AonJsfGlobalConfig()),
-			  });
-			}*/
-
-			if (this.dur.isAdmin()) {
-				companyOptions.push({
-					name: MSG.USER_MANAGEMENT,
-					fn: () => this.buildUser(),
-				});
-				if (!this.company.domain.parentId) {
-					companyOptions.push({
-						name: MSG.COMPANY_MANAGEMENT,
-						fn: () => this.buildCompanyList(),
-					});
-				}
-
-				companyOptions.push({
-					name: MSG.GROUP_MANAGEMENT,
-					fn: () => this.buildGroups(),
-				});
-
-				if (this.dur.isApiService()) {
-					companyOptions.push({
-						name: MSG.SERVICE_ACCOUNTS,
-						fn: () => this.buildServiceAccount(),
-					});
-				}
-
-				if (!this.isMobile() && ( (!this.dur.isTrial() && !this.dur.hasBeenTrial()) || this.dur.isParentUser()) ) {
-					companyOptions.push({
-						name: MSG.HIRING,
-						fn: () => this.buildStore(),
-					});
-				}
-			}
-			
-			getRelationShipCompany({
-				url: company.domain,
-				relatedRegistry: company.registry
-			}).then(relationshipCompany => {
-				
-					if (relationshipCompany.rrelationship) {
-						companyOptions.push({
-						name: MSG.HIRING + ' (Planes)',
-						icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
-						fn: () => this.buildPlans(),
-					});
-					
-					aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
-				}
-				
+		if (this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())) {
+			companyOptions.push({
+				name: MSG.GENERAL_INFORMATION,
+				// icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => this.buildGeneral(),
 			});
 		}
+
+		if (this.dur.isAdmin()) {
+			companyOptions.push({
+				name: MSG.USER_MANAGEMENT,
+				// icon: MATERIAL_ICONS.PEOPLE,
+				fn: () => this.buildUser(),
+			});
+			if (this.company && this.company.domain && !this.company.domain.parentId) {
+				companyOptions.push({
+					name: MSG.COMPANY_MANAGEMENT,
+					// icon: MATERIAL_ICONS.BUSINESS,
+					fn: () => this.buildCompanyList(),
+				});
+			}
+
+			companyOptions.push({
+				name: MSG.GROUP_MANAGEMENT,
+				// icon: MATERIAL_ICONS.GROUPS,
+				fn: () => this.buildGroups(),
+			});
+
+			if (this.dur.isApiService()) {
+				companyOptions.push({
+					name: MSG.SERVICE_ACCOUNTS,
+					// icon: MATERIAL_ICONS.API,
+					fn: () => this.buildServiceAccount(),
+				});
+			}
+
+			if (!this.isMobile() && ( (!this.dur.isTrial() && !this.dur.hasBeenTrial()) || this.dur.isParentUser()) ) {
+				companyOptions.push({
+					name: MSG.HIRING,
+					// icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+					fn: () => this.buildStore(),
+				});
+			}
+		}
+		if(this.company && this.company.registry && this.company.domain){
+			getRelationShipCompany({
+				url: this.company.domain,
+				relatedRegistry: this.company.registry
+			}).then(relationshipCompany => {
+			
+				if (relationshipCompany.rrelationship) {
+					companyOptions.push({
+						name: MSG.HIRING + ' (Planes)',
+						// icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+						fn: () => this.buildPlans(),
+					});
+				}
+				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+			}).catch(e => {	
+				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+			});
+		} else aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+		
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let appOptions = [];
 			if (this.dur.isInvoice()) {
 				appOptions.push({
 					name: INVOICE.title,
+					// icon: MATERIAL_ICONS.MONITORING,
 					fn: () => this.buildInvoiceConfiguration(),
 				});
 			}
@@ -252,6 +200,7 @@ export class AonConfiguration extends AonElement {
 				appOptions.push({
 					id: MESSENGER.title,
 					name: MESSENGER.title,
+					// icon: MATERIAL_ICONS.SPEAKER_NOTES,
 					fn: () => this.buildMessengerConfiguration(),
 				});
 			}
@@ -260,12 +209,14 @@ export class AonConfiguration extends AonElement {
 				appOptions.push({
 					id: AON_SALTRA.title,
 					name: AON_SALTRA.title,
+					// icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
 					fn: () => this.buildComunicaConfiguration(),
 				});
 			} else if (this.dur.isComunicaManager()) {
 				appOptions.push({
 					id: COMUNICA.title,
 					name: COMUNICA.title,
+					// icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
 					fn: () => this.buildComunicaConfiguration(),
 				});
 			}
@@ -273,6 +224,7 @@ export class AonConfiguration extends AonElement {
 			if (!this.dur.isEmployee() && this.isBeta()) {
 				appOptions.push({
 					id: "notice",
+					icon: "rss_feed",
 					name: "Comunicaciones",
 					fn: () => this.buildNews(),
 				});
@@ -286,6 +238,7 @@ export class AonConfiguration extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
+				icon: "dashboard",
 				name: "Panel Configuración",
 				fn: () => this.buildConfigurationMenu(),
 			});
@@ -381,7 +334,6 @@ export class AonConfiguration extends AonElement {
 		aonConfiguration.setContent(serviceAccountList);
 	}
 
-
 	createServiceAccount() {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 		let d = document.getElementById(aonConfiguration.DIALOG);
@@ -430,8 +382,6 @@ export class AonConfiguration extends AonElement {
 
 	buildCustomerList() {
 		let aonConfiguration = this.getApplication();
-		//aonConfiguration.removeToolbarOptions();
-
 		let aonCustomerList = new AonCustomerList(this);
 		aonCustomerList.id = this.CUSTOMER_LIST;
 		aonCustomerList.office = true;

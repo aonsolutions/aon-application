@@ -19,6 +19,7 @@ public class InvoiceCommunicatorContext {
 	private Company company;
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
+	private InvoiceCommunicationQuery communicationQuery;
 	
 //	private boolean error;
 //	private String errorMessage;
@@ -73,6 +74,14 @@ public class InvoiceCommunicatorContext {
 	}
 	public InvoiceCommunicatorContext setPreserveRawdocOnDeletion(boolean preserveRawdocOnDeletion) {
 		this.preserveRawdocOnDeletion = preserveRawdocOnDeletion;
+		return this;
+	}
+	
+	public InvoiceCommunicationQuery getCommunicationQuery() {
+		return communicationQuery;
+	}
+	public InvoiceCommunicatorContext setCommunicationQuery(InvoiceCommunicationQuery communicationQuery) {
+		this.communicationQuery = communicationQuery;
 		return this;
 	}
 

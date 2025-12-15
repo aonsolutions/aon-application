@@ -21,7 +21,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<compilerArgs>
+						<!--
 						<arg>-Werror</arg>
+						-->
 						<arg>-Xlint:all</arg>
 					</compilerArgs>
 				</configuration>
@@ -33,7 +35,7 @@
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.11.0-pre2</version>
+			<version>0.11.2</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

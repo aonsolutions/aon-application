@@ -457,14 +457,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
-		String customerPackage = obtainPackageUnitTag(detail.getItem(), codes.getCustomerPackage());
+		String customerPackage = obtainPackageUnitTag(detail, codes.getCustomerPackage());
 		double quantity = packageQuantity == null 
 			? obtainPackageQuantity(detail.getItem(), detail.getQuantity(), customerPackage)
-			: obtainPackageQuantityOld(detail.getItem(), packageQuantity, customerPackage);		
+			: obtainPackageQuantityOld(detail, packageQuantity, customerPackage);		
 
 		seh1l.setCantidadEnviada_12_(quantity);
 		seh1l.setUnidadDeMedidaCantidadEnviada(StringUtils.substring(customerPackage, 0, 3).toUpperCase());
-		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(obtainPackageUnit(detail.getItem(), customerPackage));
+		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(obtainPackageUnit(detail, customerPackage));
 		
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
@@ -791,7 +791,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 	
-	private double obtainPackageQuantityOld(Item item, double quantity, String customerPackingTag) {
+	private double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
 		if(customerPackingTag!=null){
 			Item oldItem = getItem(item.getId());
 			Tag itemPackFormatTag = oldItem.getPackFormatTag();
@@ -815,27 +815,27 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return 0.0;
 	}
 	
-	private double obtainPackageQuantity(Item item, double packageQuantity, String customerPackingTag) {
+	private double obtainPackageQuantityOld(DeliveryDetail detail, double packageQuantity, String customerPackingTag) {
 		if(customerPackingTag != null){
-			Tag packFormatTag = item.getPackFormatTag();
-			Tag packMeasurementTag = item.getPackMeasurementTag();
-			Tag packUnitsTag = item.getPackUnitsTag();
+			Tag packFormatTag = detail.getItem().getPackFormatTag();
+			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
 
 			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
-				return packageQuantity * item.getPackUnits() * item.getPackMeasurement();
+				return packageQuantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
 			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
-				return packageQuantity * item.getPackUnits();
+				return packageQuantity * detail.getItem().getPackUnits();
 			else if(packMeasurementTag != null && customerPackingTag.equalsIgnoreCase(packMeasurementTag.getName()))
-				return packageQuantity * item.getPackUnits() * item.getPackMeasurement(); 
+				return packageQuantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement(); 
 			else return packageQuantity;
 		}
 		return 0.0;
 	}
 	
-	private String obtainPackageUnitTag(Item item, String customerPackingTag) {
-		Tag packFormatTag = item.getPackFormatTag();
-		Tag packMeasurementTag = item.getPackMeasurementTag();
-		Tag packUnitsTag = item.getPackUnitsTag();
+	private String obtainPackageUnitTag(DeliveryDetail detail, String customerPackingTag) {
+		Tag packFormatTag = detail.getItem().getPackFormatTag();
+		Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+		Tag packUnitsTag = detail.getItem().getPackUnitsTag();
 
 		if(customerPackingTag != null){
 			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
@@ -844,18 +844,18 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		} else return packFormatTag.getName();
 	}
 	
-	private double obtainPackageUnit(Item item, String customerPackingTag) {
+	private double obtainPackageUnit(DeliveryDetail detail, String customerPackingTag) {
 		if(customerPackingTag != null){
-			Tag packFormatTag = item.getPackFormatTag();
-			Tag packMeasurementTag = item.getPackMeasurementTag();
-			Tag packUnitsTag = item.getPackUnitsTag();
+			Tag packFormatTag = detail.getItem().getPackFormatTag();
+			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
 
 			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
-				return item.getPackUnits() * item.getPackMeasurement();
+				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
 			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
-				return item.getPackUnits();
+				return detail.getItem().getPackUnits();
 			else if(packMeasurementTag != null && customerPackingTag.equalsIgnoreCase(packMeasurementTag.getName()))
-				return item.getPackUnits() * item.getPackMeasurement(); 
+				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement(); 
 			else return 1.0;
 		}
 		return 1.0;

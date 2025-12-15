@@ -345,6 +345,8 @@ export class AonReg extends AonElement {
 					uploadLogo.setAttach(attach);
 			});
 		}
+		
+		return card;
 	}
 
 	buildStatusRegistry(){

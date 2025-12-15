@@ -253,7 +253,7 @@ public class ProductDAO {
 	}
 	
 	private static Condition paramsToCondition(AONContext ctx, ProductParams params) {
-		Condition condition = PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		Condition condition = PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)).or(PRODUCT.DOMAIN.eq(params.getDomain()));
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			condition = condition.and(

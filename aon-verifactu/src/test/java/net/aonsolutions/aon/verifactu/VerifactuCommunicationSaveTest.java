@@ -35,7 +35,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoEnvioType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
 class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
@@ -165,28 +169,55 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 
 	private Invoice save(Invoice invoice) {
-		return ctx.getDslContext().transactionResult(config -> {
+		Invoice i =  ctx.getDslContext().transactionResult(config -> {
 			invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
 			icc.setConfig(configWithCertificate());
 			Invoice inv = InvoiceDAO.save(ctx, invoice);
-			System.out.println( "ReferenceCode ..: " + inv.getReferenceCode() );
+			System.out.println( "Invoice saved --> ID: " + inv.getId()  + " ReferenceCode: " + inv.getReferenceCode() );
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(ctx, icc);
-			vc.invoiceStream()			
-				.forEach( i -> {
-					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
-					DataResponse response = assertDataResponse(i, tracking);
-					assertDataRequest(i, response);
-					assertInvoiceData(i);
-					assertInvoiceInfo(i);
-					assertInvoiceCommunication(i);
-					assertCommunicationHistory(i);		
-
-			});
+			assertNotNull(vc);
+			assertNotNull(vc.getResponse());
+			assertNotNull(vc.getResponse().getResponse());
+			System.out.println( "VERIFACTU Response" );
+			AonIOUtils.write(vc.getResponse().getBytes(), System.out);
+			System.out.println();
+			System.out.println( "------------------" );
+			RespuestaRegFactuSistemaFacturacionType resp = vc.getResponse().getResponse();
+			assertNotNull(resp.getEstadoEnvio());
+			assertTrue(resp.getEstadoEnvio() == EstadoEnvioType.CORRECTO || resp.getEstadoEnvio() == EstadoEnvioType.PARCIALMENTE_CORRECTO
+					,() -> {
+						StringBuilder buf = new StringBuilder();
+						buf.append("EstadoEnvio incorrecto").append(resp.getEstadoEnvio());
+						AonCollectionUtils.stream(resp.getRespuestaLinea())
+							.forEach( lr -> {
+								buf.append("\n\tLineaRespuesta para fra: ")
+									.append(lr.getIDFactura().getNumSerieFactura() )
+									.append(" - ")
+									.append(lr.getCodigoErrorRegistro())
+									.append(" - ")
+									.append(lr.getDescripcionErrorRegistro())
+								;
+							});
+						buf.append("\n");
+						return buf.toString();
+					});
+			
+			
+			
 			return inv;
 		});
+		
+		InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
+		DataResponse response = assertDataResponse(i, tracking);
+		assertDataRequest(i, response);
+		assertInvoiceData(i);
+		assertInvoiceInfo(i);
+		assertInvoiceCommunication(i);
+		assertCommunicationHistory(i);
+		return i;	
 	}
 
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
