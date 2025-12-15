@@ -43,7 +43,9 @@ public enum InvoiceCommunicationError {
 	AON_0025("0025", "Se han producido errores durante la validaci\u00F3n del certificado."),
 	AON_0026("0026", "La fecha de inicio de validez del certificado es posterior a la fecha de hoy"),
 	AON_0027("0027", "La fecha de validez del certificado ha caducado."),
-	
+	AON_0028("0028", "El tipo de comunicaci\u00F3n NO VERIFACTU no est\u00E1 implementado."),
+	AON_0029("0029", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
+	AON_0030("0030", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),
