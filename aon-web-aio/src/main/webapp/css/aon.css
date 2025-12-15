@@ -482,6 +482,7 @@ color: var(--aonSearchButton);
   position: relative;
   height: calc(100vh - 49px);
   overflow-y: auto;
+  
   /* top | right | bottom | left */
   margin: 0px 0px 0px 0px;
  
@@ -489,6 +490,10 @@ color: var(--aonSearchButton);
   /*box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));*/
   border-left: 1px solid rgba(0,0,0,0.1);
   border-top: 1px solid rgba(0,0,0,0.1);
+  
+  margin-left: 68px;
+  
+  transition: margin-left .3s;
 }
 
 #rootPanel.closeSidenav {
@@ -988,6 +993,10 @@ background-color: var(--aonLightGray);
 
 .aonMenuAnchorDivSpan {
 	font-size: 10px;
+}
+
+#aonMenu #aonMenuSidenav{
+	transition: width .3s;
 }
 
 #aonMenuSidenav > ul {

@@ -100,11 +100,17 @@ body,
 	margin: 1rem 1rem 1rem 1rem;
 }
 
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem), 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem){
+  	border-top-right-radius: 0px;
+  	border-bottom-right-radius: 0px;
+}
 
-
-.aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
-.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
-    background-color: #fff !important;
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+  	border-top-right-radius: 0px;
+  	border-bottom-right-radius: 0px;
+	background-color: initial !important;
 }
 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected, 
@@ -115,6 +121,30 @@ body,
   background-color: #f1f5f9 !important;
   border-left: none !important;
 }
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected)
+ {
+	background-color: #f1f5f9 !important;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem){
+	width: 100% ;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected){
+	margin-left: 0px !important;
+	padding-left: 35px !important;
+}
+
 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
@@ -762,6 +792,50 @@ div[style*='height:55px'] > .aon_toolbar {
 	padding-bottom: 0px !important;
 }
 
+.salaryDraftContent {
+	--height-adjust: -35;
+}
+
+.material-icons[icon] {
+    color: transparent;
+    --aonPayroll: transparent;
+}
+
+.material-icons[icon="person"] {
+	background-image: url('/icons/user.svg');
+}
+
+.material-icons[icon="place"] {
+	background-image: url('/icons/map-pin.svg');
+}
+
+.material-icons[icon="domain"] {
+	background-image: url('/icons/building-2.svg');
+}
+
+.gwt-TreeItem .material-icons[icon] {
+	width: 20px;
+  	height: 20px;
+  	background-size: 20px;
+  	background-repeat: no-repeat;
+}
+
+img[image='segsocial']{
+    background-image: url('/icons/SeguridadSocial.svg') !important;
+}
+
+img[image='ine'] {
+	background-image: url('/icons/ine.svg') !important;
+  	background-size: 13px !important;
+  	width: 16px !important;
+  	height: 18px !important;
+  	background-position-y: bottom !important;
+  	background-repeat: no-repeat !important;
+}    
+
+div:has( > .aon_icon_menu_collapse) {
+	display: flex ;
+} 
 .aon_customer_notes_content {
 	padding: 1rem !important;
 }
@@ -774,4 +848,8 @@ div[style*='height:55px'] > .aon_toolbar {
 .aon_customer_card_content {
 	background-color: transparent !important;
 	border-radius: .375rem !important;
+}
+
+.aon_custom_text_box_no_border {
+	border: none !important;
 }

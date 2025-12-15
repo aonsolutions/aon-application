@@ -418,6 +418,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 				                        case CONSULTANCY:  return 1;
 				                        case USER:         return 2;
 				                        case SERVICE:      return 3;
+				                        case DEFAULT:      return 4;
 				                        default:           return Integer.MAX_VALUE;
 				                    }
 				                })
