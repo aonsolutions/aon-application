@@ -56,7 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 
 public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		EmployeesService {

@@ -305,7 +305,10 @@ export class AonParent extends AonElement {
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 
 		let welcomeSpan = this.createSpan();
-		this.getWelcomeMessage().then( msg => welcomeSpan.innerHTML = msg ); 
+		this.getWelcomeMessage().then( msg => {
+			welcomeSpan.innerHTML = msg;
+			this.getApplication()?.getToolbar()?.attributeChangedCallback(CONSTANT.TITLE, null, msg);
+		} ); 
 		welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
 		welcomeDiv.appendChild(welcomeSpan);
 		

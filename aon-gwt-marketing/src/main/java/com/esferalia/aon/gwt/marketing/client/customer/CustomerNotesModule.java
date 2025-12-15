@@ -76,8 +76,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		container.setStyleName(AON.CSS.aonFlexColumn());
 		
 		content = new HTMLPanel(AonStringUtils.EMPTY);
-		content.setStyleName(AON.CSS.aonFlexColumn());
-		content.getElement().getStyle().setProperty("padding", "0 1rem");
+		content.setStyleName(AON.CSS.aonCustomerNotesContent());
 		
 		scrollPanel = new ScrollPanel(content);
 		container.add(scrollPanel);
@@ -113,7 +112,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		// Notes
 		notesContent = new HTMLPanel(AonStringUtils.EMPTY);
-		notesContent.setStyleName(AON.CSS.aonFlexColumn());
+		notesContent.setStyleName(AON.CSS.aonCustomerNotesCard());
 		createNotes();
 		content.add(notesContent);
 		
@@ -146,7 +145,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 			observation = observations.get(0);
 		
 		HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		cardsPanel.addStyleName(AON.CSS.aonFlexColumn());
+		cardsPanel.setStyleName(AON.CSS.aonCustomerNotesCard());
 		
 		AonTableButton openBtn = new AonTableButton(
 				observationsOpen ? "Cerrar observaciones" : "Abrir observaciones" , 
@@ -193,10 +192,10 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		AonCustomCardSmall card = new AonCustomCardSmall(description, openBtn);
 		card.setToolbarWidgetShown();
-		card.getElement().getStyle().setProperty("background-color", "#ebebeb");
+		card.addStyleName(AON.CSS.aonCustomerCardObservation());
 		
 		HTMLPanel cardContentPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		cardContentPanel.addStyleName(AON.CSS.aonFlexColumn());
+		cardContentPanel.addStyleName(AON.CSS.aonCustomerCardContent());
 		
 		cardContentPanel.add(comments);
 		
@@ -304,7 +303,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 			toolbar.add(openBtn);
 			
 			HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
-			cardsPanel.addStyleName(AON.CSS.aonFlexColumn());
+			cardsPanel.setStyleName(AON.CSS.aonCustomerNotesCard());
 			
 			messages.forEach(message -> {
 				notesOpen.put(message.getId(), true);
@@ -364,7 +363,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				card.setToolbarWidgetShown();
 				
 				HTMLPanel cardContentPanel = new HTMLPanel(AonStringUtils.EMPTY);
-				cardContentPanel.addStyleName(AON.CSS.aonFlexColumn());
+				cardContentPanel.addStyleName(AON.CSS.aonCustomerCardContent());
 				
 				cardContentPanel.add(comments);
 				

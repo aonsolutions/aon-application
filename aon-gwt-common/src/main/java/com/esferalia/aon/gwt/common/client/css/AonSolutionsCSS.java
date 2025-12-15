@@ -1575,5 +1575,16 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_keyboard_arrow_left")
 	String aonIconKeyboardArrowLeft();
 	
+	@ClassName("aon_customer_notes_content")
+	String aonCustomerNotesContent();
+	
+	@ClassName("aon_customer_notes_card")
+	String aonCustomerNotesCard();
+	
+	@ClassName("aon_customer_card_observation")
+	String aonCustomerCardObservation();
+	
+	@ClassName("aon_customer_card_content")
+	String aonCustomerCardContent();
 }
 

@@ -45,6 +45,11 @@ on:
         type: boolean
         required: true
         default: false
+      publishVersion:
+        description: 'Publish version to Amazon ECR'
+        type: boolean
+        required: true
+        default: false
       javaVersion:
         description: 'Java version'
         type: choice
@@ -55,7 +60,7 @@ on:
           - 22
           - 21
         required: true
-        default: 21
+        default: 25
       javaDistribution:
         description: 'Java distribution'
         type: choice
@@ -86,6 +91,7 @@ env:
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
   SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || github.ref != 'refs/heads/master' }}
+  PUBLISH_VERSION: ${{ github.event.inputs.publishVersion || github.ref == 'refs/heads/master' }}
   BUILD_PRODUCTION_VERSION: ${{ github.event.inputs.buildProductionVersion || github.ref == 'refs/heads/master' }}
 
 jobs:
@@ -330,7 +336,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
-      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' }}
+      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' || env.PUBLISH_VERSION == 'true' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
       run: |
@@ -352,7 +358,7 @@ jobs:
         AWS_REGION: eu-south-2
 
     - name: Tag, and push images to Amazon ECR (Spain)
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.PUBLISH_VERSION == 'true' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |

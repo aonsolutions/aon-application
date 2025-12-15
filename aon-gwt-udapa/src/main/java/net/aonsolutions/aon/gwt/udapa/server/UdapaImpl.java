@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;

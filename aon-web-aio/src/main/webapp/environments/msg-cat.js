@@ -37,6 +37,7 @@ export const ALL1 = 'Tots';
 export const ALL2 = 'Totes';
 export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
+export const AMORTIZATION = 'Amortització';
 export const ANNUAL_VIEW = 'Vista anual';
 export const AON_SERVICES = 'Serveis Aon';
 export const API_DOCUMENTATION = 'Documentació API';

@@ -31,8 +31,8 @@ import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
-import { AonIcon } from '../../components/aon-icon.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonInvoice extends AonElement {
 
@@ -114,6 +114,7 @@ export class AonInvoice extends AonElement {
 		this.CONTENT = this.id + 'Content';
 		this.DATA = this.id + 'Data';
 		this.COMMUNICATION = this.id + 'Communication';
+		this.AMORTIZATION = this.id + 'Amortization';
 		this.COMMUNICATION_CARD = this.COMMUNICATION + CONSTANT.CARD.initCap();
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
@@ -131,8 +132,12 @@ export class AonInvoice extends AonElement {
 		this.invoice = this.invoice || new Invoice().setType(this.type);
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildInvoiceContent()},
-			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
+			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()},
+			
 		];
+		if (this.getInvoice()?.isInvestment()) {
+			this.options.push({ title: MSG.AMORTIZATION, fn: () => this.buildAmortization()});
+		}
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -628,6 +633,20 @@ export class AonInvoice extends AonElement {
 		if ( LS.isNewTheme() ) { 
 			this.showFieldsMessages(content);
 		}
+	}
+
+	buildAmortization() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+
+		let amortization = this.createElement(TAG.DIV);
+		amortization.id = this.AMORTIZATION;
+		amortization.className = CSS.AON_BLOCK;
+		let jsfInvoiceAmortization = new JSF.AonJsfInvoiceAmortization();
+		jsfInvoiceAmortization.setElExpression(`expenseInvoice.select(null, (${this.invoice.id}).intValue() )`);
+		amortization.appendChild(jsfInvoiceAmortization);
+		content.appendChild(amortization);
+		
 	}
 
 	buildCommunication() {
