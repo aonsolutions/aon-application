@@ -10,6 +10,7 @@ export class AonJsfApp extends AonElement {
 	viewId = '';
 	action = '';
 	redirectUrl = '';
+	elExpression = '';
 	actionListener = '';
 	expireSession = 'true';
 
@@ -117,6 +118,12 @@ export class AonJsfApp extends AonElement {
 		themeInput.value = LS.getTheme();
 		form.appendChild(themeInput);
 
+		let elExpressionInput = this.createElement(TAG.INPUT);
+		elExpressionInput.type = 'hidden';
+		elExpressionInput.name = 'elExpression';
+		elExpressionInput.value = this.elExpression;
+		form.appendChild(elExpressionInput);
+
 		this.appendChild(form);
 
 		this.setJaasDomain( jaasDomainInput )
@@ -152,6 +159,10 @@ export class AonJsfApp extends AonElement {
 
 	setRedirectUrl(redirectUrl) {
 		this.redirectUrl = redirectUrl;
+	}
+	
+	setElExpression(elExpression) {
+		this.elExpression = elExpression;
 	}
 
 	isLoaded() {
@@ -1107,6 +1118,14 @@ export class AonJsfInvoiceRecorder extends AonJsfApp {
 	}
 }
 
+export class AonJsfInvoiceAmortization extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceAmortization.xhtml');
+	}
+}
+
 export class AonJsfFinanceTrackingEntry extends AonJsfApp {
 
 	constructor() {
@@ -1930,6 +1949,10 @@ if (!window.customElements.get(TAG.AON_JSF_INVOICE_REPORT)) {
 
 if (!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_RECORDER, AonJsfInvoiceRecorder);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_AMORTIZATION)) {
+	window.customElements.define(TAG.AON_JSF_INVOICE_AMORTIZATION, AonJsfInvoiceAmortization);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)) {

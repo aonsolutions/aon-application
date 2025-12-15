@@ -276,6 +276,7 @@ export class AonMenu extends AonElement {
 		}
 	}
 
+	/*
 	showMenuButton(){
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		if(this.getAttribute('opened')) {
@@ -283,6 +284,7 @@ export class AonMenu extends AonElement {
 			this.getRootPanel().style.marginRight = '60px';
 		} 
 	}
+	*/
 
 	buildApp(app) {
 		let li = this.createElement(TAG.LI);

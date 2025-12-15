@@ -175,12 +175,24 @@ public class Diary2Template {
 //
 //					System.out.println();
 				
-				Object concepto = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.CONCEPTO)));
-				if ( concepto == null )
-					break;
+				Object apunte = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.APUNTE)));
+				if (apunte == null)
+					continue;
+
 
 				XSSFRow aonDiaryXSSFSheetRow = aonDiaryXSSFSheet.createRow(aonRow++);
-				aonDiaryXSSFSheetRow.createCell(AONDiaryColumn.CONCEPTO.ordinal(), CellType.STRING).setCellValue(concepto.toString());
+				
+				{
+					aonDiaryXSSFSheetRow.createCell(AONDiaryColumn.APUNTE.ordinal(), CellType.NUMERIC).setCellValue(Integer.parseInt(String.format("%.0f", apunte)));
+				}
+
+				{
+					Object concepto = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.CONCEPTO)));
+					if ( concepto == null )
+						concepto = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.DESCRIPCION_DE_LA_CUENTA)));
+					if ( concepto != null )
+						aonDiaryXSSFSheetRow.createCell(AONDiaryColumn.CONCEPTO.ordinal(), CellType.STRING).setCellValue(concepto.toString());
+				}
 
 				{	
 					Object documento = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.DOCUMENTO)));
@@ -206,11 +218,6 @@ public class Diary2Template {
 						aonDiaryXSSFSheetRow.createCell(AONDiaryColumn.ASIENTO.ordinal(), CellType.NUMERIC).setCellValue(Integer.parseInt(String.format("%.0f", asiento)));
 				}
 				
-				{
-					Object apunte = Utils.getObjectValue(a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.APUNTE)));
-					if ( apunte != null )
-						aonDiaryXSSFSheetRow.createCell(AONDiaryColumn.APUNTE.ordinal(), CellType.NUMERIC).setCellValue(Integer.parseInt(String.format("%.0f", apunte)));
-				}
 
 				{
 					Date fecha = a3DiaryXSSFRow.getCell(a3DiaryXSSFSheetColumns.get(A3DiaryColumn.FECHA)).getDateCellValue();

@@ -276,6 +276,7 @@ export const AON_JSF_PERIOD_AMORTIZATION = 'aon-jsf-period-amortization' ;
 export const AON_JSF_END_PERIOD_ENTRIES = 'aon-jsf-end-period-entries' ;
 export const AON_JSF_INVOICE_REPORT = 'aon-jsf-invoice-report' ;
 export const AON_JSF_INVOICE_RECORDER = 'aon-jsf-invoice-recorder' ;
+export const AON_JSF_INVOICE_AMORTIZATION = 'aon-jsf-invoice-amortization' ;
 export const AON_JSF_FINANCE_TRACKING_ENTRY = 'aon-jsf-finance-tracking-entry' ;
 
 export const AON_SUITE_MENU = 'aon-suite-menu';

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.google.gwt.dom.client.Element;
+
 public class Wnd {
 
 	public static native boolean isSysAdmin()
@@ -42,5 +44,19 @@ public class Wnd {
 	/*-{
 		return $wnd.getCurrentDomainNameURL();
 	}-*/;
+
+	/**
+	 * Get value of CSS variable. 
+	 * <cssSelector> {
+  	 *	--<cssVar>: <cssValue>;
+	 *	} 	
+	 * @param element
+	 * @param cssVar without '--' prefix
+	 * @return cssValue
+	 */
+	public static native String getCSSVariable(Element element, String cssVar) /*-{
+		return $wnd.getComputedStyle(element).getPropertyValue('--' + cssVar);
+	}-*/;
+
 
 }

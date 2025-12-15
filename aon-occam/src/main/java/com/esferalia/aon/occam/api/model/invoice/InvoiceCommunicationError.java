@@ -43,6 +43,9 @@ public enum InvoiceCommunicationError {
 	AON_0025("0025", "Se han producido errores durante la validaci\u00F3n del certificado."),
 	AON_0026("0026", "La fecha de inicio de validez del certificado es posterior a la fecha de hoy"),
 	AON_0027("0027", "La fecha de validez del certificado ha caducado."),
+	AON_0028("0028", "El filtro de conulta es un dato obligatorio."),
+	AON_0029("0029", "El a\u00F1o es un dato obligatorio en el filtro de consulta."),
+	AON_0030("0030", "El mes no es v\u00E1lido en el filtro de consulta."),
 	
 
 	// TODO REFACTOR

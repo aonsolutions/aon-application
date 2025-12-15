@@ -48,6 +48,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsTreeItem;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -97,7 +98,7 @@ public class Enterprises extends ResizeComposite implements
 		@Template("<span style=\"{0}\">{1}&nbsp;</span>{2}")
 		SafeHtml treeItem(SafeStyles styles, String preffix, String title);
 	
-		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" >{0}</span>")
+		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" icon=\"{0}\" >{0}</span>")
 		SafeHtml materialIcon(String materialIcon);
 	}
 	
@@ -615,7 +616,10 @@ public class Enterprises extends ResizeComposite implements
 	 */
 	private SafeHtml imageItemHTML(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
+		Image image = AbstractImagePrototype.create(imageProto).createImage();
+		image.getElement().setAttribute("image", imageProto.getName());
+		builder.appendHtmlConstant(image.toString());
+		//builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
 		builder.append(' ');
 		builder.appendEscaped(title);
 		return builder.toSafeHtml();

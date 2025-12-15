@@ -265,7 +265,7 @@ public class SettleSalariesDAO {
 		
 		xmlData += "<Othr>";
 		
-		xmlData += "<Id>" + AonStringUtils.rightPad(fbatchEnterprise.get(REGISTRY.DOCUMENT), 12, '0') + "</Id>";
+		xmlData += "<Id>" + AonStringUtils.rightPad(fbatchEnterprise.get(REGISTRY.DOCUMENT), 9, '0') + AonStringUtils.rightPad(AonStringUtils.isBlank(fbatchEnterprise.get(RBANK.SUFIX)) ? "000" : fbatchEnterprise.get(RBANK.SUFIX), 3, '0') + "</Id>";
 		
 		xmlData += "</Othr>";
 		
@@ -305,7 +305,7 @@ public class SettleSalariesDAO {
 		
 		xmlData += "</PstlAdr>";
 		
-		xmlData += "<Id><OrgId><Othr><Id>" + AonStringUtils.rightPad(fbatchEnterprise.get(REGISTRY.DOCUMENT), 12, '0') + "</Id></Othr></OrgId></Id>";
+		xmlData += "<Id><OrgId><Othr><Id>" + AonStringUtils.rightPad(fbatchEnterprise.get(REGISTRY.DOCUMENT), 9, '0') + AonStringUtils.rightPad(AonStringUtils.isBlank(fbatchEnterprise.get(RBANK.SUFIX)) ? "000" : fbatchEnterprise.get(RBANK.SUFIX), 3, '0') + "</Id></Othr></OrgId></Id>";
 		
 		xmlData += "</Dbtr>";
 		
