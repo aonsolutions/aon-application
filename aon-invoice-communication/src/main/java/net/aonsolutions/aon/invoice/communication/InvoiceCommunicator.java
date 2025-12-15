@@ -210,9 +210,9 @@ public class InvoiceCommunicator {
 								}
 							}
 							
-							@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028); }
-							@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029); }
-							@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);}
+							@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+							@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+							@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 						});
 					}
 				}
@@ -265,9 +265,9 @@ public class InvoiceCommunicator {
 							VERIFACTU.accept(ctx,cc);
 						}
 						
-						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028); }
-						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029); }
-						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);}
+						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 					});
 				}
 			}
@@ -328,9 +328,9 @@ public class InvoiceCommunicator {
 							} 
 						}
 						
-						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028); }
-						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029); }
-						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);}
+						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 					});
 				}
 			}
