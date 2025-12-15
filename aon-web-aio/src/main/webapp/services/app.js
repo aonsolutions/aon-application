@@ -261,9 +261,9 @@ export const COMUNICA = {
 
 export const DOCUMENTAL = {
   app: CONSTANT.DOCUMENTAL,
-  title: MSG.DOCUMENTARY,
-  description: MSG.DOCUMENTARY,
-  tag: MSG_ES.DOCUMENTARY,
+  title: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
+  description: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
+  tag: LS.isFutureTheme() ? MSG_ES.MY_CLOUD : MSG_ES.DOCUMENTARY,
   symbol: MATERIAL_ICONS.FOLDER_OPEN,
   color: "var(--aonDocumental)",
   // newColor: "var(--aonDocumental)",

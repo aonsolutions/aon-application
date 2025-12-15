@@ -310,11 +310,12 @@ input, select, textarea,
 	border: none;
 }
 .aon_custom_card > div:first-child {
-	border-bottom: .1rem solid #cbd5e1;
+	/*border-bottom: .1rem solid #cbd5e1;*/
 }
 
 .aon_custom_card .aon_flex_column {
 	margin: 0.25rem;
+	background-color: #f1f5f9 !important;
 }
 
 .aon_custom_row:hover, 

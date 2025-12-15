@@ -314,6 +314,7 @@ export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
+export const MY_CLOUD = 'Mon nuage';
 
 
 // ----- N

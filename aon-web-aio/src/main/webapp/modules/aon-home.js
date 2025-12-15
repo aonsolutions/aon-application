@@ -271,6 +271,8 @@ export class AonHome extends AonElement {
 		}
 		
 		// Menu button collapse
+		let topnav = this.getElement("aonMenuTopnav");
+		topnav && topnav.classList.remove("closeSidenav");
 		let aonMenuButton = this.createMenuButton();
 		this.appendChild(aonMenuButton);
 	}
@@ -313,6 +315,9 @@ export class AonHome extends AonElement {
 		
 		let rootPanel = this.getElement("rootPanel");
 		rootPanel.classList.toggle("closeSidenav");
+		
+		let topnav = this.getElement("aonMenuTopnav");
+		topnav.classList.toggle("closeSidenav");
 		
 		let menuAnchorIcon = this.getElement("aonMenuAnchorDivIcon");
 		menuAnchorIcon.innerHTML = menuAnchor.classList.contains('close')

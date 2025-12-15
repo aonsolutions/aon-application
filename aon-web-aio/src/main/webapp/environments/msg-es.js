@@ -320,6 +320,7 @@ export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 export const MAGIC_LINK = 'Envío de enlace de acceso por email';
 export const UPPER_MENU = 'Menú de cabecera';
+export const MY_CLOUD = 'Mi Nube';
 
 // ----- N
 

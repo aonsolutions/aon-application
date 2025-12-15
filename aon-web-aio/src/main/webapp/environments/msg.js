@@ -497,6 +497,7 @@ export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
 export const MOVE_STOCK = "Mover Stock"; //TODO
 export const MINS = "Minutos"; //TODO
+export const MY_CLOUD = MSG.MY_CLOUD;
 
 // ----- N
 

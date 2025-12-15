@@ -1062,7 +1062,9 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuTopnav {
-  width: 100%;
+  /*width: 100%;*/
+  width: -moz-available;
+  width: -webkit-fill-available;
   height: 5rem;
   position: fixed;
   top: 48px;
@@ -1269,6 +1271,7 @@ background-color: var(--aonLightGray);
   cursor: pointer;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
+  position: relative;
 }
 
 .aonAppMenuSidenavListSelected {

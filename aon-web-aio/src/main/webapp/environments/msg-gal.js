@@ -312,6 +312,7 @@ export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
+export const MY_CLOUD = 'A miña nube';
 
 // ----- N
 
