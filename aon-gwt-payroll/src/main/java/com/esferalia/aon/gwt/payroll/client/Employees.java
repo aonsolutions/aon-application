@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -86,6 +85,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsTreeItem;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -265,7 +265,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	interface Template extends SafeHtmlTemplates {
 
-		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" >{0}</span>")
+		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" icon=\"{0}\" >{0}</span>")
 		SafeHtml materialIcon(String materialIcon);
 
 	}
@@ -1865,11 +1865,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 */
 	private SafeHtml imageItemHTML(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
+		Image image = AbstractImagePrototype.create(imageProto).createImage();
+		image.getElement().setAttribute("image", imageProto.getName());
+		builder.appendHtmlConstant(image.toString());
+		//builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
+		
 		builder.append(' ');
 		builder.appendEscaped(capitalize(title));
 		return builder.toSafeHtml();
 	}
+
 
 	/**
 	 * Generates HTML for a tree item with an attached material icon.

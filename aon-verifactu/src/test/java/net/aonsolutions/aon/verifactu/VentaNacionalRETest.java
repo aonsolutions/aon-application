@@ -67,6 +67,15 @@ class VentaNacionalRETest extends AbstractVerifactuTest {
 		assertInvoice( vc );
 	}
 
+	@Test
+	void ventaFacesTest() throws InvoiceCommunicationException {
+		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
+		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
+		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		VerifactuContext vc = new VerifactuContext(icc);
+		assertInvoice( vc );
+	}
+
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );

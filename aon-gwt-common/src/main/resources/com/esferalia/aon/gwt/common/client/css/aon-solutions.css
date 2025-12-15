@@ -2656,4 +2656,29 @@
   background: #555;
 }
 
+.aon_customer_notes_content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: .5rem;
+	padding: 0 1rem;
+}
+
+.aon_customer_notes_card {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+}
+
+.aon_customer_card_observation {
+	background-color: #ebebeb;
+}
+
+.aon_customer_card_content {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
 
