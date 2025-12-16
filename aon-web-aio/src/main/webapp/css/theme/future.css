@@ -524,6 +524,7 @@ aon-configuration-menu .suiteMenuContent  {
 	height: 68px;
 	width: 237px;
 	margin-left: 4px;
+	z-index: 2;
 }
 
 #aonMenuAnchor.close {

@@ -479,7 +479,7 @@ export class AonDesktop extends AonElement {
 				let staticsDiv = this.createElement(TAG.DIV);
 				staticsDiv.style.height = "14rem";
 				staticsDiv.style.minWidth = "15rem";
-				staticsDiv.style.maxWidth = "25rem";
+				//staticsDiv.style.maxWidth = "25rem";
 				staticsDiv.style.margin = "0 auto";
 				staticsDiv.innerHTML = '',
 					staticsDiv.appendChild(new AonStatistics());
