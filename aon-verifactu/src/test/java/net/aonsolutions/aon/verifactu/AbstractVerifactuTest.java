@@ -62,6 +62,8 @@ public abstract class AbstractVerifactuTest {
 	public static interface Environment {
 		CloseableAONContext getCtx();
 		void setCtx(CloseableAONContext aonContext);
+		
+		
 		Integer getDomainId();
 		void setDomainId(Integer id);
 		Occam getOccam();
@@ -71,6 +73,7 @@ public abstract class AbstractVerifactuTest {
 		void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration);
 		String getDomainName();	
 		String getUser();
+		Domain getDomain();
 		
 		default void close() {
 			CloseableAONContext ctx = getCtx();
@@ -79,15 +82,13 @@ public abstract class AbstractVerifactuTest {
 			}
 		}
 	}
-	
-	static final class VerifactuEnvironment implements Environment {
-		private CloseableAONContext ctx;
-		private Integer domainId;
-		protected String domainName = System.getProperty("domainName", "verifactutest.aonsolutions.test");	
-		protected String user 		= System.getProperty("domainUser", "admin");
-		private InvoiceCommunicationConfiguration communicationConfiguration;
-		private InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
-		
+	static abstract class VerifactuEnvironmentAbs implements Environment {
+		protected CloseableAONContext ctx;
+		protected Integer domainId;
+		protected InvoiceCommunicationConfiguration communicationConfiguration;
+		protected InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
+		protected Domain domain;
+
 		@Override
 		public CloseableAONContext getCtx() {
 			return ctx;
@@ -125,67 +126,39 @@ public abstract class AbstractVerifactuTest {
 		}
 		
 		@Override
-		public String getDomainName() {
-			return domainName;
-		}
-		
-		@Override
-		public String getUser() {
-			return user;
+		public Domain getDomain() {
+			if (domain == null) {
+				domain = DomainDAO.getDomain(getCtx(), getDomainId());
+			}
+			return domain;
 		}
 		
 		@Override
 		public Occam getOccam() {
 			return new Occam()
-				.setDomainName(domainName)
+				.setDomainName(getDomainName())
 				.setDomain(domainId)
-				.setUser(user);
+				.setUser(getUser());
 		}
 	}
 	
-	static final class NoVerifactuEnvironment implements Environment {
-		private CloseableAONContext ctx;
-		private Integer domainId;
-		protected String domainName = System.getProperty("domainName", "noverifactutest.aonsolutions.test");	
-		protected String user 		= System.getProperty("domainUser", "admin");
-		private InvoiceCommunicationConfiguration communicationConfiguration;
-		private InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
+	static final class VerifactuEnvironment extends VerifactuEnvironmentAbs {
+		protected String domainName = "verifactutest.aonsolutions.test";	
+		protected String user 		= "admin";
 		
 		@Override
-		public CloseableAONContext getCtx() {
-			return ctx;
+		public String getDomainName() {
+			return domainName;
 		}
 		@Override
-		public void setCtx(CloseableAONContext aonContext) {
-			this.ctx = aonContext;
+		public String getUser() {
+			return user;
 		}
-		
-		@Override
-		public Integer getDomainId() {
-			return domainId;
-		}
-		@Override
-		public void setDomainId(Integer id) {
-			this.domainId = id;
-		}
-		
-		@Override
-		public InvoiceCommunicationConfiguration getCommunicationConfiguration() {
-			return communicationConfiguration;
-		}
-		@Override
-		public void setCommunicationConfiguration(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration) {
-			this.communicationConfiguration = invoiceCommunicationConfiguration;
-		}
-		
-		@Override
-		public InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
-			return communicationConfigurationWithCertificate;
-		}
-		@Override
-		public void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration) {
-			this.communicationConfigurationWithCertificate = invoiceCommunicationConfiguration;
-		}
+	}
+	
+	static final class NoVerifactuEnvironment extends VerifactuEnvironmentAbs {
+		protected String domainName = "noverifactutest.aonsolutions.test";	
+		protected String user 		= "admin";
 		
 		@Override
 		public String getDomainName() {
@@ -195,14 +168,6 @@ public abstract class AbstractVerifactuTest {
 		@Override
 		public String getUser() {
 			return user;
-		}
-		
-		@Override
-		public Occam getOccam() {
-			return new Occam()
-				.setDomainName(domainName)
-				.setDomain(domainId)
-				.setUser(user);
 		}
 	}
 
@@ -212,7 +177,7 @@ public abstract class AbstractVerifactuTest {
 		synchronized (VERIFACTU_ENV) {
 			if ( VERIFACTU_ENV.getDomainId() == null) {
 				AONContext context = new AONContext(connect());
-				Domain domain = DomainProviderForTests.getOrCreateDomain(context, VERIFACTU_ENV );
+				Domain domain = TestDomainProvider.getOrCreateDomain(context, VERIFACTU_ENV );
 				VERIFACTU_ENV.setDomainId( domain.getId() );
 			}
 			VERIFACTU_ENV.setCtx( AONContext.getAONContext(VERIFACTU_ENV.getOccam()) );

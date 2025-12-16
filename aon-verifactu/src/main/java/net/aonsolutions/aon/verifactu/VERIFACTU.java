@@ -220,7 +220,7 @@ public class VERIFACTU {
 		}
 	}
 	
-	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+	static void check(VerifactuContext vc) throws InvoiceCommunicationException {
 		checkCompany(vc);
 		checkConfig(vc);
 		checkInvoices(vc);
@@ -259,7 +259,7 @@ public class VERIFACTU {
 	// **************************************************************
 	// **************************************************************
 
-	private static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
+	static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
 		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.VERIFACTU, request);
 	}
 
@@ -267,7 +267,7 @@ public class VERIFACTU {
 		return InvoiceCommunicationDAO.saveResponse(ctx, domain, InvoiceCommunicationType.VERIFACTU, dataRequest, response);		
 	}
 
-	private static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
+	static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
 		Domain domain = vc.getDomain();
 		Integer invoiceId = AonNumberUtils.toInteger(registroAlta.getRefExterna());
 		InvoiceDataDAO.save(ctx, new InvoiceData()
@@ -304,7 +304,7 @@ public class VERIFACTU {
 		}
 	}
 	
-	private static void saveVerifactuBlockchain(AONContext ctx, Domain domain, VerifactuBlockchain blockchain) {
+	static void saveVerifactuBlockchain(AONContext ctx, Domain domain, VerifactuBlockchain blockchain) {
 		AppParamDAO.saveApplicationParameter(ctx, new ApplicationParameter()
 			.setDomain(domain.getId())
 			.setName(AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT.name())
@@ -342,7 +342,7 @@ public class VERIFACTU {
 		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
-	private static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
+	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
 		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.VERIFACTU, status);
 	}
 	
@@ -353,7 +353,7 @@ public class VERIFACTU {
 		return null;
 	}
 
-	private static VerifactuBlockchain getBlockchain(AONContext ctx) {	
+	static VerifactuBlockchain getBlockchain(AONContext ctx) {	
 		return new VerifactuBlockchain()
 			.setDocument(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT))
 			.setReference(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE))
