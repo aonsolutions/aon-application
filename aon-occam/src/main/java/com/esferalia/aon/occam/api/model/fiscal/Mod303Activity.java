@@ -56,6 +56,7 @@ public class Mod303Activity implements Serializable {
 	private double childMen18Hours; //Horas anuales de los hijos menores de 18 años.
 	
 	private LinkedList<Mod303ActivityDesk> desks;
+	private LinkedList<Mod303ActivityOven> ovens; // Desglose Superficio del horno (se usa en el 4T a partir de 2025)
 	private LinkedList<Mod303ActivityModule> modules;
 	
 	public Mod303Activity() {
@@ -69,6 +70,7 @@ public class Mod303Activity implements Serializable {
 		modules.add(new Mod303ActivityModule());
 		
 		initializeDesks();
+		initializeOvens();
 	}
 	
 	private void initializeDesks() {
@@ -77,6 +79,14 @@ public class Mod303Activity implements Serializable {
 		desks.add(new Mod303ActivityDesk());
 		desks.add(new Mod303ActivityDesk());
 		desks.add(new Mod303ActivityDesk());
+	}
+	
+	private void initializeOvens() {
+		ovens = new LinkedList<>();
+		ovens.add(new Mod303ActivityOven());
+		ovens.add(new Mod303ActivityOven());
+		ovens.add(new Mod303ActivityOven());
+		ovens.add(new Mod303ActivityOven());
 	}
 
 	public int getIndex() {
@@ -371,6 +381,14 @@ public class Mod303Activity implements Serializable {
 		return this;
 	}
 	
+	public LinkedList<Mod303ActivityOven> getOvens() {
+		return ovens;
+	}
+	public Mod303Activity setOvens(LinkedList<Mod303ActivityOven> ovens) {
+		this.ovens = ovens;
+		return this;
+	}
+	
 	public LinkedList<Mod303ActivityModule> getModules() {
 		return modules;
 	}
@@ -416,6 +434,7 @@ public class Mod303Activity implements Serializable {
 		this.setChildMen18Hours(0.0);
 		this.setModules(new LinkedList<>());
 		initializeDesks();
+		initializeOvens();
 	}
 
 	public static Mod303Activity clone(Mod303Activity toClone) {
@@ -459,6 +478,12 @@ public class Mod303Activity implements Serializable {
 			act.setDesks( new LinkedList<>());
 			for (Mod303ActivityDesk desk : toClone.getDesks()) {
 				act.getDesks().add( Mod303ActivityDesk.clone(desk) );
+			}
+		}
+		if (toClone.getOvens() != null) {
+			act.setOvens( new LinkedList<>());
+			for (Mod303ActivityOven oven : toClone.getOvens()) {
+				act.getOvens().add( Mod303ActivityOven.clone(oven) );
 			}
 		}
 		if (toClone.getModules() != null) {

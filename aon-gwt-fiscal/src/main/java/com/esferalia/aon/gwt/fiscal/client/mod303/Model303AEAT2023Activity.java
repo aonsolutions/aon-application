@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEAT2023SimplifiedRegi
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityDesk;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityOven;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
@@ -60,7 +61,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	private ListBox dana = new ListBox();
 	
 	private InlineLabel staffLabel = new InlineLabel(); 
-	private InlineLabel deskLabel = new InlineLabel(); 
+	private InlineLabel deskLabel = new InlineLabel();
+	private InlineLabel ovenLabel = new InlineLabel();
 
 	private class Model303AEAT2023ActivityModule {
 		private final int index;
@@ -102,6 +104,24 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			new Model303AEAT2023ActivityDesk(1),
 			new Model303AEAT2023ActivityDesk(2),
 			new Model303AEAT2023ActivityDesk(3),
+	};
+	
+	private class Model303AEAT2025ActivityOven {
+		private final int index;
+		
+		private AonIntegerBox surface = new AonIntegerBox(7);  // Superficie del horno (dm2) (solo 4T a partir de 2025)
+		private AonIntegerBox days = new AonIntegerBox(3);     // Días (solo 4T a partir de 2025)
+		
+		private Model303AEAT2025ActivityOven(int index) {
+			this.index = index;
+		}
+	}
+	
+	Model303AEAT2025ActivityOven[] ovens = new Model303AEAT2025ActivityOven[] {
+			new Model303AEAT2025ActivityOven(0),
+			new Model303AEAT2025ActivityOven(1),
+			new Model303AEAT2025ActivityOven(2),
+			new Model303AEAT2025ActivityOven(3),
 	};
 
 	private AonDoubleBox dev = new AonDoubleBox();
@@ -172,6 +192,10 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		}
 		if (deskModuleIndex(callback) != -1) {
 			tabLayoutPanel.add(getModulesDeskDataPanel(callback), "Inf. M\u00F3dulo \"Mesas\"");
+		}
+		// Desglose superficie del horno solo para 4T a partir de 2025
+		if (callback.getModel().getYear() >= 2025 && callback.getModel().isLastPeriod() && ovenModuleIndex(callback) != -1) {
+			tabLayoutPanel.add(getModulesOvenDataPanel(callback), "Inf. M\u00F3dulo \"Superficie del horno\"");
 		}
 		tabLayoutPanel.add(getResultPanel(callback), AON.MSG.result());
 
@@ -284,6 +308,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		
 		Arrays.stream(modules).forEach(m -> populateModule(act,m) );
 		Arrays.stream(desks).forEach(d -> populateDesk(act,d) );
+		Arrays.stream(ovens).forEach(o -> populateOven(act,o) );
 		
 		dev.setValue(act.getDev(),false,true);
 		lorcaReduction.setValue(act.getLorcaReduction(),false,true);
@@ -338,6 +363,10 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			d.desk.setEnabled(isEditable);
 			d.days.setEnabled(isEditable);
 		});
+		Arrays.stream(ovens).forEach(o -> {
+			o.surface.setEnabled(isEditable);
+			o.days.setEnabled(isEditable);
+		});
 		
 	}
 	private void populateModule(Mod303Activity act, Model303AEAT2023ActivityModule m) {
@@ -357,6 +386,13 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		d.capacity.setValue(desk.getDeskCapacity());
 		d.desk.setValue(desk.getDesks());
 		d.days.setValue(desk.getDeskDays());
+	}
+	
+	private void populateOven(Mod303Activity act, Model303AEAT2025ActivityOven o) {
+		boolean filled = act.getModules().size() > o.index;
+		Mod303ActivityOven oven = filled?act.getOvens().get(o.index):new Mod303ActivityOven();
+		o.surface.setValue(oven.getOvenSurface());
+		o.days.setValue(oven.getOvenDays());
 	}
 
 	private Widget getAdditionalDataPanel(IModel303AEATActivityCallback<Mod303Activity> callback) {
@@ -615,7 +651,6 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		tabContainer.add(tab);
 		container.add(tabContainer);
 		
-		
 		FlowPanel footer = new FlowPanel();
 		footer.setStyleName(AON.CSS.aonPaddingLeft());
 		footer.addStyleName(AON.CSS.aonMarginTop());
@@ -633,8 +668,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		
 		scroll.setWidget(container);
 		return scroll;
-	}
-	
+	}	
+		
 	private void paintDeskRow(IModel303AEATActivityCallback<Mod303Activity> callback, AonDisplayTable tab, Model303AEAT2023ActivityDesk d) {
 		d.capacity.addValueChangeHandler(event -> {
 			if (d.capacity.getValue() == null) d.capacity.setValue(0,false);
@@ -959,5 +994,106 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
     public static boolean isLeapYear(int year) {    	
         return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0);
     }
+    
+	private int ovenModuleIndex(IModel303AEATActivityCallback<Mod303Activity> callback) {
+		for (int x = 0; x < callback.getActivity().getModules().size(); x++) {
+			String desc = callback.getActivity().getModules().get(x).getDescription();
+			boolean hasOven =  AonStringUtils.equals(desc,ModuleInfo.M14.getDescription());
+			if (hasOven) 
+				return x;
+		}
+		return -1;
+	}
+	
+	private Widget getModulesOvenDataPanel(IModel303AEATActivityCallback<Mod303Activity> callback) {
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		
+		FlowPanel tabContainer = new FlowPanel();
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonMarginLeft());
+		tab.addStyleName(AON.CSS.aonMarginBottom());
+		
+		tab.addHeaderRow()
+			.addCell(new Label("Superficie (dm2)"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
+			.addCell(new Label("D\u00EDas"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
+		;	
+	
+		Arrays.stream(ovens).forEach(o -> paintOvenRow(callback, tab, o) );
+
+		tabContainer.add(tab);
+		container.add(tabContainer);
+		
+		FlowPanel footer = new FlowPanel();
+		footer.setStyleName(AON.CSS.aonPaddingLeft());
+		footer.addStyleName(AON.CSS.aonMarginTop());
+		InlineLabel unitLabel = new InlineLabel("Unidades: ");
+		unitLabel.setStyleName(AON.CSS.aonPaddingRight());
+		
+		ovenLabel.setStyleName(AON.CSS.aonBold());
+		
+		footer.add(unitLabel);
+		footer.add(ovenLabel);
+		container.add(footer);
+		
+		fillStaffLabel( callback );
+		fillOvenLabel( callback );
+		
+		scroll.setWidget(container);
+		return scroll;
+	}
+	
+	private void paintOvenRow(IModel303AEATActivityCallback<Mod303Activity> callback, AonDisplayTable tab, Model303AEAT2025ActivityOven ov) {
+		ov.surface.addValueChangeHandler(event -> {
+			if (ov.surface.getValue() == null) ov.surface.setValue(0,false);
+			callback.getActivity().getOvens().get(ov.index).setOvenSurface(ov.surface.getValue());
+			calculateOvens(callback);
+			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+		});
+		ov.days.addValueChangeHandler(event -> {
+			if (ov.days.getValue() == null) ov.days.setValue(0,false);
+			callback.getActivity().getOvens().get(ov.index).setOvenDays(ov.days.getValue());
+			calculateOvens(callback);
+			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+		});
+
+		tab.addRow()
+			.addCell(ov.surface, AON.CSS.aonTextRight())
+			.addCell(ov.days, AON.CSS.aonTextRight())
+			;
+	}
+	
+	private void calculateOvens(IModel303AEATActivityCallback<Mod303Activity> callback) {
+		int ovenIndex = ovenModuleIndex(callback);
+		if (ovenIndex == -1) {
+			AonMessageDialog.show("Aviso", "No procede");
+		} else {
+			double value = 0.0;
+			for (Mod303ActivityOven oven : callback.getActivity().getOvens()) {
+				if (callback.getModel().isLastPeriod() && AonMathUtils.isZero(oven.getOvenDays()) && AonMathUtils.isNotZero(oven.getOvenSurface())) {
+					oven.setOvenDays(isLeapYear(callback.getModel().getYear()) ? 366 : 365);
+				}
+				// FORMULA: SUPERFICIE/100 * DIAS/DIAS_AÑO (dos decimales, truncando)
+				double daysFactor = (oven.getOvenDays() / (isLeapYear(callback.getModel().getYear()) ? 366.0 : 365.0));
+				double factor = oven.getOvenSurface() / 100.0;
+				double v = AonMathUtils.floor(factor * daysFactor); 
+				value = value + v;
+			}
+			value = AonMathUtils.round(value);
+			callback.getActivity().getModules().get(ovenIndex).setValue(value);			
+			fillOvenLabel(callback);
+		}
+	}
+	
+	private void fillOvenLabel(IModel303AEATActivityCallback<Mod303Activity> callback) {
+		int ovenIndex = ovenModuleIndex(callback);
+		if (ovenIndex == -1) {
+			ovenLabel.setText("");
+		} else {
+			double v = callback.getActivity().getModules().get( ovenIndex ).getValue();
+			ovenLabel.setText( AON.FMT.format(v) );
+		}
+		
+	}
 	
 }
