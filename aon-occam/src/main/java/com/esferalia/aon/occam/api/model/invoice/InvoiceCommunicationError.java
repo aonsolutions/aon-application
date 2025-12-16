@@ -5,14 +5,14 @@ import java.util.Optional;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-// Á --> \u00C1 á --> \u00E1
-// É --> \u00C9 é --> \u00E9
-// Í --> \u00CD í --> \u00ED
-// Ó --> \u00D3 ó --> \u00F3
-// Ú --> \u00DA ú --> \u00FA
-// Ñ --> \u00D1 ñ --> \u00F1
-// ª --> \u00AA º --> \u00BA
-// ¿ --> \u00BF
+// ï¿½ --> \u00C1 ï¿½ --> \u00E1
+// ï¿½ --> \u00C9 ï¿½ --> \u00E9
+// ï¿½ --> \u00CD ï¿½ --> \u00ED
+// ï¿½ --> \u00D3 ï¿½ --> \u00F3
+// ï¿½ --> \u00DA ï¿½ --> \u00FA
+// ï¿½ --> \u00D1 ï¿½ --> \u00F1
+// ï¿½ --> \u00AA ï¿½ --> \u00BA
+// ï¿½ --> \u00BF
 
 
 public enum InvoiceCommunicationError {
@@ -46,7 +46,9 @@ public enum InvoiceCommunicationError {
 	AON_0028("0028", "El filtro de conulta es un dato obligatorio."),
 	AON_0029("0029", "El a\u00F1o es un dato obligatorio en el filtro de consulta."),
 	AON_0030("0030", "El mes no es v\u00E1lido en el filtro de consulta."),
-	
+	AON_0031("0031", "El tipo de comunicaci\u00F3n NO VERIFACTU no est\u00E1 implementado."),
+	AON_0032("0032", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
+	AON_0033("0033", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),

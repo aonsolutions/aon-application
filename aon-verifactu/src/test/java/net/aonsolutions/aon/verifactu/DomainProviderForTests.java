@@ -612,6 +612,13 @@ class DomainProviderForTests {
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X3654266A").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("JEAN FRANÇOIS VICENT COURTINAT")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
 		CustomerDAO.save(ctx, C_X3654266A);
+		
+		CustomerFull C_F61024808 = new CustomerFull();
+		C_F61024808
+			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("F61024808").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("L´OBRADOR, S.C.C.L.")))
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("LOURDES").setNumber("7").setZip("08358").setCity("ARENYS DE MUNT").setGeozone(getGeozoneId(ctx,"08")));
+		CustomerDAO.save(ctx, C_F61024808);
+		
 
 		// NO CENSADO EN AEAT
 		CustomerFull C_X1485566L = new CustomerFull();

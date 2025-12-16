@@ -88,6 +88,10 @@ public class InvoiceCommunicator {
 							t.setResponseMessages( VERIFACTU.history(t.getResponseData(), invoiceId) );
 						}
 					}
+					
+					@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028); }
+					@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029); }
+					@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);}
 				});
 			} catch (Exception e) {
 				return AonCollectionUtils.toList("Error al interpretar la respuesta: " + e.getMessage() );						
@@ -205,6 +209,10 @@ public class InvoiceCommunicator {
 									InvoiceDAO.postIssue(ctx, invoice );								
 								}
 							}
+							
+							@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+							@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+							@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 						});
 					}
 				}
@@ -256,6 +264,10 @@ public class InvoiceCommunicator {
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
 							VERIFACTU.accept(ctx,cc);
 						}
+						
+						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 					});
 				}
 			}
@@ -315,6 +327,10 @@ public class InvoiceCommunicator {
 								VERIFACTU.cancel(ctx,cc);
 							} 
 						}
+						
+						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
+						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 					});
 				}
 			}
