@@ -835,6 +835,54 @@ public class InvoiceTypes {
 				;
 			}
 		},
+		VENTA_NACIONAL_CLIENTE_APOSTOFRE{
+			@Override
+			public Invoice get(AONContext ctx, int domain) {
+				CustomerFull customer = VerifactuTestsUtils.getCustomerApostrofe(ctx, domain);
+				String series = VerifactuTestsUtils.series(ctx);
+				int number = 0;
+				return new Invoice()
+					.setDomain(domain)
+					.setType(InvoiceType.SALES)
+					.setSeries(series)
+					.setNumber(number)
+					.setIssueDate(VerifactuTestsUtils.issueDate())
+					.setTaxDate(VerifactuTestsUtils.issueDate())
+					.setTransaction(InvoiceTransactionType.NATIONAL)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setRegistry(customer.getRegistry().getId())
+					.setRegistryDocument(customer.getRegistry().getDocument())
+					.setRegistryDocumentType(customer.getRegistry().getDocumentType())
+					.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry())
+					.setRegistryName(customer.getRegistry().getName())
+					.setSurcharge(false)
+					.setWithholding(false)
+					.setWithholdingFarmer(false)
+					.setVatAccrualPayment(false)
+					.setInvestment(false)
+					.setService(false)
+					.setAddress( customer.getMainAddress() )
+					.addDetail(new InvoiceDetail()
+						.setSource(InvoiceSource.TEDI)
+						.setQuantity(1)
+						.setPrice(100.0)
+						.setTaxableBase(100.0)
+						.addTax(new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(100.0)
+							.setPercentage(21.0)
+							.setQuota(21.0)
+							.setDeductibleQuota(21.0)
+							.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						)
+					)
+					.setVatQuota(21.0)
+					.setTotal(121.0)
+					.refreshTaxBreakdown()
+				;
+			}
+		},
 		VENTA_EXTRACOMUNITARIA {
 			@Override
 			public Invoice get(AONContext ctx, int domain) {

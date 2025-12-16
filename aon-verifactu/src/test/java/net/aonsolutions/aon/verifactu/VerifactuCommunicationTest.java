@@ -162,6 +162,14 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_CEDILLA.get(ctx, DOMAIN_ID).setId(1);
 		communicateValid(invoice);
 	}
+	
+	
+	@Test
+	void venta_nacional_cliente_apostrofeAEATTest() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_APOSTOFRE.get(ctx, DOMAIN_ID).setId(1);
+		communicateValid(invoice);
+	}
+
 
 	private void communicateValid(Invoice invoice) throws InvoiceCommunicationException {
 		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));

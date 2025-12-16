@@ -30,6 +30,11 @@ enum ClaveTipoFactura {
      * 
      */
     F_1("F1") {
+    	@Override
+    	void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitF_1();
+    	}
+    	
 		@Override
 		protected boolean accept( Invoice inv) {
 			return inv.isSales()
@@ -53,6 +58,11 @@ enum ClaveTipoFactura {
      */
     F_2("F2") {
 		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitF_2();
+		}
+		
+		@Override
 		protected boolean accept( Invoice inv) {
 			return inv.isSales()
 				&& inv.isSimplified()
@@ -72,6 +82,11 @@ enum ClaveTipoFactura {
      * 
      */
     R_1("R1") {
+		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitR_1();
+		}
+		
 		@Override
 		protected boolean accept( Invoice inv) {
 			return inv.isSales()
@@ -102,6 +117,11 @@ enum ClaveTipoFactura {
      */
     R_2("R2") {
 		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitR_2();
+		}
+		
+		@Override
 		protected boolean accept( Invoice inv) {
 			return false;
 		}
@@ -117,6 +137,11 @@ enum ClaveTipoFactura {
      * 
      */
     R_3("R3") {
+		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitR_3();
+		}
+
 		@Override
 		protected boolean accept( Invoice inv) {
 			return false;
@@ -134,6 +159,11 @@ enum ClaveTipoFactura {
      */
     R_4("R4") {
 		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitR_4();
+		}
+		
+		@Override
 		protected boolean accept( Invoice inv) {
 			return false;
 		}
@@ -149,6 +179,11 @@ enum ClaveTipoFactura {
      * 
      */
     R_5("R5") {
+		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitR_5();
+		}
+
 		@Override
 		protected boolean accept( Invoice inv) {
 			return inv.isSales()
@@ -181,6 +216,11 @@ enum ClaveTipoFactura {
      */
     F_3("F3") {
 		@Override
+		void visit( ClaveTipoFacturaVisitor visitor ) {
+			visitor.visitF_3();
+		}
+
+		@Override
 		protected boolean accept( Invoice inv) {
 			return false;
 		}
@@ -203,6 +243,7 @@ enum ClaveTipoFactura {
 
 	protected abstract boolean accept( Invoice inv );
 	protected abstract void filler( VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta);
+	abstract void visit( ClaveTipoFacturaVisitor visitor );
 
 	public static void fill( VerifactuContext vc, Invoice inv, RegistroFacturacionAltaType alta ) throws InvoiceCommunicationException {
 		LinkedList<ClaveTipoFactura> tipoFact = AonCollectionUtils.stream( values() )
@@ -241,5 +282,40 @@ enum ClaveTipoFactura {
 		destinatarios.getIDDestinatario().add(destinatario);
 		return destinatarios;
 	}
+	
+	static ClaveTipoFactura from(ClaveTipoFacturaType tipoFactura) {
+		if (tipoFactura != null) {
+			if (ClaveTipoFacturaType.F_1.equals(tipoFactura)) {
+				return F_1;
+			} else if (ClaveTipoFacturaType.F_2.equals(tipoFactura)) {
+				return F_2;
+			} else if (ClaveTipoFacturaType.R_1.equals(tipoFactura)) {
+				return R_1;
+			} else if (ClaveTipoFacturaType.R_2.equals(tipoFactura)) {
+				return R_2;
+			} else if (ClaveTipoFacturaType.R_3.equals(tipoFactura)) {
+				return R_3;
+			} else if (ClaveTipoFacturaType.R_4.equals(tipoFactura)) {
+				return R_4;
+			} else if (ClaveTipoFacturaType.R_5.equals(tipoFactura)) {
+				return R_5;
+			} else if (ClaveTipoFacturaType.F_3.equals(tipoFactura)) {
+				return F_3;
+			}
+		}
+		return null;
+	}
+	
+	public static interface ClaveTipoFacturaVisitor {
+		void visitF_1();
+		void visitF_2();
+		void visitR_1();
+		void visitR_2();
+		void visitR_3();
+		void visitR_4();
+		void visitR_5();
+		void visitF_3();
+	}
+
 	
 }
