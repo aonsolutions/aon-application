@@ -196,7 +196,6 @@ export class AonNewMenu extends AonElement {
 			let applications = this.getElement('applications');
 			applications.className = 'aonMenuLeftopStart';
 		} else {
-			console.log("app.app", app.app);
 			switch (app.app) {
 				case NEW_APPS:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));

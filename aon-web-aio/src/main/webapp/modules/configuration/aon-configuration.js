@@ -110,7 +110,6 @@ export class AonConfiguration extends AonElement {
 			 (this.company.type !== "OFFICE" || this.company.domain.domainType !== "OFFICE") ) 
 		{
 			
-			console.log("getRelationShipCompany", this.company.domain || this.company.domain?.name, this.company.registry || this.company.id);
 			getRelationShipCompany({
 				url: this.company.domain?.name || this.company.domain,
 				relatedRegistry: this.company.registry || this.company.id
@@ -289,11 +288,7 @@ export class AonConfiguration extends AonElement {
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
 
-		console.log("getCompanyOne");
-		console.log(data);
-
 		getCompanyOne(data).then(cp => {
-			console.log(cp);
 			let aonRegistry = new AonReg();
 			aonRegistry.id = this.getApplication().id + 'Registry';
 			aonRegistry.setShowLogo(true);

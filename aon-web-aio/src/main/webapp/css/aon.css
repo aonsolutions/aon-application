@@ -4241,13 +4241,13 @@ display: block;
 	grid-gap: 1rem;
 }
 
-@media (769px <= width <= 1229px) {
+@media (1080px <= width <= 1400px) {
   .aonCardsPanel {
 	grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
 }
 
-@media (1230px <= width) {
+@media (1401px <= width) {
   .aonCardsPanel {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
   }

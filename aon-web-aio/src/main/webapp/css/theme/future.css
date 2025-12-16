@@ -1496,7 +1496,7 @@ aon-right-panel {
 	height: 2.5rem;
 }
 
-@media (769px <= width <= 1400px) {
+@media (1080px <= width <= 1400px) {
   .aonCardsPanel {
 	grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
