@@ -67,6 +67,7 @@
 .aonHeader{
 	height: 68px; /*4rem;*/
 	min-height: 68px; /*4rem;*/
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 #aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
@@ -83,7 +84,7 @@
 }
 
 .aonMenuTopnav.closeSidenav{
-	 margin-left: 68px;
+	 margin-left: 237px;
 }
 
 .aonMenuSideNav {
@@ -191,6 +192,8 @@
 #aonMenuListAppImgTop-marketingMenu,
 #aonMenuListAppImgTop-warehouseMenu,
 #aonMenuListAppImgTop-apps,
+#aonMenuListAppImgTop-expandHirin,
+#aonMenuListAppImgTop-contentIndex,
 #aonMenuAnchorDivIcon
  {
 	width: 25.5px;
@@ -232,6 +235,15 @@
 
 #aonMenuListAppImgTop-apps {
 	mask-image: url('/icons/box.svg') ;
+}
+
+#aonMenuListAppImgTop-expandHirin {
+	mask-image: url('/icons/box.svg') ;
+	background-color: white;
+}
+
+#aonMenuListAppImgTop-contentIndex {
+	mask-image: url('/icons/book-open.svg') ;
 }
 
 #aonMenuListAppImgTop-accountingMenu {
@@ -285,7 +297,7 @@
 }
 
 #aonMenuListAppImgTop-timecontrol {
-    mask-image: url('/icons/clock.svg') ;
+    mask-image: url('/icons/timer.svg') ;
 }
 
 #aonMenuListAppImgTop-messenger{
@@ -452,6 +464,10 @@ aon-configuration-menu .suiteMenuContent  {
   margin-left: 237px !important; /*13.75rem; !important;*/
 }
 
+#rootPanel > div {
+	background-color: transparent !important;
+}
+
 #rootPanel.closeSidenav {
   margin-left: 68px !important; /*13.75rem; !important;*/
   padding-left: 0px;
@@ -470,6 +486,30 @@ aon-configuration-menu .suiteMenuContent  {
 #aonMenuList-new,
 #aonMenuList{
 	margin-top: 0;
+}
+
+#aonMenuList-contentIndex {
+	display: flex;
+}
+
+#expandHirin {
+	display: flex;
+	background: linear-gradient(to right, #FB5722, #FB5722, #0E1030, #586078);
+	background-size: 300% 100%;
+	background-position: 0 0;
+	transition: background .1s ease;
+	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	border-radius: .375rem;
+	cursor: pointer;
+	margin: .5rem !important;
+	color: white;
+	padding: 0 .9rem !important;
+	height: 45px;
+}
+
+#expandHirin:hover {
+	background-position: 100% 0;
+	color: white;
 }
 
 /*
@@ -539,6 +579,9 @@ aon-configuration-menu .suiteMenuContent  {
 	visibility: collapse;
 }
 
+#aonMenuSidenav.close #expandHirin {
+	padding: 0 .7rem !important;
+}
 
 /*
 #aonMenu #aonMenuSidenav #new {
@@ -566,6 +609,33 @@ aon-configuration-menu .suiteMenuContent  {
 	width: 68px; /*13.75rem;*/
 	min-width: 0; /*13.75rem;*/
 }
+
+/*
+ ------------------ Tooltip
+*/
+
+.tooltip {
+	position: fixed;
+	z-index: 9999;
+	max-width: 300px;
+	padding: 10px 12px;
+	background: #2f3746;
+	color: #fff;
+	font-size: 14px;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	pointer-events: none;
+
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity .15s ease, transform .15s ease;
+}
+
+.tooltip.visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
 
 
 /* ========================== App Styles  ========================== */
@@ -1120,7 +1190,8 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonInvoiceHomeNewIncomeButton,
-#aonInvoiceHomeNewExpenseButton{
+#aonInvoiceHomeNewExpenseButton,
+#aonMenuList-apps{
 	display: none;	
 }
 
@@ -1321,6 +1392,10 @@ aon-right-panel {
 	width: 100%;
 }
 
+#contentIndexHelp {
+	display: none;
+}
+
 .rightPanel .divLogout *,
 .rightPanel .helpCardText *,
 .rightPanel .configCardText *{
@@ -1419,4 +1494,16 @@ aon-right-panel {
 	border: .0625rem solid #cbd5e1 !important;
 	border-radius: .375rem;
 	height: 2.5rem;
+}
+
+@media (769px <= width <= 1400px) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+@media (1401px <= width) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
 }

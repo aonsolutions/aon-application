@@ -308,6 +308,7 @@ export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
 export const EXAMPLE = "Example";
 export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
+export const EXPAND_HIRIND = MSG.EXPAND_HIRIND;
 
 // ----- F
 

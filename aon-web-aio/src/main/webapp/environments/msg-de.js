@@ -195,6 +195,7 @@ export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Abgelaufen';
 export const EXPIRED_SESSION = 'Sitzung abgelaufen';
 export const ERRORS = 'Fehler';
+export const EXPAND_HIRIND = 'Erweitern Sie die Einstellungsmöglichkeiten';
 
 // ----- F
 

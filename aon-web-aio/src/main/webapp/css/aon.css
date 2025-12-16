@@ -1009,6 +1009,10 @@ background-color: var(--aonLightGray);
 	justify-content: center;
 }
 
+#expandHirin {
+	display: none;
+}
+
 .aonMenuLeftop  {
     top: 0;
     left: 0;
@@ -3364,6 +3368,10 @@ color: var(--aonWhite);
 
 #aonMenuList-new {
   margin-top: 6px;
+}
+
+#aonMenuList-contentIndex {
+	display: none;
 }
 
 #apps {
