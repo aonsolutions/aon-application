@@ -68,19 +68,21 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.verifactu.AbstractVerifactuTest.Environment;
+
 class DomainProviderForTests {
 	
 	private DomainProviderForTests() {
 	}
 	
-	static Domain getOrCreateDomain(AONContext ctx,String domainName, String user) {
-		Domain domain = DomainDAO.getDomain(ctx, p -> p.getNameProperty().eq(domainName));
+	static Domain getOrCreateDomain(AONContext ctx, Environment env) {
+		Domain domain = DomainDAO.getDomain(ctx, p -> p.getNameProperty().eq(env.getDomainName()));
 		if (domain == null || domain.getId() == null) {
-			domain = createFullDomain(ctx, domainName, user);
+			domain = createFullDomain(ctx, env.getDomainName(), env.getUser());
 			Occam occam = new Occam()
 				.setDomainName( domain.getName())
 				.setDomain(domain.getId())
-				.setUser(user);
+				.setUser(env.getUser());
 			try ( CloseableAONContext context = AONContext.getAONContext(occam)) {
 				initializeDomain(context, occam, domain);
 			}

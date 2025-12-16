@@ -37,7 +37,7 @@ class Verifactu2Invoice {
 	private Verifactu2Invoice() {
 	
 	}
-	public Invoice to(RegistroRespuestaConsultaRegFacturacionType verifactu) {
+	public static Invoice to(RegistroRespuestaConsultaRegFacturacionType verifactu) {
 		if ( verifactu == null ) return null;
 		Invoice inv = new Invoice();
 		REFERENCE_CODE

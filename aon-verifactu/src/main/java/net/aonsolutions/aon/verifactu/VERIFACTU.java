@@ -74,7 +74,6 @@ public class VERIFACTU {
 		JAXBElement<ConsultaFactuSistemaFacturacionType> jaxbElement = of.createConsultaFactuSistemaFacturacion(request);
 		Document document = VerifactuXMLUtils.toDocument(jaxbElement, ConsultaFactuSistemaFacturacionType.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
-		System.out.println( "VERIFACTU QUERY Request: \n" + new String( vc.getRequestBytes() ) );
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
 		VerifactuResponse dataResponse = VerifactuXMLUtils.postQuery(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
 		vc.setResponse( dataResponse );

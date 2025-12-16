@@ -30,6 +30,9 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
 class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
+	
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	private static record Context( RegFactuSistemaFacturacion msg, RegistroFacturacionAnulacionType fra) {}
 	private interface CompleteRegistroFacturaType {
 		void complete( Context c );
@@ -88,7 +91,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_4104_Test() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 			assertInvoice( invoice
 				, icc -> icc.getCompany().setDocument(null)
@@ -102,7 +105,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_4116_Test() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 			assertInvoice( invoice
 				, icc -> icc.getCompany().setDocument("AAAAAAAAA")
@@ -115,7 +118,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1108_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setIDEmisorFacturaAnulada("AAAAAAAAA")
 			, InvoiceCommunicationError.VERIFACTU_1108
@@ -124,7 +127,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1224_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);
@@ -136,7 +139,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1224_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(null);
@@ -148,7 +151,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1259_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.E);
@@ -162,7 +165,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1258_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.E);
@@ -176,7 +179,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1228_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.E);
@@ -191,7 +194,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1228_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.E);
@@ -206,7 +209,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1122_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);
@@ -224,7 +227,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1222_Test_0() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceNoMessage( invoice, null
 				, c -> {
 					
@@ -235,7 +238,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1222_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);
@@ -253,7 +256,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1229_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);
@@ -269,7 +272,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1101_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);
@@ -286,7 +289,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1230_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.D);
@@ -303,7 +306,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1230_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.D);
@@ -320,7 +323,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1230_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.D);
@@ -337,7 +340,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1231_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setActivity(InvoiceTypes.getActivityGeneral(ctx, DOMAIN_ID));
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1).setActivity(InvoiceTypes.getActivityGeneral(getEnvironment()));
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setGeneradoPor(GeneradoPorType.T);

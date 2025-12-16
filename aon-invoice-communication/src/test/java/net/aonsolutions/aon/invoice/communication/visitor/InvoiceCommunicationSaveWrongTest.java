@@ -27,8 +27,10 @@ import net.aonsolutions.aon.verifactu.InvoiceTypes;
 
 class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	private List<Invoice> getInvoices() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		return AonCollectionUtils.toList( invoice);
 	}
 	
@@ -42,8 +44,8 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 	@Test
 	void domainNullTest() {
 		Domain domain = null;
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -53,8 +55,8 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 	@Test
 	void domainEmptyTest() {
 		Domain domain = new Domain();
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -63,7 +65,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void userNullTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
 		User user = null;
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
@@ -73,7 +75,7 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void userEmptyTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
 		User user = new User();
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(configWithCertificate()).setCompany(company());
@@ -83,9 +85,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 	
 	@Test
 	void noConfigTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(null).setCompany(company());
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -96,9 +98,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 	
 	@Test
 	void nullCompanyTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(config()).setCompany(null);
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -109,9 +111,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void emptyCompanyTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		cc.setConfig(config()).setCompany(new Company());
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -122,9 +124,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void noDocumentCompanyTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		Company company = company();
 		company.setDocument(null);
@@ -137,9 +139,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void noNameCompanyTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getDomainName()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
 		Company company = company();
 		company.setName(null);
@@ -152,9 +154,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void noInvoicesTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, null);
 		cc.setConfig(config()).setCompany(company());
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
@@ -166,9 +168,9 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void emptyInvoicesTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = new LinkedList<>();
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
 		cc.setConfig(config()).setCompany(company());
@@ -180,12 +182,12 @@ class InvoiceCommunicationSaveWrongTest extends AbstractVerifactuTest {
 
 	@Test
 	void moreThanOneInvoicesTest() {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = new LinkedList<>();
-		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
-		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment().getCtx(), getEnvironment().getDomainId());
 		invoices.add(invoice1);
 		invoices.add(invoice2);
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);

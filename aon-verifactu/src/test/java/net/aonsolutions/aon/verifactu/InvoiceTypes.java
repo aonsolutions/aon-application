@@ -22,12 +22,17 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
+import net.aonsolutions.aon.verifactu.AbstractVerifactuTest.Environment;
+
 public class InvoiceTypes {
 	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain, VATRegime regime ) {
 		return CompanyDAO.getEnterpriseActivities(ctx,domain)
 			.filter(a -> a.getVatRegime() == regime)
 			.findFirst()
 			.orElseThrow(() -> new IllegalStateException("No se ha encontrado actividad para regime " + regime));
+	}
+	static EnterpriseActivity getActivityGeneral( Environment env) {
+		return getActivityGeneral(env.getCtx(), env.getDomainId());
 	}
 	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain ) {
 		return getActivityGeneral(ctx, domain, VATRegime.GENERAL);
@@ -1044,6 +1049,10 @@ public class InvoiceTypes {
 			}
 		},
 		;
+		
+		public Invoice get(Environment environment) {
+			return get(environment.getCtx(), environment.getDomainId());
+		}
 		
 		public abstract Invoice get( AONContext ctx, int domain);
 	}

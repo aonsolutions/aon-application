@@ -40,9 +40,11 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class VentaExentaE1Test extends AbstractVerifactuTest {
 	
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	private Invoice getTestInvoice() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1
-			.get( ctx , DOMAIN_ID)
+			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 	}
@@ -209,7 +211,7 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	    assertEquals( "01" , sistemaInformatico.getIdSistemaInformatico());
 	    assertEquals( "aonSolutions" , sistemaInformatico.getNombreSistemaInformatico());
 	    assertEquals( "9.23" , sistemaInformatico.getVersion());
-	    assertEquals( vc.getCompany().getDocument() + "-" + DOMAIN_ID , sistemaInformatico.getNumeroInstalacion());
+	    assertEquals( vc.getCompany().getDocument() + "-" + getEnvironment().getDomainId() , sistemaInformatico.getNumeroInstalacion());
 	    assertEquals( SiNoType.N , sistemaInformatico.getTipoUsoPosibleSoloVerifactu());
 	    assertEquals( SiNoType.S , sistemaInformatico.getTipoUsoPosibleMultiOT());
 	    assertEquals( SiNoType.S , sistemaInformatico.getIndicadorMultiplesOT());
