@@ -78,16 +78,18 @@ import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
 class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	@Test
 	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		save(invoice);
 	}
 
 	private void save(Invoice invoice) throws InvoiceCommunicationException {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
 		cc.setConfig(configWithCertificate()).setCompany(company());
@@ -105,7 +107,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 
 	private InvoiceCommunicationTracking assertAcceptedInvoiceBatch(Invoice i) {
-		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(ctx, i.getDomain(), i.getId());
+		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);
 		assertTrue(oTracking.isPresent());
 		InvoiceCommunicationTracking tracking = oTracking.get();
@@ -136,7 +138,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(tracking.getInvoiceBatch());
 		Integer dataResponseId = tracking.getInvoiceBatch().getDataResponse();
 		assertNotNull(dataResponseId);
-		Optional<DataResponse> optDataResponse = DataResponseDAO.get(ctx, dataResponseId);
+		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId);
 		assertNotNull(optDataResponse);
 		assertTrue(optDataResponse.isPresent());
 		DataResponse dataResponse = optDataResponse.get();
@@ -146,7 +148,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
@@ -164,7 +166,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertAcceptedInvoiceInfo(Invoice i) {
-		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(ctx, i.getId(), InvoiceCommunicationType.VERIFACTU);
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.VERIFACTU);
 		assertNotNull(invoiceInfoOpt);
 		assertTrue(invoiceInfoOpt.isPresent());
 		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
@@ -181,13 +183,13 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(response);
 		Integer responseDataRequest = response.getDataRequest();
 		assertNotNull(responseDataRequest);
-		DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+		DataRequest dataRequest = DataRequestDAO.get(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
 			.and(f.getIdProperty().eq(responseDataRequest)));
 		assertNotNull(dataRequest);
 		assertEquals(dataRequest.getId(), responseDataRequest);
 		assertEquals(dataRequest.getDomain(), i.getDomain());
 		assertTrue(dataRequest.getId() > 0);
-		Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+		Attach request = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
 				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 				.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
@@ -196,7 +198,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 	}
 
 	private void assertAcceptedInvoiceData(Invoice invoice) {
-		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
+		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(getEnvironment().getCtx(), invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
 		InvoiceData qrUrl =  oQRUrl.get();
@@ -205,7 +207,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertEquals(InvoiceDataName.VERIFACTU_QR, qrUrl.getName());
 		assertNotNull(qrUrl.getValue());
 
-		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
+		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(getEnvironment().getCtx(), invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
 		assertNotNull(oHuella);
 		assertTrue(oHuella.isPresent());
 		InvoiceData huella =  oHuella.get();
@@ -299,7 +301,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		System.out.println( "dataResponseId ..: " + dataResponseId); 
 		assertTrue(dataResponseId > 0);
 		
-		Optional<DataResponse> optDataResponse = DataResponseDAO.get(ctx, dataResponseId );
+		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId );
 		assertNotNull(optDataResponse);
 		assertTrue(optDataResponse.isPresent());
 		DataResponse dataResponse = optDataResponse.get();
@@ -309,7 +311,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true)

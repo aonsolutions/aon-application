@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,9 +15,13 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationQuery;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.Month;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-class QueryTest extends AbstractVerifactuTest {
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestaconsultalr.RespuestaConsultaFactuSistemaFacturacionType;
+
+class VerifactuQueryTest extends AbstractVerifactuTest {
+	
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
 	
 	@Test
 	void queryNullFilterTest() throws InvoiceCommunicationException {
@@ -56,18 +61,20 @@ class QueryTest extends AbstractVerifactuTest {
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icq.setYear(2025);
 		icq.setMonth(Month.DECEMBER);
-		icq.setId(10);
+		Date today = new Date();
+		icq.setDate(today);
 		icc.setCommunicationQuery(icq);
 		VerifactuContext vc = VERIFACTU.query(icc);
-		System.out.println( "--------------- VERIFACTU Query Response ---------------" );
-		AonIOUtils.write(vc.getResponse().getBytes(), System.out);
-		System.out.println();
-		System.out.println("---------------------------------------------------------");
 		assertNotNull(vc);
 		assertNotNull(vc.getResponse());
 		assertNull(vc.getResponse().getResponse());
 		assertNotNull(vc.getResponse().getQueryResponse());
-		
+		RespuestaConsultaFactuSistemaFacturacionType r = vc.getResponse().getQueryResponse();
+		AonCollectionUtils.stream( r.getRegistroRespuestaConsultaFactuSistemaFacturacion())
+		 	.map( Verifactu2Invoice::to )
+		 	.forEach( i -> {
+		 		// TODO asserts
+		 	});
 	}
 	
 }
