@@ -138,7 +138,9 @@ class VerifactuTestsUtils {
 	static CustomerFull getCustomerCedilla(AONContext ctx, int domain) {
 		return getCustomer( ctx, domain,  "X3654266A");
 	}
-		
+	static CustomerFull getCustomerApostrofe(AONContext ctx, int domain) {
+		return getCustomer( ctx, domain,  "F61024808");
+	}
 	
 	static final String[] INTR_CUSTOMER_DOCUMENTS = new String[] {
 		"12487773327"
