@@ -55,7 +55,12 @@ public abstract class AbstractVerifactuTest {
 	private static String getDbUseSSL() {	return System.getProperty("dbUseSSL", "false");	}
 	private static String getDbTimeZone() {	return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());	}
 	
-	protected static Environment VERIFACTU_ENV = new VerifactuEnvironment();
+	protected static final Environment VERIFACTU_ENV = new VerifactuEnvironment();
+	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
+	private static final Environment[] ENVIRONMENTS = new Environment[] {
+		VERIFACTU_ENV,
+		NO_VERIFACTU_ENV
+	}; 
 	
 	private Date testDate; 
 	
@@ -67,13 +72,14 @@ public abstract class AbstractVerifactuTest {
 		Integer getDomainId();
 		void setDomainId(Integer id);
 		Occam getOccam();
-		InvoiceCommunicationConfiguration getCommunicationConfiguration();
-		void setCommunicationConfiguration(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration);
-		InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate();
-		void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration);
+		InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices);
+		InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices);
 		String getDomainName();	
 		String getUser();
-		Domain getDomain();
+		
+		Domain domain();
+		User user();
+		Company company();
 		
 		default void close() {
 			CloseableAONContext ctx = getCtx();
@@ -88,7 +94,9 @@ public abstract class AbstractVerifactuTest {
 		protected InvoiceCommunicationConfiguration communicationConfiguration;
 		protected InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
 		protected Domain domain;
-
+		protected User user;
+		protected Company company;
+		
 		@Override
 		public CloseableAONContext getCtx() {
 			return ctx;
@@ -107,30 +115,87 @@ public abstract class AbstractVerifactuTest {
 			this.domainId = id;
 		}
 		
-		@Override
-		public InvoiceCommunicationConfiguration getCommunicationConfiguration() {
-			return communicationConfiguration;
-		}
-		@Override
-		public void setCommunicationConfiguration(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration) {
-			this.communicationConfiguration = invoiceCommunicationConfiguration;
-		}
+
 		
 		@Override
-		public InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
-			return communicationConfigurationWithCertificate;
+		public InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
+			return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
+				.setCompany( company() )
+				.setConfig( config() )
+			;
 		}
-		@Override
-		public void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration invoiceCommunicationConfiguration) {
-			this.communicationConfigurationWithCertificate = invoiceCommunicationConfiguration;
+		private InvoiceCommunicationConfiguration getCommunicationConfiguration() {
+			return communicationConfiguration; 
 		}
-		
-		@Override
-		public Domain getDomain() {
-			if (domain == null) {
-				domain = DomainDAO.getDomain(getCtx(), getDomainId());
+		private void setCommunicationConfiguration(InvoiceCommunicationConfiguration config) {
+			this.communicationConfiguration = config;
+		}
+		private InvoiceCommunicationConfiguration config() {
+			synchronized (this) {
+				if (getCommunicationConfiguration() == null) {
+					setCommunicationConfiguration( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
+				}
+				assertNotNull(getCommunicationConfiguration(),"communicationConfiguration NULL" );
+				assertTrue(getCommunicationConfiguration().isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
+				assertTrue(getCommunicationConfiguration().isVerifactuTest(),"communicationConfiguration NO ENTORNO TEST" );
+				return getCommunicationConfiguration();
 			}
-			return domain;
+		}
+
+		
+		@Override
+		public InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
+			return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
+				.setCompany( company() )
+				.setConfig( configWithCertificate() )
+			;
+		}
+		private InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
+			return communicationConfigurationWithCertificate; 
+		}
+		private void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration config) {
+			this.communicationConfigurationWithCertificate = config;
+		}
+		private InvoiceCommunicationConfiguration configWithCertificate() {
+			synchronized (this) {
+				if (getCommunicationConfigurationWithCertificate() == null) {
+					setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
+				}
+				assertNotNull(getCommunicationConfigurationWithCertificate(),"communicationConfigurationWithCertificate NULL" );
+				assertTrue(getCommunicationConfigurationWithCertificate().isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
+				assertTrue(getCommunicationConfigurationWithCertificate().isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
+				Certificate c = AonSecret.getSigCert();
+				assertNotNull(c, "Verifactu Certificate NULL");
+				getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 
+				return getCommunicationConfigurationWithCertificate();
+			}
+
+		}
+
+		@Override
+		public Company company() {
+			return CompanyDAO.getCompany(getCtx(), getDomainId());
+		}
+		
+		@Override
+		public User user() {
+			synchronized (this) {
+				if (user == null) {
+					user = UserDAO.get(getCtx(), getDomainId(), getUser())
+						.orElseThrow( () -> new IllegalStateException("User " + getUser() + " not found in domain " + getDomainId()) );
+				}
+				return user;
+			}
+		}
+
+		@Override
+		public Domain domain() {
+			synchronized (this) {
+				if (domain == null) {
+					domain = DomainDAO.getDomain(getCtx(), getDomainId());
+				}
+				return domain;
+			}
 		}
 		
 		@Override
@@ -174,13 +239,15 @@ public abstract class AbstractVerifactuTest {
 	@BeforeAll
 	public static void beforeClass() throws ClassNotFoundException, SQLException {
 		shutUp();
-		synchronized (VERIFACTU_ENV) {
-			if ( VERIFACTU_ENV.getDomainId() == null) {
-				AONContext context = new AONContext(connect());
-				Domain domain = TestDomainProvider.getOrCreateDomain(context, VERIFACTU_ENV );
-				VERIFACTU_ENV.setDomainId( domain.getId() );
+		for (Environment env : ENVIRONMENTS) {
+			synchronized (env) {
+				if ( env.getDomainId() == null) {
+					AONContext context = new AONContext(connect());
+					Domain domain = TestDomainProvider.getOrCreateDomain(context, env );
+					env.setDomainId( domain.getId() );
+				}
+				env.setCtx( AONContext.getAONContext(env.getOccam()) );
 			}
-			VERIFACTU_ENV.setCtx( AONContext.getAONContext(VERIFACTU_ENV.getOccam()) );
 		}
 		System.setOut(System.out);
 		System.setErr(System.err);
@@ -188,8 +255,10 @@ public abstract class AbstractVerifactuTest {
 
 	@AfterAll
 	public static void afterClass() {
-		synchronized (VERIFACTU_ENV) {
-			VERIFACTU_ENV.close();
+		for (Environment env : ENVIRONMENTS) {
+			synchronized (env) {
+				env.close();
+			}
 		}
 	}
 	
@@ -262,59 +331,6 @@ public abstract class AbstractVerifactuTest {
 		return AonObjectUtils.defaultIfNull(testDate, new Date());
 	}
 	
-	protected Company company() {
-		return CompanyDAO.getCompany(getEnvironment().getCtx(), getEnvironment().getDomainId());
-	}
-	
-	protected Domain domain() {
-		return DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
-	}
-
-	protected User user() {
-		return UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
-			.orElseThrow( () -> new IllegalStateException("User " + getEnvironment().getUser() + " not found in domain " + getEnvironment().getDomainId()) );
-	}
-	
-	protected InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate() {
-		return getInvoiceCommunicatorContextWithCertificate(null);		
-	}
-	
-	protected InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
-		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
-			.setCompany( company() )
-			.setConfig( config() )
-		;
-	}
-	protected InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
-		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
-			.setCompany( company() )
-			.setConfig( configWithCertificate() )
-		;
-	}
-
-	protected InvoiceCommunicationConfiguration config() {
-		if (getEnvironment().getCommunicationConfiguration() == null) {
-			getEnvironment().setCommunicationConfiguration( InvoiceCommunicationDAO.get(getEnvironment().getCtx(),getEnvironment().getDomainId())); 
-		}
-		assertNotNull(getEnvironment().getCommunicationConfiguration(),"communicationConfiguration NULL" );
-		assertTrue(getEnvironment().getCommunicationConfiguration().isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
-		assertTrue(getEnvironment().getCommunicationConfiguration().isVerifactuTest(),"communicationConfiguration NO ENTORNO TEST" );
-		return getEnvironment().getCommunicationConfiguration();
-	}
-
-	protected InvoiceCommunicationConfiguration configWithCertificate() {
-		if (getEnvironment().getCommunicationConfigurationWithCertificate() == null) {
-			getEnvironment().setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getEnvironment().getCtx(),getEnvironment().getDomainId())); 
-		}
-		assertNotNull(getEnvironment().getCommunicationConfigurationWithCertificate(),"communicationConfigurationWithCertificate NULL" );
-		assertTrue(getEnvironment().getCommunicationConfigurationWithCertificate().isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
-		assertTrue(getEnvironment().getCommunicationConfigurationWithCertificate().isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
-		Certificate c = AonSecret.getSigCert();
-		assertNotNull(c, "Verifactu Certificate NULL");
-		getEnvironment().getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 
-		return getEnvironment().getCommunicationConfigurationWithCertificate();
-	}
-
 	protected abstract Environment getEnvironment();
 	
 }

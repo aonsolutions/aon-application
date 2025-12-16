@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -38,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VentaExentaE1Test extends AbstractVerifactuTest {
+class VerifactuVentaCanCeuMelTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
 
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -51,17 +52,28 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
-		List<Invoice> invoices = AonCollectionUtils.toList(getTestInvoice());
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
 		
 	@Test
+	void ventaActGeneralTest() throws InvoiceCommunicationException {
+		List<Invoice> invoices = new LinkedList<>();
+		Invoice invoice = getTestInvoice();
+		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
+		invoices.add( invoice );
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
+		VerifactuContext vc = new VerifactuContext(icc);
+		assertInvoice( vc );
+	}
+
+	@Test
 	void ventaFacesTest() throws InvoiceCommunicationException {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -103,7 +115,7 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	    assertNotNull( idFactura );
 	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(i.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    assertEquals(VerifactuUtils.toString(i.getExpDate()), idFactura.getFechaExpedicionFactura() );
+	    assertEquals(VerifactuUtils.toString(i.getExpDate() ), idFactura.getFechaExpedicionFactura() );
 	    
 	    String refExterna = rfat.getRefExterna();
 	    assertNotNull( refExterna );
@@ -170,10 +182,11 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	    assertEquals( 1, iDDestinatario.size() );
 	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
 	    assertNotNull( destinatario );
-	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
-	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
-	    assertNull( destinatario.getIDOtro() );
 	    
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
+	    assertNull(destinatario.getIDOtro());
+
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
 	    assertEquals(CuponType.N,cupon);
@@ -186,9 +199,9 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
+	    assertEquals( ClaveRegimen.C02.getValue() , dt.getClaveRegimen() );
 	    assertNull( dt.getCalificacionOperacion() );
-	    assertEquals( OperacionExentaType.E_1, dt.getOperacionExenta() );
+	    assertEquals( OperacionExentaType.E_2, dt.getOperacionExenta() );
 	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
@@ -225,5 +238,5 @@ class VentaExentaE1Test extends AbstractVerifactuTest {
 	    
 	}
 	
-	
+
 }

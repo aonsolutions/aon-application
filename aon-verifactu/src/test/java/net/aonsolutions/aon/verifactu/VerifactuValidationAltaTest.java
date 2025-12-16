@@ -62,7 +62,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		if (completeIcc != null) {
 			completeIcc.complete(icc);
@@ -74,7 +74,13 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		if (complete != null) {
 			complete.complete(new Context( fras, alta, firstDet ));
 		}
-		VerifactuValidation.validate(fras, fraType, invoice );
+		try {
+			VerifactuValidation.validate(fras, fraType, invoice );
+		} finally {
+			if (completeIcc != null) {
+				icc.setCompany( null );
+			}
+		}
 	}
 	
 	private void assertInvoiceNoMessage(Invoice invoice, CompleteInvoiceCommunicatorContext completeIcc, CompleteRegistroFacturaType complete) throws InvoiceCommunicationException {

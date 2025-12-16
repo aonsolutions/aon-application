@@ -31,7 +31,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VentaAnuladaTest extends AbstractVerifactuTest {
+class VerifactuVentaAnuladaTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
 
@@ -45,7 +45,7 @@ class VentaAnuladaTest extends AbstractVerifactuTest {
 	@Test
 	void ventaAnuladaNoAct() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc)
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		assertInvoice( vc );

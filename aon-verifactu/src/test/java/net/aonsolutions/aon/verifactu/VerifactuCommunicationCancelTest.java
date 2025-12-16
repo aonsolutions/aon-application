@@ -204,8 +204,7 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 	private Invoice save(Invoice invoice) {
 		return getEnvironment().getCtx().getDslContext().transactionResult(config -> {
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
-			icc.setConfig(configWithCertificate());
+			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc);
@@ -226,16 +225,13 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 	private Invoice cancel(Invoice invoice) {
 		return getEnvironment().getCtx().getDslContext().transactionResult(config -> {
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
-			icc.setConfig(configWithCertificate());
+			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			VERIFACTU.cancel(getEnvironment().getCtx(), icc);
 			assertCanceledDataResponse( icc, invoice );
 			return invoice;
 		});
 	}
 		
-	
-
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
 		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);

@@ -16,6 +16,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoFacturaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
@@ -25,7 +26,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionExentaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PrimerRegistroCadenaType;
@@ -39,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VentaCanCeuMelTest extends AbstractVerifactuTest {
+class VerifactuVentaNacionalRETest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
 
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -53,7 +53,7 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -64,7 +64,7 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 		Invoice invoice = getTestInvoice();
 		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
 		invoices.add( invoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -73,7 +73,7 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	void ventaFacesTest() throws InvoiceCommunicationException {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -182,11 +182,10 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	    assertEquals( 1, iDDestinatario.size() );
 	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
 	    assertNotNull( destinatario );
-	    
-	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
 	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
-	    assertNull(destinatario.getIDOtro());
-
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertNull( destinatario.getIDOtro() );
+	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
 	    assertEquals(CuponType.N,cupon);
@@ -199,18 +198,18 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C02.getValue() , dt.getClaveRegimen() );
-	    assertNull( dt.getCalificacionOperacion() );
-	    assertEquals( OperacionExentaType.E_2, dt.getOperacionExenta() );
-	    assertNull( dt.getTipoImpositivo());
+	    assertEquals( ClaveRegimen.C18.getValue() , dt.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
+	    assertNull( dt.getOperacionExenta() );		
+	    assertEquals( "21" , dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );
-	    assertNull( dt.getCuotaRepercutida());
-	    assertNull( dt.getTipoRecargoEquivalencia() );		
-	    assertNull( dt.getCuotaRecargoEquivalencia() );
+	    assertEquals( "21" , dt.getCuotaRepercutida());
+	    assertEquals( "5.2" , dt.getTipoRecargoEquivalencia());
+	    assertEquals( "5.2" , dt.getCuotaRecargoEquivalencia());		
 	    
-	    assertEquals( "0" , rfat.getCuotaTotal());
-	    assertEquals( "100" , rfat.getImporteTotal());
+	    assertEquals( "21" , rfat.getCuotaTotal());
+	    assertEquals( "121" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );
@@ -238,5 +237,4 @@ class VentaCanCeuMelTest extends AbstractVerifactuTest {
 	    
 	}
 	
-
 }

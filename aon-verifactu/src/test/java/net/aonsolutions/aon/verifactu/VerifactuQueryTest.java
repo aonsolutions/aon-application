@@ -25,7 +25,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 	
 	@Test
 	void queryNullFilterTest() throws InvoiceCommunicationException {
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContextWithCertificate();
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate( null );
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc));
 		assertNotNull(e);
 		assertNotNull(e.getMessages());
@@ -34,7 +34,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 	
 	@Test
 	void queryNullYearTest() throws InvoiceCommunicationException {
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContextWithCertificate();
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(null);
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icc.setCommunicationQuery(icq);
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc));
@@ -45,7 +45,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 	
 	@Test
 	void queryNullMonthTest() throws InvoiceCommunicationException {
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContextWithCertificate();
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(null);
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icq.setYear(2025);
 		icc.setCommunicationQuery(icq);
@@ -57,7 +57,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 	
 	@Test
 	void queryTest() throws InvoiceCommunicationException, IOException {
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContextWithCertificate();
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(null);
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icq.setYear(2025);
 		icq.setMonth(Month.DECEMBER);

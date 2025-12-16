@@ -3,8 +3,8 @@ package net.aonsolutions.aon.verifactu;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseRectificacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DesgloseType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.DetalleType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaARType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.PersonaFisicaJuridicaESType;
@@ -40,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
+class VerifactuVentaNacionalSuplidosTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
 
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -53,18 +52,19 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
-		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		List<Invoice> invoices = AonCollectionUtils.toList(getTestInvoice());
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
 		
 	@Test
 	void ventaActGeneralTest() throws InvoiceCommunicationException {
+		List<Invoice> invoices = new LinkedList<>();
 		Invoice invoice = getTestInvoice();
-		List<Invoice> invoices = AonCollectionUtils.toList( invoice );
 		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		invoices.add( invoice );
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -73,7 +73,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	void ventaFacesTest() throws InvoiceCommunicationException {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -115,7 +115,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    assertNotNull( idFactura );
 	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(i.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    assertEquals(VerifactuUtils.toString(i.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    assertEquals(VerifactuUtils.toString(i.getExpDate()), idFactura.getFechaExpedicionFactura() );
 	    
 	    String refExterna = rfat.getRefExterna();
 	    assertNotNull( refExterna );
@@ -135,20 +135,13 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    
 	    ClaveTipoFacturaType tipoFactura = rfat.getTipoFactura();
 	    assertNotNull( tipoFactura );
-	    assertEquals( ClaveTipoFacturaType.R_5, tipoFactura );
+	    assertEquals( ClaveTipoFacturaType.F_1, tipoFactura );
 	    
 	    ClaveTipoRectificativaType tipoRectificativa = rfat.getTipoRectificativa();
-	    assertEquals( ClaveTipoRectificativaType.I, tipoRectificativa );
+	    assertNull( tipoRectificativa );
 	    
 	    RegistroFacturacionAltaType.FacturasRectificadas facturasRectificadas = rfat.getFacturasRectificadas();
-	    assertNotNull( facturasRectificadas );
-	    List<IDFacturaARType> rectIds = facturasRectificadas.getIDFacturaRectificada();
-	    assertTrue( AonCollectionUtils.isNotEmpty( rectIds ) );
-	    IDFacturaARType rectId = rectIds.get(0);
-	    assertNotNull( rectId );
-	    assertEquals( vc.getCompany().getDocument(), rectId.getIDEmisorFactura() );
-	    assertEquals(i.getRectificationInvoiceReference(), rectId.getNumSerieFactura());
-	    assertEquals(VerifactuUtils.toString(i.getRectificationInvoiceDate() ), rectId.getFechaExpedicionFactura() );
+	    assertNull( facturasRectificadas );
 	    
 	    RegistroFacturacionAltaType.FacturasSustituidas facturasSustituidas = rfat.getFacturasSustituidas();
 	    assertNull( facturasSustituidas );
@@ -170,7 +163,7 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 
 	    CompletaSinDestinatarioType facturaSinIdentifDestinatarioArt61D = rfat.getFacturaSinIdentifDestinatarioArt61D();
 	    assertNotNull( facturaSinIdentifDestinatarioArt61D );
-	    assertEquals( CompletaSinDestinatarioType.S , facturaSinIdentifDestinatarioArt61D );
+	    assertEquals( CompletaSinDestinatarioType.N , facturaSinIdentifDestinatarioArt61D );
 	    
 	    MacrodatoType macrodato = rfat.getMacrodato();
 	    assertNotNull( macrodato );
@@ -183,7 +176,15 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    assertNull( tercero );
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
-	    assertNull( destinatarios );
+	    assertNotNull( destinatarios );
+	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
+	    assertNotNull( iDDestinatario );
+	    assertEquals( 1, iDDestinatario.size() );
+	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
+	    assertNotNull( destinatario );
+	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertNull( destinatario.getIDOtro() );
 	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
@@ -193,22 +194,36 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    assertNotNull( desglose );
 	    List<DetalleType> listaDesglose = desglose.getDetalleDesglose();
 	    assertNotNull( listaDesglose );
-	    assertEquals( 1, listaDesglose.size() );
-	    DetalleType dt = listaDesglose.get(0);
-	    assertNotNull( dt );
-	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
-	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
-	    assertNull( dt.getOperacionExenta() );		
-	    assertEquals( "21" , dt.getTipoImpositivo());
-	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
-	    assertNull( dt.getBaseImponibleACoste() );
-	    assertEquals( "21" , dt.getCuotaRepercutida());
-	    assertNull( dt.getTipoRecargoEquivalencia() );		
-	    assertNull( dt.getCuotaRecargoEquivalencia() );
+	    assertEquals( 2, listaDesglose.size() );
+
+	    DetalleType dt0 = listaDesglose.get(0);
+	    assertNotNull( dt0 );
+	    assertEquals( TipoImpuesto.IVA.getValue() , dt0.getImpuesto() );
+	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt0.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.N_1 , dt0.getCalificacionOperacion() );
+	    assertNull( dt0.getOperacionExenta() );		
+	    assertNull( dt0.getTipoImpositivo());
+	    assertEquals( "500" , dt0.getBaseImponibleOimporteNoSujeto());
+	    assertNull( dt0.getBaseImponibleACoste() );
+	    assertNull( dt0.getCuotaRepercutida());
+	    assertNull( dt0.getTipoRecargoEquivalencia() );		
+	    assertNull( dt0.getCuotaRecargoEquivalencia() );
+	    
+	    DetalleType dt1 = listaDesglose.get(1);
+	    assertNotNull( dt1 );
+	    assertEquals( TipoImpuesto.IVA.getValue() , dt1.getImpuesto() );
+	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt1.getClaveRegimen() );
+	    assertEquals( CalificacionOperacionType.S_1 , dt1.getCalificacionOperacion() );
+	    assertNull( dt1.getOperacionExenta() );		
+	    assertEquals( "21" , dt1.getTipoImpositivo());
+	    assertEquals( "100" , dt1.getBaseImponibleOimporteNoSujeto());
+	    assertNull( dt1.getBaseImponibleACoste() );
+	    assertEquals( "21" , dt1.getCuotaRepercutida());
+	    assertNull( dt1.getTipoRecargoEquivalencia() );		
+	    assertNull( dt1.getCuotaRecargoEquivalencia() );
 	    
 	    assertEquals( "21" , rfat.getCuotaTotal());
-	    assertEquals( "121" , rfat.getImporteTotal());
+	    assertEquals( "621" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );
@@ -236,5 +251,4 @@ class VentaNacionalRectificativaSimplificadaTest extends AbstractVerifactuTest {
 	    
 	}
 	
-
 }

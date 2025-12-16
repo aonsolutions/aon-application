@@ -39,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
+class VerifactuVentaNacionalSimpleCriterioCajaTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
-	
+
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -52,8 +52,8 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
-		List<Invoice> invoices = AonCollectionUtils.toList(getTestInvoice());
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -64,7 +64,7 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 		Invoice invoice = getTestInvoice();
 		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
 		invoices.add( invoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -73,7 +73,7 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	void ventaFacesTest() throws InvoiceCommunicationException {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
@@ -135,7 +135,7 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	    
 	    ClaveTipoFacturaType tipoFactura = rfat.getTipoFactura();
 	    assertNotNull( tipoFactura );
-	    assertEquals( ClaveTipoFacturaType.F_2, tipoFactura );
+	    assertEquals( ClaveTipoFacturaType.F_1, tipoFactura );
 	    
 	    ClaveTipoRectificativaType tipoRectificativa = rfat.getTipoRectificativa();
 	    assertNull( tipoRectificativa );
@@ -163,7 +163,7 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 
 	    CompletaSinDestinatarioType facturaSinIdentifDestinatarioArt61D = rfat.getFacturaSinIdentifDestinatarioArt61D();
 	    assertNotNull( facturaSinIdentifDestinatarioArt61D );
-	    assertEquals( CompletaSinDestinatarioType.S , facturaSinIdentifDestinatarioArt61D );
+	    assertEquals( CompletaSinDestinatarioType.N , facturaSinIdentifDestinatarioArt61D );
 	    
 	    MacrodatoType macrodato = rfat.getMacrodato();
 	    assertNotNull( macrodato );
@@ -176,7 +176,15 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	    assertNull( tercero );
 	    
 	    RegistroFacturacionAltaType.Destinatarios destinatarios = rfat.getDestinatarios();
-	    assertNull( destinatarios );
+	    assertNotNull( destinatarios );
+	    List<PersonaFisicaJuridicaType> iDDestinatario = destinatarios.getIDDestinatario();
+	    assertNotNull( iDDestinatario );
+	    assertEquals( 1, iDDestinatario.size() );
+	    PersonaFisicaJuridicaType destinatario = iDDestinatario.get(0);
+	    assertNotNull( destinatario );
+	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
+	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
+	    assertNull( destinatario.getIDOtro() );
 	    
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
@@ -190,7 +198,7 @@ class VentaNacionalSimplificadaTest extends AbstractVerifactuTest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt.getClaveRegimen() );
+	    assertEquals( ClaveRegimen.C07.getValue() , dt.getClaveRegimen() );
 	    assertEquals( CalificacionOperacionType.S_1 , dt.getCalificacionOperacion() );
 	    assertNull( dt.getOperacionExenta() );		
 	    assertEquals( "21" , dt.getTipoImpositivo());

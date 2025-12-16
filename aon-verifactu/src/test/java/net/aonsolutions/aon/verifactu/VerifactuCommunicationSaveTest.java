@@ -173,8 +173,7 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		Invoice i =  getEnvironment().getCtx().getDslContext().transactionResult(config -> {
 			invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-			InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
-			icc.setConfig(configWithCertificate());
+			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
 			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc);
