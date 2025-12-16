@@ -21,6 +21,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
+import net.aonsolutions.aon.verifactu.Environment;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
 
 class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
@@ -38,7 +39,7 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, getInvoices());
-		cc.setConfig(config()).setCompany(company());
+		cc.setConfig(getEnvironment().configuration()).setCompany(getEnvironment().company());
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
@@ -51,7 +52,7 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, Integer.MIN_VALUE, getInvoices());
-		cc.setConfig(config()).setCompany(company());
+		cc.setConfig(getEnvironment().configuration()).setCompany(getEnvironment().company());
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);

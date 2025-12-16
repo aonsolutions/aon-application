@@ -68,8 +68,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.verifactu.AbstractVerifactuTest.Environment;
-
 class TestDomainProvider {
 	
 	private TestDomainProvider() {

@@ -1,8 +1,5 @@
 package net.aonsolutions.aon.verifactu;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -12,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -24,20 +20,7 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -64,178 +47,6 @@ public abstract class AbstractVerifactuTest {
 	
 	private Date testDate; 
 	
-	public static interface Environment {
-		CloseableAONContext getCtx();
-		void setCtx(CloseableAONContext aonContext);
-		
-		
-		Integer getDomainId();
-		void setDomainId(Integer id);
-		Occam getOccam();
-		InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices);
-		InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices);
-		String getDomainName();	
-		String getUser();
-		
-		Domain domain();
-		User user();
-		Company company();
-		
-		default void close() {
-			CloseableAONContext ctx = getCtx();
-			if (ctx != null) {
-				ctx.close();
-			}
-		}
-	}
-	static abstract class VerifactuEnvironmentAbs implements Environment {
-		protected CloseableAONContext ctx;
-		protected Integer domainId;
-		protected InvoiceCommunicationConfiguration communicationConfiguration;
-		protected InvoiceCommunicationConfiguration communicationConfigurationWithCertificate;
-		protected Domain domain;
-		protected User user;
-		protected Company company;
-		
-		@Override
-		public CloseableAONContext getCtx() {
-			return ctx;
-		}
-		@Override
-		public void setCtx(CloseableAONContext aonContext) {
-			this.ctx = aonContext;
-		}
-		
-		@Override
-		public Integer getDomainId() {
-			return domainId;
-		}
-		@Override
-		public void setDomainId(Integer id) {
-			this.domainId = id;
-		}
-		
-
-		
-		@Override
-		public InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
-			return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
-				.setCompany( company() )
-				.setConfig( config() )
-			;
-		}
-		private InvoiceCommunicationConfiguration getCommunicationConfiguration() {
-			return communicationConfiguration; 
-		}
-		private void setCommunicationConfiguration(InvoiceCommunicationConfiguration config) {
-			this.communicationConfiguration = config;
-		}
-		private InvoiceCommunicationConfiguration config() {
-			synchronized (this) {
-				if (getCommunicationConfiguration() == null) {
-					setCommunicationConfiguration( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
-				}
-				assertNotNull(getCommunicationConfiguration(),"communicationConfiguration NULL" );
-				assertTrue(getCommunicationConfiguration().isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
-				assertTrue(getCommunicationConfiguration().isVerifactuTest(),"communicationConfiguration NO ENTORNO TEST" );
-				return getCommunicationConfiguration();
-			}
-		}
-
-		
-		@Override
-		public InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
-			return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
-				.setCompany( company() )
-				.setConfig( configWithCertificate() )
-			;
-		}
-		private InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
-			return communicationConfigurationWithCertificate; 
-		}
-		private void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration config) {
-			this.communicationConfigurationWithCertificate = config;
-		}
-		private InvoiceCommunicationConfiguration configWithCertificate() {
-			synchronized (this) {
-				if (getCommunicationConfigurationWithCertificate() == null) {
-					setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
-				}
-				assertNotNull(getCommunicationConfigurationWithCertificate(),"communicationConfigurationWithCertificate NULL" );
-				assertTrue(getCommunicationConfigurationWithCertificate().isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
-				assertTrue(getCommunicationConfigurationWithCertificate().isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
-				Certificate c = AonSecret.getSigCert();
-				assertNotNull(c, "Verifactu Certificate NULL");
-				getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 
-				return getCommunicationConfigurationWithCertificate();
-			}
-
-		}
-
-		@Override
-		public Company company() {
-			return CompanyDAO.getCompany(getCtx(), getDomainId());
-		}
-		
-		@Override
-		public User user() {
-			synchronized (this) {
-				if (user == null) {
-					user = UserDAO.get(getCtx(), getDomainId(), getUser())
-						.orElseThrow( () -> new IllegalStateException("User " + getUser() + " not found in domain " + getDomainId()) );
-				}
-				return user;
-			}
-		}
-
-		@Override
-		public Domain domain() {
-			synchronized (this) {
-				if (domain == null) {
-					domain = DomainDAO.getDomain(getCtx(), getDomainId());
-				}
-				return domain;
-			}
-		}
-		
-		@Override
-		public Occam getOccam() {
-			return new Occam()
-				.setDomainName(getDomainName())
-				.setDomain(domainId)
-				.setUser(getUser());
-		}
-	}
-	
-	static final class VerifactuEnvironment extends VerifactuEnvironmentAbs {
-		protected String domainName = "verifactutest.aonsolutions.test";	
-		protected String user 		= "admin";
-		
-		@Override
-		public String getDomainName() {
-			return domainName;
-		}
-		@Override
-		public String getUser() {
-			return user;
-		}
-	}
-	
-	static final class NoVerifactuEnvironment extends VerifactuEnvironmentAbs {
-		protected String domainName = "noverifactutest.aonsolutions.test";	
-		protected String user 		= "admin";
-		
-		@Override
-		public String getDomainName() {
-			return domainName;
-		}
-		
-		@Override
-		public String getUser() {
-			return user;
-		}
-	}
-
 	@BeforeAll
 	public static void beforeClass() throws ClassNotFoundException, SQLException {
 		shutUp();

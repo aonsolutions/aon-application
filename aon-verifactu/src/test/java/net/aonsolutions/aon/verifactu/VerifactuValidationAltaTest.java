@@ -74,13 +74,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		if (complete != null) {
 			complete.complete(new Context( fras, alta, firstDet ));
 		}
-		try {
-			VerifactuValidation.validate(fras, fraType, invoice );
-		} finally {
-			if (completeIcc != null) {
-				icc.setCompany( null );
-			}
-		}
+		VerifactuValidation.validate(fras, fraType, invoice );
 	}
 	
 	private void assertInvoiceNoMessage(Invoice invoice, CompleteInvoiceCommunicatorContext completeIcc, CompleteRegistroFacturaType complete) throws InvoiceCommunicationException {

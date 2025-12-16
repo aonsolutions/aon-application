@@ -22,8 +22,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-import net.aonsolutions.aon.verifactu.AbstractVerifactuTest.Environment;
-
 public class InvoiceTypes {
 	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain, VATRegime regime ) {
 		return CompanyDAO.getEnterpriseActivities(ctx,domain)

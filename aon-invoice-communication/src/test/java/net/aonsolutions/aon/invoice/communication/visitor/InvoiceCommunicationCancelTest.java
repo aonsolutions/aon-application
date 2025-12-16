@@ -73,6 +73,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
+import net.aonsolutions.aon.verifactu.Environment;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
 import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
@@ -91,8 +92,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
-		cc.setConfig(configWithCertificate()).setCompany(company());
+		InvoiceCommunicatorContext cc = getEnvironment().getInvoiceCommunicatorContextWithCertificate( invoices ); 
 		InvoiceCommunicator.acceptInvoice(cc);
 		InvoiceCommunicationTracking acceptTracking = assertAcceptedInvoiceBatch(invoice);
 		DataResponse acceptResponse = assertAcceptedDataResponse(cc, invoice, acceptTracking);

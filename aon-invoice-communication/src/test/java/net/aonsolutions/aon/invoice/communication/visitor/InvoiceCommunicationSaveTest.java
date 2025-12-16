@@ -75,6 +75,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
+import net.aonsolutions.aon.verifactu.Environment;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
 import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
@@ -212,7 +213,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
-		cc.setConfig(configWithCertificate()).setCompany(company());
+		cc.setConfig(getEnvironment().configurationWithCertificate()).setCompany(getEnvironment().company());
 		InvoiceCommunicator.acceptInvoice(cc);
 		InvoiceCommunicationTracking tracking = assertInvoiceBatch(invoice);
 		DataResponse response = assertDataResponse(cc, invoice, tracking);
