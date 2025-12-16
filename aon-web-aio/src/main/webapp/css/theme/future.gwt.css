@@ -100,6 +100,10 @@ body,
 	margin: 1rem 1rem 1rem 1rem;
 }
 
+.aon_search_filter_scroll .aon_flex_column {
+	margin: 0px;
+}  
+
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem), 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem){
   	border-top-right-radius: 0px;
@@ -333,12 +337,12 @@ input, select, textarea,
 
 .aon_between_input, 
 .aon_custom_text_box_input {
-	height: 2.15rem;
+	min-height: 2.15rem;
   	color: #1e293b;  
 	border-radius: .375rem;
 	box-sizing: border-box;
-	padding: .75rem !important;
 	border: .0625rem solid #cbd5e1;
+	padding: .5rem .75rem .5rem .75rem !important;
 }
 
 .aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
@@ -803,6 +807,10 @@ div[style*='height:55px'] > .aon_toolbar {
 
 .material-icons[icon="person"] {
 	background-image: url('/icons/user.svg');
+}
+
+.material-icons[icon="person_off"] {
+	background-image: url('/icons/user-x.svg');
 }
 
 .material-icons[icon="place"] {

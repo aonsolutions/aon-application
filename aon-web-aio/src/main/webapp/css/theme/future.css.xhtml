@@ -92,7 +92,7 @@
 	}
 
 	.aon-finding-filter-input {
-		height: 2.5rem;
+		min-height: 2.5rem;
   		border-radius: .375rem;
   		box-sizing: border-box;		
   		background-position-y: center;
@@ -498,10 +498,6 @@
         background-color: var(--aonBackgroundColor2);
 	}
 	
-	.rich-menu-list-border{
-	}
-	
-	
 	.aon-button-goto{
   		width: 24px ;
   		height: 2.5rem ;
@@ -670,6 +666,7 @@
 	.rich-menu-list-border{
 		min-width: 12.5rem;
   		height: auto;
+  		border: none;
   		border-radius: .375rem;
 		background-color: #fff;
 	  	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
@@ -693,30 +690,56 @@
 	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply, 
 	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans, 
 	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans {
-		height: 42px;
+		height: 36px;
 		width: 100%;
 		
-		line-height: 42px;
+		line-height: 36px;
 		border-radius: 0px;
 		display: inline-block;
 		
 		background-size: 24px;
+		background-image: none;
 		background-position: left;
-		
-		padding: 0px 0px 0px 32px;
-/* 		mask-size: contain;
-		mask-position: center;
-		mask-repeat: no-repeat;
-		background-color: #1e293b;
- */
  		background-color: transparent;
+		
+		padding: 0px 0px 0px 0px;
+
  				
 		color: #1e293b;
 		font-size: 14.725px;
 		font-family: "Inter-medium", sans-serif;
 	}	
 	
-	.rich-menu-item:hover, 
+
+	.aon-dropDownMenu a.aon-finding-toolbar-item[class*='aon-icon-']:before,
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-statistics:before, 
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply:before, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans:before, 
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans:before {
+		content: '';
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        display: inline-block;
+        vertical-align: middle;
+		background-color: black;
+	    mask-repeat: no-repeat;
+	}
+
+	.aon-dropDownMenu a.aon-finding-toolbar-item[class*='aon-icon-']:hover::before{
+	    background-color: #fff;
+    }
+	
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-pdf:before{
+	    mask-image: url(#{aonResource.resolve['/icons/file-pdf.svg']}) ;
+    }
+
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-excel:before{
+	    mask-image: url(#{aonResource.resolve['/icons/file-spreadsheet.svg']}) ;
+    }
+	
+	.rich-menu-item:hover,
+	.aon-dropDownMenu-selectItem, 
 	.aon-menuItem-selectClass {
 	  color: #fff;
 	  border:none;		
@@ -838,6 +861,15 @@
         padding-top: 0px !important;
         padding-bottom: 0px !important;
     }
+    
+    form[id$='bankStatementList'] .aon-panelGrid .aon-panelGrid-odd {
+        position: initial;
+    }
+    
+    form[id$='bankStatementList'] .aon-panelGrid .aon-panelGrid-even {
+        padding: 5px !important;
+    }
+    
     
     .aon-panelGrid .tbl-tab-search-even,
     .aon-panelGrid .aon-panelGrid-even,
@@ -1114,6 +1146,14 @@
 		padding-top: 10px !important;
 		padding-left: 32px !important;
 	}
+
+/* 	.aon-finding-toolbar-item.aon-icon-accept{
+  		border: 0;
+  		color: #fff;
+  		width: fit-content;
+		background-color: #0f172a;
+      }
+ */    
 	
 </style>
 
