@@ -225,6 +225,9 @@ class InvoiceConsoleTable extends ScrollPanel{
 								@Override public void visitLROE() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconBizkaia());}
 								@Override public void visitEMAIL() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconEmail());}
 								@Override public void visitCLOSING() throws InvoiceCommunicationException {addLabel(AON.CSS.aonIconLock());}
+								@Override public void visitNO_VERIFACTU() { addLabel(AON.CSS.aonIconAeat()); }
+								@Override public void visitSIF() { addLabel(AON.CSS.aonIconAeat());  }
+								@Override public void visitFACTURAE() { addLabel(AON.CSS.aonIconAeat()); }
 							});
 						} catch (Exception e) {
 							// Nothing
