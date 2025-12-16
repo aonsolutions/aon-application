@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
 // Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2025.12.05 a las 12:19:38 PM CET 
+// Generado el: 2025.12.16 a las 01:00:05 PM CET 
 //
 
 
@@ -436,10 +436,7 @@ import javax.xml.bind.annotation.XmlType;
  *                                 &lt;complexContent&gt;
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *                                     &lt;sequence&gt;
- *                                       &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -453,10 +450,7 @@ import javax.xml.bind.annotation.XmlType;
  *                                 &lt;complexContent&gt;
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *                                     &lt;sequence&gt;
- *                                       &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -487,10 +481,7 @@ import javax.xml.bind.annotation.XmlType;
  *                                 &lt;complexContent&gt;
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *                                     &lt;sequence&gt;
- *                                       &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -521,10 +512,7 @@ import javax.xml.bind.annotation.XmlType;
  *                                 &lt;complexContent&gt;
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *                                     &lt;sequence&gt;
- *                                       &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -538,10 +526,7 @@ import javax.xml.bind.annotation.XmlType;
  *                                 &lt;complexContent&gt;
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *                                     &lt;sequence&gt;
- *                                       &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
- *                                       &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
  *                                       &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -5718,10 +5703,7 @@ public class AEATIVA2025 {
      *                       &lt;complexContent&gt;
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
      *                           &lt;sequence&gt;
-     *                             &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -5735,10 +5717,7 @@ public class AEATIVA2025 {
      *                       &lt;complexContent&gt;
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
      *                           &lt;sequence&gt;
-     *                             &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -5769,10 +5748,7 @@ public class AEATIVA2025 {
      *                       &lt;complexContent&gt;
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
      *                           &lt;sequence&gt;
-     *                             &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -5803,10 +5779,7 @@ public class AEATIVA2025 {
      *                       &lt;complexContent&gt;
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
      *                           &lt;sequence&gt;
-     *                             &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -5820,10 +5793,7 @@ public class AEATIVA2025 {
      *                       &lt;complexContent&gt;
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
      *                           &lt;sequence&gt;
-     *                             &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-     *                             &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
      *                             &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8089,10 +8059,7 @@ public class AEATIVA2025 {
          *             &lt;complexContent&gt;
          *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
          *                 &lt;sequence&gt;
-         *                   &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8106,10 +8073,7 @@ public class AEATIVA2025 {
          *             &lt;complexContent&gt;
          *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
          *                 &lt;sequence&gt;
-         *                   &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8140,10 +8104,7 @@ public class AEATIVA2025 {
          *             &lt;complexContent&gt;
          *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
          *                 &lt;sequence&gt;
-         *                   &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8174,10 +8135,7 @@ public class AEATIVA2025 {
          *             &lt;complexContent&gt;
          *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
          *                 &lt;sequence&gt;
-         *                   &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8191,10 +8149,7 @@ public class AEATIVA2025 {
          *             &lt;complexContent&gt;
          *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
          *                 &lt;sequence&gt;
-         *                   &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-         *                   &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
          *                   &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8930,10 +8885,7 @@ public class AEATIVA2025 {
              *   &lt;complexContent&gt;
              *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
              *       &lt;sequence&gt;
-             *         &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -8947,54 +8899,21 @@ public class AEATIVA2025 {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "tipo2",
                 "tipo4",
-                "tipo5",
-                "tipo75",
                 "tipo10",
                 "tipo21",
                 "total"
             })
             public static class AdqIntracomunitariasBienesInversion {
 
-                @XmlElement(name = "Tipo2")
-                protected TipoBaseImponibleYCuota tipo2;
                 @XmlElement(name = "Tipo4")
                 protected TipoBaseImponibleYCuota tipo4;
-                @XmlElement(name = "Tipo5")
-                protected TipoBaseImponibleYCuota tipo5;
-                @XmlElement(name = "Tipo75")
-                protected TipoBaseImponibleYCuota tipo75;
                 @XmlElement(name = "Tipo10")
                 protected TipoBaseImponibleYCuota tipo10;
                 @XmlElement(name = "Tipo21")
                 protected TipoBaseImponibleYCuota tipo21;
                 @XmlElement(name = "Total", required = true)
                 protected TipoBaseImponibleYCuota total;
-
-                /**
-                 * Obtiene el valor de la propiedad tipo2.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo2() {
-                    return tipo2;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo2.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo2(TipoBaseImponibleYCuota value) {
-                    this.tipo2 = value;
-                }
 
                 /**
                  * Obtiene el valor de la propiedad tipo4.
@@ -9018,54 +8937,6 @@ public class AEATIVA2025 {
                  */
                 public void setTipo4(TipoBaseImponibleYCuota value) {
                     this.tipo4 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo5.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo5() {
-                    return tipo5;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo5.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo5(TipoBaseImponibleYCuota value) {
-                    this.tipo5 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo75.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo75() {
-                    return tipo75;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo75.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo75(TipoBaseImponibleYCuota value) {
-                    this.tipo75 = value;
                 }
 
                 /**
@@ -9153,10 +9024,7 @@ public class AEATIVA2025 {
              *   &lt;complexContent&gt;
              *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
              *       &lt;sequence&gt;
-             *         &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -9170,54 +9038,21 @@ public class AEATIVA2025 {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "tipo2",
                 "tipo4",
-                "tipo5",
-                "tipo75",
                 "tipo10",
                 "tipo21",
                 "total"
             })
             public static class AdqIntracomunitariasServicios {
 
-                @XmlElement(name = "Tipo2")
-                protected TipoBaseImponibleYCuota tipo2;
                 @XmlElement(name = "Tipo4")
                 protected TipoBaseImponibleYCuota tipo4;
-                @XmlElement(name = "Tipo5")
-                protected TipoBaseImponibleYCuota tipo5;
-                @XmlElement(name = "Tipo75")
-                protected TipoBaseImponibleYCuota tipo75;
                 @XmlElement(name = "Tipo10")
                 protected TipoBaseImponibleYCuota tipo10;
                 @XmlElement(name = "Tipo21")
                 protected TipoBaseImponibleYCuota tipo21;
                 @XmlElement(name = "Total", required = true)
                 protected TipoBaseImponibleYCuota total;
-
-                /**
-                 * Obtiene el valor de la propiedad tipo2.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo2() {
-                    return tipo2;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo2.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo2(TipoBaseImponibleYCuota value) {
-                    this.tipo2 = value;
-                }
 
                 /**
                  * Obtiene el valor de la propiedad tipo4.
@@ -9241,54 +9076,6 @@ public class AEATIVA2025 {
                  */
                 public void setTipo4(TipoBaseImponibleYCuota value) {
                     this.tipo4 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo5.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo5() {
-                    return tipo5;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo5.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo5(TipoBaseImponibleYCuota value) {
-                    this.tipo5 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo75.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo75() {
-                    return tipo75;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo75.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo75(TipoBaseImponibleYCuota value) {
-                    this.tipo75 = value;
                 }
 
                 /**
@@ -9709,10 +9496,7 @@ public class AEATIVA2025 {
              *   &lt;complexContent&gt;
              *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
              *       &lt;sequence&gt;
-             *         &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -9726,54 +9510,21 @@ public class AEATIVA2025 {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "tipo2",
                 "tipo4",
-                "tipo5",
-                "tipo75",
                 "tipo10",
                 "tipo21",
                 "total"
             })
             public static class ImportacionesBienesInversion {
 
-                @XmlElement(name = "Tipo2")
-                protected TipoBaseImponibleYCuota tipo2;
                 @XmlElement(name = "Tipo4")
                 protected TipoBaseImponibleYCuota tipo4;
-                @XmlElement(name = "Tipo5")
-                protected TipoBaseImponibleYCuota tipo5;
-                @XmlElement(name = "Tipo75")
-                protected TipoBaseImponibleYCuota tipo75;
                 @XmlElement(name = "Tipo10")
                 protected TipoBaseImponibleYCuota tipo10;
                 @XmlElement(name = "Tipo21")
                 protected TipoBaseImponibleYCuota tipo21;
                 @XmlElement(name = "Total", required = true)
                 protected TipoBaseImponibleYCuota total;
-
-                /**
-                 * Obtiene el valor de la propiedad tipo2.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo2() {
-                    return tipo2;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo2.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo2(TipoBaseImponibleYCuota value) {
-                    this.tipo2 = value;
-                }
 
                 /**
                  * Obtiene el valor de la propiedad tipo4.
@@ -9797,54 +9548,6 @@ public class AEATIVA2025 {
                  */
                 public void setTipo4(TipoBaseImponibleYCuota value) {
                     this.tipo4 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo5.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo5() {
-                    return tipo5;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo5.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo5(TipoBaseImponibleYCuota value) {
-                    this.tipo5 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo75.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo75() {
-                    return tipo75;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo75.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo75(TipoBaseImponibleYCuota value) {
-                    this.tipo75 = value;
                 }
 
                 /**
@@ -9932,10 +9635,7 @@ public class AEATIVA2025 {
              *   &lt;complexContent&gt;
              *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
              *       &lt;sequence&gt;
-             *         &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -9949,54 +9649,21 @@ public class AEATIVA2025 {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "tipo2",
                 "tipo4",
-                "tipo5",
-                "tipo75",
                 "tipo10",
                 "tipo21",
                 "total"
             })
             public static class OpInterioresBienesInversion {
 
-                @XmlElement(name = "Tipo2")
-                protected TipoBaseImponibleYCuota tipo2;
                 @XmlElement(name = "Tipo4")
                 protected TipoBaseImponibleYCuota tipo4;
-                @XmlElement(name = "Tipo5")
-                protected TipoBaseImponibleYCuota tipo5;
-                @XmlElement(name = "Tipo75")
-                protected TipoBaseImponibleYCuota tipo75;
                 @XmlElement(name = "Tipo10")
                 protected TipoBaseImponibleYCuota tipo10;
                 @XmlElement(name = "Tipo21")
                 protected TipoBaseImponibleYCuota tipo21;
                 @XmlElement(name = "Total", required = true)
                 protected TipoBaseImponibleYCuota total;
-
-                /**
-                 * Obtiene el valor de la propiedad tipo2.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo2() {
-                    return tipo2;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo2.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo2(TipoBaseImponibleYCuota value) {
-                    this.tipo2 = value;
-                }
 
                 /**
                  * Obtiene el valor de la propiedad tipo4.
@@ -10020,54 +9687,6 @@ public class AEATIVA2025 {
                  */
                 public void setTipo4(TipoBaseImponibleYCuota value) {
                     this.tipo4 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo5.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo5() {
-                    return tipo5;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo5.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo5(TipoBaseImponibleYCuota value) {
-                    this.tipo5 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo75.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo75() {
-                    return tipo75;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo75.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo75(TipoBaseImponibleYCuota value) {
-                    this.tipo75 = value;
                 }
 
                 /**
@@ -10378,10 +9997,7 @@ public class AEATIVA2025 {
              *   &lt;complexContent&gt;
              *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
              *       &lt;sequence&gt;
-             *         &lt;element name="Tipo2" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo4" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo5" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
-             *         &lt;element name="Tipo75" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo10" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Tipo21" type="{}tipo_BaseImponible_y_Cuota" minOccurs="0"/&gt;
              *         &lt;element name="Total" type="{}tipo_BaseImponible_y_Cuota"/&gt;
@@ -10395,54 +10011,21 @@ public class AEATIVA2025 {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "tipo2",
                 "tipo4",
-                "tipo5",
-                "tipo75",
                 "tipo10",
                 "tipo21",
                 "total"
             })
             public static class OpIntragrupoBienesInversion {
 
-                @XmlElement(name = "Tipo2")
-                protected TipoBaseImponibleYCuota tipo2;
                 @XmlElement(name = "Tipo4")
                 protected TipoBaseImponibleYCuota tipo4;
-                @XmlElement(name = "Tipo5")
-                protected TipoBaseImponibleYCuota tipo5;
-                @XmlElement(name = "Tipo75")
-                protected TipoBaseImponibleYCuota tipo75;
                 @XmlElement(name = "Tipo10")
                 protected TipoBaseImponibleYCuota tipo10;
                 @XmlElement(name = "Tipo21")
                 protected TipoBaseImponibleYCuota tipo21;
                 @XmlElement(name = "Total", required = true)
                 protected TipoBaseImponibleYCuota total;
-
-                /**
-                 * Obtiene el valor de la propiedad tipo2.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo2() {
-                    return tipo2;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo2.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo2(TipoBaseImponibleYCuota value) {
-                    this.tipo2 = value;
-                }
 
                 /**
                  * Obtiene el valor de la propiedad tipo4.
@@ -10466,54 +10049,6 @@ public class AEATIVA2025 {
                  */
                 public void setTipo4(TipoBaseImponibleYCuota value) {
                     this.tipo4 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo5.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo5() {
-                    return tipo5;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo5.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo5(TipoBaseImponibleYCuota value) {
-                    this.tipo5 = value;
-                }
-
-                /**
-                 * Obtiene el valor de la propiedad tipo75.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public TipoBaseImponibleYCuota getTipo75() {
-                    return tipo75;
-                }
-
-                /**
-                 * Define el valor de la propiedad tipo75.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link TipoBaseImponibleYCuota }
-                 *     
-                 */
-                public void setTipo75(TipoBaseImponibleYCuota value) {
-                    this.tipo75 = value;
                 }
 
                 /**

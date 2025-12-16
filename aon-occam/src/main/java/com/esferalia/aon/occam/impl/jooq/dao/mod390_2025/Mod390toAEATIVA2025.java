@@ -702,10 +702,10 @@ public class Mod390toAEATIVA2025 {
 
 	private static AdqIntracomunitariasServicios getAdqIntracomunitariasServicios(Mod3902025 mod390) {
 		AdqIntracomunitariasServicios op = new AdqIntracomunitariasServicios();
-		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0774)));
+//		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0774)));
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0588)));
-		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0741)));
-		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0776)));
+//		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0741)));
+//		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0776)));
 		op.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0636)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0638)));
 		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0598)));
@@ -715,10 +715,10 @@ public class Mod390toAEATIVA2025 {
 
 	private static AdqIntracomunitariasBienesInversion getAdqIntracomunitariasBienesInversion(Mod3902025 mod390) {
 		AdqIntracomunitariasBienesInversion op = new AdqIntracomunitariasBienesInversion();
-		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0770)));
+//		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0770)));
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0221)));
-		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0739)));
-		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0772)));
+//		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0739)));
+//		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0772)));
 		op.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0632)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0634)));
 		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0059)));
@@ -741,10 +741,10 @@ public class Mod390toAEATIVA2025 {
 
 	private static ImportacionesBienesInversion getImportacionesBienesInversion(Mod3902025 mod390) {
 		ImportacionesBienesInversion op = new ImportacionesBienesInversion();
-		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0762)));
+//		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0762)));
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0209)));
-		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0735)));
-		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0764)));
+//		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0735)));
+//		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0764)));
 		op.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0624)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0626)));
 		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0055)));
@@ -767,10 +767,10 @@ public class Mod390toAEATIVA2025 {
 
 	private static OpIntragrupoBienesInversion getOpIntragrupoBienesInversion(Mod3902025 mod390) {
 		OpIntragrupoBienesInversion op = new OpIntragrupoBienesInversion();
-		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0754)));
+//		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0754)));
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0515)));
-		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0731)));
-		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0756)));
+//		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0731)));
+//		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0756)));
 		op.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0616)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0618)));
 		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0521)));
@@ -780,10 +780,10 @@ public class Mod390toAEATIVA2025 {
 
 	private static OpInterioresBienesInversion getOpInterioresBienesInversion(Mod3902025 mod390) {
 		OpInterioresBienesInversion op = new OpInterioresBienesInversion();
-		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0750)));
+//		op.setTipo2(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0750)));
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0197)));
-		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0729)));
-		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0752)));
+//		op.setTipo5(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0729)));
+//		op.setTipo75(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0752)));
 		op.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0612)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0614)));
 		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod3902025DetailKey.C0051)));

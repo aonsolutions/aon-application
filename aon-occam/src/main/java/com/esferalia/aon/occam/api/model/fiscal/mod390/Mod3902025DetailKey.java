@@ -103,26 +103,26 @@ public enum Mod3902025DetailKey implements Serializable {
 	 
 	 // Operaciones interiores de bienes de inversión
 	 // IVA deducible en operaciones interiores de bienes de inversión
-	 ,C0750	(750,	 2.00,true ,false,true)
+//	 ,C0750	(750,	 2.00,true ,false,true)
 	 ,C0197	(197,	 4.00,true ,false,true)
-	 ,C0729	(729,	 5.00,true ,false,true)
-	 ,C0752	(752,	 7.50,true ,false,true)
+//	 ,C0729	(729,	 5.00,true ,false,true)
+//	 ,C0752	(752,	 7.50,true ,false,true)
 	 ,C0612	(612,	10.00,true ,false,true)
 	 ,C0614	(614,	21.00,true ,false,true)
 	 // Total bases imponibles y cuotas deducibles en operaciones interiores de bienes de inversión
 	 ,C0051	( 51,	 0.00,true ,true )
 	 
 	 // IVA deducible en operaciones intragrupo de bienes de inversión
-	 ,C0754	(754,	 2.00,true ,false,true)
+//	 ,C0754	(754,	 2.00,true ,false,true)
 	 ,C0515	(515,	 4.00,true ,false,true)
-	 ,C0731	(731,	 5.00,true ,false,true)
-	 ,C0756	(756,	 7.50,true ,false,true)
+//	 ,C0731	(731,	 5.00,true ,false,true)
+//	 ,C0756	(756,	 7.50,true ,false,true)
 	 ,C0616	(616,	10.00,true ,false,true)
 	 ,C0618	(618,	21.00,true ,false,true)
 	 // Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes de inversión
 	 ,C0521	(521,	 0.00,true ,true )
 	 
-	 // Importaciones y adquisiciones intracomunitarias de bienes y servicio
+	 // Importaciones y adquisiciones intracomunitarias de bienes y servicios
 	 // IVA deducible en importaciones de bienes corrientes
 	 ,C0758	(758,	 2.00,true ,false,true)
 	 ,C0203	(203,	 4.00,true ,false,true)
@@ -134,10 +134,10 @@ public enum Mod3902025DetailKey implements Serializable {
 	 ,C0053	( 53,    0.00,true ,true )
 	 
 	 // IVA deducible en importaciones de bienes de inversión
-	 ,C0762	(762,	 2.00,true ,false,true)
+//	 ,C0762	(762,	 2.00,true ,false,true)
 	 ,C0209	(209,    4.00,true ,false,true)
-	 ,C0735	(735,	 5.00,true ,false,true)
-	 ,C0764	(764,	 7.50,true ,false,true)
+//	 ,C0735	(735,	 5.00,true ,false,true)
+//	 ,C0764	(764,	 7.50,true ,false,true)
 	 ,C0624	(624,   10.00,true ,false,true)
 	 ,C0626	(626,   21.00,true ,false,true)
 	 // Total bases imponibles y cuotas deducibles en importaciones de bienes de inversión
@@ -154,20 +154,20 @@ public enum Mod3902025DetailKey implements Serializable {
 	 ,C0057	( 57,    0.00,true ,true )
 	 
 	 // IVA deducible en adquisiciones intracomunitarias de bienes de inversión
-	 ,C0770	(770,	 2.00,true ,false,true)
+//	 ,C0770	(770,	 2.00,true ,false,true)
 	 ,C0221	(221,    4.00,true ,false,true)
-	 ,C0739	(739,	 5.00,true ,false,true)
-	 ,C0772	(772,	 7.50,true ,false,true)
+//	 ,C0739	(739,	 5.00,true ,false,true)
+//	 ,C0772	(772,	 7.50,true ,false,true)
 	 ,C0632	(632,   10.00,true ,false,true)
 	 ,C0634	(634,   21.00,true ,false,true)
 	 // Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes de inversión
 	 ,C0059	( 59,    0.00,true ,true )
 	 
 	 // IVA deducible en adquisiciones intracomunitarias de servicios
-	 ,C0774	(774,	 2.00,true ,false,true)
+//	 ,C0774	(774,	 2.00,true ,false,true)
 	 ,C0588	(588,    4.00,true ,false,true)
-	 ,C0741	(741,	 5.00,true ,false,true)
-	 ,C0776	(776,	 7.50,true ,false,true)
+//	 ,C0741	(741,	 5.00,true ,false,true)
+//	 ,C0776	(776,	 7.50,true ,false,true)
 	 ,C0636	(636,   10.00,true ,false,true)
 	 ,C0638	(638,   21.00,true ,false,true)
 	 // Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de servicios

@@ -211,20 +211,20 @@ public class Mod3902025DAO {
 		 
 		 // Operaciones interiores de bienes de inversión
 		 // IVA deducible en operaciones interiores de bienes de inversión	 
-		 ,C0750	(Mod3902025DetailKey.C0750, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent2(vc)))
+//		 ,C0750	(Mod3902025DetailKey.C0750, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent2(vc)))
 		 ,C0197	(Mod3902025DetailKey.C0197, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent4(vc)))
-		 ,C0729	(Mod3902025DetailKey.C0729, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent5(vc)))
-		 ,C0752	(Mod3902025DetailKey.C0752, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent75(vc)))
+//		 ,C0729	(Mod3902025DetailKey.C0729, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent5(vc)))
+//		 ,C0752	(Mod3902025DetailKey.C0752, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent75(vc)))
 		 ,C0612	(Mod3902025DetailKey.C0612, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent10(vc)))
 		 ,C0614	(Mod3902025DetailKey.C0614, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && hasPercent21(vc)))
 		 // Total bases imponibles y cuotas deducibles en operaciones interiores de bienes de inversión
 		 ,C0051	(Mod3902025DetailKey.C0051, null)
 
 		 // IVA deducible en operaciones intragrupo de bienes de inversión
-		 ,C0754	(Mod3902025DetailKey.C0754, null)
+//		 ,C0754	(Mod3902025DetailKey.C0754, null)
 		 ,C0515	(Mod3902025DetailKey.C0515, null)
-		 ,C0731	(Mod3902025DetailKey.C0731, null)
-		 ,C0756	(Mod3902025DetailKey.C0756, null)
+//		 ,C0731	(Mod3902025DetailKey.C0731, null)
+//		 ,C0756	(Mod3902025DetailKey.C0756, null)
 		 ,C0616	(Mod3902025DetailKey.C0616, null)
 		 ,C0618	(Mod3902025DetailKey.C0618, null)
 		 // Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes de inversión
@@ -242,10 +242,10 @@ public class Mod3902025DAO {
 		 ,C0053	(Mod3902025DetailKey.C0053, null)
 		 
 		 // IVA deducible en importaciones de bienes de inversión
-		 ,C0762	(Mod3902025DetailKey.C0762, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent2(vc)))
+//		 ,C0762	(Mod3902025DetailKey.C0762, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent2(vc)))
 		 ,C0209	(Mod3902025DetailKey.C0209, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent4(vc)))
-		 ,C0735	(Mod3902025DetailKey.C0735, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent5(vc)))
-		 ,C0764	(Mod3902025DetailKey.C0764, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent75(vc)))
+//		 ,C0735	(Mod3902025DetailKey.C0735, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent5(vc)))
+//		 ,C0764	(Mod3902025DetailKey.C0764, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent75(vc)))
 		 ,C0624	(Mod3902025DetailKey.C0624, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent10(vc)))
 		 ,C0626	(Mod3902025DetailKey.C0626, ((mod, vc) -> importacionesInversionFilter(vc) && hasPercent21(vc)))
 		 // Total bases imponibles y cuotas deducibles en importaciones de bienes de inversión
@@ -262,20 +262,20 @@ public class Mod3902025DAO {
 		 ,C0057	(Mod3902025DetailKey.C0057, null)
 
 		 // IVA deducible en adquisiciones intracomunitarias de bienes de inversión
-		 ,C0770	(Mod3902025DetailKey.C0770, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent2(vc)))
+//		 ,C0770	(Mod3902025DetailKey.C0770, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent2(vc)))
 		 ,C0221	(Mod3902025DetailKey.C0221, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent4(vc)))
-		 ,C0739	(Mod3902025DetailKey.C0739, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent5(vc)))
-		 ,C0772	(Mod3902025DetailKey.C0772, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent75(vc)))
+//		 ,C0739	(Mod3902025DetailKey.C0739, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent5(vc)))
+//		 ,C0772	(Mod3902025DetailKey.C0772, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent75(vc)))
 		 ,C0632	(Mod3902025DetailKey.C0632, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent10(vc)))
 		 ,C0634	(Mod3902025DetailKey.C0634, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && hasPercent21(vc)))
 		 // Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes de inversión
 		 ,C0059	(Mod3902025DetailKey.C0059, null)
 		 
 		 // IVA deducible en adquisiciones intracomunitarias de servicios
-		 ,C0774	(Mod3902025DetailKey.C0774, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent2(vc)))
+//		 ,C0774	(Mod3902025DetailKey.C0774, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent2(vc)))
 		 ,C0588	(Mod3902025DetailKey.C0588, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent4(vc)))
-		 ,C0741	(Mod3902025DetailKey.C0741, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent5(vc)))
-		 ,C0776	(Mod3902025DetailKey.C0776, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent75(vc)))
+//		 ,C0741	(Mod3902025DetailKey.C0741, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent5(vc)))
+//		 ,C0776	(Mod3902025DetailKey.C0776, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent75(vc)))
 		 ,C0636	(Mod3902025DetailKey.C0636, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent10(vc)))
 		 ,C0638	(Mod3902025DetailKey.C0638, ((mod, vc) -> adqIntracomunitariasServicios(vc) && hasPercent21(vc)))
 		 // Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de servicios

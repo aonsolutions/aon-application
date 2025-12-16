@@ -661,10 +661,7 @@
 										<xs:element name="OpInterioresBienesInversion" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="Tipo2" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo4" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo5" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo75" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo10" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo21" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Total" type="tipo_BaseImponible_y_Cuota"/>
@@ -674,10 +671,7 @@
 										<xs:element name="OpIntragrupoBienesInversion" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="Tipo2" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo4" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo5" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo75" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo10" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo21" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Total" type="tipo_BaseImponible_y_Cuota"/>
@@ -700,10 +694,7 @@
 										<xs:element name="ImportacionesBienesInversion" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="Tipo2" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo4" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo5" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo75" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo10" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo21" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Total" type="tipo_BaseImponible_y_Cuota"/>
@@ -726,10 +717,7 @@
 										<xs:element name="AdqIntracomunitariasBienesInversion" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="Tipo2" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo4" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo5" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo75" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo10" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo21" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Total" type="tipo_BaseImponible_y_Cuota"/>
@@ -739,10 +727,7 @@
 										<xs:element name="AdqIntracomunitariasServicios" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="Tipo2" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo4" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo5" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
-													<xs:element name="Tipo75" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo10" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Tipo21" type="tipo_BaseImponible_y_Cuota" minOccurs="0"/>
 													<xs:element name="Total" type="tipo_BaseImponible_y_Cuota"/>

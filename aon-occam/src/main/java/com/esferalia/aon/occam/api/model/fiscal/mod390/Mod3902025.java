@@ -900,19 +900,19 @@ public class Mod3902025 extends Mod390 {
 	};
 	
 	private static final Mod3902025DetailKey[] C0051_FORMULA = {
-		 Mod3902025DetailKey.C0750
-		,Mod3902025DetailKey.C0197
-		,Mod3902025DetailKey.C0729
-		,Mod3902025DetailKey.C0752
+//		 Mod3902025DetailKey.C0750
+		 Mod3902025DetailKey.C0197
+//		,Mod3902025DetailKey.C0729
+//		,Mod3902025DetailKey.C0752
 		,Mod3902025DetailKey.C0612
 		,Mod3902025DetailKey.C0614
 	};
 	
 	private static final Mod3902025DetailKey[] C0521_FORMULA = {
-		 Mod3902025DetailKey.C0754
-		,Mod3902025DetailKey.C0515
-		,Mod3902025DetailKey.C0731
-		,Mod3902025DetailKey.C0756
+//		 Mod3902025DetailKey.C0754
+		 Mod3902025DetailKey.C0515
+//		,Mod3902025DetailKey.C0731
+//		,Mod3902025DetailKey.C0756
 		,Mod3902025DetailKey.C0616
 		,Mod3902025DetailKey.C0618
 	};
@@ -927,10 +927,10 @@ public class Mod3902025 extends Mod390 {
 	};
 	
 	private static final Mod3902025DetailKey[] C0055_FORMULA = {
-		 Mod3902025DetailKey.C0762
-		,Mod3902025DetailKey.C0209
-		,Mod3902025DetailKey.C0735
-		,Mod3902025DetailKey.C0764
+//		 Mod3902025DetailKey.C0762
+		 Mod3902025DetailKey.C0209
+//		,Mod3902025DetailKey.C0735
+//		,Mod3902025DetailKey.C0764
 		,Mod3902025DetailKey.C0624
 		,Mod3902025DetailKey.C0626
 	};
@@ -945,19 +945,19 @@ public class Mod3902025 extends Mod390 {
 	};
 	
 	private static final Mod3902025DetailKey[] C0059_FORMULA = {
-		 Mod3902025DetailKey.C0770
-		,Mod3902025DetailKey.C0221
-		,Mod3902025DetailKey.C0739
-		,Mod3902025DetailKey.C0772
+//		 Mod3902025DetailKey.C0770
+		 Mod3902025DetailKey.C0221
+//		,Mod3902025DetailKey.C0739
+//		,Mod3902025DetailKey.C0772
 		,Mod3902025DetailKey.C0632
 		,Mod3902025DetailKey.C0634
 	};
 
 	private static final Mod3902025DetailKey[] C0598_FORMULA = {
-		 Mod3902025DetailKey.C0774
-		,Mod3902025DetailKey.C0588
-		,Mod3902025DetailKey.C0741
-		,Mod3902025DetailKey.C0776
+//		 Mod3902025DetailKey.C0774
+		 Mod3902025DetailKey.C0588
+//		,Mod3902025DetailKey.C0741
+//		,Mod3902025DetailKey.C0776
 		,Mod3902025DetailKey.C0636
 		,Mod3902025DetailKey.C0638
 	};	

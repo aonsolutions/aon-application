@@ -297,19 +297,19 @@ public class AEATIVA2025toMod390 {
 					put(mod390, Mod3902025DetailKey.C0513, d.getOpIntragrupoCorrientes().getTotal());
 				}
 				if (d.getOpInterioresBienesInversion() != null) {
-					put(mod390, Mod3902025DetailKey.C0750, d.getOpInterioresBienesInversion().getTipo2());
+//					put(mod390, Mod3902025DetailKey.C0750, d.getOpInterioresBienesInversion().getTipo2());
 					put(mod390, Mod3902025DetailKey.C0197, d.getOpInterioresBienesInversion().getTipo4());
-					put(mod390, Mod3902025DetailKey.C0729, d.getOpInterioresBienesInversion().getTipo5());
-					put(mod390, Mod3902025DetailKey.C0752, d.getOpInterioresBienesInversion().getTipo75());
+//					put(mod390, Mod3902025DetailKey.C0729, d.getOpInterioresBienesInversion().getTipo5());
+//					put(mod390, Mod3902025DetailKey.C0752, d.getOpInterioresBienesInversion().getTipo75());
 					put(mod390, Mod3902025DetailKey.C0612, d.getOpInterioresBienesInversion().getTipo10());
 					put(mod390, Mod3902025DetailKey.C0614, d.getOpInterioresBienesInversion().getTipo21());
 					put(mod390, Mod3902025DetailKey.C0051, d.getOpInterioresBienesInversion().getTotal());
 				}
 				if (d.getOpIntragrupoBienesInversion() != null) {
-					put(mod390, Mod3902025DetailKey.C0754, d.getOpIntragrupoBienesInversion().getTipo2());
+//					put(mod390, Mod3902025DetailKey.C0754, d.getOpIntragrupoBienesInversion().getTipo2());
 					put(mod390, Mod3902025DetailKey.C0515, d.getOpIntragrupoBienesInversion().getTipo4());
-					put(mod390, Mod3902025DetailKey.C0731, d.getOpIntragrupoBienesInversion().getTipo5());
-					put(mod390, Mod3902025DetailKey.C0756, d.getOpIntragrupoBienesInversion().getTipo75());
+//					put(mod390, Mod3902025DetailKey.C0731, d.getOpIntragrupoBienesInversion().getTipo5());
+//					put(mod390, Mod3902025DetailKey.C0756, d.getOpIntragrupoBienesInversion().getTipo75());
 					put(mod390, Mod3902025DetailKey.C0616, d.getOpIntragrupoBienesInversion().getTipo10());
 					put(mod390, Mod3902025DetailKey.C0618, d.getOpIntragrupoBienesInversion().getTipo21());
 					put(mod390, Mod3902025DetailKey.C0521, d.getOpIntragrupoBienesInversion().getTotal());
@@ -324,10 +324,10 @@ public class AEATIVA2025toMod390 {
 					put(mod390, Mod3902025DetailKey.C0053, d.getImportacionesBienesCorrientes().getTotal());
 				}
 				if (d.getImportacionesBienesInversion() != null) {
-					put(mod390, Mod3902025DetailKey.C0762, d.getImportacionesBienesInversion().getTipo2());
+//					put(mod390, Mod3902025DetailKey.C0762, d.getImportacionesBienesInversion().getTipo2());
 					put(mod390, Mod3902025DetailKey.C0209, d.getImportacionesBienesInversion().getTipo4());
-					put(mod390, Mod3902025DetailKey.C0735, d.getImportacionesBienesInversion().getTipo5());
-					put(mod390, Mod3902025DetailKey.C0764, d.getImportacionesBienesInversion().getTipo75());
+//					put(mod390, Mod3902025DetailKey.C0735, d.getImportacionesBienesInversion().getTipo5());
+//					put(mod390, Mod3902025DetailKey.C0764, d.getImportacionesBienesInversion().getTipo75());
 					put(mod390, Mod3902025DetailKey.C0624, d.getImportacionesBienesInversion().getTipo10());
 					put(mod390, Mod3902025DetailKey.C0626, d.getImportacionesBienesInversion().getTipo21());
 					put(mod390, Mod3902025DetailKey.C0055, d.getImportacionesBienesInversion().getTotal());
@@ -342,19 +342,19 @@ public class AEATIVA2025toMod390 {
 					put(mod390, Mod3902025DetailKey.C0057, d.getAdqIntracomunitariasBienesCorrientes().getTotal());
 				}
 				if (d.getAdqIntracomunitariasBienesInversion() != null) {
-					put(mod390, Mod3902025DetailKey.C0770, d.getAdqIntracomunitariasBienesInversion().getTipo2());
+//					put(mod390, Mod3902025DetailKey.C0770, d.getAdqIntracomunitariasBienesInversion().getTipo2());
 					put(mod390, Mod3902025DetailKey.C0221, d.getAdqIntracomunitariasBienesInversion().getTipo4());
-					put(mod390, Mod3902025DetailKey.C0739, d.getAdqIntracomunitariasBienesInversion().getTipo5());
-					put(mod390, Mod3902025DetailKey.C0772, d.getAdqIntracomunitariasBienesInversion().getTipo75());
+//					put(mod390, Mod3902025DetailKey.C0739, d.getAdqIntracomunitariasBienesInversion().getTipo5());
+//					put(mod390, Mod3902025DetailKey.C0772, d.getAdqIntracomunitariasBienesInversion().getTipo75());
 					put(mod390, Mod3902025DetailKey.C0632, d.getAdqIntracomunitariasBienesInversion().getTipo10());
 					put(mod390, Mod3902025DetailKey.C0634, d.getAdqIntracomunitariasBienesInversion().getTipo21());
 					put(mod390, Mod3902025DetailKey.C0059, d.getAdqIntracomunitariasBienesInversion().getTotal());
 				}
 				if (d.getAdqIntracomunitariasServicios() != null) {
-					put(mod390, Mod3902025DetailKey.C0774, d.getAdqIntracomunitariasServicios().getTipo2());
+//					put(mod390, Mod3902025DetailKey.C0774, d.getAdqIntracomunitariasServicios().getTipo2());
 					put(mod390, Mod3902025DetailKey.C0588, d.getAdqIntracomunitariasServicios().getTipo4());
-					put(mod390, Mod3902025DetailKey.C0741, d.getAdqIntracomunitariasServicios().getTipo5());
-					put(mod390, Mod3902025DetailKey.C0776, d.getAdqIntracomunitariasServicios().getTipo75());
+//					put(mod390, Mod3902025DetailKey.C0741, d.getAdqIntracomunitariasServicios().getTipo5());
+//					put(mod390, Mod3902025DetailKey.C0776, d.getAdqIntracomunitariasServicios().getTipo75());
 					put(mod390, Mod3902025DetailKey.C0636, d.getAdqIntracomunitariasServicios().getTipo10());
 					put(mod390, Mod3902025DetailKey.C0638, d.getAdqIntracomunitariasServicios().getTipo21());
 					put(mod390, Mod3902025DetailKey.C0598, d.getAdqIntracomunitariasServicios().getTotal());
