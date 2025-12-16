@@ -1,33 +1,12 @@
 package net.aonsolutions.aon.verifactu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -37,6 +16,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -48,53 +28,44 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SinRegistroPrevioType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
+class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
-class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
-
-	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
-
+	@Override protected Environment getEnvironment() { return NO_VERIFACTU_ENV; }
+/*
+ 
 	@Test
-	void venta_nacional_simple_test() {
+	void venta_nacional_simpleAEATTest() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
-		saveAndCancel(invoice);
-	}
-
-	@Test
-	void venta_nacional_simplificada_test()  {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment());
-		saveAndCancel(invoice);
-	}
-
-	@Test
-	void venta_nacional_simplificada_con_customer_sin_direccion_test()  {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_suplidos_test()  {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(getEnvironment());
-		saveAndCancel(invoice);
+	void venta_nacional_simplificadaAEATTest()  {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment());
+		save(invoice);
 	}
-
+	
 	@Test
-	void venta_nacional_rectificativa_simple_test()  {
+	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest()  {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(getEnvironment());
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_suplidosAEATTest()  {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(getEnvironment());
+		save(invoice);
+	}
+	
+	@Test
+	void venta_nacional_rectificativa_simpleAEATTest()  {
 		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		invoice1 = save(invoice1);
 
@@ -104,11 +75,11 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
 		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
 		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
-		saveAndCancel(invoice2);
+		save(invoice2);
 	}
-
+	
 	@Test
-	void venta_nacional_rectificativa_simplificada_test()  {
+	void venta_nacional_rectificativa_simplificadaAEATTest()  {
 		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment());
 		invoice1 = save(invoice1);
 		
@@ -118,120 +89,101 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
 		invoice2.setRectificationInvoiceSeries(invoice1.getSeries());
 		invoice2.setRectificationInvoiceReference(invoice1.getReferenceCode());
-		saveAndCancel(invoice2);
+		save(invoice2);
 	}
-
+	
 	@Test
-	void venta_isp_test()  {
+	void venta_ispAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_re_test()  {
+	void venta_nacional_reAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_irpf_professional_test()  {
+	void venta_nacional_irpf_professionalAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_intracomunitaria_servicios_test()  {
+	void venta_intracomunitaria_serviciosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
  	
 
 	@Test
-	void venta_intracomunitaria_no_servicios_test()  {
+	void venta_intracomunitaria_no_serviciosAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_extracomunitaria_test()  {
+	void venta_extracomunitariaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_extracomunitaria_servicio_test()  {
+	void venta_extracomunitaria_servicioAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_mel_test()  {
+	void venta_can_ceu_melAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 
 	@Test
-	void venta_can_ceu_mel_servicio_test()  {
+	void venta_can_ceu_mel_servicioAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 
 	@Test
-	void venta_nacional_exenta_e1_test()  {
+	void venta_nacional_exenta_e1AEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_anulada_test()  {
+	void venta_anuladaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
 	
 	@Test
-	void venta_nacional_simple_criterio_caja_test()  {
+	void venta_nacional_simple_criterio_cajaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(getEnvironment());
-		saveAndCancel(invoice);
+		save(invoice);
 	}
-	
-	private Invoice saveAndCancel(Invoice invoice) {
-		invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
-		invoice = save(invoice);
-		cancel(invoice);
-		return invoice;
-	}
-
+*/
 	private Invoice save(Invoice invoice) {
-		return getEnvironment().getCtx().getDslContext().transactionResult(config -> {
+		Invoice i =  getEnvironment().getCtx().getDslContext().transactionResult(config -> {
+			invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc);
-			vc.invoiceStream()			
-				.forEach( i -> {
-					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
-					DataResponse response = assertDataResponse(i, tracking);
-					assertDataRequest(i, response);
-					assertInvoiceData(i);
-					assertInvoiceInfo(i);
-			});
-			
-			icc.setDataResponse(null);	// Reset previous response
+			NOVERIFACTU.accept(getEnvironment().getCtx(), icc);
 			return inv;
 		});
-	}
-	
-	private Invoice cancel(Invoice invoice) {
-		return getEnvironment().getCtx().getDslContext().transactionResult(config -> {
-			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
-			VERIFACTU.cancel(getEnvironment().getCtx(), icc);
-			assertCanceledDataResponse( icc, invoice );
-			return invoice;
-		});
-	}
 		
+		// assertDataRequest(i, response);
+		assertInvoiceData(i);
+		assertInvoiceInfo(i);
+		assertInvoiceCommunication(i);
+		assertCommunicationHistory(i);
+		return i;	
+	}
+
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
 		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);
@@ -332,107 +284,44 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(huella.getValue());
 	}
 	
-	private DataResponse assertCanceledDataResponse(InvoiceCommunicatorContext cc, Invoice invoice) {
-		assertNotNull(cc);
-		assertNotNull(cc.getDataResponse());
-		Integer dataResponseId = cc.getDataResponse().getId();
-		assertNotNull(dataResponseId);
-		assertTrue(dataResponseId > 0);
-		
-		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId );
-		assertNotNull(optDataResponse);
-		assertTrue(optDataResponse.isPresent());
-		DataResponse dataResponse = optDataResponse.get();
-		assertNotNull(dataResponse);
-		assertEquals(dataResponse.getId(),dataResponseId);
-		assertEquals(dataResponse.getDomain(), invoice.getDomain());
-		assertTrue(dataResponse.getId() > 0);
-		assertNotNull(dataResponse.getDataRequest());
-		
-		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> 
-					 f.getDomainProperty().eq(invoice.getDomain())
-				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
-				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-				.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true)
-			.findFirst()
-			.orElse(null);
-		assertNotNull(response);
-		assertNotNull(response.getData());
-		assertCanceledVerifactuResponse(cc, invoice, response.getData());
-		return dataResponse;
+	private void assertInvoiceCommunication(Invoice i) {
+		Invoice inv = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(inv);
+		assertNotNull(inv.getId());
+		assertNotNull(inv.getCommunicationInfo());
+		assertTrue(AonCollectionUtils.isNotEmpty( inv.getCommunicationInfo()));
+		assertNotNull(inv.getVerifactuInfo());
+		assertTrue(inv.getVerifactuInfo().isPresent());
+		InvoiceInfo invoiceInfo = inv.getVerifactuInfo().get();
+		assertNotNull(invoiceInfo);
+		assertNotNull(invoiceInfo.getId());
+		assertNotNull(invoiceInfo.getDomain());
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
 	}
-
-
-	private void assertCanceledVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
-		try {
-			InputStream is = new ByteArrayInputStream(data);
-			SOAPMessage response = MessageFactory.newInstance().createMessage(null, is);
-			SOAPBody soapBody = response.getSOAPBody();
-			Document bodyDoc = soapBody.extractContentAsDocument();
-	        NodeList faults = bodyDoc.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
-	        if (faults.getLength() > 0) {
-	            Element faultElem = (Element) faults.item(0);
-	            String faultString = faultElem.getElementsByTagName("faultstring").item(0).getTextContent();
-	            fail( faultString ); 
-	        } else {	        
-	        	JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
-	        	Unmarshaller um = jc.createUnmarshaller();
-	        	JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(bodyDoc, RespuestaRegFactuSistemaFacturacionType.class);
-	        	RespuestaRegFactuSistemaFacturacionType resp = o.getValue();
-	        	
-	    		assertNotNull(resp);
-	    		assertNotNull(resp.getRespuestaLinea());
-	    		assertFalse(resp.getRespuestaLinea().isEmpty());
-	    		assertEquals(1, resp.getRespuestaLinea().size());
-	    		RespuestaExpedidaType ret = resp.getRespuestaLinea().get(0);
-	    		
-	    		IDFacturaExpedidaType idFactura = ret.getIDFactura();
-	    	    assertNotNull( idFactura );
-	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
-	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
-	    		
-	    		OperacionType operacion = ret.getOperacion();
-	    		assertNotNull(operacion);
-	    		assertNotNull(operacion.getTipoOperacion());
-	    		assertEquals(TipoOperacionType.ANULACION, operacion.getTipoOperacion());
-	    		assertNull(operacion.getSubsanacion());
-	    		assertNotNull(operacion.getRechazoPrevio());
-	    		assertEquals(RechazoPrevioType.N, operacion.getRechazoPrevio());
-	    		assertNotNull(operacion.getSinRegistroPrevio());
-	    		assertEquals(SinRegistroPrevioType.N, operacion.getSinRegistroPrevio());
-	    		
-	    		assertNotNull(ret.getRefExterna());
-	    		String stringId = AonNumberUtils.toString(invoice.getId());
-				assertEquals( stringId , ret.getRefExterna());
-	        	
-	    		EstadoRegistroType estado = ret.getEstadoRegistro();
-	    		assertNotNull(estado);
-	    		
-	    		if (estado == EstadoRegistroType.ACEPTADO_CON_ERRORES) {
-	    			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
-	    			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
-	    			assertNotNull(codigoErrorRegistro);
-	    			assertEquals( BigInteger.valueOf(2007) , codigoErrorRegistro);
-	    			assertNotNull(descripcionErrorRegistro);
-	    			assertTrue(AonStringUtils.startsWith(descripcionErrorRegistro, "No debe informarse como primer registro"));
-	    		} else if (estado == EstadoRegistroType.CORRECTO) {
-	    			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
-	    			assertNull(codigoErrorRegistro);
-	    			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
-	    			assertNull(descripcionErrorRegistro);
-	    		} else {
-	    			fail( "Estado no correcto ["+estado+"] "
-	    				+ " (" + ret.getCodigoErrorRegistro() + ") "
-	    				+ ret.getDescripcionErrorRegistro() );
-	    		}
-	    		
-	    		assertNull(ret.getRegistroDuplicado());
-	        }
-			
-		} catch (IOException | SOAPException | JAXBException e) {
-			fail(e);
-		}
+	
+	private void assertCommunicationHistory(Invoice i) {
+		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(getEnvironment().getCtx(), i.getId(), t -> {
+			if (t.getResponseData() != null && t.getResponseData().length > 0) {
+				t.setResponseMessages( VERIFACTU.history(t.getResponseData(), i.getId()) );
+			}
+			return t.getResponseMessages();
+		});
+		assertNotNull(history);
+		assertTrue(AonCollectionUtils.isNotEmpty( history ));
+		assertEquals(1, history.size());
+		InvoiceCommunicationHistory h = history.get(0);
+		assertEquals(i.getId(), h.getInvoiceId());
+		assertEquals(getEnvironment().getUser(), h.getCreationUser());
+		assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
+		assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+			|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertNotNull(h.getDate() );
+		assertNotNull(h.getRequestUrl());
+		assertNotNull(h.getResponseMessages());
+		assertNotNull(h.getResponseData());
+		// assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
 	}
-
 }

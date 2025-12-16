@@ -3,7 +3,6 @@ package net.aonsolutions.aon.verifactu;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationQuery;
 import com.esferalia.aon.occam.api.model.type.Month;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -55,7 +54,8 @@ class Query2Verifactu {
 		icq.getYear().ifPresent(y -> periodoImputacion.setEjercicio( AonNumberUtils.toString( y ) ));
 		icq.getMonth().ifPresent( m -> 
 			periodoImputacion.setPeriodo(
-				Month.value( m ) 
+				Month.value( m )
+					.map( i -> i+1 )
 					.map( AonNumberUtils::toString )
 					.map( i -> AonStringUtils.leftPad( i , 2 , '0') )
 					.orElse(null) 
@@ -71,15 +71,24 @@ class Query2Verifactu {
 				.ifPresent( rn -> contraparte.setNombreRazon( rn ) );
 			filtro.setContraparte( contraparte );
 		}
-		
-		if (icq.getFromDate().isPresent() || icq.getToDate().isPresent()) {
-			FechaExpedicionConsultaType fect = new FechaExpedicionConsultaType(); 	
-			RangoFechaExpedicionType rangoFechaExpedicion = new RangoFechaExpedicionType();
-			icq.getFromDate().ifPresent( fd -> rangoFechaExpedicion.setDesde( AonDateUtils.format( fd , DATE_PATERN )));
-			icq.getToDate().ifPresent( td -> rangoFechaExpedicion.setHasta( AonDateUtils.format( td , DATE_PATERN )));
-			fect.setRangoFechaExpedicion( rangoFechaExpedicion );
-			filtro.setFechaExpedicionFactura( fect );
-		}
+		icq.getDate()
+			.ifPresentOrElse( 
+				d -> {
+					FechaExpedicionConsultaType fect = new FechaExpedicionConsultaType();	 	
+					fect.setFechaExpedicionFactura(AonDateUtils.format( icq.getDate().get() , DATE_PATERN ) );
+					filtro.setFechaExpedicionFactura( fect );
+				}
+				, () -> {
+					if (icq.getFromDate().isPresent() || icq.getToDate().isPresent()) {
+						FechaExpedicionConsultaType fect = new FechaExpedicionConsultaType(); 	
+						RangoFechaExpedicionType rangoFechaExpedicion = new RangoFechaExpedicionType();
+						icq.getFromDate().ifPresent( fd -> rangoFechaExpedicion.setDesde( AonDateUtils.format( fd , DATE_PATERN )));
+						icq.getToDate().ifPresent( td -> rangoFechaExpedicion.setHasta( AonDateUtils.format( td , DATE_PATERN )));
+						fect.setRangoFechaExpedicion( rangoFechaExpedicion );
+						filtro.setFechaExpedicionFactura( fect );
+					}
+				}
+			);
 		icq.getId()
 			.ifPresent( id -> filtro.setRefExterna( AonNumberUtils.toString( id ) ) );
 		return filtro;

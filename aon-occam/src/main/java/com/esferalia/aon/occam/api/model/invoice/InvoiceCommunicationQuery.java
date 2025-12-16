@@ -16,6 +16,7 @@ public class InvoiceCommunicationQuery implements Serializable {
 	private String referenceCode;
 	private String registryDocument;
 	private String registryName;
+	private Date date;
 	private Date fromDate;
 	private Date toDate;
 	
@@ -69,6 +70,14 @@ public class InvoiceCommunicationQuery implements Serializable {
 	
 	public boolean hasRegistryData() {
 		return getRegistryDocument().isPresent() || getRegistryName().isPresent();
+	}
+	
+	public Optional<Date> getDate() {
+		return Optional.ofNullable(date);
+	}
+	public InvoiceCommunicationQuery setDate(Date date) {
+		this.date = date;
+		return this;
 	}
 	
 	public Optional<Date> getFromDate() {

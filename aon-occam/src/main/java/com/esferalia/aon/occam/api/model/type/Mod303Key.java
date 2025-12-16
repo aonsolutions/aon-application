@@ -258,6 +258,16 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S1M4("303-CTS1M4",false,null,"M\u00F3dulo Mesas - Mesas")
 	,CT_S1D4("303-CTS1D4",false,null,"M\u00F3dulo Mesas - D\u00EDas (4T)")
 	
+	// Desglose modulo "Superficie del horno" (solo 4T a partir del 2025) 4 lineas por cada actividad
+	,CT_S1H1("303-CTS1H1",false,null,"M\u00F3dulo Superficie del horno - Superficie del horno")
+	,CT_S1J1("303-CTS1J1",false,null,"M\u00F3dulo Superficie del horno - D\u00EDas)")
+	,CT_S1H2("303-CTS1H2",false,null,"M\u00F3dulo Superficie del horno - Superficie del horno")
+	,CT_S1J2("303-CTS1J2",false,null,"M\u00F3dulo Superficie del horno - D\u00EDas)")
+	,CT_S1H3("303-CTS1H3",false,null,"M\u00F3dulo Superficie del horno - Superficie del horno")
+	,CT_S1J3("303-CTS1J3",false,null,"M\u00F3dulo Superficie del horno - D\u00EDas)")
+	,CT_S1H4("303-CTS1H4",false,null,"M\u00F3dulo Superficie del horno - Superficie del horno")
+	,CT_S1J4("303-CTS1J4",false,null,"M\u00F3dulo Superficie del horno - D\u00EDas)")
+
 	,CT_S117("303-CTS117",false,"C1","Cuota devengada operaciones corrientes")
 	,CT_S1R1("303-CTS1R1",false,"--","Reducci\u00F3n Lorca")
 	,CT_S1R2("303-CTS1R2",false,"--","Reducci\u00F3n DANA")
@@ -351,6 +361,14 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S2C4("303-CTS2C4",false,null,CT_S1C4.getDescription())
 	,CT_S2M4("303-CTS2M4",false,null,CT_S1M4.getDescription())
 	,CT_S2D4("303-CTS2D4",false,null,CT_S1D4.getDescription())
+	,CT_S2H1("303-CTS2H1",false,null,CT_S1H1.getDescription())
+	,CT_S2J1("303-CTS2J1",false,null,CT_S1J1.getDescription())
+	,CT_S2H2("303-CTS2H2",false,null,CT_S1H2.getDescription())
+	,CT_S2J2("303-CTS2J2",false,null,CT_S1J2.getDescription())
+	,CT_S2H3("303-CTS2H3",false,null,CT_S1H3.getDescription())
+	,CT_S2J3("303-CTS2J3",false,null,CT_S1J3.getDescription())
+	,CT_S2H4("303-CTS2H4",false,null,CT_S1H4.getDescription())
+	,CT_S2J4("303-CTS2J4",false,null,CT_S1J4.getDescription())
 	
 	,CT_S217("303-CTS217",false,"C2",CT_S117.getDescription())
 	,CT_S2R1("303-CTS2R1",false,"--",CT_S1R1.getDescription())
@@ -445,6 +463,14 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S3C4("303-CTS3C4",false,null,CT_S1C4.getDescription())
 	,CT_S3M4("303-CTS3M4",false,null,CT_S1M4.getDescription())
 	,CT_S3D4("303-CTS3D4",false,null,CT_S1D4.getDescription())
+	,CT_S3H1("303-CTS3H1",false,null,CT_S1H1.getDescription())
+	,CT_S3J1("303-CTS3J1",false,null,CT_S1J1.getDescription())
+	,CT_S3H2("303-CTS3H2",false,null,CT_S1H2.getDescription())
+	,CT_S3J2("303-CTS3J2",false,null,CT_S1J2.getDescription())
+	,CT_S3H3("303-CTS3H3",false,null,CT_S1H3.getDescription())
+	,CT_S3J3("303-CTS3J3",false,null,CT_S1J3.getDescription())
+	,CT_S3H4("303-CTS3H4",false,null,CT_S1H4.getDescription())
+	,CT_S3J4("303-CTS3J4",false,null,CT_S1J4.getDescription())
 
 	,CT_S317("303-CTS317",false,"C3",CT_S117.getDescription())
 	,CT_S3R1("303-CTS3R1",false,"--",CT_S1R1.getDescription())
@@ -539,7 +565,15 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S4C4("303-CTS4C4",false,null,CT_S1C4.getDescription())
 	,CT_S4M4("303-CTS4M4",false,null,CT_S1M4.getDescription())
 	,CT_S4D4("303-CTS4D4",false,null,CT_S1D4.getDescription())
-
+	,CT_S4H1("303-CTS4H1",false,null,CT_S1H1.getDescription())
+	,CT_S4J1("303-CTS4J1",false,null,CT_S1J1.getDescription())
+	,CT_S4H2("303-CTS4H2",false,null,CT_S1H2.getDescription())
+	,CT_S4J2("303-CTS4J2",false,null,CT_S1J2.getDescription())
+	,CT_S4H3("303-CTS4H3",false,null,CT_S1H3.getDescription())
+	,CT_S4J3("303-CTS4J3",false,null,CT_S1J3.getDescription())
+	,CT_S4H4("303-CTS4H4",false,null,CT_S1H4.getDescription())
+	,CT_S4J4("303-CTS4J4",false,null,CT_S1J4.getDescription())
+	
 	,CT_S417("303-CTS417",false,"C4",CT_S117.getDescription())
 	,CT_S4R1("303-CTS4R1",false,"--",CT_S1R1.getDescription())
 	,CT_S4R2("303-CTS4R2",false,"--",CT_S1R2.getDescription())
@@ -570,7 +604,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S56("303-CTS56",false,"56","Regularizaci\u00F3n bienes de inversi\u00F3n")
 	,CT_S57("303-CTS57",false,"57","Total IVA deducible")
 	,CT_S58("303-CTS58",false,"58","Resultado R\u00E9gimen Simplificado")
-	
 
 	,CT_C59("303-CTA59",true ,"59", "Entregas intracomunitarias de bienes y servicios")
 	,CT_C120("303-CTA120",true ,"120","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 123).")
@@ -690,7 +723,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_P5D("303-CTP5D",false,null,CT_P1D.getDescription())
 	,CT_P5T("303-CTP5T",false,null,"Tipo")
 	,CT_P5P("303-CTP5P",false,null,CT_P1P.getDescription())
-
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  ARABA ------
