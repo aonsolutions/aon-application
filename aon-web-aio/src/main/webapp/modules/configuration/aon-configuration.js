@@ -104,10 +104,16 @@ export class AonConfiguration extends AonElement {
 		let officeOptions = [];
 
 		// Ficha Cliente
-		if (this.dur.isParentUser() && this.company && this.company.registry && this.company.type !== "OFFICE") {
+		if ( this.dur.isParentUser() && 
+			 this.company && 
+			 (this.company.registry || this.company.id) && 
+			 (this.company.type !== "OFFICE" || this.company.domain.domainType !== "OFFICE") ) 
+		{
+			
+			console.log("getRelationShipCompany", this.company.domain || this.company.domain?.name, this.company.registry || this.company.id);
 			getRelationShipCompany({
-				url: this.company.domain,
-				relatedRegistry: this.company.registry
+				url: this.company.domain?.name || this.company.domain,
+				relatedRegistry: this.company.registry || this.company.id
 			}).then(relationshipCompany => {
 				
 				if (relationshipCompany.rrelationship) {
@@ -124,6 +130,7 @@ export class AonConfiguration extends AonElement {
 				}
 				
 			});
+			
 		}
 
 		let companyOptions = [];
@@ -172,6 +179,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 		}
+		
 		if(this.company && this.company.registry && this.company.domain){
 			getRelationShipCompany({
 				url: this.company.domain,
