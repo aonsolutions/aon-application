@@ -345,6 +345,8 @@ export class AonReg extends AonElement {
 					uploadLogo.setAttach(attach);
 			});
 		}
+		
+		return card;
 	}
 
 	buildStatusRegistry(){
@@ -402,35 +404,65 @@ export class AonReg extends AonElement {
 		const left = element.getBoundingClientRect().left + 3;
 		let d = this.getApplication().getOptionDialog();
 
+//		let options = [
+//			{ 
+//				name: "Activar", 
+//				value:"ACTIVE",
+//				icon:"toggle_on", 
+//				fn:()=> {
+//					this.registry.status = "ACTIVE";
+//					this.buildStatusRegistry();
+//					this.save();
+//				}
+//			},
+//			{ 
+//				name: "Inactivar", 
+//				value:"INACTIVE",
+//				icon:"toggle_off", 
+//				fn:()=> {
+//					this.registry.status = "INACTIVE";
+//					this.buildStatusRegistry();
+//					this.save();
+//				}
+//			},
+//			{ 
+//				name: "Bloquear", 
+//				value:"BLOCKED",
+//				icon:"block", 
+//				fn:()=> {
+//					this.registry.status = "BLOCKED";
+//					this.buildStatusRegistry();
+//					this.save();
+//				}
+//			}
+//		];
+		
 		let options = [
 			{ 
 				name: "Activar", 
 				value:"ACTIVE",
 				icon:"toggle_on", 
-				fn:()=> {
+				fn: async () => {
 					this.registry.status = "ACTIVE";
-					this.buildStatusRegistry();
-					this.save();
+					this.openCustomerInactiveBloqued();
 				}
 			},
 			{ 
 				name: "Inactivar", 
 				value:"INACTIVE",
 				icon:"toggle_off", 
-				fn:()=> {
+				fn: async () => {
 					this.registry.status = "INACTIVE";
-					this.buildStatusRegistry();
-					this.save();
+					this.openCustomerInactiveBloqued();
 				}
 			},
 			{ 
 				name: "Bloquear", 
 				value:"BLOCKED",
 				icon:"block", 
-				fn:()=> {
+				fn: async () => {
 					this.registry.status = "BLOCKED";
-					this.buildStatusRegistry();
-					this.save();
+					this.openCustomerInactiveBloqued();
 				}
 			}
 		];

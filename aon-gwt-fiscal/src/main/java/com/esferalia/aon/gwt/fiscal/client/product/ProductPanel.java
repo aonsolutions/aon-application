@@ -204,6 +204,7 @@ public class ProductPanel extends HTMLPanel {
 		type.addItem(ProductBookingType.PLAN.getDescription(), ProductBookingType.PLAN.name());
 		type.addItem(ProductBookingType.USER.getDescription(), ProductBookingType.USER.name());
 		type.addItem(ProductBookingType.CONSULTANCY.getDescription(), ProductBookingType.CONSULTANCY.name());
+		type.addItem(ProductBookingType.DEFAULT.getDescription(), ProductBookingType.DEFAULT.name());
 		type.addChangeHandler(e -> product.setBookingType(ProductBookingType.safeValueOf(type.getValue())));
 		
 		domainType.setOptions(DomainType.getValues().stream().map(domainType -> domainType.getName()).collect(Collectors.toSet()));

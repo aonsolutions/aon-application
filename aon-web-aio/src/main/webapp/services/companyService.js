@@ -150,6 +150,7 @@ export const getDomainApps = (domain) => {
     });
   };
 
+  export const getCustomerStatusTags = (data) => get(API.COMPANY_CUSTOMER_TAGS, data);
   export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);
   export const getContratado = (data) => get(`${API_URL}/contracted_plans_servlet/apps`, data);
   export const sendFormData = (data) => post(`${API_URL}/contracted_plans_servlet/callForm`, data);

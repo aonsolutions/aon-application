@@ -2,6 +2,7 @@ package net.aonsolutions.aon.invoice.communication.visitor;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -47,6 +48,21 @@ public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitVERIFACTU() {
+		// Not implemented
+	}
+
+	@Override
+	public void visitNO_VERIFACTU() throws InvoiceCommunicationException {
+		// Not implemented
+	}
+
+	@Override
+	public void visitSIF() throws InvoiceCommunicationException {
+		// Not implemented
+	}
+
+	@Override
+	public void visitFACTURAE() throws InvoiceCommunicationException {
 		// Not implemented
 	}
 

@@ -70,19 +70,19 @@
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-    		<version>20250107</version>
+    		<version>20250517</version>
 		</dependency>
 				
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1</version>
 		</dependency>
 		
 		 <dependency>
