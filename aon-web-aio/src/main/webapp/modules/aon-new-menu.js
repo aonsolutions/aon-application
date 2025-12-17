@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
@@ -70,6 +70,7 @@ import { AonDialog } from '../components/aon-dialog.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
 import { getRelationShipCompany } from '../services/registryService.js';
+import { AonTooltip } from '../components/aon-tooltip.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -367,7 +368,7 @@ export class AonNewMenu extends AonElement {
 		
 		// Set default close/open status
 		let aonMenuAnchor = this.getElement("aonMenuAnchor");
-		if(aonMenuAnchor.classList.contains("close"))
+		if(aonMenuAnchor && aonMenuAnchor.classList.contains("close"))
 			aonMenuSidenav.classList.add("close");
 		else
 			aonMenuSidenav.classList.remove("close");
@@ -441,6 +442,21 @@ export class AonNewMenu extends AonElement {
 
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
+		
+		for (let item in MENU_APPS) {
+			if (this.isSidenavApp(MENU_APPS[item])) {
+				let app = MENU_APPS[item];
+				let icon = this.getElement(`aonMenuListAppImgTop-${app.app}`);
+				let message = this.getMessage(app.app);
+				if(icon && message && message.length > 0)
+					new AonTooltip(
+						icon,
+						this.getMessage(app.app),
+						{ position: 'right' }
+					);
+			}
+		}
+		
 
 	}
 	
@@ -730,9 +746,31 @@ export class AonNewMenu extends AonElement {
 		if(id == "aonMenuBar-home"){
 			div.id = "topMenuHome";
 		}
-		
 
 		return a;
+	}
+	
+	getMessage(app){
+		switch (app) {
+			case NEW.app:
+				return "Crea facturas, sube documentos, crea solicitudes y empleados";
+			case AON_CLASSIC.app:
+				return "Vuelve a la versión clásica de nuesta app";
+			case Apps.DOCUMENTAL.app:
+				return "Almacena y comparte documentación adicional, como modelos fiscales de años anteriores o facturas de otro software";
+			case Apps.INVOICE.app:
+				return "Emita facturas, registra gastos o crea clientes, acreedores y proveedores";
+			case Apps.TIMECONTROL.app:
+				return "Registra la jornada laboral acorde a la normativa vigente";
+			case Apps.NOTES.app:
+				return "Crea y organiza anotaciones de todo lo que necesites";
+			case CONTENT_INDEX.app:
+				return "Consulta nuestros manueles para aprender nuevas funcionalidades";
+			case MESSENGER.app:
+				return "Crear y administra tus solicitudes";
+			default:
+				return "";
+		}	
 	}
 
 	isElementAt(ev, el){

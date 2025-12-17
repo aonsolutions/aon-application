@@ -300,7 +300,6 @@ export class AonParent extends AonElement {
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.getApplication().setContent(parentDiv);
 		
-
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 
@@ -312,7 +311,7 @@ export class AonParent extends AonElement {
 		welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
 		welcomeDiv.appendChild(welcomeSpan);
 		
-				
+		/*
 		let welcomeImg = this.createElement(TAG.IMG);
 		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
 		welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
@@ -320,7 +319,8 @@ export class AonParent extends AonElement {
 		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
 		this.getApplication().getRightSidenav().appendChild(welcomeImg);		
-
+		*/
+		
 		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
@@ -421,7 +421,14 @@ export class AonParent extends AonElement {
 
 		let contentDiv = this.createDiv();
 		contentDiv.appendChild(companyDiv);
-	
+		
+		let welcomeImg = this.createElement(TAG.IMG);
+		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
+		this.getWelcomeImage().then( img => welcomeImg.src = img );
+		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
+		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
+		
+		parentDiv.appendChild(welcomeImg);
 		parentDiv.appendChild(welcomeDiv);
 		parentDiv.appendChild(contentDiv);		
 	

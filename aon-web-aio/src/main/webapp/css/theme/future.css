@@ -624,7 +624,6 @@ aon-configuration-menu .suiteMenuContent  {
 	color: #fff;
 	font-size: 14px;
 	border-radius: 8px;
-	box-shadow: 0 4px 20px rgba(0,0,0,.1);
 	pointer-events: none;
 
 	opacity: 0;
@@ -844,6 +843,15 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonWelcomeLogo{
 	margin-top: 1rem; /*Warn*/
+	position: absolute;
+	max-width: 200px;
+	max-height: 6rem;
+	right: 0;
+	padding: .5rem 1rem;
+}
+
+.aonParentDiv {
+	position: relative;
 }
 
 .aonCompanyDiv {
@@ -913,6 +921,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 #UlCompanies .aonLiBeta {
 	min-height: 78px;
+	margin-right: 1.5rem;
 }
 
 #UlCompanies li {

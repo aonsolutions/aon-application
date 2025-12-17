@@ -275,14 +275,16 @@ export class AonHome extends AonElement {
 		let topnav = this.getElement("aonMenuTopnav");
 		topnav && topnav.classList.remove("closeSidenav");
 		let aonMenuButton = this.createMenuButton();
+		this.appendChild(aonMenuButton);
+		
+		let menuAnchorIcon = this.getElement("aonMenuAnchorDivIcon");
 		new AonTooltip(
-			aonMenuButton,
+			menuAnchorIcon,
 			'Cerrar Menu',
 			{ position: 'right' }
 		);
 
 		
-		this.appendChild(aonMenuButton);
 	}
 	
 	createMenuButton(){
@@ -332,7 +334,7 @@ export class AonHome extends AonElement {
 			? MATERIAL_ICONS.ARROW_CIRCLE_RIGHT
 			: MATERIAL_ICONS.ARROW_CIRCLE_LEFT;
 		new AonTooltip(
-			menuAnchor,
+			menuAnchorIcon,
 			menuAnchor.classList.contains('close') ? 'Abrir Menu' : 'Cerrar Menu',
 			{ position: 'right' }
 		);
