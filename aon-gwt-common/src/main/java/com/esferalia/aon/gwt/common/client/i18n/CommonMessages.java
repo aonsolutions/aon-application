@@ -1029,7 +1029,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Modulos. Actividades empresariales")
 	String moduleActivities();
 
-	@DefaultMessage("(de mayor a menor importacia por vol\u00FAmen de operaciones)")
+	@DefaultMessage("(de mayor a menor importancia por vol\u00FAmen de operaciones)")
 	String activitiesNote();
 
 	@DefaultMessage("Territorio Com\u00FAn")
