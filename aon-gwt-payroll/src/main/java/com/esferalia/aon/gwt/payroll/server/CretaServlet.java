@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.MULTI_VALUE_SEPARATOR_CHAR;
 import static com.esferalia.aon.gwt.payroll.shared.Province.getProvinces;
 import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_CONTRACT;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +65,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -1998,7 +1996,7 @@ public class CretaServlet extends HttpServlet
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date from = getFromDate();
-		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+		Collection<String>  cccs = getParameterValues(req, Parameter.CCC, MULTI_VALUE_SEPARATOR_CHAR);
 		String login = req.getParameter(CretaService.Parameter.USER.name());; //":-)" ; 
 
 		
@@ -2434,13 +2432,15 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
-	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> Arrays.asList(values)).orElse(Collections.emptyList());
+	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar) {
+		return Optional.ofNullable(req.getParameterValues(param.name())).map(Arrays::stream).orElse(Stream.empty())
+				.filter(AonStringUtils::isNotBlank).flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).toList();
 	}
 
-	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param, Supplier<Collection<String>> supplier) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> ( Collection<String> )Arrays.asList(values)).orElseGet(supplier);
+	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
+		return getParameterValues(req, param , MULTI_VALUE_SEPARATOR_CHAR);
 	}
+
 
 	private static int getAnhoControl() {
 		Calendar c = Calendar.getInstance();
