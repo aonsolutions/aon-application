@@ -83,6 +83,7 @@ public class ModelMatrix extends MainEntryPoint {
 		filterPanel.addValueChangeHandler( event -> search( options, event.getValue(), filterPanel.getRefreshButton() ));
 		if (options.isCompactMode()) {			
 			FlowPanel contentPanel = new FlowPanel();
+			contentPanel.ensureDebugId("aonModelMatrixContent");
 			contentPanel.add(filterPanel);
 			dataPanel = new FlowPanel();
      		dataPanel.setHeight( "320px" );

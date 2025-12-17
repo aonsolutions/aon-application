@@ -197,6 +197,7 @@ export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
 export const EXPIRED_SESSION = 'Session expired';
 export const ERRORS = 'Errors';
+export const EXPAND_HIRIND = 'Expand Hirind';
 
 // ----- F
 
@@ -312,6 +313,7 @@ export const MY_DATA = 'My Data';
 export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
 export const MAGIC_LINK = 'Sending access link by email';
+export const MY_CLOUD = 'My Cloud';
 
 // ----- N
 
