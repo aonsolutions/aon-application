@@ -63,19 +63,19 @@ export class AonModelMatrixCard extends AonElement {
           // }
           
           if (addedNode.className == 'gwt-PopupPanelGlass') {
-            // gwtIFrame.style.top = '0px';
-            // gwtIFrame.style.left = '0px';
-            // gwtIFrame.style.zIndex = '999';
-            // gwtIFrame.style.position = 'fixed';
-            // gwtIFrame.style.width = `calc(100vw)`;
-            // gwtIFrame.style.height = `calc(100vh)`;
+            gwtIFrame.style.top = '0px';
+            gwtIFrame.style.left = '0px';
+            gwtIFrame.style.zIndex = '999';
+            gwtIFrame.style.position = 'fixed';
+            gwtIFrame.style.width = `calc(100vw)`;
+            gwtIFrame.style.height = `calc(100vh)`;
           } else if (addedNode.className == 'gwt-PopupPanel') {
               if (gwtDocument.getElementsByClassName('gwt-PopupPanel').item(0) == addedNode ) {
                 // If the added node is the first gwt-PopupPanel, we need to adjust its size.
                 const gwtPopupPanel = addedNode;
                 const gwtPopupContent = gwtPopupPanel.firstChild;
-                // gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
-                // gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
+                gwtPopupContent.firstChild.style.width = `calc(100vw - 50px)`;
+                gwtPopupContent.firstChild.style.height = `calc(100vh - 50px)`;
               }
           }
 				}
@@ -83,12 +83,12 @@ export class AonModelMatrixCard extends AonElement {
 					if (removedNode.className == 'gwt-PopupPanelGlass') {
 						// If there are no more gwt-PopupPanelGlass elements, reset the gwtIFrame styles.
 						if (gwtDocument.getElementsByClassName('gwt-PopupPanelGlass').length == 0) {
-//							gwtIFrame.style.width = `100%`;
-//							gwtIFrame.style.height = `100%`;
-//							gwtIFrame.style.removeProperty('top');
-//							gwtIFrame.style.removeProperty('left');
-//							gwtIFrame.style.removeProperty('position');
-//							gwtIFrame.style.removeProperty('z-index');
+							gwtIFrame.style.width = `100%`;
+							gwtIFrame.style.height = `100%`;
+							gwtIFrame.style.removeProperty('top');
+							gwtIFrame.style.removeProperty('left');
+							gwtIFrame.style.removeProperty('position');
+							gwtIFrame.style.removeProperty('z-index');
 						}
 					} else if (removedNode.className == 'gwt-PopupPanel') {
 						// Noop			
