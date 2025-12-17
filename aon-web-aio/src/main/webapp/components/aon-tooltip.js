@@ -17,6 +17,7 @@ export class AonTooltip {
 		this.onLeave = this.onLeave.bind(this);
 		this.onReposition = this.onReposition.bind(this);
 
+		target.addEventListener('click', this.onLeave);
 		target.addEventListener('mouseenter', this.onEnter);
 		target.addEventListener('mouseleave', this.onLeave);
 		target.addEventListener('focus', this.onEnter);
@@ -101,14 +102,13 @@ export class AonTooltip {
 			left = Math.max(offset, rect.left);
 		}
 
-		let gap = 30;
-
 		this.tooltip.style.top = `${top}px`;
-		this.tooltip.style.left = `${left - gap}px`;
+		this.tooltip.style.left = `${left}px`;
 	}
 
 	destroy() {
 		this.onLeave();
+		this.target.removeEventListener('click', this.onLeave);
 		this.target.removeEventListener('mouseenter', this.onEnter);
 		this.target.removeEventListener('mouseleave', this.onLeave);
 		this.target.removeEventListener('focus', this.onEnter);
