@@ -193,8 +193,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MODEL_349)
             }, {
                 description: "Modelo 390 ",
-                title: "Declaración resume anual IVA",
-                action: () => GWT.iLoad(GWT.MODEL_390)
+                title: "Declaración resumen anual IVA",
+                action: () => GWT.iLoad(GWT.MODEL_390_HF)
             }, {
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",

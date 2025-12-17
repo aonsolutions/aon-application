@@ -29,6 +29,9 @@ public class InvoiceTypes {
 			.findFirst()
 			.orElseThrow(() -> new IllegalStateException("No se ha encontrado actividad para regime " + regime));
 	}
+	static EnterpriseActivity getActivityGeneral( Environment env) {
+		return getActivityGeneral(env.getCtx(), env.getDomainId());
+	}
 	static EnterpriseActivity getActivityGeneral( AONContext ctx, int domain ) {
 		return getActivityGeneral(ctx, domain, VATRegime.GENERAL);
 	}
@@ -1044,6 +1047,10 @@ public class InvoiceTypes {
 			}
 		},
 		;
+		
+		public Invoice get(Environment environment) {
+			return get(environment.getCtx(), environment.getDomainId());
+		}
 		
 		public abstract Invoice get( AONContext ctx, int domain);
 	}

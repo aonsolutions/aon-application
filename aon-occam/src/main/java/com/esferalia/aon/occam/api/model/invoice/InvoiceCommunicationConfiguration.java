@@ -39,7 +39,8 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private Certificate certificate;
 
 	
-
+	// NO-VERIFACTU
+	private boolean noVerifactu;
 
 	
 	// TO FIX || DELETE
@@ -104,6 +105,14 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	public InvoiceCommunicationConfiguration setSiiTest(boolean siiTest) {
 		this.siiTest = siiTest;
+		return this;
+	}
+	
+	public boolean isNoVerifactu() {
+		return noVerifactu;
+	}
+	public InvoiceCommunicationConfiguration setNoVerifactu(boolean noVerifactu) {
+		this.noVerifactu = noVerifactu;
 		return this;
 	}
 	
@@ -211,6 +220,8 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 			types.add(InvoiceCommunicationType.VERIFACTU);
 		} else if(isSii() && (getAdministration().isAEAT() || getAdministration().isCanarias() || getAdministration().isUnknown())) {
 			types.add(InvoiceCommunicationType.SII);
+		} else if(isNoVerifactu()) {
+			types.add(InvoiceCommunicationType.NO_VERIFACTU);
 		}
 		return types;
 	}

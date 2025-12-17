@@ -68,21 +68,21 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class DomainProviderForTests {
+class TestDomainProvider {
 	
-	private DomainProviderForTests() {
+	private TestDomainProvider() {
 	}
 	
-	static Domain getOrCreateDomain(AONContext ctx,String domainName, String user) {
-		Domain domain = DomainDAO.getDomain(ctx, p -> p.getNameProperty().eq(domainName));
+	static Domain getOrCreateDomain(AONContext ctx, Environment env) {
+		Domain domain = DomainDAO.getDomain(ctx, p -> p.getNameProperty().eq(env.getDomainName()));
 		if (domain == null || domain.getId() == null) {
-			domain = createFullDomain(ctx, domainName, user);
+			domain = createFullDomain(ctx, env.getDomainName(), env.getUser());
 			Occam occam = new Occam()
 				.setDomainName( domain.getName())
 				.setDomain(domain.getId())
-				.setUser(user);
+				.setUser(env.getUser());
 			try ( CloseableAONContext context = AONContext.getAONContext(occam)) {
-				initializeDomain(context, occam, domain);
+				initializeDomain(context , domain);
 			}
 		}
 		return domain;
@@ -264,7 +264,7 @@ class DomainProviderForTests {
 		return domain;
 	}
 	
-	private static void initializeDomain(AONContext context, Occam occam, Domain domain) {
+	private static void initializeDomain(AONContext context, Domain domain) {
 		
 		DefaultsDAO.loadDefaults(context);
 		Iae iae = IAEDAO.getRandom(context, null);
@@ -470,81 +470,81 @@ class DomainProviderForTests {
 		
 	}
 	private static void insertCustomers(AONContext ctx, Domain domain) {
-		CustomerFull C_B98351984 = new CustomerFull();
-		C_B98351984
+		CustomerFull cB98351984 = new CustomerFull();
+		cB98351984
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B98351984").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("PEDROSA MARCO CONSULTORES SL.P")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Teruel").setNumber("15").setAddress3("Esc. B pta 6").setZip("46008").setCity("Valencia").setGeozone(getGeozoneId(ctx,"46")));
-		CustomerDAO.save(ctx, C_B98351984);
+		CustomerDAO.save(ctx, cB98351984);
 		
-		CustomerFull C_B95717484 = new CustomerFull();
-		C_B95717484
+		CustomerFull cB95717484 = new CustomerFull();
+		cB95717484
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B95717484").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("IBAIGANE CONSULTING, S.L.")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("LAS MERCEDES").setNumber("38").setAddress2("BAJOS").setAddress3("").setZip("48930").setCity("GETXO").setGeozone(getGeozoneId(ctx,"48")));
-		CustomerDAO.save(ctx, C_B95717484);
+		CustomerDAO.save(ctx, cB95717484);
 		
-		CustomerFull C_15247056B = new CustomerFull();
-		C_15247056B
+		CustomerFull c15247056B = new CustomerFull();
+		c15247056B
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("15247056B").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JAVIER BILBAO LEIZA")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.PLAZA)).setAddress("GUIPUZKOA").setNumber("6").setAddress2("BAJOS").setAddress3("").setZip("20280").setCity("HONDARRIBIA").setGeozone(getGeozoneId(ctx,"20")));
-		CustomerDAO.save(ctx, C_15247056B);
+		CustomerDAO.save(ctx, c15247056B);
 		
-		CustomerFull C_07485941Q = new CustomerFull();
-		C_07485941Q
+		CustomerFull c07485941Q = new CustomerFull();
+		c07485941Q
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("07485941Q").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JORGE RUIZ ESCAGEDO")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("ARCA DEL AGUA").setNumber("1 2C").setZip("28300").setCity("Aranjuez").setGeozone(getGeozoneId(ctx,"28")));
-		CustomerDAO.save(ctx, C_07485941Q);
+		CustomerDAO.save(ctx, c07485941Q);
 
-		CustomerFull C_52717592M = new CustomerFull();
-		C_52717592M
-		.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("52717592M").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("MIGUEL ANGEL SILVESTRE CALABUIG")))
-		.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.AV)).setAddress("Francisco Cerdá").setNumber("47").setAddress2("Bajo").setAddress3("").setZip("46870").setCity("Ontinyent").setGeozone(getGeozoneId(ctx,"46")));
-		CustomerDAO.save(ctx, C_52717592M);
+		CustomerFull c52717592M = new CustomerFull();
+		c52717592M
+			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("52717592M").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("MIGUEL ANGEL SILVESTRE CALABUIG")))
+			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.AV)).setAddress("Francisco Cerdá").setNumber("47").setAddress2("Bajo").setAddress3("").setZip("46870").setCity("Ontinyent").setGeozone(getGeozoneId(ctx,"46")));
+		CustomerDAO.save(ctx, c52717592M);
 
-		CustomerFull C_B66068065 = new CustomerFull();
-		C_B66068065
+		CustomerFull cB66068065 = new CustomerFull();
+		cB66068065
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B66068065").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("RUCS DEL CORREDOR, S.L.")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CSRIO)).setAddress("Rimblas").setNumber("S/N").setZip("08318").setCity("Dosrius").setGeozone(getGeozoneId(ctx,"08")));
-		CustomerDAO.save(ctx, C_B66068065);
+		CustomerDAO.save(ctx, cB66068065);
 
-		CustomerFull C_E07170327 = new CustomerFull();
-		C_E07170327
+		CustomerFull cE07170327 = new CustomerFull();
+		cE07170327
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("E07170327").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("SEBASTIAN MAS C.B.")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("ANSELM CLAVE").setNumber("2").setAddress2("1º").setZip("07002").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
-		CustomerDAO.save(ctx, C_E07170327);
+		CustomerDAO.save(ctx, cE07170327);
 
-		CustomerFull C_B98465644 = new CustomerFull();
-		C_B98465644
+		CustomerFull cB98465644 = new CustomerFull();
+		cB98465644
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B98465644").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("BUSINESS GROUP CANDEL SL")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.AV)).setAddress("Cortes Valencianas").setNumber("28").setAddress2("13-A").setZip("46015").setCity("VALENCIA").setGeozone(getGeozoneId(ctx,"46")));
-		CustomerDAO.save(ctx, C_B98465644);
+		CustomerDAO.save(ctx, cB98465644);
 
-		CustomerFull C_75407353J = new CustomerFull();
-		C_75407353J
+		CustomerFull c75407353J = new CustomerFull();
+		c75407353J
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("75407353J").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("JOSE FRANCISCO ROJAS RODRIGUEZ")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("VIRGEN DE CONSOLACION").setNumber("23").setAddress2("1º").setAddress3("CENTRO").setZip("41710").setCity("UTRERA").setGeozone(getGeozoneId(ctx,"41")));
-		CustomerDAO.save(ctx, C_75407353J);
+		CustomerDAO.save(ctx, c75407353J);
 		
-		CustomerFull C_43162588Y = new CustomerFull();
-		C_43162588Y
+		CustomerFull c43162588Y = new CustomerFull();
+		c43162588Y
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("43162588Y").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("MONTIS FORTEZA, FERNANDO")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.PLAZA)).setAddress("SAN JAIME").setNumber("7 BJS").setZip("07012").setCity("PALMA DE MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
-		CustomerDAO.save(ctx, C_43162588Y);
+		CustomerDAO.save(ctx, c43162588Y);
 		
-		CustomerFull C_B57551251 = new CustomerFull();
-		C_B57551251
+		CustomerFull cB57551251 = new CustomerFull();
+		cB57551251
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("B57551251").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("COBEL CONSULTING, S.L.U.")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("GASPÀR SABATER").setNumber("8").setAddress2("BJS.").setZip("07010").setCity("PALMA MALLORCA").setGeozone(getGeozoneId(ctx,"07")));
-		CustomerDAO.save(ctx, C_B57551251);
+		CustomerDAO.save(ctx, cB57551251);
 		
-		CustomerFull C_43102210A = new CustomerFull();
-		C_43102210A
+		CustomerFull c43102210A = new CustomerFull();
+		c43102210A
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("43102210A").setDocumentType(DocumentType.NIF).setDocumentCountry(Country.ES).setName("POU VIVES, MIGUEL")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("MAYOR").setNumber("74").setZip("07520").setCity("PETRA").setGeozone(getGeozoneId(ctx,"07")));
-		CustomerDAO.save(ctx, C_43102210A);
+		CustomerDAO.save(ctx, c43102210A);
 		
 		// CLIENTE INTRACOMUNITARIO
-		CustomerFull I_393356000000 = new CustomerFull();
-		I_393356000000
+		CustomerFull i393356000000 = new CustomerFull();
+		i393356000000
 			.setRegistry(new Customer()
 				.copy(new Registry()
 					.setDomain(domain)
@@ -554,11 +554,11 @@ class DomainProviderForTests {
 					.setName("STE AMAZON EU SARL"))
 				.setTransaction(InvoiceTransactionType.INTRACOMMUNITY))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("BOULEVARD DE VAURGIRARD").setNumber("44").setZip("75757").setCity("PARIS").setGeozone(getGeozoneId(ctx,"F1")));
-		CustomerDAO.save(ctx, I_393356000000);
+		CustomerDAO.save(ctx, i393356000000);
 		
 		// CLIENTE EXTRACOMUNITARIO
-		CustomerFull I_999999999A = new CustomerFull();
-		I_999999999A
+		CustomerFull i999999999A = new CustomerFull();
+		i999999999A
 			.setRegistry(new Customer()
 				.copy(new Registry()
 					.setDomain(domain)
@@ -572,7 +572,7 @@ class DomainProviderForTests {
 				.setAddress("Bei Xin St")
 				.setZip("30044")
 				.setCity("Hsinchu City"));
-		CustomerDAO.save(ctx, I_999999999A);
+		CustomerDAO.save(ctx, i999999999A);
 		
 		// CLIENTE CANARIO
 		CustomerFull canarias1 = new CustomerFull();
@@ -595,8 +595,8 @@ class DomainProviderForTests {
 		CustomerDAO.save(ctx, canarias1 );
 		
 		// CLIENTE CONTADO
-		CustomerFull C_CONTADO = new CustomerFull();
-		C_CONTADO
+		CustomerFull cContado = new CustomerFull();
+		cContado
 			.setRegistry(new Customer().copy(new Registry()
 				.setDomain(domain)
 				.setDocument(null)
@@ -604,28 +604,28 @@ class DomainProviderForTests {
 				.setDocumentCountry(Country.ES)
 				.setName("CLIENTE CONTADO")))
 			;
-		CustomerDAO.save(ctx, C_CONTADO);
+		CustomerDAO.save(ctx, cContado);
 
 		// CARACTER CHUNGO
-		CustomerFull C_X3654266A = new CustomerFull();
-		C_X3654266A
+		CustomerFull cX3654266A = new CustomerFull();
+		cX3654266A
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X3654266A").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("JEAN FRANÇOIS VICENT COURTINAT")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Luis Huici").setNumber("12").setAddress2("1ºB").setZip("15010").setCity("La Coruña").setGeozone(getGeozoneId(ctx,"15")));
-		CustomerDAO.save(ctx, C_X3654266A);
+		CustomerDAO.save(ctx, cX3654266A);
 		
-		CustomerFull C_F61024808 = new CustomerFull();
-		C_F61024808
+		CustomerFull cF61024808 = new CustomerFull();
+		cF61024808
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("F61024808").setDocumentType(DocumentType.CIF).setDocumentCountry(Country.ES).setName("L´OBRADOR, S.C.C.L.")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("LOURDES").setNumber("7").setZip("08358").setCity("ARENYS DE MUNT").setGeozone(getGeozoneId(ctx,"08")));
-		CustomerDAO.save(ctx, C_F61024808);
+		CustomerDAO.save(ctx, cF61024808);
 		
 
 		// NO CENSADO EN AEAT
-		CustomerFull C_X1485566L = new CustomerFull();
-		C_X1485566L
+		CustomerFull cX1485566L = new CustomerFull();
+		cX1485566L
 			.setRegistry(new Customer().copy(new Registry().setDomain(domain).setDocument("X1485566L").setDocumentType(DocumentType.NIE).setDocumentCountry(Country.ES).setName("GOLDEN GATE INSTITUTE")))
 			.addAddress(new RegistryAddress().setMain(true).setStreetType((StreetType.CALLE)).setAddress("Errihera Kalea").setNumber("1 Bis").setAddress2("Bajo").setZip("20750").setCity("Zumaia").setGeozone(getGeozoneId(ctx,"20")));
-		CustomerDAO.save(ctx, C_X1485566L);
+		CustomerDAO.save(ctx, cX1485566L);
 	}
 
 	private static void insertCertificate(AONContext ctx, Domain domain) {
