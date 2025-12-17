@@ -67,12 +67,24 @@
 .aonHeader{
 	height: 68px; /*4rem;*/
 	min-height: 68px; /*4rem;*/
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+#aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
+	margin-left: 68px;
 }
 
 .aonMenuTopnav {
 	top: 68px; /*4rem;*/
     border-color: var(--aonBackgroundColor);
     background-color: var(--aonBackgroundColor);
+    margin-left: 237px;
+    
+    transition: margin .5s;
+}
+
+.aonMenuTopnav.closeSidenav{
+	 margin-left: 237px;
 }
 
 .aonMenuSideNav {
@@ -178,7 +190,11 @@
 #aonMenuListAppImgTop-treasuryMenu,
 #aonMenuListAppImgTop-groupwareMenu,
 #aonMenuListAppImgTop-marketingMenu,
-#aonMenuListAppImgTop-warehouseMenu
+#aonMenuListAppImgTop-warehouseMenu,
+#aonMenuListAppImgTop-apps,
+#aonMenuListAppImgTop-expandHirin,
+#aonMenuListAppImgTop-contentIndex,
+#aonMenuAnchorDivIcon
  {
 	width: 25.5px;
 	height: 25.5px;
@@ -215,6 +231,19 @@
 #aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-managementMenu {
     mask-image: url('/icons/file-bar-chart.svg') ;
+}
+
+#aonMenuListAppImgTop-apps {
+	mask-image: url('/icons/box.svg') ;
+}
+
+#aonMenuListAppImgTop-expandHirin {
+	mask-image: url('/icons/box.svg') ;
+	background-color: white;
+}
+
+#aonMenuListAppImgTop-contentIndex {
+	mask-image: url('/icons/book-open.svg') ;
 }
 
 #aonMenuListAppImgTop-accountingMenu {
@@ -268,7 +297,7 @@
 }
 
 #aonMenuListAppImgTop-timecontrol {
-    mask-image: url('/icons/clock.svg') ;
+    mask-image: url('/icons/timer.svg') ;
 }
 
 #aonMenuListAppImgTop-messenger{
@@ -334,10 +363,12 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 	mask-position: center;
 	mask-repeat: no-repeat;
     mask-image: url('/icons/chevron-down.svg') ;
+    
+    transition: transform 0.5s;
 }
 
 i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
-	mask-image: url('/icons/chevron-right.svg') ;
+	transform: rotate(-90deg);
 }
 
 
@@ -433,6 +464,10 @@ aon-configuration-menu .suiteMenuContent  {
   margin-left: 237px !important; /*13.75rem; !important;*/
 }
 
+#rootPanel > div {
+	background-color: transparent !important;
+}
+
 #rootPanel.closeSidenav {
   margin-left: 68px !important; /*13.75rem; !important;*/
   padding-left: 0px;
@@ -453,6 +488,30 @@ aon-configuration-menu .suiteMenuContent  {
 	margin-top: 0;
 }
 
+#aonMenuList-contentIndex {
+	display: flex;
+}
+
+#expandHirin {
+	display: flex;
+	background: linear-gradient(to right, #FB5722, #FB5722, #0E1030, #586078);
+	background-size: 300% 100%;
+	background-position: 0 0;
+	transition: background .1s ease;
+	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	border-radius: .375rem;
+	cursor: pointer;
+	margin: .5rem !important;
+	color: white;
+	padding: 0 .9rem !important;
+	height: 45px;
+}
+
+#expandHirin:hover {
+	background-position: 100% 0;
+	color: white;
+}
+
 /*
  ------------------ Menu Collapse Button
 */
@@ -464,7 +523,8 @@ aon-configuration-menu .suiteMenuContent  {
 	padding-left: 0;
 	height: 68px;
 	width: 237px;
-	transition: width 0.3s;
+	margin-left: 4px;
+	z-index: 2;
 }
 
 #aonMenuAnchor.close {
@@ -475,6 +535,7 @@ aon-configuration-menu .suiteMenuContent  {
 	transition: width .2s;
 	border-radius: 0px;
 	transition: width 0.3s;
+	padding-left: 0;
 }
 
 #aonMenuAnchorDiv {
@@ -486,20 +547,20 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonMenuAnchor.close #aonMenuAnchorDiv {
-	justify-content: center;
 	padding: 0 1.25rem;
+	margin-left: 0px;
 }
 
 #aonMenuAnchorDivIcon {
-	background: url('/icons/arrow-left-circle.svg') no-repeat center;
-	mask-position: center;
-	mask-repeat: no-repeat;
+	/*background: url('/icons/arrow-left-circle.svg') no-repeat center;*/
 	mask-image: url('/icons/arrow-left-circle.svg');
+	
+	transition: transform 0.5s;
+	padding: 0px;
 }
 
 #aonMenuAnchor.close #aonMenuAnchorDivIcon {
-	background: url('/icons/arrow-right-circle.svg') no-repeat center;
-	mask-image: url('/icons/arrow-right-circle.svg');
+	transform: rotate(-180deg);
 }
 
 .aonMenuAnchorDivSpan {
@@ -514,10 +575,20 @@ aon-configuration-menu .suiteMenuContent  {
 	justify-content: center;
 }
 
-#aonMenu #aonMenuSidenav #nevv,
-#aonMenu #aonMenuSidenav #apps {
+#aonMenuAnchor.close .aonMenuAnchorDivSpan {
+	display: block;
+	visibility: collapse;
+}
+
+#aonMenuSidenav.close #expandHirin {
+	padding: 0 .7rem !important;
+}
+
+/*
+#aonMenu #aonMenuSidenav #new {
 	display: none;	
 }
+*/
 
 #aonMenu #aonMenuSidenav .aonMenuSidenavLiSeleted,
 #aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover {
@@ -539,6 +610,33 @@ aon-configuration-menu .suiteMenuContent  {
 	width: 68px; /*13.75rem;*/
 	min-width: 0; /*13.75rem;*/
 }
+
+/*
+ ------------------ Tooltip
+*/
+
+.tooltip {
+	position: fixed;
+	z-index: 9999;
+	max-width: 300px;
+	padding: 10px 12px;
+	background: #2f3746;
+	color: #fff;
+	font-size: 14px;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	pointer-events: none;
+
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity .15s ease, transform .15s ease;
+}
+
+.tooltip.visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
 
 
 /* ========================== App Styles  ========================== */
@@ -601,8 +699,8 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSubMenuOptions .chevronRight{
 	display: inline-block !important;
-	width: 18px;
-	height: 18px;
+	width: 21px;
+	height: 21px;
 	background: url('/icons/chevron-right.svg') no-repeat center;
 	mask-size: contain;
 	mask-position: center;
@@ -620,18 +718,19 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;		
+	padding: .625rem 1.25rem .625rem 2.5rem;	
+	position: relative;
 }
 
 .aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
-	padding: .625rem 1.25rem .625rem 1.5rem;
+	padding: .625rem 1.25rem .625rem 3rem;
 }
 
 .aonSidenav .aonSidenavTitle {
-	padding: 0 1.25rem;
+	padding: 0 1rem;
 	padding-top: 0px;
 	display: flex;
-	gap: .5rem;
+	gap: .3rem;
 	align-items: center;
 	cursor: pointer;
 }
@@ -641,11 +740,17 @@ aon-configuration-menu .suiteMenuContent  {
 	min-width: 24px;
 	min-height: 24px;
 	visibility: visible;
-	background: url('/icons/chevron-left-circle.svg') no-repeat center;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+	
+	transition: transform 0.3s;
 }
 
 .aonSidenav .aonSidenavTitleArrow.closeIcon {
-	background: url('/icons/chevron-right-circle.svg') no-repeat center;
+	transform: rotate(-90deg);
+}
+
+#aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon {
+	
 }
 
 .aonSidenav .aonAppMenuSidenavList:hover,
@@ -658,6 +763,39 @@ aon-configuration-menu .suiteMenuContent  {
     letter-spacing: -0.005rem;
 	text-transform: uppercase;
     font-family: "Inter-bold", sans-serif;
+}
+
+.aonSidenavTitleButton {
+	margin-top: 0px;
+}
+
+#aonOfficePanelSidenavTypesList span{
+	display: inline-block;
+}
+
+.aonOfficePanelSidenavTypesListOption{
+	width: 20.5px;
+	height: 20.5px;
+	background-color: var(--aonTopAppTextColor) !important;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/more-vertical.svg');
+	margin-right: .3rem;
+}
+
+.sidenavHover:hove .aonOfficePanelSidenavTypesListOption {
+	display: block !important;
+}
+
+#aonOfficePanelSidenavTypesNewButtonIconButton {
+	width: 20.5px;
+	height: 20.5px;
+	background-color: var(--aonTopAppTextColor) !important;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/plus.svg');
 }
 
 .aonUpload {
@@ -1053,7 +1191,8 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonInvoiceHomeNewIncomeButton,
-#aonInvoiceHomeNewExpenseButton{
+#aonInvoiceHomeNewExpenseButton,
+#aonMenuList-apps{
 	display: none;	
 }
 
@@ -1103,7 +1242,10 @@ i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"],
 i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
 i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
 i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"], 
-i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"]{
+i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"],
+i[id$="aonOfficePanelToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"]
+{
 	width: 25.5px;
 	height: 25.5px;
 	background-color: var(--aonTopAppTextColor);
@@ -1131,6 +1273,14 @@ i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"] {
 
 i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"] {
     mask-image: url('/icons/more-vertical.svg') ;
+}
+
+i[id$="aonOfficePanelToolbarHeaderToolSectionAddButtonIcon"] {
+	mask-image: url('/icons/plus.svg') ;
+}
+
+i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
+	mask-image: url('/icons/filter.svg') ;
 }
 
 /* ========================== Table Styles  ========================== */
@@ -1243,6 +1393,10 @@ aon-right-panel {
 	width: 100%;
 }
 
+#contentIndexHelp {
+	display: none;
+}
+
 .rightPanel .divLogout *,
 .rightPanel .helpCardText *,
 .rightPanel .configCardText *{
@@ -1333,4 +1487,24 @@ aon-right-panel {
 .aonInputBoxLabel > input {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
+}
+
+/* ========================== Office Styles  ========================== */
+
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan{
+	border: .0625rem solid #cbd5e1 !important;
+	border-radius: .375rem;
+	height: 2.5rem;
+}
+
+@media (1080px <= width <= 1400px) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+@media (1401px <= width) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
 }

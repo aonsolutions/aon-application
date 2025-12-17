@@ -194,6 +194,7 @@ export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
 export const EXPIRED_SESSION = 'Saioa iraungi da';
 export const ERRORS = 'Akatsak';
+export const EXPAND_HIRIND = 'Kontratazioa Zabaldu';
 
 // ----- F
 
@@ -310,6 +311,7 @@ export const MY_DATA = 'Nire Datuak';
 export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
 export const MAGIC_LINK = 'Sarbide-esteka posta elektronikoz bidaltzen';
+export const MY_CLOUD = 'Nire hodeia';
 
 // ----- N
 

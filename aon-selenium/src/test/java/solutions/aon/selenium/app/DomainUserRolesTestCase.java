@@ -51,7 +51,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse", "contentIndex", "expandHirin" /*only for local*/ );
 
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
@@ -207,6 +207,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	private void assertSideMenu(WebDriver webDriver, WebDriverWait wait, String... ids) {
 		WebElement aonMenuSidenav = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonMenuSidenav")));//webDriver.findElement(By.id("aonMenuSidenav"));
 
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonMenuList-expandHirin")));
 		List<WebElement> sideMenuElements = aonMenuSidenav
 				.findElements(By.xpath("ul/li[starts-with(@id,'aonMenuList-')]"));
 		List<String> sideMenuElementsIds = Arrays.stream(ids).map(id -> "aonMenuList-" + id).toList();

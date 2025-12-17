@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
@@ -8,6 +8,7 @@ import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
 import * as LS from '../services/localStorageService.js';
+import * as JSF from './aon-jsf-app.js';
 import { AonMessenger } from '../modules/messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
@@ -68,6 +69,7 @@ import { getCompanyActivities } from '../services/companyService.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
+import { getRelationShipCompany } from '../services/registryService.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -277,6 +279,13 @@ export class AonNewMenu extends AonElement {
 					//"39aa7e93-a3a2-4bf2-b6c6-1297d00bd0e0"
 					this.rootPanel(new Superset(this.supersetDashboard));
 					return;
+				case EXPAND_HIRIND.app:
+					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
+					break;
+				case CONTENT_INDEX.app:
+					this.rootPanel(new JSF.AonJsfHelpContent())
+					this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+					break;	
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
@@ -365,7 +374,6 @@ export class AonNewMenu extends AonElement {
 			
 		this.appendChild(aonMenuSidenav);
 		aonMenuSidenav.classList.add("aonNewMenuSideNav");
-		//this.getRootPanel().style.marginLeft = '0px';
 		this.buildMenuSidenav();
 
 		let aonMenuTopnav = this.createElement(TAG.DIV);
@@ -388,7 +396,6 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildMenuLeftop() {
-		//this.controlSideNav();
 		let aonMenuLeftopAnchor = document.querySelector('#aonMenuLeftop a');
 		aonMenuLeftopAnchor.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(HomeApps.APPLICATIONS);
@@ -421,10 +428,12 @@ export class AonNewMenu extends AonElement {
 			}
 		}
 		
-		this.getSupersetDashboard().then((dashboard) => {
+		this.getSupersetDashboard()
+		.then((dashboard) => {
 			this.supersetDashboard = dashboard;
 			this.addMenuSidenavApp(ul, SUPERSET);
-		});
+		})
+		.finally(end => this.createBookPlansButton(ul, EXPAND_HIRIND));
 
 		let li2 = this.createElement(TAG.LI);
 		li2.classList.add("aonNewMenuSideNavLi2");
@@ -432,6 +441,81 @@ export class AonNewMenu extends AonElement {
 
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
+
+	}
+	
+	createBookPlansButton(ul, app){
+		
+		// Ficha Cliente
+		let company = LS.getCompany();
+		if(company && company.domain && company.registry){
+			getRelationShipCompany({
+				url: company.domain,
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
+				
+				let li = this.createElement(TAG.LI);
+				li.id = `aonMenuList-${app.app}`;
+				li.classList.add("aonNewMenuSideNavLi");
+				
+				app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
+				
+				let a = this.createElement(TAG.A);
+				a.addEventListener(EVENT.CLICK, () => {
+					this.appSelection(app);
+				});
+				a.classList.add('aonMenuApp');
+		
+				let hoverDiv = this.createElement(TAG.DIV);
+				hoverDiv.innerHTML = app.title;
+				if (!app.title) {
+					hoverDiv.classList.add('aonMenuAppHoverHidden');
+				}
+				hoverDiv.style.display = 'none';
+				hoverDiv.classList.add('aonMenuAppHover');
+				a.appendChild(hoverDiv);
+				
+				let div = this.createElement(TAG.DIV);
+				div.id = app.app;
+				div.classList.add("aonNewMenuAppDiv");
+				div.title = app.title;
+				
+				if (app.symbol){
+					let icon = this.createElement(TAG.SPAN);
+					icon.id = `aonMenuListAppImgTop-${app.app}`;
+					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+					icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
+					icon.innerHTML = app.symbol;
+					icon.classList.add("aonNewMenuAppIcon");
+					div.appendChild(icon);
+				} else if (app.cssSymbol) {
+					let icon = this.createElement(TAG.SPAN);
+					icon.id = `aonMenuListAppImgTop-${app.app}`;
+					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+					icon.innerHTML = app.cssSymbol;
+					if(app.newColor || app.color) {
+						icon.style.color = app.newColor || app.color;
+					}
+					icon.classList.add("aonNewMenuAppIcon");
+					div.appendChild(icon);
+				}
+		
+				if (app.description) {
+					let span = this.createElement(TAG.SPAN);
+					span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+					span.classList.add("aonNewMenuAppSpan");
+					span.innerHTML = app.description; 
+					div.appendChild(span);
+				}
+				
+				a.appendChild(div);
+		
+				li.appendChild(a);
+				
+				ul.appendChild(li);
+				
+			});
+		}
 
 	}
 	
@@ -575,7 +659,7 @@ export class AonNewMenu extends AonElement {
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
 			icon.innerHTML = app.symbol;
-			if(app.title == 'Planes' && this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
+			if(app.title == 'Planes' && (!LS.isFutureTheme() || this.isAyudaT()) && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
 				icon.style.color = "green";
 			} 
 			if(app.newColor || app.color) {
@@ -930,11 +1014,15 @@ export class AonNewMenu extends AonElement {
 			return !this.getDur().isConsole();
 		if (APPS.app === app.app)
 			return !this.getDur().isConsole();
+		if (EXPAND_HIRIND.app === app.app)
+			return !this.getDur().isConsole();
 		if (SUPERSET.app === app.app)
 			return !this.getDur().isConsole();
 		if (APPLICATIONS.app === app.app)
 			return !this.getDur().isConsole();
 		if (MenuApps.NOTES.app === app.app)
+			return !this.getDur().isConsole();
+		if(CONTENT_INDEX.app === app.app)
 			return !this.getDur().isConsole();
 		if (MenuApps.TOOLS.app === app.app)
 			return this.isBeta() && !LS.isNewTheme();
@@ -1255,9 +1343,14 @@ export class AonNewMenu extends AonElement {
 					resolve(appParams[0].value);
 				} else {
 					//reject(new Error("Superset dashboard not found"));
+					console.error("Superset dashboard not found");
+					reject(null);
 				}
 			})
-			//.catch (reject) 
+			.catch(err => {
+				console.error("Superset", err);
+				reject(null);
+			});
 			;			
 		});
 	}
