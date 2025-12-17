@@ -2,15 +2,16 @@ import { AonReg } from "../aon-reg.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME, TAG } from "../../../environments/environments.js";
 import { AonCard } from "../../../components/aon-card.js";
 import { AonNewSelect } from "../../../components/aon-new-select.js";
+import { AonNewDate } from "../../../components/aon-new-date.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonIcon } from "../../../components/aon-icon";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomerNote, saveCustomer, getRelationShipCompany, getRegistryNotes, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
-import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
+import { getDomainCompanies, saveCompany, getCustomerStatusTags } from "../../../services/companyService.js";
 import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
 import { AonItemList } from "../target/item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
@@ -905,6 +906,75 @@ export class AonCustomer extends AonReg {
 			});			
 			d.open();		
 		});
+	}
+	
+	async openCustomerInactiveBloqued() {
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if (this.isMobile()) {
+			dialog.type = "fullscreen";
+		} else {
+			dialog.width = "30%";
+		}
+
+		const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : ( this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
+
+		dialog.setTitle(title);
+
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectTag = new AonNewSelect();
+		selectTag.id = "selectTag";
+		selectTag.title = "Motivo";
+		//selectTag.autocomplete = true;
+		div.appendChild(selectTag);
+		
+		selectTag.loading(true);
+		getCustomerStatusTags()
+			.then((tags) => {
+				const options = tags.map((c) => ({ ...c, value: c.id }))
+				selectTag.setOptions(options);
+			})
+			.finally(() => {
+				selectTag.loading(false);
+			});
+		
+		let datePicker = new AonNewDate();
+	    datePicker.id = "aonDBloquedDatePicker";
+	    
+	    const dateTitle = "F. Expiración Empresa";
+	    datePicker.title = dateTitle;
+	    
+	    if(this.registry.status !== "ACTIVE")
+	    	div.appendChild(datePicker);
+
+		dialog.addSendAction(async () => {
+			if (selectTag.value) {
+				await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined );
+				this.buildStatusRegistry();
+				this.save();
+				dialog.close();
+			}
+		}, MSG.SAVE);
+
+		dialog.open();
+	}
+	
+	async saveNote(tagName, date) {
+		const params = {
+			tagName: tagName,
+			customerId: this.registry.id,
+			status: this.registry.status,
+			date : date,
+			isSig: this.isSig()
+		}
+		
+		await saveCustomerNote(params);
 	}
 
 	openDialogCompany(companies = []) {
