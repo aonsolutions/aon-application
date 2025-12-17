@@ -51,7 +51,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse", "contentIndex", "expandHirin" /*only for local*/ );
 
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
