@@ -75,10 +75,10 @@ public class Mod3902025DAO {
 	private static final byte ONE_BYTE = 1;
 	
 	public static final double PERCENT0 = 0.0;
-	public static final double PERCENT2 = 2.0;  // Solo para el IVA deducible
+	public static final double PERCENT2 = 2.0;  // Solo para el IVA deducible y solo para determinados apartados
 	public static final double PERCENT4 = 4.0;
-	public static final double PERCENT5 = 5.0;  // Solo para el IVA deducible
-	public static final double PERCENT75 = 7.5; // Solo para el IVA deducible
+	public static final double PERCENT5 = 5.0;  // Solo para el IVA deducible y solo para determinados apartados
+	public static final double PERCENT75 = 7.5; // Solo para el IVA deducible y solo para determinados apartados
 	public static final double PERCENT10 = 10.0;
 	public static final double PERCENT21 = 21.0;
 //	public static final double SURCHARGE_PERCENT00 = 0.0;
@@ -230,7 +230,7 @@ public class Mod3902025DAO {
 		 // Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes de inversión
 		 ,C0521	(Mod3902025DetailKey.C0521, null)
 		 
-		 // Importaciones y adquisiciones intracomunitarias de bienes y servicio
+		 // Importaciones y adquisiciones intracomunitarias de bienes y servicios
 		 // IVA deducible en importaciones de bienes corrientes
 		 ,C0758	(Mod3902025DetailKey.C0758, ((mod, vc) -> importacionesCorrientesFilter(vc) && hasPercent2(vc)))
 		 ,C0203	(Mod3902025DetailKey.C0203, ((mod, vc) -> importacionesCorrientesFilter(vc) && hasPercent4(vc)))
@@ -515,191 +515,6 @@ public class Mod3902025DAO {
 		// Rellenar los datos de actividades y representantes, del último modelo de ejercicios anteriores, si existe
 		boolean found = fillFromPreviousYear(ctx, mod390);
 		
-//		boolean found = Mod390DAO.getByDomain(ctx, ctx.getDomainId())
-//			.stream()
-//			.filter(m390 -> m390.getYear() <= model.getYear()-1 && m390.getAdministration() == model.getAdministration())
-//			.map(m390 -> {
-//				switch (m390.getYear()) {
-//					case 2018, 2019, 2020:
-//						return Mod3902018DAO.getById(ctx, m390.getId());
-//					case 2021:
-//						return Mod3902021DAO.getById(ctx, m390.getId());
-//					case 2022:
-//						return Mod3902022DAO.getById(ctx, m390.getId());
-//					case 2023:
-//						return Mod3902023DAO.getById(ctx, m390.getId());
-//					default: // 2024+
-//						return Mod3902024DAO.getById(ctx, m390.getId());
-//				}
-//			})
-//			.map(mod -> {
-////				mod390.setMainActivity(mod.getMainActivity());
-////				mod390.setActivity1(mod.getActivity1());
-////				mod390.setActivity2(mod.getActivity2());
-////				mod390.setActivity3(mod.getActivity3());
-////				mod390.setActivity4(mod.getActivity4());
-////				mod390.setActivity5(mod.getActivity5());
-////				mod390.setAddress(mod.getAddress());
-////				mod390.setLegalRepr1(mod.getLegalRepr1());
-////				mod390.setLegalRepr2(mod.getLegalRepr2());
-////				mod390.setLegalRepr3(mod.getLegalRepr3());
-//				
-//				// Asignar los datos según el ejercicio
-//				switch (mod.getYear()) {
-//					case 2018, 2019, 2020:
-//						Mod3902018 mod2018 = (Mod3902018) mod;
-//						mod390.setMainActivity( mod2018.getMainActivity() );
-//						mod390.setActivity1( mod2018.getActivity1() );
-//						mod390.setActivity2( mod2018.getActivity2() );
-//						mod390.setActivity3( mod2018.getActivity3() );
-//						mod390.setActivity4( mod2018.getActivity4() );
-//						mod390.setActivity5( mod2018.getActivity5() );
-//						mod390.setAddress( mod2018.getAddress() );
-//						mod390.setLegalRepr1( mod2018.getLegalRepr1() );
-//						mod390.setLegalRepr2( mod2018.getLegalRepr2() );
-//						mod390.setLegalRepr3( mod2018.getLegalRepr3() );
-//						break;
-//					case 2021:
-//						Mod3902021 mod2021 = (Mod3902021) mod;
-//						mod390.setMainActivity( mod2021.getMainActivity() );
-//						mod390.setActivity1( mod2021.getActivity1() );
-//						mod390.setActivity2( mod2021.getActivity2() );
-//						mod390.setActivity3( mod2021.getActivity3() );
-//						mod390.setActivity4( mod2021.getActivity4() );
-//						mod390.setActivity5( mod2021.getActivity5() );
-//						mod390.setAddress( mod2021.getAddress() );
-//						mod390.setLegalRepr1( mod2021.getLegalRepr1() );
-//						mod390.setLegalRepr2( mod2021.getLegalRepr2() );
-//						mod390.setLegalRepr3( mod2021.getLegalRepr3() );
-//						break;
-//					case 2022:
-//						Mod3902022 mod2022 = (Mod3902022) mod;
-//						mod390.setMainActivity( mod2022.getMainActivity() );
-//						mod390.setActivity1( mod2022.getActivity1() );
-//						mod390.setActivity2( mod2022.getActivity2() );
-//						mod390.setActivity3( mod2022.getActivity3() );
-//						mod390.setActivity4( mod2022.getActivity4() );
-//						mod390.setActivity5( mod2022.getActivity5() );
-//						mod390.setAddress( mod2022.getAddress() );
-//						mod390.setLegalRepr1( mod2022.getLegalRepr1() );
-//						mod390.setLegalRepr2( mod2022.getLegalRepr2() );
-//						mod390.setLegalRepr3( mod2022.getLegalRepr3() );
-//						break;
-//					case 2023:
-//						Mod3902023 mod2023 = (Mod3902023) mod;
-//						mod390.setMainActivity( mod2023.getMainActivity() );
-//						mod390.setActivity1( mod2023.getActivity1() );
-//						mod390.setActivity2( mod2023.getActivity2() );
-//						mod390.setActivity3( mod2023.getActivity3() );
-//						mod390.setActivity4( mod2023.getActivity4() );
-//						mod390.setActivity5( mod2023.getActivity5() );
-//						mod390.setAddress( mod2023.getAddress() );
-//						mod390.setLegalRepr1( mod2023.getLegalRepr1() );
-//						mod390.setLegalRepr2( mod2023.getLegalRepr2() );
-//						mod390.setLegalRepr3( mod2023.getLegalRepr3() );
-//						break;
-//					default: // 2024+
-//						Mod3902024 mod2024 = (Mod3902024) mod;
-//						mod390.setMainActivity( mod2024.getMainActivity() );
-//						mod390.setActivity1( mod2024.getActivity1() );
-//						mod390.setActivity2( mod2024.getActivity2() );
-//						mod390.setActivity3( mod2024.getActivity3() );
-//						mod390.setActivity4( mod2024.getActivity4() );
-//						mod390.setActivity5( mod2024.getActivity5() );
-//						mod390.setAddress( mod2024.getAddress() );
-//						mod390.setLegalRepr1( mod2024.getLegalRepr1() );
-//						mod390.setLegalRepr2( mod2024.getLegalRepr2() );
-//						mod390.setLegalRepr3( mod2024.getLegalRepr3() );
-//						break;
-//					}
-//				return mod;
-//			})
-//			.findFirst()
-//			.isPresent();
-		
-//		boolean found = Mod390DAO.getByDomain(ctx, ctx.getDomainId())
-//			.stream()
-//			.filter(m390 -> m390.getYear() == 2023)
-//			.map(m390 -> Mod3902023DAO.getById(ctx, m390.getId()))
-//			.map(mod3902023 -> {
-//				mod390.setMainActivity(mod3902023.getMainActivity());
-//				mod390.setActivity1(mod3902023.getActivity1());
-//				mod390.setActivity2(mod3902023.getActivity2());
-//				mod390.setActivity3(mod3902023.getActivity3());
-//				mod390.setActivity4(mod3902023.getActivity4());
-//				mod390.setActivity5(mod3902023.getActivity5());
-//				mod390.setAddress(mod3902023.getAddress());
-//				mod390.setLegalRepr1(mod3902023.getLegalRepr1());
-//				mod390.setLegalRepr2(mod3902023.getLegalRepr2());
-//				mod390.setLegalRepr3(mod3902023.getLegalRepr3());
-//				return mod3902023;
-//			})
-//			.findAny()
-//			.isPresent();
-//		
-//		if (!found)
-//			found = Mod390DAO.getByDomain(ctx, ctx.getDomainId())
-//				.stream()
-//				.filter(m390 -> m390.getYear() == 2022)
-//				.map(m390 -> Mod3902022DAO.getById(ctx, m390.getId()))
-//				.map(mod3902022 -> {
-//					mod390.setMainActivity(mod3902022.getMainActivity());
-//					mod390.setActivity1(mod3902022.getActivity1());
-//					mod390.setActivity2(mod3902022.getActivity2());
-//					mod390.setActivity3(mod3902022.getActivity3());
-//					mod390.setActivity4(mod3902022.getActivity4());
-//					mod390.setActivity5(mod3902022.getActivity5());
-//					mod390.setAddress(mod3902022.getAddress());
-//					mod390.setLegalRepr1(mod3902022.getLegalRepr1());
-//					mod390.setLegalRepr2(mod3902022.getLegalRepr2());
-//					mod390.setLegalRepr3(mod3902022.getLegalRepr3());
-//					return mod3902022;
-//				})
-//				.findAny()
-//				.isPresent();
-//		
-//		if (!found)
-//			found = Mod390DAO.getByDomain(ctx, ctx.getDomainId())
-//				.stream()
-//				.filter(m390 -> m390.getYear() == 2021)
-//				.map(m390 -> Mod3902021DAO.getById(ctx, m390.getId()))
-//				.map(mod3902021 -> {
-//					mod390.setMainActivity(mod3902021.getMainActivity());
-//					mod390.setActivity1(mod3902021.getActivity1());
-//					mod390.setActivity2(mod3902021.getActivity2());
-//					mod390.setActivity3(mod3902021.getActivity3());
-//					mod390.setActivity4(mod3902021.getActivity4());
-//					mod390.setActivity5(mod3902021.getActivity5());
-//					mod390.setAddress(mod3902021.getAddress());
-//					mod390.setLegalRepr1(mod3902021.getLegalRepr1());
-//					mod390.setLegalRepr2(mod3902021.getLegalRepr2());
-//					mod390.setLegalRepr3(mod3902021.getLegalRepr3());
-//					return mod3902021;
-//				})
-//				.findAny()
-//				.isPresent();
-//		
-//		if (!found)
-//			found =  Mod390DAO.getByDomain(ctx, ctx.getDomainId())
-//				.stream()
-//				.filter(m390 -> m390.getYear() == 2018 || m390.getYear() == 2019 || m390.getYear() == 2020)
-//				.map(m390 -> Mod3902018DAO.getById(ctx, m390.getId()))
-//				.map(mod3902018 -> {
-//					mod390.setMainActivity(mod3902018.getMainActivity());
-//					mod390.setActivity1(mod3902018.getActivity1());
-//					mod390.setActivity2(mod3902018.getActivity2());
-//					mod390.setActivity3(mod3902018.getActivity3());
-//					mod390.setActivity4(mod3902018.getActivity4());
-//					mod390.setActivity5(mod3902018.getActivity5());
-//					mod390.setAddress(mod3902018.getAddress());
-//					mod390.setLegalRepr1(mod3902018.getLegalRepr1());
-//					mod390.setLegalRepr2(mod3902018.getLegalRepr2());
-//					mod390.setLegalRepr3(mod3902018.getLegalRepr3());
-//					return mod3902018;
-//				})
-//				.findAny()
-//				.isPresent();
-		
 		// Si no se han encontrado datos en ejercicios anteriores, rellenar desde la configuración de la empresa
 		if (!found) {
 			fillFromConfiguration(ctx, mod390);	
@@ -715,8 +530,6 @@ public class Mod3902025DAO {
 		mod390.calculate();
 		return mod390;	
 	}
-
-
 
 	public static Mod3902025 getMod3902025(AONContext ctx, Mod390 m390) {
 		if (m390.getId() == null) {
