@@ -448,7 +448,6 @@ export class AonNewMenu extends AonElement {
 		
 		// Ficha Cliente
 		let company = LS.getCompany();
-		console.log("createBookPlansButton",company);
 		if(company && company.domain && company.registry){
 			getRelationShipCompany({
 				url: company.domain,
@@ -1344,11 +1343,12 @@ export class AonNewMenu extends AonElement {
 					resolve(appParams[0].value);
 				} else {
 					//reject(new Error("Superset dashboard not found"));
-					resolve(null);
+					console.error("Superset dashboard not found");
+					reject(null);
 				}
 			})
 			.catch(err => {
-				console.error(err);
+				console.error("Superset", err);
 				reject(null);
 			});
 			;			

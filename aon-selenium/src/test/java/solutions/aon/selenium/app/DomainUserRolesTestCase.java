@@ -207,6 +207,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	private void assertSideMenu(WebDriver webDriver, WebDriverWait wait, String... ids) {
 		WebElement aonMenuSidenav = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonMenuSidenav")));//webDriver.findElement(By.id("aonMenuSidenav"));
 
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonMenuList-expandHirin")));
 		List<WebElement> sideMenuElements = aonMenuSidenav
 				.findElements(By.xpath("ul/li[starts-with(@id,'aonMenuList-')]"));
 		List<String> sideMenuElementsIds = Arrays.stream(ids).map(id -> "aonMenuList-" + id).toList();
