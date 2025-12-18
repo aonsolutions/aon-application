@@ -312,14 +312,21 @@ input, select, textarea,
 
 .aon_custom_card {
 	border: none;
+}
+
+.aon_custom_card_dark {
 	background-color: #f1f5f9 !important;
 }
+
 .aon_custom_card > div:first-child {
 	/*border-bottom: .1rem solid #cbd5e1;*/
 }
 
 .aon_custom_card .aon_flex_column {
 	margin: 0.25rem;
+}
+
+.aon_custom_card_dark .aon_flex_column {
 	background-color: #f1f5f9 !important;
 }
 
@@ -862,4 +869,17 @@ div:has( > .aon_icon_menu_collapse) {
 
 .aon_custom_text_box_no_border {
 	border: none !important;
+}
+
+.aon_model_matrix_small_button {
+	background-color: transparent !important;
+	background-size: 15px !important;
+	padding: 0 !important;
+	min-width: auto !important;
+}
+
+.aon_model_matrix_bullet_small_button {
+	width: 15px !important;
+	height: 15px !important;
+	background-size: 15px !important;
 }
