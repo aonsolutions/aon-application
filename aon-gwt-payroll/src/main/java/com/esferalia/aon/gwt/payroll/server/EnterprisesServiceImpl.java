@@ -266,7 +266,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
+import java.io.ByteArrayOutputStream;
 
 import aon.sepe.objects.Contract;
 import jakarta.servlet.annotation.WebServlet;
@@ -2206,12 +2206,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public String getSettlePDF(String domain, String login, Integer settleId) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream()) {			
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {			
 			JooqPDFSettlementBuilder settleBuilder = new JooqPDFSettlementBuilder(domain, login, settleId, os);
 			settleBuilder.write();
 			os.flush();
 			
-			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			String base64Pdf = Base64.getEncoder().encodeToString(os.toByteArray());
 			
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -2232,7 +2232,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
 		int salaryCount = salaryIds != null ? salaryIds.size() : 1;
-		try (ByteOutputStream os = new ByteOutputStream(salaryCount * 30 * 1024); 
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(salaryCount * 30 * 1024); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
 			

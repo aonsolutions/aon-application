@@ -33,7 +33,7 @@ body,
 #rootPanel > div {
     margin: 0px;
     border-radius: 0px;
-	background-color: #f1f5f9 !important;	
+	background-color: transparent !important;	
 }
 
 .aon_toolbar,
@@ -87,7 +87,7 @@ body,
 }
 .aon_toolbar {
 	width:auto ;
-	height: 38px;
+	height: 50px;
 	margin: 1rem 1rem 1rem 1rem;
 }
 
@@ -100,10 +100,21 @@ body,
 	margin: 1rem 1rem 1rem 1rem;
 }
 
+.aon_search_filter_scroll .aon_flex_column {
+	margin: 0px;
+}  
 
-.aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
-.aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
-    background-color: #fff !important;
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem), 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem){
+  	border-top-right-radius: 0px;
+  	border-bottom-right-radius: 0px;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+  	border-top-right-radius: 0px;
+  	border-bottom-right-radius: 0px;
+	background-color: initial !important;
 }
 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected, 
@@ -114,6 +125,30 @@ body,
   background-color: #f1f5f9 !important;
   border-left: none !important;
 }
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected)
+ {
+	background-color: #f1f5f9 !important;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem){
+	width: 100% ;
+}
+
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected){
+	margin-left: 0px !important;
+	padding-left: 35px !important;
+}
+
 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
@@ -168,6 +203,7 @@ input, select, textarea,
 	padding: 0px 1.5em 1.5em 1.5em;	
 }
 
+.aon_grid_header,
 .aon_custom_table_header,
 .aon_custom_table_footer,
 .aon_display_grid_header_row ,
@@ -189,22 +225,49 @@ input, select, textarea,
 	padding: 2px 6px;	
 }
 
+.aon_grid_header{
+	background-image: none;
+	background-clip: initial;
+}
+
+
+.aon_grid_header,
 .dataGridHeader {
   border-bottom: none;
 }
 
+.aon_grid td,
 .dataGridCell, .aon_display_grid_cell  {
 	color: #64748b;
 	min-height: 68px;
 	border-top: .0625rem solid #e2e8f0;
 	border-bottom: .0625rem solid #e2e8f0;
 }
+
+.aon_grid td {
+	border-left: none;
+	border-right: none;
+}
+
+.aon_grid tr td .aon_button {
+    position: initial;
+}
+
+.aon_grid tr:hover {
+	background-color: #fff;
+}
+
+.aon_grid tr td:first-child {
+	border-left: .0625rem solid #e2e8f0;
+}
+
+.aon_grid tr td:last-child {
+	border-right: .0625rem solid #e2e8f0;
+}
+
 .aon_custom_row {
     border: .0625rem solid #e2e8f0;
 }
-
-	
-
   
 .gwt-Selector .aon-MainCreta-Enterprises {
 	width: auto;
@@ -218,12 +281,14 @@ input, select, textarea,
 	align-content: center;
 	box-sizing: border-box;
 	border-radius: .375rem;
-	background-color: #f1f5f9;
+	background-color: #f1f5f9 ;
 	
 	margin-left: .3rem;
 	padding-bottom: 2px;
 	padding-right: .3rem;
 	width: fit-content !important;
+	
+	position: initial !important;
 	
 }
 
@@ -247,9 +312,15 @@ input, select, textarea,
 
 .aon_custom_card {
 	border: none;
+	background-color: #f1f5f9 !important;
 }
 .aon_custom_card > div:first-child {
-	border-bottom: .1rem solid #cbd5e1;
+	/*border-bottom: .1rem solid #cbd5e1;*/
+}
+
+.aon_custom_card .aon_flex_column {
+	margin: 0.25rem;
+	background-color: #f1f5f9 !important;
 }
 
 .aon_custom_row:hover, 
@@ -268,12 +339,12 @@ input, select, textarea,
 
 .aon_between_input, 
 .aon_custom_text_box_input {
-	height: 2.5rem;
+	min-height: 2.15rem;
   	color: #1e293b;  
 	border-radius: .375rem;
 	box-sizing: border-box;
-	padding: .75rem !important;
 	border: .0625rem solid #cbd5e1;
+	padding: .5rem .75rem .5rem .75rem !important;
 }
 
 .aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
@@ -295,6 +366,13 @@ input, select, textarea,
   border: .0625rem solid #cbd5e1 !important;
 }
 
+.aon_button {
+	border-radius: 0rem ;
+}
+
+.aon_table_button{
+	background-size: 20px ;
+}
 
  .aon_button:hover {
 	background-color:transparent ;
@@ -324,7 +402,7 @@ input, select, textarea,
     background-image: url(/icons/file-check.svg);		
 }
 
-.aon_icon_save {
+.aon_icon_save, .aon-icon-accept {
 	background-image: url(/icons/save.svg);		
 }
 
@@ -390,6 +468,11 @@ input, select, textarea,
     background-image: url(/icons/list-plus.svg);		
 }
 
+.aon_icon_back {
+    background-image: url(/icons/arrow-left.svg);		
+}
+
+
 .aon_icon_search, 
 .aon-icon-search,
 .aon_icon_menu_collapse {
@@ -452,7 +535,9 @@ input, select, textarea,
 
 .aon_custom_dialog_glass,
 .gwt-Selector .gwt-PopupPanelGlass {
-	background-color:#f1f5f9 ;
+	opacity: 1.0;
+  	filter: opacity(45%);
+  	background-color:#f1f5f9 ;
 }
 
 
@@ -463,20 +548,25 @@ input, select, textarea,
 	background-color: #0f172a;
 }
 
+
+.gwt-Selector .gwt-Button,
+*[class^='gwt-'] .aon_ok_button,
+*[class^='gwt-'] .aon_cancel_button:not(.aon_toolbar_button),
+.gwt-Selector .popupContent .aon_button_dialog,
 .gwt-Selector .popupContent .aon_ok_button_small,
 .gwt-Selector .popupContent .aon_cancel_button_small,
 .gwt-Selector .gwt-PopupPanel .gwt-Button {
-	border: none;
-	background-color: #0f172a;
-	border-radius: 4px;
-	color: #fff;
+	border: none !important;
+	background-color: #0f172a !important;
+	border-radius: 4px !important;
+	color: #fff !important;
 	cursor: pointer;
 	font-family: var(--aonFontFamily);
-	height: 2.5rem;
+	height: 2.5rem !important;
 	letter-spacing: .75px;
 	margin: auto 6px;
 	width: fit-content;
-	padding: 0.5rem 1rem ;
+	padding: 0.5rem 1rem !important;
 	text-transform: lowercase;
 	background-image: none;
 }
@@ -521,16 +611,20 @@ div.aon_flex_block.aon_scroll_area {
 	border-radius: .375rem;
 }
 
+.aon_custom_text_area_input,
 .aon-inputText,
 .aon_input_text,
 .aon-group,
+.aon_selector select, 
+.gwt-Selector select:not(.aon_custom_text_box_input), 
 .aon-selectOneMenu,
 .gwt-ListBox,
 .gwt-TextBox,
+.gwt-TextArea,	
 .gwt-SuggestBox{
 	padding: .25rem !important;
 	border-radius: .375rem !important;
-	border: .0625rem solid #cbd5e1 !important;
+	border: .0625rem solid #cbd5e1 ;
 }
 
 .aon-panelGrid-search-info,
@@ -553,6 +647,10 @@ textarea:focus  {
 	background-color: inherit;
 }
 
+.aon_custom_row .aon_icon_download,
+.aon_custom_row .aon-icon-download,
+.aon_custom_row .aon_icon_delete,
+.aon_display_grid_cell .aon_icon_download,
 .aon_display_grid_cell .aon_icon_delete{
 	background-size: 20px;	
 }
@@ -574,7 +672,8 @@ textarea:focus  {
 	background-color: #f1f5f9;
 }
 
-/* Fix Scroll Area for Contabilidad -> [ Clientes, Proveedores, Acreedores ]  */
+/* Fix Scroll Area for Contabilidad -> [ Clientes, Proveedores, Acreedores, Plan General Contable ]  */
+div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom,
 div#rootPanel div div div div div.gwt-SplitLayoutPanel div div div div.aon_scroll_area.aon_margin_bottom {
 	margin: 1rem;
 	padding-top: 1rem;
@@ -582,9 +681,185 @@ div#rootPanel div div div div div.gwt-SplitLayoutPanel div div div div.aon_scrol
 	background-color: #fff;
 }
 
+
 .aon_filter_panel  {
 	border: none;
 	background-color: #fff;
 }
 
+.gwt-TextBox.aon-nopadding.aon-nomargin:not(:disabled) {
+	padding:0.15rem !important;	
+}
 
+/* .aon-Salary-DraftPanel .gwt-TextBox:disabled {
+	border:none !important;
+}
+ */
+.gwt-TextBox.aon-nopadding.aon-nomargin:disabled {
+	margin:0px !important;
+	padding:0.15rem !important;	
+	border: .0625rem solid transparent !important;
+}
+
+.gwt-Selector .aon-Salary-DraftPanel .aon-dataTable-row-odd:hover, 
+.gwt-Selector .aon-Salary-DraftPanel .aon-dataTable-row-even:hover {
+  background-color: #fff !important;
+}
+
+.aon-editDataTable-button.aon-icon-download {
+	background-size: 16px ;
+}
+
+.aon_card{
+	box-shadow: none !important;
+	border: .0625rem solid #cbd5e1 !important;
+}
+
+.aon_border_left {
+	border-left: #cbd5e1 1px solid;
+}
+
+.aon_border_bottom {
+	border-bottom: .0625rem solid #cbd5e1 !important;
+}
+
+
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+	background-color: #f1f5f9 !important;
+}
+
+div[style*='height:55px'] > .aon_toolbar {
+    min-height: 55px ;
+}
+
+.searchPanel-template {
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-bottom: 4rem ;
+	border-bottom: none !important;
+}
+
+.aon_flex_column.aon_custom_text_box {
+    width: auto ;
+}
+
+.aon-MainCreta-Events *, 
+.aon-EmployeeTree-Events * {
+  border-color: #fff !important;
+  background-color: #fff !important;
+}
+
+
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs ,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+	background-color: #f1f5f9 !important;
+	
+	
+}
+
+.aon-MainCreta-Events .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs), 
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs) {
+    margin-top: 6px;
+	height: 40px !important;
+}
+
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab{
+	margin-bottom: 4px;	
+	border-bottom: 2px solid #f1f5f9 !important;
+}
+
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab,
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab *,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab *{
+	background-color: #f1f5f9 !important;
+}
+
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected,
+.aon-MainCreta-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected *,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected,
+.aon-EmployeeTree-Events .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected *{
+	background-color: #fff !important;
+}
+
+.aon-EmployeeTree-Events div:has( > .gwt-TabLayoutPanelContentContainer ){
+	inset:48px 0px 0px 0px !important;
+}
+
+.aon-MainTrash-Stack .gwt-MenuBar-horizontal, 
+.aon-MainCreta-Events .gwt-MenuBar-horizontal, 
+.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
+.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
+  background-color: #fff !important;
+}
+
+.aon-Salary-DraftPanel tr:last-child td {
+	padding-bottom: 0px !important;
+}
+
+.salaryDraftContent {
+	--height-adjust: -35;
+}
+
+.material-icons[icon] {
+    color: transparent;
+    --aonPayroll: transparent;
+}
+
+.material-icons[icon="person"] {
+	background-image: url('/icons/user.svg');
+}
+
+.material-icons[icon="person_off"] {
+	background-image: url('/icons/user-x.svg');
+}
+
+.material-icons[icon="place"] {
+	background-image: url('/icons/map-pin.svg');
+}
+
+.material-icons[icon="domain"] {
+	background-image: url('/icons/building-2.svg');
+}
+
+.gwt-TreeItem .material-icons[icon] {
+	width: 20px;
+  	height: 20px;
+  	background-size: 20px;
+  	background-repeat: no-repeat;
+}
+
+img[image='segsocial']{
+    background-image: url('/icons/SeguridadSocial.svg') !important;
+}
+
+img[image='ine'] {
+	background-image: url('/icons/ine.svg') !important;
+  	background-size: 13px !important;
+  	width: 16px !important;
+  	height: 18px !important;
+  	background-position-y: bottom !important;
+  	background-repeat: no-repeat !important;
+}    
+
+div:has( > .aon_icon_menu_collapse) {
+	display: flex ;
+} 
+.aon_customer_notes_content {
+	padding: 1rem !important;
+}
+
+.aon_customer_card_observation {
+	background-color: #f1f5f9 !important;
+	border: 1px solid #f1f5f9 !important;
+}
+
+.aon_customer_card_content {
+	background-color: transparent !important;
+	border-radius: .375rem !important;
+}
+
+.aon_custom_text_box_no_border {
+	border: none !important;
+}

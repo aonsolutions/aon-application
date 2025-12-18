@@ -35,11 +35,11 @@ import com.esferalia.aon.file.seres.connect2.delivery.v4.data.SEH1P;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -54,6 +54,7 @@ import com.esferalia.aon.seres.SeresUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConnectDeliveryWriterOccam  implements Serializable {
 
@@ -81,6 +82,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 
 	public FileOutput createFile(Delivery delivery) throws FileNotFoundException, UnsupportedEncodingException {
+		delivery.getPackaging();
 		return createFile(delivery, delivery.getPackagingData(), delivery.getEdiCodes());
 	}
 	
@@ -105,7 +107,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		rectl.seh1c = createSEH1CRecord(delivery, codes);
 		rectl.seh1dList = createSEH1DList(delivery, codes);
-		if(packageData != null) {
+		if(AonStringUtils.isNotBlank(packageData)) {
 			rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);			
 		} else if(!delivery.getPackaging().isEmpty()) {
 			rectl.seh1pList = createSEH1PList2(delivery, codes);
@@ -244,7 +246,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 			packaging.seh1lList = new ArrayList<>();
 			Integer line = i + 1;
-			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, quantity, codes));
+			packaging.seh1lList.add(createSEH1LRecordOld(line, delivery, detail, quantity, codes));
 			list.add(packaging);
 		}
 		
@@ -425,7 +427,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Línea de artículos
 	 */
-	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity, EdiCodes codes) {
+	private SEH1L createSEH1LRecordOld(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity, EdiCodes codes) {
 		if(detail.getItem().getExpireDate() == null && detail.getItem().getProduct().isPerishable()) {
 			Date expireDate = AonDateUtils.addDays(detail.getItem().getSerialDate(), detail.getItem().getProduct().getDaysToExpire());
 			detail.getItem().setExpireDate(expireDate);			
@@ -458,7 +460,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		String customerPackage = obtainPackageUnitTag(detail, codes.getCustomerPackage());
 		double quantity = packageQuantity == null 
 			? obtainPackageQuantity(detail.getItem(), detail.getQuantity(), customerPackage)
-			: obtainPackageQuantity(detail, packageQuantity, customerPackage);		
+			: obtainPackageQuantityOld(detail, packageQuantity, customerPackage);		
 
 		seh1l.setCantidadEnviada_12_(quantity);
 		seh1l.setUnidadDeMedidaCantidadEnviada(StringUtils.substring(customerPackage, 0, 3).toUpperCase());
@@ -515,7 +517,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, ItemComposition ic, Double packageQuantity, EdiCodes codes) {
-		Item item = ic.getComposition();
+		Item item = AON.getItem(new Domain().setId(domainId).setName(domainName), login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getIdProperty().eq(ic.getComposition().getId())), new Options().setFull(true));
 		if(item.getExpireDate() == null && item.getProduct().isPerishable()) {
 			Date expireDate = AonDateUtils.addDays(item.getSerialDate(), item.getProduct().getDaysToExpire());
 			item.setExpireDate(expireDate);			
@@ -542,7 +546,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(item.getSerialNumber());
-		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
+		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
 		seh1l.setSeh1b(createSEH1BRecord(item));
 		
@@ -563,7 +567,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackUnits() * item.getPackMeasurement());
 		} else {
 			seh1l.setCantidadEnviada_12_(quantity);
-			seh1l.setUnidadDeMedidaCantidadEnviada(null);
+			seh1l.setUnidadDeMedidaCantidadEnviada(item.getPackUnitsTag().getName().substring(0, 3).toUpperCase());
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
 
@@ -811,7 +815,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return 0.0;
 	}
 	
-	private double obtainPackageQuantity(DeliveryDetail detail, double packageQuantity, String customerPackingTag) {
+	private double obtainPackageQuantityOld(DeliveryDetail detail, double packageQuantity, String customerPackingTag) {
 		if(customerPackingTag != null){
 			Tag packFormatTag = detail.getItem().getPackFormatTag();
 			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();

@@ -482,6 +482,7 @@ color: var(--aonSearchButton);
   position: relative;
   height: calc(100vh - 49px);
   overflow-y: auto;
+  
   /* top | right | bottom | left */
   margin: 0px 0px 0px 0px;
  
@@ -489,6 +490,15 @@ color: var(--aonSearchButton);
   /*box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));*/
   border-left: 1px solid rgba(0,0,0,0.1);
   border-top: 1px solid rgba(0,0,0,0.1);
+  
+  margin-left: 68px;
+  
+  transition: margin-left .3s;
+}
+
+#rootPanel.closeSidenav {
+  margin-left: 0px !important; /*13.75rem; !important;*/
+  padding-left: 10px;
 }
 
 .rightPanel {
@@ -936,7 +946,7 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuSidenav {
-  width: 5rem;
+  width: 4.4rem;
   left: 0px;
   font-size: 10px;
   background-color: var(--aonHeaderBackgroundColor);
@@ -948,6 +958,59 @@ background-color: var(--aonLightGray);
   /* border: 1px solid rgba(0,0,0,0.1); */
   overflow-y: auto;
   z-index: 1;
+}
+
+/*
+ ------------------ Menu Collapse Button
+*/
+
+#aonMenuAnchor {
+	position: absolute;
+	left: 20px;
+	top: 53px;
+	z-index: 3;
+	cursor: pointer;
+	transition: all .5s;
+}
+
+#aonMenuAnchor.close {
+	background-color: #eee;
+	left: -10px;
+	top: 55px;
+	border-radius: 10px;
+	padding-left: 5px;
+}
+
+#aonMenuAnchor.close .aonMenuAnchorDivSpan {
+	display: none;
+}
+
+#aonMenuAnchorDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.aonMenuAnchorDivSpan {
+	font-size: 10px;
+}
+
+#aonMenu #aonMenuSidenav{
+	transition: width .3s;
+}
+
+#aonMenuSidenav > ul {
+	margin-top: 68px;
+}
+
+#aonMenuSidenav.close {
+	width: 0px !important; /*13.75rem;*/
+	min-width: 0 !important; /*13.75rem;*/
+	justify-content: center;
+}
+
+#expandHirin {
+	display: none;
 }
 
 .aonMenuLeftop  {
@@ -1003,7 +1066,9 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuTopnav {
-  width: 100%;
+  /*width: 100%;*/
+  width: -moz-available;
+  width: -webkit-fill-available;
   height: 5rem;
   position: fixed;
   top: 48px;
@@ -1210,6 +1275,7 @@ background-color: var(--aonLightGray);
   cursor: pointer;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
+  position: relative;
 }
 
 .aonAppMenuSidenavListSelected {
@@ -3304,6 +3370,10 @@ color: var(--aonWhite);
   margin-top: 6px;
 }
 
+#aonMenuList-contentIndex {
+	display: none;
+}
+
 #apps {
   margin-top: 6px;
 }
@@ -4019,7 +4089,7 @@ color: var(--aonWhite);
 }
 
 .aonNewMenuSideNav{
-  width: 0px;
+  width: 68px;
 }
 
 .aonNewMenuTopNav{
@@ -4171,13 +4241,13 @@ display: block;
 	grid-gap: 1rem;
 }
 
-@media (769px <= width <= 1229px) {
+@media (1080px <= width <= 1400px) {
   .aonCardsPanel {
 	grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
 }
 
-@media (1230px <= width) {
+@media (1401px <= width) {
   .aonCardsPanel {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
   }
@@ -4919,5 +4989,9 @@ font-weight: 600;
 
   .aonHeight62 {
     height: 62px;  
+  }
+
+  .aonSubMenuOptions{
+  	padding-left: .3rem;
   }
 

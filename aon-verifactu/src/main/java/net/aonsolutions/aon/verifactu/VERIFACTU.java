@@ -4,8 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.soap.SOAPMessage;
 
 import org.w3c.dom.Document;
@@ -42,6 +42,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ConsultaFactuSistemaFacturacionType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ObjectFactory;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
@@ -56,6 +58,29 @@ public class VERIFACTU {
 
 	private VERIFACTU() {
 		
+	}
+
+	// **************************************************************
+	// ************************************************ [QUERY] *****
+	// **************************************************************
+	public static VerifactuContext query(InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+			.setOperation(InvoiceCommunicationOperation.CONSULTATION);
+		return query(vc);
+	}
+	
+	private static VerifactuContext query(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkQuery(vc);
+		ConsultaFactuSistemaFacturacionType request = Query2Verifactu.build(vc);
+		vc.setQueryRequest( request );
+		ObjectFactory of = new ObjectFactory();
+		JAXBElement<ConsultaFactuSistemaFacturacionType> jaxbElement = of.createConsultaFactuSistemaFacturacion(request);
+		Document document = VerifactuXMLUtils.toDocument(jaxbElement, ConsultaFactuSistemaFacturacionType.class);
+		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
+		VerifactuResponse dataResponse = VerifactuXMLUtils.postQuery(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
+		vc.setResponse( dataResponse );
+		return vc;
 	}
 
 	// **************************************************************
@@ -190,7 +215,27 @@ public class VERIFACTU {
 		saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);					
 	}
 	
-	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+	private static void checkQuery(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkCompany(vc);
+		checkConfig(vc);
+		if (vc.getInvoiceCommunicationQuery() == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0028);
+		}
+		if (vc.getInvoiceCommunicationQuery().getYear().isEmpty() ) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0029);
+		}
+		if (vc.getInvoiceCommunicationQuery().getMonth().isEmpty() ) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0030);
+		}
+	}
+	
+	static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+		checkCompany(vc);
+		checkConfig(vc);
+		checkInvoices(vc);
+	}
+	
+	private static void checkCompany(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0001);
 		}
@@ -202,9 +247,9 @@ public class VERIFACTU {
 			|| AonStringUtils.isBlank( vc.getCompany().getDomain().getName())) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0003);
 		}
-		if (vc.invoiceCount() == 0) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
-		}
+	}
+	
+	private static void checkConfig(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc.getConfig() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
 		}
@@ -213,11 +258,17 @@ public class VERIFACTU {
 		}
 	}
 	
+	private static void checkInvoices(VerifactuContext vc) throws InvoiceCommunicationException {
+		if (vc.invoiceCount() == 0) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
+		}
+	}
+	
 	// **************************************************************
 	// **************************************************************
 	// **************************************************************
 
-	private static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
+	static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
 		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.VERIFACTU, request);
 	}
 
@@ -225,7 +276,7 @@ public class VERIFACTU {
 		return InvoiceCommunicationDAO.saveResponse(ctx, domain, InvoiceCommunicationType.VERIFACTU, dataRequest, response);		
 	}
 
-	private static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
+	static void saveInvoiceData(AONContext ctx, VerifactuContext vc, RegistroFacturacionAltaType registroAlta) throws InvoiceCommunicationException {
 		Domain domain = vc.getDomain();
 		Integer invoiceId = AonNumberUtils.toInteger(registroAlta.getRefExterna());
 		InvoiceDataDAO.save(ctx, new InvoiceData()
@@ -262,7 +313,7 @@ public class VERIFACTU {
 		}
 	}
 	
-	private static void saveVerifactuBlockchain(AONContext ctx, Domain domain, VerifactuBlockchain blockchain) {
+	static void saveVerifactuBlockchain(AONContext ctx, Domain domain, VerifactuBlockchain blockchain) {
 		AppParamDAO.saveApplicationParameter(ctx, new ApplicationParameter()
 			.setDomain(domain.getId())
 			.setName(AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT.name())
@@ -300,7 +351,7 @@ public class VERIFACTU {
 		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
-	private static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
+	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
 		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.VERIFACTU, status);
 	}
 	
@@ -311,7 +362,7 @@ public class VERIFACTU {
 		return null;
 	}
 
-	private static VerifactuBlockchain getBlockchain(AONContext ctx) {	
+	static VerifactuBlockchain getBlockchain(AONContext ctx) {	
 		return new VerifactuBlockchain()
 			.setDocument(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_DOCUMENT))
 			.setReference(AppParamDAO.fetchValue(ctx, AppParam.VERIFACTU_BLOCKCHAIN_REFERENCE))

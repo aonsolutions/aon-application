@@ -37,6 +37,7 @@ export const ALL1 = 'Todos';
 export const ALL2 = 'Todos';
 export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
+export const AMORTIZATION = 'Amortización';
 export const ANNUAL_VIEW = 'Vista anual';
 export const AON_SERVICES = 'Servizos Aon';
 export const API_DOCUMENTATION = 'Documentación API';
@@ -195,6 +196,7 @@ export const EXPIRATIONS = 'Vencementos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Erros';
+export const EXPAND_HIRIND = 'Ampliar a contratación';
 
 // ----- F
 
@@ -311,6 +313,7 @@ export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
+export const MY_CLOUD = 'A miña nube';
 
 // ----- N
 

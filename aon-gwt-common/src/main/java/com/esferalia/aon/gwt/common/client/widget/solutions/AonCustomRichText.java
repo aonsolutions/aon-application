@@ -55,6 +55,10 @@ public class AonCustomRichText extends HTMLPanel  {
 	public String getValue() {
 		return this.richTextArea.getHTML();
 	}
+	
+	public void setMinHeight(String height) {
+		richTextArea.getElement().getStyle().setProperty("min-height", height);
+	}
 
 	public void addBlurHandler(BlurHandler handler) {
 		richTextArea.addBlurHandler(handler);

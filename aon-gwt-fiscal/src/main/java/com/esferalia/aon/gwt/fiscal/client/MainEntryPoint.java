@@ -1027,7 +1027,7 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		}  else if( entryPoint.equalsIgnoreCase(CUSTOMER_INVOICE_MODULE_ENTRY_POINT) ) {
-			GWT.runAsync(TargetEnterpriseModule.class, new RunAsyncCallback() {
+			GWT.runAsync(CustomerInvoiceModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -1165,6 +1165,26 @@ public class MainEntryPoint implements EntryPoint {
 	public static native boolean isSig()
 	/*-{
 		return $wnd.localStorage.getItem("isSig");
+	}-*/;
+	
+	public static native int getBookingDomainId()
+	/*-{
+		return $wnd.localStorage.getItem("booking_domain_id");
+	}-*/;
+	
+	public static native String getBookingDomainName()
+	/*-{
+		return $wnd.localStorage.getItem("booking_domain_name");
+	}-*/;
+	
+	public static native int removeBookingDomainId()
+	/*-{
+		return $wnd.localStorage.removeItem("booking_domain_id");
+	}-*/;
+	
+	public static native String removeBookingDomainName()
+	/*-{
+		return $wnd.localStorage.removeItem("booking_domain_name");
 	}-*/;
 	
 	/**

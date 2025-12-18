@@ -128,7 +128,7 @@ export class AonHelp extends AonElement {
 		
 		helpContent.appendChild(supportContent);
 
-		let helpContentIndexDiv = this.createSpan();
+		let helpContentIndexDiv = this.createSpan("contentIndexHelp");
 		helpContentIndexDiv.className = "helpCardText";
 
 		let helpContentIndexI = this.createElement(TAG.I);

@@ -37,6 +37,7 @@ export const ALL1 = 'Alle';
 export const ALL2 = 'Alle'
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
+export const AMORTIZATION = 'Amortization';
 export const ANNUAL_VIEW = 'Jahresansicht';
 export const AON_SERVICES = 'Aon Services';
 export const API_DOCUMENTATION = 'API Documentation';
@@ -194,6 +195,7 @@ export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Abgelaufen';
 export const EXPIRED_SESSION = 'Sitzung abgelaufen';
 export const ERRORS = 'Fehler';
+export const EXPAND_HIRIND = 'Erweitern Sie die Einstellungsmöglichkeiten';
 
 // ----- F
 
@@ -309,6 +311,7 @@ export const MY_DATA = 'My Data';
 export const MAGIC_LINK = 'Zusendung des Zugangslinks per E-Mail';
 export const MY_MANAGER = 'Mein Manager';
 export const MY_USER = 'My User';
+export const MY_CLOUD = 'Meine Wolke';
 
 // ----- N
 

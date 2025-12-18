@@ -192,6 +192,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			@Override
 			public void onValueChange(ValueChangeEvent<FinanceParams> event) {
 				hideMessage();
+				resetInfo();
 				onSearch();
 			}
 		});
@@ -248,6 +249,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			enableMoreData();
 			resetSearchOffset();
 			searchPanel.initialize();
+			resetInfo();
 			onSearch();
 		});
 		addToolbarButton(resetSearchButton);
@@ -323,7 +325,18 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	
 	public void setFBatch(FBatch fBatch) {
 		this.fbatch = fBatch;
+		
+		resetInfo();
+		
 		onSearch();
+	}
+	
+	private void resetInfo() {
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		
+		aviableFinances.clear();
+		selectedFinances.clear();
 	}
 	
 	public void onSearch() {

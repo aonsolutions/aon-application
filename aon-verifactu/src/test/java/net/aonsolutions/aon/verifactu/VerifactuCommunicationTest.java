@@ -33,117 +33,119 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	@Test
 	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_nacional_simplificadaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_suplidosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_rectificativa_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_rectificativa_simplificadaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_ispAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_reAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_irpf_professionalAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_intracomunitaria_serviciosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_intracomunitaria_no_serviciosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_extracomunitariaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_extracomunitaria_servicioAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_can_ceu_melAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_can_ceu_mel_servicioAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
 	@Test
 	void venta_nacional_exenta_e1AEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_anuladaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_simple_criterio_cajaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 	
 	@Test
 	void venta_nacional_cliente_no_censadoAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_NO_CENSADO.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_NO_CENSADO.get(getEnvironment()).setId(1);
 		RespuestaExpedidaType ret = communicateInvalid(invoice);
 		assertNotNull(ret);
 		
@@ -159,12 +161,20 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	
 	@Test
 	void venta_nacional_cliente_cedillaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_CEDILLA.get(ctx, DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_CEDILLA.get(getEnvironment()).setId(1);
+		communicateValid(invoice);
+	}
+	
+	
+	@Test
+	void venta_nacional_cliente_apostrofeAEATTest() throws InvoiceCommunicationException {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_CLIENTE_APOSTOFRE.get(getEnvironment()).setId(1);
 		communicateValid(invoice);
 	}
 
+
 	private void communicateValid(Invoice invoice) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
+		invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		RespuestaExpedidaType ret = communicateCommon(invoice);
@@ -174,8 +184,6 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		if (estado == EstadoRegistroType.ACEPTADO_CON_ERRORES) {
 			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
 			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
-			
-			System.out.println(  estado + " (" + codigoErrorRegistro + ") " + descripcionErrorRegistro );
 			
 			assertNotNull(codigoErrorRegistro);
 			assertEquals( BigInteger.valueOf(2007) , codigoErrorRegistro);
@@ -197,7 +205,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	}
 	
 	private RespuestaExpedidaType communicateInvalid(Invoice invoice) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
+		invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		RespuestaExpedidaType ret = communicateCommon(invoice);
@@ -213,8 +221,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	
 	private VerifactuContext doCommunicate(Invoice invoice) throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext  icc = getInvoiceCommunicatorContext(invoices);
-		icc.setConfig(configWithCertificate());
+		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		vc.setRequest( request );

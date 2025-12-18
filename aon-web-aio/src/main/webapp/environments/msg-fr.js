@@ -37,6 +37,7 @@ export const ALL1 = 'Todos';
 export const ALL2 = "Tous";
 export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
+export const AMORTIZATION = 'Amortissement';
 export const ANNUAL_VIEW = 'Vue annuelle';
 export const AON_SERVICES = 'Servicios Aon';
 export const API_DOCUMENTATION = 'Documentación API';
@@ -197,6 +198,7 @@ export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'La session a expiré';
 export const ERRORS = 'Errores';
+export const EXPAND_HIRIND = "Élargir l'embauche";
 
 // ----- F
 
@@ -313,6 +315,7 @@ export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
+export const MY_CLOUD = 'Mon nuage';
 
 
 // ----- N

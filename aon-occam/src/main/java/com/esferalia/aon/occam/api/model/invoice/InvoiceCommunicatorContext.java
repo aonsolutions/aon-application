@@ -22,6 +22,7 @@ public class InvoiceCommunicatorContext {
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
 	private boolean failOnWrongValidation = true;
+	private InvoiceCommunicationQuery communicationQuery;
 	
 	private static final ConsoleLogger VOID_CONSOLE_LOOGER = new ConsoleLogger() {
 
@@ -88,6 +89,14 @@ public class InvoiceCommunicatorContext {
 	}
 	public InvoiceCommunicatorContext setPreserveRawdocOnDeletion(boolean preserveRawdocOnDeletion) {
 		this.preserveRawdocOnDeletion = preserveRawdocOnDeletion;
+		return this;
+	}
+	
+	public InvoiceCommunicationQuery getCommunicationQuery() {
+		return communicationQuery;
+	}
+	public InvoiceCommunicatorContext setCommunicationQuery(InvoiceCommunicationQuery communicationQuery) {
+		this.communicationQuery = communicationQuery;
 		return this;
 	}
 

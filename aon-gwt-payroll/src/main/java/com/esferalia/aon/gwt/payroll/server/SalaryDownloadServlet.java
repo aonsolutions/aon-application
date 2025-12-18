@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
+import java.io.ByteArrayOutputStream;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -134,7 +134,7 @@ public class SalaryDownloadServlet extends HttpServlet {
 		
 		for(Integer salaryId : salaryIds) {
 			try (
-					ByteOutputStream os = new ByteOutputStream(30 * 1024); 
+					ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024); 
 					CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)
 			) {
 				
@@ -157,7 +157,7 @@ public class SalaryDownloadServlet extends HttpServlet {
 				String fileName = salaryRecord.get(SALARY.EMPLOYEE_NAME).replaceAll(",", "").replaceAll(" ", "_").trim();
 				fileName += "_" + dateFormat.format(salaryRecord.get(SALARY.CHARGE_DATE));
 				
-				byte[] bytes = os.getBytes();
+				byte[] bytes = os.toByteArray();
 				
 				pdfFiles.put(fileName, bytes);
 				

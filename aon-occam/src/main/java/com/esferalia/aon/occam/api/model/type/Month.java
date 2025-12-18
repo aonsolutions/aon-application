@@ -38,4 +38,9 @@ public enum Month {
     	return Optional.of(Month.values()[i]);
     }
     
+    public static Optional<Integer> value(Month month){
+    	if (month == null) return Optional.empty();
+		return Optional.of(month.ordinal());
+    }
+    	    
 }

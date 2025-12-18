@@ -70,11 +70,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-      		<groupId>com.esferalia.aon</groupId>
-     	 	<artifactId>aon.in.payroll</artifactId>
-      		<version>${project.version}</version>
-      		<scope>compile</scope>
-    	</dependency>
+      			<groupId>com.esferalia.aon</groupId>
+     	 		<artifactId>aon.in.payroll</artifactId>
+      			<version>${project.version}</version>
+      			<scope>compile</scope>
+    		</dependency>
 		<dependency>
       		<groupId>net.aonsolutions</groupId>
      	 	<artifactId>aon.in.pdf</artifactId>
@@ -93,6 +93,12 @@
 			<version>2.12.0</version>
 			<scope>provided</scope>
 		</dependency>
+                <dependency>
+                        <groupId>org.gwtproject</groupId>
+                        <artifactId>gwt-servlet-jakarta</artifactId>
+                        <version>2.12.2</version>
+                        <scope>compile</scope>
+                </dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
@@ -102,7 +108,7 @@
 		<dependency>
  			<groupId>org.json</groupId>
  			<artifactId>json</artifactId>
- 			<version>20250107</version>
+ 			<version>20250517</version>
  		</dependency>
 	</dependencies>
 </project>

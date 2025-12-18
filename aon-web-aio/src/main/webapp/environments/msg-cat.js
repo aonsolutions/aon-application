@@ -37,6 +37,7 @@ export const ALL1 = 'Tots';
 export const ALL2 = 'Totes';
 export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
+export const AMORTIZATION = 'Amortització';
 export const ANNUAL_VIEW = 'Vista anual';
 export const AON_SERVICES = 'Serveis Aon';
 export const API_DOCUMENTATION = 'Documentació API';
@@ -194,6 +195,7 @@ export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
 export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Errors';
+export const EXPAND_HIRIND = 'Ampliar Contractació';
 
 // ----- F
 
@@ -309,6 +311,7 @@ export const MY_DATA = 'Les Meves Dades';
 export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 export const MAGIC_LINK = 'Enviament d´enllaç d´accés per email';
+export const MY_CLOUD = 'El meu núvol';
 
 // ----- N
 

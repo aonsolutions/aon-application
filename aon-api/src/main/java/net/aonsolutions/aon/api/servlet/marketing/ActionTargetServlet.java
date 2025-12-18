@@ -2,8 +2,12 @@ package net.aonsolutions.aon.api.servlet.marketing;
 
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +53,9 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.product.ProductBooking;
+import com.esferalia.aon.occam.api.model.product.ProductBookingType;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -87,6 +94,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MarketingCampaignDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -487,7 +495,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
 				System.out.println("----------------------- Check Customer");
 				
- 				checkCustomer(api, ctx);
+				Customer customer = checkCustomer(api, ctx);
  				
  				// System.out.println("----------------------- Create Scope");
 				
@@ -501,7 +509,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
 				System.out.println("----------------------- Create Auth / User");
 				
-				createDefaultUser(api, ctx, newDomain);
+				User newUser = createDefaultUser(api, ctx, newDomain);
 				
 				// TODO: esto hay que hacerlo cuando nos aseguremos que los sellers que se muestran en la accion comercial tenga un usuario del padre asociado
 				
@@ -511,7 +519,22 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				
 				System.out.println("----------------------- Domain Apps / Config");
 				
-				insertDomainConfiguration(ctx, newDomain);
+
+				Integer marketingActionId = JsonUtils.getInteger(api.getData(), "marketingAction");
+				MarketingAction mkAction = MarketingCampaignDAO.getAction(ctx, marketingActionId);
+				Domain officeDomain = DomainDAO.getDomain(ctx, mkAction.getDomain());
+				
+				LinkedList<ProductBooking> productsBooking = ProductDAO.getBookingList(
+						ctx, 
+						new ProductParams()
+							.setDomainName(officeDomain.getName())
+							.setDomain(officeDomain.getId())
+							.setUser(api.getUser().getLogin())
+							.setOffset(0)
+							.setLimit(Integer.MAX_VALUE)
+						);
+				
+				insertDomainConfiguration(ctx, api.getDomain(), newDomain, newUser, customer, productsBooking);
 				
 				System.out.println("----------------------- Account Period");
 				
@@ -1094,29 +1117,52 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 	}
 	
-	private static void insertDomainConfiguration(CloseableAONContext ctx, Domain newDomain) {
-		SecurityDAO.saveDomainMaxDefinedUser(ctx, newDomain.getId(), 1);
+	private static void insertDomainConfiguration(CloseableAONContext ctx, Domain officeDomain, Domain newDomain, User newUser, Customer customer, LinkedList<ProductBooking> productsBooking) {
+		SecurityDAO.saveDomainMaxDefinedUser(ctx, newDomain.getId(), 0);
 		
-		DomainApp domainApp = new DomainApp()
-				.setDomain(newDomain.getId())
-				.setApp(AonApp.INVOICE)
-				.setActive(true);
+		Optional<ProductBooking> defaultProduct = productsBooking.stream().filter(pb -> pb.getBookingType().equals(ProductBookingType.DEFAULT)).findFirst();
 		
-		SecurityDAO.saveDomainApp(ctx, domainApp, false);
-		
-		domainApp = new DomainApp()
-				.setDomain(newDomain.getId())
-				.setApp(AonApp.DOCUMENTAL)
-				.setActive(true);
-		
-		SecurityDAO.saveDomainApp(ctx, domainApp, false);
-		
-		domainApp = new DomainApp()
-				.setDomain(newDomain.getId())
-				.setApp(AonApp.MESSENGER)
-				.setActive(true);
-		
-		SecurityDAO.saveDomainApp(ctx, domainApp, false);
+		if(defaultProduct.isEmpty() || defaultProduct.get().getAonApps().isEmpty()) {
+			DomainApp domainApp = new DomainApp()
+					.setDomain(newDomain.getId())
+					.setApp(AonApp.INVOICE)
+					.setActive(true);
+			 
+			SecurityDAO.saveDomainApp(ctx, domainApp, false);
+			
+			domainApp = new DomainApp()
+					.setDomain(newDomain.getId())
+					.setApp(AonApp.DOCUMENTAL)
+					.setActive(true);
+			
+			SecurityDAO.saveDomainApp(ctx, domainApp, false);
+			
+			domainApp = new DomainApp()
+					.setDomain(newDomain.getId())
+					.setApp(AonApp.MESSENGER)
+					.setActive(true);
+			
+			SecurityDAO.saveDomainApp(ctx, domainApp, false);
+		} else {
+			defaultProduct.get().getAonApps().forEach(aonApp -> {
+				DomainApp domainApp = new DomainApp()
+						.setDomain(newUser.getDomain().getId())
+						.setActive(true)
+						.setApp(aonApp)
+						;
+				
+				SecurityDAO.saveDomainApp(ctx, domainApp, false);
+				
+				insertUserAppRole(ctx, newUser, aonApp);
+			});
+			
+			if(defaultProduct.get().isWebhook() && null != defaultProduct.get().getWebhookProductId())
+				try {
+					fireWebhook(ctx, officeDomain, newDomain, newUser.getLogin(), defaultProduct.get(), customer);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		}
 		
 		ApplicationParameter trailParam = new ApplicationParameter()
 				.setDomain(newDomain.getId())
@@ -1124,6 +1170,71 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setValue("50");
 		
 		AppParamDAO.insertApplicationParameter(ctx, trailParam);
+	}
+	
+	private static void fireWebhook(CloseableAONContext ctx, Domain officeDomain,  Domain newDomain,  String login, ProductBooking product, Customer customer) throws Exception {
+		RegistryMedia customerEmail = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+		RegistryMedia customerPhone = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.CELLULAR.value())));
+		
+		String targetURL =  "https://" + officeDomain.getName() + "/ms/api/contracted_plans_servlet/callForm";
+
+		// LOCAL
+		//String targetURL =  "http://" + officeDomain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
+		
+		 JSONObject companyData = new JSONObject()
+				 .put("name", customer.getName()) 
+				 .put("document", customer.getDocument()) 
+				 ;
+		
+		 JSONObject formData = new JSONObject()
+		            .put("email", null != customerEmail && null != customerEmail.getId() ? customerEmail.getValue() : AonStringUtils.EMPTY)
+		            .put("name", customer.getName()) 
+		            .put("surname", AonStringUtils.EMPTY) 
+		            .put("phone", null != customerPhone && null != customerPhone.getId() ? customerPhone.getValue() : AonStringUtils.EMPTY)
+		            .put("chanel", "Solicitud Software")
+		            .put("companyData", companyData)
+		            .put("domainUrl", newDomain.getName())
+		            .put("plan", product.getCode())
+		            .put("serviceId", product.getWebhookProductId());
+		
+		URL url = new URI(targetURL).toURL();
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		
+		conn.setRequestProperty("domain_login", login);
+		conn.setRequestProperty("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		conn.setDoOutput(true);
+
+		try (OutputStream os = conn.getOutputStream()) {
+		    os.write(formData.toString().getBytes("UTF-8"));
+		}
+		
+		conn.getInputStream().close();
+	}
+	
+	private static void insertUserAppRole(CloseableAONContext ctx, User user, AonApp aonApp) {
+		List<AonRole> aonRoles = AonApp.getPortalAonRole(aonApp);
+		Byte[] arrayAonRoles = aonRoles.stream()
+			    .map(ar -> ar.value())
+			    .toArray(Byte[]::new);
+		
+		List<UserAppRole> userAppRole = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getRoleProperty().in(arrayAonRoles))).collect(Collectors.toList());
+		
+		if(userAppRole.isEmpty()) {
+			aonRoles.forEach(aonRole -> {
+				UserAppRole newUserAppRole = new UserAppRole()
+						.setDomain(user.getDomain().getId())
+						.setApp(null)
+						.setUser(user.getId())
+						.setRole(aonRole);
+				
+				SecurityDAO.insertUserAppRole(ctx, newUserAppRole);
+			});
+			
+		} 
 	}
 	
 	private static void insertAccountPeriod(CloseableAONContext ctx, Domain newDomain) {

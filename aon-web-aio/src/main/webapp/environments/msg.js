@@ -79,6 +79,7 @@ export const ALL1 = MSG.ALL1;
 export const ALL2 = MSG.ALL2;
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
+export const AMORTIZATION = MSG.AMORTIZATION;
 export const ANNUAL_VIEW = MSG.ANNUAL_VIEW;
 export const AON_BLUE = 'Azul Aon';
 export const AON_SERVICES = MSG.AON_SERVICES;
@@ -307,6 +308,7 @@ export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
 export const EXAMPLE = "Example";
 export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
+export const EXPAND_HIRIND = MSG.EXPAND_HIRIND;
 
 // ----- F
 
@@ -496,6 +498,7 @@ export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
 export const MOVE_STOCK = "Mover Stock"; //TODO
 export const MINS = "Minutos"; //TODO
+export const MY_CLOUD = MSG.MY_CLOUD;
 
 // ----- N
 

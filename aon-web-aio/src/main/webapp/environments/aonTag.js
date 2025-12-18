@@ -88,6 +88,7 @@ export const AON_NEW_SUGGESTION = 'aon-new-suggestion';
 export const AON_SWITCH = 'aon-switch';
 export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
+export const AON_TOOLTIP = 'aon-tooltip';
 export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
@@ -276,6 +277,7 @@ export const AON_JSF_PERIOD_AMORTIZATION = 'aon-jsf-period-amortization' ;
 export const AON_JSF_END_PERIOD_ENTRIES = 'aon-jsf-end-period-entries' ;
 export const AON_JSF_INVOICE_REPORT = 'aon-jsf-invoice-report' ;
 export const AON_JSF_INVOICE_RECORDER = 'aon-jsf-invoice-recorder' ;
+export const AON_JSF_INVOICE_AMORTIZATION = 'aon-jsf-invoice-amortization' ;
 export const AON_JSF_FINANCE_TRACKING_ENTRY = 'aon-jsf-finance-tracking-entry' ;
 
 export const AON_SUITE_MENU = 'aon-suite-menu';

@@ -213,9 +213,9 @@ public class TaxBreakdown implements Serializable {
 	}
 	
 	private static void calculateBreakdown(Invoice inv, InvoiceBreakdown ib) {
-		if(ib.getPercentage() != 0.0 && ib.getQuota() == 0.0) {
+		if (AonMathUtils.isNotZero( ib.getPercentage()) && AonMathUtils.isZero( ib.getQuota())) {
 			ib.setQuota(AonMathUtils.round(ib.getBase() * ib.getPercentage() / 100 ));
-			if (inv.isSurcharge() && ib.getSurchargeQuota() != 0.0 && ib.getSurchargeQuota() == 0.0) {
+			if (inv.isSurcharge() && AonMathUtils.isNotZero( ib.getSurcharge() ) && AonMathUtils.isZero( ib.getSurchargeQuota())) {
 				ib.setSurchargeQuota( AonMathUtils.round(ib.getBase() * ib.getSurcharge() / 100 ));	
 			} else {
 				ib.setSurcharge( 0.0);

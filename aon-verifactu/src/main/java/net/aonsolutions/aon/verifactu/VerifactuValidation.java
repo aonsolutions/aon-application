@@ -37,6 +37,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ConsultaFactuSistemaFacturacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CalificacionOperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.ClaveTipoRectificativaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CompletaSinDestinatarioType;
@@ -95,6 +96,34 @@ public class VerifactuValidation {
 			this.invoice.addMessage( InvoiceErrorMessages.C050.err(InvoiceErrorKey.COMMUNICATION,error.getCode(),error.getMessage()));
 		}
 	}
+	
+	// *********************************************************
+	// *************** [VALIDACION CABECERA] *******************
+	// *********************************************************
+	public static void validateHeader(ConsultaFactuSistemaFacturacionType message) throws InvoiceCommunicationException {
+		try {
+			CABECERA_OBLIGADO_EMISION_QUERY
+				.accept(message);
+		} catch( AonCoreException e) {
+			if (e.getCause() instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw e;
+		}
+	}
+	
+	/**
+	 * 1. ObligadoEmision
+	 * 
+	 * 	- El dato Cabecera >> ObligadoEmision >> NIF debe existir y ser válido.
+	 */
+	private static final Consumer<ConsultaFactuSistemaFacturacionType> CABECERA_OBLIGADO_EMISION_QUERY = v -> {
+		if (AonStringUtils.isBlank(v.getCabecera().getObligadoEmision().getNIF())) {
+			throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4104));
+		} else if (!AonDocumentUtil.isValid(v.getCabecera().getObligadoEmision().getNIF())) {
+			throw new AonCoreException(new InvoiceCommunicationException(InvoiceCommunicationError.VERIFACTU_4116));
+		}
+	};
 	
 	// *********************************************************
 	// *************** [VALIDACION CABECERA] *******************

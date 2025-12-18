@@ -261,9 +261,9 @@ export const COMUNICA = {
 
 export const DOCUMENTAL = {
   app: CONSTANT.DOCUMENTAL,
-  title: MSG.DOCUMENTARY,
-  description: MSG.DOCUMENTARY,
-  tag: MSG_ES.DOCUMENTARY,
+  title: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
+  description: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
+  tag: LS.isFutureTheme() ? MSG_ES.MY_CLOUD : MSG_ES.DOCUMENTARY,
   symbol: MATERIAL_ICONS.FOLDER_OPEN,
   color: "var(--aonDocumental)",
   // newColor: "var(--aonDocumental)",
@@ -1744,6 +1744,20 @@ export const SUPERSET = {
 	logo: "../assets/apps/superset.png",
 };
 
+export const EXPAND_HIRIND = {
+	app: CONSTANT.EXPAND_HIRIND,
+	title: MSG.EXPAND_HIRIND,
+	description: MSG.EXPAND_HIRIND,
+	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+};
+
+export const CONTENT_INDEX = {
+	app: CONSTANT.CONTENT_INDEX,
+	title: MSG.CONTENT_INDEX,
+	description: MSG.CONTENT_INDEX,
+	symbol: MATERIAL_ICONS.MENU_BOOK,
+};
+
 export function getConstNewApps(dur, isAyudaT) {
 //  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise)) || (url.includes('infoautonomos')) && (dur.isAdmin() || dur.isEnterprise)) {
   if((isAyudaT && (dur.isAdmin() || dur.isEnterprise()))) {
@@ -1797,8 +1811,8 @@ export const MENU_APPS = [
   NOTES,
   MESSENGER,
   WAREHOUSE,
+  CONTENT_INDEX,
   AON_CLASSIC,
-
 ];
 
 export const DESKTOP_APPS = [

@@ -53,16 +53,8 @@ export class AonConfig extends AonElement {
 
         let sideNavTitle = this.createSpan(); 
         sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
-        //sideNavTitle.innerHTML = MSG.PORTAL_MENU;
         sideNavTitle.innerHTML = MSG.SIDE_MENU;
         sideNavDiv.appendChild(sideNavTitle);
-
-        let sideNavSwitch = new AonSwitch();
-        sideNavSwitch.id = this.SIDE_NAV_SWITCH;
-        sideNavSwitch.checked =  LS.isLeftMenu();
-        sideNavDiv.appendChild(sideNavSwitch);
-
-        this.appendChild(sideNavDiv);
 
         let topNavDiv = this.createDiv();
         topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
@@ -173,21 +165,6 @@ export class AonConfig extends AonElement {
 			
 		});
 
-        sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
-            let welcome = this.getElement("aonCompanyTabFilter");
-            LS.setLeftMenu(sideNavSwitch.checked);
-            LS.setPortalChecked(sideNavSwitch.checked);
-            let side = this.getElement("aonMenuSidenav");
-            if(!welcome){
-                if(side.style.width == "0px") {
-                    aonMenu.showSideNav();
-                } else if(side.style.width == "68px") {
-                    aonMenu.hideSideNav();
-                };
-            }
-            
-        });
-
         let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
     }
@@ -259,10 +236,6 @@ export class AonConfig extends AonElement {
 
     getTopButton() {
         return this.getElement(this.TOP_NAV_SWITCH);
-    }
-
-    getLeftButton() {
-        return this.getElement(this.SIDE_NAV_SWITCH);
     }
 }
 if(!window.customElements.get(TAG.AON_CONFIG)){

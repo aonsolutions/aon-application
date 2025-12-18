@@ -3,6 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -11,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -130,7 +136,62 @@ public class ProductBookingDAO {
 	public static void requestBookingInfo(CloseableAONContext ctx, int domainId, String login, ProductBooking product, Integer customerRegistry) {
 		Domain officeDomain = DomainDAO.getDomain(ctx, domainId);
 		Customer customer = CustomerDAO.get(ctx, customerRegistry);
+		
+		if(product.isWebhook() && null != product.getWebhookProductId())
+			try {
+				fireWebhook(ctx, officeDomain, login, product, customer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 		sendRequestBookingInfogEmail(ctx, officeDomain, login, customer, product);
+	}
+
+	private static void fireWebhook(CloseableAONContext ctx, Domain officeDomain, String login, ProductBooking product, Customer customer) throws Exception {
+		Optional<RegistryRelationship> existRelationShip = RegistryRelationshipDAO.get(ctx,  f -> f.getRegistryProperty().eq(customer.getId()).and(f.getDomainProperty().eq(officeDomain.getId())).and(f.getRelationshipProperty().eq(-1)));
+		
+		RegistryMedia customerEmail = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+		RegistryMedia customerPhone = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(customer.getId()).and(f.getMediaProperty().eq(MediaType.CELLULAR.value())));
+		
+		Domain domain = DomainDAO.getDomain(ctx, f -> f.getNameProperty().eq(existRelationShip.get().getComments()));
+		
+		String targetURL =  "https://" + domain.getName() + "/ms/api/contracted_plans_servlet/callForm";
+
+		// LOCAL
+		// String targetURL =  "http://" + domain.getName() + ":8080/ms/api/contracted_plans_servlet/callForm";
+		
+		 JSONObject companyData = new JSONObject()
+				 .put("name", customer.getName()) 
+				 .put("document", customer.getDocument()) 
+				 ;
+		
+		 JSONObject formData = new JSONObject()
+		            .put("email", null != customerEmail && null != customerEmail.getId() ? customerEmail.getValue() : AonStringUtils.EMPTY)
+		            .put("name", customer.getName()) 
+		            .put("surname", AonStringUtils.EMPTY) 
+		            .put("phone", null != customerPhone && null != customerPhone.getId() ? customerPhone.getValue() : AonStringUtils.EMPTY)
+		            .put("chanel", "Solicitud Software")
+		            .put("companyData", companyData)
+		            .put("domainUrl", existRelationShip.isEmpty() ? AonStringUtils.EMPTY : existRelationShip.get().getComments())
+		            .put("plan", product.getCode())
+		            .put("serviceId", product.getWebhookProductId());
+		
+		URL url = new URI(targetURL).toURL();
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		
+		conn.setRequestProperty("domain_login", login);
+		conn.setRequestProperty("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		conn.setDoOutput(true);
+
+		try (OutputStream os = conn.getOutputStream()) {
+		    os.write(formData.toString().getBytes("UTF-8"));
+		}
+		
+		conn.getInputStream().close();
 	}
 
 	private static Domain getOfficeSibling(CloseableAONContext ctx, Integer customerRelatedRegistry) {
@@ -398,6 +459,9 @@ public class ProductBookingDAO {
 				
 				SecurityDAO.insertUserAppRole(ctx, newUserAppRole);
 			}
+			
+			SecurityDAO.saveDomainMaxDefinedUser(ctx, userDb.getDomain().getId(), 1);
+			
 		}
 		
 		// Set User normal

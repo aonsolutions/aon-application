@@ -9,8 +9,12 @@ import com.google.gwt.http.client.URL;
 
 public interface CretaService {
 	
+	public static char MULTI_VALUE_SEPARATOR_CHAR = ',';
+	public static CharSequence MULTI_VALUE_SEPARATOR = String.valueOf(MULTI_VALUE_SEPARATOR_CHAR);
+
 	public static String DATE_FORMAT = "dd/MM/yyyy";
 
+	
 	public static enum Message {
 		BEGIN,
 		END

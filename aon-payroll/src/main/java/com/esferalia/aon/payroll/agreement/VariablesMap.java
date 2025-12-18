@@ -2426,6 +2426,21 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_LIMPIEZA_QUIROFANO_MENSUAL", "P_LIMP_QF_M");
 		variablesMap.put("VALORACION_Y_DIAGNOSTICO_MENSUAL", "VAL_DIAG_M");
 
+		// Act. 05/12/25
+		variablesMap.put("PLUS_ACOMPAÑANTE_TRANSPORTE_ESCOLAR_HORAS", "P_ACOMP_TRANS_ESC_H");
+		variablesMap.put("PLUS_AYUDANTE_TECNICO_EDUCATIVO_MENSUAL", "P_AYUD_TEC_EDU_M");
+		variablesMap.put("PLUS_MANICURA_MENSUAL", "P_MANICURA_M");
+		variablesMap.put("SALARIO_MAXIMO_CONVENIO_ANUAL", "SAL_MAX_CONV_A");
+		variablesMap.put("CAMA_SUPLETORIA_O_SOFA_CAMA_MENSUAL", "CAMA_SUPL_SOFA_M");
+		variablesMap.put("HORA_NOCTURNA_DE_24_00_A_06_00_HORAS", "H_NOCT_24A6_H");
+		variablesMap.put("MINIBAR_MENSUAL", "MINIBAR_M");
+		variablesMap.put("QUEBRANTO_MONEDA_CONDUCTOR_DIARIO", "QMON_COND_D");
+		variablesMap.put("QUEBRANTO_MONEDA_TAQUILLERO_DIARIO", "QMON_TAQUIL_D");
+		
+		// Act. 17/12/25
+		variablesMap.put("PLUS_TRABAJO_EN_OBRA_MENSUAL", "P_TRAB_OBRA_M");
+
+
 	}
 	
 	public static void main(String[] args) {

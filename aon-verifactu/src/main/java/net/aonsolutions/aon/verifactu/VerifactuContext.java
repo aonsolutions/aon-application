@@ -12,11 +12,13 @@ import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationQuery;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.consultalr.ConsultaFactuSistemaFacturacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 
 public class VerifactuContext  {
@@ -27,6 +29,7 @@ public class VerifactuContext  {
 	private RegFactuSistemaFacturacion request;
 	private byte[] requestBytes;	
 	private VerifactuResponse response;
+	private ConsultaFactuSistemaFacturacionType queryRequest;
 	
 	public VerifactuContext(InvoiceCommunicatorContext invoiceCommunicatorContext) {
 		this.invoiceCommunicatorContext = invoiceCommunicatorContext;
@@ -46,6 +49,9 @@ public class VerifactuContext  {
 	}
 	public InvoiceCommunicationConfiguration getConfig() {
 		return getInvoiceCommunicatorContext().getConfig();
+	}
+	public InvoiceCommunicationQuery getInvoiceCommunicationQuery() {
+		return getInvoiceCommunicatorContext().getCommunicationQuery();
 	}
 	public Integer getCertificateId() {
 		return getInvoiceCommunicatorContext().getCertificateId();
@@ -142,6 +148,14 @@ public class VerifactuContext  {
 	}
 	public boolean isResponseCorrecta( Integer invoiceId ){
 		return !isResponseIncorrecta(invoiceId);
+	}
+
+	public ConsultaFactuSistemaFacturacionType getQueryRequest() {
+		return queryRequest;
+	}
+	public VerifactuContext setQueryRequest(ConsultaFactuSistemaFacturacionType queryRequest) {
+		this.queryRequest = queryRequest;
+		return this;
 	}
 	
 }

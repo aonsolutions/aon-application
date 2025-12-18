@@ -18,7 +18,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.esferalia.aon.gwt.common.bean.GWT;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.google.gwt.user.server.Base64Utils;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 

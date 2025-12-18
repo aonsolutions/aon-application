@@ -508,7 +508,6 @@ public class InvoiceCommunicationDAO {
 			.setCode("")
 			.setSource(DataResponseSource.safeValueOf(communicationType));
 		DataResponseDAO.insertDataResponse(ctx, dataResponse);
-		System.out.println("Saved DataResponse: " + dataResponse.getId());
 		Attach attach = new Attach()
 			.setDomain(domain)
 			.setAttachType(AttachType.DATA)

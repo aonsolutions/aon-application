@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod390 implements IFiscalModel, HasAudit {
+	
 	private static final long serialVersionUID = 3703786573419236372L;
 	
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
@@ -273,10 +274,6 @@ public class Mod390 implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	
-	
-	
-	
 	@Override
 	public IFiscalModelKey getDeclarationTypeKey() {
 		return null;
@@ -303,5 +300,6 @@ public class Mod390 implements IFiscalModel, HasAudit {
 	public FiscalModelDeclarationType getDeclarationResultType() {
 		return null;
 	}
+	
 }
 

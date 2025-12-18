@@ -49,7 +49,8 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
-	
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	private static final InvoiceCommunicationPhaseListener VALIDATION_VERIFACTU_PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
 		
 		@Override public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) { /* Nothing */ }
@@ -81,7 +82,6 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	};
 
-	
 	private static record Context( RegFactuSistemaFacturacion msg, RegistroFacturacionAltaType fra, DetalleType det ) {}
 	private interface CompleteRegistroFacturaType {
 		void complete( Context c );
@@ -91,16 +91,16 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertInvoice(Invoice invoice, CompleteInvoiceCommunicatorContext completeIcc, CompleteRegistroFacturaType complete) throws InvoiceCommunicationException {
-		invoice.setSeries(VerifactuTestsUtils.series(ctx, invoice.isRectifier()));
+		invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
 		invoice.setNumber(VerifactuTestsUtils.number());
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext icc = getInvoiceCommunicatorContext(invoices);
+		InvoiceCommunicatorContext icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		if (completeIcc != null) {
 			completeIcc.complete(icc);
 		}
-		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(ctx,vc, VALIDATION_VERIFACTU_PHASE_LISTENER);
+		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(getEnvironment().getCtx(),vc, VALIDATION_VERIFACTU_PHASE_LISTENER);
 		RegistroFacturaType fraType = fras.getRegistroFactura().get(0);
 		RegistroFacturacionAltaType alta = fraType.getRegistroAlta();
 		DetalleType firstDet = alta.getDesglose().getDetalleDesglose().get(0);
@@ -143,7 +143,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_4104_Test() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 			assertInvoice( invoice
 				, icc -> icc.getCompany().setDocument(null)
@@ -157,7 +157,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_4116_Test() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 			assertInvoice( invoice
 				, icc -> icc.getCompany().setDocument("AAAAAAAAA")
@@ -170,7 +170,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 //	@Test
 //	void verifactu_4105_Test() {
-//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 //		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 //			assertInvoice( invoice
 //				, null
@@ -184,7 +184,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 //	
 //	@Test
 //	void verifactu_4117_Test() {
-//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID);
+//		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 //		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> 
 //			assertInvoice( invoice
 //				, null
@@ -202,7 +202,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1253_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setRefExterna(null)
 			, InvoiceCommunicationError.VERIFACTU_1253
@@ -211,7 +211,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1108_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setIDEmisorFactura("AAAAAAAAA")
 			, InvoiceCommunicationError.VERIFACTU_1108
@@ -220,7 +220,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1105_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setFechaExpedicionFactura(null)
 			, InvoiceCommunicationError.VERIFACTU_1105
@@ -229,7 +229,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1112_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date tomorrow = AonDateUtils.addDays(new Date(), 1);
@@ -244,7 +244,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1130_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola\tMundo") // Un tabulador
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -252,7 +252,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	@Test
 	void verifactu_1130_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola\"Mundo") // Comillas
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -260,7 +260,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	@Test
 	void verifactu_1130_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola ' Mundo") // Comilla simple
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -268,7 +268,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	@Test
 	void verifactu_1130_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola < Mundo") // Menor
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -276,7 +276,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	@Test
 	void verifactu_1130_Test_5() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola > Mundo") // Mayor
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -284,7 +284,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}
 	@Test
 	void verifactu_1130_Test_6() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getIDFactura().setNumSerieFactura("Hola = Mundo") // Igual
 			, InvoiceCommunicationError.VERIFACTU_1130
@@ -293,7 +293,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1153_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setRechazoPrevio(RechazoPrevioType.X);
@@ -305,7 +305,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1161_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setRechazoPrevio(RechazoPrevioType.S);
@@ -317,7 +317,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1106_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setTipoFactura(null)
 			, InvoiceCommunicationError.VERIFACTU_1106
@@ -326,7 +326,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1114_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoFactura(ClaveTipoFacturaType.R_1);
@@ -338,7 +338,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1115_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setTipoRectificativa( ClaveTipoRectificativaType.I )
 			, InvoiceCommunicationError.VERIFACTU_1115
@@ -347,7 +347,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1117_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoRectificativa(null);
@@ -359,7 +359,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1116_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setFacturasSustituidas(new FacturasSustituidas( ) );	// NOT NULL
@@ -371,7 +371,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1118_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoRectificativa(ClaveTipoRectificativaType.S);
@@ -383,7 +383,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1119_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoRectificativa(ClaveTipoRectificativaType.I);
@@ -395,7 +395,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1134_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date minDate = AonDateUtils.add(new Date(), Calendar.YEAR, -20);
@@ -409,7 +409,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1125_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date maxDate = AonDateUtils.add(new Date(), Calendar.DAY_OF_MONTH, 370);
@@ -422,7 +422,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1136_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setFacturaSimplificadaArt7273(null)
 			,  InvoiceCommunicationError.VERIFACTU_1136
@@ -431,7 +431,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1183_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setFacturaSimplificadaArt7273(SimplificadaCualificadaType.S);
@@ -444,7 +444,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1152_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2024);
@@ -456,7 +456,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1184_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setFacturaSinIdentifDestinatarioArt61D( null )
 			, InvoiceCommunicationError.VERIFACTU_1184
@@ -465,7 +465,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1185_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoFactura(ClaveTipoFacturaType.F_1);
@@ -477,7 +477,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1137_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setMacrodato(null)
 			, InvoiceCommunicationError.VERIFACTU_1137
@@ -486,7 +486,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1138_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setMacrodato(MacrodatoType.S);
@@ -502,7 +502,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1155_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(null);
@@ -514,7 +514,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1186_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -526,7 +526,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1187_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.D);
@@ -538,7 +538,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1188_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -552,7 +552,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1211_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -567,7 +567,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1222_Test_0() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 				, c -> {
 					
@@ -578,7 +578,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1222_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -594,7 +594,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1111_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -610,7 +610,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1126_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -627,7 +627,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1101_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -644,7 +644,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1222_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -663,7 +663,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1122_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setEmitidaPorTerceroODestinatario(TercerosODestinatarioType.T);
@@ -681,7 +681,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1190_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setTipoFactura(ClaveTipoFacturaType.F_2)
 			, InvoiceCommunicationError.VERIFACTU_1190
@@ -690,7 +690,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1189_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.setDestinatarios(null)
 			, InvoiceCommunicationError.VERIFACTU_1189
@@ -699,7 +699,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1239_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -717,7 +717,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1239_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -734,7 +734,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1126_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -753,7 +753,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1111_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -772,7 +772,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1126_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -792,7 +792,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1101_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -810,7 +810,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1222_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -830,7 +830,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1122_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Destinatarios destinatarios = new Destinatarios();
@@ -849,7 +849,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1157_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoFactura(ClaveTipoFacturaType.R_2);
@@ -862,7 +862,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1124_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setTipoImpositivo("23")
 			, InvoiceCommunicationError.VERIFACTU_1124
@@ -871,7 +871,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1208_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(null);
@@ -883,7 +883,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	}		
 	@Test
 	void verifactu_1208_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCuotaRepercutida(null);
@@ -896,7 +896,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1235_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2024);
@@ -912,7 +912,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1235_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -928,7 +928,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1235_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,10,1);
@@ -943,7 +943,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1194_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -959,7 +959,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1194_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -975,7 +975,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1194_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,6,1);
@@ -990,7 +990,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1235_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2024);
@@ -1006,7 +1006,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1235_Test_5() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1022,7 +1022,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1235_Test_6() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,11,1);
@@ -1037,7 +1037,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1257_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setBaseImponibleACoste(VerifactuUtils.toString(100.5))
 			, InvoiceCommunicationError.VERIFACTU_1257
@@ -1046,7 +1046,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1257_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen(ClaveRegimen.C06.getValue());
@@ -1057,7 +1057,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1257_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.det.setImpuesto("02");
@@ -1069,7 +1069,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1279_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen(ClaveRegimen.C01_NATIONAL.getValue())
 			, InvoiceCommunicationError.VERIFACTU_1279
@@ -1078,7 +1078,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1280_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setTipoRecargoEquivalencia(null)
 			, InvoiceCommunicationError.VERIFACTU_1280
@@ -1087,7 +1087,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 			
 	@Test
 	void verifactu_1280_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setCuotaRecargoEquivalencia(null)
 			, InvoiceCommunicationError.VERIFACTU_1280
@@ -1096,7 +1096,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1281_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_2)
 			, InvoiceCommunicationError.VERIFACTU_1281, InvoiceCommunicationError.VERIFACTU_1281
@@ -1105,7 +1105,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1127_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(8.5))
 			, InvoiceCommunicationError.VERIFACTU_1127
@@ -1115,7 +1115,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1165_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1128,7 +1128,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1165_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1141,7 +1141,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1165_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,3,1);
@@ -1154,7 +1154,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1166_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1171,7 +1171,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1166_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1188,7 +1188,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1166_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,11,1);
@@ -1204,7 +1204,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1170_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1221,7 +1221,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1170_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1237,7 +1237,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1127_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(0.26));
@@ -1252,7 +1252,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1167_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1269,7 +1269,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1167_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2023);
@@ -1286,7 +1286,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1167_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2022,8,1);
@@ -1302,7 +1302,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1164_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
@@ -1315,7 +1315,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1168_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1332,7 +1332,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1168_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1349,7 +1349,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1168_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,1,1);
@@ -1366,7 +1366,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1168_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,1,1);
@@ -1382,7 +1382,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1169_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2022);
@@ -1397,7 +1397,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1169_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getYearFirstDay(2025);
@@ -1412,7 +1412,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1169_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,9,20);
@@ -1429,7 +1429,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1169_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				Date date = AonDateUtils.getDate(2024,9,20);
@@ -1443,7 +1443,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1163_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(21));
@@ -1455,7 +1455,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1163_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
@@ -1468,7 +1468,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1162_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
@@ -1481,7 +1481,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1162_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(21));
@@ -1492,7 +1492,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1162_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
@@ -1505,7 +1505,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1162_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceNoMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(21));
@@ -1516,7 +1516,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1197_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setTipoFactura( ClaveTipoFacturaType.F_2 );
@@ -1528,7 +1528,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1198_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.S_2);
@@ -1540,7 +1540,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1198_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.S_2);
@@ -1552,7 +1552,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1237_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_1);
@@ -1569,7 +1569,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1237_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_1);
@@ -1584,7 +1584,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1237_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_1);
@@ -1601,7 +1601,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1237_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_1);
@@ -1616,7 +1616,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1237_Test_5() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_2);
@@ -1633,7 +1633,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1237_Test_6() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_2);
@@ -1648,7 +1648,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1237_Test_7() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_2);
@@ -1665,7 +1665,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1237_Test_8() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.N_2);
@@ -1680,7 +1680,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1196_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(CalificacionOperacionType.S_1);
@@ -1692,7 +1692,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1195_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(null);
@@ -1704,7 +1704,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1238_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo("21"); 
@@ -1718,7 +1718,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1238_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(null); 
@@ -1734,7 +1734,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1238_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(null); 
@@ -1748,7 +1748,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1238_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(null); 
@@ -1764,7 +1764,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1199_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setOperacionExenta(OperacionExentaType.E_2)
 			, InvoiceCommunicationError.VERIFACTU_1199
@@ -1773,7 +1773,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1199_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setOperacionExenta(OperacionExentaType.E_3)
 			, InvoiceCommunicationError.VERIFACTU_1199
@@ -1782,7 +1782,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1245_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen(null)
 			, InvoiceCommunicationError.VERIFACTU_1245
@@ -1791,7 +1791,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1246_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen("KO")
 			, InvoiceCommunicationError.VERIFACTU_1246
@@ -1800,7 +1800,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1260_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setImpuesto("04")
 			, InvoiceCommunicationError.VERIFACTU_1260
@@ -1809,7 +1809,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1182_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setOperacionExenta(null)
 			, InvoiceCommunicationError.VERIFACTU_1182, InvoiceCommunicationError.VERIFACTU_1195
@@ -1818,7 +1818,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1200_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("03");
@@ -1833,7 +1833,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1201_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("04");
@@ -1849,7 +1849,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1202_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen("06")
 			, InvoiceCommunicationError.VERIFACTU_1202
@@ -1858,7 +1858,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1202_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen("06")
 			, InvoiceCommunicationError.VERIFACTU_1202
@@ -1867,7 +1867,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1203_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_2)
 			, InvoiceCommunicationError.VERIFACTU_1203, InvoiceCommunicationError.VERIFACTU_1198
@@ -1876,7 +1876,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1203_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setCalificacionOperacion(null);
@@ -1892,7 +1892,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1252_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen("08")
 			, InvoiceCommunicationError.VERIFACTU_1252
@@ -1901,7 +1901,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1205_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setClaveRegimen("10")
 			, InvoiceCommunicationError.VERIFACTU_1205
@@ -1910,7 +1910,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1205_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("10");
@@ -1928,7 +1928,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1205_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				PersonaFisicaJuridicaType d = c.fra.getDestinatarios().getIDDestinatario().get(0);
@@ -1953,7 +1953,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1206_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
@@ -1968,7 +1968,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1147_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("14");
@@ -1980,7 +1980,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1147_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("14");
@@ -1994,7 +1994,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1148_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date exp = VerifactuUtils.toDate(c.fra.getIDFactura().getFechaExpedicionFactura());
@@ -2009,7 +2009,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1149_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				Date exp = VerifactuUtils.toDate(c.fra.getIDFactura().getFechaExpedicionFactura());
@@ -2024,7 +2024,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1149_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("14");
@@ -2045,7 +2045,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1143_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setBaseImponibleACoste(null);
@@ -2060,7 +2060,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1142_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setBaseImponibleACoste(null);
@@ -2076,7 +2076,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1140_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("06");
@@ -2091,7 +2091,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1144_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setClaveRegimen("06");
@@ -2107,7 +2107,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1150_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.det.setBaseImponibleACoste(null);
@@ -2124,7 +2124,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1216_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setCuotaTotal(VerifactuUtils.toString(500));
@@ -2135,7 +2135,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1210_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setImporteTotal(VerifactuUtils.toString(500));
@@ -2146,7 +2146,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_2000_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setHuella(null);
@@ -2157,7 +2157,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_2000_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setHuella("huella incorrecta");
@@ -2168,7 +2168,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		
 	@Test
 	void verifactu_1179_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.setSistemaInformatico(null);
@@ -2179,7 +2179,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1223_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.getSistemaInformatico().setNIF(null);
@@ -2191,7 +2191,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1223_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				c.fra.getSistemaInformatico().setIDOtro(new IDOtroType());
@@ -2202,7 +2202,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2216,7 +2216,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2230,7 +2230,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2245,7 +2245,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2260,7 +2260,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_5() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2277,7 +2277,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1221_Test_6() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> {
 				IDOtroType otro = new IDOtroType();
@@ -2293,7 +2293,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1177_Test_1() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setIdSistemaInformatico(null)
 			, InvoiceCommunicationError.VERIFACTU_1177
@@ -2302,7 +2302,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1177_Test_2() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setIdSistemaInformatico("ÑS")
 			, InvoiceCommunicationError.VERIFACTU_1177
@@ -2311,7 +2311,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1177_Test_3() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setIdSistemaInformatico("")
 			, InvoiceCommunicationError.VERIFACTU_1177
@@ -2320,7 +2320,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1177_Test_4() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setIdSistemaInformatico("ss")
 			, InvoiceCommunicationError.VERIFACTU_1177
@@ -2329,7 +2329,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 	
 	@Test
 	void verifactu_1220_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setNombreSistemaInformatico(null)
 			, InvoiceCommunicationError.VERIFACTU_1220
@@ -2338,7 +2338,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1212_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setTipoUsoPosibleSoloVerifactu(null)
 			, InvoiceCommunicationError.VERIFACTU_1212
@@ -2347,7 +2347,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 
 	@Test
 	void verifactu_1213_Test() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( ctx , DOMAIN_ID).setId(1);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.fra.getSistemaInformatico().setTipoUsoPosibleMultiOT(null)
 			, InvoiceCommunicationError.VERIFACTU_1213

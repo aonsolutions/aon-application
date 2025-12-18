@@ -40,6 +40,8 @@ export const ARROW_BACK = 'arrow_back';
 export const ARROW_CIRCLE_DOWN = 'arrow_circle_down';
 export const ARROW_CIRCLE_UP = 'arrow_circle_up';
 export const ARROW_DROP_DOWN = 'arrow_drop_down';
+export const ARROW_CIRCLE_LEFT = 'arrow_circle_left';
+export const ARROW_CIRCLE_RIGHT = 'arrow_circle_right';
 export const ARROW_DROP_UP = 'arrow_drop_up';
 export const ARROW_RIGHT = 'arrow_right';
 export const ARROW_RIGHT_ALT = 'arrow_right_alt';
@@ -225,6 +227,8 @@ export const MORE_HORIZ = 'more_horiz';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';
 export const MONITORING = 'monitoring';
+
+export const MENU_BOOK = 'menu_book';
 
 export const NOTES = 'speaker_notes';
 export const NOTE_STACK = 'note_stack';
