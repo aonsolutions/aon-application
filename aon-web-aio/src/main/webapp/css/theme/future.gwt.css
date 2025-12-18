@@ -882,4 +882,5 @@ div:has( > .aon_icon_menu_collapse) {
 	width: 15px !important;
 	height: 15px !important;
 	background-size: 15px !important;
+	margin-top: 0.1rem !important;
 }
