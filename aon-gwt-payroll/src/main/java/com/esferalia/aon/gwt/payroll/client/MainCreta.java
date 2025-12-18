@@ -2029,7 +2029,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solictudRecepcionRNT = dialog.solicitudRecepcionRNT();
 			boolean withIDC = dialog.withIDC();
-			
+			Long outOfDateLiquidation = dialog.getOutOfDateLiquidation();
 	
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
@@ -2052,6 +2052,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				i54,
 				reftificationMark,
 				solictudRecepcionRNT,
+				outOfDateLiquidation,
 				withIDC);
 	
 			return true;

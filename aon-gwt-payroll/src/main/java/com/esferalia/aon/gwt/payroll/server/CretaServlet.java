@@ -96,6 +96,7 @@ import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
@@ -270,6 +271,8 @@ public class CretaServlet extends HttpServlet
 			boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
 					req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
 	
+			String outOfDateLiquidation = req.getParameter(CretaService.Parameter.RECTIFICACION_FUERA_PLAZO_LIQUIDACION.name());
+			
 			String[] nafs = getParameterValues(req, CretaService.Parameter.NAFS);
 	
 			List<String> defaultsList = new ArrayList<>();
@@ -285,6 +288,7 @@ public class CretaServlet extends HttpServlet
 			CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
 					.setReftificationMark(indicadorReftificacion)
 					.setSolicitudRecepcionRNT(solicitudRecepcionRNT)
+					.setOutOfDateLiquidation(outOfDateLiquidation)
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
