@@ -35,6 +35,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 	public CataloguePackBookingCard(ProductBooking packProduct, Tariff tariff, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
+		addStyleName(AON.CSS.aonCustomCardDark());
 		getElement().getStyle().setProperty("flex", "1");
 		getElement().getStyle().setProperty("min-height", "18rem");
 		setHeight("100%");
@@ -74,6 +75,7 @@ public abstract class CataloguePackBookingCard extends HTMLPanel {
 	public CataloguePackBookingCard(ProductBooking packProduct, ItemTariff itemTariff, LinkedList<Fee> customerFees) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonCustomCard());
+		addStyleName(AON.CSS.aonCustomCardDark());
 		getElement().getStyle().setProperty("flex", "1");
 		getElement().getStyle().setProperty("min-height", "18rem");
 		setHeight("100%");

@@ -87,6 +87,13 @@ export class AonNewLogin extends AonElement {
     loginContent.className = CSS.AON_FLEX_COLUMN;
     loginContent.style.height = "100%";
     loginContent.style.justifyContent = "center";
+    
+    let welcomeImg = this.createElement(TAG.IMG);
+	welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
+	this.getWelcomeImage().then( img => welcomeImg.src = img );
+	this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
+	welcomeImg.classList.add(CSS.AON_WELCOME_LOGO_LOGIN);
+	loginContent.appendChild(welcomeImg);
 
     let loginDivForm = this.createElement(TAG.DIV);
     loginDivForm.id = "loginDivForm";
@@ -685,6 +692,27 @@ export class AonNewLogin extends AonElement {
 	isPasswordExpired(dur) {
         return dur?.user?.expirationDate && new Date(dur.user.expirationDate) < new Date();
     }
+	
+	getWelcomeImage() {
+		return new Promise((resolve, reject) => {
+        resolve(`${window.location.protocol}//${LS.getCompany()?.domain || window.location.hostname}:${window.location.port}/aonDocuments/company.logo`);
+		});
+    }
+
+	getWelcomeMessage() {
+		return new Promise((resolve, reject) => {
+			if ( LS.getCompany()?.name ) {
+				resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${LS.getCompany()?.name}</span>`);
+			} else if ( this.getDur() ) {
+				resolve(`<span style='font-weight:lighter;'  >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${this.getDur().domain.description}</span>`)
+			}  
+			else  {
+				this.buildDur()
+				.then( dur =>  resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${dur.domain.description}</span>`))
+				.catch( err  => resolve( `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>` ) );
+			} 
+		});  
+	}
 	
   
 
