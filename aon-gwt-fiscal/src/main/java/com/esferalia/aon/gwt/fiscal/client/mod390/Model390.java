@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.Model3902022;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2023.Model3902023;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2024.Model3902024;
 import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Model4252025;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2025.Model3902025;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -346,15 +347,17 @@ public class Model390  implements EntryPoint {
 	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorMessage();
 		if (selected.isAEAT()) {
-			if (selected.getYear() >= 2024) {
+			if (selected.getYear() >= 2025) {
+				declarationContainer.setWidget(new Model3902025(new Model390Callback(),selected));
+			} else if (selected.getYear() == 2024) {
 				declarationContainer.setWidget(new Model3902024(new Model390Callback(),selected));
 			} else if (selected.getYear() == 2023) {
 				declarationContainer.setWidget(new Model3902023(new Model390Callback(),selected));
 			} else if (selected.getYear() == 2022) {
 				declarationContainer.setWidget(new Model3902022(new Model390Callback(),selected));
-			}  else if (selected.getYear() == 2021) {
+			} else if (selected.getYear() == 2021) {
 				declarationContainer.setWidget(new Model3902021(new Model390Callback(),selected));
-			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
+			} else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
 				declarationContainer.setWidget(new Model3902018(new Model390Callback(),selected));
 			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				declarationContainer.setWidget(new Model3902015(new Model390Callback(),selected));

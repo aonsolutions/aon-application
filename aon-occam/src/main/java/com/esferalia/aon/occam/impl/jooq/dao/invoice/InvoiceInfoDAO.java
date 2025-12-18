@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
@@ -262,6 +263,9 @@ public class InvoiceInfoDAO {
 					@Override public void visitSERES() 	{ /*Nothing*/ }
 					@Override public void visitEMAIL() 	{ /*Nothing*/ }
 					@Override public void visitCLOSING(){ /*Nothing*/ }
+					@Override public void visitNO_VERIFACTU() { /*Nothing*/ }
+					@Override public void visitSIF() { /*Nothing*/ }
+					@Override public void visitFACTURAE() { /*Nothing*/}
 				});
 			} catch (Exception e) {
 				// Nothing

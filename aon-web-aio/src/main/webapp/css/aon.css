@@ -1009,6 +1009,10 @@ background-color: var(--aonLightGray);
 	justify-content: center;
 }
 
+#expandHirin {
+	display: none;
+}
+
 .aonMenuLeftop  {
     top: 0;
     left: 0;
@@ -1062,7 +1066,9 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuTopnav {
-  width: 100%;
+  /*width: 100%;*/
+  width: -moz-available;
+  width: -webkit-fill-available;
   height: 5rem;
   position: fixed;
   top: 48px;
@@ -1269,6 +1275,7 @@ background-color: var(--aonLightGray);
   cursor: pointer;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
+  position: relative;
 }
 
 .aonAppMenuSidenavListSelected {
@@ -3363,6 +3370,10 @@ color: var(--aonWhite);
   margin-top: 6px;
 }
 
+#aonMenuList-contentIndex {
+	display: none;
+}
+
 #apps {
   margin-top: 6px;
 }
@@ -4230,13 +4241,13 @@ display: block;
 	grid-gap: 1rem;
 }
 
-@media (769px <= width <= 1229px) {
+@media (1080px <= width <= 1400px) {
   .aonCardsPanel {
 	grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
 }
 
-@media (1230px <= width) {
+@media (1401px <= width) {
   .aonCardsPanel {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
   }

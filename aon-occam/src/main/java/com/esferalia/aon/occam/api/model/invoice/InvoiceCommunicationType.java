@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public enum InvoiceCommunicationType implements Serializable{
+public enum InvoiceCommunicationType implements Serializable {
  
 	SII { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
 	TBAI { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
@@ -13,7 +13,10 @@ public enum InvoiceCommunicationType implements Serializable{
 	SERES { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
 	EMAIL { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
 	CLOSING { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
-	VERIFACTU { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}}
+	VERIFACTU { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
+	NO_VERIFACTU{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
+	SIF{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
+	FACTURAE { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}
 	;
 	
 	private InvoiceCommunicationType() {
@@ -78,6 +81,9 @@ public enum InvoiceCommunicationType implements Serializable{
 		void visitEMAIL() throws InvoiceCommunicationException;
 		void visitCLOSING() throws InvoiceCommunicationException;
 		void visitVERIFACTU() throws InvoiceCommunicationException;
+		void visitNO_VERIFACTU() throws InvoiceCommunicationException;
+		void visitSIF() throws InvoiceCommunicationException;
+		void visitFACTURAE() throws InvoiceCommunicationException;
 	}
 	
 }

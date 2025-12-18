@@ -12,6 +12,7 @@ import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
+import { AonTooltip } from '../components/aon-tooltip.js';
 
 export class AonHome extends AonElement {
 
@@ -271,8 +272,19 @@ export class AonHome extends AonElement {
 		}
 		
 		// Menu button collapse
+		let topnav = this.getElement("aonMenuTopnav");
+		topnav && topnav.classList.remove("closeSidenav");
 		let aonMenuButton = this.createMenuButton();
 		this.appendChild(aonMenuButton);
+		
+		let menuAnchorIcon = this.getElement("aonMenuAnchorDivIcon");
+		new AonTooltip(
+			menuAnchorIcon,
+			'Cerrar Menu',
+			{ position: 'right' }
+		);
+
+		
 	}
 	
 	createMenuButton(){
@@ -314,10 +326,18 @@ export class AonHome extends AonElement {
 		let rootPanel = this.getElement("rootPanel");
 		rootPanel.classList.toggle("closeSidenav");
 		
+		let topnav = this.getElement("aonMenuTopnav");
+		topnav.classList.toggle("closeSidenav");
+		
 		let menuAnchorIcon = this.getElement("aonMenuAnchorDivIcon");
 		menuAnchorIcon.innerHTML = menuAnchor.classList.contains('close')
 			? MATERIAL_ICONS.ARROW_CIRCLE_RIGHT
 			: MATERIAL_ICONS.ARROW_CIRCLE_LEFT;
+		new AonTooltip(
+			menuAnchorIcon,
+			menuAnchor.classList.contains('close') ? 'Abrir Menu' : 'Cerrar Menu',
+			{ position: 'right' }
+		);
 		
 	}
 	

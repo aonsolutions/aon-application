@@ -308,6 +308,7 @@ export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
 export const EXAMPLE = "Example";
 export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
+export const EXPAND_HIRIND = MSG.EXPAND_HIRIND;
 
 // ----- F
 
@@ -497,6 +498,7 @@ export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
 export const MOVE_STOCK = "Mover Stock"; //TODO
 export const MINS = "Minutos"; //TODO
+export const MY_CLOUD = MSG.MY_CLOUD;
 
 // ----- N
 

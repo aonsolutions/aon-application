@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
@@ -43,9 +44,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 class Model303AEAT2024T3 extends Model303AEAT {
 
-//	private final Model303AEATActivityFarmerTable farmerTable;
-//	private final Model303AEATActivityTable activityTable;
-
 	private ScrollPanel lastPeriodPanel;
 	private TabLayoutPanel tabPanel;
 	private Model303AEAT2023SimplifiedRegimeActivities simplifiedRegimeActivities;
@@ -83,9 +81,6 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		centerPanel.addStyleName(AON.CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
-		
-//		farmerTable = new Model303AEATActivityFarmerTable( mod303.isLastPeriod());
-//		activityTable = new Model303AEATActivityTable( mod303.isLastPeriod());
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
@@ -319,7 +314,7 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		paintListBox(a12, Mod303Key.CT_A12, table);
 		
 		cm2 = paintCheck(Mod303Key.CM_002,table);	// Inscrito en el Registro de devolución mensual (Art. 30 RIVA)
-		paintA02(Mod303Key.CT_A02,table);	// Tributa exclusivamente en régimen simplificado
+		paintA02(Mod303Key.CT_A02,table);			// Tributa exclusivamente en régimen simplificado
 		a03 = paintCheck(Mod303Key.CT_A03,table);	// Autoliquidación conjunta
 		a07 = paintCheck(Mod303Key.CT_A07,table);	// Acogido al régimen especial del criterio de Caja (art. 163 undecies LIVA)
 		a08 = paintCheck(Mod303Key.CT_A08,table);	// Destinatario de operaciones acogidas al régimen especial del criterio de caja
@@ -481,221 +476,10 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		return table;
 	}
 	
-//	private Widget getSimplifiedRegimePanel() {
-//		DockLayoutPanel simplifiedTableContainer = new DockLayoutPanel(Unit.PX);
-//		simplifiedTableContainer.addNorth( new Model303AEATSimplifiedRegimeActivities(getModel()), 400);
-//		
-//		SimpleLayoutPanel layout = new SimpleLayoutPanel();
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlexTable table = new FlexTable();
-//		table.setWidth("100%");
-//		table.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		table.getColumnFormatter().setWidth(0, "auto");
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
-//		table.getColumnFormatter().setWidth(1, "40px");
-//		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
-//		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
-//		table.getColumnFormatter().setWidth(3, "50px");
-//		if (getModel().isLastPeriod()) {
-//			paintDeclaration(table,Model3032022AEATSimplifiedRegime4TScript.values(),3);
-//		} else {
-//			paintDeclaration(table,Model3032022AEATSimplifiedRegimeScript.values(),3);
-//		}
-//		scroll.setWidget(table);
-//		layout.setWidget(scroll);
-//		simplifiedTableContainer.add( layout );
-//		return simplifiedTableContainer;
-		
-//		tableContainer.add( addGroupPanel(AON.MSG.farmerActivity(), getActivityFarmerTable()) );
-//		tableContainer.add( addGroupPanel(AON.MSG.simplifieedActivities(), getActivityTable()) );
-//	}
-
-//	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
-//		farmerTable.paint(getModel().getActivityFarmerList());
-//		farmerTable.addSelectionHandler(event -> {
-//			final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
-//			int idx = 0;
-//			for (int i = 0; i < getModel().getActivityList().size() ; i++ ) {
-//				if (getModel().getActivityFarmerList().get(i) == event.getSelectedItem()) {
-//					idx = i;
-//				}
-//			}
-//			final int currentIndex = idx;
-//			
-//			final AonCustomDialog dialog = new AonCustomDialog();
-//			IMod303ActivityFarmerCallback activityCallback = new IMod303ActivityFarmerCallback() {
-//				
-//				@Override
-//				public void onCancel() {
-//					dialog.hide();
-//					getModel().getActivityFarmerList().set(currentIndex, original);
-//					calculateAndRefresh();
-//					farmerTable.paint(getModel().getActivityFarmerList());
-//				}
-//				
-//				@Override
-//				public void onAccept(Mod303ActivityFarmer act) {
-//					getModel().getActivityFarmerList().set(currentIndex, act);
-//					dialog.hide();
-//					farmerTable.paint(getModel().getActivityFarmerList());
-//				}
-//				
-//				@Override
-//				public void onRemove() {
-//					dialog.hide();
-//					for (int i = 0; i < getModel().getActivityList().size() ; i++ ) {
-//						if (getModel().getActivityFarmerList().get(i) == event.getSelectedItem()) {
-//							getModel().getActivityFarmerList().get(i).initialize();
-//						}
-//					}
-//					calculateAndRefresh();
-//					farmerTable.paint(getModel().getActivityFarmerList());
-//				}
-//
-//				@Override
-//				public Mod303ActivityFarmer getActivity() {
-//					return event.getSelectedItem();
-//				}
-//			};
-//			Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getModel().isLastPeriod());
-//			actPanel.addValueChangeHandler( event1 -> 
-//				calculateAndRefresh( new AsyncCallback<Mod303>() {
-//
-//					@Override public void onFailure(Throwable caught) {
-//						// Nothing
-//					}
-//
-//					@Override
-//					public void onSuccess(Mod303 result) {
-//						actPanel.populateActivity(result.getActivityFarmerList().get(currentIndex));
-//					}
-//				})
-//			);
-//			dialog.setCaption(AON.MSG.farmerActivity());
-//			dialog.setGlassEnabled(true);
-//			dialog.setAnimationEnabled(true);
-//			dialog.add(actPanel);
-//			dialog.setWidth("700px");
-//			dialog.setHeight("280px");
-//			dialog.show();
-//			dialog.center();
-//		});
-//		farmerTable.paint(getModel().getActivityFarmerList());
-//		return farmerTable;
-//	}
-	
-//	private Model303AEATActivityTable getActivityTable() {
-//		activityTable.paint(getModel().getActivityList());
-//		activityTable.addSelectionHandler( event -> {
-//			final Mod303Activity activity = event.getSelectedItem();
-//			final Mod303Activity original = Mod303Activity.clone(activity); 
-//			int idx = 0;
-//			for (int i = 0; i < getModel().getActivityList().size() ; i++ ) {
-//				if (getModel().getActivityList().get(i) == activity) {
-//					idx = i;
-//				}
-//			}
-//			final int currentIndex = idx;
-//			final AonCustomDialog dialog = new AonCustomDialog();
-//			IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
-//				
-//				@Override
-//				public Mod303 getMod303() {
-//					return getModel();
-//				}
-//
-//				@Override
-//				public void onCancel() {
-//					dialog.hide();
-//					getModel().getActivityList().set(currentIndex, original);
-//					calculateAndRefresh();
-//					activityTable.paint(getModel().getActivityList());
-//				}
-//				
-//				@Override
-//				public void onAccept() {
-//					dialog.hide();
-//					calculateAndRefresh();
-//					activityTable.paint(getModel().getActivityList());
-//				}
-//				
-//				@Override
-//				public void onRemove() {
-//					dialog.hide();
-//					for (int i = 0; i < getModel().getActivityList().size() ; i++ ) {
-//						if (getModel().getActivityList().get(i) == activity) {
-//							getModel().getActivityList().get(i).initialize();
-//						}
-//					}
-//					calculateAndRefresh();
-//					activityTable.paint(getModel().getActivityList());
-//				}
-//
-//				@Override
-//				public Mod303Activity getActivity() {
-//					return activity;
-//				}
-//			};
-//			Model303AEATActivity2023 actPanel = new Model303AEATActivity2023(activityCallback);
-//			actPanel.addValueChangeHandler( event1 -> {
-//				getModel().getActivityList().set(currentIndex, event1.getValue());
-//				calculateAndRefresh( new AsyncCallback<Mod303>() {
-//
-//					@Override public void onFailure(Throwable caught) {
-//						// Nothing
-//					}
-//
-//					@Override
-//					public void onSuccess(Mod303 result) {
-//						actPanel.populateActivity(activityCallback);
-//					}
-//				});
-//			});
-//			dialog.setCaption(AON.MSG.simplifieedActivities());
-//			dialog.setGlassEnabled(true);
-//			dialog.setAnimationEnabled(true);
-//			dialog.showCloseButton(true);
-//			dialog.add(actPanel);
-//			dialog.setWidth("700px");
-//			dialog.setHeight("620px");
-//			dialog.show();
-//			dialog.center();
-//		});
-//		return activityTable;
-//	}
-
-//	private Widget getSimplifiedTable() {
-//		SimpleLayoutPanel layout = new SimpleLayoutPanel();
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlexTable table = new FlexTable();
-//		table.setWidth("100%");
-//		table.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		table.getColumnFormatter().setWidth(0, "auto");
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
-//		table.getColumnFormatter().setWidth(1, "40px");
-//		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
-//		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
-//		table.getColumnFormatter().setWidth(3, "50px");
-//		if (getModel().isLastPeriod()) {
-//			paintDeclaration(table,Model3032022AEATSimplifiedRegime4TScript.values(),3);
-//		} else {
-//			paintDeclaration(table,Model3032022AEATSimplifiedRegimeScript.values(),3);
-//		}
-//		scroll.setWidget(table);
-//		layout.setWidget(scroll);
-//		return layout;
-//	}
-	
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
 		simplifiedRegimeActivities.populate(getModel());
-//		farmerTable.paint(getModel().getActivityFarmerList());
-//		activityTable.paint(getModel().getActivityList());
 	}
 	
 	@Override
@@ -762,7 +546,6 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		tab.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBorderBottom());
 		
-		
 		paintActivityRow(tab,Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E);
 		paintActivityRow(tab,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E);
 		paintActivityRow(tab,Mod303Key.CT_U3D,Mod303Key.CT_U3C,Mod303Key.CT_U3E);
@@ -795,7 +578,7 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
-		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 
+		tab2.setWidget(1, 0, new Label(getModel().getYear() >= 2025 ? "CNAE2025" : "C.N.A.E.")); 
 		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBold());
 		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 1, new Label() ); 
@@ -832,7 +615,6 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		lastPeriodPanel.setWidget(table);
 	}
 
-
 	private void paintProrrateRow(FlexTable tab, Mod303Key cnaeKey, Mod303Key amountKey, Mod303Key amountRightKey, Mod303Key typeKey, Mod303Key percentKey) {
 		int row = tab.getRowCount();
 		
@@ -845,16 +627,29 @@ class Model303AEAT2024T3 extends Model303AEAT {
 			markAsDirty();
 		});
 		tab.setWidget(row, 0, cnae);
-
-		AonCnae2009Panel panel = new AonCnae2009Panel();
-		panel.addSelectionHandler(event -> {
-			cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
-			getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
-			markAsDirty();
-		});
-		AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
-		button.addClickHandler(event -> panel.onShow());
-		tab.setWidget(row, 1, button);
+		
+		// A partir de 2025, se usa CNAE2025
+		if (getModel().getYear() >= 2025) {
+			AonCnae2025Panel panel = new AonCnae2025Panel();
+			panel.addSelectionHandler(event -> {
+				cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
+				getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+				markAsDirty();
+			});
+			AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
+			button.addClickHandler(event -> panel.onShow());
+			tab.setWidget(row, 1, button);
+		} else {
+			AonCnae2009Panel panel = new AonCnae2009Panel();
+			panel.addSelectionHandler(event -> {
+				cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
+				getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+				markAsDirty();
+			});
+			AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
+			button.addClickHandler(event -> panel.onShow());
+			tab.setWidget(row, 1, button);
+		}
 		
 		AonDoubleBox amount = new AonDoubleBox();
 		amount.setValue(getModel().getAmount(amountKey));
@@ -896,7 +691,6 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		});
 		tab.setWidget(row, 5, percent);
 	}
-
 
 	private void paintActivityRow(FlexTable tab, Mod303Key desKey, Mod303Key keyKey, Mod303Key epiKey) {
 		int row = tab.getRowCount();

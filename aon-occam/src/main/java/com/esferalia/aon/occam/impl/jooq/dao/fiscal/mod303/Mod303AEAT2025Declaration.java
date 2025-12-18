@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityDesk;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityOven;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
@@ -950,6 +951,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S1E4, ensureActivity(mod, 0).getChildMen18Hours())
 			,mod -> ensureActivity(mod, 0).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S1E4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E4))
+		
 		,CT_S1C1(Mod303Key.CT_S1C1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1C1, ensureDesk(mod, 0, 0).getDeskCapacity())
 			,mod -> ensureDesk(mod, 0, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C1))
@@ -998,6 +1000,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S1D4, ensureDesk(mod, 0, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 0, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D4))
+		
 		,CT_S17R(Mod303Key.CT_S17R, null, null, null
 			,"calculateResult(0,CT_S17I,CT_S17F)"
 			, null
@@ -2346,8 +2349,143 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		, CT_P2C(Mod303Key.CT_P2C), CT_P2I(Mod303Key.CT_P2I), CT_P2D(Mod303Key.CT_P2D), CT_P2T(Mod303Key.CT_P2T), CT_P2P(Mod303Key.CT_P2P)
 		, CT_P3C(Mod303Key.CT_P3C), CT_P3I(Mod303Key.CT_P3I), CT_P3D(Mod303Key.CT_P3D), CT_P3T(Mod303Key.CT_P3T), CT_P3P(Mod303Key.CT_P3P)
 		, CT_P4C(Mod303Key.CT_P4C), CT_P4I(Mod303Key.CT_P4I), CT_P4D(Mod303Key.CT_P4D), CT_P4T(Mod303Key.CT_P4T), CT_P4P(Mod303Key.CT_P4P)
-		, CT_P5C(Mod303Key.CT_P5C), CT_P5I(Mod303Key.CT_P5I), CT_P5D(Mod303Key.CT_P5D), CT_P5T(Mod303Key.CT_P5T), CT_P5P(Mod303Key.CT_P5P);
-
+		, CT_P5C(Mod303Key.CT_P5C), CT_P5I(Mod303Key.CT_P5I), CT_P5D(Mod303Key.CT_P5D), CT_P5T(Mod303Key.CT_P5T), CT_P5P(Mod303Key.CT_P5P)
+		
+		// Desglose módulo "Superficie del horno" (solo para el 4T a partir del 2025), 4 lineas por cada actividad
+		
+		,CT_S1H1(Mod303Key.CT_S1H1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1H1, ensureOven(mod, 0, 0).getOvenSurface())
+				,mod -> ensureOven(mod, 0, 0).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S1H1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1H1))
+		,CT_S1J1(Mod303Key.CT_S1J1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1J1, ensureOven(mod, 0, 0).getOvenDays())
+				,mod -> ensureOven(mod, 0, 0).setOvenDays((int) mod.getAmount(Mod303Key.CT_S1J1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1J1))
+		,CT_S1H2(Mod303Key.CT_S1H2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1H2, ensureOven(mod, 0, 1).getOvenSurface())
+				,mod -> ensureOven(mod, 0, 1).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S1H2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1H2))
+		,CT_S1J2(Mod303Key.CT_S1J2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1J2, ensureOven(mod, 0, 1).getOvenDays())
+				,mod -> ensureOven(mod, 0, 1).setOvenDays((int) mod.getAmount(Mod303Key.CT_S1J2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1J2))
+		,CT_S1H3(Mod303Key.CT_S1H3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1H3, ensureOven(mod, 0, 2).getOvenSurface())
+				,mod -> ensureOven(mod, 0, 2).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S1H3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1H3))
+		,CT_S1J3(Mod303Key.CT_S1J3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1J3, ensureOven(mod, 0, 2).getOvenDays())
+				,mod -> ensureOven(mod, 0, 2).setOvenDays((int) mod.getAmount(Mod303Key.CT_S1J3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1J3))
+		,CT_S1H4(Mod303Key.CT_S1H4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1H4, ensureOven(mod, 0, 3).getOvenSurface())
+				,mod -> ensureOven(mod, 0, 3).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S1H4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1H4))
+		,CT_S1J4(Mod303Key.CT_S1J4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1J4, ensureOven(mod, 0, 3).getOvenDays())
+				,mod -> ensureOven(mod, 0, 3).setOvenDays((int) mod.getAmount(Mod303Key.CT_S1J4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S1J4))
+		
+		,CT_S2H1(Mod303Key.CT_S2H1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2H1, ensureOven(mod, 1, 0).getOvenSurface())
+				,mod -> ensureOven(mod, 1, 0).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S2H1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2H1))
+		,CT_S2J1(Mod303Key.CT_S2J1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2J1, ensureOven(mod, 1, 0).getOvenDays())
+				,mod -> ensureOven(mod, 1, 0).setOvenDays((int) mod.getAmount(Mod303Key.CT_S2J1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2J1))
+		,CT_S2H2(Mod303Key.CT_S2H2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2H2, ensureOven(mod, 1, 1).getOvenSurface())
+				,mod -> ensureOven(mod, 1, 1).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S2H2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2H2))
+		,CT_S2J2(Mod303Key.CT_S2J2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2J2, ensureOven(mod, 1, 1).getOvenDays())
+				,mod -> ensureOven(mod, 1, 1).setOvenDays((int) mod.getAmount(Mod303Key.CT_S2J2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2J2))
+		,CT_S2H3(Mod303Key.CT_S2H3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2H3, ensureOven(mod, 1, 2).getOvenSurface())
+				,mod -> ensureOven(mod, 1, 2).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S2H3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2H3))
+		,CT_S2J3(Mod303Key.CT_S2J3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2J3, ensureOven(mod, 1, 2).getOvenDays())
+				,mod -> ensureOven(mod, 1, 2).setOvenDays((int) mod.getAmount(Mod303Key.CT_S2J3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2J3))
+		,CT_S2H4(Mod303Key.CT_S2H4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2H4, ensureOven(mod, 1, 3).getOvenSurface())
+				,mod -> ensureOven(mod, 1, 3).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S2H4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2H4))
+		,CT_S2J4(Mod303Key.CT_S2J4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2J4, ensureOven(mod, 1, 3).getOvenDays())
+				,mod -> ensureOven(mod, 1, 3).setOvenDays((int) mod.getAmount(Mod303Key.CT_S2J4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S2J4))
+		
+		,CT_S3H1(Mod303Key.CT_S3H1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3H1, ensureOven(mod, 2, 0).getOvenSurface())
+				,mod -> ensureOven(mod, 2, 0).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S3H1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3H1))
+		,CT_S3J1(Mod303Key.CT_S3J1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3J1, ensureOven(mod, 2, 0).getOvenDays())
+				,mod -> ensureOven(mod, 2, 0).setOvenDays((int) mod.getAmount(Mod303Key.CT_S3J1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3J1))
+		,CT_S3H2(Mod303Key.CT_S3H2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3H2, ensureOven(mod, 2, 1).getOvenSurface())
+				,mod -> ensureOven(mod, 2, 1).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S3H2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3H2))
+		,CT_S3J2(Mod303Key.CT_S3J2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3J2, ensureOven(mod, 2, 1).getOvenDays())
+				,mod -> ensureOven(mod, 2, 1).setOvenDays((int) mod.getAmount(Mod303Key.CT_S3J2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3J2))
+		,CT_S3H3(Mod303Key.CT_S3H3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3H3, ensureOven(mod, 2, 2).getOvenSurface())
+				,mod -> ensureOven(mod, 2, 2).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S3H3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3H3))
+		,CT_S3J3(Mod303Key.CT_S3J3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3J3, ensureOven(mod, 2, 2).getOvenDays())
+				,mod -> ensureOven(mod, 2, 2).setOvenDays((int) mod.getAmount(Mod303Key.CT_S3J3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3J3))
+		,CT_S3H4(Mod303Key.CT_S3H4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3H4, ensureOven(mod, 2, 3).getOvenSurface())
+				,mod -> ensureOven(mod, 2, 3).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S3H4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3H4))
+		,CT_S3J4(Mod303Key.CT_S3J4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3J4, ensureOven(mod, 2, 3).getOvenDays())
+				,mod -> ensureOven(mod, 2, 3).setOvenDays((int) mod.getAmount(Mod303Key.CT_S3J4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S3J4))
+		
+		,CT_S4H1(Mod303Key.CT_S4H1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4H1, ensureOven(mod, 3, 0).getOvenSurface())
+				,mod -> ensureOven(mod, 3, 0).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S4H1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4H1))
+		,CT_S4J1(Mod303Key.CT_S4J1, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4J1, ensureOven(mod, 3, 0).getOvenDays())
+				,mod -> ensureOven(mod, 3, 0).setOvenDays((int) mod.getAmount(Mod303Key.CT_S4J1))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4J1))
+		,CT_S4H2(Mod303Key.CT_S4H2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4H2, ensureOven(mod, 3, 1).getOvenSurface())
+				,mod -> ensureOven(mod, 3, 1).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S4H2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4H2))
+		,CT_S4J2(Mod303Key.CT_S4J2, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4J2, ensureOven(mod, 3, 1).getOvenDays())
+				,mod -> ensureOven(mod, 3, 1).setOvenDays((int) mod.getAmount(Mod303Key.CT_S4J2))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4J2))
+		,CT_S4H3(Mod303Key.CT_S4H3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4H3, ensureOven(mod, 3, 2).getOvenSurface())
+				,mod -> ensureOven(mod, 3, 2).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S4H3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4H3))
+		,CT_S4J3(Mod303Key.CT_S4J3, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4J3, ensureOven(mod, 3, 2).getOvenDays())
+				,mod -> ensureOven(mod, 3, 2).setOvenDays((int) mod.getAmount(Mod303Key.CT_S4J3))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4J3))
+		,CT_S4H4(Mod303Key.CT_S4H4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4H4, ensureOven(mod, 3, 3).getOvenSurface())
+				,mod -> ensureOven(mod, 3, 3).setOvenSurface((int) mod.getAmount(Mod303Key.CT_S4H4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4H4))
+		,CT_S4J4(Mod303Key.CT_S4J4, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4J4, ensureOven(mod, 3, 3).getOvenDays())
+				,mod -> ensureOven(mod, 3, 3).setOvenDays((int) mod.getAmount(Mod303Key.CT_S4J4))
+				,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S4J4))
+		;
+		
 		private Mod303Key key;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
@@ -2624,7 +2762,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	private static boolean rectificacionDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
 				&& (vat.isPurchase() || vat.isExpenses())
-				&& AonMathUtils.isNotZero(vat.getPercentage()); // FALTA - NO INCLUIR LAS QUE SEAN DEL TIPO 0%
+				&& AonMathUtils.isNotZero(vat.getPercentage()); // NO INCLUIR LAS QUE SEAN DEL TIPO 0%
 	}
 
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat, Mod303 mod) {
@@ -2713,6 +2851,20 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			}
 		}
 		return a.getDesks().get(idx);
+	}
+	
+	private static Mod303ActivityOven ensureOven(Mod303 mod, int act, int idx) {
+		if (idx < 0 || idx > 3) throw new IllegalArgumentException("0, 1, 2 o 3");
+		Mod303Activity a = ensureActivity(mod, act);
+		if (a.getOvens() == null) {
+			a.setOvens(new LinkedList<>());
+		}
+		for (int i = 0; i <= idx; i++) {
+			if (idx == a.getOvens().size()) {
+				a.getOvens().add(new Mod303ActivityOven());
+			}
+		}
+		return a.getOvens().get(idx);
 	}
 
 	@Override
