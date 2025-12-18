@@ -643,10 +643,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			requestDataBuffer.append("&" + Parameter.USER + "=" + Wnd.getCurrentUser());
 			requestDataBuffer.append("&" + Parameter.DOMAIN + "=" + Wnd.getCurrentDomainNameURL());
-
-			for (CCC ccc : cccs)
-				requestDataBuffer.append("&" + Parameter.CCC + "=" + ccc.getRegime() + ccc.getCode());
-
+			
+			String cccsString = cccs.stream().map(ccc -> ccc.getRegime() + ccc.getCode())
+					.collect(Collectors.joining(MULTI_VALUE_SEPARATOR));
+			if ( AonStringUtils.isNotBlank(cccsString) )
+				requestDataBuffer.append("&" + Parameter.CCC + "=" + cccsString);
+			
 			if (basesMesAnterior)
 				requestDataBuffer.append("&" + Parameter.ACEPTAR_BASES_ANTERIORES + "=on");
 
@@ -668,9 +670,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				file.accept( new CretaService.File.Visitor<StringBuffer, Collection<CCC>, Exception>() {
 					
 					void visitFile(StringBuffer requestDataBuffer, Collection<CCC> cccs) throws Exception {
-						for (CCC ccc : cccs)
-							for (Employee employee : ccc.getEmployees())
-								requestDataBuffer.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
+						String nafsString = cccs.stream().flatMap(ccc -> ccc.getEmployees().stream()).map(Employee::getSocialSecurity).collect(Collectors.joining(MULTI_VALUE_SEPARATOR));
+						if ( AonStringUtils.isNotBlank(nafsString ) )
+							requestDataBuffer.append("&" + Parameter.NAFS + "=" + nafsString);
 					}
 					
 					@Override
