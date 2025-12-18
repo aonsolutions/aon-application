@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.MainCreta.isAON;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.CRETA_URL;
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.MULTI_VALUE_SEPARATOR;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.TRABAJADORES_TRAMOS;
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -17,7 +18,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -1178,7 +1181,7 @@ public abstract class CretaDetail extends Composite {
 	protected void submitBases() {
 		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
 		try {
-			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
+			datas.put(CretaService.Parameter.NAFS.name(), Collections.singletonList(join(getNafs())));
 		}catch ( Exception e ) {
 		}
 		
@@ -1204,7 +1207,7 @@ public abstract class CretaDetail extends Composite {
 	protected void submitSalaryBases() {
 		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
 		try {
-			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
+			datas.put(CretaService.Parameter.NAFS.name(), Collections.singletonList(join(getNafs())));
 		}catch ( Exception e ) {
 		}
 		
@@ -1476,6 +1479,13 @@ public abstract class CretaDetail extends Composite {
 			return true;
 		})
 		.collect(Collectors.toList());
+	}
+	
+	private static String join( Collection<String> collection){
+		return
+		collection.stream()
+		.filter(AonStringUtils::isNotBlank)
+		.collect(Collectors.joining(CretaService.MULTI_VALUE_SEPARATOR));
 	}
 	
 	private static boolean contains(List<JsFile> jsFiles, String id) {
