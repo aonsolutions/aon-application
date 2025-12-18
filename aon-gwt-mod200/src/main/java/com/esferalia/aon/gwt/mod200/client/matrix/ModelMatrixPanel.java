@@ -360,6 +360,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
 		if (params.getStatus() == null && params.getPeriod() == null) {
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+			if(options.isCompactMode() /*&& params.getPeriod() != null && params.getPeriod().isMonthPeriod()*/)			
+				addButton.addStyleName(AON.CSS.aonModelMatrixSmallButton());
+			
 			cell.add(addButton);		
 			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
 					, new AonModuleCallback<IFiscalModel>() {
@@ -408,6 +411,10 @@ public class ModelMatrixPanel extends FlowPanel {
 		mod.addStyleName(AON.CSS.aonIconLabel());
 		mod.addStyleName(AON.CSS.aonIconBullet());
 		mod.addStyleName(AON.CSS.aonTextCenter());
+
+		if(options.isCompactMode() /*&& params.getPeriod() != null && params.getPeriod().isMonthPeriod()*/)
+			mod.addStyleName(AON.CSS.aonModelMatrixBulletSmallButton());		
+
 		focusPanel.add(mod);
 		cell.clear();
 		cell.add(focusPanel);
