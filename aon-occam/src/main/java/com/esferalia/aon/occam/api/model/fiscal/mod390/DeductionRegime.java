@@ -167,4 +167,5 @@ public class DeductionRegime implements Serializable {
 		this.quota10 = quota10;
 		return this;
 	}
+	
 }

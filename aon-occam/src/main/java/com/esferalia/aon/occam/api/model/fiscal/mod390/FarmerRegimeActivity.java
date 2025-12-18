@@ -10,7 +10,7 @@ public class FarmerRegimeActivity implements Serializable {
     protected double incomes;
     protected double quotaIndex;
     protected double accrualQuota;
-    private double danaReduction;   // Reducción DANA 2024
+    private double danaReduction;   // Reducción DANA 2024 (Solo ejercicio 2024)
     protected double inputQuotas;
     protected double quota;
     

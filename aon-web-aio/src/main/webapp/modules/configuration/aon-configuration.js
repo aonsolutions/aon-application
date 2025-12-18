@@ -98,10 +98,15 @@ export class AonConfiguration extends AonElement {
 		let officeOptions = [];
 
 		// Ficha Cliente
-		if (this.dur.isParentUser() && this.company && this.company.registry && this.company.type !== "OFFICE") {
+		if ( this.dur.isParentUser() && 
+			 this.company && 
+			 (this.company.registry || this.company.id) && 
+			 (this.company.type !== "OFFICE" || this.company.domain.domainType !== "OFFICE") ) 
+		{
+			
 			getRelationShipCompany({
-				url: this.company.domain,
-				relatedRegistry: this.company.registry
+				url: this.company.domain?.name || this.company.domain,
+				relatedRegistry: this.company.registry || this.company.id
 			}).then(relationshipCompany => {
 				
 				if (relationshipCompany.rrelationship) {
@@ -118,6 +123,7 @@ export class AonConfiguration extends AonElement {
 				}
 				
 			});
+			
 		}
 
 		let companyOptions = [];
@@ -166,6 +172,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 		}
+		
 		if(this.company && this.company.registry && this.company.domain){
 			getRelationShipCompany({
 				url: this.company.domain,
@@ -224,7 +231,7 @@ export class AonConfiguration extends AonElement {
 			if (!this.dur.isEmployee() && this.isBeta()) {
 				appOptions.push({
 					id: "notice",
-					icon: "rss_feed",
+					// icon: "rss_feed",
 					name: "Comunicaciones",
 					fn: () => this.buildNews(),
 				});
@@ -238,7 +245,7 @@ export class AonConfiguration extends AonElement {
 
 			menuOptions.push({
 				id: "options panel",
-				icon: "dashboard",
+				// icon: "dashboard",
 				name: "Panel Configuración",
 				fn: () => this.buildConfigurationMenu(),
 			});
@@ -275,11 +282,7 @@ export class AonConfiguration extends AonElement {
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
 
-		console.log("getCompanyOne");
-		console.log(data);
-
 		getCompanyOne(data).then(cp => {
-			console.log(cp);
 			let aonRegistry = new AonReg();
 			aonRegistry.id = this.getApplication().id + 'Registry';
 			aonRegistry.setShowLogo(true);

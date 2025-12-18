@@ -1753,6 +1753,21 @@ export const PLANS = {
   symbol: MATERIAL_ICONS.APPS
 };
 
+// export const EXPAND_HIRIND = {
+// 	app: CONSTANT.EXPAND_HIRIND,
+// 	title: MSG.EXPAND_HIRIND,
+// 	description: MSG.EXPAND_HIRIND,
+// 	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+// };
+
+export const CONTENT_INDEX = {
+	app: CONSTANT.CONTENT_INDEX,
+	title: MSG.CONTENT_INDEX,
+	description: MSG.CONTENT_INDEX,
+	symbol: 'school',
+  info: "Consulta nuestros manuales"
+};
+
 export const AON_APPS = [
 	AON_SOLUTIONS, 
 	BIDOQ, 
@@ -1774,8 +1789,8 @@ export const MENU_APPS = [
   NOTES,
   MESSENGER,
   WAREHOUSE,
-  AON_CLASSIC,
-  // PLANS
+  // CONTENT_INDEX,
+  AON_CLASSIC
 ];
 
 export const DESKTOP_APPS = [

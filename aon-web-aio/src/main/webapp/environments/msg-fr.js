@@ -213,6 +213,7 @@ export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'La session a expiré';
 export const ERRORS = 'Errores';
+export const EXPAND_HIRIND = "Élargir l'embauche";
 
 // ----- F
 

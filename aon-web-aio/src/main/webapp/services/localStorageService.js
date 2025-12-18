@@ -32,6 +32,7 @@ export const AON_MOBILE_ANDROID_35 = 'css/theme/aon-mobile-android-35.css';
 export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
+export const FUTURE_THEME = '/css/theme/future.css';
 
 export const BETA     = 'beta';
 export const BETADOC  = 'betadoc';
@@ -173,6 +174,11 @@ export const setDarkTheme = (value) => {
         remove(THEME);
     }
 };
+
+export const isFutureTheme = () => {
+    let theme = get(THEME);
+    return theme && FUTURE_THEME == theme;
+}
 
 export const isWhiteBrand = () => {
     let aon = getWhiteBrand();

@@ -1,16 +1,12 @@
 import { AonElement } from '../components/AonElement.js';
 import { AonHeader } from '../modules/aon-header.js';
-import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
-// import * as LS from '../services/localStorageService.js';
+import { MSG, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
 import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
-//import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
-// import { APPLICATIONS, APPS, PLANS } from '../services/app.js';
-// import { clearAuth } from '../services/service.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
@@ -39,12 +35,7 @@ export class AonHome extends AonElement {
 	connectedCallback () {
 		this.clear();
 		this.initialize();
-//		if(this.isMobile()) {
-//			this.buildMobile();
-//		} else {
-			this.build();
-//			this.customize();
-//		}
+    this.build();
 	}
 
 	initialize() {
@@ -117,161 +108,32 @@ export class AonHome extends AonElement {
 		content.appendChild(rootPanel);
 		this.appendChild(content);
 
-//
-// Botones de la cabecera
-//
-        if(this.isNewStyle()){
-          this.rightPanel = new AonRightPanel();
-          this.appendChild(this.rightPanel);
-          // Botones con opcion de abrir un AonRightPanel()
-          // Cada boton por lo que he visto se crea en aon-header.js
-          const panelButtons = [
-            { id: 'aonHeaderUser',         title: MSG.USER,          content: () => new AonLoginPanel(), key: 'user' },
-            { id: 'aonHeaderNotification', title: MSG.NOTIFICATIONS, content: () => new AonNotificationPanel(), key: 'notifications' },
-            { id: 'aonHeaderConfig',       title: MSG.CONFIGURATION, content: () => new AonConfig(), key: 'config' },
-            { id: 'aonHeaderHelp',         title: MSG.HELP,          content: () => new AonHelp(), key: 'help' }
-          ];
-          // Montamos funcionalidad para cada boton.
-          panelButtons.forEach(({ id, title, content, key }) => {
-            const el = this.getElement(id);
-            if (el) {
-              el.addEventListener(EVENT.CLICK, (e) => {
-                e.stopPropagation();
-                this.toggleRightPanel(key, title, content());
-              });
-            }
+    //
+    // Botones de la cabecera
+    //  
+      this.rightPanel = new AonRightPanel();
+      this.appendChild(this.rightPanel);
+      // Botones con opcion de abrir un AonRightPanel()
+      // Cada boton por lo que he visto se crea en aon-header.js
+      const panelButtons = [
+        { id: 'aonHeaderUser',         title: MSG.USER,          content: () => new AonLoginPanel(), key: 'user' },
+        { id: 'aonHeaderNotification', title: MSG.NOTIFICATIONS, content: () => new AonNotificationPanel(), key: 'notifications' },
+        { id: 'aonHeaderConfig',       title: MSG.CONFIGURATION, content: () => new AonConfig(), key: 'config' },
+        { id: 'aonHeaderHelp',         title: MSG.HELP,          content: () => new AonHelp(), key: 'help' }
+      ];
+      // Montamos funcionalidad para cada boton.
+      panelButtons.forEach(({ id, title, content, key }) => {
+        const el = this.getElement(id);
+        if (el) {
+          el.addEventListener(EVENT.CLICK, (e) => {
+            e.stopPropagation();
+            this.toggleRightPanel(key, title, content());
           });
-        } else {
-        //   this.rightPanel = new AonRightPanel();
-        //   this.rightPanel.addEventListener(EVENT.CLOSE, () => {
-        //       // CLose Right Sidenav
-        //       document.removeEventListener('click', this.closeRightPanelHandler);
-        //   });
-
-        //   this.appendChild(this.rightPanel);
-
-        //   this.editButton         = this.getElement('aonRightPanelEditButton');
-        //   this.configButton       = this.getElement('aonRightPanelConfigButton');
-        //   this.helpButton         = this.getElement('aonRightPanelHelpButton');
-        //   this.notificationButton = this.getElement('aonRightPanelNotificationButton');
-
-        //   if(LS.isRightPanel()) {
-        //       LS.removeRightPanel();
-        //       this.rightPanel.clear();
-        //       this.rightPanel.setContent(new AonConfig());
-        //       this.rightPanel.setTitle(MSG.CONFIGURATION);
-        //       this.rightPanel.open();
-        //   }
-
-        //   let headerConfig = this.getElement('aonHeaderConfig');
-        //   if (headerConfig) {
-        //       headerConfig.addEventListener(EVENT.CLICK, () => {
-        //           let config = this.getElement('aonConfig');
-        //           if (!this.rightPanel.isClose() && config) {
-        //               this.closeRightPanel();
-        //           } else {
-        //               let rightPanelContent = document.querySelector(".rightPanel");
-        //               if(rightPanelContent) this.closeRightPanel();
-
-        //               this.rightPanel.clear();
-        //               this.rightPanel.setContent(new AonConfig());
-        //               this.rightPanel.setTitle(MSG.CONFIGURATION);
-
-        //               this.configButton.style.display='block';
-        //               this.helpButton.style.display='none';
-        //               this.editButton.style.display='none';
-        //               this.notificationButton.style.display='none';
-
-        //               this.rightPanel.open();
-        //               this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerConfig);
-        //               document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
-        //           }
-        //       });
-        //   }
-
-        //   let headerHelp = this.getElement('aonHeaderHelp');
-        //   if (headerHelp) {
-        //       headerHelp.addEventListener(EVENT.CLICK, () => {
-        //           let help = this.getElement('aonHelp');
-        //           if(!this.rightPanel.isClose() && help) {
-        //               this.closeRightPanel();
-        //           } else {
-        //               let rightPanelContent = document.querySelector(".rightPanel");
-        //               if(rightPanelContent) this.closeRightPanel();
-
-        //               this.rightPanel.clear();
-        //               let aonHelp = new AonHelp();
-        //               this.rightPanel.setContent(aonHelp);
-        //               this.rightPanel.setTitle(MSG.HELP);
-
-        //               this.helpButton.style.display='block';
-        //               this.editButton.style.display='none';
-        //               this.notificationButton.style.display='none';
-        //               this.configButton.style.display='none';
-
-        //               this.rightPanel.open();
-        //               this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerHelp);
-        //               document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer
-        //               aonHelp.addEventListener(EVENT.AON_APPLICATION_OPEN, () => this.closeRightPanel() ); 
-        //           }
-        //       });
-        //   }
-
-        //   let headerUser = this.getElement('aonHeaderUser');
-        //   if (headerUser) {
-        //       headerUser.addEventListener(EVENT.CLICK, () => {
-        //           let user = this.getElement('aonLoginPanel');
-        //           if(!this.rightPanel.isClose() && user) {
-        //               this.closeRightPanel();
-        //           } else  {
-        //               let rightPanelContent = document.querySelector(".rightPanel");
-        //               if(rightPanelContent) this.closeRightPanel();
-
-        //               this.rightPanel.clear();
-        //               this.rightPanel.setContent(new AonLoginPanel());
-        //               this.rightPanel.setTitle(MSG.USER);
-
-        //               this.editButton.style.display = 'block';
-        //               this.helpButton.style.display = 'none';
-        //               this.configButton.style.display = 'none';
-        //               this.notificationButton.style.display='none';
-
-        //               this.rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
-        //               this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerUser);
-        //               document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
-        //           }
-        //       });
-        //   }
-
-        //   let headerNotification = this.getElement('aonHeaderNotification');
-        //   if (headerNotification) {
-        //       headerNotification.addEventListener(EVENT.CLICK, () => {
-        //           let notification = this.getElement('aonNotificationPanel');
-        //           if(!this.rightPanel.isClose() && notification) {
-        //               this.closeRightPanel();
-        //           } else  {
-        //               let rightPanelContent = document.querySelector(".rightPanel");
-        //               if(rightPanelContent) this.closeRightPanel();
-
-        //               this.rightPanel.clear();
-        //               this.rightPanel.setContent(new AonNotificationPanel());
-        //               this.rightPanel.setTitle(MSG.NOTIFICATIONS);
-
-        //               this.editButton.style.display = 'none';
-        //               this.helpButton.style.display = 'none';
-        //               this.configButton.style.display = 'none';
-        //               this.notificationButton.style.display='block';
-
-        //               this.rightPanel.open();
-        //               this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerNotification);
-        //               document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
-        //           }
-        //       });
-        //   }
         }
-//
-// FIN Botones de la cabecera
-//
+      });
+    //
+    // FIN Botones de la cabecera
+    //
 	}
 
 // Logica comun de apertura/cierre
@@ -301,27 +163,15 @@ export class AonHome extends AonElement {
  	closePopupOnOutsideClick(openpBtn, event) {
     let rightPanelContent = document.querySelector(".rightPanel");
 		if (!rightPanelContent.contains(event.target) && !openpBtn.contains(event.target)) {
-	       	this.editButton.style.display='none';
+      this.editButton.style.display='none';
 			this.configButton.style.display='none';
 			this.notificationButton.style.display='none';
 			this.helpButton.style.display='none';
 			this.rightPanel.close();
-			
-			// Its remove on this.rightPanel.addEventListener(EVENT.CLOSE, ...)
-	        //document.removeEventListener('click', this.closeRightPanelHandler); // Remover el evento una vez cerrado
-	    }
+		}
 	}
 	
-	customize(){
-//		let aonHeader = this.getElement(this.AON_HEADER);
-//		let aonSearchDiv = aonHeader.getElement("aon-search-div");
-//		aonSearchDiv.style.height = '32px';
-//		aonSearchDiv.style.border = 'none';
-//		aonSearchDiv.style.borderRadius = '4px';
-//		aonSearchDiv.style.backgroundColor = "var(--aonSearchBar)";
-//		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
-//		aonSearchDiv.style.alignItems = 'center';
-	}
+	customize(){}
 	
 	showMenu(bool) {}
 

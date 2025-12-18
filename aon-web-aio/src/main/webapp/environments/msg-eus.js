@@ -209,6 +209,7 @@ export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
 export const EXPIRED_SESSION = 'Saioa iraungi da';
 export const ERRORS = 'Akatsak';
+export const EXPAND_HIRIND = 'Kontratazioa Zabaldu';
 
 // ----- F
 

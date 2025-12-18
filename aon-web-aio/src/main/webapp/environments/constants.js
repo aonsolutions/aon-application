@@ -95,6 +95,7 @@ export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CONSOLE = 'console';
 export const CREATE_EXPENSE = 'createExpense';
 export const CREATE_INCOME = 'createIncome';
+export const CONTENT_INDEX = "contentIndex";
 export const CREATE_INVOICE = 'createInvoice';
 export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
 export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
@@ -143,6 +144,7 @@ export const ENTERPRISE = 'enterprise';
 export const ENTERPRISES = 'enterprises';
 export const ERROR = "error";
 export const EXAMPLE = "example";
+export const EXPAND_HIRIND = "expandHirin";
 export const EXPENSES = "expenses";
 export const EXPORTED = "exported";
 

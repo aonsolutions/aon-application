@@ -211,6 +211,7 @@ export const EXPIRATIONS = 'Vencementos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Erros';
+export const EXPAND_HIRIND = 'Ampliar a contratación';
 
 // ----- F
 

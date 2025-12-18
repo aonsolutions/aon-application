@@ -75,41 +75,44 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
+import net.aonsolutions.aon.verifactu.Environment;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
 import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
 class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 
+	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+
 	@Test
 	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_simplificadaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_simplificada_con_customer_sin_direccionAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA_CON_CUSTOMER_SIN_DIRECCION.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_suplidosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SUPLIDOS.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_rectificativa_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		invoice1 = save(invoice1);
 
-		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLE.get(getEnvironment());
 		invoice2.setRectificationInvoice(invoice1.getId());
 		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
 		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
@@ -120,10 +123,10 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	
 	@Test
 	void venta_nacional_rectificativa_simplificadaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(ctx, DOMAIN_ID);
+		Invoice invoice1 = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		invoice1 = save(invoice1);
 
-		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(ctx, DOMAIN_ID);
+		Invoice invoice2 = InvoiceTypes.Invoices.VENTA_NACIONAL_RECTIFICATIVA_SIMPLIFICADA.get(getEnvironment());
 		invoice2.setRectificationInvoice(invoice1.getId());
 		invoice2.setRectificationInvoiceDate(invoice1.getIssueDate());
 		invoice2.setRectificationInvoiceNumber(invoice1.getNumber());
@@ -134,83 +137,83 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	
 	@Test
 	void venta_ispAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ISP.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_reAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_irpf_professionalAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_IRPF_PROFESSIONAL.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_intracomunitaria_serviciosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_intracomunitaria_no_serviciosAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA.get(getEnvironment());
 		save(invoice);
 	}
 
 	@Test
 	void venta_extracomunitariaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_extracomunitaria_servicioAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA_SERVICIO.get(getEnvironment());
 		save(invoice);
 	}
 
 	@Test
 	void venta_can_ceu_melAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL.get(getEnvironment());
 		save(invoice);
 	}
 
 	@Test
 	void venta_can_ceu_mel_servicioAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO.get(getEnvironment());
 		save(invoice);
 	}
 
 	@Test
 	void venta_nacional_exenta_e1AEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_EXENTA_E1.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_anuladaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_ANULADA.get(getEnvironment());
 		save(invoice);
 	}
 	
 	@Test
 	void venta_nacional_simple_criterio_cajaAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(ctx, DOMAIN_ID);
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(getEnvironment());
 		save(invoice);
 	}
 
 	private Invoice save(Invoice invoice) throws InvoiceCommunicationException {
-		Domain domain = DomainDAO.getDomain(ctx, DOMAIN_ID);
-		User user = UserDAO.get(ctx, DOMAIN_ID, USER)
-			.orElseThrow(() -> new IllegalStateException("User not found: " + USER));
+		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
+		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
+			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
-		cc.setConfig(configWithCertificate()).setCompany(company());
+		cc.setConfig(getEnvironment().configurationWithCertificate()).setCompany(getEnvironment().company());
 		InvoiceCommunicator.acceptInvoice(cc);
 		InvoiceCommunicationTracking tracking = assertInvoiceBatch(invoice);
 		DataResponse response = assertDataResponse(cc, invoice, tracking);
@@ -223,7 +226,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
-		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(ctx, i.getDomain(), i.getId());
+		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);
 		assertTrue(oTracking.isPresent());
 		InvoiceCommunicationTracking tracking = oTracking.get();
@@ -254,7 +257,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(tracking.getInvoiceBatch());
 		Integer dataResponseId = tracking.getInvoiceBatch().getDataResponse();
 		assertNotNull(dataResponseId);
-		Optional<DataResponse> optDataResponse = DataResponseDAO.get(ctx, dataResponseId);
+		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId);
 		assertNotNull(optDataResponse);
 		assertTrue(optDataResponse.isPresent());
 		DataResponse dataResponse = optDataResponse.get();
@@ -264,7 +267,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		assertTrue(dataResponse.getId() > 0);
 		assertNotNull(dataResponse.getDataRequest());
 		
-		Attach response = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(invoice.getDomain())
 			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
 			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
@@ -282,7 +285,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertInvoiceInfo(Invoice i) {
-		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(ctx, i.getId(), InvoiceCommunicationType.VERIFACTU);
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.VERIFACTU);
 		assertNotNull(invoiceInfoOpt);
 		assertTrue(invoiceInfoOpt.isPresent());
 		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
@@ -296,7 +299,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertInvoiceCommunication(Invoice i) {
-		Invoice inv = InvoiceDAO.getFullInvoice(ctx, i.getId());
+		Invoice inv = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
 		assertNotNull(inv);
 		assertNotNull(inv.getId());
 		assertNotNull(inv.getCommunicationInfo());
@@ -314,7 +317,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 	
 	private void assertCommunicationHistory(Invoice i) throws InvoiceCommunicationException {
-		Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> map = InvoiceCommunicator.history(getOccam(), i.getId());
+		Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> map = InvoiceCommunicator.history(getEnvironment().getOccam(), i.getId());
 		assertNotNull(map);
 		assertTrue(AonCollectionUtils.isNotEmpty( map ));
 		AonCollectionUtils.stream(map)
@@ -333,7 +336,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 				InvoiceCommunicationHistory h = history.get(0);
 				assertEquals(i.getId(), h.getInvoiceId());
 				assertEquals(e.getKey(), h.getType());
-				assertEquals(USER, h.getCreationUser());
+				assertEquals(getEnvironment().getUser(), h.getCreationUser());
 				assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
 				assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
 						|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
@@ -350,13 +353,13 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(response);
 		Integer responseDataRequest = response.getDataRequest();
 		assertNotNull(responseDataRequest);
-		DataRequest dataRequest = DataRequestDAO.get(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+		DataRequest dataRequest = DataRequestDAO.get(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
 			.and(f.getIdProperty().eq(responseDataRequest)));
 		assertNotNull(dataRequest);
 		assertEquals(dataRequest.getId(), responseDataRequest);
 		assertEquals(dataRequest.getDomain(), i.getDomain());
 		assertTrue(dataRequest.getId() > 0);
-		Attach request = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+		Attach request = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
 				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
 				.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
@@ -365,7 +368,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 
 	private void assertInvoiceData(Invoice invoice) {
-		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
+		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(getEnvironment().getCtx(), invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
 		InvoiceData qrUrl =  oQRUrl.get();
@@ -374,7 +377,7 @@ class InvoiceCommunicationSaveTest extends AbstractVerifactuTest {
 		assertEquals(InvoiceDataName.VERIFACTU_QR, qrUrl.getName());
 		assertNotNull(qrUrl.getValue());
 
-		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
+		Optional<InvoiceData> oHuella = InvoiceDataDAO.get(getEnvironment().getCtx(), invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_HUELLA);
 		assertNotNull(oHuella);
 		assertTrue(oHuella.isPresent());
 		InvoiceData huella =  oHuella.get();

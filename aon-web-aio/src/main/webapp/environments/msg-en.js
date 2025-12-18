@@ -212,6 +212,7 @@ export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
 export const EXPIRED_SESSION = 'Session expired';
 export const ERRORS = 'Errors';
+export const EXPAND_HIRIND = 'Expand Hirind';
 
 // ----- F
 

@@ -54,6 +54,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.verifactu.NOVERIFACTU;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 import net.aonsolutions.aon.verifactu.VerifactuContext;
 
@@ -259,15 +260,22 @@ public class InvoiceCommunicator {
 						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
 						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
 						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 						
 						@Override
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
 							VERIFACTU.accept(ctx,cc);
 						}
 						
-						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
-						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
-						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
+						@Override 
+						public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
+							NOVERIFACTU.accept(ctx,cc);
+						}
+						@Override 
+						public void visitSIF() throws InvoiceCommunicationException { 
+							NOVERIFACTU.accept(ctx,cc);
+						}
+						
 					});
 				}
 			}
@@ -320,6 +328,7 @@ public class InvoiceCommunicator {
 						@Override public void visitSII() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0015); }
 						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0016); }
 						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0017); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
 						
 						@Override
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
@@ -328,9 +337,20 @@ public class InvoiceCommunicator {
 							} 
 						}
 						
-						@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0031); }
-						@Override public void visitSIF() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0032); }
-						@Override public void visitFACTURAE() throws InvoiceCommunicationException { throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0033);}
+						@Override 
+						public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
+							if (mustBeAnnulled(ctx, invoice, InvoiceCommunicationType.VERIFACTU)) {
+								VERIFACTU.cancel(ctx,cc);
+							} 
+						}
+						
+						@Override 
+						public void visitSIF() throws InvoiceCommunicationException { 
+							if (mustBeAnnulled(ctx, invoice, InvoiceCommunicationType.VERIFACTU)) {
+								VERIFACTU.cancel(ctx,cc);
+							} 
+						}
+						
 					});
 				}
 			}

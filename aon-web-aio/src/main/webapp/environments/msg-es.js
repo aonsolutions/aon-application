@@ -124,7 +124,7 @@ export const CONTACT_DATA = 'Datos contacto';
 export const CONTACT_DATA2 = "Datos de contacto";
 export const CONTACTS = 'Contactos';
 export const CONTAINER = 'Envase';
-export const CONTENT_INDEX = 'Índice de contenidos';
+export const CONTENT_INDEX = 'Índice Contenidos';
 export const CONTRACT = 'Contratar';
 export const CONTRACTED_PRODUCTS = "Productos contratados";
 export const CONTRACTED_USERS = "Usuarios contratados";
@@ -222,6 +222,7 @@ export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'Sesión expirada';
 export const ERRORS = 'Errores';
+export const EXPAND_HIRIND = 'Ampliar Plan';
 
 // ----- F
 
