@@ -512,6 +512,10 @@ aon-configuration-menu .suiteMenuContent  {
 	color: white;
 }
 
+#aonParentSidenav{
+	padding-bottom: 2rem;
+}
+
 /*
  ------------------ Menu Collapse Button
 */
@@ -865,6 +869,10 @@ aon-configuration-menu .suiteMenuContent  {
 	font-family: "Inter-medium", sans-serif;
 }
 
+#aonParentSidenavsigning {
+	margin-bottom: 2rem;
+}
+
 
 /* ========================== Tabs Styles  ========================== */
 
@@ -970,10 +978,6 @@ aon-configuration-menu .suiteMenuContent  {
 #aonLogin {
 	font-size: 17px;
 	font-family: var(--aonFontFamily);
-}
-
-#loginContent {
-	background-color: var(--aonBackgroundColor);
 }
 
 .aonLoginTitle {
@@ -1406,7 +1410,19 @@ aon-right-panel {
 }
 
 .rightPanel #aonRightPanelContent {
-	padding: 1.25rem 1.25rem 5rem 1.25rem;
+	padding: 1rem;
+	overflow-y: scroll;
+	height: 85%;
+}
+
+.rightPanelAboutContactCard {
+	margin-left: 0;
+}
+
+#aonHelpAboutContactCardContent > div > div {
+	align-items: center;
+	margin: 0 !important;
+	padding: .5rem !important;
 }
 
 .rightPanel span:not(.material-icons) {
@@ -1423,6 +1439,7 @@ aon-right-panel {
 .rightPanel aon-card .aonCard{
 	margin: 0px;
 	padding: 0px;;
+	border-radius: .375rem;
 }
 
 .rightPanel .divLogout,
@@ -1440,6 +1457,15 @@ aon-right-panel {
 	width: 100%;
 }
 
+.helpCardText {
+	display: flex;
+  	justify-content: center;
+}
+
+#aonHelpAboutContactCardTitle {
+	margin-bottom: .5rem;
+}
+
 #contentIndexHelp {
 	display: none;
 }
@@ -1448,28 +1474,132 @@ aon-right-panel {
 .rightPanel .helpCardText *,
 .rightPanel .configCardText *{
 	color: #fff;	
+	font-size: 1rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv > div:first-child{
+	font-size: 1.2rem
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv > div:not(:first-child){
+	font-size: 1rem
 }
 
 #loginContent > div {
 	flex-direction: column;
 }
 
-.rightPanel .divLogout {
-	margin-top: 2rem;
+.helpCardText:hover,
+.configCardText:hover {
+  background-color: #64748b !important;
+}
+
+.aonUserPasswordLink {
+  font-size: 1rem;
+  text-decoration: none;
+  justify-content: center;
+  padding: .5rem 1rem;
 }
 
 .rightPanel div[id$="CardContent"]{
-	padding: 1.25rem;
+	padding: 1rem;
 }
 
 .rightPanel div[id$="CardContent"] *:not(.material-icons) {
 	color: #64748b;
 }
 
+.rightPanel div[id$="CardContent"] .material-icons {
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+}
+
+.rightPanel .helpCardText .material-icons,
+.rightPanel .configCardText .material-icons {
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: white;
+}
+
+#helpContent > span.helpCardText:hover
+#aonConfig .configCardText:hover {
+	background-color: #64748b !important;
+}
+
+#aonConfig .configCardText {
+	display: flex;
+	justify-content: center;
+}
+
+#helpContent > span.helpCardText:nth-of-type(2) > i {
+	mask-image: url('/icons/bell.svg') ;
+}
+
+#helpContent > span.helpCardText:nth-of-type(3) > i {
+	mask-image: url('/icons/award.svg') ;
+}
+
+#aonContactIcon1{
+	 mask-image: url('/icons/building.svg') ;
+}
+
+#aonContactIcon2{
+	 mask-image: url('/icons/phone.svg') ;
+}
+
+#aonContactIcon3{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon4{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon5{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon6{
+	 mask-image: url('/icons/clock-4.svg') ;
+}
+
+#aonContactIcon7{
+	 mask-image: url('/icons/clock-4.svg') ;
+}
+
+.rightPanel .configCardText .material-icons {
+	mask-image: url('/icons/folder-cog.svg') ;
+}
+
+.rightPanel div[id$="CardContent"] > div > div{
+	padding: .5rem !important;
+}
+
+.rightPanel div[id$="CardContent"] > div > div:hover{
+	background-color: #f1f5f9;
+}
+
+.rightPanel #aonConfigThemesCardTitle,
+.rightPanel #aonConfigHelpLangCardTitle {
+	margin-bottom: 0;
+}
+
+
 .rightPanel .toolbarSidenavPanel{
 	color: #fff;
 	background: #475569;
 	padding: 1rem 1.25rem;
+	
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
 
 .rightPanel .toolbarSidenavPanel * {
@@ -1489,7 +1619,7 @@ aon-right-panel {
 	display: none;
 }
 
-.rightPanel i[class~="configPanelLanguageI"]{
+.rightPanel i[class~="configPanelLanguageI"] {
 	width: 24px;
 	height: 24px;
 	mask-size: contain;
@@ -1514,8 +1644,56 @@ aon-right-panel {
 	position: initial;
 }
 
-/* ========================== Header Customer Styles  ========================== */
+.profile-avatar-letters{
+	background-color: #475569;
+  	color: #fff;
+}
 
+.userPanelDivUserInfo{
+	width: 100%;
+	max-width: 100%;
+	
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv{
+	margin: .2rem 1rem;
+	display: flex;
+	align-items: center;
+	
+	height: 24px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+}
+
+#loginContent > div > div.userPanelDivUserInfo {
+	margin-bottom: 2rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(1){
+	justify-content: center;
+	margin-bottom: .3rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(2) > i{
+	width: 24px;
+	mask-image: url('/icons/mail.svg') ;
+	background-image: url('/icons/mail.svg');
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(3) > i{
+	width: 24px;
+	mask-image: url('/icons/phone.svg') ;
+	background-image: url('/icons/phone.svg');
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(4) > i{
+	width: 24px;
+	mask-image: url('/icons/user.svg') ;
+	background-image: url('/icons/user.svg');
+}
+
+/* ========================== Header Customer Styles  ========================== */
 .aonSecondaryToolbar{
 	border: none;
 }
