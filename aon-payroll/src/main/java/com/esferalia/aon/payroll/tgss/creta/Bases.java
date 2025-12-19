@@ -7,7 +7,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FREE_BASES;
@@ -52,11 +51,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
@@ -93,7 +90,6 @@ import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -115,6 +111,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.bases.BasesBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.DatoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.RectificacionFueraPlazo;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TrabajadorBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.Tramos;
@@ -258,6 +255,9 @@ public class Bases {
 	public static class CustomizeBasesCallback implements BasesCallback {
 		boolean reftificationMark = false;
 		boolean solicitudRecepcionRNT = false;
+
+		Integer outOfDateReason = 1;
+		String outOfDateLiquidation = null;
 		
 		public CustomizeBasesCallback setReftificationMark(boolean reftificationMark) {
 			this.reftificationMark = reftificationMark;
@@ -268,6 +268,18 @@ public class Bases {
 			this.solicitudRecepcionRNT = solicitudRecepcionRNT;
 			return this;
 		}
+		
+		public CustomizeBasesCallback setOutOfDateLiquidation(String outOfDateLiquidation) {
+			this.outOfDateLiquidation = outOfDateLiquidation;
+			return this;
+		}
+		
+		public RectificacionFueraPlazo getOutOfDateLiquidation() {
+			RectificacionFueraPlazo ref = new RectificacionFueraPlazo();
+			ref.setNumeroLiquidacion(outOfDateLiquidation);
+			ref.setMotivoRectificacion(outOfDateReason.toString());
+			return ref;
+		}
 
 		// ------------------------------------------------------ BasesCallback
 		@Override
@@ -276,6 +288,8 @@ public class Bases {
 				bases.setIndicadorRectificacion("S");
 			if ( solicitudRecepcionRNT)
 				bases.getLiquidacion().forEach( l -> l.setSolicitudRecepcionRNT("S"));
+			if ( AonNumberUtils.isDigits(outOfDateLiquidation))
+				bases.getLiquidacion().forEach( l -> l.setRectificacionFueraPlazo(getOutOfDateLiquidation()));
 		}
 	}
 
