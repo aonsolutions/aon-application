@@ -175,8 +175,12 @@ export class AonUserList extends AonElement {
 				id: user.id,
 				time: 0
 			};
-			generateTokenJson(data).then(token => {
-				open(`https://${LS.getDomainName()}/app?token=${token.session_id}`, '_blank');
+			
+			let domainName = this.sessionData ? this.sessionData.domain_name : LS.getDomainName();
+			
+			// this.sessionData can be undefined, then will get current sessionData in generateTokenJson method
+			generateTokenJson(data, this.sessionData).then(token => {
+				open(`https://${domainName}/?token=${token.session_id}`, '_blank');
 			}).catch(e => this.showError(e));
 		});			
 		d.open();
