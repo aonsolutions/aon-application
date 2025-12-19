@@ -61,6 +61,8 @@ export class AonPlans extends AonElement {
   }
 
   build() {
+    GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE)
+  /*
     if(this.getDur().isTrial() || this.getDur().hasBeenTrial()){
       // Autocontratacion
       GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE)
@@ -110,6 +112,7 @@ export class AonPlans extends AonElement {
         });
         cardAddUsers.addContent(usersButton);
     }
+  */
   }
 
   buildPlanCard(plan, index, userLevel, plansGrid) {

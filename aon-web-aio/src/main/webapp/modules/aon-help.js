@@ -74,6 +74,8 @@ export class AonHelp extends AonElement {
 
       helpContent.appendChild(supportContent);
 
+    /* 
+    No se quiere ya en este lado
       // Indice de contenido
       let buttonContent = this.createElement(TAG.BUTTON);
       // Icono
@@ -88,6 +90,7 @@ export class AonHelp extends AonElement {
         let rightPanel = this.closest('aon-right-panel');
         rightPanel?.close?.();
       });
+    */
       // Notificaciones
       let buttonNotif = this.createElement(TAG.BUTTON);
       // Icono

@@ -1765,7 +1765,7 @@ export const CONTENT_INDEX = {
 	title: MSG.CONTENT_INDEX,
 	description: MSG.CONTENT_INDEX,
 	symbol: 'school',
-  info: "Consulta nuestros manuales"
+  info: "Manuales de uso para el usuario"
 };
 
 export const AON_APPS = [
@@ -1789,7 +1789,7 @@ export const MENU_APPS = [
   NOTES,
   MESSENGER,
   WAREHOUSE,
-  // CONTENT_INDEX,
+  CONTENT_INDEX,
   AON_CLASSIC
 ];
 
