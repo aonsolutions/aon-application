@@ -48,7 +48,7 @@ public class ContractDataJSON {
 			.put(IJsonNames.DOMAIN, cData.getDomain())
 			.put("contract", cData.getName())
 			.put("expression", cData.getExpression() )
-			.put(IJsonNames.START_DATE, cData.getStartDate())
+			.put(IJsonNames.START_DATE2, cData.getStartDate())
 			.put(IJsonNames.END_DATE, cData.getEndDate());
 	}
 

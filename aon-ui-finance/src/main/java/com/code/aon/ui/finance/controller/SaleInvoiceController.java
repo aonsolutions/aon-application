@@ -258,6 +258,10 @@ public class SaleInvoiceController extends InvoiceController {
 		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
 	}
 
+	public boolean isProforma() {
+		return getInvoice().isProforma();
+	}
+	
 	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {
 		int number = (getInvoice().getNumber() == 0 ? 1 : getInvoice().getNumber());
 
@@ -667,7 +671,7 @@ public class SaleInvoiceController extends InvoiceController {
 					.setDomain(inv.getDomain())
 					.setUser(login);
 				InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-				if (config.hasVerifactu()) {
+				if (config.isVerifactu()) {
 					communicateInvoice(occam, config, company, invoice, getCertificate());
 					return;
 				}

@@ -109,7 +109,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
-			} else if(icc.hasVerifactu()) {
+			} else if(icc.isVerifactu()) {
 				if (invoice.getCommunicationInfo() != null) {
 					InvoiceInfo info = invoice.getCommunicationInfo().get(InvoiceCommunicationType.VERIFACTU);
 					if (info != null) {

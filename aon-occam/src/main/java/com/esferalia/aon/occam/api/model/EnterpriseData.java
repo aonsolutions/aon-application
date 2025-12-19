@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 public class EnterpriseData implements Serializable {
 
@@ -16,6 +16,7 @@ public class EnterpriseData implements Serializable {
 	private Date endDate;
 	
 	private boolean isRemoved;
+	private boolean updated;
 	
 	public EnterpriseData() {
 		super();
@@ -90,6 +91,15 @@ public class EnterpriseData implements Serializable {
 
 	public EnterpriseData setIsRemoved(boolean isRemoved) {
 		this.isRemoved = isRemoved;
+		return this;
+	}
+	
+	public boolean isUpdated() {
+		return updated;
+	}
+	
+	public EnterpriseData setUpdated(boolean updated) {
+		this.updated = updated;
 		return this;
 	}
 

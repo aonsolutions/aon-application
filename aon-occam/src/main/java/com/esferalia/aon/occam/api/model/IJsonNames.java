@@ -39,6 +39,7 @@ public final class IJsonNames {
 	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
+	public static final String ADMINISTRATION_HISTORY = "administrationHistory";
 	public static final String ADMINISTRATIVE = "administrative";
 	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
@@ -383,6 +384,7 @@ public final class IJsonNames {
 	public static final String KEY_VALUES = "keyValues";
 	public static final String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
+	
 	public static final String LANGUAGE = "language";
 	public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
@@ -404,6 +406,11 @@ public final class IJsonNames {
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
 	public static final String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
+	public static final String LROE = "lroe";
+	public static final String LROE_DATA = "lroeData";
+	public static final String LROE_DATA_HISTORY = "lroeDataHistory";
+	public static final String LROE_REGISTRY_DATE = "lroeRegistryDate";
+	
 	// ---------------------------------------------------------------------------------------------	[M] 
 	public static final String MAIN = "main";
 	public static final String MANUFACTURED = "manufactured";
@@ -431,6 +438,10 @@ public final class IJsonNames {
 	public static final String NIF = "nif";
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
+	public static final String NO_SIF_DATA = "noSifData";
+	public static final String NO_SIF_DATA_HISTORY = "noSifDataHistory";
+	public static final String NO_VERIFACTU_DATA = "noVerifactuData";
+	public static final String NO_VERIFACTU_DATA_HISTORY = "noVerifactuDataHistory";
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
 	public static final String NOTIFICATION_DATE = "notification_date";
@@ -674,14 +685,19 @@ public final class IJsonNames {
 	public static final String SHIPPING_PERIOD = "shippingPeriod";
 	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
+	public static final String SIF = "sif";
+	public static final String SIF_DATA = "sifData";
+	public static final String SIF_DATA_HISTORY = "sifDataHistory";
+	public static final String SIGNATURE = "signature";
+	public static final String SIGNED = "signed";
 	public static final String SII = "sii";
 	public static final String SII_AUTOSEND = "siiAutosend";
+	public static final String SII_DATA = "siiData";
+	public static final String SII_DATA_HISTORY = "siiDataHistory";
 	public static final String SII_INCLUDE_DATE = "siiIncludeDate";
 	public static final String SII_REGISTRY_DATE = "siiRegistryDate";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SII_TEST = "siiTest";
-	public static final String SIGNATURE = "signature";
-	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
 	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
 	public static final String SOURCE = "source";
@@ -689,7 +705,8 @@ public final class IJsonNames {
 	public static final String SOURCE_IDS = "source_ids";
 	public static final String SOURCE_WAREHOUSE = "sourceWarehouse";
 	public static final String SSCC = "sscc";
-	public static final String START_DATE = "start_date";
+	public static final String START_DATE = "startDate";
+	@Deprecated public static final String START_DATE2 = "start_date";
 	public static final String START_COUNT = "start_count";
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
@@ -727,6 +744,8 @@ public final class IJsonNames {
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TBAI = "tbai";
+	public static final String TBAI_DATA = "tbaiData";
+	public static final String TBAI_DATA_HISTORY = "tbaiDataHistory";
 	public static final String TBAI_INCLUDE_DATE = "tbaiIncludeDate";
 	public static final String TBAI_REGISTRY_DATE = "tbaiRegistryDate";
 	public static final String TBAI_TEST = "tbaiTest";
@@ -757,6 +776,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[U] 
 	public static final String UNDEDUCTIBLE = "undeductible";
 	public static final String UNPAID_BALANCE = "unpaidBalance";
+	public static final String UPDATED = "updated";
 	public static final String URL = "url";
 	public static final String USER = "user";
 	public static final String USERNAME = "username";
@@ -785,6 +805,8 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_DATA = "verifactuData";
+	public static final String VERIFACTU_DATA_HISTORY = "verifactuDataHistory";
 	public static final String VERIFACTU_INCLUDE_DATE = "verifactuIncludeDate";
 	public static final String VERIFACTU_REGISTRY_DATE = "verifactuRegistryDate";
 	public static final String VERIFACTU_TEST = "verifactuTest";

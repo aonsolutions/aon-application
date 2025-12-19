@@ -4,6 +4,8 @@ import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import { AonFiscalBeta } from './aon-fiscal-beta.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { isPersonaFisica } from '../../services/documentUtils.js';
+import { getCompany } from '../../services/companyService.js';
 
 
 export class AonFiscalMenu extends AonSuiteMenu {
@@ -22,17 +24,26 @@ export class AonFiscalMenu extends AonSuiteMenu {
 
     constructor () {
         super();
-		this.comercialInitialize();
     }
 
     async connectedCallback() {
 		await this.getAppParams(); 
+        await this.getCompany();
 		this.buildDur().then(() => {		
 	        this.clear();
 	        this.initialize();
+       		this.comercialInitialize();
 	        this.build();
 	        this.setTitle("Opciones fiscales");
 		})
+    }
+
+    async getCompany() {
+        getCompany().then(c => {
+            this.company = c;
+        }).catch(e => {
+            console.log("error getCompany", e);
+        });
     }
     
     async getAppParams() {
@@ -244,10 +255,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
+                disabled: !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
+                disabled: isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()

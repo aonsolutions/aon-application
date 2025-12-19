@@ -87,4 +87,20 @@ public enum InvoiceType implements Serializable  {
 		}
 		return bool;
 	}
+	
+	public boolean isSales() {
+		return SALES.equals(this);
+	}
+	
+	public boolean isPurchase() {
+		return PURCHASE.equals(this);
+	}
+	
+	public boolean isExpenses() {
+		return EXPENSES.equals(this);
+	}
+	
+	public boolean isUndeductible() {
+		return UNDEDUCTIBLE.equals(this);
+	}
 }
