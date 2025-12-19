@@ -1169,6 +1169,8 @@
 	border-radius: 0.5rem;
 }
 
+.aon_custom_card_dark{}
+
 .aon_custom_card_small{
 	padding: .5rem 1rem !important;
 	border: 1px solid rgb(235, 235, 235);
@@ -2680,5 +2682,18 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
+}
+
+.aon_model_matrix_small_button {
+	background-color: transparent !important;
+	background-size: 15px !important;
+	padding: 0 !important;
+	min-width: auto !important;
+}
+
+.aon_model_matrix_bullet_small_button {
+	width: 15px !important;
+	height: 15px !important;
+	background-size: 15px !important;
 }
 

@@ -229,6 +229,13 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 	@UiField
 	ListBox i54ListBox;
+	
+	@UiField
+	Element outOfDateTR;
+	
+	@UiField
+	LongBox outOfDateLiquidationLongBox;
+	
 
 	private Callback<T> callback;
 	
@@ -309,6 +316,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(true);
 				setVisibleCtrl(false);
 				setVisibleMonth(false);
+				setVisibleOutOfDate(true);
 				onMonthChanged(null);
 				return null;
 			}
@@ -319,6 +327,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(false);
 				setVisibleCtrl(false);
 				setVisibleMonth(true);
+				setVisibleOutOfDate(false);
 				onMonthsChanged(null);
 				return null;
 			}
@@ -329,23 +338,42 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(true);
 				setVisibleCtrl(true);
 				setVisibleMonth(false);
+				setVisibleOutOfDate(false);
 				onMonthsChanged(null);
 				return null;
 			}
 
 			@Override
 			public Void visitL13() {
-				return visitL00();
+				setVisibleTo(true);
+				setVisibleFrom(true);
+				setVisibleCtrl(false);
+				setVisibleMonth(false);
+				setVisibleOutOfDate(false);
+				onMonthChanged(null);
+				return null;
 			}
 
 			@Override
 			public Void visitL90() {
-				return visitL00();
+				setVisibleTo(true);
+				setVisibleFrom(true);
+				setVisibleCtrl(false);
+				setVisibleMonth(false);
+				setVisibleOutOfDate(false);
+				onMonthChanged(null);
+				return null;
 			}
 
 			@Override
 			public Void visitL91() {
-				return visitL00();
+				setVisibleTo(true);
+				setVisibleFrom(true);
+				setVisibleCtrl(false);
+				setVisibleMonth(false);
+				setVisibleOutOfDate(false);
+				onMonthChanged(null);
+				return null;
 			}
 
 		});
@@ -448,6 +476,15 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		return i54ListBox.getSelectedValue();
 	}
 
+	public Long getOutOfDateLiquidation() {
+		return outOfDateLiquidationLongBox.getValue();
+	}
+	
+	public void setOutOfDateLiquidation(Long outOfDateLiquidation){
+		outOfDateLiquidationLongBox.setValue(outOfDateLiquidation, true);
+	}
+	
+
 	public abstract String getDescription(T t);
 	
 	// ------------------------------------------------------------------------
@@ -481,6 +518,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setVisible(visible, ctrlMonthTR);
 	}
 
+
+	protected void setVisibleOutOfDate(boolean visible){
+		setVisible(visible, outOfDateTR);
+	}
 
 	protected void setVisiblePreviousBases(boolean visible){
 		setVisible(visible, previousBasesTR);
