@@ -30,7 +30,7 @@ public class TbaiSigner extends XadesSigner {
 	
 	private static final AdESPolicy POLICY_TBAI_ARABA = new AdESPolicy(
 		"https://ticketbai.araba.eus/tbai/sinadura/",
-		"4Vk3uExj7tGn9DyUCPDsV9HRmK6KZfYdRiW3StOjcQA="
+		"4Vk3uExj7tGn9DyUCPDsV9HRmK6KZfYdRiW3StOjcQA=",
 		SHA_256,
 		null
 	);
