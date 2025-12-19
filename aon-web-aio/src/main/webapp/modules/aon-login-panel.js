@@ -68,7 +68,7 @@ export class AonLoginPanel extends AonElement {
 		let avatar = new AonAvatar();
 		avatar.setAuth(auth);
 		//avatar.setScale("1.8", "23px");
-		divGeneral.appendChild(avatar);
+		loginContent.appendChild(avatar);
 
 		let divUserInfo = this.createDiv();
 		divUserInfo.className = "userPanelDivUserInfo";
@@ -98,18 +98,6 @@ export class AonLoginPanel extends AonElement {
 			else
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, MSG.NO_DATA));
 		}
-		
-		if (auth.name) {
-			let divPassword = this.createDiv();
-			divPassword.className = 'aonUserPasswordLink';
-			divPassword.innerText =  MSG.CHANGE_PASSWORD;
-			divPassword.addEventListener("click", (e) => {
-				let aonUser = new AonUser();
-				aonUser.editPassword();
-			});
-			
-			divUserInfo.appendChild(divPassword);
-		}
 				
 		/*if (auth.name) {
 			let divConfiguration = this.createDiv();
@@ -132,17 +120,29 @@ export class AonLoginPanel extends AonElement {
 		}*/
 	
 		divGeneral.appendChild(divUserInfo);
-
+		loginContent.appendChild(divGeneral);
+		
+		if (auth.name) {
+			let divPassword = this.createDiv();
+			divPassword.className = 'aonUserPasswordLink configCardText';
+			divPassword.innerText =  MSG.CHANGE_PASSWORD;
+			divPassword.addEventListener("click", (e) => {
+				let aonUser = new AonUser();
+				aonUser.editPassword();
+			});
+			
+			loginContent.appendChild(divPassword);
+		}
+		
 		let divLogout = this.createDiv();
 		divLogout.id = this.LOGOUT;
-		divLogout.className = 'divLogout';
+		divLogout.className = 'divLogout configCardText';
 		divLogout.addEventListener(EVENT.CLICK, () => {
 			closeSession();
 			LS.setNewTheme(true);
 		});
 		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
 		
-		loginContent.appendChild(divGeneral);
 		loginContent.appendChild(divLogout);
 		
 		let openButton = this.getElement("openNotificationButton");
