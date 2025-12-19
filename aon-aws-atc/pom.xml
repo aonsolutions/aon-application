@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod425</artifactId>
-			<version>6.2.0</version>
+			<version>6.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
