@@ -1535,11 +1535,16 @@ public class SecurityDAO {
 				.setScopes(scopes);
 	}
 
+	/**
+	 * @deprecated use DomainUserRoles.isOcr() method instead
+	 */
+	@Deprecated
 	public static boolean isOCRActive(AONContext ctx, int domain) {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain().getId())
+				(p.getDomainProperty().eq(user.getDomain().getId())
+				.or(p.getDomainProperty().eq(domain)))
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()
