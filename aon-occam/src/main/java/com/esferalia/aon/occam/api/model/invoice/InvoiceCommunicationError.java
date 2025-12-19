@@ -27,13 +27,7 @@ public enum InvoiceCommunicationError {
 	AON_0009("0009", "No se ha podido identificar el tipo de registro para la generaci\u00F3n del blockchain"),
 	AON_0010("0010", "Las facturas rectificativas tienen que tener serie."),
 	AON_0011("0011", "La fecha de la factura no puede ser superior a la fecha actual."),
-	AON_0012("0012", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),
-	AON_0013("0013", "El tipo de comunicaci\u00F3n EMAIL no est\u00E1 implementado."),
-	AON_0014("0014", "El tipo de comunicaci\u00F3n CLOSING no est\u00E1 implementado."),
-	AON_0015("0015", "El tipo de comunicaci\u00F3n SII no est\u00E1 implementado."),
-	AON_0016("0016", "El tipo de comunicaci\u00F3n TBAI no est\u00E1 implementado."),
-	AON_0017("0017", "El tipo de comunicaci\u00F3n LROE no est\u00E1 implementado."),
-	AON_0018("0018", "El tipo de comunicaci\u00F3n VERIFACTU no est\u00E1 implementado."),
+	
 	AON_0019("0019", "El Documento del cliente est\u00E1 vacio."),
 	AON_0020("0020", "El Documento del cliente no es v\u00E1lido."),
 	AON_0021("0021", "Error al obtener el certificado."),
@@ -49,6 +43,19 @@ public enum InvoiceCommunicationError {
 	AON_0031("0031", "El tipo de comunicaci\u00F3n NO VERIFACTU no est\u00E1 implementado."),
 	AON_0032("0032", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
 	AON_0033("0033", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
+	AON_0034("0034", "Se ha producido un error al firmar el XML del registro ed facturaci\u00F3n."),
+
+	// InvoiceCommunicationType 	
+	AON_NO_SERES		("0100", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),
+	AON_NO_EMAIL		("0101", "El tipo de comunicaci\u00F3n EMAIL no est\u00E1 implementado."),
+	AON_NO_CLOSING		("0102", "El tipo de comunicaci\u00F3n CLOSING no est\u00E1 implementado."),
+	AON_NO_SII			("0103", "El tipo de comunicaci\u00F3n SII no est\u00E1 implementado."),
+	AON_NO_TBAI			("0104", "El tipo de comunicaci\u00F3n TBAI no est\u00E1 implementado."),
+	AON_NO_LROE			("0105", "El tipo de comunicaci\u00F3n LROE no est\u00E1 implementado."),
+	AON_NO_VERIFACTU	("0106", "El tipo de comunicaci\u00F3n VERIFACTU no est\u00E1 implementado."),
+	AON_NO_NO_VERIFACTU	("0107", "El tipo de comunicaci\u00F3n NO_VERIFACTU no est\u00E1 implementado."),
+	AON_NO_SIF			("0108", "El tipo de comunicaci\u00F3n SIF no est\u00E1 implementado."),
+	AON_NO_FACTURAE		("0109", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),

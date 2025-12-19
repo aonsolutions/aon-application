@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
@@ -31,7 +31,7 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 	
 	@Override
-	public void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<List<InvestAsset>> callback) {
+	public void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<LinkedList<InvestAsset>> callback) {
 		AON.start();
 		ssa.getInvestAssets(domainName, domainId, user, callback);
 	}
@@ -49,7 +49,7 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 	
 	@Override
-	public void getInvoices(Occam occam, InvoiceCommunicationParams params, AsyncCallback<List<Invoice>> callback) {
+	public void getInvoices(Occam occam, InvoiceCommunicationParams params, AsyncCallback<LinkedList<Invoice>> callback) {
 		AON.start();
 		ssa.getInvoices(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
@@ -106,9 +106,9 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	
 	
 	@Override
-	public void getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice, AsyncCallback<List<InvoiceCommunicationTracking>> callback) {
+	public void getInvoiceCommunicationTrackings(String domainName, int domainId, String login, Integer invoice, AsyncCallback<LinkedList<InvoiceCommunicationTracking>> callback) {
 		AON.start();
-		ssa.getInvoiceCommunicationTrackingList(domainName, domainId, login, invoice, new AsyncCallbackWrapper<>(callback));	
+		ssa.getInvoiceCommunicationTrackings(domainName, domainId, login, invoice, new AsyncCallbackWrapper<>(callback));	
 	}
 	
 	@Override

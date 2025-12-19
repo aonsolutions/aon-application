@@ -2,11 +2,14 @@ package net.aonsolutions.aon.verifactu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -38,14 +41,13 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return NO_VERIFACTU_ENV; }
-/*
  
 	@Test
 	void venta_nacional_simpleAEATTest() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
 		save(invoice);
 	}
-	
+/*
 	@Test
 	void venta_nacional_simplificadaAEATTest()  {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLIFICADA.get(getEnvironment());
@@ -164,7 +166,8 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get(getEnvironment());
 		save(invoice);
 	}
-*/
+	*/
+	
 	private Invoice save(Invoice invoice) {
 		Invoice i =  getEnvironment().getCtx().getDslContext().transactionResult(config -> {
 			invoice.setSeries(VerifactuTestsUtils.series(getEnvironment().getCtx(), invoice.isRectifier()));
@@ -172,11 +175,15 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			NOVERIFACTU.accept(getEnvironment().getCtx(), icc);
+			VerifactuContext vc = NOVERIFACTU.accept(getEnvironment().getCtx(), icc);
+			assertNotNull(vc);
+			assertNull(vc.getResponse());
 			return inv;
 		});
 		
-		// assertDataRequest(i, response);
+		InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);
+		DataResponse response = assertDataResponse(i, tracking);
+		assertDataRequest(i, response);
 		assertInvoiceData(i);
 		assertInvoiceInfo(i);
 		assertInvoiceCommunication(i);
@@ -185,7 +192,7 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 	}
 
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
-		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
+		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getNoVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);
 		assertTrue(oTracking.isPresent());
 		InvoiceCommunicationTracking tracking = oTracking.get();
@@ -196,10 +203,10 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertEquals(invoiceBatchDetail.getInvoice(),i.getId());
 		InvoiceCommunicationStatus status = invoiceBatchDetail.getStatus();
 		assertNotNull(status);
-		assertTrue(status == InvoiceCommunicationStatus.ACCEPTED || status == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertTrue(status == InvoiceCommunicationStatus.PENDING);
 		InvoiceBatch invoiceBatch = tracking.getInvoiceBatch();
 		assertNotNull(invoiceBatch);
-		assertSame(InvoiceCommunicationType.VERIFACTU, invoiceBatch.getType());
+		assertSame(InvoiceCommunicationType.NO_VERIFACTU, invoiceBatch.getType());
 		assertSame(InvoiceCommunicationOperation.REGISTER, invoiceBatch.getOperation());
 		assertEquals(invoiceBatch.getDomain(),i.getDomain());
 		Integer dataResponse = invoiceBatch.getDataResponse();
@@ -224,16 +231,18 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(dataResponse.getDataRequest());
 		
 		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
-			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
-			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
+				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
+				.and(f.getSourceTypeProperty().eq(DataAttachSource.NO_VERIFACTU.value()))
+				.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true)
+			.findFirst()
+			.orElse(null);
 		assertNotNull(response);
-		assertNotNull(response.getData());
+		assertNull(response.getData());  
 		return dataResponse;
 	}
 	
 	private void assertInvoiceInfo(Invoice i) {
-		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.VERIFACTU);
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.NO_VERIFACTU);
 		assertNotNull(invoiceInfoOpt);
 		assertTrue(invoiceInfoOpt.isPresent());
 		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
@@ -242,8 +251,7 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(invoiceInfo.getDomain());
 		assertEquals(i.getId(), invoiceInfo.getInvoice());
 		assertEquals(i.getDomain(), invoiceInfo.getDomain());
-		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
-				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.PENDING);
 	}
 
 	private void assertDataRequest(Invoice i, DataResponse response) {
@@ -258,7 +266,7 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertTrue(dataRequest.getId() > 0);
 		Attach request = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(i.getDomain())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
-				.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
+				.and(f.getSourceTypeProperty().eq(DataAttachSource.NO_VERIFACTU.value()))
 				.and(f.getSourceBatchProperty().eq(dataRequest.getId())), true).findFirst().orElse(null);
 		assertNotNull(request);
 		assertNotNull(request.getData());
@@ -290,25 +298,19 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertNotNull(inv.getId());
 		assertNotNull(inv.getCommunicationInfo());
 		assertTrue(AonCollectionUtils.isNotEmpty( inv.getCommunicationInfo()));
-		assertNotNull(inv.getVerifactuInfo());
-		assertTrue(inv.getVerifactuInfo().isPresent());
-		InvoiceInfo invoiceInfo = inv.getVerifactuInfo().get();
+		assertNotNull(inv.getNoVerifactuInfo());
+		assertTrue(inv.getNoVerifactuInfo().isPresent());
+		InvoiceInfo invoiceInfo = inv.getNoVerifactuInfo().get();
 		assertNotNull(invoiceInfo);
 		assertNotNull(invoiceInfo.getId());
 		assertNotNull(invoiceInfo.getDomain());
 		assertEquals(i.getId(), invoiceInfo.getInvoice());
 		assertEquals(i.getDomain(), invoiceInfo.getDomain());
-		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
-				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.PENDING);
 	}
 	
 	private void assertCommunicationHistory(Invoice i) {
-		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(getEnvironment().getCtx(), i.getId(), t -> {
-			if (t.getResponseData() != null && t.getResponseData().length > 0) {
-				t.setResponseMessages( VERIFACTU.history(t.getResponseData(), i.getId()) );
-			}
-			return t.getResponseMessages();
-		});
+		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(getEnvironment().getCtx(), i.getId(), null );
 		assertNotNull(history);
 		assertTrue(AonCollectionUtils.isNotEmpty( history ));
 		assertEquals(1, history.size());
@@ -316,12 +318,11 @@ class NoVerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 		assertEquals(i.getId(), h.getInvoiceId());
 		assertEquals(getEnvironment().getUser(), h.getCreationUser());
 		assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
-		assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
-			|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+		assertTrue(h.getStatus() == InvoiceCommunicationStatus.PENDING);
 		assertNotNull(h.getDate() );
 		assertNotNull(h.getRequestUrl());
-		assertNotNull(h.getResponseMessages());
-		assertNotNull(h.getResponseData());
-		// assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
+		assertNotNull(h.getResponseUrl());
+		assertNull(h.getResponseMessages());
+		assertNull(h.getResponseData());
 	}
 }

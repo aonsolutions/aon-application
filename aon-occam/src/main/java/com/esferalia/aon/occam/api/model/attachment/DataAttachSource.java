@@ -2,7 +2,10 @@ package com.esferalia.aon.occam.api.model.attachment;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.watson.mutable.MutableObject;
 
 
 public enum DataAttachSource implements Serializable {
@@ -36,7 +39,10 @@ public enum DataAttachSource implements Serializable {
 	MOD349,
 	MOD200,
 	MOD369,
-	VERIFACTU
+	VERIFACTU,
+	SIF,
+	NO_VERIFACTU, 
+	FACTURAE 
 	;
 
 	public byte value() {
@@ -56,20 +62,36 @@ public enum DataAttachSource implements Serializable {
 		if (i < 0 || i >= DataAttachSource.values().length) return null;
 		return DataAttachSource.values()[i];
 	}
+
+	public static Byte value(DataAttachSource s) {
+		if (s == null) return null;
+		return s.value();
+	}
+	
+	public static Byte safeByteOf(InvoiceCommunicationType ict) {
+		return value( safeValueOf(ict) );
+	}
 	
 	public static DataAttachSource safeValueOf(InvoiceCommunicationType ict) {
-		if(InvoiceCommunicationType.SII.equals(ict)) {
-			return DataAttachSource.SII;
-		} else if(InvoiceCommunicationType.TBAI.equals(ict)) {
-			return DataAttachSource.TBAI;
-		} else if(InvoiceCommunicationType.LROE.equals(ict)) {
-			return DataAttachSource.LROE;
-		} else if(InvoiceCommunicationType.VERIFACTU.equals(ict)) {
-			return DataAttachSource.VERIFACTU;
-		} else if(InvoiceCommunicationType.SERES.equals(ict)) {
-			return DataAttachSource.SERES;
+		if ( ict == null) return null;
+		MutableObject<DataAttachSource> ret = new MutableObject<>();
+		try {
+			ict.visit( new InvoiceCommunicationTypeVisitor() {
+				@Override public void visitVERIFACTU() throws InvoiceCommunicationException { ret.setValue( DataAttachSource.VERIFACTU );}
+				@Override public void visitTBAI() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.TBAI );}
+				@Override public void visitSII() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.SII );}
+				@Override public void visitSIF() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.SIF );}
+				@Override public void visitSERES() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.SERES );}
+				@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.NO_VERIFACTU );}
+				@Override public void visitLROE() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.LROE );}
+				@Override public void visitFACTURAE() throws InvoiceCommunicationException {ret.setValue( DataAttachSource.FACTURAE );			}
+				@Override public void visitEMAIL() throws InvoiceCommunicationException {/* Nothing */}
+				@Override public void visitCLOSING() throws InvoiceCommunicationException {/* Nothing */}
+			});
+		} catch (Exception e) {
+			/* Nothing */
 		}
-		return null;
+		return ret.getValue();
 	}
 	
 }

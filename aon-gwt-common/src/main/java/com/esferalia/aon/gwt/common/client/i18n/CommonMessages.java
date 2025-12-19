@@ -582,6 +582,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Comunicaci\u00F3n AEAT")
 	String communicationAeat();
 
+	@DefaultMessage("Comunicadas a ")
+	String communicated();
+
+	@DefaultMessage("con estado")
+	String withStatus();
+	
+	@DefaultMessage("Comunicaci\u00F3n")
+	String communication();
+
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
@@ -645,6 +654,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ordenar por")
 	String orderBy();
 
+	@DefaultMessage("Orden")
+	String order();
+	
+	@DefaultMessage("Ascendente")
+	String ascendingOrder();
+	
+	@DefaultMessage("Descendente")
+	String descendingOrder();
+	
+	
 	// ---------------------------------------------------------Common Messages
 	@DefaultMessage("Declaraci\u00F3n")
 	String declaration();
@@ -860,6 +879,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
 	
+	@DefaultMessage("Raz\u00F3n social, documento, alias ")
+	String registryPlaceHolder();
+
+	@DefaultMessage("C\u00F3digo, descripci\u00F3n")
+	String itemPlaceHolder();
+
 	@DefaultMessage("Referencia")
 	String reference();
 
@@ -3613,6 +3638,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Producto")
 	String product();
 
+ 	@DefaultMessage("Producto")
+	String item();
+
  	@DefaultMessage("Categor\u00EDa")
 	String category();
  	
@@ -4308,6 +4336,60 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("(*) Por el c\u00F3nyuge y los hijos menores de 18 a\u00F1os que tengan un grado de minusval\u00EDa igual o superior al 33 por 100 se reflejar\u00E1 el 75 por 100 de las horas trabajadas por ellos")
 	String actMsg2();
 
+	@DefaultMessage("Grupo de facturaci\u00F3n")
+	String invoicingGroup();
 	
+	@DefaultMessage("Periodicidad")
+	String periodicity();
+	
+	@DefaultMessage("F. Facturaci\u00f3n")
+	String invoicingDate();
+	@DefaultMessage("Mes Fact.")
+	String invoicingMonth();
+	@DefaultMessage("A\u00F1o Fact.")
+	String invoicingYear();
+
+	@DefaultMessage("Datos salvados correctamente")
+	String saveSuccess();
+
+	@DefaultMessage("Datos borrados correctamente")
+	String deleteSuccess();
+
+	@DefaultMessage("Cuotas")
+	String fees();
+
+	@DefaultMessage("Editar B\u00FAsqueda")
+	String editSearch();
+
+	@DefaultMessage("Proforma")
+	String proforma();
+
+	@DefaultMessage("Destinatario")
+	String recipient();
+
+	@DefaultMessage("Generar facturas proforma")
+	String saveAsProformas();
+
+	@DefaultMessage("Comunicar facturas")
+	String communicateInvoices();
+
+	@DefaultMessage("Mostrar filtro")
+	String  showFilter();
+	
+	@DefaultMessage("Ocultar filtro")
+	String  hideFilter();
+
+	@DefaultMessage("Origen")
+	String source();
+
+	@DefaultMessage("Mostrar petici\u00F3n")
+	String  viewRequest();
+	
+	@DefaultMessage("Mostrar respuesta")
+	String  viewResponse();
+
+	@DefaultMessage("Generaci\u00F3n de facturas")
+	String generateInvoices();
+
 }
 

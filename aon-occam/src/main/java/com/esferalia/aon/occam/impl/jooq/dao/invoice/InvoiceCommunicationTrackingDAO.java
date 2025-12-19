@@ -3,23 +3,15 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 import static com.esferalia.aon.jooq.tables.InvoiceBatch.INVOICE_BATCH;
 import static com.esferalia.aon.jooq.tables.InvoiceBatchDetail.INVOICE_BATCH_DETAIL;
 
-import java.sql.Timestamp;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceCommunicationTrackingProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
@@ -27,7 +19,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
-import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO.InvoiceBatchFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO.InvoiceBatchDetailFiller;
@@ -38,30 +29,6 @@ public class InvoiceCommunicationTrackingDAO {
 	
 	}
 	
-	private static final InvoiceCommunicationTrackingPropertiesDAO INVOICE_COMMUNICATION_TRACKING_PROPERTIES = new InvoiceCommunicationTrackingPropertiesDAO();
-	private static class InvoiceCommunicationTrackingPropertiesDAO implements InvoiceCommunicationTrackingProperties {
-		
-		public Condition[] getConditions(InvoiceCommunicationTrackingFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		// INVOICE BATCH DETAIL
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH_DETAIL.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE_BATCH_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH_DETAIL.INVOICE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH_DETAIL.STATUS);}
-		
-		// INVOICE BATCH
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DATE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.TYPE);}
-		@Override public Property<Byte> getOperationProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.OPERATION);}
-		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DATA_RESPONSE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.CREATION_USER);}
-	}
-	
 	private static SelectOnConditionStep<Record> select(AONContext ctx){	
 		return ctx.getDslContext()
 			.select()
@@ -69,16 +36,24 @@ public class InvoiceCommunicationTrackingDAO {
 			.join(INVOICE_BATCH_DETAIL).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH));
 	}
 	
-	private static SelectConditionStep<Record> select(AONContext ctx, InvoiceCommunicationTrackingFilter filter){	
+	private static SelectConditionStep<Record> select(AONContext ctx, Integer invoiceId){	
 		return select(ctx)
-			.where(INVOICE_COMMUNICATION_TRACKING_PROPERTIES.getConditions(filter));
+			.where(INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId));
+	}
+	
+	public static Optional<InvoiceCommunicationTracking> getNoVerifactuRegister(AONContext ctx, Integer domain, Integer invoice) {
+		return getRegister(ctx, domain, invoice, InvoiceCommunicationType.NO_VERIFACTU);
 	}
 
 	public static Optional<InvoiceCommunicationTracking> getVerifactuRegister(AONContext ctx, Integer domain, Integer invoice) {
+		return getRegister(ctx, domain, invoice, InvoiceCommunicationType.VERIFACTU);
+	}
+	
+	private static Optional<InvoiceCommunicationTracking> getRegister(AONContext ctx, Integer domain, Integer invoice, InvoiceCommunicationType type) {
 		return select(ctx)
 			.where(INVOICE_BATCH_DETAIL.DOMAIN.eq(domain))
 			.and(INVOICE_BATCH_DETAIL.INVOICE.eq(invoice))
-			.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.VERIFACTU.value()))
+			.and(INVOICE_BATCH.TYPE.eq(type.value()))
 			.and(INVOICE_BATCH.OPERATION.eq(InvoiceCommunicationOperation.REGISTER.value()))
 			.limit(1)
 			.fetch()
@@ -86,36 +61,22 @@ public class InvoiceCommunicationTrackingDAO {
 			.map(new InvoiceCommunicationTrackingFiller())
 			.findFirst();
 	}
-	
-	public static Optional<InvoiceCommunicationTracking> getVerifactuAnnulment(AONContext ctx, Integer domain, Integer invoice) {
-		return select(ctx)
-			.where(INVOICE_BATCH_DETAIL.DOMAIN.eq(domain))
-			.and(INVOICE_BATCH_DETAIL.INVOICE.eq(invoice))
-			.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.VERIFACTU.value()))
-			.and(INVOICE_BATCH.OPERATION.eq(InvoiceCommunicationOperation.ANNULMENT.value()))
-			.limit(1)
+
+	public static Stream<InvoiceCommunicationTracking> stream(AONContext ctx, Integer invoiceId) {
+		return select(ctx, invoiceId)
 			.fetch()
 			.stream()
 			.map(new InvoiceCommunicationTrackingFiller())
-			.findFirst();
+		;
 	}
 	
-	public static Stream<InvoiceCommunicationTracking> getStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
-		return select(ctx, filter)
-			.fetch().stream().map(new InvoiceCommunicationTrackingFiller());
-	}
-	
-	public static List<InvoiceCommunicationTracking> getList(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
-		return select(ctx, filter)
-			.fetch().stream().map(new InvoiceCommunicationTrackingFiller())
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static InvoiceCommunicationTracking get(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
-		return select(ctx, filter).limit(1)
-			.fetch().stream().map(new InvoiceCommunicationTrackingFiller())
-			.findFirst().orElse(new InvoiceCommunicationTracking());
-	}
+//	public static Optional<InvoiceCommunicationTracking> get(AONContext ctx, Integer invoiceId) {
+//		return select(ctx, invoiceId)
+//			.fetch()
+//			.stream()
+//			.map(new InvoiceCommunicationTrackingFiller())
+//			.findFirst();
+//	}
 	
 	public static InvoiceCommunicationTracking save(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceCommunicationTracking.getInvoiceBatchDetail().getInvoice());

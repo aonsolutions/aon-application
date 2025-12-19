@@ -168,10 +168,10 @@ public class LroeModel140 extends DockLayoutPanel {
 					
 					@Override
 					public void info(Integer invoice, String reference) {
-						SII_SERVICE.getInvoiceCommunicationTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceCommunicationTracking>>() {
+						SII_SERVICE.getInvoiceCommunicationTrackings(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<LinkedList<InvoiceCommunicationTracking>>() {
 							
 							@Override
-							public void onSuccess(List<InvoiceCommunicationTracking> result) {
+							public void onSuccess(LinkedList<InvoiceCommunicationTracking> result) {
 								FlexTable table = new FlexTable();
 								table.setWidth("100%");
 								if(result.isEmpty()) {
@@ -708,10 +708,10 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 
-				SII_SERVICE.getInvestAssets(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<InvestAsset>>() {
+				SII_SERVICE.getInvestAssets(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<LinkedList<InvestAsset>>() {
 					
 					@Override
-					public void onSuccess(List<InvestAsset> result) {
+					public void onSuccess(LinkedList<InvestAsset> result) {
 						ListBox lb = new ListBox();
 						for (InvestAsset ia : result) {
 							lb.addItem(ia.getDescription(), ia.getId().toString());

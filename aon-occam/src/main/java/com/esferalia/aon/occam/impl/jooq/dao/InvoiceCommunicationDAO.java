@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.DataAttach;
@@ -373,7 +375,7 @@ public class InvoiceCommunicationDAO {
 	}
 	
 	private static List<EnterpriseData> getIccHistory(AONContext ctx, Integer domainId, EnterpriseDataNames name) {
-		return EnterpriseDataDAO.getList(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq(EnterpriseDataNames.ICC_SIF.name())));
+		return EnterpriseDataDAO.getList(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq(name.name())));
 	}
 	
 	private static EnterpriseData getIccData(List<EnterpriseData> history) {
@@ -494,6 +496,19 @@ public class InvoiceCommunicationDAO {
 	// ************************** [HISTORY] ************************
 	// *************************************************************
 	
+	private static final Field<Byte> DATA_ATTACH_SOURCE_FIELD = DSL.decode(INVOICE_BATCH.TYPE,
+		InvoiceCommunicationType.SII.value(),DataAttachSource.SII.value(),
+		InvoiceCommunicationType.TBAI.value(),DataAttachSource.TBAI.value(),
+		InvoiceCommunicationType.LROE.value(),DataAttachSource.LROE.value(),
+		InvoiceCommunicationType.SERES.value(),DataAttachSource.SERES.value(),
+//		InvoiceCommunicationType.EMAIL.value(),DataAttachSource.EMAIL.value(),
+//		InvoiceCommunicationType.CLOSING.value(),DataAttachSource.CLOSING.value(),
+		InvoiceCommunicationType.VERIFACTU.value(),DataAttachSource.VERIFACTU.value(),
+		InvoiceCommunicationType.NO_VERIFACTU.value(),DataAttachSource.NO_VERIFACTU.value(),
+		InvoiceCommunicationType.SIF.value(),DataAttachSource.SIF.value(),
+		InvoiceCommunicationType.FACTURAE.value(),DataAttachSource.FACTURAE.value()
+	);		
+	
 	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, List<String>> messagesExtractor) {
 		return ctx.getDslContext().select(
 				INVOICE_BATCH.DATE,
@@ -511,12 +526,12 @@ public class InvoiceCommunicationDAO {
 			.from(INVOICE_BATCH_DETAIL)
 			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
 			.join(DATA_RESPONSE).on(DATA_RESPONSE.ID.eq(INVOICE_BATCH.DATA_RESPONSE))
-			.leftOuterJoin(DATA_ATTACH_REQUEST).on(DATA_ATTACH_REQUEST.SOURCE_ID.eq(DATA_RESPONSE.ID)
-				.and(DATA_ATTACH_REQUEST.SOURCE.eq(DataAttachSource.VERIFACTU.value())
+			.leftOuterJoin(DATA_ATTACH_REQUEST).on(DATA_ATTACH_REQUEST.SOURCE_ID.eq(DATA_RESPONSE.DATA_REQUEST)
+				.and(DATA_ATTACH_REQUEST.SOURCE.eq(DATA_ATTACH_SOURCE_FIELD)
 				.and(DATA_ATTACH_REQUEST.TYPE.eq(DataAttachType.REQUEST.value())))
 			)
 			.leftOuterJoin(DATA_ATTACH_RESPONSE).on(DATA_ATTACH_RESPONSE.SOURCE_ID.eq(DATA_RESPONSE.ID)
-				.and(DATA_ATTACH_RESPONSE.SOURCE.eq(DataAttachSource.VERIFACTU.value()))
+				.and(DATA_ATTACH_RESPONSE.SOURCE.eq(DATA_ATTACH_SOURCE_FIELD))
 				.and(DATA_ATTACH_RESPONSE.TYPE.in(DataAttachType.RESPONSE_OK.value(), DataAttachType.RESPONSE_ERROR.value()))
 			)
 			.where( INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId))

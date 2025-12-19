@@ -821,6 +821,7 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public Optional<InvoiceInfo> getVerifactuInfo() { return getInvoiceInfo(InvoiceCommunicationType.VERIFACTU); }
+	public Optional<InvoiceInfo> getNoVerifactuInfo() { return getInvoiceInfo(InvoiceCommunicationType.NO_VERIFACTU); }
 	public Optional<InvoiceInfo> getLroeInfo() { return getInvoiceInfo(InvoiceCommunicationType.LROE); }
 	public Optional<InvoiceInfo> getTbaiInfo() { return getInvoiceInfo(InvoiceCommunicationType.TBAI); }
 	public Optional<InvoiceInfo> getSiiInfo() { return getInvoiceInfo(InvoiceCommunicationType.SII); }
