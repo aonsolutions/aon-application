@@ -986,7 +986,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonLoginSubTitle {
 	font-size: 17px;
-	padding: 1.25rem 1.25rem 0rem 1.25;
+	padding: .5rem 0;
 }
 
 .aonLoginLogo {
@@ -1051,6 +1051,8 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonLoginFormContent {
 	border: none;
+	padding-top: 0;
+	gap: .5rem;
 }
 
 #aonLogin .aonToolbar2 * {
@@ -1105,7 +1107,7 @@ aon-configuration-menu .suiteMenuContent  {
 	display: flex;
 	max-width: 200px;
 	max-height: 7rem;
-	margin: 1rem 0;
+	margin: 2rem 0 1rem 0;
 }
 
 #aonLoginPasswordIcon {
