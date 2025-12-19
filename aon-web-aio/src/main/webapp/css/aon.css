@@ -496,6 +496,10 @@ color: var(--aonSearchButton);
   transition: margin-left .3s;
 }
 
+.rootPanelTopbar{
+	height: calc(100vh - 115px );
+}
+
 #rootPanel > div {
 	background-color: transparent;
 }
@@ -3625,10 +3629,21 @@ color: var(--aonWhite);
 }
 
 .userPanelDivUserInfo{
-  max-width: 205px;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: .3rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv{
+	display: flex;
+	align-items: center;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(1){
+	justify-content: center;
+	margin-bottom: .3rem;
 }
 
 .userPanelNameInfoDiv{

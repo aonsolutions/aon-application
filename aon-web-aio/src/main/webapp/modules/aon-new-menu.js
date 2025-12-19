@@ -616,6 +616,7 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		rootPanel.style.marginTop = "68px";
+		rootPanel.classList.add('rootPanelTopbar');
 		//rootPanel.style.height = `calc(100vh - 115px )`;
 	}
 

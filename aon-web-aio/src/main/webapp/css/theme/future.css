@@ -243,7 +243,7 @@
 }
 
 #aonMenuListAppImgTop-contentIndex {
-	mask-image: url('/icons/book-open.svg') ;
+	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
 #aonMenuListAppImgTop-accountingMenu {
@@ -1466,8 +1466,14 @@ aon-right-panel {
 	margin-bottom: .5rem;
 }
 
-#contentIndexHelp {
-	display: none;
+#contentIndexHelp,
+#aonRightPanelEditButton,
+#aonRightPanelNotificationButton{
+	display: none !important;
+}
+
+#openNotificationButton {
+	display: block;
 }
 
 .rightPanel .divLogout *,
@@ -1519,7 +1525,10 @@ aon-right-panel {
 }
 
 .rightPanel .helpCardText .material-icons,
-.rightPanel .configCardText .material-icons {
+#aonConfig > span > i,
+#aonRightPanelCloseButton > button > i,
+#openNotificationButton > button > i,
+#aonLoginPanelLogout > div > i {
 	width: 23px;
 	height: 23px;
 	mask-size: contain;
@@ -1574,7 +1583,19 @@ aon-right-panel {
 	 mask-image: url('/icons/clock-4.svg') ;
 }
 
-.rightPanel .configCardText .material-icons {
+#aonLoginPanelLogout > div > i {
+	mask-image: url('/icons/log-out.svg') ;
+}
+
+#aonRightPanelCloseButton > button > i {
+	mask-image: url('/icons/x.svg') ;
+}
+
+#openNotificationButton > button > i {
+	mask-image: url('/icons/external-link.svg') ;
+}
+
+#aonConfig > span > i {
 	mask-image: url('/icons/folder-cog.svg') ;
 }
 
