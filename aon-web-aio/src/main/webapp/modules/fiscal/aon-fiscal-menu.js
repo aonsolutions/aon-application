@@ -6,6 +6,10 @@ import { AonFiscalBeta } from './aon-fiscal-beta.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { isPersonaFisica } from '../../services/documentUtils.js';
 import { getCompany } from '../../services/companyService.js';
+import { get } from '../../services/localStorageService.js';
+import { getInvoiceConfiguration } from '../../services/invoiceService.js';
+import { Invoice } from '../invoice/Invoice.js';
+import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 
 
 export class AonFiscalMenu extends AonSuiteMenu {
@@ -29,6 +33,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
     async connectedCallback() {
 		await this.getAppParams(); 
         await this.getCompany();
+        await this.getInvoiceConfiguration();
 		this.buildDur().then(() => {		
 	        this.clear();
 	        this.initialize();
@@ -45,7 +50,15 @@ export class AonFiscalMenu extends AonSuiteMenu {
             console.log("error getCompany", e);
         });
     }
-    
+ 
+    async getInvoiceConfiguration() {
+        getInvoiceConfiguration().then(c => {
+            this.icc = new InvoiceCommunicationConfiguration(c);
+        }).catch(e => {
+            console.log("error getInvoiceConfiguration", e);
+        });
+    }
+
     async getAppParams() {
         let response = 9999;
         this.isAlava = false;
@@ -129,6 +142,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
 			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -213,6 +227,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -255,12 +270,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
-                disabled: !isPersonaFisica(this.company.document),
+                disabled: !this.icc.isLroe() || !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
-                disabled: isPersonaFisica(this.company.document),
+                disabled: !this.icc.isLroe() || isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -286,6 +301,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()

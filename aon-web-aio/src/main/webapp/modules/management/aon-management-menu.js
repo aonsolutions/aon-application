@@ -3,6 +3,7 @@ import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 import { PAYMETHODS } from '../MenuOptions.js';
+import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 
 export class AonManagementMenu extends AonSuiteMenu {
 
@@ -16,11 +17,20 @@ export class AonManagementMenu extends AonSuiteMenu {
 		this.gestionInitialize()
     }
 
-    connectedCallback () {
+    async connectedCallback () {
         this.clear();
         this.initialize();
+        await this.getInvoiceConfiguration();
         this.build();
         this.setTitle("Opciones de gestión");
+    }
+
+    async getInvoiceConfiguration() {
+        getInvoiceConfiguration().then(c => {
+            this.icc = new InvoiceCommunicationConfiguration(c);
+         }).catch(e => {
+            console.log("error getInvoiceConfiguration", e);
+        });
     }
 
     gestionInitialize() {
@@ -140,6 +150,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "SII - Suministro Inmediato de Información",
                 title: "SII - Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }, {
                 description: "Modelo 347 - Declaración anual operaciones con terceras personas.",

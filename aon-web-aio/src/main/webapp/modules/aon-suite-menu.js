@@ -365,19 +365,19 @@ export class AonSuiteMenu extends AonElement {
 	}
 
     buildLi(option, ul, div){
-        let li = this.createElement(TAG.LI);
-        li.className = 'aonInputListOptionsItem';
-        li.innerHTML = option.title;
-        li.classList.add("suiteMenuLi");
-        ul.appendChild(li);
+        if(!option.disabled) {
+            let li = this.createElement(TAG.LI);
+            li.className = 'aonInputListOptionsItem';
+            li.innerHTML = option.title;
+            li.classList.add("suiteMenuLi");
+            ul.appendChild(li);
     
-        li.addEventListener(EVENT.CLICK, () => {
-          div.classList.remove('is-visible');
-          option.action();
+            li.addEventListener(EVENT.CLICK, () => {
+                div.classList.remove('is-visible');
+                option.action();
+            });            
+        }
 
-        });
-    
-        return li;
     }
 	
 	getOptions(){
