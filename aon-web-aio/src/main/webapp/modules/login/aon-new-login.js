@@ -355,8 +355,8 @@ export class AonNewLogin extends AonElement {
   languageDialog() {
     let divLanguage = this.getElement("aonLoginLanguageDivToolbar");
     let spanLanguage = this.getElement("aonLoginLanguageSpanToolbar");
-    const top = spanLanguage.getBoundingClientRect().top + 25;
-    const left = spanLanguage.getBoundingClientRect().left;
+    const top = spanLanguage.getBoundingClientRect().top;
+    const left = spanLanguage.getBoundingClientRect().left + 25;
     let d = this.getElement("aonHeaderDialogHelpOption");
     if (!d) {
       d = new AonDialogMenu();

@@ -974,6 +974,21 @@ aon-configuration-menu .suiteMenuContent  {
     mask-image: url('/icons/building.svg') ;
 }
 
+#UlCompanies > li > span:nth-of-type(3){
+	width: 25.5px;
+	height: 25.5px;
+	border-radius: 0;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color:#64748b;
+    mask-image: url('/icons/chevron-right.svg') ;
+}
+
+#UlCompanies > li:hover > span:nth-of-type(3) {
+	background-color: white;
+}
+
 /* ========================== Login Styles  ========================== */
 #aonLogin {
 	font-size: 17px;
@@ -1139,6 +1154,32 @@ aon-configuration-menu .suiteMenuContent  {
 	top: 26px;
 	right: 12px;
 	position: relative;
+}
+
+#aonHeaderDialogHelpOptionDialogMenuContent {
+	border:none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi img {
+	display: none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi span {
+	color: #475569;
+    font-size: 1rem !important;
+    display: flex;
+    justify-content: center;
+    width: 6rem;
+    align-items: center;;
+    cursor: pointer;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover {
+	background-color: #475569 !important;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
+	color: white;
 }
 
 /* ========================== Card Styles  ========================== */	
@@ -1524,6 +1565,14 @@ aon-right-panel {
 	mask-position: center;
 	mask-repeat: no-repeat;
 	background-color: #64748b;
+}
+
+.rightPanel #aonConfig{
+	display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 .rightPanel .helpCardText .material-icons,
