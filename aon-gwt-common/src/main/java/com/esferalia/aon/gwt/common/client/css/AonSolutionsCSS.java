@@ -925,6 +925,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_card")
 	String aonCustomCard();
 	
+	@ClassName("aon_custom_card_dark")
+	String aonCustomCardDark();
+	
 	@ClassName("aon_custom_card_small")
 	String aonCustomCardSmall();
 	
@@ -1586,5 +1589,11 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_customer_card_content")
 	String aonCustomerCardContent();
+	
+	@ClassName("aon_model_matrix_small_button")
+	String aonModelMatrixSmallButton();
+	
+	@ClassName("aon_model_matrix_bullet_small_button")
+	String aonModelMatrixBulletSmallButton();
 }
 

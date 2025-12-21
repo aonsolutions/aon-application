@@ -459,6 +459,9 @@ public class ProductBookingDAO {
 				
 				SecurityDAO.insertUserAppRole(ctx, newUserAppRole);
 			}
+			
+			SecurityDAO.saveDomainMaxDefinedUser(ctx, userDb.getDomain().getId(), 1);
+			
 		}
 		
 		// Set User normal

@@ -2436,6 +2436,10 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("MINIBAR_MENSUAL", "MINIBAR_M");
 		variablesMap.put("QUEBRANTO_MONEDA_CONDUCTOR_DIARIO", "QMON_COND_D");
 		variablesMap.put("QUEBRANTO_MONEDA_TAQUILLERO_DIARIO", "QMON_TAQUIL_D");
+		
+		// Act. 17/12/25
+		variablesMap.put("PLUS_TRABAJO_EN_OBRA_MENSUAL", "P_TRAB_OBRA_M");
+
 
 	}
 	

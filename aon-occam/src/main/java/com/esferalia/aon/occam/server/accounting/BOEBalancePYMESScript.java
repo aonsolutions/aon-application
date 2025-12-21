@@ -91,7 +91,7 @@ public class BOEBalancePYMESScript extends BalanceScript {
 					+"+sabPositivo({5524})"
 					,null)
 			,PCIV(1,HEADER1,"V","Acreedores comerciales y otras cuentas a pagar",null,"PCIV1+PCIV2")
-				,PCIV1(2,LEAF,"1","Proveedores","sab({400,401,405})-sdb({406})",null)
+				,PCIV1(2,LEAF,"1","Proveedores","sab({400,401,403,404,405})-sdb({406})",null)
 				,PCIV2(2,LEAF,"2","Otros acreedores","sab({41,438,465,466,475,476,477})",null)
 			,PCV (1, LEAF, "VI","Periodificaciones a corto plazo","sab({485,568})",null)
 			,PCVI(1, LEAF, "VII","Deuda con caracter\u00EDsticas especiales a corto plazo","sab({502,507,199})",null)
