@@ -24,7 +24,25 @@ public class AonCustomCard extends HTMLPanel {
 
 		createTitle(title, this.rightWidget);
 	}
+	
+	public AonCustomCard(String title, boolean isDark) {
+		super(EMPTY_STRING);
+		addStyleName(AON.CSS.aonCustomCard());
+		if(isDark) addStyleName(AON.CSS.aonCustomCardDark());
 
+		createTitle(title);
+	}
+	
+	public AonCustomCard(String title, Widget rightWidget, boolean isDark) {
+		super(EMPTY_STRING);
+		addStyleName(AON.CSS.aonCustomCard());
+		if(isDark) addStyleName(AON.CSS.aonCustomCardDark());
+		
+		this.rightWidget = rightWidget;
+
+		createTitle(title, this.rightWidget);
+	}
+	
 	private void createTitle(String title, Widget rightWidget) {
 		HTMLPanel toolbarPanel = new HTMLPanel(EMPTY_STRING);
 		toolbarPanel.getElement().getStyle().setProperty("display", "flex");
@@ -68,6 +86,8 @@ public class AonCustomCard extends HTMLPanel {
 		
 		add(titlePanel);
 	}
+	
+	
 	
 	public void setToolbarWidgetShown() {
 		if(null != this.rightWidget)

@@ -48,7 +48,8 @@ public interface CretaService {
 		SOLICITUD_RECEPCION_RNT,
 		USER,
 		DOMAIN,
-		WITH_IDC
+		WITH_IDC,
+		RECTIFICACION_FUERA_PLAZO_LIQUIDACION
 	}
 
 	public static enum File {
