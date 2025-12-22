@@ -971,7 +971,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solicitudRecepcionRNT = dialog.solicitudRecepcionRNT();
 			boolean withIDC = dialog.withIDC();
-			long outOfDateLiquidation = dialog.getOutOfDateLiquidation();
+			Long outOfDateLiquidation = dialog.getOutOfDateLiquidation();
 
 			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, checkCCCs(ccs),
 					basesMesAnterior, calcsDetailed, i54, reftificationMark, solicitudRecepcionRNT, outOfDateLiquidation, withIDC);
@@ -1043,13 +1043,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				public void visitBases(Void t, Void l) throws RuntimeException {
 
 					dialog.setVisibleWithIDC(true);
+					dialog.setVisibleOutOfDate(true);
 					dialog.setVisibleReftificationMark(true);
 					dialog.setVisibleSolicitudRecepcionRNT(true);
-					
 
 					// TODO: add TypeChangeHadler to CretaRequestDialog?
 					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleWithIDC("L00".equals(dialog.getType())));
+					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleOutOfDate("L00".equals(dialog.getType())));
 				}
 
 				@Override

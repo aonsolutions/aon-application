@@ -277,7 +277,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setVisibleFrom(true);
 		setVisibleCtrl(false);
 		setVisibleMonth(false);
-		
+		setVisibleOutOfDate(false);
 		
 		acceptButton.setEnabled(enableAccept());
 	}
@@ -316,7 +316,6 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(true);
 				setVisibleCtrl(false);
 				setVisibleMonth(false);
-				setVisibleOutOfDate(true);
 				onMonthChanged(null);
 				return null;
 			}
@@ -327,7 +326,6 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(false);
 				setVisibleCtrl(false);
 				setVisibleMonth(true);
-				setVisibleOutOfDate(false);
 				onMonthsChanged(null);
 				return null;
 			}
@@ -338,42 +336,23 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 				setVisibleFrom(true);
 				setVisibleCtrl(true);
 				setVisibleMonth(false);
-				setVisibleOutOfDate(false);
 				onMonthsChanged(null);
 				return null;
 			}
 
 			@Override
 			public Void visitL13() {
-				setVisibleTo(true);
-				setVisibleFrom(true);
-				setVisibleCtrl(false);
-				setVisibleMonth(false);
-				setVisibleOutOfDate(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
 
 			@Override
 			public Void visitL90() {
-				setVisibleTo(true);
-				setVisibleFrom(true);
-				setVisibleCtrl(false);
-				setVisibleMonth(false);
-				setVisibleOutOfDate(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
 
 			@Override
 			public Void visitL91() {
-				setVisibleTo(true);
-				setVisibleFrom(true);
-				setVisibleCtrl(false);
-				setVisibleMonth(false);
-				setVisibleOutOfDate(false);
-				onMonthChanged(null);
-				return null;
+				return visitL00();
 			}
 
 		});
