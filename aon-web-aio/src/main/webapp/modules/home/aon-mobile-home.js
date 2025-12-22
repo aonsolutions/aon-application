@@ -14,6 +14,7 @@ import { AonIcon } from '../../components/aon-icon.js';
 import { isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
+import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -172,6 +173,9 @@ export class AonMobileHome extends AonElement {
     }
 
     async widgetTimeControl() {
+		let timeControlPanel = this.createElement(TAG.DIV);
+        timeControlPanel.id = 'timeControlPanel';
+		
         let widgetTC = this.createElement(TAG.DIV);
         widgetTC.id = this.WIDGET_TC;
         widgetTC.className = "aonWidgetTCMobile";
@@ -181,9 +185,19 @@ export class AonMobileHome extends AonElement {
         if (!this.getDur().isTimecontrol()) return null;
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
+        
+        if(this.isBeta() && this.isMobile())
+			timeControlPanel.classList.add('aonWidgetTCMobileBig');
+        
         widgetTC.appendChild(aonSign);
-        return widgetTC;
-    }
+        timeControlPanel.appendChild(widgetTC);
+        
+        timeControlPanel.addEventListener('click', () => {
+            this.rootPanel(new AonTimecontrol());
+        });
+        
+        return timeControlPanel;
+	}
 
     widgetNomina() {
         const widgetNomina = this.createElement(TAG.DIV);
