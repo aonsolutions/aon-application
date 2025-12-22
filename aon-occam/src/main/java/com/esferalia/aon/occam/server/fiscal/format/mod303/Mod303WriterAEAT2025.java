@@ -306,23 +306,24 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA2B) ,17,2)) // Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(110))  // Reservado para la AEAT
-		                                                        // LOS SIGUIENTES DATOS SE INTRODUCIRAN EN EL 4T DEL 2025
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+		                                                        
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1H1),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1J1),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1H2),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1J2),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1H3),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1J3),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1H4),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1J4),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2H1),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2J1),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2H2),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2J2),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2H3),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2J3),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2H4),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2J4),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(274))
 		   ,(wr, mod) -> wr.append("</T30302000>")
 		})
@@ -487,23 +488,24 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA4B) ,17,2)) // Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
 			   
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(110))  // Reservado para la AEAT
-               														// LOS SIGUIENTES DATOS SE INTRODUCIRAN EN EL 4T DEL 2025
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(7)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(3)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+               														
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3H1),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3J1),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3H2),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3J2),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3H3),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3J3),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3H4),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3J4),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4H1),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4J1),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4H2),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4J2),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4H3),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4J3),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4H4),7,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Superficie - 4T
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4J4),3,0)) // Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 2 - Módulo Superficie de horno - Días - 4T
+			   
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(274))
 			   ,(wr, mod) -> wr.append("</T30302000>")
 		})

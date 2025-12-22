@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.MULTI_VALUE_SEPARATOR_CHAR;
 import static com.esferalia.aon.gwt.payroll.shared.Province.getProvinces;
 import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_CONTRACT;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +65,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -98,6 +96,7 @@ import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
@@ -272,9 +271,11 @@ public class CretaServlet extends HttpServlet
 			boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
 					req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
 	
-			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
+			String outOfDateLiquidation = req.getParameter(CretaService.Parameter.RECTIFICACION_FUERA_PLAZO_LIQUIDACION.name());
+			
+			String[] nafs = getParameterValues(req, CretaService.Parameter.NAFS);
 	
-			List<String> defaultsList = new ArrayList<String>();
+			List<String> defaultsList = new ArrayList<>();
 			//defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
 			defaultsList.addAll(Arrays.asList("51=M", "54=1" ));
 	
@@ -287,6 +288,7 @@ public class CretaServlet extends HttpServlet
 			CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
 					.setReftificationMark(indicadorReftificacion)
 					.setSolicitudRecepcionRNT(solicitudRecepcionRNT)
+					.setOutOfDateLiquidation(outOfDateLiquidation)
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
@@ -312,8 +314,8 @@ public class CretaServlet extends HttpServlet
 				}
 			};
 			
-			List<InputStream> respuestasIss = new ArrayList<InputStream>();
-			List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
+			List<InputStream> respuestasIss = new ArrayList<>();
+			List<InputStream> trabajadoresYTramosIss = new ArrayList<>();
 			
 			try {
 				for (Part part : req.getParts()) {
@@ -751,7 +753,7 @@ public class CretaServlet extends HttpServlet
 			
 			List<InputStream> trabajaresYTramosIsList = new LinkedList<>();
 
-			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
+			String[] nafs = getParameterValues(req, CretaService.Parameter.NAFS);
 			
 			String autorizado = respuesta.getAutorizado();
 			
@@ -788,8 +790,8 @@ public class CretaServlet extends HttpServlet
 				throw new IOException("Unsupported type '" + tipo + "' from IDC. Comming soon :-(");
 			}
 			
-			String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
-			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
+			String[] cccs = getParameterValues(req, CretaService.Parameter.CCC);
+			String[] nafs = getParameterValues(req, CretaService.Parameter.NAFS);
 			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 			String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 			
@@ -1920,14 +1922,14 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
+		String[] cccs = getParameterValues(req, Parameter.CCC);
 		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
 		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
-		.filter(optional -> optional.isPresent())
-		.map(optional -> optional.get())
+		.filter(Optional::isPresent)
+		.map(Optional::get)
 		;
 	}
 
@@ -1935,7 +1937,7 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+		String[] cccs = getParameterValues(req, Parameter.CCC);
 		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
@@ -1944,8 +1946,9 @@ public class CretaServlet extends HttpServlet
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
 		.map( r -> {
-			if ( cccs != null && !cccs.isEmpty() ) {
-				r.getLiquidacion().removeIf(l -> !cccs.contains(l.getCcc().getProvincia() + l.getCcc().getNumero() ) );
+			if ( cccs != null && cccs.length > 0 ) {
+				Arrays.sort(cccs);
+				r.getLiquidacion().removeIf(l -> Arrays.binarySearch(cccs, l.getCcc().getProvincia() + l.getCcc().getNumero()) < 0 );
 			}
 			return r;
 		})
@@ -1998,15 +2001,15 @@ public class CretaServlet extends HttpServlet
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date from = getFromDate();
-		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+		String[] cccs = getParameterValues(req, Parameter.CCC, MULTI_VALUE_SEPARATOR_CHAR);
 		String login = req.getParameter(CretaService.Parameter.USER.name());; //":-)" ; 
 
 		
 		return distinct(
 			findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from, cccs)
 			.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
-			.filter(optional -> optional.isPresent())
-			.map(optional -> optional.get())
+			.filter(Optional::isPresent)
+			.map(Optional::get)
 		)
 		;
 	}
@@ -2138,7 +2141,7 @@ public class CretaServlet extends HttpServlet
 
 	}
 	
-	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
+	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, String[] cccs) {
 		
 		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain().getId();
 		
@@ -2150,7 +2153,7 @@ public class CretaServlet extends HttpServlet
 					p.getDomainProperty().in(new Integer[]{domainId, userDomain})
 					.and(p.getTypeProperty().eq((byte)type.ordinal()))
 					.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
-					.and(cccs.stream().map(ccc -> p.getDataProperty().like(("%"+ccc.substring(2)+"%").getBytes())).reduce((f1,f2)->f1.or(f2)).orElse(null))
+					.and(Arrays.stream(cccs).map(ccc -> p.getDataProperty().like(("%"+ccc.substring(2)+"%").getBytes())).reduce((f1,f2)->f1.or(f2)).orElse(null))
 				,
 				AttachType.REGISTRY
 				)
@@ -2434,13 +2437,15 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
-	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> Arrays.asList(values)).orElse(Collections.emptyList());
+	private static String[] getParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar) {
+		return Optional.ofNullable(req.getParameterValues(param.name())).map(Arrays::stream).orElse(Stream.empty())
+				.filter(AonStringUtils::isNotBlank).flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).toArray(String[]::new);
 	}
 
-	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param, Supplier<Collection<String>> supplier) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> ( Collection<String> )Arrays.asList(values)).orElseGet(supplier);
+	private static String[] getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
+		return getParameterValues(req, param , MULTI_VALUE_SEPARATOR_CHAR);
 	}
+
 
 	private static int getAnhoControl() {
 		Calendar c = Calendar.getInstance();
@@ -2712,7 +2717,7 @@ public class CretaServlet extends HttpServlet
 	}
 	
 
-	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, Collection<String> cccs) {
+	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, String[] cccs) {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		try ( 
@@ -2736,7 +2741,7 @@ public class CretaServlet extends HttpServlet
 			.and(SALARY.SOCIAL_SECURITY_NUMBER.isNotNull()) // Skip RETAs
 			;
 			
-			if ( cccs != null && !cccs.isEmpty())
+			if ( cccs != null && cccs.length > 0 )
 				selectCCCs = selectCCCs.and(ENTERPRISE_CCC.CCC.in(cccs));
 			
 			return 

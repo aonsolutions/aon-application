@@ -90,4 +90,19 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 //			e.printStackTrace();
 //		}
 	}
+
+	@Override
+	public void visitNO_VERIFACTU() throws InvoiceCommunicationException {
+		// Not implemented
+	}
+
+	@Override
+	public void visitSIF() throws InvoiceCommunicationException {
+		// Not implemented
+	}
+
+	@Override
+	public void visitFACTURAE() throws InvoiceCommunicationException {
+		// Not implemented
+	}
 }

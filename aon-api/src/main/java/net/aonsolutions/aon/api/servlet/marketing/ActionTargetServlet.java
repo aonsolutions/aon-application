@@ -1118,7 +1118,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	}
 	
 	private static void insertDomainConfiguration(CloseableAONContext ctx, Domain officeDomain, Domain newDomain, User newUser, Customer customer, LinkedList<ProductBooking> productsBooking) {
-		SecurityDAO.saveDomainMaxDefinedUser(ctx, newDomain.getId(), 1);
+		SecurityDAO.saveDomainMaxDefinedUser(ctx, newDomain.getId(), 0);
 		
 		Optional<ProductBooking> defaultProduct = productsBooking.stream().filter(pb -> pb.getBookingType().equals(ProductBookingType.DEFAULT)).findFirst();
 		

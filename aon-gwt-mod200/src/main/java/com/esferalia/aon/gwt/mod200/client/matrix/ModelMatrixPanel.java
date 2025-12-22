@@ -58,8 +58,11 @@ public class ModelMatrixPanel extends FlowPanel {
 	private static final String FIXED = "fixed";
 	
 	private static final String[] MONTHS = new String[]{"ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"};
-	private static final String[] QUARS = new String[]{"1\u00BA TRIM","2\u00BA TRIM","3\u00BA TRIM","4\u00BA TRIM"};
+	private static final String[] QUARS = new String[]{"1\u00BA TRIM.","2\u00BA TRIM.","3\u00BA TRIM.","4\u00BA TRIM."};
+	private static final String[] MONTHS_COMPACT = new String[]{"E","F","M","A","M","J","J","A","S","O","N","D"};
+	private static final String[] QUARS_COMPACT = new String[]{"1\u00BA T.","2\u00BA T.","3\u00BA T.","4\u00BA T."};
 	
+	private MatrixModuleOptions options;
 	private FiscalMatrixParams params;
 	private AonSearchPanelButton refreshButton;
 	
@@ -68,7 +71,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	private CheckBox markAllForSend;
 	
 	public ModelMatrixPanel(MatrixModuleOptions options, FiscalMatrixParams params, AonSearchPanelButton refreshButton) {
-		
+		this.options = options;
 		this.params = params;
 		this.refreshButton = refreshButton;
 		
@@ -174,9 +177,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		if (!options.isCompactMode()) {
 			row.addCell( getHelpButton(), AON.CSS.aonFlexGrow1());
 		}
-		row.addCell( getEmptyLabel( "50px"))
+		row.addCell( getEmptyLabel( "45px"))
 			.addCell( getEmptyLabel( "25px"))
-			.addCell( getEmptyLabel( "70px"))
+			.addCell( getEmptyLabel( options.isCompactMode() ? "30px" : "50px"))
 			.addCell( getMonthsTable(), AON. CSS.aonWidth400());
 		
 		row = table.addRow( );
@@ -357,6 +360,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
 		if (params.getStatus() == null && params.getPeriod() == null) {
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+			if(options.isCompactMode() /*&& params.getPeriod() != null && params.getPeriod().isMonthPeriod()*/)			
+				addButton.addStyleName(AON.CSS.aonModelMatrixSmallButton());
+			
 			cell.add(addButton);		
 			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
 					, new AonModuleCallback<IFiscalModel>() {
@@ -405,6 +411,10 @@ public class ModelMatrixPanel extends FlowPanel {
 		mod.addStyleName(AON.CSS.aonIconLabel());
 		mod.addStyleName(AON.CSS.aonIconBullet());
 		mod.addStyleName(AON.CSS.aonTextCenter());
+
+		if(options.isCompactMode() /*&& params.getPeriod() != null && params.getPeriod().isMonthPeriod()*/)
+			mod.addStyleName(AON.CSS.aonModelMatrixBulletSmallButton());		
+
 		focusPanel.add(mod);
 		cell.clear();
 		cell.add(focusPanel);
@@ -474,7 +484,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		periodRow
 			.addCell( new Label( FiscalModelUtils.getModelName( fm) ), AON.CSS.aonBold(), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
 			.addCell( admonLabel, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
-			.addCell( new Label(perKey.getValue()), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
+			.addCell( new Label(options.isCompactMode() ? perKey.getValue().substring(0, 3) + "." : perKey.getValue()), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
 			;
 		AonDisplayTableCell periodCell = periodRow.addCell();
 		periodCell.getElement().getStyle().setVerticalAlign(VerticalAlign.BOTTOM);
@@ -539,10 +549,10 @@ public class ModelMatrixPanel extends FlowPanel {
 			monthsRow.addStyleName(AON.CSS.aonFontSmaller());
 			monthsRow.addStyleName(AON.CSS.aonBold());			
 			if (params.getPeriod() == null) {
-				Arrays.stream(MONTHS).forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );				
+				Arrays.stream(options.isCompactMode() ? MONTHS_COMPACT : MONTHS).forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );				
 			} else {
 				// Si filtrando por solo un mes, se muestra solo el mes por el que se filtra 
-				monthsRow.addCell(new InlineLabel( MONTHS[params.getPeriod().value()] ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth40());
+				monthsRow.addCell(new InlineLabel(  options.isCompactMode() ? MONTHS_COMPACT[params.getPeriod().value()] : MONTHS[params.getPeriod().value()] ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth40());
 				addOnePeriodCells(monthsRow);
 			}
 		}
@@ -558,10 +568,10 @@ public class ModelMatrixPanel extends FlowPanel {
 			quarsRow.addStyleName(AON.CSS.aonFontSmaller());
 			quarsRow.addStyleName(AON.CSS.aonBold());
 			if (params.getPeriod() == null) {
-				Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
+				Arrays.stream(options.isCompactMode() ? QUARS_COMPACT : QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
 			} else {
 				// Si filtrando por solo un trimestre, se muestra solo el trimestre por el que se filtra
-				quarsRow.addCell(new InlineLabel( QUARS[params.getPeriod().value()-Period.T1.value()] ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
+				quarsRow.addCell(new InlineLabel( options.isCompactMode() ? QUARS_COMPACT[params.getPeriod().value()-Period.T1.value()] : QUARS[params.getPeriod().value()-Period.T1.value()] ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
 				addOnePeriodCells(quarsRow);
 			}
 		}

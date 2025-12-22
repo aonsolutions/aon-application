@@ -24,8 +24,8 @@ public class SimpliedRegimeActivity implements Serializable {
     private double unit7;
     private double amount7;
     private double boxC;
-    private double boxC1;  // Reducción Lorca
-    private double boxC2;  // Reducción DANA 2024
+    private double boxC1;  // Reducción Lorca (hasta 2024)
+    private double boxC2;  // Reducción DANA 2024 (solo ejercicio 2024)
     private double boxD;
     private double boxE;
     private double boxF;

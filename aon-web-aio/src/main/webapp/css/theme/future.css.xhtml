@@ -92,7 +92,7 @@
 	}
 
 	.aon-finding-filter-input {
-		height: 2.5rem;
+		min-height: 2.5rem;
   		border-radius: .375rem;
   		box-sizing: border-box;		
   		background-position-y: center;
@@ -498,10 +498,6 @@
         background-color: var(--aonBackgroundColor2);
 	}
 	
-	.rich-menu-list-border{
-	}
-	
-	
 	.aon-button-goto{
   		width: 24px ;
   		height: 2.5rem ;
@@ -670,9 +666,46 @@
 	.rich-menu-list-border{
 		min-width: 12.5rem;
   		height: auto;
+  		border: none;
   		border-radius: .375rem;
 		background-color: #fff;
 	  	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	}
+	
+	.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon),
+	.rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon']){
+		line-height: 36px;
+		border-radius: 0px;
+		
+ 				
+		color: #1e293b;
+		font-size: 14.725px;
+		font-family: "Inter-medium", sans-serif;
+
+		padding: 5px 20px 5px 12px; !important;
+	}
+
+	.rich-menu-list-bg .rich-menu-item-label:has(input[class*='aon-icon']){
+		padding-left: 12px;
+	}
+	
+	.rich-menu-list-bg .rich-menu-item-label input[class*='aon-icon']{
+		color: #1e293b;
+		font-size: 14.725px;
+		font-family: "Inter-medium", sans-serif;
+	}
+	
+	.rich-menu-list-bg .rich-menu-item .rich-menu-item-icon ,
+	.rich-menu-list-bg .rich-menu-item input[class*='aon-icon'] {
+		height: 36px;
+		
+		background-size: 24px;
+		background-image: none;
+		background-position: left;
+ 		background-color: transparent;
+
+		padding: 0px 0px 0px 0px !important;
+
 	}
 	
 	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-new,
@@ -693,31 +726,196 @@
 	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply, 
 	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans, 
 	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans {
-		height: 42px;
+		height: 36px;
 		width: 100%;
 		
-		line-height: 42px;
+		line-height: 36px;
 		border-radius: 0px;
 		display: inline-block;
 		
 		background-size: 24px;
+		background-image: none;
 		background-position: left;
-		
-		padding: 0px 0px 0px 32px;
-/* 		mask-size: contain;
-		mask-position: center;
-		mask-repeat: no-repeat;
-		background-color: #1e293b;
- */
  		background-color: transparent;
+		
+		padding: 0px 0px 0px 0px;
+
  				
 		color: #1e293b;
 		font-size: 14.725px;
 		font-family: "Inter-medium", sans-serif;
 	}	
 	
-	.rich-menu-item:hover, 
-	.aon-menuItem-selectClass {
+	.no_aon-dropDownMenu a.aon-finding-toolbar-item[class*='aon-icon-']:before,
+	.no_aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-statistics:before, 
+	.no_aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply:before, 
+	.no_aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans:before, 
+	.no_aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans:before {
+		content: '';
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        display: inline-block;
+        vertical-align: middle;
+		background-color: black;
+	    mask-repeat: no-repeat;
+	}
+	
+	.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon):before,
+	.rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon']):before{
+		content: '';
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        display: inline-block;
+        vertical-align: middle;
+		background-color: black;
+	    mask-repeat: no-repeat;
+	    mask-image: url(#{aonResource.resolve['/icons/none.svg']}) ;
+	}
+	
+	.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon):hover::before,
+	.rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon']):hover::before,
+	.aon-dropDownMenu a.aon-finding-toolbar-item[class*='aon-icon-']:hover::before{
+	    background-color: #fff;
+    }
+	
+	.rich-menu-list-bg .rich-menu-item:has(.aon-icon-pdf):before{
+	    mask-image: url(#{aonResource.resolve['/icons/file-pdf.svg']}) ;
+    }
+
+	.rich-menu-list-bg .rich-menu-item:has(.aon-icon-excel):before{
+	    mask-image: url(#{aonResource.resolve['/icons/file-spreadsheet.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-tree):before {
+	    mask-image: url(#{aonResource.resolve['/icons/folder-tree.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-statistics):before {
+    	mask-image: url(#{aonResource.resolve['/icons/bar-chart-3.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-payroll):before {
+    	mask-image: url(#{aonResource.resolve['/icons/file-euro.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-audit):before {
+    	mask-image: url(#{aonResource.resolve['/icons/eye.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-info):before {
+    	mask-image: url(#{aonResource.resolve['/icons/info.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-notes):before {
+    	mask-image: url(#{aonResource.resolve['/icons/sticky-note.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-comments):before {
+    	mask-image: url(#{aonResource.resolve['/icons/file-text.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-auxiliary):before {
+    	mask-image: url(#{aonResource.resolve['/icons/table.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-relationship):before {
+    	mask-image: url(#{aonResource.resolve['/icons/users.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-task-assume):before {
+    	mask-image: url(#{aonResource.resolve['/icons/briefcase.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-domain):before {
+    	mask-image: url(#{aonResource.resolve['/icons/link.svg']}) ;
+    }
+	
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-documents):before {
+    	mask-image: url(#{aonResource.resolve['/icons/files.svg']}) ;
+    }
+	
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-purchase):before {
+    	mask-image: url(#{aonResource.resolve['/icons/shopping-cart.svg']}) ;
+    }
+	
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-commercial):before {
+    	mask-image: url(#{aonResource.resolve['/icons/briefcase.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-task):before {
+    	mask-image: url(#{aonResource.resolve['/icons/list-checks.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-tax):before {
+    	mask-image: url(#{aonResource.resolve['/icons/euro.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-product):before {
+    	mask-image: url(#{aonResource.resolve['/icons/package.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-data):before {
+    	mask-image: url(#{aonResource.resolve['/icons/pencil.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-addinfo):before {
+    	mask-image: url(#{aonResource.resolve['/icons/list-plus.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-segment):before {
+    	mask-image: url(#{aonResource.resolve['/icons/layout-dashboard.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-sincronize):before {
+    	mask-image: url(#{aonResource.resolve['/icons/refresh-cw.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-sign):before {
+    	mask-image: url(#{aonResource.resolve['/icons/file-signature.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-copy):before {
+    	mask-image: url(#{aonResource.resolve['/icons/copy.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-araba):before {
+    	mask-image: url(#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-transfer):before {
+    	mask-image: url(#{aonResource.resolve['/icons/import.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-mailReply):before {
+    	mask-image: url(#{aonResource.resolve['/icons/reply.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon-pay']):before{
+    	mask-image: url(#{aonResource.resolve['/icons/file-plus-2.svg']}) ;
+    }
+
+    .rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon-settle']):before{
+    	mask-image: url(#{aonResource.resolve['/icons/file-minus-2.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon-fraction']):before{
+    	mask-image: url(#{aonResource.resolve['/icons/file-plus-2.svg']}) ;
+    }
+    
+    .rich-menu-list-bg .rich-menu-item:has(input[class*='aon-icon-webmail2']):before{
+    	mask-image: url(#{aonResource.resolve['/icons/mail.svg']}) ;
+    }
+    .rich-menu-list-bg .rich-menu-item .aon-finding-toolbar-item.aon-icon-webmail2  {
+        background-image: none !important;
+    }
+    
+    
+	.rich-menu-item:hover,
+	.aon-dropDownMenu-selectItem, 
+	.aon-menuItem-selectClass,
+	.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon):hover {
 	  color: #fff;
 	  border:none;		
 	  font-size: 14.725px;
@@ -839,6 +1037,15 @@
         padding-bottom: 0px !important;
     }
     
+    form[id$='bankStatementList'] .aon-panelGrid .aon-panelGrid-odd {
+        position: initial;
+    }
+    
+    form[id$='bankStatementList'] .aon-panelGrid .aon-panelGrid-even {
+        padding: 5px !important;
+    }
+    
+    
     .aon-panelGrid .tbl-tab-search-even,
     .aon-panelGrid .aon-panelGrid-even,
     .aon-scroll-area .aon-panelGrid-even {
@@ -879,7 +1086,7 @@
 		padding: 13px !important;
   		background-size: inherit;	  
   		background-image: url(#{aonResource.resolve['/icons/award.svg']}) ;
-	}
+	}aon-icon-sincronize
 	
 	.aon-icon-commercial-ok{
 		padding: 13px !important;
@@ -990,7 +1197,7 @@
 	
 	.rich-inslider-field{
 		background-image: none ;
-	}
+	}aon-icon-sincronize
 	
 	.rich-inslider-tip {
 	    border-color: #cbd5e1;
@@ -1114,6 +1321,14 @@
 		padding-top: 10px !important;
 		padding-left: 32px !important;
 	}
+
+/* 	.aon-finding-toolbar-item.aon-icon-accept{
+  		border: 0;
+  		color: #fff;
+  		width: fit-content;
+		background-color: #0f172a;
+      }
+ */    
 	
 </style>
 

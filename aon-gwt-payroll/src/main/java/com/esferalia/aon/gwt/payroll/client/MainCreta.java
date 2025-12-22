@@ -58,9 +58,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
-import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.InfoDescription;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.L13PendingDescription;
-import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.PEC;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -68,7 +66,6 @@ import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -1260,7 +1257,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addWarnings(result.getWarnings());
 			cretaResults.addUnknown(result.getUnknown());
 			cretaResults.addMessages(new JsEvent[]{});
-			cretaResults.setParameter(CretaService.Parameter.NAFS, getSelectedNafs());;
+			cretaResults.setParameter(CretaService.Parameter.NAFS, join(getSelectedNafs()));;
 
 			resultsPanel.setWidget(cretaResults);
 
@@ -2032,7 +2029,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solictudRecepcionRNT = dialog.solicitudRecepcionRNT();
 			boolean withIDC = dialog.withIDC();
-			
+			Long outOfDateLiquidation = dialog.getOutOfDateLiquidation();
 	
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
@@ -2055,6 +2052,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				i54,
 				reftificationMark,
 				solictudRecepcionRNT,
+				outOfDateLiquidation,
 				withIDC);
 	
 			return true;
@@ -2747,9 +2745,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	protected static void sync(final SyncCallback cb, Collection<CCC> cccs) {
-		List<String> cccCodes = cccs.stream().map(CCC::getCode).collect(Collectors.toList());
+		String cccCodes = cccs.stream().map(CCC::getCode).collect(Collectors.joining(CretaService.MULTI_VALUE_SEPARATOR));
 		Map<String, Collection<String>> options  = new HashMap<>();
-		options.put(CretaService.Parameter.CCC.name(), cccCodes );
+		options.put(CretaService.Parameter.CCC.name(), Collections.singleton(cccCodes));
 		options.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
 		options.put(CretaService.Parameter.DOMAIN.name(), Collections.singleton(Wnd.getCurrentDomainNameURL()));
 		sync(cb, options);
@@ -3206,8 +3204,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		enterprises.stream()
 		.flatMap(e -> e.getActivities().stream())
 		.flatMap(a -> a.getCccs().stream())
-		.filter( ccc -> Enterprises.checkCCC(ccc))
-		.filter( ccc -> Enterprises.hasEmployees(ccc))
+		.filter( Enterprises::checkCCC)
+		.filter( Enterprises::hasEmployees)
 		.sorted((ccc1, ccc2) -> ccc1.getCode().compareTo(ccc2.getCode()))
 		.skip(offset)
 		.limit(limit)
@@ -3282,6 +3280,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	 
+	private static String join( Collection<String> collection){
+		return
+		collection.stream()
+		.filter(AonStringUtils::isNotBlank)
+		.collect(Collectors.joining(CretaService.MULTI_VALUE_SEPARATOR));
+	}
 
 	// ------------------------------------------------------------------------
 	private  static native void log (String message ) /*-{

@@ -33,7 +33,7 @@ body,
 #rootPanel > div {
     margin: 0px;
     border-radius: 0px;
-	background-color: #f1f5f9 !important;	
+	background-color: transparent !important;	
 }
 
 .aon_toolbar,
@@ -87,7 +87,7 @@ body,
 }
 .aon_toolbar {
 	width:auto ;
-	height: 38px;
+	height: 50px;
 	margin: 1rem 1rem 1rem 1rem;
 }
 
@@ -99,6 +99,10 @@ body,
 	border-radius: .375rem;
 	margin: 1rem 1rem 1rem 1rem;
 }
+
+.aon_search_filter_scroll .aon_flex_column {
+	margin: 0px;
+}  
 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem), 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem){
@@ -309,12 +313,21 @@ input, select, textarea,
 .aon_custom_card {
 	border: none;
 }
+
+.aon_custom_card_dark {
+	background-color: #f1f5f9 !important;
+}
+
 .aon_custom_card > div:first-child {
-	border-bottom: .1rem solid #cbd5e1;
+	/*border-bottom: .1rem solid #cbd5e1;*/
 }
 
 .aon_custom_card .aon_flex_column {
 	margin: 0.25rem;
+}
+
+.aon_custom_card_dark .aon_flex_column {
+	background-color: #f1f5f9 !important;
 }
 
 .aon_custom_row:hover, 
@@ -333,12 +346,12 @@ input, select, textarea,
 
 .aon_between_input, 
 .aon_custom_text_box_input {
-	height: 2.15rem;
+	min-height: 2.15rem;
   	color: #1e293b;  
 	border-radius: .375rem;
 	box-sizing: border-box;
-	padding: .75rem !important;
 	border: .0625rem solid #cbd5e1;
+	padding: .5rem .75rem .5rem .75rem !important;
 }
 
 .aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
@@ -370,6 +383,12 @@ input, select, textarea,
 
  .aon_button:hover {
 	background-color:transparent ;
+}
+
+.aon_icon_receipt,
+.aon_toolbar_button.aon_icon_receipt{
+	background-size: 24px;
+	background-image: url(/icons/file-text.svg);
 }
 
 .aon_icon_excel, .aon-icon-excel, .aon-icon-import-excel-trans, .aon-icon-export-excel-trans {
@@ -622,7 +641,7 @@ div.aon_flex_block.aon_scroll_area {
 }
 
 .aon-panelGrid-search-info,
-.aon-finding-title-toolbar, 
+.aon-finding-title-toolbar,
 .gwt-Selector .gwt-MenuBar-horizontal, 
 .gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
    border-bottom: .0625rem solid  #cbd5e1 !important;
@@ -685,10 +704,6 @@ div#rootPanel div div div div div.gwt-SplitLayoutPanel div div div div.aon_scrol
 	padding:0.15rem !important;	
 }
 
-/* .aon-Salary-DraftPanel .gwt-TextBox:disabled {
-	border:none !important;
-}
- */
 .gwt-TextBox.aon-nopadding.aon-nomargin:disabled {
 	margin:0px !important;
 	padding:0.15rem !important;	
@@ -805,6 +820,10 @@ div[style*='height:55px'] > .aon_toolbar {
 	background-image: url('/icons/user.svg');
 }
 
+.material-icons[icon="person_off"] {
+	background-image: url('/icons/user-x.svg');
+}
+
 .material-icons[icon="place"] {
 	background-image: url('/icons/map-pin.svg');
 }
@@ -852,4 +871,203 @@ div:has( > .aon_icon_menu_collapse) {
 
 .aon_custom_text_box_no_border {
 	border: none !important;
+}
+
+.gwt-Selector .gwt-MenuBarPopup {
+	height: auto;aon-web-aio/src/main/webapp/css/theme/future.gwt.css
+	border: none;
+	min-width: 12.5rem;
+	border-radius: .375rem;
+	background-color: #fff;
+	box-shadow: rgba(0, 0, 0, .07) 0 .0625rem .0625rem, rgba(0, 0, 0, .07) 0
+		.125rem .125rem, rgba(0, 0, 0, .07) 0 .25rem .25rem,
+		rgba(0, 0, 0, .07) 0 .5rem .5rem, rgba(0, 0, 0, .07) 0 1rem 1rem;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem {
+	height: 32px;
+    color: #1e293b;
+	font-size: 13.725px;
+	padding: .5rem 1rem ;
+	background-position-y: center;
+  	font-family: "Inter-regular", sans-serif !important;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuBar {
+	border-radius: .375rem;
+}
+
+.gwt-Selector .gwt-MenuBarPopup table {
+	width: 100%;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem:hover  {
+  color: #fff;
+  border:none;		
+  cursor: pointer;
+  background-color:#64748b;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem.gwt-MenuItem-disabled:hover {
+    color:initial ;
+    cursor: not-allowed;
+    background-color: initial;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon_icon'], 
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon-icon']{
+	padding: 12px 12px 12px 0px!important;
+    background-image: none;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon_icon']:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon-icon']:before{ 
+		content: '';
+        width: 20px;
+        height: 20px;
+	    mask-size: 18px;
+        margin-right: 8px;
+        display: inline-block;
+        vertical-align: middle;
+		background-color: black;
+	    mask-repeat: no-repeat;
+	    mask-image: url('/icons/blank.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon_icon']:after,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon-icon']:after{
+		content: '';
+        width: 100%;
+        display: inline-block;
+	}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon_icon']:hover:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon-icon']:hover:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem-selected *[class*='aon_icon']:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem-selected *[class*='aon-icon']:before  { 
+		background-color: white;
+}
+
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-employee:before{
+	mask-image: url('/icons/user.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-workplace:before{
+	mask-image: url('/icons/map-pin.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-ine:before{
+	mask-size: 14px;
+	mask-image: url('/icons/ine.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_tgss:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-segsocial-small:before{
+ 	mask-image: url('/icons/SeguridadSocial.svg') ;
+}
+		
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-time:before {
+ 	mask-image: url('/icons/timer.svg') ;
+}		
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-copy:before {	
+ 	mask-image: url('/icons/copy.svg') ;
+}		
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-paste:before {	
+ 	mask-image: url('/icons/clipboard.svg') ;
+}		
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_add:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-reset:before {	
+ 	mask-image: url('/icons/plus.svg') ;
+}		
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-save:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-accept:before {
+ 	mask-image: url('/icons/save.svg') ;
+}		
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-task-start:before {
+ 	mask-image: url('/icons/play.svg') ;
+}		
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-predetermine:before{
+	background-color: blue;
+	mask-image: url('/icons/check-circle.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-okwarning:before {
+	background-color: orange;
+	mask-image: url('/icons/alert-triangle.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-exception:before {
+	background-color: red;.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon_icon']:hover:before,
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem *[class*='aon-icon']:hover:before  { 
+		background-color: white;
+}
+	
+	mask-image: url('/icons/x-circle.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-warn:before {
+	background-color: orange;
+	mask-image: url('/icons/alert-circle.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-errorwarning:before {
+	background-color: red;
+	mask-image: url('/icons/alert-circle.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_send:before {
+ 	mask-image: url('/icons/send.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon-icon-refresh:before {
+ 	mask-image: url('/icons/refresh-cw.svg') ;
+}
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_right:before {
+ 	mask-image: url('/icons/arrow-right.svg') ;
+}
+
+
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_pdf:before {
+	mask-size: 22px;
+  	width: 22px !important;
+  	height: 22px !important;
+	mask-image: url('/icons/file-pdf.svg') ;
+}
+	
+.gwt-Selector .gwt-MenuBarPopup .gwt-MenuItem .aon_icon_excel:before {
+	mask-size: 22px;
+  	width: 22px !important;
+  	height: 22px !important;
+	mask-image: url('/icons/file-x.svg') ;
+}
+	
+
+
+.gwt-Selector .gwt-MenuBar .gwt-MenuItem-selected,
+.gwt-Selector .gwt-MenuBar-vertical .subMenuIcon-selected {
+	color: #fff;
+  	background: #64748b;
+    background-color: #64748b;
+}
+
+
+
+.aon_model_matrix_small_button {
+	background-color: transparent !important;
+	background-size: 15px !important;
+	padding: 0 !important;
+	min-width: auto !important;
+}
+
+.aon_model_matrix_bullet_small_button {
+	width: 15px !important;
+	height: 15px !important;
+	background-size: 15px !important;
+	margin-top: 0.1rem !important;
 }
