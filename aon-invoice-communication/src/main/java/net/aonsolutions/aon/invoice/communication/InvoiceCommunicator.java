@@ -203,7 +203,6 @@ public class InvoiceCommunicator {
 							@Override public void visitSII() throws InvoiceCommunicationException		{throwSII();}
 							@Override public void visitTBAI() throws InvoiceCommunicationException		{throwTBAI();}
 							@Override public void visitLROE() throws InvoiceCommunicationException		{throwLROE();}
-							@Override public void visitSIF() throws InvoiceCommunicationException		{throwSIF();}
 							@Override public void visitFACTURAE() throws InvoiceCommunicationException	{throwFACTURAE();}
 							
 							@Override
@@ -217,6 +216,12 @@ public class InvoiceCommunicator {
 							@Override 
 							public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
 								NOVERIFACTU.accept(ctx,cc);
+								InvoiceDAO.postIssue(ctx, invoice );								
+							}
+							
+							@Override 
+							public void visitSIF() throws InvoiceCommunicationException	{
+								SIF.accept(ctx,cc);
 								InvoiceDAO.postIssue(ctx, invoice );								
 							}
 							

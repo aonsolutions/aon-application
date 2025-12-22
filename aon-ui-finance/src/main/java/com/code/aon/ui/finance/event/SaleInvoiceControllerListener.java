@@ -14,7 +14,7 @@ public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 	@Override
 	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
 		super.afterBeanReset(event);
-		initializeVerifactuStatus( event);
+		initializeCommunicationStatus( event);
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.SALES);
 		super.afterBeanCreated(event);
-		initializeVerifactuStatus( event);
+		initializeCommunicationStatus( event);
 	}
 
 	@Override
@@ -33,19 +33,19 @@ public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		initializeVerifactuStatus( event);
+		initializeCommunicationStatus( event);
 		super.afterModelInitialized(event);
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		initializeVerifactuStatus( event);
+		initializeCommunicationStatus( event);
 		super.afterBeanSelected(event);
 	}
 	
-	private void initializeVerifactuStatus(ControllerEvent event) {
+	private void initializeCommunicationStatus(ControllerEvent event) {
 		SaleInvoiceController controller = (SaleInvoiceController) event.getController();
-		controller.setVerifactuStatus(null);
+		controller.setCommunicationStatus(null);
 	}
 	
 

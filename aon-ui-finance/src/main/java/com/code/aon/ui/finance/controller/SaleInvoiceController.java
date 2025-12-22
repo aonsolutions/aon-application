@@ -125,7 +125,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private FtpSaleInvoiceDownloadHandler ftpEdiDownloader;
 	
 	private FtpSaleInvoiceUploaderHandler ftpEdiUploader;
-	private InvoiceCommunicationStatus verifactuStatus;
+	private InvoiceCommunicationStatus communicationStatus;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -505,7 +505,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Override
 	protected synchronized void accept() {
-		if(isNevv() && (isTbai() || isVerifactu())) {
+		if(isNevv() && (isTbai() || isVerifactu() || isNoVerifactu() || isSif())) {
 			Invoice invoice = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
@@ -595,6 +595,8 @@ public class SaleInvoiceController extends InvoiceController {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createEmisionLROE(company, invoice, icc);
 			}
+			setCommunicationStatus( null ); // Refresca el estado de la comunicacion
+			refresh( null );
 		} catch (Exception e) {
 			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());
@@ -671,7 +673,7 @@ public class SaleInvoiceController extends InvoiceController {
 					.setDomain(inv.getDomain())
 					.setUser(login);
 				InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-				if (config.isVerifactu()) {
+				if (config.isVerifactu() || config.isNoVerifactu() || config.isSif()) {
 					communicateInvoice(occam, config, company, invoice, getCertificate());
 					return;
 				}
@@ -694,22 +696,6 @@ public class SaleInvoiceController extends InvoiceController {
 					tbai.createEmisionTBAI(company, invoice, config);
 					setTbaiUrl(TbaiData.getInstance(config).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
-				
-//				VerifactuConfiguration verifactuConfiguration = AON.getVerifactuConfiguration(domainName, invoice.getDomain(), login);
-//
-//				verifactuConfiguration.setCertificate(getCertData());
-//				if(verifactuConfiguration.isActive()) {
-//					Domain domain = new Domain().setName(domainName).setId(invoice.getDomain());
-//					User user = new User().setLogin(login);
-//					AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
-//							new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
-//								.setCompany(company)
-//								.setVerifactuConfiguration(verifactuConfiguration);
-//
-//					InvoiceCommunicationType.VERIFACTU.visit(visitor);
-//				}
-				
-				// SII
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -732,7 +718,7 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		try {
 			InvoiceCommunicator.issueInvoice(communicator);
-			setVerifactuStatus( null );
+			setCommunicationStatus( null );
 			refresh( null );
 		} catch (Exception e) {
 			
@@ -861,7 +847,7 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	public String onAnularVerifactu() {
-		if(isVerifactuInvoice()) {
+		if (isVerifactuInvoice() || isNoVerifactuInvoice() || isSifInvoice()) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -880,7 +866,7 @@ public class SaleInvoiceController extends InvoiceController {
 				.setCompany(company);
 			try {
 				InvoiceCommunicator.cancelInvoice(communicator);
-				setVerifactuStatus( null );
+				setCommunicationStatus( null );
 				initializeModel();
 				resetTo();
 				return backAction();
@@ -894,7 +880,7 @@ public class SaleInvoiceController extends InvoiceController {
 				return null;
 			}
 		} else {
-			throw new AbortProcessingException("La factura no es Verifactu");
+			throw new AbortProcessingException("La factura no se puede anular");
 		}
 	}
 	
@@ -1017,16 +1003,24 @@ public class SaleInvoiceController extends InvoiceController {
 			.orElse(false);
 	}
 	
-	public boolean isInvoiceVerifactuAccepted() {
-		return isVerifactuAccepted();
-//		Invoice inv = (Invoice) getTo();
-//		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-//				.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
-//		return info.getStatus().isAccepted();
+//	public InvoiceCommunicationStatus getVerifactuStatus() { return getCommunicationStatus(InvoiceCommunicationType.VERIFACTU); }
+//	public InvoiceCommunicationStatus getNoVerifactuStatus() { return getCommunicationStatus(InvoiceCommunicationType.NO_VERIFACTU); }
+//	public InvoiceCommunicationStatus getSifStatus() { return getCommunicationStatus(InvoiceCommunicationType.SIF); }
+	
+	private InvoiceCommunicationStatus getCommunicationStatus() {
+		if (isVerifactuInvoice()) {
+			return getCommunicationStatus(InvoiceCommunicationType.VERIFACTU);
+		} else if (isNoVerifactuInvoice()) {
+			return getCommunicationStatus(InvoiceCommunicationType.NO_VERIFACTU);
+		} else if (isSifInvoice()) {
+			return getCommunicationStatus(InvoiceCommunicationType.SIF);
+		} else {
+			return null;
+		}
 	}
 	
-	public InvoiceCommunicationStatus getVerifactuStatus() {
-		if (verifactuStatus == null) {
+	private InvoiceCommunicationStatus getCommunicationStatus(InvoiceCommunicationType type) {
+		if (communicationStatus == null) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -1034,33 +1028,42 @@ public class SaleInvoiceController extends InvoiceController {
 				.setDomainName(domainName)
 				.setDomain(inv.getDomain())
 				.setUser(login);
-			AON.getInvoiceInfo(occam, inv.getId(), InvoiceCommunicationType.VERIFACTU)
+			AON.getInvoiceInfo(occam, inv.getId(), type)
 				.ifPresentOrElse( 
-					info -> setVerifactuStatus( info.getStatus() ),
-					()  -> setVerifactuStatus( InvoiceCommunicationStatus.PENDING )
+					info -> setCommunicationStatus( info.getStatus() ),
+					()  -> setCommunicationStatus( InvoiceCommunicationStatus.PENDING )
 				);
 		}
-		return verifactuStatus;
+		return communicationStatus;
 	}
-	public void setVerifactuStatus(InvoiceCommunicationStatus invoiceCommunicationStatus) {
-		this.verifactuStatus = invoiceCommunicationStatus;
+	public void setCommunicationStatus(InvoiceCommunicationStatus invoiceCommunicationStatus) {
+		this.communicationStatus = invoiceCommunicationStatus;
 	}
-	public String getVerifactuStatusDescription() {
-		return StringUtils.upperCase(this.verifactuStatus == null ? "" : this.verifactuStatus.getDescription());
+	public String getCommunicationStatusDescription() {
+		return StringUtils.upperCase(
+			(this.communicationStatus == null ? InvoiceCommunicationStatus.PENDING : this.communicationStatus)
+				.getDescription()
+			);
 	}
 	
-	public boolean isVerifactuNoStatus() {
-		return getVerifactuStatus() == null || getVerifactuStatus() == InvoiceCommunicationStatus.PENDING;		
-	}
-	public boolean isVerifactuAccepted() {
-		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED;		
-	}
-	public boolean isVerifactuAcceptedWithErrors() {
-		return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;
-	}
-	public boolean isVerifactuWrong() {
-		return getVerifactuStatus() == InvoiceCommunicationStatus.WRONG;
-	}
+	public boolean isCommunicationPending() {return getCommunicationStatus() == null || getCommunicationStatus() == InvoiceCommunicationStatus.PENDING;}
+	public boolean isCommunicationAccepted() { return getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED; }
+	public boolean isCommunicationAcceptedWithErrors() {return getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
+	public boolean isCommunicationWrong() { return getCommunicationStatus() == InvoiceCommunicationStatus.WRONG; }
+	public boolean isInvoiceCommunicationAccepted() { return isCommunicationAccepted() || isCommunicationAcceptedWithErrors(); }
+	
+//	public boolean isVerifactuNoStatus() {return getVerifactuStatus() == null || getVerifactuStatus() == InvoiceCommunicationStatus.PENDING;}
+//	public boolean isNoVerifactuNoStatus() {return getNoVerifactuStatus() == null || getNoVerifactuStatus() == InvoiceCommunicationStatus.PENDING;}
+//	public boolean isSifNoStatus() {return getSifStatus() == null || getSifStatus() == InvoiceCommunicationStatus.PENDING;}
+//	public boolean isVerifactuAccepted() { return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED; }
+//	public boolean isNoVerifactuAccepted() { return getNoVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED; }
+//	public boolean isSifAccepted() { return getSifStatus() == InvoiceCommunicationStatus.ACCEPTED; }
+//	public boolean isVerifactuAcceptedWithErrors() {return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
+//	public boolean isNoVerifactuAcceptedWithErrors() {return getNoVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
+//	public boolean isSifAcceptedWithErrors() {return getSifStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
+//	public boolean isVerifactuWrong() { return getVerifactuStatus() == InvoiceCommunicationStatus.WRONG; }
+//	public boolean isNoVerifactuWrong() { return getNoVerifactuStatus() == InvoiceCommunicationStatus.WRONG; }
+//	public boolean isSifWrong() { return getSifStatus() == InvoiceCommunicationStatus.WRONG; }
 	
 	public boolean isPass() {	
 		return getCert().hasPassword();
