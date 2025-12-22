@@ -56,6 +56,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
+import net.aonsolutions.aon.verifactu.SIF;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
 import net.aonsolutions.aon.verifactu.VerifactuContext;
 
@@ -266,7 +267,6 @@ public class InvoiceCommunicator {
 						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throwTBAI(); }
 						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throwLROE(); }
 						@Override public void visitFACTURAE() throws InvoiceCommunicationException	{ throwFACTURAE(); }	
-						@Override public void visitSIF() throws InvoiceCommunicationException 		{ throwSIF(); }
 						
 						@Override
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
@@ -276,6 +276,11 @@ public class InvoiceCommunicator {
 						@Override 
 						public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
 							NOVERIFACTU.accept(ctx,cc);
+						}
+						
+						@Override 
+						public void visitSIF() throws InvoiceCommunicationException {
+							SIF.accept(ctx,cc);
 						}
 						
 					});
@@ -309,14 +314,23 @@ public class InvoiceCommunicator {
 				@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ /* Nothing */ }
 				@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ /* Nothing */ }
 				@Override public void visitFACTURAE() throws InvoiceCommunicationException 	{ /* Nothing */ }
-				@Override public void visitSIF() throws InvoiceCommunicationException 		{ /* Nothing */ }
+
+				@Override 
+				public void visitSIF() throws InvoiceCommunicationException {
+					result.setValue( 
+						invoice.getInvoiceInfo( type )
+							.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), type))
+							.map(InvoiceInfo::isAccepted)
+							.orElse(false)
+					);
+				}
 				
 				@Override 
 				public void visitNO_VERIFACTU() throws InvoiceCommunicationException {
 					result.setValue( 
 						invoice.getInvoiceInfo( type )
 							.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), type))
-							.map(info -> info.isPending())
+							.map(InvoiceInfo::isPending)
 							.orElse(false)
 					);
 				}
@@ -326,7 +340,7 @@ public class InvoiceCommunicator {
 					result.setValue( 
 						invoice.getInvoiceInfo( type )
 							.or(() -> InvoiceInfoDAO.get(ctx, invoice.getId(), type))
-							.map(info -> info.isPartialAccepted())
+							.map(InvoiceInfo::isPartialAccepted)
 							.orElse(false)
 					);
 				}
@@ -365,7 +379,6 @@ public class InvoiceCommunicator {
 						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throwTBAI(); }
 						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throwLROE(); }
 						@Override public void visitFACTURAE() throws InvoiceCommunicationException	{ throwFACTURAE(); }
-						@Override public void visitSIF() throws InvoiceCommunicationException 		{ throwSIF(); }
 						
 						@Override
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
@@ -380,6 +393,14 @@ public class InvoiceCommunicator {
 								NOVERIFACTU.cancel(ctx,cc);
 							} 
 						}
+						
+						@Override 
+						public void visitSIF() throws InvoiceCommunicationException {
+							if (mustBeAnnulled(ctx, invoice, InvoiceCommunicationType.SIF)) {
+								SIF.cancel(ctx,cc); 
+							}
+						}
+						
 					});
 				}
 			}

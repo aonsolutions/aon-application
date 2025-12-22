@@ -41,10 +41,14 @@ public class InvoiceCommunicationTrackingDAO {
 			.where(INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId));
 	}
 	
+	public static Optional<InvoiceCommunicationTracking> getSifRegister(AONContext ctx, Integer domain, Integer invoice) {
+		return getRegister(ctx, domain, invoice, InvoiceCommunicationType.SIF);
+	}
+
 	public static Optional<InvoiceCommunicationTracking> getNoVerifactuRegister(AONContext ctx, Integer domain, Integer invoice) {
 		return getRegister(ctx, domain, invoice, InvoiceCommunicationType.NO_VERIFACTU);
 	}
-
+	
 	public static Optional<InvoiceCommunicationTracking> getVerifactuRegister(AONContext ctx, Integer domain, Integer invoice) {
 		return getRegister(ctx, domain, invoice, InvoiceCommunicationType.VERIFACTU);
 	}

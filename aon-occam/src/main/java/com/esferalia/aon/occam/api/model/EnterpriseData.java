@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class EnterpriseData implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3926586279837688509L;
 	
 	private Integer id;
 	private Integer domain;
@@ -18,14 +18,9 @@ public class EnterpriseData implements Serializable {
 	private boolean isRemoved;
 	private boolean updated;
 	
-	public EnterpriseData() {
-		super();
-	}
-
 	public Integer getId() {
 		return id;
 	}
-
 	public EnterpriseData setId(Integer id) {
 		this.id = id;
 		return this;
@@ -34,7 +29,6 @@ public class EnterpriseData implements Serializable {
 	public Integer getDomain() {
 		return domain;
 	}
-
 	public EnterpriseData setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
@@ -43,7 +37,6 @@ public class EnterpriseData implements Serializable {
 	public Integer getEnterprise() {
 		return enterprise;
 	}
-
 	public EnterpriseData setEnterprise(Integer enterprise) {
 		this.enterprise = enterprise;
 		return this;
@@ -52,7 +45,6 @@ public class EnterpriseData implements Serializable {
 	public String getName() {
 		return name;
 	}
-
 	public EnterpriseData setName(String name) {
 		this.name = name;
 		return this;
@@ -61,7 +53,6 @@ public class EnterpriseData implements Serializable {
 	public String getExpression() {
 		return expression;
 	}
-
 	public EnterpriseData setExpression(String expression) {
 		this.expression = expression;
 		return this;
@@ -70,7 +61,6 @@ public class EnterpriseData implements Serializable {
 	public Date getStartDate() {
 		return startDate;
 	}
-
 	public EnterpriseData setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
@@ -79,7 +69,6 @@ public class EnterpriseData implements Serializable {
 	public Date getEndDate() {
 		return endDate;
 	}
-
 	public EnterpriseData setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
@@ -88,7 +77,6 @@ public class EnterpriseData implements Serializable {
 	public boolean isRemoved() {
 		return isRemoved;
 	}
-
 	public EnterpriseData setIsRemoved(boolean isRemoved) {
 		this.isRemoved = isRemoved;
 		return this;
@@ -97,7 +85,6 @@ public class EnterpriseData implements Serializable {
 	public boolean isUpdated() {
 		return updated;
 	}
-	
 	public EnterpriseData setUpdated(boolean updated) {
 		this.updated = updated;
 		return this;

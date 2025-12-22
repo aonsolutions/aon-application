@@ -40,9 +40,12 @@ public abstract class AbstractVerifactuTest {
 	
 	protected static final Environment VERIFACTU_ENV = new VerifactuEnvironment();
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
+	protected static final Environment SIF_ENV = new SifEnvironment();
+	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
-		NO_VERIFACTU_ENV
+		NO_VERIFACTU_ENV,
+		SIF_ENV
 	}; 
 	
 	private Date testDate; 
