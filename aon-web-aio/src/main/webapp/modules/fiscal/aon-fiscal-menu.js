@@ -52,11 +52,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
     }
  
     async getInvoiceConfiguration() {
-        getInvoiceConfiguration().then(c => {
-            this.icc = new InvoiceCommunicationConfiguration(c);
-        }).catch(e => {
-            console.log("error getInvoiceConfiguration", e);
-        });
+        let c = await getInvoiceConfiguration();
+        this.icc = new InvoiceCommunicationConfiguration(c);
     }
 
     async getAppParams() {
@@ -119,6 +116,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         this.options = [{
             title: 'IVA AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
@@ -149,6 +147,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IRPF AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -182,6 +181,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
@@ -207,6 +207,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IVA Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
+            disabled: !(this.isAlava || this.isGipu || this.isBizk),
             options: [{
                 description: "Modelo 303 ",
                 description2: " |320 Gipuzkoa",
@@ -234,6 +235,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IRPF Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
+            disabled: !(this.isAlava || this.isGipu || this.isBizk),
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -267,6 +269,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'LROE Bizkaia',
             visible: this.isBizk,
+            disabled: !this.isBizk,
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
@@ -282,6 +285,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IVA Navarra',
             visible: this.isNavarra,
+            disabled: !this.isNavarra,
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
@@ -308,6 +312,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IRPF Navarra',
             visible: this.isNavarra,
+            disabled: !this.isNavarra,
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -341,6 +346,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IGIC Canarias',
             visible: this.isCanarias,
+            disabled: !this.isCanarias,
             options: [{
                 description: "Modelo 420/417 ",
                 title: "IGIC Autoliquidación",
@@ -350,6 +356,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'Matriz de empresas y modelos fiscales',
             visible: true,
+            disabled: false,
             options: [{
                 title: "Matriz de empresas y modelos fiscales",
                 description: "Matriz de empresas y modelos fiscales",
