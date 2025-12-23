@@ -139,11 +139,15 @@ export class AonSignMobile extends AonElement {
       button.classList.add('aonTimeControlButton');
       button.style.backgroundColor = '#86D364';
       button.innerHTML = MSG.ENTRY.toUpperCase();
+      
       if(this.isMobile()){
-        button.style.width = "120%";
+        //button.style.width = "120%";
         button.style.borderRadius = "12px";
       }
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
+      button.addEventListener(EVENT.CLICK, (event) => {
+		event.stopPropagation();
+		this.saveTimeCtrl('in');
+	 });
       content.appendChild(button);
     }
 	}
@@ -162,42 +166,52 @@ export class AonSignMobile extends AonElement {
         button.style.width = "60%";
         button.style.borderRadius = "12px";
       }
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
+      button.addEventListener(EVENT.CLICK, (event) => {
+		event.stopPropagation();
+		this.saveTimeCtrl('in');
+	  });
       content.appendChild(button);
     }
 	}
 
 	salida() {
-    let content = this.getElement(this.CONTENT);
-    if(content){
-      this.clearElement(content);
-
-      let buttons = this.createElement(TAG.DIV);
-      buttons.style.display = "flex";
-      buttons.style.justifyContent = "center";
-      buttons.style.gap = "1rem";
-
-      let button = this.createElement(TAG.BUTTON);
-      button.id = this.id+"Salida";
-      button.className = 'aonButton';
-      button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#DC4D30';
-      button.innerHTML = MSG.EXIT.toUpperCase();
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
-      buttons.appendChild(button);
-
-    //   let button2 = this.createElement(TAG.BUTTON);
-    //   button2.id = this.id + "Pausa";
-    //   button2.className = 'aonButton';
-    //   button2.classList.add('aonTimeControlButton');
-    //   button2.style.backgroundColor = '#F39F1D';
-    //   button2.innerHTML = 'PAUSA';
-    //   button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
-    //   buttons.appendChild(button2);
-      
-
-      content.appendChild(buttons);
-    }
+	    let content = this.getElement(this.CONTENT);
+	    if(content){
+	      	this.clearElement(content);
+	
+	      	let buttons = this.createElement(TAG.DIV);
+	      	buttons.style.display = "flex";
+	      	buttons.style.justifyContent = "center";
+	      	buttons.style.gap = "1rem";
+	
+	      	let button = this.createElement(TAG.BUTTON);
+	      	button.id = this.id+"Salida";
+	      	button.className = 'aonButton';
+	      	button.classList.add('aonTimeControlButton');
+	      	button.style.backgroundColor = '#DC4D30';
+	      	button.innerHTML = MSG.EXIT.toUpperCase();
+	      	button.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('out');
+			});
+	     	buttons.appendChild(button);
+	
+			if(this.isBeta() && this.isMobile()){
+				let button2 = this.createElement(TAG.BUTTON);
+		  		button2.id = this.id + "Pausa";
+		  		button2.className = 'aonButton';
+		  		button2.classList.add('aonTimeControlButton');
+		  		button2.style.backgroundColor = '#F39F1D';
+		  		button2.innerHTML = 'PAUSA';
+		  		button2.addEventListener(EVENT.CLICK, (event) => {
+					event.stopPropagation();
+					this.saveTimeCtrl('pause');
+				});
+		  		buttons.appendChild(button2);
+			}
+			
+	      	content.appendChild(buttons);
+	    }
 	}
 
   async saveTimeCtrl(status){
@@ -335,6 +349,18 @@ export class AonSignMobile extends AonElement {
         content.appendChild(div);
         this.totalHourWeek();
       }
+      
+      if(this.isBeta() && this.isMobile()) {
+        const id = 'lastTimeUser';
+        const div = this.getElement(id) || this.createElement(TAG.DIV);
+        div.id = id;
+        div.style.color = "grey";
+        div.style.cursor = "default";
+        div.style.fontSize  = ".8rem";
+        div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
+        content.appendChild(div);
+        this.totalHourWeek();
+       }
     }
   }
 

@@ -243,7 +243,7 @@
 }
 
 #aonMenuListAppImgTop-contentIndex {
-	mask-image: url('/icons/book-open.svg') ;
+	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
 #aonMenuListAppImgTop-accountingMenu {
@@ -974,6 +974,21 @@ aon-configuration-menu .suiteMenuContent  {
     mask-image: url('/icons/building.svg') ;
 }
 
+#UlCompanies > li > span:nth-of-type(3){
+	width: 25.5px;
+	height: 25.5px;
+	border-radius: 0;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color:#64748b;
+    mask-image: url('/icons/chevron-right.svg') ;
+}
+
+#UlCompanies > li:hover > span:nth-of-type(3) {
+	background-color: white;
+}
+
 /* ========================== Login Styles  ========================== */
 #aonLogin {
 	font-size: 17px;
@@ -986,7 +1001,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonLoginSubTitle {
 	font-size: 17px;
-	padding: 1.25rem 1.25rem 0rem 1.25;
+	padding: .5rem 0;
 }
 
 .aonLoginLogo {
@@ -1051,6 +1066,8 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonLoginFormContent {
 	border: none;
+	padding-top: 0;
+	gap: .5rem;
 }
 
 #aonLogin .aonToolbar2 * {
@@ -1105,7 +1122,7 @@ aon-configuration-menu .suiteMenuContent  {
 	display: flex;
 	max-width: 200px;
 	max-height: 7rem;
-	margin: 1rem 0;
+	margin: 2rem 0 1rem 0;
 }
 
 #aonLoginPasswordIcon {
@@ -1137,6 +1154,32 @@ aon-configuration-menu .suiteMenuContent  {
 	top: 26px;
 	right: 12px;
 	position: relative;
+}
+
+#aonHeaderDialogHelpOptionDialogMenuContent {
+	border:none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi img {
+	display: none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi span {
+	color: #475569;
+    font-size: 1rem !important;
+    display: flex;
+    justify-content: center;
+    width: 6rem;
+    align-items: center;;
+    cursor: pointer;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover {
+	background-color: #475569 !important;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
+	color: white;
 }
 
 /* ========================== Card Styles  ========================== */	
@@ -1466,8 +1509,14 @@ aon-right-panel {
 	margin-bottom: .5rem;
 }
 
-#contentIndexHelp {
-	display: none;
+#contentIndexHelp,
+#aonRightPanelEditButton,
+#aonRightPanelNotificationButton{
+	display: none !important;
+}
+
+#openNotificationButton {
+	display: block;
 }
 
 .rightPanel .divLogout *,
@@ -1518,8 +1567,19 @@ aon-right-panel {
 	background-color: #64748b;
 }
 
+.rightPanel #aonConfig{
+	display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
 .rightPanel .helpCardText .material-icons,
-.rightPanel .configCardText .material-icons {
+#aonConfig > span > i,
+#aonRightPanelCloseButton > button > i,
+#openNotificationButton > button > i,
+#aonLoginPanelLogout > div > i {
 	width: 23px;
 	height: 23px;
 	mask-size: contain;
@@ -1574,7 +1634,19 @@ aon-right-panel {
 	 mask-image: url('/icons/clock-4.svg') ;
 }
 
-.rightPanel .configCardText .material-icons {
+#aonLoginPanelLogout > div > i {
+	mask-image: url('/icons/log-out.svg') ;
+}
+
+#aonRightPanelCloseButton > button > i {
+	mask-image: url('/icons/x.svg') ;
+}
+
+#openNotificationButton > button > i {
+	mask-image: url('/icons/external-link.svg') ;
+}
+
+#aonConfig > span > i {
 	mask-image: url('/icons/folder-cog.svg') ;
 }
 
