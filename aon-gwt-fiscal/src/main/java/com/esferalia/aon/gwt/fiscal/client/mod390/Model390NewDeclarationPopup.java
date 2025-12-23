@@ -18,7 +18,8 @@ import com.google.gwt.user.client.ui.ListBox;
 public class Model390NewDeclarationPopup extends AonCustomDialog {
 	
 	protected int row = 0;
-	private AdministrationListBox admonList = new AdministrationListBox(false, false, true);
+//	private AdministrationListBox admonList = new AdministrationListBox(false, false, true);
+	private AdministrationListBox admonList = new AdministrationListBox();
 	private AonIntegerBox yearBox = new AonIntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
@@ -62,7 +63,7 @@ public class Model390NewDeclarationPopup extends AonCustomDialog {
 			replacement.setVisible(mod390.isReplacementDeclarationAvailable());
 			complementary.setVisible(mod390.isComplementaryDeclarationAvailable());
 			defaultVatRegimeLabel.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
-			defaultVatRegime.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
+			defaultVatRegime.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);			
 		});
 		tab.setWidget(row, 1, admonList);
 		row++;
@@ -156,7 +157,7 @@ public class Model390NewDeclarationPopup extends AonCustomDialog {
 	}
 
 	private void populate(Mod390 mod390) {
-		admonList.setSelectedIndex( mod390.getAdministration().ordinal());
+		admonList.setSelectedIndex(mod390.getAdministration().ordinal());
 		yearBox.setValue(mod390.getYear());
 		complementary.setValue(mod390.isComplementary());
 		replacement.setValue(mod390.isReplacement());		

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.Model3902022;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2023.Model3902023;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2024.Model3902024;
+import com.esferalia.aon.gwt.fiscal.client.mod425.e2025.Model4252025;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2025.Model3902025;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -363,6 +364,12 @@ public class Model390  implements EntryPoint {
 			} else {
 				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			}
+		} else if (selected.isCanarias()) {
+			if (selected.getYear() >= 2025) {
+				declarationContainer.setWidget(new Model4252025(new Model390Callback(),selected));
+			} else {
+				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
+			}			
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
