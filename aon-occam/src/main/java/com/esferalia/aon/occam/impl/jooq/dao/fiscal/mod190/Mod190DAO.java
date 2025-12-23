@@ -228,7 +228,13 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.ARABA_RETENTION,
 								FS_MODEL190_DETAIL.BIZKAIA_RETENTION,
 								FS_MODEL190_DETAIL.GIPUZKOA_RETENTION,
-								FS_MODEL190_DETAIL.EXCESSES								
+								FS_MODEL190_DETAIL.EXCESSES,	
+								FS_MODEL190_DETAIL.ENTREPRENEURSHIP,
+								FS_MODEL190_DETAIL.RETIREMENT_PENSION,
+								FS_MODEL190_DETAIL.WIDOWHOOD_PENSION,
+								FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION,
+								FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION,
+								FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -237,7 +243,8 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null, null, null));
+								null, null, null, null, null, null, null, null,
+								null, null, null, null, null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -303,6 +310,12 @@ public class Mod190DAO {
 					, detail.getBizkaiaRetention()
 					, detail.getGipuzkoaRetention()
 					, AonEnumUtils.getByte(detail.isExcesses())
+					, AonEnumUtils.getByte(detail.isEntrepreneurship())
+					, AonEnumUtils.getByte(detail.isRetirementPension())
+					, AonEnumUtils.getByte(detail.isWidowhoodPension())
+					, AonEnumUtils.getByte(detail.isPermanentDisabilityPension())
+					, AonEnumUtils.getByte(detail.isNonContributoryPension())
+					, AonEnumUtils.getByte(detail.isOtherNonExemptPensions())
 					);
 		}
 		batch.execute();
@@ -393,6 +406,12 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
+				.set(FS_MODEL190_DETAIL.ENTREPRENEURSHIP, AonEnumUtils.getByte(detail.isEntrepreneurship()))
+				.set(FS_MODEL190_DETAIL.RETIREMENT_PENSION, AonEnumUtils.getByte(detail.isRetirementPension()))
+				.set(FS_MODEL190_DETAIL.WIDOWHOOD_PENSION, AonEnumUtils.getByte(detail.isWidowhoodPension()))
+				.set(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION, AonEnumUtils.getByte(detail.isPermanentDisabilityPension()))
+				.set(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION, AonEnumUtils.getByte(detail.isNonContributoryPension()))
+				.set(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS, AonEnumUtils.getByte(detail.isOtherNonExemptPensions()))
 				;
 	}
 
@@ -465,6 +484,12 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
+				.set(FS_MODEL190_DETAIL.ENTREPRENEURSHIP, AonEnumUtils.getByte(detail.isEntrepreneurship()))
+				.set(FS_MODEL190_DETAIL.RETIREMENT_PENSION, AonEnumUtils.getByte(detail.isRetirementPension()))
+				.set(FS_MODEL190_DETAIL.WIDOWHOOD_PENSION, AonEnumUtils.getByte(detail.isWidowhoodPension()))
+				.set(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION, AonEnumUtils.getByte(detail.isPermanentDisabilityPension()))
+				.set(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION, AonEnumUtils.getByte(detail.isNonContributoryPension()))
+				.set(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS, AonEnumUtils.getByte(detail.isOtherNonExemptPensions()))
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -715,6 +740,12 @@ public class Mod190DAO {
 				.setBizkaiaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.BIZKAIA_RETENTION)))
 				.setGipuzkoaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION)))
 				.setExcesses(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.EXCESSES)))
+				.setEntrepreneurship(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.ENTREPRENEURSHIP)))
+				.setRetirementPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.RETIREMENT_PENSION)))
+				.setWidowhoodPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.WIDOWHOOD_PENSION)))
+				.setPermanentDisabilityPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION)))
+				.setNonContributoryPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION)))
+				.setOtherNonExemptPensions(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS)))
 				;
 		}
 	}

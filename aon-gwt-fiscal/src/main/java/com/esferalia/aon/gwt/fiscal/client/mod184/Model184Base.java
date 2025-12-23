@@ -613,12 +613,13 @@ abstract class Model184Base extends DockLayoutPanel {
 			partnerManager = new Model184Partner2019( getCallback() , getModel(), selectedIndex );
 		} else if (getModel().getYear() == 2022) {
 			partnerManager = new Model184Partner2022( getCallback() , getModel(), selectedIndex );
-		} else {
+		} else if (getModel().getYear() == 2023 || getModel().getYear() == 2024) {
 			partnerManager = new Model184Partner2023( getCallback() , getModel(), selectedIndex );
+		}else {
+			partnerManager = new Model184Partner2025( getCallback() , getModel(), selectedIndex );
 		}
 		tabPanel.add( (Widget) partnerManager,  AON.MSG.entityPartners());
 	}
-
 	
 	protected void paintEntityTab(TabLayoutPanel tabPanel) {
 		ScrollPanel entityScrollPanel = new ScrollPanel();

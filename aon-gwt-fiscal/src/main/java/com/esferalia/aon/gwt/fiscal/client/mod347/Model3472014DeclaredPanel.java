@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Declared2014.IModel347DeclaredCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -48,6 +49,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	private DoubleBox secondAssetAmount = new DoubleBox();
 	private DoubleBox thirdAssetAmount = new DoubleBox();
 	private DoubleBox fourthAssetAmount = new DoubleBox();
+	private AonTextBox bdns = new AonTextBox();
 	
 	Model3472014DeclaredPanel(Model347Callback cbk, Mod347 mod347,Mod347Declared declared, IModel347DeclaredCallback callback) {
 		
@@ -220,12 +222,13 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		panel.add(tab3);
 		
-		// Importe percibido en metalico / Ejercicio / Importe operaciones criterio de caja
+		// Importe percibido en metalico / Ejercicio / Importe operaciones criterio de caja / BDNS
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.getColumnFormatter().setWidth(0, "130px");
 		tab4.getColumnFormatter().setWidth(1, "80px");
-		tab4.getColumnFormatter().setWidth(2, "auto");
+		tab4.getColumnFormatter().setWidth(2, "130px");
+		tab4.getColumnFormatter().setWidth(3, "auto");
 		
 		tab4.setStyleName(AON.CSS.aonWidthAll());
 		tab4.addStyleName(AON.CSS.aonNowrap());
@@ -233,9 +236,13 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab4.setWidget(0, 0, new Model347SmallerLabel("Importe perc. en met\u00E1lico"));
 		tab4.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.fiscalYear()));
 		
-		Model347SmallerLabel label6 = new Model347SmallerLabel("Imp. anual op. dev. criterio de caja");
+		Model347SmallerLabel label6 = new Model347SmallerLabel("Imp. anual op. crit. caja");
 		label6.setTitle("Importe anual de las operaciones devengadas conforme al criterio de caja del IVA");		
 		tab4.setWidget(0, 2, label6);
+		
+		Model347SmallerLabel label7 = new Model347SmallerLabel("N\u00FAm. convocatoria BDNS");
+		label7.setVisible(mod347.getYear() >= 2025); // Número de convocatoria BDNS (solo a partir del ejercicio 2025)
+		tab4.setWidget(0, 3, label7);
 		
 		cashAmount.setValue(declared.getCashAmount());
 		cashAmount.addValueChangeHandler(event -> {
@@ -268,6 +275,16 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			callback.onValueChanged(declared);
 		});
 		tab4.setWidget(1, 2, accrualAmount);
+		
+		bdns.setVisible(mod347.getYear() >= 2025);
+		bdns.setMaxLength(6);
+		bdns.setVisibleLength(6);
+		bdns.setValue(declared.getBdns());
+		bdns.addValueChangeHandler(event -> {
+			declared.setBdns(bdns.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab4.setWidget(1, 3, bdns);
 		
 		panel.add(tab4);
 		
@@ -552,6 +569,13 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 					firstAssetAmount.setValue(assetAmount.getValue(), true);
 			}
 		}
+		
+		// BDNS solo si esta visible (a partir del ejercicio 2025) y si es clave E, si está deshabilitado se limpia el campo
+		bdns.setEnabled( bdns.isVisible() && key.getValue() == Mod347Key.E );
+		if (!bdns.isEnabled()) {
+			bdns.setValue(null, true);
+		}
+		
 	}
 
 	@Override
