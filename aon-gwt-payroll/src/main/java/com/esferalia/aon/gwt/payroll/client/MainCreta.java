@@ -1257,7 +1257,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addWarnings(result.getWarnings());
 			cretaResults.addUnknown(result.getUnknown());
 			cretaResults.addMessages(new JsEvent[]{});
-			cretaResults.setParameter(CretaService.Parameter.NAFS, getSelectedNafs());;
+			cretaResults.setParameter(CretaService.Parameter.NAFS, join(getSelectedNafs()));;
 
 			resultsPanel.setWidget(cretaResults);
 
@@ -2029,7 +2029,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solictudRecepcionRNT = dialog.solicitudRecepcionRNT();
 			boolean withIDC = dialog.withIDC();
-			
+			Long outOfDateLiquidation = dialog.getOutOfDateLiquidation();
 	
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
@@ -2052,6 +2052,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				i54,
 				reftificationMark,
 				solictudRecepcionRNT,
+				outOfDateLiquidation,
 				withIDC);
 	
 			return true;
@@ -3279,6 +3280,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	 
+	private static String join( Collection<String> collection){
+		return
+		collection.stream()
+		.filter(AonStringUtils::isNotBlank)
+		.collect(Collectors.joining(CretaService.MULTI_VALUE_SEPARATOR));
+	}
 
 	// ------------------------------------------------------------------------
 	private  static native void log (String message ) /*-{

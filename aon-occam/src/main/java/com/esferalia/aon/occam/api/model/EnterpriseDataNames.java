@@ -1,0 +1,17 @@
+package com.esferalia.aon.occam.api.model;
+
+public enum EnterpriseDataNames {
+
+	// INVOICE COMMUNICATION CONFIGURATION
+	
+	ICC_ADMINISTRATION,
+	ICC_LROE,
+	ICC_SIF,
+	ICC_SII,
+	ICC_TBAI,
+	ICC_SERES,
+	ICC_EMAIL,
+	ICC_VERIFACTU,
+	ICC_NO_VERIFACTU,
+	ICC_FACTURAE;
+}

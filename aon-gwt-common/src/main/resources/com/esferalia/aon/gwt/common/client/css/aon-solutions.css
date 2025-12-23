@@ -404,6 +404,14 @@
 .aon_icon_aeat_orange { background-image: iconAeatOrange;}
 @url iconAeatRed aonIconAeatRed;
 .aon_icon_aeat_red { background-image: iconAeatRed;}
+@url iconSif aonIconSif;
+.aon_icon_sif { background-image: iconSif;}
+@url iconSifGreen aonIconSifGreen;
+.aon_icon_sif_green { background-image: iconSifGreen;}
+@url iconSifOrange aonIconSifOrange;
+.aon_icon_sif_orange { background-image: iconSifOrange;}
+@url iconSifRed aonIconSifRed;
+.aon_icon_sif_red { background-image: iconSifRed;}
 @url iconAraba aonIconAraba;
 .aon_icon_araba { background-image: iconAraba;}
 @url iconArabaBw aonIconArabaBw;
@@ -1217,6 +1225,8 @@
 	border: 1px solid rgb(235, 235, 235);
 	border-radius: 0.5rem;
 }
+
+.aon_custom_card_dark{}
 
 .aon_custom_card_small{
 	padding: .5rem 1rem !important;
@@ -2736,5 +2746,18 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
+}
+
+.aon_model_matrix_small_button {
+	background-color: transparent !important;
+	background-size: 15px !important;
+	padding: 0 !important;
+	min-width: auto !important;
+}
+
+.aon_model_matrix_bullet_small_button {
+	width: 15px !important;
+	height: 15px !important;
+	background-size: 15px !important;
 }
 

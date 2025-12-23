@@ -13,7 +13,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
@@ -262,14 +261,11 @@ public interface IFinance {
 	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData);
 	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
-//	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
 	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId);
 	
-	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter);
-	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(AONContext ctx, InvoiceCommunicationTrackingFilter filter);
-	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter);
+	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(AONContext ctx, Integer invoiceId);
 	public InvoiceCommunicationTracking saveInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking);
 	public void deleteInvoiceCommunicationTracking(AONContext ctx, Integer invoiceId);
 	

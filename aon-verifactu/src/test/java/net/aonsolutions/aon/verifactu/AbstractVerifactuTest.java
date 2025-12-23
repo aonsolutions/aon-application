@@ -22,19 +22,11 @@ import org.junit.platform.commons.logging.LoggerFactory;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -53,11 +45,48 @@ public abstract class AbstractVerifactuTest {
 	
 	protected static final Environment VERIFACTU_ENV = new VerifactuEnvironment();
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
+	protected static final Environment SIF_ENV = new SifEnvironment();
+	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
-		NO_VERIFACTU_ENV
+		NO_VERIFACTU_ENV,
+		SIF_ENV
 	}; 
 	
+	protected static InvoiceCommunicationPhaseListener PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		@Override
+		public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			// Nothing
+		}
+		@Override
+		public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		@Override
+		public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException{
+			// Nothing
+		}
+		
+		@Override
+		public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			if (icc.isFailOnWrongValidation() 
+			 && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
+				// TRACE _-- borrar
+				icc.invoiceStream()
+					.filter( Invoice::hasMessages )
+					.flatMap( Invoice::messageStream )
+					.forEach( m -> System.out.println( m.getLevel() + " " + m.getCode() + " - " + m.getMessage() ));
+				// ----------------
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0024);
+			}
+		}
+	};
+
 	private Date testDate; 
 	
 	protected static final InvoiceCommunicationPhaseListener EMPTY_VERIFACTU_PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {

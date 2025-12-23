@@ -1,18 +1,22 @@
 package net.aonsolutions.aon.verifactu;
 
-import javax.xml.soap.SOAPMessage;
-
 import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
+import net.aonsolutions.aon.sign.VerifactuSigner;
+import net.aonsolutions.aon.sign.exception.AonSignerException;
 
 public class NOVERIFACTU {
 
@@ -24,21 +28,28 @@ public class NOVERIFACTU {
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
 	
-	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
 			.setBlockchain( VERIFACTU.getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER)
 		;
-		return accept(ctx, vc);
+		return accept(ctx, vc, phase);
 	}
 	
-	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
-		VERIFACTU.check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
-		vc.setRequest( request );
-		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
-		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
-		return saveAccept( ctx, vc );
+	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
+		try {
+			VERIFACTU.check(vc);
+			RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx,vc, phase);
+			vc.setRequest( request );
+			Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
+			byte[] requestBytes = VerifactuXMLUtils.toBytes(document);
+			Certificate cert = AonSecret.getAonCert();
+			requestBytes = VerifactuSigner.getInstance().sign( cert, requestBytes );
+			vc.setRequestBytes(requestBytes);
+			return saveAccept( ctx, vc );
+		} catch (AonSignerException e) {
+			throw new InvoiceCommunicationException( InvoiceCommunicationError.AON_0034, e.getMessage());
+		}
 	}
 	
 
@@ -63,14 +74,12 @@ public class NOVERIFACTU {
 		return cancel(ctx, vc);
 	}
 	
-	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc ) throws InvoiceCommunicationException {
 		VERIFACTU.check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, vc, null);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
-		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
-		vc.setResponse( VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage));
 		return saveCancel( ctx, vc );
 	}
 	

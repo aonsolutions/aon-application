@@ -188,6 +188,7 @@ export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
 export const EXERCISE = 'Exercici';
+export const EXEMPTION_CAUSE = 'Causa d\'Exempció';
 export const EXIT = 'Sortida';
 export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
@@ -393,6 +394,7 @@ export const PRODUCT_MUST_BE_SELECTED = "És obligatori seleccionar un producte"
 export const PRODUCTS = 'Productes';
 export const PROVINCE = 'Provincia';
 export const PROFORMA_INVOICES = "Esborrany/Proforma";
+export const PROGRAMMED = "Programat";
 
 // ----- Q
 

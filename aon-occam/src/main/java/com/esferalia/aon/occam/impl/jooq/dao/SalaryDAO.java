@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
@@ -777,7 +778,7 @@ public class SalaryDAO {
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
 						contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
 						contractDataRecord.get(CONTRACT_DATA.START_DATE),
-						contractDataRecord.get(CONTRACT_DATA.END_DATE))
+						AonObjectUtils.firstNonNull(contractDataRecord.get(CONTRACT_DATA.END_DATE), salary.getEndDate()) )
 					);
 					contractDataIter.back();
 

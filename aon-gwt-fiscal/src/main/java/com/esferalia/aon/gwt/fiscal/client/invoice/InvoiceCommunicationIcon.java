@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.mutable.MutableObject;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 class InvoiceCommunicationIcon extends InlineLabel {
@@ -64,6 +63,26 @@ class InvoiceCommunicationIcon extends InlineLabel {
 					}
 				}
 				
+				@Override
+				public void visitNO_VERIFACTU() throws InvoiceCommunicationException {
+					visitVERIFACTU();
+				}
+
+				@Override
+				public void visitSIF() throws InvoiceCommunicationException {
+					if ( status == null ) {
+						addStyleName(AON.CSS.aonIconSif());
+					} else {
+						status.accept(new InvoiceCommunicationStatusVisitor() {
+							@Override public void visitPending() {addStyleName( AON.CSS.aonIconSifOrange());}
+							@Override public void visitAccepted() {addStyleName( AON.CSS.aonIconSifGreen());}
+							@Override public void visitAcceptedWithErrors() {addStyleName( AON.CSS.aonIconSifGreen());}
+							@Override public void visitWrong() {addStyleName( AON.CSS.aonIconSifRed());}
+							@Override public void visitCancelled() {addStyleName( AON.CSS.aonIconSif());}
+						});
+					}
+				}
+
 				@Override
 				public void visitTBAI() throws InvoiceCommunicationException {
 					if (admon == null) {
@@ -130,6 +149,11 @@ class InvoiceCommunicationIcon extends InlineLabel {
 					visitVERIFACTU();
 				}
 				
+				@Override
+				public void visitFACTURAE() throws InvoiceCommunicationException {
+					addStyleName(AON.CSS.aonIconEdit());
+				}
+
 				@Override
 				public void visitSERES() throws InvoiceCommunicationException {
 					addStyleName(AON.CSS.aonIconLetterS());

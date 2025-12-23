@@ -91,6 +91,9 @@ public enum InvoiceCommunicationType implements Serializable {
 				@Override public void visitEMAIL() throws InvoiceCommunicationException {ret.setValue(true);}
 				@Override public void visitCLOSING() throws InvoiceCommunicationException {ret.setValue(true);}
 				@Override public void visitVERIFACTU() throws InvoiceCommunicationException {ret.setValue(false);}
+				@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException {ret.setValue(false);}
+				@Override public void visitSIF() throws InvoiceCommunicationException {ret.setValue(false);}
+				@Override public void visitFACTURAE() throws InvoiceCommunicationException {ret.setValue(false);}
 			});
 		} catch (Exception e) {
 			ret.setValue(false);
@@ -109,6 +112,9 @@ public enum InvoiceCommunicationType implements Serializable {
 				@Override public void visitEMAIL() throws InvoiceCommunicationException {ret.setValue(true);}
 				@Override public void visitCLOSING() throws InvoiceCommunicationException {ret.setValue(true);}
 				@Override public void visitVERIFACTU() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitSIF() throws InvoiceCommunicationException {ret.setValue(true);}
+				@Override public void visitFACTURAE() throws InvoiceCommunicationException {ret.setValue(true);}
 			});
 		} catch (Exception e) {
 			ret.setValue(false);
@@ -129,6 +135,37 @@ public enum InvoiceCommunicationType implements Serializable {
 		void visitNO_VERIFACTU() throws InvoiceCommunicationException;
 		void visitSIF() throws InvoiceCommunicationException;
 		void visitFACTURAE() throws InvoiceCommunicationException;
+		
+		default void throwSERES() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_SERES);
+		}
+		default void throwEMAIL() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_EMAIL);
+		}
+		default void throwVERIFACTU() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_VERIFACTU);
+		}
+		default void throwNO_VERIFACTU() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_NO_VERIFACTU);
+		}
+		default void throwCLOSING() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_CLOSING);
+		}
+		default void throwSII() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_SII);
+		}
+		default void throwTBAI() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_TBAI);
+		}
+		default void throwLROE() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_LROE);
+		}
+		default void throwFACTURAE() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_FACTURAE);
+		}
+		default void throwSIF() throws InvoiceCommunicationException {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_SIF);
+		}
 	}
 	
 }

@@ -714,7 +714,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		try {
 	        DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 	        InvoiceCommunicationConfiguration config = getInvoiceCommunicationConfiguration();
-	        boolean communication = config.isTbai() || config.hasVerifactu();
+	        boolean communication = config.hasCommunication();
 	        if(communication) {
 	        	String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();

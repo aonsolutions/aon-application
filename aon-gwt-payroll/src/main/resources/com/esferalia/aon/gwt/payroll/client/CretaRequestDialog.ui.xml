@@ -203,6 +203,15 @@
 					<g:CheckBox  name="{WITH_IDC.name}" ui:field="withIDCCheckBox" checked="false"/>
 				</td>
 			</tr>
+			<tr ui:field="outOfDateTR" >
+				<td class="{style.label}">
+					<g:Label text="Reftificaci&oacute;n Fuera de Plazo" />
+				</td>
+				<td class="{style.field}">
+					<g:InlineLabel text="N&uacute;mero Liquidaci&oacute;n" />
+					<g:LongBox  styleName="gwt-TextBox" ui:field="outOfDateLiquidationLongBox"/>
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
 			</tr>

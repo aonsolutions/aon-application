@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
@@ -773,12 +772,6 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceDataDAO.save(ctx, invoiceData));				
 	}
 	
-//	@Override
-//	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
-//		return ctx.getDslContext().transactionResult(
-//				configuration -> InvoiceInfoDAO.get(ctx, filter));
-//	}
-//	
 	@Override
 	public Optional<InvoiceInfo> getInvoiceInfo(AONContext ctx, Integer invoiceId, InvoiceCommunicationType type) {
 		return ctx.getDslContext().transactionResult(
@@ -804,23 +797,11 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
+	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationTrackingDAO.getStream(ctx, filter));				
+				configuration -> InvoiceCommunicationTrackingDAO.stream(ctx, invoiceId));				
 	}
 
-	@Override
-	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationTrackingDAO.getList(ctx, filter));		
-	}
-
-	@Override
-	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationTrackingDAO.get(ctx, filter));		
-	}
-	
 	// ---------- BOOKING CHECK
 
 	@Override

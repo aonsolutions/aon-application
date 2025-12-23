@@ -77,17 +77,15 @@ import net.aonsolutions.aon.verifactu.Environment;
 import net.aonsolutions.aon.verifactu.InvoiceTypes;
 import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
-class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
+class VerifactuInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCancelTest {
 
-	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
-
-	@Test
-	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
-		save(invoice);
+	@Override 
+	protected Environment getEnvironment() { 
+		return VERIFACTU_ENV; 
 	}
 
-	private void save(Invoice invoice) throws InvoiceCommunicationException {
+	@Override 
+	protected void save(Invoice invoice) throws InvoiceCommunicationException {
 		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
 		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
@@ -154,13 +152,6 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true).findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(response.getData());
-//		try {
-//			System.out.println( "** Verifactu Response **" );
-//			AonIOUtils.write(response.getData(), System.out);
-//			System.out.println( );
-//		} catch (IOException e) {
-//			System.out.println( "WRITE ERROR!" );
-//		}
 		assertAcceptedVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}
@@ -298,7 +289,6 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(cc.getDataResponse());
 		Integer dataResponseId = cc.getDataResponse().getId();
 		assertNotNull(dataResponseId);
-		System.out.println( "dataResponseId ..: " + dataResponseId); 
 		assertTrue(dataResponseId > 0);
 		
 		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId );
@@ -318,13 +308,6 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		.findFirst().orElse(null);
 		assertNotNull(response);
 		assertNotNull(response.getData());
-		try {
-			System.out.println( "** Verifactu Response **" );
-			AonIOUtils.write(response.getData(), System.out);
-			System.out.println( );
-		} catch (IOException e) {
-			System.out.println( "WRITE ERROR!" );
-		}
 		assertCanceledVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}

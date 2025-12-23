@@ -8148,7 +8148,7 @@ public class AON {
 	}
 
 	// COMMUNICATION INVOICES 
-	public static List<Invoice> getCommunicationInvoices(Occam occam, InvoiceCommunicationParams params) {
+	public static LinkedList<Invoice> getCommunicationInvoices(Occam occam, InvoiceCommunicationParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getCommunicationInvoices(ctx,params)
 					.collect(Collectors.toCollection(LinkedList::new));
@@ -8353,33 +8353,9 @@ public class AON {
 		}
 	}	
 
-	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Occam occam, InvoiceCommunicationTrackingFilter filter) {
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
-		}
-	}
-	
-	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
-		}
-	}
-	
-	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Occam occam, InvoiceCommunicationTrackingFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
-		}
-	}
-	
-	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
-		}
-	}
-	
-	public static InvoiceCommunicationTracking getInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceCommunicationTracking(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackings(ctx, invoiceId);
 		}
 	}
 	

@@ -111,8 +111,6 @@ public class EnterpriseDAO {
 		LinkedList<EnterpriseData> datas = EnterpriseDataDAO.getList(ctx, f -> f.getEnterpriseProperty().eq(enterprise.getId()));
 		enterprise.setDatas(datas);
 		
-		printEnterprise(enterprise);
-		
 		return enterprise;
 	}
 	
@@ -150,7 +148,6 @@ public class EnterpriseDAO {
 
 	private static Enterprise update(AONContext ctx, Enterprise enterprise) {
 		ctx.checkWrite();
-		printEnterprise(enterprise);
 		ctx.getDslContext()
 			.update(ENTERPRISE)
 			.set(ENTERPRISE.CALENDAR, enterprise.getCalendar())
@@ -271,72 +268,4 @@ public class EnterpriseDAO {
 		}
 	}
 	
-	private static void printEnterprise(Enterprise enterprise) {
-		System.out.println("------- Enterprise : " + enterprise.getName() + " -------");
-		System.out.println("Id: " + enterprise.getId() + "\nName: " + enterprise.getName() + "\nAlias: " + enterprise.getAlias());
-		System.out.println("Document: " + enterprise.getDocument() + "\nDocumentType: " + enterprise.getDocumentType().getDescription() + "\nDocumentCountry: " + enterprise.getDocumentCountry().getName());
-		
-		RegistryAddress address = enterprise.getAddress();
-		if(null != address) {
-			System.out.println("Address --> Id: " + address.getId() + "\nRegistry: " + address.getRegistry() + "\nStreetType: " + (address.getStreetType() == null ? "" : address.getStreetType().getDescription()) + "\nAddress: " + address.getAddress() + "\nNumber: " + address.getNumber() + "\nZip: " + address.getZip());
-			System.out.println("Province: " + address.getProvince() + "\nCity: " + address.getCity() + "\nMunicipalityCode: " + address.getMunicipalityCode() + "\nGeozone: " + address.getGeozone());
-		}
-		
-		Optional<RegistryMedia> mobile = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
-		mobile.ifPresentOrElse(
-			mobileIt -> System.out.println("Mobile -> Id: " + mobileIt.getId() + "\nRegistry: " + mobileIt.getRegistry() + "\nValue: " + mobileIt.getValue()), 
-			() -> System.out.println("Mobile: Not defined!")
-		);
-		
-		Optional<RegistryMedia> phone = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.FIXED_PHONE).findFirst();
-		phone.ifPresentOrElse(
-			phoneIt -> System.out.println("Phone -> Id: " + phoneIt.getId() + "\nRegistry: " + phoneIt.getRegistry() + "\nValue: " + phoneIt.getValue()), 
-			() -> System.out.println("Phone: Not defined!")
-		);
-		
-		Optional<RegistryMedia> email = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.EMAIL).findFirst();
-		email.ifPresentOrElse(
-			emailIt -> System.out.println("Email -> Id: " + emailIt.getId() + "\nRegistry: " + emailIt.getRegistry() + "\nValue: " + emailIt.getValue()), 
-			() -> System.out.println("Email: Not defined!")
-		);
-		
-		Optional<RegistryMedia> web = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.WEB).findFirst();
-		web.ifPresentOrElse(
-			webIt -> System.out.println("Web -> Id: " + webIt.getId() + "\nRegistry: " + webIt.getRegistry() + "\nValue: " + webIt.getValue()), 
-			() -> System.out.println("Web: Not defined!")
-		);
-		
-		System.out.println("Scope: " + enterprise.getScope());
-		
-		Optional<EnterpriseData> paySheetModel = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
-		paySheetModel.ifPresentOrElse(
-			paySheetModelIt -> System.out.println("Modelo Recibo Salarial -> Id: " + paySheetModelIt.getId() + "\nEnterprise: " + paySheetModelIt.getEnterprise() + "\nExpression: " + paySheetModelIt.getExpression()), 
-			() -> System.out.println("Modelo Recibo Salarial: Not defined!")
-		);
-		
-		Optional<EnterpriseData> costModel = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
-		costModel.ifPresentOrElse(
-			costModelIt -> System.out.println("Modelo Recibo Costes Empresa -> Id: " + costModelIt.getId() + "\nEnterprise: " + costModelIt.getEnterprise() + "\nExpression: " + costModelIt.getExpression()), 
-			() -> System.out.println("Modelo Recibo Costes Empresa: Not defined!")
-		);
-		
-		Optional<EnterpriseData> paysheetSend = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
-		paysheetSend.ifPresentOrElse(
-			paysheetSendIt -> System.out.println("Envio Nominas -> Id: " + paysheetSendIt.getId() + "\nEnterprise: " + paysheetSendIt.getEnterprise() + "\nExpression: " + paysheetSendIt.getExpression()), 
-			() -> System.out.println("Envio Nominas: Not defined!")
-		);
-		
-		Optional<EnterpriseData> paysheetSendEmail = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
-		paysheetSendEmail.ifPresentOrElse(
-			paysheetSendEmailIt -> System.out.println("Email Nominas -> Id: " + paysheetSendEmailIt.getId() + "\nEnterprise: " + paysheetSendEmailIt.getEnterprise() + "\nExpression: " + paysheetSendEmailIt.getExpression()), 
-			() -> System.out.println("Email Nominas: Not defined!")
-		);
-		
-		Optional<EnterpriseData> agreement = enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
-		agreement.ifPresentOrElse(
-			agreementIt -> System.out.println("Convenio -> Id: " + agreementIt.getId() + "\nEnterprise: " + agreementIt.getEnterprise() + "\nExpression: " + agreementIt.getExpression()), 
-			() -> System.out.println("Convenio: Not defined!")
-		);
-		
-	}
 }

@@ -315,7 +315,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private JSONObject updateAllTargetItem(AonApiData api) {
 		JSONObject params = api.getData();
-		Date startDate = AonDateUtils.parse(params.optString(IJsonNames.START_DATE), AonDateUtils.SIMPLE_DATE_FORMAT4);
+		Date startDate = AonDateUtils.parse(params.optString(IJsonNames.START_DATE2), AonDateUtils.SIMPLE_DATE_FORMAT4);
 		
 		if (startDate == null) {
 			throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
@@ -335,7 +335,7 @@ public class ProductServlet extends AonApiHttpServlet {
 		 List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
 		 String typeStr = api.getData().optString(IJsonNames.TYPE);
 		 RegistryMode type = AonStringUtils.isNotBlank(typeStr) ? RegistryMode.valueOf(typeStr) : RegistryMode.TARGET;
-		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);
+		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);
 		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);
 		 
 		 
@@ -406,7 +406,7 @@ public class ProductServlet extends AonApiHttpServlet {
 			status = api.getData().getEnum(RegistryItemStatus.class, IJsonNames.STATUS);
 		}
 		
-		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);	//NULLABLE
+		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);	//NULLABLE
 		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);		//NULLABLE
 		if (ritemJson != null && itemId > 0 && status != null) {
 			RegistryItem ritem = RegistryItemJSON.fromJSON(ritemJson);

@@ -278,7 +278,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
 		if (invoice.isSales()) {
 			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-			if (config.hasVerifactu()) {
+			if (config.isVerifactu()) {
 				if (InvoiceCommunicator.mustBeAnnulled(api.getOccam(), invoice, InvoiceCommunicationType.VERIFACTU)) {
 					cancelAndCommunicateInvoice(api, config, company, invoice);
 					return new JSONObject();
@@ -483,7 +483,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			
 			// ***********************************
 			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-			if (icc.hasVerifactu()) {
+			if (icc.isVerifactu()) {
 				return acceptAndCommunicateInvoice(api, icc, company);	
 			}
 			// ***********************************

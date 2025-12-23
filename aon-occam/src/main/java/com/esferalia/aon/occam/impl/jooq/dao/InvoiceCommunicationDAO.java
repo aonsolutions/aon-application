@@ -12,12 +12,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.DataAttach;
@@ -26,6 +29,8 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -38,6 +43,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
@@ -67,23 +73,26 @@ public class InvoiceCommunicationDAO {
 	private enum InvoiceCommunicationConfigurationParams {
 		// -------------------------------------------------------------------- [TicketBAI]
 		TBAI_ACTIVE { 
-			@Override 
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTbai(param.trueValue());
-			}
 
+			@Override 
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param ) {
+				return param.trueValue()
+					? data.setName(administration.isBizkaia() ? EnterpriseDataNames.ICC_LROE.name() : EnterpriseDataNames.ICC_TBAI.name())
+					: data;
+			}
+			
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 				AppParamDAO.save(ctx, domainId,  AppParam.TBAI_ACTIVE, Boolean.toString(config.isTbai()));
-				if(config.isTbai()) {
+				if(config.hasCommunication()) {
 					AppParamDAO.save(ctx, domainId,  AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM, "default");
 				}
 			}
 		},
 		TBAI_TEST {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTbaiTest(param.trueValue());
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				return data.setExpression(param.trueValue()? "test" : "prod");
 			}
 
 			@Override
@@ -93,38 +102,18 @@ public class InvoiceCommunicationDAO {
 		},
 		TBAI_INCLUDE_DATE {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTbaiIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				Date date = AonDateUtils.parse(param.getValue(), YYYY_MM_DD);
+				if(date == null) {
+					date = DataResponseDAO.getFirstDataResponseDate(ctx, data.getDomain(), administration.isBizkaia()
+							? DataResponseSource.LROE : DataResponseSource.TBAI);
+				}
+				return data.setStartDate(date);
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getTbaiIncludeDate() != null
-					? AonDateUtils.format(config.getTbaiIncludeDate(), YYYY_MM_DD)
-					: null;
-				AppParamDAO.save(ctx, domainId,  AppParam.TBAI_INCLUDE_DATE, date);
-			}
-		},
-		TBAI_REGISTRY_DATE {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setTbaiRegistryDate(param.getValue());
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.TBAI_REGISTRY_DATE, config.getTbaiRegistryDate());
-			}
-		},
-		TBAI_SKIP_TRACKING {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setSkipTracking(param.trueValue());
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.TBAI_SKIP_TRACKING, Boolean.toString(config.isSkipTracking()));
+				// NO HACE NADA!
 			}
 		},
 		
@@ -132,8 +121,10 @@ public class InvoiceCommunicationDAO {
 		
 		VERIFACTU_ACTIVE { 
 			@Override 
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setVerifactu(param.trueValue());
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				return  param.trueValue()
+					? data.setName(EnterpriseDataNames.ICC_VERIFACTU.name())
+					: data;
 			}
 
 			@Override
@@ -146,8 +137,8 @@ public class InvoiceCommunicationDAO {
 		},
 		VERIFACTU_TEST {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setVerifactuTest(param.trueValue());
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				return data.setExpression(param.trueValue()? "test" : "prod");
 			}
 
 			@Override
@@ -157,28 +148,17 @@ public class InvoiceCommunicationDAO {
 		},
 		VERIFACTU_INCLUDE_DATE {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setVerifactuIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				Date date = AonDateUtils.parse(param.getValue(), YYYY_MM_DD);
+				if(date == null) {
+					date = DataResponseDAO.getFirstDataResponseDate(ctx, data.getDomain(), DataResponseSource.VERIFACTU);
+				}
+				return data.setStartDate(date);
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getVerifactuIncludeDate() != null
-					? AonDateUtils.format(config.getVerifactuIncludeDate(), YYYY_MM_DD)
-					: null;
-				AppParamDAO.save(ctx, domainId,  AppParam.VERIFACTU_INCLUDE_DATE, date);
-			}
-		},
-		VERIFACTU_REGISTRY_DATE {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setVerifactuRegistryDate(param.getValue());
-				
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.VERIFACTU_REGISTRY_DATE, config.getVerifactuRegistryDate());
+				// NO HACE NADA!
 			}
 		},
 		
@@ -186,11 +166,10 @@ public class InvoiceCommunicationDAO {
 		
 		SII_ACTIVE { 
 			@Override 
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setSii(param.trueValue());
-				
-				// PREPARE
-				
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				return param.trueValue()
+					? data.setName(EnterpriseDataNames.ICC_SII.name())
+					: data;
 			}
 
 			@Override
@@ -200,8 +179,8 @@ public class InvoiceCommunicationDAO {
 		},
 		SII_TEST {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setSiiTest(param.trueValue());
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				return data.setExpression(param.trueValue()? "test" : "prod");
 			}
 
 			@Override
@@ -211,61 +190,19 @@ public class InvoiceCommunicationDAO {
 		},
 		SII_INCLUDE_DATE {
 			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				config.setSiiIncludeDate(AonDateUtils.parse(param.getValue(), YYYY_MM_DD));
-				if(config.getSiiIncludeDate() == null) {
-					String defaultDate = Administration.COMMON_TERRITORY== config.getAdministration() ? "2017-07-01" : "2018-01-01";
-					config.setSiiIncludeDate(AonDateUtils.parse(defaultDate, YYYY_MM_DD));
+			public EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData data, ApplicationParameter param) {
+				Date date = AonDateUtils.parse(param.getValue(), YYYY_MM_DD);
+				if(date == null) {
+					date = DataResponseDAO.getFirstDataResponseDate(ctx, data.getDomain(), DataResponseSource.SII);
 				}
-				return config;
+				return data.setStartDate(date);
 			}
 
 			@Override
 			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				String date = config.getSiiIncludeDate() != null
-					? AonDateUtils.format(config.getSiiIncludeDate(), YYYY_MM_DD)
-					: null;
-				AppParamDAO.save(ctx, domainId,  AppParam.SII_INCLUDE_DATE, date);
+				// NO HACE NADA!
 			}
-		},
-		SII_REGISTRY_DATE {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setSiiRegistryDate(param.getValue());
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.SII_REGISTRY_DATE, config.getSiiRegistryDate());
-				if("audit".equalsIgnoreCase(config.getSiiRegistryDate()) ) {
-					AppParamDAO.save(ctx, domainId, AppParam.FS_MODEL_CFG_SII, "R");
-				}
-			}
-		},
-		SII_AUTOSEND {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setSiiAutosend(param.trueValue());
-				
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				AppParamDAO.save(ctx, domainId, AppParam.SII_AUTOSEND, Boolean.toString(config.isSiiAutosend()));
-			}
-		},
-		SII_PREPARE_NEW_SII {
-			@Override
-			public InvoiceCommunicationConfiguration fillValue(InvoiceCommunicationConfiguration config, ApplicationParameter param) {
-				return config.setPrepareNewSii(param.trueValue());
-				
-			}
-
-			@Override
-			public void save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-				// Nothing
-			}
-		},
+		}
 		;
 		
 		private static final String YYYY_MM_DD = "yyyy-MM-dd";
@@ -276,7 +213,7 @@ public class InvoiceCommunicationDAO {
 				.findAny();
 		}
 
-		public abstract InvoiceCommunicationConfiguration fillValue( InvoiceCommunicationConfiguration config, ApplicationParameter param);
+		public abstract EnterpriseData fillValue(AONContext ctx, Administration administration, EnterpriseData config, ApplicationParameter param);
 		public abstract void save( AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config);
 		
 	}
@@ -286,72 +223,220 @@ public class InvoiceCommunicationDAO {
 	public static InvoiceCommunicationConfiguration get(AONContext ctx, int domainId) {
 		ctx.checkRead();
 		InvoiceCommunicationConfiguration configuration = new InvoiceCommunicationConfiguration();
-		Administration admon = AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
-			.map( ApplicationParameter::getValue )
-			.map( Integer::parseInt )
-			.map( Administration::safeValueOf )
-			.orElse( Administration.UNKNOWN )
-		;
-		configuration.setAdministration(admon);
-		fillVerifactu(ctx, domainId, configuration);
+
+		fillAdministration(ctx, domainId, configuration);
 		fillTbai(ctx, domainId, configuration);
+		fillLroe(ctx, domainId, configuration);
 		fillSii(ctx, domainId, configuration);
+		fillVerifactu(ctx, domainId, configuration);
+		fillNoVerifactu(ctx, domainId, configuration);
+		fillSif(ctx, domainId, configuration);
+		
 		return configuration;
+	}
+	
+	private static void fillAdministration(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setAdministrationHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_ADMINISTRATION) );
+		EnterpriseData data = getIccData(config.getAdministrationHistory());
+		if(data != null) config.setAdministration(Administration.safeValueOf(data.getExpression()));
+		if(config.getAdministration() == null) {
+			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
+			Administration admon = AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
+					.map( ApplicationParameter::getValue )
+					.map( Integer::parseInt )
+					.map( Administration::safeValueOf )
+					.orElse( Administration.UNKNOWN );
+			EnterpriseData ed = EnterpriseDataDAO.insert(ctx, new EnterpriseData()
+					.setDomain(domainId)
+					.setEnterprise(enterprise.getId())
+					.setName(EnterpriseDataNames.ICC_ADMINISTRATION.name())
+					.setExpression(admon.name())
+					.setStartDate(AonDateUtils.today()));
+			config.getAdministrationHistory().add(ed);
+			config.setAdministration(admon);	
+		}
 	}
 
 	private static void fillTbai(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isVerifactu() && !config.isSii() ) {
+		config.setTbaiDataHistory( getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_TBAI) );
+		config.setTbaiData( getIccData( config.getTbaiDataHistory() ) );
+		
+		if(config.getTbaiDataHistory().isEmpty() && (config.isAraba() || config.isGipuzkoa())) {
+			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
+			EnterpriseData oldTbaiData = new EnterpriseData()
+					.setDomain(domainId)
+					.setEnterprise(enterprise.getId());
 			AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
-			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(config, r)));
+			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldTbaiData, r)));
+						
+			if(AonStringUtils.isNotBlank(oldTbaiData.getName())) {
+				if(oldTbaiData.getStartDate() == null) {
+					oldTbaiData.setStartDate(AonDateUtils.today());
+				}
+				
+				config.setTbaiData(EnterpriseDataDAO.insert(ctx, oldTbaiData));
+				config.getTbaiDataHistory().add(oldTbaiData);
+				
+				// TODO Eliminar los parámetros antiguos de TBAI. (Excepto TBAI_REGISTRY_DATE)
+			}
 		}
 	}
-	private static void fillVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isTbai() && !config.isSii() ) {
-			AppParamDAO.getByPattern(ctx, domainId, "VERIFACTU_%")
-				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(config, r)));
-		}
-	}
-	private static void fillSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isTbai() && !config.isVerifactu() ) {
-			AppParamDAO.getByPattern(ctx, domainId, "SII_%")
-				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(config, r)));
+	
+	private static void fillLroe(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setLroeDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_LROE));
+		config.setLroeData(getIccData( config.getLroeDataHistory() ));
+		
+		if(config.getLroeDataHistory().isEmpty() && config.isBizkaia()) {
+			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
+			EnterpriseData oldLroeData = new EnterpriseData()
+					.setDomain(domainId)
+					.setEnterprise(enterprise.getId());
+			AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
+			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldLroeData, r)));
+			if(AonStringUtils.isNotBlank(oldLroeData.getName())) {
+				if(oldLroeData.getStartDate() == null) {
+					oldLroeData.setStartDate(AonDateUtils.today());
+				}
+				config.setLroeData(EnterpriseDataDAO.insert(ctx, oldLroeData));
+				config.getLroeDataHistory().add(oldLroeData);
+				
+				// TODO Eliminar los parámetros antiguos de TBAI/LROE. (Excepto TBAI_REGISTRY_DATE)
+			}
 		}
 		
-		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
-		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+		// Fecha de registro contable que se envía al LROE. Fecha de Auditoria (creation_date) o Fecha de IVA (tax_date)
+		AppParamDAO.get(ctx, domainId, AppParam.TBAI_REGISTRY_DATE)
+		.ifPresent( p -> config.setLroeRegistryDate(p.getValue()));
+	}
+	
+	private static void fillVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setVerifactuDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_VERIFACTU));
+		config.setVerifactuData(getIccData(config.getVerifactuDataHistory()));
+		
+		if(config.getVerifactuDataHistory().isEmpty()) {
+			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
+			EnterpriseData oldVerifactuData = new EnterpriseData()
+					.setDomain(domainId)
+					.setEnterprise(enterprise.getId());
+			AppParamDAO.getByPattern(ctx, domainId, "VERIFACTU_%")
+			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldVerifactuData, r)));
+			if(AonStringUtils.isNotBlank(oldVerifactuData.getName())) {
+				if(oldVerifactuData.getStartDate() == null) {
+					oldVerifactuData.setStartDate(AonDateUtils.today());
+				}
+				config.setVerifactuData(EnterpriseDataDAO.insert(ctx, oldVerifactuData));
+				config.getVerifactuDataHistory().add(oldVerifactuData);
+				
+				// TODO Eliminar los parámetros antiguos de Verifactu.
+			}
+		}
+	}
+	
+	private static void fillSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setSiiDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_SII));
+		config.setSiiData(getIccData(config.getSiiDataHistory()));
+		
+		if(config.getSiiDataHistory().isEmpty()) {
+			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
+			EnterpriseData oldSiiData = new EnterpriseData()
+					.setDomain(domainId)
+					.setEnterprise(enterprise.getId());
+			AppParamDAO.getByPattern(ctx, domainId, "SII_%")
+			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldSiiData, r)));
+			if(AonStringUtils.isNotBlank(oldSiiData.getName())) {
+				if(oldSiiData.getStartDate() == null) {
+					oldSiiData.setStartDate(AonDateUtils.today());
+				}
+				config.setSiiData(EnterpriseDataDAO.insert(ctx, oldSiiData));
+				config.getSiiDataHistory().add(oldSiiData);
+				
+				// TODO Eliminar los parámetros antiguos de SII.
+			}
+		}
+		
+		// Fecha de registro contable que se envía al SII. Fecha de Auditoria (creation_date) o Fecha de IVA (tax_date)
 		AppParamDAO.get(ctx, domainId, AppParam.FS_MODEL_CFG_SII)
 			.ifPresent( p -> config.setSiiRegistryDate("R".equalsIgnoreCase(p.getValue()) ? "audit" : "tax"));
-		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
-		// ------------- ¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 		
+		// true si el dominio ya está preparado para la nueva pantalla del SII.
+		AppParamDAO.get(ctx, domainId, AppParam.SII_PREPARE_NEW_SII)
+		.ifPresent( p -> config.setPrepareNewSii( p.trueValue() ));
+		
+	}
+	
+	private static void fillNoVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setNoVerifactuDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_NO_VERIFACTU));
+		config.setNoVerifactuData(getIccData(config.getNoVerifactuDataHistory()));
+	}
+	
+	private static void fillSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setSifDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_SIF));
+		config.setSifData(getIccData(config.getSifDataHistory()));
+	}
+	
+	private static List<EnterpriseData> getIccHistory(AONContext ctx, Integer domainId, EnterpriseDataNames name) {
+		return EnterpriseDataDAO.getList(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq(name.name())));
+	}
+	
+	private static EnterpriseData getIccData(List<EnterpriseData> history) {
+		return history.stream().filter(f -> (f.getStartDate() != null && f.getStartDate().before(new Date()))
+				&& (f.getEndDate() == null || f.getEndDate().after(new Date()))).findFirst().orElse(null);
 	}
 
 	// ----------------------------------------------------- [WRITE]
+	
 	public static InvoiceCommunicationConfiguration save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		ctx.checkWrite();
-		saveVerifactu(ctx, domainId, config);
+		saveAdministration(ctx, domainId, config);
 		saveTbai(ctx, domainId, config);
+		saveLroe(ctx, domainId, config);
 		saveSii(ctx, domainId, config);
+		saveVerifactu(ctx, domainId, config);
+		saveNoVerifactu(ctx, domainId, config);
+		saveSif(ctx, domainId, config);
+		
 		return get(ctx, domainId);
 	} 
-
-	private static void saveVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isTbai() && !config.isSii() ) {
-			AonCollectionUtils.stream(InvoiceCommunicationConfigurationParams.values())
-				.forEach(t -> t.save(ctx, domainId, config));
-		}
+	
+	private static void saveConfiguration(AONContext ctx, Integer domainId, List<EnterpriseData> history) {
+		history.stream().forEach(data -> {
+			if(data.getId() == null) {
+				EnterpriseDataDAO.insert(ctx, data.setDomain(domainId));
+			} else if(data.isUpdated()) {
+				EnterpriseDataDAO.update(ctx, data);
+			} 
+		});
 	}
+	
+	private static void saveAdministration(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getAdministrationHistory());
+	}
+	
 	private static void saveTbai(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isVerifactu() && !config.isSii() ) {
-			AonCollectionUtils.stream(InvoiceCommunicationConfigurationParams.values())
-				.forEach(t -> t.save(ctx, domainId, config));
-		}
+		saveConfiguration(ctx, domainId, config.getTbaiDataHistory());
 	}
+
 	private static void saveSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		if ( !config.isTbai() && !config.isVerifactu() ) {
-			AonCollectionUtils.stream(InvoiceCommunicationConfigurationParams.values())
-				.forEach(t -> t.save(ctx, domainId, config));
-		}
+		saveConfiguration(ctx, domainId, config.getSiiDataHistory());
+		AppParamDAO.save(ctx, domainId, AppParam.FS_MODEL_CFG_SII, 
+			"audit".equalsIgnoreCase( config.getSiiRegistryDate() ) ? "R" : "T");	
+	}
+	
+	private static void saveLroe(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getLroeDataHistory());
+		AppParamDAO.save(ctx, domainId, AppParam.TBAI_REGISTRY_DATE, config.getLroeRegistryDate());
+	}
+	
+	private static void saveVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getVerifactuDataHistory());
+	}
+	
+	private static void saveNoVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getNoVerifactuDataHistory());
+	}
+	
+	private static void saveSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getSifDataHistory());
 	}
 	
 	// *************************************************************
@@ -411,7 +496,20 @@ public class InvoiceCommunicationDAO {
 	// ************************** [HISTORY] ************************
 	// *************************************************************
 	
-	public static LinkedList<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, LinkedList<String>> messagesExtractor) {
+	private static final Field<Byte> DATA_ATTACH_SOURCE_FIELD = DSL.decode(INVOICE_BATCH.TYPE,
+		InvoiceCommunicationType.SII.value(),DataAttachSource.SII.value(),
+		InvoiceCommunicationType.TBAI.value(),DataAttachSource.TBAI.value(),
+		InvoiceCommunicationType.LROE.value(),DataAttachSource.LROE.value(),
+		InvoiceCommunicationType.SERES.value(),DataAttachSource.SERES.value(),
+//		InvoiceCommunicationType.EMAIL.value(),DataAttachSource.EMAIL.value(),
+//		InvoiceCommunicationType.CLOSING.value(),DataAttachSource.CLOSING.value(),
+		InvoiceCommunicationType.VERIFACTU.value(),DataAttachSource.VERIFACTU.value(),
+		InvoiceCommunicationType.NO_VERIFACTU.value(),DataAttachSource.NO_VERIFACTU.value(),
+		InvoiceCommunicationType.SIF.value(),DataAttachSource.SIF.value(),
+		InvoiceCommunicationType.FACTURAE.value(),DataAttachSource.FACTURAE.value()
+	);		
+	
+	public static List<InvoiceCommunicationHistory> getHistory(AONContext ctx, Integer invoiceId, Function<InvoiceCommunicationHistory, LinkedList<String>> messagesExtractor) {
 		return ctx.getDslContext().select(
 				INVOICE_BATCH.DATE,
 				INVOICE_BATCH.TYPE,
@@ -428,12 +526,12 @@ public class InvoiceCommunicationDAO {
 			.from(INVOICE_BATCH_DETAIL)
 			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
 			.join(DATA_RESPONSE).on(DATA_RESPONSE.ID.eq(INVOICE_BATCH.DATA_RESPONSE))
-			.leftOuterJoin(DATA_ATTACH_REQUEST).on(DATA_ATTACH_REQUEST.SOURCE_ID.eq(DATA_RESPONSE.ID)
-				.and(DATA_ATTACH_REQUEST.SOURCE.eq(DataAttachSource.VERIFACTU.value())
+			.leftOuterJoin(DATA_ATTACH_REQUEST).on(DATA_ATTACH_REQUEST.SOURCE_ID.eq(DATA_RESPONSE.DATA_REQUEST)
+				.and(DATA_ATTACH_REQUEST.SOURCE.eq(DATA_ATTACH_SOURCE_FIELD)
 				.and(DATA_ATTACH_REQUEST.TYPE.eq(DataAttachType.REQUEST.value())))
 			)
 			.leftOuterJoin(DATA_ATTACH_RESPONSE).on(DATA_ATTACH_RESPONSE.SOURCE_ID.eq(DATA_RESPONSE.ID)
-				.and(DATA_ATTACH_RESPONSE.SOURCE.eq(DataAttachSource.VERIFACTU.value()))
+				.and(DATA_ATTACH_RESPONSE.SOURCE.eq(DATA_ATTACH_SOURCE_FIELD))
 				.and(DATA_ATTACH_RESPONSE.TYPE.in(DataAttachType.RESPONSE_OK.value(), DataAttachType.RESPONSE_ERROR.value()))
 			)
 			.where( INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId))

@@ -223,7 +223,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(getEnvironment().getCtx(),vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
@@ -17,10 +18,10 @@ public interface InvoiceCommunicationServiceAsync {
 
 	void getConfiguration(String domainName, int domainId, String user, AsyncCallback<InvoiceCommunicationConfiguration> callback);
 
-	void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<List<InvestAsset>> callback);
+	void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<LinkedList<InvestAsset>> callback);
 	void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset, Invoice invoice, AsyncCallback<Void> callback);
 
-	void getInvoices(Occam occam, InvoiceCommunicationParams params, AsyncCallback<List<Invoice>> callback);
+	void getInvoices(Occam occam, InvoiceCommunicationParams params, AsyncCallback<LinkedList<Invoice>> callback);
 	void altaLroe(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<ICResponse> callback);
 	void bajaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
@@ -37,7 +38,7 @@ public interface InvoiceCommunicationServiceAsync {
 
 	void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback);
 	
-	void getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice, AsyncCallback<List<InvoiceCommunicationTracking>> callback);
+	void getInvoiceCommunicationTrackings(String domainName, int domainId, String login, Integer invoice, AsyncCallback<LinkedList<InvoiceCommunicationTracking>> callback);
 	void getRequestUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback);
 	void getResponseUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback);
 

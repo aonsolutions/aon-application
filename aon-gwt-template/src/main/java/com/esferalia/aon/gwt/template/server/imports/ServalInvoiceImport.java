@@ -760,7 +760,8 @@ public class ServalInvoiceImport extends ImportUtils{
 			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
 		
 			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
-			if((icConfig.isTbai() || icConfig.hasVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+			if(/* TODO icConfig.hasCommunication()*/
+				(icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
 				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
 						+ " está activado, no se pueden importar facturas emitidas");
 			}

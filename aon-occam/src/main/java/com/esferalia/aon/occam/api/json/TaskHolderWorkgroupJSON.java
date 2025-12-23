@@ -33,7 +33,7 @@ public class TaskHolderWorkgroupJSON {
 				.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 				.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 				.setTaskHolderWorkgroupType(TaskHolderWorkgroupType.safeValueOf(JsonUtils.getString(json, "task_holder_workgroup_type")))
-				.setStartDate(AonDateUtils.parse(JsonUtils.getString(json, IJsonNames.START_DATE), "yyyy-MM-dd"))
+				.setStartDate(AonDateUtils.parse(JsonUtils.getString(json, IJsonNames.START_DATE2), "yyyy-MM-dd"))
 				.setEndDate(AonDateUtils.parse(JsonUtils.getString(json, IJsonNames.END_DATE), "yyyy-MM-dd"))
 				;
 	}
@@ -54,7 +54,7 @@ public class TaskHolderWorkgroupJSON {
 		.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(taskHolderWorkgroup.getTaskHolderObj()))
 		.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(taskHolderWorkgroup.getWorkgroup()))
 		.put("task_holder_workgroup_type", taskHolderWorkgroup.getTaskHolderWorkgroupType())
-		.put(IJsonNames.START_DATE, taskHolderWorkgroup.getStartDate())
+		.put(IJsonNames.START_DATE2, taskHolderWorkgroup.getStartDate())
 		.put(IJsonNames.END_DATE, taskHolderWorkgroup.getEndDate())
 		;	
 	}

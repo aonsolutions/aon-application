@@ -33,7 +33,7 @@ public class ActivitySummaryJSON {
 			.put(IJsonNames.SECOND_SURNAME, activitySummary.getSecondSurname())
 			;
 		
-		json.put(IJsonNames.START_DATE, AonDateUtils.format(activitySummary.getStartDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
+		json.put(IJsonNames.START_DATE2, AonDateUtils.format(activitySummary.getStartDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
 			.put(IJsonNames.END_DATE,AonDateUtils.format(activitySummary.getEndDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
 			.put(IJsonNames.START_COUNT, activitySummary.getStartCount())
 			.put(IJsonNames.END_COUNT, activitySummary.getEndCount()) 

@@ -1,15 +1,22 @@
 package net.aonsolutions.aon.verifactu;
 
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 final class NoVerifactuEnvironment extends VerifactuEnvironmentAbs {
 	protected String domainName = "noverifactutest.aonsolutions.test";	
@@ -26,53 +33,38 @@ final class NoVerifactuEnvironment extends VerifactuEnvironmentAbs {
 	}
 	
 	@Override
-	public InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
-		InvoiceCommunicatorContext icc = super.getInvoiceCommunicatorContext(invoices);
-		icc.getConfig()
-			.setVerifactu( false )
-			.setNoVerifactu( true );
+	public InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
+		InvoiceCommunicatorContext icc = super.getInvoiceCommunicatorContextWithCertificate(invoices);
+		assertNotNull(icc,"Context WithCertificate NULL" );
+		assertNotNull(icc.getConfig(),"Context Configuration WithCertificate NULL" );
+		assertTrue(icc.getConfig().isNoVerifactu() ,"Context Configuration WithCertificate NO_VERIFACTU NO ACTIVO");
+		assertNotNull(icc.getConfig().getCertificate(), "Context Configuration WithCertificate Certificate NULL");
 		return icc;
 	}
 
 	@Override
-	public InvoiceCommunicatorContext getInvoiceCommunicatorContextWithCertificate(List<Invoice> invoices) {
-		InvoiceCommunicatorContext icc = super.getInvoiceCommunicatorContext(invoices);
-		icc.getConfig()
-			.setVerifactu( false )
-			.setNoVerifactu( true );
-		return icc;
+	public InvoiceCommunicationConfiguration configurationWithCertificate() {
+		synchronized (this) {
+			if (getCommunicationConfigurationWithCertificate() == null) {
+				setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
+			}
+			getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 
+			return getCommunicationConfigurationWithCertificate();
+		}
 	}
 
 	public void initializeDomain(AONContext ctx) {
-		ApplicationParameter verifactuActiveParam = AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_ACTIVE.toString());
-		if (verifactuActiveParam == null || verifactuActiveParam.getId() == null) {
-			ctx.getDslContext().insertInto(APP_PARAM)
-			.set(APP_PARAM.DOMAIN, ctx.getDomainId())
-			.set(APP_PARAM.NAME, AppParam.VERIFACTU_ACTIVE.toString())
-			.set(APP_PARAM.VALUE, Boolean.FALSE.toString())
-			.execute();
-			ctx.log().info("App Param VERIFACTU_ACTIVE set to TRUE");
-		}
+		Date today = new Date();
+		Date yesterday = AonDateUtils.addDays(today, -1);
 		
-		ApplicationParameter verifactuTestParam = AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_TEST.toString());
-		if (verifactuTestParam == null || verifactuTestParam.getId() == null) {
-			ctx.getDslContext().insertInto(APP_PARAM)
-			.set(APP_PARAM.DOMAIN, ctx.getDomainId())
-			.set(APP_PARAM.NAME, AppParam.VERIFACTU_TEST.toString())
-			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
+		Enterprise enterprise = EnterpriseDAO.get( ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
+			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
+			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
+			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_NO_VERIFACTU.name() )
+			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
+			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
-			ctx.log().info("App Param VERIFACTU_TEST set to TRUE");
-		}
-		
-//		ApplicationParameter verifactuIncludeDateParam = AppParamDAO.fetchOne(ctx, AppParam.VERIFACTU_INCLUDE_DATE.toString());
-//		if (verifactuIncludeDateParam == null || verifactuIncludeDateParam.getId() == null) {
-//			String date = AonDateUtils.format(new Date(), "yyyy-MM-dd");
-//			ctx.getDslContext().insertInto(APP_PARAM)
-//				.set(APP_PARAM.DOMAIN, ctx.getDomainId())
-//				.set(APP_PARAM.NAME, AppParam.VERIFACTU_INCLUDE_DATE.toString())
-//				.set(APP_PARAM.VALUE, date)
-//			.execute();
-//			ctx.log().info("App Param VERIFACTU_INCLUDE_DATE set to " + date);
-//		}
+			ctx.log().info("App Param NO VERIFACTU set to TRUE / TEST");
 	}
 }

@@ -526,7 +526,7 @@ public class InvoiceDAO {
 				: INVOICE_TRACKING.SERIES.eq(series));
 	}
 	
-	private static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
+	private static int getCommunicationNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = selectMaxInvoice(ctx, types, series)
 			.union(selectMaxInvoiceTracking(ctx, types, series))
 			.fetch()
@@ -541,9 +541,9 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-		if((comConfig.hasVerifactu() || ( comConfig.isTbai() && !comConfig.isSkipTracking() ) ) 
+		if((comConfig.hasCommunication()) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
-			return getTbaiNextNumber(ctx, types, series);
+			return getCommunicationNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)
 			.fetch()
@@ -1042,10 +1042,10 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
-		// ONLY IF IS TICKET BAI.
+		// ONLY IF IS COMMUNICATION.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-			if((icc.hasVerifactu() || icc.isTbai())) {
+			if((icc.hasCommunication())) {
 				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
 		}
