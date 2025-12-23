@@ -1989,8 +1989,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			};
 			dialog.setVisibleReftificationMark(true);
 			dialog.setVisibleWithIDC("L00".equals(dialog.getType()));
+			dialog.setVisibleOutOfDate("L00".equals(dialog.getType()));
 			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleWithIDC("L00".equals(dialog.getType())));
+			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleOutOfDate("L00".equals(dialog.getType())));
 			setupDialog(dialog);
 		}
 	

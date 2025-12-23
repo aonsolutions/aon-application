@@ -280,6 +280,7 @@ public class Mod193DAO {
 			.set(FS_MODEL193_DETAIL.PREVIOUS_PAYER_DOCUMENT, detail.getPreviousPayerDocument())
 			.set(FS_MODEL193_DETAIL.ACCRUAL_DATE, AonDateUtils.toSql(detail.getAccrualDate()))
 			.set(FS_MODEL193_DETAIL.MARKET_KEY, detail.getMarketKey())
+			.set(FS_MODEL193_DETAIL.ISIN, detail.getIsin()) 
 			.execute();
 	}
 
@@ -324,6 +325,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193_DETAIL.PREVIOUS_PAYER_DOCUMENT, detail.getPreviousPayerDocument())
 				.set(FS_MODEL193_DETAIL.ACCRUAL_DATE, AonDateUtils.toSql(detail.getAccrualDate()))
 				.set(FS_MODEL193_DETAIL.MARKET_KEY, detail.getMarketKey())
+				.set(FS_MODEL193_DETAIL.ISIN, detail.getIsin()) 
 				.where(FS_MODEL193_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -478,6 +480,7 @@ public class Mod193DAO {
 				.setPreviousPayerDocument(rec.getValue(FS_MODEL193_DETAIL.PREVIOUS_PAYER_DOCUMENT))
 				.setAccrualDate(rec.getValue(FS_MODEL193_DETAIL.ACCRUAL_DATE))
 				.setMarketKey(rec.getValue(FS_MODEL193_DETAIL.MARKET_KEY))
+				.setIsin(rec.getValue(FS_MODEL193_DETAIL.ISIN)) 
 				;
 		}
 	}
@@ -558,7 +561,8 @@ public class Mod193DAO {
 				saveDetail(ctx,mod193,detail);
 			}
 		}
-		return getById(ctx, mod193 .getId());
+		return getById(ctx, mod193.getId());
+		
 	}
 	
     // Grabar resultado y pdf en response y marcar el modelo como enviado
