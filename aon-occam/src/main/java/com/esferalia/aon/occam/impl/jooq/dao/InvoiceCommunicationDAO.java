@@ -619,11 +619,11 @@ public class InvoiceCommunicationDAO {
 		return dataResponse;		
 	}
 	
-	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
+	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
 		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, communicationType)
 			.orElse( 
 				new InvoiceInfo()
-					.setDomain(domain.getId())
+					.setDomain(domainId)
 					.setInvoice(invoiceId)
 					.setType(communicationType)
 			)

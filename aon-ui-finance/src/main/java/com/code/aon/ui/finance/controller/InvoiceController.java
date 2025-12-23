@@ -128,7 +128,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
-import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -2146,13 +2146,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public boolean isVerifactuInvoice() {
-		return isVerifactu() && getInvoice().getNumber() > 0 && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isVerifactu() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	public boolean isNoVerifactuInvoice() {
-		return isNoVerifactu() && getInvoice().getNumber() > 0 && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isNoVerifactu() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	public boolean isSifInvoice() {
-		return isSif() && getInvoice().getNumber() > 0 && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isSif() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	
 	String tbaiUrl;
@@ -2195,13 +2195,20 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			Integer domainId = DomainManager.getCurrentDomain();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			Domain domain = new Domain().setName(domainName).setId(domainId);
-			User user = new User().setLogin(login);
-			InvoiceData data = AON.getInvoiceData(domain, user, f -> f.getDomainProperty().eq(domainId)
-					.and(f.getInvoiceProperty().eq(invoiceId))
-					.and(f.getNameProperty().eq("VERIFACTU_QR")));
-			if(data != null) verifactuUrl = data.getValue();					
-			if(verifactuUrl == null) verifactuUrl = ""; 
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(login);
+			verifactuUrl = AON.getInvoiceInfo(occam, invoice.getId(), InvoiceCommunicationType.VERIFACTU)
+				.map( InvoiceInfo::getCheckUrl )
+				.orElse( "" )
+			;
+			
+////			InvoiceData data = AON.getInvoiceData(domain, user, f -> f.getDomainProperty().eq(domainId)
+////				.and(f.getInvoiceProperty().eq(invoiceId))
+////				.and(f.getNameProperty().eq("VERIFACTU_QR")));
+//			if(data != null) verifactuUrl = data.getValue();					
+//			if(verifactuUrl == null) verifactuUrl = ""; 
 		} 
 		return verifactuUrl;
 	}

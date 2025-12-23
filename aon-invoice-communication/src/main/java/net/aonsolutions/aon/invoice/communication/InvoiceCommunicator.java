@@ -447,7 +447,34 @@ public class InvoiceCommunicator {
 		if (cc.getConfig() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
 		}
-		checkCertificate(ctx, cc);
+		try {
+			for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+				type.visit( new InvoiceCommunicationTypeVisitor() {
+					
+					@Override public void visitSERES() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitEMAIL() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitCLOSING() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitSII() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitTBAI() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitLROE() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitFACTURAE() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitSIF() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					
+					@Override
+					public void visitVERIFACTU() throws InvoiceCommunicationException  {
+						checkCertificate(ctx, cc);
+					}
+					
+				});
+			}
+		} catch (Exception e) {
+			// Si es una InvoiceCommunicationException la lanzamos tal cual
+			if (e instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021, e);
+		}
 	}
 	
 	private static void checkCertificate(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {

@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
@@ -53,7 +52,13 @@ public class InvoiceInfoDAO {
 			.orderBy(INVOICE_INFO.CREATION_DATE.desc())
 			.fetch()
 			.stream()
-			.map(r -> InvoiceInfoFiller.build(ctx, r))
+			.map(r -> {
+				Integer domainId = r.getValue(INVOICE_INFO.DOMAIN);
+				InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
+				InvoiceInfo v = InvoiceInfoFiller.build(ctx, r);
+				fixUrl( icc, v );
+				return v;
+			})
 			.findFirst();	
 	}
 	
@@ -120,12 +125,7 @@ public class InvoiceInfoDAO {
 		// Es una buena ñapa puesto que debería guardarse la URL completa :(
 		if (enumMap.containsKey(InvoiceCommunicationType.VERIFACTU)) {
 			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.VERIFACTU);
-			if (v != null
-			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
-				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
-				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
-				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
-			}
+			fixUrl( icc, v );
 		}
 		
 		// ---------------------------------------------------------------------------------------
@@ -135,6 +135,14 @@ public class InvoiceInfoDAO {
 	}
 	
 	
+	private static void fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo v) {
+		if (v != null
+			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
+				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
+				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
+			}
+	}
 	// ************************************************************
 	// ********************** [WRITE] *****************************
 	// ************************************************************
@@ -245,6 +253,14 @@ public class InvoiceInfoDAO {
 					public void visitVERIFACTU() {
 						InvoiceDataDAO.getValue(ctx, info.getDomain(), info.getInvoice(), InvoiceDataName.VERIFACTU_QR).ifPresent( info::setCheckUrl );
 					}
+					@Override 
+					public void visitNO_VERIFACTU() { 
+						visitVERIFACTU();	
+					}
+					@Override 
+					public void visitSIF() { 
+						visitVERIFACTU();
+					}
 					
 					@Override
 					public void visitTBAI() {
@@ -263,8 +279,6 @@ public class InvoiceInfoDAO {
 					@Override public void visitSERES() 	{ /*Nothing*/ }
 					@Override public void visitEMAIL() 	{ /*Nothing*/ }
 					@Override public void visitCLOSING(){ /*Nothing*/ }
-					@Override public void visitNO_VERIFACTU() { /*Nothing*/ }
-					@Override public void visitSIF() { /*Nothing*/ }
 					@Override public void visitFACTURAE() { /*Nothing*/}
 				});
 			} catch (Exception e) {

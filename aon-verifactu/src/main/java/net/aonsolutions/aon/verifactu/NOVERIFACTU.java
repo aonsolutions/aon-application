@@ -51,7 +51,7 @@ public class NOVERIFACTU {
 	
 	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		try {
-			VERIFACTU.check(vc);
+			check(vc);
 			RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 			vc.setRequest( request );
 			Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
@@ -101,7 +101,7 @@ public class NOVERIFACTU {
 	}
 	
 	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
-		VERIFACTU.check(vc);
+		check(vc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
@@ -131,19 +131,21 @@ public class NOVERIFACTU {
 	// ************************************************ [PRIVATE] ***
 	// **************************************************************
 	
+	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+		VERIFACTU.checkCompany(vc);
+		VERIFACTU.checkConfig(vc);
+		VERIFACTU.checkInvoices(vc);
+	}
+
 	private static void saveInvoiceCommunication(AONContext ctx
 		, VerifactuContext vc
 		, InvoiceBatch invoiceBatch
 		, Integer invoiceId
 		, InvoiceCommunicationStatus status) {
-		saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status);
-		saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);					
+		saveInvoiceInfo(ctx, vc.getDomainId(), invoiceId, status);
+		saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, status);					
 	}
 	
-	// **************************************************************
-	// **************************************************************
-	// **************************************************************
-
 	static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
 		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.NO_VERIFACTU, request);
 	}
@@ -162,7 +164,7 @@ public class NOVERIFACTU {
 		return InvoiceBatchDAO.save(ctx, invoiceBatch);
 	}
 	
-	private static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, Domain domain, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
+	private static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
 		InvoiceBatchDetail ibd = new InvoiceBatchDetail()
 			.setDomain(invoiceBatch.getDomain())
 			.setInvoiceBatch(invoiceBatch.getId())
@@ -171,8 +173,8 @@ public class NOVERIFACTU {
 		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
-	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
-		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.NO_VERIFACTU, status);
+	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationStatus status) {
+		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domainId, invoiceId, InvoiceCommunicationType.NO_VERIFACTU, status);
 	}
 	
 }

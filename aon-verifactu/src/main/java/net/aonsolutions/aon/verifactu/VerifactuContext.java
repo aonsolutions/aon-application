@@ -37,6 +37,9 @@ public class VerifactuContext  {
 	public InvoiceCommunicatorContext getInvoiceCommunicatorContext() {
 		return invoiceCommunicatorContext;
 	}
+	public Integer getDomainId() {
+		return getDomain() == null ? null : getDomain().getId();
+	}
 	public Domain getDomain() {
 		return getInvoiceCommunicatorContext().getDomain();
 	}

@@ -127,6 +127,10 @@ public class SaleInvoiceController extends InvoiceController {
 	private FtpSaleInvoiceUploaderHandler ftpEdiUploader;
 	private InvoiceCommunicationStatus communicationStatus;
 	
+	private boolean lroe;
+	private boolean anular;
+	
+	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		setInvoiceDetailControllerName(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
@@ -703,12 +707,33 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
+	public void onCommunicateInvoice(ActionEvent event) {
+		try {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Occam occam = getOccam()
+				.setDomainName(domainName)
+				.setDomain(inv.getDomain())
+				.setUser(login);
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+			if (config.isVerifactu() || config.isNoVerifactu() || config.isSif()) {
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, inv.getDomain(), login);			
+				communicateInvoice( occam, config, company , invoice , getCertificate() );
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
 	private void communicateInvoice(Occam occam
 		, InvoiceCommunicationConfiguration config
 		, Company company
 		, com.esferalia.aon.occam.api.model.finance.Invoice invoice
-		, Integer certId) {
-		
+		, Integer certId) throws Exception {
+		communicationValidation(invoice);
 		List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.toList(invoice);
 		Domain domain = AON.getDomain(occam, invoice.getDomain());
 		User user = AON.getUser(occam.getDomainName(), occam.getDomain(), occam.getUser());
@@ -719,6 +744,7 @@ public class SaleInvoiceController extends InvoiceController {
 		try {
 			InvoiceCommunicator.issueInvoice(communicator);
 			setCommunicationStatus( null );
+			setVerifactuUrl( null );
 			refresh( null );
 		} catch (Exception e) {
 			
@@ -742,36 +768,40 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	private void tbaiValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		checkCertificate();
+		communicationValidation(invoice);
+	}
+	
+	private void communicationValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		checkInvoice(invoice);
 		checkRegistry(invoice);
 		checkDetails(invoice);
 	}
 	
-	private void checkInvoice(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+	private void checkInvoice(com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
 		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
-			throw new Exception("Las Facturas rectificativas tienen que tener serie.");
+			throw new AbortProcessingException("Las Facturas rectificativas tienen que tener serie.");
 		}
 		
 		Date date = AonDateUtils.getDateWithoutTime(invoice.getIssueDate());
 		if(date.after(new Date())) {
-			throw new Exception("La Fecha de la factura no puede ser superior a la fecha actual.");
+			throw new AbortProcessingException("La Fecha de la factura no puede ser superior a la fecha actual.");
 		}
 	}
 	
-	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
 		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente está vacio.");
+			throw new AbortProcessingException("El Documento del cliente está vacio.");
 		}
 			
 		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
 				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente no es válido.");
+			throw new AbortProcessingException("El Documento del cliente no es válido.");
 		}
 	}
 	
-	private void checkDetails(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+	private void checkDetails(com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
 		for (com.esferalia.aon.occam.api.model.finance.InvoiceDetail detail : invoice.getDetails()) {
 			if(Double.toString(detail.getQuantity())
 					.substring(Double.toString(detail.getQuantity()).indexOf(".") + 1)
@@ -817,9 +847,6 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 
-	boolean lroe;
-	boolean anular;
-	
 	public void tbai() {
 		lroe = false;
 		anular = false;
@@ -1015,7 +1042,7 @@ public class SaleInvoiceController extends InvoiceController {
 		} else if (isSifInvoice()) {
 			return getCommunicationStatus(InvoiceCommunicationType.SIF);
 		} else {
-			return null;
+			return InvoiceCommunicationStatus.PENDING;
 		}
 	}
 	
@@ -1040,10 +1067,24 @@ public class SaleInvoiceController extends InvoiceController {
 		this.communicationStatus = invoiceCommunicationStatus;
 	}
 	public String getCommunicationStatusDescription() {
-		return StringUtils.upperCase(
-			(this.communicationStatus == null ? InvoiceCommunicationStatus.PENDING : this.communicationStatus)
-				.getDescription()
-			);
+		if ( isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING ) {
+			return StringUtils.upperCase("EMITIDA/NO ENVIADA");
+		}
+		return StringUtils.upperCase(getCommunicationStatus().getDescription());
+	}
+	public String getCommunicationStatusIcon() {
+		if ( isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING ) {
+			return "aon-icon-point-light-green";
+		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED ) {
+			return "aon-icon-point-green";
+		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS ) {
+			return "aon-icon-point-yellow";
+		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.WRONG ) {
+			return "aon-icon-point-red";
+		} else {
+			return "aon-icon-point-orange";
+		}
+		
 	}
 	
 	public boolean isCommunicationPending() {return getCommunicationStatus() == null || getCommunicationStatus() == InvoiceCommunicationStatus.PENDING;}
