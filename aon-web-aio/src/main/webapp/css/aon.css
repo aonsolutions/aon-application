@@ -4893,6 +4893,7 @@ font-weight: 600;
   	display: flex;
     width: auto;
     background-color: transparent;
+    gap: 1.2rem;
   }
   
   .aonWidgetTCMobileBig #aonSign{
@@ -4906,9 +4907,8 @@ font-weight: 600;
   
   .aonWidgetTCMobileBig #timeControlPanelAppSelection{
   	padding: 0;
-    min-width: 4.5rem;
     align-items: end;
-    gap: 1rem;
+    gap: .5rem;
   }
   
   .aonWidgetTCMobileBig #timeControlPanelAppSelection li {
