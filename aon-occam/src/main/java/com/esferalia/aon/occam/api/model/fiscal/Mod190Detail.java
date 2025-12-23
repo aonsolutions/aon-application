@@ -26,7 +26,7 @@ public class Mod190Detail implements Serializable {
 
 	private int tempId;
 
-	private byte ceutaMelillaPalma; // Ceuta o Melilla / Isla de la Palma (A partir del 2023 tambien para la Isla de la Palma) // FALTA - VER SI SE QUITA AL FINAL EN 2025 ISLA DE LA PALMA
+	private byte ceutaMelillaPalma; // Ceuta o Melilla / Isla de la Palma (A partir del 2023 tambien para la Isla de la Palma) 
 	private int birthYear;
 	private byte familySituation;
 	private String spouseDocument;

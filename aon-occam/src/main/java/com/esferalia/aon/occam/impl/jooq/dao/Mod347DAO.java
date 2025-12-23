@@ -445,7 +445,7 @@ public class Mod347DAO {
 				.setIsp(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.ISP)))
 				.setDepositRegime(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.DEPOSIT_REGIME)))
 				.setVatAccrualAmount(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT))
-//				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS)) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
+				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS)) 
 				;
 		}
 	}
@@ -502,7 +502,7 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
-//			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
+			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) 
 			.execute();
 		
 	}
@@ -539,7 +539,7 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
-//			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) // FALTA - Nuevo campo 2025: Número de convocatoria BDNS
+			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) 
 			.where(FS_MOD347_DETAIL.ID.equal(declared.getId()))
 			.execute();
 	}

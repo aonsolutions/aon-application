@@ -176,7 +176,7 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		ceutaMelillaPalma.setWidth("140px");
 		ceutaMelillaPalma.addItem("-");
 		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
-		ceutaMelillaPalma.addItem("2 - Isla de La Palma"); // FALTA - VER SI AL FINAL SE QUITA O NO ISLA DE LA PALMA
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma"); 
 		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
 		ceutaMelillaPalma.addChangeHandler( event -> {
 			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
