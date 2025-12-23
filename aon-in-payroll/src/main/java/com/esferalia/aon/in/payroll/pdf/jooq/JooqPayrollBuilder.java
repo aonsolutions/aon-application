@@ -221,6 +221,7 @@ public class JooqPayrollBuilder {
 			// PAYROLL RELATED DATA
 			{
 				payrollBuilder.setTotalDays(salary.getSalaryDays());
+				payrollBuilder.setReceivedDate(salary.getChargeDate());
 				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
 				payrollBuilder.setLiquidPeriodEnd(getSalaryEndDate(salary));
 

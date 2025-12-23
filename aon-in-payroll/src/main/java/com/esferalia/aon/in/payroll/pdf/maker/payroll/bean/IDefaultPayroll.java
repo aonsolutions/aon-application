@@ -34,6 +34,8 @@ public interface IDefaultPayroll {
 	Optional<Date> getLiquidPeriodStart();
 
 	Optional<Date> getLiquidPeriodEnd();
+	
+	Optional<Date> getReceivedDate();
 
 	Optional<Integer> getTotalDays();
 
