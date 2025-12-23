@@ -1,3 +1,6 @@
+import { CONSTANT } from "../environments/environments";
+import { AonDateUtils } from "../modules/utils/AonDateUtils";
+import { isPersonaFisica } from "../services/documentUtils";
 import { Administration } from "./Administration";
 import { EnterpriseData, EnterpriseDataNames } from "./EnterpriseData";
 
@@ -90,6 +93,10 @@ export class InvoiceCommunicationConfiguration {
             d.startDate && d.startDate > new Date());
     }
 
+    getData = (history) => { // history: array of EnterpriseData
+        return history.find(d => d.startDate && d.startDate <= this.getToday() && (!d.endDate || d.endDate > this.getToday()));
+    }
+
     getFutureData = (history) => { // history: array of EnterpriseData
         if(this.willBe(history)) {
             return history.find(d => d.startDate && d.startDate > new Date());
@@ -111,7 +118,7 @@ export class InvoiceCommunicationConfiguration {
         if(administration instanceof Administration && administration.value != this.administration.value) {
             this._administration = administration;
             this._administrationHistory = this.endHistory(this.administrationHistory);
-            this._administrationHistory.push(this.newEnterpriseData(EnterpriseDataNames.ICC_ADMINISTRATION));
+            this._administrationHistory.push(this.newEnterpriseData(EnterpriseDataNames.ICC_ADMINISTRATION, enterprise));
         } else if(administration instanceof Administration && administration.value === this.administration.value) {
             this._administration = undefined;
             this._administrationHistory = undefined;
@@ -138,9 +145,10 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    newEnterpriseData = (name, date) => {
+    newEnterpriseData = (name, enterprise, date) => {
         return new EnterpriseData({
             name,
+            enterprise,
             expression: "",
             startDate: date || new Date(),
             updated: true
@@ -148,7 +156,7 @@ export class InvoiceCommunicationConfiguration {
     }
 
     endHistory = (history, date) => {
-        let auxHistory = history;   
+        let auxHistory = structuredClone(history);   
         auxHistory.forEach((element, index)=> {
             if(!element.endDate) {
                 auxHistory[index].endDate = date || new Date();
@@ -158,34 +166,129 @@ export class InvoiceCommunicationConfiguration {
         return auxHistory;
     }
 
+    endOtherHistories = (h, date) => {
+        if(!h.includes(CONSTANT.TBAI)) {
+            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory, date);
+            this.tbaiData = this.getData(this.getTbaiDataHistory());
+        }
+        if(!h.includes(CONSTANT.LROE)) {
+            this._lroeDataHistory = this.endHistory(this.lroeDataHistory, date);
+            this.lroeData = this.getData(this.getLroeDataHistory());
+        }
+        if(!h.includes(CONSTANT.SII)) {
+            this._siiDataHistory = this.endHistory(this.siiDataHistory, date);
+            this.siiData = this.getData(this.getSiiDataHistory());
+        }
+        if(!h.includes(CONSTANT.VERIFACTU)) {
+            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory, date);
+            this.verifactuData = this.getData(this.getVerifactuDataHistory());
+        }
+        if(!h.includes(CONSTANT.NO_VERIFACTU)) {
+            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory, date);
+            this.noVerifactuData = this.getData(this.getNoVerifactuDataHistory());
+        }
+        if(!h.includes(CONSTANT.SIF)) {
+            this._sifDataHistory = this.endHistory(this.sifDataHistory, date);
+            this.sifData = this.getData(this.getSifDataHistory());
+        }
+        if(!h.includes(CONSTANT.NO_SIF)) {
+            this._noSifDataHistory = this.endHistory(this.noSifDataHistory, date);
+            this.noSifData = this.getData(this.getNoSifDataHistory());
+        }
+    }
+
+    undefinedHistories = (h) => {
+        if(!h.includes(CONSTANT.TBAI)) {
+            this._tbaiDataHistory = undefined;
+            this.tbaiData = this.getData(this.getTbaiDataHistory());
+        }
+        if(!h.includes(CONSTANT.LROE)) {
+            this._lroeDataHistory = undefined;
+            this.lroeData = this.getData(this.getLroeDataHistory());
+        }
+        if(!h.includes(CONSTANT.SII)) {
+            this._siiDataHistory = undefined;
+            this.siiData = this.getData(this.getSiiDataHistory());
+        }
+        if(!h.includes(CONSTANT.VERIFACTU)) {
+            this._verifactuDataHistory = undefined;
+            this.verifactuData = this.getData(this.getVerifactuDataHistory());
+        }
+        if(!h.includes(CONSTANT.NO_VERIFACTU)) {
+            this._noVerifactuDataHistory = undefined;
+            this.noVerifactuData = this.getData(this.getNoVerifactuDataHistory());
+        }
+        if(!h.includes(CONSTANT.SIF)) {
+            this._sifDataHistory = undefined;
+            this.sifData = this.getData(this.getSifDataHistory());
+        }
+        if(!h.includes(CONSTANT.NO_SIF)) {
+            this._noSifDataHistory = undefined;
+            this.noSifData = this.getData(this.getNoSifDataHistory());
+        }
+    }
+
+    setHistoryStartDate = (history, date) => {
+        let auxHistory = structuredClone(history);
+        auxHistory.forEach((element, index) => {
+            if(!element.endDate || element.endDate > date) {
+                auxHistory[index].startDate = date;
+                auxHistory[index].updated = true;
+            }
+        });
+        return auxHistory;
+    }
+
+    getToday = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+
     // Specific methods for TBAI communication type
 
-
-    setTbai(tbai) {
+    setTbai(tbai, enterprise) {
         if(tbai && !this.isTbai()) {
-            this.tbaiData = this.newEnterpriseData(EnterpriseDataNames.ICC_TBAI);
-            this._tbaiDataHistory = this.tbaiDataHistory || [];
+            this.tbaiData = this.newEnterpriseData(EnterpriseDataNames.ICC_TBAI, enterprise);
+            this._tbaiDataHistory = this.tbaiDataHistory ? structuredClone(this.tbaiDataHistory) : [];
             this._tbaiDataHistory.push(this.tbaiData);
-
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
+            this.setTbaiDate(this.getToday());
         } else if(!tbai && this.isTbai()) {
             this.tbaiData = undefined;
             this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
 
     setTbaiDate(date) {
-        if(this.isTbai()) {
-            this.tbaiData.startDate = date;
-            this.tbaiData.updated = true;
+       let check = this.checkTbaiDate(date)
+        if(this.isTbai() && check.valid) {
+            this._tbaiDataHistory = this.setHistoryStartDate(this.getTbaiDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.TBAI, CONSTANT.SII]);
+                this.tbaiData = undefined;
+            } else {
+                this.tbaiData.startDate = date;
+                this.tbaiData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.TBAI, CONSTANT.SII], date);
         }
+        return check;
+    }
+
+    checkTbaiDate(date) {
+        const selectedDate = date;
+        const nowDate = this.getToday();
+
+        if (selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
+        }
+        if (selectedDate < nowDate.addDay(-1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+        return { valid: true, message: '' };    
     }
 
     getTbaiDataHistory = () => {
@@ -209,40 +312,57 @@ export class InvoiceCommunicationConfiguration {
     }
 
     wasTbai = () => {
-        return this.was(this.tbaiDataHistory);
+        return this.was(this.getTbaiDataHistory());
     }
 
     willBeTbai = () => {
-        return this.willBe(this.tbaiDataHistory);
+        return this.willBe(this.getTbaiDataHistory());
     }
 
     // Specific methods for LROE communication type
 
-    setLroe(lroe) {
+    setLroe(lroe, enterprise) {
         if(lroe && !this.isLroe()) {
-            this.lroeData = this.newEnterpriseData(EnterpriseDataNames.ICC_LROE);
-            this._lroeDataHistory = this.lroeDataHistory || [];
+            this.lroeData = this.newEnterpriseData(EnterpriseDataNames.ICC_LROE, enterprise);
+            this._lroeDataHistory = this.lroeDataHistory ? structuredClone(this.lroeDataHistory) : [];
             this._lroeDataHistory.push(this.lroeData);
-
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
+            this.setLroeDate(this.getToday());
         } else if(!lroe && this.isLroe()) {
             this.lroeData = undefined;
             this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
 
     setLroeDate(date) {
-        if(this.isLroe()) {
-            this.lroeData.startDate = date;
-            this.lroeData.updated = true;
+       let check = this.checkLroeDate(date)
+        if(this.isLroe() && check.valid) {
+            this._lroeDataHistory = this.setHistoryStartDate(this.getLroeDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.LROE]);
+                this.lroeData = undefined;
+            } else {
+                this.lroeData.startDate = date;
+                this.lroeData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.LROE], date);
         }
+        return check;
+    }
+
+    checkLroeDate(date) {
+        const selectedDate = date;
+        const nowDate = this.getToday();
+
+        if (selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
+        }
+        if (selectedDate < nowDate.addDay(-1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+        return { valid: true, message: '' };    
     }
 
     getLroeDataHistory = () => {
@@ -266,66 +386,62 @@ export class InvoiceCommunicationConfiguration {
     }
 
     wasLroe = () => {
-        return this.was(this.lroeDataHistory);
+        return this.was(this.getLroeDataHistory());
     }
 
     willBeLroe = () => {
-        return this.willBe(this.lroeDataHistory);
+        return this.willBe(this.getLroeDataHistory());
     }
 
     // Specific methods for Verifactu communication type
 
-    setVerifactu(verifactu) {
+    setVerifactu(verifactu, enterprise, document) {
         if(verifactu && !this.isVerifactu()) {
-            this.verifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_VERIFACTU);
-            this._verifactuDataHistory = this.verifactuDataHistory || [];
+            this.verifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_VERIFACTU, enterprise);
+            this._verifactuDataHistory = this.verifactuDataHistory ? structuredClone(this.verifactuDataHistory) : [];
             this._verifactuDataHistory.push(this.verifactuData);
-
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
-        } else if(!verifactu && this.isVerifactu()) {
+            this.setVerifactuDate(this.getToday(), document);
+         } else if(!verifactu && this.isVerifactu()) {
             this.verifactuData = undefined;
             this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
 
-    setVerifactuDate(date) {
-        let check = this.checkVerifactuDate(date)
+    setVerifactuDate(date, document) {
+       let check = this.checkVerifactuDate(date, document)
         if(this.isVerifactu() && check.valid) {
-            this.verifactuData.startDate = date;
-            this.verifactuData.updated = true;
+            this._verifactuDataHistory = this.setHistoryStartDate(this.getVerifactuDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.VERIFACTU]);
+                this.verifactuData = undefined;
+            } else {
+                this.verifactuData.startDate = date;
+                this.verifactuData.updated = true;
+                this.siiData = undefined;
+                this.noVerifactuData = undefined;
+            }
+            this.endOtherHistories([CONSTANT.VERIFACTU], date);
         }
-        return check
+        return check;
     }
 
-    checkVerifactuDate(date) {
+    checkVerifactuDate(date, document) {
         const selectedDate = date;
-        const now = new Date();
-        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const maxDate = isPersonaFisica(this.configuration.company.document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
+        const nowDate = this.getToday();
+        const maxDate = isPersonaFisica(document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
 
-        if (now < maxDate && selectedDate > maxDate) {
-            return {valid: false, message: isPersonaFisica(this.configuration.company.document)
+        if (nowDate < maxDate && selectedDate > maxDate) {
+            return {valid: false, message: isPersonaFisica(document)
                 ? 'La fecha es posterior al 1 de Julio de 2026.'
                 : 'La fecha es posterior al 1 de Enero de 2026.'};
         }
-        if (selectedDate < nowDate) {
+        if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
         }
         return { valid: true, message: '' };
-    }
-    
-    getVerifactuDate() {
-        const now = new Date();
-        const date = new Date(2026, 0, 1);
-        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        return date > nowDate ? date : nowDate;
     }
 
     getVerifactuDataHistory = () => {
@@ -349,40 +465,64 @@ export class InvoiceCommunicationConfiguration {
     }
 
     wasVerifactu = () => {
-        return this.was(this.verifactuDataHistory);
+        return this.was(this.getVerifactuDataHistory());
     }
     
     willBeVerifactu = () => {
-        return this.willBe(this.verifactuDataHistory);
+        return this.willBe(this.getVerifactuDataHistory());
     }
 
     // Specific methods for No Verifactu communication type
 
-    setNoVerifactu(noVerifactu) {
+    setNoVerifactu(noVerifactu, enterprise, document) {
         if(noVerifactu && !this.isNoVerifactu()) {
-            this.noVerifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_VERIFACTU);
-            this._noVerifactuDataHistory = this.noVerifactuDataHistory || [];
+            this.noVerifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_VERIFACTU, enterprise);
+            this._noVerifactuDataHistory = this.noVerifactuDataHistory ? structuredClone(this.noVerifactuDataHistory) : [];
             this._noVerifactuDataHistory.push(this.noVerifactuData);
-
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
-        } else if(!noVerifactu && this.isNoVerifactu()) {
+            this.setNoVerifactuDate(this.getToday(), document);
+        } else if(!noVerifactu && (this.isNoVerifactu() || this.willBeNoVerifactu())) {
             this.noVerifactuData = undefined;
             this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
+            this.undefinedHistories([CONSTANT.NO_VERIFACTU]);
+
+
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
     
-    setNoVerifactuDate(date) {
-        if(this.isNoVerifactu()) {
-            this.noVerifactuData.startDate = date;
-            this.noVerifactuData.updated = true;
+    setNoVerifactuDate(date, document) {
+        let check = this.checkNoVerifactuDate(date, document)
+        if(this.isNoVerifactu() && check.valid) {
+            this._noVerifactuDataHistory = this.setHistoryStartDate(this.getNoVerifactuDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.NO_VERIFACTU]);
+                this.noVerifactuData = undefined;
+            } else {
+                this.noVerifactuData.startDate = date;
+                this.noVerifactuData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.NO_VERIFACTU], date);
         }
+        return check;
+    }
+
+    checkNoVerifactuDate(date, document) {
+        const selectedDate = date;
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const maxDate = isPersonaFisica(document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
+        if (now < maxDate && selectedDate > maxDate) {
+            return {valid: false, message: isPersonaFisica(document)
+                ? 'La fecha es posterior al 1 de Julio de 2026.'
+                : 'La fecha es posterior al 1 de Enero de 2026.'};
+        }
+        if (selectedDate < nowDate.addDay(-1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+
+        return { valid: true, message: '' };
     }
 
     getNoVerifactuDataHistory = () => {
@@ -402,42 +542,59 @@ export class InvoiceCommunicationConfiguration {
     }
 
     wasNoVerifactu = () => {
-        return this.was(this.noVerifactuDataHistory);
+        return this.was(this.getNoVerifactuDataHistory());
     }
 
     willBeNoVerifactu = () => {
-        return this.willBe(this.noVerifactuDataHistory);
+        return this.willBe(this.getNoVerifactuDataHistory());
     }
 
     // Specific methods for SII communication type
 
-    setSii(sii) {
+    setSii(sii, enterprise) {
         if(sii && !this.isSii()) {
-            this.siiData = this.newEnterpriseData(EnterpriseDataNames.ICC_SII);
-            this._siiDataHistory = this.siiDataHistory || [];
+            this.siiData = this.newEnterpriseData(EnterpriseDataNames.ICC_SII, enterprise);
+            this._siiDataHistory = this.siiDataHistory ? structuredClone(this.siiDataHistory) : [];
             this._siiDataHistory.push(this.siiData);
-
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
+            this.setSiiDate(this.getToday());
         } else if(!sii && this.isSii()) {
             this.siiData = undefined;
             this._siiDataHistory = this.endHistory(this.siiDataHistory);
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
 
     setSiiDate(date) {
-        if(this.isSii()) {
-            this.siiData.startDate = date;
-            this.siiData.updated = true;
+       let check = this.checkSiiDate(date)
+        if(this.isSii() && check.valid) {
+            this._siiDataHistory = this.setHistoryStartDate(this.getSiiDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.SII, CONSTANT.TBAI]);
+                this.siiData = undefined;
+            } else {
+                this.siiData.startDate = date;
+                this.siiData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.SII, CONSTANT.TBAI], date);
         }
+        return check;
     }
-    
+
+    checkSiiDate(date) {
+        const selectedDate = date;
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
+        }
+        if (selectedDate < nowDate.addDay(-1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+        return { valid: true, message: '' };    
+    }   
+
     getSiiDataHistory = () => {
         return this._siiDataHistory || this.siiDataHistory;
     }
@@ -468,17 +625,12 @@ export class InvoiceCommunicationConfiguration {
 
     // Specific methods for SIF communication type
 
-    setSif(sif) {
+    setSif(sif, enterprise) {
         if(sif && !this.isSif()) {
-            this.sifData = this.newEnterpriseData(EnterpriseDataNames.ICC_FACTURAE);
-            this._sifDataHistory = this.sifDataHistory || [];
+            this.sifData = this.newEnterpriseData(EnterpriseDataNames.ICC_FACTURAE, enterprise);
+            this._sifDataHistory = this.sifDataHistory ? structuredClone(this.sifDataHistory) : [];
             this._sifDataHistory.push(this.sifData);
-            
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);            
+            this.setSifDate(this.getToday());
         } else if(!sif && this.isSif()) {
             this.sifData = undefined;
             this._sifDataHistory = this.endHistory(this.sifDataHistory);
@@ -486,10 +638,33 @@ export class InvoiceCommunicationConfiguration {
     }
     
     setSifDate(date) {
-        if(this.isSif()) {
-            this.sifData.startDate = date;
-            this.sifData.updated = true;
+        let check = this.checkSifDate(date)
+        if(this.isSif() && check.valid) {
+            this._sifDataHistory = this.setHistoryStartDate(this.getSifDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.SIF]);
+                this.sifData = undefined;
+            } else {
+                this.sifData.startDate = date;
+                this.sifData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.SIF], date);
         }
+        return check;
+    }
+
+    checkSifDate(date) {
+        const selectedDate = date;
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
+        }
+        if (selectedDate < nowDate.addDay(-1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+        return { valid: true, message: '' };    
     }
     
     getSifDataHistory = () => {
@@ -514,32 +689,49 @@ export class InvoiceCommunicationConfiguration {
 
     // Specific methods for No SIF communication type
     
-    setNoSif = (noSif) => {
+    setNoSif = (noSif, enterprise) => {
         if(noSif && !this.isNoSif()) {
-            this.noSifData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_SIF);
-            this._noSifDataHistory = this.noSifDataHistory || [];
+            this.noSifData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_SIF, enterprise);
+            this._noSifDataHistory = this.noSifDataHistory ? structuredClone(this.noSifDataHistory) : [];
             this._noSifDataHistory.push(this.noSifData);
-
-            this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
-            this._siiDataHistory = this.endHistory(this.siiDataHistory);
-            this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
-            this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
-            this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
-            this._sifDataHistory = this.endHistory(this.sifDataHistory);            
+            this.setNoSifDate(this.getToday());
         } else if(!noSif && this.isNoSif()) {
             this.noSifData = undefined;
             this._noSifDataHistory = this.endHistory(this.noSifDataHistory);
             if(!this.hasCommunication()) {
-                this.setSif(true);
+                this.setSif(true, enterprise);
             }
         }
     }
 
     setNoSifDate(date) {
-        if(this.isNoSif()) {
-            this.noSifData.startDate = date;
-            this.noSifData.updated = true;
+        let check = this.checkNoSifDate(date)
+        if(this.isNoSif() && check.valid) {
+            this._noSifDataHistory = this.setHistoryStartDate(this.getNoSifDataHistory(), date);
+            if(date >= this.getToday().addDay(1)) {
+                this.undefinedHistories([CONSTANT.NO_SIF]);
+                this.noSifData = undefined;
+            } else {
+                this.noSifData.startDate = date;
+                this.noSifData.updated = true;
+            }
+            this.endOtherHistories([CONSTANT.NO_SIF], date);
         }
+        return check;
+    }
+
+    checkNoSifDate(date) {
+        const selectedDate = date;
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (selectedDate > nowDate) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
+        }
+        if (selectedDate < nowDate) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
+        }
+        return { valid: true, message: '' };
     }
 
     getNoSifDataHistory = () => {
