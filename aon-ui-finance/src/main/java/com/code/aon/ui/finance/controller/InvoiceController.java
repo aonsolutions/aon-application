@@ -2140,9 +2140,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isCommunicableInvoice() {
-		return (isVerifactu() || isNoVerifactu() || isSif())
-			&& getInvoice().getNumber() > 0 
-			&& !AonStringUtils.isBlank(getVerifactuUrl());
+		return getInvoice().getNumber() > 0
+			&& ( (isVerifactu() && !AonStringUtils.isBlank(getVerifactuUrl() ))
+				|| isNoVerifactu() 
+				|| isSif())
+		;
 	}
 
 	public boolean isVerifactuInvoice() {

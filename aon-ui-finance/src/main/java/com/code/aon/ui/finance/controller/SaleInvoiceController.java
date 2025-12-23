@@ -872,42 +872,52 @@ public class SaleInvoiceController extends InvoiceController {
 		initializeModel();
 		resetTo();
 	}
-
-	public String onAnularVerifactu() {
-		if (isVerifactuInvoice() || isNoVerifactuInvoice() || isSifInvoice()) {
-			Invoice inv = (Invoice) getTo();
-			String domainName = AonUtil.getDomainName();
-			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-			Occam occam = new Occam()
-				.setDomainName(domainName)
-				.setDomain(inv.getDomain())
-				.setUser(login);
-			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.toList(invoice);
-			Domain domain = AON.getDomain(occam, invoice.getDomain());
-			User user = AON.getUser(occam.getDomainName(), occam.getDomain(), occam.getUser());
-			InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, user, getCertificate(), invoices)
-				.setConfig(config)
-				.setCompany(company);
-			try {
-				InvoiceCommunicator.cancelInvoice(communicator);
-				setCommunicationStatus( null );
-				initializeModel();
-				resetTo();
-				return backAction();
-			} catch (Exception e) {
-				try {
-					InvoiceCommunicator.throwRightException(e, invoice);
-				} catch (InvoiceErrorException e1) {
-					AonCollectionUtils.stream(e1.getMessages())
-						.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
-				}
-				return null;
-			}
+	public String onCommunicateCancelInvoice() {
+		if (isNoVerifactuInvoice() || isSifInvoice()) {
+			return onAnular();		
 		} else {
 			throw new AbortProcessingException("La factura no se puede anular");
+		}
+	}
+	public String onAnularVerifactu() {
+		if (isVerifactuInvoice() ) {
+			return onAnular();
+		} else {
+			throw new AbortProcessingException("La factura no se puede anular");
+		}
+	}
+	
+	private String onAnular() {
+		Invoice inv = (Invoice) getTo();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+		Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(inv.getDomain())
+			.setUser(login);
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+		List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.toList(invoice);
+		Domain domain = AON.getDomain(occam, invoice.getDomain());
+		User user = AON.getUser(occam.getDomainName(), occam.getDomain(), occam.getUser());
+		InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, user, getCertificate(), invoices)
+			.setConfig(config)
+			.setCompany(company);
+		try {
+			InvoiceCommunicator.cancelInvoice(communicator);
+			setCommunicationStatus( null );
+			initializeModel();
+			resetTo();
+			return backAction();
+		} catch (Exception e) {
+			try {
+				InvoiceCommunicator.throwRightException(e, invoice);
+			} catch (InvoiceErrorException e1) {
+				AonCollectionUtils.stream(e1.getMessages())
+					.forEach( m -> AonUtil.addErrorMessage(m.getMessage() ));
+			}
+			return null;
 		}
 	}
 	
