@@ -19,6 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2025;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2025;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
@@ -560,6 +563,10 @@ public class Up2Date {
 			// PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
 			// PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
 			// PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
+			
+			AlterFsMod193Detail2025.ALTER_FS_MODEL_193_DETAIL_2025,
+			AlterFsMod347Detail2025.ALTER_FS_MODEL_347_DETAIL_2025,
+			AlterFsMod190Detail2025.ALTER_FS_MODEL_190_DETAIL_2025,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
