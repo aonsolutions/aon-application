@@ -155,24 +155,41 @@ export class AonSignMobile extends AonElement {
   vuelta() {
     let content = this.getElement(this.CONTENT);
     if(content){
-      this.clearElement(content);
-      let button = this.createElement(TAG.BUTTON);
-      button.id = this.id+"Vuelta";
-      button.className = 'aonButton';
-      button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#86D364';
-      button.innerHTML = 'VUELTA';
-      if(this.isMobile()){
-        button.style.width = "60%";
-        button.style.borderRadius = "12px";
-      }
-      button.addEventListener(EVENT.CLICK, (event) => {
+      	this.clearElement(content);
+      
+      	let buttons = this.createElement(TAG.DIV);
+		buttons.style.display = "flex";
+		buttons.style.justifyContent = "center";
+		buttons.style.gap = "1rem";
+		
+		let button = this.createElement(TAG.BUTTON);
+		button.id = this.id+"Salida";
+		button.className = 'aonButton';
+		button.classList.add('aonTimeControlButton');
+		button.style.backgroundColor = '#DC4D30';
+		button.innerHTML = MSG.EXIT.toUpperCase();
+		button.addEventListener(EVENT.CLICK, (event) => {
+			event.stopPropagation();
+			this.saveTimeCtrl('out');
+		});
+		buttons.appendChild(button);
+      
+		let button2 = this.createElement(TAG.BUTTON);
+		button2.id = this.id+"Vuelta";
+		button2.className = 'aonButton';
+		button2.classList.add('aonTimeControlButton');
+		button2.style.backgroundColor = '#86D364';
+		button2.innerHTML = 'VUELTA';
+		button2.addEventListener(EVENT.CLICK, (event) => {
 		event.stopPropagation();
-		this.saveTimeCtrl('in');
-	  });
-      content.appendChild(button);
-    }
+			this.saveTimeCtrl('in');
+		});
+
+		buttons.appendChild(button2);
+  
+		content.appendChild(buttons);
 	}
+}
 
 	salida() {
 	    let content = this.getElement(this.CONTENT);
@@ -230,8 +247,64 @@ export class AonSignMobile extends AonElement {
       timeOutPosition = error && error.timeout;
       this.showToast(error);
     }); 
+    
+    if(this.isBeta() && this.isMobile()){
+		if(signin.status == 'out'){
+			const resp = await saveTimeControl(signin);
 
-    const resp = await saveTimeControl(signin);
+			if(timeOutPosition && this.isMobile() && resp && resp.id){
+			  getPosition()
+			  .then(position=>{
+			    if(position){
+			      r.coordinates = position.latitude + ',' + position.longitude;
+			      saveTimeControl({...resp, ...signin})
+			      .then(console.log)
+			      .catch(console.error);
+			    }
+			  })
+			  .catch(console.error);
+			}
+			
+			this.buildSignin(resp);
+		} else {
+			let aonMobileMenu = this.getElement('aonMobileMenu');
+			aonMobileMenu.removeEventListener(EVENT.CLOSE_DIALOG, () => this.disabledButton(false));
+			aonMobileMenu.addEventListener(EVENT.CLOSE_DIALOG, () => this.disabledButton(false));
+			
+			aonMobileMenu.timeControlReason(signin, 
+			(event) => {
+				this.selectReason(event, signin, timeOutPosition);
+			});
+		}	
+	} else {
+		const resp = await saveTimeControl(signin);
+
+		if(timeOutPosition && this.isMobile() && resp && resp.id){
+		  getPosition()
+		  .then(position=>{
+		    if(position){
+		      r.coordinates = position.latitude + ',' + position.longitude;
+		      saveTimeControl({...resp, ...signin})
+		      .then(console.log)
+		      .catch(console.error);
+		    }
+		  })
+		  .catch(console.error);
+		}
+		
+		this.buildSignin(resp);
+	}
+  }
+  
+  async buildSigninTimeControl(tc) {	
+    console.log('buildSigninTimeControl this.tc : ', tc);
+	this.buildSignin(tc);
+  }
+  
+  async selectReason(event, signin, timeOutPosition) {	
+	console.log('selected Reason : ', signin, event);
+			  	
+  	const resp = await saveTimeControl(signin);
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
       getPosition()
@@ -247,9 +320,7 @@ export class AonSignMobile extends AonElement {
     }
 
     this.buildSignin(resp);
-
-    //this.disabledButton(false);
-  }
+ }
 
   disabledButton(disabled){
     const content = this.getElement(this.CONTENT);
@@ -296,8 +367,8 @@ export class AonSignMobile extends AonElement {
 
     this.changeTime(time);
     
-    if(!this.isApp())
-      this.divLastTime(signin);
+    //if(!this.isApp())
+    //  this.divLastTime(signin);
   }
 
   async timeAction(time, id) {

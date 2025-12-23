@@ -27,6 +27,9 @@ import { AonUploadToast } from "../components/aon-upload-toast.js";
 import { AonMobileHome } from "./home/aon-mobile-home.js";
 import { AonMobileDesktop } from "./company/aon-mobile-desktop.js";
 import { AonMobileProfile } from "./user/aon-mobile-profile.js";
+import { AonNewInput } from "../components/aon-new-input.js";
+import { AonSelect } from "../components/aon-select.js";
+import { createSelect } from "../components/CreateComponent.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -44,6 +47,8 @@ export class AonMobileMenu extends AonElement {
 
   constructor() {
     super();
+    
+    this._listenerClose = (event) => this.dispatchEvent(new CustomEvent(EVENT.CLOSE_DIALOG));
   }
 
   connectedCallback() {
@@ -266,6 +271,92 @@ export class AonMobileMenu extends AonElement {
   	const aonMobileProfile = new AonMobileProfile();
 		aonMobileProfile.id = CONSTANT.AON_MOBILE_PROFILE;
 	  this.rootPanel(aonMobileProfile);
+  }
+  
+  timeControlReason(signin, callback){
+	let dialog = this.getElement(this.DIALOG_MENU);
+	dialog.removeEventListener(EVENT.CLOSE, this._listenerClose);
+	dialog.addEventListener(EVENT.CLOSE, this._listenerClose);
+
+	let reasonTitle = !signin || !signin.status ? 'N/D' : signin.status === 'in' ? 'Entrada' : 'Pausa'
+    dialog.setTitle(`Motivo ${reasonTitle}`);    
+    
+    let div = document.createElement(TAG.DIV);
+	div.style.display = "flex";
+	div.style.flexDirection = "column";
+	div.style.margin = ".5rem 0 2rem";
+	div.style.height = '10rem';
+	div.style.overflow = 'scroll';
+	dialog.setContent(div);
+	
+	let options = !signin || !signin.status 
+		? 
+			[]
+		:   signin.status === 'in'
+				?
+					[{
+						name: 'Presencial',
+						value: '0'
+					},
+					{
+						name: 'Teletrabajo',
+						value: '1'
+					},
+					{
+						name: 'Desplazado',
+						value: '2'
+					}]
+				: signin.status === 'pause'
+					?
+						[{
+							name: 'Descanso',
+							value: '0'
+						},
+						{
+							name: 'Consulta Médico',
+							value: '1'
+						},
+						{
+							name: 'Funciones Inexcusables',
+							value: '2'
+						},
+						{
+							name: 'Hospitalización hijo prematuro',
+							value: '3'
+						},
+						{
+							name: 'Lactancia',
+							value: '4'
+						},
+						{
+							name: 'Motivos familiares urgentes',
+							value: '5'
+						}]
+					:
+						[]
+		;
+	
+	let reason = createSelect('timeControlReason', 'Motivo');
+    reason.autocomplete = false;
+    reason.readonly = false;
+    
+    // Default value
+    //streetTypeSelect.value = 'undefined';
+    
+    reason.addEventListener(EVENT.SELECT, (e) => this.selectReason(e, callback));
+	
+	div.appendChild(reason);
+	
+   	reason.setOptions(options);
+	
+    dialog.open();
+  }
+  
+  selectReason(event, callback){
+      this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: event.detail}));
+      let dialog = this.getDialogMenu();
+      dialog.close();
+      callback(event);
   }
 
   newButtons() {
