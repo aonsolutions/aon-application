@@ -458,7 +458,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
     		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
 		if(json.has(IJsonNames.START_DATE))
 			filter = filter.and(f.getDocumentDateProperty().ge(JsonUtils.getDate(json, IJsonNames.START_DATE)));
-		if(json.has(IJsonNames.END_DATE))
+		if(json.has(IJsonNames.END_DATE2))
 			filter = filter.and(f.getDocumentDateProperty().le(JsonUtils.getDate(json, IJsonNames.END_DATE)));
 		if(json.has(IJsonNames.FROM_DATE))
 			filter = filter.and(f.getCreationDateProperty().gt(new Timestamp(JsonUtils.getDate(json, IJsonNames.FROM_DATE).getTime())));
@@ -515,7 +515,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
     		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
 		if(json.has(IJsonNames.START_DATE))
 			filter = filter.and(f.getCreationDateTimeStampProperty().ge(new Timestamp(JsonUtils.getDate(json, IJsonNames.START_DATE).getTime())));
-		if(json.has(IJsonNames.END_DATE))
+		if(json.has(IJsonNames.END_DATE2))
 			filter = filter.and(f.getCreationDateTimeStampProperty().le(new Timestamp(JsonUtils.getDate(json, IJsonNames.END_DATE).getTime())));
 		if(json.has(IJsonNames.FROM_DATE))
 			filter = filter.and(f.getCreationDateTimeStampProperty().gt(new Timestamp(JsonUtils.getDate(json, IJsonNames.FROM_DATE).getTime())));

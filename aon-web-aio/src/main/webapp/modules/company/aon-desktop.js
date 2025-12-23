@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities } from '../../services/service.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -52,6 +52,10 @@ import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
 import { createSelect } from '../../components/CreateComponent.js';
+import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
+import { AonInvoiceCommunication } from '../invoice/aon-invoice-communication.js';
+import { isPersonaFisica } from '../../services/documentUtils.js';
+import { Invoice } from '../invoice/Invoice.js';
 
 export class AonDesktop extends AonElement {
 
@@ -86,13 +90,14 @@ export class AonDesktop extends AonElement {
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
 		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
 		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
+		this.INVOICE_CONFIGURATION_DIALOG = this.id + 'InvoiceConfigurationDialog';
 	}
 
 	getDur() {
 		return this.dur;
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		if (LS.isNewTheme()) {
 			/*let span = this.getElement('aonHeaderHome');
 			if (span) span.style.display = 'none';*/
@@ -102,10 +107,14 @@ export class AonDesktop extends AonElement {
 		}
 
 		this.initialize();
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
-			this.build();
-		});
+		
+		let r = await getDomainUserRoles({});
+		this.dur = new DomainUserRoles(r);
+		this.build();
+
+	    await this.getInvoiceConfiguration();
+		if(!this.checkConfigurationComplete(this.ic))
+			this.buildInvoiceConfigurationDialog();
 	}
 
 	disconnectedCallback() {
@@ -115,6 +124,56 @@ export class AonDesktop extends AonElement {
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
 			if (expandButtonDiv) expandButtonDiv.style.display = 'none';
+		}
+	}
+
+	async getInvoiceConfiguration() {
+		this.ic = await getInvoiceConfiguration();
+	}
+
+	buildInvoiceConfigurationDialog() {
+		let dialog = this.getElement(this.INVOICE_CONFIGURATION_DIALOG);
+		if(!dialog) {
+			dialog = new AonDialog();
+			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
+			this.appendChild(dialog);
+			dialog.autoclose = false;
+		}
+
+		let communication =  new AonInvoiceCommunication();
+		communication.setConfiguration(this.ic);
+		communication.onChange(() => {
+			this.ic = communication.getConfiguration();
+			let com = communication.getCommunicationConfiguration();
+			if(com instanceof InvoiceCommunicationConfiguration) {
+				this.ic.communication = com.toJSON();
+			} else {
+				this.ic.communication = new InvoiceCommunicationConfiguration(com).toJSON();
+			}
+		});
+
+		dialog.clear();
+		dialog.setTitle(MSG.INVOICE_CONFIGURATION);
+		dialog.setContent(communication);
+
+		dialog.addAcceptAction(() => {		
+			if(this.checkConfigurationComplete(this.ic)) { 
+				saveInvoiceConfiguration(this.ic);
+			} else {
+				this.buildInvoiceConfigurationDialog();
+			}
+		});
+		dialog.open();
+	}
+
+	checkConfigurationComplete(config) {
+		if(!config || !config.company || !config.company.document || !config.communication) return false;
+		let icc = new InvoiceCommunicationConfiguration(config.communication);
+		if(isPersonaFisica(config.company.document)) {
+			if(!(config.company.person || config.person)) return false;
+			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
+		} else {
+			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
 		}
 	}
 

@@ -80,7 +80,7 @@ public class InvoiceClosingServlet extends AonApiHttpServlet {
 					.put(IJsonNames.ID, r.getId())
 					.put(IJsonNames.DESCRIPTION, r.getDescription())
 					.put(IJsonNames.START_DATE2, AonDateUtils.format(r.getDate(), "dd/MM/yyyy"))
-					.put(IJsonNames.END_DATE, AonDateUtils.format(r.getEndDate(), "dd/MM/yyyy"))
+					.put(IJsonNames.END_DATE2, AonDateUtils.format(r.getEndDate(), "dd/MM/yyyy"))
 					.put("hash", !AonStringUtils.isBlank(r.getMd5()) ? r.getMd5() : "-")
 			);
 		});

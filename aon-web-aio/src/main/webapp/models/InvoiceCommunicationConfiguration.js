@@ -1,5 +1,4 @@
 import { CONSTANT } from "../environments/environments";
-import { AonDateUtils } from "../modules/utils/AonDateUtils";
 import { isPersonaFisica } from "../services/documentUtils";
 import { Administration } from "./Administration";
 import { EnterpriseData, EnterpriseDataNames } from "./EnterpriseData";
@@ -118,7 +117,9 @@ export class InvoiceCommunicationConfiguration {
         if(administration instanceof Administration && administration.value != this.administration.value) {
             this._administration = administration;
             this._administrationHistory = this.endHistory(this.administrationHistory);
-            this._administrationHistory.push(this.newEnterpriseData(EnterpriseDataNames.ICC_ADMINISTRATION, enterprise));
+            let administrationData = this.newEnterpriseData(EnterpriseDataNames.ICC_ADMINISTRATION, enterprise);
+            administrationData.expression = administration.value;
+            this._administrationHistory.push(administrationData);
         } else if(administration instanceof Administration && administration.value === this.administration.value) {
             this._administration = undefined;
             this._administrationHistory = undefined;
@@ -792,6 +793,10 @@ export class InvoiceCommunicationConfiguration {
 
     hasCommunication = () => {
         return !this.isNoSif() && (this.isTbai() || this.isLroe() || this.isVerifactu() || this.isNoVerifactu() || this.isSii() || this.isSif()); 
+    }
+
+    willBeCommunication = () => {
+        return this.willBeTbai() || this.willBeLroe() || this.willBeVerifactu() || this.willBeNoVerifactu() || this.willBeSii() || this.willBeSif();
     }
 
     // TO JSON

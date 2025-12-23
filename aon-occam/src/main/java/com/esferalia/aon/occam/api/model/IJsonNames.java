@@ -244,8 +244,9 @@ public final class IJsonNames {
 	public static final String EMAIL = "email";
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
-	public static final String END_DATE = "end_date";
-	public static final String END_COUNT = "end_count";
+	public static final String END_DATE = "endDate";
+	@Deprecated public static final String END_DATE2 = "end_date";
+	@Deprecated public static final String END_COUNT = "end_count";
 	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_CREATION_DATE = "entryCreationDate";
 	public static final String ENTRY_CREATION_USER = "entryCreationUser";	

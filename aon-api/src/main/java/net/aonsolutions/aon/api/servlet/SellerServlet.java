@@ -189,7 +189,7 @@ public class SellerServlet extends AonApiHttpServlet {
 		 RegistrySellerType type = RegistrySellerType.safeValueOf(api.getData().optString(IJsonNames.TYPE));
 		 RegistrySellerStatus status = RegistrySellerStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);
-		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);
+		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE2);
 		 
 		 
 		 List<RegistrySeller> registrySellers = new ArrayList<>();
@@ -249,7 +249,7 @@ public class SellerServlet extends AonApiHttpServlet {
 		RegistrySellerStatus status = RegistrySellerStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		
 		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);	//NULLABLE
-		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);		//NULLABLE
+		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE2);		//NULLABLE
 		if (sellerId > 0 && status != null) {
 			RegistrySeller rseller = new RegistrySeller()
 				.setId(rsellerId)
