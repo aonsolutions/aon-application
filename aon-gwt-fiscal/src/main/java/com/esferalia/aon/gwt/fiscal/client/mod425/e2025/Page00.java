@@ -158,7 +158,7 @@ class Page00 extends PageAbs {
 			.addCell(new Label("Declaraci\u00F3n sustitutiva por rectificaci\u00F3n de cuotas en caso de concurso de acreedores"), AON.CSS.aonWidth400())
 		 	.addCell(replacementDueInsolvencyState);
 		tab1.addRow()
-			.addCell(new Label(AON.MSG.replacedReceipt()), AON.CSS.aonWidth400())
+			.addCell(new Label("N\u00FAmero de justificante de la declaraci\u00F3n sustituida"), AON.CSS.aonWidth400())
 		 	.addCell(replacedReceipt);
 		
 		name.addValueChangeHandler(event ->{

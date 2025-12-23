@@ -336,9 +336,10 @@ public class Mod4252025DAO {
 		mod425.setComplementary(model.isComplementary());
 		mod425.setWithoutActivity(model.isWithoutActivity());
 		mod425.setDocument(model.getDocument());
-		mod425.setName(model.getName());
-		mod425.setFirstSurname(model.getFirstSurname());
-		mod425.setSecondSurname(model.getSecondSurname());
+//		mod425.setName(model.getName());
+//		mod425.setFirstSurname(model.getFirstSurname());
+//		mod425.setSecondSurname(model.getSecondSurname());
+		mod425.setName(model.getEnterpriseName());
 		mod425.setContactPhone(model.getContactPhone());
 		mod425.setReceipt(model.getReceipt());
 		mod425.setReplacedReceipt(model.getReplacedReceipt());

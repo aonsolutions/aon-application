@@ -13,11 +13,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
-class Page12 extends ResizeComposite {
+class Page07 extends ResizeComposite {
 	
 	FiscalModelAdmonPanel<Mod390, Model390ModuleOptions> admonPanel;
 
-	public Page12(final Model390Callback callback, final Model4252025Callback cbk2025) {
+	public Page07(final Model390Callback callback, final Model4252025Callback cbk2025) {
 		super();
 		
 		IFiscalModelAdmonPanelCallback<Mod390, Model390ModuleOptions> cbk = 

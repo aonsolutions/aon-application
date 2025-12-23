@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-class Page09 extends PageAbs {
+class Page06 extends PageAbs {
 
 	// Operaciones esecíficas
 	private AonDoubleBox box120 = new AonDoubleBox(); // 120 Operaciones en régimen general
@@ -46,7 +46,7 @@ class Page09 extends PageAbs {
 	private AonDoubleBox box146 = new AonDoubleBox(); // 146 Importe en el supuesto de transmisión de la totalidad o parte del patrimonio empresarial o profesional
 	private AonDoubleBox box147 = new AonDoubleBox(); // 147 Total volumen de operaciones en el REPEP
 
-	Page09(Model4252025Callback callback) {
+	Page06(Model4252025Callback callback) {
 		super(callback);
 		paint();
 		setValue();

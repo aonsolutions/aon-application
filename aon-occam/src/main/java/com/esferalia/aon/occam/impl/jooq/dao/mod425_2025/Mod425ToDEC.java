@@ -28,8 +28,12 @@ public class Mod425ToDEC {
 	}
 	
 	public static String getDeclaration(Mod4252025 mod425) throws JAXBException {
+		return getDeclaration(mod425, false);
+	}
+	
+	public static String getDeclaration(Mod4252025 mod425, boolean mustChangeCharacters) throws JAXBException {
 		System.out.println("Mod425ToDEC getDeclaration");
-		DEC dec = getDEC(mod425);
+		DEC dec = getDEC(mod425, mustChangeCharacters);
 		StringWriter writer = new StringWriter();
 		JAXBContext context = JAXBContext.newInstance(DEC.class);
 		Marshaller um = context.createMarshaller();
@@ -39,7 +43,7 @@ public class Mod425ToDEC {
 		return writer.toString();		
 	}
 
-	private static DEC getDEC(Mod4252025 mod) {
+	private static DEC getDEC(Mod4252025 mod, boolean mustChangeCharacters) {
 		
 		DEC dec = new DEC();
 		
@@ -57,13 +61,13 @@ public class Mod425ToDEC {
 			dec.setNJA(mod.getReplacedReceipt()); // Número anterior de justificante
 		}
 		
-		dec.setIDE(getIde(mod)); // Datos identificativos y opciones tributarias
-		dec.setEST(getEst(mod)); // Datos estadísticos
+		dec.setIDE(getIde(mod, mustChangeCharacters)); // Datos identificativos y opciones tributarias
+		dec.setEST(getEst(mod, mustChangeCharacters)); // Datos estadísticos
 		
-		addRepPF(dec.getREP(), mod.getAddress());    // Representante persona física
-		addRepPJ(dec.getREP(), mod.getLegalRepr1()); // Representante persona juridica (1)
-		addRepPJ(dec.getREP(), mod.getLegalRepr2()); // Representante persona juridica (2)
-		addRepPJ(dec.getREP(), mod.getLegalRepr3()); // Representante persona juridica (3)
+		addRepPF(dec.getREP(), mod.getAddress(), mustChangeCharacters);    // Representante persona física
+		addRepPJ(dec.getREP(), mod.getLegalRepr1(), mustChangeCharacters); // Representante persona juridica (1)
+		addRepPJ(dec.getREP(), mod.getLegalRepr2(), mustChangeCharacters); // Representante persona juridica (2)
+		addRepPJ(dec.getREP(), mod.getLegalRepr3(), mustChangeCharacters); // Representante persona juridica (3)
 
 		dec.setREG(getReg(mod)); // Régimen General
 		
@@ -83,7 +87,7 @@ public class Mod425ToDEC {
 	}
 	
 	//	Datos identificativos y opciones tributarias
-	private static TIDENTIGIC getIde(Mod4252025 mod) {
+	private static TIDENTIGIC getIde(Mod4252025 mod, boolean mustChangeCharacters) {
 
 		TIDENTIGIC ide = new TIDENTIGIC();
 		
@@ -92,14 +96,14 @@ public class Mod425ToDEC {
 		
 		DATOSPERSONALES dp = new DATOSPERSONALES();
 		dp.setNIF(mod.getDocument());                          // Nif de la persona
-		dp.setNRS(changeCharacters(mod.getName()));        	   // Nombre o razón social
-		dp.setSVP(changeCharacters(mod.getStreetInitial()));   // Siglas vía pública
-		dp.setNVP(changeCharacters(mod.getStreetName()));      // Nombre de la vía pública
-		dp.setNPK(changeCharacters(mod.getStreetNumber()));    // Número de edificio/pto kilométrico
-		dp.setESC(changeCharacters(mod.getStreetStair()));     // Escalera
-		dp.setPIS(changeCharacters(mod.getStreetFloor()));     // Piso
-		dp.setPUE(changeCharacters(mod.getStreetDoor()));      // Puerta
-		dp.setLOC(changeCharacters(mod.getTown()));            // Localidad
+		dp.setNRS(changeCharacters(mod.getName(), mustChangeCharacters));        	   // Nombre o razón social
+		dp.setSVP(changeCharacters(mod.getStreetInitial(), mustChangeCharacters));   // Siglas vía pública
+		dp.setNVP(changeCharacters(mod.getStreetName(), mustChangeCharacters));      // Nombre de la vía pública
+		dp.setNPK(changeCharacters(mod.getStreetNumber(), mustChangeCharacters));    // Número de edificio/pto kilométrico
+		dp.setESC(changeCharacters(mod.getStreetStair(), mustChangeCharacters));     // Escalera
+		dp.setPIS(changeCharacters(mod.getStreetFloor(), mustChangeCharacters));     // Piso
+		dp.setPUE(changeCharacters(mod.getStreetDoor(), mustChangeCharacters));      // Puerta
+		dp.setLOC(changeCharacters(mod.getTown(), mustChangeCharacters));            // Localidad
 		dp.setTEL(mod.getContactPhone());       	           // Teléfono
 //		dp.setMOV(mod.getContactCellular());                   // Teléfono móvil
 //		dp.setEMA(mod.getContactEmail());                      // Email
@@ -111,7 +115,7 @@ public class Mod425ToDEC {
 		return ide;
 	}
 	
-	private static TDATOSESTADISTICOS425 getEst(Mod4252025 mod) {
+	private static TDATOSESTADISTICOS425 getEst(Mod4252025 mod, boolean mustChangeCharacters) {
       	
 		TDATOSESTADISTICOS425 est = new TDATOSESTADISTICOS425();
 		est.setDTP(getSiNo(mod.isMod415())); 				// ¿Está obligado a presentar el modelo 415 por realizar operaciones con terceras personas por importe superior a 3.005,06 euros?
@@ -123,7 +127,7 @@ public class Mod425ToDEC {
 		if (AonStringUtils.isNotBlank(mod.getMergedDeclarationDocument()) && AonStringUtils.isNotBlank(mod.getMergedDeclarationName())) {
 			TDATOSPERSONALES dp = new TDATOSPERSONALES();
 			dp.setNIF(mod.getMergedDeclarationDocument());
-			dp.setNRS(changeCharacters(mod.getMergedDeclarationName()));
+			dp.setNRS(changeCharacters(mod.getMergedDeclarationName(), mustChangeCharacters));
 			est.setPER(dp);
 		}	
 		
@@ -159,7 +163,7 @@ public class Mod425ToDEC {
 	}
 	
 	// Añadir Representante persona física
-	private static void addRepPF(List<TREPRESENTANTE> repList, Address address) {
+	private static void addRepPF(List<TREPRESENTANTE> repList, Address address, boolean mustChangeCharacters) {
 		
 		if (address != null && AonStringUtils.isNotBlank(address.getRdocument()) && AonStringUtils.isNotBlank(address.getRname())) {
 			
@@ -169,16 +173,16 @@ public class Mod425ToDEC {
 			
 			TDATOSPERSONALES dp = new TDATOSPERSONALES();
 			dp.setNIF(address.getRdocument());                // Nif de la persona
-			dp.setNRS(changeCharacters(address.getRname()));  // Nombre o razón social
+			dp.setNRS(changeCharacters(address.getRname(), mustChangeCharacters));  // Nombre o razón social
 			
 			TDIRECCION dir = new TDIRECCION();
-			dir.setSVP(changeCharacters(address.getRstreetType()));      // Siglas vía pública
-			dir.setNVP(changeCharacters(address.getRstreetName()));      // Nombre de la vía pública
-			dir.setNPK(changeCharacters(address.getRstreetNumber()));    // Número de edificio/pto kilométrico
-			dir.setESC(changeCharacters(address.getRstreetStair()));     // Escalera
-			dir.setPIS(changeCharacters(address.getRstreetFloor()));     // Piso
-			dir.setPUE(changeCharacters(address.getRstreetDoor()));      // Puerta
-			dir.setLOC(changeCharacters(address.getRtown()));            // Localidad
+			dir.setSVP(changeCharacters(address.getRstreetType(), mustChangeCharacters));      // Siglas vía pública
+			dir.setNVP(changeCharacters(address.getRstreetName(), mustChangeCharacters));      // Nombre de la vía pública
+			dir.setNPK(changeCharacters(address.getRstreetNumber(), mustChangeCharacters));    // Número de edificio/pto kilométrico
+			dir.setESC(changeCharacters(address.getRstreetStair(), mustChangeCharacters));     // Escalera
+			dir.setPIS(changeCharacters(address.getRstreetFloor(), mustChangeCharacters));     // Piso
+			dir.setPUE(changeCharacters(address.getRstreetDoor(), mustChangeCharacters));      // Puerta
+			dir.setLOC(changeCharacters(address.getRtown(), mustChangeCharacters));            // Localidad
 			dir.setPOP(AonFiscalFileUtils.unsigned(address.getRprovince(), 2)); // Código de provincia
 			dir.setCMU(address.getRtownCode());                          // Código de municipio	
 			dir.setCP(address.getRzip());                                // Código Postal
@@ -196,7 +200,7 @@ public class Mod425ToDEC {
 	}
 	
 	// Añadir Representante persona jurídica
-	private static void addRepPJ(List<TREPRESENTANTE> repList, LegalRepresentative legalRepr) {
+	private static void addRepPJ(List<TREPRESENTANTE> repList, LegalRepresentative legalRepr, boolean mustChangeCharacters) {
 		
 		if (legalRepr != null && AonStringUtils.isNotBlank(legalRepr.getDocument()) && AonStringUtils.isNotBlank(legalRepr.getName())) {
 			
@@ -208,7 +212,7 @@ public class Mod425ToDEC {
 			
 			TDATOSPERSONALES dp = new TDATOSPERSONALES();
 			dp.setNIF(legalRepr.getDocument());                // Nif de la persona
-			dp.setNRS(changeCharacters(legalRepr.getName()));  // Nombre o razón social
+			dp.setNRS(changeCharacters(legalRepr.getName(), mustChangeCharacters));  // Nombre o razón social
 			
 			TPERSONA per = new TPERSONA();
 			per.setPER(dp);
@@ -493,19 +497,22 @@ public class Mod425ToDEC {
 		return AonFiscalFileUtils.signed(amount, ' ', '-', 4).trim();
 	}
 	
-	// FALTA - VER SI ES NECESARIO, PUES SE GUARDARAN ASI EN LA BASE DE DATOS
 	// CAMBIAR CARACTERES NO PERMITIDOS (ACENTOS, &, ', ETC.) Y PONER EN MAYUSCULAS
-	private static String changeCharacters(String fileString) {
+	private static String changeCharacters(String fileString, boolean mustChangeCharacters) {
 		fileString = AonStringUtils.trimToEmpty(fileString);
 		fileString = AonStringUtils.upperCase(fileString);
-//		fileString = fileString.replace("'", " ");
-//		fileString = fileString.replace("&", "Y");	
-//		fileString = fileString.replace("Á", "A");
-//		fileString = fileString.replace("É", "E");
-//		fileString = fileString.replace("Í", "I");
-//		fileString = fileString.replace("Ó", "O");
-//		fileString = fileString.replace("Ú", "U");
-//		fileString = fileString.replace("Ü", "U");		
+		// Estos caracteres se cambian solo cuando se envía a los modulos de impresión de la ATC, 
+		// no cuando se usa para guardar la declaración en la base de datos
+		if (mustChangeCharacters) {
+			fileString = fileString.replace("'", " ");
+			fileString = fileString.replace("&", "Y");	
+			fileString = fileString.replace("Á", "A");
+			fileString = fileString.replace("É", "E");
+			fileString = fileString.replace("Í", "I");
+			fileString = fileString.replace("Ó", "O");
+			fileString = fileString.replace("Ú", "U");
+			fileString = fileString.replace("Ü", "U");
+		}
 		return fileString;
 	}
 

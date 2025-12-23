@@ -11,12 +11,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
-//import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-//import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-//import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.mod425.Mod4252025;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -358,8 +355,8 @@ public class Model4252025 extends DockLayoutPanel {
 		AonLink page03Link = new AonLink(AON.MSG.generalRegimeOperations()); 	// Operaciones realizadas en el Regimen General
 		AonLink page04Link = new AonLink(AON.MSG.simplifiedRegimeOperations()); // Operaciones realizadas en el Regimen Simplificado
 		AonLink page05Link = new AonLink(AON.MSG.annualLiquidationResult()); 	// Resultado Liquidacion Anual y de las Autoliquidaciones
-		AonLink page09Link = new AonLink(AON.MSG.specificOperations());		   	// Operaciones Especificas, Operaciones RECC, Operaciones REPEP
-		AonLink page12Link = new AonLink("Agencia Tributaria Canaria");;		// Agencia Tributaria Canaria (Información)
+		AonLink page06Link = new AonLink(AON.MSG.specificOperations());		   	// Operaciones Especificas, Operaciones RECC, Operaciones REPEP
+		AonLink page07Link = new AonLink("Agencia Tributaria Canaria");;		// Agencia Tributaria Canaria (Información)
 		
 		pageLinks.add(page00Link);
 		pageLinks.add(page01Link);
@@ -367,8 +364,8 @@ public class Model4252025 extends DockLayoutPanel {
 		pageLinks.add(page03Link);
 		pageLinks.add(page04Link);
 		pageLinks.add(page05Link);
-		pageLinks.add(page09Link);
-		pageLinks.add(page12Link);
+		pageLinks.add(page06Link);
+		pageLinks.add(page07Link);
 		
 		Model4252025Callback cbk = new Model4252025Callback();
 		page00Link.addClickHandler(event -> showContent(pageLinks, 0, new Page00(cbk), false)); 
@@ -377,8 +374,8 @@ public class Model4252025 extends DockLayoutPanel {
 		page03Link.addClickHandler(event -> showContent(pageLinks, 3, new Page03(cbk), false));
 		page04Link.addClickHandler(event -> showContent(pageLinks, 4, new Page04(cbk), false));
 		page05Link.addClickHandler(event -> showContent(pageLinks, 5, new Page05(cbk), false));
-		page09Link.addClickHandler(event -> showContent(pageLinks, 9, new Page09(cbk), false));
-		page12Link.addClickHandler(event -> showContent(pageLinks,12, new Page12(getCallback(), cbk), false));
+		page06Link.addClickHandler(event -> showContent(pageLinks, 6, new Page06(cbk), false));
+		page07Link.addClickHandler(event -> showContent(pageLinks, 7, new Page07(getCallback(), cbk), false));
 		
 		scrollPanel.add(pageLinks);
 		if (pageSelected == -1) {
@@ -387,10 +384,10 @@ public class Model4252025 extends DockLayoutPanel {
 		return scrollPanel;
 	}
 	
-	private void showContent( FlowPanel pageLinks,int idx, Widget page, boolean scroll) {
-		if (idx != 	pageSelected) {
+	private void showContent(FlowPanel pageLinks, int idx, Widget page, boolean scroll) {
+		if (idx != pageSelected) {
 			pageSelected = idx;
-			for ( int i = 0; i < pageLinks.getWidgetCount(); i++) {
+			for (int i = 0; i < pageLinks.getWidgetCount(); i++) {
 				if (i == pageSelected) {
 					pageLinks.getWidget(i).addStyleName(AON.CSS.aonBackgroundLigthGray());
 				} else {

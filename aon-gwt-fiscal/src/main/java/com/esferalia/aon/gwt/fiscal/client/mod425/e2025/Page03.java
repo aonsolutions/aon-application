@@ -202,9 +202,12 @@ public class Page03 extends PageAbs  {
 							if (!key.isReadonly()) {
 								final double percent = det.getPercent();
 								fields.getBaseBox().addValueChangeHandler(event -> {
+									if (fields.getBaseBox().getValue() == null) 
+										fields.getBaseBox().setValue(0.0, false);
 									fields.getDetail().setTaxableBase(fields.getBaseBox().getValue());
 									if  (percent != 0.0 && fields.getDetail().getQuota() == 0) {
-										if (fields.getQuotaBox().getValue()==null) fields.getQuotaBox().setValue(0.0, false);
+										if (fields.getQuotaBox().getValue() == null) 
+											fields.getQuotaBox().setValue(0.0, false);
 										fields.setQuotaBox( AonMathUtils.round( fields.getBaseBox().getValue() * percent / 100), true );
 									}
 									getModel().getGeneralRegime().put(key, fields.getDetail());
@@ -264,6 +267,8 @@ public class Page03 extends PageAbs  {
 							fields.getQuotaBox().setEnabled(!key.isReadonly());
 							if (!key.isReadonly()) {
 								fields.getQuotaBox().addValueChangeHandler(event -> {
+									if (fields.getQuotaBox().getValue() == null) 
+										fields.getQuotaBox().setValue(0.0, false);
 									fields.getDetail().setQuota(fields.getQuotaBox().getValue());
 									getModel().getGeneralRegime().put(key, fields.getDetail());
 									markAsDirty();
@@ -309,7 +314,7 @@ public class Page03 extends PageAbs  {
 				Mod425Detail detail = getModel().getGeneralRegime().get(key);
 				Mod425DetailFields fields = map.get(key);
 				if (fields.getBaseBox().getValue() != null 
-						&& key.hasTaxableBaseAvailable() 
+						&& (key.hasTaxableBaseAvailable() || key == Mod4252025DetailKey.C074) 
 						&& !AonMathUtils.equals(fields.getBaseBox().getValue(),detail.getTaxableBase())) {
 					fields.setBaseBox(detail.getTaxableBase(),true);	
 				}

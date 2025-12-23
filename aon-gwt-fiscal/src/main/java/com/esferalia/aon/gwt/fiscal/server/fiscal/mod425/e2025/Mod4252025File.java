@@ -36,7 +36,7 @@ public class Mod4252025File extends HttpServlet {
 			System.out.println("PASO 1");
 			
 			// Obtener el XML
-			String xml = Mod425ToDEC.getDeclaration(mod425);
+			String xml = Mod425ToDEC.getDeclaration(mod425, true);
 			
 			System.out.println("PASO 2. xml="+xml);
 			
