@@ -901,8 +901,15 @@ export class AonHeader extends AonElement {
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
 				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
+				if ( name ) return true;
 				const document = AonStringUtils.containsMatching(company?.document,aonHeaderSearchBoxValue);
-				return document || name;
+				if ( document ) return true;
+				const email = company?.emails?.some(email => AonStringUtils.containsMatching(email,aonHeaderSearchBoxValue));
+				if ( email ) return true;
+				const phone = company?.phones?.some(phone => AonStringUtils.containsMatching(phone,aonHeaderSearchBoxValue));
+				if ( phone ) return true;
+				
+				return false;
 			});
 		
 			let searchOptions = [];
@@ -917,11 +924,13 @@ export class AonHeader extends AonElement {
 
 				const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
 				const companyDocument = this.decorateMatching(company.document, aonHeaderSearchBoxValue);
+				const companyEmail = this.decorateMatching(company.emails.find(email => AonStringUtils.containsMatching(email, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
+				const companyPhone = this.decorateMatching(company.phones.find(phone => AonStringUtils.containsMatching(phone, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
 				
 				searchOptions.push({
 					id: `Company${company.id}`,
 					icon: aonHeader.getIcon(company),
-					name: `<span>${companyName}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+					name: `<span>${companyName}&nbsp;${companyEmail}&nbsp;${companyPhone}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
 					title: `${company.domain}`,
 					fn: () => { aonHeader.companySelection(company); },
 				});

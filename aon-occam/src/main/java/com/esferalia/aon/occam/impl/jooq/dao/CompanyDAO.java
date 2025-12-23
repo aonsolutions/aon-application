@@ -65,6 +65,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CompanyDAO {
 	
+	
 	private CompanyDAO() {
 	}
 
@@ -76,6 +77,9 @@ public class CompanyDAO {
 		}
 		
 		protected Condition[] getConditions(CompanyFilter filter) {
+			if (filter == null){
+				return new Condition[0];
+			}
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null){
 				return new Condition[0];
@@ -97,6 +101,7 @@ public class CompanyDAO {
 	}
 	
 	public static class CompanyFiller implements Function<Record, Company> {
+		
 		@Override
 		public Company apply(Record r) {
 			return buildCompany(r, REGISTRY);
@@ -381,14 +386,34 @@ public class CompanyDAO {
 	}
 	
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
+		return getCompanyStream(ctx, auth, null, page, perPage);
+	}
+	
+	
+	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
 		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		com.esferalia.aon.jooq.tables.Rmedia email = RMEDIA.as("email");
+		com.esferalia.aon.jooq.tables.Rmedia phone = RMEDIA.as("phone");
 		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
 		
-		return ctx.getDslContext().select()
+		SelectSeekStep1<Record, String> query = 
+			ctx.getDslContext()
+			.select(COMPANY.fields())
+			.select(REGISTRY.fields())
+			.select(domain.fields())
+			.select(USER.fields())
+			.select(SCOPE.fields())
+			.select(APP_PARAM.fields())
+			.select(parent.fields())
+			.select(payer.fields())
+//TODO			.select(DSL.groupConcatDistinct(phone.VALUE).as(AonCompanyFiller.PHONES))
+//TODO			.select(DSL.groupConcatDistinct(email.VALUE).as(AonCompanyFiller.EMAILS))
+			.select(DSL.field("GROUP_CONCAT(DISTINCT `phone`.`value` SEPARATOR ',')").as(AonCompanyFiller.PHONES))
+			.select(DSL.field("GROUP_CONCAT(DISTINCT `email`.`value` SEPARATOR ',')").as(AonCompanyFiller.EMAILS))
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
@@ -397,68 +422,31 @@ public class CompanyDAO {
 			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
 			.leftOuterJoin(payer).on(domain.ID.eq(payer.DOMAIN).and(payer.NAME.eq(AppParam.AON_DOMAIN_PAYER.getValue())))
-			.where(
-				USER.AUTH.eq(auth)
-				.and(
-					domain.ID.in(domains)
-					.or(
-						domain.PARENT.in(domains)
-						.and(
-							domain.SCOPE.isNull()
-							.or(domain.SCOPE.in(userScopes))
-						)
-					)
-				)
-			)
-			//.orderBy(REGISTRY.NAME)
-			.limit(perPage)
-			.offset(( page -1 ) * perPage)
-			.fetch().stream().map(new AonCompanyFiller());
-	}
-	
-	
-	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-		com.esferalia.aon.jooq.tables.AppParam payer = APP_PARAM.as("payer");
-		
-		Integer[] userScopes = AuthDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
-		
-		SelectSeekStep1<Record, String> query = ctx.getDslContext()
-		.select(COMPANY.fields())
-		.select(DOMAIN.fields())
-		.select(REGISTRY.fields())
-		.select(REGISTRY.fields())
-		.select(parent.ID, parent.NAME)
-		.select(USER.SHARED)
-		.select(APP_PARAM.VALUE)
-		.from(COMPANY)
-		.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-		.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
-		.join(USER).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
-		.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
-		.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
-		.leftOuterJoin(parent).on(DOMAIN.PARENT.eq(parent.ID))
-		.leftOuterJoin(payer).on(DOMAIN.ID.eq(payer.DOMAIN).and(payer.NAME.eq(AppParam.AON_DOMAIN_PAYER.getValue())))
+			.leftOuterJoin(email).on(COMPANY.REGISTRY.eq(email.REGISTRY).and(email.MEDIA.eq(MediaType.EMAIL.value())))
+			.leftOuterJoin(phone).on(COMPANY.REGISTRY.eq(phone.REGISTRY).and(phone.MEDIA.in(MediaType.FIXED_PHONE.value(), MediaType.CELLULAR.value(), MediaType.FAX.value())))
 		.where(COMPANY_PROPERTIES.getConditions(filter))
 		.and(
 			USER.AUTH.eq(auth)
 			.and(
-				DOMAIN.ID.in(domains)
+				domain.ID.in(domains)
 				.or(
-					DOMAIN.PARENT.in(domains)
+					domain.PARENT.in(domains)
 					.and(
-						DOMAIN.SCOPE.isNull()
-						.or(DOMAIN.SCOPE.in(userScopes))
+						domain.SCOPE.isNull()
+						.or(domain.SCOPE.in(userScopes))
 					)
 				)
 			)
 		)
-		.orderBy(REGISTRY.NAME);
+		.groupBy(COMPANY.REGISTRY)
+		.orderBy(REGISTRY.NAME)
+		;
 			
 		if(page!=null && perPage!=null) {
 			query.limit(perPage).offset(perPage * (page -1));
 		}
+		
+		System.out.println(query.getSQL());
 		
 		return query.fetch().stream().map(new AonCompanyFiller());
 	}
