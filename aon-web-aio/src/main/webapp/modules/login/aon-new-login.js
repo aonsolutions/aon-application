@@ -88,17 +88,17 @@ export class AonNewLogin extends AonElement {
     loginContent.style.height = "100%";
     loginContent.style.justifyContent = "center";
     
+    let loginDivForm = this.createElement(TAG.DIV);
+    loginDivForm.id = "loginDivForm";
+    loginDivForm.className = CSS.AON_LOGIN_FORM;
+    loginContent.appendChild(loginDivForm);
+    
     let welcomeImg = this.createElement(TAG.IMG);
 	welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
 	this.getWelcomeImage().then( img => welcomeImg.src = img );
 	this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 	welcomeImg.classList.add(CSS.AON_WELCOME_LOGO_LOGIN);
-	loginContent.appendChild(welcomeImg);
-
-    let loginDivForm = this.createElement(TAG.DIV);
-    loginDivForm.id = "loginDivForm";
-    loginDivForm.className = CSS.AON_LOGIN_FORM;
-    loginContent.appendChild(loginDivForm);
+	loginDivForm.appendChild(welcomeImg);
 
     this.createTitlePanel(loginDivForm, MSG.LOGIN, MSG.LOGIN_SUBTITLE);
 
@@ -355,8 +355,8 @@ export class AonNewLogin extends AonElement {
   languageDialog() {
     let divLanguage = this.getElement("aonLoginLanguageDivToolbar");
     let spanLanguage = this.getElement("aonLoginLanguageSpanToolbar");
-    const top = spanLanguage.getBoundingClientRect().top + 25;
-    const left = spanLanguage.getBoundingClientRect().left;
+    const top = spanLanguage.getBoundingClientRect().top;
+    const left = spanLanguage.getBoundingClientRect().left + 25;
     let d = this.getElement("aonHeaderDialogHelpOption");
     if (!d) {
       d = new AonDialogMenu();

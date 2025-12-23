@@ -280,6 +280,19 @@
       <version>1.12.792</version>
 	  <scope>compile</scope>
     </dependency>
+    <dependency>
+    	<groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+		<version>2.20.0</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-annotations</artifactId>
+		<version>2.20</version>
+		<scope>compile</scope>
+	</dependency>
+	
     
     <!-- TEST DEPENDENCIES -->
 	<dependency>
