@@ -106,7 +106,7 @@
 											<aon:commandLink id="gwt_mod303-new" 
 												rendered="#{actionDenied.renderedOption('gwt_mod303-new')}"
 												action="gwt_mod303-new"
-												title="#{bundle.fiscal_model_303_module}"
+												title="#{fiscalParams.aeat and fiscalParams.canarias ? 'IVA / IGIC. Autoliquidaci&#243;n.' : fiscalParams.canarias ? 'IGIC. Autoliquidaci&#243;n.' : 'IVA. Autoliquidaci&#243;n.' }"
 												styleClass="aon-menu-fiscal">
 												<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
@@ -127,7 +127,7 @@
 													styleClass="aon-menu-fiscal-model aon-menu-icon-canarias"
 													value="420/417" />
 												<aon:outputText styleClass="aon-menu-fiscal-label"
-													value="IVA. Autoliquidaci&#243;n." />
+													value="#{fiscalParams.aeat and fiscalParams.canarias ? 'IVA / IGIC. Autoliquidaci&#243;n.' : fiscalParams.canarias ? 'IGIC. Autoliquidaci&#243;n.' : 'IVA. Autoliquidaci&#243;n.' }" />
 											</aon:commandLink>
 										</aon:div>
 										
@@ -257,22 +257,24 @@
 												<aon:outputText rendered="#{fiscalParams.navarra}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
 													value="349" />													
-												<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.canarias}" 
+													styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" 
+													value="&#160;"/>
 												<aon:outputText styleClass="aon-menu-fiscal-label"
 													value="#{bundle.fiscal_model_349_module}" />
 											</aon:commandLink>
 										</aon:div>
 										
 										<!-- *********************** [MODELO 390] -->
-										<aon:div rendered="#{fiscalParams.aeat}">
+										<aon:div rendered="#{fiscalParams.aeat || fiscalParams.canarias}">
 											<aon:commandLink id="gwt_mod390-new" 
 												rendered="#{actionDenied.renderedOption('gwt_mod390-new')}"
 												action="gwt_mod390-new"
-												title="#{bundle.fiscal_model_390_module}"
+												title="#{fiscalParams.aeat and fiscalParams.canarias ? 'Declaraci&#243;n resumen anual IVA / IGIC' : fiscalParams.canarias ? 'Declaraci&#243;n resumen anual IGIC' : bundle.fiscal_model_390_module}"
 												styleClass="aon-menu-fiscal">
-												<aon:outputText rendered="#{fiscalParams.aeat}"
+												<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
-													value="390" />
+													value="#{fiscalParams.aeat?'390':'&#160;'}" />
 												<aon:outputText rendered="#{fiscalParams.araba}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-araba"
 													value="&#160;" />
@@ -285,9 +287,11 @@
 												<aon:outputText rendered="#{fiscalParams.navarra}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
 													value="&#160;" />
-												<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.canarias}" 
+													styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" 
+													value="425"/>
 												<aon:outputText styleClass="aon-menu-fiscal-label"
-													value="#{bundle.fiscal_model_390_module}" />
+													value="#{fiscalParams.aeat and fiscalParams.canarias ? 'Declaraci&#243;n resumen anual IVA / IGIC' : fiscalParams.canarias ? 'Declaraci&#243;n resumen anual IGIC' : bundle.fiscal_model_390_module}" />
 											</aon:commandLink>
 										</aon:div>
 

@@ -54,7 +54,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 	}
 	
 	private Widget getToolbarPanel(Model390Callback cbk) {
-		AonToolbar toolbar = new AonToolbar( "Modelo 390");
+		AonToolbar toolbar = new AonToolbar( "Declaraci\u00F3n Resumen Anual IVA / IGIC");
 		
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler( event -> cbk.onNew( ));
