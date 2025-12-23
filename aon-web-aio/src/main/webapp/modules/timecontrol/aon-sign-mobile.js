@@ -7,6 +7,8 @@ import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import * as LS from "../../services/localStorageService.js";
+import { AonDialog } from '../../components/aon-dialog.js';
+import { createSelect } from '../../components/CreateComponent.js';
 
 export class AonSignMobile extends AonElement {
   _taskHolders;
@@ -125,6 +127,7 @@ export class AonSignMobile extends AonElement {
     divGeneral.appendChild(div);
 
     if(this.tc){
+	  //console.log("build initial TC", this.tc);
       this.buildSignin(this.tc);
     }
   }
@@ -132,24 +135,24 @@ export class AonSignMobile extends AonElement {
   entrada() {
     let content = this.getElement(this.CONTENT);
 		if(content){
-      this.clearElement(content);
-      let button = this.createElement(TAG.BUTTON);
-      button.id = this.id+"Entrada";
-      button.className = 'aonButton';
-      button.classList.add('aonTimeControlButton');
-      button.style.backgroundColor = '#86D364';
-      button.innerHTML = MSG.ENTRY.toUpperCase();
-      
-      if(this.isMobile()){
-        //button.style.width = "120%";
-        button.style.borderRadius = "12px";
-      }
-      button.addEventListener(EVENT.CLICK, (event) => {
-		event.stopPropagation();
-		this.saveTimeCtrl('in');
-	 });
-      content.appendChild(button);
-    }
+	      this.clearElement(content);
+	      let button = this.createElement(TAG.BUTTON);
+	      button.id = this.id+"Entrada";
+	      button.className = 'aonButton';
+	      button.classList.add('aonTimeControlButton');
+	      button.style.backgroundColor = '#86D364';
+	      button.innerHTML = MSG.ENTRY.toUpperCase();
+	      
+	      if(this.isMobile()){
+	        //button.style.width = "120%";
+	        button.style.borderRadius = "12px";
+	      }
+	      button.addEventListener(EVENT.CLICK, (event) => {
+			event.stopPropagation();
+			this.saveTimeCtrl('in');
+		 });
+	      content.appendChild(button);
+	    }
 	}
 
   vuelta() {
@@ -181,7 +184,7 @@ export class AonSignMobile extends AonElement {
 		button2.style.backgroundColor = '#86D364';
 		button2.innerHTML = 'VUELTA';
 		button2.addEventListener(EVENT.CLICK, (event) => {
-		event.stopPropagation();
+			event.stopPropagation();
 			this.saveTimeCtrl('in');
 		});
 
@@ -248,33 +251,116 @@ export class AonSignMobile extends AonElement {
       this.showToast(error);
     }); 
     
+    //console.log('saveTimeCtrl : ', signin);
+    
     if(this.isBeta() && this.isMobile()){
 		if(signin.status == 'out'){
 			const resp = await saveTimeControl(signin);
-
-			if(timeOutPosition && this.isMobile() && resp && resp.id){
-			  getPosition()
-			  .then(position=>{
-			    if(position){
-			      r.coordinates = position.latitude + ',' + position.longitude;
-			      saveTimeControl({...resp, ...signin})
-			      .then(console.log)
-			      .catch(console.error);
-			    }
-			  })
-			  .catch(console.error);
-			}
-			
+			this.setTimeControl(resp);
 			this.buildSignin(resp);
 		} else {
-			let aonMobileMenu = this.getElement('aonMobileMenu');
-			aonMobileMenu.removeEventListener(EVENT.CLOSE_DIALOG, () => this.disabledButton(false));
-			aonMobileMenu.addEventListener(EVENT.CLOSE_DIALOG, () => this.disabledButton(false));
+		  let dialog = new AonDialog();
+		  dialog.id = "timeControlReasonDialog";
+		  this.appendChild(dialog);
+		    
+		  dialog.autoclose = false;
+		  dialog.type = "fullscreen";
+		    
+		  dialog.clear();
+		  
+		  let reasonTitle = !signin || !signin.status ? 'N/D' : signin.status === 'in' ? 'Entrada' : 'Pausa'
+		  dialog.setTitle(`Motivo ${reasonTitle}`); 
+		  
+		  let content = document.createElement(TAG.DIV);
+		  
+		  content.style.display = "flex";
+		  content.style.flexDirection = "column";
+		  content.style.margin = ".5rem 0 2rem";
+		  content.style.height = '10rem';
+		  content.style.overflow = 'scroll';
+		  dialog.setContent(content);
 			
-			aonMobileMenu.timeControlReason(signin, 
-			(event) => {
-				this.selectReason(event, signin, timeOutPosition);
+		 let options = !signin || !signin.status 
+			? 
+				[]
+			:   signin.status === 'in'
+					?
+						[{
+							name: 'Presencial',
+							value: '0'
+						},
+						{
+							name: 'Teletrabajo',
+							value: '1'
+						},
+						{
+							name: 'Desplazado',
+							value: '2'
+						}]
+					: signin.status === 'pause'
+						?
+							[{
+								name: 'Descanso',
+								value: '0'
+							},
+							{
+								name: 'Consulta Médico',
+								value: '1'
+							},
+							{
+								name: 'Funciones Inexcusables',
+								value: '2'
+							},
+							{
+								name: 'Hospitalización hijo prematuro',
+								value: '3'
+							},
+							{
+								name: 'Lactancia',
+								value: '4'
+							},
+							{
+								name: 'Motivos familiares urgentes',
+								value: '5'
+							}]
+						:
+							[]
+			;
+			
+			let reason = createSelect('timeControlReason', 'Motivo');
+			reason.autocomplete = false;
+			reason.readonly = false;
+			
+			// Default value
+			//streetTypeSelect.value = 'undefined';
+			
+			['click', 'mousedown', 'pointerdown'].forEach(evt => {
+			  content.addEventListener(evt, e => e.stopPropagation());
 			});
+			
+			['click', 'mousedown', 'pointerdown'].forEach(evt => {
+			  reason.addEventListener(evt, e => e.stopPropagation());
+			});
+			
+			reason.addEventListener(EVENT.SELECT, (e) => {
+			  e.stopPropagation();
+			  this.selectReason(e, signin, timeOutPosition);
+			  dialog.close();
+				this.removeChild(dialog);
+			});
+			
+			content.appendChild(reason);
+			
+			reason.setOptions(options);
+			
+			dialog.addCancelAction((e) => {
+				e.stopPropagation();
+				this.disabledButton(false);
+				this.removeChild(dialog);
+			});
+			
+			dialog.open();
+	      
 		}	
 	} else {
 		const resp = await saveTimeControl(signin);
@@ -296,13 +382,8 @@ export class AonSignMobile extends AonElement {
 	}
   }
   
-  async buildSigninTimeControl(tc) {	
-    console.log('buildSigninTimeControl this.tc : ', tc);
-	this.buildSignin(tc);
-  }
-  
   async selectReason(event, signin, timeOutPosition) {	
-	console.log('selected Reason : ', signin, event);
+	//console.log('selected Reason : ', signin, event);
 			  	
   	const resp = await saveTimeControl(signin);
 
@@ -337,6 +418,7 @@ export class AonSignMobile extends AonElement {
   }
 
   buildSignin(signin) {
+	//console.log("buildSignin", signin);
     this._taskHolder = signin.task_holder.id;
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
