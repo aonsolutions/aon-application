@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.json.ApiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.PersonJSON;
 import com.esferalia.aon.occam.api.json.TaxJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceCommunicationConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -688,10 +689,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		List<RegistryAdditionalInfo> rais = new LinkedList<>();
 		rais.add(RegistryAdditionalInfo.BANKS);
 		JSONObject companyJSON = RegistryServlet.getRegistryAdditionalInfo(CompanyJSON.toJSON(company), api, api.getData(), company.getId(), rais);;
-		
+		Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
+		JSONObject personJSON = PersonJSON.toJSON(person);
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.PRINT, getPrintConfiguration(api));
 		json.put(IJsonNames.COMPANY, companyJSON);
+		json.put(IJsonNames.PERSON, personJSON);
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put(IJsonNames.COMMUNICATION, getInvoiceCommunicationConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));

@@ -139,49 +139,58 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(document, 1).style.height = '50px';
 
         if(isPersonaFisica(this.configuration.company.document)) {
-            let nameValue = this.configuration.company.person ? this.configuration.company.person.name : this.configuration.company.name;
-            let surname1Value = this.configuration.company.person && this.configuration.company.person.surname1
-                ? this.configuration.company.person.surname1 : '';
-            let surname2Value = this.configuration.company.person && this.configuration.company.person.surname2 
-                ? this.configuration.company.person.surname2 : '';
-            let disabled = (!surname1Value || surname1Value != '') && (!surname2Value || surname2Value != '');
+            let nameValue = this.configuration.person && this.configuration.person.firstSurname 
+                ? this.configuration.person.firstName : this.configuration.company.name;
+            let surname1Value = this.configuration.person && this.configuration.person.firstSurname
+                ? this.configuration.person.firstSurname : '';
+            let surname2Value = this.configuration.person && this.configuration.person.secondSurname 
+                ? this.configuration.person.secondSurname : '';
             let name = createInput(this.id + 'personName', MSG.NAME);
             name.setValue(nameValue);
-            name.disabled = disabled;
-            name.readonly = disabled;
-            if(!disabled) { 
-                name.addEventListener(EVENT.CHANGE, () => {
-                    this.configuration.company.person.name = name.value;
-                    this.dispatchEvent(new Event(EVENT.CHANGE));
-                });
-            }
+            name.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.firstName = name.value;
+                this.configuration.company.person.name = name.value;
+                name.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
+          
             table.addCell(name, 1).style.height = '50px';
-
+            if(nameValue === '') {
+                name.addError('Este campo es obligatorio');
+            }
             table.addRow();
 
             let surname1 = createInput(this.id + 'personSurname1', MSG.SURNAME + ' 1');
             surname1.setValue(surname1Value);
-            surname1.disabled = disabled;
-            surname1.readonly = disabled;
-            if(!disabled) {
-                surname1.addEventListener(EVENT.CHANGE, () => {
-                    this.configuration.company.person.surname1 = surname1.value;
-                    this.dispatchEvent(new Event(EVENT.CHANGE));
-                });
-            }
+            surname1.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.firstSurname = surname1.value;
+                this.configuration.company.person.surname1 = surname1.value;
+                surname1.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
             table.addCell(surname1, 1).style.height = '50px';
+            if(surname1Value === '') {
+                surname1.addError('Este campo es obligatorio');
+            }
 
             let surname2 = createInput(this.id + 'personSurname2', MSG.SURNAME + ' 2');
             surname2.setValue(surname2Value);
-            surname2.disabled = disabled;
-            surname2.readonly = disabled;
-            if(!disabled) {
-                surname2.addEventListener(EVENT.CHANGE, () => {
-                    this.configuration.company.person.surname2 = surname2.value;
-                    this.dispatchEvent(new Event(EVENT.CHANGE));
-                });
-            }
+            surname2.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.secondSurname = surname2.value;
+                this.configuration.company.person.surname2 = surname2.value;
+                surname2.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
             table.addCell(surname2, 1).style.height = '50px';
+            if(surname2Value === '') {
+                surname2.addError('Este campo es obligatorio');
+            }
 
             table.addRow();
         } else {
@@ -196,17 +205,20 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildAdministration(table) {
+        const enterprise = this.configuration.company.id;
         let administration = createSelect(this.ADMINISTRATION, 'Administración');
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
         administration.setValue(this.communicationConfiguration.getAdministration().value);
         administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
         administration.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setAdministration(new Administration(administration.value));
+            this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
-
+        if(this.communicationConfiguration.getAdministration().isUnknown()) {
+            administration.addError('Debe seleccionar una administración');
+        }
         table.addRow();
     }
 

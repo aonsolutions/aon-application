@@ -114,7 +114,7 @@ export class InvoiceCommunicationConfiguration {
         return this._administration || this.administration;
     }
 
-    setAdministration = (administration) => {
+    setAdministration = (administration, enterprise) => {
         if(administration instanceof Administration && administration.value != this.administration.value) {
             this._administration = administration;
             this._administrationHistory = this.endHistory(this.administrationHistory);
@@ -256,6 +256,7 @@ export class InvoiceCommunicationConfiguration {
         } else if(!tbai && this.isTbai()) {
             this.tbaiData = undefined;
             this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
+            this.undefinedHistories([CONSTANT.TBAI, CONSTANT.SII]);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }
@@ -330,6 +331,7 @@ export class InvoiceCommunicationConfiguration {
         } else if(!lroe && this.isLroe()) {
             this.lroeData = undefined;
             this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
+            this.undefinedHistories([CONSTANT.LROE]);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }
@@ -404,6 +406,7 @@ export class InvoiceCommunicationConfiguration {
          } else if(!verifactu && this.isVerifactu()) {
             this.verifactuData = undefined;
             this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
+            this.undefinedHistories([CONSTANT.VERIFACTU]);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }
@@ -484,8 +487,6 @@ export class InvoiceCommunicationConfiguration {
             this.noVerifactuData = undefined;
             this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
             this.undefinedHistories([CONSTANT.NO_VERIFACTU]);
-
-
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }
@@ -560,6 +561,7 @@ export class InvoiceCommunicationConfiguration {
         } else if(!sii && this.isSii()) {
             this.siiData = undefined;
             this._siiDataHistory = this.endHistory(this.siiDataHistory);
+            this.undefinedHistories([CONSTANT.SII, CONSTANT.TBAI]);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }
@@ -634,6 +636,7 @@ export class InvoiceCommunicationConfiguration {
         } else if(!sif && this.isSif()) {
             this.sifData = undefined;
             this._sifDataHistory = this.endHistory(this.sifDataHistory);
+            this.undefinedHistories([CONSTANT.SIF]);
         }
     }
     
@@ -698,6 +701,7 @@ export class InvoiceCommunicationConfiguration {
         } else if(!noSif && this.isNoSif()) {
             this.noSifData = undefined;
             this._noSifDataHistory = this.endHistory(this.noSifDataHistory);
+            this.undefinedHistories([CONSTANT.NO_SIF]);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise);
             }

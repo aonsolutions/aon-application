@@ -67,8 +67,8 @@ public class InvoiceCommunicationConfigurationJSON {
 			.put(IJsonNames.VERIFACTU_DATA, EnterpriseDataJSON.toJSON(config.getVerifactuData()))
 			.put(IJsonNames.VERIFACTU_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getVerifactuDataHistory()))
 			
-			.put(IJsonNames.NO_VERIFACTU_DATA, EnterpriseDataJSON.toJSON(config.getVerifactuData()))
-			.put(IJsonNames.NO_VERIFACTU_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getVerifactuDataHistory()))
+			.put(IJsonNames.NO_VERIFACTU_DATA, EnterpriseDataJSON.toJSON(config.getNoVerifactuData()))
+			.put(IJsonNames.NO_VERIFACTU_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getNoVerifactuDataHistory()))
 			
 			.put(IJsonNames.SII_DATA, EnterpriseDataJSON.toJSON(config.getSiiData()))
 			.put(IJsonNames.SII_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getSiiDataHistory()))
