@@ -382,6 +382,8 @@ public class TimeControlDAO {
 					.setDomain(tcd.getDomain()));
 		}
 		
+		tc.setStatus(tcd.getStatus());
+		
 		tc.setLastCoordinates(tcd.getCoordinates());
 		tc.setLastDate(tcd.getDate());
 		tc.setLastLocation(tcd.getLocation());

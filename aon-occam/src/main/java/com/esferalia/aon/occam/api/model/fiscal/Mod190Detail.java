@@ -26,7 +26,7 @@ public class Mod190Detail implements Serializable {
 
 	private int tempId;
 
-	private byte ceutaMelillaPalma; // Ceuta o Melilla / Isla de la Palma (A partir del 2023 tambien para la Isla de la Palma)
+	private byte ceutaMelillaPalma; // Ceuta o Melilla / Isla de la Palma (A partir del 2023 tambien para la Isla de la Palma) 
 	private int birthYear;
 	private byte familySituation;
 	private String spouseDocument;
@@ -94,6 +94,13 @@ public class Mod190Detail implements Serializable {
 	private double gipuzkoaRetention;
 	
 	private boolean excesses; // Nuevo 2024: EXCESOS ENTREGA ACCIONES EMPRESAS EMERGENTES
+	
+	private boolean entrepreneurship; 			// Nuevo 2025: Rendimientos del trabajo obtenidos por la gestión de fondos vinculados al emprendimiento
+	private boolean retirementPension; 			// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 01. Jubilación.
+	private boolean widowhoodPension;			// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 02. Viudedad.
+	private boolean permanentDisabilityPension; // Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 03. Pensión por incapacidad permanente, total o parcial.
+	private boolean nonContributoryPension;	 	// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 04. Pensión NO contributiva por invalidez o jubilación.
+	private boolean otherNonExemptPensions; 	// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 05. Resto de prestaciones del artículo 17.2.a).1ª de la Ley IRPF, no exentas, distintas de las anteriores.
 
 	public Integer getId() {
 		return id;
@@ -666,6 +673,60 @@ public class Mod190Detail implements Serializable {
 			ceutaMelillaPalma = 1;
 		else 
 			ceutaMelillaPalma = 0;		
+		return this;
+	}
+	
+	public boolean isEntrepreneurship() {
+		return entrepreneurship;
+	}
+
+	public Mod190Detail setEntrepreneurship(boolean entrepreneurship) {
+		this.entrepreneurship = entrepreneurship;
+		return this;
+	}
+
+	public boolean isRetirementPension() {
+		return retirementPension;
+	}
+
+	public Mod190Detail setRetirementPension(boolean retirementPension) {
+		this.retirementPension = retirementPension;
+		return this;
+	}
+
+	public boolean isWidowhoodPension() {
+		return widowhoodPension;
+	}
+
+	public Mod190Detail setWidowhoodPension(boolean widowhoodPension) {
+		this.widowhoodPension = widowhoodPension;
+		return this;
+	}
+
+	public boolean isPermanentDisabilityPension() {
+		return permanentDisabilityPension;
+	}
+
+	public Mod190Detail setPermanentDisabilityPension(boolean permanentDisabilityPension) {
+		this.permanentDisabilityPension = permanentDisabilityPension;
+		return this;
+	}
+
+	public boolean isNonContributoryPension() {
+		return nonContributoryPension;
+	}
+
+	public Mod190Detail setNonContributoryPension(boolean nonContributoryPension) {
+		this.nonContributoryPension = nonContributoryPension;
+		return this;
+	}
+
+	public boolean isOtherNonExemptPensions() {
+		return otherNonExemptPensions;
+	}
+
+	public Mod190Detail setOtherNonExemptPensions(boolean otherNonExemptPensions) {
+		this.otherNonExemptPensions = otherNonExemptPensions;
 		return this;
 	}
 

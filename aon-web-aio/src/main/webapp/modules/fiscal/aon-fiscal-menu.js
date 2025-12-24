@@ -331,7 +331,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MODEL_180)
             }, {
                 description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régmien de atribución de rentas",
+                title: "Declaración anual. Entidades en régimen de atribución de rentas",
                 action: () => GWT.iLoad(GWT.MODEL_184)
             }, {
                 description: "Modelo 190 ",
@@ -351,6 +351,10 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 420/417 ",
                 title: "IGIC Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
+            }, {
+                description: "Modelo 425 ",
+                title: "IGIC Declaración resumen anual",
+                action: () => GWT.iLoad(GWT.MODEL_390)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
