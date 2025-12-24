@@ -33,6 +33,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 	private Optional<Date>									antiquity;
 	private Optional<Date>									liquidPeriodStart;
 	private Optional<Date>									liquidPeriodEnd;
+	private Optional<Date>									receivedDate;
 	private Optional<Integer>								totalDays;
 	private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 	private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
@@ -113,7 +114,12 @@ public class DefaultPayroll implements IDefaultPayroll {
 	public Optional<Date> getLiquidPeriodEnd() {
 		return liquidPeriodEnd;
 	}
-
+	
+	@Override
+	public Optional<Date> getReceivedDate() {
+		return receivedDate;
+	}
+	
 	@Override
 	public Optional<Integer> getTotalDays() {
 		return totalDays;
@@ -192,6 +198,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 		private Optional<Date>									antiquity;
 		private Optional<Date>									liquidPeriodStart;
 		private Optional<Date>									liquidPeriodEnd;
+		private Optional<Date>									receivedDate;
 		private Optional<Integer>								totalDays;
 		private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 		private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
@@ -220,6 +227,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 			antiquity		  = Optional.empty();
 			liquidPeriodStart = Optional.empty();
 			liquidPeriodEnd	  = Optional.empty();
+			receivedDate      = Optional.empty();
 			totalDays		  = Optional.empty();
 			accruals		  = Optional.of(new HashMap<>());
 			deductions		  = Optional.of(new HashMap<>());
@@ -301,6 +309,11 @@ public class DefaultPayroll implements IDefaultPayroll {
 
 		public DefaultPayrollBuilder setLiquidPeriodEnd(Date liquidPeriodEnd) {
 			this.liquidPeriodEnd = Optional.ofNullable(liquidPeriodEnd);
+			return this;
+		}
+		
+		public DefaultPayrollBuilder setReceivedDate(Date receivedDate) {
+			this.receivedDate = Optional.ofNullable(receivedDate);
 			return this;
 		}
 
@@ -493,6 +506,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 			p.antiquity			= this.antiquity;
 			p.liquidPeriodStart	= this.liquidPeriodStart;
 			p.liquidPeriodEnd	= this.liquidPeriodEnd;
+			p.receivedDate		= this.receivedDate;
 			p.totalDays			= this.totalDays;
 			p.accruals			= this.accruals;
 			p.deductions		= this.deductions;

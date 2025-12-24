@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -66,5 +67,16 @@ public class AonCompanyJSON {
 			.put(IJsonNames.SURCHARGE, aonCompany.getCompany().isSurcharge())
 			.put(IJsonNames.SCHEMA, aonCompany.getSchema())
 			;
+	}
+	
+	public static JSONArray toJSON(String[] strs) {
+		JSONArray array = new JSONArray();
+		if (strs == null)
+			return array;
+
+		for (String str : strs)
+			array.put(str);
+
+		return array;
 	}
 }
