@@ -212,6 +212,7 @@ export const LINK_CUSTOMER_DOMAINS = 'linkCustomerDomains';
 export const LIST = 'list';
 export const LOCATION = 'location';
 export const LOGO = 'logo';
+export const LROE = 'lroe';
 
 // ----- M
 
@@ -235,6 +236,8 @@ export const NAME = 'name';
 export const NEXT = 'next';
 export const NEW = 'new';
 export const NEW_DATE = 'newDate';
+export const NO_SIF = 'noSif';
+export const NO_VERIFACTU = 'noVerifactu';
 export const NOTES = 'notes';
 export const NUMBER = 'number';
 
@@ -376,6 +379,8 @@ export const SHOW_APPS = 'showApps';
 export const SHOW_FILE = 'showFile';
 export const SHOW_PASSWORD = 'showPassword';
 export const SHOW_TOOLBAR = 'showToolbar';
+export const SIF = 'sif';
+export const SII = 'sii';
 export const SPAN = 'span';
 export const SPIN = 'spin';
 export const SRC = 'src';
@@ -398,6 +403,7 @@ export const TAGS = 'tags';
 export const TARGET = 'target';
 export const TASK_HOLDER = 'taskHolder';
 export const TAXES = 'taxes';
+export const TBAI = 'tbai';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';
 export const THIRD_PART = "thirdPart";
@@ -433,6 +439,7 @@ export const VAT = 'vat';
 export const VAT_PANEL = 'vatPanel';
 export const VAT_PERCENT = 'vatPercent';
 export const VAT_ACCRUAL_PAYMENT = 'vatAccrualPayment';
+export const VERIFACTU = 'verifactu';
 export const VISIBLE = 'visible';
 
 // ----- W

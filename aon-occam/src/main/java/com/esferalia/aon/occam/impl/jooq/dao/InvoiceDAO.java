@@ -1865,7 +1865,7 @@ public class InvoiceDAO {
 		if (invoice == null) throw new AonCoreException("Factura NULA");
 		Invoice inv = getFullInvoice(ctx, invoice.getId());
 		if (inv == null || inv.getId() == null) throw new AonCoreException("Factura no encontrada");
-		if (!inv.isSales()) throw new AonCoreException("S�lo se pueden emitir facturas de venta");
+		if (!inv.isSales()) throw new AonCoreException("Solo se pueden emitir facturas de venta");
 		if ( AonObjectUtils.notEquals(inv.getSeries(),invoice.getSeries())
 				|| AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
 			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	

@@ -95,6 +95,7 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
 	public static final String BILLABLE = "billable";
+	public static final String BIRTH_DATE = "birthDate";
 	public static final String BLOCKED = "blocked";	
 	public static final String BOOKING = "booking";
 	public static final String BORDER = "border";
@@ -243,8 +244,9 @@ public final class IJsonNames {
 	public static final String EMAIL = "email";
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
-	public static final String END_DATE = "end_date";
-	public static final String END_COUNT = "end_count";
+	public static final String END_DATE = "endDate";
+	@Deprecated public static final String END_DATE2 = "end_date";
+	@Deprecated public static final String END_COUNT = "end_count";
 	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_CREATION_DATE = "entryCreationDate";
 	public static final String ENTRY_CREATION_USER = "entryCreationUser";	
@@ -285,7 +287,8 @@ public final class IJsonNames {
 	public static final String FINANCE_PENDING = "financePending";
 	public static final String FINANCE = "finance";
 	public static final String FINANCES = "finances";
-	public static final String FIRST_SURNAME = "first_surname";
+	public static final String FIRST_NAME = "firstName";
+	public static final String FIRST_SURNAME = "firstSurname";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
@@ -302,6 +305,7 @@ public final class IJsonNames {
 	public static final String FULL = "full";
 	public static final String FULL_ADDRESS = "fullAddress";
 	// ---------------------------------------------------------------------------------------------	[G] 
+	public static final String GENDER = "gender";
 	public static final String GLOBAL = "global";
 	public static final String GROUPED_BY = "groupedBy";
 	// ---------------------------------------------------------------------------------------------	[H]
@@ -420,6 +424,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[M] 
 	public static final String MAIN = "main";
 	public static final String MANUFACTURED = "manufactured";
+	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String MAX_DEFINED_USERS = "maxDefinedUsers";
 	public static final String MEDIA = "media";
 	public static final String MEDIAS = "medias";
@@ -654,7 +659,7 @@ public final class IJsonNames {
 	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
 	public static final String SCOPES = "scopes";
-	public static final String SECOND_SURNAME = "second_surname";
+	public static final String SECOND_SURNAME = "secondSurname";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
 	public static final String SELECTED = "selected";
@@ -706,6 +711,7 @@ public final class IJsonNames {
 	public static final String SII_TEST = "siiTest";
 	public static final String SIZE = "size";
 	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
+	public static final String SOCIAL_SECURITY_NUMBER = "socialSecurityNumber";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
 	public static final String SOURCE_IDS = "source_ids";

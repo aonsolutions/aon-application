@@ -30,7 +30,7 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 import net.aonsolutions.aon.tbai.lroe.LROE140_2_1;
 
 public class Lroe140_2_1Test {
-
+/*
 	private static final String CERT_NAME = "bizkaia.p12";
 	private static final String CERT_PASSWORD = "IZDesa2021";
 	private static final String CERT_TYPE = "AEAT";
@@ -147,5 +147,5 @@ public class Lroe140_2_1Test {
 //		lroe.alta(icc, person, invoice);
 		lroe.consulta(icc, person, invoice);
 	}
-	
+*/	
 }

@@ -122,7 +122,6 @@ export class AonInvoiceCommunication extends AonElement {
         }
     }
 
-
     buildCompanyInfo(table) {
         const valid = isValid(this.configuration.company.document);
         let document = createInput(this.id + 'companyDocument', MSG.DOCUMENT);
@@ -140,17 +139,58 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(document, 1).style.height = '50px';
 
         if(isPersonaFisica(this.configuration.company.document)) {
+            let nameValue = this.configuration.person && this.configuration.person.firstSurname 
+                ? this.configuration.person.firstName : this.configuration.company.name;
+            let surname1Value = this.configuration.person && this.configuration.person.firstSurname
+                ? this.configuration.person.firstSurname : '';
+            let surname2Value = this.configuration.person && this.configuration.person.secondSurname 
+                ? this.configuration.person.secondSurname : '';
             let name = createInput(this.id + 'personName', MSG.NAME);
-            name.setValue(this.configuration.company.name);
+            name.setValue(nameValue);
+            name.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.firstName = name.value;
+                this.configuration.company.person.name = name.value;
+                name.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
+          
             table.addCell(name, 1).style.height = '50px';
-
+            if(nameValue === '') {
+                name.addError('Este campo es obligatorio');
+            }
             table.addRow();
 
             let surname1 = createInput(this.id + 'personSurname1', MSG.SURNAME + ' 1');
+            surname1.setValue(surname1Value);
+            surname1.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.firstSurname = surname1.value;
+                this.configuration.company.person.surname1 = surname1.value;
+                surname1.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
             table.addCell(surname1, 1).style.height = '50px';
+            if(surname1Value === '') {
+                surname1.addError('Este campo es obligatorio');
+            }
 
             let surname2 = createInput(this.id + 'personSurname2', MSG.SURNAME + ' 2');
+            surname2.setValue(surname2Value);
+            surname2.addEventListener(EVENT.CHANGE, () => {
+                if(!this.configuration.person) this.configuration.person = {};
+                if(!this.configuration.company.person) this.configuration.company.person = {};
+                this.configuration.person.secondSurname = surname2.value;
+                this.configuration.company.person.surname2 = surname2.value;
+                surname2.removeError();
+                this.dispatchEvent(new Event(EVENT.CHANGE));
+            });
             table.addCell(surname2, 1).style.height = '50px';
+            if(surname2Value === '') {
+                surname2.addError('Este campo es obligatorio');
+            }
 
             table.addRow();
         } else {
@@ -162,27 +202,30 @@ export class AonInvoiceCommunication extends AonElement {
 
             table.addRow();
         }
-
     }
 
     buildAdministration(table) {
+        const enterprise = this.configuration.company.id;
         let administration = createSelect(this.ADMINISTRATION, 'Administración');
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
         administration.setValue(this.communicationConfiguration.getAdministration().value);
         administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
         administration.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setAdministration(new Administration(administration.value));
+            this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
-
+        if(this.communicationConfiguration.getAdministration().isUnknown()) {
+            administration.addError('Debe seleccionar una administración');
+        }
         table.addRow();
     }
 
-    buildNoSif(table) { 
+    buildNoSif(table) {
         let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
+        issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
         issueInvoice.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked());
             this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -200,7 +243,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
         table.addCell(facturae, 1).style.height = '50px';
-        facturae.setWidth('110px');
+        facturae.setWidth('150px');
         table.addRow();
     }
 
@@ -213,68 +256,46 @@ export class AonInvoiceCommunication extends AonElement {
         table.addRow();
 
         const communicationActiveId = id + CONSTANT.ACTIVE.initCap();
-        let communicationActive = createSwitch(communicationActiveId, MSG.ACTIVATE);
-        communicationActive.checked = active;
-        communicationActive.disabled = (active || future) && data && data.id;
+        let communicationActive = createSwitch(communicationActiveId, future ? MSG.PROGRAMMED : MSG.ACTIVATE);
+        communicationActive.checked = active || future;
+        communicationActive.disabled = (active && data && data.id) ? true : false;
         communicationActive.addEventListener(EVENT.CHANGE, () => {
             activeFn(communicationActive.isChecked());
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
         table.addCell(communicationActive, 1).style.height = '50px';
-        communicationActive.setWidth('110px');
+        communicationActive.setWidth('150px');
 
-        if (active) {
+        if (active || future) {
             const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
             let communicationIncludeDate = createDate(communicationIncludeDateId, 'Fecha Inclusión ' + title);
             if(data && data.id) {
                 communicationIncludeDate.disabled = true;
                 communicationIncludeDate.readonly = true;
             }
+            table.addCell(communicationIncludeDate, 1).style.height = '50px';
+            communicationIncludeDate.setDate(future ? futureData.startDate : data.startDate);
             communicationIncludeDate.addEventListener(EVENT.CHANGE, () => {
                 dateFn(communicationIncludeDate.getDate());
                 this.dispatchEvent(new Event(EVENT.CHANGE));
                 this.reload();
             });
-            table.addCell(communicationIncludeDate, 1).style.height = '50px';
-            communicationIncludeDate.setDate(data.startDate);
+
         } else { 
             const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
             let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
             table.addCell(exemption, 1).style.height = '50px';
         }
         table.addRow();
-
-        if (future) {
-            const communicationProgrammedId = id + CONSTANT.PROGRAMMED.initCap();
-            let programmed = createSwitch(communicationProgrammedId, MSG.PROGRAMMED);
-            programmed.checked = future;
-            programmed.addEventListener(EVENT.CHANGE, () => {
-                // TODO
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-            });
-            table.addCell(programmed, 1).style.height = '50px';
-            programmed.setWidth('110px');
-
-            const communicationProgrammedDateId = id + CONSTANT.PROGRAMMED_DATE.initCap();
-            let communicationProgrammedDate = createDate(communicationProgrammedDateId, 'Fecha Inclusión ' + title);
-            communicationProgrammedDate.addEventListener(EVENT.CHANGE, () => {
-                // TODO
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-            });
-
-            table.addCell(communicationProgrammedDate, 1).style.height = '50px';
-            communicationProgrammedDate.setDate(futureData.startDate);
-
-            table.addRow();
-        }
     }
 
     buildTicketBai(table) {
+        const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isTbai();
         let future = this.communicationConfiguration.willBeTbai();
         this.buildCommunication(table, this.TBAI, MSG.TICKETBAI, active, future, this.communicationConfiguration.getTbaiData(),
-            this.communicationConfiguration.getFutureTbaiData(), (value) => this.communicationConfiguration.setTbai(value),
+            this.communicationConfiguration.getFutureTbaiData(), (value) => this.communicationConfiguration.setTbai(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setTbaiDate(date)
                 if(!check.valid) this.showError(check.message);
@@ -283,45 +304,51 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildLroe(table) {
+        const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isLroe();
         let future = this.communicationConfiguration.willBeLroe();
-        this.buildCommunication(table, this.LROE, MSG.LROE, active, future, this.communicationConfiguration.getLroeData(), 
-            this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value),
+        this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(), 
+            this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date)
+                let check = this.communicationConfiguration.setLroeDate(date)
                 if(!check.valid) this.showError(check.message);
             });
     }
 
     buildSii(table) {
+        const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isSii();
         let future = this.communicationConfiguration.willBeSii();
         this.buildCommunication(table, this.SII, MSG.SII, active, future, this.communicationConfiguration.getSiiData(), 
-            this.communicationConfiguration.getFutureSiiData(), (value) => this.communicationConfiguration.setSii(value),
+            this.communicationConfiguration.getFutureSiiData(), (value) => this.communicationConfiguration.setSii(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date)
+                let check = this.communicationConfiguration.setSiiDate(date)
                 if(!check.valid) this.showError(check.message);
             });
     }
 
     buildVerifactu(table) {
+        const enterprise = this.configuration.company.id;
+        const document = this.configuration.company.document;
         let active = this.communicationConfiguration.isVerifactu();
         let future = this.communicationConfiguration.willBeVerifactu();
         this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(), 
-            this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value),
+            this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise, document),
             (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date)
+                let check = this.communicationConfiguration.setVerifactuDate(date, document)
                 if(!check.valid) this.showError(check.message);
             });
     }
 
     buildNoVerifactu(table) {
+        const enterprise = this.configuration.company.id;
+        const document = this.configuration.company.document;
         let active = this.communicationConfiguration.isNoVerifactu();
         let future = this.communicationConfiguration.willBeNoVerifactu();
         this.buildCommunication(table, this.NO_VERIFACTU, MSG.NO_VERIFACTU, active, future, this.communicationConfiguration.getNoVerifactuData(),
-            this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value),
+            this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise, document),
             (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date)
+                let check = this.communicationConfiguration.setNoVerifactuDate(date, document)
                 if(!check.valid) this.showError(check.message);
             });
     }
@@ -395,33 +422,6 @@ export class AonInvoiceCommunication extends AonElement {
                 ? this.configuration.communication
                 : new InvoiceCommunicationConfiguration(this.configuration.communication);
         }
-    }
-
-    buildPerson() {
-        let div = this.createElement(TAG.DIV);
-
-        let name = createInput(this.id + 'personName', MSG.NAME, div);
-        name.setValue(this.configuration.company.name);
-
-        let surname1 = createInput(this.id + 'personSurname1', MSG.SURNAME + ' 1', div);
-        let surname2 = createInput(this.id + 'personSurname2', MSG.SURNAME + ' 2', div);
-
-        let d = new AonDialog();
-        d.id = this.id + 'PersonDialog';
-        this.appendChild(d);
-        d.clear();
-        if (!this.isMobile()) d.width = '400px';
-        d.setTitle(MSG.NAME);
-        d.setContent(div);
-        d.addAcceptAction(() => {
-            this.configuration.company.person = {
-                name: name.value,
-                surname1: surname1.value,
-                surname2: surname2.value
-            };
-            if (this.autosave) this.save();
-        });
-        d.open();
     }
 }
 if (!window.customElements.get(TAG.AON_INVOICE_COMMUNICATION)) {

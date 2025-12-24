@@ -336,7 +336,7 @@ public class ProductServlet extends AonApiHttpServlet {
 		 String typeStr = api.getData().optString(IJsonNames.TYPE);
 		 RegistryMode type = AonStringUtils.isNotBlank(typeStr) ? RegistryMode.valueOf(typeStr) : RegistryMode.TARGET;
 		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);
-		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);
+		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE2);
 		 
 		 
 		 List<RegistryItem>registryItems = new ArrayList<>();
@@ -407,7 +407,7 @@ public class ProductServlet extends AonApiHttpServlet {
 		}
 		
 		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE2);	//NULLABLE
-		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);		//NULLABLE
+		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE2);		//NULLABLE
 		if (ritemJson != null && itemId > 0 && status != null) {
 			RegistryItem ritem = RegistryItemJSON.fromJSON(ritemJson);
 			Item item = new Item().setId(itemId);

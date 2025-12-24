@@ -651,7 +651,37 @@ public class InvoiceCommunicator {
 		if (cc.invoiceCount() == 0) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
 		}
-		checkCertificate(ctx, cc.getConfig(), cc.getCertificateId());
+		if (cc.getConfig() == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
+		}
+		try {
+			for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+				type.visit( new InvoiceCommunicationTypeVisitor() {
+					
+					@Override public void visitSERES() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitEMAIL() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitCLOSING() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitSII() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitTBAI() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitLROE() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitFACTURAE() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitSIF() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					
+					@Override
+					public void visitVERIFACTU() throws InvoiceCommunicationException  {
+						checkCertificate(ctx, cc.getConfig(), cc.getCertificateId());
+					}
+					
+				});
+			}
+		} catch (Exception e) {
+			// Si es una InvoiceCommunicationException la lanzamos tal cual
+			if (e instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021, e);
+		}
 	}
 	
 	private static void checkConfig(InvoiceCommunicationConfiguration config) throws InvoiceCommunicationException {
