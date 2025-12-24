@@ -18,6 +18,7 @@ public class Address implements Serializable {
 	private String rtown;
 	private int rprovince;
 	private String rzip;
+	private String rtownCode;
 
 	public String getRdocument() {
 		return rdocument;
@@ -124,6 +125,15 @@ public class Address implements Serializable {
 
 	public Address setRzip(String rzip) {
 		this.rzip = rzip;
+		return this;
+	}
+
+	public String getRtownCode() {
+		return rtownCode;
+	}
+
+	public Address setRtownCode(String rtownCode) {
+		this.rtownCode = rtownCode;
 		return this;
 	}
 }

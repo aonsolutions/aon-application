@@ -111,6 +111,7 @@ public class DraftPayrollBuilder {
 			defaulPayrollBuilder.setProfessionalGroup(salary.getCategory());
 			
 			//PAYROLL RELATED DATA
+			defaulPayrollBuilder.setReceivedDate(salary.getChargeDate());
 			defaulPayrollBuilder.setLiquidPeriodStart(salary.getStartDate());
 			defaulPayrollBuilder.setTotalDays(salary.getTimeUnits());
 			defaulPayrollBuilder.setLiquidPeriodEnd(getSalaryEnd(salary) );
