@@ -15,6 +15,7 @@ import { isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonMobileHome extends AonElement {
 
