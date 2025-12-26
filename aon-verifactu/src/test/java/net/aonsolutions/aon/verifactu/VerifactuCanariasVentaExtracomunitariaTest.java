@@ -39,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
+class VerifactuCanariasVentaExtracomunitariaTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_CANARIAS_ENV; }
 
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_EXTRACOMUNITARIA
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -52,7 +52,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
-		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
+		List<Invoice> invoices = AonCollectionUtils.toList(getTestInvoice());
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
@@ -68,7 +68,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
-
+		
 	@Test
 	void ventaFacesTest() throws InvoiceCommunicationException {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
@@ -77,7 +77,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
-	
+
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
@@ -200,9 +200,9 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IGIC.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
+	    assertEquals( ClaveRegimen.C02.getValue() , dt.getClaveRegimen() );
 	    assertNull( dt.getCalificacionOperacion() );
-	    assertEquals( OperacionExentaType.E_5, dt.getOperacionExenta() );
+	    assertEquals( OperacionExentaType.E_2, dt.getOperacionExenta() );
 	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );

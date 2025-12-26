@@ -39,12 +39,12 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegistroFacturaType;
 
-class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
+class VerifactuCanariasVentaCanCeuMelServiciosTest extends AbstractVerifactuTest {
 	
 	@Override protected Environment getEnvironment() { return VERIFACTU_CANARIAS_ENV; }
-
+	
 	private Invoice getTestInvoice() {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_CAN_CEU_MEL_SERVICIO
 			.get( getEnvironment() )
 			.setId(1);
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
@@ -77,7 +77,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
 	}
-	
+
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
 		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
 		assertNotNull( rfsf );
@@ -155,7 +155,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	    
 	    String descripcionOperacion = rfat.getDescripcionOperacion();
 	    assertNotNull( descripcionOperacion );
-	    assertEquals( Invoice2Verifactu.NO_SERVICE_DESCRIPTION , descripcionOperacion );
+	    assertEquals( Invoice2Verifactu.SERVICE_DESCRIPTION , descripcionOperacion );
 	    
 	    SimplificadaCualificadaType facturaSimplificadaArt7273 = rfat.getFacturaSimplificadaArt7273();
 	    assertNotNull( facturaSimplificadaArt7273 );
@@ -184,9 +184,9 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	    assertNotNull( destinatario );
 	    
 	    assertEquals( i.getRegistryName(), destinatario.getNombreRazon() );
-	    assertNull(destinatario.getNIF());
-	    assertNotNull(destinatario.getIDOtro());
-	    assertEquals( i.getRegistryDocument(), destinatario.getIDOtro().getID().substring(2));
+	    assertEquals( i.getRegistryDocument(), destinatario.getNIF() );
+	    assertNull(destinatario.getIDOtro());
+	    
 
 	    CuponType cupon = rfat.getCupon();
 	    assertNotNull( cupon );
@@ -200,9 +200,9 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
 	    assertEquals( TipoImpuesto.IGIC.getValue() , dt.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
+	    assertEquals( ClaveRegimen.C02.getValue() , dt.getClaveRegimen() );
 	    assertNull( dt.getCalificacionOperacion() );
-	    assertEquals( OperacionExentaType.E_5, dt.getOperacionExenta() );
+	    assertEquals( OperacionExentaType.E_2, dt.getOperacionExenta() );
 	    assertNull( dt.getTipoImpositivo());
 	    assertEquals( "100" , dt.getBaseImponibleOimporteNoSujeto());
 	    assertNull( dt.getBaseImponibleACoste() );

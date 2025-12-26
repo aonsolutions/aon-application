@@ -52,6 +52,16 @@ public class VerifactuContext  {
 	public InvoiceCommunicationConfiguration getConfig() {
 		return getInvoiceCommunicatorContext().getConfig();
 	}
+	public boolean isCommonTerritory() {
+		return getInvoiceCommunicatorContext().getConfig().isAEAT();
+	}
+	public boolean isCanarias() {
+		return getInvoiceCommunicatorContext().getConfig().isCanarias();
+	}
+	public boolean isVerifactuAdmon() {
+		return isCommonTerritory() || isCanarias();
+	}
+	
 	public InvoiceCommunicationQuery getInvoiceCommunicationQuery() {
 		return getInvoiceCommunicatorContext().getCommunicationQuery();
 	}
