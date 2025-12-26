@@ -138,6 +138,7 @@ export class AonDesktop extends AonElement {
 			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
 			this.appendChild(dialog);
 			dialog.autoclose = false;
+			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 		}
 
 		let communication =  new AonInvoiceCommunication();

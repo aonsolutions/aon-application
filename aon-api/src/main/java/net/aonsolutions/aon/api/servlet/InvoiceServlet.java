@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FINANCE;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.json.ApiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceCommunicationConfiguratio
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -106,6 +109,7 @@ import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.sign.PdfSigner;
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
@@ -483,7 +487,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if (invoice.isSales()) {
 			// ***********************************
 			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-			if (icc.hasCommunication() && !icc.isTbai() && !icc.isLroe() && !invoice.isThirdPart()) {
+			if (icc.hasCommunication() && !icc.isSii() && !icc.isTbai() && !icc.isLroe() && !invoice.isThirdPart()) {
 				return acceptAndCommunicateInvoice(api, icc, company);	
 			} 
 			
@@ -495,7 +499,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				
 			if (icc.isTbai() && invoice.isThirdPart()) {
 				checkTbaiId(company, invoice, tbaiId);
-			} else if( icc.isTbai()) {
+			} else if( icc.isTbai() || icc.isSii()) {
 				Certificate certificate = checkCertificate(api);
 				icc.setCertificate(certificate);
 				invoiceValidation(invoice);
@@ -510,6 +514,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
 		acceptTbai(icc, company, invoice);
+		acceptSii(api, icc, company, invoice);
 		saveInvoiceData(api, icc, invoice, tbaiId);
 		return getInvoice(api, invoice.getId(), invoice.messageStream().toList());
 	}
@@ -539,6 +544,27 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(invoice.isSales() && icc.isTbai() && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, icc);
+		}
+	}
+	
+	public static void acceptSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
+		if(invoice.isSales() && icc.isSii()) {
+			try {
+				SIIManager manager = SIIManager.getInstance(icc);
+				
+				AccountingReportParams params = new AccountingReportParams();
+				params.setDomain(api.getOccam().getDomain());
+				params.setInvoices(new Integer[] {invoice.getId()});
+				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(api.getOccam(), params, "")
+						.collect(Collectors.toCollection(LinkedList::new));		
+				manager.suministroFacturas(api.getDomain(), api.getUser().getLogin(), company, invoice, contextList, null);
+			} catch (Exception e) {
+				if (e instanceof InvoiceCommunicationException ice) {
+					throw ice;
+				} else {
+					throw new InvoiceCommunicationException( e );
+				}
+			}
 		}
 	}
 

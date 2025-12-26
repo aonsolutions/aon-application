@@ -71,6 +71,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Facturas de Venta",
                 title: "Facturas de Venta",
+                disabled: this.icc.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             }, {
                 description: "Impresión / eMail de Facturas",
@@ -79,10 +80,12 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Pedidos de Venta",
                 title: "Pedidos de Venta",
+                disabled: this.icc.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfSale())
             }, {
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
+                disabled: this.icc.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         }, {

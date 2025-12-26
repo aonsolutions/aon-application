@@ -291,6 +291,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
+		if(this.icc.isNoSif()) this.fileOpened = false;
 		this.checkConfiguration();
 		this.clear();
 		this.buildInputFile();
@@ -506,15 +507,16 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.icc.hasCommunication())	invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox()))
-				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox())) {
+				if(this.icc.hasCommunication())	invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			}
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -526,10 +528,11 @@ export class AonInvoice extends AonElement {
 		}
 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
-		
-		if(this.getInvoice().file || this.invoice.isEmitida() ){
+		if( (this.getInvoice().file 
+			&& !(this.icc.isNoSif() && this.getInvoice().file.path && this.getInvoice().file.path.includes('download_invoice_pdf') ) )
+			|| (!this.icc.isNoSif() && this.invoice.isEmitida())) {
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile(true));
-		} else {
+		} else if(!this.invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
 		this.buildCommunicationToolbar(invoiceToolbar);

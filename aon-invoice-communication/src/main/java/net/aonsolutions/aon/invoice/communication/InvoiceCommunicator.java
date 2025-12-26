@@ -22,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
@@ -206,23 +205,7 @@ public class InvoiceCommunicator {
 							@Override public void visitSERES() throws InvoiceCommunicationException 	{throwSERES();}
 							@Override public void visitEMAIL() throws InvoiceCommunicationException		{throwEMAIL();}
 							@Override public void visitCLOSING() throws InvoiceCommunicationException	{throwCLOSING();}
-							@Override public void visitSII() throws InvoiceCommunicationException		{
-								try {
-									SIIManager manager = SIIManager.getInstance(cc.getConfig());
-									AccountingReportParams params = new AccountingReportParams();
-									params.setDomain(invoice.getDomain());
-									params.setInvoices( new Integer[] {invoice.getId()} );
-									LinkedList<VatContext> contextList = OLDVATDAO.getSiiVatContext(ctx, p -> FinanceUtils.getVATFilter(p, params), "")
-											.collect(Collectors.toCollection(LinkedList::new));
-									manager.suministroFacturas(cc.getDomain(), cc.getUser().getLogin(), cc.getCompany(), invoice, contextList, null);
-								} catch (Exception e) {
-									if (e instanceof InvoiceCommunicationException ice) {
-										throw ice;
-									} else {
-										throw new InvoiceCommunicationException( e );
-									}
-								}								
-							}
+							@Override public void visitSII() throws InvoiceCommunicationException		{throwSII();}
 							@Override public void visitTBAI() throws InvoiceCommunicationException		{throwTBAI();}
 							@Override public void visitLROE() throws InvoiceCommunicationException		{throwLROE();}
 							@Override public void visitFACTURAE() throws InvoiceCommunicationException	{throwFACTURAE();}
@@ -282,7 +265,7 @@ public class InvoiceCommunicator {
 			invoice = InvoiceDAO.accept(ctx, invoice, invoice.getRawdocId().orElse(null));
 			// TODO Cambiarlo cuando accept2 sea viable para la pantalla del portal.
 			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
-					
+
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
 				for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
 					type.visit( new InvoiceCommunicationTypeVisitor() {

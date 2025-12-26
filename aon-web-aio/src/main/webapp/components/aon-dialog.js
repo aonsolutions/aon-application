@@ -157,7 +157,6 @@ export class AonDialog extends AonElement {
 		main.className = "aonDialogContent";
 		dialog.appendChild(main);
 
-
 		let closeDesktop = this.createElement(TAG.LABEL);
 		closeDesktop.id = this.BUTTON_CLOSE;
 		closeDesktop.title = MSG.CLOSE;
