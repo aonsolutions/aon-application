@@ -917,7 +917,7 @@ export class AonHeader extends AonElement {
 			let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
 			searchOptions.push({
 				icon: MATERIAL_ICONS.BUSINESS,
-				name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
+				name: `<span style="font-weight: bold; cursor: default" header >${title}</span>`,
 			});
 			
 			searchCompanies.slice(0, 10).forEach(company => {
@@ -938,7 +938,7 @@ export class AonHeader extends AonElement {
 			
 			searchOptions.push({
 				icon: MATERIAL_ICONS.GROUP,
-				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.EMPLOYEES}</span>`,
+				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.EMPLOYEES}</span>`,
 			});
 
 			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
@@ -988,11 +988,26 @@ export class AonHeader extends AonElement {
 				employeesSpan.innerText = `${contracts.length > 25 ? '>': ''} ${contracts.length} ${MSG.EMPLOYEES}`;
 				employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 					
+				let applicationsOptions = [];
+				let aonMenu = this.getElement('aonMenu');
+				let searchApplicationsOptions = aonMenu.getApplicationsOptions()?.filter( application => AonStringUtils.containsMatching(application.name, aonHeaderSearchBoxValue) );
+
+				let applicationsTitle = searchApplicationsOptions.length == 1 ? `${MSG.ONE} ${MSG.APPLICATION}` :`${searchApplicationsOptions.length} ${MSG.APPLICATIONS}`;
+				applicationsOptions.push({
+					icon: MATERIAL_ICONS.APPLICATIONS,
+					name: `<span style="font-weight: bold; cursor: default" header >${applicationsTitle}</span>`,
+				});
+				searchApplicationsOptions.slice(0, 10).forEach(applicationOption => {
+					const appicationName = this.decorateMatching(applicationOption.name, aonHeaderSearchBoxValue);
+                    applicationsOptions.push({ ...applicationOption, name:  `<span>${appicationName}</span>` });
+                });
+				aonHeaderSearchDialogMenu.addMenuOptions(applicationsOptions);
+				
 				aonHeaderSearchDialogMenu.addMenuOptions([{
 					icon: MATERIAL_ICONS.HELP,
-					name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Help" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.HELP}</span>`,
+					name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Help" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.HELP}</span>`,
 				}]);
-
+				
 				getHelpDatas({pattern: aonHeaderSearchBoxValue, limit: 11})
 				.then(helpDatas => {
 					
@@ -1051,7 +1066,7 @@ export class AonHeader extends AonElement {
 		let decoratedText = text;
 		let matchingWords = AonStringUtils.getMatching(decoratedText, searcher);
 		for ( let matchingWord of matchingWords ) {
-			decoratedText = decoratedText.replaceAll(matchingWord, `<b>${matchingWord}</b>`);
+			decoratedText = decoratedText.replaceAll(matchingWord, `<b decorate >${matchingWord}</b>`);
 		}
 		return decoratedText;
 	}

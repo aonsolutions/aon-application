@@ -1382,29 +1382,45 @@
 		padding-left: 32px !important;
 	}
 
-/* 	.aon-finding-toolbar-item-group input.aon-finding-toolbar-item.aon-icon-accept:first-child {
-  		border: 0;
+ 	.aon-finding-toolbar-item-group input.aon-finding-toolbar-item.aon-icon-accept:first-child {
+		border: 0;
   		border-radius: .375rem;
-
+  		
   		color: #fff;
-	    background-color: #0f172a;
-	    
-		height: 2.5rem;
-  		padding: .5rem 1rem;
-
+  		background-color: #0f172a;
+  		padding: .5rem 2rem;
+  		padding-left: 64px;  	    
+  		
   		cursor: pointer;
-  		text-align: center;
+  		text-align: left;
   		text-transform: lowercase;
   		
   		background-image: none;
-  	    
+  		
+ 	 	width: 150px;
+  		height: 32px;
+  		font-size: 0.9rem;
     }
 	
 	
 	.aon-finding-toolbar-item-group:has(input.aon-finding-toolbar-item.aon-icon-accept:first-child):before {
-		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
+  		z-index: 1;
+		
+		content: '';
+  		width: 24px;
+  		height: 24px;
+  		
+  		margin-right: 8px;
+  		display: inline-block;
+  		vertical-align: middle;
+  		
+  		left: 64px;
+  		position: fixed;
+  		
+  		background-color: white;
+  		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
     }
- */    
+    
 	
 </style>
 
