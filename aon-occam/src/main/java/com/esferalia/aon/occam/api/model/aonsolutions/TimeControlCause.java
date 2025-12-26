@@ -30,11 +30,11 @@ public enum TimeControlCause {
 	}
 	
 	public static TimeControlCause safeValueOf( String i ) {
-		if(AonStringUtils.isBlank(i)) return DEFAULT;
+		if(AonStringUtils.isBlank(i)) return null;
 		for (TimeControlCause rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}
-		return TimeControlCause.DEFAULT;
+		return null;
 	}
 }
