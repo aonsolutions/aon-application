@@ -28,7 +28,7 @@ export class AonManagementMenu extends AonSuiteMenu {
 
     async getInvoiceConfiguration() {
         let c = await getInvoiceConfiguration();
-        this.icc = new InvoiceCommunicationConfiguration(c);
+        this.icc = new InvoiceCommunicationConfiguration(c.communication);
     }
 
     gestionInitialize() {
@@ -76,11 +76,11 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Impresión / eMail de Facturas",
                 title: "Impresión / eMail de Facturas",
+                disabled: this.icc.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             }, {
                 description: "Pedidos de Venta",
                 title: "Pedidos de Venta",
-                disabled: this.icc.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfSale())
             }, {
                 description: "Facturación masiva de Albaranes",

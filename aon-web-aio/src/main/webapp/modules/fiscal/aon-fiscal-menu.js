@@ -53,7 +53,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
  
     async getInvoiceConfiguration() {
         let c = await getInvoiceConfiguration();
-        this.icc = new InvoiceCommunicationConfiguration(c);
+        this.icc = new InvoiceCommunicationConfiguration(c.communication);
     }
 
     async getAppParams() {
