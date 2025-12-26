@@ -36,7 +36,8 @@ public class EnterpriseDataJSON {
 				.setExpression(JsonUtils.getString(json, IJsonNames.EXPRESSION))
 				.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
-				.setUpdated(JsonUtils.getboolean(json, IJsonNames.UPDATED));
+				.setUpdated(JsonUtils.getboolean(json, IJsonNames.UPDATED))
+				.setIsRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
 	}
 	
 	public static JSONArray toJSON(List<EnterpriseData> list) {

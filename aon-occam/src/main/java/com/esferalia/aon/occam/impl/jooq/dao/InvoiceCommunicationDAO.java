@@ -410,7 +410,9 @@ public class InvoiceCommunicationDAO {
 				EnterpriseDataDAO.insert(ctx, data.setDomain(domainId));
 			} else if(data.isUpdated()) {
 				EnterpriseDataDAO.update(ctx, data);
-			} 
+			} else if(data.isRemoved()) {
+				EnterpriseDataDAO.delete(ctx, data.getId());
+			}
 		});
 	}
 	

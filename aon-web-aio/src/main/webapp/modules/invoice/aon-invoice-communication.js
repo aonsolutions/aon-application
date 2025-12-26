@@ -302,7 +302,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCommunication(table, this.TBAI, MSG.TICKETBAI, active, future, this.communicationConfiguration.getTbaiData(),
             this.communicationConfiguration.getFutureTbaiData(), (value) => this.communicationConfiguration.setTbai(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date)
+                let check = this.communicationConfiguration.setTbaiDate(date, enterprise)
                 if(!check.valid) this.showError(check.message);
             }
         );
@@ -315,7 +315,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(), 
             this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setLroeDate(date)
+                let check = this.communicationConfiguration.setLroeDate(date, enterprise)
                 if(!check.valid) this.showError(check.message);
             });
     }
@@ -327,7 +327,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCommunication(table, this.SII, MSG.SII, active, future, this.communicationConfiguration.getSiiData(), 
             this.communicationConfiguration.getFutureSiiData(), (value) => this.communicationConfiguration.setSii(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setSiiDate(date)
+                let check = this.communicationConfiguration.setSiiDate(date, enterprise)
                 if(!check.valid) this.showError(check.message);
             });
     }
@@ -340,7 +340,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(), 
             this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setVerifactuDate(date)
+                let check = this.communicationConfiguration.setVerifactuDate(date, enterprise)
                 if(!check.valid) this.showError(check.message);
             });
     }
@@ -352,7 +352,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCommunication(table, this.NO_VERIFACTU, MSG.NO_VERIFACTU, active, future, this.communicationConfiguration.getNoVerifactuData(),
             this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setNoVerifactuDate(date)
+                let check = this.communicationConfiguration.setNoVerifactuDate(date, enterprise)
                 if(!check.valid) this.showError(check.message);
             });
     }

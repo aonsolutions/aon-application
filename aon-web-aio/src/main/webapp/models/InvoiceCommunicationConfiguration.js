@@ -75,7 +75,7 @@ export class InvoiceCommunicationConfiguration {
     // Generic methods for EnterpriseData checks
 
     is = (data) => { // data: EnterpriseData
-        return data && (!data.endDate || data.endDate > new Date()); 
+        return (data && (!data.endDate || data.endDate > new Date())) ? true : false; 
     };
 
     isTest = (data) => { // data: EnterpriseData
@@ -253,7 +253,7 @@ export class InvoiceCommunicationConfiguration {
             this.tbaiData = this.newEnterpriseData(EnterpriseDataNames.ICC_TBAI, enterprise);
             this._tbaiDataHistory = this.tbaiDataHistory ? structuredClone(this.tbaiDataHistory) : [];
             this._tbaiDataHistory.push(this.tbaiData);
-            this.setTbaiDate(this.getToday());
+            this.setTbaiDate(this.getToday(), enterprise);
         } else if(!tbai && this.isTbai()) {
             this.tbaiData = undefined;
             this._tbaiDataHistory = this.endHistory(this.tbaiDataHistory);
@@ -264,18 +264,24 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    setTbaiDate(date) {
+    setTbaiDate(date, enterprise) {
        let check = this.checkTbaiDate(date)
         if(this.isTbai() && check.valid) {
             this._tbaiDataHistory = this.setHistoryStartDate(this.getTbaiDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.TBAI, CONSTANT.SII]);
                 this.tbaiData = undefined;
+                if(this.isNoSif()) {
+                    this.setSif(true, enterprise);
+                }
             } else {
                 this.tbaiData.startDate = date;
                 this.tbaiData.updated = true;
             }
             this.endOtherHistories([CONSTANT.TBAI, CONSTANT.SII], date);
+            if(!this.hasCommunication()) {
+                this.setSif(true, enterprise, CONSTANT.LROE);
+            }
         }
         return check;
     }
@@ -328,7 +334,7 @@ export class InvoiceCommunicationConfiguration {
             this.lroeData = this.newEnterpriseData(EnterpriseDataNames.ICC_LROE, enterprise);
             this._lroeDataHistory = this.lroeDataHistory ? structuredClone(this.lroeDataHistory) : [];
             this._lroeDataHistory.push(this.lroeData);
-            this.setLroeDate(this.getToday());
+            this.setLroeDate(this.getToday(), enterprise);
         } else if(!lroe && this.isLroe()) {
             this.lroeData = undefined;
             this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
@@ -339,18 +345,24 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    setLroeDate(date) {
+    setLroeDate(date, enterprise) {
        let check = this.checkLroeDate(date)
         if(this.isLroe() && check.valid) {
             this._lroeDataHistory = this.setHistoryStartDate(this.getLroeDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.LROE]);
                 this.lroeData = undefined;
+                if(this.isNoSif()) {
+                    this.setSif(true, enterprise);
+                }
             } else {
                 this.lroeData.startDate = date;
                 this.lroeData.updated = true;
             }
             this.endOtherHistories([CONSTANT.LROE], date);
+            if(!this.hasCommunication()) {
+                this.setSif(true, enterprise, CONSTANT.LROE);
+            }
         }
         return check;
     }
@@ -398,12 +410,12 @@ export class InvoiceCommunicationConfiguration {
 
     // Specific methods for Verifactu communication type
 
-    setVerifactu(verifactu, enterprise, document) {
+    setVerifactu(verifactu, enterprise) {
         if(verifactu && !this.isVerifactu()) {
             this.verifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_VERIFACTU, enterprise);
             this._verifactuDataHistory = this.verifactuDataHistory ? structuredClone(this.verifactuDataHistory) : [];
             this._verifactuDataHistory.push(this.verifactuData);
-            this.setVerifactuDate(this.getToday(), document);
+            this.setVerifactuDate(this.getToday(), enterprise);
          } else if(!verifactu && this.isVerifactu()) {
             this.verifactuData = undefined;
             this._verifactuDataHistory = this.endHistory(this.verifactuDataHistory);
@@ -414,13 +426,16 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    setVerifactuDate(date) {
+    setVerifactuDate(date, enterprise) {
        let check = this.checkVerifactuDate(date)
         if(this.isVerifactu() && check.valid) {
             this._verifactuDataHistory = this.setHistoryStartDate(this.getVerifactuDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.VERIFACTU]);
                 this.verifactuData = undefined;
+                if(this.isNoSif()) {
+                    this.setSif(true, enterprise);
+                }
             } else {
                 this.verifactuData.startDate = date;
                 this.verifactuData.updated = true;
@@ -428,6 +443,9 @@ export class InvoiceCommunicationConfiguration {
                 this.noVerifactuData = undefined;
             }
             this.endOtherHistories([CONSTANT.VERIFACTU], date);
+            if(!this.hasCommunication()) {
+                this.setSif(true, enterprise, CONSTANT.VERIFACTU);
+            }
         }
         return check;
     }
@@ -476,12 +494,12 @@ export class InvoiceCommunicationConfiguration {
 
     // Specific methods for No Verifactu communication type
 
-    setNoVerifactu(noVerifactu, enterprise, document) {
+    setNoVerifactu(noVerifactu, enterprise) {
         if(noVerifactu && !this.isNoVerifactu()) {
             this.noVerifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_VERIFACTU, enterprise);
             this._noVerifactuDataHistory = this.noVerifactuDataHistory ? structuredClone(this.noVerifactuDataHistory) : [];
             this._noVerifactuDataHistory.push(this.noVerifactuData);
-            this.setNoVerifactuDate(this.getToday(), document);
+            this.setNoVerifactuDate(this.getToday(), enterprise);
         } else if(!noVerifactu && (this.isNoVerifactu() || this.willBeNoVerifactu())) {
             this.noVerifactuData = undefined;
             this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
@@ -492,7 +510,7 @@ export class InvoiceCommunicationConfiguration {
         }
     }
     
-    setNoVerifactuDate(date) {
+    setNoVerifactuDate(date, enterprise) {
         let check = this.checkNoVerifactuDate(date)
         if(this.isNoVerifactu() && check.valid) {
             this._noVerifactuDataHistory = this.setHistoryStartDate(this.getNoVerifactuDataHistory(), date);
@@ -504,6 +522,9 @@ export class InvoiceCommunicationConfiguration {
                 this.noVerifactuData.updated = true;
             }
             this.endOtherHistories([CONSTANT.NO_VERIFACTU], date);
+            if(!this.hasCommunication()) {
+                this.setSif(true, enterprise, CONSTANT.NO_VERIFACTU);
+            }
         }
         return check;
     }
@@ -554,7 +575,7 @@ export class InvoiceCommunicationConfiguration {
             this.siiData = this.newEnterpriseData(EnterpriseDataNames.ICC_SII, enterprise);
             this._siiDataHistory = this.siiDataHistory ? structuredClone(this.siiDataHistory) : [];
             this._siiDataHistory.push(this.siiData);
-            this.setSiiDate(this.getToday());
+            this.setSiiDate(this.getToday(), enterprise);
         } else if(!sii && this.isSii()) {
             this.siiData = undefined;
             this._siiDataHistory = this.endHistory(this.siiDataHistory);
@@ -565,18 +586,24 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    setSiiDate(date) {
+    setSiiDate(date, enterprise) {
        let check = this.checkSiiDate(date)
         if(this.isSii() && check.valid) {
             this._siiDataHistory = this.setHistoryStartDate(this.getSiiDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.SII, CONSTANT.TBAI]);
                 this.siiData = undefined;
+                if(this.isNoSif()) {
+                    this.setSif(true, enterprise);
+                }
             } else {
                 this.siiData.startDate = date;
                 this.siiData.updated = true;
             }
             this.endOtherHistories([CONSTANT.SII, CONSTANT.TBAI], date);
+            if(!this.hasCommunication()) {
+                this.setSif(true, enterprise, CONSTANT.SII);
+            }
         }
         return check;
     }
@@ -624,12 +651,12 @@ export class InvoiceCommunicationConfiguration {
 
     // Specific methods for SIF communication type
 
-    setSif(sif, enterprise) {
+    setSif(sif, enterprise, communicationType) {
         if(sif && !this.isSif()) {
             this.sifData = this.newEnterpriseData(EnterpriseDataNames.ICC_SIF, enterprise);
             this._sifDataHistory = this.sifDataHistory ? structuredClone(this.sifDataHistory) : [];
             this._sifDataHistory.push(this.sifData);
-            this.setSifDate(this.getToday());
+            this.setSifDate(this.getToday(), communicationType);
         } else if(!sif && this.isSif()) {
             this.sifData = undefined;
             this._sifDataHistory = this.endHistory(this.sifDataHistory);
@@ -637,7 +664,7 @@ export class InvoiceCommunicationConfiguration {
         }
     }
     
-    setSifDate(date) {
+    setSifDate(date, communicationType) {
         let check = this.checkSifDate(date)
         if(this.isSif() && check.valid) {
             this._sifDataHistory = this.setHistoryStartDate(this.getSifDataHistory(), date);
@@ -648,7 +675,11 @@ export class InvoiceCommunicationConfiguration {
                 this.sifData.startDate = date;
                 this.sifData.updated = true;
             }
-            this.endOtherHistories([CONSTANT.SIF], date);
+            let h = [CONSTANT.SIF];
+            if(communicationType ) {
+                h.push(communicationType);
+            }
+            this.endOtherHistories(h, date);
         }
         return check;
     }
