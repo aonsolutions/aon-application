@@ -64,6 +64,7 @@ export const AUTORENEW = 'autorenew';
 
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
+export const BALANCE = 'balance';
 export const BAR_CHART = 'bar_chart';
 export const BARCODE = 'barcode';
 export const BATCH_PREDICTION = 'batch_prediction';
@@ -80,6 +81,7 @@ export const BUILD = 'build';
 export const BUILD_CIRCLE = 'build_circle';
 export const BUSINESS = 'business';
 export const BUSINESS_CENTER = 'business_center';
+export const BREASTFEEDING = 'breastfeeding';
 
 // ----- C
 
@@ -108,6 +110,7 @@ export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
 export const CLOUD_UPLOAD = 'cloud_upload';
 export const CODE = 'code';
+export const COFFEE = 'coffee';
 export const COGNITION_2 = "cognition_2";
 export const COMMENT = 'comment';
 export const COMMENT_BANK = 'comment_bank';
@@ -135,6 +138,7 @@ export const DOCUMENT_SCANNER = 'document_scanner';
 export const DONE = 'done';
 export const DOMAIN_ADD = 'domain_add';
 export const DRAFT_ORDERS = 'draft_orders';
+export const DISTANCE = 'distance';
 
 // ----- E
 
@@ -153,6 +157,7 @@ export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 
 // ----- F
 
+export const FAMILY_RESTROOM = 'family_restroom';
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
@@ -185,6 +190,7 @@ export const HELP = 'help';
 export const HIGHLIGHT_OFF = 'highlight_off';
 export const HDR_AUTO = 'hdr_auto';
 export const HOME = 'home';
+export const HOME_HEALTH = 'home_health';
 
 // ----- I
 
@@ -293,6 +299,7 @@ export const SEND = 'send';
 export const SETTINGS = 'settings';
 export const SHOPPING_BAG = 'shopping_bag';
 export const SPEAKER_NOTES = 'speaker_notes';
+export const STETHOSCOPE = 'stethoscope';
 export const STICKY_NOTE = 'sticky_note_2';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SUPPORT_AGENT = "support_agent";
