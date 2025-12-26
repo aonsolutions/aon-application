@@ -13,9 +13,10 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.Vector;
 
-import jakarta.activation.DataHandler;
-import jakarta.activation.DataSource;
-import jakarta.activation.FileDataSource;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
