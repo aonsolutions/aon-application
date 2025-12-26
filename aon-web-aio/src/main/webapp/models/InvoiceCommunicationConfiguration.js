@@ -414,8 +414,8 @@ export class InvoiceCommunicationConfiguration {
         }
     }
 
-    setVerifactuDate(date, document) {
-       let check = this.checkVerifactuDate(date, document)
+    setVerifactuDate(date) {
+       let check = this.checkVerifactuDate(date)
         if(this.isVerifactu() && check.valid) {
             this._verifactuDataHistory = this.setHistoryStartDate(this.getVerifactuDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
@@ -432,15 +432,13 @@ export class InvoiceCommunicationConfiguration {
         return check;
     }
 
-    checkVerifactuDate(date, document) {
+    checkVerifactuDate(date) {
         const selectedDate = date;
         const nowDate = this.getToday();
-        const maxDate = isPersonaFisica(document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
+        const maxDate = new Date(2026, 0, 1);
 
         if (nowDate < maxDate && selectedDate > maxDate) {
-            return {valid: false, message: isPersonaFisica(document)
-                ? 'La fecha es posterior al 1 de Julio de 2026.'
-                : 'La fecha es posterior al 1 de Enero de 2026.'};
+            return {valid: false, message: 'La fecha es posterior al 1 de Enero de 2026.'};
         }
         if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
@@ -494,8 +492,8 @@ export class InvoiceCommunicationConfiguration {
         }
     }
     
-    setNoVerifactuDate(date, document) {
-        let check = this.checkNoVerifactuDate(date, document)
+    setNoVerifactuDate(date) {
+        let check = this.checkNoVerifactuDate(date)
         if(this.isNoVerifactu() && check.valid) {
             this._noVerifactuDataHistory = this.setHistoryStartDate(this.getNoVerifactuDataHistory(), date);
             if(date >= this.getToday().addDay(1)) {
@@ -510,15 +508,13 @@ export class InvoiceCommunicationConfiguration {
         return check;
     }
 
-    checkNoVerifactuDate(date, document) {
+    checkNoVerifactuDate(date) {
         const selectedDate = date;
         const now = new Date();
         const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const maxDate = isPersonaFisica(document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
+        const maxDate = new Date(2026, 0, 1);
         if (now < maxDate && selectedDate > maxDate) {
-            return {valid: false, message: isPersonaFisica(document)
-                ? 'La fecha es posterior al 1 de Julio de 2026.'
-                : 'La fecha es posterior al 1 de Enero de 2026.'};
+            return {valid: false, message: 'La fecha es posterior al 1 de Enero de 2026.'};
         }
         if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
@@ -819,6 +815,8 @@ export class InvoiceCommunicationConfiguration {
             siiRegistryDate: this.siiRegistryDate,
             sifDataHistory: this.getSifDataHistory(),
             sifData: this.getSifData(),
+            noSifData: this.getNoSifData(),
+            noSifDataHistory: this.getNoSifDataHistory(),
             defaultCertificate: this.defaultCertificate
         };
     }

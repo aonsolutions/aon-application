@@ -50,7 +50,8 @@ export class AonInvoiceCommunication extends AonElement {
             div.style.width = '100%';
             this.appendChild(div);
             this.buildCompanyCard(div);
-            this.buildCommunicationCard(div);
+            if(this.showCommunicationCard()) 
+                this.buildCommunicationCard(div);
         }
     }
 
@@ -63,7 +64,7 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     showCommunicationCard() {
-        return !this.communicationConfiguration.getAdministration().isUnknown() &&  isValid(this.configuration.company.document)
+        return !this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)
             && !this.communicationConfiguration.isNoSif();
     }
 
@@ -223,11 +224,12 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildNoSif(table) {
+        const enterprise = this.configuration.company.id;
         let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
         issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
         issueInvoice.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setNoSif(!issueInvoice.isChecked());
+            this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
@@ -333,59 +335,23 @@ export class AonInvoiceCommunication extends AonElement {
         let active = this.communicationConfiguration.isVerifactu();
         let future = this.communicationConfiguration.willBeVerifactu();
         this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(), 
-            this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise, document),
+            this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setVerifactuDate(date, document)
+                let check = this.communicationConfiguration.setVerifactuDate(date)
                 if(!check.valid) this.showError(check.message);
             });
     }
 
     buildNoVerifactu(table) {
         const enterprise = this.configuration.company.id;
-        const document = this.configuration.company.document;
         let active = this.communicationConfiguration.isNoVerifactu();
         let future = this.communicationConfiguration.willBeNoVerifactu();
         this.buildCommunication(table, this.NO_VERIFACTU, MSG.NO_VERIFACTU, active, future, this.communicationConfiguration.getNoVerifactuData(),
-            this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise, document),
+            this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise),
             (date) => {
-                let check = this.communicationConfiguration.setNoVerifactuDate(date, document)
+                let check = this.communicationConfiguration.setNoVerifactuDate(date)
                 if(!check.valid) this.showError(check.message);
             });
-    }
-
-    checkVerifactuDate(verifactuIncludeDate) {
-        const selectedDate = verifactuIncludeDate.getDate();
-        const now = new Date();
-        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const maxDate = isPersonaFisica(this.configuration.company.document) ? new Date(2026, 6, 1) : new Date(2026, 0, 1);
-        const minDate = new Date(2025, 11, 1);
-
-        if (selectedDate < minDate) {
-            this.showError('La fecha es anterior al 1 de Diciembre de 2025.');
-            verifactuIncludeDate.setDate(this.getVerifactuDate());
-            return false;
-        }
-
-        if (now < maxDate && selectedDate > maxDate) {
-            this.showError(isPersonaFisica(this.configuration.company.document)
-                ? 'La fecha es posterior al 1 de Julio de 2026.'
-                : 'La fecha es posterior al 1 de Enero de 2026.');
-            verifactuIncludeDate.setDate(this.getVerifactuDate());
-            return false;
-        }
-        if (selectedDate < nowDate) {
-            this.showError('La fecha seleccionada no puede ser anterior a la fecha actual.');
-            verifactuIncludeDate.setDate(this.getVerifactuDate());
-            return false;
-        }
-        return true;
-    }
-
-    getVerifactuDate() {
-        const now = new Date();
-        const date = new Date(2026, 0, 1);
-        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        return date > nowDate ? date : nowDate;
     }
 
     showError(error) {

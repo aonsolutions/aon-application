@@ -7,6 +7,7 @@ public enum EnterpriseDataNames {
 	ICC_ADMINISTRATION,
 	ICC_LROE,
 	ICC_SIF,
+	ICC_NO_SIF,
 	ICC_SII,
 	ICC_TBAI,
 	ICC_SERES,
