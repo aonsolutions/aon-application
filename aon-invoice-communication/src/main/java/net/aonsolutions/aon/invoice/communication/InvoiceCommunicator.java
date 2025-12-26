@@ -22,10 +22,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -48,11 +51,14 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
@@ -200,7 +206,23 @@ public class InvoiceCommunicator {
 							@Override public void visitSERES() throws InvoiceCommunicationException 	{throwSERES();}
 							@Override public void visitEMAIL() throws InvoiceCommunicationException		{throwEMAIL();}
 							@Override public void visitCLOSING() throws InvoiceCommunicationException	{throwCLOSING();}
-							@Override public void visitSII() throws InvoiceCommunicationException		{throwSII();}
+							@Override public void visitSII() throws InvoiceCommunicationException		{
+								try {
+									SIIManager manager = SIIManager.getInstance(cc.getConfig());
+									AccountingReportParams params = new AccountingReportParams();
+									params.setDomain(invoice.getDomain());
+									params.setInvoices( new Integer[] {invoice.getId()} );
+									LinkedList<VatContext> contextList = OLDVATDAO.getSiiVatContext(ctx, p -> FinanceUtils.getVATFilter(p, params), "")
+											.collect(Collectors.toCollection(LinkedList::new));
+									manager.suministroFacturas(cc.getDomain(), cc.getUser().getLogin(), cc.getCompany(), invoice, contextList, null);
+								} catch (Exception e) {
+									if (e instanceof InvoiceCommunicationException ice) {
+										throw ice;
+									} else {
+										throw new InvoiceCommunicationException( e );
+									}
+								}								
+							}
 							@Override public void visitTBAI() throws InvoiceCommunicationException		{throwTBAI();}
 							@Override public void visitLROE() throws InvoiceCommunicationException		{throwLROE();}
 							@Override public void visitFACTURAE() throws InvoiceCommunicationException	{throwFACTURAE();}

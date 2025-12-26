@@ -481,18 +481,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
 		
 		if (invoice.isSales()) {
-			
 			// ***********************************
 			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-			if (icc.isVerifactu()) {
+			if (icc.hasCommunication() && !icc.isTbai() && !icc.isLroe() && !invoice.isThirdPart()) {
 				return acceptAndCommunicateInvoice(api, icc, company);	
-			}
-			// ***********************************
+			} 
 			
+			
+			// ONLY TBAI & THIRD PART INVOICES
 			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
 				invoice.setReferenceCode(null);	
 			}
-			
+				
 			if (icc.isTbai() && invoice.isThirdPart()) {
 				checkTbaiId(company, invoice, tbaiId);
 			} else if( icc.isTbai()) {
@@ -500,8 +500,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				icc.setCertificate(certificate);
 				invoiceValidation(invoice);
 			}
+				
+			// ***********************************		
 		}
-		
 		
 		Integer rawdocId = invoice.getId();
 		invoice.setRawdocId(invoice.getId());
