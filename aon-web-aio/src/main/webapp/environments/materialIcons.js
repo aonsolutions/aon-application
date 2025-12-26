@@ -123,6 +123,7 @@ export const CONTRACT = 'contract';
 export const CONTACTS = 'contacts';
 export const CREDIT_CARD = 'credit_card';
 export const CONTENT_COPY = 'content_copy';
+export const CLINICAL_NOTES = 'clinical_notes';
 export const CYCLE = 'cycle';
 
 // ----- D
@@ -317,6 +318,7 @@ export const TERMINAL = 'terminal';
 // ----- U
 
 export const UNARCHIVE = 'unarchive';
+export const UNKNOWN_DOCUMENT = 'unknown_document';
 
 // ----- V
 

@@ -4924,11 +4924,36 @@ font-weight: 600;
   	margin: 0 !important;
   }
   
+  #aonTimeControlReasonDialogDialogMain {
+  	margin-top: 60px;
+  }
+  
+  #aonTimeControlReasonDialogDialogContent .aonTimeControlResonOption:last-of-type {
+  	border-bottom: none;
+  }
+  
+  #DesplazadoReasonInput,
+  #OtroReasonInput{
+	padding-left: 1rem;
+
+  }
+  
+  span#DesplazadoReasonInputTitle,
+  span#OtroReasonInputTitle {
+  	display: none;
+  }
+  
   .aonTimeControlResonOption{
   	display:flex;
   	align-items: center;
   	gap: 1rem;
-  	padding: .5rem 1rem;
+  	padding: 1rem;
+  	cursor: pointer;
+ 	border-bottom: 1px solid #d3d3d3;
+  }
+  
+  .aonTimeControlResonOption:hover {
+  	background-color: #f0f0f0;
   }
   
   .aonWidgetNominaMobile{

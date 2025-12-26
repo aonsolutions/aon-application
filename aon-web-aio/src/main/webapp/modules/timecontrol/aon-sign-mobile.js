@@ -3,11 +3,12 @@ import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, 
 import {getPosition} from '../../services/maps.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import * as LS from "../../services/localStorageService.js";
 import { IN_REASON, PAUSE_REASON } from '../../models/timecontrol/TimeControlReason.js';
+import { createInput } from "../../components/CreateComponent.js";
 
 export class AonSignMobile extends AonElement {
   _taskHolders;
@@ -98,6 +99,15 @@ export class AonSignMobile extends AonElement {
 		e.stopPropagation();
 		this.disabledButton(false);
 	});
+	aonDialog.addAction(
+		{
+			id:'',
+			title:'Control Horario',
+			icon:MATERIAL_ICONS.ALARM,
+			position: "right",
+		},
+		(e) => e.stopPropagation()
+	);
 	aonDialog.onclick = (e) => {
 		e.stopPropagation();
 		aonDialog.close();
@@ -205,7 +215,7 @@ export class AonSignMobile extends AonElement {
 		button2.innerHTML = 'VUELTA';
 		button2.addEventListener(EVENT.CLICK, (event) => {
 			event.stopPropagation();
-			this.saveTimeCtrl('in');
+			this.saveTimeCtrl('return');
 		});
 
 		buttons.appendChild(button2);
@@ -277,26 +287,40 @@ export class AonSignMobile extends AonElement {
     //console.log('saveTimeCtrl : ', signin);
     
     if(this.isBeta() && this.isMobile()){
-		if(signin.status == 'out'){
+		if(signin.status == 'out' || signin.status == 'return'){
 			
-			const resp = await saveTimeControl(signin);
+			if(signin.status == 'return') signin.status = 'in';
 			
-			if(timeOutPosition && this.isMobile() && resp && resp.id){
-			  getPosition()
-			  .then(position=>{
-			    if(position){
-			      resp.coordinates = position.latitude + ',' + position.longitude;
-			      saveTimeControl({...resp, ...signin})
-			      .then(console.log)
-			      .catch(console.error);
-			    }
-			  })
-			  .catch(console.error);
+			if(signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0){
+				const resp = await saveTimeControl(signin);
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
+			} else if(signin.status == 'in'){
+				this.openReasonDialog(signin, timeOutPosition);
+			} else {
+				const resp = await saveTimeControl(signin);
+			
+				if(timeOutPosition && this.isMobile() && resp && resp.id){
+				  getPosition()
+				  .then(position=>{
+				    if(position){
+				      resp.coordinates = position.latitude + ',' + position.longitude;
+				      saveTimeControl({...resp, ...signin})
+				      .then(console.log)
+				      .catch(console.error);
+				    }
+				  })
+				  .catch(console.error);
+				}
+				
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
 			}
 			
+		} else if(signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0){
+			const resp = await saveTimeControl(signin);
 			this.setTimeControl(resp);
 			this.buildSignin(resp);
-			
 		} else
 			this.openReasonDialog(signin, timeOutPosition);
 		
@@ -349,7 +373,15 @@ export class AonSignMobile extends AonElement {
 		e.stopPropagation();
 		this.disabledButton(false);
 	});
-	
+	d.addAction(
+		{
+			id:'',
+			title:'Control Horario',
+			icon:MATERIAL_ICONS.ALARM,
+			position: "right",
+		},
+		(e) => e.stopPropagation()
+	);
 	d.onclick = (e) => {
 		e.stopPropagation();
 		d.close();
@@ -372,7 +404,9 @@ export class AonSignMobile extends AonElement {
 	
 	options.forEach(opt => {
 		content.appendChild( this.buildReasonOption(opt, async (value) => {
-			console.log('value', value);
+			//console.log('value', value);
+			
+			signin.cause = value;
 			
 			const resp = await saveTimeControl(signin);
 
@@ -393,6 +427,43 @@ export class AonSignMobile extends AonElement {
 		    
 			d.close();
 		}));
+        
+        if(!opt.clickable) {
+			// Create name input
+			let nameInput = createInput( opt.name.trim() + "ReasonInput", opt.value === '2' ?  'Indicar lugar' : 'Indicar motivo');
+			nameInput.type = 'text';
+			nameInput.setAttribute("maxLength", 50);
+			content.appendChild(nameInput);
+			
+			nameInput.addEventListener(EVENT.CLICK, (e) => e.stopPropagation());
+			
+			nameInput.addEventListener(EVENT.CHANGE, async (e) => {
+				e.stopPropagation();
+				//console.log('value reason', nameInput.value, e);
+				
+				signin.cause = opt.value;
+				signin.comments = nameInput.value;
+			
+				const resp = await saveTimeControl(signin);
+				
+				if(timeOutPosition && this.isMobile() && resp && resp.id){
+				  getPosition()
+				  .then(position=>{
+				    if(position){
+				      resp.coordinates = position.latitude + ',' + position.longitude;
+				      saveTimeControl({...resp, ...signin})
+				      .then(console.log)
+				      .catch(console.error);
+				    }
+				  })
+				  .catch(console.error);
+				}
+				
+				this.buildSignin(resp);
+				
+				d.close();
+			});
+		}
 	});
 	
 	d.setContent(content);
@@ -414,7 +485,7 @@ export class AonSignMobile extends AonElement {
         val.innerHTML = opt.name;
         div.appendChild(val);
 
-        if(callback){
+        if(callback && opt.clickable){
             div.addEventListener(EVENT.CLICK, (e) => {
 				e.stopPropagation();
 				callback(opt.value);

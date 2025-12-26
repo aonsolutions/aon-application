@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TimeControlDAO {	
 
@@ -261,8 +262,17 @@ public class TimeControlDAO {
 		if(null != tcd.getId()) 
 			sets.set(TIMECONTROL.ID, tcd.getId());
 		
-		if(null != tcd.getCause()) 
+		if(null == tcd.getCause()) 
+			sets.set(TIMECONTROL.CAUSE, DSL.castNull(TIMECONTROL.CAUSE));
+		
+		if(null != tcd.getCause() && null == tcd.getReason()) 
 			sets.set(TIMECONTROL.CAUSE, tcd.getCause().value());
+		
+		if(null != tcd.getReason()) 
+			sets.set(TIMECONTROL.CAUSE, tcd.getReason().value());
+		
+		if(null != tcd.getReason() && AonStringUtils.isBlank(tcd.getComments())) 
+			sets.set(TIMECONTROL.COMMENTS, tcd.getReason().getDescription());
 		
 		Integer id = sets.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
 		
