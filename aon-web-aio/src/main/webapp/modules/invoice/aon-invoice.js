@@ -2978,7 +2978,7 @@ export class AonInvoice extends AonElement {
 		let ok = this.checkConfiguration();
 		if(!ok) return;
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if(this.invoice.isEmitida() && this.icc.hasCommunication() ) {
+		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() ) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';

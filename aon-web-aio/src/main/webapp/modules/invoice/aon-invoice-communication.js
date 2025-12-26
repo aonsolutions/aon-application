@@ -227,7 +227,10 @@ export class AonInvoiceCommunication extends AonElement {
         const enterprise = this.configuration.company.id;
         let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
-        issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
+        if(!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
+            this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
+        }
+        // issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
         issueInvoice.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));

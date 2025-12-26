@@ -626,7 +626,7 @@ export class InvoiceCommunicationConfiguration {
 
     setSif(sif, enterprise) {
         if(sif && !this.isSif()) {
-            this.sifData = this.newEnterpriseData(EnterpriseDataNames.ICC_FACTURAE, enterprise);
+            this.sifData = this.newEnterpriseData(EnterpriseDataNames.ICC_SIF, enterprise);
             this._sifDataHistory = this.sifDataHistory ? structuredClone(this.sifDataHistory) : [];
             this._sifDataHistory.push(this.sifData);
             this.setSifDate(this.getToday());
@@ -695,7 +695,7 @@ export class InvoiceCommunicationConfiguration {
             this._noSifDataHistory = this.noSifDataHistory ? structuredClone(this.noSifDataHistory) : [];
             this._noSifDataHistory.push(this.noSifData);
             this.setNoSifDate(this.getToday());
-        } else if(!noSif && this.isNoSif()) {
+        } else if(!noSif) {
             this.noSifData = undefined;
             this._noSifDataHistory = this.endHistory(this.noSifDataHistory);
             this.undefinedHistories([CONSTANT.NO_SIF]);
