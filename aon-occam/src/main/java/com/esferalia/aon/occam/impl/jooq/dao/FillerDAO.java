@@ -36,9 +36,13 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
+import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -107,6 +111,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FillerDAO {
 	
@@ -397,6 +402,9 @@ public class FillerDAO {
 	}
 	
 	public static class AonCompanyFiller extends Filler implements Function<Record, AonCompany> {
+		public static final Field<String> EMAILS = DSL.field("emails", String.class);
+		public static final Field<String> PHONES = DSL.field("phones", String.class);
+		
 		@Override
 		public AonCompany apply(Record r) {
 			com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
@@ -441,13 +449,21 @@ public class FillerDAO {
 				.setSurcharge(getValue(r, COMPANY.SURCHARGE) == 1)
 				.setVatAccrualPayment(getValue(r, COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
 				.setWithholding(getValue(r, COMPANY.WITHHOLDING) == 1);
+			
+			String[] emails = Arrays.stream(AonStringUtils.split(AonStringUtils.defaultIfBlank(r.getValue(EMAILS)), ','))
+					.filter(AonStringUtils::isNotBlank).toArray(String[]::new);
+			String[] phones = Arrays.stream(AonStringUtils.split(AonStringUtils.defaultIfBlank(r.getValue(PHONES)), ','))
+					.filter(AonStringUtils::isNotBlank).map( phone -> phone.replaceAll("\\D","")).toArray(String[]::new);
 
 			return new AonCompany()
 				.setDomain(d)
 				.setShared(AonEnumUtils.enumValue(UserType.class, getValue(r, USER.TYPE)) == UserType.SHARED)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(getValue(r, APP_PARAM.VALUE))))
-				.setLogin(getValue(r, USER.LOGIN));
+				.setLogin(getValue(r, USER.LOGIN))
+				.setEmails(emails)
+				.setPhones(phones)
+				;
 		}
 	}
 	

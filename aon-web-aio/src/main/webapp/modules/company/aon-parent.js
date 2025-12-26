@@ -401,6 +401,7 @@ export class AonParent extends AonElement {
 		let i = this.createElement(TAG.I);
 		i.className = 'material-icons aonAvatar';
 		i.innerHTML = icon;
+		i.setAttribute('icon', icon);
 
 		let span2 = this.createElement(TAG.SPAN);
 		span2.innerHTML = company.name;

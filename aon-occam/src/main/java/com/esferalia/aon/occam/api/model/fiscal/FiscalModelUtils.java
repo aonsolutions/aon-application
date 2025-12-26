@@ -33,16 +33,17 @@ public class FiscalModelUtils {
 		)
 		,M300	("300",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isQuarterPeriod() && !mod.isLastPeriod() )	
 		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )
-		,M420	("420",mod -> (mod.getModel() == FiscalModelType.M303 && mod.isCanarias() && mod.isQuarterPeriod()))
-		,M417	("417",mod -> (mod.getModel() == FiscalModelType.M303 && mod.isCanarias() && mod.isMonthPeriod()))
+		,M420	("420",mod -> (mod.getModel() == FiscalModelType.M303 && mod.isCanarias() && mod.isQuarterPeriod()), "I.G.I.C. R\u00E9gimen General. Autoliquidaci\u00F3n Trimestral." )
+		,M417	("417",mod -> (mod.getModel() == FiscalModelType.M303 && mod.isCanarias() && mod.isMonthPeriod()) , "I.G.I.C. Suministro Inmediato de Informaci\u00F3n. Autoliquidaci\u00F3n.")
 		
 		// ********** MODELO 390 **********
-		,M390	("390",mod -> mod.getModel() == FiscalModelType.M390 
-			|| mod.getModel() == FiscalModelType.M390_HF
+		,M390	("390",mod -> (mod.getModel() == FiscalModelType.M390 && mod.isAEAT()) 
+			|| (mod.getModel() == FiscalModelType.M390_HF)
 			|| ( (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 )
 					&& (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa()) 
 					&& mod.isLastPeriod() )
 		)
+		,M425	("425",mod -> (mod.getModel() == FiscalModelType.M390 && mod.isCanarias()), "I.G.I.C. Declaraci\u00F3n Resumen Anual.")
 		
 		// ********** MODELO 130 ********** 
 		,M130	("130",mod -> mod.getModel() == FiscalModelType.M130)
@@ -81,20 +82,37 @@ public class FiscalModelUtils {
 		
 		private String name;
 		private IFiscalModelTypeName accepter;
+		private String description;
 		
-		private FiscalModelTypeName( String name, IFiscalModelTypeName getter) {
+		private FiscalModelTypeName(String name, IFiscalModelTypeName getter) {
 			this.name = name;
 			this.accepter = getter;
 		}
+		private FiscalModelTypeName(String name, IFiscalModelTypeName getter, String description) {
+			this.name = name;
+			this.accepter = getter;
+			this.description = description;
+		}
 		public String getName() {
 			return name;
+		}
+		public String getDescription() {
+			return description;
 		}
 		private boolean accept(IFiscalModel mod) {
 			return this.accepter.accept(mod);
 		}
 		private static String getName(IFiscalModel mod) {
 			for (FiscalModelTypeName f : FiscalModelTypeName.values()) {
-				if (f.accept(mod)) return f.getName();
+				if (f.accept(mod)) 
+					return f.getName();
+			}
+			return null;
+		}
+		private static String getDescription(IFiscalModel mod) {
+			for (FiscalModelTypeName f : FiscalModelTypeName.values()) {
+				if (f.accept(mod)) 
+					return f.getDescription();
 			}
 			return null;
 		}
@@ -119,6 +137,11 @@ public class FiscalModelUtils {
 			else description = fm.getPeriod().getDescription();			
 		}		
 		return description;
+	}
+
+	// POR AHORA SOLO SE USA PARA CANARIAS, PERO SE PODRIA EXTENDER A TODOS Y DEJAR DE USAR AON.MSG...
+	public static String getModelDescription(IFiscalModel fm) {
+		return FiscalModelTypeName.getDescription(fm);
 	}
 	
 }

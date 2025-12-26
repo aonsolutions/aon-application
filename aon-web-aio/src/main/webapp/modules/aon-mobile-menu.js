@@ -27,6 +27,9 @@ import { AonUploadToast } from "../components/aon-upload-toast.js";
 import { AonMobileHome } from "./home/aon-mobile-home.js";
 import { AonMobileDesktop } from "./company/aon-mobile-desktop.js";
 import { AonMobileProfile } from "./user/aon-mobile-profile.js";
+import { AonNewInput } from "../components/aon-new-input.js";
+import { AonSelect } from "../components/aon-select.js";
+import { createSelect } from "../components/CreateComponent.js";
 
 export class AonMobileMenu extends AonElement {
 

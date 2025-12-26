@@ -170,6 +170,7 @@ export class AonDialogMenu extends AonElement {
 		const half = this.HEADER_HEIGHT / 2;
 		if( this.Y_DRAG >= half){
 			this.close();
+			this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
 		} else {
 			this.setDrag(this.START_TOP);
 		}

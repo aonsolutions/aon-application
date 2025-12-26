@@ -6,6 +6,7 @@ export const DBLCLICK = 'dblclick';
 export const CLICK_TITLE = 'clickTitle';
 export const CONTEXTMENU = 'contextmenu';
 export const CLOSE = 'close';
+export const CLOSE_DIALOG = 'closeDialog';
 export const CROPPER = 'cropper';
 export const CUSTOMER_CHANGE = 'customerChange';
 export const LOAD = 'load';
