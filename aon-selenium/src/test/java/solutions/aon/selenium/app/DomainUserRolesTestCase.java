@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -150,6 +151,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	
 
 	private void listCompanies(WebDriver webDriver, WebDriverWait wait) {
+		JavascriptExecutor js = (JavascriptExecutor) webDriver;
+		js.executeScript(
+		    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+		);
 		wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderCompanyListButton"))).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
 	}
