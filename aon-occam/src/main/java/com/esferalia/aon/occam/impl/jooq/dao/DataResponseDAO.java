@@ -114,6 +114,20 @@ public class DataResponseDAO {
 			.sorted((a1, a2) -> a2.getId().compareTo(a1.getId()));		
 	}
 	
+	public static Date getFirstDataResponseDate(AONContext ctx, Integer domainId, DataResponseSource source) {
+		return ctx.getDslContext()
+			.select(DSL.min(DATA_RESPONSE.RESPONSE_DATE).as(DATA_RESPONSE.RESPONSE_DATE))
+			.from(DATA_RESPONSE)
+			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
+			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.fetch()
+			.stream()
+			.map(r -> r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+			.filter(d -> d != null) 
+			.findFirst()
+			.orElse(null);
+	}
+	
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	
 		Integer id = ctx.getDslContext().insertInto(DATA_RESPONSE)
 				.set(DATA_RESPONSE.DOMAIN, dataResponse.getDomain())

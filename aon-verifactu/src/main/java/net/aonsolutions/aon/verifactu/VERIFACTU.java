@@ -182,7 +182,7 @@ public class VERIFACTU {
 					InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
 				} else {
 					// Si la respuesta es incorrecta, se guarda la comunicación.
-					saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, InvoiceCommunicationStatus.WRONG);
+					saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, InvoiceCommunicationStatus.WRONG);
 				}
 				break;
 			}
@@ -202,8 +202,8 @@ public class VERIFACTU {
 		, InvoiceBatch invoiceBatch
 		, Integer invoiceId
 		, InvoiceCommunicationStatus status) {
-		saveInvoiceInfo(ctx, vc.getDomain(), invoiceId, status);
-		saveInvoiceBatchdetail(ctx, vc.getDomain(), invoiceBatch, invoiceId, status);					
+		saveInvoiceInfo(ctx, vc.getDomainId(), invoiceId, status);
+		saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, status);					
 	}
 	
 	private static void checkQuery(VerifactuContext vc) throws InvoiceCommunicationException {
@@ -220,13 +220,14 @@ public class VERIFACTU {
 		}
 	}
 	
-	static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
 		checkCompany(vc);
 		checkConfig(vc);
+		checkCertificate(vc);
 		checkInvoices(vc);
 	}
 	
-	private static void checkCompany(VerifactuContext vc) throws InvoiceCommunicationException {
+	static void checkCompany(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0001);
 		}
@@ -240,16 +241,19 @@ public class VERIFACTU {
 		}
 	}
 	
-	private static void checkConfig(VerifactuContext vc) throws InvoiceCommunicationException {
+	static void checkConfig(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc.getConfig() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
 		}
+	}
+	
+	private static void checkCertificate(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc.getConfig().getCertificate() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0007);
 		}
 	}
-	
-	private static void checkInvoices(VerifactuContext vc) throws InvoiceCommunicationException {
+
+	static void checkInvoices(VerifactuContext vc) throws InvoiceCommunicationException {
 		if (vc.invoiceCount() == 0) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
 		}
@@ -333,7 +337,7 @@ public class VERIFACTU {
 		return InvoiceBatchDAO.save(ctx, invoiceBatch);
 	}
 	
-	private static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, Domain domain, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
+	private static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
 		InvoiceBatchDetail ibd = new InvoiceBatchDetail()
 			.setDomain(invoiceBatch.getDomain())
 			.setInvoiceBatch(invoiceBatch.getId())
@@ -342,8 +346,8 @@ public class VERIFACTU {
 		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
-	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationStatus status) {
-		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.VERIFACTU, status);
+	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationStatus status) {
+		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domainId, invoiceId, InvoiceCommunicationType.VERIFACTU, status);
 	}
 	
 	private static InvoiceCommunicationStatus getInvoiceCommunicationStatus(EstadoRegistroType status) {

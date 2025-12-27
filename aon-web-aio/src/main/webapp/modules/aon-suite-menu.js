@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { MSG, CSS, EVENT, TAG, CONSTANT } from '../environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG, CONSTANT } from '../environments/environments.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonButton } from '../components/aon-button.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
@@ -15,41 +15,41 @@ export class AonSuiteMenu extends AonElement {
     CONF_BUTTON;
     DROPDOWN_BUTTON;
     options = [];
-    last; 
+    last;
     new;
     cardData;
 
-	constructor () {
-		super();
-	}
-	
-	connectedCallback () {
-		this.clear();
-		this.initialize();
-		this.build();
-	}
+    constructor() {
+        super();
+    }
 
-	initialize() {
+    connectedCallback() {
+        this.clear();
+        this.initialize();
+        this.build();
+    }
+
+    initialize() {
         this.id = 'aonSuiteMenu';
-		this.SIDE_MENU = this.id+ 'SideMenu';
-		this.CONTENT = this.id+ 'Content';
+        this.SIDE_MENU = this.id + 'SideMenu';
+        this.CONTENT = this.id + 'Content';
         this.TITLE = this.id + 'Title';
         this.NEW_BUTTON = this.id + 'NewButton';
         this.UPLOAD_BUTTON = this.id + 'UploadButton';
         this.CONF_BUTTON = this.id + 'ConfButton';
         this.DROPDOWN_BUTTON = this.id + "DropDownButton";
         this.OPTIONS = this.id + "Options";
-	}
-	
-	initOptions(){
-		this.options = [];
-	}
+    }
 
-	build() {
+    initOptions() {
+        this.options = [];
+    }
+
+    build() {
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
         this.appendChild(divFlex);
-		// this.getApplication().setContent(divFlex);
+        // this.getApplication().setContent(divFlex);
 
         // let sideMenu = this.createDiv();
         // sideMenu.id = this.SIDE_MENU;
@@ -161,7 +161,7 @@ export class AonSuiteMenu extends AonElement {
         });
 	}
 
-    setTitle(title){
+    setTitle(title) {
         this.title = title;
         let titleElement = this.getElement(this.TITLE);
         if(titleElement) {
@@ -200,84 +200,43 @@ export class AonSuiteMenu extends AonElement {
 		// card.setContent(divGeneral);
     }
 
-    buildCard(opt, i,div){
-        // if(opt.visible!=undefined && opt.visible == true){
-			
-			let options = opt.options.filter(opt => !opt.filter || opt.filter());
-			if (options.length === 0 ) 
-				return; 
+    buildCard(opt, i, div) {
+        if (!opt.disabled) {
+            let options = opt.options.filter(opt => !opt.filter || opt.filter());
+            if (options.length === 0)
+                return;
 
-			
             let card = new AonCard();
             card.id = "card" + i;
             card.title = opt.title;
             card.classList.add("suiteMenuCardCard");
             div.appendChild(card);
-            
+
             let cardDiv = this.getElement(card.CARD);
             cardDiv.classList.add("suiteMenuCardDiv");
-            
+
             let divGeneral = this.createDiv();
-			options.forEach((v) =>{
-                divGeneral.appendChild(this.buildCardData(v));
+            options.forEach((v) => {
+                if (!v.disabled) {
+                    divGeneral.appendChild(this.buildCardData(v));
+                }
             })
-        
-            card.setContent(divGeneral); 
-        // }else if(opt.visible == undefined){
-        //     let card = new AonCard();
-        //     card.id = "card" + i;
-        //     card.title = opt.title;
-        //     card.classList.add("suiteMenuCardCard")
-        //     div.appendChild(card);
-            
-        //     let cardDiv = this.getElement(card.CARD);
-        //     cardDiv.classList.add("suiteMenuCardDiv");
-            
-        //     let divGeneral = this.createDiv();
-        //     opt.options.forEach((v) =>{
-        //         divGeneral.appendChild(this.buildCardData(v));
-        //     })
-        
-        //     card.setContent(divGeneral); 
-        // }else if (this.allFalse){
-        //     let card = new AonCard();
-        //     card.id = "card" + i;
-        //     card.title = opt.title;
-        //     card.style.minWidth = "375px";
-        //     card.style.maxWidth = "375px";      
 
-        //     card.style.display = "flex";
-        //     card.style.maxHeight = "375px";
-        //     card.style.marginLeft = "10px";
-        //     //card.style.marginTop = "20px";
-        //     div.appendChild(card);
-            
-        //     let cardDiv = this.getElement(card.CARD);
-        //     cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-        //     cardDiv.style.borderRadius = '2px';
-        //     cardDiv.style.minWidth = "375px";
-            
-        //     let divGeneral = this.createDiv();
-        //     opt.options.forEach((v) =>{
-        //         divGeneral.appendChild(this.buildCardData(v));
-        //     })
-
-            
-        //     card.setContent(divGeneral); 
-        // }
+            card.setContent(divGeneral);
+        }
     }
 
     buildCardData(value) {
-		let div = this.createDiv();
-		div.classList.add("suiteMenuCardDataDiv");
+        let div = this.createDiv();
+        div.classList.add("suiteMenuCardDataDiv");
 
-		let span = this.createDiv();
-		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value.description;
+        let span = this.createDiv();
+        span.className = CSS.AON_CARD_TEXT;
+        span.innerHTML = value.description;
         span.classList.add("suiteMenuCardDataSpan");
-		div.appendChild(span);
+        div.appendChild(span);
 
-        if(value.description2){
+        if (value.description2) {
             div.style.display = "flex";
             let span2 = this.createSpan();
             span2.className = CSS.AON_CARD_TEXT;
@@ -297,14 +256,14 @@ export class AonSuiteMenu extends AonElement {
 	}
 
 
-    buildSideNavCardData(value,number) {
-		let div = this.createDiv();
-		div.classList.add("suiteMenuSideNavCardDataDiv");
+    buildSideNavCardData(value, number) {
+        let div = this.createDiv();
+        div.classList.add("suiteMenuSideNavCardDataDiv");
 
-		let span = this.createSpan();
-		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value;
-		div.appendChild(span);
+        let span = this.createSpan();
+        span.className = CSS.AON_CARD_TEXT;
+        span.innerHTML = value;
+        div.appendChild(span);
 
         let span2 = this.createSpan();
         span2.className = CSS.AON_CARD_TEXT;
@@ -312,25 +271,25 @@ export class AonSuiteMenu extends AonElement {
         span2.classList.add("suiteMenuSideNavCardDataSpan2");
         div.appendChild(span2);
 
-		return div;
-	}
+        return div;
+    }
 
-    setButtonHover(button){
+    setButtonHover(button) {
         button.classList.add("suiteMenuSideNavCardDataButton");
     }
-    
+
 
     buildOptions(options) {
         this.clearElementById(this.OPTIONS);
 
-        if(options.length === 0) return null;
+        if (options.length === 0) return null;
 
-        let div = this.getElement(this.OPTIONS); 
+        let div = this.getElement(this.OPTIONS);
         div.classList.add('is-visible');
         div.classList.add("suiteMenuOptionsDiv");
 
         div.addEventListener("mouseleave", () => {
-           div.classList.remove('is-visible');
+            div.classList.remove('is-visible');
         });
 
         let ul = this.createElement(TAG.UL);
@@ -339,11 +298,11 @@ export class AonSuiteMenu extends AonElement {
         ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
         ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
         div.appendChild(ul);
-        
-        options.forEach((opt) =>{
-           this.buildLi(opt,ul,div);
+
+        options.forEach((opt) => {
+            this.buildLi(opt, ul, div);
         });
-        
+
     }
 
     buildSideNavRow(value) {
@@ -353,55 +312,55 @@ export class AonSuiteMenu extends AonElement {
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
         span.classList.add("suiteMenuSideNavRowSpan");
-		span.innerHTML = value;
-		div.appendChild(span);
-        
-		return div;
-	}
+        span.innerHTML = value;
+        div.appendChild(span);
 
-    buildLi(option, ul, div){
-        let li = this.createElement(TAG.LI);
-        li.className = 'aonInputListOptionsItem';
-        li.innerHTML = option.title;
-        li.classList.add("suiteMenuLi");
-        ul.appendChild(li);
-    
-        li.addEventListener(EVENT.CLICK, () => {
-          div.classList.remove('is-visible');
-          option.action();
-
-        });
-    
-        return li;
+        return div;
     }
-	
-	getOptions(){
-		if ( !this.options?.length ){
-			this.initOptions();
-		}
-		return this.options;
-	}
 
-    getContent(){
+    buildLi(option, ul, div) {
+        if (!option.disabled) {
+            let li = this.createElement(TAG.LI);
+            li.className = 'aonInputListOptionsItem';
+            li.innerHTML = option.title;
+            li.classList.add("suiteMenuLi");
+            ul.appendChild(li);
+
+            li.addEventListener(EVENT.CLICK, () => {
+                div.classList.remove('is-visible');
+                option.action();
+            });
+        }
+
+    }
+
+    getOptions() {
+        if (!this.options?.length) {
+            this.initOptions();
+        }
+        return this.options;
+    }
+
+    getContent() {
         return this.getElement(this.CONTENT);
     }
 
-    getDropDown(){
+    getDropDown() {
         return this.getElement(this.DROPDOWN_BUTTON);
     }
 
-	hasBank() {
-		return this.getDur().hasBank();
-	}
-	
-	isDomainManagementAvailable() {
-		return this.getDur().isDomainManagementAvailable();
-	}
-	isNotDomainManagementAvailable() {
-		return !this.getDur().isDomainManagementAvailable();
-	}
-	
+    hasBank() {
+        return this.getDur().hasBank();
+    }
+
+    isDomainManagementAvailable() {
+        return this.getDur().isDomainManagementAvailable();
+    }
+    isNotDomainManagementAvailable() {
+        return !this.getDur().isDomainManagementAvailable();
+    }
+
 }
-if(!window.customElements.get(TAG.AON_SUITE_MENU)){
-	window.customElements.define(TAG.AON_SUITE_MENU, AonSuiteMenu);
+if (!window.customElements.get(TAG.AON_SUITE_MENU)) {
+    window.customElements.define(TAG.AON_SUITE_MENU, AonSuiteMenu);
 }

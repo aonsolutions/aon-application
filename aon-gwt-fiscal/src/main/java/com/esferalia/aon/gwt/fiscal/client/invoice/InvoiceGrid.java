@@ -99,16 +99,16 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		}
 	};
 	
-	public void getInvoices(AsyncCallback<List<Invoice>> callback) {
+	public void getInvoices(AsyncCallback<LinkedList<Invoice>> callback) {
 		SII_SERVICE.getInvoices(options.getOccam(), getFilterParams(), callback);
 	}
 	
 	public void setFilterParams(InvoiceCommunicationParams filterParams) {
 		this.filterParams = filterParams.setPage(1);	
-		getInvoices(new AsyncCallback<List<Invoice>>() {
+		getInvoices(new AsyncCallback<LinkedList<Invoice>>() {
 
 			@Override
-			public void onSuccess(List<Invoice> result) {
+			public void onSuccess(LinkedList<Invoice> result) {
 				selFiles = new LinkedList<>();
 				select(selFiles);
 				addDataDisplay(dataGrid, result);
@@ -145,10 +145,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			public void onScroll(ScrollEvent event) {
 				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
 					setPage(getPage() + 1);
-					getInvoices(new AsyncCallback<List<Invoice>>() {
+					getInvoices(new AsyncCallback<LinkedList<Invoice>>() {
 
 						@Override
-						public void onSuccess(List<Invoice> result) {
+						public void onSuccess(LinkedList<Invoice> result) {
 							dataProvider.getList().addAll(result);
 							dataGrid.redraw();
 						}
@@ -172,10 +172,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			}
 		}, MouseOverEvent.getType());
 
-		getInvoices(new AsyncCallback<List<Invoice>>() {
+		getInvoices(new AsyncCallback<LinkedList<Invoice>>() {
 			
 			@Override
-			public void onSuccess(List<Invoice> result) {
+			public void onSuccess(LinkedList<Invoice> result) {
 				load(result);
 			}
 			

@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -19,11 +19,11 @@ public interface InvoiceCommunicationService extends RemoteService {
 	
 	InvoiceCommunicationConfiguration getConfiguration(String domainName, int domainId, String user);
 	
-	List<InvestAsset> getInvestAssets(String domainName, int domainId, String user);
+	LinkedList<InvestAsset> getInvestAssets(String domainName, int domainId, String user);
 	void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset, Invoice invoice);
 	void addDocumentInvoice(String domainName, int domainId, String user, Invoice invoice);
 	
-	List<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params);
+	LinkedList<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params);
 	
 	ICResponse altaLroe(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 	String bajaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) throws Exception;
@@ -35,7 +35,7 @@ public interface InvoiceCommunicationService extends RemoteService {
 
 	String cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams);
 	
-	List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice);
+	LinkedList<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(String domainName, int domainId, String login, Integer invoice);
 
 	String getRequestUrl(String domainName, int domainId, String login, Integer dataResponse);
 	String getResponseUrl(String domainName, int domainId, String login, Integer dataResponse);

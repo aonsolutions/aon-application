@@ -39,10 +39,15 @@ public abstract class AbstractVerifactuTest {
 	private static String getDbTimeZone() {	return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());	}
 	
 	protected static final Environment VERIFACTU_ENV = new VerifactuEnvironment();
+	protected static final Environment VERIFACTU_CANARIAS_ENV = new VerifactuCanariasEnvironment();
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
+	protected static final Environment SIF_ENV = new SifEnvironment();
+	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
-		NO_VERIFACTU_ENV
+		VERIFACTU_CANARIAS_ENV,
+		NO_VERIFACTU_ENV,
+		SIF_ENV
 	}; 
 	
 	private Date testDate; 

@@ -79,6 +79,9 @@ public class InvoiceCommunicationHistory implements Serializable {
 	public boolean isAccepted() {
 		return this.status == InvoiceCommunicationStatus.ACCEPTED;
 	}
+	public boolean isPending() {
+		return this.status == InvoiceCommunicationStatus.PENDING;
+	}
 	
 	public boolean isMessagesVisible() {
 		return isWrong() || isAcceptedWithErrors();

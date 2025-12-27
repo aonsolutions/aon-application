@@ -10,6 +10,7 @@ import { AonOcrConfiguration } from "./aon-ocr-configuration.js";
 
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
+import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
 
 export class AonInvoiceConfiguration extends AonElement {
     
@@ -84,6 +85,12 @@ export class AonInvoiceConfiguration extends AonElement {
         communication.setConfiguration(this.configuration);
         communication.onChange(() => {
             this.configuration = communication.getConfiguration();
+            let com = communication.getCommunicationConfiguration();
+            if(com instanceof InvoiceCommunicationConfiguration) {
+                this.configuration.communication = com.toJSON();
+            } else {
+                this.configuration.communication = new InvoiceCommunicationConfiguration(com).toJSON();
+            }
         });
         content.appendChild(communication);
     }

@@ -73,7 +73,7 @@ export class AonHeader extends AonElement {
 		this.initialize();
 		this.activeTimecontrol = false;
 		this.build();
-    }
+	}
 
 	initialize() {
 		this.BASE_ID = 'aonHeader';

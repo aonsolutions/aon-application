@@ -35,6 +35,7 @@ import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrash
 import { BankAccount } from '../registry/bank/BankAccount.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import * as JSF from '../aon-jsf-app.js';
+import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 
 export class AonInvoice extends AonElement {
 	invoice;
@@ -94,6 +95,7 @@ export class AonInvoice extends AonElement {
 		this.initialize();
 		this.initializeFunctions();
 		this.configuration = await getApiConfiguration();
+		this.icc = new InvoiceCommunicationConfiguration(this.configuration.communication);
 
 		this.getInvoice().surcharge = this.getInvoice().surcharge 
 			|| (!this.getInvoice().isEmitida() && this.getCompany().surcharge);
@@ -286,6 +288,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
+		if(this.icc.isNoSif()) this.fileOpened = false;
 		this.checkConfiguration();
 		this.clear();
 		this.buildInputFile();
@@ -504,8 +507,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			// invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
-			invoiceToolbar.addButton3(MATERIAL_ICONS.CHECK, MSG.ISSU, () => this.acceptInvoice());
+			if(this.icc.hasCommunication())	invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				// invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 				invoiceToolbar.addButton3(MATERIAL_ICONS.SAVE, MSG.SAVE, () => this.save());
@@ -513,8 +515,9 @@ export class AonInvoice extends AonElement {
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox()))
-				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox())) {
+				if(this.icc.hasCommunication())	invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			}
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -526,17 +529,18 @@ export class AonInvoice extends AonElement {
 		}
 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
-		
-		if(this.getInvoice().file || this.invoice.isEmitida() ){
+		if( (this.getInvoice().file 
+			&& !(this.icc.isNoSif() && this.getInvoice().file.path && this.getInvoice().file.path.includes('download_invoice_pdf') ) )
+			|| (!this.icc.isNoSif() && this.invoice.isEmitida())) {
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile(true));
-		} else {
+		} else if(!this.invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
 		this.buildCommunicationToolbar(invoiceToolbar);
 	}
 
 	buildCommunicationToolbar(invoiceToolbar) {
-		if (this.isVerifactuTest()) {
+		if (this.icc.isVerifactuTest()) {
 			let vaction  = {
 				id: 'Communication_verifactu_test',
 				name: "VERIFACTUENTORNOTEST",
@@ -2931,39 +2935,11 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	mustBeCommunicated() {
-		return this.configuration
-			&& this.configuration.communication
-			&& (this.configuration.communication.tbai
-			 || this.hasVerifactu()
-		);
-	}
-
-	hasVerifactu() {
-		return this.configuration
-			&& this.configuration.communication
-			&& this.configuration.communication.verifactu
-			&& (!this.configuration.communication.verifactuIncludeDate
-				|| AonDateUtils.isAfterOrEqual(new Date(), AonDateUtils.parse(this.configuration.communication.verifactuIncludeDate)))	
-		;
-	}
-
-	isVerifactuTest() {
-		return this.hasVerifactu()
-			&& this.configuration.communication.verifactuTest;
-	}
-	isTbaiTest() {
-		return this.configuration
-			&& this.configuration.communication
-			&& this.configuration.communication.tbai
-			&& this.configuration.communication.tbaiTest
-		;
-	}
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
 		if(!ok) return;
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() ) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
@@ -2989,13 +2965,13 @@ export class AonInvoice extends AonElement {
 						this.showError(e)
 					});
 				});
-			} else {
+			} else if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
 				let certSelect = createSelect("cert", "Certificado");
 				getAeatCertificates().then(certs => {
 					certSelect.setOptions(certs.map(s => {
 						return {
 							value: s.id,
-							  name: s.name
+							name: s.name
 						}
 					}));
 				}); 
@@ -3224,10 +3200,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	newRectifyInvoice() {
-		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+		if(this.invoice.isEmitida() && this.icc.hasCommunication()) {
 			if (!this.checkRectifySeries()) {
-				this.showMessageError("En entornos con VERIFACTU/TicketBAI activo,"
-					+" debe existir al menos una serie para facturas rectificativas.");
+				this.showMessageError("Debe existir al menos una serie para facturas rectificativas.");
 				return;
 			}
 
@@ -3293,7 +3268,7 @@ export class AonInvoice extends AonElement {
 
 	rectifyInvoice() {
 		// [START] TEMP SOLUTION!!
-		if(this.invoice.isEmitida() && this.mustBeCommunicated() ) {
+		if(this.invoice.isEmitida() && this.icc.hasCommunication()) {
 			return this.newRectifyInvoice();
 		}
 		// [END]

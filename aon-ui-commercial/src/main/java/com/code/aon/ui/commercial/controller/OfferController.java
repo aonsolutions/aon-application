@@ -840,7 +840,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		try {
 			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
 			InvoiceCommunicationConfiguration config = getInvoiceCommunicationConfiguration();
-			boolean communication = config.isTbai() || config.hasVerifactu();
+			boolean communication = config.hasCommunication();
 		    if(communication) {
 		        String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
@@ -855,8 +855,8 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		}
 	}
 
-	public boolean isTbai() {
-		return getInvoiceCommunicationConfiguration().isTbai();
+	public boolean isCommunication() {
+		return getInvoiceCommunicationConfiguration().hasCommunication();
 	}
 	
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
