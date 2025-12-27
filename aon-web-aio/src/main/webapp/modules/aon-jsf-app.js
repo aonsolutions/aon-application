@@ -1346,7 +1346,7 @@ export class AonJsfHelpContent extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setJsfApp('jsfhelp');
+		//this.setJsfApp('jsfhelp');
 		this.setViewId('/facelet/help/helpContent.xhtml');
 	}
 	
