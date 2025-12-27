@@ -73,7 +73,7 @@
 												<ui:param name="sfc_seriesProperty" value="#{invoiceController.rectificationSeries}" />
 												<ui:param name="sfc_numberProperty" value="#{invoiceController.rectificationNumber}" />
 												<ui:param name="sfc_numberEditable" value="#{invoiceController.rectificationNumberEditable}" />
-												<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai and !invoiceController.verifactu}"/>
+												<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai and !invoiceController.verifactu and !invoiceController.noVerifactu and !invoiceController.sif}"/>
 												<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
 													value="#{invoiceController.onRectificationSeriesChanged}" />	
 												<aon:methodParam name="sfc_onNumberEditable" type="actionListener"

@@ -67,9 +67,8 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 	
 	@Override
-	public List<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params) {
-		List<Invoice> list = AON.getCommunicationInvoices(occam, params); 
-		return list;
+	public LinkedList<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params) {
+		return AON.getCommunicationInvoices(occam, params);
 	}
 		
 	public Filter getFilter(InvoiceProperties f, InvoiceParams params) {
@@ -314,7 +313,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
         }
 	}
 	
-	public List<InvestAsset> getInvestAssets(String domainName, int domainId, String login) {
+	public LinkedList<InvestAsset> getInvestAssets(String domainName, int domainId, String login) {
 		return AON.getInvestAssetStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -328,10 +327,13 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 	
 	@Override
-	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice) {
-		Domain domain = new Domain().setName(domainName).setId(domainId);
-		User user = new User().setLogin(login);
-		return AON.getInvoiceCommunicationTrackingList(domain, user, f -> f.getInvoiceProperty().eq(invoice));
+	public LinkedList<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(String domainName, int domainId, String login, Integer invoiceId) {
+		Occam occam = new Occam()
+			.setDomainName(domainName)
+			.setDomain(domainId)
+			.setUser(login);
+		return AON.getInvoiceCommunicationTrackings(occam, invoiceId)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public String getRequestUrl(String domainName, int domainId, String login, Integer dataResponse) {

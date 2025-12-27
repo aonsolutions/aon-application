@@ -306,6 +306,7 @@ export const ERRORS = MSG.ERRORS;
 export const ERR_EMPTY_VALUE = "Campos sin valor";
 export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
 export const EXAMPLE = "Example";
+export const EXEMPTION_CAUSE = MSG.EXEMPTION_CAUSE;
 export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
 export const EXPAND_HIRIND = MSG.EXPAND_HIRIND;
@@ -467,6 +468,7 @@ export const LOCATION = MSG.LOCATION;
 export const LOCATIONS = MSG.LOCATIONS;
 export const LOGIN = MSG.LOGIN;
 export const LOGIN_SUBTITLE = MSG.LOGIN_SUBTITLE;
+export const LROE = 'LROE';
 
 // ----- M
 
@@ -527,6 +529,7 @@ export const NO_DATA = MSG.NO_DATA;
 export const NO_LINK_CLIENT = MSG.NO_LINK_CLIENT;
 export const NO_PERIOD = 'Sin Periodo';
 export const NO_STOCK_AVAILABLE = MSG.NO_STOCK_AVAILABLE;
+export const NO_VERIFACTU = "No Verifactu";
 export const NOT_LINKED1 = MSG.NOT_LINKED1;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
@@ -609,6 +612,7 @@ export const PRODUCTS_AND_SERVICES = "Productos y Servicios"; //MSG.PRODUCTS_AND
 export const PROFIT = "Beneficio"; // TODO
 export const PROFORMA = "Proforma";
 export const PROFORMA_INVOICES = MSG.PROFORMA_INVOICES; 
+export const PROGRAMMED = MSG.PROGRAMMED;
 export const PROJECT = "Proyecto"; //TODO
 export const PROJECTS = "Proyectos"; //TODO
 export const PROTOCOL = "Protocolo";
@@ -864,6 +868,7 @@ export const YESTERDAY = MSG.YESTERDAY;
 
 
 //-------------DAYS
+
 export const SUNDAY = MSG.SUNDAY;
 export const MONDAY = MSG.MONDAY;
 export const TUESDAY = MSG.TUESDAY;
@@ -873,6 +878,7 @@ export const FRIDAY = MSG.FRIDAY;
 export const SATURDAY = MSG.SATURDAY;
 
 //-------------MONTHS
+
 export const JANUARY = MSG.JANUARY;
 export const FEBRUARY = MSG.FEBRUARY;
 export const MARCH = MSG.MARCH;

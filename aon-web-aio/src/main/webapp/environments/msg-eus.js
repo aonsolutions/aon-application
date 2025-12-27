@@ -187,6 +187,7 @@ export const ENTERPRISE = 'Enpresa';
 export const ENTERPRISES = 'Enpresak';
 export const ENTRY = 'Sarrera';
 export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
+export const EXEMPTION_CAUSE = 'Salbuespenaren Arrazoia';
 export const EXIT = 'Irteera';
 export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
@@ -393,6 +394,7 @@ export const PRODUCT_MUST_BE_SELECTED = "Produktu bat aukeratzea derrigorrezkoa 
 export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
 export const PROFORMA_INVOICES = "Zirriborroa/Proforma";
+export const PROGRAMMED = "Programatua";
 
 // ----- Q
 

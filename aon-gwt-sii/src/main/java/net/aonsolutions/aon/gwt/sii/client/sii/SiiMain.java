@@ -102,13 +102,14 @@ public class SiiMain extends AonTemplate2{
 		LinkedList<String> list = new LinkedList<>();
 		list.add("fe_emitidas");
 		filterMap.put("sii",list);
-		Date date = icc.getSiiIncludeDate() != null
-				? icc.getSiiIncludeDate()
+		
+		Date date = icc.getSiiData().getStartDate() != null
+				? icc.getSiiData().getStartDate()
 				: new Date(2017-1900, 6, 1);
 		if(administration.equals(Administration.ALAVA) || administration.equals(Administration.BIZKAIA)
 				|| administration.equals(Administration.GIPUZKOA) || administration.equals(Administration.NAVARRA)) {
-			date = icc.getSiiIncludeDate() != null
-					? icc.getSiiIncludeDate()
+			date = icc.getSiiData().getStartDate() != null
+					? icc.getSiiData().getStartDate()
 					: new Date(2018-1900, 0, 1);
 		}
 		

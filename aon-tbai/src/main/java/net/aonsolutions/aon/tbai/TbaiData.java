@@ -286,7 +286,7 @@ public class TbaiData {
 		InvoiceCommunicationStatus status = response.isOk() 
 				? InvoiceCommunicationStatus.ACCEPTED 
 				: InvoiceCommunicationStatus.WRONG;
-		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoiceId, InvoiceCommunicationType.TBAI, status);
+		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain.getId(), invoiceId, InvoiceCommunicationType.TBAI, status);
 		
 		dr.setCode(response.getResponseStatus());
 		DataResponseDAO.updateDataResponse(ctx, dr, f -> f.getIdProperty().eq(dr.getId()));
@@ -320,7 +320,7 @@ public class TbaiData {
 		InvoiceCommunicationStatus status = response.isOk() 
 				? InvoiceCommunicationStatus.ACCEPTED 
 				: InvoiceCommunicationStatus.WRONG;
-		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain, invoice.getId(), InvoiceCommunicationType.TBAI, status);
+		InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domain.getId(), invoice.getId(), InvoiceCommunicationType.TBAI, status);
 		
 		DataRequest dataRequest = InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.TBAI, request);
 		

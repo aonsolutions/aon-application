@@ -194,6 +194,7 @@ export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
 export const EXERCISE = "Ejercicio";
+export const EXEMPTION_CAUSE = "Causa de Exención";
 export const EXIT = 'Salida';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
@@ -404,6 +405,7 @@ export const PRODUCT_MUST_BE_SELECTED = "Es obligatorio seleccionar un producto"
 export const PRODUCTS = 'Productos';
 export const PROVINCE = 'Provincia';
 export const PROFORMA_INVOICES = "Borrador/Proformas";
+export const PROGRAMMED = "Programado";
 
 // ----- Q
 
