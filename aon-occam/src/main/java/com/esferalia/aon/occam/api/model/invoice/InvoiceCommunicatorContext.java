@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -17,6 +18,7 @@ public class InvoiceCommunicatorContext {
 	private final List<Invoice> invoices;
 	private InvoiceCommunicationConfiguration config;
 	private Company company;
+	private Person person;
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
 	private InvoiceCommunicationQuery communicationQuery;
@@ -34,36 +36,54 @@ public class InvoiceCommunicatorContext {
 	public Domain getDomain() {
 		return domain;
 	}
+	
 	public User getUser() {
 		return user;
 	}
+	
 	public Integer getCertificateId() {
 		return certificateId;
 	}
+	
 	public Stream<Invoice> invoiceStream() {
 		return AonCollectionUtils.stream(invoices);
 	}
+	
 	public int invoiceCount() {
 		return AonCollectionUtils.size(invoices);
 	}
+	
 	public InvoiceCommunicationConfiguration getConfig() {
 		return config;
 	}
+	
 	public InvoiceCommunicatorContext setConfig(InvoiceCommunicationConfiguration config) {
 		this.config = config;
 		return this;
 	}
+	
 	public Company getCompany() {
 		return company;
 	}
+	
 	public InvoiceCommunicatorContext setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+	
+	public Person getPerson() {
+		return person;
+	}
+	
+	public InvoiceCommunicatorContext setPerson(Person person) {
+		this.person = person;
 		return this;
 	}
 	
 	public DataResponse getDataResponse() {
 		return dataResponse;
 	}
+	
 	public InvoiceCommunicatorContext setDataResponse(DataResponse dataResponse) {
 		this.dataResponse = dataResponse;
 		return this;
@@ -100,6 +120,5 @@ public class InvoiceCommunicatorContext {
 //		this.errorMessage = errorMessage;
 //		return this;
 //	}
-	
 	
 }

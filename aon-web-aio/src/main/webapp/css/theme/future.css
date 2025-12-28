@@ -567,6 +567,11 @@ aon-configuration-menu .suiteMenuContent  {
 	transform: rotate(-180deg);
 }
 
+#aonMenuAnchor #aonMenuAnchorDivIcon {
+	min-height: 25.5px;
+	min-width: 25.5px;
+}
+
 .aonMenuAnchorDivSpan {
 	font-size: 1rem;
 	line-height: 1.5rem;

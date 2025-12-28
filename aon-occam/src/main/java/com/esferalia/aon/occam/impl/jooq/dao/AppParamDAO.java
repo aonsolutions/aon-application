@@ -181,6 +181,14 @@ public class AppParamDAO {
 						.setName(r.getValue(APP_PARAM.NAME))
 						.setValue(r.getValue(APP_PARAM.VALUE))).collect(Collectors.toList());
 	}
+
+	public static void delete(AONContext ctx, Integer domainId, AppParam param) {
+		ctx.getDslContext()
+			.delete(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(domainId))
+			.and(APP_PARAM.NAME.eq(param.getValue()))
+			.execute();
+	}
 	
 	public static void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter) {
 		ctx.getDslContext()

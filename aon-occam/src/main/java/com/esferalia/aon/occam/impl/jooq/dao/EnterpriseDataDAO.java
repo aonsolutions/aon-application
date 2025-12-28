@@ -118,6 +118,7 @@ public class EnterpriseDataDAO {
 			list.add(ctData);
 			ctx.log().debug("INSERT ENTERPRISE_DATA id: " + id);		
 		} else {
+			ctData.setId(exists.getId());
 			ctx.log().debug("YA EXISTEN ESTOS DATOS ENTERPRISE_DATA id: " + exists.getId());	
 		}
 		

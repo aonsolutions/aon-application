@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -43,7 +44,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_NATIONAL.getBasicWithVat( ib );
+			DetalleType detalle = C01_NATIONAL.getBasicWithVat( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			return detalle;
 		}
@@ -73,7 +74,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_ISP.getBasicWithVat( ib );
+			DetalleType detalle = C01_ISP.getBasicWithVat( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_2);
 			return detalle;
 		}
@@ -104,7 +105,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_INTRACOMMUNITY_SERVICE.getBasic( ib );
+			DetalleType detalle = C01_INTRACOMMUNITY_SERVICE.getBasic( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.N_2);
 			return detalle;
 		}
@@ -134,7 +135,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_PREPAYMENT.getBasic(ib);
+			DetalleType detalle = C01_PREPAYMENT.getBasic( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.N_1);
 			return detalle;
 		}
@@ -173,7 +174,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_EXENTA_E1.getBasic( ib );
+			DetalleType detalle = C01_EXENTA_E1.getBasic( vc, ib );
 			detalle.setOperacionExenta(OperacionExentaType.E_1);
 			return detalle;
 		}
@@ -206,7 +207,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C01_EXENTA_E5.getBasic(ib);
+			DetalleType detalle = C01_EXENTA_E5.getBasic( vc, ib );
 			detalle.setOperacionExenta(OperacionExentaType.E_5);
 			return detalle;
 		}
@@ -225,7 +226,7 @@ enum ClaveRegimen {
 		}
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C02.getBasic(ib);
+			DetalleType detalle = C02.getBasic( vc, ib );
 			detalle.setOperacionExenta(OperacionExentaType.E_2);
 			return detalle;
 		}
@@ -298,7 +299,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C07.getBasicWithVat( ib );
+			DetalleType detalle = C07.getBasicWithVat( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			return detalle;
 		}
@@ -412,7 +413,7 @@ enum ClaveRegimen {
 		
 		@Override
 		protected DetalleType getDetalleType( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) throws InvoiceCommunicationException {
-			DetalleType detalle = C18.getBasicWithVat( ib );
+			DetalleType detalle = C18.getBasicWithVat( vc, ib );
 			detalle.setCalificacionOperacion(CalificacionOperacionType.S_1);
 			detalle.setTipoRecargoEquivalencia(VerifactuUtils.toString(ib.getSurcharge()));
 			detalle.setCuotaRecargoEquivalencia(VerifactuUtils.toString(ib.getSurchargeQuota()));
@@ -464,16 +465,28 @@ enum ClaveRegimen {
 		;
 	}
 	
-	private DetalleType getBasic( InvoiceBreakdown ib ) {
+	private DetalleType getBasic( VerifactuContext vc, InvoiceBreakdown ib ) {
 		DetalleType detalle = new DetalleType();
-		detalle.setImpuesto(TipoImpuesto.IVA.getValue());
+		TipoImpuesto tipoImpuesto = vc.getConfig().getAdministration().visit( 
+			new IAdministrationVisitor<TipoImpuesto>() {
+				@Override public TipoImpuesto visitAlava() 				{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitBizkaia() 			{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitGipuzkoa() 			{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitNavarra() 			{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitCommonTerritory() 	{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitUnknown() 			{ return TipoImpuesto.IVA; }
+				@Override public TipoImpuesto visitCanarias() 			{ return TipoImpuesto.IGIC; }
+			}
+		);
+		detalle.setImpuesto(tipoImpuesto.getValue());
 		detalle.setClaveRegimen( this.getValue() );
 		detalle.setBaseImponibleOimporteNoSujeto(VerifactuUtils.toString(ib.getBase()));
 		return detalle;
 	}
 	
-	private DetalleType getBasicWithVat( InvoiceBreakdown ib ) {
-		DetalleType detalle = this.getBasic(ib);
+
+	private DetalleType getBasicWithVat( VerifactuContext vc, InvoiceBreakdown ib ) {
+		DetalleType detalle = this.getBasic( vc,  ib );
 		detalle.setBaseImponibleACoste(null);
 		detalle.setTipoImpositivo(VerifactuUtils.toString(ib.getPercentage()));
 		detalle.setCuotaRepercutida(VerifactuUtils.toString(ib.getQuota()));

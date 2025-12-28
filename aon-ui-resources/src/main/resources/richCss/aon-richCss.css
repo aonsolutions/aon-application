@@ -1138,7 +1138,9 @@ color:#000;
 .aon-evicertia{
 	background:transparent url(images/aon-icon/aon-evicertia.png) scroll left center no-repeat;	
 }
-
+.aon-icon-qr{
+	background:transparent url(images/aon-icon/aon-icon-qr.png) scroll left center no-repeat;	
+}
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
 }

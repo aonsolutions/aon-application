@@ -57,7 +57,7 @@ public class TaxJSON {
 			.put(IJsonNames.ID, tax.getId())
 			.put(IJsonNames.DOMAIN, tax.getDomain())
 			.put(IJsonNames.NAME, tax.getName())
-			.put(IJsonNames.START_DATE, JsonUtils.getDateJSON(tax.getStartDate()))
+			.put(IJsonNames.START_DATE2, JsonUtils.getDateJSON(tax.getStartDate()))
 			.put(IJsonNames.TYPE, TaxType.name(tax.getType()))
 			.put(IJsonNames.PERCENTAGE, tax.getPercentage())
 			.put(IJsonNames.SURCHARGE, tax.getSurcharge())

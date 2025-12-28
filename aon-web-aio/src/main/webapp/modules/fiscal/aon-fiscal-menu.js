@@ -4,6 +4,12 @@ import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import { AonFiscalBeta } from './aon-fiscal-beta.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { isPersonaFisica } from '../../services/documentUtils.js';
+import { getCompany } from '../../services/companyService.js';
+import { get } from '../../services/localStorageService.js';
+import { getInvoiceConfiguration } from '../../services/invoiceService.js';
+import { Invoice } from '../invoice/Invoice.js';
+import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 
 
 export class AonFiscalMenu extends AonSuiteMenu {
@@ -22,19 +28,34 @@ export class AonFiscalMenu extends AonSuiteMenu {
 
     constructor () {
         super();
-		this.comercialInitialize();
     }
 
     async connectedCallback() {
 		await this.getAppParams(); 
+        await this.getCompany();
+        await this.getInvoiceConfiguration();
 		this.buildDur().then(() => {		
 	        this.clear();
 	        this.initialize();
+       		this.comercialInitialize();
 	        this.build();
 	        this.setTitle("Opciones fiscales");
 		})
     }
-    
+
+    async getCompany() {
+        getCompany().then(c => {
+            this.company = c;
+        }).catch(e => {
+            console.log("error getCompany", e);
+        });
+    }
+ 
+    async getInvoiceConfiguration() {
+        let c = await getInvoiceConfiguration();
+        this.icc = new InvoiceCommunicationConfiguration(c.communication);
+    }
+
     async getAppParams() {
         let response = 9999;
         this.isAlava = false;
@@ -95,6 +116,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         this.options = [{
             title: 'IVA AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
@@ -118,12 +140,14 @@ export class AonFiscalMenu extends AonSuiteMenu {
 			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -157,6 +181,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'AEAT',
             visible: this.isAEAT,
+            disabled: !this.isAEAT,
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
@@ -182,6 +207,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IVA Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
+            disabled: !(this.isAlava || this.isGipu || this.isBizk),
             options: [{
                 description: "Modelo 303 ",
                 description2: " |320 Gipuzkoa",
@@ -202,12 +228,14 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
+            disabled: !(this.isAlava || this.isGipu || this.isBizk),
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -241,19 +269,23 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'LROE Bizkaia',
             visible: this.isBizk,
+            disabled: !this.isBizk,
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
+                disabled: !this.icc.isLroe() || !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
+                disabled: !this.icc.isLroe() || isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IVA Navarra',
             visible: this.isNavarra,
+            disabled: !this.isNavarra,
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
@@ -273,12 +305,14 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
+                disabled: !this.icc.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF Navarra',
             visible: this.isNavarra,
+            disabled: !this.isNavarra,
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -297,7 +331,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MODEL_180)
             }, {
                 description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régmien de atribución de rentas",
+                title: "Declaración anual. Entidades en régimen de atribución de rentas",
                 action: () => GWT.iLoad(GWT.MODEL_184)
             }, {
                 description: "Modelo 190 ",
@@ -312,15 +346,21 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }, {
             title: 'IGIC Canarias',
             visible: this.isCanarias,
+            disabled: !this.isCanarias,
             options: [{
                 description: "Modelo 420/417 ",
                 title: "IGIC Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
+            }, {
+                description: "Modelo 425 ",
+                title: "IGIC Declaración resumen anual",
+                action: () => GWT.iLoad(GWT.MODEL_390)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'Matriz de empresas y modelos fiscales',
             visible: true,
+            disabled: false,
             options: [{
                 title: "Matriz de empresas y modelos fiscales",
                 description: "Matriz de empresas y modelos fiscales",

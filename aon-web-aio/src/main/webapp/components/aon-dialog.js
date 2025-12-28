@@ -157,7 +157,6 @@ export class AonDialog extends AonElement {
 		main.className = "aonDialogContent";
 		dialog.appendChild(main);
 
-
 		let closeDesktop = this.createElement(TAG.LABEL);
 		closeDesktop.id = this.BUTTON_CLOSE;
 		closeDesktop.title = MSG.CLOSE;
@@ -254,6 +253,7 @@ export class AonDialog extends AonElement {
 		let divButtonRight = this.createElement(TAG.DIV);
 		divButtonRight.id = this.BUTTON_RIGHT;
 		divButtonRight.style.marginLeft = "auto";
+		divButtonRight.style.paddingRight = "20px";
 		action.appendChild(divButtonRight);
 
 		//--- CHANGE STYLES --------------------------------
@@ -504,13 +504,13 @@ export class AonDialog extends AonElement {
 		}
 	}
 	
-	createButtonAccept(title=undefined){
+	createButtonAccept(title=undefined, icon=undefined){
 		let btn = undefined;
 		if(this.isTypeFullScreen()){
 			btn = this.addAction({
 				id:this.ACCEPT,
-				title:title || MSG.ACCEPT,
-				icon:MATERIAL_ICONS.DONE,
+				title: title || MSG.ACCEPT,
+				icon: icon || MATERIAL_ICONS.DONE,
 				position: "right",
 			});
 		} else {
@@ -531,8 +531,8 @@ export class AonDialog extends AonElement {
 		return btn;
 	}
 
-	addSendAction(fn, title) {
-		let button = this.createButtonAccept(title);
+	addSendAction(fn, title, icon=undefined) {
+		let button = this.createButtonAccept(title, icon);
 		if(button){
 			button.classList.add('buttonload')
 			button.addEventListener('click', (ev) => {

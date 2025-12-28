@@ -83,12 +83,13 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(),16,2))  // Importe transmisiones inmuebles tercer trimestre  
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(),16,2))      // Importe operaciones cuarto trimestre
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(),16,2)) // Importe transmisiones inmuebles cuarto trimestre  
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 		            // NIF operador intracomunitario
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 	// NIF operador intracomunitario
 		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual()?"X":" ")                                             // Operaciones régimen especial criterio de caja
 		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp()?"X":" ")                                                    // Operación con inversión del sujeto pasivo
 		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime()?"X":" ")                                          // Operación con bienes vinculados o destinados a vincularse al régimen de depósito distinto del aduanero
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getVatAccrualAmount(),16,2))         // Importe anual de las operaciones devengadas conforme al criterio de caja del IVA
-		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',201))							                    // Blancos
+		   ,(line, mod347, declared, asset) -> line.append(mod347.getYear() >= 2025 ? AonFiscalFileUtils.unsigned(declared.getBdns(),6,0) : AonStringUtils.repeat(' ',6))  // Número de convocatoria BDNS (a partir del ejercicio 2025)
+		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',195))							                    // Blancos
 		   ,(line, mod347, declared, asset) -> line.append("\r\n") 												                    	// FIN DE REGISTRO. CONSTANTE CRLF
 		})
 		
@@ -183,12 +184,13 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(),16,2))  // Importe transmisiones inmuebles tercer trimestre  
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(),16,2))      // Importe operaciones cuarto trimestre
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(),16,2)) // Importe transmisiones inmuebles cuarto trimestre  
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 		            // NIF operador intracomunitario
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 	// NIF operador intracomunitario
 		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual()?"X":" ")                                             // Operaciones régimen especial criterio de caja
 		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp()?"X":" ")                                                    // Operación con inversión del sujeto pasivo
 		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime()?"X":" ")                                          // Operación con bienes vinculados o destinados a vincularse al régimen de depósito distinto del aduanero
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getVatAccrualAmount(),16,2))         // Importe anual de las operaciones devengadas conforme al criterio de caja del IVA
-		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',208))							                    // Blancos
+		   ,(line, mod347, declared, asset) -> line.append(mod347.getYear() >= 2025 ? AonFiscalFileUtils.unsigned(declared.getBdns(),6,0) : AonStringUtils.repeat(' ',6))  // Número de convocatoria BDNS (a partir del ejercicio 2025) // FALTA - CONFIRMAR SI GIPUZKOA TAMBIEN TIENE EL CAMPO BDNS
+		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',202))							                    // Blancos
 		   ,(line, mod347, declared, asset) -> line.append("\r\n") 												                    	// FIN DE REGISTRO. CONSTANTE CRLF
 		})
 		

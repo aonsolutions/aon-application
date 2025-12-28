@@ -522,8 +522,7 @@ export class AonMobileInvoice extends AonInvoice {
 			if(this.autosave) this.save();
 		});
 		div.appendChild(irpf);
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-			this.invoice.setWithholding(false);
+		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			irpf.setDisabled(true);
 		}
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;

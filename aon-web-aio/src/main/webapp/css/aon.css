@@ -4879,19 +4879,90 @@ font-weight: 600;
   }
 
   .aonWidgetTCMobile{
-    height: 100px;
+    height: 100%;
     background-color: #f0f0f0;
     border-radius: 10px;
     width: 100%;
   }
+  
+  .aonWidgetTCMobileBig{
+  	grid-column: 1 / -1;
+  }
+  
+  .aonWidgetTCMobileBig #aonMobileHomeWidgetTC{
+  	display: flex;
+    width: auto;
+    background-color: transparent;
+    gap: 1.2rem;
+  }
+  
+  .aonWidgetTCMobileBig #aonSign{
+  	flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+  }
+  
+  #aonTimeControlReasonDialog {
+  	margin-top: 5rem;
+  }
+  
+  .aonWidgetTCMobileBig #timeControlPanelAppSelection{
+  	padding: 0;
+    align-items: end;
+    gap: .5rem;
+  }
+  
+  .aonWidgetTCMobileBig #timeControlPanelAppSelection li {
+  	padding: 0;
+  	width: auto;
+  }
+  
+  .aonWidgetTCMobileBig #timeControlPanelAppSelection li > span {
+  	margin: 0 !important;
+  }
+  
+  #aonTimeControlReasonDialogDialogMain {
+  	margin-top: 60px;
+  }
+  
+  #aonTimeControlReasonDialogDialogContent .aonTimeControlResonOption:last-of-type {
+  	border-bottom: none;
+  }
+  
+  #DesplazadoReasonInput,
+  #OtroReasonInput{
+	padding-left: 1rem;
 
+  }
+  
+  span#DesplazadoReasonInputTitle,
+  span#OtroReasonInputTitle {
+  	display: none;
+  }
+  
+  .aonTimeControlResonOption{
+  	display:flex;
+  	align-items: center;
+  	gap: 1rem;
+  	padding: 1rem;
+  	cursor: pointer;
+ 	border-bottom: 1px solid #d3d3d3;
+  }
+  
+  .aonTimeControlResonOption:hover {
+  	background-color: #f0f0f0;
+  }
+  
   .aonWidgetNominaMobile{
     height: 100px;
     background-color: #f0f0f0;
     border-radius: 10px;
     width: 100%;
   }
-
+  
   .aonWidgetNominaMobileTitulo{
     text-align: center;
     font-size: 16px;
@@ -5016,5 +5087,10 @@ font-weight: 600;
 
   .aonSubMenuOptions{
   	padding-left: .3rem;
+  }
+  
+  #timeControlReasonoptions {
+  	overflow-y: scroll;
+    height: 8rem;
   }
 

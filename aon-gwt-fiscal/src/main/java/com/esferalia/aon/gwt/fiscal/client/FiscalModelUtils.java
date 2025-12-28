@@ -16,26 +16,17 @@ import com.google.gwt.resources.client.DataResource;
 
 public class FiscalModelUtils {
 	
-//	public static final FiscalMSServiceAsync FISCAL_MS_SERVICE;
-//	
-//	static {
-//		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
-//		FISCAL_MS_SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
-//	}
-	
 	private FiscalModelUtils() {
 		
 	}
 	
 	public static String getModelName(IFiscalModel fm) {
-		return  com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getModelName(fm);
+		return com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getModelName(fm);
 	}
 
 	public static String getModelDescription(IFiscalModel m) {
-		if (m.isCanarias() && m.isMonthPeriod())
-			return "I.G.I.C. Suministro Inmediato de Informaci\u00F3n. Autoliquidaci\u00F3n.";
-		else if (m.isCanarias() && m.isQuarterPeriod())
-			return "I.G.I.C. R\u00E9gimen General. Autoliquidaci\u00F3n Trimestral.";
+		if (m.isCanarias()) 
+			return com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getModelDescription(m);
 		else
 			return AON.MSG.fiscalModelDescriptionlong(m.getModel());
 	}
@@ -44,34 +35,6 @@ public class FiscalModelUtils {
 		return  com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getPeriodDescription(fm);
 	}
 	
-//	public static <T extends FiscalModel> void fillPaymentInfo(FlowPanel paymentInfo,T mod) {
-//		paymentInfo.clear();
-//		paymentInfo.setVisible(mod.isFinished() || mod.isSent());
-//		InlineLabel l1 = new InlineLabel(AON.MSG.result());
-//		l1.setStyleName(AON.CSS.aonInnerLabel());
-//		paymentInfo.add(l1);
-//		InlineLabel l2 = new InlineLabel(AON.FMT.format(mod.getResult()));
-//		l2.setStyleName(AON.CSS.aonInnerLabel());
-//		l2.addStyleName(AON.CSS.aonBold());
-//		paymentInfo.add(l2);
-//		if (mod.getDeclarationType() != null) {
-//			InlineLabel l3 = new InlineLabel(mod.getDeclarationType().getDescription());
-//			l3.setStyleName(AON.CSS.aonInnerLabel());
-//			l3.addStyleName(AON.CSS.aonBold());
-//			paymentInfo.add(l3);
-//		}
-//		if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null) {
-//			InlineLabel l4 = new InlineLabel(mod.getFinance().getBankAccount().getIban());
-//			l4.setStyleName(AON.CSS.aonInnerLabel());
-//			l4.addStyleName(AON.CSS.aonBold());
-//			paymentInfo.add(l4);
-//			
-//			InlineLabel l5 = new InlineLabel(mod.getFinance().getBankAlias());
-//			l5.setStyleName(AON.CSS.aonInnerLabel());
-//			paymentInfo.add(l5);
-//		}
-//	}
-
 	private static class FiscalStatusBackgroundRGB implements IFiscalStatusVisitor<String> {
 		@Override public String visitMissing() 	{return "White";}
 		@Override public String visitPending() 	{return "LightGray";}
@@ -528,31 +491,5 @@ public class FiscalModelUtils {
 		
 		return buff.toString();
 	}
-	
-//	public static void sendEmail(IFiscalModelCallback<?, ?> modelCallback, IFiscalModel model) {
-//		
-//		final PopupPanel popup = new PopupPanel(false, true);
-//		popup.add(new AonSplash());
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
-//		popup.center();
-//		FISCAL_MS_SERVICE.sendEmail(modelCallback.getOptions().getOccam(), model, new AsyncCallback<Void>() {
-//			
-//			@Override
-//			public void onSuccess(Void result) {
-//				popup.hide();
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				popup.hide();
-//				modelCallback.showError("No se pudo enviar email: " + caught.getMessage());
-//			}
-//			
-//		});
-//		
-//	}
 
 }
-
-

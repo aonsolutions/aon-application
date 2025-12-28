@@ -141,10 +141,10 @@ public class LroeModel240 extends DockLayoutPanel {
 					
 					@Override
 					public void info(Integer invoice, String reference) {
-						SII_SERVICE.getInvoiceCommunicationTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceCommunicationTracking>>() {
+						SII_SERVICE.getInvoiceCommunicationTrackings(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<LinkedList<InvoiceCommunicationTracking>>() {
 							
 							@Override
-							public void onSuccess(List<InvoiceCommunicationTracking> result) {
+							public void onSuccess(LinkedList<InvoiceCommunicationTracking> result) {
 								FlexTable table = new FlexTable();
 								table.setWidth("100%");
 								if(result.isEmpty()) {

@@ -524,7 +524,7 @@ public class InvoiceDAO {
 				: INVOICE_TRACKING.SERIES.eq(series));
 	}
 	
-	private static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
+	private static int getCommunicationNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = selectMaxInvoice(ctx, types, series)
 			.union(selectMaxInvoiceTracking(ctx, types, series))
 			.fetch()
@@ -539,9 +539,9 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-		if((comConfig.hasVerifactu() || ( comConfig.isTbai() && !comConfig.isSkipTracking() ) ) 
+		if((comConfig.hasCommunication()) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
-			return getTbaiNextNumber(ctx, types, series);
+			return getCommunicationNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)
 			.fetch()
@@ -1004,10 +1004,10 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
-		// ONLY IF IS TICKET BAI.
+		// ONLY IF IS COMMUNICATION.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
-			if((icc.hasVerifactu() || icc.isTbai())) {
+			if((icc.hasCommunication())) {
 				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
 		}
@@ -1805,7 +1805,7 @@ public class InvoiceDAO {
 		if (invoice == null) throw new AonCoreException("Factura NULA");
 		Invoice inv = getFullInvoice(ctx, invoice.getId());
 		if (inv == null || inv.getId() == null) throw new AonCoreException("Factura no encontrada");
-		if (!inv.isSales()) throw new AonCoreException("S�lo se pueden emitir facturas de venta");
+		if (!inv.isSales()) throw new AonCoreException("Solo se pueden emitir facturas de venta");
 		if ( AonObjectUtils.notEquals(inv.getSeries(),invoice.getSeries())
 				|| AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
 			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	
