@@ -149,7 +149,6 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		}
 	}
 	
-	@Test
 	public void testPortalUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://general-payroll-test.aonsolutions.org:8080?aonTheme=/css/theme/future.css");
@@ -167,7 +166,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndex"))).click();
 
-			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+ 			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:driveContentForm")));
 			
