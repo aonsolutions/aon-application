@@ -15,6 +15,7 @@ export class AonMobileProfile extends AonElement {
     INPUT_FILE;
     AVATAR;
     DIALOG;
+    
     get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}

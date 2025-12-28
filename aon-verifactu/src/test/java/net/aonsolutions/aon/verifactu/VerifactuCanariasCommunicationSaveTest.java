@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -40,6 +41,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.EstadoEnvioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.respuestasuministro.RespuestaRegFactuSistemaFacturacionType;
 
+@Disabled("Disabled until Verifactu Canarias environment is available")
 class VerifactuCanariasCommunicationSaveTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return VERIFACTU_CANARIAS_ENV; }

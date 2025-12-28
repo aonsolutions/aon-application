@@ -10,6 +10,8 @@ import { AonNotificationPanel } from './aon-notification-panel.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
+import { AonTooltip } from '../components/aon-tooltip.js';
+import { AonDialog } from '../components/aon-dialog.js';
 
 export class AonHome extends AonElement {
 	AON_MENU;
@@ -50,6 +52,12 @@ export class AonHome extends AonElement {
 		let aonMobileHeader = new AonMobileHeader();
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
+		
+		// TimeControl Reason Dialog
+	    let aonDialog = new AonDialog();
+	    aonDialog.id = 'aonTimeControlReasonDialog';
+	    aonDialog.autoclose = true;
+	    this.appendChild(aonDialog)
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
