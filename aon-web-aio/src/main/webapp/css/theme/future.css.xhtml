@@ -1382,45 +1382,48 @@
 		padding-left: 32px !important;
 	}
 
- 	.aon-finding-toolbar-item-group input.aon-finding-toolbar-item.aon-icon-accept:first-child {
+
+  	.aon-finding-toolbar-item-group div[id$='save-container'] {
 		border: 0;
   		border-radius: .375rem;
   		
-  		color: #fff;
+  		min-width: 200px;
   		background-color: #0f172a;
-  		padding: .5rem 2rem;
-  		padding-left: 64px;  	    
   		
   		cursor: pointer;
+  		
+  		flex-direction:row; 
+  		align-items:center;
+  		justify-content:center; 
+  		display:flex !important; 
+  		
+  		
+    }
+    
+    .aon-finding-toolbar-item-group div[id$='save-container'] input[id$='save'] {
+  		color: #fff;
+  		font-size: 0.9rem;
+  		min-width: fit-content;
+  		background-image: none;
+
   		text-align: left;
   		text-transform: lowercase;
-  		
-  		background-image: none;
-  		
- 	 	width: 150px;
-  		height: 32px;
-  		font-size: 0.9rem;
     }
 	
 	
-	.aon-finding-toolbar-item-group:has(input.aon-finding-toolbar-item.aon-icon-accept:first-child):before {
+	.aon-finding-toolbar-item-group div[id$='save-container']:before {
   		z-index: 1;
 		
 		content: '';
   		width: 24px;
   		height: 24px;
   		
-  		margin-right: 8px;
   		display: inline-block;
   		vertical-align: middle;
-  		
-  		left: 64px;
-  		position: fixed;
   		
   		background-color: white;
   		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
     }
-    
 	
 </style>
 
