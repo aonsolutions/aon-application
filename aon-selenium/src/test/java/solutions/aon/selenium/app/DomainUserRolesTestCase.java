@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -151,7 +152,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	@Test
 	public void testPortalUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
-				"http://general-payroll-test.aonsolutions.org:8080/?jass");
+				"http://general-payroll-test.aonsolutions.org:8080?aonTheme=/css/theme/future.css");
 		String email = System.getProperty("integration.test.env.app.auth", "portal@general-payroll-test.aonsolutions.org");
 		String password = System.getProperty("integration.test.env.app.password", "portal");
 
@@ -163,8 +164,8 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
 
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderHelp"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndexHelp"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndex"))).click();
 
 			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);
