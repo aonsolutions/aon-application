@@ -39,5 +39,11 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>drive_content</from-outcome>
+			<to-view-id>/com/code/aon/web/help/facelet/drive_content.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>

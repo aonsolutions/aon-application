@@ -36,6 +36,10 @@ public class DomainUserRolesController implements Serializable {
 		this.dur = dur;
 	}
 
+	public boolean isPortal() {
+		return getDur().isPortal();
+	}
+
 	public boolean isAdmin() {
 		return getDur().isAdmin();
 	}

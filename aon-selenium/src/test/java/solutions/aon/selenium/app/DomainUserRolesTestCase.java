@@ -10,9 +10,11 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -147,6 +149,41 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		}
 	}
 	
+	@Test
+	public void testPortalUserMain() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://general-payroll-test.aonsolutions.org:8080?aonTheme=/css/theme/future.css");
+		String email = System.getProperty("integration.test.env.app.auth", "portal@general-payroll-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "portal");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndex"))).click();
+
+			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+			webDriver.switchTo().frame(aonJsfAppFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:driveContentForm")));
+			
+			Assert.assertEquals(wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".breadcrumb span.link"))).getText(), "Portal");
+			
+			
+
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
 	
 	
 
