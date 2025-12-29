@@ -39,6 +39,7 @@ public final class IJsonNames {
 	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
+	public static final String ADMINISTRATION_HISTORY = "administrationHistory";
 	public static final String ADMINISTRATIVE = "administrative";
 	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
@@ -94,6 +95,7 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
 	public static final String BILLABLE = "billable";
+	public static final String BIRTH_DATE = "birthDate";
 	public static final String BLOCKED = "blocked";	
 	public static final String BOOKING = "booking";
 	public static final String BORDER = "border";
@@ -242,8 +244,9 @@ public final class IJsonNames {
 	public static final String EMAIL = "email";
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
-	public static final String END_DATE = "end_date";
-	public static final String END_COUNT = "end_count";
+	public static final String END_DATE = "endDate";
+	@Deprecated public static final String END_DATE2 = "end_date";
+	@Deprecated public static final String END_COUNT = "end_count";
 	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_CREATION_DATE = "entryCreationDate";
 	public static final String ENTRY_CREATION_USER = "entryCreationUser";	
@@ -284,7 +287,8 @@ public final class IJsonNames {
 	public static final String FINANCE_PENDING = "financePending";
 	public static final String FINANCE = "finance";
 	public static final String FINANCES = "finances";
-	public static final String FIRST_SURNAME = "first_surname";
+	public static final String FIRST_NAME = "firstName";
+	public static final String FIRST_SURNAME = "firstSurname";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
@@ -300,6 +304,7 @@ public final class IJsonNames {
 	public static final String FULL = "full";
 	public static final String FULL_ADDRESS = "fullAddress";
 	// ---------------------------------------------------------------------------------------------	[G] 
+	public static final String GENDER = "gender";
 	public static final String GLOBAL = "global";
 	public static final String GROUPED_BY = "groupedBy";
 	// ---------------------------------------------------------------------------------------------	[H]
@@ -383,6 +388,7 @@ public final class IJsonNames {
 	public static final String KEY_VALUES = "keyValues";
 	public static final String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
+	
 	public static final String LANGUAGE = "language";
 	public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
@@ -404,9 +410,15 @@ public final class IJsonNames {
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
 	public static final String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
+	public static final String LROE = "lroe";
+	public static final String LROE_DATA = "lroeData";
+	public static final String LROE_DATA_HISTORY = "lroeDataHistory";
+	public static final String LROE_REGISTRY_DATE = "lroeRegistryDate";
+	
 	// ---------------------------------------------------------------------------------------------	[M] 
 	public static final String MAIN = "main";
 	public static final String MANUFACTURED = "manufactured";
+	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String MAX_DEFINED_USERS = "maxDefinedUsers";
 	public static final String MEDIA = "media";
 	public static final String MEDIAS = "medias";
@@ -431,6 +443,10 @@ public final class IJsonNames {
 	public static final String NIF = "nif";
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
+	public static final String NO_SIF_DATA = "noSifData";
+	public static final String NO_SIF_DATA_HISTORY = "noSifDataHistory";
+	public static final String NO_VERIFACTU_DATA = "noVerifactuData";
+	public static final String NO_VERIFACTU_DATA_HISTORY = "noVerifactuDataHistory";
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
 	public static final String NOTIFICATION_DATE = "notification_date";
@@ -637,7 +653,7 @@ public final class IJsonNames {
 	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
 	public static final String SCOPES = "scopes";
-	public static final String SECOND_SURNAME = "second_surname";
+	public static final String SECOND_SURNAME = "secondSurname";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
 	public static final String SELECTED = "selected";
@@ -674,22 +690,29 @@ public final class IJsonNames {
 	public static final String SHIPPING_PERIOD = "shippingPeriod";
 	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
+	public static final String SIF = "sif";
+	public static final String SIF_DATA = "sifData";
+	public static final String SIF_DATA_HISTORY = "sifDataHistory";
+	public static final String SIGNATURE = "signature";
+	public static final String SIGNED = "signed";
 	public static final String SII = "sii";
 	public static final String SII_AUTOSEND = "siiAutosend";
+	public static final String SII_DATA = "siiData";
+	public static final String SII_DATA_HISTORY = "siiDataHistory";
 	public static final String SII_INCLUDE_DATE = "siiIncludeDate";
 	public static final String SII_REGISTRY_DATE = "siiRegistryDate";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SII_TEST = "siiTest";
-	public static final String SIGNATURE = "signature";
-	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
 	public static final String SKIP_ALCATRAZ_VALIDATION_ALLOWED = "skipAlcatrazValidationAllowed";
+	public static final String SOCIAL_SECURITY_NUMBER = "socialSecurityNumber";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
 	public static final String SOURCE_IDS = "source_ids";
 	public static final String SOURCE_WAREHOUSE = "sourceWarehouse";
 	public static final String SSCC = "sscc";
-	public static final String START_DATE = "start_date";
+	public static final String START_DATE = "startDate";
+	@Deprecated public static final String START_DATE2 = "start_date";
 	public static final String START_COUNT = "start_count";
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
@@ -727,6 +750,8 @@ public final class IJsonNames {
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TBAI = "tbai";
+	public static final String TBAI_DATA = "tbaiData";
+	public static final String TBAI_DATA_HISTORY = "tbaiDataHistory";
 	public static final String TBAI_INCLUDE_DATE = "tbaiIncludeDate";
 	public static final String TBAI_REGISTRY_DATE = "tbaiRegistryDate";
 	public static final String TBAI_TEST = "tbaiTest";
@@ -757,6 +782,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[U] 
 	public static final String UNDEDUCTIBLE = "undeductible";
 	public static final String UNPAID_BALANCE = "unpaidBalance";
+	public static final String UPDATED = "updated";
 	public static final String URL = "url";
 	public static final String USER = "user";
 	public static final String USERNAME = "username";
@@ -785,6 +811,8 @@ public final class IJsonNames {
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VERIFACTU = "verifactu";
+	public static final String VERIFACTU_DATA = "verifactuData";
+	public static final String VERIFACTU_DATA_HISTORY = "verifactuDataHistory";
 	public static final String VERIFACTU_INCLUDE_DATE = "verifactuIncludeDate";
 	public static final String VERIFACTU_REGISTRY_DATE = "verifactuRegistryDate";
 	public static final String VERIFACTU_TEST = "verifactuTest";

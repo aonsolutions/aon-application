@@ -1394,13 +1394,10 @@ export class AonNewMenu extends AonElement {
 		});
 	}
 	
-	showApplicationsDialog() {
-		let el = this.getElement(HomeApps.APPLICATIONS.app);
-		let aonMenuSearchDialog = this.getElement(this.AON_MENU_SEARCH_DIALOG);
+	getApplicationsOptions(){
 		
 		let applicationsOptions = [];
-		
-		
+
 		let topMenuApps = TOP_MENU_APPS.filter( app => this.isApp(app) );
 		
 		for (let topMenuApp of topMenuApps) {
@@ -1428,11 +1425,12 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		applicationsOptions.sort((op1,op2) => op1?.name?.localeCompare(op2?.name) );
+
 		let desktopApps = DESKTOP_APPS.filter( app => this.isSidenavApp(app) );
 		for ( let desktopApp of desktopApps ) {
 			let name = (desktopApp.description || desktopApp.title )?.trim();
 			if ( name?.length === 0 )
-				return; 
+				break; 
 			let size = 20;
 			let icon = desktopApp.symbol;
 			let image = icon ? undefined : desktopApp.logo;
@@ -1450,6 +1448,15 @@ export class AonNewMenu extends AonElement {
 				fn : () => { this.appSelection(desktopApp); }
 			});
 		}
+
+		return applicationsOptions;
+	}
+	
+	showApplicationsDialog() {
+		let el = this.getElement(HomeApps.APPLICATIONS.app);
+		let aonMenuSearchDialog = this.getElement(this.AON_MENU_SEARCH_DIALOG);
+		
+		let applicationsOptions = this.getApplicationsOptions();
 
 		let aonMenuSearch = this.createElement(TAG.SPAN);
 		aonMenuSearch.id = this.AON_MENU_SEARCH;

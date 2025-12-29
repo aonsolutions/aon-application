@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
@@ -25,7 +26,6 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -39,6 +39,8 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -53,11 +55,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -68,45 +70,38 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.IDFacturaExpedidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.OperacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.RechazoPrevioType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SinRegistroPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SubsanacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
-import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
 import net.aonsolutions.aon.verifactu.Environment;
-import net.aonsolutions.aon.verifactu.InvoiceTypes;
 import net.aonsolutions.aon.verifactu.VerifactuUtils;
 
-class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
+class VerifactuInvoiceCommunicationSaveTest extends AbsInvoiceCommunicationSaveTest {
 
-	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
-
-	@Test
-	void venta_nacional_simpleAEATTest() throws InvoiceCommunicationException {
-		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE.get(getEnvironment());
-		save(invoice);
+	@Override 
+	protected Environment getEnvironment() { 
+		return VERIFACTU_ENV; 
 	}
 
-	private void save(Invoice invoice) throws InvoiceCommunicationException {
+	protected Invoice save(Invoice invoice) throws InvoiceCommunicationException {
 		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
 		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
 			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
-		InvoiceCommunicatorContext cc = getEnvironment().getInvoiceCommunicatorContextWithCertificate( invoices ); 
+		InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, null, invoices);
+		cc.setConfig(getEnvironment().configurationWithCertificate()).setCompany(getEnvironment().company());
 		InvoiceCommunicator.acceptInvoice(cc);
-		InvoiceCommunicationTracking acceptTracking = assertAcceptedInvoiceBatch(invoice);
-		DataResponse acceptResponse = assertAcceptedDataResponse(cc, invoice, acceptTracking);
-		assertAcceptedDataRequest(invoice, acceptResponse);
-		assertAcceptedInvoiceData(invoice);
-		assertAcceptedInvoiceInfo(invoice);
-		
-		InvoiceCommunicator.cancelInvoice(cc);
-		// DataResponse cancelResponse = 
-				assertCanceledDataResponse( cc, invoice );
-		// assertCanceledDataRequest(invoice, cancelResponse);
+		InvoiceCommunicationTracking tracking = assertInvoiceBatch(invoice);
+		DataResponse response = assertDataResponse(cc, invoice, tracking);
+		assertDataRequest(invoice, response);
+		assertInvoiceData(invoice);
+		assertInvoiceInfo(invoice);
+		assertInvoiceCommunication(invoice);
+		assertCommunicationHistory(invoice);
+		return invoice;
 	}
 
-	private InvoiceCommunicationTracking assertAcceptedInvoiceBatch(Invoice i) {
+	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
 		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getVerifactuRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);
 		assertTrue(oTracking.isPresent());
@@ -133,7 +128,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		return tracking;
 	}
 
-	private DataResponse assertAcceptedDataResponse(InvoiceCommunicatorContext cc, Invoice invoice, InvoiceCommunicationTracking tracking) {
+	private DataResponse assertDataResponse(InvoiceCommunicatorContext cc, Invoice invoice, InvoiceCommunicationTracking tracking) {
 		assertNotNull(tracking);
 		assertNotNull(tracking.getInvoiceBatch());
 		Integer dataResponseId = tracking.getInvoiceBatch().getDataResponse();
@@ -161,11 +156,11 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 //		} catch (IOException e) {
 //			System.out.println( "WRITE ERROR!" );
 //		}
-		assertAcceptedVerifactuResponse(cc, invoice, response.getData());
+		assertVerifactuResponse(cc, invoice, response.getData());
 		return dataResponse;
 	}
 	
-	private void assertAcceptedInvoiceInfo(Invoice i) {
+	private void assertInvoiceInfo(Invoice i) {
 		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.VERIFACTU);
 		assertNotNull(invoiceInfoOpt);
 		assertTrue(invoiceInfoOpt.isPresent());
@@ -178,8 +173,59 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
 				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
 	}
+	
+	private void assertInvoiceCommunication(Invoice i) {
+		Invoice inv = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(inv);
+		assertNotNull(inv.getId());
+		assertNotNull(inv.getCommunicationInfo());
+		assertTrue(AonCollectionUtils.isNotEmpty( inv.getCommunicationInfo()));
+		assertNotNull(inv.getVerifactuInfo());
+		assertTrue(inv.getVerifactuInfo().isPresent());
+		InvoiceInfo invoiceInfo = inv.getVerifactuInfo().get();
+		assertNotNull(invoiceInfo);
+		assertNotNull(invoiceInfo.getId());
+		assertNotNull(invoiceInfo.getDomain());
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertTrue(invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				|| invoiceInfo.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+	}
+	
+	private void assertCommunicationHistory(Invoice i) throws InvoiceCommunicationException {
+		Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> map = InvoiceCommunicator.history(getEnvironment().getOccam(), i.getId());
+		assertNotNull(map);
+		assertTrue(AonCollectionUtils.isNotEmpty( map ));
+		AonCollectionUtils.stream(map)
+			.forEach(e -> {
+				assertNotNull(e.getKey());		
+				assertNotNull(e.getValue());
+				InvoiceCommunicationHistoryMapValue v = e.getValue();
+				assertNotNull(v.getInfo());
+				InvoiceInfo info = v.getInfo();
+				assertEquals(e.getKey(), info.getType());
+				assertNotNull(v.getHistory());
+				List<InvoiceCommunicationHistory> history = v.getHistory();
+				assertNotNull(history);
+				assertTrue(AonCollectionUtils.isNotEmpty( history ));
+				assertEquals(1, history.size());
+				InvoiceCommunicationHistory h = history.get(0);
+				assertEquals(i.getId(), h.getInvoiceId());
+				assertEquals(e.getKey(), h.getType());
+				assertEquals(getEnvironment().getUser(), h.getCreationUser());
+				assertTrue(h.getOperation() == InvoiceCommunicationOperation.REGISTER);
+				assertTrue(h.getStatus() == InvoiceCommunicationStatus.ACCEPTED
+						|| h.getStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS);
+				assertNotNull(h.getDate() );
+				assertNotNull(h.getRequestUrl());
+				assertNotNull(h.getResponseMessages());
+				assertNotNull(h.getResponseData());
+				assertTrue(AonCollectionUtils.isEmpty( h.getResponseMessages()));
+			});
+		
+	}
 
-	private void assertAcceptedDataRequest(Invoice i, DataResponse response) {
+	private void assertDataRequest(Invoice i, DataResponse response) {
 		assertNotNull(response);
 		Integer responseDataRequest = response.getDataRequest();
 		assertNotNull(responseDataRequest);
@@ -197,7 +243,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(request.getData());
 	}
 
-	private void assertAcceptedInvoiceData(Invoice invoice) {
+	private void assertInvoiceData(Invoice invoice) {
 		Optional<InvoiceData> oQRUrl = InvoiceDataDAO.get(getEnvironment().getCtx(), invoice.getDomain(), invoice.getId(), InvoiceDataName.VERIFACTU_QR);
 		assertNotNull(oQRUrl);
 		assertTrue(oQRUrl.isPresent());
@@ -217,7 +263,7 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		assertNotNull(huella.getValue());
 	}
 	
-	private void assertAcceptedVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
+	private void assertVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
 		try {
 			InputStream is = new ByteArrayInputStream(data);
 			SOAPMessage response = MessageFactory.newInstance().createMessage(null, is);
@@ -291,117 +337,8 @@ class InvoiceCommunicationCancelTest extends AbstractVerifactuTest {
 		} catch (IOException | SOAPException | JAXBException e) {
 			fail(e);
 		}
+        
+		
 	}
 	
-	private DataResponse assertCanceledDataResponse(InvoiceCommunicatorContext cc, Invoice invoice) {
-		assertNotNull(cc);
-		assertNotNull(cc.getDataResponse());
-		Integer dataResponseId = cc.getDataResponse().getId();
-		assertNotNull(dataResponseId);
-		System.out.println( "dataResponseId ..: " + dataResponseId); 
-		assertTrue(dataResponseId > 0);
-		
-		Optional<DataResponse> optDataResponse = DataResponseDAO.get(getEnvironment().getCtx(), dataResponseId );
-		assertNotNull(optDataResponse);
-		assertTrue(optDataResponse.isPresent());
-		DataResponse dataResponse = optDataResponse.get();
-		assertNotNull(dataResponse);
-		assertEquals(dataResponse.getId(),dataResponseId);
-		assertEquals(dataResponse.getDomain(), invoice.getDomain());
-		assertTrue(dataResponse.getId() > 0);
-		assertNotNull(dataResponse.getDataRequest());
-		
-		Attach response = AttachmentDAO.getDataAttachStream(getEnvironment().getCtx(), f -> f.getDomainProperty().eq(invoice.getDomain())
-			.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value()))
-			.and(f.getSourceTypeProperty().eq(DataAttachSource.VERIFACTU.value()))
-			.and(f.getSourceBatchProperty().eq(dataResponse.getId())), true)
-		.findFirst().orElse(null);
-		assertNotNull(response);
-		assertNotNull(response.getData());
-		try {
-			System.out.println( "** Verifactu Response **" );
-			AonIOUtils.write(response.getData(), System.out);
-			System.out.println( );
-		} catch (IOException e) {
-			System.out.println( "WRITE ERROR!" );
-		}
-		assertCanceledVerifactuResponse(cc, invoice, response.getData());
-		return dataResponse;
-	}
-	
-	private void assertCanceledVerifactuResponse(InvoiceCommunicatorContext cc, Invoice invoice, byte[] data) {
-		try {
-			InputStream is = new ByteArrayInputStream(data);
-			SOAPMessage response = MessageFactory.newInstance().createMessage(null, is);
-			SOAPBody soapBody = response.getSOAPBody();
-			Document bodyDoc = soapBody.extractContentAsDocument();
-	        NodeList faults = bodyDoc.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
-	        if (faults.getLength() > 0) {
-	            Element faultElem = (Element) faults.item(0);
-	            String faultString = faultElem.getElementsByTagName("faultstring").item(0).getTextContent();
-	            fail( faultString ); 
-	        } else {	        
-	        	JAXBContext jc = JAXBContext.newInstance(RespuestaRegFactuSistemaFacturacionType.class.getPackage().getName());
-	        	Unmarshaller um = jc.createUnmarshaller();
-	        	JAXBElement<RespuestaRegFactuSistemaFacturacionType> o = um.unmarshal(bodyDoc, RespuestaRegFactuSistemaFacturacionType.class);
-	        	RespuestaRegFactuSistemaFacturacionType resp = o.getValue();
-	        	
-	    		assertNotNull(resp);
-	    		assertNotNull(resp.getRespuestaLinea());
-	    		assertFalse(resp.getRespuestaLinea().isEmpty());
-	    		assertEquals(1, resp.getRespuestaLinea().size());
-	    		RespuestaExpedidaType ret = resp.getRespuestaLinea().get(0);
-	    		
-	    		IDFacturaExpedidaType idFactura = ret.getIDFactura();
-	    	    assertNotNull( idFactura );
-	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
-	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
-	    		
-	    		OperacionType operacion = ret.getOperacion();
-	    		assertNotNull(operacion);
-	    		assertNotNull(operacion.getTipoOperacion());
-	    		assertEquals(TipoOperacionType.ANULACION, operacion.getTipoOperacion());
-	    		assertNull(operacion.getSubsanacion());
-	    		assertNotNull(operacion.getRechazoPrevio());
-	    		assertEquals(RechazoPrevioType.N, operacion.getRechazoPrevio());
-	    		assertNotNull(operacion.getSinRegistroPrevio());
-	    		assertEquals(SinRegistroPrevioType.N, operacion.getSinRegistroPrevio());
-	    		
-	    		assertNotNull(ret.getRefExterna());
-	    		String stringId = AonNumberUtils.toString(invoice.getId());
-				assertEquals( stringId , ret.getRefExterna());
-	        	
-	    		EstadoRegistroType estado = ret.getEstadoRegistro();
-	    		assertNotNull(estado);
-	    		
-	    		if (estado == EstadoRegistroType.ACEPTADO_CON_ERRORES) {
-	    			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
-	    			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
-	    			
-	    			System.out.println(  estado + " (" + codigoErrorRegistro + ") " + descripcionErrorRegistro );
-	    			
-	    			assertNotNull(codigoErrorRegistro);
-	    			assertEquals( BigInteger.valueOf(2007) , codigoErrorRegistro);
-	    			
-	    			assertNotNull(descripcionErrorRegistro);
-	    			assertTrue(AonStringUtils.startsWith(descripcionErrorRegistro, "No debe informarse como primer registro"));
-	    		} else if (estado == EstadoRegistroType.CORRECTO) {
-	    			BigInteger codigoErrorRegistro = ret.getCodigoErrorRegistro();
-	    			assertNull(codigoErrorRegistro);
-	    			String descripcionErrorRegistro = ret.getDescripcionErrorRegistro();
-	    			assertNull(descripcionErrorRegistro);
-	    		} else {
-	    			fail( "Estado no correcto ["+estado+"] "
-	    				+ " (" + ret.getCodigoErrorRegistro() + ") "
-	    				+ ret.getDescripcionErrorRegistro() );
-	    		}
-	    		
-	    		assertNull(ret.getRegistroDuplicado());
-	        }
-			
-		} catch (IOException | SOAPException | JAXBException e) {
-			fail(e);
-		}
-	}
 }

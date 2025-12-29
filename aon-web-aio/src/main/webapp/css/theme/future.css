@@ -1827,3 +1827,96 @@ aon-right-panel {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
   }
 }
+
+/* ========================== Search Styles  ========================== */
+
+#aonMenuLeftop-applications {
+	display: none;
+}
+
+#aonHeaderSearchDialogMenu span {
+	color: #64748b;
+	font-family: "Inter-regular", sans-serif;
+}
+
+#aonHeaderSearchDialogMenu span[header],
+#aonHeaderSearchDialogMenu b[decorate] {
+	color:var(--aonHeaderBackgroundColor);
+}
+
+#aonHeaderSearchDialogMenu i.material-icons {
+	color:transparent;
+	min-width: 19px;
+	min-height: 19px;
+	mask-size: 18px;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+	mask-image: url('/icons/arrow-right.svg');
+	
+}
+
+#aonHeaderSearchDialogMenu i.material-icons:has(+span>span[header]) {
+	background-color:var(--aonHeaderBackgroundColor);
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="euro_symbol"]  {
+	mask-image: url('/icons/euro.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="handshake"]  {
+	mask-image: url('/icons/hear-handshake.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="trolley"]  {
+	mask-image: url('/icons/truck.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="monitoring"]  {
+	mask-image: url('/icons/line-chart.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]  {
+	mask-image: url('/icons/calculator.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="open_in_new"]  {
+	mask-image: url('/icons/external-link.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="help"]  {
+	mask-image: url('/icons/help-circle.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="apps"]  {
+	mask-image: url('/icons/grip-vertical.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="share"]  {
+	mask-image: url('/icons/share-2.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="apartment"]  {
+	mask-image: url('/icons/building-2.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="domain_disabled"]  {
+	mask-image: url('/icons/building-off.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="work"] {
+	mask-image: url('/icons/briefcase.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="person"] {
+	mask-image: url('/icons/user.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="group"] {
+	mask-image: url('/icons/users.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="business"] {
+	mask-image: url('/icons/building.svg');
+}
+

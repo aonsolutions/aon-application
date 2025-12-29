@@ -38,5 +38,14 @@ public enum MaritalStatus {
 		if (i < 0 || i >= MaritalStatus.values().length) return null;
 		return MaritalStatus.values()[i];
 	}
+	
+	public static MaritalStatus safeValueOf( String s ) {
+		if(s == null) return null;
+		for (MaritalStatus g : values()) {
+			if(g.name().equalsIgnoreCase(s))
+				return g;
+		}
+		return null;
+	}
 
 }

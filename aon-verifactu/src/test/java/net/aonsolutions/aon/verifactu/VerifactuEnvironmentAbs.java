@@ -6,11 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
@@ -83,29 +81,13 @@ abstract class VerifactuEnvironmentAbs implements Environment {
 			.setConfig( configurationWithCertificate() )
 		;
 	}
-	private InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
+	protected InvoiceCommunicationConfiguration getCommunicationConfigurationWithCertificate() {
 		return communicationConfigurationWithCertificate; 
 	}
-	private void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration config) {
+	protected void setCommunicationConfigurationWithCertificate(InvoiceCommunicationConfiguration config) {
 		this.communicationConfigurationWithCertificate = config;
 	}
-	@Override
-	public InvoiceCommunicationConfiguration configurationWithCertificate() {
-		synchronized (this) {
-			if (getCommunicationConfigurationWithCertificate() == null) {
-				setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
-			}
-			assertNotNull(getCommunicationConfigurationWithCertificate(),"communicationConfigurationWithCertificate NULL" );
-			assertTrue(getCommunicationConfigurationWithCertificate().isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
-			assertTrue(getCommunicationConfigurationWithCertificate().isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
-			Certificate c = AonSecret.getSigCert();
-			assertNotNull(c, "Verifactu Certificate NULL");
-			getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 
-			return getCommunicationConfigurationWithCertificate();
-		}
-
-	}
-
+	
 	@Override
 	public Company company() {
 		return CompanyDAO.getCompany(getCtx(), getDomainId());

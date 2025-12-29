@@ -136,7 +136,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 			// TODO HAY QUE ADAPTAR TICKET BAI PARA QUE PUEDA ENVIARSE TODAS LAS FACTURAS DE UNA.
 			// Y USAR EL ELSE PARA TICKET BAI. 
 			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config,inv));
-		} else if(config.hasVerifactu()) {
+		} else if(config.isVerifactu()) {
 			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.stream(invoiceList)
 					.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
 					.toList();

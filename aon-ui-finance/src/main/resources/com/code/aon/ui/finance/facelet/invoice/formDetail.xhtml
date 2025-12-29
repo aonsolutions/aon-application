@@ -20,7 +20,7 @@
 					<ui:param name="controller" value="#{detailController}" />
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
-					<ui:param name="skipResetButton" value="#{invoiceController.tediReadOnly or invoiceController.tbaiInvoice or invoiceController.verifactuInvoice}" />
+					<ui:param name="skipResetButton" value="#{invoiceController.tediReadOnly or invoiceController.tbaiInvoice or invoiceController.verifactuInvoice or invoiceController.noVerifactuInvoice or invoiceController.sifInvoice}" />
 					<ui:param name="skipLineEdition" value="#{true}" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
 					<ui:param name="resetButtonReRender" value="aonContent" />
@@ -35,7 +35,7 @@
 						<aon:commandLink id="#{dataTableId}-selectButton"
 							styleClass="aon-table-row-link" value="&#160;"
 							immediate="true" ajaxSingle="true" requestDelay="100"
-							rendered="#{!invoiceController.tediReadOnly and !invoiceController.tbaiInvoice and !invoiceController.verifactuInvoice and (detailController.editable or to.sourceId &lt; 0)}"
+							rendered="#{!invoiceController.tediReadOnly and !invoiceController.tbaiInvoice and !invoiceController.verifactuInvoice and !invoiceController.noVerifactuInvoice and !invoiceController.sifInvoice and (detailController.editable or to.sourceId &lt; 0)}"
 							actionListener="#{detailController.onSelect}"
 							reRender="aonContent"
 							onkeyup="#{dataTableId}KeyUp(this)"

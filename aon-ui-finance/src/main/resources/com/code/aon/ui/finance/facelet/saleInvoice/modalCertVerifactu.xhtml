@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-<aon:panelGroup id="showCertVerifactuWindow">
+	<aon:panelGroup id="showCertVerifactuWindow">
 		<aon:if test="#{saleInvoice.showCertVerifactuWindow}">
 			<rich:modalPanel id="fiscalCertVerifactuModalPanel"
 				minWidth="400" minHeight="200" zindex="90"
@@ -37,7 +37,7 @@
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="certVerifactuAccept"	
-											rendered="#{!saleInvoice.invoiceVerifactuAccepted}"
+											rendered="#{!saleInvoice.invoiceCommunicationAccepted}"
 											value="Enviar"
 											action="#{saleInvoice.issueInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-check-black"

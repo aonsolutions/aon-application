@@ -41,7 +41,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	
-	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }
+	@Override protected Environment getEnvironment() { return VERIFACTU_CANARIAS_ENV; }
 
 	private Invoice getTestInvoice() {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA
@@ -199,7 +199,7 @@ class VerifactuVentaIntracomunitaria extends AbstractVerifactuTest {
 	    assertEquals( 1, listaDesglose.size() );
 	    DetalleType dt = listaDesglose.get(0);
 	    assertNotNull( dt );
-	    assertEquals( TipoImpuesto.IVA.getValue() , dt.getImpuesto() );
+	    assertEquals( TipoImpuesto.IGIC.getValue() , dt.getImpuesto() );
 	    assertEquals( ClaveRegimen.C01_ISP.getValue() , dt.getClaveRegimen() );
 	    assertNull( dt.getCalificacionOperacion() );
 	    assertEquals( OperacionExentaType.E_5, dt.getOperacionExenta() );

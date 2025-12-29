@@ -29,4 +29,13 @@ public enum Gender {
 		if (i < 0 || i >= Gender.values().length) return null;
 		return Gender.values()[i];
 	}
+	
+	public static Gender safeValueOf( String s ) {
+		if(s == null) return null;
+		for (Gender g : values()) {
+			if(g.name().equalsIgnoreCase(s))
+				return g;
+		}
+		return null;
+	}
 }

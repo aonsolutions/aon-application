@@ -438,9 +438,10 @@ public class AccountingInvoiceDAO {
 		if (type == InvoiceType.SALES) {
 			if (c.isTbai()) {
 				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
-			}
-			if (c.hasVerifactu()) {
+			} else if (c.isVerifactu()) {
 				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Verifactu activado");
+			} else if(c.hasCommunication()) {
+				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Emisión de facturas activada");
 			}
 		}
 	}
