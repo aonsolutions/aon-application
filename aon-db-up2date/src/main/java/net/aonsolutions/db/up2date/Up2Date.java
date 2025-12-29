@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
 import net.aonsolutions.db.up2date.tgss.BasesMax2026Update;
 import net.aonsolutions.db.up2date.tgss.MEI2026Insert;
+import net.aonsolutions.db.up2date.tgss.Solidarity2026Insert;
 
 public class Up2Date {
 
@@ -568,6 +569,7 @@ public class Up2Date {
 			// AlterFsMod190Detail2025.ALTER_FS_MODEL_190_DETAIL_2025,
 			BasesMax2026Update.BASESMAX2026UPDATE,
 			MEI2026Insert.MEI2026INSERT,
+			Solidarity2026Insert.SOLIDARITY2026INSERT,
 			
 			
 			// ----------------------------------------------------------------

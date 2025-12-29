@@ -3114,6 +3114,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestSolidaridad() throws Exception {
+		
+		if (!isDisplayed("solidaridad,_tercer_tramo"))
+			open("solidaridad");
+
+
+		wait4Id("solidaridad,_tercer_tramo");
+
+		draft("SOLIDARIDAD, TERCER TRAMO");
+		
+		calculate(Calendar.JANUARY,2026);
+		assertText("solidaridad_iPercentLabel", "0,19 %");
+		assertText("solidaridad_iiPercentLabel", "0,21 %");
+		assertText("solidaridad_iiiPercentLabel", "0,24 %");
+		click("costsCheck-input");
+		assertText("solidaridad_i_ePercentLabel", "0,96 %");
+		assertText("solidaridad_ii_ePercentLabel", "1,04 %");
+		assertText("solidaridad_iii_ePercentLabel", "1,22 %");
+		click("costsCheck-input");
+	}
+
+	@Test
 	public void TestInactividad() throws Exception {
 		
 		if (!isDisplayed("permiso,_no_retribuido-content"))
