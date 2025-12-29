@@ -96,6 +96,7 @@ export class AonDesktop extends AonElement {
 		await this.getInvoiceConfiguration();
 		if(!this.checkConfigurationComplete(this.ic))
 			this.buildInvoiceConfigurationDialog();
+	
 	}
 
 	disconnectedCallback() {
@@ -140,7 +141,7 @@ export class AonDesktop extends AonElement {
 	
 			dialog.addAcceptAction(() => {
 				if(this.checkConfigurationComplete(this.ic)) {
-					saveInvoiceConfiguration(this.ic);
+					saveInvoiceConfiguratsion(this.ic);
 				} else {
 					this.buildInvoiceConfigurationDialog();
 				}
@@ -156,11 +157,19 @@ export class AonDesktop extends AonElement {
 		if(!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
 		if(isPersonaFisica(config.company.document)) {
-			if(!(config.company.person || config.person)) return false;
+			if(!(
+					 config.company.person && this.isNotEmpty(config.company.person)
+				|| config.person && this.isNotEmpty(config.person)
+			)) return false;
 			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
 		} else {
 			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
 		}
+	}
+
+	isNotEmpty(value) {
+		// Verifica si el valor es definido, no vacío y no es un objeto vacío
+		return value !== undefined && value !== null && value !== "" && !(typeof value === 'object' && (Object.keys(value).length === 0) || (Object.keys(value).length === 1));
 	}
 
 	build() {

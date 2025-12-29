@@ -48,6 +48,8 @@ public class HelpController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private static final String HOME_ID = "1Z_DmemsSagq0r5WE3cLDMz4HdHzfofFm";
+	private static final String PORTAL_ID = "1hW4Woxq3p0Yho-kyloyFYLXL_D0n1bRG";
+
 	private GFile file;
 	private GFile homeFile;
 	private Drive drive;
@@ -101,11 +103,7 @@ public class HelpController implements Serializable {
 	 * reset the breadcrumb
 	 */
 	private void resetBreadcrumb() {
-		final GFile file = new GFile.GFileBuilder()
-				.setId(HOME_ID)
-				.setType(MimeTypes.FOLDER)
-				.setName("Inicio")
-				.build();
+		final GFile file = homeFile;
 		
 		this.breadcrumb = new LinkedHashMap<String,GFile>();
 		this.breadcrumb.put(file.getId(), file);
@@ -128,6 +126,7 @@ public class HelpController implements Serializable {
 		return indexContent;
 	}
 	
+
 	/**
 	 * Get the current content 
 	 * @return The Collection of files
@@ -263,20 +262,22 @@ public class HelpController implements Serializable {
 	public Collection<GFile> getBreadcrumb() {
 		return this.breadcrumb.values();
 	}	
-
-	
 	
 	public void setFileByName(String name) {
 		this.file = DriveService.getFile(drive,null, name).orElseThrow();
 	}
 	
+	public void setHomeByName(String name) {
+		this.homeFile = DriveService.getFile(drive, null, name).orElseThrow();
+		this.homeFile = new GFile.GFileBuilder().setId(homeFile.getId()).setType(MimeTypes.FOLDER)
+				.setName(homeFile.getName()).build();
+		resetBreadcrumb();
+	}
+	
+	
 	
 	public void home() {
-		this.setFile(new GFile.GFileBuilder()
-					.setId(HOME_ID)
-					.setType(MimeTypes.FOLDER)
-					.setName("Inicio")
-					.build());
+		this.setFile(homeFile);
 		this.resetBreadcrumb();
 	}
 	

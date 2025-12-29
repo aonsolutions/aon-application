@@ -43,7 +43,32 @@
 	  'opsz' 24;
 	}
 	</style>
+	
+	<aon:if test="#{request.remoteUser != null}">
+		<aon:form id="appForm" > 
+	
+			<aon:commandButton 
+				id="appButton" 
+				style="display: none;" 
+				action="drive_content"
+			>
+				<aon:if test="#{dur.portal}">
+					<f:setPropertyActionListener target="#{help.homeByName}" value="Portal" />
+					<f:setPropertyActionListener target="#{help.fileByName}" value="Portal" />
+				</aon:if>
+				
+			</aon:commandButton>
+		</aon:form>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			#{rich:element('appButton')}.click();	
+		//]]>
+		</script>
+	</aon:if>
 
-	<ui:include src="/com/code/aon/web/help/facelet/drive_content.xhtml" />
+	<aon:if test="#{request.remoteUser == null}">
+		<ui:include src="/com/code/aon/web/help/facelet/drive_content.xhtml" />
+	</aon:if>
 
 </ui:composition>
