@@ -211,7 +211,9 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
         administration.setValue(this.communicationConfiguration.getAdministration().value);
-        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
+        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown() 
+            && this.communicationConfiguration.getAdministrationData() 
+            && this.communicationConfiguration.getAdministrationData().id;
         administration.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -225,7 +227,7 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildNoSif(table) {
         const enterprise = this.configuration.company.id;
-        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
+        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
         if(!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
