@@ -112,10 +112,10 @@ export class AonDesktop extends AonElement {
 		this.dur = new DomainUserRoles(r);
 		this.build();
 
-/*	    await this.getInvoiceConfiguration();
+	    await this.getInvoiceConfiguration();
 		if(!this.checkConfigurationComplete(this.ic))
 			this.buildInvoiceConfigurationDialog();
-*/	
+	
 	}
 
 	disconnectedCallback() {
