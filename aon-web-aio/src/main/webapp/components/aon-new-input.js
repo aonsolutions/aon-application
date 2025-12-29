@@ -142,8 +142,8 @@ export class AonNewInput extends AonElement {
 		input.addEventListener(EVENT.BLUR, this.onBlur);
 		input.addEventListener(EVENT.INPUT, this.onInput);
 		input.addEventListener(EVENT.KEYUP, () => {
-		if (input.type !== "time") this.value = input.value;
-			this.dispatchEvent(new Event(EVENT.KEYUP));
+			if (input.type !== "time") this.value = input.value;
+				this.dispatchEvent(new Event(EVENT.KEYUP));
 		});
 
 		input.placeholder = this.getTitle();

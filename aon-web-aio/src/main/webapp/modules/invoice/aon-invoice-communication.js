@@ -19,6 +19,7 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     initialize() {
+        this.COMPONENT;
         this.id = this.id || 'aonInvoiceConfigurationCommunication';
         this.DIV = this.id + 'Div';
         
@@ -29,7 +30,6 @@ export class AonInvoiceCommunication extends AonElement {
         this.CARD = this.id + 'Card';
         this.CARD_TABLE = this.CARD + 'Table';
         this.CARD_DIV = this.CARD + 'Div';
-
 
         // FACTURAE
         this.FACTURAE = this.CARD_TABLE + 'Facturae';
@@ -45,9 +45,10 @@ export class AonInvoiceCommunication extends AonElement {
             this.showError('No es posible configurar las comunicaciones. El documento de la empresa no es válido.');
         } else {
             let div = this.createElement(TAG.DIV);
-            div.id = this.DIV;
-            div.style.display = 'flex';
-            div.style.width = '100%';
+            div.id  = this.DIV;
+            this.COMPONENT = div;
+            // div.style.display = 'flex';
+            // div.style.width = '100%';
             this.appendChild(div);
             this.buildCompanyCard(div);
             if(this.showCommunicationCard()) 
@@ -56,11 +57,10 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     reload() {
-        let parent = this.getElement(this.DIV);
-        this.clearElement(parent);
-        this.buildCompanyCard(parent);
+        this.clearElement(this.COMPONENT);
+        this.buildCompanyCard(this.COMPONENT);
         if(this.showCommunicationCard()) 
-            this.buildCommunicationCard(parent);
+            this.buildCommunicationCard(this.COMPONENT);
     }
 
     showCommunicationCard() {
@@ -70,7 +70,7 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildCompanyCard(parent) {
         let card = createCard(this.COMPANY_CARD, MSG.COMPANY);
-        card.style.width = '50%';
+        // card.style.width = '50%';
         parent.appendChild(card);
 
         let content = this.createElement(TAG.DIV);
@@ -93,7 +93,7 @@ export class AonInvoiceCommunication extends AonElement {
     buildCommunicationCard(parent) {
         if (!this.communicationConfiguration.getAdministration().isUnknown() &&  isValid(this.configuration.company.document)) {
             let card = createCard(this.CARD, MSG.COMMUNICATIONS);
-            card.style.width = '50%';
+            // card.style.width = '50%';
             parent.appendChild(card);
 
             let content = this.createElement(TAG.DIV);
@@ -210,10 +210,12 @@ export class AonInvoiceCommunication extends AonElement {
         let administration = createSelect(this.ADMINISTRATION, 'Administración');
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
-        administration.setValue(this.communicationConfiguration.getAdministration().value);
+        if(!this.communicationConfiguration.getAdministration().isUnknown()) {
+            administration.setValue(this.communicationConfiguration.getAdministration().value);
+        }
         administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
         administration.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
+            this.communicationConfiguration.setAdministration(new Administration(administration.getValue()), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
@@ -289,7 +291,8 @@ export class AonInvoiceCommunication extends AonElement {
 
         } else { 
             const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
-            let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
+            // let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
+            let exemption = createInput(communicationExemptionId, MSG.EXEMPTION_CAUSE);
             table.addCell(exemption, 1).style.height = '50px';
         }
         table.addRow();

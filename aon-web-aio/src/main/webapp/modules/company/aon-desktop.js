@@ -19,6 +19,7 @@ import { AonSaltra } from '../laboral/aon-saltra.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
 import { AonCard } from '../../components/aon-card.js';
+import { AonDialog } from '../../components/aon-dialog';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonModelMatrixCard } from '../fiscal/aon-model-matrix-card.js';
@@ -118,33 +119,37 @@ export class AonDesktop extends AonElement {
 			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
 			this.appendChild(dialog);
 			dialog.autoclose = false;
+			dialog.removeCliclOutsideDialogClose();
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
+			
+			let communication =  new AonInvoiceCommunication();
+			communication.setConfiguration(this.ic);
+			communication.onChange(() => {
+				this.ic = communication.getConfiguration();
+				let com = communication.getCommunicationConfiguration();
+				if(com instanceof InvoiceCommunicationConfiguration) {
+					this.ic.communication = com.toJSON();
+				} else {
+					this.ic.communication = new InvoiceCommunicationConfiguration(com).toJSON();
+				}
+			});
+	
+			dialog.clear();
+			dialog.setTitle(MSG.INVOICE_CONFIGURATION);
+			dialog.setContent(communication);
+	
+			dialog.addAcceptAction(() => {
+				if(this.checkConfigurationComplete(this.ic)) {
+					saveInvoiceConfiguration(this.ic);
+				} else {
+					this.buildInvoiceConfigurationDialog();
+				}
+			});
+			dialog.open();
+		} else {
+			// Existe simplemente lo abrimos
+			dialog.open();
 		}
-
-		let communication =  new AonInvoiceCommunication();
-		communication.setConfiguration(this.ic);
-		communication.onChange(() => {
-			this.ic = communication.getConfiguration();
-			let com = communication.getCommunicationConfiguration();
-			if(com instanceof InvoiceCommunicationConfiguration) {
-				this.ic.communication = com.toJSON();
-			} else {
-				this.ic.communication = new InvoiceCommunicationConfiguration(com).toJSON();
-			}
-		});
-
-		dialog.clear();
-		dialog.setTitle(MSG.INVOICE_CONFIGURATION);
-		dialog.setContent(communication);
-
-		dialog.addAcceptAction(() => {		
-			if(this.checkConfigurationComplete(this.ic)) { 
-				saveInvoiceConfiguration(this.ic);
-			} else {
-				this.buildInvoiceConfigurationDialog();
-			}
-		});
-		dialog.open();
 	}
 
 	checkConfigurationComplete(config) {

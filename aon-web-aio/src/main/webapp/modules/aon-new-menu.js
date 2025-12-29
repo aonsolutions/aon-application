@@ -435,7 +435,7 @@ export class AonNewMenu extends AonElement {
 			this.supersetDashboard = dashboard;
 			this.addMenuSidenavApp(ul, SUPERSET);
 		})
-		.finally(end => this.createBookPlansButton(ul, EXPAND_HIRIND));
+		//.finally(end => this.createBookPlansButton(ul, EXPAND_HIRIND));
 
 		let li2 = this.createElement(TAG.LI);
 		li2.classList.add("aonNewMenuSideNavLi2");
