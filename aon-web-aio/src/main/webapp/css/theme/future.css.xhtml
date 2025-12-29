@@ -1097,6 +1097,11 @@
         padding-bottom: 0px !important;
     }
     
+    .aon-panelGrid-even.aon-width-500 {
+    	width: inherit ;
+    	min-width: 500px;
+    }
+    
     form[id$='bankStatementList'] .aon-panelGrid .aon-panelGrid-odd {
         position: initial;
     }
@@ -1142,11 +1147,17 @@
   		background-image: url(#{aonResource.resolve['/icons/eye.svg']}) ;
 	}
 	
+	.aon-icon-project-ok {
+		padding: 13px !important;
+  		background-size: inherit;	  
+  		background-image: url(#{aonResource.resolve['/icons/folder-check.svg']}) ;
+	}
+	
 	.aon-icon-unsigned {
 		padding: 13px !important;
   		background-size: inherit;	  
   		background-image: url(#{aonResource.resolve['/icons/award.svg']}) ;
-	}aon-icon-sincronize
+	}
 	
 	.aon-icon-commercial-ok{
 		padding: 13px !important;
@@ -1423,6 +1434,10 @@
   		
   		background-color: white;
   		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
+    }
+    
+    td.aon-width-220 > div:only-child {
+        min-width: max-content;
     }
 	
 </style>
