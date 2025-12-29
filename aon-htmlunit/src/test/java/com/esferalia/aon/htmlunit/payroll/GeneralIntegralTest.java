@@ -3104,6 +3104,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("mei_cost", cgcBase*0.67/100.00);
 		click("costsCheck-input");
 		
+		calculate(Calendar.JANUARY,2026);
+		cgcBase = getValue("cgcBaseLabel");
+		cgpBase = getValue("cgpBaseLabel");
+		assertText("mei", cgcBase*0.15/100.00);
+		click("costsCheck-input");
+		assertText("mei_cost", cgcBase*0.75/100.00);
+		click("costsCheck-input");
 	}
 
 	@Test

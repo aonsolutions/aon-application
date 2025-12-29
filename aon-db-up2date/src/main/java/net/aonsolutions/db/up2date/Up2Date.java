@@ -19,13 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2025;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2025;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
 import net.aonsolutions.db.up2date.tgss.BasesMax2026Update;
+import net.aonsolutions.db.up2date.tgss.MEI2026Insert;
 
 public class Up2Date {
 
@@ -569,6 +567,7 @@ public class Up2Date {
 			// AlterFsMod347Detail2025.ALTER_FS_MODEL_347_DETAIL_2025,
 			// AlterFsMod190Detail2025.ALTER_FS_MODEL_190_DETAIL_2025,
 			BasesMax2026Update.BASESMAX2026UPDATE,
+			MEI2026Insert.MEI2026INSERT,
 			
 			
 			// ----------------------------------------------------------------
