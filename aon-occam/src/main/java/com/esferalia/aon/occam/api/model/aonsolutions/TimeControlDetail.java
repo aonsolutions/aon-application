@@ -26,6 +26,8 @@ public class TimeControlDetail implements Serializable {
 	private Location location;
 	private Coordinates coordinates;
 	
+	private TimeControlReason reason;
+	
 	private Date creationDate;
 	private String creationUser;
 	private Date modificationDate;
@@ -157,6 +159,15 @@ public class TimeControlDetail implements Serializable {
 		this.modificatedTimeControl = modificatedTimeControl;
 		return this;
 	}
+	
+	public TimeControlReason getReason() {
+		return reason;
+	}
+
+	public TimeControlDetail setReason(TimeControlReason reason) {
+		this.reason = reason;
+		return this;
+	}
 
 	
 	public JSONObject toJSON() {
@@ -166,6 +177,7 @@ public class TimeControlDetail implements Serializable {
 		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
 		json.put("cause", getCause() != null ? getCause().name().toLowerCase() : TimeControlCause.DEFAULT);
 		json.put("date", getDate().getTime());
+		json.put("reason", getReason() != null ? getReason().name() : null);
 		
 		if(getCoordinates() != null) {
 			json.put("coordinates", getCoordinates().toJSON());
@@ -216,6 +228,7 @@ public class TimeControlDetail implements Serializable {
 				&& (date!=null && tm.date!=null && date.compareTo(tm.date) ==0 )
 				&& Objects.equals(location, tm.location)
 				&& Objects.equals(coordinates, tm.coordinates)
+				&& Objects.equals(reason, tm.reason)
 			);
 	}
 }

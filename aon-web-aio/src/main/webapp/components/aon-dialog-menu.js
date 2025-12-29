@@ -150,9 +150,12 @@ export class AonDialogMenu extends AonElement {
 		content.appendChild(body);
 
 		this.onclick = (ev) => {
-			if (ev.target == dialog) {
+			if (ev.target == dialog)
 				this.close();
-			}
+			
+			if (ev.target.id == dialog.id)
+				this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
+		
 		}
 	}
 	
@@ -270,6 +273,7 @@ export class AonDialogMenu extends AonElement {
 		const half = this.HEADER_HEIGHT / 2;
 		if( this.Y_DRAG >= half){
 			this.close();
+			this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
 		} else {
 			this.setDrag(this.START_TOP);
 		}
@@ -452,6 +456,7 @@ export class AonDialogMenu extends AonElement {
 			ic.style.verticalAlign = 'middle';
 			ic.style.fontSize = `${item.size || 16}px`;
 			ic.innerHTML = item.icon;
+			ic.setAttribute('icon', item.icon);
 			li.appendChild(ic);
 		}
 

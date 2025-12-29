@@ -182,6 +182,10 @@ export class AonJsfApp extends AonElement {
 		});
 
 	}
+	
+	getJsfApp(){
+		return this.jsfapp;
+	}
 
 	getJaasDomain(dur) {
 		if ( dur?.user?.domain == dur?.domain?.id ) 
@@ -1346,9 +1350,15 @@ export class AonJsfHelpContent extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setJsfApp('jsfhelp');
 		this.setViewId('/facelet/help/helpContent.xhtml');
 	}
+	
+	connectedCallback() {
+		this.buildDur()
+		.catch( () => this.setJsfApp('jsfhelp') )
+		.finally( () => super.connectedCallback() );
+	}
+	
 	
 }
 

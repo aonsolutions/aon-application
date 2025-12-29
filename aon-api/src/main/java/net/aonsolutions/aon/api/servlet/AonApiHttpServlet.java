@@ -8,7 +8,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -381,9 +387,27 @@ public class AonApiHttpServlet extends HttpServlet{
 		if(cert.isEmpty()) {
 			throw new AonApiException("El certificado no existe.");
 		}
+		
+		try {
+			ByteArrayInputStream key = new ByteArrayInputStream(cert.getData());
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(key, cert.getPassword().toCharArray());
+			String alias = keyStore.aliases().nextElement();
+			X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+			Date now = new Date();
+			if (certificate.getNotBefore() != null && now.before(certificate.getNotBefore())) {
+				throw new AonApiException(InvoiceCommunicationError.AON_0026.getMessage());
+			} 
+			if (certificate.getNotAfter() != null && now.after(certificate.getNotAfter())) {
+				throw new AonApiException(InvoiceCommunicationError.AON_0027.getMessage());
+			} 			
+		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+			throw new AonApiException(InvoiceCommunicationError.AON_0025.getMessage());
+		}
+		
 		return cert;	
 	}
-	
+		
 	protected static boolean checkCert(byte[] cert, String password) {
 		try {
 			ByteArrayInputStream is = new ByteArrayInputStream(cert);

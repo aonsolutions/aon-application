@@ -37,6 +37,7 @@ class VerifactuTestsUtils {
 	static String series(AONContext ctx, boolean rectifier) {
 		return series( ctx, rectifier, false);
 	}
+	
 	static String series(AONContext ctx, boolean rectifier, boolean cancel) {
 	    char prefix = switch ((cancel ? 2 : 0) | (rectifier ? 1 : 0)) {
 	        case 3 -> 'T'; // cancel + rectifier

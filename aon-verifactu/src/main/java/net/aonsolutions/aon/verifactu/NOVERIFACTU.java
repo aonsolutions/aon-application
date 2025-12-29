@@ -4,13 +4,18 @@ import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministrolr.RegFactuSistemaFacturacion;
@@ -38,7 +43,7 @@ public class NOVERIFACTU {
 	
 	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
-			VERIFACTU.check(vc);
+			check(vc);
 			RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx,vc, phase);
 			vc.setRequest( request );
 			Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
@@ -60,7 +65,7 @@ public class NOVERIFACTU {
 		}
 		VERIFACTU.saveVerifactuBlockchain(ctx, vc.getDomain(), vc.getBlockchain());
 		vc.invoiceStream()
-			.forEach(i -> VERIFACTU.saveInvoiceInfo(ctx, vc.getDomain(), i.getId(), InvoiceCommunicationStatus.ACCEPTED));
+			.forEach(i -> VERIFACTU.saveInvoiceInfo(ctx, vc.getDomainId(), i.getId(), InvoiceCommunicationStatus.ACCEPTED));
 		return vc;
 	}
 	
@@ -74,8 +79,8 @@ public class NOVERIFACTU {
 		return cancel(ctx, vc);
 	}
 	
-	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc ) throws InvoiceCommunicationException {
-		VERIFACTU.check(vc);
+	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+		check(vc);
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, vc, null);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
@@ -88,6 +93,24 @@ public class NOVERIFACTU {
 		vc.invoiceStream()
 			.forEach(i -> InvoiceDAO.delete(ctx, i.getId(), vc.isPreserveRawdocOnDeletion()));
 		return vc;
+	}
+	
+	// **************************************************************
+	// ************************************************ [PRIVATE] ***
+	// **************************************************************
+	
+	private static void check(VerifactuContext vc) throws InvoiceCommunicationException {
+		VERIFACTU.checkCompany(vc);
+		VERIFACTU.checkConfig(vc);
+		VERIFACTU.checkInvoices(vc);
+	}
+
+	static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
+		return InvoiceCommunicationDAO.saveRequest(ctx, domain, InvoiceCommunicationType.NO_VERIFACTU, request);
+	}
+
+	static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationStatus status) {
+		return InvoiceCommunicationDAO.saveInvoiceInfo(ctx, domainId, invoiceId, InvoiceCommunicationType.NO_VERIFACTU, status);
 	}
 	
 }

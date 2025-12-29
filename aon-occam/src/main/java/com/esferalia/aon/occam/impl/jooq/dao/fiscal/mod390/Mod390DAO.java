@@ -182,7 +182,8 @@ public class Mod390DAO {
 		mod390.setDocument(conf.getCompany().getDocument());
 		mod390.setEnterpriseName(conf.getCompany().getName());
 		mod390.setYear( year );
-		if (mod390.isLegalEntity()) mod390.setName(mod390.getEnterpriseName());
+		if (mod390.isLegalEntity()) 
+			mod390.setName(mod390.getEnterpriseName());
 		else {
 			String tmpName = mod390.getEnterpriseName();
 			if (AonStringUtils.contains(tmpName, ',')) {

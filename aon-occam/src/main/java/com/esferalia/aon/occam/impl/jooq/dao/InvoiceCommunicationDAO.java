@@ -231,7 +231,7 @@ public class InvoiceCommunicationDAO {
 		fillVerifactu(ctx, domainId, configuration);
 		fillNoVerifactu(ctx, domainId, configuration);
 		fillSif(ctx, domainId, configuration);
-		
+		fillNoSif(ctx, domainId, configuration);
 		return configuration;
 	}
 	
@@ -374,11 +374,17 @@ public class InvoiceCommunicationDAO {
 		config.setSifData(getIccData(config.getSifDataHistory()));
 	}
 	
+	private static void fillNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		config.setNoSifDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_NO_SIF));
+		config.setNoSifData(getIccData(config.getNoSifDataHistory()));
+	}
+	
 	private static List<EnterpriseData> getIccHistory(AONContext ctx, Integer domainId, EnterpriseDataNames name) {
 		return EnterpriseDataDAO.getList(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq(name.name())));
 	}
 	
 	private static EnterpriseData getIccData(List<EnterpriseData> history) {
+		if(history == null || history.isEmpty()) return null;
 		return history.stream().filter(f -> (f.getStartDate() != null && f.getStartDate().before(new Date()))
 				&& (f.getEndDate() == null || f.getEndDate().after(new Date()))).findFirst().orElse(null);
 	}
@@ -394,7 +400,7 @@ public class InvoiceCommunicationDAO {
 		saveVerifactu(ctx, domainId, config);
 		saveNoVerifactu(ctx, domainId, config);
 		saveSif(ctx, domainId, config);
-		
+		saveNoSif(ctx, domainId, config);
 		return get(ctx, domainId);
 	} 
 	
@@ -404,7 +410,9 @@ public class InvoiceCommunicationDAO {
 				EnterpriseDataDAO.insert(ctx, data.setDomain(domainId));
 			} else if(data.isUpdated()) {
 				EnterpriseDataDAO.update(ctx, data);
-			} 
+			} else if(data.isRemoved()) {
+				EnterpriseDataDAO.delete(ctx, data.getId());
+			}
 		});
 	}
 	
@@ -437,6 +445,10 @@ public class InvoiceCommunicationDAO {
 	
 	private static void saveSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		saveConfiguration(ctx, domainId, config.getSifDataHistory());
+	}
+	
+	private static void saveNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		saveConfiguration(ctx, domainId, config.getNoSifDataHistory());
 	}
 	
 	// *************************************************************
@@ -619,11 +631,11 @@ public class InvoiceCommunicationDAO {
 		return dataResponse;		
 	}
 	
-	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Domain domain, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
+	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
 		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, communicationType)
 			.orElse( 
 				new InvoiceInfo()
-					.setDomain(domain.getId())
+					.setDomain(domainId)
 					.setInvoice(invoiceId)
 					.setType(communicationType)
 			)

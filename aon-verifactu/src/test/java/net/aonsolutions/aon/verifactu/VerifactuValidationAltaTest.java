@@ -1099,7 +1099,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_RE.get( getEnvironment());
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_2)
-			, InvoiceCommunicationError.VERIFACTU_1281, InvoiceCommunicationError.VERIFACTU_1281
+			, InvoiceCommunicationError.VERIFACTU_1281, InvoiceCommunicationError.VERIFACTU_1198, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 	
@@ -1522,7 +1522,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.fra.setTipoFactura( ClaveTipoFacturaType.F_2 );
 				c.det.setCalificacionOperacion(CalificacionOperacionType.S_2);
 			}
-			, InvoiceCommunicationError.VERIFACTU_1197
+			, InvoiceCommunicationError.VERIFACTU_1197 , InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 	
@@ -1578,7 +1578,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoRecargoEquivalencia(null);
 				c.det.setCuotaRecargoEquivalencia(null);
 			}
-			, InvoiceCommunicationError.VERIFACTU_1237
+			, InvoiceCommunicationError.VERIFACTU_1237, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 
@@ -1642,7 +1642,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoRecargoEquivalencia(null);
 				c.det.setCuotaRecargoEquivalencia(null);
 			}
-			, InvoiceCommunicationError.VERIFACTU_1237
+			, InvoiceCommunicationError.VERIFACTU_1237, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 
@@ -1698,7 +1698,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setCalificacionOperacion(null);
 				c.det.setOperacionExenta(null); 
 			}
-			, InvoiceCommunicationError.VERIFACTU_1195
+			, InvoiceCommunicationError.VERIFACTU_1195, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 	
@@ -1728,7 +1728,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.fra.setCuotaTotal(VerifactuUtils.toString(21));
 				c.fra.setImporteTotal(VerifactuUtils.toString(121));
 			}
-			, InvoiceCommunicationError.VERIFACTU_1238
+			, InvoiceCommunicationError.VERIFACTU_1238, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 
@@ -1870,7 +1870,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		Invoice invoice = InvoiceTypes.Invoices.VENTA_NACIONAL_SIMPLE_CRITERIO_CAJA.get( getEnvironment()).setId(1);
 		assertInvoiceMessage( invoice, null
 			, c -> c.det.setCalificacionOperacion(CalificacionOperacionType.S_2)
-			, InvoiceCommunicationError.VERIFACTU_1203, InvoiceCommunicationError.VERIFACTU_1198
+			, InvoiceCommunicationError.VERIFACTU_1203, InvoiceCommunicationError.VERIFACTU_1198, InvoiceCommunicationError.VERIFACTU_1207
 		);
 	}
 

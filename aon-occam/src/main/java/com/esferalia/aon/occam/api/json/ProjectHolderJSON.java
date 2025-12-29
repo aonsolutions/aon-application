@@ -30,7 +30,7 @@ public class ProjectHolderJSON {
 		return new ProjectHolder().setId(JsonUtils.optInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
 				.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE2))
-				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
+				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE2))
 				.setProject(JsonUtils.optInteger(json, IJsonNames.PROJECT))
 				.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 				.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, "taskHolder")))
@@ -54,7 +54,7 @@ public class ProjectHolderJSON {
 				.put(IJsonNames.DOMAIN, projectHolder.getDomain())
 				.put(IJsonNames.PROJECT, projectHolder.getProject())
 				.put(IJsonNames.START_DATE2, projectHolder.getStartDate())
-				.put(IJsonNames.END_DATE, projectHolder.getEndDate())
+				.put(IJsonNames.END_DATE2, projectHolder.getEndDate())
 				.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(projectHolder.getWorkgroup()))
 				//.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(projectHolder.getTaskHolder()));
 				.put("taskHolder", TaskHolderJSON.toJSON(projectHolder.getTaskHolder()))

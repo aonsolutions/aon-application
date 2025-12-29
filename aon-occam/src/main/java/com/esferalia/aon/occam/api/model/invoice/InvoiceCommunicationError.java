@@ -217,7 +217,7 @@ public enum InvoiceCommunicationError {
 		VERIFACTU_1203("1203", "Si ClaveRegimen es 07 OperacionExenta no puede ser E2, E3, E4 y E5 o CalificacionOperacion no puede ser S2, N1, N2."),
 		VERIFACTU_1205("1205", "Si ClaveRegimen es 10 CalificacionOperacion tiene que ser N1, TipoFactura F1 y Destinatarios estar identificada mediante NIF."),
 		VERIFACTU_1206("1206", "Si ClaveRegimen es 11 TipoImpositivo ha de ser 21%."),
-	VERIFACTU_1207("1207", "La CuotaRepercutida solo podr\u00E1 ser distinta de 0 si CalificacionOperacion es S1."),
+		VERIFACTU_1207("1207", "La CuotaRepercutida solo podr\u00E1 ser distinta de 0 si CalificacionOperacion es S1."),
 		VERIFACTU_1208("1208", "Si CalificacionOperacion es S1 y BaseImponibleACoste no est\u00E1 cumplimentada, TipoImpositivo y CuotaRepercutida son obligatorios."),
 	VERIFACTU_1209("1209", "Si CalificacionOperacion es S1 y ClaveRegimen es 06, TipoImpositivo y CuotaRepercutida son obligatorios."),
 		VERIFACTU_1210("1210", "El campo ImporteTotal tiene un valor incorrecto para el valor de los campos BaseImponibleOimporteNoSujeto, CuotaRepercutida y CuotaRecargoEquivalencia suministrados."),

@@ -40,6 +40,7 @@ public class Mod347Declared implements Serializable {
 	private boolean isp;
 	private boolean depositRegime;	
 	private double vatAccrualAmount;
+	private String bdns; // Nuevo campo 2025: Número de convocatoria BDNS
 
 	private boolean dirty;
 	private boolean deleted;
@@ -303,6 +304,15 @@ public class Mod347Declared implements Serializable {
 
 	public Mod347Declared setVatAccrualAmount(double vatAccrualAmount) {
 		this.vatAccrualAmount = vatAccrualAmount;
+		return this;
+	}
+
+	public String getBdns() {
+		return bdns;
+	}
+
+	public Mod347Declared setBdns(String bdns) {
+		this.bdns = bdns;
 		return this;
 	}
 

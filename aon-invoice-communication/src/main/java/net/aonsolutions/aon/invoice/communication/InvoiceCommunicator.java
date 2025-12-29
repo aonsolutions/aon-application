@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -66,10 +68,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
@@ -348,7 +354,6 @@ public class InvoiceCommunicator {
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
-
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
 				for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
 					type.visit( new InvoiceCommunicationTypeVisitor() {
@@ -651,7 +656,37 @@ public class InvoiceCommunicator {
 		if (cc.invoiceCount() == 0) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
 		}
-		checkCertificate(ctx, cc.getConfig(), cc.getCertificateId());
+		if (cc.getConfig() == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
+		}
+		try {
+			for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
+				type.visit( new InvoiceCommunicationTypeVisitor() {
+					
+					@Override public void visitSERES() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitEMAIL() throws InvoiceCommunicationException 		{ /*Nothing*/ }
+					@Override public void visitCLOSING() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitSII() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitTBAI() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitLROE() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					@Override public void visitFACTURAE() throws InvoiceCommunicationException		{ /*Nothing*/ }
+					@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException 	{ /*Nothing*/ }
+					@Override public void visitSIF() throws InvoiceCommunicationException 			{ /*Nothing*/ }
+					
+					@Override
+					public void visitVERIFACTU() throws InvoiceCommunicationException  {
+						checkCertificate(ctx, cc.getConfig(), cc.getCertificateId());
+					}
+					
+				});
+			}
+		} catch (Exception e) {
+			// Si es una InvoiceCommunicationException la lanzamos tal cual
+			if (e instanceof InvoiceCommunicationException ice) {
+				throw ice;
+			}
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021, e);
+		}
 	}
 	
 	private static void checkConfig(InvoiceCommunicationConfiguration config) throws InvoiceCommunicationException {

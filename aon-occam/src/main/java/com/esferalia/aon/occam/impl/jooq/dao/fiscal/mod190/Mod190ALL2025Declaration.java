@@ -43,7 +43,7 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVi
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902023Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902025Key;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
@@ -174,13 +174,13 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						Mod190Detail detail = null;
 						
 						if(isE01())
-							detail = getDetail(document,person,Mod1902023Key.E,"01",accrualYear);
+							detail = getDetail(document,person,Mod1902025Key.E,"01",accrualYear);
 						else if(isE02())
-							detail = getDetail(document,person,Mod1902023Key.E,"02",accrualYear);
+							detail = getDetail(document,person,Mod1902025Key.E,"02",accrualYear);
 						else if(isE03()) 
-							detail = getDetail(document,person,Mod1902023Key.E,"03",accrualYear);
+							detail = getDetail(document,person,Mod1902025Key.E,"03",accrualYear);
 						else if(isE04())
-							detail = getDetail(document,person,Mod1902023Key.E,"04",accrualYear);
+							detail = getDetail(document,person,Mod1902025Key.E,"04",accrualYear);
 						
 						if(null != detail) {
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
@@ -211,7 +211,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
-						Mod190Detail detail = getDetail(document,person,Mod1902023Key.L,"01",accrualYear);
+						Mod190Detail detail = getDetail(document,person,Mod1902025Key.L,"01",accrualYear);
 						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
 						
 						// Parte no exenta va a la A
@@ -230,7 +230,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							visitAKey();		
 						} else if(AonMathUtils.isGreatherThanZero(amount )) {
 							//Esta comprobacion es por que puede haber payments CRA 0054 que tengan amount 0 (pe.: DIAS_PREAVISO)
-							Mod190Detail detail = getDetail(document,person,Mod1902023Key.L,"05",accrualYear);
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.L,"05",accrualYear);
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 						}
@@ -243,7 +243,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
 						if ( AonMathUtils.isGreatherThanZero(expense )) {
-							Mod190Detail detail = getDetail(document,person,Mod1902023Key.L,"24",accrualYear);
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.L,"24",accrualYear);
 							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
 						} else {
 							// Parte no exenta va a la A a la parte en especie
@@ -255,7 +255,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							
 							Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 							
-							Mod190Detail detail = getDetail(document,person,Mod1902023Key.A,null,accrualYear);
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
 							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
 							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
 							if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
@@ -270,7 +270,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
 						if ( AonMathUtils.isGreatherThanZero(expense )) {
-							Mod190Detail detail = getDetail(document,person,Mod1902023Key.L,"25",accrualYear);
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.L,"25",accrualYear);
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
 						} else
 							// Parte no exenta va a la A
@@ -285,7 +285,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 								? 0.0
 								: (irpfBase * totalIrpf / totalIrpfBase);
 						
-						Mod190Detail detail = getDetail(document,person,Mod1902023Key.A,null,accrualYear);
+						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
 						Integer salary = rec.getValue(SALARY.ID);
 						if (!salaries.contains(salary)) {
 							salaries.add(salary);
@@ -310,7 +310,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 								? 0.0
 								: (irpfBase * totalIrpf / totalIrpfBase);
 						
-						Mod190Detail detail = getDetail(document,person,Mod1902023Key.A,null,accrualYear);
+						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
 						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 						
@@ -368,7 +368,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						return irpfQuota == 0.00 || irpfQuotaEnterprise <= 0.00 ? 0.00 : irpfQuotaEnterprise;
 					}
 					
-					private Mod190Detail getDetail(String document,int person, Mod1902023Key key, String subKey, Integer accrualYear) {
+					private Mod190Detail getDetail(String document,int person, Mod1902025Key key, String subKey, Integer accrualYear) {
 						String mapKey =  document 
 									+ "_" 
 									+ person 
@@ -406,7 +406,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 										}
 									}
 								);
-							if (key == Mod1902023Key.A) {
+							if (key == Mod1902025Key.A) {
 								Integer birthData = rec.getValue(birthYear);
 								detail.setBirthYear(birthData==null?0:birthData);
 								fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail);
@@ -815,102 +815,102 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 		@Override
 		public Mod190DetailKey visitProfessional(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.G.getValue())
-				.setSubKey( Mod1902023Key.G.getSubKeys()[0] );
+				.setKey( Mod1902025Key.G.getValue())
+				.setSubKey( Mod1902025Key.G.getSubKeys()[0] );
 		}
 		@Override public Mod190DetailKey visitM190G02(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.G.getValue())
-				.setSubKey( Mod1902023Key.G.getSubKeys()[1] );
+				.setKey( Mod1902025Key.G.getValue())
+				.setSubKey( Mod1902025Key.G.getSubKeys()[1] );
 		}
 		
 		@Override 
 		public Mod190DetailKey visitM190G03(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.G.getValue())
-				.setSubKey( Mod1902023Key.G.getSubKeys()[2] );
+				.setKey( Mod1902025Key.G.getValue())
+				.setSubKey( Mod1902025Key.G.getSubKeys()[2] );
 		}
 
 		@Override
 		public Mod190DetailKey visitFarmer(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.H.getValue())
-				.setSubKey( Mod1902023Key.H.getSubKeys()[0]);
+				.setKey( Mod1902025Key.H.getValue())
+				.setSubKey( Mod1902025Key.H.getSubKeys()[0]);
 		}
 
 		@Override public Mod190DetailKey visitM190H02(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.H.getValue())
-				.setSubKey( Mod1902023Key.H.getSubKeys()[1]);
+				.setKey( Mod1902025Key.H.getValue())
+				.setSubKey( Mod1902025Key.H.getSubKeys()[1]);
 		}
 		
 		@Override public Mod190DetailKey visitM190H03(Mod190DetailKey detailKey) { 
 			return detailKey
-				.setKey( Mod1902023Key.H.getValue())
-				.setSubKey( Mod1902023Key.H.getSubKeys()[2]);
+				.setKey( Mod1902025Key.H.getValue())
+				.setSubKey( Mod1902025Key.H.getSubKeys()[2]);
 		}
 
 		@Override
 		public Mod190DetailKey visitTransportOperator(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.H.getValue())
-				.setSubKey( Mod1902023Key.H.getSubKeys()[3]);
+				.setKey( Mod1902025Key.H.getValue())
+				.setSubKey( Mod1902025Key.H.getSubKeys()[3]);
 		}
 		
 		@Override 
 		public Mod190DetailKey visitM190I01(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.I.getValue())
-				.setSubKey( Mod1902023Key.I.getSubKeys()[0]);
+				.setKey( Mod1902025Key.I.getValue())
+				.setSubKey( Mod1902025Key.I.getSubKeys()[0]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190I02(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.I.getValue())
-				.setSubKey( Mod1902023Key.I.getSubKeys()[1]);
+				.setKey( Mod1902025Key.I.getValue())
+				.setSubKey( Mod1902025Key.I.getSubKeys()[1]);
 		}
 		
 		@Override 
 		public Mod190DetailKey visitM190J(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.J.getValue())
+				.setKey( Mod1902025Key.J.getValue())
 				.setSubKey( null );
 		}
 		@Override 
 		public Mod190DetailKey visitM190K01(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.K.getValue())
-				.setSubKey( Mod1902023Key.K.getSubKeys()[0]);
+				.setKey( Mod1902025Key.K.getValue())
+				.setSubKey( Mod1902025Key.K.getSubKeys()[0]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190K02(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.K.getValue())
-				.setSubKey( Mod1902023Key.K.getSubKeys()[1]);
+				.setKey( Mod1902025Key.K.getValue())
+				.setSubKey( Mod1902025Key.K.getSubKeys()[1]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190K03(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.K.getValue())
-				.setSubKey( Mod1902023Key.K.getSubKeys()[2]);
+				.setKey( Mod1902025Key.K.getValue())
+				.setSubKey( Mod1902025Key.K.getSubKeys()[2]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190F01(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.F.getValue())
-				.setSubKey( Mod1902023Key.F.getSubKeys()[0]);
+				.setKey( Mod1902025Key.F.getValue())
+				.setSubKey( Mod1902025Key.F.getSubKeys()[0]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190F021(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.F.getValue())
-				.setSubKey( Mod1902023Key.F.getSubKeys()[1]);
+				.setKey( Mod1902025Key.F.getValue())
+				.setSubKey( Mod1902025Key.F.getSubKeys()[1]);
 		}
 		@Override 
 		public Mod190DetailKey visitM190F022(Mod190DetailKey detailKey) {
 			return detailKey
-				.setKey( Mod1902023Key.F.getValue())
-				.setSubKey( Mod1902023Key.F.getSubKeys()[1]);
+				.setKey( Mod1902025Key.F.getValue())
+				.setSubKey( Mod1902025Key.F.getSubKeys()[1]);
 		}
 
 	}

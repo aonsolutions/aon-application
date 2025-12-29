@@ -748,7 +748,7 @@ public class VerifactuValidation {
 					ctx.v.addError(InvoiceCommunicationError.VERIFACTU_1198);
 				}
 			}
-		} else if (AonEnumUtils.in( ctx.det.getCalificacionOperacion(), N_1, N_2)) {
+		} else if (AonEnumUtils.in( ctx.det.getCalificacionOperacion(), N_1, N_2) && isIVA( ctx.det.getImpuesto()) ) {
 			// - Si CalificacionOperacion es = "N1/N2" e Impuesto = "01" (IVA) o no se cumplimenta (considerándose "01" - IVA), 
 			//  	no se puede informar ninguno de estos campos: TipoImpositivo, CuotaRepercutida, TipoRecargoEquivalencia, CuotaRecargoEquivalencia.
 			if ( AonStringUtils.isNotBlank(ctx.det.getTipoImpositivo()) || AonStringUtils.isNotBlank(ctx.det.getCuotaRepercutida()) 
@@ -986,6 +986,12 @@ public class VerifactuValidation {
 	 * 
 	 */
 	private static final Consumer<DegloseContext> ALTA_FRA_DESGLOSE_CUOTA_REPERCUTIDA = ctx -> {
+		if (ctx.det.getCalificacionOperacion() != S_1 
+			&& AonStringUtils.isNotBlank(ctx.det.getCuotaRepercutida())
+			&& AonStringUtils.notEquals("0",ctx.det.getCuotaRepercutida())) {
+			// La CuotaRepercutida solo podr\u00E1 ser distinta de 0 si CalificacionOperacion es S1.
+			ctx.v.addError(InvoiceCommunicationError.VERIFACTU_1207);
+		} else 
 		if (ctx.det.getCalificacionOperacion() == S_1) {
 			if (AonStringUtils.isBlank(ctx.det.getTipoImpositivo()) || AonStringUtils.isBlank(ctx.det.getCuotaRepercutida())) {
 				// Error VERIFACTU_1208 añadido en ALTA_FRA_DESGLOSE_TIPOIMPOSITIVO 

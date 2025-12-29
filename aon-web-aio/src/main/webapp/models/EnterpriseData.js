@@ -17,6 +17,7 @@ export class EnterpriseData {
 
     id; // Integer
     domain; // Integer
+    enterprise; // Integer
     name; // String
     expression; // String 
     startDate; // Date
@@ -28,6 +29,7 @@ export class EnterpriseData {
         if (data) {
             this.id = data.id;
             this.domain = data.domain;
+            this.enterprise = data.enterprise;
             this.name = data.name;
             this.expression = data.expression;
             this.startDate = data.startDate ? new Date(data.startDate) : undefined;

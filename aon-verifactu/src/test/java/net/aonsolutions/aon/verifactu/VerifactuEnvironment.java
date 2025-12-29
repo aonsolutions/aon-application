@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -58,7 +59,16 @@ final class VerifactuEnvironment extends VerifactuEnvironmentAbs {
 			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
 			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
-		ctx.log().info("App Param VERIFACTU set to TRUE / TEST");
+		ctx.log().info("Enterprise Data: ICC_VERIFACTU set to TRUE / TEST");
+		
+		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
+			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
+			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
+			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_ADMINISTRATION.name() )
+			.set(ENTERPRISE_DATA.EXPRESSION, Administration.COMMON_TERRITORY.name() )
+			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
+			.execute();
+		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to COMMON_TERRITORY");
 	}
 
 }

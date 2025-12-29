@@ -1,4 +1,4 @@
-import { CSS, TAG } from '../../environments/environments.js';
+import { CSS, MATERIAL_ICONS, TAG } from '../../environments/environments.js';
 import { getTimeControl, getDomainUserRoles, getDomainNotice, getUserNotice, getTaskCount, getBanks, getEmployeeSalary} from '../../services/service.js';
 import { AonElement } from '../../components/AonElement';
 import '../invoice/aon-invoice-panel.js';
@@ -15,6 +15,7 @@ import { isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -134,6 +135,24 @@ export class AonMobileHome extends AonElement {
         }
 
         divGeneral.appendChild(notificationDrag);
+        
+        // Control horario
+		if(this.isBeta() && this.isMobile() && this.getDur().isTimecontrol()){
+			let timeControlTitleWidgets = this.buildTitle("Control Horario");
+			divGeneral.appendChild(timeControlTitleWidgets); 
+			
+			let divWidgets2 = this.createElement(TAG.DIV);
+		    divWidgets2.id = this.DIV_WIDGETS + "2";
+		    divWidgets2.className = "aonDivWidgetsMobile";
+			
+			let timeControlWidget =  { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol()}
+			if (timeControlWidget.show) {
+		        const builtWidget = await timeControlWidget.builder.call(this);
+		        if(builtWidget) divWidgets2.appendChild(builtWidget);
+		    }
+		    
+		    divGeneral.appendChild(divWidgets2); 
+		}
 
         let tituloWidgets = this.buildTitle("Información");
         divGeneral.appendChild(tituloWidgets); 
@@ -143,7 +162,7 @@ export class AonMobileHome extends AonElement {
         divWidgets.className = "aonDivWidgetsMobile";
     
         const widgetOrder = [
-            { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol()},
+            { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol() && !(this.isBeta() && this.isMobile())},
             { id: this.WIDGET_NOMINA, builder: this.widgetNomina, show: this.getDur().isPayroll()},
             { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: () => this.widgetSolicitudes("recibidas"), show: this.getDur().isMessenger() },
             { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: () => this.widgetSolicitudes("enviadas"), show: this.getDur().isMessenger() },
@@ -190,6 +209,10 @@ export class AonMobileHome extends AonElement {
 			timeControlPanel.classList.add('aonWidgetTCMobileBig');
         
         widgetTC.appendChild(aonSign);
+        
+        if(this.isBeta() && this.isMobile())
+        	this.createTimeControlApps(widgetTC);
+        
         timeControlPanel.appendChild(widgetTC);
         
         timeControlPanel.addEventListener('click', () => {
@@ -197,6 +220,86 @@ export class AonMobileHome extends AonElement {
         });
         
         return timeControlPanel;
+	}
+	
+	createTimeControlApps(parent){
+		let ul = this.createElement(TAG.UL);
+		ul.id = "timeControlPanelAppSelection";
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
+		
+		ul.appendChild(this.createTimeControlAppInfo());
+		ul.appendChild(this.createTimeControlAppSchedule());
+		
+		parent.appendChild(ul);
+	}
+	
+	createTimeControlAppInfo(){
+		let li = this.createElement(TAG.LI);
+		li.id = "timeControlPanelAppSelection-Info";
+		li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+		li.classList.add(CSS.AON_APP_LI);
+		li.classList.add("fixLi");
+		li.style.borderRight = '0px';
+		li.style.borderLeft = '0px';
+		li.style.cursor = 'pointer';
+		
+		li.addEventListener('click', (ev) => {
+			ev.stopPropagation();
+			this.rootPanel(new AonTimecontrol());
+		});
+		
+		let span = this.createElement(TAG.SPAN);
+		
+		span.style.margin = '20px';
+		
+		let icon = this.createSpan();
+		icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		icon.id = "aonMobileSelectionIcon-Info";
+		icon.innerHTML = MATERIAL_ICONS.ALARM;
+		icon.style.backgroundColor = "#f0f0f0";
+		icon.style.color = "black";
+		icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
+		icon.style.borderRadius = "5px";
+		span.appendChild(icon);	
+		
+		li.appendChild(span);
+		
+		return li;
+	}
+	
+	createTimeControlAppSchedule(){
+		let li = this.createElement(TAG.LI);
+		li.id = "timeControlPanelAppSelection-Schedule";
+		li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+		li.classList.add(CSS.AON_APP_LI);
+		li.classList.add("fixLi");
+		li.style.borderRight = '0px';
+		li.style.borderLeft = '0px';
+		li.style.cursor = 'pointer';
+		
+		li.addEventListener('click', (ev) => {
+			ev.stopPropagation();
+			this.rootPanelHtml('<aon-messenger></aon-messenger>');
+		});
+		
+		let span = this.createElement(TAG.SPAN);
+		
+		span.style.margin = '20px';
+		
+		let icon = this.createSpan();
+		icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		icon.id = "aonMobileSelectionIcon-Schedule";
+		icon.innerHTML = MATERIAL_ICONS.SPEAKER_NOTES;
+		icon.style.backgroundColor = "#f0f0f0";
+		icon.style.color = "black";
+		icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
+		icon.style.borderRadius = "5px";
+		span.appendChild(icon);
+		
+		li.appendChild(span);
+		
+		return li;
 	}
 
     widgetNomina() {

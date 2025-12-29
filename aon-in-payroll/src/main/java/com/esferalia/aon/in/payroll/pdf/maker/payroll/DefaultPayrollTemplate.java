@@ -593,7 +593,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String payrollTotal		   = toLatinNumber(safeDouble(p.getPayrollTotal()));
 		String enterpriseSign	   = text("FIRMA EMPRESA");
 		String dateLFormat = "dd 'de' MMMM 'de' yyyy";
-		String issueDate = AonDateUtils.format(p.getLiquidPeriodEnd().orElse(null), dateLFormat);
+		String receivedDate = AonDateUtils.format(p.getReceivedDate().orElse(p.getLiquidPeriodEnd().orElse(null)), dateLFormat);
 		
 
 		x = 23.5f;
@@ -685,8 +685,8 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		drawTotalLine(160);
 		y -= NORMAL_LINE_JUMP;
 		drawText(contents, enterpriseSign, x + 10 + 120, y, BLACK, HELVETICA, FONT_SIZE - 1);
-		if (issueDate != null) {
-			drawText(contents, issueDate, x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);			
+		if (receivedDate != null) {
+			drawText(contents, receivedDate, x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);			
 		}
 		y -= NORMAL_LINE_JUMP;
 		drawText(contents, "RECIBÍ", x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);
