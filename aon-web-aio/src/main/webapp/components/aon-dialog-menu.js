@@ -456,6 +456,7 @@ export class AonDialogMenu extends AonElement {
 			ic.style.verticalAlign = 'middle';
 			ic.style.fontSize = `${item.size || 16}px`;
 			ic.innerHTML = item.icon;
+			ic.setAttribute('icon', item.icon);
 			li.appendChild(ic);
 		}
 

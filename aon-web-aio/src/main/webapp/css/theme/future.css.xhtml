@@ -1382,29 +1382,48 @@
 		padding-left: 32px !important;
 	}
 
-/* 	.aon-finding-toolbar-item-group input.aon-finding-toolbar-item.aon-icon-accept:first-child {
-  		border: 0;
+
+  	.aon-finding-toolbar-item-group div[id$='save-container'] {
+		border: 0;
   		border-radius: .375rem;
-
-  		color: #fff;
-	    background-color: #0f172a;
-	    
-		height: 2.5rem;
-  		padding: .5rem 1rem;
-
-  		cursor: pointer;
-  		text-align: center;
-  		text-transform: lowercase;
   		
+  		min-width: 200px;
+  		background-color: #0f172a;
+  		
+  		cursor: pointer;
+  		
+  		flex-direction:row; 
+  		align-items:center;
+  		justify-content:center; 
+  		display:flex !important; 
+  		
+  		
+    }
+    
+    .aon-finding-toolbar-item-group div[id$='save-container'] input[id$='save'] {
+  		color: #fff;
+  		font-size: 0.9rem;
+  		min-width: fit-content;
   		background-image: none;
-  	    
+
+  		text-align: left;
+  		text-transform: lowercase;
     }
 	
 	
-	.aon-finding-toolbar-item-group:has(input.aon-finding-toolbar-item.aon-icon-accept:first-child):before {
-		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
+	.aon-finding-toolbar-item-group div[id$='save-container']:before {
+  		z-index: 1;
+		
+		content: '';
+  		width: 24px;
+  		height: 24px;
+  		
+  		display: inline-block;
+  		vertical-align: middle;
+  		
+  		background-color: white;
+  		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
     }
- */    
 	
 </style>
 

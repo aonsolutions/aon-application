@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -362,9 +363,20 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setDate(date)
 				.setLocation(lc)
 				.setComments(params.optString(IJsonNames.COMMENTS))
+				.setReason(AonStringUtils.isBlank(params.optString("cause")) ? null : TimeControlReason.safeValueOf(Byte.parseByte(params.optString("cause"))))
 				.setStatus(TimeControlStatus.safeValueOf(params.optString(IJsonNames.STATUS)));
+		
+		if(AonStringUtils.isBlank(tcd.getComments()) && null != lc && !AonStringUtils.isBlank(lc.getDescription()))
+			tcd.setComments(lc.getDescription());
+		
+		if(null != lc && null != lc.getId() && null == tcd.getReason() && !tcd.getStatus().equals(TimeControlStatus.OUT)) {
+			// Get reason by location
+			tcd.setReason(TimeControlReason.IN_PERSON);
+		}
 	
-		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), api.getUser().getLogin(), tcd).toJSON();
+		TimeControlDetail result = AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), api.getUser().getLogin(), tcd);
+		System.out.println(result.toJSON().toString());
+		return result.toJSON();
 	}
 	
 	private File getTimeControlExcel(AonApiData api) throws Exception {

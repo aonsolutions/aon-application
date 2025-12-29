@@ -744,4 +744,8 @@ public class DomainUserRoles implements Serializable {
 	public boolean isOfficeManager() {
 		return hasRole(AonRole.OFFICE_MANAGER);
 	}
+	
+	public boolean isPortal() {
+		return getUser().isPortal();
+	}
 }

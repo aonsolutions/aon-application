@@ -4905,6 +4905,10 @@ font-weight: 600;
     border-radius: 10px;
   }
   
+  #aonTimeControlReasonDialog {
+  	margin-top: 5rem;
+  }
+  
   .aonWidgetTCMobileBig #timeControlPanelAppSelection{
   	padding: 0;
     align-items: end;
@@ -4918,6 +4922,38 @@ font-weight: 600;
   
   .aonWidgetTCMobileBig #timeControlPanelAppSelection li > span {
   	margin: 0 !important;
+  }
+  
+  #aonTimeControlReasonDialogDialogMain {
+  	margin-top: 60px;
+  }
+  
+  #aonTimeControlReasonDialogDialogContent .aonTimeControlResonOption:last-of-type {
+  	border-bottom: none;
+  }
+  
+  #DesplazadoReasonInput,
+  #OtroReasonInput{
+	padding-left: 1rem;
+
+  }
+  
+  span#DesplazadoReasonInputTitle,
+  span#OtroReasonInputTitle {
+  	display: none;
+  }
+  
+  .aonTimeControlResonOption{
+  	display:flex;
+  	align-items: center;
+  	gap: 1rem;
+  	padding: 1rem;
+  	cursor: pointer;
+ 	border-bottom: 1px solid #d3d3d3;
+  }
+  
+  .aonTimeControlResonOption:hover {
+  	background-color: #f0f0f0;
   }
   
   .aonWidgetNominaMobile{
