@@ -54,8 +54,10 @@ import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '
 import { createSelect } from '../../components/CreateComponent.js';
 import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 import { AonInvoiceCommunication } from '../invoice/aon-invoice-communication.js';
-import { isPersonaFisica } from '../../services/documentUtils.js';
+import { isPersonaFisica, isValid } from '../../services/documentUtils.js';
 import { Invoice } from '../invoice/Invoice.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
+import { AonBasicTable } from '../../components/aon-basic-table.js';
 
 export class AonDesktop extends AonElement {
 
@@ -65,6 +67,9 @@ export class AonDesktop extends AonElement {
 	INPUT_DOCUMENT_FILE;
 	appOption;
 	SIDENAV_ACTIVITY_SUMMARY;
+
+
+	conditionsAccepted; // Invoice Configuration  conditions.
 
 	static get observedAttributes() {
 		return [];
@@ -113,7 +118,7 @@ export class AonDesktop extends AonElement {
 		this.build();
 
 	    await this.getInvoiceConfiguration();
-		if(!this.checkConfigurationComplete(this.ic))
+		if(!this.checkConfigurationComplete(this.ic, false))
 			this.buildInvoiceConfigurationDialog();
 	
 	}
@@ -154,12 +159,25 @@ export class AonDesktop extends AonElement {
 			}
 		});
 
+		let div = this.createDiv();
+	
+		let aviso = this.createDiv();
+		aviso.style.backgroundColor = '#fde400ff';
+		aviso.style.padding = '10px';
+		aviso.style.margin = '10px';
+		aviso.innerHTML = "<span style='color:red'>Aviso Importante</span>: Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br>";
+
+		div.appendChild(aviso);
+		div.appendChild(communication);
+
 		dialog.clear();
 		dialog.setTitle(MSG.INVOICE_CONFIGURATION);
-		dialog.setContent(communication);
+		dialog.setContent(div);
+
+		this.buildConditions(div);
 
 		dialog.addAcceptAction(() => {		
-			if(this.checkConfigurationComplete(this.ic)) { 
+			if(this.checkConfigurationComplete(this.ic, true)) { 
 				saveInvoiceConfiguration(this.ic);
 			} else {
 				this.buildInvoiceConfigurationDialog();
@@ -168,14 +186,53 @@ export class AonDesktop extends AonElement {
 		dialog.open();
 	}
 
-	checkConfigurationComplete(config) {
+
+	buildConditions(parent) {
+		let conditions = this.createDiv();
+		parent.appendChild(conditions);
+		let table = new AonBasicTable();
+		table.style.top = '20px';
+		table.style.position = 'relative'; 
+		conditions.appendChild(table);
+		table.addRow();
+		
+		let checkBox = new AonCheckbox();
+		checkBox.setCh
+		let td = table.addCell(checkBox)
+		td.style.width = '15px';
+		let span3 = this.createElement(TAG.SPAN);
+		span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
+		table.addCell(span3);
+		
+		checkBox.addEventListener(EVENT.CHANGE, () => {
+			this.conditionsAccepted = checkBox.isChecked();
+		});
+	}
+
+	checkConfigurationComplete(config, showError) {
+		if(showError && !this.conditionsAccepted) {
+			this.showMessageError("Debe aceptar las condiciones para continuar.");
+			return false;
+		}
 		if(!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if(isPersonaFisica(config.company.document)) {
-			if(!(config.company.person || config.person)) return false;
-			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
+		if(!isValid(config.company.document)) {
+			if(showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
+			return false;
+		}
+		if(isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
+			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
+			return false;
+		} 
+		if(showError && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+			this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+			return false;
+		} 
+		if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
+			return true;
 		} else {
-			return (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) ? true : false;
+			if(showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
+			return false;
 		}
 	}
 
